@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sdfSchema="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_schema.sdf#" xmlns:sdfDatatypes="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#" xmlns:sdfUnits="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sdfQuality="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_quality.sdf#" xml:base="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_quality.sdf">
+
+    <sdfSchema:Entity rdf:ID="QualityLevel"/>
+    <rdf:Property rdf:ID="hasQualityLevel"/>
+    <rdf:Property rdf:ID="correspondingValue">
+        <rdfs:domain rdf:resource="#QualityLevel"/>
+    </rdf:Property>     
+    
+    <rdf:Property rdf:ID="lowerBound">
+        <rdfs:domain rdf:resource="#QualityLevel"/>
+    </rdf:Property>
+    
+    <rdf:Property rdf:ID="upperBound">
+        <rdfs:domain rdf:resource="#QualityLevel"/>
+    </rdf:Property>
+
+    <sdfQuality:QualityLevel rdf:ID="VeryGood">
+        <sdfQuality:correspondingValue>1</sdfQuality:correspondingValue>
+        <sdfSchema:symbolicRepresentation>++</sdfSchema:symbolicRepresentation>
+    </sdfQuality:QualityLevel>
+    
+    <sdfQuality:QualityLevel rdf:ID="Good">
+        <sdfQuality:correspondingValue>0.75</sdfQuality:correspondingValue>
+        <sdfSchema:symbolicRepresentation>+</sdfSchema:symbolicRepresentation>
+    </sdfQuality:QualityLevel>
+
+    <sdfQuality:QualityLevel rdf:ID="Medium">
+        <sdfQuality:correspondingValue>0.5</sdfQuality:correspondingValue>
+        <sdfSchema:symbolicRepresentation>o</sdfSchema:symbolicRepresentation>
+    </sdfQuality:QualityLevel>
+
+    <sdfQuality:QualityLevel rdf:ID="Bad">
+        <sdfQuality:correspondingValue>0.25</sdfQuality:correspondingValue>
+        <sdfSchema:symbolicRepresentation>-</sdfSchema:symbolicRepresentation>
+    </sdfQuality:QualityLevel>
+
+    <sdfQuality:QualityLevel rdf:ID="VeryBad">
+        <sdfQuality:correspondingValue>0</sdfQuality:correspondingValue>
+        <sdfSchema:symbolicRepresentation>--</sdfSchema:symbolicRepresentation>
+    </sdfQuality:QualityLevel>
+    
+    <!-- Hier werden nur die Typen definiert. Im globalen
+         Schema werden diese dann konkreten Attributen
+         zugeordnet -->
+    
+    <sdfSchema:sdfEntity rdf:ID="SDFQuality"/>
+    
+    <sdfSchema:Entity rdf:ID="Correctness">
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+    
+    <sdfSchema:Entity rdf:ID="Coverage"> 
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+
+    <sdfSchema:Entity rdf:ID="Security">    
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+
+    <sdfSchema:Entity rdf:ID="Costs">
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+    
+    <sdfSchema:Entity rdf:ID="LatencyTime">    
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+
+    <sdfSchema:Entity rdf:ID="ResponseTime">    
+         <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+    
+   <sdfSchema:Entity rdf:ID="Timelineness">
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+    
+    <sdfSchema:Entity rdf:ID="Credibility">                      
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+    
+    <sdfSchema:Entity rdf:ID="Objectivity">                          
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+    
+    <sdfSchema:Entity rdf:ID="Reputation">                          
+        <sdfSchema:isA rdf:resource="SDFQuality"/>
+    </sdfSchema:Entity>
+                      
+</rdf:RDF>

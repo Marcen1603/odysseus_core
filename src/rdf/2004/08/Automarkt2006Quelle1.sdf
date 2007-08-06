@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rdf:RDF xmlns:sdf_query="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_query.sdf#" xmlns:sdf_quality_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_quality_descriptions.sdf#" xmlns:GlobalSchemaAutomarkt="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/GlobalSchemaAutomarkt.sdf#" xmlns:sdf_predicates="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_predicates.sdf#" xmlns:sdf_datatype_constraints="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatype_constraints.sdf#" xmlns:sdf_datatypes="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#" xmlns:sdf_mappings="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_mappings.sdf#" xmlns:sdf_unit_mappings="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_unit_mappings.sdf#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sdf_units="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#" xmlns:sdf_extensional_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_extensional_descriptions.sdf#" xmlns:sdf_intensional_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_intensional_descriptions.sdf#" xmlns:sdf_quality="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_quality.sdf#" xmlns:sdf_functions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_functions.sdf#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sdf_schema="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_schema.sdf#" xmlns:sdf_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_descriptions.sdf#" xml:base="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2006Quelle1.sdf#">
+
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!-- Quellenbeschreibung ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+  <sdf_descriptions:SourceDescription rdf:about="#Automarkt2006Quelle1.sdf">
+    <sdf_descriptions:aboutSource rdf:resource="http://134.106.52.176/Automarkt2006Quelle1"/>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- Intensional ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sdf_descriptions:hasIntensionalDesc>
+        <sdf_descriptions:IntensionalDescription rdf:about="#IntDesc">
+            <sdf_intensional_descriptions:hasLocalSchema rdf:resource="#localSchema"/>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_AUTO.FGSTNR"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#FGSTNR"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_AUTO.km"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#km"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_AUTO.Preis"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Preis"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_AUTO.Farbe"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Farbe"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_AUTO.Modell"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Modell"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_AUTO.Marke"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Marke"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_HERSTELLER.Marke"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Marke"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_HERSTELLER.Strasse"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#H_Strasse"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_HERSTELLER.Hausnummer"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#H_Hausnummer"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_HERSTELLER.Plz"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#H_Plz"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_HERSTELLER.Ort"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#H_Ort"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_VERKAEUFER.Vknr"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Vknr"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_VERKAEUFER.Vorname"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Vorname"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_VERKAEUFER.Nachname"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Nachname"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_VERKAEUFER.Plz"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#V_Plz"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_VERKAEUFER.Strasse"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#V_Strasse"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_VERKAEUFER.Hausnummer"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#V_Hausnummer"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasSchemaMapping>
+                <sdf_mappings:OneToOne>
+                    <sdf_mappings:hasIn rdf:resource="#DYNQ_VERKAEUFER.Ort"/>
+                    <sdf_mappings:hasOut rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#V_Ort"/>
+                </sdf_mappings:OneToOne>
+            </sdf_intensional_descriptions:hasSchemaMapping>
+
+            <sdf_intensional_descriptions:hasAccessPattern>
+                <sdf_intensional_descriptions:AccessPattern rdf:ID="Suche">
+                    <sdf_intensional_descriptions:hasInputPattern rdf:resource="#SucheInput"/>
+                    <sdf_intensional_descriptions:hasOutputPattern rdf:resource="#SucheOutput"/>
+                </sdf_intensional_descriptions:AccessPattern>
+            </sdf_intensional_descriptions:hasAccessPattern>
+
+        </sdf_descriptions:IntensionalDescription>
+    </sdf_descriptions:hasIntensionalDesc>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- Extensional ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- Qualitativ  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  </sdf_descriptions:SourceDescription>
+
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!-- Schema ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++- -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  <sdf_schema:Dataschema rdf:about="#localSchema">
+
+    <sdf_schema:hasEntity>
+      <sdf_schema:Entity rdf:about="#Verkauf">
+
+        <sdf_schema:hasIdAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Vknr">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+
+		</sdf_schema:Attribute>
+        </sdf_schema:hasIdAttribute>
+        <sdf_schema:hasIdAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_AUTO.FGSTNR">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+            </sdf_schema:Attribute>
+        </sdf_schema:hasIdAttribute>
+
+      </sdf_schema:Entity>
+
+    </sdf_schema:hasEntity>
+
+    <sdf_schema:hasEntity>
+        <sdf_schema:Entity rdf:about="#Auto">
+
+            <sdf_schema:hasIdAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_AUTO.FGSTNR">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasIdAttribute>
+
+            <sdf_schema:hasAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_AUTO.km">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+                    <sdf_units:hasUnit rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#Kilometer"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+            <sdf_schema:hasAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_AUTO.Preis">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+	              <sdf_units:hasUnit rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#Euro"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+            <sdf_schema:hasAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_AUTO.Farbe">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+            <sdf_schema:hasAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_AUTO.Marke">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+            <sdf_schema:hasAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_AUTO.Modell">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+        </sdf_schema:Entity>
+    </sdf_schema:hasEntity>
+
+    <sdf_schema:hasEntity>
+        <sdf_schema:Entity rdf:about="#Hersteller">
+
+            <sdf_schema:hasIdAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_HERSTELLER.Marke">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasIdAttribute>
+
+            <sdf_schema:hasAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_HERSTELLER.Strasse">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+            <sdf_schema:hasAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_HERSTELLER.Hausnummer">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+            </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+            <sdf_schema:hasAttribute>
+                <sdf_schema:Attribute rdf:about="#DYNQ_HERSTELLER.Plz">
+                    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+                </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+            <sdf_schema:hasAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_HERSTELLER.Ort">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+            </sdf_schema:Attribute>
+            </sdf_schema:hasAttribute>
+
+        </sdf_schema:Entity>
+    </sdf_schema:hasEntity>
+
+    <sdf_schema:hasEntity>
+      <sdf_schema:Entity rdf:about="#Verkaeufer">
+
+        <sdf_schema:hasIdAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Vknr">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+            </sdf_schema:Attribute>
+        </sdf_schema:hasIdAttribute>
+
+        <sdf_schema:hasAttribute>
+          <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Vorname">
+            <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+          </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+
+        <sdf_schema:hasAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Nachname">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+            </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+
+        <sdf_schema:hasAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Plz">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+            </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+
+        <sdf_schema:hasAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Strasse">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+            </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+
+        <sdf_schema:hasAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Hausnummer">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+            </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+
+        <sdf_schema:hasAttribute>
+            <sdf_schema:Attribute rdf:about="#DYNQ_VERKAEUFER.Ort">
+                <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+            </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+
+      </sdf_schema:Entity>
+    </sdf_schema:hasEntity>
+  </sdf_schema:Dataschema>
+
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!-- Zugriffsmuster ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++- -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  <sdf_intensional_descriptions:InputPattern rdf:ID="SucheInput">
+    <sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+        <sdf_intensional_descriptions:AttributeAttributeBindingPair>
+            <sdf_intensional_descriptions:concernsAttribute rdf:resource="#DYNQ_VERKAEUFER.Vknr"/>
+            <sdf_intensional_descriptions:necessity rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_intensional_descriptions.sdf#Optional"/>
+		<sdf_intensional_descriptions:hasCompareOperator rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_predicates.sdf#Equal"/>
+        </sdf_intensional_descriptions:AttributeAttributeBindingPair>
+    </sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+    <sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+        <sdf_intensional_descriptions:AttributeAttributeBindingPair>
+            <sdf_intensional_descriptions:concernsAttribute rdf:resource="#DYNQ_VERKAEUFER.Plz"/>
+            <sdf_intensional_descriptions:necessity rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_intensional_descriptions.sdf#Required"/>
+		<sdf_intensional_descriptions:hasCompareOperator rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_predicates.sdf#Equal"/>
+        </sdf_intensional_descriptions:AttributeAttributeBindingPair>
+    </sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+  </sdf_intensional_descriptions:InputPattern>
+
+  <sdf_intensional_descriptions:OutputPattern rdf:ID="SucheOutput">
+    <sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+        <sdf_intensional_descriptions:AttributeAttributeBindingPair>
+            <sdf_intensional_descriptions:concernsAttribute rdf:resource="#DYNQ_VERKAEUFER.Vknr"/>
+            <sdf_intensional_descriptions:hasOutputAttributeBinding rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_intensional_descriptions.sdf#Id"/>
+        </sdf_intensional_descriptions:AttributeAttributeBindingPair>
+    </sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+    <sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+        <sdf_intensional_descriptions:AttributeAttributeBindingPair>
+            <sdf_intensional_descriptions:concernsAttribute rdf:resource="#DYNQ_VERKAEUFER.Vorname"/>
+        </sdf_intensional_descriptions:AttributeAttributeBindingPair>
+    </sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+    <sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+        <sdf_intensional_descriptions:AttributeAttributeBindingPair>
+            <sdf_intensional_descriptions:concernsAttribute rdf:resource="#DYNQ_VERKAEUFER.Nachname"/>
+        </sdf_intensional_descriptions:AttributeAttributeBindingPair>
+    </sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+    <sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+        <sdf_intensional_descriptions:AttributeAttributeBindingPair>
+            <sdf_intensional_descriptions:concernsAttribute rdf:resource="#DYNQ_VERKAEUFER.Plz"/>
+        </sdf_intensional_descriptions:AttributeAttributeBindingPair>
+    </sdf_intensional_descriptions:hasAttributeAttributeBindingPair>
+  </sdf_intensional_descriptions:OutputPattern>
+
+
+</rdf:RDF>

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+compile ()
+{
+  echo "compiling " $1
+  /usr/local/jdk1.3.1/bin/java mwg $1 $2
+}
+
+mtp () # move to package
+{
+  echo $3 > $2
+  cat $1 >> $2
+}
+
+CLASSPATH=$HOME/dyna/DynaQuest/araneusWTK
+export CLASSPATH
+compile IMDB/IMDB_MoviePage.NF IMDB/IMDB_MoviePage.java
+compile IMDB/IMDB_ReturnedMovies.NF IMDB/IMDB_ReturnedMovies.java
+compile IMDB/IMDB_PersonPage.NF IMDB/IMDB_PersonPage.java
+compile IMDB/IMDB_PersonList.NF IMDB/IMDB_PersonList.java
+compile Autoscout24/CarPage.NF Autoscout24/CarPage.java
+mtp IMDB/IMDB_MoviePage.java $HOME/dyna/DynaQuest/src/mg/diss/wrapper/imdb/IMDB_MoviePage.java 'package mg.diss.wrapper.imdb;'
+mtp IMDB/IMDB_ReturnedMovies.java $HOME/dyna/DynaQuest/src/mg/diss/wrapper/imdb/IMDB_ReturnedMovies.java 'package mg.diss.wrapper.imdb;'
+mtp IMDB/IMDB_PersonPage.java $HOME/dyna/DynaQuest/src/mg/diss/wrapper/imdb/IMDB_PersonPage.java 'package mg.diss.wrapper.imdb;'
+mtp IMDB/IMDB_PersonList.java $HOME/dyna/DynaQuest/src/mg/diss/wrapper/imdb/IMDB_PersonList.java 'package mg.diss.wrapper.imdb;'
+mtp Autoscout24/CarPage.java $HOME/dyna/DynaQuest/src/mg/diss/wrapper/autoscout24/CarPage.java 'package mg.diss.wrapper.autoscout24;'

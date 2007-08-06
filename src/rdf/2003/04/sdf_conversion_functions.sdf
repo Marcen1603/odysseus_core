@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sdfFunctions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_functions.sdf#" xml:base="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_conversion_functions.sdf">
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++
+         Definitionen von (bel.) Funktionsnamen
+     ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sdfFunctions:Merge rdf:ID="BruttoToNettoProzent">
+    </sdfFunctions:Merge>
+
+    <sdfFunctions:Merge rdf:ID="NettoToBruttoProzent">
+    </sdfFunctions:Merge>
+
+
+</rdf:RDF>

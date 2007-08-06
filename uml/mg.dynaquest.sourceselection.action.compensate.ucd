@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" id="mg.dynaquest.sourceselection.action.compensate" metadata="uml2-1.0" initialized="true" tag="5" key="32303036313030332044796E615175657374">
+  <children xsi:type="editmodel:ClassEditModel" name="NecInAttrCompConstant" location="1694,844" size="263,169" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompConstant">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="240,90">
+      <children xsi:type="editmodel:MethodEditModel" name="NecInAttrCompConstant" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompConstant#NecInAttrCompConstant(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="NecInAttrCompConstant" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompConstant#NecInAttrCompConstant()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompConstant#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompConstant#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompConstant#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation&lt;-mg.dynaquest.sourceselection.action.compensate/NecInAttrCompConstant" source="//@children.0" target="//@children.5/@sourceConnections.0" targetEnd="//@children.0/@sourceConnections.0/@children.1" sourceEnd="//@children.0/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="131,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="PredicateCompensation" location="1144,337" size="678,457" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation">
+    <children xsi:type="editmodel:CompartmentEditModel" size="186,72">
+      <children xsi:type="editmodel:AttributeEditModel" name="actionName" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#actionName"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="compensatedPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@compensatedPlans+mg.dynaquest.sourceselection.action.compensate/PredicateCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#compensatedPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="context" id="mg.dynaquest.sourceselection/AnnotatedPlan@context+mg.dynaquest.sourceselection.action.compensate/PredicateCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#context"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="doOperatorCompensation" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#doOperatorCompensation"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="errorPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@errorPlans+mg.dynaquest.sourceselection.action.compensate/PredicateCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#errorPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="org.apache.log4j/Logger@logger+mg.dynaquest.sourceselection.action.compensate/PredicateCompensation@|org.apache.log4j/Logger#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="predicateAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@predicateAttributes+mg.dynaquest.sourceselection.action.compensate/PredicateCompensation@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#predicateAttributes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="query" id="mg.dynaquest.sourcedescription.sdf.query/SDFQuery@query+mg.dynaquest.sourceselection.action.compensate/PredicateCompensation@|mg.dynaquest.sourcedescription.sdf.query/SDFQuery#query"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="restrictiveCompensation" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#restrictiveCompensation"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="weightingLimit" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#weightingLimit"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="655,198">
+      <children xsi:type="editmodel:MethodEditModel" name="PredicateCompensation" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#PredicateCompensation()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="PredicateCompensation" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#PredicateCompensation(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getErrorPlans" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#getErrorPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSelectPOCompensatedPlan" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#getSelectPOCompensatedPlan(Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourcedescription.sdf.query.WSimplePredicateSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#setActionName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/PredicateCompensation#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction&lt;-mg.dynaquest.sourceselection.action.compensate/PredicateCompensation" source="//@children.1" target="//@children.2/@sourceConnections.0" targetEnd="//@children.1/@sourceConnections.0/@children.1" sourceEnd="//@children.1/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="339,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ForwardCompensation" location="2973,337" size="517,277" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation">
+    <children xsi:type="editmodel:CompartmentEditModel">
+      <children xsi:type="editmodel:AttributeEditModel" name="errorPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@errorPlans+mg.dynaquest.sourceselection.action.compensate/ForwardCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#errorPlans"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,180">
+      <children xsi:type="editmodel:MethodEditModel" name="ForwardCompensation" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#ForwardCompensation(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="ForwardCompensation" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#ForwardCompensation()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getErrorPlans" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#getErrorPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#setActionName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/ForwardCompensation#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.10/@sourceConnections.0 //@children.1/@sourceConnections.0 //@children.7/@sourceConnections.0 //@children.14/@sourceConnections.0 //@children.3/@sourceConnections.0" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction&lt;-mg.dynaquest.sourceselection.action.compensate/ForwardCompensation" source="//@children.2" target="//@children.4" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,237" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.5/@sourceConnections.0" name="NecInAttrCompensation" location="1852,337" size="526,439" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation">
+    <children xsi:type="editmodel:CompartmentEditModel" size="179,72">
+      <children xsi:type="editmodel:AttributeEditModel" name="actionName" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#actionName"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="bindCollectorAt" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#bindCollectorAt"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="compensatedPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@compensatedPlans+mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#compensatedPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="context" id="mg.dynaquest.sourceselection/AnnotatedPlan@context+mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#context"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="errorPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@errorPlans+mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#errorPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="org.apache.log4j/Logger@logger+mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation@|org.apache.log4j/Logger#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="predicateAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@predicateAttributes+mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#predicateAttributes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="query" id="mg.dynaquest.sourcedescription.sdf.query/SDFQuery@query+mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation@|mg.dynaquest.sourcedescription.sdf.query/SDFQuery#query"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="restrictiveCompensation" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#restrictiveCompensation"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="rm" id="mg.dynaquest.sourceselection/RepositoryManager@rm+mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation@|mg.dynaquest.sourceselection/RepositoryManager#rm"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="useCollector" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#useCollector"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="503,162">
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getCollectorPOPlan" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#getCollectorPOPlan(Lmg.dynaquest.sourceselection.AnnotatedPlan;Ljava.util.HashMap;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getErrorPlans" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#getErrorPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReplacePOPlan" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#getReplacePOPlan(Lmg.dynaquest.sourceselection.AnnotatedPlan;Ljava.util.HashMap;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#setActionName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction&lt;-mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation" source="//@children.3" target="//@children.2/@sourceConnections.0" targetEnd="//@children.3/@sourceConnections.0/@children.1" sourceEnd="//@children.3/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="263,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.2/@sourceConnections.0" name="CompensateAction" location="1519,50" size="517,237" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction">
+    <children xsi:type="editmodel:CompartmentEditModel" size="75,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="actionName" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#actionName"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,126">
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getErrorPlans" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#getErrorPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#setActionName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="NecInAttrCompInterval" location="1364,844" size="255,169" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompInterval">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="232,90">
+      <children xsi:type="editmodel:MethodEditModel" name="NecInAttrCompInterval" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompInterval#NecInAttrCompInterval(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="NecInAttrCompInterval" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompInterval#NecInAttrCompInterval()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompInterval#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompInterval#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompInterval#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.13/@sourceConnections.0 //@children.0/@sourceConnections.0" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation&lt;-mg.dynaquest.sourceselection.action.compensate/NecInAttrCompInterval" source="//@children.5" target="//@children.3" targetEnd="//@children.5/@sourceConnections.0/@children.1" sourceEnd="//@children.5/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="127,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="263,439" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.11/@sourceConnections.0" name="SelectJoinCompensation" location="50,844" size="526,223" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation">
+    <children xsi:type="editmodel:CompartmentEditModel" size="151,54">
+      <children xsi:type="editmodel:AttributeEditModel" name="costControlled" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation#costControlled"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="m" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation#m"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="predicateAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@predicateAttributes+mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#predicateAttributes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="searchMinimalPlan" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation#searchMinimalPlan"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="503,72">
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJoinPredicate" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation#getJoinPredicate(Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourceselection.AnnotatedPlan;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSelectJoinAttributes" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation#getSelectJoinAttributes(Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourceselection.AnnotatedPlan;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSelectJoinedPlan" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation#getSelectJoinedPlan(Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourceselection.AnnotatedPlan;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.12/@sourceConnections.0" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation&lt;-mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation" source="//@children.6" target="//@children.14" targetEnd="//@children.6/@sourceConnections.0/@children.1" sourceEnd="//@children.6/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="263,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,367" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="OperatorCompensation" location="50,337" size="517,349" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation">
+    <children xsi:type="editmodel:CompartmentEditModel" size="109,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="actionName" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#actionName"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="compensatedPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@compensatedPlans+mg.dynaquest.sourceselection.action.compensate/OperatorCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#compensatedPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="context" id="mg.dynaquest.sourceselection/AnnotatedPlan@context+mg.dynaquest.sourceselection.action.compensate/OperatorCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#context"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="errorPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@errorPlans+mg.dynaquest.sourceselection.action.compensate/OperatorCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#errorPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="query" id="mg.dynaquest.sourcedescription.sdf.query/SDFQuery@query+mg.dynaquest.sourceselection.action.compensate/OperatorCompensation@|mg.dynaquest.sourcedescription.sdf.query/SDFQuery#query"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,180">
+      <children xsi:type="editmodel:MethodEditModel" name="OperatorCompensation" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#OperatorCompensation()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="OperatorCompensation" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#OperatorCompensation(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getErrorPlans" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#getErrorPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#setActionName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/OperatorCompensation#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction&lt;-mg.dynaquest.sourceselection.action.compensate/OperatorCompensation" source="//@children.7" target="//@children.2/@sourceConnections.0" targetEnd="//@children.7/@sourceConnections.0/@children.1" sourceEnd="//@children.7/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="SelectJoinCompensationGreedy" location="597,1207" size="517,223" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,144">
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinCompensationGreedy" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#SelectJoinCompensationGreedy(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinCompensationGreedy" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#SelectJoinCompensationGreedy()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getExecutionQueue" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#getExecutionQueue(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getOutputPatternForQueue" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#getOutputPatternForQueue(Lmg.dynaquest.sourceselection.AnnotatedPlanQueue;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy#main([Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation&lt;-mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationGreedy" source="//@children.8" target="//@children.11/@sourceConnections.0" targetEnd="//@children.8/@sourceConnections.0/@children.1" sourceEnd="//@children.8/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="SelectJoinCompensationSmartCluster" location="50,1552" size="517,223" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster">
+    <children xsi:type="editmodel:CompartmentEditModel" size="77,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="flexibility" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#flexibility"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,126">
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinCompensationSmartCluster" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#SelectJoinCompensationSmartCluster(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinCompensationSmartCluster" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#SelectJoinCompensationSmartCluster()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="buildClusters" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#buildClusters(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNewHopeAttribute" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#getNewHopeAttribute(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster#main([Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster&lt;-mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationSmartCluster" source="//@children.9" target="//@children.11" targetEnd="//@children.9/@sourceConnections.0/@children.1" sourceEnd="//@children.9/@sourceConnections.0/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,295"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ProjectCompensation" location="2408,337" size="535,385" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation">
+    <children xsi:type="editmodel:CompartmentEditModel" size="109,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="actionName" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#actionName"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="compensatedPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@compensatedPlans+mg.dynaquest.sourceselection.action.compensate/ProjectCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#compensatedPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="context" id="mg.dynaquest.sourceselection/AnnotatedPlan@context+mg.dynaquest.sourceselection.action.compensate/ProjectCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#context"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="errorPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@errorPlans+mg.dynaquest.sourceselection.action.compensate/ProjectCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#errorPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="org.apache.log4j/Logger@logger+mg.dynaquest.sourceselection.action.compensate/ProjectCompensation@|org.apache.log4j/Logger#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="query" id="mg.dynaquest.sourcedescription.sdf.query/SDFQuery@query+mg.dynaquest.sourceselection.action.compensate/ProjectCompensation@|mg.dynaquest.sourcedescription.sdf.query/SDFQuery#query"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="512,198">
+      <children xsi:type="editmodel:MethodEditModel" name="ProjectCompensation" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#ProjectCompensation()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="ProjectCompensation" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#ProjectCompensation(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getCompensatedPlan" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#getCompensatedPlan(Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getErrorPlans" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#getErrorPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#setActionName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/ProjectCompensation#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction&lt;-mg.dynaquest.sourceselection.action.compensate/ProjectCompensation" source="//@children.10" target="//@children.2/@sourceConnections.0" targetEnd="//@children.10/@sourceConnections.0/@children.1" sourceEnd="//@children.10/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="267,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.9/@sourceConnections.0" name="SelectJoinCompensationCluster" location="50,1207" size="517,295" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster">
+    <children xsi:type="editmodel:CompartmentEditModel">
+      <children xsi:type="editmodel:AttributeEditModel" name="clusteredPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@clusteredPlans+mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster@|mg.dynaquest.sourceselection/AnnotatedPlan#clusteredPlans"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,198">
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinCompensationCluster" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#SelectJoinCompensationCluster(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinCompensationCluster" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#SelectJoinCompensationCluster()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="buildClusters" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#buildClusters(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAnnotatedPlanQueues" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#getAnnotatedPlanQueues(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getOutputPatternForClusterSet" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#getOutputPatternForClusterSet(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSubgoalPermutations" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#getSubgoalPermutations(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSubplanPermutations" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#getSubplanPermutations(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster#main([Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.8/@sourceConnections.0" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensation&lt;-mg.dynaquest.sourceselection.action.compensate/SelectJoinCompensationCluster" source="//@children.11" target="//@children.6" targetEnd="//@children.11/@sourceConnections.0/@children.1" sourceEnd="//@children.11/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="263,223" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="JoinCompensationJoin" location="606,844" size="728,313" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin">
+    <children xsi:type="editmodel:CompartmentEditModel" size="156,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="avoidEqualURIJoins" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#avoidEqualURIJoins"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="705,216">
+      <children xsi:type="editmodel:MethodEditModel" name="JoinCompensationJoin" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#JoinCompensationJoin()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="JoinCompensationJoin" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#JoinCompensationJoin(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getBuckets" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#getBuckets(Ljava.util.ArrayList;Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getConcernedAttributes" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#getConcernedAttributes(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJoinCompensatedPlan" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#getJoinCompensatedPlan(Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourcedescription.sdf.predicate.SDFJoinPredicate;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getOutputAdornment" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#getOutputAdornment(Lmg.dynaquest.sourceselection.AnnotatedPlan;Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttribute;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin#setActionName(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation&lt;-mg.dynaquest.sourceselection.action.compensate/JoinCompensationJoin" source="//@children.12" target="//@children.6/@sourceConnections.0" targetEnd="//@children.12/@sourceConnections.0/@children.1" sourceEnd="//@children.12/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="364,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="NecInAttrCompSource" location="1987,844" size="255,169" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompSource">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="232,90">
+      <children xsi:type="editmodel:MethodEditModel" name="NecInAttrCompSource" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompSource#NecInAttrCompSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="NecInAttrCompSource" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompSource#NecInAttrCompSource(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompSource#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompSource#main([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompSource#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/NecInAttrCompensation&lt;-mg.dynaquest.sourceselection.action.compensate/NecInAttrCompSource" source="//@children.13" target="//@children.5/@sourceConnections.0" targetEnd="//@children.13/@sourceConnections.0/@children.1" sourceEnd="//@children.13/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="127,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.6/@sourceConnections.0" name="JoinCompensation" location="597,337" size="517,367" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation">
+    <children xsi:type="editmodel:CompartmentEditModel" size="161,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="actionName" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#actionName"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="compensatedPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@compensatedPlans+mg.dynaquest.sourceselection.action.compensate/JoinCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#compensatedPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="context" id="mg.dynaquest.sourceselection/AnnotatedPlan@context+mg.dynaquest.sourceselection.action.compensate/JoinCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#context"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="errorPlans" id="mg.dynaquest.sourceselection/AnnotatedPlan@errorPlans+mg.dynaquest.sourceselection.action.compensate/JoinCompensation@|mg.dynaquest.sourceselection/AnnotatedPlan#errorPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="generatePartialPlans" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#generatePartialPlans"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="logger" id="org.apache.log4j/Logger@logger+mg.dynaquest.sourceselection.action.compensate/JoinCompensation@|org.apache.log4j/Logger#logger"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="query" id="mg.dynaquest.sourcedescription.sdf.query/SDFQuery@query+mg.dynaquest.sourceselection.action.compensate/JoinCompensation@|mg.dynaquest.sourcedescription.sdf.query/SDFQuery#query"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="queryRequiredAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@queryRequiredAttributes+mg.dynaquest.sourceselection.action.compensate/JoinCompensation@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#queryRequiredAttributes"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,144">
+      <children xsi:type="editmodel:MethodEditModel" name="compensate" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#compensate(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getActionName" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#getActionName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getCompensatedPlans" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#getCompensatedPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getErrorPlans" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#getErrorPlans()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initInternalBaseValues" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#initInternalBaseValues(Lorg.w3c.dom.NodeList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setActionName" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#setActionName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setQuery" id="mg.dynaquest.sourceselection.action.compensate/JoinCompensation#setQuery(Lmg.dynaquest.sourcedescription.sdf.query.SDFQuery;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.sourceselection.action.compensate/CompensateAction&lt;-mg.dynaquest.sourceselection.action.compensate/JoinCompensation" source="//@children.14" target="//@children.2/@sourceConnections.0" targetEnd="//@children.14/@sourceConnections.0/@children.1" sourceEnd="//@children.14/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="10,10" gridOrigin="0,0" rulerUnit="pixel">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showInterfaceStereotype="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterlas="true"/>
+</editmodel:ClassDiagramEditModel>

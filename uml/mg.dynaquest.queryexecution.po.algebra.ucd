@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" id="mg.dynaquest.queryexecution.po.algebra" metadata="uml2-1.0" initialized="true" tag="5" key="32303036313030332044796E615175657374">
+  <children xsi:type="editmodel:ClassEditModel" name="SortPO" location="264,1657" size="237,205" id="mg.dynaquest.queryexecution.po.algebra/SortPO">
+    <children xsi:type="editmodel:CompartmentEditModel" size="131,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="sortAttrib" id="mg.dynaquest.queryexecution.po.algebra/SortPO#sortAttrib"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="214,108">
+      <children xsi:type="editmodel:MethodEditModel" name="SortPO" id="mg.dynaquest.queryexecution.po.algebra/SortPO#SortPO(Lmg.dynaquest.queryexecution.po.algebra.SortPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SortPO" id="mg.dynaquest.queryexecution.po.algebra/SortPO#SortPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SortPO" id="mg.dynaquest.queryexecution.po.algebra/SortPO#SortPO(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttribute;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/SortPO#cloneMe()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSortAttrib" id="mg.dynaquest.queryexecution.po.algebra/SortPO#getSortAttrib()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setSortAttrib" id="mg.dynaquest.queryexecution.po.algebra/SortPO#setSortAttrib(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttribute;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.3/@sourceConnections.0 //@children.4/@sourceConnections.0 //@children.1/@sourceConnections.0" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/SortPO" source="//@children.0" target="//@children.2" targetEnd="//@children.0/@sourceConnections.0/@children.1" sourceEnd="//@children.0/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="118,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="107,187" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="TopPO" location="50,1657" size="184,133" id="mg.dynaquest.queryexecution.po.algebra/TopPO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="161,54">
+      <children xsi:type="editmodel:MethodEditModel" name="TopPO" id="mg.dynaquest.queryexecution.po.algebra/TopPO#TopPO(Lmg.dynaquest.queryexecution.po.algebra.TopPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="TopPO" id="mg.dynaquest.queryexecution.po.algebra/TopPO#TopPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/TopPO#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/TopPO" source="//@children.1" target="//@children.0/@sourceConnections.0" targetEnd="//@children.1/@sourceConnections.0/@children.1" sourceEnd="//@children.1/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="92,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.0/@sourceConnections.0" name="UnaryAlgebraPO" location="615,844" size="215,187" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO">
+    <children xsi:type="editmodel:CompartmentEditModel" size="105,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="pORTNUMBER" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO#pORTNUMBER"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="192,90">
+      <children xsi:type="editmodel:MethodEditModel" name="UnaryAlgebraPO" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO#UnaryAlgebraPO(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="UnaryAlgebraPO" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO#UnaryAlgebraPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInputPO" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO#getInputPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPhysInputPO" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO#getPhysInputPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setInputPO" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO#setInputPO(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO" source="//@children.2" target="//@children.14/@sourceConnections.0" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="107,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="SelectPO" location="531,1657" size="271,169" id="mg.dynaquest.queryexecution.po.algebra/SelectPO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="248,90">
+      <children xsi:type="editmodel:MethodEditModel" name="SelectPO" id="mg.dynaquest.queryexecution.po.algebra/SelectPO#SelectPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SelectPO" id="mg.dynaquest.queryexecution.po.algebra/SelectPO#SelectPO(Lmg.dynaquest.sourcedescription.sdf.query.WSimplePredicateSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SelectPO" id="mg.dynaquest.queryexecution.po.algebra/SelectPO#SelectPO(Lmg.dynaquest.queryexecution.po.algebra.SelectPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/SelectPO#cloneMe()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setPredicate" id="mg.dynaquest.queryexecution.po.algebra/SelectPO#setPredicate(Lmg.dynaquest.sourcedescription.sdf.predicate.SDFPredicate;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/SelectPO" source="//@children.3" target="//@children.0/@sourceConnections.0" targetEnd="//@children.3/@sourceConnections.0/@children.1" sourceEnd="//@children.3/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="135,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ProjectPO" location="832,1657" size="322,205" id="mg.dynaquest.queryexecution.po.algebra/ProjectPO">
+    <children xsi:type="editmodel:CompartmentEditModel">
+      <children xsi:type="editmodel:AttributeEditModel" name="projectAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@projectAttributes+mg.dynaquest.queryexecution.po.algebra/ProjectPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#projectAttributes"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="299,108">
+      <children xsi:type="editmodel:MethodEditModel" name="ProjectPO" id="mg.dynaquest.queryexecution.po.algebra/ProjectPO#ProjectPO(Lmg.dynaquest.queryexecution.po.algebra.ProjectPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="ProjectPO" id="mg.dynaquest.queryexecution.po.algebra/ProjectPO#ProjectPO(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="ProjectPO" id="mg.dynaquest.queryexecution.po.algebra/ProjectPO#ProjectPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/ProjectPO#cloneMe()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getProjectAttributes" id="mg.dynaquest.queryexecution.po.algebra/ProjectPO#getProjectAttributes()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setProjectAttributes" id="mg.dynaquest.queryexecution.po.algebra/ProjectPO#setProjectAttributes(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/UnaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/ProjectPO" source="//@children.4" target="//@children.0/@sourceConnections.0" targetEnd="//@children.4/@sourceConnections.0/@children.1" sourceEnd="//@children.4/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="161,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="AccessPO" location="860,844" size="517,763" id="mg.dynaquest.queryexecution.po.algebra/AccessPO">
+    <children xsi:type="editmodel:CompartmentEditModel" size="189,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="attributeGlobalConstListReplacement" id="mg.dynaquest.sourcedescription.sdf.schema/SDFConstantSet@attributeGlobalConstListReplacement+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFConstantSet#attributeGlobalConstListReplacement"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="attributeGlobalConstListReplacementIterators" id="java.util/Iterator@attributeGlobalConstListReplacementIterators+mg.dynaquest.queryexecution.po.algebra/AccessPO@|java.util/Iterator#attributeGlobalConstListReplacementIterators"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="globalInputAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@globalInputAttributes+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#globalInputAttributes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="globalInputValues" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#globalInputValues"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="inAttributeMappings" id="mg.dynaquest.sourceselection.mapping/AttributeMapping@inAttributeMappings+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourceselection.mapping/AttributeMapping#inAttributeMappings"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="localCompareOperators" id="mg.dynaquest.sourcedescription.sdf.predicate/SDFCompareOperatorList@localCompareOperators+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourcedescription.sdf.predicate/SDFCompareOperatorList#localCompareOperators"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="localInputAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@localInputAttributes+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#localInputAttributes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="localOutputAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@localOutputAttributes+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#localOutputAttributes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="outAttributeMappings" id="mg.dynaquest.sourceselection.mapping/AttributeMapping@outAttributeMappings+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourceselection.mapping/AttributeMapping#outAttributeMappings"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="source" id="mg.dynaquest.sourcedescription.sdf.description/SDFSource@source+mg.dynaquest.queryexecution.po.algebra/AccessPO@|mg.dynaquest.sourcedescription.sdf.description/SDFSource#source"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,504">
+      <children xsi:type="editmodel:MethodEditModel" name="AccessPO" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#AccessPO(Lmg.dynaquest.queryexecution.po.algebra.AccessPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="AccessPO" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#AccessPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#cloneMe()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="equals" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#equals(Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAttributeGlobalConstListReplacement" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getAttributeGlobalConstListReplacement()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAttributeGlobalConstListReplacementIterators" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getAttributeGlobalConstListReplacementIterators()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getGlobalInputValues" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getGlobalInputValues()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInAttributeMappings" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getInAttributeMappings()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInputAttributes" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getInputAttributes()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLocalCompareOperators" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getLocalCompareOperators()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLocalInputAttributes" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getLocalInputAttributes()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLocalInputValues" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getLocalInputValues()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLocalOutputAttributes" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getLocalOutputAttributes()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getOutAttributeMappings" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getOutAttributeMappings()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSource" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#getSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="hashCode" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#hashCode()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="replaceAttributeByConstantList" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#replaceAttributeByConstantList(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttribute;Lmg.dynaquest.sourcedescription.sdf.schema.SDFConstantSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setGlobalInputValues" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setGlobalInputValues(Lmg.dynaquest.sourcedescription.sdf.schema.SDFConstantSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setInAttributeMappings" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setInAttributeMappings(Ljava.util.List;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setInputAttributes" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setInputAttributes(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLocalCompareOperators" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setLocalCompareOperators(Lmg.dynaquest.sourcedescription.sdf.predicate.SDFCompareOperatorList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLocalInputAttributes" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setLocalInputAttributes(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLocalOutputAttributes" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setLocalOutputAttributes(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setOutAttributeMappings" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setOutAttributeMappings(Ljava.util.List;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setSource" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#setSource(Lmg.dynaquest.sourcedescription.sdf.description.SDFSource;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="transformToGlobal" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#transformToGlobal(Lmg.dynaquest.queryexecution.po.relational.object.RelationalTuple;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="transformToLocal" id="mg.dynaquest.queryexecution.po.algebra/AccessPO#transformToLocal(Lmg.dynaquest.sourcedescription.sdf.schema.SDFConstantSet;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/AccessPO" source="//@children.5" target="//@children.14/@sourceConnections.0" targetEnd="//@children.5/@sourceConnections.0/@children.1" sourceEnd="//@children.5/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="JoinPO" location="2492,1657" size="256,205" id="mg.dynaquest.queryexecution.po.algebra/JoinPO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="233,126">
+      <children xsi:type="editmodel:MethodEditModel" name="JoinPO" id="mg.dynaquest.queryexecution.po.algebra/JoinPO#JoinPO(Lmg.dynaquest.sourcedescription.sdf.predicate.SDFJoinPredicate;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="JoinPO" id="mg.dynaquest.queryexecution.po.algebra/JoinPO#JoinPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="JoinPO" id="mg.dynaquest.queryexecution.po.algebra/JoinPO#JoinPO(Lmg.dynaquest.queryexecution.po.algebra.JoinPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/JoinPO#cloneMe()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getJoinPredicate" id="mg.dynaquest.queryexecution.po.algebra/JoinPO#getJoinPredicate()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setPredicate" id="mg.dynaquest.queryexecution.po.algebra/JoinPO#setPredicate(Lmg.dynaquest.sourcedescription.sdf.predicate.SDFPredicate;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="mg.dynaquest.queryexecution.po.algebra/JoinPO#toString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/JoinPO" source="//@children.6" target="//@children.11/@sourceConnections.0" targetEnd="//@children.6/@sourceConnections.0/@children.1" sourceEnd="//@children.6/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="128,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.14/@sourceConnections.0" name="AlgebraPO" location="874,211" size="517,583" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO">
+    <children xsi:type="editmodel:CompartmentEditModel" size="114,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="executionPlace" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#executionPlace"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="inputPO" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO@inputPO+mg.dynaquest.queryexecution.po.algebra/AlgebraPO@|mg.dynaquest.queryexecution.po.algebra/AlgebraPO#inputPO"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="outElements" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@outElements+mg.dynaquest.queryexecution.po.algebra/AlgebraPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#outElements"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="phyInputPO" id="mg.dynaquest.queryexecution.po.base/PlanOperator@phyInputPO+mg.dynaquest.queryexecution.po.algebra/AlgebraPO@|mg.dynaquest.queryexecution.po.base/PlanOperator#phyInputPO"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="poname" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#poname"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="predicate" id="mg.dynaquest.sourcedescription.sdf.predicate/SDFPredicate@predicate+mg.dynaquest.queryexecution.po.algebra/AlgebraPO@|mg.dynaquest.sourcedescription.sdf.predicate/SDFPredicate#predicate"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="sorted" id="mg.dynaquest.sourcedescription.sdf.schema/SDFSchemaElementSet@sorted+mg.dynaquest.queryexecution.po.algebra/AlgebraPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFSchemaElementSet#sorted"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="494,378">
+      <children xsi:type="editmodel:MethodEditModel" name="AlgebraPO" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#AlgebraPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="AlgebraPO" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#AlgebraPO(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#cloneMe()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getExecutionPlace" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getExecutionPlace()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInputPO" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getInputPO(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInternalXMLRepresentation" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getInternalXMLRepresentation(Ljava.lang.String;Ljava.lang.String;Ljava.lang.StringBuffer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNumberOfInputs" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getNumberOfInputs()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getOutElements" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getOutElements()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPOName" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getPOName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPhysInputPO" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getPhysInputPO(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPredicate" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getPredicate()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSorted" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#getSorted()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="replaceInput" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#replaceInput(Lmg.dynaquest.queryexecution.po.algebra.SupportsCloneMe;Lmg.dynaquest.queryexecution.po.algebra.SupportsCloneMe;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setExecutionPlace" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setExecutionPlace(Ljava.net.URI;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setInputPO" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setInputPO(ILmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setNoOfInputs" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setNoOfInputs(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setOutElements" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setOutElements(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setPOName" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setPOName(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setPhysInputPO" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setPhysInputPO(ILmg.dynaquest.queryexecution.po.base.PlanOperator;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setPredicate" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setPredicate(Lmg.dynaquest.sourcedescription.sdf.predicate.SDFPredicate;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setSorted" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO#setSorted(Lmg.dynaquest.sourcedescription.sdf.schema.SDFSchemaElementSet;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/SupportsCloneMe&lt;-mg.dynaquest.queryexecution.po.algebra/AlgebraPO" source="//@children.7" target="//@children.9" targetEnd="//@children.7/@sourceConnections.0/@children.1" sourceEnd="//@children.7/@sourceConnections.0/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="92,111"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ConstCompCollectorPO" location="50,844" size="535,133" id="mg.dynaquest.sourceselection/ConstCompCollectorPO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="512,54">
+      <children xsi:type="editmodel:MethodEditModel" name="ConstCompCollectorPO" id="mg.dynaquest.sourceselection/ConstCompCollectorPO#ConstCompCollectorPO(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="ConstCompCollectorPO" id="mg.dynaquest.sourceselection/ConstCompCollectorPO#ConstCompCollectorPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.sourceselection/ConstCompCollectorPO#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO&lt;-mg.dynaquest.sourceselection/ConstCompCollectorPO" source="//@children.8" target="//@children.14/@sourceConnections.0" targetEnd="//@children.8/@sourceConnections.0/@children.1" sourceEnd="//@children.8/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="267,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.7/@sourceConnections.0" name="SupportsCloneMe" location="1040,50" size="184,111" id="mg.dynaquest.queryexecution.po.algebra/SupportsCloneMe">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="161,18">
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/SupportsCloneMe#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="UnionPO" location="1960,1657" size="192,133" id="mg.dynaquest.queryexecution.po.algebra/UnionPO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="169,54">
+      <children xsi:type="editmodel:MethodEditModel" name="UnionPO" id="mg.dynaquest.queryexecution.po.algebra/UnionPO#UnionPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="UnionPO" id="mg.dynaquest.queryexecution.po.algebra/UnionPO#UnionPO(Lmg.dynaquest.queryexecution.po.algebra.UnionPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/UnionPO#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/UnionPO" source="//@children.10" target="//@children.11/@sourceConnections.0" targetEnd="//@children.10/@sourceConnections.0/@children.1" sourceEnd="//@children.10/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="96,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DifferencePO" location="1184,1657" size="264,133" id="mg.dynaquest.queryexecution.po.algebra/DifferencePO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="241,54">
+      <children xsi:type="editmodel:MethodEditModel" name="DifferencePO" id="mg.dynaquest.queryexecution.po.algebra/DifferencePO#DifferencePO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="DifferencePO" id="mg.dynaquest.queryexecution.po.algebra/DifferencePO#DifferencePO(Lmg.dynaquest.queryexecution.po.algebra.DifferencePO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/DifferencePO#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.13/@sourceConnections.0 //@children.10/@sourceConnections.0 //@children.15/@sourceConnections.0 //@children.6/@sourceConnections.0" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/DifferencePO" source="//@children.11" target="//@children.14" targetEnd="//@children.11/@sourceConnections.0/@children.1" sourceEnd="//@children.11/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="132,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="108,223" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="CollectorPO" location="1407,844" size="190,133" id="mg.dynaquest.queryexecution.po.algebra/CollectorPO" runTimeClassModel="CollectorPO(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;),CollectorPO(),cloneMe()">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="167,54">
+      <children xsi:type="editmodel:MethodEditModel" name="CollectorPO" id="mg.dynaquest.queryexecution.po.algebra/CollectorPO#CollectorPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="CollectorPO" id="mg.dynaquest.queryexecution.po.algebra/CollectorPO#CollectorPO(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/CollectorPO#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/CollectorPO" source="//@children.12" target="//@children.14/@sourceConnections.0" targetEnd="//@children.12/@sourceConnections.0/@children.1" sourceEnd="//@children.12/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="95,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="SelectJoinPO" location="1478,1657" size="452,169" id="mg.dynaquest.queryexecution.po.algebra/SelectJoinPO">
+    <children xsi:type="editmodel:CompartmentEditModel">
+      <children xsi:type="editmodel:AttributeEditModel" name="selJoinAttributes" id="mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet@selJoinAttributes+mg.dynaquest.queryexecution.po.algebra/SelectJoinPO@|mg.dynaquest.sourcedescription.sdf.schema/SDFAttributeSet#selJoinAttributes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="selJoinPred" id="mg.dynaquest.sourcedescription.sdf.predicate/SDFJoinPredicate@selJoinPred+mg.dynaquest.queryexecution.po.algebra/SelectJoinPO@|mg.dynaquest.sourcedescription.sdf.predicate/SDFJoinPredicate#selJoinPred"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="429,54">
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinPO" id="mg.dynaquest.queryexecution.po.algebra/SelectJoinPO#SelectJoinPO(Lmg.dynaquest.sourcedescription.sdf.schema.SDFAttributeSet;Lmg.dynaquest.sourcedescription.sdf.predicate.SDFJoinPredicate;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="SelectJoinPO" id="mg.dynaquest.queryexecution.po.algebra/SelectJoinPO#SelectJoinPO(Lmg.dynaquest.queryexecution.po.algebra.SelectJoinPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/SelectJoinPO#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/SelectJoinPO" source="//@children.13" target="//@children.11/@sourceConnections.0" targetEnd="//@children.13/@sourceConnections.0/@children.1" sourceEnd="//@children.13/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="226,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.11/@sourceConnections.0" name="BinaryAlgebraPO" location="1895,844" size="217,223" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="194,144">
+      <children xsi:type="editmodel:MethodEditModel" name="BinaryAlgebraPO" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#BinaryAlgebraPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="BinaryAlgebraPO" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#BinaryAlgebraPO(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLeftInput" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#getLeftInput()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getRightInput" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#getRightInput()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLeftInput" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#setLeftInput(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLeftInput" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#setLeftInput(Lmg.dynaquest.queryexecution.po.base.PlanOperator;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setRightInput" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#setRightInput(Lmg.dynaquest.queryexecution.po.algebra.AlgebraPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setRightInput" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO#setRightInput(Lmg.dynaquest.queryexecution.po.base.PlanOperator;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.8/@sourceConnections.0 //@children.5/@sourceConnections.0 //@children.2/@sourceConnections.0 //@children.12/@sourceConnections.0" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/AlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO" source="//@children.14" target="//@children.7" targetEnd="//@children.14/@sourceConnections.0/@children.1" sourceEnd="//@children.14/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="108,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="258,583" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="IntersectionPO" location="2182,1657" size="280,133" id="mg.dynaquest.queryexecution.po.algebra/IntersectionPO">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="257,54">
+      <children xsi:type="editmodel:MethodEditModel" name="IntersectionPO" id="mg.dynaquest.queryexecution.po.algebra/IntersectionPO#IntersectionPO()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="IntersectionPO" id="mg.dynaquest.queryexecution.po.algebra/IntersectionPO#IntersectionPO(Lmg.dynaquest.queryexecution.po.algebra.IntersectionPO;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="cloneMe" id="mg.dynaquest.queryexecution.po.algebra/IntersectionPO#cloneMe()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="mg.dynaquest.queryexecution.po.algebra/BinaryAlgebraPO&lt;-mg.dynaquest.queryexecution.po.algebra/IntersectionPO" source="//@children.15" target="//@children.11/@sourceConnections.0" targetEnd="//@children.15/@sourceConnections.0/@children.1" sourceEnd="//@children.15/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="140,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterals="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="10,10" gridOrigin="0,0" rulerUnit="pixel">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showInterfaceStereotype="true" showAssociationMember="true" showMethods="true" showAttributes="true" showLiterlas="true"/>
+</editmodel:ClassDiagramEditModel>

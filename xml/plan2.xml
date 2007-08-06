@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.1 U (http://www.xmlspy.com) by Marco Grawunder (University of Oldenburg) -->
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www-is.informatik.uni-oldenburg.de/~grawund/xml/schema/planoperatoren.xsd">
+	<SelectLoaderPO id="actorsAccess" name="actorsAccess">
+		<filename>d:\\Development\\database\\oraload\\alleSchauspieler_mini.loader</filename>
+		<delimiter>|</delimiter>
+		<restrictToAttribute>0</restrictToAttribute>
+		<restrictToAttribute>1</restrictToAttribute>
+	</SelectLoaderPO>
+</plan>

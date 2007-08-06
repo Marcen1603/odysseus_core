@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- edited with XML Spy v4.1 U (http://www.xmlspy.com) by Marco Grawunder (University of Oldenburg) -->
+<plan>
+    <mg.diss.SelectLoaderPO id="actorsAccess" name="actorsAccess">
+        <filename>d:\\Development\\database\\oraload\\alleSchauspieler_mini.loader</filename>
+        <delimiter>|</delimiter>
+        <restrictToAttribute>0</restrictToAttribute>
+        <restrictToAttribute>1</restrictToAttribute>
+    </mg.diss.SelectLoaderPO>
+</plan>

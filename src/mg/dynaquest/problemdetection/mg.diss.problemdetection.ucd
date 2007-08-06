@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" size="820,1238" id="mg.diss.problemdetection" metadata="nsuml-1.4" initialized="true" tag="5" key="32303034313130342044796E615175657374">
+  <children xsi:type="editmodel:ClassEditModel" name="EditKnowledgeModell" location="454,1097" size="182,85" id="mg.diss.problemdetection/EditKnowledgeModell" runTimeClassModel="km,main([LString;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="151,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="km" id="mg.diss.problemdetection/EditKnowledgeModell#km"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="53,18">
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.diss.problemdetection/EditKnowledgeModell#main([LString;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="TestEnv" location="50,1097" size="152,121" id="mg.diss.problemdetection/TestEnv" runTimeClassModel="test(),main([LString;),getKnowledgeModel(),connectCreek()">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="129,72">
+      <children xsi:type="editmodel:MethodEditModel" name="connectCreek" id="mg.diss.problemdetection/TestEnv#connectCreek()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getKnowledgeModel" id="mg.diss.problemdetection/TestEnv#getKnowledgeModel()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="main" id="mg.diss.problemdetection/TestEnv#main([LString;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="test" id="mg.diss.problemdetection/TestEnv#test()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="EventBuffer" location="538,854" size="141,193" id="mg.diss.problemdetection/EventBuffer" runTimeClassModel="isEmpty(),put(Lmg.diss.monitor.POMonitorEvent;),get(),toString(),getMaxBufferSize(),getInstance(),getSize(),clearBuffer()">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="118,144">
+      <children xsi:type="editmodel:MethodEditModel" name="clearBuffer" id="mg.diss.problemdetection/EventBuffer#clearBuffer()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="get" id="mg.diss.problemdetection/EventBuffer#get()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInstance" id="mg.diss.problemdetection/EventBuffer#getInstance()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMaxBufferSize" id="mg.diss.problemdetection/EventBuffer#getMaxBufferSize()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSize" id="mg.diss.problemdetection/EventBuffer#getSize()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isEmpty" id="mg.diss.problemdetection/EventBuffer#isEmpty()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="put" id="mg.diss.problemdetection/EventBuffer#put(Lmg.diss.monitor.POMonitorEvent;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="mg.diss.problemdetection/EventBuffer#toString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Constants" location="266,424" size="191,301" id="mg.diss.problemdetection/Constants" runTimeClassModel="minBlockSize,getId(),numberOfRetrieveCases,minBufferSize,minTimeOutMilliSec,minOperatorMemSize,checkAttribute(Ljava.lang.String;Ljava.lang.Integer;),maxBufferSize,debug,maxBlockSize,minDatarate,maxOperatorMemSize,maxDatarate,maxTimeOutMilliSec">
+    <children xsi:type="editmodel:CompartmentEditModel" size="168,216">
+      <children xsi:type="editmodel:AttributeEditModel" name="debug" id="mg.diss.problemdetection/Constants#debug"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="maxBlockSize" id="mg.diss.problemdetection/Constants#maxBlockSize"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="maxBufferSize" id="mg.diss.problemdetection/Constants#maxBufferSize"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="maxDatarate" id="mg.diss.problemdetection/Constants#maxDatarate"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="maxOperatorMemSize" id="mg.diss.problemdetection/Constants#maxOperatorMemSize"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="maxTimeOutMilliSec" id="mg.diss.problemdetection/Constants#maxTimeOutMilliSec"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="minBlockSize" id="mg.diss.problemdetection/Constants#minBlockSize"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="minBufferSize" id="mg.diss.problemdetection/Constants#minBufferSize"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="minDatarate" id="mg.diss.problemdetection/Constants#minDatarate"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="minOperatorMemSize" id="mg.diss.problemdetection/Constants#minOperatorMemSize"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="minTimeOutMilliSec" id="mg.diss.problemdetection/Constants#minTimeOutMilliSec"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="numberOfRetrieveCases" id="mg.diss.problemdetection/Constants#numberOfRetrieveCases"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="101,36">
+      <children xsi:type="editmodel:MethodEditModel" name="checkAttribute" id="mg.diss.problemdetection/Constants#checkAttribute(Ljava.lang.String;Ljava.lang.Integer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getId" id="mg.diss.problemdetection/Constants#getId()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="GenerateExecutionSituation" location="50,854" size="222,139" id="mg.diss.problemdetection/GenerateExecutionSituation" runTimeClassModel="stop(),addEventToSituation(Ljava.lang.Integer;Ljava.lang.Integer;),start(),getInstance(),run()">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="129,90">
+      <children xsi:type="editmodel:MethodEditModel" name="addEventToSituation" id="mg.diss.problemdetection/GenerateExecutionSituation#addEventToSituation(Ljava.lang.Integer;Ljava.lang.Integer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInstance" id="mg.diss.problemdetection/GenerateExecutionSituation#getInstance()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="run" id="mg.diss.problemdetection/GenerateExecutionSituation#run()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="start" id="mg.diss.problemdetection/GenerateExecutionSituation#start()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="stop" id="mg.diss.problemdetection/GenerateExecutionSituation#stop()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="TimeIntervals" location="50,424" size="166,380" id="mg.diss.problemdetection/TimeIntervals" runTimeClassModel="unblockOperator(J),mg.diss.problemdetection.TimeIntervals.Interval,toString(),TimeIntervals(),blockOperator(J),operatorBlockedAtTime(J)">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="143,90">
+      <children xsi:type="editmodel:MethodEditModel" name="TimeIntervals" id="mg.diss.problemdetection/TimeIntervals#TimeIntervals()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="blockOperator" id="mg.diss.problemdetection/TimeIntervals#blockOperator(J)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="operatorBlockedAtTime" id="mg.diss.problemdetection/TimeIntervals#operatorBlockedAtTime(J)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="mg.diss.problemdetection/TimeIntervals#toString()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="unblockOperator" id="mg.diss.problemdetection/TimeIntervals#unblockOperator(J)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="123,231">
+      <children xsi:type="editmodel:ClassEditModel" name="Interval" size="123,229" id="mg.diss.problemdetection/TimeIntervals$Interval" runTimeClassModel="leave,Interval(J),getLeaveTime(),setLeaveTime(J),toString(),entry,intervalIsOpen(),getEntryTime(),isInInterval(J),Interval(JJ)">
+        <children xsi:type="editmodel:CompartmentEditModel" size="75,36">
+          <children xsi:type="editmodel:AttributeEditModel" name="entry" id="mg.diss.problemdetection/TimeIntervals$Interval#entry"/>
+          <children xsi:type="editmodel:AttributeEditModel" name="leave" id="mg.diss.problemdetection/TimeIntervals$Interval#leave"/>
+        </children>
+        <children xsi:type="editmodel:CompartmentEditModel" size="100,144">
+          <children xsi:type="editmodel:MethodEditModel" name="Interval" id="mg.diss.problemdetection/TimeIntervals$Interval#Interval(JJ)"/>
+          <children xsi:type="editmodel:MethodEditModel" name="Interval" id="mg.diss.problemdetection/TimeIntervals$Interval#Interval(J)"/>
+          <children xsi:type="editmodel:MethodEditModel" name="getEntryTime" id="mg.diss.problemdetection/TimeIntervals$Interval#getEntryTime()"/>
+          <children xsi:type="editmodel:MethodEditModel" name="getLeaveTime" id="mg.diss.problemdetection/TimeIntervals$Interval#getLeaveTime()"/>
+          <children xsi:type="editmodel:MethodEditModel" name="intervalIsOpen" id="mg.diss.problemdetection/TimeIntervals$Interval#intervalIsOpen()"/>
+          <children xsi:type="editmodel:MethodEditModel" name="isInInterval" id="mg.diss.problemdetection/TimeIntervals$Interval#isInInterval(J)"/>
+          <children xsi:type="editmodel:MethodEditModel" name="setLeaveTime" id="mg.diss.problemdetection/TimeIntervals$Interval#setLeaveTime(J)"/>
+          <children xsi:type="editmodel:MethodEditModel" name="toString" id="mg.diss.problemdetection/TimeIntervals$Interval#toString()"/>
+        </children>
+        <children xsi:type="editmodel:CompartmentEditModel"/>
+        <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+      </children>
+    </children>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="PreSituationTable" location="322,854" size="166,175" id="mg.diss.problemdetection/PreSituationTable" runTimeClassModel="toString(),getInstance(),setOperatorUnblocked(Lmg.diss.queryexecution.po.base.NAryPlanOperator;J),setOperatorBlocked(Lmg.diss.queryexecution.po.base.NAryPlanOperator;J),operatorBlockedAtTime(Lmg.diss.queryexecution.po.base.NAryPlanOperator;J),containsOperator(Lmg.diss.queryexecution.po.base.NAryPlanOperator;),deleteOperator(Lmg.diss.queryexecution.po.base.NAryPlanOperator;)">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="143,126">
+      <children xsi:type="editmodel:MethodEditModel" name="containsOperator" id="mg.diss.problemdetection/PreSituationTable#containsOperator(Lmg.diss.queryexecution.po.base.NAryPlanOperator;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="deleteOperator" id="mg.diss.problemdetection/PreSituationTable#deleteOperator(Lmg.diss.queryexecution.po.base.NAryPlanOperator;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInstance" id="mg.diss.problemdetection/PreSituationTable#getInstance()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="operatorBlockedAtTime" id="mg.diss.problemdetection/PreSituationTable#operatorBlockedAtTime(Lmg.diss.queryexecution.po.base.NAryPlanOperator;J)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setOperatorBlocked" id="mg.diss.problemdetection/PreSituationTable#setOperatorBlocked(Lmg.diss.queryexecution.po.base.NAryPlanOperator;J)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setOperatorUnblocked" id="mg.diss.problemdetection/PreSituationTable#setOperatorUnblocked(Lmg.diss.queryexecution.po.base.NAryPlanOperator;J)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="mg.diss.problemdetection/PreSituationTable#toString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="RecoveryHandler" location="252,1097" size="152,121" id="mg.diss.problemdetection/RecoveryHandler" runTimeClassModel="stop(),start(),getInstance(),run()">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="87,72">
+      <children xsi:type="editmodel:MethodEditModel" name="getInstance" id="mg.diss.problemdetection/RecoveryHandler#getInstance()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="run" id="mg.diss.problemdetection/RecoveryHandler#run()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="start" id="mg.diss.problemdetection/RecoveryHandler#start()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="stop" id="mg.diss.problemdetection/RecoveryHandler#stop()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="ExecutionSituationTable" location="507,424" size="199,211" id="mg.diss.problemdetection/ExecutionSituationTable" runTimeClassModel="isEmpty(),get(),toString(),getMaxTableSize(),getInstance(),getSize(),clearBuffer(),put(Lmg.diss.problemdetection.ExecutionSituation.ExecutionSituation;),deleteOperator(Lmg.diss.queryexecution.po.base.NAryPlanOperator;)">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="113,162">
+      <children xsi:type="editmodel:MethodEditModel" name="clearBuffer" id="mg.diss.problemdetection/ExecutionSituationTable#clearBuffer()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="deleteOperator" id="mg.diss.problemdetection/ExecutionSituationTable#deleteOperator(Lmg.diss.queryexecution.po.base.NAryPlanOperator;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="get" id="mg.diss.problemdetection/ExecutionSituationTable#get()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInstance" id="mg.diss.problemdetection/ExecutionSituationTable#getInstance()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMaxTableSize" id="mg.diss.problemdetection/ExecutionSituationTable#getMaxTableSize()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSize" id="mg.diss.problemdetection/ExecutionSituationTable#getSize()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isEmpty" id="mg.diss.problemdetection/ExecutionSituationTable#isEmpty()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="put" id="mg.diss.problemdetection/ExecutionSituationTable#put(Lmg.diss.problemdetection.ExecutionSituation.ExecutionSituation;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="mg.diss.problemdetection/ExecutionSituationTable#toString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="FilterComp" location="313,181" size="177,193" id="mg.diss.problemdetection/FilterComp" runTimeClassModel="BLOCK,poMonitorEventOccured(Lmg.diss.monitor.POMonitorEvent;),addBlockedEventId(Ljava.lang.Integer;Ljava.lang.Integer;),UNBLOCK,addFilterEventId(Ljava.lang.Integer;),getInstance(),poManagerEventOccured(Lmg.diss.queryexecution.pom.POManagerEvent;),isBlockedEvent(Lmg.diss.monitor.POMonitorEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="111,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="BLOCK" id="mg.diss.problemdetection/FilterComp#BLOCK"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="UNBLOCK" id="mg.diss.problemdetection/FilterComp#UNBLOCK"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="154,108">
+      <children xsi:type="editmodel:MethodEditModel" name="addBlockedEventId" id="mg.diss.problemdetection/FilterComp#addBlockedEventId(Ljava.lang.Integer;Ljava.lang.Integer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addFilterEventId" id="mg.diss.problemdetection/FilterComp#addFilterEventId(Ljava.lang.Integer;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getInstance" id="mg.diss.problemdetection/FilterComp#getInstance()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isBlockedEvent" id="mg.diss.problemdetection/FilterComp#isBlockedEvent(Lmg.diss.monitor.POMonitorEvent;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="poManagerEventOccured" id="mg.diss.problemdetection/FilterComp#poManagerEventOccured(Lmg.diss.queryexecution.pom.POManagerEvent;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="poMonitorEventOccured" id="mg.diss.problemdetection/FilterComp#poMonitorEventOccured(Lmg.diss.monitor.POMonitorEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" id="mg.diss.monitor/POMonitorEventListener&lt;-mg.diss.problemdetection/FilterComp" source="//@children.9" target="//@children.10" targetEnd="//@children.9/@sourceConnections.0/@children.1" sourceEnd="//@children.9/@sourceConnections.0/@children.0" connectionRouterKind="Manual" autoLocated="true">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,-1" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" id="mg.diss.queryexecution.pom/POManagerEventListener&lt;-mg.diss.problemdetection/FilterComp" source="//@children.9" target="//@children.11" targetEnd="//@children.9/@sourceConnections.1/@children.1" sourceEnd="//@children.9/@sourceConnections.1/@children.0" connectionRouterKind="Manual" autoLocated="true">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,-1" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.9/@sourceConnections.0" name="POMonitorEventListener" location="50,50" size="313,81" stereotype="interface" id="mg.diss.monitor/POMonitorEventListener" runTimeClassModel="poMonitorEventOccured(Lmg.diss.monitor.POMonitorEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="147,18">
+      <children xsi:type="editmodel:MethodEditModel" name="poMonitorEventOccured" id="mg.diss.monitor/POMonitorEventListener#poMonitorEventOccured(Lmg.diss.monitor.POMonitorEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.9/@sourceConnections.1" name="POManagerEventListener" location="393,50" size="407,81" stereotype="interface" id="mg.diss.queryexecution.pom/POManagerEventListener" runTimeClassModel="poManagerEventOccured(Lmg.diss.queryexecution.pom.POManagerEvent;)">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="154,18">
+      <children xsi:type="editmodel:MethodEditModel" name="poManagerEventOccured" id="mg.diss.queryexecution.pom/POManagerEventListener#poManagerEventOccured(Lmg.diss.queryexecution.pom.POManagerEvent;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=3" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="10,10" gridOrigin="0,0" rulerUnit="pixel">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showInterfaceStereotype="true" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>

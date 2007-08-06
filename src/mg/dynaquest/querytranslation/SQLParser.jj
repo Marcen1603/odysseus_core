@@ -1,0 +1,99 @@
+/**
+ * JavaCC file
+ * Token definitions coming partially from SqlScript.jjt by Ramanathan .S (sramji@rocketmail.com)
+ * Join Bedingungen muessen entweder mittels ON in der FromClause definiert werden,
+ * oder in der WhereClause konjunktiv mit dem Rest verknuepft sein
+ * (Problem Join-Baum muss geforkt werden)
+ * TODO disjunktive verknuepfung erlauben
+ */options{  JDK_VERSION = "5.0";  STATIC = false;  DEBUG_PARSER = false;}PARSER_BEGIN(SQLParser)package mg.dynaquest.querytranslation.parser;import java.io.InputStream;import java.io.StringBufferInputStream;import java.util.ArrayList;import java.util.List;import mg.dynaquest.queryexecution.po.algebra.AccessPO;import mg.dynaquest.queryexecution.po.algebra.AlgebraPO;import mg.dynaquest.queryexecution.po.algebra.JoinPO;import mg.dynaquest.queryexecution.po.algebra.ProjectPO;import mg.dynaquest.queryexecution.po.algebra.SelectPO;
+import mg.dynaquest.queryexecution.po.streaming.algebra.WindowPO;
+import mg.dynaquest.queryexecution.po.streaming.algebra.WindowType;import mg.dynaquest.sourcedescription.sdf.predicate.SDFCompareOperator;import mg.dynaquest.sourcedescription.sdf.predicate.SDFCompareOperatorFactory;import mg.dynaquest.sourcedescription.sdf.predicate.SDFComplexPredicateFactory;import mg.dynaquest.sourcedescription.sdf.predicate.SDFPredicate;import mg.dynaquest.sourcedescription.sdf.predicate.SDFSimplePredicate;import mg.dynaquest.sourcedescription.sdf.predicate.SDFSimplePredicateFactory;import mg.dynaquest.sourcedescription.sdf.schema.SDFAttribute;import mg.dynaquest.sourcedescription.sdf.schema.SDFAttributeList;import mg.dynaquest.sourcedescription.sdf.schema.SDFExpression;import mg.dynaquest.sourcedescription.sdf.vocabulary.SDFPredicates;import mg.dynaquest.sourcedescription.sdm.SourceDescriptionManager;public class SQLParser{
+	private static enum CompositionType { INIT, AND, OR};  private SourceDescriptionManager sdm = null;  public static AlgebraPO parse(InputStream aInSt, SourceDescriptionManager sdm)throws ParseException{    SQLParser parser = new SQLParser(aInSt);    parser.sdm = sdm;    return parser.SQLStatement();  }  public static void main(String args[])throws Exception{    //  	SQLParser.parse(new StringBufferInputStream("SELECT A FROM B"), null);//  	SQLParser.parse(new StringBufferInputStream("SELECT A,B FROM C"), null);//  	SQLParser.parse(new StringBufferInputStream("SELECT * FROM D,C"), null);
+	SQLParser.parse(new StringBufferInputStream("SELECT A,B FROM D JOIN C ON"), null);//    SQLParser.parse(new StringBufferInputStream("SELECT A,B FROM D JOIN C ON a=b*3 JOIN X ON a<=17-b, D"), null);  }}PARSER_END(SQLParser)SKIP:{  " "  | "\r"  | "\n"  | "\t"}TOKEN:{  <K_ALL:"ALL">  | <K_AND:"AND">  | <K_ANY:"ANY">  | <K_AS:"AS">  | <K_ASC:"ASC">  | <K_BEGIN:"BEGIN">  | <K_BETWEEN:"BETWEEN">  | <K_BINARY_INTEGER:"BINARY_INTEGER">  | <K_BOOLEAN:"BOOLEAN">  | <K_BY:"BY">  | <K_CHAR:"CHAR">  | <K_CLOSE:"CLOSE">  | <K_COMMENT:"COMMENT">  | <K_COMMIT:"COMMIT">  | <K_CONNECT:"CONNECT">  | <K_CONSTANT:"CONSTANT">  | <K_CURRENT:"CURRENT">  | <K_CURSOR:"CURSOR">  | <K_DATE:"DATE">  | <K_DECIMAL:"DECIMAL">  | <K_DECLARE:"DECLARE">  //|   <K_DEFAULT:"DEFAULT">
+| <K_DELETE:"DELETE">  | <K_DESC:"DESC">  | <K_DISTINCT:"DISTINCT">  | <K_DO:"DO">  | <K_ELSE:"ELSE">  | <K_ELSIF:"ELSIF">  | <K_END:"END">  | <K_EXCEPTION:"EXCEPTION">  | <K_EXCEPTION_INIT:"EXCEPTION_INIT">  | <K_EXCLUSIVE:"EXCLUSIVE">  | <K_EXISTS:"EXISTS">  | <K_EXIT:"EXIT">  | <K_FETCH:"FETCH">  | <K_FLOAT:"FLOAT">  | <K_FOR:"FOR">  | <K_FROM:"FROM">  | <K_FUNCTION:"FUNCTION">  | <K_GOTO:"GOTO">  | <K_GROUP:"GROUP">  | <K_HAVING:"HAVING">  | <K_IF:"IF">  | <K_IN:"IN">  | <K_INDEX:"INDEX">  | <K_INSERT:"INSERT">  | <K_INTEGER:"INTEGER">  | <K_INTERSECT:"INTERSECT">  | <K_INTO:"INTO">  | <K_IS:"IS">  | <K_JOIN:"JOIN">  | <K_LEVEL:"LEVEL">  | <K_LIKE:"LIKE">  | <K_LOCK:"LOCK">  | <K_LOOP:"LOOP">  | <K_MINUS:"MINUS">  | <K_MODE:"MODE">  | <K_NATURAL:"NATURAL">  | <K_NOT:"NOT">  | <K_NOWAIT:"NOWAIT">  | <K_NULL:"NULL">  | <K_NUMBER:"NUMBER">  | <K_OF:"OF">  | <K_ONLY:"ONLY">  | <K_OPEN:"OPEN">  | <K_OR:"OR">  | <K_ON:"ON">  | <K_ORDER:"ORDER">  | <K_OTHERS:"OTHERS">  | <K_OUT:"OUT">  | <K_PACKAGE:"PACKAGE">  | <K_POSITIVE:"POSITIVE">  | <K_PRAGMA:"PRAGMA">  | <K_PRIOR:"PRIOR">  | <K_PROCEDURE:"PROCEDURE">  | <K_RAISE:"RAISE">
+  | <K_RANGE:"RANGE">  | <K_READ:"READ">  | <K_REAL:"REAL">  | <K_RECORD:"RECORD">  | <K_REF:"REF">  | <K_RETURN:"RETURN">  | <K_REVERSE:"REVERSE">  | <K_ROLLBACK:"ROLLBACK">  | <K_ROW:"ROW">  | <K_SAVEPOINT:"SAVEPOINT">  | <K_SEGMENT:"SEGMENT">  | <K_SELECT:"SELECT">  | <K_SET:"SET">  | <K_SHARE:"SHARE">
+  | <K_SLIDE:"SLIDING">  | <K_SMALLINT:"SMALLINT">  | <K_SQL:"SQL">  | <K_START:"START">  | <K_TABLE:"TABLE">  | <K_THEN:"THEN">  | <K_TO:"TO">  | <K_TRANSACTION:"TRANSACTION">
+  | <K_TUMBLE:"TUMBLING">  | <K_UNION:"UNION">  | <K_UPDATE:"UPDATE">  | <K_USE:"USE">  | <K_VALUES:"VALUES">  | <K_VARCHAR2:"VARCHAR2">  | <K_VARCHAR:"VARCHAR">  | <K_WHEN:"WHEN">  | <K_WHERE:"WHERE">  | <K_WHILE:"WHILE">  | <K_WITH:"WITH">
+  | <K_WINDOW:"WINDOW">  | <K_WORK:"WORK">  | <K_WRITE:"WRITE">}TOKEN:/* Numeric Constants */{
+  
+  <NUMBER:<FLOAT>  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>  | <#FLOAT:<INTEGER>  | <INTEGER>("."<INTEGER>)?  | "."<INTEGER>>  | <#INTEGER:(<DIGIT>)+>  | <#DIGIT:["0"-"9"]>}SPECIAL_TOKEN:{  <LINE_COMMENT:"--"(~["\r", "\n"])*>  | <MULTI_LINE_COMMENT:"/*"(~["*"])*"*"("*"  | (~["*", "/"](~["*"])*"*"))*"/">}TOKEN:{
+  <IDENTIFIER:(<LETTER>)+(<DIGIT>  | <LETTER>  | <SPECIAL_CHARS>)*>  | <#LETTER:["a"-"z", "A"-"Z"]>  | <#SPECIAL_CHARS:":" | "/" | "?" | "#" | "[" | "]" | "@" | "!" | "$" | "&" | "'" | "(" | ")" | "*" | "+" | "," | ";" | "=" | "_" | "-" | "." | "~">  | <BIND:":"<IDENTIFIER>("."<IDENTIFIER>)?>  | <CHAR_LITERAL:"'"(~["'"])*"'"("'"(~["'"])*"'")*>  | <QUOTED_IDENTIFIER:"\""(~["\n", "\r", "\""])*"\"">
+}AlgebraPO SQLStatement():{  AlgebraPO projection = null;  AlgebraPO selection = null;  AlgebraPO from = null;}{  <K_SELECT>[<K_ALL>  | <K_DISTINCT>]projection = SelectionList()//    [IntoClause()]
+	from = FromClause()
+	[selection = WhereClause(from){if (selection != null) selection.setInputPO(0,from);}]//    [ ConnectClause() ]
+//    [ GroupByClause() ]
+//    [ SetClause() ]
+{    if (selection == null){
+      selection = from;    }    if (projection != null){      projection.setInputPO(0, selection);
+      return projection;    } else {      return selection;    }  }}AlgebraPO SelectionList():{  AlgebraPO projection;  Token tIdentifier;  List<SDFAttribute>attributeList = new ArrayList<SDFAttribute>();}{  tIdentifier = "*"{    return null;  }  | tIdentifier = <IDENTIFIER>{    try {
+      attributeList.add(sdm.getAttribute(tIdentifier.image));    }    catch (Exception e){      throw new ParseException(e.getMessage());    }  }  (","tIdentifier = <IDENTIFIER>{    try {      attributeList.add(sdm.getAttribute(tIdentifier.image));    }    catch (Exception e){      throw new ParseException(e.getMessage());    }  }  )*{    return new ProjectPO(new SDFAttributeList(attributeList));  }}
+AlgebraPO FromClause():{  AlgebraPO source = null;}{  <K_FROM>source = SourceReferences(){    return source;  }}AlgebraPO WhereClause(AlgebraPO from):{  SelectPO selection = null;  SDFPredicate predicate = null;  SDFPredicate curPredicate = null;  Token tType = null;}{
+	<K_WHERE> predicate = JoinPredicate() {
+		selection = new SelectPO();
+		selection.setPredicate(predicate);
+		return selection;
+	}//  <K_WHERE>predicate = SimplePredicate(){//    //join suchen////falls nicht gefunden selection//selection = new SelectPO();//  }//  ((tType = <K_AND>//  | tType = <K_OR>)curPredicate = SimplePredicate(){//    //join suchen////falls nicht gefunden zu predicates adden//if (selection == null){//      selection = new SelectPO();//    }//    else {//      SDFPredicate tmp = predicate;//      String typeURI = null;//      if (tType.image.equals("OR")){//        typeURI = SDFPredicates.Or;//      }//      else {//        typeURI = SDFPredicates.And;//      }//      predicate = SDFComplexPredicateFactory.combinePredicates(typeURI, tmp, curPredicate);//    }//  }//  )*{//    if (selection != null){//      selection.setPredicate(predicate);//    }//    return selection;//  }}
+AlgebraPO SourceReferences():{  AlgebraPO retPO;  AlgebraPO curPO;
+  SDFPredicate predicate = null;}{  retPO = SourceItem() (("," curPO = SourceItem(){    AlgebraPO tmp = retPO;
+    retPO = new JoinPO();    ((JoinPO)retPO).setLeftInput(tmp);    ((JoinPO)retPO).setRightInput(curPO);  })  | <K_JOIN> curPO = SourceItem() <K_ON> predicate = JoinPredicate(){
+  	tmp = retPO;
+  	retPO = new JoinPO();
+  	((JoinPO)retPO).setLeftInput(tmp);
+    ((JoinPO)retPO).setRightInput(curPO);
+    ((JoinPO)retPO).setPredicate(predicate);
+  })*{    return retPO;  }}AlgebraPO SourceItem():{  Token tSource;
+  Token tType;
+  Token tSize;}{
+	//TODO definition mit stunden/minuten/sekunden/ms erlauben  tSource = <IDENTIFIER> "(" <K_WINDOW> (tType=<K_TUMBLE> | tType=<K_SLIDE>) tSize = <NUMBER> ")" {    try {      AccessPO accessPO = new AccessPO(sdm.getSourceDescription(tSource.image).getAboutSource());
+      
+      WindowType type = null;
+      if (tType.image.equals("TUMBLING")) {
+      	type = WindowType.Tumbling;
+      } else {
+      	type = WindowType.Sliding;
+      }
+	WindowPO win = new WindowPO(type, Integer.parseInt(tSize.image));
+	win.setInputPO(0, accessPO);
+	return win;    }    catch (Exception e){      throw new ParseException(e.getMessage());    }  }}
+SDFPredicate JoinPredicate() : {
+  SDFPredicate predicateLeft = null;  SDFPredicate predicateRight = null;}{
+	predicateLeft = SimplePredicate() 
+	[<K_AND> predicateRight = JoinPredicate() 
+		{
+			return SDFComplexPredicateFactory.combinePredicates(SDFPredicates.AndPredicate, predicateLeft, predicateRight);
+		}
+	|<K_OR> predicateRight = JoinPredicate()
+		{
+			return SDFComplexPredicateFactory.combinePredicates(SDFPredicates.OrPredicate, predicateLeft, predicateRight);
+		}
+	]
+	{ return predicateLeft; }
+}SDFPredicate SimplePredicate():{  String leftExpression;  String rightExpression;  SDFCompareOperator compareOperator;
+  SDFPredicate predicate;}{  LOOKAHEAD(Expression()) leftExpression = Expression() 
+  compareOperator = CompareOperator()
+  rightExpression = Expression()
+  {    //TODO atm nur attribute auf der linken seite erlaubt, spaeter auch
+// expressions moeglich
+//TODO URI
+String uri = "TODOSDFExpressionURI"+System.currentTimeMillis()+System.nanoTime();    SDFExpression expression = new SDFExpression(rightExpression, rightExpression);    try {      return SDFSimplePredicateFactory.createSimplePredicate(uri, SDFPredicates.NumberPredicate, sdm.getAttribute(leftExpression), compareOperator, rightExpression, null, null, null);    }    catch (Exception e){      throw new ParseException(e.getMessage());    }  }
+  | "(" predicate = JoinPredicate() ")"  {return predicate;}}
+TOKEN:{<MATHOP:"+" | "-" | "*" | "/" | "^" | "%">}String Expression():{  String expression;  Token tToken;  Token tOp;
+  String exprLeft;}{
+
+	//TODO bug: klammerung nur rechts moeglich, klammerung fixen  LOOKAHEAD(SimpleToken() (<MATHOP> | "*")) exprLeft = SimpleToken() (tOp = <MATHOP>|tOp ="*") expression = Expression(){
+    return exprLeft+tOp.image+expression;  }  |	expression = SimpleToken() {return expression;}}
+
+String SimpleToken() : {
+	String expr;
+	Token tToken;
+}
+{
+ "(" expr= Expression() ")" {return expr;}
+  | tToken = <IDENTIFIER>{
+    return tToken.image;
+  }
+  | tToken = <NUMBER>{
+    return tToken.image;
+  }
+}
+  SDFCompareOperator CompareOperator():{}{  "="{    return SDFCompareOperatorFactory.getCompareOperator(SDFPredicates.Equal);  }  | "<"{    return SDFCompareOperatorFactory.getCompareOperator(SDFPredicates.LowerThan);  }  | ">"{    return SDFCompareOperatorFactory.getCompareOperator(SDFPredicates.GreaterThan);  }  | ">="{    return SDFCompareOperatorFactory.getCompareOperator(SDFPredicates.GreaterOrEqualThan);  }  | "<="{    return SDFCompareOperatorFactory.getCompareOperator(SDFPredicates.LowerOrEqualThan);  }  | "<>"{    return SDFCompareOperatorFactory.getCompareOperator(SDFPredicates.Unequal);  }}

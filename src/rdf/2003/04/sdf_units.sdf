@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sdfSchema="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_schema.sdf#" xmlns:sdfDatatypes="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#" xmlns:sdfUnits="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#" xml:base="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf">
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="CanHaveUnit"/>
+    
+    <sdfSchema:Entity rdf:ID="SDFUnit"/>
+ 
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFCurrencyUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+    </sdfSchema:Entity>    
+    
+    <sdfUnits:SDFCurrencyUnit rdf:ID="Euro"/>
+    <sdfUnits:SDFCurrencyUnit rdf:ID="Dollar"/>
+   
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFWeightUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+     </sdfSchema:Entity>
+    <sdfUnits:SDFWeightUnit rdf:ID="Gramm"/>
+    <sdfUnits:SDFWeightUnit rdf:ID="Kilogramm"/>
+    <sdfUnits:SDFWeightUnit rdf:ID="Tonne"/>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFDistanceUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+    </sdfSchema:Entity>    
+    <sdfUnits:SDFDistanceUnit rdf:ID="Millimeter"/>
+    <sdfUnits:SDFDistanceUnit rdf:ID="Zentimeter"/>
+    <sdfUnits:SDFDistanceUnit rdf:ID="Decimeter"/>
+    <sdfUnits:SDFDistanceUnit rdf:ID="Meter"/>
+    <sdfUnits:SDFDistanceUnit rdf:ID="Kilometer"/>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFAreaUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+    </sdfSchema:Entity>
+    <sdfUnits:SDFAreaUnit rdf:ID="Quadratzentimeter"/>
+    <sdfUnits:SDFAreaUnit rdf:ID="Quadratmeter"/>
+    <sdfUnits:SDFAreaUnit rdf:ID="Hektar"/>
+    <sdfUnits:SDFAreaUnit rdf:ID="Quadratkilometer"/>
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFVolumeUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+    </sdfSchema:Entity>
+    <sdfUnits:SDFVolumeUnit rdf:ID="Liter"/>
+    <sdfUnits:SDFVolumeUnit rdf:ID="Kubikmeter"/>
+    <sdfUnits:SDFVolumeUnit rdf:ID="Gallone"/>
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFTemperatureUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+    </sdfSchema:Entity>
+    <sdfUnits:SDFTemperatureUnit rdf:ID="GradCelsius"/>
+    <sdfUnits:SDFTemperatureUnit rdf:ID="GradFahrenheid"/>
+    <sdfUnits:SDFTemperatureUnit rdf:ID="GradKelvin"/>
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFTimeUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+    </sdfSchema:Entity>
+    
+    <sdfUnits:SDFTimeUnit rdf:ID="Sekunden"/>
+    <sdfUnits:SDFTimeUnit rdf:ID="Minuten"/>
+    <sdfUnits:SDFTimeUnit rdf:ID="Stunden"/>
+    <sdfUnits:SDFTimeUnit rdf:ID="Tage"/>
+    <sdfUnits:SDFTimeUnit rdf:ID="Wochen"/>
+    <sdfUnits:SDFTimeUnit rdf:ID="Jahre"/>
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <sdfSchema:Entity rdf:ID="SDFSpeedUnit">
+        <sdfSchema:isA rdf:resource="#SDFUnit"/>
+    </sdfSchema:Entity>
+    <sdfUnits:SDFSpeedUnit rdf:ID="MeterProSekunde"/>
+    <sdfUnits:SDFSpeedUnit rdf:ID="KilometerProStunde"/>
+    <sdfUnits:SDFSpeedUnit rdf:ID="MeilenProStunde"/>
+    
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <rdf:Property rdf:ID="hasUnit">
+        <rdfs:domain rdf:resource="#CanHaveUnit"/>
+        <rdfs:range rdf:resource="#SDFUnit"/>
+    </rdf:Property>
+</rdf:RDF>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rdf:RDF xmlns:sdf_query="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_query.sdf#" xmlns:sdf_quality_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_quality_descriptions.sdf#" xmlns:GlobalSchemaAutomarkt="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/GlobalSchemaAutomarkt.sdf#" xmlns:sdf_predicates="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_predicates.sdf#" xmlns:sdf_datatype_constraints="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatype_constraints.sdf#" xmlns:sdf_datatypes="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#" xmlns:sdf_mappings="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_mappings.sdf#" xmlns:sdf_unit_mappings="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_unit_mappings.sdf#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sdf_units="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#" xmlns:sdf_extensional_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_extensional_descriptions.sdf#" xmlns:Automarkt2004="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004#" xmlns:sdf_intensional_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_intensional_descriptions.sdf#" xmlns:Automarkt2004_Quelle1="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1.sdf#" xmlns:sdf_quality="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_quality.sdf#" xmlns:sdf_functions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_functions.sdf#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sdf_schema="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_schema.sdf#" xmlns:sdf_descriptions="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_descriptions.sdf#">
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Ort">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Nachname">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Marke">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Farbe">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Entity rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Auto">
+    <sdf_schema:hasAttribute>
+      <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#km">
+        <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+        <sdf_units:hasUnit rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#Kilometer"/>
+      </sdf_schema:Attribute>
+    </sdf_schema:hasAttribute>
+    <sdf_schema:hasAttribute>
+      <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Preis">
+        <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+        <sdf_units:hasUnit rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#Euro"/>
+      </sdf_schema:Attribute>
+    </sdf_schema:hasAttribute>
+    <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Farbe"/>
+    <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Marke"/>
+    <sdf_schema:hasAttribute>
+      <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Modell">
+        <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+      </sdf_schema:Attribute>
+    </sdf_schema:hasAttribute>
+    <sdf_schema:hasAttribute>
+      <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#FGSTNR">
+        <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+      </sdf_schema:Attribute>
+    </sdf_schema:hasAttribute>
+  </sdf_schema:Entity>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Plz">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Hausnummer">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Vorname">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#H_Plz">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Strasse">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#H_Strasse">
+    <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+  </sdf_schema:Attribute>
+  <sdf_schema:Dataschema rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Automarkt2004">
+    <sdf_schema:hasEntity>
+      <sdf_schema:Entity rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Verkauf">
+        <sdf_schema:hasAttribute>
+          <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Vknr">
+            <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#Number"/>
+          </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#FGSTNR"/>
+      </sdf_schema:Entity>
+    </sdf_schema:hasEntity>
+    <sdf_schema:hasEntity rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Auto"/>
+    <sdf_schema:hasEntity>
+      <sdf_schema:Entity rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Hersteller">
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Marke"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#H_Strasse"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#H_Plz"/>
+        <sdf_schema:hasAttribute>
+          <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#H_Ort">
+            <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+          </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+        <sdf_schema:hasAttribute>
+          <sdf_schema:Attribute rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#H_Hausnummer">
+            <sdf_datatypes:hasBaseDatatype rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_datatypes.sdf#String"/>
+          </sdf_schema:Attribute>
+        </sdf_schema:hasAttribute>
+      </sdf_schema:Entity>
+    </sdf_schema:hasEntity>
+    <sdf_schema:hasEntity>
+      <sdf_schema:Entity rdf:about="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Verkaeufer">
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Ort"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Vknr"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Vorname"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Plz"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Strasse"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#Nachname"/>
+        <sdf_schema:hasAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004_Quelle1#V_Hausnummer"/>
+      </sdf_schema:Entity>
+    </sdf_schema:hasEntity>
+  </sdf_schema:Dataschema>
+</rdf:RDF>

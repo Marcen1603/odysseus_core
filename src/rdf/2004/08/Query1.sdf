@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:globalSchema="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#" xmlns:sdfSchema="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_schema.sdf#" xmlns:sdfQuality="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_quality.sdf#" xmlns:sdfPredicates="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_predicates.sdf#" xmlns:sdfUnits="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_units.sdf#" xmlns:sdfQuery="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_query.sdf#" xml:base="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Query1.sdf">
+
+    <sdfQuery:Query rdf:ID="AutomarktQuery1">
+
+        <sdfQuery:hasQueryAttribute>
+            <sdfQuery:QueryAttribute>
+                <sdfQuery:concernsAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Vknr"/>
+                <sdfQuery:weighting rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_query.sdf#VeryImportant"/>
+            </sdfQuery:QueryAttribute>
+        </sdfQuery:hasQueryAttribute>
+        <sdfQuery:hasQueryAttribute>
+             <sdfQuery:QueryAttribute>
+                <sdfQuery:concernsAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Vorname"/>
+                <sdfQuery:weighting rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_query.sdf#VeryImportant"/>
+            </sdfQuery:QueryAttribute>
+        </sdfQuery:hasQueryAttribute>
+        <sdfQuery:hasQueryAttribute>
+            <sdfQuery:QueryAttribute>
+                <sdfQuery:concernsAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Nachname"/>
+                <sdfQuery:weighting rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_query.sdf#Neutral"/>
+            </sdfQuery:QueryAttribute>
+        </sdfQuery:hasQueryAttribute>
+
+        <sdfQuery:hasQueryPredicate>
+            <sdfQuery:QueryPredicate>
+               <sdfQuery:hasPredicate>
+                    <sdfPredicates:StringPredicate>
+                        <sdfPredicates:predAttribute rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2004/08/Automarkt2004.sdf#Nachname"/>
+                        <sdfPredicates:predStringOperator rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_predicates.sdf#Equal"/>
+                        <sdfPredicates:predValue>Barreto</sdfPredicates:predValue>
+                    </sdfPredicates:StringPredicate>
+                </sdfQuery:hasPredicate>
+               <sdfQuery:weighting rdf:resource="http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_query.sdf#Important"/>
+            </sdfQuery:QueryPredicate>
+        </sdfQuery:hasQueryPredicate>
+    </sdfQuery:Query>
+
+</rdf:RDF>
