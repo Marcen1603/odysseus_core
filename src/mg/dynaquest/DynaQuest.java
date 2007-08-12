@@ -312,6 +312,9 @@ public class DynaQuest {
         int waitSeconds = 1;
         int bufferSize = 100;
         
+        /* SessionID. Sollte später durch Client gesetzt werden */
+        String sessionId = "DEFAULT_SESSION_ID";
+        
         if (args.length>0){
         	queryURI = args[0];
         	planToExecute = Integer.parseInt(args[1]);         
@@ -325,8 +328,7 @@ public class DynaQuest {
         //dq.start();    
         SDFQueryFactory factory = new SDFQueryFactory(dq.getSdm());
     
-
-        Collection<SDFQuery> testQuery = factory.readQuerys(queryURI);
+        Collection<SDFQuery> testQuery = factory.readQuerys(queryURI, sessionId);
         
         dq.processQuery(planToExecute, noOfRuns, waitSeconds, testQuery, bufferSize);
         

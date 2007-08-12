@@ -217,6 +217,7 @@ public class AnnotatedPlan {
         // man nur noch schwer daran
         ((SchemaTransformationAccessPO)top).setGlobalInputValues(query.getInputVectorAssignment(((SchemaTransformationAccessPO)top).getInputAttributes()));
         ((SchemaTransformationAccessPO)top).setQueryPredicates(query.getQueryPredicates(((SchemaTransformationAccessPO)top).getInputAttributes()));
+        ((SchemaTransformationAccessPO)top).setSessionId(query.getSessionId());
         //((AccessPO)top).setSDFQuery(query);
         // Jetzt müssen noch die Operatoren gesetzt werden, die von der Quellen verwendet werden sollen (falls mehrere vorliegen)
         // Falls die Quelle den Operator nicht anbietet, wird per default der erste gewählt

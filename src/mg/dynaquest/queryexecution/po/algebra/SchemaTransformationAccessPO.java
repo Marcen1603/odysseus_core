@@ -105,6 +105,8 @@ public class SchemaTransformationAccessPO extends AccessPO {
 
 	private ArrayList<SDFSimplePredicate> queryPredicates = null;
 
+	private String sessionId;
+
 		
 	/*
 	 * Achtung: Die globalInputValues müssen mit in der Reihenfolge der
@@ -592,6 +594,14 @@ public class SchemaTransformationAccessPO extends AccessPO {
 				queryPredicates.add(sp);
 			}
 		}
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+	
+	public String getSessionId() {
+		return this.sessionId;
 	}
 
 	}

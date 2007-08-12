@@ -246,7 +246,7 @@ public class SDFQueryFactory {
 		return new WeightedSimplePredicate(sPred, weighting);
 	}
 
-	private SDFQuery readQuery(Resource r) throws Exception {
+	private SDFQuery readQuery(Resource r, String sessionId) throws Exception {
 		SDFQuery query = new SDFQuery(r.getURI());
 		StmtIterator iter = r.listProperties();
 		while (iter.hasNext()) {
@@ -281,6 +281,10 @@ public class SDFQueryFactory {
 			}
 
 		}
+		
+		/* Session ID setzen */
+		query.setSessionId(sessionId);
+		
 		return query;
 	}
 
@@ -316,13 +320,13 @@ public class SDFQueryFactory {
 	}
 
 	
-	public Collection<SDFQuery> readQuerys(String queryURI)
+	public Collection<SDFQuery> readQuerys(String queryURI, String sessionId)
 			throws Exception {
 		Collection<SDFQuery> ret = new ArrayList<SDFQuery>();
 		Model queryModel = RDFHelper.readModel(queryURI);
 		ArrayList nodeList = RDFHelper.getNodesWithRDFType(queryModel, SDFQueryVoc.Query);
 		for (int i = 0; i < nodeList.size(); i++) {
-			ret.add(readQuery((Resource) nodeList.get(i)));
+			ret.add(readQuery((Resource) nodeList.get(i), sessionId));
 		}
 		return ret;
 	}

@@ -84,7 +84,7 @@ public abstract class NAryPlanOperator extends TriggeredPlanOperator implements 
      * @param operator
      */
     protected NAryPlanOperator(NAryPlanOperator operator) {
-        super(operator);
+    	super(operator);
         this.executionPlace = operator.executionPlace;
         if (operator.input != null){
             input = new PlanOperator[operator.input.length];

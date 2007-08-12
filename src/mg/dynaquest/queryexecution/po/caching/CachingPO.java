@@ -79,7 +79,7 @@ public class CachingPO extends UnaryPlanOperator {
 	public CachingPO(SchemaTransformationAccessPO schemaTransformationAccessPO) {
 		super(schemaTransformationAccessPO);
 		this.algebraPO = schemaTransformationAccessPO;
-
+		
 		// Wrapper wird erzeugt ...
 		PlanOperator wrapPlan = WrapperPlanFactory
 				.getAccessPlan(schemaTransformationAccessPO);
@@ -167,6 +167,9 @@ public class CachingPO extends UnaryPlanOperator {
 		// e.printStackTrace();
 		// }
 
+		/* Session ID setzen */
+		storageManager.setSessionId(algebraPO.getSessionId());
+		
 		/* Semantische Regionen invalidieren */
 		storageManager.invalidateSemanticRegions();
 
