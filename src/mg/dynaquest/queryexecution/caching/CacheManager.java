@@ -25,14 +25,14 @@ public class CacheManager {
 	/* Global configuration parameters */
 	private Properties properties;
 	
-    String caching_enabled = null;
-	String caching_jdbcstring = null;
-	String caching_db_user = null;
-	String caching_db_password = null;
-	String caching_sqlfile = null;
-	String caching_driverClass = null;
-	int caching_tupleCapacity;
-	int caching_invalidationTimeoutInSeconds; 
+    public String caching_enabled = null;
+	public String caching_jdbcstring = null;
+	public String caching_db_user = null;
+	public String caching_db_password = null;
+	public String caching_sqlfile = null;
+	public String caching_driverClass = null;
+	public int caching_tupleCapacity;
+	public int caching_invalidationTimeoutInSeconds; 
 	
 	/* Logger instance */
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -64,7 +64,7 @@ public class CacheManager {
 		} catch (FileNotFoundException e) {
 			// Dann neue Properties-Datei mit Default-Werten anlegen
 			properties.put("caching_invalidationTimeoutInSeconds","360"); // 10 Minuten 
-			properties.put("caching_tupleCapacity", "10000"); // 1000 Datensätze
+			properties.put("caching_tupleCapacity", "10000"); // 10000 Datensätze
 			properties.put("caching_enabled", "false");
 			properties.put("caching_db_user", "dynacache");
 			properties.put("caching_db_password", "99PyvqsemyEh9BH9");

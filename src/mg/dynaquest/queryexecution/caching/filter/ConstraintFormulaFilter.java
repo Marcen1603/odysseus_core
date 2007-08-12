@@ -46,7 +46,11 @@ public class ConstraintFormulaFilter {
 	public boolean doesTupelPass(RelationalTuple tuple) {
 
 		/* Leere Tupel werden sofort gefiltert */
-		if (tuple.getAttributeCount() == 0 || tuple == null) {
+		if (tuple == null) {
+			return false;
+		}
+		
+		if (tuple.getAttributeCount() == 0) {
 			return false;
 		}
 

@@ -36,8 +36,7 @@ import org.w3c.dom.NodeList;
 public class CachingPO extends UnaryPlanOperator {
 
 	/*
-	 * TODO: - Konfiguration in Dynaquest File auslagern
-	 * 		 - Invalidation 
+	 * TODO: - Konfiguration in Dynaquest File auslagern - Sessions
 	 */
 
 	/**
@@ -62,7 +61,7 @@ public class CachingPO extends UnaryPlanOperator {
 
 	private int probeQueryTupleCounter = -1;
 
-	private HashSet<SemanticRegion> matchingRegions;
+	private HashSet<SemanticRegion> matchingRegions = new HashSet<SemanticRegion>();
 
 	private ConstraintFormulaFilter remainderFilter;
 
@@ -161,14 +160,16 @@ public class CachingPO extends UnaryPlanOperator {
 		this.cacheManager = CacheManager.getInstance();
 		this.storageManager = StorageManager.getInstance();
 
-		/* Resettet Cache Memory (Zu Testzwecken) */
+		// /* Resettet Cache Memory (Zu Testzwecken) */
 		// try {
 		// storageManager.flush();
 		// } catch (SQLException e) {
 		// e.printStackTrace();
 		// }
+
 		/* Semantische Regionen invalidieren */
-		// storageManager.invalidateSemanticRegions();
+		storageManager.invalidateSemanticRegions();
+
 		/* ProbeQuery generieren */
 		try {
 			getProbeQuery();
@@ -182,19 +183,28 @@ public class CachingPO extends UnaryPlanOperator {
 			predicates = this.getRemainderQuery(algebraPO.getQueryPredicates(),
 					matchingRegions);
 
-			/* Falls kein Containment: Remainder Filter setzen */
+			/*
+			 * Wenn predicate nicht null ist, so handelt es sich um Disjunktheit
+			 * oder Schnitt
+			 */
 			if (predicates != null) {
-				/*
-				 * Liste mit ConstraintFormeln aller passenden semantischen
-				 * Regionen erstellen
-				 */
-				ArrayList<ConstraintFormula> constraintFormulae = new ArrayList<ConstraintFormula>();
-				for (SemanticRegion sr : matchingRegions) {
-					constraintFormulae.add(sr.getConstraintFormula());
-				}
+				if (!matchingRegions.isEmpty()) {
+						/*
+						 * Gibt es passende Regionen, so handelt es sich um
+						 * Schnitt und es wird der Remainder Filter gesetzt
+						 */
+						/*
+						 * Liste mit ConstraintFormeln aller passenden
+						 * semantischen Regionen erstellen
+						 */
+						ArrayList<ConstraintFormula> constraintFormulae = new ArrayList<ConstraintFormula>();
+						for (SemanticRegion sr : matchingRegions) {
+							constraintFormulae.add(sr.getConstraintFormula());
+						}
 
-				this.remainderFilter = new ConstraintFormulaFilter(
-						constraintFormulae, algebraPO.getOutElements());
+						this.remainderFilter = new ConstraintFormulaFilter(
+								constraintFormulae, algebraPO.getOutElements());
+					}
 
 			} else {
 				/*
@@ -210,7 +220,7 @@ public class CachingPO extends UnaryPlanOperator {
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		
+
 		/* Initialisiere Remainder Query Liste */
 		this.remainderQuery = new ArrayList<DataTuple>();
 		this.probeQuery = new ArrayList<DataTuple>();
@@ -220,6 +230,7 @@ public class CachingPO extends UnaryPlanOperator {
 
 	/**
 	 * Stoppt AccessPO, schließt ihn und setzt Anzahl der Inputs auf 0
+	 * 
 	 * @throws POException
 	 */
 	private void terminateAccessPO() throws POException {
@@ -228,39 +239,52 @@ public class CachingPO extends UnaryPlanOperator {
 		this.setNoOfInputs(0);
 	}
 
-	private HashSet<SemanticRegion> getProbeQuery() throws SQLException {
+	/**
+	 * Generiert die Probe Query zu der aktuellen Anfrage
+	 * 
+	 * @throws SQLException
+	 */
+	private void getProbeQuery() throws SQLException {
 
 		logger.info("Extracted Query Predicates: "
 				+ this.algebraPO.getQueryPredicates());
 		logger.info("Extracted Query Attributes: " + this.getOutElements());
 
-		/* Probe Query generieren */
+		/*
+		 * Finde semantische Regionen, welche Inhalte zu einer gegebenen Quelle
+		 * liefern
+		 */
+		HashSet<SemanticRegion> sourceMatchingRegions = StorageManager
+				.getInstance().getMatchingRegionsForSource(
+						algebraPO.getSource());
 
-		/* Semantische Regionen suchen, die zur Anfrage beitragen können */
-		try {
-			matchingRegions = storageManager.getMatchingRegions(algebraPO
-					.getSource(), algebraPO.getQueryPredicates());
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-
-		logger.info("Gefundene passende Regionen: " + matchingRegions.size());
+		HashSet<Integer> matchingTupleIds = null;
 
 		/*
-		 * Hole TupelIDs aus der Datenbank, die zu der Anfrage passende
-		 * Attribute enthalten
+		 * Nun überprüfe die in Frage kommenden Regionen daraufhin, ob sie
+		 * passende Tupel enthalten
 		 */
-		HashSet<Integer> matchingIds = storageManager.getMatchingTupleIds(
-				this.algebraPO.getQueryPredicates(), matchingRegions);
+		if (sourceMatchingRegions.size() != 0) {
+			matchingTupleIds = StorageManager.getInstance()
+					.getMatchingTupleIds(algebraPO.getQueryPredicates(),
+							sourceMatchingRegions);
+		}
 
-		for (int i : matchingIds) {
-			this.probeQueryTupleIds.add(i);
+		if (matchingTupleIds != null) {
+			this.matchingRegions = StorageManager.getInstance()
+					.getSemanticRegions(matchingTupleIds);
+
+			logger.info("Gefundene passende Regionen: "
+					+ matchingRegions.size());
+
+			for (int i : matchingTupleIds) {
+				this.probeQueryTupleIds.add(i);
+			}
 		}
 
 		logger.info("ProbeQuery umfasst " + probeQueryTupleIds.size()
 				+ " Einträge");
 
-		return matchingRegions;
 	}
 
 	/**
@@ -307,21 +331,23 @@ public class CachingPO extends UnaryPlanOperator {
 		 * Remainder extrahieren. Diesen, falls nicht null, der Remainder Query
 		 * hinzufügen.
 		 */
-		if (!semanticRegions.isEmpty() && semanticRegions != null) {
-			for (SemanticRegion sr : semanticRegions) {
-				if (sr.getSource().equals(algebraPO.getSource())) {
-					ArrayList<SDFSimplePredicate> remainderPredicates = sr
-							.getConstraintFormula().getRemainder(
-									queryPredicates);
-					if (remainderPredicates != null) {
-						remainder.addAll(sr.getConstraintFormula()
-								.getRemainder(queryPredicates));
-					} else {
-						/*
-						 * Wenn der Remainder einer semantischen Region null
-						 * ist, so ist auch die Remainder Query null.
-						 */
-						return null;
+		if (semanticRegions != null) {
+			if (!semanticRegions.isEmpty()) {
+				for (SemanticRegion sr : semanticRegions) {
+					if (sr.getSource().equals(algebraPO.getSource())) {
+						ArrayList<SDFSimplePredicate> remainderPredicates = sr
+								.getConstraintFormula().getRemainder(
+										queryPredicates);
+						if (remainderPredicates != null) {
+							remainder.addAll(sr.getConstraintFormula()
+									.getRemainder(queryPredicates));
+						} else {
+							/*
+							 * Wenn der Remainder einer semantischen Region null
+							 * ist, so ist auch die Remainder Query null.
+							 */
+							return null;
+						}
 					}
 				}
 			}
@@ -333,7 +359,7 @@ public class CachingPO extends UnaryPlanOperator {
 		 * matchenden Regionen gibt (z.B. weil die Quelle sich unterscheidet)
 		 * oder wenn es eine semantische Überlappung gibt
 		 */
-		if (remainder == null) {
+		if (remainder.size() == 0) {
 			remainder.addAll(queryPredicates);
 		}
 
@@ -371,21 +397,31 @@ public class CachingPO extends UnaryPlanOperator {
 
 	}
 
+	/**
+	 * 
+	 * @return nächstes Tuple aus der Remainder Query oder NULL, falls keines
+	 *         mehr vorhanden ist
+	 * @throws POException
+	 * @throws TimeoutException
+	 */
 	private RelationalTuple getNextRemainderQueryTuple() throws POException,
 			TimeoutException {
 		logger.info("Cache Miss!");
-		/* Ansonsten Hole Remainder Query vom Wrapper */
 
-		/* Initialisiere Tupel */
+		/* Tupel initialisieren */
 		RelationalTuple tuple = new RelationalTuple(0);
 
 		/*
-		 * So lange neue Tupel anfordern, bis Tupel passiert oder keine mehr
-		 * kommen
+		 * Ein Tupel aus der Quelle extrahieren
 		 */
-		while (tuple != null && !remainderFilter.doesTupelPass(tuple)) {
-			tuple = (RelationalTuple) this.getInputNext(this, -1);
+		tuple = (RelationalTuple) this.getInputNext(this, -1);
+
+		if (this.remainderFilter != null) {
+			while (!remainderFilter.doesTupelPass(tuple) && tuple != null) {
+				tuple = (RelationalTuple) this.getInputNext(this, -1);
+			}
 		}
+
 		/*
 		 * Speichere Remainder Query temporär in Liste extrahierter Inhalte
 		 */
@@ -408,6 +444,7 @@ public class CachingPO extends UnaryPlanOperator {
 						+ tuple.getAttribute(i));
 			}
 		}
+
 		return tuple;
 	}
 
@@ -491,7 +528,7 @@ public class CachingPO extends UnaryPlanOperator {
 				String timeStamp = tstamp.toString();
 
 				for (SemanticRegion sr : matchingRegions) {
-					sr.updateTimeStamp(timeStamp);
+					sr.updateLastAccess(timeStamp);
 				}
 			}
 		}

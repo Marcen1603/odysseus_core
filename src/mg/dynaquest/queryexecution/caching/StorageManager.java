@@ -8,7 +8,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -58,6 +60,8 @@ public class StorageManager implements Replacement, Invalidation {
 
 	/* Logger Instanz */
 	private Logger logger = Logger.getLogger(this.getClass().getName());
+
+	private String sessionId = "DEFAULT_SESSION";
 
 	/**
 	 * 
@@ -133,17 +137,18 @@ public class StorageManager implements Replacement, Invalidation {
 			 * der Region mit dem ältesten Timestamp.
 			 */
 
-			while ((semanticRegion.size() + getCacheSize()) > CacheManager.getInstance()
-					.caching_tupleCapacity) {
+			while ((semanticRegion.size() + getCacheSize()) > CacheManager
+					.getInstance().caching_tupleCapacity) {
 				SemanticRegion sr = getSemanticRegionToReplace();
 				sr.delete();
 			}
 
 			/* Erzeuge neue semantische Region */
 
-			String sql = "INSERT INTO SemanticRegions(Source, ReplacementValue, TimeStamp) VALUES (?,'0',NOW())";
+			String sql = "INSERT INTO SemanticRegions(Source, ReplacementValue, TimeStamp, LastAccess, SessionId) VALUES (?,'0',NOW(),NOW(),?)";
 			PreparedStatement pstmt = dbConnection.prepareStatement(sql);
 			pstmt.setString(1, source.getURI(false));
+			pstmt.setString(2, this.sessionId);
 			pstmt.executeUpdate();
 			ResultSet resultSet = pstmt.getGeneratedKeys();
 
@@ -208,7 +213,7 @@ public class StorageManager implements Replacement, Invalidation {
 	public SemanticRegion getSemanticRegionToReplace() {
 
 		/* ID ältester Region herausfinden */
-		String sql = "SELECT `Id` FROM `SemanticRegions` WHERE `Timestamp` = (SELECT MIN(`Timestamp`) FROM `SemanticRegions`)";
+		String sql = "SELECT `Id` FROM `SemanticRegions` WHERE `LastAccess` = (SELECT MIN(`LastAccess`) FROM `SemanticRegions`)";
 		PreparedStatement pstmt;
 		SemanticRegion semanticRegion = null;
 
@@ -254,7 +259,8 @@ public class StorageManager implements Replacement, Invalidation {
 	/**
 	 * Löscht eine semantische Region aus dem Cache Memory
 	 * 
-	 * @param semanticRegion Zu löschende semantische Region
+	 * @param semanticRegion
+	 *            Zu löschende semantische Region
 	 * @throws SQLException
 	 */
 	public void deleteSemanticRegion(SemanticRegion semanticRegion)
@@ -299,9 +305,9 @@ public class StorageManager implements Replacement, Invalidation {
 			SQLException {
 		if (this.dbConnection == null) {
 			Class.forName(CacheManager.getInstance().caching_driverClass);
-			this.dbConnection = DriverManager.getConnection(
-					CacheManager.getInstance().caching_jdbcstring,
-					CacheManager.getInstance().caching_db_user,
+			this.dbConnection = DriverManager.getConnection(CacheManager
+					.getInstance().caching_jdbcstring, CacheManager
+					.getInstance().caching_db_user,
 					CacheManager.getInstance().caching_db_password);
 			this.dbConnection.setAutoCommit(false);
 		}
@@ -313,8 +319,7 @@ public class StorageManager implements Replacement, Invalidation {
 	 * constructor
 	 */
 	private StorageManager() {
-		
-		
+
 		/* Datenbankverbindung bei Initialisierung herstellen */
 		try {
 			getDataBaseConnection();
@@ -383,7 +388,7 @@ public class StorageManager implements Replacement, Invalidation {
 	 *         beinhalten
 	 * @throws SQLException
 	 */
-	private HashSet<SemanticRegion> getMatchingRegionsForSource(
+	public HashSet<SemanticRegion> getMatchingRegionsForSource(
 			SDFSource dataSource) throws SQLException {
 		HashSet<SemanticRegion> matchingTuples = new HashSet<SemanticRegion>();
 		String sql = "SELECT `Id` FROM `SemanticRegions` WHERE `Source` = ?";
@@ -438,8 +443,9 @@ public class StorageManager implements Replacement, Invalidation {
 
 	/**
 	 * @param matchingRegions
-	 * @param queryPredicateList Anfrageprädiakte
-	 * @return Menge von Tupeln, welche zu Anfrageprädikat und Quelle passende
+	 * @param queryPredicateList
+	 *            Anfrageprädiakte
+	 * @return IDs von Tupeln, welche zu Anfrageprädikat und Quelle passende
 	 *         Inhalte enthalten
 	 * @throws SQLException
 	 */
@@ -460,7 +466,7 @@ public class StorageManager implements Replacement, Invalidation {
 
 		/*
 		 * Für jedes Prädikat in der Anfrage: Hole TupelIDs, die dieses
-		 * enthalten
+		 * enthalten. 
 		 */
 		for (SDFSimplePredicate predicate : queryPredicateList) {
 			String predicateOperator = predicate.getCompareOp().toString();
@@ -566,7 +572,7 @@ public class StorageManager implements Replacement, Invalidation {
 	 * @return Menge semantischer Regionen zu gegebener Menge von Tupeln
 	 * @throws SQLException
 	 */
-	private HashSet<SemanticRegion> getSemanticRegions(
+	public HashSet<SemanticRegion> getSemanticRegions(
 			HashSet<Integer> matchingTuples) throws SQLException {
 		HashSet<SemanticRegion> matchingRegions = new HashSet<SemanticRegion>();
 
@@ -688,6 +694,10 @@ public class StorageManager implements Replacement, Invalidation {
 
 	/**
 	 * Invalidiert semantische Regionen, d.h. identifiziert und löscht diese
+	 * 
+	 * @param sessionId
+	 * 
+	 * @param sessionId
 	 */
 	public synchronized void invalidateSemanticRegions() {
 		/* Hole IDs semantischer Regionen */
@@ -704,10 +714,13 @@ public class StorageManager implements Replacement, Invalidation {
 
 			while (rs.next()) {
 				SemanticRegion sr = new SemanticRegion(rs.getInt("Id"));
+
 				if (!sr.isValid()) {
 					logger.info("Invalidiere semantische Region " + sr.getId()
 							+ "\n");
 					sr.delete();
+				} else {
+					logger.info("Semantische Region" + sr.getId() + " ist gültig");
 				}
 			}
 		} catch (SQLException e) {
@@ -716,12 +729,84 @@ public class StorageManager implements Replacement, Invalidation {
 	}
 
 	/**
+	 * 
+	 * @param semanticRegion
+	 * @return true, falls semantische Region konsistent ist, false sonst
+	 */
+	public boolean isSemanticRegionValid(SemanticRegion semanticRegion) {
+
+		/*
+		 * Falls semantische Region während aktueller Session angelegt wurde,
+		 * immer gültig
+		 */
+		if (isSessionValid(semanticRegion)) {
+			return true;
+		} else {
+			/* Sonst überprüfen, ob Zeit abgelaufen ist */
+			Date date = new Date();
+			Timestamp currentTimeStamp = new Timestamp(date.getTime());
+			Timestamp regionTimeStamp = semanticRegion.getTimeStamp();
+
+			if ((currentTimeStamp.getTime() - regionTimeStamp.getTime()) < CacheManager
+					.getInstance().caching_invalidationTimeoutInSeconds * 1000) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param semanticRegion
+	 * @return true, falls semantische Region während der aktuellen Session
+	 *         angelegt wurde, false sonst
+	 */
+	private boolean isSessionValid(SemanticRegion semanticRegion) {
+		/* Hole IDs semantischer Regionen */
+		String sql = "SELECT `SessionId` FROM `SemanticRegions` WHERE `Id`=?";
+
+		PreparedStatement pstmt;
+
+		try {
+			pstmt = dbConnection.prepareStatement(sql);
+
+			pstmt.setInt(1, semanticRegion.getId());
+
+			ResultSet rs = pstmt.executeQuery();
+
+			/* Ausführung der Transaktion */
+			dbConnection.commit();
+
+			String regionSessionId = null;
+
+			while (rs.next()) {
+				regionSessionId = rs.getString("SessionId");
+			}
+
+			/* Wenn SessionIds identisch, true zurückliefern */
+			if (regionSessionId.equals(this.sessionId)) {
+				return true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	public synchronized void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	/**
 	 * Liest Datenquelle zu gegebener sem. Region aus dem Cache Memory
 	 * 
 	 * @param region
 	 * @return Quelle einer semantischen Region
 	 */
-	 public SDFSource getSourceForRegion(SemanticRegion region) {
+	public SDFSource getSourceForRegion(SemanticRegion region) {
 
 		String sql = "SELECT `Source` FROM `SemanticRegions` WHERE `Id`=?";
 		SDFSource source = null;
@@ -777,8 +862,8 @@ public class StorageManager implements Replacement, Invalidation {
 	 * @param region
 	 * @param timeStamp
 	 */
-	public void updateRegionTimeStamp(SemanticRegion region, String timeStamp) {
-		String sql = "UPDATE `SemanticRegions` SET `TimeStamp` = ? WHERE `Id` = ?";
+	public void updateRegionLastAccess(SemanticRegion region, String timeStamp) {
+		String sql = "UPDATE `SemanticRegions` SET `LastAccess` = ? WHERE `Id` = ?";
 		PreparedStatement pstmt;
 
 		try {
@@ -790,5 +875,28 @@ public class StorageManager implements Replacement, Invalidation {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Timestamp getRegionTimeStamp(SemanticRegion semanticRegion) {
+		String sql = "SELECT `Timestamp` FROM `SemanticRegions` WHERE `Id` = ?";
+		PreparedStatement pstmt;
+		ResultSet rs;
+		Timestamp timeStamp = null;
+
+		try {
+			pstmt = dbConnection.prepareStatement(sql);
+			pstmt.setInt(1, semanticRegion.getId());
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				timeStamp = rs.getTimestamp("Timestamp");
+			}
+			pstmt.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return timeStamp;
 	}
 }

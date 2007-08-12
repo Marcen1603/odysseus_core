@@ -2,23 +2,28 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="lib/araneusWTK.jar"/>
-	<classpathentry kind="var" path="lib/commons-logging.jar"/>
-	<classpathentry kind="var" path="lib/concurrent.jar"/>
-	<classpathentry kind="var" path="lib/icu4j.jar"/>
-	<classpathentry kind="var" path="lib/jena.jar"/>
-	<classpathentry kind="var" path="lib/log4j-1.2.7.jar"/>
-	<classpathentry kind="var" path="lib/ojdbc14.jar"/>
-	<classpathentry kind="var" path="lib/rdf-api-2001-01-19.jar"/>
-	<classpathentry kind="var" path="lib/xalan.jar"/>
-	<classpathentry kind="var" path="lib/xercesImpl.jar"/>
-	<classpathentry kind="var" path="lib/xml-apis.jar"/>
-	<classpathentry kind="var" path="lib/junit.jar"/>
 	<classpathentry kind="con" path="com.omondo.uml.CONTAINER"/>
-	<classpathentry kind="var" path="lib/mysql-connector-java-5.0.4-bin.jar"/>
-	<classpathentry kind="var" path="lib/joone-engine.jar"/>
-	<classpathentry kind="var" path="lib/weka.jar"/>
-	<classpathentry kind="var" path="lib/jCreekOhneWeka.jar"/>
 	<classpathentry kind="lib" path="lib/jep.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/araneusWTK.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/commons-logging.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/concurrent.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/icu4j.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/jCreekOhneWeka.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/jena.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/jep.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/joone-engine.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/junit.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/log4j-1.2.7.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/mysql-connector-java-5.0.4-bin.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/ojdbc14.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/persistence.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/rdf-api-2001-01-19.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/toplink-agent.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/toplink-essentials.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/toplink-essentials-agent.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/weka.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/xalan.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/xercesImpl.jar"/>
+	<classpathentry kind="var" path="DYNALIB_HOME/xml-apis.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

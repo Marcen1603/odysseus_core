@@ -26,6 +26,7 @@ public class SemanticRegion {
 
 	private ArrayList<DataTuple> dataTuples = null;
 
+	private Timestamp lastAccess = null;
 	private Timestamp timeStamp = null;
 
 	private int replacementValue = 0;
@@ -49,7 +50,7 @@ public class SemanticRegion {
 			this.dataTuples = sr.getDataTuples();
 			this.replacementValue = sr.getReplacementValue();
 			this.source = sr.getSource();
-			this.timeStamp = sr.getTimeStamp();
+			this.lastAccess = sr.getLastAccess();
 			this.constraintFormula = sr.getConstraintFormula();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -141,20 +142,28 @@ public class SemanticRegion {
 	}
 
 	public Timestamp getTimeStamp() {
+		if (this.timeStamp == null) {
+			this.timeStamp = StorageManager.getInstance().getRegionTimeStamp(this);
+		}
 		return timeStamp;
 	}
 
-	public void setTimeStamp(Timestamp timeStamp) {
-		this.timeStamp = timeStamp;
+	public Timestamp getLastAccess() {
+		return lastAccess;
 	}
 
+	public void setLastAccess(Timestamp lastAccess) {
+		this.lastAccess = lastAccess;
+	}
+
+	
 	/**
-	 * Überschreibt Timestamp der sem. Region im Cache Memory mit der aktuellen Systemzeit  
+	 * Überschreibt Last Access Timestamp der sem. Region im Cache Memory mit der aktuellen Systemzeit  
 	 * @param timeStamp 
 	 *
 	 */
-	public void updateTimeStamp(String timeStamp) {
-		StorageManager.getInstance().updateRegionTimeStamp(this, timeStamp);
+	public void updateLastAccess(String timeStamp) {
+		StorageManager.getInstance().updateRegionLastAccess(this, timeStamp);
 	}
 	
 	public int getId() {
@@ -170,7 +179,7 @@ public class SemanticRegion {
 	 * @return true, wenn Inhalte dieser semantischen Region konsistent sind, false sonst
 	 */
 	public boolean isValid() {
-		return false;
+		return StorageManager.getInstance().isSemanticRegionValid(this);
 	}
 
 	/**
