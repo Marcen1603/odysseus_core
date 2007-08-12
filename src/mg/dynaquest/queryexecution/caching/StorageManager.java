@@ -164,6 +164,13 @@ public class StorageManager implements Replacement, Invalidation {
 			 */
 
 			for (SDFSimplePredicate predicate : constraintFormula) {
+				String value = null;
+				if (predicate instanceof SDFStringPredicate) {
+					value = predicate.getValue().getString();
+				} else if (predicate instanceof SDFNumberPredicate) {
+					value = String.valueOf(predicate.getValue().getDouble());
+				}
+				
 				sql = "INSERT INTO ConstraintFormulae(ParentId, PredicateName, Operator, Value, Type) VALUES "
 						+ "("
 						+ semanticRegionId
@@ -172,7 +179,7 @@ public class StorageManager implements Replacement, Invalidation {
 						+ "','"
 						+ predicate.getCompareOp().toString()
 						+ "','"
-						+ predicate.getValue().getString()
+						+ value
 						+ "','"
 						+ predicate.getAttribute().getDatatype().getURI(false)
 						+ "')";
@@ -477,7 +484,11 @@ public class StorageManager implements Replacement, Invalidation {
 
 			pstmt = dbConnection.prepareStatement(sql);
 			pstmt.setString(1, predicate.getAttribute().getURI(false));
-			pstmt.setString(2, predicate.getValue().getString());
+			if (predicate instanceof SDFStringPredicate) {
+				pstmt.setString(2, predicate.getValue().getString());
+			} else if (predicate instanceof SDFNumberPredicate) {
+				pstmt.setString(2, String.valueOf(predicate.getValue().getDouble()));
+			}
 
 			rs = pstmt.executeQuery();
 

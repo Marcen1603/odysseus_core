@@ -28,6 +28,7 @@ import mg.dynaquest.queryoptimization.trafo.ProcessPlanTransform;
 import mg.dynaquest.queryoptimization.trafo.RelationalFullProcessPlanTransform;
 import mg.dynaquest.sourcedescription.sdf.query.SDFQuery;
 import mg.dynaquest.sourcedescription.sdf.query.SDFQueryFactory;
+import mg.dynaquest.sourcedescription.sdf.schema.SDFConstant;
 import mg.dynaquest.sourcedescription.sdm.RelationalSourceDescriptionManager;
 import mg.dynaquest.sourcedescription.sdm.SourceDescriptionManager;
 import mg.dynaquest.sourceselection.AnnotatedPlan;
@@ -210,6 +211,7 @@ public class DynaQuest {
             ProcessPlanTransform.dumpPlan(p.getAccessPlan(), "",dumpedPlan);
             logger.info(i+++""+dumpedPlan.toString());
         }
+        
 		return accessPlans;
 	}
     

@@ -37,6 +37,8 @@ public abstract class SDFConstant extends SDFSchemaElement {
 		ret.append(" Konstantenwert:");
 		if (value != null)
 			ret.append(value.toString());
+		if (doubleValue != null)
+			ret.append(doubleValue.toString()+ " (double)");
 		return ret.toString();
 	}
 	
