@@ -30,6 +30,11 @@ public class SDFQuery extends SDFElement {
 	private static final long serialVersionUID = 8701378646907056999L;
 
 	/**
+	 * ID der aktuellen Sitzung
+	 */
+	private String sessionId = null;
+	
+	/**
 	 * @uml.property name="returnAttributes"
 	 * @uml.associationEnd multiplicity="(1 1)"
 	 */
@@ -420,5 +425,13 @@ public class SDFQuery extends SDFElement {
 			simplesPredicates.addAll(getQueryPredicatesForAttribute((SDFAttribute)att));
 		}
 		return simplesPredicates;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 }

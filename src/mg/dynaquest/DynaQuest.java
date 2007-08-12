@@ -293,11 +293,11 @@ public class DynaQuest {
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1.sdf";
 //        String queryURI = "http://134.106.144.4/~codey/Query1.sdf"; /* Peter Barreto */
 //        String queryURI = "http://134.106.144.4/~codey/Query5.sdf"; /* Paul Barreto */
-//        String queryURI = "http://134.106.144.4/~codey/Query2.sdf"; /* Vknr. > 3500*/
+        String queryURI = "http://134.106.144.4/~codey/Query2.sdf"; /* Vknr. > 3500*/
 //        String queryURI = "http://134.106.144.4/~codey/Query3.sdf"; /* Peter */
 //        String queryURI = "http://134.106.144.4/~codey/Query4.sdf"; /* Hausnummer = 508*/
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/QueryBenj1.sdf";
-        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1Full.sdf"; /* Barreto */
+//        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1Full.sdf"; /* Barreto */
         //String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1mitJoin.sdf";
 
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/QueryOnSource4.sdf";
