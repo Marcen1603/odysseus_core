@@ -487,7 +487,7 @@ public class StorageManager implements Replacement, Invalidation {
 			if (predicate instanceof SDFStringPredicate) {
 				pstmt.setString(2, predicate.getValue().getString());
 			} else if (predicate instanceof SDFNumberPredicate) {
-				pstmt.setString(2, String.valueOf(predicate.getValue().getDouble()));
+				pstmt.setDouble(2, predicate.getValue().getDouble());
 			}
 
 			rs = pstmt.executeQuery();
