@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 public class CachingPO extends UnaryPlanOperator {
 
 	/*
-	 * TODO: - Konfiguration in Dynaquest File auslagern - Sessions
+	 * TODO: - Konfiguration in Dynaquest File auslagern
 	 */
 
 	/**
