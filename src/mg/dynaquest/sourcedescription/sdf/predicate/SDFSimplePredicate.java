@@ -22,6 +22,17 @@ public abstract class SDFSimplePredicate extends SDFPredicate {
 	 */
 	private SDFAttributeList allAttributes;
 
+	/* Eine rudimentäre Equals Funktion. Besser als nichts, aber nicht viel besser. */
+	public boolean equals(Object obj) {
+		if (obj instanceof SDFSimplePredicate) {
+			SDFSimplePredicate predicate = (SDFSimplePredicate) obj;
+			if (predicate.getAttribute().getURI(false) == this.getAttribute().getURI(false) && predicate.getValue().toString() == this.getValue().toString()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * 
 	 * @return Das negierte Prädikat
@@ -133,7 +144,7 @@ public abstract class SDFSimplePredicate extends SDFPredicate {
 	 */
 	public boolean contains(SDFSimplePredicate predicate) {
 
-		/* Attribute und Operatoren müssen identisch sein */
+		/* Attributsname und Operatoren müssen identisch sein */
 		if (this.getAttribute().getURI(false).equals(predicate.getAttribute()
 				.getURI(false))
 				&& this.getCompareOp().toString().equals(predicate.getCompareOp().toString())) {
@@ -142,9 +153,8 @@ public abstract class SDFSimplePredicate extends SDFPredicate {
 			 * Handelt es sich um einen = oder != Operator, so muss Wert gleich
 			 * sein
 			 */
-			if (this.getCompareOp().toString().equals(new SDFEqualOperator().toString())
-					|| this.getCompareOp().toString().equals(
-							new SDFUnequalOperator().toString())) {
+			if (this.getCompareOp() instanceof SDFEqualOperator
+					|| this.getCompareOp() instanceof SDFUnequalOperator) {
 				if (this.getValue().equals(predicate.getValue())) {
 					return true;
 				}
@@ -156,18 +166,15 @@ public abstract class SDFSimplePredicate extends SDFPredicate {
 				 */
 			} else {
 				/* > und >= */
-				if (this.getCompareOp().equals(new SDFGreaterThanOperator())
-						|| this.getCompareOp().equals(
-								new SDFGreaterOrEqualThanOperator())) {
+				if (this.getCompareOp() instanceof SDFGreaterThanOperator
+						|| this.getCompareOp() instanceof SDFGreaterOrEqualThanOperator) {
 					if (this.getValue().getDouble() <= predicate.getValue()
 							.getDouble()) {
 						return true;
 					}
 					/* < und <= */
-				} else if (this.getCompareOp().equals(
-						new SDFLowerThanOperator())
-						|| this.getCompareOp().equals(
-								new SDFLowerOrEqualThanOperator())) {
+				} else if (this.getCompareOp() instanceof SDFLowerThanOperator 
+						|| this.getCompareOp() instanceof SDFLowerOrEqualThanOperator) {
 					if (this.getValue().getDouble() >= predicate.getValue()
 							.getDouble()) {
 						return true;

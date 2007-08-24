@@ -190,7 +190,7 @@ public class CachingPO extends UnaryPlanOperator {
 					matchingRegions);
 
 			/*
-			 * Wenn predicate nicht null ist, so handelt es sich um Disjunktheit
+			 * Wenn predicates nicht null ist, so handelt es sich um Disjunktheit
 			 * oder Schnitt
 			 */
 			if (predicates != null) {

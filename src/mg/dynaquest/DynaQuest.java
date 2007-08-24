@@ -302,9 +302,9 @@ public class DynaQuest {
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1.sdf";
 //        String queryURI = "http://134.106.144.4/~codey/Query1.sdf"; /* Peter Barreto */
 //        String queryURI = "http://134.106.144.4/~codey/Query5.sdf"; /* Paul Barreto */
-//        String queryURI = "http://134.106.144.4/~codey/Query10.sdf"; /* Barreto ^ PLZ > 55000 ~ 500 */
+        String queryURI = "http://134.106.144.4/~codey/Query10.sdf"; /* Barreto ^ PLZ > 55000 ~ 500 */
 //        String queryURI = "http://134.106.144.4/~codey/Query11.sdf"; /* Barreto ^ PLZ > 80000 ~ 200 */
-        String queryURI = "http://134.106.144.4/~codey/Query12.sdf"; /* Barreto ^ PLZ > 90000 ~ 100 */
+//        String queryURI = "http://134.106.144.4/~codey/Query12.sdf"; /* Barreto ^ PLZ > 90000 ~ 100 */
 //        String queryURI = "http://134.106.144.4/~codey/Query13.sdf"; /* Barreto ^ PLZ > 35000 ~  */
 //        String queryURI = "http://134.106.144.4/~codey/Query3.sdf"; /* Peter */
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/QueryBenj1.sdf";

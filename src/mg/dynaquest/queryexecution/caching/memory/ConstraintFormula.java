@@ -187,7 +187,7 @@ public class ConstraintFormula extends ArrayList<SDFSimplePredicate> {
 		 */
 		if (this.size() <= queryPredicates.size()) {
 			for (SDFSimplePredicate queryPredicate : queryPredicates) {
-				if (containmentMap.get(queryPredicate) == null) {
+				if (containmentMap.get(queryPredicate) == null) { 
 					contained = false;
 					break;
 				}
