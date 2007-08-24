@@ -8,8 +8,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -188,10 +190,14 @@ public class DynaQuest {
 	        Object o = null;
 	        int r=0;
 	        while ((o = p.next(dummy, -1))!=null){
-	        	System.out.println(o);
+	        	if (r==0) {
+	        		logger.info("Time to First Tuple: " + Calendar.getInstance().getTimeInMillis());
+	        	}
+//	        	System.out.println(o); DISABLED FOR MEASURING CACHE TIME
 	        	r++;
 	        }
 	        logger.info(r+ " Objekte gelesen");
+	        logger.info("UNIX Timestamp: " + Calendar.getInstance().getTimeInMillis());
 	        p.close(dummy);
         poManager.stopSubtree(p);
         poManager.stop();
@@ -248,7 +254,8 @@ public class DynaQuest {
             for (int i=0;i<noOfRuns || noOfRuns==-1;i++){
             	processQuery(q,planToExecute, bufferSize);
                 try {
-		        	logger.info("Warte "+waitSeconds+" Sekunden ....");
+		        	logger.info("Time to Finish: " + Calendar.getInstance().getTimeInMillis());
+                	logger.info("Warte "+waitSeconds+" Sekunden ....");
 		        	Thread.sleep(waitSeconds * 1000);
                 } catch (InterruptedException e) {
                 	e.printStackTrace();
@@ -295,9 +302,11 @@ public class DynaQuest {
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1.sdf";
 //        String queryURI = "http://134.106.144.4/~codey/Query1.sdf"; /* Peter Barreto */
 //        String queryURI = "http://134.106.144.4/~codey/Query5.sdf"; /* Paul Barreto */
-        String queryURI = "http://134.106.144.4/~codey/Query2.sdf"; /* Vknr. > 3500*/
+//        String queryURI = "http://134.106.144.4/~codey/Query10.sdf"; /* Barreto ^ PLZ > 55000 ~ 500 */
+//        String queryURI = "http://134.106.144.4/~codey/Query11.sdf"; /* Barreto ^ PLZ > 80000 ~ 200 */
+        String queryURI = "http://134.106.144.4/~codey/Query12.sdf"; /* Barreto ^ PLZ > 90000 ~ 100 */
+//        String queryURI = "http://134.106.144.4/~codey/Query13.sdf"; /* Barreto ^ PLZ > 35000 ~  */
 //        String queryURI = "http://134.106.144.4/~codey/Query3.sdf"; /* Peter */
-//        String queryURI = "http://134.106.144.4/~codey/Query4.sdf"; /* Hausnummer = 508*/
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/QueryBenj1.sdf";
 //        String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1Full.sdf"; /* Barreto */
         //String queryURI = "http://www-is.offis.uni-oldenburg.de/~grawund/rdf/2004/08/Query1mitJoin.sdf";
@@ -325,7 +334,9 @@ public class DynaQuest {
         	waitSeconds = Integer.parseInt(args[4]);
         	bufferSize = Integer.parseInt(args[5]);
         }
+        
         logger.info("Starte DynaQuest");
+        logger.info("UNIX Timestamp: " + Calendar.getInstance().getTimeInMillis());
         DynaQuest dq = new DynaQuest(writeToDB);
         //dq.start();    
         SDFQueryFactory factory = new SDFQueryFactory(dq.getSdm());

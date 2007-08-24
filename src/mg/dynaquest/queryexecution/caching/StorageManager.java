@@ -428,7 +428,7 @@ public class StorageManager implements Replacement, Invalidation {
 	 */
 	private HashMap getTupleAttributes(int id) throws SQLException {
 		ResultSet tuples;
-		String sql = "SELECT `Attribute`, `Value`, `DataType` FROM `DataTuples` WHERE `TupleId` = (SELECT `TupleId` FROM `DataTuples` WHERE `Id` = ?)";
+		String sql = "SELECT `Attribute`, `Value`, `DataType` FROM `DataTuples` WHERE `TupleId` = ?";
 		PreparedStatement pstmt = dbConnection.prepareStatement(sql);
 		pstmt.setInt(1, id);
 		tuples = pstmt.executeQuery();
@@ -452,7 +452,7 @@ public class StorageManager implements Replacement, Invalidation {
 	 * @param matchingRegions
 	 * @param queryPredicateList
 	 *            Anfrageprädiakte
-	 * @return IDs von Tupeln, welche zu Anfrageprädikat und Quelle passende
+	 * @return TupleIDs von Tupeln, welche zu Anfrageprädikat und Quelle passende
 	 *         Inhalte enthalten
 	 * @throws SQLException
 	 */
@@ -477,7 +477,7 @@ public class StorageManager implements Replacement, Invalidation {
 		 */
 		for (SDFSimplePredicate predicate : queryPredicateList) {
 			String predicateOperator = predicate.getCompareOp().toString();
-			String sql = "SELECT `Id` FROM `DataTuples` WHERE ("
+			String sql = "SELECT `TupleId` FROM `DataTuples` WHERE ("
 					+ matchingRegionsSQLString
 					+ ") AND `Attribute` = ? AND `Value` " + predicateOperator
 					+ " ?";
@@ -498,7 +498,7 @@ public class StorageManager implements Replacement, Invalidation {
 			HashSet<Integer> tupleSet = new HashSet<Integer>();
 
 			while (rs.next()) {
-				tupleSet.add(rs.getInt("Id"));
+				tupleSet.add(rs.getInt("TupleId"));
 			}
 
 			pstmt.close();
@@ -509,12 +509,12 @@ public class StorageManager implements Replacement, Invalidation {
 
 		/*
 		 * Durchschnitt von allen Mengen bilden, um Tupel zu finden, die alle
-		 * Prädikate beantworten
+		 * Prädikate beantworten 
 		 */
-
+		
 		if (tupleSets.size() > 1) {
-			for (int i = 0; i < tupleSets.size() - 1; i++) {
-				tupleSets.get(i).retainAll(tupleSets.get(i + 1));
+			for (int i = 1; i < tupleSets.size(); i++) {
+				tupleSets.get(0).retainAll(tupleSets.get(i));
 			}
 		}
 
@@ -598,11 +598,11 @@ public class StorageManager implements Replacement, Invalidation {
 				if (tupleString.equals("")) {
 					tupleString += entry;
 				} else {
-					tupleString += " OR `Id` = " + entry;
+					tupleString += " OR `TupleId` = " + entry;
 				}
 			}
 
-			String sql = "SELECT `ParentId` FROM `DataTuples` WHERE `Id` = "
+			String sql = "SELECT `ParentId` FROM `DataTuples` WHERE `TupleId` = "
 					+ tupleString;
 			PreparedStatement pstmt = dbConnection.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery();

@@ -69,7 +69,7 @@ public abstract class FullProcessPlanTransform extends ProcessPlanTransform {
     			FatherChildConnection con2 = getNextLogicalOperatorWithoutLogicalChildren(currentPlan);
     			PlanOperator newPO;
 				try {
-					newPO = trafoRule.transform(con2.child, i);
+					newPO = trafoRule.transform(con2.child, i); /* transformiert logischen PlanOperator in physischen Wrapper */
 				} catch (TransformationNotApplicableExeception e) {
 					// Es sind nicht immer alle Transformationen anwendbar 
 					// dann einfach weiter machen

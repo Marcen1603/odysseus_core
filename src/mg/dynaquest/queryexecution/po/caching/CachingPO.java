@@ -6,6 +6,7 @@ package mg.dynaquest.queryexecution.po.caching;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
@@ -66,6 +67,8 @@ public class CachingPO extends UnaryPlanOperator {
 	private ConstraintFormulaFilter remainderFilter;
 
 	private ArrayList<DataTuple> probeQuery;
+
+	private boolean firstTime = true;
 
 	public CachingPO() {
 		super();
@@ -159,13 +162,13 @@ public class CachingPO extends UnaryPlanOperator {
 		/* Hole Instanzen des Cache- und Storage-Managers */
 		this.cacheManager = CacheManager.getInstance();
 		this.storageManager = StorageManager.getInstance();
-
+		
 		// /* Resettet Cache Memory (Zu Testzwecken) */
-		// try {
-		// storageManager.flush();
-		// } catch (SQLException e) {
-		// e.printStackTrace();
-		// }
+//		 try {
+//		 storageManager.flush();
+//		 } catch (SQLException e) {
+//		 e.printStackTrace();
+//		 }
 
 		/* Session ID setzen */
 		storageManager.setSessionId(algebraPO.getSessionId());
@@ -378,11 +381,15 @@ public class CachingPO extends UnaryPlanOperator {
 	protected Object process_next() throws POException, TimeoutException {
 
 		probeQueryTupleCounter++;
-
+		
 		/* Wenn noch Einträge in der Probe Query sind, liefere diese zurück */
 		if (probeQueryTupleIds.size() > probeQueryTupleCounter) {
 			return getNextProbeQueryTuple();
 		} else {
+			if (firstTime) {
+				logger.info("Time to Remainder Query: " + Calendar.getInstance().getTimeInMillis());
+				firstTime = false;
+			}
 			/*
 			 * Wenn kein total Containment vorliegt, Tupel aus QuellSystem
 			 * extrahieren
@@ -409,7 +416,7 @@ public class CachingPO extends UnaryPlanOperator {
 	 */
 	private RelationalTuple getNextRemainderQueryTuple() throws POException,
 			TimeoutException {
-		logger.info("Cache Miss!");
+//		logger.info("Cache Miss!");
 
 		/* Tupel initialisieren */
 		RelationalTuple tuple = new RelationalTuple(0);
@@ -452,7 +459,7 @@ public class CachingPO extends UnaryPlanOperator {
 	}
 
 	private RelationalTuple getNextProbeQueryTuple() {
-		logger.info("Cache Hit!");
+//		logger.info("Cache Hit!");
 
 		RelationalTuple relTuple = storageManager.getProbeQueryTuple(
 				probeQueryTupleIds.get(probeQueryTupleCounter), this
