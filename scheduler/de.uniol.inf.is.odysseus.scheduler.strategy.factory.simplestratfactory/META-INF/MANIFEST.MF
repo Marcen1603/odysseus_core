@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Simplestratfactory
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.monitoring.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.plan,
+ de.uniol.inf.is.odysseus.scheduler,
+ de.uniol.inf.is.odysseus.scheduler.strategy,
+ de.uniol.inf.is.odysseus.scheduler.strategy.factory,
+ org.osgi.service.component,
+ org.slf4j
+Service-Component: OSGI-INF/BiggestQueueFactory.xml, OSGI-INF/RoundRobinIterFactory.xml, OSGI-INF/RoundRobinNoIterFactory.xml

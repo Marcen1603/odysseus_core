@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager.SingleSchedulerManager">
+   <implementation class="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager.SingleSchedulerManager"/>
+   <reference bind="bindSchedulerFactory" cardinality="1..n" interface="de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory" name="ISchedulerFactory" policy="dynamic" unbind="unbindSchedulerFactory"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager"/>
+   </service>
+   <reference bind="bindSchedulingStrategyFactory" cardinality="1..n" interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory" name="ISchedulingStrategyFactory" policy="dynamic" unbind="unbindSchedulingStrategyFactory"/>
+</scr:component>

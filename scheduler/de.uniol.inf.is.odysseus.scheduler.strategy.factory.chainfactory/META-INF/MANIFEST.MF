@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Chainfactory
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.monitoring.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.plan,
+ de.uniol.inf.is.odysseus.scheduler,
+ de.uniol.inf.is.odysseus.scheduler.strategy,
+ de.uniol.inf.is.odysseus.scheduler.strategy.factory,
+ org.osgi.service.component
+Service-Component: OSGI-INF/ChainIterFactory.xml, OSGI-INF/ChainNoIterFactory.xml
