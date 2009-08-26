@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Priority_interval
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.priority_interval;singleton:=true
+Bundle-Version: 1.0.0
+Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.priority,
+ de.uniol.inf.is.odysseus.priority_interval
