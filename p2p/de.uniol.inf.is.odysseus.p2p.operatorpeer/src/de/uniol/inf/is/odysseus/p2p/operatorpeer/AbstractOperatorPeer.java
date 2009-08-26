@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer;
 import java.util.ArrayList;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.base.ITransformation;
+import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.IPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
@@ -11,16 +13,12 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.strategy.bidding.IBiddingStrategy;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.priority.Priority;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
-import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.roundrobinfactory.RoundRobinFactory;
-import de.uniol.inf.is.odysseus.priority.Priority;
-import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadScheduler;
-import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.transformation.drools.DroolsTransformation;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 public abstract class AbstractOperatorPeer implements IPeer {
 
@@ -140,7 +138,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 	}
 
 	private void initSchedulerStrategy() {
-		this.schedulerStrategy = new RoundRobinFactory();
+		//this.schedulerStrategy = new RoundRobinFactory();
 	}
 
 	protected abstract void initSocketServerListener(AbstractOperatorPeer aPeer);
