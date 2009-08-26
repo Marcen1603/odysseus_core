@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+	<!ENTITY rdf  'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+	<!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+	<!ENTITY xsd  'http://www.w3.org/2001/XMLSchema#'>
+	<!ENTITY cim  'http://www.student.uni-oldenburg.de/mart.koehler/2008/01/cim#'>
+	<!ENTITY tsda 'http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda#'>
+]>
+<rdf:RDF xml:base="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda_instance#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsd ="http://www.w3.org/2001/XMLSchema#" xmlns:cim="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/cim#" xmlns:tsda="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda#">
+<!-- Testinstanzen nach TSDA Spezifikation -->
+
+<tsda:Node rdf:ID="Node_0"/>
+
+<tsda:Node rdf:ID="Node_1">
+	<tsda:parentNode rdf:resource="#Node_0"/>
+	<tsda:refersTo>
+		<cim:Company rdf:ID="_1" rdfs:label="EinEnergieversorger">
+			<cim:Operates_PSRs rdf:resource="#_2"/>
+		</cim:Company>	
+	</tsda:refersTo>
+</tsda:Node>
+<tsda:Node rdf:ID="Node_2">
+	<tsda:parentNode rdf:resource="#Node_1"/>
+	<tsda:refersTo>
+		<cim:HydroPowerPlant rdf:ID="_2" rdfs:label="EinWasserkraftwerk">
+			<cim:PowerSystemResource.Contains_Measurements rdf:resource="#_3"/>		
+		</cim:HydroPowerPlant>
+	</tsda:refersTo>
+</tsda:Node>
+<tsda:Node rdf:ID="Node_3">
+	<tsda:parentNode rdf:resource="#Node_2"/>
+	<tsda:refersTo>
+		<cim:StringMeasurement rdf:ID="_3" rdfs:label="Messung">
+			<cim:Measurement.MeasurementType rdf:resource="#_4"/>
+			<cim:StringMeasurement.Contains_MeasurementValues  rdf:resource="#_5"/> 
+		</cim:StringMeasurement>
+	</tsda:refersTo>
+</tsda:Node>
+<tsda:Node rdf:ID="Node_4">
+	<tsda:parentNode rdf:resource="#Node_3"/>
+	<tsda:refersTo>
+		<cim:MeasurementType rdf:ID="_4" rdfs:label="Messungstyp">
+			<cim:MeasurementType.UnitTypes rdf:resource="#_6"/>
+		</cim:MeasurementType>			
+	</tsda:refersTo>
+</tsda:Node>
+<tsda:Node rdf:ID="Node_5">
+	<tsda:parentNode rdf:resource="#Node_4"/>
+	<tsda:refersTo>
+		<cim:UnitOfMeasure rdf:ID="_6" rdfs:label="Einheit">
+			<cim:UnitOfMeasure.unitSymbol rdf:resource="#Item_8"/>
+		</cim:UnitOfMeasure>
+	</tsda:refersTo>
+	<tsda:hasItem rdf:resource="#Item_8"/>
+</tsda:Node>
+
+
+
+<tsda:Item rdf:ID="Item_8" />
+
+
+<tsda:Node rdf:ID="Node_6">
+	<tsda:parentNode rdf:resource="#Node_3"/>
+	<tsda:refersTo>
+		<cim:StringMeasurementValue rdf:ID="_5" rdfs:label="Messwert">
+			<cim:StringMeasurementValue.value rdf:resource="#Item_9"/>
+		</cim:StringMeasurementValue>		
+	</tsda:refersTo>
+	<tsda:hasItem rdf:resource="#Item_9"/>
+</tsda:Node>
+<tsda:Item rdf:ID="Item_9">
+	<tsda:hasItemAttribute>
+		<tsda:ItemAttribute rdf:ID="_006" rdfs:label="Version">
+			<tsda:hasItemAttributeValue>3</tsda:hasItemAttributeValue>
+			<tsda:hasItemAttributeDefinition>Integer</tsda:hasItemAttributeDefinition>
+		</tsda:ItemAttribute>
+	</tsda:hasItemAttribute>
+</tsda:Item>
+
+<tsda:Aggregate rdf:ID="_123" rdfs:label="Summe"/>
+<tsda:Aggregate rdf:ID="_124" rdfs:label="Durchschnitt"/>
+<tsda:Aggregate rdf:ID="_125" rdfs:label="Maximum"/>
+<tsda:Aggregate rdf:ID="_126" rdfs:label="Minimum"/>
+</rdf:RDF>

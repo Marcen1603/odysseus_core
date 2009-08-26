@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Ontologie Schema und Individual Konfiguration</comment>
+<entry key="instance">/home/mart/Development/hsda_tsda_data/schemata/tsda_instance.rdf</entry> 
+<entry key="protocolNamespace">http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda</entry>
+<entry key="instanceNamespace">http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda_instance</entry>
+<entry key="cimNamespace">http://www.student.uni-oldenburg.de/mart.koehler/2008/01/cim</entry>
+<entry key="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/cim">file:/home/mart/Development/hsda_tsda_data/schemata/cim.legacy-rdfs</entry>
+<entry key="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda">file:/home/mart/Development/hsda_tsda_data/schemata/tsda.rdfs</entry>
+</properties>

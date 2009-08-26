@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+	<!ENTITY rdf  'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+	<!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+	<!ENTITY xsd  'http://www.w3.org/2001/XMLSchema#'>
+	<!ENTITY cim  'http://www.student.uni-oldenburg.de/mart.koehler/2008/01/cim#'>
+	<!ENTITY mult 'http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#'>
+	<!ENTITY tsda 'http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda#'>
+]>
+<rdf:RDF xml:base="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda#" xmlns:tsda="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/tsda#" xmlns:mult="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsd ="http://www.w3.org/2001/XMLSchema#" xmlns:cim="http://www.student.uni-oldenburg.de/mart.koehler/2008/01/cim#">
+
+<rdfs:Class rdf:ID="Item"/>
+<rdfs:Class rdf:ID="ItemAttribute"/>
+<rdfs:Class rdf:ID="Aggregate"/>
+<rdfs:Property rdf:ID="hasItemAttribute">
+  	<rdfs:range rdf:resource="#ItemAttribute"/>
+	<rdfs:domain rdf:resource="#Item"/>
+	<mult:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#1:1"/>
+</rdfs:Property>
+<rdfs:Property rdf:ID="hasItemAttributeValue">
+  	<rdfs:range rdf:resource="&rdfs;Literal"/>
+	<rdfs:domain rdf:resource="#ItemAttribute"/>
+	<mult:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#1:N"/>
+</rdfs:Property>
+<rdfs:Property rdf:ID="hasItemAttributeDefinition">
+  	<rdfs:range rdf:resource="&rdfs;Literal"/>
+	<rdfs:domain rdf:resource="#ItemAttribute"/>
+	<mult:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#1:1"/>
+</rdfs:Property>
+
+<rdfs:Property rdf:ID="pathname">
+	<rdfs:domain rdf:resource="#Node" />
+  	<rdfs:domain rdf:resource="#Item"/>
+	<rdfs:range rdf:resource="&rdfs;Literal"/>
+        <mult:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#1:1"/>
+</rdfs:Property>
+
+<rdfs:Class rdf:ID="Node">
+</rdfs:Class>
+<rdfs:Property rdf:ID="parentNode">
+	<rdfs:domain rdf:resource="#Node"/>
+	<rdfs:range rdf:resource="#Node"/>
+	<mult:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#1:1"/>
+</rdfs:Property>
+<rdfs:Property rdf:ID="hasItem">
+  	<rdfs:range rdf:resource="#Item"/>
+	<rdfs:domain rdf:resource="#Node"/>
+	<mult:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#1:1"/>
+</rdfs:Property>
+
+<rdfs:Property rdf:ID="refersTo">
+	<rdfs:domain rdf:resource="#Node"/>
+	<rdfs:range rdf:resource="&rdfs;Resource"/>
+	<mult:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#1:1"/>
+</rdfs:Property>
+</rdf:RDF>

@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cims="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#MeasurementValue.MeasurementValueQuality">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#aggregateOf"/>
+    <rdfs:comment>A MeasurementValue has a MeasurementValueQuality associated with it.</rdfs:comment>
+    <rdfs:label>MeasurementValueQuality</rdfs:label>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementValueQuality"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementValue"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#StringMeasurementValue.MemberOf_Measurement">
+    <rdfs:comment>Measurement to which this value is connected.</rdfs:comment>
+    <rdfs:label>MemberOf_Measurement</rdfs:label>
+    <cims:inverseRoleName rdf:resource="http://iec.ch/TC57/CIM-Snippet#StringMeasurement.Contains_MeasurementValues"/>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#StringMeasurement"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementValue"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Measurement">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Meas"/>
+    <rdfs:comment>A Measurement represents any measured, calculated or non-measured non-calculated quantity. Any piece of equipment may contain Measurements, e.g. a substation may have temperature measurements and door open indications, a transformer may have oil temperature and tank pressure measurements, a bay may contain a number of  power flow measurements and a Breaker may contain a switch status measurement. 
+The PSR - Measurement association is intended to capture this use of Measurement and is included in the naming hierarchy based on EquipmentContainer. The naming hierarchy typically has Measurements as leafs, e.g. Substation-VoltageLevel-Bay-Switch-Measurement.
+Some Measurements represent quantities related to a particular sensor location in the network, e.g. a voltage transformer (PT) at a busbar or a current transformer (CT) at the bar between a breaker and an isolator. The sensing position is not captured in the PSR - Measurement association. Instead it is captured by the Measurement - Terminal association that is used to define the sensing location in the network topology. The location is defined by the connection of the Terminal to ConductingEquipment. 
+Two possible paths exist:
+1) Measurement-Terminal- ConnectivityNode-Terminal-ConductingEquipment
+2) Measurement-Terminal-ConductingEquipment
+Alternative 2 is the only allowed use. 
+When the sensor location is needed both Measurement-PSR and Measurement-Terminal are used. The Measurement-Terminal association is never used alone.</rdfs:comment>
+    <rdfs:label>Measurement</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#PowerSystemResource">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Core"/>
+    <rdfs:comment>A power system resource can be an item of equipment such as a Switch, an EquipmentContainer containing many individual items of equipment such as a 
+Substation, or an organisational entity such as Company or SubControlArea.  This provides for the nesting of collections of PowerSystemResources within other PowerSystemResources. For example, a Switch could be a member of a Substation and a Substation could be a member of a division of a Company.</rdfs:comment>
+    <rdfs:label>PowerSystemResource</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#MeasurementValue.timeStamp">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#attribute"/>
+    <rdfs:comment>The time when the value was last updated</rdfs:comment>
+    <rdfs:label>timeStamp</rdfs:label>
+    <cims:dataType rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementValue"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Measurement.MeasurementType">
+    <rdfs:comment>The type for the Measurement</rdfs:comment>
+    <rdfs:label>MeasurementType</rdfs:label>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementType"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#Measurement"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#UnitOfMeasure">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Metering"/>
+    <rdfs:comment>While there may be many aspects to describing a measurement, three of them are very popular and are clustered together as the "UnitType". The MeasurementType element can be used to indicate flow direction as well as the type of measurement. Possible enumerations include: NetEnergy, ForwardEnergy, ReverseEnergy, TotalEnergy, ForwardMaxDemand, etc. The Unit name goes on to further qualify the energy (or power) as being real (Wh, W) or reactive (VArh, VAr). If it is needed, the Unit.Multiplier element is available to carry the metric prefix for the unit of measure (e.g. "k", "M".)</rdfs:comment>
+    <rdfs:label>UnitOfMeasure</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Measurement.MemberOf_PSR">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#ofAggregate"/>
+    <rdfs:comment>The PowerSystemResource that contains the Measurement in the naming hierarchy</rdfs:comment>
+    <rdfs:label>MemberOf_PSR</rdfs:label>
+    <cims:inverseRoleName rdf:resource="http://iec.ch/TC57/CIM-Snippet#PowerSystemResource.Contains_Measurements"/>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#PowerSystemResource"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#Measurement"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#StringMeasurement">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#Measurement"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Meas"/>
+    <rdfs:comment>StringMeasurement represents a measurement with values of type string.</rdfs:comment>
+    <rdfs:label>StringMeasurement</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#MeasurementType">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Meas"/>
+    <rdfs:comment>Specifies the type of Measurement, e.g. IndoorTemperature, OutDoorTemperature, BusVoltage, GeneratorVoltage, LineFlow etc. The MeasurementType.name shall be unique among all specified types and describe the type. The MeasurementType.aliasName is meant to be used for localization.</rdfs:comment>
+    <rdfs:label>MeasurementType</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Company">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Core"/>
+    <rdfs:comment>A company is a legal entity that owns and operates power system resources and is a party to interchange and transmission contracts.</rdfs:comment>
+    <rdfs:label>Company</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Package_IEC61968">
+    <rdfs:comment>The IEC 61968 subdirectories of the CIM are developed, standardized and maintained by IEC TC57 Working Group 14: System Interfaces for Distribution Management (WG14).</rdfs:comment>
+    <rdfs:label>IEC61968</rdfs:label>
+    <rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#StringMeasurementValue.value">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#attribute"/>
+    <rdfs:comment>The value to supervise.</rdfs:comment>
+    <rdfs:label>value</rdfs:label>
+    <cims:dataType rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#StringMeasurementValue"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#HydroPowerPlant">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#PowerSystemResource"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Production"/>
+    <rdfs:comment>A hydro power station which can generate or pump. When generating, the generator turbines receive there water from an upper reservoir. When pumping, the pumps receive their water from a lower reservoir.</rdfs:comment>
+    <rdfs:label>HydroPowerPlant</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#MeasurementValue">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Meas"/>
+    <rdfs:comment>The current state for a measurement. A state value is an instance of a measurement from a specific source. Measurements can be associated with many state values, each representing a different source for the measurement.</rdfs:comment>
+    <rdfs:label>MeasurementValue</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Company.Operates_PSRs">
+    <rdfs:comment>PowerSystemResources the Company operates.</rdfs:comment>
+    <rdfs:label>Operates_PSRs</rdfs:label>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#PowerSystemResource"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#Company"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..n"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject.pathName">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#attribute"/>
+    <rdfs:comment>The pathname is a system unique name composed from all IdentifiedObject.localNames in a naming hierarchy path from the object to the root.</rdfs:comment>
+    <rdfs:label>pathName</rdfs:label>
+    <cims:dataType rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#MeasurementValueQuality">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Meas"/>
+    <rdfs:comment>Measurement quality flags. Bits 0-10 are defined for substation automation in draft IEC 61850 part 7-3. Bits 11-15 are reserved for future expansion by that document. Bits 16-31 are reserved for EMS applications.</rdfs:comment>
+    <rdfs:label>MeasurementValueQuality</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Package_IEC61970">
+    <rdfs:label>IEC61970</rdfs:label>
+    <rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Seconds">
+    <rdfs:comment>Time, in seconds</rdfs:comment>
+    <rdfs:label>Seconds</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#HydroPowerPlant.dischargeTravelDelay">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#attribute"/>
+    <rdfs:comment>Water travel delay from tailbay to next downstream hydro power station</rdfs:comment>
+    <rdfs:label>dischargeTravelDelay</rdfs:label>
+    <cims:dataType rdf:resource="http://iec.ch/TC57/CIM-Snippet#Seconds"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#HydroPowerPlant"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Package_Core">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_IEC61970"/>
+    <rdfs:comment>Contains the core PowerSystemResource and ConductingEquipment entities shared by all applications plus common collections of those entities. Not all applications require all the Core entities.</rdfs:comment>
+    <rdfs:label>Core</rdfs:label>
+    <rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject.localName">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#attribute"/>
+    <rdfs:comment>The localName is a human readable name of the object. It is only used with objects organized in a naming hierarchy. The simplest naming hierarchy has just one parent (the root) giving a flat naming hierarchy. However, the naming hierarchy usually has several levels, e.g. Substation, VoltageLevel, Equipment etc. Children of the same parent have names that are unique among them. If the uniqueness requirement cannot be met IdentifiedObject.localName shall not be used, use IdentifiedObject.name  instead.</rdfs:comment>
+    <rdfs:label>localName</rdfs:label>
+    <cims:dataType rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#StringMeasurement.Contains_MeasurementValues">
+    <rdfs:comment>The values connected to this measurement.</rdfs:comment>
+    <rdfs:label>Contains_MeasurementValues</rdfs:label>
+    <cims:inverseRoleName rdf:resource="http://iec.ch/TC57/CIM-Snippet#StringMeasurementValue.MemberOf_Measurement"/>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#StringMeasurementValue"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#Measurement"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..n"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Core"/>
+    <rdfs:comment>This is a root class to provide common naming attributes for all classes needing naming attributes</rdfs:comment>
+    <rdfs:label>IdentifiedObject</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Package_Generation">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_IEC61970"/>
+    <rdfs:comment>This package contains packages that have information for Unit Commitment and Economic Dispatch of Hydro and Thermal Generating Units, Load Forecasting, Automatic Generation Control, and Unit Modeling for Dynamic Training Simulator.</rdfs:comment>
+    <rdfs:label>Generation</rdfs:label>
+    <rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Package_Production">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Generation"/>
+    <rdfs:comment>The production package is responsible for classes which describe various kinds of generators. These classes also provide production costing information which is used to economically allocate demand among committed units and calculate reserve quantities.</rdfs:comment>
+    <rdfs:label>Production</rdfs:label>
+    <rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject.name">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#attribute"/>
+    <rdfs:comment>The name is a free text human readable name of the object. It may be non unique and may not correlate to a naming hierarchy.</rdfs:comment>
+    <rdfs:label>name</rdfs:label>
+    <cims:dataType rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#IdentifiedObject"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Quality61850.oldData">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#attribute"/>
+    <rdfs:comment>Measurement value is old and possibly invalid, as it has not been successfully updated during a specified time interval.</rdfs:comment>
+    <rdfs:label>oldData</rdfs:label>
+    <cims:dataType rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementValueQuality"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#StringMeasurementValue">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementValue"/>
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_Meas"/>
+    <rdfs:comment>StringMeasurementValue represents a measurement value of type string.</rdfs:comment>
+    <rdfs:label>StringMeasurementValue</rdfs:label>
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Package_Metering">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_IEC61968"/>
+    <rdfs:label>Metering</rdfs:label>
+    <rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#Package_Meas">
+    <cims:belongsToCategory rdf:resource="http://iec.ch/TC57/CIM-Snippet#Package_IEC61970"/>
+    <rdfs:comment>Contains entities that describe dynamic measurement data exchanged between applications.</rdfs:comment>
+    <rdfs:label>Meas</rdfs:label>
+    <rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#MeasurementType.UnitTypes">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#ofAggregate"/>
+    <rdfs:label>UnitTypes</rdfs:label>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#UnitOfMeasure"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#MeasurementType"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..n"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://iec.ch/TC57/CIM-Snippet#PowerSystemResource.Contains_Measurements">
+    <cims:stereotype rdf:resource="http://langdale.com.au/2005/UML#aggregateOf"/>
+    <rdfs:comment>The Measurements that are included in the naming hierarchy where the PSR is the containing object</rdfs:comment>
+    <rdfs:label>Contains_Measurements</rdfs:label>
+    <cims:inverseRoleName rdf:resource="http://iec.ch/TC57/CIM-Snippet#Measurement.MemberOf_PSR"/>
+    <rdfs:range rdf:resource="http://iec.ch/TC57/CIM-Snippet#Measurement"/>
+    <rdfs:domain rdf:resource="http://iec.ch/TC57/CIM-Snippet#PowerSystemResource"/>
+    <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..n"/>
+    <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </rdf:Description>
+</rdf:RDF>
