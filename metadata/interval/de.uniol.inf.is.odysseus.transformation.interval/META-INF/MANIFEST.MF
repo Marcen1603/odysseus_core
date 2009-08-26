@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Interval
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.interval;singleton:=true
+Bundle-Version: 1.0.5
+Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base.planmanagement,
+ de.uniol.inf.is.odysseus.base.predicate,
+ de.uniol.inf.is.odysseus.intervalapproach.window,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.aggregate,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.description
