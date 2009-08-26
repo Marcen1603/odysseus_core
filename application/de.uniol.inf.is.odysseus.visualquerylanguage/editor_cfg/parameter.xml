@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Operator-List xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="parameterSchema.xsd">
+
+	<sources>
+		<source>
+		<source-name>TestSource1</source-name>
+		<source-type>Type1</source-type>
+		<cparams>
+		<constructParameter>
+			<name>ConParam1</name>
+			<position>1</position>
+			<type>String</type>
+		</constructParameter>
+		
+		<constructParameter>
+			<name>ConParam2</name>
+			<position>2</position>
+			<type>Integer</type>
+		</constructParameter>
+		</cparams>
+		<sparams>
+			<setterParameter>
+				<name>SetParam1</name>
+				<type>Integer</type>
+				<setter>setParam1</setter>
+			</setterParameter>
+		</sparams>
+			
+		</source>
+		
+		<source>
+			<source-name>TestSource2</source-name>
+			<source-type>Type2</source-type>
+			<sparams>
+				<setterParameter>
+					<name>SetParam2</name>
+					<type>Integer</type>
+					<setter>setParam2</setter>
+				</setterParameter>
+			</sparams>
+		</source>
+	
+	</sources>
+	
+	<pipes>
+		<pipe>
+			<pipe-name>TestPipe1</pipe-name>
+			<pipe-type>Type1</pipe-type>
+			<sparams>
+				<setterParameter>
+					<name>Param1</name>
+					<type>Integer</type>
+					<setter>setParam</setter>
+				</setterParameter>
+			</sparams>
+		</pipe>
+	</pipes>
+	
+	<sinks>
+		<sink>
+			<sink-name>TestSink1</sink-name>
+			<sink-type>Type1</sink-type>
+			<cparams>
+				<constructParameter>
+					<name>Param</name>
+					<type>String</type>
+					<position>2</position>
+				</constructParameter>
+			</cparams>
+		</sink>
+		
+		<sink>
+			<sink-name>TestSink2</sink-name>
+			<sink-type>Type2</sink-type>
+		</sink>	
+	</sinks>
+
+</Operator-List>
