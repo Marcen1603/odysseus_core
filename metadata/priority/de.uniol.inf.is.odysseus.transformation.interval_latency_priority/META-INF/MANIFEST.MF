@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Interval_latency_priority
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.interval_latency_priority
+Bundle-Version: 1.0.0
+Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.interval_latency_priority,
+ de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.priority
