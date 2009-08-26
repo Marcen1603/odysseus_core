@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<stateMachine>
+    <consumptionMode>onlyOneMatch</consumptionMode>
+    <initialState>A</initialState>
+    <outputScheme>
+        <entries>
+            <label>Set_C_0_price</label>
+        </entries>
+        <entries>
+            <label>Count_B__</label>
+        </entries>
+    </outputScheme>
+    <states>
+        <state>
+            <accepting>false</accepting>
+            <id>A</id>
+            <transitions>
+                <transition>
+                    <action>consume</action>
+                    <condition>
+                        <label>___bidder == 1</label>
+                    </condition>
+                    <id>0</id>
+                    <nextState>B</nextState>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <accepting>false</accepting>
+            <id>B</id>
+            <transitions>
+                <transition>
+                    <action>consume</action>
+                    <condition>
+                        <label>Set_B_0_auction == ___auction &amp;&amp; ___price &lt; 200</label>
+                    </condition>
+                    <id>0</id>
+                    <nextState>B</nextState>
+                 </transition>
+                 <transition>
+                    <action>discard</action>
+                    <condition>
+                        <label>Set_B_0_auction != ___auction</label>
+                    </condition>
+                    <id>1</id>
+                    <nextState>B</nextState>
+                </transition>
+                <transition>
+                    <action>consume</action>
+                    <condition>
+                        <label>Set_B_0_auction == ___auction &amp;&amp; ___price &gt;= 200</label>
+                    </condition>
+                    <id>2</id>
+                    <nextState>C</nextState>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <accepting>true</accepting>
+            <id>C</id>
+            <transitions/>
+        </state>
+    </states>
+    <symTabScheme>
+        <entries>
+            <attribute>auction</attribute>
+            <stateIdentifier>B</stateIdentifier>
+            <index>0</index>
+            <operation>Set</operation>
+        </entries>
+        <entries>
+            <attribute></attribute>
+            <stateIdentifier>B</stateIdentifier>
+            <index>-1</index>
+            <operation>Count</operation>
+        </entries>
+        <entries>
+            <attribute>price</attribute>
+            <stateIdentifier>C</stateIdentifier>
+            <index>0</index>
+            <operation>Set</operation>
+        </entries>
+    </symTabScheme>
+</stateMachine>
