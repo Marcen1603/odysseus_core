@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nexmark Plug-in
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.nexmark
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.nexmark.Activator
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.xml,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.6"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: xalan.jar,
+ .
+Export-Package: de.uniol.inf.is.odysseus.nexmark.generator

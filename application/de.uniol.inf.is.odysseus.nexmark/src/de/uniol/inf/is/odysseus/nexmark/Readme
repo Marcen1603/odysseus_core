@@ -1,0 +1,56 @@
+The here used version of the NEXMark Generator is a modified version of the NEXMark Benchmark found at http://datalab.cs.pdx.edu/niagara/NEXMark/. Instead of generating XML documents it generates RelationalTuple structures.
+
+The NEXMark Generator simulates an auction house. It generates the streams people, auctions and bids. The auctions are created to static categories.
+
+Configuration:
+The configuration can be changed in the NEXMarkGeneratorConfiguration.properties file.
+
+Usage:
+The Generator can either be instantiated or used as an external sever.
+
+As an instance:
+
+   1. create and start the server with one of the constructors
+    NexmarkServer server = new NexmarkServer(<startPort>);
+    NexmarkServer server = new NexmarkServer(<startPort>, <elementLimit>);
+    NexmarkServer server = new NexmarkServer(<personPort>, <auctionPort>, <bidPort>, <categoryPort>);
+    NexmarkServer server = new NexmarkServer(<personPort>, <auctionPort>, <bidPort>, <categoryPort>, <elementLimit>);
+    
+    server.start();
+    
+   2. create a conneciton to the server
+    Socket socket = new Socket(<host>, <port>);
+    // the <port> specifies the benchmark stream to be recieved 
+    // if used locally <host> would be "localhost"
+    
+    ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+    
+   3. use the stream
+    // the data (RelationalTuples) is now send through the ObjectInputStream
+    in.readObject();
+    
+   4. stop the server when finished
+    server.stop();
+    
+As an external server
+    
+   1. start the server
+    Syntax: java NexmarkServer <ports> [<elementLimit>]
+     <ports> can be specified via:
+	  -ports|-p <personPort>, <auctionPort>, <bidPort>, <categoryPort> (to specify specific ports)
+	  -port_range|-pr <startPort> (to specify a port range, personPort is <startPort>, auctionPort is <startPort> + 1, ...
+	  
+	 <elementLimit> is an optional parameter to specify an elementLimit. Only <elementLimit> tuple are sent over the stream
+	  -element_limit|-el <elementLimit>
+	  
+	Example:
+	    java NexmarkServer -pr 2000 -el 10000    
+    
+   2. create a conneciton to the server
+    Socket socket = new Socket(<host>, <port>);
+    ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+    
+   3. use the stream
+    // the data (RelationalTuples) is now send through the ObjectInputStream
+    in.readObject();
+    
