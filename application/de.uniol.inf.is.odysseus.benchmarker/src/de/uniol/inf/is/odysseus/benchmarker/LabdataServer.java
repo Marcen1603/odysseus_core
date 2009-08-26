@@ -14,8 +14,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
+import com.Ostermiller.util.CSVParser;
+
 import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriorityFactory;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
