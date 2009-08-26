@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.console;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -46,7 +47,7 @@ public class ExecutorConsole implements CommandProvider,
 		this.executor.addPlanModificationListener(this);
 				
 		try {
-			this.parser = this.executor.getSupportedQueryParser().get(0);
+			this.parser = this.executor.getSupportedQueryParser().iterator().next();
 		} catch (PlanManagementException e) {
 			System.out.println("Error setting parser.");
 		}
@@ -61,16 +62,16 @@ public class ExecutorConsole implements CommandProvider,
 			return parser;
 		}
 
-		ArrayList<String> parserList = this.executor.getSupportedQueryParser();
-		if (parserList != null && parserList.size() > 0) {
-			this.parser = parserList.get(0);
+		Iterator<String> parsers = this.executor.getSupportedQueryParser().iterator();
+		if (parsers != null && parsers.hasNext()) {
+			this.parser = parsers.next();
 			return this.parser;
 		}
 		throw new Exception("No parser found");
 	}
 
 	public void _ps(CommandInterpreter ci) {
-		ArrayList<String> parserList = null;
+		Set<String> parserList = null;
 		try {
 			parserList = this.executor.getSupportedQueryParser();
 		} catch (PlanManagementException e) {
