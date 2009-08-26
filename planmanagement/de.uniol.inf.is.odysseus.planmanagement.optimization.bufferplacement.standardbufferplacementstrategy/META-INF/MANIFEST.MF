@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: StandardBufferPlacementStrategy
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy.Activator
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.component
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy
+Service-Component: OSGI-INF/StandardBufferPlacementStrategy.xml
+

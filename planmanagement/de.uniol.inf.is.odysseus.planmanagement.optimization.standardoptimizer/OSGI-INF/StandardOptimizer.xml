@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer">
+   <implementation class="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer.StandardOptimizer"/>
+   <reference bind="bindBufferPlacementStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy" name="IBufferPlacementStrategy" policy="dynamic" unbind="unbindBufferPlacementStrategy"/>
+   <reference bind="bindPlanOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer" name="IPlanOptimizer" policy="dynamic" unbind="unbindPlanOptimizer"/>
+   <reference bind="bindQueryOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer" name="IQueryOptimizer" policy="dynamic" unbind="unbindQueryOptimizer"/>
+   <reference bind="bindPlanMigrationStrategie" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie" name="IPlanMigrationStrategie" policy="dynamic" unbind="unbindPlanMigrationStrategie"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer"/>
+   </service>
+</scr:component>
