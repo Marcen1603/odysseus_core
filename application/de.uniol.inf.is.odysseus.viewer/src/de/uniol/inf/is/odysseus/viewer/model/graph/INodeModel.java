@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * Stellt die Schnittstelle zur Repräsentation eines Knotens innerhalb des
  * GraphModels bereit. Ein Knoten kennt die Verbindungen seiner Nachfolger- 
- * und Vorgängerknoten und besitzt einen Inhalt. Über einen nicht eindeutigen 
+ * und Vorgaengerknoten und besitzt einen Inhalt. Über einen nicht eindeutigen 
  * Namen können zusätzliche Funktionalitäten implementiert werden (z.B. für die Symbole).
  * 
  * @author Timo Michelsen

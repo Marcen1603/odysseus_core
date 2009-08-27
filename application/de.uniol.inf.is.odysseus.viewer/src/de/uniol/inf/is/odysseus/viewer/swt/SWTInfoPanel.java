@@ -232,13 +232,13 @@ public class SWTInfoPanel implements INodeModelChangeListener<IPhysicalOperator>
 				
 		// Nachbarschaftszeile
 		endGradeLabel = new Label(content, SWT.SHADOW_IN);
-		endGradeLabel.setText( "Vorgänger:" + node.getConnectionsAsEndNode().size()  );
+		endGradeLabel.setText( "#Parents:" + node.getConnectionsAsEndNode().size()  );
 		data = new GridData( GridData.FILL_HORIZONTAL );
 		data.horizontalSpan = 2;
 		endGradeLabel.setLayoutData( data );
 		
 		startGradeLabel = new Label(content, SWT.SHADOW_IN);
-		startGradeLabel.setText( "Nachfolger:" + node.getConnectionsAsStartNode().size()   );
+		startGradeLabel.setText( "#Childs:" + node.getConnectionsAsStartNode().size()   );
 		GridData gradeLabelData2 = new GridData(GridData.FILL_HORIZONTAL);
 		gradeLabelData2.horizontalSpan = 2;
 		startGradeLabel.setLayoutData( gradeLabelData2 );
