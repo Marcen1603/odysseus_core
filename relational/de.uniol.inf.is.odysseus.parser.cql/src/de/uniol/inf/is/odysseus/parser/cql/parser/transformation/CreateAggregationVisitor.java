@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAS;
@@ -31,11 +31,11 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
 	private SelectAO select;
 
-	private AbstractLogicalOperator top;
+	private ILogicalOperator top;
 
 	private boolean hasGrouping;
 
-	public void init(AbstractLogicalOperator top, AttributeResolver attributeResolver) {
+	public void init(ILogicalOperator top, AttributeResolver attributeResolver) {
 		ao = new AggregateAO();
 		this.top = top;
 		ao.setInputAO(top);
@@ -80,12 +80,13 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		SDFAttribute attribute = this.attributeResolver.getAttribute(node
 				.getName());
 		if (attribute == null) {
-			throw new IllegalArgumentException("no such attribute: " + node.getName());
+			throw new IllegalArgumentException("no such attribute: "
+					+ node.getName());
 		}
 		ao.addGroupingAttribute(attribute);
 		return null;
 	}
-	
+
 	@Override
 	public Object visit(ASTAS node, Object data) {
 		return data;
@@ -131,7 +132,8 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	private boolean isNumerical(SDFDatatype datatype) {
 		// TODO oder sollte der check ueber die dtconstraints laufen?
 		return datatype == SDFDatatypeFactory.getDatatype("Double")
-				|| datatype == SDFDatatypeFactory.getDatatype("Integer") || datatype == SDFDatatypeFactory.getDatatype("Long");
+				|| datatype == SDFDatatypeFactory.getDatatype("Integer")
+				|| datatype == SDFDatatypeFactory.getDatatype("Long");
 	}
 
 	@Override
@@ -163,7 +165,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		return select;
 	}
 
-	public AbstractLogicalOperator getResult() {
+	public ILogicalOperator getResult() {
 		if (this.select != null) {
 			return this.select;
 		}
