@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.viewer.swt.resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -23,6 +24,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.uniol.inf.is.odysseus.viewer.Activator;
+
 public class XMLResourceConfiguration implements IResourceConfiguration {
 
 	private static final String XSD_FILE = "viewer_cfg/resourcesSchema.xsd";
@@ -30,15 +33,18 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 	
 	private Map<String, String> resources = new HashMap<String, String>();
 	
-	public XMLResourceConfiguration( String xmlFilename ) throws IOException{
+	public XMLResourceConfiguration( String configFileName ) throws IOException{
 		
-		logger.info( "Paring resourceConfigurationfile " + xmlFilename  );
+		logger.info( "Paring resourceConfigurationfile " + configFileName  );
 		
 		// VALIDATION
 		SchemaFactory factory = SchemaFactory.newInstance( "http://www.w3.org/2001/XMLSchema" );	
 		Schema schema;
 		try {
-			schema = factory.newSchema( new File( XSD_FILE ) );
+			// Neu mit OSGi
+			URL xsd = Activator.getContext().getBundle().getEntry(XSD_FILE);
+			logger.debug(xsd.toString());
+			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
 			logger.error( " canntot compile Schemafile " + XSD_FILE + "because " );
 			logger.error( ex.getMessage() );
@@ -46,7 +52,10 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 		}
 		
 		Validator validator = schema.newValidator();
-		Source source = new StreamSource( new File( xmlFilename ) );
+		// Neu mit OSGi
+		URL xmlFile = Activator.getContext().getBundle().getEntry(configFileName);
+		logger.debug(xmlFile.toString());
+		Source source = new StreamSource(xmlFile.openStream());
 		
 		try {
 			validator.validate( source );
@@ -66,7 +75,7 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 		docFactory.setNamespaceAware(true); // never forget this!
 		try {
 			DocumentBuilder builder = docFactory.newDocumentBuilder();
-			Document doc = builder.parse(xmlFilename);
+			Document doc = builder.parse(xmlFile.openStream());
 			
 			// Über XPath Images rauslesen
 			XPathFactory xPathFactory = XPathFactory.newInstance();

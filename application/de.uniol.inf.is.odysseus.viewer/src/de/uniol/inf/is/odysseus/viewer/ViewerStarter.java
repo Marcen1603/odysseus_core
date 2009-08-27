@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.viewer.swt.SWTMainWindow;
 public class ViewerStarter implements Runnable {
 
 	private IModelProvider<IPhysicalOperator> modelProvider;
-	private static final String SHELL_TITLE = "Visualisierung - von Timo Michelsen";
+	private static final String SHELL_TITLE = "ODYSSEUS - Query Plan Viewer";
 	private static final int SHELL_SIZE = 800;
 	
 	private static final Logger logger = LoggerFactory.getLogger( ViewerStarter.class );

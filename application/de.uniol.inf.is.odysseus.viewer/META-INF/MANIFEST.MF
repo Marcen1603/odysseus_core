@@ -18,4 +18,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.eclipse.swt.layout,
  org.eclipse.swt.opengl,
  org.eclipse.swt.widgets,
+ org.osgi.framework,
  org.slf4j;version="1.5.6"
+Export-Package: de.uniol.inf.is.odysseus.viewer
+Bundle-Activator: de.uniol.inf.is.odysseus.viewer.Activator

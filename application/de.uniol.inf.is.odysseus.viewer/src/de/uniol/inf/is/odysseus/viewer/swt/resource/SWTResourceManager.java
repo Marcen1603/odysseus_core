@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.viewer.swt.resource;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
+
+import de.uniol.inf.is.odysseus.viewer.Activator;
 
 /**
  * Verwaltet die Resourcen wie Bilder und Farben, die vom SWT angefordert wurden.
@@ -252,7 +255,8 @@ public class SWTResourceManager {
 	// schief gegangen ist.
 	private static Image loadImage( Device device, String filename ) {
 		try {
-			Image image = new Image(device, filename);
+			URL imageURL = Activator.getContext().getBundle().getEntry(filename);
+			Image image = new Image(device, imageURL.openStream());
 			
 			logger.debug( "Imageresource loaded:" + filename );
 			
