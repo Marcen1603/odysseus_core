@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
@@ -26,6 +27,11 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 
+import de.uniol.inf.is.odysseus.viewer.ViewerStarter;
+import de.uniol.inf.is.odysseus.viewer.ViewerStarterConfiguration;
+import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
+
+
 public class ExecutorConsole implements CommandProvider,
 		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener {
 
@@ -35,9 +41,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	private ConsoleFunctions support = new ConsoleFunctions();
 
-	private String scheduler;
-
-	private String schedulingStrat;
+	private ViewerStarter wnd;
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
@@ -175,6 +179,19 @@ public class ExecutorConsole implements CommandProvider,
 			executor.setScheduler(args[0],args[1]);
 		}else {
 			System.out.println("No query argument.");
+		}
+	}
+	
+	public void _viewer(CommandInterpreter ci){
+		System.out.println("startviewer");
+		try{
+			ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
+			//cfg.useOGL = viewerOGL;
+			wnd = new ViewerStarter(null, cfg);
+			Thread thread = new Thread(wnd, "ViewerThread");
+			thread.start();
+		}catch(Throwable e){
+			e.printStackTrace();
 		}
 	}
 	
@@ -410,6 +427,8 @@ public class ExecutorConsole implements CommandProvider,
 		} else {
 			System.out.println("No query argument.");
 		}
+		// TODO: DAS HIER IST NUR EIN HACK!!
+		blah();
 	}
 
 	public void _qs(CommandInterpreter ci) {
@@ -507,5 +526,23 @@ public class ExecutorConsole implements CommandProvider,
 	@Override
 	public void sendErrorEvent(ErrorEvent eventArgs) {
 		System.out.println("Error Event: " + eventArgs.getMessage());
+	}
+	
+	public void blah(){
+		if (wnd != null){
+			ArrayList<IPhysicalOperator> queries = null;
+			try {
+				queries = this.executor.getSealedPlan().getRoots();
+			} catch (PlanManagementException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for (IPhysicalOperator query:queries){
+				if (query.isSink()){
+					OdysseusModelProviderSink mp = new OdysseusModelProviderSink((ISink)query);
+					wnd.setModelProvider(mp);
+				}
+			}
+		}
 	}
 }
