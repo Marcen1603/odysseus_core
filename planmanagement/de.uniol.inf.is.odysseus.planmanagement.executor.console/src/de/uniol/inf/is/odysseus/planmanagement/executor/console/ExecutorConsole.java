@@ -280,6 +280,9 @@ public class ExecutorConsole implements CommandProvider,
 				.println("dumpr - dump physical plan of all registered roots.");
 		System.out.println("");
 
+		System.out.println("viewer - starts viewer that shows the last added query");
+		System.out.println("");
+
 		System.out
 				.println("dumpe - dump all physical operators of the current execution plan.");
 		System.out.println("");
