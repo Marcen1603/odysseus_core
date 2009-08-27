@@ -43,7 +43,6 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 		try {
 			// Neu mit OSGi
 			URL xsd = Activator.getContext().getBundle().getEntry(XSD_FILE);
-			logger.debug(xsd.toString());
 			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
 			logger.error( " canntot compile Schemafile " + XSD_FILE + "because " );

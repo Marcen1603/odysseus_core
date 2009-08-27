@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.viewer.view.symbol;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
@@ -17,6 +18,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -24,6 +26,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import de.uniol.inf.is.odysseus.viewer.Activator;
 
 public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 
@@ -34,15 +38,15 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 	private Map<String, Collection<SymbolElementInfo>> mapTypeSymbolInfos;
 	private Collection<SymbolElementInfo> defaultSymbolInfos;
 	
-	public XMLSymbolConfiguration( String xmlFilename ) throws IOException {
-		if( xmlFilename == null ) 
+	public XMLSymbolConfiguration( String configFilename ) throws IOException {
+		if( configFilename == null ) 
 			throw new IllegalArgumentException( "xmlFilename is null!" );
 		
-		if( xmlFilename.length() == 0 )  
+		if( configFilename.length() == 0 )  
 			throw new IllegalArgumentException( "xmlFilename is empty!");
 		
 		
-		logger.info("Parsing configurationfile " + xmlFilename );
+		logger.info("Parsing configurationfile " + configFilename );
 		
 		// DATEN EINLESEN
 		mapTypeSymbolInfos = new HashMap<String, Collection<SymbolElementInfo>>();
@@ -52,7 +56,10 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		SchemaFactory factory = SchemaFactory.newInstance( "http://www.w3.org/2001/XMLSchema" );	
 		Schema schema;
 		try {
-			schema = factory.newSchema( new File( XSD_FILE ) );
+			//schema = factory.newSchema( new File( XSD_FILE ) );
+			//OSGi
+			URL xsd = Activator.getContext().getBundle().getEntry(XSD_FILE);
+			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
 			logger.error( " canntot compile Schemafile " + XSD_FILE + "because " );
 			logger.error( ex.getMessage() );
@@ -60,7 +67,11 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		}
 		
 		Validator validator = schema.newValidator();
-		Source source = new StreamSource( new File( xmlFilename ) );
+		// Neu mit OSGi
+		URL xmlFile = Activator.getContext().getBundle().getEntry(configFilename);
+		logger.debug(xmlFile.toString());
+		Source source = new StreamSource(xmlFile.openStream());
+
 		
 		try {
 			validator.validate( source );
@@ -81,7 +92,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 			DocumentBuilderFactory bfactory = DocumentBuilderFactory.newInstance();
 			bfactory.setNamespaceAware( true );
 			DocumentBuilder builder = bfactory.newDocumentBuilder();
-			Document document = builder.parse( xmlFilename );
+			Document document = builder.parse(xmlFile.openStream());
 			
 			// Über XPath Images rauslesen
 			XPathFactory xPathFactory = XPathFactory.newInstance();
