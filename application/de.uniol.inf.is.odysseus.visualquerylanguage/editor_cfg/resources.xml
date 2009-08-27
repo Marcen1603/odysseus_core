@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="resourcesSchema.xsd">
 
-	<Image source="H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/source.png" name="source"/>
-	<Image source="H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/connection.png" name="connection"/>
-	<Image source="H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/sink.png" name="sink"/>
-	<Image source="H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/NeueAnfrage.png" name="newQuery"/>
-	<Image source="H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/AnfrageStoppen.png" name="stopQuery"/>
+	<Image source="C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/source.png" name="source"/>
+	<Image source="C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/connection.png" name="connection"/>
+	<Image source="C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/sink.png" name="sink"/>
+	<Image source="C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/NeueAnfrage.png" name="newQuery"/>
+	<Image source="C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/AnfrageStoppen.png" name="stopQuery"/>
 
 </Resources>

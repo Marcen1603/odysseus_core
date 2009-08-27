@@ -99,7 +99,7 @@ public class DefaultGraphArea extends Composite implements
 
 		try {
 			this.parser = new XMLParameterParser(
-					"H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/parameter.xml");
+					"C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/parameter.xml");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -399,7 +399,7 @@ public class DefaultGraphArea extends Composite implements
 	@Override
 	public void selectObject(ISelectSender<INodeView<INodeContent>> sender,
 			Collection<? extends INodeView<INodeContent>> selected) {
-		refreshParameterView();
+//		refreshParameterView();
 		if (connectionChosen) {
 			CursorManager.connectionCursor(true, "connection");
 			addNewConnection();

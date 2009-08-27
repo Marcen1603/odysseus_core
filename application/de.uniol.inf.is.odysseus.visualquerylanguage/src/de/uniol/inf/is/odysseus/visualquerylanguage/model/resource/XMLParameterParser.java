@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.ParamSetterF
 
 public class XMLParameterParser implements IParameterConfiguration {
 	
-	private static final String XSD_FILE = "H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/parameterSchema.xsd";
+	private static final String XSD_FILE = "C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/parameterSchema.xsd";
 	private static final Logger logger = LoggerFactory
 			.getLogger(XMLParameterParser.class);
 	private Collection<IParam<?>> constructParams = new ArrayList<IParam<?>>();

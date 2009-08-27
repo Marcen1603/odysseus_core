@@ -34,7 +34,7 @@ public class EditorStarter implements CommandProvider{
 		
 		try {
 			//URL resources = context.getBundle().getResource("/editor_cfg/resources.xml");
-			XMLResourceConfiguration cfg = new XMLResourceConfiguration("H:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/resources.xml");
+			XMLResourceConfiguration cfg = new XMLResourceConfiguration("C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/resources.xml");
 			SWTResourceManager.getInstance().load(d, cfg);
 		} catch (IOException e) {
 			logger.error("Could not load XMLConfiguration because ");

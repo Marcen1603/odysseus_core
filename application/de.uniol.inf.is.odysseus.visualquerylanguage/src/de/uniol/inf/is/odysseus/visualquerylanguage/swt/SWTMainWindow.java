@@ -103,7 +103,9 @@ public class SWTMainWindow {
 		removeNodeMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+				if(tabFolder.getSelection().getControl() instanceof DefaultGraphArea) {
+					((DefaultGraphArea)(tabFolder.getSelection().getControl())).removeNodes();
+				}
 			}
 		});
 
@@ -166,6 +168,7 @@ public class SWTMainWindow {
 		item.setText("Anfrage " + queryCounter);
 		item.setControl(graphArea);
 		queryMap.put(queryCounter, query);
+		tabFolder.setSelection(item);
 		
 		queryCounter++;
 	}
