@@ -99,6 +99,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckHaving;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAccessAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAggregationVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateJoinAOVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePriorityAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -242,7 +243,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor();
 		joinVisitor.init(attributeResolver);
-		AbstractLogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(statement, null);
+		ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(statement, null);
 
 		CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
 		aggregationVisitor.init(top, attributeResolver);
@@ -251,6 +252,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		top = new CreateProjectionVisitor().createProjection(statement, top,
 				attributeResolver);
+		CreatePriorityAOVisitor prioVisitor = new CreatePriorityAOVisitor(top);
+		prioVisitor.visit(statement, null);
+		top = prioVisitor.getTopOperator();
 		return top;
 		} catch (Exception e) {
 			e.printStackTrace();

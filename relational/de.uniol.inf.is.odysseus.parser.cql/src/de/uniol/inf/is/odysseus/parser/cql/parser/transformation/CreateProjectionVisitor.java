@@ -47,9 +47,10 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	public CreateProjectionVisitor() {
 	}
 
-	//TODO kompletten visitor draus machen, ohne diese  methode
-	public AbstractLogicalOperator createProjection(ASTSelectStatement statement,
-			AbstractLogicalOperator top, AttributeResolver attributeResolver) {
+	// TODO kompletten visitor draus machen, ohne diese methode
+	public AbstractLogicalOperator createProjection(
+			ASTSelectStatement statement, ILogicalOperator top,
+			AttributeResolver attributeResolver) {
 		this.top = top;
 		SimpleNode node = (SimpleNode) statement.jjtGetChild(0);
 		this.attributeResolver = attributeResolver;
@@ -92,7 +93,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 						// their occurence, so whenever an outputattribute is
 						// not found in the inputschema we add the next
 						// expression to the output
-						 outputExpressions.add(exprIt.next());
+						outputExpressions.add(exprIt.next());
 					}
 				}
 				map.setInputAO(top);
@@ -107,10 +108,10 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		rename.setInputAO(top);
 		rename.setInputSchema(top.getOutputSchema());
 		rename.setOutputSchema(this.aliasSchema);
-		
+
 		return rename;
 	}
-	
+
 	@Override
 	public Object visit(ASTSelectAll node, Object data) {
 		outputSchema = top.getOutputSchema();
@@ -165,7 +166,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			outputSchema.add(attribute);
 			CQLAttribute aliasAttribute;
 			if (aliasExpression.hasAlias()) {
-				//copy other attributes like datatypes
+				// copy other attributes like datatypes
 				aliasAttribute = attribute.clone();
 				aliasAttribute.setSourceName("");
 				aliasAttribute.setAttributeName(aliasExpression.getAlias());

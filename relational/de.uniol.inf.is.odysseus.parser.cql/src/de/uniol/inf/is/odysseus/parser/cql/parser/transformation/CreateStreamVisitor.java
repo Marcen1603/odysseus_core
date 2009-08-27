@@ -5,7 +5,6 @@ import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -14,18 +13,12 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
-import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.priority.PriorityAO;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -66,9 +59,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTTimedTuples node, Object data) {
-		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary.getInstance()
-				.getSource(name), node
-				.getTuples(attributes));
+		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary
+				.getInstance().getSource(name), node.getTuples(attributes));
 		newPO.setOutputSchema(attributes);
 		DataDictionary.getInstance().setView(name, newPO);
 		return null;
@@ -96,46 +88,6 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		DataDictionary.getInstance().setView(name, operator);
 		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object visit(ASTElementPriorities node, Object data) {
-		PriorityAO<RelationalTuple<? extends IPriority>> ao = new PriorityAO<RelationalTuple<? extends IPriority>>();
-		node.childrenAccept(this, ao);
-		ao.setInputAO(0, operator);
-		ao.setOutputSchema(attributes);
-		ao.setInputSchema(0, attributes);
-		for (IPredicate p : ao.getPriorities().values()) {
-			CQLParser.initPredicate(p, attributes, null);
-		}
-		DataDictionary.getInstance().setView(name, ao);
-
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object visit(ASTElementPriority node, Object data) {
-		PriorityAO<RelationalTuple<IPriority>> ao = (PriorityAO<RelationalTuple<IPriority>>) data;
-		AttributeResolver tmpResolver = new AttributeResolver();
-		for (SDFAttribute attribute : this.attributes) {
-			tmpResolver.addAttribute((CQLAttribute) attribute);
-		}
-
-		IPredicate<RelationalTuple<?>> predicate;
-		predicate = CreatePredicateVisitor.toPredicate(node.getPredicate(),
-				tmpResolver);
-		ao.setPriority(node.getPriority(), predicate);
-		return data;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object visit(ASTDefaultPriority node, Object data) {
-		((PriorityAO<RelationalTuple>) data).setDefaultPriority(node
-				.getPriority());
-		return data;
 	}
 
 	@Override
@@ -197,11 +149,12 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		return data;
 	}
 
-//	@Override
-//	public Object visit(ASTOSGI node, Object data) {
-//		OSGIAccessAO source = new OSGIAccessAO(new SDFSource(name, SourceType.OSGI));
-//		source.setRegexp(node.getRegexp());
-//		DataDictionary.getInstance().setView(name, source);
-//		return data;
-//	}
+	// @Override
+	// public Object visit(ASTOSGI node, Object data) {
+	// OSGIAccessAO source = new OSGIAccessAO(new SDFSource(name,
+	// SourceType.OSGI));
+	// source.setRegexp(node.getRegexp());
+	// DataDictionary.getInstance().setView(name, source);
+	// return data;
+	// }
 }
