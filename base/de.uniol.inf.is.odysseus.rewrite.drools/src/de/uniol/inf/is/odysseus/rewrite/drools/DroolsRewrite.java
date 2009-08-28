@@ -37,7 +37,7 @@ public class DroolsRewrite implements IRewrite {
 
 	private static final String RULE_PATH = "/resources/rewrite/rules";
 	private static final String LOGGER_NAME = "rewrite";
-	public static final String PACKAGE_NAME = "de.uniol.inf.is.odysseus.transformation.drools";
+	public static final String PACKAGE_NAME = "de.uniol.inf.is.odysseus.rewrite.rules";
 	public RuleBase rulebase;
 	public ReadWriteLock ruleBaseLock = new ReentrantReadWriteLock();
 	private static Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
