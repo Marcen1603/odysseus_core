@@ -20,20 +20,20 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.Op
 public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
-	public IEditableExecutionPlan optimizeNewQueries(IOptimizable sender,
-			List<IEditableQuery> queries, OptimizeParameter parameters)
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> queries, OptimizeParameter parameter)
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IEditableQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
-						parameters);
+						parameter);
 			}
 
 			ArrayList<IEditableQuery> newPlan = sender.getRegisteredQueries();
 			newPlan.addAll(queries);
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
-					.optimizePlan(sender, parameters, newPlan);
+					.optimizePlan(sender, parameter, newPlan);
 
 			return this.planMigrationStrategie.migratePlan(sender,
 					newExecutionPlan);
