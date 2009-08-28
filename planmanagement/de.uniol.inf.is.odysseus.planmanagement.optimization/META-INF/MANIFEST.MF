@@ -21,8 +21,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization,
  de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement,
- de.uniol.inf.is.odysseus.planmanagement.optimization.event.endoptimize,
- de.uniol.inf.is.odysseus.planmanagement.optimization.event.startoptimize,
  de.uniol.inf.is.odysseus.planmanagement.optimization.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter,
  de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter,
