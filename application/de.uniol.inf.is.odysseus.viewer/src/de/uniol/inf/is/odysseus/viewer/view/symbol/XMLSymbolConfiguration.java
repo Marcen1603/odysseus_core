@@ -33,8 +33,6 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger( XMLSymbolConfiguration.class );
 	
-	private static final String XSD_FILE = "viewer_cfg/symbolSchema.xsd";
-	
 	private Map<String, Collection<SymbolElementInfo>> mapTypeSymbolInfos;
 	private Collection<SymbolElementInfo> defaultSymbolInfos;
 	
@@ -58,10 +56,10 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		try {
 			//schema = factory.newSchema( new File( XSD_FILE ) );
 			//OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(XSD_FILE);
+			URL xsd = Activator.getContext().getBundle().getEntry(Activator.XSD_SYMBOL_SCHEMA_FILE);
 			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + XSD_FILE + "because " );
+			logger.error( " canntot compile Schemafile " + Activator.XSD_SYMBOL_SCHEMA_FILE + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
@@ -77,7 +75,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Configurationfile is not valid with " + XSD_FILE + "because " );
+			logger.error( "Configurationfile is not valid with " + Activator.XSD_SYMBOL_SCHEMA_FILE + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {

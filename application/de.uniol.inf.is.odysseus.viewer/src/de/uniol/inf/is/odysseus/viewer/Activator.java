@@ -6,6 +6,9 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
 	static BundleContext context;
+	public static final String XSD_RESOURCES_FILE = "viewer_cfg/resourcesSchema.xsd";
+	public static final String XSD_DIAGRAMM_SCHEMA_FILE = "viewer_cfg/diagramSchema.xsd";
+	public static final String XSD_SYMBOL_SCHEMA_FILE = "viewer_cfg/symbolSchema.xsd";
 	
 	@Override
 	public void start(BundleContext bc) throws Exception {

@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.viewer.swt.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
@@ -16,6 +16,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -28,8 +29,7 @@ import de.uniol.inf.is.odysseus.viewer.Activator;
 
 public class XMLResourceConfiguration implements IResourceConfiguration {
 
-	private static final String XSD_FILE = "viewer_cfg/resourcesSchema.xsd";
-	private static final Logger logger = LoggerFactory.getLogger( XMLResourceConfiguration.class );
+		private static final Logger logger = LoggerFactory.getLogger( XMLResourceConfiguration.class );
 	
 	private Map<String, String> resources = new HashMap<String, String>();
 	
@@ -42,10 +42,10 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 		Schema schema;
 		try {
 			// Neu mit OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(XSD_FILE);
+			URL xsd = Activator.getContext().getBundle().getEntry(Activator.XSD_RESOURCES_FILE);
 			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + XSD_FILE + "because " );
+			logger.error( " canntot compile Schemafile " + Activator.XSD_RESOURCES_FILE + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
@@ -60,7 +60,7 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Resourcesfile is not valid with " + XSD_FILE + "because " );
+			logger.error( "Resourcesfile is not valid with " + Activator.XSD_RESOURCES_FILE + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {

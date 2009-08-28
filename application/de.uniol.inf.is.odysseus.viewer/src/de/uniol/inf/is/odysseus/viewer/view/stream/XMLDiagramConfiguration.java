@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.viewer.view.stream;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.xml.parsers.DocumentBuilder;
@@ -26,34 +26,47 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.uniol.inf.is.odysseus.viewer.Activator;
+
 public class XMLDiagramConfiguration implements IDiagramConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger( XMLDiagramConfiguration.class );
-	private static final String XSD_FILE = "viewer_cfg/diagramSchema.xsd";
 	private Collection<DiagramInfo> diagramInfos = new ArrayList<DiagramInfo>();
 	
-	public XMLDiagramConfiguration( String xmlFilename ) {
-		logger.info( "Paring resourceConfigurationfile " + xmlFilename  );
+	public XMLDiagramConfiguration( String configFileName ) {
+		logger.info( "Paring resourceConfigurationfile " + configFileName  );
 		
 		// VALIDATION
 		SchemaFactory factory = SchemaFactory.newInstance( "http://www.w3.org/2001/XMLSchema" );	
 		Schema schema;
 		try {
-			schema = factory.newSchema( new File( XSD_FILE ) );
+			// Neu mit OSGi
+			URL xsd = Activator.getContext().getBundle().getEntry(Activator.XSD_DIAGRAMM_SCHEMA_FILE);
+			schema = factory.newSchema(xsd);
+
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + XSD_FILE + "because " );
+			logger.error( " canntot compile Schemafile " + Activator.XSD_DIAGRAMM_SCHEMA_FILE + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
 		
 		Validator validator = schema.newValidator();
-		Source source = new StreamSource( new File( xmlFilename ) );
+		// Neu mit OSGi
+		URL xmlFile = Activator.getContext().getBundle().getEntry(configFileName);
+		logger.debug(xmlFile.toString());
+		Source source = null;
+		try {
+			source = new StreamSource(xmlFile.openStream());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Resourcesfile is not valid with " + XSD_FILE + "because " );
+			logger.error( "Resourcesfile is not valid with " + Activator.XSD_DIAGRAMM_SCHEMA_FILE + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {
@@ -67,7 +80,7 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 		docFactory.setNamespaceAware(true); // never forget this!
 		try {
 			DocumentBuilder builder = docFactory.newDocumentBuilder();
-			Document doc = builder.parse(xmlFilename);
+			Document doc = builder.parse(xmlFile.openStream());
 			
 			// Über XPath Images rauslesen
 			XPathFactory xPathFactory = XPathFactory.newInstance();
@@ -90,7 +103,7 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 		} catch( ParserConfigurationException e ) {
 			logger.error("ParserConfigurationException occured!", e);
 		} catch( FileNotFoundException e ) {
-			logger.error("Could not find '" + xmlFilename + "'!", e);
+			logger.error("Could not find '" + configFileName + "'!", e);
 		} catch( SAXException e ) {
 			logger.error("Error during parsing XML-File!", e);
 		} catch( IOException e ) {
