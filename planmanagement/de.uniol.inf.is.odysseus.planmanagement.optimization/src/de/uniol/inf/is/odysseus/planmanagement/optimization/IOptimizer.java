@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 
 /**
  * @author Jonas Jacobi, Wolf Bauer
@@ -24,10 +23,6 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String strategy);
 
-	public IEditableExecutionPlan optimizeNewQueries(IOptimizable sender,
-			List<IEditableQuery> queries, OptimizeParameter parameters)
-			throws QueryOptimizationException;
-
 	public IEditableExecutionPlan preStartOptimization(IQuery queryToStart,
 			IEditableExecutionPlan execPlan) throws QueryOptimizationException;
 
@@ -35,18 +30,29 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 			IEditableExecutionPlan execPlan) throws QueryOptimizationException;
 
 	public IExecutionPlan reoptimize(IQuery sender,
-			IEditableExecutionPlan executionPlan) throws QueryOptimizationException;
+			IEditableExecutionPlan executionPlan)
+			throws QueryOptimizationException;
 
 	public IExecutionPlan reoptimize(IPlan sender,
 			IEditableExecutionPlan executionPlan);
 
-	public <T extends IPlanOptimizable & IPlanMigratable > IExecutionPlan preQueryRemoveOptimization(T sender,
-			IQuery removedQuery, IEditableExecutionPlan executionPlan, AbstractOptimizationParameter<?>... parameters) throws QueryOptimizationException;
-	
-	public <T extends IPlanOptimizable & IPlanMigratable > IExecutionPlan preQueryRemoveOptimization(T sender,
-			IQuery removedQuery, IEditableExecutionPlan executionPlan, OptimizeParameter parameter) throws QueryOptimizationException;
+	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
+			T sender, IQuery removedQuery,
+			IEditableExecutionPlan executionPlan,
+			AbstractOptimizationParameter<?>... parameters)
+			throws QueryOptimizationException;
 
-	public IExecutionPlan preQueryAddOptimization(
-			IOptimizable sender, List<IEditableQuery> newQueries,
-			ParameterDoRestruct true1) throws QueryOptimizationException;
+	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
+			T sender, IQuery removedQuery,
+			IEditableExecutionPlan executionPlan, OptimizeParameter parameter)
+			throws QueryOptimizationException;
+
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> newQueries,
+			AbstractOptimizationParameter<?>... parameters)
+			throws QueryOptimizationException;
+
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> newQueries, OptimizeParameter parameter)
+			throws QueryOptimizationException;
 }

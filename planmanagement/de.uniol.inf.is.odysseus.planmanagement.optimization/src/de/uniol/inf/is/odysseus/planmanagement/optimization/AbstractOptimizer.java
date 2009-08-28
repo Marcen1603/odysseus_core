@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
@@ -122,47 +121,42 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	@Override
-	public <T extends IPlanOptimizable & IPlanMigratable > IExecutionPlan preQueryRemoveOptimization(T sender,
-			IQuery removedQuery,
-			IEditableExecutionPlan executionPlan, AbstractOptimizationParameter<?>... parameters)
+	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
+			T sender, IQuery removedQuery,
+			IEditableExecutionPlan executionPlan,
+			AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException {
-		return preQueryRemoveOptimization(sender, removedQuery,
-				executionPlan, new OptimizeParameter(parameters));
+		return preQueryRemoveOptimization(sender, removedQuery, executionPlan,
+				new OptimizeParameter(parameters));
 	};
-	
+
 	@Override
-	public IEditableExecutionPlan optimizeNewQueries(IOptimizable sender,
-			List<IEditableQuery> queries, OptimizeParameter parameters)
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> newQueries,
+			AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException {
-		return null;
-	}
-	
+		return preQueryAddOptimization(sender, newQueries,
+				new OptimizeParameter(parameters));
+	};
+
 	@Override
 	public IExecutionPlan reoptimize(IQuery sender,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		return null;
 	}
-	
+
 	@Override
 	public IExecutionPlan reoptimize(IPlan sender,
 			IEditableExecutionPlan executionPlan) {
 		return null;
 	}
-	
-	@Override
-	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries, ParameterDoRestruct true1)
-			throws QueryOptimizationException {
-		return null;
-	}
-	
+
 	@Override
 	public IEditableExecutionPlan preStopOptimization(IQuery queryToStop,
 			IEditableExecutionPlan execPlan) throws QueryOptimizationException {
 		return null;
 	}
-
 
 	@Override
 	public String getInfos() {
