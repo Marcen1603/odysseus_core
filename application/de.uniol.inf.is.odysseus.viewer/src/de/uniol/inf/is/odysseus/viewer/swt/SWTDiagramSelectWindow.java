@@ -9,6 +9,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+
+import de.uniol.inf.is.odysseus.viewer.Activator;
 import de.uniol.inf.is.odysseus.viewer.view.graph.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.viewer.view.stream.DiagramInfo;
 import de.uniol.inf.is.odysseus.viewer.view.stream.IDiagramConfiguration;
@@ -17,11 +19,10 @@ import de.uniol.inf.is.odysseus.viewer.view.stream.XMLDiagramConfiguration;
 public class SWTDiagramSelectWindow {
 
 //	private static final Logger logger = LoggerFactory.getLogger( SWTDiagramSelectWindow.class );
-	private static final String DIAGRAM_CFG_FILE = "viewer_cfg/diagram.xml";
 	
 	public SWTDiagramSelectWindow( Shell baseWindow, final IOdysseusNodeView node ) {
 		
-		final IDiagramConfiguration diagramConfig = new XMLDiagramConfiguration( DIAGRAM_CFG_FILE );
+		final IDiagramConfiguration diagramConfig = new XMLDiagramConfiguration( Activator.DIAGRAM_CFG_FILE, Activator.XSD_DIAGRAMM_SCHEMA_FILE );
 			
 		final Shell wnd = new Shell( baseWindow, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL ); // erstellt Dialog
 		wnd.setText( "Diagrammauswahl" );

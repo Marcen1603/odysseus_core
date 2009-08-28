@@ -36,7 +36,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 	private Map<String, Collection<SymbolElementInfo>> mapTypeSymbolInfos;
 	private Collection<SymbolElementInfo> defaultSymbolInfos;
 	
-	public XMLSymbolConfiguration( String configFilename ) throws IOException {
+	public XMLSymbolConfiguration( String configFilename, String schemaFile ) throws IOException {
 		if( configFilename == null ) 
 			throw new IllegalArgumentException( "xmlFilename is null!" );
 		
@@ -56,10 +56,10 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		try {
 			//schema = factory.newSchema( new File( XSD_FILE ) );
 			//OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(Activator.XSD_SYMBOL_SCHEMA_FILE);
+			URL xsd = Activator.getContext().getBundle().getEntry(schemaFile);
 			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + Activator.XSD_SYMBOL_SCHEMA_FILE + "because " );
+			logger.error( " canntot compile Schemafile " + schemaFile + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
@@ -75,7 +75,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Configurationfile is not valid with " + Activator.XSD_SYMBOL_SCHEMA_FILE + "because " );
+			logger.error( "Configurationfile is not valid with " + schemaFile + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {

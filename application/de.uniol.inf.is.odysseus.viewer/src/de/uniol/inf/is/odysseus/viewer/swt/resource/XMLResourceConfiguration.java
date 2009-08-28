@@ -33,7 +33,7 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 	
 	private Map<String, String> resources = new HashMap<String, String>();
 	
-	public XMLResourceConfiguration( String configFileName ) throws IOException{
+	public XMLResourceConfiguration( String configFileName, String schemaFile ) throws IOException{
 		
 		logger.info( "Paring resourceConfigurationfile " + configFileName  );
 		
@@ -42,10 +42,10 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 		Schema schema;
 		try {
 			// Neu mit OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(Activator.XSD_RESOURCES_FILE);
+			URL xsd = Activator.getContext().getBundle().getEntry(schemaFile );
 			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + Activator.XSD_RESOURCES_FILE + "because " );
+			logger.error( " canntot compile Schemafile " + schemaFile  + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
@@ -60,7 +60,7 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Resourcesfile is not valid with " + Activator.XSD_RESOURCES_FILE + "because " );
+			logger.error( "Resourcesfile is not valid with " + schemaFile  + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {

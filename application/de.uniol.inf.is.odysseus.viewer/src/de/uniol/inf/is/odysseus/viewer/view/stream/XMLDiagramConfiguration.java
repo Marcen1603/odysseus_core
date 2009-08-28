@@ -33,7 +33,7 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger( XMLDiagramConfiguration.class );
 	private Collection<DiagramInfo> diagramInfos = new ArrayList<DiagramInfo>();
 	
-	public XMLDiagramConfiguration( String configFileName ) {
+	public XMLDiagramConfiguration( String configFileName, String schemaFile ) {
 		logger.info( "Paring resourceConfigurationfile " + configFileName  );
 		
 		// VALIDATION
@@ -41,11 +41,11 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 		Schema schema;
 		try {
 			// Neu mit OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(Activator.XSD_DIAGRAMM_SCHEMA_FILE);
+			URL xsd = Activator.getContext().getBundle().getEntry(schemaFile);
 			schema = factory.newSchema(xsd);
 
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + Activator.XSD_DIAGRAMM_SCHEMA_FILE + "because " );
+			logger.error( " canntot compile Schemafile " + schemaFile + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
@@ -66,7 +66,7 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Resourcesfile is not valid with " + Activator.XSD_DIAGRAMM_SCHEMA_FILE + "because " );
+			logger.error( "Resourcesfile is not valid with " + schemaFile + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {

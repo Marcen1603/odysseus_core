@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.viewer.Activator;
 import de.uniol.inf.is.odysseus.viewer.ctrl.IController;
 import de.uniol.inf.is.odysseus.viewer.swt.render.SWTRenderManager;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.IResourceConfiguration;
@@ -61,9 +62,6 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator>
 	
 	private final IGraphViewFactory<IPhysicalOperator> DEFAULT_GRAPH_FACTORY = new OdysseusGraphViewFactory();
 	private final ISymbolElementFactory<IPhysicalOperator> defaultSymbolFactory;
-	
-	private static final String RESOURCES_FILE = "viewer_cfg/resources.xml";
-	private static final String CONFIG_FILE = "viewer_cfg/symbol.xml";
 	
 	private ISymbolConfiguration symbolConfiguration;
 	private IResourceConfiguration resourceConfiguration;
@@ -100,7 +98,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator>
 		
 		// Ressourcen laden
 		try {
-			resourceConfiguration = new XMLResourceConfiguration(RESOURCES_FILE);	
+			resourceConfiguration = new XMLResourceConfiguration(Activator.RESOURCES_FILE, Activator.XSD_RESOURCES_FILE);	
 			SWTResourceManager.getInstance().freeAllResources();
 			SWTResourceManager.getInstance().load( shell.getDisplay(), resourceConfiguration );
 		} catch( Exception ex ) {
@@ -758,10 +756,10 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator>
 	
 	private void loadConfigurations() {
 		try {
-			ISymbolConfiguration symConfig = new XMLSymbolConfiguration(CONFIG_FILE);
+			ISymbolConfiguration symConfig = new XMLSymbolConfiguration(Activator.SYMBOL_CONFIG_FILE, Activator.XSD_SYMBOL_SCHEMA_FILE);
 			symbolConfiguration = symConfig;
 		
-			resourceConfiguration = new XMLResourceConfiguration(RESOURCES_FILE);	
+			resourceConfiguration = new XMLResourceConfiguration(Activator.RESOURCES_FILE, Activator.XSD_RESOURCES_FILE);	
 			SWTResourceManager.getInstance().freeImageResources();
 			SWTResourceManager.getInstance().load( shell.getDisplay(), resourceConfiguration );	
 		} catch( IOException ex ) {
