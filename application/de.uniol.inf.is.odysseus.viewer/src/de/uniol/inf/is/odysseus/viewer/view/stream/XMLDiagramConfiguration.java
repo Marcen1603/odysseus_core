@@ -33,27 +33,22 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger( XMLDiagramConfiguration.class );
 	private Collection<DiagramInfo> diagramInfos = new ArrayList<DiagramInfo>();
 	
-	public XMLDiagramConfiguration( String configFileName, String schemaFile ) {
-		logger.info( "Paring resourceConfigurationfile " + configFileName  );
+	public XMLDiagramConfiguration( URL xmlFile, URL xsd ) {
+		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
 		
 		// VALIDATION
 		SchemaFactory factory = SchemaFactory.newInstance( "http://www.w3.org/2001/XMLSchema" );	
 		Schema schema;
 		try {
-			// Neu mit OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(schemaFile);
 			schema = factory.newSchema(xsd);
 
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + schemaFile + "because " );
+			logger.error( " canntot compile Schemafile " + xsd + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
 		
 		Validator validator = schema.newValidator();
-		// Neu mit OSGi
-		URL xmlFile = Activator.getContext().getBundle().getEntry(configFileName);
-		logger.debug(xmlFile.toString());
 		Source source = null;
 		try {
 			source = new StreamSource(xmlFile.openStream());
@@ -66,7 +61,7 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Resourcesfile is not valid with " + schemaFile + "because " );
+			logger.error( "Resourcesfile is not valid with " + xsd + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {
@@ -103,7 +98,7 @@ public class XMLDiagramConfiguration implements IDiagramConfiguration {
 		} catch( ParserConfigurationException e ) {
 			logger.error("ParserConfigurationException occured!", e);
 		} catch( FileNotFoundException e ) {
-			logger.error("Could not find '" + configFileName + "'!", e);
+			logger.error("Could not find '" + xmlFile + "'!", e);
 		} catch( SAXException e ) {
 			logger.error("Error during parsing XML-File!", e);
 		} catch( IOException e ) {

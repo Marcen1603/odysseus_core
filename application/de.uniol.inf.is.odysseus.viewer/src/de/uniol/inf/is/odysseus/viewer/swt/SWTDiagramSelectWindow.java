@@ -22,7 +22,7 @@ public class SWTDiagramSelectWindow {
 	
 	public SWTDiagramSelectWindow( Shell baseWindow, final IOdysseusNodeView node ) {
 		
-		final IDiagramConfiguration diagramConfig = new XMLDiagramConfiguration( Activator.DIAGRAM_CFG_FILE, Activator.XSD_DIAGRAMM_SCHEMA_FILE );
+		final IDiagramConfiguration diagramConfig = new XMLDiagramConfiguration(Activator.getContext().getBundle().getEntry( Activator.DIAGRAM_CFG_FILE), Activator.getContext().getBundle().getEntry(Activator.XSD_DIAGRAMM_SCHEMA_FILE) );
 			
 		final Shell wnd = new Shell( baseWindow, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL ); // erstellt Dialog
 		wnd.setText( "Diagrammauswahl" );

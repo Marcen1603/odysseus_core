@@ -25,42 +25,35 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.viewer.Activator;
-
 public class XMLResourceConfiguration implements IResourceConfiguration {
 
 		private static final Logger logger = LoggerFactory.getLogger( XMLResourceConfiguration.class );
 	
 	private Map<String, String> resources = new HashMap<String, String>();
 	
-	public XMLResourceConfiguration( String configFileName, String schemaFile ) throws IOException{
+	public XMLResourceConfiguration( URL xmlFile, URL xsd ) throws IOException{
 		
-		logger.info( "Paring resourceConfigurationfile " + configFileName  );
+		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
 		
 		// VALIDATION
 		SchemaFactory factory = SchemaFactory.newInstance( "http://www.w3.org/2001/XMLSchema" );	
 		Schema schema;
 		try {
-			// Neu mit OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(schemaFile );
 			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + schemaFile  + "because " );
+			logger.error( " canntot compile Schemafile " + xsd  + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
 		
 		Validator validator = schema.newValidator();
-		// Neu mit OSGi
-		URL xmlFile = Activator.getContext().getBundle().getEntry(configFileName);
-		logger.debug(xmlFile.toString());
 		Source source = new StreamSource(xmlFile.openStream());
 		
 		try {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Resourcesfile is not valid with " + schemaFile  + "because " );
+			logger.error( "Resourcesfile is not valid with " + xsd  + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {

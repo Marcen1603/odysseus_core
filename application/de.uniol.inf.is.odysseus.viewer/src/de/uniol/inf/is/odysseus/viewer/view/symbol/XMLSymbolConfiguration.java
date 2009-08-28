@@ -27,8 +27,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.viewer.Activator;
-
 public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger( XMLSymbolConfiguration.class );
@@ -36,15 +34,13 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 	private Map<String, Collection<SymbolElementInfo>> mapTypeSymbolInfos;
 	private Collection<SymbolElementInfo> defaultSymbolInfos;
 	
-	public XMLSymbolConfiguration( String configFilename, String schemaFile ) throws IOException {
-		if( configFilename == null ) 
+	public XMLSymbolConfiguration( URL xmlFile, URL xsd ) throws IOException {
+		if( xmlFile == null ) 
 			throw new IllegalArgumentException( "xmlFilename is null!" );
 		
-		if( configFilename.length() == 0 )  
-			throw new IllegalArgumentException( "xmlFilename is empty!");
+	
 		
-		
-		logger.info("Parsing configurationfile " + configFilename );
+		logger.info("Parsing configurationfile " + xmlFile );
 		
 		// DATEN EINLESEN
 		mapTypeSymbolInfos = new HashMap<String, Collection<SymbolElementInfo>>();
@@ -55,18 +51,15 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		Schema schema;
 		try {
 			//schema = factory.newSchema( new File( XSD_FILE ) );
-			//OSGi
-			URL xsd = Activator.getContext().getBundle().getEntry(schemaFile);
 			schema = factory.newSchema(xsd);
 		} catch( SAXException ex ) {
-			logger.error( " canntot compile Schemafile " + schemaFile + "because " );
+			logger.error( " canntot compile Schemafile " + xsd + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		}
 		
 		Validator validator = schema.newValidator();
 		// Neu mit OSGi
-		URL xmlFile = Activator.getContext().getBundle().getEntry(configFilename);
 		logger.debug(xmlFile.toString());
 		Source source = new StreamSource(xmlFile.openStream());
 
@@ -75,7 +68,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 			validator.validate( source );
 			
 		} catch( SAXException ex ) {
-			logger.error( "Configurationfile is not valid with " + schemaFile + "because " );
+			logger.error( "Configurationfile is not valid with " + xsd + "because " );
 			logger.error( ex.getMessage() );
 			return;
 		} catch( IOException e ) {

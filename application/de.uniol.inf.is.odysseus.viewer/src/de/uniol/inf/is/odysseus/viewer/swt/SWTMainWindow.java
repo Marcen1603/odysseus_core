@@ -98,7 +98,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator>
 		
 		// Ressourcen laden
 		try {
-			resourceConfiguration = new XMLResourceConfiguration(Activator.RESOURCES_FILE, Activator.XSD_RESOURCES_FILE);	
+			resourceConfiguration = new XMLResourceConfiguration(Activator.getContext().getBundle().getEntry(Activator.RESOURCES_FILE), Activator.getContext().getBundle().getEntry(Activator.XSD_RESOURCES_FILE));	
 			SWTResourceManager.getInstance().freeAllResources();
 			SWTResourceManager.getInstance().load( shell.getDisplay(), resourceConfiguration );
 		} catch( Exception ex ) {
@@ -756,10 +756,10 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator>
 	
 	private void loadConfigurations() {
 		try {
-			ISymbolConfiguration symConfig = new XMLSymbolConfiguration(Activator.SYMBOL_CONFIG_FILE, Activator.XSD_SYMBOL_SCHEMA_FILE);
+			ISymbolConfiguration symConfig = new XMLSymbolConfiguration(Activator.getContext().getBundle().getEntry(Activator.SYMBOL_CONFIG_FILE), Activator.getContext().getBundle().getEntry(Activator.XSD_SYMBOL_SCHEMA_FILE));
 			symbolConfiguration = symConfig;
 		
-			resourceConfiguration = new XMLResourceConfiguration(Activator.RESOURCES_FILE, Activator.XSD_RESOURCES_FILE);	
+			resourceConfiguration = new XMLResourceConfiguration(Activator.getContext().getBundle().getEntry(Activator.RESOURCES_FILE), Activator.getContext().getBundle().getEntry(Activator.XSD_RESOURCES_FILE));	
 			SWTResourceManager.getInstance().freeImageResources();
 			SWTResourceManager.getInstance().load( shell.getDisplay(), resourceConfiguration );	
 		} catch( IOException ex ) {
