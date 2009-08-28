@@ -150,13 +150,12 @@ public class DefaultTISweepArea<T extends IMetaAttribute<? extends ITimeInterval
 	}
 
 	/**
-	 * TODO @Marco es waere schoen, wenn das eine sprechendere bezeichnung
-	 * haette ;)
+	 * For Debug-Purposes
 	 * 
 	 * @param baseTime
-	 * @return
+	 * @return the current Content of the SweepArea with baseTime as origin of all points of time 
 	 */
-	public String toString2(PointInTime baseTime) {
+	public String getSweepAreaAsString(PointInTime baseTime) {
 		StringBuffer buf = new StringBuffer("SweepArea " + elements.size()
 				+ " Elems \n");
 		for (T element : elements) {
