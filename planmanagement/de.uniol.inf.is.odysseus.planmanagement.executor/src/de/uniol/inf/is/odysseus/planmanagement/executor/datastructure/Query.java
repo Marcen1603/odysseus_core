@@ -102,7 +102,7 @@ public class Query implements IEditableQuery {
 	@SuppressWarnings("unchecked")
 	@Override
 	public IPhysicalOperator setRoot(IPhysicalOperator root) {
-		this.root = (IPhysicalOperator) root.clone();
+		this.root = root;
 
 		if (this.parameters != null) {
 			IPhysicalOperator defaultRoot = null;
