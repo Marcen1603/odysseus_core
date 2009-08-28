@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
@@ -115,11 +114,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * 
 	 * @param newExecutionPlan
 	 *            neuer Ausführungsplan
-	 * @throws QueryOptimizationException
 	 */
-	protected void setExecutionPlan(IExecutionPlan newExecutionPlan)
-			throws QueryOptimizationException {
-		if (newExecutionPlan != null) {
+	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
+		if (newExecutionPlan != null && !newExecutionPlan.equals(this.executionPlan)) {
 			try {
 				this.logger.info("Set execution plan.");
 
@@ -136,8 +133,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				schedulerManager().refreshScheduling(this);
 				this.logger.info("New execution plan set.");
 			} catch (Exception e) {
-				throw new QueryOptimizationException(
-						"Error setting execution plan.", e);
+				this.logger.error("Error while setting new execution plan. "
+						+ e.getMessage());
+				fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
+						"Error while setting new execution plan. "
+								+ e.getMessage()));
 			}
 		}
 	}
@@ -485,4 +485,5 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				"Executor exception (with inner error). "
 						+ eventArgs.getMessage()));
 	}
+
 }

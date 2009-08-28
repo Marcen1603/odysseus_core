@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -8,10 +9,12 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 
 /**
  * IExecutor stellt die Hauptschnittstelle für externe Anwendungen zu Odysseus
@@ -109,4 +112,5 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	public int addQuery(IPhysicalOperator physicalPlan,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
+
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,19 +13,27 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.event.endoptimize.AbstractEndEvent;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.event.startoptimize.AbstractStartEvent;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 
+/**
+ * @author Wolf Bauer, Jonas Jacobi
+ */
 public abstract class AbstractOptimizer implements IOptimizer {
 
 	protected Logger logger;
 
-	protected Map<String, IBufferPlacementStrategy> bufferPlacementStrategies = new HashMap<String,IBufferPlacementStrategy>();
+	protected Map<String, IBufferPlacementStrategy> bufferPlacementStrategies = new HashMap<String, IBufferPlacementStrategy>();
 
 	protected IPlanOptimizer planOptimizer;
 
@@ -32,7 +41,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 	protected IPlanMigrationStrategie planMigrationStrategie;
 
-	//protected IBufferPlacementStrategy bufferPlacementStrategy;
+	// protected IBufferPlacementStrategy bufferPlacementStrategy;
 
 	private ArrayList<IErrorEventListener> errorEventListener = new ArrayList<IErrorEventListener>();
 
@@ -52,7 +61,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public void unbindBufferPlacementStrategy(
 			IBufferPlacementStrategy bufferPlacementStrategy) {
 		synchronized (this.bufferPlacementStrategies) {
-			this.bufferPlacementStrategies.remove(bufferPlacementStrategy.getName());
+			this.bufferPlacementStrategies.remove(bufferPlacementStrategy
+					.getName());
 		}
 	}
 
@@ -104,33 +114,63 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 	}
 
-	protected abstract IExecutionPlan processOptimizeEvent(
-			AbstractStartEvent<?> eventArgs) throws QueryOptimizationException;
+	@Override
+	public IEditableExecutionPlan preStartOptimization(IQuery queryToStart,
+			IEditableExecutionPlan executionPlan)
+			throws QueryOptimizationException {
+		return executionPlan;
+	}
 
 	@Override
-	public void optimizeStartEvent(AbstractStartEvent<?> eventArgs)
+	public <T extends IPlanOptimizable & IPlanMigratable > IExecutionPlan preQueryRemoveOptimization(T sender,
+			IQuery removedQuery,
+			IEditableExecutionPlan executionPlan, AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException {
-
-		this.logger.info("Start optimize: " + eventArgs.getID());
-
-		AbstractEndEvent<?> endEventargs = eventArgs.createEndOptimizeEvent(
-				this, processOptimizeEvent(eventArgs));
-
-		if (endEventargs != null) {
-			eventArgs.getSender().optimizeEndEvent(endEventargs);
-			this.logger.info("End optimize, send event: "
-					+ endEventargs.getID());
-			return;
-		}
-		this.logger.info("End optimization. No new execution plan generated.");
+		return preQueryRemoveOptimization(sender, removedQuery,
+				executionPlan, new OptimizeParameter(parameters));
+	};
+	
+	@Override
+	public IEditableExecutionPlan optimizeNewQueries(IOptimizable sender,
+			List<IEditableQuery> queries, OptimizeParameter parameters)
+			throws QueryOptimizationException {
+		return null;
 	}
+	
+	@Override
+	public IExecutionPlan reoptimize(IQuery sender,
+			IEditableExecutionPlan executionPlan)
+			throws QueryOptimizationException {
+		return null;
+	}
+	
+	@Override
+	public IExecutionPlan reoptimize(IPlan sender,
+			IEditableExecutionPlan executionPlan) {
+		return null;
+	}
+	
+	@Override
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> newQueries, ParameterDoRestruct true1)
+			throws QueryOptimizationException {
+		return null;
+	}
+	
+	@Override
+	public IEditableExecutionPlan preStopOptimization(IQuery queryToStop,
+			IEditableExecutionPlan execPlan) throws QueryOptimizationException {
+		return null;
+	}
+
 
 	@Override
 	public String getInfos() {
 		String infos = "<Optimizer class=\"" + this + "\"> ";
 
 		infos += "<BufferPlacementStrategy>";
-		for (String bufferPlacementStrategy : this.bufferPlacementStrategies.keySet()) {
+		for (String bufferPlacementStrategy : this.bufferPlacementStrategies
+				.keySet()) {
 			infos += getInfoString(bufferPlacementStrategy,
 					"BufferPlacementStrategy comp.: ");
 		}
@@ -150,12 +190,12 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public Set<String> getRegisteredBufferPlacementStrategies() {
 		return this.bufferPlacementStrategies.keySet();
 	}
-	
+
 	@Override
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String strategy) {
 		return this.bufferPlacementStrategies.get(strategy);
 	}
-	
+
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
 		this.errorEventListener.add(errorEventListener);

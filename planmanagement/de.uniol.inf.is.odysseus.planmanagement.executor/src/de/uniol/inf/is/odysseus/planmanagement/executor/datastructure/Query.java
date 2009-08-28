@@ -183,7 +183,7 @@ public class Query implements IEditableQuery {
 	@Override
 	public void reoptimize() {
 		for (IQueryReoptimizeListener reoptimizeListener : this.queryReoptimizeListener) {
-			reoptimizeListener.reoptimizeRequest(this);
+			reoptimizeListener.reoptimize(this);
 		}
 	}
 
