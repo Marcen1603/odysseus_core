@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.model.resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,6 +26,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
@@ -36,11 +38,11 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.ParamSetterF
 
 public class XMLParameterParser implements IParameterConfiguration {
 	
-	private static final String XSD_FILE = "C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/parameterSchema.xsd";
+	private static final String XSD_FILE = "editor_cfg/parameterSchema.xsd";
 	private static final Logger logger = LoggerFactory
 			.getLogger(XMLParameterParser.class);
-	private Collection<IParam<?>> constructParams = new ArrayList<IParam<?>>();
-	private Collection<IParam<?>> setterParams = new ArrayList<IParam<?>>();
+	private Collection<IParamConstruct<?>> constructParams = new ArrayList<IParamConstruct<?>>();
+	private Collection<IParamSetter<?>> setterParams = new ArrayList<IParamSetter<?>>();
 	private Collection<DefaultSourceContent> sources = new ArrayList<DefaultSourceContent>();
 	private Collection<DefaultSinkContent> sinks = new ArrayList<DefaultSinkContent>();
 	private Collection<DefaultPipeContent> pipes = new ArrayList<DefaultPipeContent>();
@@ -76,7 +78,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 		this.paramSetFac = new ParamSetterFactory();
 		this.paramConFac = new ParamConstructFactory();
 		try {
-			schema = factory.newSchema(new File(XSD_FILE));
+			URL xsdFile = Activator.getContext().getBundle().getEntry(XSD_FILE);
+			schema = factory.newSchema(xsdFile);
 		} catch (SAXException ex) {
 			 logger.error( " cannot compile Schemafile " + XSD_FILE +
 			 "because " );
@@ -178,23 +181,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 				getSourceNodes(nodes.item(i));
 			}
 		}
-		System.out.println("Sources------------------------------------------------");
-		for (DefaultSourceContent con : sources) {
-			System.out.println("Name: " + con.getName() + ", Typ: " + con.getTyp());
-			for (IParam<?> c : con
-				.getConstructParameterList()) {
-			System.out.println("PCType: "
-					+ c.getType()
-					+ ", PPos: "
-					+ ((IParamConstruct<?>) (c))
-							.getPosition());
-			}
-			for (IParam<?> c : con.getSetterParameterList()) {
-				System.out.println("PSType: " + c.getType()
-						+ ", PSet: "
-						+ ((IParamSetter<?>) (c)).getSetter());
-			}
-		}
 	}
 	
 	private void getPipes(Document doc) {
@@ -204,23 +190,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 				getPipeNodes(nodes.item(i));
 			}
 		}
-		System.out.println("Pipes------------------------------------------------");
-		for (DefaultPipeContent con : pipes) {
-			System.out.println("Name: " + con.getName() + ", Typ: " + con.getTyp());
-			for (IParam<?> c : con
-				.getConstructParameterList()) {
-			System.out.println("PCType: "
-					+ c.getType()
-					+ ", PPos: "
-					+ ((IParamConstruct<?>) (c))
-							.getPosition());
-			}
-			for (IParam<?> c : con.getSetterParameterList()) {
-				System.out.println("PSType: " + c.getType()
-						+ ", PSet: "
-						+ ((IParamSetter<?>) (c)).getSetter());
-			}
-		}
 	}
 	
 	private void getSinks(Document doc) {
@@ -228,18 +197,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			if(nodes.item(i).getNodeName().equals("sink")) {
 				getSinkNodes(nodes.item(i));
-			}
-		}
-		System.out.println("Sinks------------------------------------------------");
-		for (DefaultSinkContent con : sinks) {
-			System.out.println("Name: " + con.getName() + ", Typ: " + con.getTyp());
-			for (IParam<?> c : con.getConstructParameterList()) {
-			System.out.println("PCType: " + c.getType() + ", PPos: " + ((IParamConstruct<?>)(c)).getPosition());
-			}
-			for (IParam<?> c : con.getSetterParameterList()) {
-				System.out.println("PSType: " + c.getType()
-						+ ", PSet: "
-						+ ((IParamSetter<?>)(c)).getSetter());
 			}
 		}
 	}
@@ -265,6 +222,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}
 				if (node.getNodeName().equals("type")) {
 					pType = childNodes.item(i).getNodeValue();
+					
 				}
 				if (node.getNodeName().equals("position")) {
 					pPosition = Integer.parseInt(childNodes.item(i)
@@ -274,8 +232,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 					pSetter = childNodes.item(i).getNodeValue();
 				}
 				if (newSource && newSourceType) {
-					constructParams = new ArrayList<IParam<?>>();
-					setterParams = new ArrayList<IParam<?>>();
+					constructParams = new ArrayList<IParamConstruct<?>>();
+					setterParams = new ArrayList<IParamSetter<?>>();
 					source = new DefaultSourceContent(sourceName, sourceType,
 							constructParams, setterParams);
 					sources.add(source);
@@ -338,8 +296,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 					pSetter = childNodes.item(i).getNodeValue();
 				}
 				if (newPipe && newPipeType) {
-					constructParams = new ArrayList<IParam<?>>();
-					setterParams = new ArrayList<IParam<?>>();
+					constructParams = new ArrayList<IParamConstruct<?>>();
+					setterParams = new ArrayList<IParamSetter<?>>();
 					pipe = new DefaultPipeContent(pipeName, pipeType,
 							constructParams, setterParams);
 					pipes.add(pipe);
@@ -402,8 +360,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 					pSetter = childNodes.item(i).getNodeValue();
 				}
 				if (newSink && newSinkType) {
-					constructParams = new ArrayList<IParam<?>>();
-					setterParams = new ArrayList<IParam<?>>();
+					constructParams = new ArrayList<IParamConstruct<?>>();
+					setterParams = new ArrayList<IParamSetter<?>>();
 					sink = new DefaultSinkContent(sinkName, sinkType,
 							constructParams, setterParams);
 					sinks.add(sink);

@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.resource.SWTResourceManager;
 
 
 public class SWTMainWindow {
@@ -172,5 +172,7 @@ public class SWTMainWindow {
 		
 		queryCounter++;
 	}
+	
+	
 	
 }

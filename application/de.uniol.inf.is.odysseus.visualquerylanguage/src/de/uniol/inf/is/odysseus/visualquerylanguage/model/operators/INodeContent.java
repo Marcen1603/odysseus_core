@@ -4,8 +4,8 @@ import java.util.Collection;
 
 public interface INodeContent {
 	
-	public Collection<IParam<?>> getConstructParameterList();
-	public Collection<IParam<?>> getSetterParameterList();
+	public Collection<IParamConstruct<?>> getConstructParameterList();
+	public Collection<IParamSetter<?>> getSetterParameterList();
 	public String getName();
 	public String getTyp();
 	

@@ -8,17 +8,17 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.viewer.swt.symbol.AbstractSWTConnectionSymbolElement;
+import de.uniol.inf.is.odysseus.viewer.view.graph.DefaultConnectionView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.DefaultNodeView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.IConnectionView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.IGraphView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.Vector;
+import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
+import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
+import de.uniol.inf.is.odysseus.viewer.view.symbol.SymbolElementInfo;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.symbol.AbstractSWTConnectionSymbolElement;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.DefaultConnectionView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.DefaultNodeView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.IConnectionView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.IGraphView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.INodeView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.Vector;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.position.INodePositioner;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.symbol.ISymbolElementFactory;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.symbol.SymbolElementInfo;
 
 
 public final class SugiyamaPositioner implements INodePositioner<INodeContent> {

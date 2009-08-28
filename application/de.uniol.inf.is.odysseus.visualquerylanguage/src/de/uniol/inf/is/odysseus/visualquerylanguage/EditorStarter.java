@@ -6,20 +6,13 @@ import java.net.URL;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.eclipse.swt.widgets.Display;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
+import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
+import de.uniol.inf.is.odysseus.viewer.swt.resource.XMLResourceConfiguration;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
-import de.uniol.inf.is.odysseus.vqlinterfaces.ctrl.DefaultController;
-import de.uniol.inf.is.odysseus.vqlinterfaces.ctrl.IController;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.DefaultGraphModel;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.IGraphModel;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.resource.SWTResourceManager;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.resource.XMLResourceConfiguration;
 
 public class EditorStarter implements CommandProvider{
 	
@@ -33,8 +26,8 @@ public class EditorStarter implements CommandProvider{
 		Display d = new Display();
 		
 		try {
-			//URL resources = context.getBundle().getResource("/editor_cfg/resources.xml");
-			XMLResourceConfiguration cfg = new XMLResourceConfiguration("C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/resources.xml");
+			URL xmlFile = Activator.getContext().getBundle().getEntry("viewer_cfg/resources.xml");
+			XMLResourceConfiguration cfg = new XMLResourceConfiguration(xmlFile.toString());
 			SWTResourceManager.getInstance().load(d, cfg);
 		} catch (IOException e) {
 			logger.error("Could not load XMLConfiguration because ");

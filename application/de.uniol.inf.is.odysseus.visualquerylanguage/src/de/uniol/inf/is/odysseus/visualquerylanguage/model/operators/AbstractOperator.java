@@ -7,11 +7,11 @@ public abstract class AbstractOperator implements INodeContent{
 	
 	private String name;
 	private String typ;
-	Collection<IParam<?>> constructParameterList;
-	Collection<IParam<?>> setterParameterList;
+	Collection<IParamConstruct<?>> constructParameterList;
+	Collection<IParamSetter<?>> setterParameterList;
 	private Collection<INodeContentChangeListener<INodeContent>> listeners = new ArrayList<INodeContentChangeListener<INodeContent>>();
 	
-	public AbstractOperator(String name, String typ, Collection<IParam<?>> constructParameters, Collection<IParam<?>> setterParameters) {
+	public AbstractOperator(String name, String typ, Collection<IParamConstruct<?>> constructParameters, Collection<IParamSetter<?>> setterParameters) {
 		this.name = name;
 		this.typ = typ;
 		this.constructParameterList = constructParameters;
@@ -26,12 +26,12 @@ public abstract class AbstractOperator implements INodeContent{
 	}
 
 	@Override
-	public Collection<IParam<?>> getConstructParameterList() {
+	public Collection<IParamConstruct<?>> getConstructParameterList() {
 		return constructParameterList;
 	}
 	
 	@Override
-	public Collection<IParam<?>> getSetterParameterList() {
+	public Collection<IParamSetter<?>> getSetterParameterList() {
 		return setterParameterList;
 	}
 

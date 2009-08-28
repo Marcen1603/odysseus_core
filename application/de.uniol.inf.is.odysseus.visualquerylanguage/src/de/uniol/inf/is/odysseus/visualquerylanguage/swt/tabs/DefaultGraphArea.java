@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -20,53 +23,55 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
+import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultNodeModel;
+import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
+import de.uniol.inf.is.odysseus.viewer.model.graph.IGraphModel;
+import de.uniol.inf.is.odysseus.viewer.model.graph.IGraphModelChangeListener;
+import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
+import de.uniol.inf.is.odysseus.viewer.swt.SWTStatusLine;
+import de.uniol.inf.is.odysseus.viewer.swt.render.SWTRenderManager;
+import de.uniol.inf.is.odysseus.viewer.swt.select.ISelectListener;
+import de.uniol.inf.is.odysseus.viewer.swt.select.ISelector;
+import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTArrowSymbolElement;
+import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTImageSymbolElement;
+import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTSymbolElementFactory;
+import de.uniol.inf.is.odysseus.viewer.view.graph.DefaultConnectionView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.DefaultGraphView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.DefaultNodeView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.IConnectionView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.IGraphView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.viewer.view.graph.Vector;
+import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
+import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
+import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
+import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IModelController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParam;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor.CursorManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositioner;
-import de.uniol.inf.is.odysseus.vqlinterfaces.ctrl.IController;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.DefaultConnectionModel;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.DefaultNodeModel;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.IConnectionModel;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.IGraphModel;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.IGraphModelChangeListener;
-import de.uniol.inf.is.odysseus.vqlinterfaces.model.graph.INodeModel;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.SWTStatusLine;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.renderer.SWTRenderManager;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.select.ISelectListener;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.select.ISelectSender;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.symbol.SWTArrowSymbolElement;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.symbol.SWTImageSymbolElement;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.symbol.SWTSymbolElementFactory;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.DefaultConnectionView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.DefaultGraphView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.DefaultNodeView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.IConnectionView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.IGraphView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.INodeView;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.graph.Vector;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.position.INodePositioner;
-import de.uniol.inf.is.odysseus.vqlinterfaces.view.symbol.ISymbolElementFactory;
 
 public class DefaultGraphArea extends Composite implements
 		IGraphArea<INodeContent>, IGraphModelChangeListener<INodeContent>,
 		ISelectListener<INodeView<INodeContent>> {
+	
+	private static final String XML_FILE = "editor_cfg/parameter.xml";
 
 	private Canvas canvas = null;
 
-	private IController<INodeContent> controller;
+	private IModelController<INodeContent> controller;
 	private IGraphView<INodeContent> viewGraph;
 	private SWTRenderManager<INodeContent> renderManager;
 
@@ -76,8 +81,7 @@ public class DefaultGraphArea extends Composite implements
 
 	private ScrolledComposite infoScroll;
 	private Composite infoArea;
-
-	private Composite param;
+	private final Map<INodeView<INodeContent>, SWTParameterArea> parameterAreasShown = new HashMap<INodeView<INodeContent>, SWTParameterArea>();
 
 	private Tree tree;
 	private boolean leftMouseClicked = false;
@@ -86,6 +90,8 @@ public class DefaultGraphArea extends Composite implements
 	private INodePositioner<INodeContent> positioner;
 
 	private XMLParameterParser parser = null;
+	
+	private final Logger log = LoggerFactory.getLogger(DefaultGraphArea.class);
 
 	public DefaultGraphArea(Composite parent, DefaultQuery query, int style) {
 		super(parent, style);
@@ -98,8 +104,8 @@ public class DefaultGraphArea extends Composite implements
 		this.setLayoutData(graphAreaData);
 
 		try {
-			this.parser = new XMLParameterParser(
-					"C:/Informatik/Odysseus/de.uniol.inf.is.odysseus.visualquerylanguage/editor_cfg/parameter.xml");
+			URL xmlFile = Activator.getContext().getBundle().getEntry(XML_FILE); 
+			this.parser = new XMLParameterParser(xmlFile.toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -226,10 +232,13 @@ public class DefaultGraphArea extends Composite implements
 				}
 			}
 		});
+		infoScroll.setMinSize( infoArea.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+		infoArea.layout();
+		infoScroll.layout();
 	}
 
 	@Override
-	public IController<INodeContent> getController() {
+	public IModelController<INodeContent> getController() {
 		return controller;
 	}
 
@@ -259,8 +268,7 @@ public class DefaultGraphArea extends Composite implements
 						node);
 				controller.addNode(node);
 				CursorManager.isNotConnection();
-				nodeView.setPosition(renderManager
-						.getRealNodePosition(new Vector(e.x, e.y)));
+				nodeView.setPosition(this.getRealNodePosition(new Vector(e.x, e.y)));
 				if (content.isSource()) {
 					nodeView.getSymbolContainer().add(
 							new SWTImageSymbolElement<INodeContent>("source"));
@@ -395,61 +403,62 @@ public class DefaultGraphArea extends Composite implements
 		connectionChosen = true;
 		renderManager.getSelector().unselectAll();
 	}
+	
+	private void addParameterArea ( INodeView<INodeContent> nodeView ) {
+		if( !parameterAreasShown.containsKey( nodeView )) {
+			
+			SWTParameterArea p = new SWTParameterArea(infoArea, (DefaultNodeView<INodeContent>)nodeView );
+//			p.addInfoPanelListener( this );
+			parameterAreasShown.put( nodeView, p );
+			log.debug( "ParameterArea for " + nodeView + " created" );
+		}
+	}
+	
+	private void removeParameterArea( INodeView<INodeContent> unselected ) {
+		if( parameterAreasShown.containsKey( unselected )) {
+			SWTParameterArea panel = parameterAreasShown.get( unselected );
+//			if( panel.isPinned() )
+//				return;
+			
+//			panel.removeInfoPanelListener( this );
+			panel.dispose();
+			parameterAreasShown.remove( unselected );
+			
+			log.debug( "ParameterArea for " + unselected + " destroyed" );
+		}
+	}
 
 	@Override
-	public void selectObject(ISelectSender<INodeView<INodeContent>> sender,
+	public void selectObject(ISelector<INodeView<INodeContent>> sender,
 			Collection<? extends INodeView<INodeContent>> selected) {
-//		refreshParameterView();
+		for (INodeView<INodeContent> iNodeView : renderManager.getSelector().getSelected()) {
+			addParameterArea(iNodeView);
+		}
+		infoScroll.setMinSize( infoArea.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+		infoArea.layout();
+		infoScroll.layout();
 		if (connectionChosen) {
 			CursorManager.connectionCursor(true, "connection");
 			addNewConnection();
 		}
+		
 	}
 
 	@Override
-	public void unselectObject(ISelectSender<INodeView<INodeContent>> sender,
+	public void unselectObject(ISelector<INodeView<INodeContent>> sender,
 			Collection<? extends INodeView<INodeContent>> unselected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private Composite refreshParameterView() {
-		if (renderManager.getSelector().getSelectionCount() == 1) {
-			for (Object object : renderManager.getSelector().getSelected()) {
-				if (!param.equals(object)) {
-					if (object instanceof INodeView<?>) {
-						param = new Composite(infoArea, 0);
-						GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-						param.setLayoutData(gd);
-						param.setLayout(new GridLayout());
-						param.setBackground(tree.getBackground());
-						Label header = new Label(param, SWT.LEAD);
-						Label cType = new Label(param, SWT.LEAD);
-						cType.setText("Parametertyp");
-						Text type = new Text(param, SWT.LEAD);
-						Label pos = new Label(param, SWT.LEAD);
-						pos.setText("Konstruktorposition");
-						Text cPos = new Text(param, SWT.LEAD);
-						INodeContent content = ((INodeView<INodeContent>) (object))
-								.getModelNode().getContent();
-						for (IParam<?> cParam : content
-								.getConstructParameterList()) {
-							header.setText(cParam.getName());
-							type.setText(cParam.getType());
-							cPos.setText(Integer
-									.toString(((IParamConstruct<?>) (cParam))
-											.getPosition()));
-						}
-						return param;
-					}
-				}
-			}
-			return null;
-		} else {
-			param.dispose();
-			return null;
+		for (INodeView<INodeContent> iNodeView : unselected) {
+			removeParameterArea(iNodeView);
 		}
+		infoScroll.setMinSize( infoArea.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+		infoArea.layout();
+		infoScroll.layout();
+		
 	}
-
+	
+	
+	// Canvaskoordinaten in Graphkoordinaten umrechnen
+	private Vector getRealNodePosition(Vector v) {
+		return v.div(renderManager.getZoomFactor()).sub(renderManager.getGraphOffset());
+	}
 }

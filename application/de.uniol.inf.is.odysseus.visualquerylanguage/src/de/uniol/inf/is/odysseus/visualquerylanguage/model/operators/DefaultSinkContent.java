@@ -6,8 +6,8 @@ public class DefaultSinkContent extends AbstractOperator{
 
 
 	public DefaultSinkContent(String name, String typ,
-			Collection<IParam<?>> constructParameters,
-			Collection<IParam<?>> setterParameters) {
+			Collection<IParamConstruct<?>> constructParameters,
+			Collection<IParamSetter<?>> setterParameters) {
 		super(name, typ, constructParameters, setterParameters);
 		// TODO Auto-generated constructor stub
 	}

@@ -3,7 +3,8 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Display;
-import de.uniol.inf.is.odysseus.vqlinterfaces.swt.resource.SWTResourceManager;
+
+import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 
 public class CursorManager {
 	
