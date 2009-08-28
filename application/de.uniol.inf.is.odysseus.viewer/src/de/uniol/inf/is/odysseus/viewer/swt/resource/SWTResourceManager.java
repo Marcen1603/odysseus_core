@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eclipse.swt.graphics.Color;
@@ -52,6 +54,8 @@ public class SWTResourceManager {
 	
 	// Geladene Bilder. Zuordnung zwischen Identifikationsnamen und Imageinstanz
 	private Map<String, Image> loadedImages = new HashMap<String, Image>();
+
+	public static Bundle resourceBundle = null;
 	
 	// Einzige Instanz dieser Klasse. Siehe dazu Singleton-Pattern.
 	private static SWTResourceManager instance;
@@ -61,6 +65,7 @@ public class SWTResourceManager {
 	 */
 	private SWTResourceManager() {
 		logger.debug( "SWTResourceManager started!" );
+		
 	}
 	
 	/**
@@ -71,8 +76,10 @@ public class SWTResourceManager {
 	 * @return Einzige Instanz der SWTResourceManager-Klasse
 	 */
 	public static SWTResourceManager getInstance() {
-		if( instance == null )
+		if (resourceBundle == null) throw new RuntimeException("Resource Bundle not set");
+		if( instance == null ){
 			instance = new SWTResourceManager();
+		}
 		return instance;
 	}
 	
@@ -255,7 +262,7 @@ public class SWTResourceManager {
 	// schief gegangen ist.
 	private static Image loadImage( Device device, String filename ) {
 		try {
-			URL imageURL = Activator.getContext().getBundle().getEntry(filename);
+			URL imageURL = resourceBundle.getEntry(filename);
 			Image image = new Image(device, imageURL.openStream());
 			
 			logger.debug( "Imageresource loaded:" + filename );

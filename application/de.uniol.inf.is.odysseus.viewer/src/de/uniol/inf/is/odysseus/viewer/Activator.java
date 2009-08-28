@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.viewer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
+
 
 public class Activator implements BundleActivator {
 
@@ -17,12 +19,14 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bc) throws Exception {
 		context = bc;
+		SWTResourceManager.resourceBundle = bc.getBundle();
 		
 	}
 
 	@Override
 	public void stop(BundleContext arg0) throws Exception {
 		context = null;
+		SWTResourceManager.resourceBundle = null;
 	}
 	
 	public static BundleContext getContext() {
