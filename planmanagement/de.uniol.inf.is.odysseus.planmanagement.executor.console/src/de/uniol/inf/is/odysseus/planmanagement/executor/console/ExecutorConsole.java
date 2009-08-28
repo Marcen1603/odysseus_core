@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
@@ -26,7 +25,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
-
 import de.uniol.inf.is.odysseus.viewer.ViewerStarter;
 import de.uniol.inf.is.odysseus.viewer.ViewerStarterConfiguration;
 import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
@@ -49,9 +47,10 @@ public class ExecutorConsole implements CommandProvider,
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
-				
+
 		try {
-			this.parser = this.executor.getSupportedQueryParser().iterator().next();
+			this.parser = this.executor.getSupportedQueryParser().iterator()
+					.next();
 		} catch (PlanManagementException e) {
 			System.out.println("Error setting parser.");
 		}
@@ -66,7 +65,8 @@ public class ExecutorConsole implements CommandProvider,
 			return parser;
 		}
 
-		Iterator<String> parsers = this.executor.getSupportedQueryParser().iterator();
+		Iterator<String> parsers = this.executor.getSupportedQueryParser()
+				.iterator();
 		if (parsers != null && parsers.hasNext()) {
 			this.parser = parsers.next();
 			return this.parser;
@@ -79,17 +79,17 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			parserList = this.executor.getSupportedQueryParser();
 		} catch (PlanManagementException e) {
-			System.out.println(e.getMessage());
+			ci.println(e.getMessage());
 		}
 		if (parserList != null) {
-			System.out.println("Available parser:");
+			ci.println("Available parser:");
 			for (String par : parserList) {
 				System.out.print(par);
 
 				if (par.equals(this.parser)) {
 					System.out.print(" - Selected");
 				}
-				System.out.println("");
+				ci.println("");
 			}
 		}
 	}
@@ -100,15 +100,15 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				if (this.executor.getSupportedQueryParser().contains(args[0])) {
 					this.parser = args[0];
-					System.out.println("New parser: " + args[0]);
+					ci.println("New parser: " + args[0]);
 				} else {
-					System.out.println("No parser with this ID.");
+					ci.println("No parser with this ID.");
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 	}
 
@@ -116,71 +116,74 @@ public class ExecutorConsole implements CommandProvider,
 		Set<String> bufferList = this.executor
 				.getRegisteredBufferPlacementStrategies();
 		if (bufferList != null) {
-			String current = (String) this.executor.getConfiguration().get(SettingBufferPlacementStrategy.class).getValue();
-			System.out.println("Available bufferplacement strategies:");
+			String current = (String) this.executor.getConfiguration().get(
+					SettingBufferPlacementStrategy.class).getValue();
+			ci.println("Available bufferplacement strategies:");
 			if (current == null) {
 				System.out.print("no strategy - SELECTED");
-			}else{
+			} else {
 				System.out.print("no strategy");
 			}
-			System.out.println("");
+			ci.println("");
 			for (String iBufferPlacementStrategy : bufferList) {
 				System.out.print(iBufferPlacementStrategy);
 				if (current != null && iBufferPlacementStrategy.equals(current)) {
 					System.out.print(" - SELECTED");
 				}
-				System.out.println("");
+				ci.println("");
 			}
-			
+
 		}
 	}
 
 	public void _sstrats(CommandInterpreter ci) {
-		 Set<String> list = this.executor.getRegisteredSchedulingStrategyFactories();
+		Set<String> list = this.executor
+				.getRegisteredSchedulingStrategyFactories();
 		if (list != null) {
 			String current = executor.getCurrentSchedulingStrategy();
-			System.out.println("Available Scheduling strategies:");
-			
-			System.out.println("");
+			ci.println("Available Scheduling strategies:");
+
+			ci.println("");
 			for (String iStrategy : list) {
 				System.out.print(iStrategy.toString());
 				if (current != null && iStrategy.equals(current)) {
 					System.out.print(" - SELECTED");
 				}
-				System.out.println("");
+				ci.println("");
 			}
 			System.out.print("no strategy");
 		}
 	}
-	
+
 	public void _sscheduler(CommandInterpreter ci) {
-		 Set<String> list = this.executor.getRegisteredSchedulerFactories();
+		Set<String> list = this.executor.getRegisteredSchedulerFactories();
 		if (list != null) {
 			String current = executor.getCurrentScheduler();
-			System.out.println("Available Schedulers:");
-			
-//			if (current == null) {
-//				System.out.print(" - SELECTED");
-//			}
-			System.out.println("");
+			ci.println("Available Schedulers:");
+
+			// if (current == null) {
+			// System.out.print(" - SELECTED");
+			// }
+			ci.println("");
 			for (String iStrategy : list) {
 				System.out.print(iStrategy.toString());
 				if (current != null && iStrategy.equals(current)) {
 					System.out.print(" - SELECTED");
 				}
-				System.out.println("");
+				ci.println("");
 			}
 		}
 	}
-	
+
 	public void _scheduler(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		if (args != null && args.length > 0) {
-			executor.setScheduler(args[0],args[1]);
-		}else {
-			System.out.println("No query argument.");
+			executor.setScheduler(args[0], args[1]);
+		} else {
+			ci.println("No query argument.");
 		}
 	}
+
 	
 	public void _viewer(CommandInterpreter ci){
 		System.out.println("startviewer");
@@ -202,119 +205,115 @@ public class ExecutorConsole implements CommandProvider,
 				String bufferName = args[0];
 				Set<String> list = this.executor
 						.getRegisteredBufferPlacementStrategies();
-				if (list.contains(bufferName)){
+				if (list.contains(bufferName)) {
 					this.executor.getConfiguration().set(
 							new SettingBufferPlacementStrategy(bufferName));
-					System.out.println("Strategy "+ bufferName+" set.");
+					ci.println("Strategy " + bufferName + " set.");
 					return;
 				} else {
 					this.executor.getConfiguration().set(
 							new SettingBufferPlacementStrategy(null));
-					if ("no strategy".equalsIgnoreCase(bufferName)){
-						System.out.println("Current strategy removed.");
-					}else{
-						System.out.println("Strategy not found. Current strategy removed.");
+					if ("no strategy".equalsIgnoreCase(bufferName)) {
+						ci.println("Current strategy removed.");
+					} else {
+						ci
+								.println("Strategy not found. Current strategy removed.");
 					}
 					return;
 				}
-				
+
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 	}
 
 	public void _man(CommandInterpreter ci) {
-		System.out
-				.println("ExecutorInfo - more detailed information on the excutor");
-		System.out.println("");
+		ci.println("ExecutorInfo - more detailed information on the excutor");
+		ci.println("");
 
-		System.out.println("parser PARSERID - set current parser");
-		System.out.println("");
+		ci.println("parser PARSERID - set current parser");
+		ci.println("");
 
-		System.out.println("ps - show available parser");
-		System.out.println("");
+		ci.println("ps - show available parser");
+		ci.println("");
 
-		System.out
-				.println("buffer BUFFERID - set current bufferplacement strategy");
-		System.out.println("");
+		ci.println("buffer BUFFERID - set current bufferplacement strategy");
+		ci.println("");
 
-		System.out.println("bs - show available bufferplacement strategy");
-		System.out.println("");
+		ci.println("bs - show available bufferplacement strategy");
+		ci.println("");
 
-		System.out.println("sscheduler - show available scheduler");
-		System.out.println("");
-		
-		System.out.println("sstrats - show available scheduling strategy factories");
-		System.out.println("");
-		
-		System.out.println("scheduler SCHEDULER STRATEGY - set current scheduler with strategy");
-		System.out.println("");		
-		
-		System.out.println("schedule - start scheduling");
-		System.out.println("");
+		ci.println("sscheduler - show available scheduler");
+		ci.println("");
 
-		System.out.println("stopschedule - stop scheduling");
-		System.out.println("");
+		ci.println("sstrats - show available scheduling strategy factories");
+		ci.println("");
 
-		System.out.println("qs - show all registered queries");
-		System.out.println("");
+		ci
+				.println("scheduler SCHEDULER STRATEGY - set current scheduler with strategy");
+		ci.println("");
 
-		System.out.println("qstop QUERYID - stop query with QUERYID");
-		System.out.println("");
+		ci.println("schedule - start scheduling");
+		ci.println("");
 
-		System.out.println("qstart QUERYID - stop query with QUERYID");
-		System.out.println("");
+		ci.println("stopschedule - stop scheduling");
+		ci.println("");
 
-		System.out
+		ci.println("qs - show all registered queries");
+		ci.println("");
+
+		ci.println("qstop QUERYID - stop query with QUERYID");
+		ci.println("");
+
+		ci.println("qstart QUERYID - stop query with QUERYID");
+		ci.println("");
+
+		ci
 				.println("meta QUERYID - dump meta data of the query with QUERYID (only if root is a sink)");
-		System.out.println("");
+		ci.println("");
 
-		System.out
+		ci
 				.println("dumpp QUERYID - dump physical plan of the query with QUERYID");
-		System.out.println("");
+		ci.println("");
 
-		System.out
-				.println("dumpr - dump physical plan of all registered roots.");
-		System.out.println("");
+		ci.println("dumpr - dump physical plan of all registered roots.");
+		ci.println("");
 
-		System.out.println("viewer - starts viewer that shows the last added query");
-		System.out.println("");
-
-		System.out
+		ci
 				.println("dumpe - dump all physical operators of the current execution plan.");
-		System.out.println("");
+		ci.println("");
 
-		System.out.println("remove QUERYID - remove query with QUERYID");
-		System.out.println("");
+		ci.println("remove QUERYID - remove query with QUERYID");
+		ci.println("");
 
-		System.out
+		ci
 				.println("add QUERYSTRING [S] - add query [with console-output-sink]");
-		System.out.println("Examples:");
-		System.out
+		ci.println("Examples:");
+		ci
 				.println("add 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'");
-		System.out
-				.println("add 'SELECT (a * 2) as value FROM test WHERE a > 2' S");
-		System.out.println("");
+		ci.println("add 'SELECT (a * 2) as value FROM test WHERE a > 2' S");
+		ci.println("");
 	}
-	
+
 	public void _dumpe(CommandInterpreter ci) {
 		IExecutionPlan plan = this.executor.getExecutionPlan();
-		
+
 		int i = 1;
-		System.out.println("Registered source:");
+		ci.println("Registered source:");
 		for (IIterableSource<?> isource : plan.getSources()) {
-			System.out.println(i++ + ": " + isource.toString() + ", Owner:" + this.support.getOwnerIDs(isource.getOwner()));
+			ci.println(i++ + ": " + isource.toString() + ", Owner:"
+					+ this.support.getOwnerIDs(isource.getOwner()));
 		}
-		
-		System.out.println("");
-		i= 1;
-		System.out.println("Registered PartialPlans:");
+
+		ci.println("");
+		i = 1;
+		ci.println("Registered PartialPlans:");
 		for (IPartialPlan partialPlan : plan.getPartialPlans()) {
-			System.out.println(i++ + ": ");
-			System.out.println(partialPlan.toString());
+			ci.println(i++ + ": ");
+			ci.println(partialPlan.toString());
 		}
 	}
 
@@ -332,7 +331,7 @@ public class ExecutorConsole implements CommandProvider,
 
 		try {
 			StringBuffer buff = new StringBuffer();
-			System.out.println("Physical plan of all roots: ");
+			ci.println("Physical plan of all roots: ");
 			int count = 1;
 			for (IPhysicalOperator root : this.executor.getSealedPlan()
 					.getRoots()) {
@@ -342,11 +341,11 @@ public class ExecutorConsole implements CommandProvider,
 				} else {
 					this.support.dumpPlan((ISource) root, depth, buff);
 				}
-				System.out.println(count++ + ". root:");
-				System.out.println(buff.toString());
+				ci.println(count++ + ". root:");
+				ci.println(buff.toString());
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			ci.println(e.getMessage());
 		}
 	}
 
@@ -364,27 +363,26 @@ public class ExecutorConsole implements CommandProvider,
 			}
 
 			try {
-				IQuery query = this.executor.getSealedPlan()
-						.getQuery(qnum);
+				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
 					StringBuffer buff = new StringBuffer();
 					if (query.getSealedRoot().isSink()) {
-						this.support.dumpPlan((ISink) query.getSealedRoot(), depth,
-								buff);
+						this.support.dumpPlan((ISink) query.getSealedRoot(),
+								depth, buff);
 					} else {
-						this.support.dumpPlan((ISource) query.getSealedRoot(), depth,
-								buff);
+						this.support.dumpPlan((ISource) query.getSealedRoot(),
+								depth, buff);
 					}
-					System.out.println("Physical plan of query: " + qnum);
-					System.out.println(buff.toString());
+					ci.println("Physical plan of query: " + qnum);
+					ci.println(buff.toString());
 				} else {
-					System.out.println("Query not found.");
+					ci.println("Query not found.");
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 	}
 
@@ -394,22 +392,22 @@ public class ExecutorConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				IQuery query = this.executor.getSealedPlan()
-						.getQuery(qnum);
+				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
 					if (query.getSealedRoot().isSink()) {
-						this.support.printPlanMetadata((ISink) query.getSealedRoot());
+						this.support.printPlanMetadata((ISink) query
+								.getSealedRoot());
 
 					} else {
-						System.out.println("Root is no sink.");
+						ci.println("Root is no sink.");
 					}
 				}
 
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 	}
 
@@ -424,11 +422,11 @@ public class ExecutorConsole implements CommandProvider,
 					this.executor.addQuery(args[0], parser());
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 		// TODO: DAS HIER IST NUR EIN HACK!!
 		blah();
@@ -438,9 +436,8 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			System.out
 					.println("Current registered queries (ID | STARTED | PARSERID):");
-			for (IQuery query : this.executor.getSealedPlan()
-					.getQueries()) {
-				System.out.println(query.getID() + " | " + query.isStarted());
+			for (IQuery query : this.executor.getSealedPlan().getQueries()) {
+				ci.println(query.getID() + " | " + query.isStarted());
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -454,10 +451,10 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				this.executor.removeQuery(qnum);
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 	}
 
@@ -468,10 +465,10 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				this.executor.stopQuery(qnum);
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 	}
 
@@ -482,10 +479,10 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				this.executor.startQuery(qnum);
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				ci.println(e.getMessage());
 			}
 		} else {
-			System.out.println("No query argument.");
+			ci.println("No query argument.");
 		}
 	}
 
@@ -493,8 +490,8 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			this.executor.startExecution();
 		} catch (PlanManagementException e) {
-			System.out.println(e.getMessage());
-			System.out.println(e.getStackTrace());
+			ci.println(e.getMessage());
+			ci.printStackTrace(e);
 		}
 	}
 
@@ -502,8 +499,8 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			this.executor.stopExecution();
 		} catch (PlanManagementException e) {
-			System.out.println(e.getMessage());
-			System.out.println(e.getStackTrace());
+			ci.println(e.getMessage());
+			ci.printStackTrace(e);
 		}
 	}
 
