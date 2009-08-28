@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+
+	<xs:complexType name="Parameter">
+		<xs:attribute name="key" type="xs:string" use="required"/>
+		<xs:attribute name="value" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="Size">
+		<xs:attribute name="width" type="xs:decimal" use="required"/>
+		<xs:attribute name="height" type="xs:decimal" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="SymbolElement">
+		<xs:sequence>
+			<xs:element name="Parameter" type="Parameter" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="Symbol">
+		<xs:sequence>
+			<xs:element name="Size" type="Size"/>
+			<xs:element name="SymbolElement" type="SymbolElement" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="nodeName" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="Default">
+		<xs:sequence>
+			<xs:element name="Size" type="Size"/>
+			<xs:element name="SymbolElement" type="SymbolElement" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="Symbols">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Symbol" type="Symbol" maxOccurs="unbounded"/>
+				<xs:element name="Default" type="Default"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

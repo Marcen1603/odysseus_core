@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagrams xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="diagramSchema.xsd">
+  
+  <Diagram name="Simple Liste (50)" diagramType="list" converterType="default">
+    <Parameter key="maxItems" value="50"/>
+  </Diagram>
+  
+  <Diagram name="Simple Liste (200)" diagramType="list" converterType="default">
+  	<Parameter key="maxItems" value="200"/>
+  </Diagram>
+  
+  <Diagram name="Simple Liste (Unbegrenzt)" diagramType="list" converterType="default">
+  	<Parameter key="maxItems" value="-1"/>
+  </Diagram>
+  
+  <Diagram name="Histogramm" diagramType="histogram" converterType="integer">
+  	<Parameter key="attributeID" value="2"/>
+  </Diagram>
+  
+  <Diagram name="Liniendiagramm(4)" diagramType="line" converterType="float">
+  	<Parameter key="attributeID" value="4" />
+  	<Parameter key="maxItems" value="1000" />
+  </Diagram>
+  
+</Diagrams>
