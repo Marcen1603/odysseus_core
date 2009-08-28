@@ -538,6 +538,9 @@ public class ExecutorConsole implements CommandProvider,
 				e.printStackTrace();
 			}
 			for (IPhysicalOperator query:queries){
+				if (query == null) {
+					continue;
+				}
 				if (query.isSink()){
 					OdysseusModelProviderSink mp = new OdysseusModelProviderSink((ISink)query);
 					wnd.setModelProvider(mp);
