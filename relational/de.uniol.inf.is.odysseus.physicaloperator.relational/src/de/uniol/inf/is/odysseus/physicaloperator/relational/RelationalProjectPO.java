@@ -30,8 +30,8 @@ public class RelationalProjectPO<T extends IClone> extends
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	@Override

@@ -37,8 +37,8 @@ public class RelationalMapPO<T extends IClone> extends
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 	
 	@SuppressWarnings("unchecked")
