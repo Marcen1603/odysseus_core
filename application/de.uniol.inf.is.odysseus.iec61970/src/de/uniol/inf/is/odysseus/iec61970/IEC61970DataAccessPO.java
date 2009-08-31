@@ -5,11 +5,12 @@ import java.nio.ByteBuffer;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.iec61970.dataaccessclient.CallBack;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.IFacade;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractUnaryPipe;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
 
 
@@ -19,7 +20,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
  *
  * @param <W>
  */
-public class IEC61970DataAccessPO<W> extends AbstractUnaryPipe<ByteBuffer, W> {
+public class IEC61970DataAccessPO<W extends IClone> extends AbstractPipe<ByteBuffer, W> {
 	
 	private IDataAccessHandler<W> handler;
 	private int size = -1;
@@ -60,6 +61,16 @@ public class IEC61970DataAccessPO<W> extends AbstractUnaryPipe<ByteBuffer, W> {
 		pathnames = daPO.pathnames;
 		
 	}
+	
+	@Override
+	protected ByteBuffer cloneIfNessessary(ByteBuffer object, boolean exclusive, int port) {
+		return object;
+	}
+	
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
@@ -81,7 +92,7 @@ public class IEC61970DataAccessPO<W> extends AbstractUnaryPipe<ByteBuffer, W> {
 	}
 	
 	@Override
-	protected synchronized void process_next(ByteBuffer buffer, int port, boolean isReadOnly) {
+	protected synchronized void process_next(ByteBuffer buffer, int port) {
 		try {
 			while (buffer.remaining() > 0){
 				//Gesamtgröße des Objekts rausfinden
