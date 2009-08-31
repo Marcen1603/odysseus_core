@@ -59,8 +59,8 @@ public class UnionPO<R extends IMetaAttribute<?>> extends AbstractPipe<R, R> {
 	private boolean[] done;
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	@Override

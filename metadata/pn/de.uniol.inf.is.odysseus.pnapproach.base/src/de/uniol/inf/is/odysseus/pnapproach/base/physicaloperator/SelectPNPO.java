@@ -26,8 +26,8 @@ public class SelectPNPO<T extends IMetaAttribute<? extends IPosNeg>> extends Abs
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	@Override

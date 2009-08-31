@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.StartsBeforePredicate
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttribute;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
 /**
@@ -76,8 +77,8 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	public void process_next(R object, int port) {

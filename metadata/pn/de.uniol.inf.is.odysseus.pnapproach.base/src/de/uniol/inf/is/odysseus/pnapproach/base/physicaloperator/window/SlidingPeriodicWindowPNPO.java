@@ -74,8 +74,8 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttribute<? extends IPosNe
     }
     
     @Override
-    public boolean modifiesInput() {
-    	return true;
+    public OutputMode getOutputMode() {
+    	return OutputMode.MODIFIED_INPUT;
     }
     
     public void process_next(R next, int port){	

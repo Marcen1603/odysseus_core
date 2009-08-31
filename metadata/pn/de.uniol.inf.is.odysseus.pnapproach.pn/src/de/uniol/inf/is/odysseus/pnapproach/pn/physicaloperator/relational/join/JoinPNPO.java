@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -67,8 +68,8 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttribute<M>> extends
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 	
 	@Override

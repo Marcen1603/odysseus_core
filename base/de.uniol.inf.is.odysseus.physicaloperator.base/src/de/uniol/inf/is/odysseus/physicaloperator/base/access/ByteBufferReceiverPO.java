@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 public class ByteBufferReceiverPO<W> extends AbstractPipe<ByteBuffer, W> {
 	
@@ -111,8 +112,8 @@ public class ByteBufferReceiverPO<W> extends AbstractPipe<ByteBuffer, W> {
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	private synchronized void transfer() throws IOException, ClassNotFoundException {

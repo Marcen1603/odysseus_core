@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 public class SlidingElementWindowTIPO<T extends IMetaAttribute<ITimeInterval>> extends AbstractWindowTIPO<T> {
 
@@ -23,8 +24,8 @@ public class SlidingElementWindowTIPO<T extends IMetaAttribute<ITimeInterval>> e
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	@Override

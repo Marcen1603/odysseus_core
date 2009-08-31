@@ -14,8 +14,8 @@ public class MetadataPO<M extends IClone, In extends IMetaAttribute, Out extends
 	}
 	
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	public void process_next(In object, int port){

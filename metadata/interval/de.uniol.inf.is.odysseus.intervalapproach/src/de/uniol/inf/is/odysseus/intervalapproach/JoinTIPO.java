@@ -103,8 +103,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttribute<K>>
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 	
 	@Override

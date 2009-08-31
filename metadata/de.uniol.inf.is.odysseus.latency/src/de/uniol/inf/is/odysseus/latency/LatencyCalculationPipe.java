@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 public class LatencyCalculationPipe<T extends IMetaAttribute<? extends ILatency>> extends AbstractPipe<T, T>{
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	@Override

@@ -58,8 +58,8 @@ public class DuplicateEliminationTIPO<T extends IMetaAttribute<? extends ITimeIn
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	@Override

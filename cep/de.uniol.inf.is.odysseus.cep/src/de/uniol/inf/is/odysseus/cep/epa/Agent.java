@@ -143,8 +143,8 @@ public class Agent extends AbstractPipe<Object, Object> {
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 	
 	/**

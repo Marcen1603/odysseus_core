@@ -15,8 +15,8 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	@Override

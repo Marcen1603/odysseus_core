@@ -19,8 +19,8 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttribute<? extends IPri
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return super.modifiesInput();
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	@SuppressWarnings("unchecked")

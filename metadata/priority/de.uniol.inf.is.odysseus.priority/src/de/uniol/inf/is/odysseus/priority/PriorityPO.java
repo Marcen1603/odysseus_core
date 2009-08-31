@@ -22,8 +22,8 @@ public class PriorityPO<T extends IMetaAttribute<? extends IPriority>> extends
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	@SuppressWarnings("unchecked")

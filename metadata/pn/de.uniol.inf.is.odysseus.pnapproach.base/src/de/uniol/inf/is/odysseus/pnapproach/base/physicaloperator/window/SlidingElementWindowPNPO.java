@@ -25,8 +25,8 @@ public class SlidingElementWindowPNPO<T extends IMetaAttribute<IPosNeg>>
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	@Override

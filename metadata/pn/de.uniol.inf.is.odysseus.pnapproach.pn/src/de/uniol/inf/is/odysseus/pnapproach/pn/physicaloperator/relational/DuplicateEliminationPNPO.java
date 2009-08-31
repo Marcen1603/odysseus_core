@@ -58,8 +58,8 @@ public class DuplicateEliminationPNPO<T extends IMetaAttribute<? extends IPosNeg
 	}
 	
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	public synchronized void process_next(T next, int port) {		

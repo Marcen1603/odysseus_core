@@ -71,8 +71,8 @@ public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 	@SuppressWarnings("unchecked")

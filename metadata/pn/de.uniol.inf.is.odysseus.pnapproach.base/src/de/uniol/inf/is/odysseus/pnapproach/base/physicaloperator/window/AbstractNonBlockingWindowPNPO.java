@@ -46,8 +46,8 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 	}
 
 	@Override
-	public boolean modifiesInput() {
-		return true;
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 	
 	@Override

@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		IPipe<R, W> {
 
+	public enum OutputMode  {NEW_ELEMENT, MODIFIED_INPUT, INPUT};
+	
 	final protected POEvent openInitEvent = new POEvent(this,
 			POEventType.OpenInit);
 	final private POEvent openDoneEvent = new POEvent(this,
@@ -42,7 +44,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		return true;
 	}
 	
-	abstract public boolean modifiesInput();
+	abstract public OutputMode getOutputMode();
 
 	public void setNoOfInputPort(int ports) {
 		if (ports > noInputPorts) {
@@ -66,7 +68,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String, etc.)
 	// MUST override this method (else there will be a ClassCastException)
 	protected R cloneIfNessessary(R object, boolean exclusive, int port){
-		if (modifiesInput() && !isInputExclusive(port)) {
+		if (getOutputMode()==OutputMode.MODIFIED_INPUT && !isInputExclusive(port)) {
 			object = (R) ((IClone)object).clone();
 			setInputExclusive(true, port);
 		}
@@ -77,13 +79,19 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public boolean isTransferExclusive() {
 		// Zunächst Testen ob das Datum an mehrere Empfänger
 		// versendet wird --> dann niemals exclusiv
-		boolean ret = super.isTransferExclusive();
-		// Wenn einer der Eingänge nicht exclusive ist
-		// Ergebnis auch nicht exclusive
-		for (int i=0;i<inputExclusive.length && ret;i++){
-			ret = ret && inputExclusive[i];
+		boolean ret = super.isTransferExclusive();	
+		OutputMode out = getOutputMode();
+		switch(out){
+		case NEW_ELEMENT:
+			return ret;		
+		default: // MODIFIED_INPUT und INPUT
+			// Wenn einer der Eingänge nicht exclusive ist
+			// das Ergebnis auch nicht exclusive
+			for (int i=0;i<inputExclusive.length && ret;i++){
+				ret = ret && inputExclusive[i];
+			}
+			return ret;
 		}
-		return ret;
 	}
 
 	@Override

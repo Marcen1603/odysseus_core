@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.iec61970.dataaccessclient.CallBack;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.IFacade;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 
 
@@ -68,8 +69,8 @@ public class IEC61970DataAccessPO<W extends IClone> extends AbstractPipe<ByteBuf
 	}
 	
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 
 	@Override

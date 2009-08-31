@@ -44,8 +44,8 @@ public class PriorityBufferedPipe2<T extends IMetaAttribute<? extends IPriority>
 	}
 	
 	@Override
-	public boolean modifiesInput() {
-		return false;
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 
 	@SuppressWarnings("unchecked")
