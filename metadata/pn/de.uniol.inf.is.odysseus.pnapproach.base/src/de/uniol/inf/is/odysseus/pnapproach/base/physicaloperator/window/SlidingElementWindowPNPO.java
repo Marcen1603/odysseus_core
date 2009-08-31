@@ -25,12 +25,12 @@ public class SlidingElementWindowPNPO<T extends IMetaAttribute<IPosNeg>>
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port,
-			boolean isReadOnly) {
-		if (isReadOnly) {
-			object = (T) object.clone();
-		}
-
+	public boolean modifiesInput() {
+		return true;
+	}
+	
+	@Override
+	protected synchronized void process_next(T object, int port) {
 		buffer.add(object);
 		if (buffer.size() == this.windowSize + 1) {
 			T toReturn = buffer.remove(0);

@@ -91,6 +91,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		}		
 	}
 	
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
 	
 	@Override
 	protected void process_open() {
@@ -124,7 +128,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 	
 	@Override
-	protected synchronized void process_next(R object, int port, boolean isReadOnly) {
+	protected synchronized void process_next(R object, int port) {
 		
 		// ReadOnly ist egal
 		

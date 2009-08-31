@@ -56,12 +56,14 @@ public class DuplicateEliminationTIPO<T extends IMetaAttribute<? extends ITimeIn
 	public IClone cloneMe(){
 		return new DuplicateEliminationTIPO<T>(this);
 	}
+
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
 	
 	@Override
-	public synchronized void process_next(T next, int port, boolean isReadOnly) {
-		if(isReadOnly){
-			next = (T)next.clone(); 
-		}			
+	public synchronized void process_next(T next, int port) {
 		
 		// Using extractElements the odering parameters for the
 		// remove predicate must be inversed,

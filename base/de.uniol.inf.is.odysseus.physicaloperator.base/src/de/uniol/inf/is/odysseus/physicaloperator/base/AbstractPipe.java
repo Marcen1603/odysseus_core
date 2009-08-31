@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
@@ -24,7 +25,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractPipe.class);
 
-	abstract protected void process_next(R object, int port, boolean isReadOnly);
+	abstract protected void process_next(R object, int port);
 
 	final protected ArrayList<Subscription<ISource<? extends R>>> subscribedTo = new ArrayList<Subscription<ISource<? extends R>>>();
 
@@ -32,6 +33,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	protected POEvent[] processDoneEvent = null;
 
 	protected int noInputPorts = -1;
+	private boolean[] inputExclusive;
 
 	private boolean allInputsDone = false;
 
@@ -39,39 +41,75 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public boolean isSink() {
 		return true;
 	}
+	
+	abstract public boolean modifiesInput();
 
 	public void setNoOfInputPort(int ports) {
 		if (ports > noInputPorts) {
 			this.noInputPorts = ports;
 			processInitEvent = new POEvent[ports];
 			processDoneEvent = new POEvent[ports];
+			inputExclusive = new boolean[ports];
 			for (int i = 0; i < ports; i++) {
 				processInitEvent[i] = new POPortEvent(this,
 						POEventType.ProcessInit, i);
 				processDoneEvent[i] = new POPortEvent(this,
 						POEventType.ProcessDone, i);
+				inputExclusive[i] = false;
 			}
 		}
 	}
 
 	public void close() {
 	};
-
+	
+	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String, etc.)
+	// MUST override this method (else there will be a ClassCastException)
+	protected R cloneIfNessessary(R object, boolean exclusive, int port){
+		if (modifiesInput() && !isInputExclusive(port)) {
+			object = (R) ((IClone)object).clone();
+			setInputExclusive(true, port);
+		}
+		return object;
+	}
+	
 	@Override
-	public void process(R object, int port, boolean isReadOnly) {
-		// if (!isOpen()) System.err.println(this+" PROCESS BEFORE OPEN!!!");
-		// evtl. spaeter wieder einbauen? Exception?
-		fire(processInitEvent[port]);
-		process_next(object, port, isReadOnly);
-		fire(processDoneEvent[port]);
+	public boolean isTransferExclusive() {
+		// Zunächst Testen ob das Datum an mehrere Empfänger
+		// versendet wird --> dann niemals exclusiv
+		boolean ret = super.isTransferExclusive();
+		// Wenn einer der Eingänge nicht exclusive ist
+		// Ergebnis auch nicht exclusive
+		for (int i=0;i<inputExclusive.length && ret;i++){
+			ret = ret && inputExclusive[i];
+		}
+		return ret;
 	}
 
 	@Override
+	public void process(R object, int port, boolean exclusive) {
+		// if (!isOpen()) System.err.println(this+" PROCESS BEFORE OPEN!!!");
+		// evtl. spaeter wieder einbauen? Exception?
+		fire(processInitEvent[port]);
+		process_next(cloneIfNessessary(object, exclusive, port), port);
+		fire(processDoneEvent[port]);
+	}
+
+	private void setInputExclusive(boolean exclusive, int port) {
+		this.inputExclusive[port] = exclusive;
+	}
+	
+	private boolean isInputExclusive(int port){
+		return inputExclusive[port];
+	}
+	
+	@Override
 	public void process(Collection<? extends R> object, int port,
-			boolean isReadOnly) {
+			boolean exclusive) {
+		setInputExclusive(exclusive, port);
 		for (R cur : object) {
 			fire(processInitEvent[port]);
-			process_next(cur, port, isReadOnly);
+			process_next(cur, port);
 			fire(processDoneEvent[port]);
 		}
 	}

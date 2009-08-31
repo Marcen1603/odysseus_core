@@ -17,15 +17,15 @@ public abstract class AbstractPNPipe<R extends IMetaAttribute<? extends IPosNeg>
 	protected POEvent pushDoneNegEvent = new POEvent(this,
 			POEventType.PushDoneNeg);
 	
-	public void process(R object, int port, boolean isReadOnly) {
+	public void process(R object, int port, boolean exclusive) {
 		// if (!isOpen()) System.err.println(this+" PROCESS BEFORE OPEN!!!");
 		// evtl. spaeter wieder einbauen? Exception?
 		if(object.getMetadata().getElementType() == ElementType.POSITIVE ){
-			super.process(object, port, isReadOnly);
+			super.process(object, port, exclusive);
 		}
 		else{
 			fire(processInitNegEvent[port]);
-			process_next(object, port, isReadOnly);
+			process_next(object, port);
 			fire(processDoneNegEvent[port]);
 		}
 	}

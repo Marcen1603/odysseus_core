@@ -40,16 +40,16 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttribute<M>> 
 	}
 
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(T object, int port) {
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum?? propagateDone gemeint?
 			return;
 		}
 		
 		if(port == 0){
-			this.doLeft(object, port, isReadOnly);
+			this.doLeft(object, port);
 		}
 		else{
-			this.doRight(object, port, isReadOnly);
+			this.doRight(object, port);
 		}
 		
 		transferFunction.newElement(object, port);
@@ -64,7 +64,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttribute<M>> 
 		}
 	}
 	
-	private void doLeft(T object, int port, boolean isReadOnly){
+	private void doLeft(T object, int port){
 		int otherport = port ^ 1;
 		Order leftRight = Order.fromOrdinal(port);
 		
@@ -114,7 +114,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttribute<M>> 
 		}
 	}
 	
-	private void doRight(T object, int port, boolean isReadOnly){
+	private void doRight(T object, int port){
 		int leftport = port ^ 1;
 		Order leftRight = Order.fromOrdinal(leftport);
 		Order rightLeft = Order.fromOrdinal(port);

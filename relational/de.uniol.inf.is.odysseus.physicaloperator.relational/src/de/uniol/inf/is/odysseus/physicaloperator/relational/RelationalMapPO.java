@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IClone;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractUnaryPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @author Jonas Jacobi
  */
 public class RelationalMapPO<T extends IClone> extends
-		AbstractUnaryPipe<RelationalTuple<T>, RelationalTuple<T>> {
+		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
 	final private int[][] variables;
 	final private SDFExpression[] expressions;
@@ -36,14 +36,17 @@ public class RelationalMapPO<T extends IClone> extends
 		}
 	}
 
+	@Override
+	public boolean modifiesInput() {
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	final protected void process_next(RelationalTuple<T> object, int port,
-			boolean isReadOnly) {
+	final protected void process_next(RelationalTuple<T> object, int port) {
 		RelationalTuple<T> outputVal = new RelationalTuple<T>(
 				this.expressions.length);
-		outputVal.setMetadata((T) (isReadOnly ? object.getMetadata().clone()
-				: object.getMetadata()));
+		outputVal.setMetadata((T) object.getMetadata());
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {
 				Object[] values = new Object[this.variables[i].length];

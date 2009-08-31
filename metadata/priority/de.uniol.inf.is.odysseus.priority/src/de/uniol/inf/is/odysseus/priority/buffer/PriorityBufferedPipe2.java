@@ -42,9 +42,14 @@ public class PriorityBufferedPipe2<T extends IMetaAttribute<? extends IPriority>
 	public boolean isDone() {
 		return super.isDone() && isEmpty();
 	}
+	
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
 
 	@SuppressWarnings("unchecked")
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(T object, int port) {
 		byte prio = object.getMetadata().getPriority();
 		
 		// Load Shedding
@@ -52,9 +57,6 @@ public class PriorityBufferedPipe2<T extends IMetaAttribute<? extends IPriority>
 			return;
 		}
 		
-		if (isReadOnly) {
-			object = (T) object.clone();
-		}
 		if (maxSize < this.size() + 1) {
 			maxSize = this.size() + 1;
 		}

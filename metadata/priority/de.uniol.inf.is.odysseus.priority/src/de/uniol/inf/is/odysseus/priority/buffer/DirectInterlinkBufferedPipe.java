@@ -18,10 +18,14 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttribute<? extends IPri
 		directLinkLock.unlock();
 	}
 
+	@Override
+	public boolean modifiesInput() {
+		return super.modifiesInput();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	final protected synchronized void process_next(T object, int port,
-			boolean isReadOnly) {
+	final protected synchronized void process_next(T object, int port) {
 		
 		byte prio = object.getMetadata().getPriority();
 		
@@ -30,10 +34,6 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttribute<? extends IPri
 			return;
 		}
 		
-		if (isReadOnly) {
-			object = (T) object.clone();
-		}
-
 		if (prio > 0) {
 			directLinkLock.lock();
 			transfer(object);

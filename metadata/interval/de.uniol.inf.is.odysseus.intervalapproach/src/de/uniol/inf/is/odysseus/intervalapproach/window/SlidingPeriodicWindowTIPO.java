@@ -75,12 +75,12 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 		return new SlidingPeriodicWindowTIPO<R>(this);
 	}
 
-	public void process_next(R object, int port, boolean isReadOnly) {
-
-		if (isReadOnly) {
-			object = (R) object.clone();
-		}
-
+	@Override
+	public boolean modifiesInput() {
+		return true;
+	}
+	
+	public void process_next(R object, int port) {
 		long t_s = object.getMetadata().getStart().getMainPoint();
 		long delta = this.windowAdvance;
 		long winSize = this.windowSize;

@@ -49,7 +49,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			.synchronizedList(new ArrayList<IOperatorOwner>());
 	private List<IOperatorControl> deactivateRequestControls = Collections
 			.synchronizedList(new ArrayList<IOperatorControl>());
-
+	
 	@Override
 	public boolean isSink() {
 		return false;
@@ -136,9 +136,18 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// transferbatchevent
 		synchronized (this.subscriptions) {
 			for (Subscription<ISink<? super T>> sink : this.subscriptions) {
-				sink.target.process(object, sink.port, !this.hasSingleConsumer);
+				sink.target.process(object, sink.port, isTransferExclusive());
 			}
 		}
+	}
+
+	
+	/** states if the next Operator can change the transfer object oder
+	 * has to make a copy
+	 * @return
+	 */
+	protected boolean isTransferExclusive(){
+		return hasSingleConsumer;
 	}
 
 	final protected void fire(POEvent event) {

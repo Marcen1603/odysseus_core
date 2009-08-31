@@ -57,11 +57,12 @@ public class DuplicateEliminationPNPO<T extends IMetaAttribute<? extends IPosNeg
 		return new DuplicateEliminationPNPO<T>(this);
 	}
 	
-	public synchronized void process_next(T next, int port, boolean isReadOnly) {
-		if(isReadOnly){
-			next = (T)next.clone();
-		}
-		
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
+	
+	public synchronized void process_next(T next, int port) {		
 		doPositiveNegative(next);
 	}
 

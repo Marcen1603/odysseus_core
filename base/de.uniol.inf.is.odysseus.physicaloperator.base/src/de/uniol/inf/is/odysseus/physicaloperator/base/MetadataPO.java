@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataFactory;
 
 
-public class MetadataPO<M extends IClone, In extends IMetaAttribute, Out extends IMetaAttribute<M>> extends AbstractUnaryPipe<In, Out>{
+public class MetadataPO<M extends IClone, In extends IMetaAttribute, Out extends IMetaAttribute<M>> extends AbstractPipe<In, Out>{
 
 	private IMetadataFactory<M, In> mFac;
 	
@@ -13,10 +13,12 @@ public class MetadataPO<M extends IClone, In extends IMetaAttribute, Out extends
 		this.mFac = mFac;
 	}
 	
-	public void process_next(In object, int port, boolean isReadOnly){
-		if(isReadOnly){
-			object = (In)object.clone();
-		}
+	@Override
+	public boolean modifiesInput() {
+		return true;
+	}
+	
+	public void process_next(In object, int port){
 		M metadata = this.mFac.createMetadata(object);
 		object.setMetadata(metadata);
 		this.transfer((Out)object);

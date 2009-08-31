@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractUnaryPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
-public class ByteBufferReceiverPO<W> extends AbstractUnaryPipe<ByteBuffer, W> {
+public class ByteBufferReceiverPO<W> extends AbstractPipe<ByteBuffer, W> {
 	
 	private static final Logger logger = LoggerFactory.getLogger( ByteBufferReceiverPO.class );
 
@@ -30,6 +30,11 @@ public class ByteBufferReceiverPO<W> extends AbstractUnaryPipe<ByteBuffer, W> {
 		this.host = host;
 		this.port = port;
 		this.opened = false;
+	}
+	
+	@Override
+	protected ByteBuffer cloneIfNessessary(ByteBuffer object, boolean exclusive, int port) {
+		return object;
 	}
 	
 	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
@@ -62,7 +67,7 @@ public class ByteBufferReceiverPO<W> extends AbstractUnaryPipe<ByteBuffer, W> {
 	}
 	
 	@Override
-	protected synchronized void process_next(ByteBuffer buffer, int port, boolean isReadOnly) {
+	protected synchronized void process_next(ByteBuffer buffer, int port) {
 		try {	
 			while (buffer.remaining() > 0){
 
@@ -105,6 +110,11 @@ public class ByteBufferReceiverPO<W> extends AbstractUnaryPipe<ByteBuffer, W> {
 		} 
 	}
 
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
+	
 	private synchronized void transfer() throws IOException, ClassNotFoundException {
 		W toTrans = handler.create();
 		//logger.debug("Transfer "+toTrans);

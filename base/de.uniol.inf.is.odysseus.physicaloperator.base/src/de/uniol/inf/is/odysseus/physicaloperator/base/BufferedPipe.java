@@ -70,13 +70,14 @@ public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
 		return returnValue;
 	}
 
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected synchronized void process_next(T object, int port,
-			boolean isReadOnly) {
-		if (isReadOnly) {
-			object = (T) object.clone();
-		}
+	protected synchronized void process_next(T object, int port) {
 		synchronized (this.buffer) {
 			this.buffer.add(object);
 		}

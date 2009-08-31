@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractBinaryPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *            Datentyp
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttribute<K>>
-		extends AbstractBinaryPipe<T, T> {
+		extends AbstractPipe<T, T> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(JoinTIPO.class);
 	private ISweepArea<T>[] areas;
@@ -103,7 +103,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttribute<K>>
 	}
 
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	public boolean modifiesInput() {
+		return false;
+	}
+	
+	@Override
+	protected void process_next(T object, int port) {
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
 			// JJ: weil man schon fertig sein

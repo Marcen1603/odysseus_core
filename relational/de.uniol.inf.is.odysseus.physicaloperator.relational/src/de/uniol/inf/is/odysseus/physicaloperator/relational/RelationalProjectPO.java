@@ -1,15 +1,14 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.base.IClone;
-//import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractUnaryPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
  * @author Jonas Jacobi
  */
 public class RelationalProjectPO<T extends IClone> extends
-		AbstractUnaryPipe<RelationalTuple<T>, RelationalTuple<T>> {
+		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
 	private int[] restrictList;
 
@@ -31,11 +30,12 @@ public class RelationalProjectPO<T extends IClone> extends
 	}
 
 	@Override
-	final protected void process_next(RelationalTuple<T> object, int port,
-			boolean isReadOnly) {
-		if (isReadOnly) {
-			object = object.clone();
-		}
+	public boolean modifiesInput() {
+		return true;
+	}
+	
+	@Override
+	final protected void process_next(RelationalTuple<T> object, int port) {
 		try {
 			transfer(object.restrict(this.restrictList, null));
 		} catch (Exception e) {

@@ -34,11 +34,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	private POEvent[] processDoneEvent = null;
 
 	protected int noInputPorts = -1;
+	
 	private String name;
 
 	protected ArrayList<IOperatorOwner> owner = new ArrayList<IOperatorOwner>();
 	protected ArrayList<IOperatorControl> deactivateRequestControls = new ArrayList<IOperatorControl>();
-
+	
 	@Override
 	public boolean isSink() {
 		return true;

@@ -76,7 +76,12 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 	}
 
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	public boolean modifiesInput() {
+		return false;
+	}
+	
+	@Override
+	protected void process_next(T object, int port) {
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum?? propagateDone gemeint?
 			// JJ: weil man schon fertig sein
 			// kann, wenn ein strom keine elemente liefert, der
@@ -86,18 +91,14 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 			// werden muss, man also ressourcen spart
 			return;
 		}
-		
-		if(isReadOnly){
-			object = (T)object.clone();
-		}
-		
+			
 		Object[] nextElem = this.preStore(object, port);
 		
 		if(nextElem != null){
 			object = (T)nextElem[0];
 			port = (Integer)nextElem[1];
 		
-			this.process_next(object, port);
+			this.process_next_internal(object, port);
 		}
 		
 		synchronized (this) {
@@ -205,7 +206,7 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 		return null;
 	}
 	
-	private void process_next(T object, int port){
+	private void process_next_internal(T object, int port){
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
 		Order otherOrder = Order.fromOrdinal(otherport);
@@ -308,19 +309,19 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 				T right_min = this.preareas[1].peek();
 					
 				if(left_min.getMetadata().getTimestamp().before(right_min.getMetadata().getTimestamp())){
-					this.process_next(this.preareas[0].poll(), 0);
+					this.process_next_internal(this.preareas[0].poll(), 0);
 				}
 				else{
-					this.process_next(this.preareas[1].poll(), 1);
+					this.process_next_internal(this.preareas[1].poll(), 1);
 				}
 			}
 			
 			// leere noch die volle liste, falls vorhanden
 			while(!this.preareas[port].isEmpty()){
-				this.process_next(this.preareas[port].poll(), 0);
+				this.process_next_internal(this.preareas[port].poll(), 0);
 			}
 			while(!this.preareas[otherport].isEmpty()){
-				this.process_next(this.preareas[otherport].poll(), 0);
+				this.process_next_internal(this.preareas[otherport].poll(), 0);
 			}
 		}
 		// der andere port ist noch nicht fertig
@@ -330,17 +331,17 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 				T right_min = this.preareas[1].peek();
 					
 				if(left_min.getMetadata().getTimestamp().before(right_min.getMetadata().getTimestamp())){
-					this.process_next(this.preareas[0].poll(), 0);
+					this.process_next_internal(this.preareas[0].poll(), 0);
 				}
 				else{
-					this.process_next(this.preareas[1].poll(), 1);
+					this.process_next_internal(this.preareas[1].poll(), 1);
 				}
 			}
 			
 			// falls die liste port, welcher ja done ist, leer ist, kann die andere auch geleert werden
 			if(this.preareas[port].isEmpty()){
 				while(!this.preareas[otherport].isEmpty()){
-					this.process_next(this.preareas[otherport].poll(), 0);
+					this.process_next_internal(this.preareas[otherport].poll(), 0);
 				}
 			}
 		}

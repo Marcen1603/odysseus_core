@@ -73,12 +73,12 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttribute<? extends IPosNe
         return new SlidingPeriodicWindowPNPO<R>(this);
     }
     
-    public void process_next(R next, int port, boolean isReadOnly){
-    	if(isReadOnly){
-    		next = (R)next.clone();
-    	}
-		
-		
+    @Override
+    public boolean modifiesInput() {
+    	return true;
+    }
+    
+    public void process_next(R next, int port){	
 		long t_s = next.getMetadata().getTimestamp().getMainPoint();
 		long delta = this.windowAdvance;
 		long winSize = this.windowSize;

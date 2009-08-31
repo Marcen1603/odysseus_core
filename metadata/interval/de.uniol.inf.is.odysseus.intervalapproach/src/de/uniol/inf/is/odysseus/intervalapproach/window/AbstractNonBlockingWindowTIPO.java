@@ -18,12 +18,14 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttribute<? e
 		super(po);
 	}
 
+	@Override
+	public boolean modifiesInput() {
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
-		if (isReadOnly) {
-			object = (T) object.clone();
-		}
+	protected void process_next(T object, int port) {
 		ITimeInterval time = object.getMetadata();
 		time.setEnd(this.calcWindowEnd(time));
 		this.transfer(object);

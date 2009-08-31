@@ -21,12 +21,14 @@ public class PriorityPO<T extends IMetaAttribute<? extends IPriority>> extends
 		this.defaultPriority = priorityAO.getDefaultPriority();
 	}
 
+	@Override
+	public boolean modifiesInput() {
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(T next, int port, boolean isReadOnly) {
-		if (isReadOnly) {
-			next = (T) next.clone();
-		}
+	protected void process_next(T next, int port) {
 		for (Map.Entry<Byte, IPredicate<? super T>> curPriority : this.priorites
 				.entrySet()) {
 			if (curPriority.getValue().evaluate(next)) {

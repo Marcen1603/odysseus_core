@@ -13,6 +13,7 @@ import java.util.logging.SimpleFormatter;
 import org.nfunk.jep.JEP;
 import org.nfunk.jep.Variable;
 
+import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.ComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
@@ -141,11 +142,16 @@ public class Agent extends AbstractPipe<Object, Object> {
 		this.defLog.getHandlers()[0].setFormatter(new SimpleFormatter());
 	}
 
+	@Override
+	public boolean modifiesInput() {
+		return false;
+	}
+	
 	/**
 	 * Verarbeitet ein übergebenes Event.
 	 */
 	@Override
-	protected void process_next(Object object, int port, boolean isReadOnly) {
+	protected void process_next(Object object, int port) {
 		this.debug("Beginne Verarbeitung von Event " + object);
 		this.debug(this.getStats());
 

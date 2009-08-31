@@ -59,8 +59,12 @@ public class UnionPO<R extends IMetaAttribute<?>> extends AbstractPipe<R, R> {
 	private boolean[] done;
 
 	@Override
-	protected synchronized void process_next(R object, int port,
-			boolean isReadOnly) {
+	public boolean modifiesInput() {
+		return false;
+	}
+	
+	@Override
+	protected synchronized void process_next(R object, int port) {
 
 		// setting the timestamp must be independent
 		// of the metadata type

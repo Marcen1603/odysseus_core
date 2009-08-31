@@ -23,10 +23,12 @@ public class SlidingElementWindowTIPO<T extends IMetaAttribute<ITimeInterval>> e
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port, boolean isReadOnly){		
-		if(isReadOnly){
-			object = (T)object.clone();
-		}
+	public boolean modifiesInput() {
+		return true;
+	}
+	
+	@Override
+	protected synchronized void process_next(T object, int port){		
 		buffer.add(object);
 
 		// Fall testen, dass der Strom zu Ende ist ...

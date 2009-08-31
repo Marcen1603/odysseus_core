@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 /**
  * @author Jonas Jacobi
  */
-public class SelectPO<T> extends AbstractUnaryPipe<T, T> {
+public class SelectPO<T> extends AbstractPipe<T, T> {
 
 	private IPredicate<? super T> predicate;
 
@@ -15,8 +15,12 @@ public class SelectPO<T> extends AbstractUnaryPipe<T, T> {
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port,
-			boolean isReadOnly) {
+	public boolean modifiesInput() {
+		return false;
+	}
+	
+	@Override
+	protected synchronized void process_next(T object, int port) {
 //		System.out.println("SelectPO (" + this.hashCode() + "): " + object);
 		if (predicate.evaluate(object)) {
 			transfer(object);

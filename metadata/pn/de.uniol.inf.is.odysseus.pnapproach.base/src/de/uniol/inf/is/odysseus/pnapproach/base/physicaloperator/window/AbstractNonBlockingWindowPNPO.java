@@ -46,11 +46,12 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 	}
 
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
-		if(isReadOnly){
-			object = (T)object.clone();
-		}
-		
+	public boolean modifiesInput() {
+		return true;
+	}
+	
+	@Override
+	protected void process_next(T object, int port) {
 		// Fuer jedes Element, dass sich noch in der SweepArea befindet,
 		// und welches zu diesem Zeitpunkt entfernt werden kann, schreibe
 		// ein neues negatives Element in den Ausgabedatenstrom

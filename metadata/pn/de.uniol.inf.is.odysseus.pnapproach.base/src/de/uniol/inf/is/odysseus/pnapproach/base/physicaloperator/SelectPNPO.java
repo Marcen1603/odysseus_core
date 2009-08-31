@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractUnaryPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  *
  * @param <T>
  */
-public class SelectPNPO<T extends IMetaAttribute<? extends IPosNeg>> extends AbstractUnaryPipe<T, T> {
+public class SelectPNPO<T extends IMetaAttribute<? extends IPosNeg>> extends AbstractPipe<T, T> {
 
 	private IPredicate<? super T> predicate;
 
@@ -26,8 +26,12 @@ public class SelectPNPO<T extends IMetaAttribute<? extends IPosNeg>> extends Abs
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port,
-			boolean isReadOnly) {
+	public boolean modifiesInput() {
+		return false;
+	}
+	
+	@Override
+	protected synchronized void process_next(T object, int port) {
 		if ((object.getMetadata().getElementType() == ElementType.POSITIVE && predicate.evaluate(object)) || 
 				object.getMetadata().getElementType() == ElementType.NEGATIVE) {
 			transfer(object);
