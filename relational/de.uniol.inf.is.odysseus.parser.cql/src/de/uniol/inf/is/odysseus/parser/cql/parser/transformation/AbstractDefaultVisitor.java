@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBasicPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCSVSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
@@ -484,6 +485,11 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTOSGI node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCSVSource node, Object data) {
 		return null;
 	}
 }

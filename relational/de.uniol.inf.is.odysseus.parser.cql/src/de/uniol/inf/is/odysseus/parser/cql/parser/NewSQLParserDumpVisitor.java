@@ -364,4 +364,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTCSVSource node, Object data) {
+		return pvisit(node);
+	}
+
 }
