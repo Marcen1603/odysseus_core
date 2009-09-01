@@ -49,7 +49,7 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 			//open sources directly, otherwise they get indirectly opened by
 			//the open calls at the roots
 			if (partialPlans.isEmpty()) {
-				for (IIterableSource curSource : iterableSources) {
+				for (IIterableSource<?> curSource : iterableSources) {
 					curSource.open();
 				}
 			} else {

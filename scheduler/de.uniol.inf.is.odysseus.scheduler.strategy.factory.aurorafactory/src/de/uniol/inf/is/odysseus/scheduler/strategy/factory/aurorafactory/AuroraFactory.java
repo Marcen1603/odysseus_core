@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingStrategyFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinCost;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinLatency;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinMemory;
 
 
 public class AuroraFactory extends AbstractSchedulingStrategyFactory {

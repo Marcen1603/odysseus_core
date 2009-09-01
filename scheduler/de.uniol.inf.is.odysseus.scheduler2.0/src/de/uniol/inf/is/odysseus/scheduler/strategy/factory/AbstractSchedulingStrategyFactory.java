@@ -13,7 +13,7 @@ public abstract class AbstractSchedulingStrategyFactory implements
 		setName(context.getProperties());
 	}
 	
-	protected void setName(Dictionary properties){
+	protected void setName(Dictionary<?,?> properties){
 		name = ((String)properties.get("component.readableName"));
 		if (name == null){
 			name = ((String)properties.get("component.name"));

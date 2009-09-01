@@ -34,7 +34,7 @@ public abstract class AbstractTypeSafeMap<T extends IMapValue<?>> implements
 		set(entry, true);
 	}
 
-	public boolean contains(Class entryType) {
+	public boolean contains(Class<?> entryType) {
 		return this.entry.containsKey(entryType);
 	}
 

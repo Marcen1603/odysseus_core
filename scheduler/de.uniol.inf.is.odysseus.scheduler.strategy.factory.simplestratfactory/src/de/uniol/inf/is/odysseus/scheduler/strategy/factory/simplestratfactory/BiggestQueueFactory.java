@@ -5,7 +5,6 @@ import org.osgi.service.component.ComponentContext;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingStrategyFactory;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl.BiggestQueueStrategy;
 
 /**

@@ -542,7 +542,7 @@ public class ExecutorConsole implements CommandProvider,
 					continue;
 				}
 				if (query.isSink()){
-					OdysseusModelProviderSink mp = new OdysseusModelProviderSink((ISink)query);
+					OdysseusModelProviderSink mp = new OdysseusModelProviderSink((ISink<?>)query);
 					wnd.setModelProvider(mp);
 				}
 			}

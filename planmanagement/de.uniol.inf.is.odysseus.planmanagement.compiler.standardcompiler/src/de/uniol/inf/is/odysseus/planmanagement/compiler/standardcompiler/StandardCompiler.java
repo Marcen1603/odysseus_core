@@ -16,6 +16,11 @@ import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 
+/**
+ * 
+ * @author Wolf Bauer
+ *
+ */
 public class StandardCompiler implements ICompiler {
 	protected ITransformation transformation;
 	
