@@ -26,6 +26,7 @@ public class ByteBufferReceiverPO<W> extends AbstractPipe<ByteBuffer, W> {
 	
 	public ByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port) throws IOException{
 		super();
+		setNoOfInputPort(1);
 		this.handler = handler;
 		router = Router.getInstance();
 		this.host = host;
@@ -40,6 +41,7 @@ public class ByteBufferReceiverPO<W> extends AbstractPipe<ByteBuffer, W> {
 	
 	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
 		super();
+		setNoOfInputPort(1);
 		handler = (IObjectHandler<W>)byteBufferReceiverPO.handler.clone();
 		size = byteBufferReceiverPO.size;
 		currentSize = byteBufferReceiverPO.currentSize;
