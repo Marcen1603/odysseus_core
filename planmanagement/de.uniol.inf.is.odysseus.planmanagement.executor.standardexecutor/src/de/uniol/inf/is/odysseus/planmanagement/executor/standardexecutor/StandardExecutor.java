@@ -134,8 +134,13 @@ public class StandardExecutor extends AbstractExecutor implements
 			return;
 		}
 
-		setExecutionPlan(optimizer().preQueryAddOptimization(this, newQueries,
-				ParameterDoRestruct.TRUE));
+		this.executionPlanLock.lock();
+		try {
+			setExecutionPlan(optimizer().preQueryAddOptimization(this,
+					newQueries, ParameterDoRestruct.TRUE));
+		} finally {
+			this.executionPlanLock.unlock();
+		}
 
 		for (IEditableQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
@@ -240,6 +245,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		if (removedQuery != null && optimizer() != null) {
 			try {
+				executionPlanLock.lock();
 				setExecutionPlan(optimizer().preQueryRemoveOptimization(this,
 						removedQuery, this.executionPlan));
 				this.plan.removeQuery(removedQuery.getID());
@@ -253,6 +259,8 @@ public class StandardExecutor extends AbstractExecutor implements
 						.warn("Query not removed. An Error while optimizing occurd (ID: "
 								+ queryID + ").");
 				throw new PlanManagementException(e);
+			} finally {
+				executionPlanLock.unlock();
 			}
 		}
 	}
@@ -263,6 +271,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		Query queryToStart = (Query) this.plan.getQuery(queryID);
 
 		try {
+			this.executionPlanLock.lock();
 			setExecutionPlan(optimizer().preStartOptimization(queryToStart,
 					this.executionPlan));
 			queryToStart.start();
@@ -277,6 +286,8 @@ public class StandardExecutor extends AbstractExecutor implements
 					.warn("Query not started. An Error during optimizing occurd (ID: "
 							+ queryID + ").");
 			return;
+		} finally {
+			this.executionPlanLock.unlock();
 		}
 	}
 
@@ -287,6 +298,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		Query queryToStop = (Query) this.plan.getQuery(queryID);
 
 		try {
+			this.executionPlanLock.lock();
 			setExecutionPlan(optimizer().preStopOptimization(queryToStop,
 					this.executionPlan));
 			queryToStop.stop();
@@ -304,6 +316,8 @@ public class StandardExecutor extends AbstractExecutor implements
 					.warn("Query not stopped. An Error while optimizing occurd (ID: "
 							+ queryID + ").");
 			return;
+		} finally {
+			this.executionPlanLock.unlock();
 		}
 	}
 
@@ -314,8 +328,10 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		try {
 			if (sender instanceof Query) {
+				this.executionPlanLock.lock();
 				setExecutionPlan(optimizer().reoptimize(sender,
 						this.executionPlan));
+
 				this.logger.debug("Query " + sender.getID() + " reoptimized.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						QueryPlanModificationEvent.QUERY_REOPTIMIZE, sender));
@@ -329,6 +345,8 @@ public class StandardExecutor extends AbstractExecutor implements
 					.warn("Query not reoptimized. An Error while optimizing occurd (ID: "
 							+ sender.getID() + ").");
 			return;
+		} finally {
+			this.executionPlanLock.unlock();
 		}
 	}
 
@@ -336,24 +354,27 @@ public class StandardExecutor extends AbstractExecutor implements
 	public void reoptimizeRequest(IPlan sender) {
 		this.logger.info("Reoptimize request by plan.");
 
-		try {
-			if (sender instanceof Plan) {
+		if (sender instanceof Plan) {
+			try {
+				this.executionPlanLock.lock();
 				setExecutionPlan(optimizer().reoptimize((Plan) sender,
 						this.executionPlan));
 				this.logger.debug("Plan reoptimized.");
 				firePlanModificationEvent(new PlanModificationEvent(this,
 						PlanModificationEvent.PLAN_REOPTIMIZE, this.plan));
-			} else {
+			} catch (Exception e) {
 				this.logger
-						.warn("Plan not reoptimized. Plan type is not supported.");
+						.warn("Plan not reoptimized. An Error while optimizing occurd.");
 				return;
+			} finally {
+				this.executionPlanLock.unlock();
 			}
-
-		} catch (Exception e) {
+		} else {
 			this.logger
-					.warn("Plan not reoptimized. An Error while optimizing occurd.");
+					.warn("Plan not reoptimized. Plan type is not supported.");
 			return;
 		}
+
 	}
 
 	@Override
@@ -375,11 +396,14 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String strategy) {
 		try {
+			this.executionPlanLock.lock();
 			return optimizer().getBufferPlacementStrategy(strategy);
 		} catch (NoOptimizerLoadedException e) {
 			this.logger
 					.error("Error while using optimizer. Getting BufferplacementStrategy. "
 							+ e.getMessage());
+		} finally {
+			this.executionPlanLock.unlock();
 		}
 		return null;
 	}

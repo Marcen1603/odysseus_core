@@ -143,19 +143,19 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public IExecutionPlan reoptimize(IQuery sender,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
-		return null;
+		return executionPlan;
 	}
 
 	@Override
 	public IExecutionPlan reoptimize(IPlan sender,
 			IEditableExecutionPlan executionPlan) {
-		return null;
+		return executionPlan;
 	}
 
 	@Override
 	public IEditableExecutionPlan preStopOptimization(IQuery queryToStop,
 			IEditableExecutionPlan execPlan) throws QueryOptimizationException {
-		return null;
+		return execPlan;
 	}
 
 	@Override

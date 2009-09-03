@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -102,6 +103,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
+	
+	protected ReentrantLock executionPlanLock = new ReentrantLock();
 
 	@Override
 	public ExecutionConfiguration getConfiguration() {
