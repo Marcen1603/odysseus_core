@@ -11,6 +11,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
@@ -128,6 +129,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				this.executionPlan
 						.setSources(new ArrayList<IIterableSource<?>>(
 								newExecutionPlan.getSources()));
+				this.executionPlan
+						.setRoots(new ArrayList<IPhysicalOperator>(newExecutionPlan.getRoots()));
 
 				if (isRunning()) {
 					this.executionPlan.open();

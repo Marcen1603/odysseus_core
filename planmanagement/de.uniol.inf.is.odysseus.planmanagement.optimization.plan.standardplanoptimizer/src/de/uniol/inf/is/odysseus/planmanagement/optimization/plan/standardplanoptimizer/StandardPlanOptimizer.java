@@ -98,6 +98,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		EditableExecutionPlan newPlan = new EditableExecutionPlan();
 		newPlan.setPartialPlans(partialPlans);
 		newPlan.setSources(sources);
+		newPlan.setRoots(roots);
 
 		return newPlan;
 	}

@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -12,32 +14,34 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 
 	protected boolean open;
 
-	protected ArrayList<IPartialPlan> partialPlans = new ArrayList<IPartialPlan>();
+	protected List<IPartialPlan> partialPlans = new ArrayList<IPartialPlan>();
 
-	protected ArrayList<IIterableSource<?>> iterableSources = new ArrayList<IIterableSource<?>>();
+	protected List<IIterableSource<?>> iterableSources = new ArrayList<IIterableSource<?>>();
+
+	private List<IPhysicalOperator> roots;
 
 	protected boolean isOpen() {
 		return open;
 	}
 
 	@Override
-	public ArrayList<IPartialPlan> getPartialPlans() {
+	public List<IPartialPlan> getPartialPlans() {
 		return this.partialPlans;
 	}
 
 	@Override
-	public ArrayList<IIterableSource<?>> getSources() {
+	public List<IIterableSource<?>> getSources() {
 		return this.iterableSources;
 	}
 
 	@Override
-	public void setPartialPlans(ArrayList<IPartialPlan> patialPlans) {
+	public void setPartialPlans(List<IPartialPlan> patialPlans) {
 		this.open = false;
 		this.partialPlans = patialPlans;
 	}
 
 	@Override
-	public void setSources(ArrayList<IIterableSource<?>> iterableSources) {
+	public void setSources(List<IIterableSource<?>> iterableSources) {
 		this.open = false;
 		this.iterableSources = iterableSources;
 	}
@@ -45,10 +49,19 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 	@Override
 	public void open() throws OpenFailedException {
 		if (!isOpen()) {
+			
+			//TODO: Hack --> klären!!!
+			//Warum nicht einfach auf allen roots open aufrufen?
+			if (roots != null){
+				for (IPhysicalOperator r:roots){
+					r.open();
+				}
+			}
+			
 			//if there are no operators above a source ("SELECT * FROM Source"),
 			//open sources directly, otherwise they get indirectly opened by
 			//the open calls at the roots
-			if (partialPlans.isEmpty()) {
+			if (partialPlans.isEmpty()) {		
 				for (IIterableSource<?> curSource : iterableSources) {
 					curSource.open();
 				}
@@ -72,4 +85,14 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 			}
 		}
 	}
+
+	public void setRoots(List<IPhysicalOperator> roots) {
+		this.roots = roots;
+	}
+	
+	@Override
+	public List<IPhysicalOperator> getRoots() {
+		return roots;
+	}
+	
 }
