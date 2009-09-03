@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
+Bundle-Activator: de.uniol.inf.is.odysseus.visualquerylanguage.Activator
 Bundle-ManifestVersion: 2
 Bundle-Name: Visualquerylanguage
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.visualquerylanguage
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.visualquerylanguage.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base.planmanagement.plan,

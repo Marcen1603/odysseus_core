@@ -69,8 +69,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 	DefaultSinkContent sink = null;
 	DefaultPipeContent pipe = null;
 
-	public XMLParameterParser(String xmlFile) throws IOException {
-		// logger.info( "Parsing parameterConfigurationfile " + xmlFilename );
+	public XMLParameterParser(URL xmlFile) throws IOException {
+		 logger.info( "Parsing parameterConfigurationfile " + xmlFile );
 		// VALIDATION
 		SchemaFactory factory = SchemaFactory
 				.newInstance("http://www.w3.org/2001/XMLSchema");
@@ -88,7 +88,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 		}
 
 		Validator validator = schema.newValidator();
-		Source source = new StreamSource(new File(xmlFile));
+		Source source = new StreamSource(xmlFile.openStream());
 
 		try {
 			validator.validate(source);
@@ -110,7 +110,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 		docFactory.setNamespaceAware(true); // never forget this!
 		try {
 			DocumentBuilder builder = docFactory.newDocumentBuilder();
-			Document doc = builder.parse(xmlFile);
+			Document doc = builder.parse(xmlFile.openStream());
 
 			getSources(doc);
 			getPipes(doc);

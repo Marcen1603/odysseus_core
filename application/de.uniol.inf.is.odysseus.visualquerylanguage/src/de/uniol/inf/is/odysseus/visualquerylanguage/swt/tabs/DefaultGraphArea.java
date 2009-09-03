@@ -20,7 +20,6 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Sash;
@@ -69,8 +68,6 @@ public class DefaultGraphArea extends Composite implements
 	
 	private static final String XML_FILE = "editor_cfg/parameter.xml";
 
-	private Canvas canvas = null;
-
 	private IModelController<INodeContent> controller;
 	private IGraphView<INodeContent> viewGraph;
 	private SWTRenderManager<INodeContent> renderManager;
@@ -105,26 +102,21 @@ public class DefaultGraphArea extends Composite implements
 
 		try {
 			URL xmlFile = Activator.getContext().getBundle().getEntry(XML_FILE); 
-			this.parser = new XMLParameterParser(xmlFile.toString());
+			this.parser = new XMLParameterParser(xmlFile);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		buildGraphArea();
-
+		
 		this.symFac = new SWTSymbolElementFactory<INodeContent>();
 		this.positioner = new SugiyamaPositioner(symFac);
-
+		
 		controller = query.getController();
 		controller.getModel().addGraphModelChangeListener(this);
 		this.viewGraph = new DefaultGraphView<INodeContent>(controller
 				.getModel());
-
-		this.renderManager = new SWTRenderManager<INodeContent>(canvas,
-				new SWTStatusLine(this.getParent()), positioner);
-		this.renderManager.setDisplayedGraph(viewGraph);
-		renderManager.getSelector().addSelectListener(this);
+		
+		buildGraphArea();
 	}
 
 	private void buildGraphArea() {
@@ -146,6 +138,19 @@ public class DefaultGraphArea extends Composite implements
 				sash.getParent().layout();
 			}
 		});
+		
+		Composite comp = new Composite(this, SWT.BORDER);
+		FormData formData = new FormData();
+		formData.top = new FormAttachment(0, 0);
+		formData.bottom = new FormAttachment(100, 0);
+		formData.left = new FormAttachment(0, 0);
+		formData.right = new FormAttachment(sash, 0);
+		comp.setLayoutData(formData);
+		
+		this.renderManager = new SWTRenderManager<INodeContent>(comp,
+				new SWTStatusLine(this.getParent()), positioner);
+		this.renderManager.setDisplayedGraph(viewGraph);
+		renderManager.getSelector().addSelectListener(this);
 
 		// Informationsbereich von Timo
 		infoScroll = new ScrolledComposite(this, SWT.BORDER | SWT.V_SCROLL
@@ -168,22 +173,17 @@ public class DefaultGraphArea extends Composite implements
 		infoScroll.setMinSize(200, 200);
 		infoScroll.setExpandHorizontal(true);
 		infoScroll.setExpandVertical(true);
-
-		canvas = new Canvas(this, SWT.BORDER);
-		FormData canvasFormData = new FormData();
-		canvasFormData.top = new FormAttachment(0, 0);
-		canvasFormData.bottom = new FormAttachment(100, 0);
-		canvasFormData.left = new FormAttachment(0, 0);
-		canvasFormData.right = new FormAttachment(sash, 0);
-		canvas.setBackground(Display.getDefault().getSystemColor(
+		
+		
+		renderManager.getCanvas().setBackground(Display.getDefault().getSystemColor(
 				SWT.COLOR_WHITE));
-		canvas.setLayoutData(canvasFormData);
-		canvas.addMouseListener(new MouseAdapter() {
+		renderManager.getCanvas().addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseDown(MouseEvent e) {
 				if (e.button == 1) {
 					addNewNode(e);
+					renderManager.refreshView();
 				} else {
 					setCursor(CursorManager.setStandardCursor());
 					connectionChosen = false;

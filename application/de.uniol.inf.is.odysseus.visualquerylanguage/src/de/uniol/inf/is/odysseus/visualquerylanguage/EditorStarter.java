@@ -26,8 +26,9 @@ public class EditorStarter implements CommandProvider{
 		Display d = new Display();
 		
 		try {
-			URL xmlFile = Activator.getContext().getBundle().getEntry("viewer_cfg/resources.xml");
-			XMLResourceConfiguration cfg = new XMLResourceConfiguration(xmlFile.toString());
+			URL xmlFile = Activator.getContext().getBundle().getEntry("editor_cfg/resources.xml");
+			URL xsdFile = Activator.getContext().getBundle().getEntry("editor_cfg/resourcesSchema.xsd");
+			XMLResourceConfiguration cfg = new XMLResourceConfiguration(xmlFile, xsdFile);
 			SWTResourceManager.getInstance().load(d, cfg);
 		} catch (IOException e) {
 			logger.error("Could not load XMLConfiguration because ");
