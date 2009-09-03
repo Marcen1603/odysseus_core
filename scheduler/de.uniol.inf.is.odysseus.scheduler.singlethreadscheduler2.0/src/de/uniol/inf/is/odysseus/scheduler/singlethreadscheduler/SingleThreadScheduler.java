@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
@@ -114,7 +115,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	}
 
 	@Override
-	public void setPartialPlans(ArrayList<IPartialPlan> partialPlans) {
+	public void setPartialPlans(List<IPartialPlan> partialPlans) {
 		if (partialPlans != null) {
 			synchronized (this.parts) {
 				this.parts.clear();
@@ -130,7 +131,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	}
 
 	@Override
-	public void setSources(ArrayList<IIterableSource<?>> sources) {
+	public void setSources(List<IIterableSource<?>> sources) {
 		if (sources != null) {
 			synchronized (this.sourcesToSchedule) {
 				this.sourcesToSchedule.clear();
