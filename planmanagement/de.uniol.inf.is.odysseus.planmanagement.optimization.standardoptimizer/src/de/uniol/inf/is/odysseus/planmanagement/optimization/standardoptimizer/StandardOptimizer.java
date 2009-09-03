@@ -29,7 +29,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 						parameter);
 			}
 
-			ArrayList<IEditableQuery> newPlan = sender.getRegisteredQueries();
+			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
 			newPlan.addAll(queries);
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer

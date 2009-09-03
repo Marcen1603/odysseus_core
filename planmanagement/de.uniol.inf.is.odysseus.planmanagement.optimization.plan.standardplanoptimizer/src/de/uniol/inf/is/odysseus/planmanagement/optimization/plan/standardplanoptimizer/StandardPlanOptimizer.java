@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.PartialPlan;
 public class StandardPlanOptimizer implements IPlanOptimizer {
 
 	private void checkPhysikalPlan(IPlanOptimizable sender,
-			ArrayList<IEditableQuery> queries) throws OpenFailedException,
+			List<IEditableQuery> queries) throws OpenFailedException,
 			TransformationException, NoTransformationConfiguration {
 
 		for (IEditableQuery query : queries) {
@@ -46,7 +46,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 
 	@Override
 	public IEditableExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizeParameter parameters, ArrayList<IEditableQuery> allQueries)
+			OptimizeParameter parameters, List<IEditableQuery> allQueries)
 			throws QueryOptimizationException {
 
 		try {

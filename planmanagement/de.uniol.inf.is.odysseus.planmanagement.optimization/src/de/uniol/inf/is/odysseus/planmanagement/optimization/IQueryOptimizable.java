@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
@@ -8,5 +8,5 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 public interface IQueryOptimizable {
 	public ICompiler getCompiler();
 
-	public ArrayList<IEditableQuery> getRegisteredQueries();
+	public List<IEditableQuery> getRegisteredQueries();
 }
