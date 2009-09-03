@@ -104,8 +104,8 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 				renderRange.width = width = rect.width;
 				renderRange.height = height = rect.height;
 				
-				if( logger.isDebugEnabled() )
-					logger.debug( "SWTRenderCanvas resize:" + rect.width + " x " + rect.height );
+				//if( logger.isDebugEnabled() )
+					//logger.debug( "SWTRenderCanvas resize:" + rect.width + " x " + rect.height );
 				
 				refreshView();
 			}
@@ -334,7 +334,7 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 	public void setGraphOffset( Vector offset ) {
 		shift = offset;
 		refreshView();
-		logger.debug( "Displayed graph changed in position: " + offset.getX() + " " + offset.getY() );
+		//logger.debug( "Displayed graph changed in position: " + offset.getX() + " " + offset.getY() );
 	}
 	
 
