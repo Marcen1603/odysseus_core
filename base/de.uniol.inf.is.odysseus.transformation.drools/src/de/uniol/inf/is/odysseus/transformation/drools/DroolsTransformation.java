@@ -94,7 +94,7 @@ public class DroolsTransformation implements ITransformation {
 				if (++pos > 1) {
 					builder.append(", ");
 				}
-				builder.append(errOp.getPOName());
+				builder.append(errOp.toString());
 			}
 			throw new TransformationException(config, errors);
 		}
