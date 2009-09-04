@@ -88,14 +88,6 @@ public class DroolsTransformation implements ITransformation {
 			session.startProcess("collect_errors");
 			session.fireAllRules();
 			session.dispose();
-			StringBuilder builder = new StringBuilder();
-			int pos = 0;
-			for (ILogicalOperator errOp : errors) {
-				if (++pos > 1) {
-					builder.append(", ");
-				}
-				builder.append(errOp.toString());
-			}
 			throw new TransformationException(config, errors);
 		}
 		session.dispose();
