@@ -80,7 +80,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 					if (iterableSource.isSink()
 							&& !partialPlanSources.contains(iterableSource)) {
 						partialPlanSources.add(iterableSource);
-					} else if (!sources.contains(iterableSource)) {
+					} else if (!iterableSource.isSink() && !sources.contains(iterableSource)) {
 						sources.add(iterableSource);
 					}
 				}
