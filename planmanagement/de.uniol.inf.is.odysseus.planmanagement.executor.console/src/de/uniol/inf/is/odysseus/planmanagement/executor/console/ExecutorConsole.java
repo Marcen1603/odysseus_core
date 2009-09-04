@@ -25,11 +25,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.DolToEur;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.Now;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.ToNumber;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.ToString;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.viewer.ViewerStarter;
 import de.uniol.inf.is.odysseus.viewer.ViewerStarterConfiguration;
 import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
@@ -447,6 +442,10 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 	
+	public void _nmsN(CommandInterpreter ci){
+		_nexmarkSourcesNIO(ci);
+	}
+	
 	public void _nexmarkSourcesNIO(CommandInterpreter ci){
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
@@ -466,7 +465,11 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		ci.println("Nexmark Sources with NIO added.");
 	}
-
+	
+	public void _nms(CommandInterpreter ci){
+		_nexmarkSources(ci);
+	}
+	
 	public void _nexmarkSources(CommandInterpreter ci){
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430";
@@ -484,7 +487,7 @@ public class ExecutorConsole implements CommandProvider,
 				e.printStackTrace();
 			}
 		}
-		ci.println("Nexmark Sources with NIO added.");
+		ci.println("Nexmark Sources without NIO added.");
 	}
 
 	public void _nmq(CommandInterpreter ci){
@@ -503,7 +506,7 @@ public class ExecutorConsole implements CommandProvider,
 			}
 			
 		}else{
-			ci.println("usage [0-6]|* [nio]");
+			ci.println("usage [0-5]|* [nio]");
 		}
 		
 		
