@@ -8,9 +8,10 @@ public class PlanManagementException extends Exception {
 
 	public PlanManagementException(Exception e) {
 		this(e.getMessage());
+		this.setStackTrace(e.getStackTrace());
 	}
 
-	public PlanManagementException(String details) {
+	protected PlanManagementException(String details) {
 		super("PlanManagementException: An error occured during planmangement. (" + AppEnv.LINE_SEPERATOR + details + ")");
 	}
 }

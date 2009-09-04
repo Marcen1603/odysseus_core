@@ -24,6 +24,7 @@ public class SchedulerException extends PlanManagementException {
 	 */
 	public SchedulerException(Exception exception) {
 		this(exception.getMessage());
+		this.setStackTrace(exception.getStackTrace());
 	}
 
 	public SchedulerException(String details) {

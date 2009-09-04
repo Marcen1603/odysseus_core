@@ -7,6 +7,7 @@ public class QueryAddException extends PlanManagementException {
 
 	public QueryAddException(Exception exception) {
 		this(exception.getMessage());
+		this.setStackTrace(exception.getStackTrace());
 	}
 
 	public QueryAddException(String error) {
@@ -14,5 +15,6 @@ public class QueryAddException extends PlanManagementException {
 				"Error while adding query." + (error != null
 						&& error.length() > 0 ? "Additional Info:"
 						+ AppEnv.LINE_SEPERATOR + error : ""));
+		
 	}
 }
