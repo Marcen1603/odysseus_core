@@ -43,7 +43,7 @@ public class TransformationException extends Exception {
 		if (untranslatedOperators != null) {
 			builder.append("; unable to transform: ");
 			for(ILogicalOperator op : this.untranslatedOperators) {
-				builder.append(op.getPOName());
+				builder.append(op.toString());
 			}
 		}
 		if (this.config != null) {
