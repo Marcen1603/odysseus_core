@@ -5,33 +5,37 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
+import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataFactory;
+import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
-public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttribute<Q>> extends AggregatePO<Q,R,R>{
-	
-	public IMetadataFactory<Q, R> getMetadataFactory() {
-		return metadataFactory;
+public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttribute<Q>>
+		extends AggregatePO<Q, R, R> {
+	private Class<Q> metadataType;
+
+	public Class<Q> getMetadataType() {
+		return metadataType;
 	}
 
-	private IMetadataFactory<Q, R> metadataFactory;
-	
-	public void setMetadataFactory(IMetadataFactory<Q, R> metadataFactory) {
-		this.metadataFactory = metadataFactory;
+	public void setMetadataType(Class<Q> metadataType) {
+		this.metadataType = metadataType;
 	}
 
-	class _Point implements Comparable<_Point>{
+	class _Point implements Comparable<_Point> {
 		public PointInTime p;
 		boolean startP;
 		PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg;
-		
-		public _Point(PointInTime p, boolean startP, PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg) {
+
+		public _Point(
+				PointInTime p,
+				boolean startP,
+				PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg) {
 			this.p = p;
 			this.startP = startP;
 			this.element_agg = element_agg;
@@ -39,18 +43,17 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 		public int compareTo(_Point p2) {
 			int c = this.p.compareTo(p2.p);
-			if (c == 0){
-				if (this.startP && !p2.startP){ // Endpunkte liegen immer vor Startpunkten
+			if (c == 0) {
+				if (this.startP && !p2.startP) { // Endpunkte liegen immer vor
+													// Startpunkten
 					c = 1;
-				}else if (!this.startP && p2.startP){
+				} else if (!this.startP && p2.startP) {
 					c = -1;
-				}	
+				}
 			}
-			return c; 
+			return c;
 		}
-		
-		
-		
+
 		@Override
 		public int hashCode() {
 			final int PRIME = 31;
@@ -79,177 +82,213 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			return true;
 		}
 
-		boolean isDach(){
+		boolean isDach() {
 			return element_agg == null;
 		}
-		
+
 		@Override
 		public String toString() {
-			return (startP?"s":"e")+(isDach()?"^":"")+p;
+			return (startP ? "s" : "e") + (isDach() ? "^" : "") + p;
 		}
 	}
-	
-	public AggregateTIPO(AggregateAO aggregateAO, IMetadataFactory<Q,R> mFactory) {
+
+	public AggregateTIPO(AggregateAO aggregateAO, Class<Q> metadataType) {
 		super(aggregateAO);
-		this.metadataFactory = mFactory;
+		setMetadataType(metadataType);
 	}
 
 	public AggregateTIPO(AggregateTIPO<Q, R> aggregatePO) {
 		super(aggregatePO);
-		this.metadataFactory = aggregatePO.metadataFactory;
+		this.metadataType = aggregatePO.metadataType;
 	}
-	
-	
-	
+
 	public AggregateTIPO(AggregateAO aggregateAO) {
 		super(aggregateAO);
 	}
 
-	// Dient dazu, alle Element in der Sweep-Area mit dem neuen Element zu "verschneiden" und dabei ggf. neue Elemente zu
+	// Dient dazu, alle Element in der Sweep-Area mit dem neuen Element zu
+	// "verschneiden" und dabei ggf. neue Elemente zu
 	// erzeugen
-	// Erweitert um die M�glichkeit mehrere Aggregationsfunktionen auf mehreren Attributen anwenden zu k�nnen
-	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht korrekt. Deswegen eigene Version
-	protected synchronized void updateSA(DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> sa, R element){
-		Iterator<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> qualifies = sa.queryOverlaps(element.getMetadata());
-		//System.out.println("updateSA MinTS: "+sa.getMinTs()+"  Size:"+sa.size()+" mit "+element);
+	// Erweitert um die M�glichkeit mehrere Aggregationsfunktionen auf
+	// mehreren Attributen anwenden zu k�nnen
+	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht
+	// korrekt. Deswegen eigene Version
+	protected synchronized void updateSA(
+			DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> sa,
+			R element) {
+		Iterator<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> qualifies = sa
+				.queryOverlaps(element.getMetadata());
+		// System.out.println("updateSA MinTS: "+sa.getMinTs()+"  Size:"+sa.size()+" mit "+element);
 		R e_probe = element;
 		Q t_probe = element.getMetadata();
-		//sa.dumpContent(false);
-		if (!qualifies.hasNext()){
-			//System.out.println("updateSA initiales Einfuegen");
+		// sa.dumpContent(false);
+		if (!qualifies.hasNext()) {
+			// System.out.println("updateSA initiales Einfuegen");
 			saInsert(sa, calcInit(e_probe), t_probe);
-		}else{
+		} else {
 			// Punktliste generieren
 			SortedSet<_Point> pl = new TreeSet<_Point>();
 			// Erst die Elemente der SweepArea
-			while (qualifies.hasNext()){
-				PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg = qualifies.next();
+			while (qualifies.hasNext()) {
+				PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg = qualifies
+						.next();
 				sa.remove(element_agg);
 				ITimeInterval t_agg = element_agg.getMetadata();
-				pl.add( new _Point(t_agg.getStart(),true,element_agg));
-				pl.add( new _Point(t_agg.getEnd(),false,element_agg));
+				pl.add(new _Point(t_agg.getStart(), true, element_agg));
+				pl.add(new _Point(t_agg.getEnd(), false, element_agg));
 			}
 			// Dann das zu vergleichende Element
-			pl.add( new _Point(t_probe.getStart(),true, null));
-			pl.add( new _Point(t_probe.getEnd(),false, null));
-			
-			//System.out.println("Punktliste "+pl);
-			
+			pl.add(new _Point(t_probe.getStart(), true, null));
+			pl.add(new _Point(t_probe.getEnd(), false, null));
+
+			// System.out.println("Punktliste "+pl);
+
 			Iterator<_Point> iter = pl.iterator();
 			_Point p1 = null;
 			_Point p2 = null;
-			if (iter.hasNext()){
-				p1=iter.next();
+			if (iter.hasNext()) {
+				p1 = iter.next();
 			}
 			PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> curr_agg = p1.element_agg;
-			while(iter.hasNext()){
-				p2=iter.next();
-				if (p1.p.before(p2.p)){ // Ansonsten w�re das ein leeres Intervall, das nicht betrachtet werden muss
+			while (iter.hasNext()) {
+				p2 = iter.next();
+				if (p1.p.before(p2.p)) { // Ansonsten w�re das ein leeres
+											// Intervall, das nicht betrachtet
+											// werden muss
 					// TODO ggflls. Metadaten aggregieren
-					Q newTI = this.metadataFactory.createMetadata();
+					Q newTI;
+					try {
+						newTI = getMetadataType().newInstance();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
 					newTI.setStart(p1.p);
 					newTI.setEnd(p2.p);
-					
+
 					// Merken, falls zwei Dachpunkte in der Folge sind (S^-->E^)
-					if (!p2.isDach()){
+					if (!p2.isDach()) {
 						curr_agg = p2.element_agg;
 					}
-					if (p1.startP && p2.startP){ // Element vorher  
-						if (!p1.isDach() && p2.isDach()){ // S --> S^ 
-							saInsert(sa,curr_agg, newTI);
-						}else{ // S^ --> S
-							saInsert(sa,calcInit(element), newTI);
-						}
-						// alle anderen F�lle gehen nicht, weil sich die Intervalle schneiden!
-					}else if (p1.startP && !p2.startP){ // Schnitt (f�r alle gleich!) 
-						saInsert(sa, calcMerge(curr_agg, element), newTI);
-					}else if (!p1.startP && p2.startP){ // Zwischelement E^ --> S
-						// Muss ein Init auf dem neuen Element sein, da es hier keinen Schnitt gibt
-						saInsert(sa, calcInit(element), newTI);					
-					}else if (!p1.startP && !p2.startP){ // Element danach
-						if (!p1.isDach() && p2.isDach()){  // E --> E^
+					if (p1.startP && p2.startP) { // Element vorher
+						if (!p1.isDach() && p2.isDach()) { // S --> S^
+							saInsert(sa, curr_agg, newTI);
+						} else { // S^ --> S
 							saInsert(sa, calcInit(element), newTI);
-						}else{ // E^ --> E
+						}
+						// alle anderen F�lle gehen nicht, weil sich die
+						// Intervalle schneiden!
+					} else if (p1.startP && !p2.startP) { // Schnitt (f�r alle
+															// gleich!)
+						saInsert(sa, calcMerge(curr_agg, element), newTI);
+					} else if (!p1.startP && p2.startP) { // Zwischelement E^
+															// --> S
+						// Muss ein Init auf dem neuen Element sein, da es hier
+						// keinen Schnitt gibt
+						saInsert(sa, calcInit(element), newTI);
+					} else if (!p1.startP && !p2.startP) { // Element danach
+						if (!p1.isDach() && p2.isDach()) { // E --> E^
+							saInsert(sa, calcInit(element), newTI);
+						} else { // E^ --> E
 							saInsert(sa, curr_agg, newTI);
 						}
 					}
 				}
 				p1 = p2;
 			}
-			
-			
-			// ACHTUNG!! FEHLERHAFT. MIT DIESEM ALGORITHMUS WERDEN DUPLIKATE ERZEUGT!!!!
-			// ________   _________  ______ Inhalt
-			//     ___________________________ Probe
+
+			// ACHTUNG!! FEHLERHAFT. MIT DIESEM ALGORITHMUS WERDEN DUPLIKATE
+			// ERZEUGT!!!!
+			// ________ _________ ______ Inhalt
+			// ___________________________ Probe
 			// ---------------------------------- 1. Durchgang
 			// ____
-			//     ____
-			//         _______________________ 
+			// ____
+			// _______________________
 			// ---------------------------------- 2. Durchgang
-			//     _______
-			//            _________
-			//                     ___________
-			
-//			while (qualifies.hasNext()){
-//				PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, ITimeInterval> element_agg = qualifies.next();
-//				
-//				//System.out.println("updateSA qualifies "+element_dach+ " sa.size() "+sa.size());
-//				
-//				ITimeInterval t_agg = element_agg.getMetadata();
-//				//qualifies.remove(); ist eine Kopie und �ndert deswegen nicht die SweepArea!
-//				//System.out.println("remove "+sa.remove(element_agg));
-//				//System.out.println("updateSA remove "+sa.size());
-//				
-//				sa.remove(element_agg);
-//				
-//				// Jetzt die (bereits ermittelten) �berlappungen pr�fen und die Elemente ggf. in die Area einf�gen (vor, geschnitten, danach)
-//				
-//				if (t_agg.getStart().beforeOrEquals(t_probe.getStart())){ // Aggr. startet vor neuem Element
-//					// alles eintragen was nicht schneidet (davor), falls nicht identisch
-//					if (t_agg.getStart().before(t_probe.getStart())){
-//						saInsert(sa,element_agg, new TimeInterval(t_agg.getStart(), t_probe.getStart()));
-//					}
-//					
-//					if (t_agg.getEnd().before(t_probe.getEnd())){
-//						saInsert(sa,calcMerge(element_agg, e_probe),new TimeInterval(t_probe.getStart(), t_agg.getEnd()));
-//						saInsert(sa,calcInit(e_probe), new TimeInterval(t_agg.getEnd(), t_probe.getEnd()));
-//						t_probe.getEnd();
-//					}else{
-//						saInsert(sa,calcMerge(element_agg, e_probe),new TimeInterval(t_probe.getStart(), t_probe.getEnd()));
-//						saInsert(sa,element_agg.clone(), new TimeInterval(t_probe.getEnd(), t_agg.getEnd()));
-//						t_agg.getEnd();
-//					}
-//				}else{ // Aggr. startet hinter dem neuen Element (eher ungw�hnlich)	
-//					// Bereich davor
-//					saInsert(sa,element_agg, new TimeInterval(t_probe.getStart(), t_agg.getStart()));
-//					// dann jeweils der Schnittbereich und der Rest
-//					if (t_probe.getEnd().beforeOrEquals(t_agg.getEnd())){
-//						saInsert(sa, calcMerge(element_agg, e_probe), new TimeInterval(t_agg.getStart(), t_probe.getEnd()));
-//						if (t_probe.getEnd().before(t_agg.getEnd())){
-//							saInsert(sa, element_agg.clone(), new TimeInterval(t_probe.getEnd(),t_agg.getEnd()));
-//						}
-//						t_agg.getEnd();
-//					}else{
-//						saInsert(sa, calcMerge(element_agg, e_probe), new TimeInterval(t_agg.getStart(), t_agg.getEnd()));
-//						saInsert(sa, calcInit(e_probe), new TimeInterval(t_agg.getEnd(), t_probe.getEnd()));
-//						t_probe.getEnd();
-//					}					
-//				}
-//				//last_te = PointInTime.max(t_agg.getEnd(), t_probe.getEnd());
-//			}
-//			if (last_te.before(t_probe.getEnd())){
-//				saInsert(sa,calcInit(e_probe),new TimeInterval(last_te, t_probe.getEnd()));
-//			}					
-		}// if (!qualifies.hasNext())
-		//System.out.println("NachUpdate "+sa.size());
-		//sa.dumpContent();
-		
+			// _______
+			// _________
+			// ___________
 
-		
+			// while (qualifies.hasNext()){
+			// PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>,
+			// ITimeInterval> element_agg = qualifies.next();
+			//				
+			// //System.out.println("updateSA qualifies "+element_dach+
+			// " sa.size() "+sa.size());
+			//				
+			// ITimeInterval t_agg = element_agg.getMetadata();
+			// //qualifies.remove(); ist eine Kopie und �ndert deswegen nicht
+			// die SweepArea!
+			// //System.out.println("remove "+sa.remove(element_agg));
+			// //System.out.println("updateSA remove "+sa.size());
+			//				
+			// sa.remove(element_agg);
+			//				
+			// // Jetzt die (bereits ermittelten) �berlappungen pr�fen und
+			// die Elemente ggf. in die Area einf�gen (vor, geschnitten,
+			// danach)
+			//				
+			// if (t_agg.getStart().beforeOrEquals(t_probe.getStart())){ //
+			// Aggr. startet vor neuem Element
+			// // alles eintragen was nicht schneidet (davor), falls nicht
+			// identisch
+			// if (t_agg.getStart().before(t_probe.getStart())){
+			// saInsert(sa,element_agg, new TimeInterval(t_agg.getStart(),
+			// t_probe.getStart()));
+			// }
+			//					
+			// if (t_agg.getEnd().before(t_probe.getEnd())){
+			// saInsert(sa,calcMerge(element_agg, e_probe),new
+			// TimeInterval(t_probe.getStart(), t_agg.getEnd()));
+			// saInsert(sa,calcInit(e_probe), new TimeInterval(t_agg.getEnd(),
+			// t_probe.getEnd()));
+			// t_probe.getEnd();
+			// }else{
+			// saInsert(sa,calcMerge(element_agg, e_probe),new
+			// TimeInterval(t_probe.getStart(), t_probe.getEnd()));
+			// saInsert(sa,element_agg.clone(), new
+			// TimeInterval(t_probe.getEnd(), t_agg.getEnd()));
+			// t_agg.getEnd();
+			// }
+			// }else{ // Aggr. startet hinter dem neuen Element (eher
+			// ungw�hnlich)
+			// // Bereich davor
+			// saInsert(sa,element_agg, new TimeInterval(t_probe.getStart(),
+			// t_agg.getStart()));
+			// // dann jeweils der Schnittbereich und der Rest
+			// if (t_probe.getEnd().beforeOrEquals(t_agg.getEnd())){
+			// saInsert(sa, calcMerge(element_agg, e_probe), new
+			// TimeInterval(t_agg.getStart(), t_probe.getEnd()));
+			// if (t_probe.getEnd().before(t_agg.getEnd())){
+			// saInsert(sa, element_agg.clone(), new
+			// TimeInterval(t_probe.getEnd(),t_agg.getEnd()));
+			// }
+			// t_agg.getEnd();
+			// }else{
+			// saInsert(sa, calcMerge(element_agg, e_probe), new
+			// TimeInterval(t_agg.getStart(), t_agg.getEnd()));
+			// saInsert(sa, calcInit(e_probe), new TimeInterval(t_agg.getEnd(),
+			// t_probe.getEnd()));
+			// t_probe.getEnd();
+			// }
+			// }
+			// //last_te = PointInTime.max(t_agg.getEnd(), t_probe.getEnd());
+			// }
+			// if (last_te.before(t_probe.getEnd())){
+			// saInsert(sa,calcInit(e_probe),new TimeInterval(last_te,
+			// t_probe.getEnd()));
+			// }
+		}// if (!qualifies.hasNext())
+		// System.out.println("NachUpdate "+sa.size());
+		// sa.dumpContent();
+
 	}
 
-	private PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> saInsert(DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> sa, PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> elem, Q t) {
-		//System.out.println("SA Insert "+elem);
+	private PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> saInsert(
+			DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> sa,
+			PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> elem,
+			Q t) {
+		// System.out.println("SA Insert "+elem);
 		elem.setMetadata(t);
 		sa.insert(elem);
 		return elem;

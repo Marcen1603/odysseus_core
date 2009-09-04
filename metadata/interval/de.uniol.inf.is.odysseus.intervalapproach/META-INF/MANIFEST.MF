@@ -18,3 +18,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
  de.uniol.inf.is.odysseus.intervalapproach.window
+Bundle-Activator: de.uniol.inf.is.odysseus.intervalapproach.Activator

@@ -17,7 +17,6 @@ import java.util.Properties;
 import com.Ostermiller.util.CSVParser;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriorityFactory;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -81,61 +80,60 @@ public class LabdataServer {
 		Integer accelerationFactor = Integer.parseInt(cfg.getProperty(
 				"acceleration", "1"));
 		Integer port = Integer.parseInt(cfg.getProperty("port", DEFAULT_PORT));
-		boolean useRaw = Boolean.parseBoolean(cfg
-				.getProperty("useRaw", "true"));
-		boolean useCSV = Boolean.parseBoolean(cfg.getProperty("useCSV", "false"));
+		boolean useRaw = Boolean
+				.parseBoolean(cfg.getProperty("useRaw", "true"));
+		boolean useCSV = Boolean.parseBoolean(cfg
+				.getProperty("useCSV", "false"));
 		char delim = cfg.getProperty("csvDelim", ";").charAt(0);
 		String streamName = cfg.getProperty("streamName", "test:labdata");
-		
+
 		DataDictionary dd = DataDictionary.getInstance();
 		SDFEntity stream = dd.getEntity(streamName);
 		SDFAttributeList schema = stream.getAttributes();
-		
+
 		ObjectInputStream iStream = null;
 		if (limit > 0) {
 			System.out.println("Begin caching of " + limit + " values");
-			if(!useCSV){
+			if (!useCSV) {
 				iStream = new ObjectInputStream(new FileInputStream(inputFile));
 				cachedValues = new RelationalTuple[limit][1];
 				for (int i = 0; i < limit; ++i) {
 					cachedValues[i][0] = iStream.readObject();
 				}
 				iStream.close();
-			}else{				
+			} else {
 				cachedValues = new Object[limit][schema.size()];
-				
-				CSVParser csvParser = new CSVParser(new FileInputStream(inputFile));
+
+				CSVParser csvParser = new CSVParser(new FileInputStream(
+						inputFile));
 				csvParser.changeDelimiter(delim);
-				csvParser.getLine(); // first line are the attribute names, so do not process it
-				for(int i = 0; i<limit; i++){
+				csvParser.getLine(); // first line are the attribute names, so
+				// do not process it
+				for (int i = 0; i < limit; i++) {
 					String[] line = csvParser.getLine();
-					inner:
-					for(int u = 0; u<schema.size(); u++){
+					inner: for (int u = 0; u < schema.size(); u++) {
 						SDFAttribute attr = schema.get(u);
-						if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+						if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
-						}
-						else if(SDFDatatypes.isDouble(attr.getDatatype())){
+						} else if (SDFDatatypes.isDouble(attr.getDatatype())) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
-						}
-						else if(SDFDatatypes.isInteger(attr.getDatatype())){
+						} else if (SDFDatatypes.isInteger(attr.getDatatype())) {
 							cachedValues[i][u] = Integer.parseInt(line[u]);
-						}
-						else if(SDFDatatypes.isLong(attr.getDatatype())){
+						} else if (SDFDatatypes.isLong(attr.getDatatype())) {
 							cachedValues[i][u] = Long.parseLong(line[u]);
-						}
-						else if(SDFDatatypes.isString(attr.getDatatype())){
+						} else if (SDFDatatypes.isString(attr.getDatatype())) {
 							cachedValues[i][u] = line[u];
-						}
-						else if(SDFDatatypes.isDate(attr.getDatatype())){
-							SimpleDateFormat df = new SimpleDateFormat(attr.getDtConstraint("format").getCType());
-							try{
+						} else if (SDFDatatypes.isDate(attr.getDatatype())) {
+							SimpleDateFormat df = new SimpleDateFormat(attr
+									.getDtConstraint("format").getCType());
+							try {
 								Date date = df.parse(line[u]);
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(date);
 								cachedValues[i][u] = cal;
-							}catch(ParseException e){
-								// maybe there is some error in the measurement line
+							} catch (ParseException e) {
+								// maybe there is some error in the measurement
+								// line
 								// kill the whole line and parse the next one.
 								i--;
 								break inner;
@@ -146,7 +144,6 @@ public class LabdataServer {
 			}
 			System.out.println("Caching done");
 		}
-		IntervalLatencyPriorityFactory factory = new IntervalLatencyPriorityFactory();
 		ServerSocket server = new ServerSocket(port);
 		while (true) {
 			System.out.println("Waiting for connection on port " + port);
@@ -154,13 +151,13 @@ public class LabdataServer {
 			ClientHandler handler;
 			if (useRaw) {
 				handler = new RawHandler(s, iStream, limit, inputFile,
-						cachedValues, factory, accelerationFactor);
-			} else if(useCSV){
-				handler = new CSVHandler(s, iStream, limit, inputFile, cachedValues, schema, factory, accelerationFactor, delim);
-			}
-			else {
+						cachedValues, accelerationFactor);
+			} else if (useCSV) {
+				handler = new CSVHandler(s, iStream, limit, inputFile,
+						cachedValues, schema, accelerationFactor, delim);
+			} else {
 				handler = new TupleHandler(s, iStream, limit, inputFile,
-						cachedValues, factory, accelerationFactor);
+						cachedValues, accelerationFactor);
 			}
 			handler.start();
 		}
@@ -174,23 +171,16 @@ abstract class ClientHandler extends Thread {
 	protected Integer limit;
 	protected String inputFile;
 	protected Object[][] cachedValues;
-	protected IntervalLatencyPriorityFactory factory;
 	protected Integer accelerationFactor;
 
-	public ClientHandler(
-			Socket s,
-			ObjectInputStream iStream,
-			Integer limit,
-			String inputFile,
-			Object[][] cachedValues,
-			IntervalLatencyPriorityFactory factory,
+	public ClientHandler(Socket s, ObjectInputStream iStream, Integer limit,
+			String inputFile, Object[][] cachedValues,
 			Integer accelerationFactor) {
 		this.s = s;
 		this.iStream = iStream;
 		this.limit = limit;
 		this.inputFile = inputFile;
 		this.cachedValues = cachedValues;
-		this.factory = factory;
 		this.accelerationFactor = accelerationFactor;
 
 	}
@@ -198,16 +188,10 @@ abstract class ClientHandler extends Thread {
 }
 
 class TupleHandler extends ClientHandler {
-	public TupleHandler(
-			Socket s,
-			ObjectInputStream stream,
-			Integer limit,
-			String inputFile,
-			Object[][] cachedValues,
-			IntervalLatencyPriorityFactory factory,
+	public TupleHandler(Socket s, ObjectInputStream stream, Integer limit,
+			String inputFile, Object[][] cachedValues,
 			Integer accelerationFactor) {
-		super(s, stream, limit, inputFile, cachedValues, factory,
-				accelerationFactor);
+		super(s, stream, limit, inputFile, cachedValues, accelerationFactor);
 	}
 
 	@Override
@@ -227,11 +211,11 @@ class TupleHandler extends ClientHandler {
 			Long diff = 0L;
 			int i = 0;
 			while (limit < 1 || i < limit) {
-				RelationalTuple obj = limit > 0 ? (RelationalTuple)cachedValues[i++][0]
+				RelationalTuple obj = limit > 0 ? (RelationalTuple) cachedValues[i++][0]
 						: (RelationalTuple) iStream.readObject();
 				Long timestamp = (Long) obj.getAttribute(0);
 				// obj.setMetadata(factory.createMetadata(obj));
-				//System.out.println(obj);
+				// System.out.println(obj);
 				if (lastTimestamp == null) {
 					oStream.writeObject(obj);
 					lastTimestamp = timestamp;
@@ -252,7 +236,7 @@ class TupleHandler extends ClientHandler {
 					oStream.writeObject(obj);
 					lastTimestamp = timestamp;
 				}
-			}			
+			}
 			System.out.println(" |->Done");
 		} catch (EOFException e) {
 			System.out.println(" |->Done");
@@ -269,16 +253,10 @@ class TupleHandler extends ClientHandler {
 }
 
 class RawHandler extends ClientHandler {
-	public RawHandler(
-			Socket s,
-			ObjectInputStream stream,
-			Integer limit,
-			String inputFile,
-			Object[][] cachedValues,
-			IntervalLatencyPriorityFactory factory,
+	public RawHandler(Socket s, ObjectInputStream stream, Integer limit,
+			String inputFile, Object[][] cachedValues,
 			Integer accelerationFactor) {
-		super(s, stream, limit, inputFile, cachedValues, factory,
-				accelerationFactor);
+		super(s, stream, limit, inputFile, cachedValues, accelerationFactor);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -300,7 +278,7 @@ class RawHandler extends ClientHandler {
 			int i = 0;
 			long startDuration = System.nanoTime();
 			while (limit < 1 || i < limit) {
-				RelationalTuple obj = limit > 0 ? (RelationalTuple)cachedValues[i++][0]
+				RelationalTuple obj = limit > 0 ? (RelationalTuple) cachedValues[i++][0]
 						: (RelationalTuple) iStream.readObject();
 				Long timestamp = (Long) obj.getAttribute(0);
 				// obj.setMetadata(factory.createMetadata(obj));
@@ -357,18 +335,11 @@ class RawHandler extends ClientHandler {
 class CSVHandler extends ClientHandler {
 	private SDFAttributeList schema;
 	char csvDelim;
-	
-	public CSVHandler(
-			Socket s,
-			ObjectInputStream stream,
-			Integer limit,
-			String inputFile,
-			Object[][] cachedValues,
-			SDFAttributeList schema,
-			IntervalLatencyPriorityFactory factory,
+
+	public CSVHandler(Socket s, ObjectInputStream stream, Integer limit,
+			String inputFile, Object[][] cachedValues, SDFAttributeList schema,
 			Integer accelerationFactor, char delim) {
-		super(s, stream, limit, inputFile, cachedValues, factory,
-				accelerationFactor);
+		super(s, stream, limit, inputFile, cachedValues, accelerationFactor);
 		this.schema = schema;
 		this.csvDelim = delim;
 	}
@@ -392,61 +363,63 @@ class CSVHandler extends ClientHandler {
 			long startDuration = System.nanoTime();
 			CSVParser csvParser = new CSVParser(new FileInputStream(inputFile));
 			csvParser.changeDelimiter(this.csvDelim);
-			csvParser.getLine(); // first line are the attribute names, so do not process it.
+			csvParser.getLine(); // first line are the attribute names, so do
+			// not process it.
 			while (limit < 1 || i < limit) {
-				if(limit > 0){
-					for(int u = 0; u<cachedValues[i].length; u++){
+				if (limit > 0) {
+					for (int u = 0; u < cachedValues[i].length; u++) {
 						SDFAttribute attr = this.schema.get(u);
-						if(SDFDatatypes.isMeasurementValue(attr.getDatatype()) ||
-								SDFDatatypes.isDouble(attr.getDatatype())){
-							oStream.writeDouble((Double)cachedValues[i][u]);
-						}
-						else if(SDFDatatypes.isInteger(attr.getDatatype())){
-							oStream.writeInt((Integer)cachedValues[i][u]);
-						}
-						else if(SDFDatatypes.isLong(attr.getDatatype())){
-							oStream.writeLong((Long)cachedValues[i][u]);
-						}
-						else if(SDFDatatypes.isString(attr.getDatatype())){
-							oStream.writeUTF((String)cachedValues[i][u]);
-						}
-						else if(SDFDatatypes.isDate(attr.getDatatype())){
-							oStream.writeLong(((Calendar)cachedValues[i][u]).getTimeInMillis());
+						if (SDFDatatypes.isMeasurementValue(attr.getDatatype())
+								|| SDFDatatypes.isDouble(attr.getDatatype())) {
+							oStream.writeDouble((Double) cachedValues[i][u]);
+						} else if (SDFDatatypes.isInteger(attr.getDatatype())) {
+							oStream.writeInt((Integer) cachedValues[i][u]);
+						} else if (SDFDatatypes.isLong(attr.getDatatype())) {
+							oStream.writeLong((Long) cachedValues[i][u]);
+						} else if (SDFDatatypes.isString(attr.getDatatype())) {
+							oStream.writeUTF((String) cachedValues[i][u]);
+						} else if (SDFDatatypes.isDate(attr.getDatatype())) {
+							oStream.writeLong(((Calendar) cachedValues[i][u])
+									.getTimeInMillis());
 						}
 					}
-				}else{
+				} else {
 					String[] line = null;
-					try{
+					try {
 						line = csvParser.getLine();
-						for(int u = 0; u<line.length; u++){
+						for (int u = 0; u < line.length; u++) {
 							SDFAttribute attr = this.schema.get(i);
-							if(SDFDatatypes.isMeasurementValue(attr.getDatatype()) ||
-									SDFDatatypes.isDouble(attr.getDatatype())){
-								oStream.writeDouble(Double.parseDouble(line[u]));
-							}
-							else if(SDFDatatypes.isInteger(attr.getDatatype())){
+							if (SDFDatatypes.isMeasurementValue(attr
+									.getDatatype())
+									|| SDFDatatypes
+											.isDouble(attr.getDatatype())) {
+								oStream
+										.writeDouble(Double
+												.parseDouble(line[u]));
+							} else if (SDFDatatypes.isInteger(attr
+									.getDatatype())) {
 								oStream.writeInt(Integer.parseInt(line[u]));
-							}
-							else if(SDFDatatypes.isLong(attr.getDatatype())){
+							} else if (SDFDatatypes.isLong(attr.getDatatype())) {
 								oStream.writeLong(Long.parseLong(line[u]));
-							}
-							else if(SDFDatatypes.isString(attr.getDatatype())){
+							} else if (SDFDatatypes
+									.isString(attr.getDatatype())) {
 								oStream.writeUTF(line[u]);
-							}
-							else if(SDFDatatypes.isDate(attr.getDatatype())){
-								SimpleDateFormat df = new SimpleDateFormat(attr.getDtConstraint("format").getCType());
-								try{
+							} else if (SDFDatatypes.isDate(attr.getDatatype())) {
+								SimpleDateFormat df = new SimpleDateFormat(attr
+										.getDtConstraint("format").getCType());
+								try {
 									Date date = df.parse(line[u]);
 									Calendar cal = Calendar.getInstance();
 									cal.setTime(date);
 									oStream.writeLong(cal.getTimeInMillis());
-								}catch(ParseException e){
-									throw new RuntimeException("Date not correctly formatted.");
+								} catch (ParseException e) {
+									throw new RuntimeException(
+											"Date not correctly formatted.");
 								}
-								
+
 							}
 						}
-					}catch(IOException e){
+					} catch (IOException e) {
 						break;
 					}
 				}

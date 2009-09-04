@@ -504,7 +504,8 @@ public class ExecutorConsole implements CommandProvider,
 			}else{
 				addQuery(nexmarkQ[j][Integer.parseInt(args[0])]);
 			}
-			
+			//TODO remove wenn viewer auf events reagiert
+			blah();
 		}else{
 			ci.println("usage [0-5]|* [nio]");
 		}
