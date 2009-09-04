@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.LiesInPredicate;
@@ -21,7 +20,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.StartsBeforePredicate
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
 /**
@@ -36,7 +35,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 	/**
 	 * This operator needs a sweeparea if the pos-neg approach will be used.
 	 */
-	private DefaultTISweepArea<IMetaAttribute<? extends ITimeInterval>> sa;
+	private SweepArea<IMetaAttribute<? extends ITimeInterval>> sa;
 
 	/**
 	 * This is the number of slides that have been processed.
@@ -52,7 +51,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 	public SlidingPeriodicWindowTIPO(WindowAO logical) {
 		super(logical);
 
-		this.sa = new DefaultTISweepArea<IMetaAttribute<? extends ITimeInterval>>();
+		this.sa = new SweepArea<IMetaAttribute<? extends ITimeInterval>>();
 		this.deliveryList = new LinkedList<IMetaAttribute<? extends ITimeInterval>>();
 
 		this.sa.setRemovePredicate(StartsBeforePredicate.getInstance());
@@ -80,7 +79,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
-	
+
 	public void process_next(R object, int port) {
 		long t_s = object.getMetadata().getStart().getMainPoint();
 		long delta = this.windowAdvance;
