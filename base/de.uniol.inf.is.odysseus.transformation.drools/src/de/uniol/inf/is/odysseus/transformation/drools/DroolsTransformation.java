@@ -6,6 +6,7 @@ import java.util.List;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
+import org.drools.audit.WorkingMemoryConsoleLogger;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
@@ -79,6 +80,10 @@ public class DroolsTransformation implements ITransformation {
 
 		session.insert(this);
 		session.startProcess("flow");
+		
+//		WorkingMemoryConsoleLogger lg = new WorkingMemoryConsoleLogger(session);
+//		lg.clearFilters();
+		
 		session.fireAllRules();
 
 		IPhysicalOperator physicalPO = top.getPhysInputPO(0);
