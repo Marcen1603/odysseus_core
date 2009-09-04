@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataFactory;
+import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.GroupingHelper;
@@ -61,12 +61,17 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	//private PointInTime baseTime = null;
 
 
-	public StreamGroupingWithAggregationPO(AggregateAO aggregateAO, GroupingHelper<R> grHelper, IMetadataFactory<Q,R> mFactory){
-		super(aggregateAO, mFactory);
+	public StreamGroupingWithAggregationPO(AggregateAO aggregateAO, GroupingHelper<R> grHelper, Class<Q> metadataType){
+		super(aggregateAO, metadataType);
 		setGroupingHelper(grHelper);
-		initAggFunctions(aggregateAO);
 	}
 	
+	
+	@Override
+	public void setGroupingHelper(GroupingHelper<R> groupingHelper) {
+		super.setGroupingHelper(groupingHelper);
+		initAggFunctions();
+	}
 	public StreamGroupingWithAggregationPO(AggregateAO aggregateAO) {
 		super(aggregateAO);
 	}
@@ -75,7 +80,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		super(agg);
 	}
 
-	protected void initAggFunctions(AggregateAO aggregateAO){
+	protected void initAggFunctions(){
+		AggregateAO aggregateAO = getAlgebraOp();
 		SDFAttributeList inputSchema = aggregateAO.getInputSchema();
 		for (SDFAttribute a:inputSchema){
 			
