@@ -16,4 +16,6 @@ public interface IEditableExecutionPlan extends IExecutionPlan {
 	public void close();
 
 	public void open() throws OpenFailedException;
+
+	public void initWith(IExecutionPlan newExecutionPlan);
 }

@@ -230,6 +230,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries);
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					QueryPlanModificationEvent.QUERY_ADDED, query));
 			return query.getID();
 		} catch (Exception e) {
 			this.logger.error("Error adding Queries. Details: "

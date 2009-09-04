@@ -10,6 +10,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
+import org.drools.audit.WorkingMemoryConsoleLogger;
 import org.drools.rule.Package;
 import org.drools.rule.Rule;
 import org.osgi.framework.BundleContext;
@@ -61,6 +62,7 @@ public class DroolsRewrite implements IRewrite {
 		}
 
 		session.startProcess("RuleFlow");
+			
 		session.fireAllRules();
 		session.dispose();
 		if (logger.isInfoEnabled()) {

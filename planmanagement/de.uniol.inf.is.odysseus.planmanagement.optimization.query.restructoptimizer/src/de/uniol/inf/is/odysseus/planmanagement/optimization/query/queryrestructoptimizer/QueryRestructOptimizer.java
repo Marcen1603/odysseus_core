@@ -50,7 +50,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 				query.initializePhysicalPlan(physicalPlan);
 			} catch (Throwable e) {
 				throw new QueryOptimizationException(
-						"Exeception while initialize query.", new Exception(e));
+						"Exeception while initialize query.", e);
 			}
 		}
 	}

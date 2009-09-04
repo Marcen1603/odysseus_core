@@ -7,6 +7,7 @@ public class QueryPlanModificationEvent extends
 		AbstractPlanModificationEvent<IQuery> {
 
 	public static String QUERY_REMOVE = "QUERY_REMOVE";
+	public static String QUERY_ADDED = "QUERY_ADDED";
 	public static String QUERY_START = "QUERY_START";
 	public static String QUERY_STOP = "QUERY_STOP";
 	public static String QUERY_REOPTIMIZE = "QUERY_REOPTIMIZE";
