@@ -138,4 +138,9 @@ public class AccessAO extends AbstractLogicalOperator {
 		return host;
 	}
 	
+	@Override
+	public String toString() {
+		return getPOName() + " (" + this.getSource().getURI() + ")";
+	}
+	
 }
