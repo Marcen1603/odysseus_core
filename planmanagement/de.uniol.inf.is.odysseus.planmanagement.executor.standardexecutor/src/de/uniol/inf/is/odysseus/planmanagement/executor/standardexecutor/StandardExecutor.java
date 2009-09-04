@@ -183,7 +183,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	public Collection<Integer> addQuery(String query, String parserID,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException {
-		this.logger.info("Start adding Queries.");
+		this.logger.info("Start adding Queries. "+query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
 			ArrayList<IEditableQuery> newQueries = createQueries(query,

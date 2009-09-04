@@ -492,9 +492,9 @@ public class ExecutorConsole implements CommandProvider,
 
 	public void _nmq(CommandInterpreter ci){
 		String[] args = support.getArgs(ci);
-		if (args != null && args.length > 1) {
+		if (args != null && args.length >= 1) {
 			int j=0;
-			if (args[1] != null && args[1].startsWith("n")){
+			if (args.length > 1 && args[1].startsWith("n")){
 				j = 1;
 			}
 			if ("*".equals(args[0])){

@@ -11,7 +11,6 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
@@ -19,10 +18,8 @@ import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ISettingChangeListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
@@ -123,14 +120,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		if (newExecutionPlan != null && !newExecutionPlan.equals(this.executionPlan)) {
 			try {
 				this.logger.info("Set execution plan.");
-
-				this.executionPlan.setPartialPlans(new ArrayList<IPartialPlan>(
-						newExecutionPlan.getPartialPlans()));
-				this.executionPlan
-						.setSources(new ArrayList<IIterableSource<?>>(
-								newExecutionPlan.getSources()));
-				this.executionPlan
-						.setRoots(new ArrayList<IPhysicalOperator>(newExecutionPlan.getRoots()));
+				// Init current execution plan with newExecutionPlan
+				this.executionPlan.initWith(newExecutionPlan);
 
 				if (isRunning()) {
 					this.executionPlan.open();

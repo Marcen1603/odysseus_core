@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
 public class EditableExecutionPlan implements IEditableExecutionPlan {
@@ -49,27 +50,9 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 	@Override
 	public void open() throws OpenFailedException {
 		if (!isOpen()) {
-			
-			//TODO: Hack --> klären!!!
-			//Warum nicht einfach auf allen roots open aufrufen?
 			if (roots != null){
 				for (IPhysicalOperator r:roots){
 					r.open();
-				}
-			}
-			
-			//if there are no operators above a source ("SELECT * FROM Source"),
-			//open sources directly, otherwise they get indirectly opened by
-			//the open calls at the roots
-			if (partialPlans.isEmpty()) {		
-				for (IIterableSource<?> curSource : iterableSources) {
-					curSource.open();
-				}
-			} else {
-				for (IPartialPlan partialPlan : this.partialPlans) {
-					for (ISink<?> root : partialPlan.getRoots()) {
-						root.open();
-					}
 				}
 			}
 		}
@@ -93,6 +76,15 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 	@Override
 	public List<IPhysicalOperator> getRoots() {
 		return roots;
+	}
+
+	@Override
+	public void initWith(IExecutionPlan newExecutionPlan) {
+		this.setPartialPlans(new ArrayList<IPartialPlan>(
+				newExecutionPlan.getPartialPlans()));
+		this.setSources(new ArrayList<IIterableSource<?>>(
+						newExecutionPlan.getSources()));
+		this.setRoots(new ArrayList<IPhysicalOperator>(newExecutionPlan.getRoots()));
 	}
 	
 }
