@@ -9,8 +9,9 @@ public class QueryOptimizationException extends Exception {
 		this(m, null);
 	}
 
-	public QueryOptimizationException(String m, Exception e) {
+	public QueryOptimizationException(String m, Throwable e) {
 		super(m + (e != null ? AppEnv.LINE_SEPERATOR + "Additional info:" + AppEnv.LINE_SEPERATOR
 				+ e.getMessage() : ""));
+		this.setStackTrace(e.getStackTrace());
 	}
 }
