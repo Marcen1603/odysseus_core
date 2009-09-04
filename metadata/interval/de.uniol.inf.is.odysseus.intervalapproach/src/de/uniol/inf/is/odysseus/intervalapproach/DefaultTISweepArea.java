@@ -168,6 +168,8 @@ public class DefaultTISweepArea<T extends IMetaAttribute<? extends ITimeInterval
 	
 	@Override
 	public void setRemovePredicate(IPredicate<? super T> removePredicate) {
-		throw new UnsupportedOperationException("Das remove-Praedikat in der DefaultTISweepArea ist fest. Es wird ein TotallyBeforePredicate verwendet.");
+		UnsupportedOperationException exception = new UnsupportedOperationException("Das remove-Praedikat in der DefaultTISweepArea ist fest. Es wird ein TotallyBeforePredicate verwendet.");
+		exception.fillInStackTrace();
+		throw exception;
 	}
 }
