@@ -26,6 +26,8 @@ Import-Package:
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.function,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.viewer;resolution:=optional,
  de.uniol.inf.is.odysseus.viewer.model.create;resolution:=optional,
  org.eclipse.osgi.framework.console,
