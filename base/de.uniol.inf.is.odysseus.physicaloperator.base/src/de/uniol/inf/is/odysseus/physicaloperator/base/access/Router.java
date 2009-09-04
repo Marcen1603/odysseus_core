@@ -20,7 +20,7 @@ public class Router extends Thread {
 	// HashMap<SocketChannel, ISink<ByteBuffer>>();
 	Selector selector = null;
 	static Router instance = null;
-	private LinkedList<UnsortedPair<SocketChannel, ISink<ByteBuffer>>> deferredList = new LinkedList<UnsortedPair<SocketChannel, ISink<ByteBuffer>>>();
+	private LinkedList<UnsortedPair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<UnsortedPair<SocketChannel, IRouterReceiver>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
 
@@ -70,7 +70,7 @@ public class Router extends Thread {
 					SelectionKey key = (SelectionKey) it.next();
 					it.remove();
 					@SuppressWarnings("unchecked")
-					ISink<ByteBuffer> op = (ISink<ByteBuffer>) key.attachment();
+					IRouterReceiver op = (IRouterReceiver) key.attachment();
 					SocketChannel sc = (SocketChannel) key.channel();
 
 					// System.out.println("Selection Key "+key.isConnectable()+" "+key.isReadable()+" "+op);
@@ -124,7 +124,7 @@ public class Router extends Thread {
 		}
 	}
 
-	public void connectToServer(ISink<ByteBuffer> sink, String host, int port)
+	public void connectToServer(IRouterReceiver sink, String host, int port)
 			throws Exception {
 		SocketChannel sc = SocketChannel.open();
 		sc.configureBlocking(false);
@@ -134,9 +134,9 @@ public class Router extends Thread {
 		selector.wakeup();
 	}
 
-	private void deferedRegister(SocketChannel sc, ISink<ByteBuffer> sink) {
+	private void deferedRegister(SocketChannel sc, IRouterReceiver sink) {
 		synchronized (deferredList) {
-			deferredList.add(new UnsortedPair<SocketChannel, ISink<ByteBuffer>>(
+			deferredList.add(new UnsortedPair<SocketChannel, IRouterReceiver>(
 					sc, sink));
 			registerAction = true;
 		}
@@ -145,7 +145,7 @@ public class Router extends Thread {
 	private synchronized void processRegister() {
 		synchronized (deferredList) {
 			while (deferredList.size() > 0) {
-				UnsortedPair<SocketChannel, ISink<ByteBuffer>> pair = deferredList
+				UnsortedPair<SocketChannel, IRouterReceiver> pair = deferredList
 						.poll();
 				try {
 					// System.out.println("Registering "+pair.getE1()+" "+pair.getE2());
@@ -175,7 +175,7 @@ public class Router extends Thread {
 	// }
 
 	private void readDataFromSocket(SocketChannel socketChannel,
-			ISink<ByteBuffer> os) throws Exception {
+			IRouterReceiver os) throws Exception {
 		// ISink<ByteBuffer> os = clientMap.get(socketChannel);
 		// System.out.println(os);
 		// System.out.println("Read From Socket " + socketChannel.toString() +
@@ -187,16 +187,16 @@ public class Router extends Thread {
 				buffer.clear();
 				while ((count = socketChannel.read(buffer)) > 0) {
 					buffer.flip();
-					os.process(buffer, 0, true);
+					os.process(buffer);
 					buffer.clear();
 				}
 				buffer.flip(); // Wie geht das denn?
 				while (buffer.hasRemaining()) {
-					os.process(buffer, 0, true);
+					os.process(buffer);
 				}
 			}
 			if (count < 0) {
-				os.done(0);
+				os.done();
 				socketChannel.close();
 				// System.err.println("Server "+socketChannel+" connection closed (no more Data)");
 			}
@@ -204,7 +204,7 @@ public class Router extends Thread {
 			socketChannel.isConnectionPending();
 			System.err.println("Server " + socketChannel
 					+ " connection closed (IOException) " + e.getMessage());
-			os.done(0);
+			os.done();
 			socketChannel.close();
 			// throw e;
 		}
