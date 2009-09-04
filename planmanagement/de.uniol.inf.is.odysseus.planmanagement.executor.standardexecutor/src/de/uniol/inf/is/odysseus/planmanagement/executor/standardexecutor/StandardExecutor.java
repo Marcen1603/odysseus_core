@@ -111,7 +111,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			String parserID, QueryBuildParameter parameters)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
-		this.logger.debug("Tranlate Queries.");
+		this.logger.debug("Translate Queries.");
 		ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
 		Query newQuery = null;
 		Collection<ILogicalOperator> logicalPlan = compiler().translateQuery(
@@ -193,6 +193,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		} catch (Exception e) {
 			this.logger.error("Error adding Queries. Details: "
 					+ e.getMessage());
+			e.printStackTrace();
 			throw new QueryAddException(e);
 		}
 	}
