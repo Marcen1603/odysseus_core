@@ -21,5 +21,15 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.osgi.framework,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.viewer,
- de.uniol.inf.is.odysseus.viewer.model.create
+ de.uniol.inf.is.odysseus.viewer.ctrl,
+ de.uniol.inf.is.odysseus.viewer.model.create,
+ de.uniol.inf.is.odysseus.viewer.model.graph,
+ de.uniol.inf.is.odysseus.viewer.swt,
+ de.uniol.inf.is.odysseus.viewer.swt.render,
+ de.uniol.inf.is.odysseus.viewer.swt.resource,
+ de.uniol.inf.is.odysseus.viewer.swt.select,
+ de.uniol.inf.is.odysseus.viewer.swt.symbol,
+ de.uniol.inf.is.odysseus.viewer.view.graph,
+ de.uniol.inf.is.odysseus.viewer.view.position,
+ de.uniol.inf.is.odysseus.viewer.view.symbol
 Bundle-Activator: de.uniol.inf.is.odysseus.viewer.Activator
