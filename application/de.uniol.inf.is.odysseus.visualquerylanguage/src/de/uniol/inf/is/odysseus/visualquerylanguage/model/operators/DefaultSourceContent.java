@@ -17,12 +17,12 @@ public class DefaultSourceContent extends AbstractOperator{
 	}
 
 	@Override
-	public boolean isSink() {
+	public boolean isOnlySink() {
 		return false;
 	}
 
 	@Override
-	public boolean isSource() {
+	public boolean isOnlySource() {
 		return true;
 	}
 	

@@ -2,15 +2,14 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -23,8 +22,10 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeC
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParam;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
+import de.uniol.inf.is.odysseus.visualquerylanguage.validation.ObjectFactory;
 
 public class SWTParameterArea {
 	
@@ -58,7 +59,7 @@ public class SWTParameterArea {
 		}
 		
 		Label typLabel = new Label(comp, SWT.LEFT);
-		typLabel.setText("Typ: " + content.getTyp());
+		typLabel.setText("Typ: " + content.getType());
 		
 		final Table table = new Table(comp, SWT.BORDER);
 		
@@ -72,32 +73,85 @@ public class SWTParameterArea {
 	    final TableEditor editor = new TableEditor(table);
 	    editor.horizontalAlignment = SWT.LEFT;
 	    editor.grabHorizontal = true;
-	    editor.minimumWidth = 70;
-	    final int EDITABLECOLUMN = 1;
-
-	    table.addSelectionListener(new SelectionAdapter() {
-	      public void widgetSelected(SelectionEvent e) {
-	        Control oldEditor = editor.getEditor();
-	        if (oldEditor != null)
-	          oldEditor.dispose();
-
-	        TableItem item = (TableItem) e.item;
-	        if (item == null)
-	          return;
-
-	        Text newEditor = new Text(table, SWT.NONE);
-	        newEditor.setText(item.getText(EDITABLECOLUMN));
-	        newEditor.addModifyListener(new ModifyListener() {
-	          public void modifyText(ModifyEvent me) {
-	            Text text = (Text) editor.getEditor();
-	            editor.getItem()
-	                .setText(EDITABLECOLUMN, text.getText());
-	          }
-	        });
-	        System.out.println(item.getData());
-	        newEditor.selectAll();
-	        newEditor.setFocus();
-	        editor.setEditor(newEditor, item, EDITABLECOLUMN);
+	    table.addListener(SWT.MouseDown, new Listener() {
+	      public void handleEvent(Event event) {
+	        Rectangle clientArea = table.getClientArea();
+	        Point pt = new Point(event.x, event.y);
+	        int index = table.getTopIndex();
+	        while (index < table.getItemCount()) {
+	          boolean visible = false;
+	          final TableItem item = table.getItem(index);
+	            Rectangle rect = item.getBounds(1);
+	            if (rect.contains(pt)) {
+	              final int column = 1;
+	              final Text text = new Text(table, SWT.NONE);
+	              Listener textListener = new Listener() {
+	                @SuppressWarnings("unchecked")
+					public void handleEvent(final Event e) {
+	                  Object obj = null;
+	                  switch (e.type) {
+	                  case SWT.FocusOut:
+	  	              if(editor.getItem().getData() instanceof IParam<?>) {
+		              	obj = ObjectFactory.getInstance().getParamType(text.getText(), ((IParam<?>)(editor.getItem().getData())).getType());
+		              	if(obj != null) {
+			              	if(obj instanceof Integer) {
+			              		((IParam<Integer>)(editor.getItem().getData())).setValue((Integer)obj);
+			              	}
+			              	if(obj instanceof String) {
+			              		((IParam<String>)(editor.getItem().getData())).setValue((String)obj);
+			              	}
+		              	}
+		              }
+	  	              if(obj == null) {
+	                	  text.dispose();
+	                	  e.doit = false;
+	                  }else {
+	                	  item.setText(column, text.getText());
+	                  }
+	                    text.dispose();
+	                    break;
+	                  case SWT.Traverse:
+	                    switch (e.detail) {
+	                    case SWT.TRAVERSE_RETURN:
+	      	              if(editor.getItem().getData() instanceof IParam<?>) {
+	    	              	obj = ObjectFactory.getInstance().getParamType(text.getText(), ((IParam<?>)(editor.getItem().getData())).getType());
+	    	              	if(obj instanceof Integer) {
+	    	              		((IParam<Integer>)(editor.getItem().getData())).setValue((Integer)obj);
+	    	              	}
+	    	              	if(obj instanceof String) {
+	    	              		((IParam<String>)(editor.getItem().getData())).setValue((String)obj);
+	    	              	}
+	    	              }
+	      	              if(obj == null) {
+		                	  text.dispose();
+		                	  e.doit = false;
+		                  }else {
+	                      item.setText(column, text.getText());
+		                  }
+	                    // FALL THROUGH
+	                    case SWT.TRAVERSE_ESCAPE:
+	                      text.dispose();
+	                      e.doit = false;
+	                    }
+	                    break;
+	                  }
+	                }
+	              };
+	              text.addListener(SWT.FocusOut, textListener);
+	              text.addListener(SWT.Traverse, textListener);
+	              editor.setEditor(text, item, 1);
+	              text.setText(item.getText(1));
+	              text.selectAll();
+	              text.setFocus();
+	              return;
+	            }
+	            if (!visible && rect.intersects(clientArea)) {
+	              visible = true;
+	            }
+	          if (!visible)
+	            return;
+	          index++;
+	      }
 	      }
 	    });
 	    
@@ -121,7 +175,7 @@ public class SWTParameterArea {
 			scItem = new TableItem(table, SWT.NONE);
 			String value = "";
 			if(sParam.getValue() != null) {
-				sParam.getValue().toString();
+				value = sParam.getValue().toString();
 			}
 			scItem.setText(new String[] { sParam.getName(), value});
 			scItem.setData(sParam);

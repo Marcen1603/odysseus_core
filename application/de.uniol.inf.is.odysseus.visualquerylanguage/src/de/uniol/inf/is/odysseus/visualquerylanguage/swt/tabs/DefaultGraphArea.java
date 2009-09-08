@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -52,10 +53,13 @@ import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IModelController;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
@@ -259,30 +263,32 @@ public class DefaultGraphArea extends Composite implements
 	private void addNewNode(MouseEvent e) {
 		if (tree.getSelectionCount() != 0
 				&& !CursorManager.getIsStandardCursor()) {
-			INodeContent content = (INodeContent) (tree.getSelection()[0]
-					.getData());
-			if (content != null) {
-				INodeModel<INodeContent> node = new DefaultNodeModel<INodeContent>(
-						content);
-				INodeView<INodeContent> nodeView = new DefaultNodeView<INodeContent>(
-						node);
-				controller.addNode(node);
-				CursorManager.isNotConnection();
-				nodeView.setPosition(this.getRealNodePosition(new Vector(e.x, e.y)));
-				if (content.isSource()) {
-					nodeView.getSymbolContainer().add(
-							new SWTImageSymbolElement<INodeContent>("source"));
-				} else if (content.isSink()) {
-					nodeView.getSymbolContainer().add(
-							new SWTImageSymbolElement<INodeContent>("sink"));
-				} else if (content.isPipe()) {
-					nodeView.getSymbolContainer().add(
-							new SWTImageSymbolElement<INodeContent>("pipe"));
-				}
-				viewGraph.insertViewedNode(nodeView);
-				if ((e.stateMask & SWT.SHIFT) == 0
-						&& !CursorManager.getIsConnection()) {
-					this.setCursor(CursorManager.setStandardCursor());
+			INodeContent con = (INodeContent)tree.getSelection()[0].getData();
+			if (con != null) {
+			INodeContent content = createNewINodeContentInstance(con);	
+				if(content != null) {
+					INodeModel<INodeContent> node = new DefaultNodeModel<INodeContent>(
+							content);
+					INodeView<INodeContent> nodeView = new DefaultNodeView<INodeContent>(
+							node);
+					controller.addNode(node);
+					CursorManager.isNotConnection();
+					nodeView.setPosition(this.getRealNodePosition(new Vector(e.x, e.y)));
+					if (content.isOnlySource()) {
+						nodeView.getSymbolContainer().add(
+								new SWTImageSymbolElement<INodeContent>("source"));
+					} else if (content.isOnlySink()) {
+						nodeView.getSymbolContainer().add(
+								new SWTImageSymbolElement<INodeContent>("sink"));
+					} else if (content.isPipe()) {
+						nodeView.getSymbolContainer().add(
+								new SWTImageSymbolElement<INodeContent>("pipe"));
+					}
+					viewGraph.insertViewedNode(nodeView);
+					if ((e.stateMask & SWT.SHIFT) == 0
+							&& !CursorManager.getIsConnection()) {
+						this.setCursor(CursorManager.setStandardCursor());
+					}
 				}
 			}
 		}
@@ -293,7 +299,7 @@ public class DefaultGraphArea extends Composite implements
 			if (!connectionStarted
 					&& !((INodeModel<INodeContent>) ((ArrayList<INodeView<INodeContent>>) (renderManager
 							.getSelector().getSelected())).get(0)
-							.getModelNode()).getContent().isSink()) {
+							.getModelNode()).getContent().isOnlySink()) {
 				connNodeList = new ArrayList<INodeView<INodeContent>>(
 						renderManager.getSelector().getSelected());
 				connectionStarted = true;
@@ -304,8 +310,8 @@ public class DefaultGraphArea extends Composite implements
 						.getSelector().getSelected())).get(0));
 				for (INodeView<INodeContent> nodeView : connNodeList) {
 					if (!((INodeModel<INodeContent>) (selectedNode
-							.getModelNode())).getContent().isSource()) {
-						if (!nodeView.getModelNode().getContent().isSink()) {
+							.getModelNode())).getContent().isOnlySource()) {
+						if (!nodeView.getModelNode().getContent().isOnlySink()) {
 							connectionStarted = false;
 							IConnectionModel<INodeContent> connModel = new DefaultConnectionModel<INodeContent>(
 									nodeView.getModelNode(), selectedNode
@@ -320,9 +326,9 @@ public class DefaultGraphArea extends Composite implements
 							viewGraph.insertViewedConnection(connView);
 							CursorManager.isNotConnection();
 						} else if (!((INodeModel<INodeContent>) (selectedNode
-								.getModelNode())).getContent().isSink()) {
+								.getModelNode())).getContent().isOnlySink()) {
 							if (!nodeView.getModelNode().getContent()
-									.isSource()) {
+									.isOnlySource()) {
 								connectionStarted = false;
 								IConnectionModel<INodeContent> connModel = new DefaultConnectionModel<INodeContent>(
 										selectedNode.getModelNode(), nodeView
@@ -460,5 +466,17 @@ public class DefaultGraphArea extends Composite implements
 	// Canvaskoordinaten in Graphkoordinaten umrechnen
 	private Vector getRealNodePosition(Vector v) {
 		return v.div(renderManager.getZoomFactor()).sub(renderManager.getGraphOffset());
+	}
+	
+	private INodeContent createNewINodeContentInstance(INodeContent con) {
+		INodeContent content = null;
+		if(con instanceof DefaultSourceContent) {
+			content = new DefaultSourceContent(con.getName(), con.getType(), con.getNewConstructParameterListInstance(), con.getNewSetterParameterListInstance());
+		}else if(con instanceof DefaultSinkContent) {
+			content = new DefaultSinkContent(con.getName(), con.getType(), con.getNewConstructParameterListInstance(), con.getNewSetterParameterListInstance());
+		}else if(con instanceof DefaultPipeContent) {
+			content = new DefaultPipeContent(con.getName(), con.getType(), con.getNewConstructParameterListInstance(), con.getNewSetterParameterListInstance());
+		}
+		return content;
 	}
 }

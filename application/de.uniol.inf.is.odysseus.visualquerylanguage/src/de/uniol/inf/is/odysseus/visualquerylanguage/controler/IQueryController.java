@@ -4,11 +4,10 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.IQuery;
 
-public interface IQueryController<C extends IQuery<?>> {
+public interface IQueryController<L extends IQuery<?>> {
 	
-	public void addQuery(C query);
-	public void removeQuery(C query);
-	public C getQueryById(int id);
-	public Collection<C> getAllQueries();
-	
+	public void addQuery(L query);
+	public void removeQuery(L query);
+	public L getQueryById(int id);
+	public Collection<L> getAllQueries();
 }

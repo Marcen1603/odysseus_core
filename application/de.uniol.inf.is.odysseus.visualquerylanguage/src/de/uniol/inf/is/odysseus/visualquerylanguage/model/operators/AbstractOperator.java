@@ -7,8 +7,8 @@ public abstract class AbstractOperator implements INodeContent{
 	
 	private String name;
 	private String typ;
-	Collection<IParamConstruct<?>> constructParameterList;
-	Collection<IParamSetter<?>> setterParameterList;
+	Collection<IParamConstruct<?>> constructParameterList = new ArrayList<IParamConstruct<?>>();
+	Collection<IParamSetter<?>> setterParameterList = new ArrayList<IParamSetter<?>>();
 	private Collection<INodeContentChangeListener<INodeContent>> listeners = new ArrayList<INodeContentChangeListener<INodeContent>>();
 	
 	public AbstractOperator(String name, String typ, Collection<IParamConstruct<?>> constructParameters, Collection<IParamSetter<?>> setterParameters) {
@@ -36,7 +36,7 @@ public abstract class AbstractOperator implements INodeContent{
 	}
 
 	@Override
-	public String getTyp() {
+	public String getType() {
 		return typ;
 	}
 
@@ -67,5 +67,23 @@ public abstract class AbstractOperator implements INodeContent{
 			}
 		}
 	}
-
+	
+	@Override
+	public Collection<IParamConstruct<?>> getNewConstructParameterListInstance() {
+		Collection<IParamConstruct<?>> list = new ArrayList<IParamConstruct<?>>();
+		for (IParamConstruct<?> iParamConstruct : constructParameterList) {
+			list.add(ParamConstructFactory.getInstance().createParam(iParamConstruct.getType(), iParamConstruct.getPosition(), iParamConstruct.getName()));
+		}
+		return list;
+	}
+	
+	@Override
+	public Collection<IParamSetter<?>> getNewSetterParameterListInstance() {
+		Collection<IParamSetter<?>> list = new ArrayList<IParamSetter<?>>();
+		for (IParamSetter<?> iParamSetter : setterParameterList) {
+			list.add(ParamSetterFactory.getInstance().createParam(iParamSetter.getType(), iParamSetter.getSetter(), iParamSetter.getName()));
+		}
+		return list;
+	}
+	
 }

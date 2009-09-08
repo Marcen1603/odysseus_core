@@ -7,13 +7,16 @@ public interface INodeContent {
 	public Collection<IParamConstruct<?>> getConstructParameterList();
 	public Collection<IParamSetter<?>> getSetterParameterList();
 	public String getName();
-	public String getTyp();
+	public String getType();
 	
 	public void addNodeContentChangeListener(INodeContentChangeListener<INodeContent> listener);
 	public void notifyNodeContentChangeListener();
 	
-	public boolean isSource();
-	public boolean isSink();
+	public boolean isOnlySource();
+	public boolean isOnlySink();
 	public boolean isPipe();
+	
+	public Collection<IParamConstruct<?>> getNewConstructParameterListInstance();
+	public Collection<IParamSetter<?>> getNewSetterParameterListInstance();
 
 }

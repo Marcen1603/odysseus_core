@@ -47,8 +47,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 	private Collection<DefaultSinkContent> sinks = new ArrayList<DefaultSinkContent>();
 	private Collection<DefaultPipeContent> pipes = new ArrayList<DefaultPipeContent>();
 
-	private ParamSetterFactory paramSetFac;
-	private ParamConstructFactory paramConFac;
 	private boolean newSource = false;
 	private boolean newSourceType = false;
 	private String sourceName = "";
@@ -75,8 +73,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 		SchemaFactory factory = SchemaFactory
 				.newInstance("http://www.w3.org/2001/XMLSchema");
 		Schema schema;
-		this.paramSetFac = new ParamSetterFactory();
-		this.paramConFac = new ParamConstructFactory();
 		try {
 			URL xsdFile = Activator.getContext().getBundle().getEntry(XSD_FILE);
 			schema = factory.newSchema(xsdFile);
@@ -245,7 +241,10 @@ public class XMLParameterParser implements IParameterConfiguration {
 						if (pPosition != null && source != null) {
 							sources.remove(source);
 							source.getConstructParameterList().add(
-									paramConFac.createParam(pType, pPosition, pName));
+									ParamConstructFactory.getInstance().createParam(pType, pPosition, pName));
+							for (IParamConstruct<?> param : source.getConstructParameterList()) {
+								System.out.println(param.getName());
+							}
 							pName = "";
 							pType = "";
 							pPosition = null;
@@ -253,7 +252,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 						} else if (!pSetter.isEmpty() && source != null) {
 							sources.remove(source);
 							source.getSetterParameterList().add(
-									paramSetFac.createParam(pType, pSetter, pName));
+									ParamSetterFactory.getInstance().createParam(pType, pSetter, pName));
 							pName = "";
 							pType = "";
 							pSetter = "";
@@ -309,7 +308,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 						if (pPosition != null && pipe != null) {
 							pipes.remove(pipe);
 							pipe.getConstructParameterList().add(
-									paramConFac.createParam(pType, pPosition, pName));
+									ParamConstructFactory.getInstance().createParam(pType, pPosition, pName));
 							pName = "";
 							pType = "";
 							pPosition = null;
@@ -317,7 +316,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 						} else if (!pSetter.isEmpty() && pipe != null) {
 							pipes.remove(pipe);
 							pipe.getSetterParameterList().add(
-									paramSetFac.createParam(pType, pSetter, pName));
+									ParamSetterFactory.getInstance().createParam(pType, pSetter, pName));
 							pName = "";
 							pType = "";
 							pSetter = "";
@@ -373,7 +372,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 						if (pPosition != null && sink != null) {
 							sinks.remove(sink);
 							sink.getConstructParameterList().add(
-									paramConFac.createParam(pType, pPosition, pName));
+									ParamConstructFactory.getInstance().createParam(pType, pPosition, pName));
 							pName = "";
 							pType = "";
 							pPosition = null;
@@ -381,7 +380,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 						} else if (!pSetter.isEmpty() && sink != null) {
 							sinks.remove(sink);
 							sink.getSetterParameterList().add(
-									paramSetFac.createParam(pType, pSetter, pName));
+									ParamSetterFactory.getInstance().createParam(pType, pSetter, pName));
 							pName = "";
 							pType = "";
 							pSetter = "";
