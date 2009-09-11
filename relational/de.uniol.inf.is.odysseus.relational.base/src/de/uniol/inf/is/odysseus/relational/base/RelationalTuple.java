@@ -1,12 +1,11 @@
 package de.uniol.inf.is.odysseus.relational.base;
 
 import java.io.Serializable;
-
 import java.nio.CharBuffer;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -21,7 +20,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class RelationalTuple<T extends IClone> extends MetaAttributeContainer<T>
+public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		implements Serializable, Comparable<RelationalTuple<T>> {
 
 	private static final long serialVersionUID = 7119095568322125441L;

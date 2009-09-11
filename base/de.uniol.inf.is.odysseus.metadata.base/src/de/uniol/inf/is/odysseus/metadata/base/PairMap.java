@@ -6,9 +6,9 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.FESortedPair;
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 
-public class PairMap<K1 extends Comparable<K1>,K2 extends Comparable<K2>,V,M extends IClone> extends MetaAttributeContainer<M>{
+public class PairMap<K1 extends Comparable<K1>,K2 extends Comparable<K2>,V,M extends IMetaAttribute> extends MetaAttributeContainer<IMetaAttribute>{
 	/**
 	 * 
 	 */

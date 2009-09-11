@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * @author Jonas Jacobi
  */
-public class AtomicDataInputStreamAccessPO<M extends IClone> extends
+public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		AbstractSource<RelationalTuple<M>> implements
 		IIterableSource<RelationalTuple<M>>{//, IP2PInputPO 
 

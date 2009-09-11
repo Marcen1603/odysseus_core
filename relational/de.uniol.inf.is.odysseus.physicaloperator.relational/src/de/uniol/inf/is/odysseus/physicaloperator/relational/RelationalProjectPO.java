@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
  * @author Jonas Jacobi
  */
-public class RelationalProjectPO<T extends IClone> extends
+public class RelationalProjectPO<T extends IMetaAttribute> extends
 		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
 	private int[] restrictList;

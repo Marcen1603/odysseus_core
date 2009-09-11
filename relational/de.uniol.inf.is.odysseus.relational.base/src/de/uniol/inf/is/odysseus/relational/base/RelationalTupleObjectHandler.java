@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IObjectHandler;
@@ -18,7 +19,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
-public class RelationalTupleObjectHandler<M extends IClone> implements
+public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 		IObjectHandler<RelationalTuple<M>> {
 
 	private static final Logger logger = LoggerFactory.getLogger( RelationalTupleObjectHandler.class );
@@ -167,7 +168,7 @@ public class RelationalTupleObjectHandler<M extends IClone> implements
 		h.put(2,100.0d);
 		h.put(3,"Hallo Folks");
 		ByteBuffer buffer = h.getByteBuffer();
-		RelationalTuple<IClone> r = h.create();
+		RelationalTuple<IMetaAttribute> r = h.create();
 		System.out.println(r);
 		
 	}

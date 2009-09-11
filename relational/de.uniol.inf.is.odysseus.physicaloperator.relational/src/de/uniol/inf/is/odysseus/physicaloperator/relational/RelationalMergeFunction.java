@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Jonas Jacobi
  */
-public class RelationalMergeFunction<M extends IClone> implements
+public class RelationalMergeFunction<M extends IMetaAttribute> implements
 		IDataMergeFunction<RelationalTuple<M>> {
 
 	private SDFAttributeList schema;

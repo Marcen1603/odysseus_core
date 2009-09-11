@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.metadata.base;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 
-public class Container<Type, MetaType extends IClone> extends MetaAttributeContainer<MetaType> {
+
+public class Container<Type, MetaType extends IMetaAttribute> extends MetaAttributeContainer<MetaType> {
 	
 	private static final long serialVersionUID = -581770058118444611L;
 	public Type cargo;

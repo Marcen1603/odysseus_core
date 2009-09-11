@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.metadata.base;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 
 /**
  * @author Jonas Jacobi
  */
-public class MetaAttributeContainer<T extends IClone> implements IMetaAttributeContainer<T> {
+public class MetaAttributeContainer<T extends IMetaAttribute> implements IMetaAttributeContainer<T> {
 	private static final long serialVersionUID = -4027708515386331790L;
 	
 	private T metadata;

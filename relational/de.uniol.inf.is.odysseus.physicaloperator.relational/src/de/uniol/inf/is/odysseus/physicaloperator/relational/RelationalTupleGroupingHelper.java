@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.GroupingHelper;
@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class RelationalTupleGroupingHelper<T extends IClone> extends
+public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		GroupingHelper<RelationalTuple<T>> {
 
 	Map<RelationalTuple<T>, Integer> keyMap = null;

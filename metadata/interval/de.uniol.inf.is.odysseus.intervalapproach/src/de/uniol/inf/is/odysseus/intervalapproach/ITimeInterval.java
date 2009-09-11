@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
 
 /**
  * @author Jonas Jacobi
  */
-public interface ITimeInterval extends IClone, Comparable<ITimeInterval>{
+public interface ITimeInterval extends IMetaAttribute, Comparable<ITimeInterval>{
 	public PointInTime getStart();
 	public PointInTime getEnd();
 	public void setStart(PointInTime point);

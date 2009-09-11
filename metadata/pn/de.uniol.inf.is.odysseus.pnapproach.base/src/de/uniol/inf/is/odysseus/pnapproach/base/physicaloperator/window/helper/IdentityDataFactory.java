@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.helper;
 
-import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
  * 
  * @author Andre Bolles
  */
-public class IdentityDataFactory<M_inOut extends IClone, 
+public class IdentityDataFactory<M_inOut extends IMetaAttribute, 
 										T_inOut extends IMetaAttributeContainer<M_inOut>> implements IDataFactory<M_inOut, M_inOut, T_inOut, T_inOut> {
 
 	@Override
