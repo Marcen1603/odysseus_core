@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.pa
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -32,7 +32,7 @@ public class Benchmark implements IBenchmark {
 		this.executor.setScheduler(config.scheduler, config.schedulingStrategy);
 		BenchmarkResult result = new BenchmarkResult();
 		MySink sink = new MySink(result, config.maxResults);
-		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttribute<? extends ILatency>>();
+		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
 		latency.subscribe(sink, 0);
 
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(

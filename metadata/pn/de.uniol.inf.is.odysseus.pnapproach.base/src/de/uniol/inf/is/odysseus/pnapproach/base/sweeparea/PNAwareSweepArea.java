@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.sweeparea;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -15,12 +15,12 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  * 
  * @author Bernd Hochschulz
  */
-public class PNAwareSweepArea<T extends IMetaAttribute<? extends IPosNeg>>
+public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNeg>>
 		extends SweepArea<T> implements IPNAwareSweepArea<T> {
 	@Override
 	public int getNegativeElementCount() {
 		int count = 0;
-		for (IMetaAttribute<? extends IPosNeg> element : elements) {
+		for (IMetaAttributeContainer<? extends IPosNeg> element : elements) {
 			if (element.getMetadata().getElementType() == ElementType.NEGATIVE) {
 				count++;
 			}
@@ -31,7 +31,7 @@ public class PNAwareSweepArea<T extends IMetaAttribute<? extends IPosNeg>>
 	@Override
 	public int getPositiveElementCount() {
 		int count = 0;
-		for (IMetaAttribute<? extends IPosNeg> element : elements) {
+		for (IMetaAttributeContainer<? extends IPosNeg> element : elements) {
 			if (element.getMetadata().getElementType() == ElementType.POSITIVE) {
 				count++;
 			}

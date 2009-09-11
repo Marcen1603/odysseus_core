@@ -5,21 +5,21 @@ import de.uniol.inf.is.odysseus.base.IClone;
 /**
  * @author Jonas Jacobi
  */
-public class MetaAttribute<T extends IClone> implements IMetaAttribute<T> {
+public class MetaAttributeContainer<T extends IClone> implements IMetaAttributeContainer<T> {
 	private static final long serialVersionUID = -4027708515386331790L;
 	
 	private T metadata;
 
-	public MetaAttribute() {
+	public MetaAttributeContainer() {
 		this.metadata = null;
 	}
 
-	public MetaAttribute(T data) {
+	public MetaAttributeContainer(T data) {
 		this.metadata = data;
 	}
 
 	@SuppressWarnings("unchecked")
-	public MetaAttribute(MetaAttribute<T> copy) {
+	public MetaAttributeContainer(MetaAttributeContainer<T> copy) {
 		if (copy.metadata != null) {
 			this.metadata = (T) copy.metadata.clone();
 		}
@@ -34,8 +34,8 @@ public class MetaAttribute<T extends IClone> implements IMetaAttribute<T> {
 		return metadata;
 	}
 
-	public MetaAttribute<T> clone() {
-		return new MetaAttribute<T>(this);
+	public MetaAttributeContainer<T> clone() {
+		return new MetaAttributeContainer<T>(this);
 	}
 
 	public void setMetadata(T metadata) {

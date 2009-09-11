@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
  * @param <M> Metadatentyp
  * @param <T> Datentyp
  */
-public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttribute<M>> extends
+public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeContainer<M>> extends
 		JoinTIPO<M, T> {
 	private static final Logger logger = LoggerFactory.getLogger(LeftJoinTIPO.class);
 	

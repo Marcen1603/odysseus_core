@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  *
  */
-public class DuplicateEliminationTIPO<T extends IMetaAttribute<? extends ITimeInterval>> extends AbstractPipe<T,T>{
+public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T,T>{
 
 	/**
 	 * the list of next elems to return

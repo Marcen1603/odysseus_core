@@ -3,14 +3,14 @@ package de.uniol.inf.is.odysseus.pnapproach.id.physicalopertor.relational.join.h
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.pnapproach.id.physicalopertor.relational.join.ResultAwareJoinPNIDPO;
 import de.uniol.inf.is.odysseus.pnapproach.id.sweeparea.ResultAwarePNIDSweepArea;
 
-public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAttribute<M>> implements ITransferFunction<T> {
+public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAttributeContainer<M>> implements ITransferFunction<T> {
 
 	private ResultAwareJoinPNIDPO<M, T> po;
 	private ResultAwarePNIDSweepArea<T> sweepArea;

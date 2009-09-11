@@ -4,7 +4,7 @@ import java.lang.management.MemoryUsage;
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
  * UnionPNHelper
  * @author Andre Bolles
  */
-public class UnionPO<R extends IMetaAttribute<?>> extends AbstractPipe<R, R> {
+public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<R, R> {
 
 	/**
 	 * 

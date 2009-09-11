@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.IClone;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
  * @author Jonas Jacobi
  */
-public class MetadataCreationPO<M extends IClone, In extends IMetaAttribute<M>> extends
+public class MetadataCreationPO<M extends IClone, In extends IMetaAttributeContainer<M>> extends
 		AbstractPipe<In, In> {
 
 	private Class<M> type;

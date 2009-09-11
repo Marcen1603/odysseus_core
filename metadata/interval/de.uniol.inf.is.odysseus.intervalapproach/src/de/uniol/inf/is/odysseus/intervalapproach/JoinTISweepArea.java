@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
-public class JoinTISweepArea<T extends IMetaAttribute<? extends ITimeInterval>>
+public class JoinTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends DefaultTISweepArea<T> {
 
 	public void insert(T s) {

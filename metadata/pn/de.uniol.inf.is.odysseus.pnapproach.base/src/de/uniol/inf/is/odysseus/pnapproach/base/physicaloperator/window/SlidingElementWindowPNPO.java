@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
-public class SlidingElementWindowPNPO<T extends IMetaAttribute<IPosNeg>>
+public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>>
 		extends AbstractPipe<T, T> {
 
 	List<T> buffer = null;

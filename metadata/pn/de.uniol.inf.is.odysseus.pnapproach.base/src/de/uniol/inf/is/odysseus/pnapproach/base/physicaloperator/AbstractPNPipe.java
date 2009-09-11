@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
-public abstract class AbstractPNPipe<R extends IMetaAttribute<? extends IPosNeg>, W extends IMetaAttribute<? extends IPosNeg>> extends AbstractPipe<R, W>{
+public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends IPosNeg>, W extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPipe<R, W>{
 		
 	protected POEvent[] processInitNegEvent = null;
 	protected POEvent[] processDoneNegEvent = null;

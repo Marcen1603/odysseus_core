@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
-public abstract class AbstractWindowTIPO<T extends IMetaAttribute<? extends ITimeInterval>>
+public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractPipe<T, T> {
 	protected final long windowSize;
 	protected final long windowAdvance;

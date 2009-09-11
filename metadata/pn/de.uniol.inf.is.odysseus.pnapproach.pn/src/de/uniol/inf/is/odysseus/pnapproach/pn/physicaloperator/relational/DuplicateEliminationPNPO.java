@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  *
  */
-public class DuplicateEliminationPNPO<T extends IMetaAttribute<? extends IPosNeg>> extends AbstractPipe<T, T>{
+public class DuplicateEliminationPNPO<T extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPipe<T, T>{
 
 	
 	/**

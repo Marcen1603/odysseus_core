@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 /**
  * @author Jonas Jacobi
  */
-public class TITransferFunction<T extends IMetaAttribute<? extends ITimeInterval>>
+public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		implements ITransferFunction<T> {
 
 	final private ITimeInterval[] minTs;

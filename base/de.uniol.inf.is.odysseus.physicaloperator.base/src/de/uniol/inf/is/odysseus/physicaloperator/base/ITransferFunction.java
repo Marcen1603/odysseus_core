@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
  * Diese Klasse verarbeitet den in einem Join notwendigen Heap, der die richtige Sortierung
@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
  *
  * @param <T> Datentyp der Elemente, die Verarbeitet werden sollen.
  */
-public interface ITransferFunction<T extends IMetaAttribute<?>> {
+public interface ITransferFunction<T extends IMetaAttributeContainer<?>> {
 	
 	/**
 	 * Anhand eines neuen Elementes, welches typischerweise aktuell aus dem

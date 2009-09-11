@@ -5,10 +5,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
-public class SlidingElementWindowTIPO<T extends IMetaAttribute<ITimeInterval>> extends AbstractWindowTIPO<T> {
+public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractWindowTIPO<T> {
 
 	List<T> buffer = null;
 	boolean forceElement = true;

@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
-public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttribute<? extends ITimeInterval>>
+public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
 
 

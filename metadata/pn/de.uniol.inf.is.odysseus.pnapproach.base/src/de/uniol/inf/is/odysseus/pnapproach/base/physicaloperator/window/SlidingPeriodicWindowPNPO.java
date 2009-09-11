@@ -12,8 +12,8 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
@@ -29,13 +29,13 @@ import de.uniol.inf.is.odysseus.pnapproach.base.sweeparea.DefaultPNSweepArea;
  * 
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  */
-public class SlidingPeriodicWindowPNPO<R extends IMetaAttribute<? extends IPosNeg>> extends AbstractPipe<R, R>{
+public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPipe<R, R>{
     
 	/**
 	 * This operator needs a sweeparea if the pos-neg approach
 	 * will be used.
 	 */
-	private DefaultPNSweepArea<IMetaAttribute<? extends IPosNeg>> sa;
+	private DefaultPNSweepArea<IMetaAttributeContainer<? extends IPosNeg>> sa;
 	
 	private long windowSize;
 	private long windowAdvance;
@@ -50,7 +50,7 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttribute<? extends IPosNe
         this.windowSize = windowSize;
         this.windowAdvance = windowAdvance;
         
-    	this.sa = new DefaultPNSweepArea<IMetaAttribute<? extends IPosNeg>>();
+    	this.sa = new DefaultPNSweepArea<IMetaAttributeContainer<? extends IPosNeg>>();
     	
     	this.sa.setRemovePredicate(BeforePredicate.getInstance());
     	// the query predicate will be set every time the
@@ -94,9 +94,9 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttribute<? extends IPosNe
 			PointInTime p_remove = new PointInTime(remove_t_start, 0);
 			IPosNeg pn = new PosNeg();
 			pn.setTimestamp(p_remove);
-			IMetaAttribute<IPosNeg> ref_elem = new MetaAttribute<IPosNeg>(pn);
+			IMetaAttributeContainer<IPosNeg> ref_elem = new MetaAttributeContainer<IPosNeg>(pn);
 			
-			Iterator<IMetaAttribute<? extends IPosNeg>> iter_remove = this.sa.extractElements(ref_elem, Order.RightLeft);
+			Iterator<IMetaAttributeContainer<? extends IPosNeg>> iter_remove = this.sa.extractElements(ref_elem, Order.RightLeft);
 			// write the negative elements
 			while(iter_remove.hasNext()){
 				// the element has to be copied, because it will be edited
@@ -123,7 +123,7 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttribute<? extends IPosNe
 			// you have to use Order.RightLeft, because the LiesInPNPredicate only evaluates
 			// left element in the method evaluate(T left, T right), so the left element
 			// must be an element from the sweep area.
-			Iterator<IMetaAttribute<? extends IPosNeg>> iter = this.sa.query(null, Order.RightLeft);
+			Iterator<IMetaAttributeContainer<? extends IPosNeg>> iter = this.sa.query(null, Order.RightLeft);
 			while(iter.hasNext()){
 				R retval = (R) iter.next().clone();
 				retval.getMetadata().setElementType(ElementType.POSITIVE);

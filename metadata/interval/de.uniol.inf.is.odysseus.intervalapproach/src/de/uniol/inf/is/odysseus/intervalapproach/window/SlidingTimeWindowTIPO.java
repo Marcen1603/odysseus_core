@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
  * Effizientere Implementierung eines SlidingAdvanceTimeWindow
  * @author Jonas Jacobi
  */
-public class SlidingTimeWindowTIPO<T extends IMetaAttribute<ITimeInterval>> extends
+public class SlidingTimeWindowTIPO<T extends IMetaAttributeContainer<ITimeInterval>> extends
 		AbstractNonBlockingWindowTIPO<T> {
 
 	public SlidingTimeWindowTIPO(WindowAO algebraOp) {

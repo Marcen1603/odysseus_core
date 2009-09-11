@@ -18,8 +18,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.LiesInPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.StartsBeforePredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
@@ -29,13 +29,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
  * 
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  */
-public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeInterval>>
+public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractWindowTIPO<R> {
 
 	/**
 	 * This operator needs a sweeparea if the pos-neg approach will be used.
 	 */
-	private SweepArea<IMetaAttribute<? extends ITimeInterval>> sa;
+	private SweepArea<IMetaAttributeContainer<? extends ITimeInterval>> sa;
 
 	/**
 	 * This is the number of slides that have been processed.
@@ -45,14 +45,14 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 	/**
 	 * list with elements to deliver
 	 */
-	private LinkedList<IMetaAttribute<? extends ITimeInterval>> deliveryList;
+	private LinkedList<IMetaAttributeContainer<? extends ITimeInterval>> deliveryList;
 
 	/** Creates a new instance of SlidingDeltaWindowPO */
 	public SlidingPeriodicWindowTIPO(WindowAO logical) {
 		super(logical);
 
-		this.sa = new SweepArea<IMetaAttribute<? extends ITimeInterval>>();
-		this.deliveryList = new LinkedList<IMetaAttribute<? extends ITimeInterval>>();
+		this.sa = new SweepArea<IMetaAttributeContainer<? extends ITimeInterval>>();
+		this.deliveryList = new LinkedList<IMetaAttributeContainer<? extends ITimeInterval>>();
 
 		this.sa.setRemovePredicate(StartsBeforePredicate.getInstance());
 		// the execution mode must be positive negative in every case,
@@ -100,12 +100,12 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 			// and therefore their end timestamp is infinity
 			PointInTime p_end = new PointInTime();
 			TimeInterval compVal = new TimeInterval(p_start, p_end);
-			IMetaAttribute<? extends ITimeInterval> compElem = new MetaAttribute<ITimeInterval>(
+			IMetaAttributeContainer<? extends ITimeInterval> compElem = new MetaAttributeContainer<ITimeInterval>(
 					compVal);
-			Iterator<IMetaAttribute<? extends ITimeInterval>> iter = this.sa
+			Iterator<IMetaAttributeContainer<? extends ITimeInterval>> iter = this.sa
 					.query(compElem, Order.LeftRight);
 			while (iter.hasNext()) {
-				IMetaAttribute<? extends ITimeInterval> retval = (IMetaAttribute<? extends ITimeInterval>) iter
+				IMetaAttributeContainer<? extends ITimeInterval> retval = (IMetaAttributeContainer<? extends ITimeInterval>) iter
 						.next().clone();
 				// edit the time interval
 				retval.getMetadata().setStart(p_start);
@@ -122,7 +122,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttribute<? extends ITimeI
 			PointInTime p_remove = new PointInTime(remove_t_start, 0);
 			TimeInterval remove_val = new TimeInterval(p_remove,
 					new PointInTime(remove_t_start + 1, 0));
-			IMetaAttribute<ITimeInterval> ref_elem = new MetaAttribute<ITimeInterval>(
+			IMetaAttributeContainer<ITimeInterval> ref_elem = new MetaAttributeContainer<ITimeInterval>(
 					remove_val);
 
 			this.sa.purgeElements(ref_elem, Order.RightLeft);

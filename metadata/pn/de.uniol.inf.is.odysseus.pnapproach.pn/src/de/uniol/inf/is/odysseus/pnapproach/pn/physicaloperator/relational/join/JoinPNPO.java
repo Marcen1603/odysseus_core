@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.pnapproach.pn.physicaloperator.relational.join.h
  * @param <M> Metadatentyp
  * @param <T> Datentyp
  */
-public class JoinPNPO<M extends IPosNeg, T extends IMetaAttribute<M>> extends
+public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> extends
 		AbstractBinaryPNPipe<T, T> {
 	private static final Logger logger = LoggerFactory.getLogger(JoinPNPO.class);
 	protected final DefaultPNSweepArea<T>[] areas;

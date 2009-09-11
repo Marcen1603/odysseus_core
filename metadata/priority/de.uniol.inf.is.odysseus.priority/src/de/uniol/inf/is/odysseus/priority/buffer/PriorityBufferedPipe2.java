@@ -6,13 +6,13 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class PriorityBufferedPipe2<T extends IMetaAttribute<? extends IPriority>>
+public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends IPriority>>
 		extends AbstractPipe<T, T> implements IBuffer<T>, IPrioBuffer<T> {
 
 	private Comparator<? super T> comparator = new MetadataComparator<IPriority>();

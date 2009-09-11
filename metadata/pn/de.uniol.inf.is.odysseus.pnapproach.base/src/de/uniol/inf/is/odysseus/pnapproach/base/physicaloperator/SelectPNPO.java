@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  *
  * @param <T>
  */
-public class SelectPNPO<T extends IMetaAttribute<? extends IPosNeg>> extends AbstractPipe<T, T> {
+public class SelectPNPO<T extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPipe<T, T> {
 
 	private IPredicate<? super T> predicate;
 

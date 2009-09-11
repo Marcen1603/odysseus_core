@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @param <T>
  *            Datentyp
  */
-public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttribute<K>>
+public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
 		extends AbstractPipe<T, T> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(JoinTIPO.class);

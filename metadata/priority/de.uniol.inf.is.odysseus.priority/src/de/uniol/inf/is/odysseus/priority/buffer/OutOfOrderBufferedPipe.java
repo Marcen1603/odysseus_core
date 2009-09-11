@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.priority.buffer;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class OutOfOrderBufferedPipe<T extends IMetaAttribute<? extends IPriority>>
+public class OutOfOrderBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>
 		extends AbstractPrioBuffer<T> {
 
 	@SuppressWarnings("unchecked")

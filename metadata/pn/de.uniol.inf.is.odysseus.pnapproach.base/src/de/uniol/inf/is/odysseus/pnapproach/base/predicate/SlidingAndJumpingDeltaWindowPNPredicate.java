@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.pnapproach.base.predicate;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
 /**
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  * @author abolles
  *
  */
-public class SlidingAndJumpingDeltaWindowPNPredicate<T extends IMetaAttribute<? extends IPosNeg>> extends AbstractPredicate<T> {
+public class SlidingAndJumpingDeltaWindowPNPredicate<T extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPredicate<T> {
 
 	long windowSize;
 	long windowAdvance;

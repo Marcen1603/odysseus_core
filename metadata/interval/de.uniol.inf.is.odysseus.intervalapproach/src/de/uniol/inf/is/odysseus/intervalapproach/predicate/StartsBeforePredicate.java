@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.intervalapproach.predicate;
 
 import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
-public class StartsBeforePredicate extends AbstractPredicate<IMetaAttribute<? extends ITimeInterval>>{
+public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>>{
 
 	private static final StartsBeforePredicate instance = new StartsBeforePredicate();
 	
@@ -12,11 +12,11 @@ public class StartsBeforePredicate extends AbstractPredicate<IMetaAttribute<? ex
 		return this;
 	}
 	
-	public boolean evaluate(IMetaAttribute<? extends ITimeInterval> elem){
+	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> elem){
 		throw new UnsupportedOperationException();
 	}
 	
-	public boolean evaluate(IMetaAttribute<? extends ITimeInterval> left, IMetaAttribute<? extends ITimeInterval> right){
+	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left, IMetaAttributeContainer<? extends ITimeInterval> right){
 		return left.getMetadata().getStart().beforeOrEquals(right.getMetadata().getStart());
 	}
 	

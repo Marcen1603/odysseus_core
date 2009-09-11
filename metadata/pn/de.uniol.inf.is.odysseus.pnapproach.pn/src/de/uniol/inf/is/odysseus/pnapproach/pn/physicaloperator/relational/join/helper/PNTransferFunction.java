@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.pnapproach.pn.physicaloperator.relational.join.
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.pnapproach.base.sweeparea.DefaultPNSweepArea;
 
-public class PNTransferFunction<T extends IMetaAttribute<? extends IPosNeg>> implements ITransferFunction<T>{
+public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPosNeg>> implements ITransferFunction<T>{
 
 	final protected PointInTime[] minTs;
 	private AbstractSource<T> po;

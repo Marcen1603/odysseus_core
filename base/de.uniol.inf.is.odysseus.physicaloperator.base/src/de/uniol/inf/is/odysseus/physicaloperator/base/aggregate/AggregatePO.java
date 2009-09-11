@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Evaluator;
@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Pa
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-abstract public class AggregatePO<M extends IClone, R extends IMetaAttribute<? extends M>, A extends IClone>
+abstract public class AggregatePO<M extends IClone, R extends IMetaAttributeContainer<? extends M>, A extends IClone>
 		extends AbstractPipe<R, R> {
 
 	private Map<FESortedPair<SDFAttribute, AggregateFunction>, Initializer<A>> init = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Initializer<A>>();

@@ -7,7 +7,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  * SweepArea f�r den PN-Ansatz.
  * @author Andre Bolles
  */
-public class DefaultPNSweepArea<T extends IMetaAttribute<? extends IPosNeg>>
+public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPosNeg>>
 		extends SweepArea<T> {
 	
 	public DefaultPNSweepArea() {

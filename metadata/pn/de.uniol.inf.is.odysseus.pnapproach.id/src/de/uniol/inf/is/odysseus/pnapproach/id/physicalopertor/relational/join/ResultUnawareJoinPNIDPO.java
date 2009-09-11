@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.pnapproach.id.sweeparea.DefaultPNIDSweepArea;
  * @param <M> Metadatentyp
  * @param <T> Datentyp
  */
-public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute<M>> extends
+public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> extends
 		AbstractBinaryPNPipe<T, T> {
 	private static final Logger logger = LoggerFactory.getLogger(ResultAwareJoinPNIDPO.class);
 	protected final DefaultPNIDSweepArea<T>[] areas;

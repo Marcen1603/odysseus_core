@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.helper.IDataFactory;
 
-public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends IMetaAttribute<M>>
+public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>>
 		extends AbstractPipe<T, T> {
 
 	long windowSize;

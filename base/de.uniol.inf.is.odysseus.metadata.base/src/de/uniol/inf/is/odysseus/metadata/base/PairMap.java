@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.base.IClone;
 
-public class PairMap<K1 extends Comparable<K1>,K2 extends Comparable<K2>,V,M extends IClone> extends MetaAttribute<M>{
+public class PairMap<K1 extends Comparable<K1>,K2 extends Comparable<K2>,V,M extends IClone> extends MetaAttributeContainer<M>{
 	/**
 	 * 
 	 */

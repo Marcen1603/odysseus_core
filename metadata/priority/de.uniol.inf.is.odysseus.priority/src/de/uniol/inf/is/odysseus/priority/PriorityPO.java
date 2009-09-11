@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.priority;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
 /**
  * @author Jonas Jacobi
  */
-public class PriorityPO<T extends IMetaAttribute<? extends IPriority>> extends
+public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> extends
 		AbstractPipe<T, T> {
 
 	private final Map<Byte, IPredicate<? super T>> priorites;

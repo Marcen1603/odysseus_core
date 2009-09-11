@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
  * 
  * @author Jonas Jacobi
  */
-public class DefaultTISweepArea<T extends IMetaAttribute<? extends ITimeInterval>>
+public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends SweepArea<T> implements Comparable<DefaultTISweepArea<T>> {
 	private static final Logger logger = LoggerFactory.getLogger(ISweepArea.class);
 

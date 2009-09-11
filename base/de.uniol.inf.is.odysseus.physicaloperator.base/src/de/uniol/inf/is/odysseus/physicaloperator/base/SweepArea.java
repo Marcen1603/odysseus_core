@@ -9,12 +9,12 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
  * @author Jonas Jacobi
  */
-public class SweepArea<T extends IMetaAttribute<?>> implements ISweepArea<T> {
+public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepArea<T> {
 	// elements get stored in a linked list instead of a priority queue
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because

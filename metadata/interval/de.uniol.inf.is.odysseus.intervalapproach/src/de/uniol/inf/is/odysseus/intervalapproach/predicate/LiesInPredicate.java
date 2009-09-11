@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.intervalapproach.predicate;
 
 import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
-public class LiesInPredicate extends AbstractPredicate<IMetaAttribute<? extends ITimeInterval>>{
+public class LiesInPredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>>{
 
 	private static final LiesInPredicate instance = new LiesInPredicate();
 	
-	public boolean evaluate(IMetaAttribute<? extends ITimeInterval> left, IMetaAttribute<? extends ITimeInterval> right){
+	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left, IMetaAttributeContainer<? extends ITimeInterval> right){
 		if(left.getMetadata().getStart().beforeOrEquals(right.getMetadata().getStart()) &&
 				left.getMetadata().getEnd().afterOrEquals(right.getMetadata().getEnd())){
 			return true;
@@ -19,7 +19,7 @@ public class LiesInPredicate extends AbstractPredicate<IMetaAttribute<? extends 
 	/**
 	 * @deprecated This method is not supported by this predicate.
 	 */
-	public boolean evaluate(IMetaAttribute<? extends ITimeInterval> input) {
+	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> input) {
 		throw new UnsupportedOperationException();
 	}
 	

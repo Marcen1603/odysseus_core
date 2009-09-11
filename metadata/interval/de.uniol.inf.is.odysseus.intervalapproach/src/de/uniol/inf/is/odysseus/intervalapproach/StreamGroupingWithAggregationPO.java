@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Pa
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IMetaAttribute<Q>> extends AggregateTIPO<Q,R> {
+public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>> extends AggregateTIPO<Q,R> {
 	
 	
 	private class G{

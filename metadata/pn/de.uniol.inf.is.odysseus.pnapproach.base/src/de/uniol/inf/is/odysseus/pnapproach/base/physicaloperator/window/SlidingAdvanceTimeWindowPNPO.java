@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.helper.IDataFactory;
 import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.helper.WindowCalculator;
@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.predicate.SlidingAndJumpingDelta
  * 
  * @author Andre Bolles
  */
-public class SlidingAdvanceTimeWindowPNPO<M extends IPosNeg, T extends IMetaAttribute<M>> extends
+public class SlidingAdvanceTimeWindowPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> extends
 	AbstractNonBlockingWindowPNPO<M, T> {
 
 	public SlidingAdvanceTimeWindowPNPO(long windowSize, long windowAdvance, IDataFactory<M, M, T, T> dFac) {
