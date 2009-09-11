@@ -6,10 +6,7 @@ import java.util.List;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
-import org.drools.audit.WorkingMemoryConsoleLogger;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,20 +43,11 @@ public class DroolsTransformation implements ITransformation {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private void activate(ComponentContext context) {
+	protected void activate(ComponentContext context) {
 		BundleContext bundleContext = context.getBundleContext();
-		bundleContext.addBundleListener(new BundleListener() {
-
-			@Override
-			public void bundleChanged(BundleEvent event) {
-				System.out.println(event.getType() + ": " + event.getBundle());
-			}
-		});
 		RuleAgent ra = RuleAgentFactory.createRuleAgent(bundleContext,
 				RULE_PATH, LOGGER_NAME);
 		this.rulebase = ra.getRuleBase();
-
 	}
 
 	@Override
@@ -80,10 +68,11 @@ public class DroolsTransformation implements ITransformation {
 
 		session.insert(this);
 		session.startProcess("flow");
-		
-//		WorkingMemoryConsoleLogger lg = new WorkingMemoryConsoleLogger(session);
-//		lg.clearFilters();
-		
+
+		// WorkingMemoryConsoleLogger lg = new
+		// WorkingMemoryConsoleLogger(session);
+		// lg.clearFilters();
+
 		session.fireAllRules();
 
 		IPhysicalOperator physicalPO = top.getPhysInputPO(0);
