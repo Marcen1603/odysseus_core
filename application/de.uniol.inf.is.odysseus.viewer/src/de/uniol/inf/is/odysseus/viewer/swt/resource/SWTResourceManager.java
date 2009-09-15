@@ -262,7 +262,9 @@ public class SWTResourceManager {
 	// schief gegangen ist.
 	private static Image loadImage( Device device, String filename ) {
 		try {
+//			URL imageURL = Activator.getContext().getBundle().getEntry(filename);
 			URL imageURL = resourceBundle.getEntry(filename);
+			
 			Image image = new Image(device, imageURL.openStream());
 			
 			logger.debug( "Imageresource loaded:" + filename );
