@@ -27,6 +27,11 @@ public class SchedulerException extends PlanManagementException {
 		this.setStackTrace(exception.getStackTrace());
 	}
 
+	/**
+	 * Constructor of SchedulerException.
+	 * 
+	 * @param details detailed exception message.
+	 */
 	public SchedulerException(String details) {
 		super("SchedulerException:Scheduler plugin is not loaded. (" + AppEnv.LINE_SEPERATOR + details + ")");
 	}

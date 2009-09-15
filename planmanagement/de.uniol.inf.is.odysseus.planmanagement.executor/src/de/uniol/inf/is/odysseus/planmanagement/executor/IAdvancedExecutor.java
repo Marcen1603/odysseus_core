@@ -2,12 +2,74 @@ package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.Set;
 
+/**
+ * IAdvancedExecutor describes an advanced {@link IExecutor}. IAdvancedExecutor
+ * provides methods to get all available buffer placement strategies, scheduling strategy factories
+ * and scheduler factories. It also provides Methods to set the buffer placement
+ * strategy, the scheduling strategy factory and the scheduler factory which should be
+ * used.
+ * 
+ * @author Wolf Bauer
+ * 
+ */
 public interface IAdvancedExecutor extends IExecutor {
+	/**
+	 * Provides a Set of registered buffer placement strategies represented by
+	 * an id.
+	 * 
+	 * @return Set of registered buffer placement strategies represented by an
+	 *         id
+	 */
 	public Set<String> getRegisteredBufferPlacementStrategies();
+
+	/**
+	 * Set the buffer placement strategy which should be used.
+	 * 
+	 * @param strategy
+	 *            new buffer placement strategy which should be used.
+	 */
 	public void setDefaultBufferPlacementStrategy(String strategy);
+
+	/**
+	 * Provides a Set of registered scheduling strategy factories represented by
+	 * an id.
+	 * 
+	 * @return Set of registered scheduling strategy factories represented by an
+	 *         id
+	 */
 	public Set<String> getRegisteredSchedulingStrategyFactories();
+
+	/**
+	 * Provides a Set of registered scheduler factories represented by an id.
+	 * 
+	 * @return Set of registered scheduler factories represented by an id
+	 */
 	public Set<String> getRegisteredSchedulerFactories();
+
+	/**
+	 * Sets the the scheduler factory with a scheduling strategy factory which
+	 * should be used for creating concrete scheduler.
+	 * 
+	 * @param scheduler
+	 *            scheduler factory which should be used for creating concrete
+	 *            scheduler.
+	 * @param schedulerStrategy
+	 *            scheduling strategy factory which should be used by scheduler
+	 *            for creating concrete scheduler.
+	 */
 	public void setScheduler(String scheduler, String schedulerStrategy);
+
+	/**
+	 * Get the current active scheduler factory represented by an id.
+	 * 
+	 * @return current active scheduler factory represented by an id.
+	 */
 	public String getCurrentScheduler();
+
+	/**
+	 * Get the current active scheduling strategy factory represented by an id.
+	 * 
+	 * @return current active scheduling strategy factory represented by an id.
+	 */
 	public String getCurrentSchedulingStrategy();
 }
