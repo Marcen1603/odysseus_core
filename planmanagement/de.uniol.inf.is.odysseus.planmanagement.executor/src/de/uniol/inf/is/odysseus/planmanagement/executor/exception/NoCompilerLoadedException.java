@@ -9,11 +9,14 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.exception;
  */
 public class NoCompilerLoadedException extends PlanManagementException {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -3471219280532519112L;
 
 	/**
 	 * Constructor of NoCompilerLoadedException. Message is:
-	 * "Compiler plugin is not loaded."
+	 * "Compiler plug-in is not loaded."
 	 * 
 	 */
 	public NoCompilerLoadedException() {

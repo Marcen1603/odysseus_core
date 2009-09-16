@@ -38,8 +38,8 @@ import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
 /**
- * AbstractExecutor bietet eine abstracte Implementierung der
- * AusfÃ¼hrungumgebung. Sie Ã¼bernimmt die Aufgabe zum einbinden von OSGi-Services
+ * AbstractExecutor bietet eine abstrakte Implementierung der
+ * Ausführungumgebung. Sie übernimmt die Aufgabe zum einbinden von OSGi-Services
  * innerhalb des Odysseus-Frameworks.
  * 
  * @author wolf
@@ -60,7 +60,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	protected IEditablePlan plan;
 
 	/**
-	 * Der aktuell ausgefÃ¼hrte physische Plan
+	 * Der aktuell ausgeführte physische Plan
 	 */
 	protected IEditableExecutionPlan executionPlan;
 
@@ -80,41 +80,39 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	private ICompiler compiler;
 
 	/**
-	 * Konfiguration der AusfÃ¼hrungsumgebung
+	 * Konfiguration der Ausführungsumgebung
 	 */
 	protected ExecutionConfiguration configuration = new ExecutionConfiguration();
 
 	/**
-	 * Alle Listener fÃ¼r Anfragebearbeitungs-Nachrichten
+	 * Alle Listener für Anfragebearbeitungs-Nachrichten
 	 */
 	private List<IPlanModificationListener> planModificationListener = Collections
 			.synchronizedList(new ArrayList<IPlanModificationListener>());
 
 	/**
-	 * Alle Listener fÃ¼r AusfÃ¼hrungs-Nachrichten
+	 * Alle Listener für Ausführungs-Nachrichten
 	 */
 	private List<IPlanExecutionListener> planExecutionListener = Collections
 			.synchronizedList(new ArrayList<IPlanExecutionListener>());
 
 	/**
-	 * Alle Listener fÃ¼r Fehler-Nachrichten
+	 * Alle Listener für Fehler-Nachrichten
 	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
 	
+	/**
+	 * Lock for synchronizing execution plan changes.
+	 */
 	protected ReentrantLock executionPlanLock = new ReentrantLock();
 
-	@Override
-	public ExecutionConfiguration getConfiguration() {
-		return configuration;
-	}
-
 	/**
-	 * setExecutionPlan setzt den aktuellen AusfÃ¼hrungsplan und aktualisiert das
+	 * setExecutionPlan setzt den aktuellen Ausführungsplan und aktualisiert das
 	 * Scheduling.
 	 * 
 	 * @param newExecutionPlan
-	 *            neuer AusfÃ¼hrungsplan
+	 *            neuer Ausführungsplan
 	 */
 	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
 		if (newExecutionPlan != null && !newExecutionPlan.equals(this.executionPlan)) {
@@ -140,7 +138,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	}
 
 	/**
-	 * Standard-Construktor. Initialisiert die AusfÃ¼hrungsumgebung.
+	 * Standard-Construktor. Initialisiert die Ausführungsumgebung.
 	 */
 	public AbstractExecutor() {
 		this.logger = LoggerFactory.getLogger(AbstractExecutor.class);
@@ -177,7 +175,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	}
 
 	/**
-	 * optimizer liefert der aktuelle Optimierer zurÃ¼ck. Sollte keiner vorhanden
+	 * optimizer liefert der aktuelle Optimierer zurück. Sollte keiner vorhanden
 	 * sein, wird eine Exception geworfen.
 	 * 
 	 * @return aktueller Optimierer
@@ -266,7 +264,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	}
 
 	/**
-	 * _ExecutorInfo schreibt Informationen Ã¼ber die AusfÃ¼hrungsumgebung in die
+	 * _ExecutorInfo schreibt Informationen über die Ausführungsumgebung in die
 	 * Konsole. Kann in der OSGi-Konsole verwendet werden.
 	 * 
 	 * @param ci
@@ -318,15 +316,26 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	/**
 	 * initializeIntern Innerhalb dieser Funktion kÃ¶nnen spezifische
 	 * Initialisierungen vorgenommen werden. Dies wird von initialize
-	 * aufgerufen. Hier mÃ¼ssen ein Plan und AusfÃ¼hrungsplan-Objekt erstellt
+	 * aufgerufen. Hier müssen ein Plan und Ausführungsplan-Objekt erstellt
 	 * werden.
 	 * 
 	 * @param configuration
-	 *            Konfiguration der AusfÃ¼hrungsumgebung.
+	 *            Konfiguration der Ausführungsumgebung.
 	 */
 	protected abstract void initializeIntern(
 			ExecutionConfiguration configuration);
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#getConfiguration()
+	 */
+	@Override
+	public ExecutionConfiguration getConfiguration() {
+		return configuration;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#initialize()
+	 */
 	@Override
 	public void initialize() throws ExecutorInitializeException {
 		this.logger.info("Start initializing Executor.");
@@ -348,11 +357,17 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		this.logger.info("Stop initializing Executor.");
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable#getSchedulerManager()
+	 */
 	@Override
 	public ISchedulerManager getSchedulerManager() {
 		return this.schedulerManager;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#startExecution()
+	 */
 	@Override
 	public void startExecution() throws SchedulerException {
 		if (isRunning()) {
@@ -373,6 +388,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				PlanExecutionEvent.EXECUTION_STARTED));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#stopExecution()
+	 */
 	@Override
 	public void stopExecution() throws SchedulerException {
 		if (!isRunning()) {
@@ -392,6 +410,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				PlanExecutionEvent.EXECUTION_STOPPED));
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#isRunning()
+	 */
 	@Override
 	public boolean isRunning() throws SchedulerException {
 		try {
@@ -401,11 +422,17 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#getExecutionPlan()
+	 */
 	@Override
 	public IExecutionPlan getExecutionPlan() {
 		return this.executionPlan;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable#getCompiler()
+	 */
 	@Override
 	public ICompiler getCompiler() {
 		try {
@@ -416,6 +443,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler#addPlanModificationListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener)
+	 */
 	@Override
 	public void addPlanModificationListener(IPlanModificationListener listener) {
 		synchronized (this.planModificationListener) {
@@ -425,6 +455,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler#removePlanModificationListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener)
+	 */
 	@Override
 	public void removePlanModificationListener(
 			IPlanModificationListener listener) {
@@ -433,6 +466,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionHandler#addPlanExecutionListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener)
+	 */
 	@Override
 	public void addPlanExecutionListener(IPlanExecutionListener listener) {
 		synchronized (this.planExecutionListener) {
@@ -442,6 +478,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionHandler#removePlanExecutionListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener)
+	 */
 	@Override
 	public void removePlanExecutionListener(IPlanExecutionListener listener) {
 		synchronized (this.planExecutionListener) {
@@ -449,17 +488,26 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#getSealedPlan()
+	 */
 	@Override
 	public IPlan getSealedPlan() throws PlanManagementException {
 		return this.plan;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#getSupportedQueryParser()
+	 */
 	@Override
 	public Set<String> getSupportedQueryParser()
 			throws NoCompilerLoadedException {
 		return compiler().getSupportedQueryParser();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler#addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener)
+	 */
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
 		synchronized (this.errorEventListener) {
@@ -469,6 +517,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler#removeErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener)
+	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
 		synchronized (this.errorEventListener) {
@@ -476,6 +527,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener#sendErrorEvent(de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent)
+	 */
 	@Override
 	public synchronized void sendErrorEvent(ErrorEvent eventArgs) {
 		fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,

@@ -43,11 +43,15 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 			schedulerFactoryMap = null;
 		}
 	}
-
+	
 	public String getInfoString(Object object, String label) {
+		return getInfoString(object.toString(), label);
+	}
+
+	public String getInfoString(String object, String label) {
 		String infos = AppEnv.LINE_SEPERATOR + label + ": ";
 		if (object != null) {
-			infos += object.getClass();
+			infos += object;
 		} else {
 			infos += "not set. ";
 		}

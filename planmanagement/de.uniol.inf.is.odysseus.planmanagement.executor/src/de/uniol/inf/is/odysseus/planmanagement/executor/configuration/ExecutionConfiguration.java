@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.configuration;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AbstractTypeSafeMap;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingCalculateLatency;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting.SettingDefaultTransformationConfiguration;
 

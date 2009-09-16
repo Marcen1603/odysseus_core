@@ -10,6 +10,9 @@ import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
  * 
  */
 public class QueryAddException extends PlanManagementException {
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -4360303442668293801L;
 
 	

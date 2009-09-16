@@ -9,6 +9,9 @@ import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
  */
 public class SchedulerException extends PlanManagementException {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -7047933396969916561L;
 	
 	/**

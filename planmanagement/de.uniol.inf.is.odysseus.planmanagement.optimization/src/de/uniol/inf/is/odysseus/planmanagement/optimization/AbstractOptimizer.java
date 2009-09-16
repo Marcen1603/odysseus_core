@@ -26,29 +26,66 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanM
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 
 /**
+ * AbstractOptimizer implements base optimization functions. It manages services
+ * for query optimization, plan optimization, buffer placement and plan
+ * migration.
+ * 
  * @author Wolf Bauer, Jonas Jacobi
+ */
+/**
+ * @author Wolf Bauer
+ *
  */
 public abstract class AbstractOptimizer implements IOptimizer {
 
+	/**
+	 * Logger for detailed informations.
+	 */
 	protected Logger logger;
 
+	/**
+	 * Map of registered buffer placement strategies.
+	 */
 	protected Map<String, IBufferPlacementStrategy> bufferPlacementStrategies = new HashMap<String, IBufferPlacementStrategy>();
 
+	/**
+	 * Registered plan optimization service.
+	 */
 	protected IPlanOptimizer planOptimizer;
 
+	/**
+	 * Registered query optimization service.
+	 */
 	protected IQueryOptimizer queryOptimizer;
 
+	/**
+	 * Registered plan migration service.
+	 */
 	protected IPlanMigrationStrategie planMigrationStrategie;
 
 	// protected IBufferPlacementStrategy bufferPlacementStrategy;
 
+	/**
+	 * List of error event listener. If an error occurs these objects should be informed.
+	 */
 	private ArrayList<IErrorEventListener> errorEventListener = new ArrayList<IErrorEventListener>();
 
+	/**
+	 * OSGi-Method: Is called when this object will be activated by OSGi (after
+	 * constructor and bind-methods). This method can be used to configure this
+	 * object.
+	 */
 	public void activate() {
+		// load logger
 		this.logger = LoggerFactory.getLogger(AbstractOptimizer.class);
 		this.logger.trace("Create Executor.");
 	}
 
+	/**
+	 * Method to bind a {@link IBufferPlacementStrategy}. Used by OSGi.
+	 * 
+	 * @param bufferPlacementStrategy new {@link IBufferPlacementStrategy} service
+	 */
 	public void bindBufferPlacementStrategy(
 			IBufferPlacementStrategy bufferPlacementStrategy) {
 		String bpN = bufferPlacementStrategy.getName();
@@ -57,6 +94,11 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 	}
 
+	/**
+	 * Method to unbind a {@link IBufferPlacementStrategy}. Used by OSGi.
+	 * 
+	 * @param bufferPlacementStrategy {@link IBufferPlacementStrategy} service to unbind
+	 */
 	public void unbindBufferPlacementStrategy(
 			IBufferPlacementStrategy bufferPlacementStrategy) {
 		synchronized (this.bufferPlacementStrategies) {
@@ -65,31 +107,61 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 	}
 
+	/**
+	 * Method to bind a {@link IPlanOptimizer}. Used by OSGi.
+	 * 
+	 * @param planOptimizer new {@link IPlanOptimizer} service
+	 */
 	public void bindPlanOptimizer(IPlanOptimizer planOptimizer) {
 		this.planOptimizer = planOptimizer;
 	}
 
+	/**
+	 * Method to unbind a {@link IPlanOptimizer}. Used by OSGi.
+	 * 
+	 * @param planOptimizer {@link IPlanOptimizer} service to unbind
+	 */
 	public void unbindPlanOptimizer(IPlanOptimizer planOptimizer) {
 		if (this.planOptimizer == planOptimizer) {
 			this.planOptimizer = null;
 		}
 	}
 
+	/**
+	 * Method to bind a {@link IQueryOptimizer}. Used by OSGi.
+	 * 
+	 * @param queryOptimizer new {@link IQueryOptimizer} service
+	 */
 	public void bindQueryOptimizer(IQueryOptimizer queryOptimizer) {
 		this.queryOptimizer = queryOptimizer;
 	}
 
+	/**
+	 * Method to unbind a {@link IQueryOptimizer}. Used by OSGi.
+	 * 
+	 * @param queryOptimizer {@link IQueryOptimizer} service to unbind
+	 */
 	public void unbindQueryOptimizer(IQueryOptimizer queryOptimizer) {
 		if (this.queryOptimizer == queryOptimizer) {
 			this.queryOptimizer = null;
 		}
 	}
 
+	/**
+	 * Method to bind a {@link IPlanMigrationStrategie}. Used by OSGi.
+	 * 
+	 * @param planMigrationStrategie new {@link IPlanMigrationStrategie} service
+	 */
 	public void bindPlanMigrationStrategie(
 			IPlanMigrationStrategie planMigrationStrategie) {
 		this.planMigrationStrategie = planMigrationStrategie;
 	}
 
+	/**
+	 * Method to unbind a {@link IPlanMigrationStrategie}. Used by OSGi.
+	 * 
+	 * @param planMigrationStrategie {@link IPlanMigrationStrategie} service to unbind
+	 */
 	public void unbindPlanMigrationStrategie(
 			IPlanMigrationStrategie planMigrationStrategie) {
 		if (this.planMigrationStrategie == planMigrationStrategie) {
@@ -97,22 +169,54 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 	}
 
+	/**
+	 * Get a formated info string for object. if object not null
+	 * 
+	 * @param object
+	 *            object to describe
+	 * @param label
+	 *            label for description
+	 * @return String: "LINE_SEPERATOR + label + ":" + class name of object" or
+	 *         "LINE_SEPERATOR + label + ":" + not set"
+	 */
 	public String getInfoString(Object object, String label) {
+		return getInfoString(object.toString(), label);
+	}
+
+	/**
+	 * Get a formated info string for object. if object not null
+	 * 
+	 * @param object
+	 *            object to describe
+	 * @param label
+	 *            label for description
+	 * @return String: "LINE_SEPERATOR + label + ":" + object" or
+	 *         "LINE_SEPERATOR + label + ":" + not set"
+	 */
+	public String getInfoString(String object, String label) {
 		String infos = AppEnv.LINE_SEPERATOR + label + ": ";
 		if (object != null) {
-			infos += object.getClass();
+			infos += object;
 		} else {
 			infos += "not set. ";
 		}
 		return infos;
 	}
 
+	/**
+	 * Sends an {@link ErrorEvent} to all registered EventListenern
+	 * 
+	 * @param eventArgs {@link ErrorEvent} to send
+	 */
 	protected void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
 			listener.sendErrorEvent(eventArgs);
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStartOptimization(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)
+	 */
 	@Override
 	public IEditableExecutionPlan preStartOptimization(IQuery queryToStart,
 			IEditableExecutionPlan executionPlan)
@@ -120,6 +224,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return executionPlan;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryRemoveOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable, de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter<?>[])
+	 */
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
 			T sender, IQuery removedQuery,
@@ -130,6 +237,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 				new OptimizeParameter(parameters));
 	};
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter<?>[])
+	 */
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IEditableQuery> newQueries,
@@ -139,6 +249,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 				new OptimizeParameter(parameters));
 	};
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)
+	 */
 	@Override
 	public IExecutionPlan reoptimize(IQuery sender,
 			IEditableExecutionPlan executionPlan)
@@ -146,18 +259,27 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return executionPlan;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)
+	 */
 	@Override
 	public IExecutionPlan reoptimize(IPlan sender,
 			IEditableExecutionPlan executionPlan) {
 		return executionPlan;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStopOptimization(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)
+	 */
 	@Override
 	public IEditableExecutionPlan preStopOptimization(IQuery queryToStop,
 			IEditableExecutionPlan execPlan) throws QueryOptimizationException {
 		return execPlan;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider#getInfos()
+	 */
 	@Override
 	public String getInfos() {
 		String infos = "<Optimizer class=\"" + this + "\"> ";
@@ -180,21 +302,33 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return infos;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#getRegisteredBufferPlacementStrategies()
+	 */
 	@Override
 	public Set<String> getRegisteredBufferPlacementStrategies() {
 		return this.bufferPlacementStrategies.keySet();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#getBufferPlacementStrategy(java.lang.String)
+	 */
 	@Override
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String strategy) {
 		return this.bufferPlacementStrategies.get(strategy);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler#addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener)
+	 */
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
 		this.errorEventListener.add(errorEventListener);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler#removeErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener)
+	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
 		this.errorEventListener.remove(errorEventListener);

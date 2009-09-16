@@ -14,9 +14,18 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
 
+/**
+ * TODO: sollte von Jonas oder Marco dokumentiert werden.
+ * 
+ * @author Wolf Bauer
+ *
+ */
 public abstract class AbstractBufferPlacementStrategy implements
 		IBufferPlacementStrategy {
 
+	/**
+	 * Name of this strategy
+	 */
 	private String name = null;
 	
 	protected void activate(ComponentContext context){

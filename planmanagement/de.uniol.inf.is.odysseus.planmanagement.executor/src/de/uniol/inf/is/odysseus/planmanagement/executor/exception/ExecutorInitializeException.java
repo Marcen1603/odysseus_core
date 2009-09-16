@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.exception;
 
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+
 /**
  * ExecutorInitializeException describes an {@link Exception} which occurs
  * during initializing an {@link IExecutor} .
@@ -8,6 +10,9 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.exception;
  * 
  */
 public class ExecutorInitializeException extends PlanManagementException {
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -4360303442668293801L;
 
 	/**
