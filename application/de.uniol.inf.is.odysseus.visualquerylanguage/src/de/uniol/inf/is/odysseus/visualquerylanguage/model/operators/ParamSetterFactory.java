@@ -17,14 +17,8 @@ public class ParamSetterFactory {
 	}
 	
 	public DefaultParamSetter<?> createParam(String type, String setter, String name) {
-		if(type.toUpperCase().equals("STRING")) {
-			DefaultParamSetter<String> sParam = new DefaultParamSetter<String>(type, setter, name);
-			return sParam;
-		}else if(type.toUpperCase().equals("INTEGER")) {
-			DefaultParamSetter<Integer> sParam = new DefaultParamSetter<Integer>(type, setter, name);
-			return sParam;
-		}
-		return null;
+		DefaultParamSetter<Object> sParam = new DefaultParamSetter<Object>(type, setter, name);
+		return sParam;
 	}
 	
 }

@@ -18,7 +18,11 @@ public class CursorManager {
 	
 	public static Cursor dragButtonCursor(String imageName) {
 		isStandard = false;
-		return new Cursor(Display.getDefault(), SWTResourceManager.getInstance().getImage(imageName).getImageData(), 0, 0);
+		if(SWTResourceManager.getInstance().getImage(imageName) != null) {
+			return new Cursor(Display.getDefault(), SWTResourceManager.getInstance().getImage(imageName).getImageData(), 0, 0);
+		}else {
+			return setStandardCursor();
+		}
 	}
 	
 	public static Cursor connectionCursor(boolean value, String imageName) {

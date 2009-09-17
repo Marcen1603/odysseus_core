@@ -3,56 +3,56 @@
 	xsi:noNamespaceSchemaLocation="parameterSchema.xsd">
 
 	<sources>
-		<source>
-		<source-name>TestSource1</source-name>
-		<source-type>Type1</source-type>
-		<cparams>
-		<constructParameter>
-			<name>ConParam1</name>
-			<position>1</position>
-			<type>String</type>
-		</constructParameter>
-		
-		<constructParameter>
-			<name>ConParam2</name>
-			<position>2</position>
-			<type>Integer</type>
-		</constructParameter>
-		</cparams>
-		<sparams>
-			<setterParameter>
-				<name>SetParam1</name>
-				<type>Integer</type>
-				<setter>setParam1</setter>
-			</setterParameter>
-		</sparams>
-			
-		</source>
 		
 		<source>
-			<source-name>TestSource2</source-name>
-			<source-type>Type2</source-type>
-			<sparams>
-				<setterParameter>
-					<name>SetParam2</name>
-					<type>Integer</type>
-					<setter>setParam2</setter>
-				</setterParameter>
-			</sparams>
+			<source-name>SourceOperator</source-name>
+			<source-type>de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO</source-type>
+			<cparams>
+				<constructParameter>
+					<name>URI</name>
+					<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource</type>
+					<position>0</position>
+				</constructParameter>
+			</cparams>
 		</source>
 	
 	</sources>
 	
 	<pipes>
 		<pipe>
-			<pipe-name>TestPipe1</pipe-name>
-			<pipe-type>Type1</pipe-type>
+			<pipe-name>Select</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO</pipe-type>
 			<sparams>
 				<setterParameter>
-					<name>Param1</name>
-					<type>Integer</type>
-					<setter>setParam</setter>
+					<name>Output</name>
+					<type>SDFAttributeList</type>
+					<setter>setOutputSchema</setter>
 				</setterParameter>
+				
+				<setterParameter>
+					<name>OutputValue</name>
+					<type>SDFAttribute</type>
+					<setter></setter>
+				</setterParameter>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+				<setterParameter>
+					<name>PredicateFirstValue</name>
+					<type>SDFExpression</type>
+					<setter></setter>
+				</setterParameter>
+				
+				<setterParameter>
+					<name>PredicateSecondValue</name>
+					<type>SDFAttribute</type>
+					<setter></setter>
+				</setterParameter>
+				
 			</sparams>
 		</pipe>
 	</pipes>

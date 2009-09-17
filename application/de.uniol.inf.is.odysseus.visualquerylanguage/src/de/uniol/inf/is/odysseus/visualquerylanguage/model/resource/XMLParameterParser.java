@@ -242,9 +242,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 							sources.remove(source);
 							source.getConstructParameterList().add(
 									ParamConstructFactory.getInstance().createParam(pType, pPosition, pName));
-							for (IParamConstruct<?> param : source.getConstructParameterList()) {
-								System.out.println(param.getName());
-							}
 							pName = "";
 							pType = "";
 							pPosition = null;

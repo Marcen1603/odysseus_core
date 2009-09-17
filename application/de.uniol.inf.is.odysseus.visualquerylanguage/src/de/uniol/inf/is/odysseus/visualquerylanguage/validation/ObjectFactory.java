@@ -13,13 +13,17 @@ public class ObjectFactory {
 	}
 	
 	public Object getParamType(String value, String paramType) {
-		if(paramType.toUpperCase().equals("INTEGER")) {
-			if(Validator.getInstance().validateInteger(value)) {
-				return Integer.parseInt(value);
-			}
-		}else if(paramType.toUpperCase().equals("STRING")) {
+		if(paramType.equals("java.lang.String")) {
 			if(Validator.getInstance().validateString(value, "")) {
 				return value;
+			}
+		}else if(paramType.equals("de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource")) {
+			if(Validator.getInstance().validateString(value, "")) {
+				return value;
+			}
+		}else if(paramType.equals("java.lang.Integer")) {
+			if(Validator.getInstance().validateInteger(value)) {
+				return Integer.parseInt(value);
 			}
 		}
 		

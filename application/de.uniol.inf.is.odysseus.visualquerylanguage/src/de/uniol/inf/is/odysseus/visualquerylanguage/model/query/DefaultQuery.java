@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.model.query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultGraphModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultModelController;
@@ -12,26 +13,26 @@ public class DefaultQuery implements IQuery<INodeContent>{
 	
 	private static final Logger log = LoggerFactory.getLogger(DefaultQuery.class);
 	
-	private final int id;
+	private int id;
 	private final IModelController<INodeContent> controller;
 	private String name = "";
 	private IGraphModel<INodeContent> graphModel;
 	private boolean running = false;
 	
-	public DefaultQuery(int id, String name) {
-		this.id = id;
+	public DefaultQuery(String name) {
 		this.graphModel = new DefaultGraphModel<INodeContent>();
 		this.controller = new DefaultModelController<INodeContent>(graphModel);
 		this.name = name;
-	}
-	
-	public DefaultQuery(int id) {
-		this(id, "");
 	}
 
 	@Override
 	public IModelController<INodeContent> getController() {
 		return controller;
+	}
+	
+	@Override
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	@Override
@@ -66,5 +67,17 @@ public class DefaultQuery implements IQuery<INodeContent>{
 	@Override
 	public boolean isRunning() {
 		return this.running;
+	}
+
+	@Override
+	public void addNode(AbstractLogicalOperator logOp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addRootNode(AbstractLogicalOperator logOp) {
+		// TODO Auto-generated method stub
+		
 	}
 }
