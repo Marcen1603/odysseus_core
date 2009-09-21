@@ -8,11 +8,14 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -25,16 +28,14 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.viewer.ViewerStarter;
 import de.uniol.inf.is.odysseus.viewer.ViewerStarterConfiguration;
 import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
 
-
-
 public class ExecutorConsole implements CommandProvider,
 		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener {
-	
-	
+
 	private IAdvancedExecutor executor;
 
 	private String parser;
@@ -43,36 +44,40 @@ public class ExecutorConsole implements CommandProvider,
 
 	private ViewerStarter wnd;
 
-	private String[][] nexmarkQ = new String[][]{{
-			// Q1
-			"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid UNBOUNDED AS b",
-			// Q2
-			"SELECT auction, price FROM nexmark:bid WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
-			// Q3
-			"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction UNBOUNDED AS a, nexmark:person UNBOUNDED AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')" ,
-			// Q4
-			"SELECT AVG(q.final) FROM nexmark:category AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction UNBOUNDED AS a, nexmark:bid UNBOUNDED AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
-			// Q7
-			"SELECT b.auction, b.price, b.bidder FROM nexmark:bid RANGE 1000 SLIDE 1000 AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid RANGE 1000 SLIDE 1000) AS sub WHERE sub.max_price = b.price",
-			// Q8
-			"SELECT p.id, p.name, a.reserve FROM nexmark:person RANGE 43200000 AS p, nexmark:auction RANGE 43200000 AS a WHERE p.id = a.seller"
-	},{			// Q1
-			"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 UNBOUNDED AS b",
-			// Q2
-			"SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
-			// Q3
-			"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction2 UNBOUNDED AS a, nexmark:person2 UNBOUNDED AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')" ,
-			// Q4
-			"SELECT AVG(q.final) FROM nexmark:category2 AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction2 UNBOUNDED AS a, nexmark:bid2 UNBOUNDED AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
-			// Q7
-			"SELECT b.auction, b.price, b.bidder	FROM nexmark:bid2 RANGE 1000 SLIDE 1000 AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid2 RANGE 1000 SLIDE 1000) AS sub WHERE sub.max_price = b.price",
-			// Q8
-			"SELECT p.id, p.name, a.reserve FROM nexmark:person2 RANGE 43200000 AS p, nexmark:auction2 RANGE 43200000 AS a WHERE p.id = a.seller"
-	}};
+	private boolean usePriority = false;
 
-	
-	public void bindExecutor(IAdvancedExecutor executor) {		
-		
+	private String[][] nexmarkQ = new String[][] {
+			{
+			// Q1
+					"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid UNBOUNDED AS b",
+					// Q2
+					"SELECT auction, price FROM nexmark:bid WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
+					// Q3
+					"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction UNBOUNDED AS a, nexmark:person UNBOUNDED AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
+					// Q4
+					"SELECT AVG(q.final) FROM nexmark:category AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction UNBOUNDED AS a, nexmark:bid UNBOUNDED AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
+					// Q7
+					"SELECT b.auction, b.price, b.bidder FROM nexmark:bid RANGE 1000 SLIDE 1000 AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid RANGE 1000 SLIDE 1000) AS sub WHERE sub.max_price = b.price",
+					// Q8
+					"SELECT p.id, p.name, a.reserve FROM nexmark:person RANGE 43200000 AS p, nexmark:auction RANGE 43200000 AS a WHERE p.id = a.seller" },
+			{ // Q1
+					"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 UNBOUNDED AS b",
+					// Q2
+					"SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
+					// Q3
+					"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction2 UNBOUNDED AS a, nexmark:person2 UNBOUNDED AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
+					// Q4
+					"SELECT AVG(q.final) FROM nexmark:category2 AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction2 UNBOUNDED AS a, nexmark:bid2 UNBOUNDED AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
+					// Q7
+					"SELECT b.auction, b.price, b.bidder	FROM nexmark:bid2 RANGE 1000 SLIDE 1000 AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid2 RANGE 1000 SLIDE 1000) AS sub WHERE sub.max_price = b.price",
+					// Q8
+					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 RANGE 43200000 AS p, nexmark:auction2 RANGE 43200000 AS a WHERE p.id = a.seller" } };
+
+	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration("relational", ITimeInterval.class));
+
+	public void bindExecutor(IAdvancedExecutor executor) {
+		System.out.println("executor begunden");
 		this.executor = executor;
 
 		this.executor.addErrorEventListener(this);
@@ -84,7 +89,7 @@ public class ExecutorConsole implements CommandProvider,
 					.next();
 		} catch (PlanManagementException e) {
 			System.out.println("Error setting parser.");
-		}		
+		}
 	}
 
 	public void unbindExecutor(IAdvancedExecutor executor) {
@@ -215,20 +220,26 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	
-	public void _viewer(CommandInterpreter ci){
+	private static class Test<T> {
+		public void muh(T x) {
+		}
+	}
+
+	public void _viewer(CommandInterpreter ci) {
 		System.out.println("startviewer");
-		try{
+		Test<Void> a = null;
+		a.muh(null);
+		try {
 			ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
-			//cfg.useOGL = viewerOGL;
+			// cfg.useOGL = viewerOGL;
 			wnd = new ViewerStarter(null, cfg);
 			Thread thread = new Thread(wnd, "ViewerThread");
 			thread.start();
-		}catch(Throwable e){
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void _buffer(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		if (args != null && args.length > 0) {
@@ -319,6 +330,9 @@ public class ExecutorConsole implements CommandProvider,
 
 		ci.println("remove QUERYID - remove query with QUERYID");
 		ci.println("");
+
+		ci
+				.println("usePriorities [value] - shows if priorities are enabled / switches usage of priorities on/off");
 
 		ci
 				.println("add QUERYSTRING [S] - add query [with console-output-sink]");
@@ -441,18 +455,18 @@ public class ExecutorConsole implements CommandProvider,
 			ci.println("No query argument.");
 		}
 	}
-	
-	public void _nmsN(CommandInterpreter ci){
+
+	public void _nmsN(CommandInterpreter ci) {
 		_nexmarkSourcesNIO(ci);
 	}
-	
-	public void _nexmarkSourcesNIO(CommandInterpreter ci){
+
+	public void _nexmarkSourcesNIO(CommandInterpreter ci) {
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
 		q[1] = "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
 		q[2] = "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
-		for (String s:q){
+		for (String s : q) {
 			try {
 				this.executor.addQuery(s, parser());
 			} catch (PlanManagementException e) {
@@ -465,18 +479,18 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		ci.println("Nexmark Sources with NIO added.");
 	}
-	
-	public void _nms(CommandInterpreter ci){
+
+	public void _nms(CommandInterpreter ci) {
 		_nexmarkSources(ci);
 	}
-	
-	public void _nexmarkSources(CommandInterpreter ci){
+
+	public void _nexmarkSources(CommandInterpreter ci) {
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430";
 		q[1] = "CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432";
 		q[2] = "CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65431";
 		q[3] = "CREATE STREAM nexmark:category (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65433";
-		for (String s:q){
+		for (String s : q) {
 			try {
 				this.executor.addQuery(s, parser());
 			} catch (PlanManagementException e) {
@@ -490,33 +504,32 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Nexmark Sources without NIO added.");
 	}
 
-	public void _nmq(CommandInterpreter ci){
+	public void _nmq(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		if (args != null && args.length >= 1) {
-			int j=0;
-			if (args.length > 1 && args[1].startsWith("n")){
+			int j = 0;
+			if (args.length > 1 && args[1].startsWith("n")) {
 				j = 1;
 			}
-			if ("*".equals(args[0])){
-				for(String q:nexmarkQ[j]){
+			if ("*".equals(args[0])) {
+				for (String q : nexmarkQ[j]) {
 					addQuery(q);
 				}
-			}else{
+			} else {
 				addQuery(nexmarkQ[j][Integer.parseInt(args[0])]);
 			}
-			//TODO remove wenn viewer auf events reagiert
+			// TODO remove wenn viewer auf events reagiert
 			blah();
-		}else{
+		} else {
 			ci.println("usage [0-5]|* [nio]");
 		}
-		
-		
-	}
-	
 
-	private void addQuery(String q){
+	}
+
+	private void addQuery(String q) {
 		try {
-			this.executor.addQuery(q, parser());
+			this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
+					new MySink()));
 		} catch (PlanManagementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -525,16 +538,67 @@ public class ExecutorConsole implements CommandProvider,
 			e.printStackTrace();
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public void _usePriorities(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		try {
+			if (args.length == 1) {
+				usePriority = toBoolean(args[0]);
+				TransformationConfiguration trafoConfig;
+				if (usePriority) {
+					trafoConfig = new TransformationConfiguration("relational",
+							ITimeInterval.class, IPriority.class);
+				} else {
+					trafoConfig = new TransformationConfiguration("relational",
+							ITimeInterval.class);
+
+				}
+				this.trafoConfigParam = new ParameterTransformationConfiguration(
+						trafoConfig);
+			}
+		} catch (IllegalArgumentException e) {
+			ci.println(e.getMessage());
+		}
+		ci.println("priorities are "
+				+ (usePriority ? "activated" : "deactivated"));
+
+	}
+
+	private boolean toBoolean(String string) {
+		if (string.equalsIgnoreCase("true")) {
+			return true;
+		}
+		if (string.equalsIgnoreCase("on")) {
+			return true;
+		}
+		if (string.equalsIgnoreCase("1")) {
+			return true;
+		}
+		if (string.equalsIgnoreCase("false")) {
+			return false;
+		}
+		if (string.equalsIgnoreCase("off")) {
+			return false;
+		}
+		if (string.equalsIgnoreCase("0")) {
+			return false;
+		}
+		throw new IllegalArgumentException("can't convert '" + string
+				+ "' to boolean value");
+	}
+
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		if (args != null && args.length > 0) {
 			try {
 				if (args.length > 1 && args[1].toUpperCase().equals("S")) {
 					this.executor.addQuery(args[0], parser(),
-							new ParameterDefaultRoot(new MySink()));
+							new ParameterDefaultRoot(new MySink()),
+							this.trafoConfigParam);
 				} else {
-					this.executor.addQuery(args[0], parser());
+					this.executor.addQuery(args[0], parser(),
+							this.trafoConfigParam);
 				}
 			} catch (Exception e) {
 				ci.println(e.getMessage());
@@ -642,9 +706,9 @@ public class ExecutorConsole implements CommandProvider,
 	public void sendErrorEvent(ErrorEvent eventArgs) {
 		System.out.println("Error Event: " + eventArgs.getMessage());
 	}
-	
-	public void blah(){
-		if (wnd != null){
+
+	public void blah() {
+		if (wnd != null) {
 			ArrayList<IPhysicalOperator> queries = null;
 			try {
 				queries = this.executor.getSealedPlan().getRoots();
@@ -652,12 +716,13 @@ public class ExecutorConsole implements CommandProvider,
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			for (IPhysicalOperator query:queries){
+			for (IPhysicalOperator query : queries) {
 				if (query == null) {
 					continue;
 				}
-				if (query.isSink()){
-					OdysseusModelProviderSink mp = new OdysseusModelProviderSink((ISink<?>)query);
+				if (query.isSink()) {
+					OdysseusModelProviderSink mp = new OdysseusModelProviderSink(
+							(ISink<?>) query);
 					wnd.setModelProvider(mp);
 				}
 			}
