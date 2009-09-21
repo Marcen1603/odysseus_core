@@ -58,8 +58,8 @@ public class SWTMainWindow {
 	private final Shell shell;
 
 	private IAdvancedExecutor executor = null;
-	
-	IQueryController<DefaultQuery> queryController = new DefaultQueryController(); 
+
+	IQueryController<DefaultQuery> queryController = new DefaultQueryController();
 
 	private CTabFolder tabFolder;
 	private HashMap<Integer, DefaultQuery> queryMap = new HashMap<Integer, DefaultQuery>();
@@ -167,31 +167,35 @@ public class SWTMainWindow {
 		startQueryItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					queryController.launchQuery(tabFolder.getSelection().getControl(), executor);
-				} catch (SecurityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NoSuchMethodException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InstantiationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InvocationTargetException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if (tabFolder.getSelection().getControl() instanceof DefaultGraphArea) {
+					try {
+						queryController.launchQuery(tabFolder.getSelection()
+								.getControl(), executor);
+					} catch (SecurityException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IllegalArgumentException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (NoSuchMethodException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InstantiationException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
+
 		});
 
 		ToolItem stopQueryItem = new ToolItem(tools, SWT.PUSH);
@@ -242,7 +246,5 @@ public class SWTMainWindow {
 		// queryMap.put(queryCounter, query);
 		tabFolder.setSelection(item);
 	}
-
-	
 
 }

@@ -55,6 +55,12 @@
 				
 			</sparams>
 		</pipe>
+		
+		<pipe>
+			<pipe-name>Join</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO</pipe-type>
+		</pipe>
+		
 	</pipes>
 	
 	<sinks>

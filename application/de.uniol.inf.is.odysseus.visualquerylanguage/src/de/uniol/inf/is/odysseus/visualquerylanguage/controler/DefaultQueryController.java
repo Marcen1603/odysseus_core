@@ -12,7 +12,10 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -155,13 +158,15 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 			root = logOp;
 		}
 		
-		buildTree(opList, modelList);
+		if(!buildTree(opList, modelList)) {
+			return null;
+		}
 		
 		return root;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void buildTree(ArrayList<ILogicalOperator> operatorList, ArrayList<INodeModel<INodeContent>> modelList) {
+	private boolean buildTree(ArrayList<ILogicalOperator> operatorList, ArrayList<INodeModel<INodeContent>> modelList) {
 		ArrayList<ILogicalOperator> startNodes = null;
 		
 		for (int i = 0; i<operatorList.size(); i++) {
@@ -173,11 +178,24 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 						}
 					}
 				}
-				operatorList.get(i).setNoOfInputs(startNodes.size());
-				for (int j = 0; j < startNodes.size(); j++) {
-					operatorList.get(i).setInputAO(j, startNodes.get(j));
+				if(operatorList.get(i) instanceof UnaryLogicalOp) {
+					if(startNodes.size() != 1) {
+						return false;
+					}
+					for (int j = 0; j < startNodes.size(); j++) {
+						operatorList.get(i).setInputAO(j, startNodes.get(j));
+					}
+				}else if(operatorList.get(i) instanceof BinaryLogicalOp) {
+					if(startNodes.size() != 2) {
+						return false;
+					}
+					if(startNodes.get(0) instanceof AbstractLogicalOperator && startNodes.get(1) instanceof AbstractLogicalOperator) {
+						((BinaryLogicalOp)operatorList.get(i)).setLeftInput((AbstractLogicalOperator)startNodes.get(0));
+						((BinaryLogicalOp)operatorList.get(i)).setRightInput((AbstractLogicalOperator)startNodes.get(1));
+					}
 				}
 		}
+		return true;
 	}
 
 }

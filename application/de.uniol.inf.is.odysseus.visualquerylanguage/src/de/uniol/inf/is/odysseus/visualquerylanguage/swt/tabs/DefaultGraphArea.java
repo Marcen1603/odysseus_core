@@ -15,6 +15,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -92,6 +93,8 @@ public class DefaultGraphArea extends Composite implements
 	
 	private IAdvancedExecutor executor;
 	
+	private Composite upperGraphArea = null;
+	
 	private final Logger log = LoggerFactory.getLogger(DefaultGraphArea.class);
 
 	public DefaultGraphArea(Composite parent, DefaultQuery query, int style, IAdvancedExecutor exec) {
@@ -99,12 +102,21 @@ public class DefaultGraphArea extends Composite implements
 		
 		this.executor = exec;
 
-		this.setLayout(new FormLayout());
+//		this.setLayout(new FormLayout());
 		GridData graphAreaData = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.FILL_VERTICAL);
 		graphAreaData.horizontalIndent = 0;
 		graphAreaData.horizontalSpan = 2;
 		this.setLayoutData(graphAreaData);
+		
+		
+		GridLayout gl = new GridLayout();
+		gl.numColumns = 1;
+		this.setLayout(gl);
+		upperGraphArea = new Composite(this, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		upperGraphArea.setLayout(new FormLayout());
+		upperGraphArea.setLayoutData(gd);
 
 		try {
 			URL xmlFile = Activator.getContext().getBundle().getEntry(XML_FILE); 
@@ -128,7 +140,7 @@ public class DefaultGraphArea extends Composite implements
 	private void buildGraphArea() {
 
 		// Trenner innerhalb des Graphenbereichs von Timo
-		final Sash sash = new Sash(this, SWT.VERTICAL);
+		final Sash sash = new Sash(upperGraphArea, SWT.VERTICAL);
 		FormData sashFormData = new FormData();
 		sashFormData.top = new FormAttachment(0, 0);
 		sashFormData.bottom = new FormAttachment(100, 0);
@@ -145,7 +157,7 @@ public class DefaultGraphArea extends Composite implements
 			}
 		});
 		
-		Composite comp = new Composite(this, SWT.BORDER);
+		Composite comp = new Composite(upperGraphArea, SWT.BORDER);
 		FormData formData = new FormData();
 		formData.top = new FormAttachment(0, 0);
 		formData.bottom = new FormAttachment(100, 0);
@@ -153,40 +165,28 @@ public class DefaultGraphArea extends Composite implements
 		formData.right = new FormAttachment(sash, 0);
 		comp.setLayoutData(formData);
 		
-//		// Statuszeile
-//		Composite statusLine = new Composite( this, 0);
-//		FormData statusData = new FormData();
-//		statusData.height = 200;
-//		statusData.top = new FormAttachment(0, 0);
-//		statusData.bottom = new FormAttachment(100, 0);
-//		statusData.right = new FormAttachment(0, 0);
-//		statusData.left = new FormAttachment(100, 0);
+		// Statuszeile
+//		Composite statusLine = new Composite( this, SWT.BORDER);
+//		GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
+//		statusData.heightHint = 50;
 //		statusLine.setLayoutData( statusData );
-//		statusLine.setBackground( this.getBackground() );
+//		statusLine.setBackground( this.getBackground());
 //		statusLine.setForeground( this.getForeground() );
 //		statusLine.setFont( this.getFont() );
 //		GridLayout statusLineLayout = new GridLayout();
 //		statusLineLayout.numColumns = 3;
 //		statusLine.setLayout( statusLineLayout );
-//		
-//		SWTStatusLine status = new SWTStatusLine(statusLine);
-//		status.setText("Anfrageerstellung bereit.");
-//		
-//		// Rechter bereich der Statuszeile
-//		Composite statusRight = new Composite( statusLine, 0 );
-//		statusRight.setLayout( new FillLayout() );
-//		GridData d2 = new GridData();
-//		d2.horizontalAlignment = GridData.END;
-//		d2.widthHint = 300;
-//		statusRight.setLayoutData( d2 );
+		
+		SWTStatusLine status = new SWTStatusLine(this);
+		status.setText("Anfrageerstellung bereit.");
 		
 		this.renderManager = new SWTRenderManager<INodeContent>(comp,
-				new SWTStatusLine(this.getParent()), positioner);
+				status, positioner);
 		this.renderManager.setDisplayedGraph(viewGraph);
 		renderManager.getSelector().addSelectListener(this);
 
 		// Informationsbereich von Timo
-		infoScroll = new ScrolledComposite(this, SWT.BORDER | SWT.V_SCROLL
+		infoScroll = new ScrolledComposite(upperGraphArea , SWT.BORDER | SWT.V_SCROLL
 				| SWT.H_SCROLL);
 		FormData infoFormData = new FormData();
 		infoFormData.top = new FormAttachment(0, 0);
@@ -393,6 +393,9 @@ public class DefaultGraphArea extends Composite implements
 								CursorManager.isNotConnection();
 							}
 						}
+					}else {
+						connNodeList = new ArrayList<INodeView<INodeContent>>(
+								renderManager.getSelector().getSelected());
 					}
 				}
 			}
@@ -500,7 +503,6 @@ public class DefaultGraphArea extends Composite implements
 		infoScroll.setMinSize( infoArea.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
 		infoArea.layout();
 		infoScroll.layout();
-		
 	}
 	
 	
