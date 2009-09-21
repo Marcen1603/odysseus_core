@@ -38,7 +38,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			return this.planMigrationStrategie.migratePlan(sender,
 					newExecutionPlan);
 		}
-		return null;
+		return sender.getEditableExecutionPlan();
 	}
 
 	@Override
