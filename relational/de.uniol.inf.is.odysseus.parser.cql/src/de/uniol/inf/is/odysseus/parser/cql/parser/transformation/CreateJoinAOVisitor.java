@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO.Type;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInPredicate;
@@ -72,6 +73,11 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		}
 
 		return createJoin(name, data);
+	}
+	
+	@Override
+	public Object visit(ASTElementPriorities node, Object data) {
+		return data;
 	}
 
 	private Object createJoin(String alias, Object data) {
