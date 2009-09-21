@@ -94,6 +94,7 @@ public class DefaultGraphArea extends Composite implements
 	private IAdvancedExecutor executor;
 	
 	private Composite upperGraphArea = null;
+	SWTStatusLine status = null;
 	
 	private final Logger log = LoggerFactory.getLogger(DefaultGraphArea.class);
 
@@ -165,19 +166,7 @@ public class DefaultGraphArea extends Composite implements
 		formData.right = new FormAttachment(sash, 0);
 		comp.setLayoutData(formData);
 		
-		// Statuszeile
-//		Composite statusLine = new Composite( this, SWT.BORDER);
-//		GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
-//		statusData.heightHint = 50;
-//		statusLine.setLayoutData( statusData );
-//		statusLine.setBackground( this.getBackground());
-//		statusLine.setForeground( this.getForeground() );
-//		statusLine.setFont( this.getFont() );
-//		GridLayout statusLineLayout = new GridLayout();
-//		statusLineLayout.numColumns = 3;
-//		statusLine.setLayout( statusLineLayout );
-		
-		SWTStatusLine status = new SWTStatusLine(this);
+		status = new SWTStatusLine(this);
 		status.setText("Anfrageerstellung bereit.");
 		
 		this.renderManager = new SWTRenderManager<INodeContent>(comp,
@@ -521,5 +510,9 @@ public class DefaultGraphArea extends Composite implements
 			content = new DefaultPipeContent(con.getName(), con.getType(), con.getNewConstructParameterListInstance(), con.getNewSetterParameterListInstance());
 		}
 		return content;
+	}
+	
+	public SWTStatusLine getStatusLine() {
+		return this.status;
 	}
 }

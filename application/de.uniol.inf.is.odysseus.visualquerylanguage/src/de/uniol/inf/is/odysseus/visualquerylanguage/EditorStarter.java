@@ -14,15 +14,36 @@ import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.XMLResourceConfiguration;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
 
-public class EditorStarter implements CommandProvider{
+public class EditorStarter implements CommandProvider, Runnable{
 	
 	private static final Logger logger = LoggerFactory.getLogger(EditorStarter.class);
 	
 	
 	private IAdvancedExecutor executor;
 	
-	public void build() throws IOException {
+	public void _visual(CommandInterpreter interpreter) {
+			Thread thread = new Thread(this);
+			thread.start();
+	}
 
+	@Override
+	public String getHelp() {
+		return null;
+	}
+	
+	private void bindExecutor(IAdvancedExecutor executor) {
+		this.executor = executor;
+	}
+	
+	private void unbindExecutor(IAdvancedExecutor executor) {
+		if(this.executor == executor) {
+			this.executor = null;
+		}
+	}
+
+	@Override
+	public void run() {
+		
 		Display d = new Display();
 		
 		try {
@@ -36,33 +57,13 @@ public class EditorStarter implements CommandProvider{
 		}
 		 
 		
-		SWTMainWindow main = new SWTMainWindow(Display.getDefault(), executor);
+		try {
+			SWTMainWindow main = new SWTMainWindow(d, executor);
+		} catch (IOException e) {
+			logger.error("SWTMainWindow not loaded");
+		}
 		
 		SWTResourceManager.getInstance().freeAllResources();
-	}
-	
-	public void _visual(CommandInterpreter interpreter) {
-		try {
-			build();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.getStackTrace();
-		}
-	}
-
-	@Override
-	public String getHelp() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	private void bindExecutor(IAdvancedExecutor executor) {
-		this.executor = executor;
-	}
-	
-	private void unbindExecutor(IAdvancedExecutor executor) {
-		if(this.executor == executor) {
-			this.executor = null;
-		}
+		
 	}
 }

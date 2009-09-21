@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.controler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,7 +14,6 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
 
@@ -153,6 +154,12 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 				}
 			} else {
 				logOp = (ILogicalOperator) clazz.newInstance();
+			}
+			for (IParamSetter<?> param : content.getSetterParameterList()) {
+				if(param.getValue() != null) {
+					Method method = logOp.getClass().getMethod(param.getSetter(), new Class[] {param.getValue().getClass()});
+					method.invoke(logOp, new Object[]{param.getValue()});
+				}
 			}
 			opList.add(logOp);
 			root = logOp;

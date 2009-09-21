@@ -1,13 +1,8 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -28,26 +23,10 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IQueryController;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
 
@@ -62,8 +41,9 @@ public class SWTMainWindow {
 	IQueryController<DefaultQuery> queryController = new DefaultQueryController();
 
 	private CTabFolder tabFolder;
-	private HashMap<Integer, DefaultQuery> queryMap = new HashMap<Integer, DefaultQuery>();
 	CTabItem queryListTab;
+	
+	private HashMap<Integer, DefaultQuery> queryMap = new HashMap<Integer, DefaultQuery>();
 
 	public SWTMainWindow(Display display, IAdvancedExecutor exec)
 			throws IOException {
@@ -172,26 +152,26 @@ public class SWTMainWindow {
 						queryController.launchQuery(tabFolder.getSelection()
 								.getControl(), executor);
 					} catch (SecurityException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
+						log.error("Error while executing query.");
 					} catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
+						log.error("Error while executing query.");
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler beim dynamischen Laden der Klassen aufgetreten.");
+						log.error("Error while using reflection for dynamic classloading.");
 					} catch (NoSuchMethodException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler beim dynamischen Laden von Methoden aufgetreten.");
+						log.error("Error while using reflection for dynamic methodloading.");
 					} catch (InstantiationException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler beim dynamischen Instanziieren einer Klasse aufgetreten.");
+						log.error("Error while creating an instance of a class.");
 					} catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
+						log.error("Error while executing query");
 					} catch (InvocationTargetException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
+						log.error("Error while executing query");
 					}
 				}
 			}
@@ -223,7 +203,7 @@ public class SWTMainWindow {
 			}
 
 		});
-
+		
 		queryListTab = new CTabItem(tabFolder, SWT.NULL);
 		queryListTab.setText("Laufende Anfragen");
 
