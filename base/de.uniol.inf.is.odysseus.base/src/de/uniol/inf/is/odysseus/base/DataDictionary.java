@@ -40,7 +40,7 @@ public class DataDictionary {
 	private DataDictionary() {
 	}
 
-	public static DataDictionary getInstance() {
+	public synchronized static DataDictionary getInstance() {
 		if (instance == null) {
 			logger.debug("Create new DataDictionary");
 			instance = new DataDictionary();
