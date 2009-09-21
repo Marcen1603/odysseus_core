@@ -10,5 +10,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.priority,
+ org.osgi.framework;version="1.5.0",
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.priority_interval
+Bundle-Activator: de.uniol.inf.is.odysseus.priority_interval.Activator
