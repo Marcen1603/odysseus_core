@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Priority_interval
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.priority_interval;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
