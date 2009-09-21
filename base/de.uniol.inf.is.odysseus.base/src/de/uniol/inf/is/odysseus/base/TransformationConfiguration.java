@@ -7,14 +7,24 @@ import java.util.Properties;
 import java.util.Set;
 
 public class TransformationConfiguration {
-	private Set<String> metaTypes = new HashSet<String>();
-	private String dataType;
+	private final Set<String> metaTypes;
+	private final String dataType;
 	private Properties options;
 
 	public TransformationConfiguration(String dataType, String... metaTypes) {
 		this.dataType = dataType;
 		this.metaTypes = toSet(metaTypes);
 		this.options = new Properties();
+	}
+
+	public TransformationConfiguration(final String dataType,
+			Class<? extends IMetaAttribute>... metaTypes) {
+		this.dataType = dataType;
+		HashSet<String> tmp = new HashSet<String>();
+		for(Class<? extends IMetaAttribute> type : metaTypes) {
+			tmp.add(type.getName());
+		}
+		this.metaTypes = Collections.unmodifiableSet(tmp);
 	}
 
 	public boolean metaTypesEqual(String... types) {
@@ -51,13 +61,13 @@ public class TransformationConfiguration {
 		}
 		return builder.toString();
 	}
-	
+
 	public void setOption(String key, Object value) {
 		this.options.put(key, value);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T> T getOption(String key) {
-		return (T)this.options.get(key);
+		return (T) this.options.get(key);
 	}
 }
