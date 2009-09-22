@@ -11,6 +11,11 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	public IntervalPriority() {
 	}
 	
+	public IntervalPriority(IntervalPriority other){
+		super(other);
+		this.priority = other.priority;
+	}
+	
 	@Override
 	public byte getPriority() {
 		return this.priority;
@@ -19,6 +24,11 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	@Override
 	public void setPriority(byte priority) {
 		this.priority = priority;
+	}
+	
+	@Override
+	public IntervalPriority clone() {
+		return new IntervalPriority(this);
 	}
 
 }
