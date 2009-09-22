@@ -52,7 +52,7 @@ public class StandardCompiler implements ICompiler {
 	 *         "LINE_SEPERATOR + label + ":" + not set"
 	 */
 	public String getInfoString(Object object, String label) {
-		String infos = AppEnv.LINE_SEPERATOR + label + ": ";
+		String infos = AppEnv.LINE_SEPARATOR + label + ": ";
 		if (object != null) {
 			infos += object.getClass();
 		} else {
@@ -137,13 +137,13 @@ public class StandardCompiler implements ICompiler {
 		infos += getInfoString(this.transformation, "Transformation comp.:");
 		infos += getInfoString(this.rewrite, "Restructure comp.:");
 
-		infos += AppEnv.LINE_SEPERATOR + " <Parser> ";
+		infos += AppEnv.LINE_SEPARATOR + " <Parser> ";
 		for (IQueryParser parser : this.parserList.values()) {
 			infos += getInfoString(parser, "Parser:");
 		}
-		infos += AppEnv.LINE_SEPERATOR + " </Parser>";
+		infos += AppEnv.LINE_SEPARATOR + " </Parser>";
 
-		infos += AppEnv.LINE_SEPERATOR + "</Compiler> ";
+		infos += AppEnv.LINE_SEPARATOR + "</Compiler> ";
 
 		return infos;
 	}

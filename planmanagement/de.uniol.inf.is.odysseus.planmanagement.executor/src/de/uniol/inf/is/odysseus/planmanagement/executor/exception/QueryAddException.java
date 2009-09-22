@@ -35,7 +35,7 @@ public class QueryAddException extends PlanManagementException {
 		super(
 				"Error while adding query." + (error != null
 						&& error.length() > 0 ? "Additional Info:"
-						+ AppEnv.LINE_SEPERATOR + error : ""));
+						+ AppEnv.LINE_SEPARATOR + error : ""));
 		
 	}
 }

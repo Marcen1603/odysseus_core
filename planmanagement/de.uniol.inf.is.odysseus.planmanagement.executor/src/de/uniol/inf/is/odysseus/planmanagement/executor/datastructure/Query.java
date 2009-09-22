@@ -165,8 +165,8 @@ public class Query implements IEditableQuery {
 		info += "ID:" + this.id;
 		info += "Started:" + this.started;
 		info += "CompileLanguage:" + this.parserID;
-		info += "LogicalAlgebra:" + AppEnv.LINE_SEPERATOR + this.logicalPlan;
-		info += "PhysicalAlgebra:" + AppEnv.LINE_SEPERATOR + this.root;
+		info += "LogicalAlgebra:" + AppEnv.LINE_SEPARATOR + this.logicalPlan;
+		info += "PhysicalAlgebra:" + AppEnv.LINE_SEPARATOR + this.root;
 		return info;
 	}
 

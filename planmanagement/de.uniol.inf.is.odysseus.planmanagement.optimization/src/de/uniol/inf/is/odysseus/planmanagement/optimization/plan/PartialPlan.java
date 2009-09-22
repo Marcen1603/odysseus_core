@@ -124,17 +124,17 @@ public class PartialPlan implements IPartialPlan {
 
 		for (ISink<?> root : this.roots) {
 			if (result != "") {
-				result += AppEnv.LINE_SEPERATOR;
+				result += AppEnv.LINE_SEPARATOR;
 			}
 			result += root.toString() + ", Owner: "
 					+ getOwnerIDs(root.getOwner());
 		}
 
-		result += AppEnv.LINE_SEPERATOR + "Sources:";
+		result += AppEnv.LINE_SEPARATOR + "Sources:";
 
 		for (IIterableSource<?> source : iterableSource) {
 			if (result != "") {
-				result += AppEnv.LINE_SEPERATOR;
+				result += AppEnv.LINE_SEPARATOR;
 			}
 			result += source.toString() + ", Owner: "
 					+ getOwnerIDs(source.getOwner());

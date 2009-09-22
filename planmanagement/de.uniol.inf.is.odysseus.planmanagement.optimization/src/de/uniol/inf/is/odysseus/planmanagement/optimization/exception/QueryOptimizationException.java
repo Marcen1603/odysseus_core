@@ -35,8 +35,8 @@ public class QueryOptimizationException extends Exception {
 	 */
 	public QueryOptimizationException(String m, Throwable e) {
 		super(m
-				+ (e != null ? AppEnv.LINE_SEPERATOR + "Additional info:"
-						+ AppEnv.LINE_SEPERATOR + e.getMessage() : ""));
+				+ (e != null ? AppEnv.LINE_SEPARATOR + "Additional info:"
+						+ AppEnv.LINE_SEPARATOR + e.getMessage() : ""));
 		this.setStackTrace(e.getStackTrace());
 	}
 }

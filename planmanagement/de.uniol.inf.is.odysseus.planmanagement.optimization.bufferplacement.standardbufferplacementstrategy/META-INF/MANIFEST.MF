@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: StandardBufferPlacementStrategy
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.physicaloperator.base,

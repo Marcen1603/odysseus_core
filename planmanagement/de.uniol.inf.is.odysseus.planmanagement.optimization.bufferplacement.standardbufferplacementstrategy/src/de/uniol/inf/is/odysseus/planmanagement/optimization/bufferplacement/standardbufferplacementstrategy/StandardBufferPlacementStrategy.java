@@ -11,6 +11,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 
+/**
+ * TODO: sollte von Jonas oder Marco dokumentiert werden.
+ * 
+ * @author Wolf Bauer
+ *
+ */
 public class StandardBufferPlacementStrategy extends
 		AbstractBufferPlacementStrategy {
 

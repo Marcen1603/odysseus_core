@@ -194,7 +194,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 *         "LINE_SEPERATOR + label + ":" + not set"
 	 */
 	public String getInfoString(String object, String label) {
-		String infos = AppEnv.LINE_SEPERATOR + label + ": ";
+		String infos = AppEnv.LINE_SEPARATOR + label + ": ";
 		if (object != null) {
 			infos += object;
 		} else {
@@ -297,7 +297,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		infos += getInfoString(this.planOptimizer, "PlanOptimizer");
 		infos += getInfoString(this.queryOptimizer, "QueryOptimizer");
 
-		infos += AppEnv.LINE_SEPERATOR + "</Optimizer> ";
+		infos += AppEnv.LINE_SEPARATOR + "</Optimizer> ";
 
 		return infos;
 	}

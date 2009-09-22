@@ -100,27 +100,27 @@ public class StandardExecutor extends AbstractExecutor implements
 	public String getInfos() {
 		String infos = "Executor: " + this;
 
-		infos += AppEnv.LINE_SEPERATOR + AppEnv.LINE_SEPERATOR + "Optimizer: ";
+		infos += AppEnv.LINE_SEPARATOR + AppEnv.LINE_SEPARATOR + "Optimizer: ";
 		try {
-			infos += AppEnv.LINE_SEPERATOR + optimizer().getInfos();
+			infos += AppEnv.LINE_SEPARATOR + optimizer().getInfos();
 		} catch (Exception e) {
-			infos += "not set. " + AppEnv.LINE_SEPERATOR + e.getMessage();
+			infos += "not set. " + AppEnv.LINE_SEPARATOR + e.getMessage();
 		}
 
-		infos += AppEnv.LINE_SEPERATOR + AppEnv.LINE_SEPERATOR
+		infos += AppEnv.LINE_SEPARATOR + AppEnv.LINE_SEPARATOR
 				+ "SchedulerManager: ";
 		try {
-			infos += AppEnv.LINE_SEPERATOR + schedulerManager().getInfos();
+			infos += AppEnv.LINE_SEPARATOR + schedulerManager().getInfos();
 		} catch (Exception e) {
-			infos += "not set. " + AppEnv.LINE_SEPERATOR + e.getMessage();
+			infos += "not set. " + AppEnv.LINE_SEPARATOR + e.getMessage();
 		}
 
-		infos += AppEnv.LINE_SEPERATOR + AppEnv.LINE_SEPERATOR + "Compiler: ";
+		infos += AppEnv.LINE_SEPARATOR + AppEnv.LINE_SEPARATOR + "Compiler: ";
 
 		try {
-			infos += AppEnv.LINE_SEPERATOR + compiler().getInfos();
+			infos += AppEnv.LINE_SEPARATOR + compiler().getInfos();
 		} catch (Exception e) {
-			infos += "not set. " + AppEnv.LINE_SEPERATOR + e.getMessage();
+			infos += "not set. " + AppEnv.LINE_SEPARATOR + e.getMessage();
 		}
 
 		return infos;

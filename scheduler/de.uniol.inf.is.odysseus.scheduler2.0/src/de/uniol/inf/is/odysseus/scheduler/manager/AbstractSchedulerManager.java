@@ -17,39 +17,89 @@ import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
 
+/**
+ * AbstractSchedulerManager is a base implementation for scheduling manager. It
+ * manages OSGi-services and error handling for the scheduling module. This base
+ * is designed for using one scheduler at the same time.
+ * 
+ * @author Wolf Bauer
+ * 
+ */
 public abstract class AbstractSchedulerManager implements ISchedulerManager {
 
+	/**
+	 * Count of active scheduler.
+	 */
 	protected int schedulerCount = 1;
 
+	/**
+	 * Logger for informations.
+	 */
 	protected Logger logger;
 
+	/**
+	 * Map of all registered {@link ISchedulerFactory}.
+	 */
 	private Map<String, ISchedulerFactory> schedulerFactoryMap = Collections
 			.synchronizedMap(new HashMap<String, ISchedulerFactory>());
 
+	/**
+	 * Map of all registered {@link ISchedulingStrategyFactory}.
+	 */
 	private Map<String, ISchedulingStrategyFactory> schedulingStrategyFactoryMap = Collections
 			.synchronizedMap(new HashMap<String, ISchedulingStrategyFactory>());
 
+	/**
+	 * List of all objects which are informed if an exception occurs.
+	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
 
+	/**
+	 * Creates a new manager and initializes the logger. Used by OSGi (no
+	 * parameter allowed).
+	 */
 	public AbstractSchedulerManager() {
 		this.logger = LoggerFactory.getLogger(AbstractSchedulerManager.class);
 		this.logger.trace("Scheduler manager activated.");
 	}
 
+	/**
+	 * OSGi-Method: Is called when this object will be deactivted by OSGi.
+	 */
 	protected void deactivate() {
 		synchronized (this.schedulerFactoryMap) {
 			schedulerFactoryMap.clear();
 			schedulerFactoryMap = null;
 		}
 	}
-	
+
+	/**
+	 * Get a formated info string for object. if object not null
+	 * 
+	 * @param object
+	 *            object to describe
+	 * @param label
+	 *            label for description
+	 * @return String: "LINE_SEPERATOR + label + ":" + class name of object" or
+	 *         "LINE_SEPERATOR + label + ":" + not set"
+	 */
 	public String getInfoString(Object object, String label) {
 		return getInfoString(object.toString(), label);
 	}
 
+	/**
+	 * Get a formated info string for object. if object not null
+	 * 
+	 * @param object
+	 *            object to describe
+	 * @param label
+	 *            label for description
+	 * @return String: "LINE_SEPERATOR + label + ":" + object" or
+	 *         "LINE_SEPERATOR + label + ":" + not set"
+	 */
 	public String getInfoString(String object, String label) {
-		String infos = AppEnv.LINE_SEPERATOR + label + ": ";
+		String infos = AppEnv.LINE_SEPARATOR + label + ": ";
 		if (object != null) {
 			infos += object;
 		} else {
@@ -58,44 +108,84 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 		return infos;
 	}
 
+	/**
+	 * Sends an {@link ErrorEvent} to all registered EventListenern
+	 * 
+	 * @param eventArgs
+	 *            {@link ErrorEvent} to send
+	 */
 	protected synchronized void fireErrorEvent(ErrorEvent eventArgs) {
 		for (IErrorEventListener listener : this.errorEventListener) {
 			listener.sendErrorEvent(eventArgs);
 		}
 	}
 
+	/**
+	 * Method to bind a {@link ISchedulerFactory}. Used by OSGi.
+	 * 
+	 * @param schedulerFactory
+	 *            new {@link ISchedulerFactory} service
+	 */
 	public void bindSchedulerFactory(ISchedulerFactory schedulerFactory) {
 		String sName = schedulerFactory.getName();
-		logger.info("activate "+sName);
-		if(this.schedulerFactoryMap.get(sName) == null) {
-			this.schedulerFactoryMap.put(sName,schedulerFactory);
-		}else{
-			logger.warn("Duplicate Scheduling Name "+sName+" !");
+		logger.info("activate " + sName);
+		if (this.schedulerFactoryMap.get(sName) == null) {
+			this.schedulerFactoryMap.put(sName, schedulerFactory);
+		} else {
+			logger.warn("Duplicate Scheduling Name " + sName + " !");
 		}
 	}
 
-	public void unbindSchedulerFactory(
-			ISchedulerFactory schedulerFactory) {
+	/**
+	 * Method to unbind a {@link ISchedulerFactory}. Used by OSGi.
+	 * 
+	 * @param schedulerFactory
+	 *            {@link ISchedulerFactory} service to unbind
+	 */
+	public void unbindSchedulerFactory(ISchedulerFactory schedulerFactory) {
 		this.schedulerFactoryMap.remove(schedulerFactory.getName());
 	}
 
-
+	/**
+	 * Method to bind a {@link ISchedulingStrategyFactory}. Used by OSGi.
+	 * 
+	 * @param schedulingStrategyFactory
+	 *            new {@link ISchedulingStrategyFactory} service
+	 */
 	public void bindSchedulingStrategyFactory(
 			ISchedulingStrategyFactory schedulingStrategyFactory) {
 		String stratName = schedulingStrategyFactory.getName();
-		logger.info("activate "+stratName);
-		if(this.schedulingStrategyFactoryMap.get(stratName) == null) {
-			this.schedulingStrategyFactoryMap.put(stratName, schedulingStrategyFactory);
-		}else{
-			logger.warn("Duplicate Scheduling Strategy Name "+stratName+" !");
+		logger.info("activate " + stratName);
+		if (this.schedulingStrategyFactoryMap.get(stratName) == null) {
+			this.schedulingStrategyFactoryMap.put(stratName,
+					schedulingStrategyFactory);
+		} else {
+			logger.warn("Duplicate Scheduling Strategy Name " + stratName
+					+ " !");
 		}
 	}
 
+	/**
+	 * Method to unbind a {@link ISchedulingStrategyFactory}. Used by OSGi.
+	 * 
+	 * @param schedulingStrategyFactory
+	 *            {@link ISchedulingStrategyFactory} service to unbind
+	 */
 	public void unbindSchedulingStrategyFactory(
 			ISchedulingStrategyFactory schedulingStrategyFactory) {
-		this.schedulingStrategyFactoryMap.remove(schedulingStrategyFactory.getName());
+		this.schedulingStrategyFactoryMap.remove(schedulingStrategyFactory
+				.getName());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * #
+	 * addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.
+	 * error.IErrorEventListener)
+	 */
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
 		if (!this.errorEventListener.contains(errorEventListener)) {
@@ -103,11 +193,28 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * #
+	 * removeErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event
+	 * .error.IErrorEventListener)
+	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
 		this.errorEventListener.remove(errorEventListener);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener
+	 * #sendErrorEvent(de.uniol.inf.is.odysseus.base.planmanagement.event.error.
+	 * ErrorEvent)
+	 */
 	@Override
 	public synchronized void sendErrorEvent(ErrorEvent eventArgs) {
 		this.logger.error("Error while scheduling.");
@@ -117,33 +224,68 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 						+ eventArgs.getMessage()));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * getSchedulerCount()
+	 */
 	@Override
 	public int getSchedulerCount() {
 		return this.schedulerCount;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#getScheduler
+	 * ()
+	 */
 	@Override
 	public Set<String> getScheduler() {
-		// TODO: Sollte dies eine Kopie sein? Eigentlich nicht, da Strings immutable sind ...
+		// TODO: Sollte dies eine Kopie sein? Eigentlich nicht, da Strings
+		// immutable sind ...
 		return this.schedulerFactoryMap.keySet();
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * getSchedulingStrategy()
+	 */
 	@Override
 	public Set<String> getSchedulingStrategy() {
-		// TODO: Sollte dies eine Kopie sein? Eigentlich nicht, da Strings immutable sind ...
+		// TODO: Sollte dies eine Kopie sein? Eigentlich nicht, da Strings
+		// immutable sind ...
 		return this.schedulingStrategyFactoryMap.keySet();
 	}
-	
+
+	/**
+	 * Creates a scheduler with the given parameters if they are valid.
+	 * 
+	 * @param scheduler
+	 *            Name of the scheduler which should be created.
+	 * @param schedulingStrategy
+	 *            Name of the scheduling strategy with which the new scheduler
+	 *            should be initialized.
+	 * @return A new scheduler instance.
+	 */
 	protected IScheduler createScheduler(String scheduler,
 			String schedulingStrategy) {
+		// get the factories
 		ISchedulerFactory sf = schedulerFactoryMap.get(scheduler);
-		ISchedulingStrategyFactory ssf = schedulingStrategyFactoryMap.get(schedulingStrategy);
-		if (sf != null && ssf != null){
+		ISchedulingStrategyFactory ssf = schedulingStrategyFactoryMap
+				.get(schedulingStrategy);
+		if (sf != null && ssf != null) {
+			// create the new scheduler
 			IScheduler s = sf.createScheduler(ssf);
 			return s;
 		}
-		logger.error("No Scheduler created from "+scheduler+" "+schedulingStrategy);
+		logger.error("No Scheduler created from " + scheduler + " "
+				+ schedulingStrategy);
 		return null;
 	}
-	
+
 }

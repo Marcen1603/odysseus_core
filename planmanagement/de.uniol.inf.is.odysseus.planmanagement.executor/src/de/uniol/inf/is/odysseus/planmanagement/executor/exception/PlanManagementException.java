@@ -34,6 +34,6 @@ public class PlanManagementException extends Exception {
 	protected PlanManagementException(String details) {
 		super(
 				"PlanManagementException: An error occured during planmangement. ("
-						+ AppEnv.LINE_SEPERATOR + details + ")");
+						+ AppEnv.LINE_SEPARATOR + details + ")");
 	}
 }

@@ -685,7 +685,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	@Override
 	public String getHelp() {
-		String info = AppEnv.LINE_SEPERATOR
+		String info = AppEnv.LINE_SEPARATOR
 				+ "----------------------------------";
 		info += "Executor Console";
 		info += "man - show all executor commands";

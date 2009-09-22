@@ -36,6 +36,6 @@ public class SchedulerException extends PlanManagementException {
 	 * @param details detailed exception message.
 	 */
 	public SchedulerException(String details) {
-		super("SchedulerException:Scheduler plugin is not loaded. (" + AppEnv.LINE_SEPERATOR + details + ")");
+		super("SchedulerException:Scheduler plugin is not loaded. (" + AppEnv.LINE_SEPARATOR + details + ")");
 	}
 }

@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Single Thread Scheduler Plug-in
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler
 Bundle-Version: 2.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.base.planmanagement.event.error,
