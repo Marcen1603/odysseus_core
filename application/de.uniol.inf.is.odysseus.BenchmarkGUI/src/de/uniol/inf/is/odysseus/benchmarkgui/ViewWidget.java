@@ -12,17 +12,19 @@ import org.eclipse.swt.dnd.TreeDropTargetEffect;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
@@ -108,44 +110,46 @@ public class ViewWidget extends Composite {
 		createGrpBufferPlacement();
 		this.btnExecute = new Button(this, SWT.NONE);
 		this.btnExecute.setText("&Execute");
-		
+
 		final BundleContext bundleContext = Activator.getDefault().getBundle()
 				.getBundleContext();
-		ServiceTracker tracker = new ServiceTracker(bundleContext, IBenchmark.class.getName(), new ServiceTrackerCustomizer() {
+		ServiceTracker tracker = new ServiceTracker(bundleContext,
+				IBenchmark.class.getName(), new ServiceTrackerCustomizer() {
 
-			@Override
-			public Object addingService(ServiceReference reference) {
-				return bundleContext.getService(reference);
-			}
+					@Override
+					public Object addingService(ServiceReference reference) {
+						return bundleContext.getService(reference);
+					}
 
-			@Override
-			public void modifiedService(ServiceReference reference,
-					Object service) {
-				
-			}
+					@Override
+					public void modifiedService(ServiceReference reference,
+							Object service) {
 
-			@Override
-			public void removedService(ServiceReference reference,
-					Object service) {
-			}
-			
-		});
+					}
+
+					@Override
+					public void removedService(ServiceReference reference,
+							Object service) {
+					}
+
+				});
 		tracker.open();
 		try {
 			this.benchmarker = (IBenchmark) tracker.waitForService(0);
 		} catch (InterruptedException e3) {
 			e3.printStackTrace();
 		}
-		
+
 		this.btnExecute.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				Configuration config = new Configuration();
 				try {
-					System.out.println(benchmarker
-							.runBenchmark(
-									"CREATE STREAM XX (a INTEGER) FROM (([0,5),1), ([2,5),3)); SELECT * FROM XX",
-									"CQL", config));
+					System.out
+							.println(benchmarker
+									.runBenchmark(
+											"CREATE STREAM XX (a INTEGER) FROM (([0,5),1), ([2,5),3)); SELECT * FROM XX",
+											"CQL", config));
 				} catch (BenchmarkException e1) {
 					e1.printStackTrace();
 				}
@@ -276,6 +280,5 @@ public class ViewWidget extends Composite {
 		grpBufferPlacement.setText("BufferPlacement");
 		treeBufferPlacement = new Tree(grpBufferPlacement, SWT.NONE);
 		treeBufferPlacement.setLayoutData(gridData111);
-		createDragAndDrop(treeBufferPlacement);
 	}
 } // @jve:decl-index=0:visual-constraint="178,28"
