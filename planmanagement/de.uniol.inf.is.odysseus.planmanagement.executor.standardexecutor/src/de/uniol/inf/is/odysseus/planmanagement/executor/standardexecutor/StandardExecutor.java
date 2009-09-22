@@ -442,9 +442,13 @@ public class StandardExecutor extends AbstractExecutor implements
 	 */
 	@Override
 	public void startQuery(int queryID) {
-		this.logger.info("Starting query (ID: " + queryID + ").");
 		Query queryToStart = (Query) this.plan.getQuery(queryID);
-
+		if (queryToStart.isStarted()) {
+			this.logger.info("Query (ID: " + queryID + ") is already started.");
+			return ;
+		}
+		this.logger.info("Starting query (ID: " + queryID + ").");
+		
 		try {
 			this.executionPlanLock.lock();
 			setExecutionPlan(optimizer().preStartOptimization(queryToStart,
