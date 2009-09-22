@@ -26,7 +26,6 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 		return OutputMode.MODIFIED_INPUT;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T next, int port) {
 		for (Map.Entry<Byte, IPredicate<? super T>> curPriority : this.priorites
