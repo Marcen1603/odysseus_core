@@ -263,6 +263,5 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void processPunctuation(PointInTime timestamp) {
-		sendPunctuation(timestamp);
 	}
 }
