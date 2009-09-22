@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.model.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParam;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.ParamConstructFactory;
@@ -47,10 +45,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 	private Collection<DefaultSinkContent> sinks = new ArrayList<DefaultSinkContent>();
 	private Collection<DefaultPipeContent> pipes = new ArrayList<DefaultPipeContent>();
 
-	private boolean newSource = false;
-	private boolean newSourceType = false;
-	private String sourceName = "";
-	private String sourceType = "";
 	private boolean newSink = false;
 	private boolean newSinkType = false;
 	private String sinkName = "";
@@ -108,7 +102,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 			DocumentBuilder builder = docFactory.newDocumentBuilder();
 			Document doc = builder.parse(xmlFile.openStream());
 
-			getSources(doc);
 			getPipes(doc);
 			getSinks(doc);
 
@@ -120,22 +113,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 					"Error during loading resource-configuration!", ex);
 		}
 
-	}
-
-	private NodeList getSourceNodeList(Document doc) {
-		XPathFactory xPathFactory = XPathFactory.newInstance();
-		XPath xpath = xPathFactory.newXPath();
-		XPathExpression expr;
-		try {
-			expr = xpath.compile("/Operator-List/sources/source");
-			NodeList nodes = (NodeList) expr.evaluate(doc,
-					XPathConstants.NODESET);
-			return nodes;
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	private NodeList getPipeNodeList(Document doc) {
@@ -169,15 +146,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 		}
 		return null;
 	}
-
-	private void getSources(Document doc) {
-		NodeList nodes = getSourceNodeList(doc);
-		for (int i = 0; i < nodes.getLength(); i++) {
-			if(nodes.item(i).getNodeName().equals("source")) {
-				getSourceNodes(nodes.item(i));
-			}
-		}
-	}
 	
 	private void getPipes(Document doc) {
 		NodeList nodes = getPipeNodeList(doc);
@@ -193,71 +161,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			if(nodes.item(i).getNodeName().equals("sink")) {
 				getSinkNodes(nodes.item(i));
-			}
-		}
-	}
-
-	private void getSourceNodes(Node node) {
-		NodeList childNodes = node.getChildNodes();
-		if (childNodes != null) {
-			for (int i = 0; i < childNodes.getLength(); i++) {
-				if (childNodes.item(i) != null
-						&& childNodes.item(i).getNodeValue() != null
-						&& childNodes.item(i).getNodeValue().trim().length() > 0) {
-					if (node.getNodeName().equals("source-name")) {
-						sourceName = childNodes.item(i).getNodeValue();
-						newSource = true;
-					}
-				}
-				if (node.getNodeName().equals("source-type")) {
-					sourceType = childNodes.item(i).getNodeValue();
-					newSourceType = true;
-				}
-				if (node.getNodeName().equals("name")) {
-					pName = childNodes.item(i).getNodeValue();
-				}
-				if (node.getNodeName().equals("type")) {
-					pType = childNodes.item(i).getNodeValue();
-					
-				}
-				if (node.getNodeName().equals("position")) {
-					pPosition = Integer.parseInt(childNodes.item(i)
-							.getNodeValue());
-				}
-				if (node.getNodeName().equals("setter")) {
-					pSetter = childNodes.item(i).getNodeValue();
-				}
-				if (newSource && newSourceType) {
-					constructParams = new ArrayList<IParamConstruct<?>>();
-					setterParams = new ArrayList<IParamSetter<?>>();
-					source = new DefaultSourceContent(sourceName, sourceType,
-							constructParams, setterParams);
-					sources.add(source);
-					newSource = false;
-					newSourceType = false;
-				}
-				if (pPosition != null || !pSetter.isEmpty()) {
-					if (sourceParamComplete()) {
-						if (pPosition != null && source != null) {
-							sources.remove(source);
-							source.getConstructParameterList().add(
-									ParamConstructFactory.getInstance().createParam(pType, pPosition, pName));
-							pName = "";
-							pType = "";
-							pPosition = null;
-							sources.add(source);
-						} else if (!pSetter.isEmpty() && source != null) {
-							sources.remove(source);
-							source.getSetterParameterList().add(
-									ParamSetterFactory.getInstance().createParam(pType, pSetter, pName));
-							pName = "";
-							pType = "";
-							pSetter = "";
-							sources.add(source);
-						}
-					}
-				}
-				getSourceNodes(childNodes.item(i));
 			}
 		}
 	}
@@ -388,22 +291,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 				getSinkNodes(childNodes.item(i));
 			}
 		}
-	}
-
-	private boolean sourceParamComplete() {
-		if (sourceName.isEmpty()) {
-			return false;
-		} else if (pName.isEmpty()) {
-			return false;
-		} else if (pType.isEmpty()) {
-			return false;
-		} else if (pPosition == null && pSetter.isEmpty()) {
-			return false;
-		} else if (pPosition != null && !pSetter.isEmpty()) {
-			logger.warn("Parameter has Position and Setter");
-			return false;
-		}
-		return true;
 	}
 	
 	private boolean sinkParamComplete() {

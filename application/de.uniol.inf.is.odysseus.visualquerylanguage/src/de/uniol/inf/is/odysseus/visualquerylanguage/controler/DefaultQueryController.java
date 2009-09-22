@@ -189,16 +189,17 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 					if(startNodes.size() != 1) {
 						return false;
 					}
-					for (int j = 0; j < startNodes.size(); j++) {
-						operatorList.get(i).setInputAO(j, startNodes.get(j));
-					}
+						operatorList.get(i).setInputAO(0, startNodes.get(0));
+						operatorList.get(i).setInputSchema(0, startNodes.get(0).getOutputSchema());
 				}else if(operatorList.get(i) instanceof BinaryLogicalOp) {
 					if(startNodes.size() != 2) {
 						return false;
 					}
 					if(startNodes.get(0) instanceof AbstractLogicalOperator && startNodes.get(1) instanceof AbstractLogicalOperator) {
 						((BinaryLogicalOp)operatorList.get(i)).setLeftInput((AbstractLogicalOperator)startNodes.get(0));
+						((BinaryLogicalOp)operatorList.get(i)).setLeftInputSchema(((AbstractLogicalOperator)startNodes.get(0)).getOutputSchema());
 						((BinaryLogicalOp)operatorList.get(i)).setRightInput((AbstractLogicalOperator)startNodes.get(1));
+						((BinaryLogicalOp)operatorList.get(i)).setLeftInputSchema(((AbstractLogicalOperator)startNodes.get(1)).getOutputSchema());
 					}
 				}
 		}

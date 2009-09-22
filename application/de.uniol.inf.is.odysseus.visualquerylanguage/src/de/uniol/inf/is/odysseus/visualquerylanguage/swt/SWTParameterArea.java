@@ -34,6 +34,8 @@ public class SWTParameterArea {
 	private Composite comp;
 	private INodeView<INodeContent> nodeView;
 	
+	private Table table = null;
+	
 	public SWTParameterArea(Composite parent, INodeView<INodeContent> nodeView) {
 		
 		this.nodeView = nodeView;
@@ -61,15 +63,18 @@ public class SWTParameterArea {
 		Label typLabel = new Label(comp, SWT.LEFT);
 		typLabel.setText("Typ: " + content.getType());
 		
-		final Table table = new Table(comp, SWT.BORDER);
+		if(!content.isOnlySource() && (!content.getConstructParameterList().isEmpty() || !content.getSetterParameterList().isEmpty())) {
+	    	table = new Table(comp, SWT.BORDER);
+			TableColumn tc1 = new TableColumn(table, SWT.LEFT);
+		    TableColumn tc2 = new TableColumn(table, SWT.LEFT);
+		    tc1.setText("Name");
+		    tc2.setText("Wert");
+		    tc1.setWidth(70);
+		    tc2.setWidth(70);
+	    }
 		
-		TableColumn tc1 = new TableColumn(table, SWT.LEFT);
-	    TableColumn tc2 = new TableColumn(table, SWT.LEFT);
-	    tc1.setText("Name");
-	    tc2.setText("Wert");
-	    tc1.setWidth(70);
-	    tc2.setWidth(70);
 	    
+		if(table != null) {
 	    final TableEditor editor = new TableEditor(table);
 	    editor.horizontalAlignment = SWT.LEFT;
 	    editor.grabHorizontal = true;
@@ -179,6 +184,7 @@ public class SWTParameterArea {
 			}
 			scItem.setText(new String[] { sParam.getName(), value});
 			scItem.setData(sParam);
+		}
 		}
 	}
 	

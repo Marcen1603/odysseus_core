@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -15,7 +16,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultNodeModel;
@@ -55,10 +57,13 @@ import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IModelController;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
@@ -68,7 +73,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositi
 public class DefaultGraphArea extends Composite implements
 		IGraphArea<INodeContent>, IGraphModelChangeListener<INodeContent>,
 		ISelectListener<INodeView<INodeContent>> {
-	
+
 	private static final String XML_FILE = "editor_cfg/parameter.xml";
 
 	private IModelController<INodeContent> controller;
@@ -90,27 +95,22 @@ public class DefaultGraphArea extends Composite implements
 	private INodePositioner<INodeContent> positioner;
 
 	private XMLParameterParser parser = null;
-	
-	private IAdvancedExecutor executor;
-	
+
 	private Composite upperGraphArea = null;
 	SWTStatusLine status = null;
-	
+
 	private final Logger log = LoggerFactory.getLogger(DefaultGraphArea.class);
 
-	public DefaultGraphArea(Composite parent, DefaultQuery query, int style, IAdvancedExecutor exec) {
+	public DefaultGraphArea(Composite parent, DefaultQuery query, int style,
+			IAdvancedExecutor exec) {
 		super(parent, style);
-		
-		this.executor = exec;
 
-//		this.setLayout(new FormLayout());
 		GridData graphAreaData = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.FILL_VERTICAL);
 		graphAreaData.horizontalIndent = 0;
 		graphAreaData.horizontalSpan = 2;
 		this.setLayoutData(graphAreaData);
-		
-		
+
 		GridLayout gl = new GridLayout();
 		gl.numColumns = 1;
 		this.setLayout(gl);
@@ -120,21 +120,21 @@ public class DefaultGraphArea extends Composite implements
 		upperGraphArea.setLayoutData(gd);
 
 		try {
-			URL xmlFile = Activator.getContext().getBundle().getEntry(XML_FILE); 
+			URL xmlFile = Activator.getContext().getBundle().getEntry(XML_FILE);
 			this.parser = new XMLParameterParser(xmlFile);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		this.symFac = new SWTSymbolElementFactory<INodeContent>();
 		this.positioner = new SugiyamaPositioner(symFac);
-		
+
 		controller = query.getController();
 		controller.getModel().addGraphModelChangeListener(this);
 		this.viewGraph = new DefaultGraphView<INodeContent>(controller
 				.getModel());
-		
+
 		buildGraphArea();
 	}
 
@@ -157,7 +157,7 @@ public class DefaultGraphArea extends Composite implements
 				sash.getParent().layout();
 			}
 		});
-		
+
 		Composite comp = new Composite(upperGraphArea, SWT.BORDER);
 		FormData formData = new FormData();
 		formData.top = new FormAttachment(0, 0);
@@ -165,18 +165,18 @@ public class DefaultGraphArea extends Composite implements
 		formData.left = new FormAttachment(0, 0);
 		formData.right = new FormAttachment(sash, 0);
 		comp.setLayoutData(formData);
-		
+
 		status = new SWTStatusLine(this);
 		status.setText("Anfrageerstellung bereit.");
-		
-		this.renderManager = new SWTRenderManager<INodeContent>(comp,
-				status, positioner);
+
+		this.renderManager = new SWTRenderManager<INodeContent>(comp, status,
+				positioner);
 		this.renderManager.setDisplayedGraph(viewGraph);
 		renderManager.getSelector().addSelectListener(this);
 
 		// Informationsbereich von Timo
-		infoScroll = new ScrolledComposite(upperGraphArea , SWT.BORDER | SWT.V_SCROLL
-				| SWT.H_SCROLL);
+		infoScroll = new ScrolledComposite(upperGraphArea, SWT.BORDER
+				| SWT.V_SCROLL | SWT.H_SCROLL);
 		FormData infoFormData = new FormData();
 		infoFormData.top = new FormAttachment(0, 0);
 		infoFormData.bottom = new FormAttachment(100, 0);
@@ -195,10 +195,9 @@ public class DefaultGraphArea extends Composite implements
 		infoScroll.setMinSize(200, 200);
 		infoScroll.setExpandHorizontal(true);
 		infoScroll.setExpandVertical(true);
-		
-		
-		renderManager.getCanvas().setBackground(Display.getDefault().getSystemColor(
-				SWT.COLOR_WHITE));
+
+		renderManager.getCanvas().setBackground(
+				Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		renderManager.getCanvas().addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -213,8 +212,7 @@ public class DefaultGraphArea extends Composite implements
 				}
 			}
 		});
-		
-		
+
 		tree = getTree();
 		tree.addMouseListener(new MouseAdapter() {
 
@@ -232,6 +230,7 @@ public class DefaultGraphArea extends Composite implements
 		});
 		tree.addSelectionListener(new SelectionAdapter() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (tree.getSelection() != null && e.item instanceof TreeItem
@@ -242,7 +241,7 @@ public class DefaultGraphArea extends Composite implements
 					} else {
 						connectionChosen = false;
 						connectionStarted = false;
-						if (tree.getSelection()[0].getData() instanceof DefaultSourceContent) {
+						if (tree.getSelection()[0].getData() instanceof Entry) {
 							setCursor(CursorManager.dragButtonCursor("source"));
 						} else if (tree.getSelection()[0].getData() instanceof DefaultSinkContent) {
 							setCursor(CursorManager.dragButtonCursor("sink"));
@@ -255,7 +254,7 @@ public class DefaultGraphArea extends Composite implements
 				}
 			}
 		});
-		infoScroll.setMinSize( infoArea.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+		infoScroll.setMinSize(infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		infoArea.layout();
 		infoScroll.layout();
 	}
@@ -279,49 +278,98 @@ public class DefaultGraphArea extends Composite implements
 		renderManager.refreshView();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addNewNode(MouseEvent e) {
+		INodeContent con = null;
 		if (tree.getSelectionCount() != 0
 				&& !CursorManager.getIsStandardCursor()) {
-			INodeContent con = (INodeContent)tree.getSelection()[0].getData();
-			if (con != null) {
-			INodeContent content = createNewINodeContentInstance(con);	
-				if(content != null) {
-					INodeModel<INodeContent> node = new DefaultNodeModel<INodeContent>(
-							content);
-					INodeView<INodeContent> nodeView = new DefaultNodeView<INodeContent>(
-							node);
-					controller.addNode(node);
-					CursorManager.isNotConnection();
-					nodeView.setPosition(this.getRealNodePosition(new Vector(e.x, e.y)));
-					if (content.isOnlySource()) {
-						if(new SWTImageSymbolElement<INodeContent>("source") != null) {
-							nodeView.getSymbolContainer().add(
-									new SWTImageSymbolElement<INodeContent>("source"));
-						}else {
-							nodeView.getSymbolContainer().add(new SWTFillCircleSymbolElement<INodeContent>(new Color(Display.getDefault(),
-									new RGB(0, 0, 0))));
-						}
-					} else if (content.isOnlySink()) {
-						if(new SWTImageSymbolElement<INodeContent>("sink") != null) {
-							nodeView.getSymbolContainer().add(
-									new SWTImageSymbolElement<INodeContent>("sink"));
-						}else {
-							nodeView.getSymbolContainer().add(new SWTFillCircleSymbolElement<INodeContent>(new Color(Display.getDefault(),
-									new RGB(0, 0, 0))));
-						}
-					} else if (content.isPipe()) {
-						if(new SWTImageSymbolElement<INodeContent>("pipe") != null) {
-							nodeView.getSymbolContainer().add(
-									new SWTImageSymbolElement<INodeContent>("pipe"));
-						}else {
-							nodeView.getSymbolContainer().add(new SWTFillCircleSymbolElement<INodeContent>(new Color(Display.getDefault(),
-									new RGB(0, 0, 0))));
-						}
+			if (tree.getSelection()[0].getData() instanceof Entry){
+				Collection<IParamConstruct<?>> conParamList = new ArrayList<IParamConstruct<?>>();
+				DefaultParamConstruct<String> param = new DefaultParamConstruct<String>("de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource", 0, "URI");
+				param.setValue((String)((Entry)(tree.getSelection()[0].getData())).getKey());
+				conParamList.add(param);
+				Collection<IParamSetter<?>> setParamList = new ArrayList<IParamSetter<?>>();
+				con = new DefaultSourceContent((String)((Entry)tree.getSelection()[0].getData()).getKey(), "de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO", conParamList, setParamList );
+			}
+			if (con != null || tree.getSelection()[0].getData() instanceof INodeContent) {
+				if(con == null) {
+					con = (INodeContent) tree.getSelection()[0]
+						.getData();
+				}
+				if (con != null) {
+					INodeContent content = null;
+					if(!con.isOnlySource()) {
+						 content = createNewINodeContentInstance(con);
+					}else {
+						content = con;
 					}
-					viewGraph.insertViewedNode(nodeView);
-					if ((e.stateMask & SWT.SHIFT) == 0
-							&& !CursorManager.getIsConnection()) {
-						this.setCursor(CursorManager.setStandardCursor());
+					if (content != null) {
+						INodeModel<INodeContent> node = new DefaultNodeModel<INodeContent>(
+								content);
+						INodeView<INodeContent> nodeView = new DefaultNodeView<INodeContent>(
+								node);
+						controller.addNode(node);
+						CursorManager.isNotConnection();
+						nodeView.setPosition(this
+								.getRealNodePosition(new Vector(e.x, e.y)));
+						if (content.isOnlySource()) {
+							if (new SWTImageSymbolElement<INodeContent>(
+									"source") != null) {
+								nodeView
+										.getSymbolContainer()
+										.add(
+												new SWTImageSymbolElement<INodeContent>(
+														"source"));
+							} else {
+								nodeView
+										.getSymbolContainer()
+										.add(
+												new SWTFillCircleSymbolElement<INodeContent>(
+														new Color(
+																Display
+																		.getDefault(),
+																new RGB(0, 0, 0))));
+							}
+						} else if (content.isOnlySink()) {
+							if (new SWTImageSymbolElement<INodeContent>("sink") != null) {
+								nodeView
+										.getSymbolContainer()
+										.add(
+												new SWTImageSymbolElement<INodeContent>(
+														"sink"));
+							} else {
+								nodeView
+										.getSymbolContainer()
+										.add(
+												new SWTFillCircleSymbolElement<INodeContent>(
+														new Color(
+																Display
+																		.getDefault(),
+																new RGB(0, 0, 0))));
+							}
+						} else if (content.isPipe()) {
+							if (new SWTImageSymbolElement<INodeContent>("pipe") != null) {
+								nodeView
+										.getSymbolContainer()
+										.add(
+												new SWTImageSymbolElement<INodeContent>(
+														"pipe"));
+							} else {
+								nodeView
+										.getSymbolContainer()
+										.add(
+												new SWTFillCircleSymbolElement<INodeContent>(
+														new Color(
+																Display
+																		.getDefault(),
+																new RGB(0, 0, 0))));
+							}
+						}
+						viewGraph.insertViewedNode(nodeView);
+						if ((e.stateMask & SWT.SHIFT) == 0
+								&& !CursorManager.getIsConnection()) {
+							this.setCursor(CursorManager.setStandardCursor());
+						}
 					}
 				}
 			}
@@ -382,7 +430,7 @@ public class DefaultGraphArea extends Composite implements
 								CursorManager.isNotConnection();
 							}
 						}
-					}else {
+					} else {
 						connNodeList = new ArrayList<INodeView<INodeContent>>(
 								renderManager.getSelector().getSelected());
 					}
@@ -400,10 +448,11 @@ public class DefaultGraphArea extends Composite implements
 		TreeItem item;
 		TreeItem sources = new TreeItem(singleTree, 0);
 		sources.setText("Quellen");
-		for (DefaultSourceContent source : parser.getSources()) {
+		for (Entry<String, ILogicalOperator> entry : DataDictionary
+				.getInstance().getViews()) {
 			item = new TreeItem(sources, 0);
-			item.setData(source);
-			item.setText(source.getName());
+			item.setData(entry);
+			item.setText(entry.getKey());
 		}
 		TreeItem sinks = new TreeItem(singleTree, 0);
 		sinks.setText("Senken");
@@ -447,40 +496,42 @@ public class DefaultGraphArea extends Composite implements
 		connectionChosen = true;
 		renderManager.getSelector().unselectAll();
 	}
-	
-	private void addParameterArea ( INodeView<INodeContent> nodeView ) {
-		if( !parameterAreasShown.containsKey( nodeView )) {
-			
-			SWTParameterArea p = new SWTParameterArea(infoArea, (DefaultNodeView<INodeContent>)nodeView );
-			parameterAreasShown.put( nodeView, p );
-			log.debug( "ParameterArea for " + nodeView + " created" );
+
+	private void addParameterArea(INodeView<INodeContent> nodeView) {
+		if (!parameterAreasShown.containsKey(nodeView)) {
+
+			SWTParameterArea p = new SWTParameterArea(infoArea,
+					(DefaultNodeView<INodeContent>) nodeView);
+			parameterAreasShown.put(nodeView, p);
+			log.debug("ParameterArea for " + nodeView + " created");
 		}
 	}
-	
-	private void removeParameterArea( INodeView<INodeContent> unselected ) {
-		if( parameterAreasShown.containsKey( unselected )) {
-			SWTParameterArea panel = parameterAreasShown.get( unselected );
+
+	private void removeParameterArea(INodeView<INodeContent> unselected) {
+		if (parameterAreasShown.containsKey(unselected)) {
+			SWTParameterArea panel = parameterAreasShown.get(unselected);
 			panel.dispose();
-			parameterAreasShown.remove( unselected );
-			
-			log.debug( "ParameterArea for " + unselected + " destroyed" );
+			parameterAreasShown.remove(unselected);
+
+			log.debug("ParameterArea for " + unselected + " destroyed");
 		}
 	}
 
 	@Override
 	public void selectObject(ISelector<INodeView<INodeContent>> sender,
 			Collection<? extends INodeView<INodeContent>> selected) {
-		for (INodeView<INodeContent> iNodeView : renderManager.getSelector().getSelected()) {
+		for (INodeView<INodeContent> iNodeView : renderManager.getSelector()
+				.getSelected()) {
 			addParameterArea(iNodeView);
 		}
-		infoScroll.setMinSize( infoArea.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+		infoScroll.setMinSize(infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		infoArea.layout();
 		infoScroll.layout();
 		if (connectionChosen) {
 			CursorManager.connectionCursor(true, "connection");
 			addNewConnection();
 		}
-		
+
 	}
 
 	@Override
@@ -489,30 +540,40 @@ public class DefaultGraphArea extends Composite implements
 		for (INodeView<INodeContent> iNodeView : unselected) {
 			removeParameterArea(iNodeView);
 		}
-		infoScroll.setMinSize( infoArea.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+		infoScroll.setMinSize(infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		infoArea.layout();
 		infoScroll.layout();
 	}
-	
-	
+
 	// Canvaskoordinaten in Graphkoordinaten umrechnen
 	private Vector getRealNodePosition(Vector v) {
-		return v.div(renderManager.getZoomFactor()).sub(renderManager.getGraphOffset());
+		return v.div(renderManager.getZoomFactor()).sub(
+				renderManager.getGraphOffset());
 	}
-	
+
 	private INodeContent createNewINodeContentInstance(INodeContent con) {
 		INodeContent content = null;
-		if(con instanceof DefaultSourceContent) {
-			content = new DefaultSourceContent(con.getName(), con.getType(), con.getNewConstructParameterListInstance(), con.getNewSetterParameterListInstance());
-		}else if(con instanceof DefaultSinkContent) {
-			content = new DefaultSinkContent(con.getName(), con.getType(), con.getNewConstructParameterListInstance(), con.getNewSetterParameterListInstance());
-		}else if(con instanceof DefaultPipeContent) {
-			content = new DefaultPipeContent(con.getName(), con.getType(), con.getNewConstructParameterListInstance(), con.getNewSetterParameterListInstance());
+		if (con instanceof DefaultSourceContent) {
+			content = new DefaultSourceContent(con.getName(), con.getType(),
+					con.getNewConstructParameterListInstance(), con
+							.getNewSetterParameterListInstance());
+		} else if (con instanceof DefaultSinkContent) {
+			content = new DefaultSinkContent(con.getName(), con.getType(), con
+					.getNewConstructParameterListInstance(), con
+					.getNewSetterParameterListInstance());
+		} else if (con instanceof DefaultPipeContent) {
+			content = new DefaultPipeContent(con.getName(), con.getType(), con
+					.getNewConstructParameterListInstance(), con
+					.getNewSetterParameterListInstance());
 		}
 		return content;
 	}
-	
+
 	public SWTStatusLine getStatusLine() {
 		return this.status;
+	}
+	
+	public Tree getCreatedTree() {
+		return this.tree;
 	}
 }

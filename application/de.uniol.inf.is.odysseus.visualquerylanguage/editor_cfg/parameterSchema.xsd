@@ -29,16 +29,6 @@
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="source-type">
-		<xsd:sequence>
-			<xsd:element name="source-name" type="xsd:string"
-				minOccurs="1" maxOccurs="1"/>
-			<xsd:element name="source-type" type="xsd:string"/>
-			<xsd:element name="cparams" type="constructor-param-list" minOccurs="0" maxOccurs="1"/>
-			<xsd:element name="sparams" type="setter-param-list" minOccurs="0" maxOccurs="1"/>
-		</xsd:sequence>
-	</xsd:complexType>
-
 	<xsd:complexType name="pipe-type">
 		<xsd:sequence>
 			<xsd:element name="pipe-name" type="xsd:string"
@@ -64,18 +54,6 @@
 	<xsd:element name="Operator-List">
 		<xsd:complexType>
 			<xsd:all>
-				<xsd:element name="sources">
-					<xsd:complexType>
-						<xsd:sequence maxOccurs="unbounded">
-							<xsd:element name="source" type="source-type" />
-						</xsd:sequence>
-					</xsd:complexType>
-					<xsd:unique name="unique-source">
-						<xsd:selector xpath="source" />
-						<xsd:field xpath="source-name" />
-					</xsd:unique>
-				</xsd:element>
-
 
 				<xsd:element name="pipes">
 					<xsd:complexType>
