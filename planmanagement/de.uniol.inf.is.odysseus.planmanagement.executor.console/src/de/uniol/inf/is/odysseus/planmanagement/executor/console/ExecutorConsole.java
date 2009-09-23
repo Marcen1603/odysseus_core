@@ -341,6 +341,15 @@ public class ExecutorConsole implements CommandProvider,
 				.println("add 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'");
 		ci.println("add 'SELECT (a * 2) as value FROM test WHERE a > 2' S");
 		ci.println("");
+		
+		ci.println("nms Register NIO Nexmark Sources on Port");
+		ci.println("");
+
+		ci.println("nmsn Register Nexmark Sources on Port");
+		ci.println("");
+		
+		ci.println("nmq [0-5]|* [nio] Execute Nexmark Queries");
+		ci.println("");
 	}
 
 	public void _dumpe(CommandInterpreter ci) {
@@ -459,7 +468,11 @@ public class ExecutorConsole implements CommandProvider,
 	public void _nmsN(CommandInterpreter ci) {
 		_nexmarkSourcesNIO(ci);
 	}
-
+	
+	public void _nmsn(CommandInterpreter ci){
+		_nexmarkSourcesNIO(ci);
+	}
+	
 	public void _nexmarkSourcesNIO(CommandInterpreter ci) {
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
