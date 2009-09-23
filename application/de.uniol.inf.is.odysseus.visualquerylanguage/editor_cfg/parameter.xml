@@ -6,6 +6,7 @@
 		<pipe>
 			<pipe-name>Select</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO</pipe-type>
+			<pipe-image>Select</pipe-image>
 			<sparams>
 				<setterParameter>
 					<name>Output</name>
@@ -43,6 +44,7 @@
 		<pipe>
 			<pipe-name>Join</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO</pipe-type>
+			<pipe-image>Join</pipe-image>
 		</pipe>
 		
 	</pipes>
@@ -51,6 +53,7 @@
 		<sink>
 			<sink-name>TestSink1</sink-name>
 			<sink-type>Type1</sink-type>
+			<sink-image>sink</sink-image>
 			<cparams>
 				<constructParameter>
 					<name>Param</name>
@@ -63,6 +66,7 @@
 		<sink>
 			<sink-name>TestSink2</sink-name>
 			<sink-type>Type2</sink-type>
+			<sink-image>sink</sink-image>
 		</sink>	
 	</sinks>
 

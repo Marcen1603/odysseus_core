@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.pa
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -116,6 +117,7 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 		Class[] constructParameters = null;
 		Constructor con = null;
 		ILogicalOperator logOp = null;
+		WindowAO windowOp = null;
 
 		ArrayList<Object> parameterValues = null;
 		Object paramObj = new Object();
@@ -149,11 +151,19 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 							(String) parameterValues.get(0));
 					logOp = (ILogicalOperator) con.newInstance(source);
 				} else {
-					logOp = (ILogicalOperator) con.newInstance(parameterValues);
+					if(clazz.newInstance() instanceof WindowAO) {
+						windowOp = (WindowAO) con.newInstance(parameterValues);
+					}else {
+						logOp = (ILogicalOperator) con.newInstance(parameterValues);
+					}
 					
 				}
 			} else {
-				logOp = (ILogicalOperator) clazz.newInstance();
+				if(clazz.newInstance() instanceof WindowAO) {
+					windowOp = (WindowAO) clazz.newInstance();
+				}else {
+					logOp = (ILogicalOperator) clazz.newInstance();
+				}
 			}
 			for (IParamSetter<?> param : content.getSetterParameterList()) {
 				if(param.getValue() != null) {
@@ -161,8 +171,18 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 					method.invoke(logOp, new Object[]{param.getValue()});
 				}
 			}
-			opList.add(logOp);
-			root = logOp;
+			if(windowOp != null) {
+				opList.add(windowOp);
+			}else {
+				opList.add(logOp);
+			}
+			if(nodeModel.getConnectionsAsStartNode().isEmpty()) {
+				if(windowOp != null) {
+					root = windowOp;
+				}else {
+					root = logOp;
+				}
+			}
 		}
 		
 		if(!buildTree(opList, modelList)) {

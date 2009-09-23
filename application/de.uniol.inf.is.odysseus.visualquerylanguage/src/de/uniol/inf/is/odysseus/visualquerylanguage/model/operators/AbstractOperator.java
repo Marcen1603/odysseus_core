@@ -3,17 +3,21 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.model.operators;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.swt.graphics.Image;
+
 public abstract class AbstractOperator implements INodeContent{
 	
 	private String name;
 	private String typ;
+	private Image image;
 	Collection<IParamConstruct<?>> constructParameterList = new ArrayList<IParamConstruct<?>>();
 	Collection<IParamSetter<?>> setterParameterList = new ArrayList<IParamSetter<?>>();
 	private Collection<INodeContentChangeListener<INodeContent>> listeners = new ArrayList<INodeContentChangeListener<INodeContent>>();
 	
-	public AbstractOperator(String name, String typ, Collection<IParamConstruct<?>> constructParameters, Collection<IParamSetter<?>> setterParameters) {
+	public AbstractOperator(String name, String typ, Image image, Collection<IParamConstruct<?>> constructParameters, Collection<IParamSetter<?>> setterParameters) {
 		this.name = name;
 		this.typ = typ;
+		this.image = image;
 		this.constructParameterList = constructParameters;
 		this.setterParameterList = setterParameters;
 	}
@@ -84,6 +88,11 @@ public abstract class AbstractOperator implements INodeContent{
 			list.add(ParamSetterFactory.getInstance().createParam(iParamSetter.getType(), iParamSetter.getSetter(), iParamSetter.getName()));
 		}
 		return list;
+	}
+	
+	@Override
+	public Image getImage() {
+		return image;
 	}
 	
 }

@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.viewer.model.graph.IGraphModelChangeListener;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.viewer.swt.SWTStatusLine;
 import de.uniol.inf.is.odysseus.viewer.swt.render.SWTRenderManager;
+import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.viewer.swt.select.ISelectListener;
 import de.uniol.inf.is.odysseus.viewer.swt.select.ISelector;
 import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTArrowSymbolElement;
@@ -283,24 +284,32 @@ public class DefaultGraphArea extends Composite implements
 		INodeContent con = null;
 		if (tree.getSelectionCount() != 0
 				&& !CursorManager.getIsStandardCursor()) {
-			if (tree.getSelection()[0].getData() instanceof Entry){
+			if (tree.getSelection()[0].getData() instanceof Entry) {
 				Collection<IParamConstruct<?>> conParamList = new ArrayList<IParamConstruct<?>>();
-				DefaultParamConstruct<String> param = new DefaultParamConstruct<String>("de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource", 0, "URI");
-				param.setValue((String)((Entry)(tree.getSelection()[0].getData())).getKey());
+				DefaultParamConstruct<String> param = new DefaultParamConstruct<String>(
+						"de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource",
+						0, "URI");
+				param.setValue((String) ((Entry) (tree.getSelection()[0]
+						.getData())).getKey());
 				conParamList.add(param);
 				Collection<IParamSetter<?>> setParamList = new ArrayList<IParamSetter<?>>();
-				con = new DefaultSourceContent((String)((Entry)tree.getSelection()[0].getData()).getKey(), "de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO", conParamList, setParamList );
+				con = new DefaultSourceContent(
+						(String) ((Entry) tree.getSelection()[0].getData())
+								.getKey(),
+						"de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO",
+						SWTResourceManager.getInstance().getImage("Source"),
+						conParamList, setParamList);
 			}
-			if (con != null || tree.getSelection()[0].getData() instanceof INodeContent) {
-				if(con == null) {
-					con = (INodeContent) tree.getSelection()[0]
-						.getData();
+			if (con != null
+					|| tree.getSelection()[0].getData() instanceof INodeContent) {
+				if (con == null) {
+					con = (INodeContent) tree.getSelection()[0].getData();
 				}
 				if (con != null) {
 					INodeContent content = null;
-					if(!con.isOnlySource()) {
-						 content = createNewINodeContentInstance(con);
-					}else {
+					if (!con.isOnlySource()) {
+						content = createNewINodeContentInstance(con);
+					} else {
 						content = con;
 					}
 					if (content != null) {
@@ -555,16 +564,16 @@ public class DefaultGraphArea extends Composite implements
 		INodeContent content = null;
 		if (con instanceof DefaultSourceContent) {
 			content = new DefaultSourceContent(con.getName(), con.getType(),
-					con.getNewConstructParameterListInstance(), con
-							.getNewSetterParameterListInstance());
+					con.getImage(), con.getNewConstructParameterListInstance(),
+					con.getNewSetterParameterListInstance());
 		} else if (con instanceof DefaultSinkContent) {
 			content = new DefaultSinkContent(con.getName(), con.getType(), con
-					.getNewConstructParameterListInstance(), con
-					.getNewSetterParameterListInstance());
+					.getImage(), con.getNewConstructParameterListInstance(),
+					con.getNewSetterParameterListInstance());
 		} else if (con instanceof DefaultPipeContent) {
 			content = new DefaultPipeContent(con.getName(), con.getType(), con
-					.getNewConstructParameterListInstance(), con
-					.getNewSetterParameterListInstance());
+					.getImage(), con.getNewConstructParameterListInstance(),
+					con.getNewSetterParameterListInstance());
 		}
 		return content;
 	}
@@ -572,8 +581,14 @@ public class DefaultGraphArea extends Composite implements
 	public SWTStatusLine getStatusLine() {
 		return this.status;
 	}
-	
+
 	public Tree getCreatedTree() {
 		return this.tree;
+	}
+
+	public void addNewSource() {
+		tree = getTree();
+		infoScroll.layout();
+		infoArea.layout();
 	}
 }

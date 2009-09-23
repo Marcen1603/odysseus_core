@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IQueryController;
@@ -50,6 +52,7 @@ public class SWTMainWindow {
 
 		shell = new Shell(display);
 		shell.setText("Visuelle Anfragesprache von Nico Klein");
+		shell.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/2 - shell.getSize().x/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - shell.getSize().y/2);
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
@@ -129,6 +132,8 @@ public class SWTMainWindow {
 
 		// Toolbar
 		ToolBar tools = new ToolBar(shell, SWT.FLAT);
+		
+		
 		ToolItem newQueryItem = new ToolItem(tools, SWT.PUSH);
 		newQueryItem.setImage(SWTResourceManager.getInstance().getImage(
 				"newQuery"));
@@ -137,6 +142,18 @@ public class SWTMainWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				createNewGraphTab();
+			}
+		});
+		
+		ToolItem newSourceItem = new ToolItem(tools, SWT.PUSH);
+		newSourceItem.setImage(SWTResourceManager.getInstance().getImage(
+				"newQuery"));
+		newSourceItem.setToolTipText("Neue Quelle hinzufügen");
+		newSourceItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				@SuppressWarnings("unused")
+				SWTSourceCreator newSource = new SWTSourceCreator(shell, executor);
 			}
 		});
 
@@ -226,5 +243,4 @@ public class SWTMainWindow {
 		// queryMap.put(queryCounter, query);
 		tabFolder.setSelection(item);
 	}
-
 }

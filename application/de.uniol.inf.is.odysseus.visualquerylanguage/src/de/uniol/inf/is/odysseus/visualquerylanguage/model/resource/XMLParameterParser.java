@@ -18,6 +18,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.eclipse.swt.graphics.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -25,6 +26,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
@@ -49,10 +51,12 @@ public class XMLParameterParser implements IParameterConfiguration {
 	private boolean newSinkType = false;
 	private String sinkName = "";
 	private String sinkType = "";
+	private String sinkImage = "";
 	private boolean newPipe = false;
 	private boolean newPipeType = false;
 	private String pipeName = "";
 	private String pipeType = "";
+	private String pipeImage = "";
 	private String pName = "";
 	private String pType = "";
 	private Integer pPosition = null;
@@ -177,27 +181,26 @@ public class XMLParameterParser implements IParameterConfiguration {
 						newPipe = true;
 					}
 				}
-				if (node.getNodeName().equals("pipe-type")) {
+				if(node.getNodeName().equals("pipe-image")) {
+					pipeImage = childNodes.item(i).getNodeValue();
+				}else if (node.getNodeName().equals("pipe-type")) {
 					pipeType = childNodes.item(i).getNodeValue();
 					newPipeType = true;
-				}
-				if (node.getNodeName().equals("name")) {
+				}else if (node.getNodeName().equals("name")) {
 					pName = childNodes.item(i).getNodeValue();
-				}
-				if (node.getNodeName().equals("type")) {
+				}else if (node.getNodeName().equals("type")) {
 					pType = childNodes.item(i).getNodeValue();
-				}
-				if (node.getNodeName().equals("position")) {
+				}else if (node.getNodeName().equals("position")) {
 					pPosition = Integer.parseInt(childNodes.item(i)
 							.getNodeValue());
-				}
-				if (node.getNodeName().equals("setter")) {
+				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
 				}
 				if (newPipe && newPipeType) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
 					setterParams = new ArrayList<IParamSetter<?>>();
-					pipe = new DefaultPipeContent(pipeName, pipeType,
+					Image image = SWTResourceManager.getInstance().getImage(pipeImage);
+					pipe = new DefaultPipeContent(pipeName, pipeType, image, 
 							constructParams, setterParams);
 					pipes.add(pipe);
 					newPipe = false;
@@ -241,27 +244,26 @@ public class XMLParameterParser implements IParameterConfiguration {
 						newSink = true;
 					}
 				}
-				if (node.getNodeName().equals("sink-type")) {
+				if(node.getNodeName().equals("sink-image")) {
+					sinkImage = childNodes.item(i).getNodeValue();
+				}else if (node.getNodeName().equals("sink-type")) {
 					sinkType = childNodes.item(i).getNodeValue();
 					newSinkType = true;
-				}
-				if (node.getNodeName().equals("name")) {
+				}else if (node.getNodeName().equals("name")) {
 					pName = childNodes.item(i).getNodeValue();
-				}
-				if (node.getNodeName().equals("type")) {
+				}else if (node.getNodeName().equals("type")) {
 					pType = childNodes.item(i).getNodeValue();
-				}
-				if (node.getNodeName().equals("position")) {
+				}else if (node.getNodeName().equals("position")) {
 					pPosition = Integer.parseInt(childNodes.item(i)
 							.getNodeValue());
-				}
-				if (node.getNodeName().equals("setter")) {
+				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
 				}
 				if (newSink && newSinkType) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
 					setterParams = new ArrayList<IParamSetter<?>>();
-					sink = new DefaultSinkContent(sinkName, sinkType,
+					Image image = SWTResourceManager.getInstance().getImage(sinkImage);
+					sink = new DefaultSinkContent(sinkName, sinkType, image,
 							constructParams, setterParams);
 					sinks.add(sink);
 					newSink = false;

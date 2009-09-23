@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.model.operators;
 
 import java.util.Collection;
 
+import org.eclipse.swt.graphics.Image;
+
 public class DefaultSourceContent extends AbstractOperator{
 
-	public DefaultSourceContent(String name, String typ,
+	public DefaultSourceContent(String name, String typ, Image image,
 			Collection<IParamConstruct<?>> constructParameters,
 			Collection<IParamSetter<?>> setterParameters) {
-		super(name, typ, constructParameters, setterParameters);
+		super(name, typ, image, constructParameters, setterParameters);
 		// TODO Auto-generated constructor stub
 	}
 
