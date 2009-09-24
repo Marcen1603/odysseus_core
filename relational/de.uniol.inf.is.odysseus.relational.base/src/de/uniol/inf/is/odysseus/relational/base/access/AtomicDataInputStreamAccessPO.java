@@ -7,8 +7,7 @@ import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IntegerHandler;
@@ -22,10 +21,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Jonas Jacobi
  */
 public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
-		AbstractSource<RelationalTuple<M>> implements
-		IIterableSource<RelationalTuple<M>>{//, IP2PInputPO 
+		AbstractIterableSource<RelationalTuple<M>> {
 
-	// private IMetadataFactory<M, RelationalTuple<M>> metadataFactory;
 	final private String hostName;
 	final private int port;
 	private ObjectInputStream channel;
@@ -119,8 +116,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 						this.channel = new ObjectInputStream(s.getInputStream());
 					} catch (Exception e) {
 						// throw new OpenFailedException(e.getMessage());
-						System.err
-								.println("Konnte Quelle nicht öffnen");
+						System.err.println("Konnte Quelle nicht öffnen");
 						try {
 							Thread.sleep(5000);
 						} catch (InterruptedException e1) {
@@ -170,12 +166,12 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	// this.metadataFactory = metadataFactory;
 	// }
 
-//	public boolean isP2P() {
-//		return p2p;
-//	}
-//
-//	public void setP2P(boolean p2p) {
-//		this.p2p = p2p;
-//	}
+	// public boolean isP2P() {
+	// return p2p;
+	// }
+	//
+	// public void setP2P(boolean p2p) {
+	// this.p2p = p2p;
+	// }
 
 }

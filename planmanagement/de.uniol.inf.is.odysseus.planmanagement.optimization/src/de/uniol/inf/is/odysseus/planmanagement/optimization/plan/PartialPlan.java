@@ -57,7 +57,7 @@ public class PartialPlan implements IPartialPlan {
 	 *            Owner which have IDs.
 	 * @return ","-separated string of the owner IDs.
 	 */
-	private String getOwnerIDs(ArrayList<IOperatorOwner> owner) {
+	private String getOwnerIDs(List<IOperatorOwner> owner) {
 		String result = "";
 		for (IOperatorOwner iOperatorOwner : owner) {
 			if (result != "") {

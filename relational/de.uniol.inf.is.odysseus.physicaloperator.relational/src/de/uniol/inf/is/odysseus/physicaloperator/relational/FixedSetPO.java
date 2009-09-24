@@ -5,13 +5,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
 
 
 public final class FixedSetPO<T extends IMetaAttributeContainer<? extends IClone>> extends
-		AbstractSource<T> implements
-		IIterableSource<T> {
+		AbstractIterableSource<T>{
 
 	private final T[] tuples;
 	private int index;
@@ -19,13 +17,12 @@ public final class FixedSetPO<T extends IMetaAttributeContainer<? extends IClone
 
 	public FixedSetPO(T... tuples) {
 		this.tuples = tuples;
-		this.isDone = new AtomicBoolean();
+		this.isDone = new AtomicBoolean(false);
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		index = 0;
-		this.isDone.set(false);
 	}
 
 	@Override

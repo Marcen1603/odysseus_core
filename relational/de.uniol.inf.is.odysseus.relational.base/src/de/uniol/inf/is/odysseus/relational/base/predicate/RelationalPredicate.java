@@ -30,6 +30,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		this.expression = expression;
 	}
 
+	@Override
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
 		List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 		this.attributePositions = new int[neededAttributes.size()];

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
 /**

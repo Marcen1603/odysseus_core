@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.ByteBufferReceiverPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.IdentityTransformation;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.InputStreamAccessPO;
 
 /**
  * @author Marco Grawunder

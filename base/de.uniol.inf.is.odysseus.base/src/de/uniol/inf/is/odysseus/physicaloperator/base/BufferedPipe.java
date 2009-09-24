@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 /**
  * @author Jonas Jacobi
  */
-public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
+public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
 
 	protected LinkedList<T> buffer = new LinkedList<T>();
@@ -22,8 +22,8 @@ public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
 	public BufferedPipe() {
 		super();
 		final BufferedPipe<T> t = this;
-		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,
-				"selectivity", 1d));
+		this.addMonitoringData("selectivity",
+				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 	}
 
 	@Override
@@ -36,11 +36,7 @@ public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
 	final public boolean hasNext() {
 		if (!isOpen())
 			return false;
-		boolean isEmpty;
-		synchronized (this.buffer) {
-			isEmpty = buffer.isEmpty();
-		}
-		return !isEmpty;
+		return !buffer.isEmpty();
 	}
 
 	@Override
@@ -74,8 +70,7 @@ public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		synchronized (this.buffer) {
@@ -95,6 +90,7 @@ public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
 	@Override
 	public void transferNextBatch(int count) {
 		List<T> out;
+		//FIXME fehler, weil ueber falsches objekt synchronisiert wird
 		synchronized (this.buffer) {
 			if (count == this.buffer.size()) {
 				out = this.buffer;
@@ -115,6 +111,5 @@ public class BufferedPipe<T extends IClone> extends AbstractPipe<T, T>
 			propagateDone();
 		}
 	}
-
 
 }

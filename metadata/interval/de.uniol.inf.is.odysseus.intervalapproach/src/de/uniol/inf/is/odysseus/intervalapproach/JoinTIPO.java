@@ -190,10 +190,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	}
 
 	protected boolean isDone() {
-		if (getsubscribedTo(0).done) {
-			return getsubscribedTo(1).done || areas[0].isEmpty();
+		if (getSubscribedTo(0).done) {
+			return getSubscribedTo(1).done || areas[0].isEmpty();
 		} else {
-			return getsubscribedTo(0).done && areas[1].isEmpty();
+			return getSubscribedTo(0).done && areas[1].isEmpty();
 		}
 	}
 

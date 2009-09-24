@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.GroupingHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Evaluator;
@@ -28,14 +27,21 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	private List<SDFAttribute> grAttribs;
 	private Map<FESortedPair<SDFAttribute, AggregateFunction>, Integer> aggrOutputPos = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Integer>();
 	private Map<SDFAttribute, Integer> groupOutputPos = new HashMap<SDFAttribute, Integer>();
+	final private SDFAttributeList inputSchema;
+	final private SDFAttributeList outputSchema;
+	final private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations;
 	// Da Initializer, Evaluator und Merger auf der selben Klasse basieren,
 	// reicht hier eine Map
 	//TODO lieber eine factory uebergeben, die e.g. immer die selben instanzen liefert, dann kann auf einiges
 	//gecaste verzichtet werden, weil die typinformationen vorhanden sind
 	static private Map<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple>> fMap = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple>>();
 
-	public RelationalTupleGroupingHelper(AggregateAO aggregateAO) {
-		super(aggregateAO);
+	public RelationalTupleGroupingHelper(SDFAttributeList inputSchema, SDFAttributeList outputSchema, List<SDFAttribute> groupingAttributes, Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
+		super();
+		this.grAttribs = groupingAttributes;
+		this.inputSchema = inputSchema;
+		this.outputSchema = outputSchema;
+		this.aggregations = aggregations;
 	}
 
 	@Override
@@ -58,11 +64,10 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 
 	@Override
 	public void init() {
-		grAttribs = getAggregateAO().getGroupingAttributes();
 		if (grAttribs != null && grAttribs.size() > 0) {
 			gRestrict = new int[grAttribs.size()];
 			for (int i = 0; i < grAttribs.size(); i++) {
-				gRestrict[i] = getAggregateAO().getInputSchema().indexOf(
+				gRestrict[i] = inputSchema.indexOf(
 						grAttribs.get(i));
 			}
 		}
@@ -74,9 +79,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	private int getOutputPos(FESortedPair<SDFAttribute, AggregateFunction> p) {
 		Integer pos = aggrOutputPos.get(p);
 		if (pos == null) {
-			SDFAttributeList outputSchema = getAggregateAO().getOutputSchema();
-			Map<AggregateFunction, SDFAttribute> funcs = getAggregateAO()
-					.getAggregationFunctions(p.getE1());
+			Map<AggregateFunction, SDFAttribute> funcs = aggregations.get(p.getE1());
 			SDFAttribute outAttr = funcs.get(p.getE2());
 			pos = outputSchema.indexOf(outAttr);
 			aggrOutputPos.put(p, pos);
@@ -87,7 +90,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	private int getOutputPos(SDFAttribute attribute) {
 		Integer pos = groupOutputPos.get(attribute);
 		if (pos == null) {
-			pos = getAggregateAO().getOutputSchema().indexOf(attribute);
+			pos = outputSchema.indexOf(attribute);
 			groupOutputPos.put(attribute, pos);
 		}
 		return pos;
@@ -96,8 +99,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	@Override
 	public RelationalTuple<T> createOutputElement(Integer groupID,
 			PairMap<SDFAttribute, AggregateFunction, RelationalTuple<T>, ?> r) {
-		RelationalTuple returnTuple = new RelationalTuple(getAggregateAO()
-				.getOutputSchema());
+		RelationalTuple<T> returnTuple = new RelationalTuple<T>(outputSchema);
 
 		// in r stecken alle Aggregate drin
 		// notwendig: Finde die Ziel-Position in dem returnTuple
@@ -109,9 +111,9 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		}
 
 		// Jetzt die Gruppierungsattribute
-		RelationalTuple gruppAttr = tupleMap.get(groupID);
+		RelationalTuple<T> gruppAttr = tupleMap.get(groupID);
 		int groupTupPos = 0;
-		for (SDFAttribute ga : getAggregateAO().getGroupingAttributes()) {
+		for (SDFAttribute ga : grAttribs) {
 			int pos = getOutputPos(ga);
 			returnTuple
 					.setAttribute(pos, gruppAttr.getAttribute(groupTupPos++));
@@ -150,8 +152,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 			FESortedPair<SDFAttribute, AggregateFunction> p) {
 		Evaluator<RelationalTuple> eval = fMap.get(p);
 		if (eval == null) {
-			eval = createAggFunction(p.getE2(), getAggregateAO()
-					.getInputSchema().indexOf(p.getE1()));
+			eval = createAggFunction(p.getE2(), inputSchema.indexOf(p.getE1()));
 			fMap.put(p, eval);
 		}
 		return (Evaluator<RelationalTuple<T>>) (Evaluator) eval;

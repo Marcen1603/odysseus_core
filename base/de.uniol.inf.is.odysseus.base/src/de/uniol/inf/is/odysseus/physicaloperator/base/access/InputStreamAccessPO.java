@@ -8,11 +8,10 @@ import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
 
 public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> extends
-		AbstractSource<Out> implements IIterableSource<Out>{//, IP2PInputPO {
+		AbstractIterableSource<Out>{
 
 	private String host;
 	private int port;

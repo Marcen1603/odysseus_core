@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
@@ -35,7 +36,11 @@ public class ConsoleFunctions {
 		for (int i = 0; i < depth; ++i) {
 			b.append("  ");
 		}
-		b.append(mySink + " active: " + mySink.isActive());
+		b.append(mySink);
+		if (mySink instanceof IIterableSource<?>) {
+			b.append(" active: ");
+			b.append(((IIterableSource<?>)mySink).isActive());
+		}
 		b.append("(");
 		b.append(mySink.getSubscribedTo());
 		b.append(")\n");
@@ -57,7 +62,11 @@ public class ConsoleFunctions {
 			for (int i = 0; i < depth; ++i) {
 				b.append("  ");
 			}
-			b.append(source + " active: " + source.isActive());
+			b.append(source);
+			if (source instanceof IIterableSource<?>) {
+				b.append(" active: ");
+				b.append(((IIterableSource<?>)source).isActive());
+			}
 			b.append("(");
 			b.append(source.getSubscribtions());
 			b.append(")\n");
@@ -80,7 +89,8 @@ public class ConsoleFunctions {
 		}
 	}
 
-	public String getOwnerIDs(ArrayList<IOperatorOwner> owner) {
+	//TODO die methode kommt auch in partial plan vor, sollte evtl in die operatoren rein
+	public String getOwnerIDs(List<IOperatorOwner> owner) {
 		String result = "";
 		for (IOperatorOwner iOperatorOwner : owner) {
 			if(result != "") {

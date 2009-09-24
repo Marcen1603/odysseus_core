@@ -8,12 +8,13 @@ import java.util.ListIterator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterablePipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends IPriority>>
-		extends AbstractPipe<T, T> implements IBuffer<T>, IPrioBuffer<T> {
+		extends AbstractIterablePipe<T, T> implements IBuffer<T>,
+		IPrioBuffer<T> {
 
 	private Comparator<? super T> comparator = new MetadataComparator<IPriority>();
 
@@ -42,21 +43,20 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 	public boolean isDone() {
 		return super.isDone() && isEmpty();
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void process_next(T object, int port) {
 		byte prio = object.getMetadata().getPriority();
-		
+
 		// Load Shedding
-		if (prio < 0){
+		if (prio < 0) {
 			return;
 		}
-		
+
 		if (maxSize < this.size() + 1) {
 			maxSize = this.size() + 1;
 		}

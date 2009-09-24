@@ -10,29 +10,13 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.access,
+ de.uniol.inf.is.odysseus.physicaloperator.base.event,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.uniol.inf.is.odysseus.base.wrapper;uses:="de.uniol.inf.is.odysseus.physicaloperator.base,de.uniol.inf.is.odysseus.logicaloperator.base",
- de.uniol.inf.is.odysseus.monitoring,
- de.uniol.inf.is.odysseus.physicaloperator.base;
-  uses:="de.uniol.inf.is.odysseus.monitoring,
-   de.uniol.inf.is.odysseus.physicaloperator.base.event,
-   de.uniol.inf.is.odysseus.physicaloperator.base.sweeparea,
-   de.uniol.inf.is.odysseus.base,
-   de.uniol.inf.is.odysseus.base.predicate",
- de.uniol.inf.is.odysseus.physicaloperator.base.access;uses:="de.uniol.inf.is.odysseus.physicaloperator.base,de.uniol.inf.is.odysseus.base",
- de.uniol.inf.is.odysseus.physicaloperator.base.aggregate;
-  uses:="de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
-   de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions,
-   de.uniol.inf.is.odysseus.physicaloperator.base,
-   de.uniol.inf.is.odysseus.metadata.base,
-   de.uniol.inf.is.odysseus.base,
-   de.uniol.inf.is.odysseus.logicaloperator.base",
- de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions,
- de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;uses:="de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions",
- de.uniol.inf.is.odysseus.physicaloperator.base.event;uses:="de.uniol.inf.is.odysseus.physicaloperator.base",
- de.uniol.inf.is.odysseus.physicaloperator.base.plan
+Export-Package: de.uniol.inf.is.odysseus.base.wrapper;uses:="de.uniol.inf.is.odysseus.physicaloperator.base,de.uniol.inf.is.odysseus.logicaloperator.base"
 Bundle-ClassPath: .

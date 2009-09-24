@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -8,7 +10,6 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -28,14 +29,17 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 
 	private Map<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<A>> eval = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<A>>();
 
-	SDFAttributeList inputSchema = null;
-	Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations = null;
-	
+	private SDFAttributeList inputSchema = null;
+	private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations = null;
+
 	private GroupingHelper<R> groupingHelper;
 
-	private AggregateAO algebraOp;
-	
-	
+	private SDFAttributeList outputSchema;
+
+	private List<SDFAttribute> groupingAttributes;
+
+	// private AggregateAO algebraOp;
+
 	public GroupingHelper<R> getGroupingHelper() {
 		return groupingHelper;
 	}
@@ -43,15 +47,29 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 	public void setGroupingHelper(GroupingHelper<R> groupingHelper) {
 		this.groupingHelper = groupingHelper;
 	}
-	
-	public AggregatePO(AggregateAO algebraOP){
-		this.inputSchema = algebraOP.getInputSchema();
-		this.aggregations = algebraOP.getAggregations();
-		this.algebraOp = algebraOP;
-	}
 
-	public AggregateAO getAlgebraOp() {
-		return algebraOp;
+	public AggregatePO(SDFAttributeList inputSchema, SDFAttributeList outputSchema,
+			List<SDFAttribute> groupingAttributes, Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
+		this.inputSchema = inputSchema;
+		this.outputSchema = outputSchema;
+		this.aggregations = aggregations;
+		this.groupingAttributes = groupingAttributes;
+	}
+	
+	public SDFAttributeList getInputSchema() {
+		return inputSchema;
+	}
+	
+	public Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> getAggregations() {
+		return Collections.unmodifiableMap(aggregations);
+	}
+	
+	public List<SDFAttribute> getGroupingAttribute() {
+		return groupingAttributes;
+	}
+	
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
 	}
 
 	public AggregatePO(AggregatePO<M, R, A> agg) {
@@ -62,6 +80,8 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 		eval = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<A>>(
 				agg.eval);
 		this.inputSchema = agg.inputSchema;
+		this.outputSchema = agg.outputSchema;
+		this.groupingAttributes = agg.groupingAttributes;
 		this.aggregations = agg.aggregations;
 		this.groupingHelper = agg.groupingHelper;
 	}

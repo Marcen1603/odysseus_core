@@ -6,13 +6,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorControl;
 import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
@@ -31,7 +32,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final protected Map<POEventType, ArrayList<POEventListener>> eventListener = new HashMap<POEventType, ArrayList<POEventListener>>();
 	final protected ArrayList<POEventListener> genericEventListener = new ArrayList<POEventListener>();
 	private boolean hasSingleConsumer;
-	private boolean open = false;
+	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name;
 
 	// Events
@@ -45,11 +46,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final private POEvent pushDoneEvent = new POEvent(this,
 			POEventType.PushDone);
 
-	private List<IOperatorOwner> owner = Collections
-			.synchronizedList(new ArrayList<IOperatorOwner>());
-	private List<IOperatorControl> deactivateRequestControls = Collections
-			.synchronizedList(new ArrayList<IOperatorControl>());
-	
+	protected List<IOperatorOwner> owners = new Vector<IOperatorOwner>();
+
 	@Override
 	public boolean isSink() {
 		return false;
@@ -66,26 +64,20 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	public boolean isOpen() {
-		return open;
+		return open.get();
 	}
 
 	public void close() {
+		open.set(false);
 	};
 
-	protected void setOpen(boolean open) {
-		this.open = open;
-	}
-
 	@Override
-	// Eigentlich final ... aber dann kann man in AbstractPipe diese Methode
-	// nicht ueberschreiben ...
 	public synchronized void open() throws OpenFailedException {
-		if (!isOpen() && isActive()) {
-			// System.out.println(this+"open");
+		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
-			open = true;
+			open.set(true);
 		}
 	}
 
@@ -141,12 +133,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	
-	/** states if the next Operator can change the transfer object oder
-	 * has to make a copy
+	/**
+	 * states if the next Operator can change the transfer object oder has to
+	 * make a copy
+	 * 
 	 * @return
 	 */
-	protected boolean isTransferExclusive(){
+	protected boolean isTransferExclusive() {
 		return hasSingleConsumer;
 	}
 
@@ -226,6 +219,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPOEventSender#subscribe(de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventListener,
 	 *      de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventType)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void subscribe(POEventListener listener, POEventType type) {
 		synchronized (this.eventListener) {
@@ -312,69 +306,30 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
-		synchronized (this.owner) {
-			this.owner.add(owner);
-		}
+		this.owners.add(owner);
 	}
 
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
-		synchronized (this.owner) {
-			this.owner.remove(owner);
-		}
-		synchronized (this.deactivateRequestControls) {
-			this.deactivateRequestControls.remove(owner);
-		}
+		this.owners.remove(owner);
+		// synchronized (this.deactivateRequestControls) {
+		// this.deactivateRequestControls.remove(owner);
+		// }
 	}
 
 	@Override
 	public boolean isOwnedBy(IOperatorOwner owner) {
-		synchronized (this.owner) {
-			return this.owner.contains(owner);
-		}
+		return this.owners.contains(owner);
 	}
 
 	@Override
 	public boolean hasOwner() {
-		synchronized (this.owner) {
-			return this.owner.size() > 0;
-		}
+		return !this.owners.isEmpty();
 	}
 
 	@Override
-	public ArrayList<IOperatorOwner> getOwner() {
-		return new ArrayList<IOperatorOwner>(this.owner);
+	public List<IOperatorOwner> getOwner() {
+		return Collections.unmodifiableList(this.owners);
 	}
 
-	@Override
-	public void activateRequest(IOperatorControl operatorControl) {
-		synchronized (this.deactivateRequestControls) {
-			this.deactivateRequestControls.remove(operatorControl);
-		}
-	}
-
-	@Override
-	public void deactivateRequest(IOperatorControl operatorControl) {
-		synchronized (this.deactivateRequestControls) {
-			this.deactivateRequestControls.add(operatorControl);
-		}
-	}
-
-	@Override
-	public boolean deactivateRequestedBy(IOperatorControl operatorControl) {
-		synchronized (this.deactivateRequestControls) {
-			return this.deactivateRequestControls.contains(operatorControl);
-		}
-	}
-
-	@Override
-	public synchronized boolean isActive() {
-		int own = this.owner.size();
-		int deac = this.deactivateRequestControls.size();
-
-		if (own < 1 || own <= deac) {
-			return false;
-		}
-		return true;
-	}
 }

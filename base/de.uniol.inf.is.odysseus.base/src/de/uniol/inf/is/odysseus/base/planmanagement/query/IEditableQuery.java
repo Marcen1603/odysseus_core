@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorControl;
+import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 
 /**
@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Qu
  * @author Wolf Bauer
  * 
  */
-public interface IEditableQuery extends IOperatorControl, IQuery {
+public interface IEditableQuery extends IOperatorOwner, IQuery {
 	/**
 	 * Set the logical plan of this query.
 	 * 

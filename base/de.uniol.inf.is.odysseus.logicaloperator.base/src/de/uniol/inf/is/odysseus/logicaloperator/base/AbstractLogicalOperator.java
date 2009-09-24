@@ -473,7 +473,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public ArrayList<IOperatorOwner> getOwner() {
+	public List<IOperatorOwner> getOwner() {
 		return this.owner;
 	}
 

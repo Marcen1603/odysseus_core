@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.base.planmanagement;
 
-import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Describes an operator which is owned by an other object (e. g. a query can
@@ -46,5 +47,5 @@ public interface IOwnedOperator {
 	 * 
 	 * @return All registered owner of this operator.
 	 */
-	public ArrayList<IOperatorOwner> getOwner();
+	public List<IOperatorOwner> getOwner();
 }

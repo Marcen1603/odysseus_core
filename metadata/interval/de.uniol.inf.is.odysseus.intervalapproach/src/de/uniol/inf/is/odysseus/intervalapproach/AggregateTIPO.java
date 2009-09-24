@@ -1,19 +1,19 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
-import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>>
 		extends AggregatePO<Q, R, R> {
@@ -45,7 +45,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			int c = this.p.compareTo(p2.p);
 			if (c == 0) {
 				if (this.startP && !p2.startP) { // Endpunkte liegen immer vor
-													// Startpunkten
+					// Startpunkten
 					c = 1;
 				} else if (!this.startP && p2.startP) {
 					c = -1;
@@ -92,8 +92,13 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		}
 	}
 
-	public AggregateTIPO(AggregateAO aggregateAO, Class<Q> metadataType) {
-		super(aggregateAO);
+	public AggregateTIPO(
+			SDFAttributeList inputSchema,
+			SDFAttributeList outputSchema,
+			List<SDFAttribute> groupingAttributes,
+			Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations,
+			Class<Q> metadataType) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		setMetadataType(metadataType);
 	}
 
@@ -102,8 +107,11 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		this.metadataType = aggregatePO.metadataType;
 	}
 
-	public AggregateTIPO(AggregateAO aggregateAO) {
-		super(aggregateAO);
+	public AggregateTIPO(SDFAttributeList inputSchema,
+			SDFAttributeList outputSchema,
+			List<SDFAttribute> groupingAttributes,
+			Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 	}
 
 	// Dient dazu, alle Element in der Sweep-Area mit dem neuen Element zu
@@ -153,8 +161,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			while (iter.hasNext()) {
 				p2 = iter.next();
 				if (p1.p.before(p2.p)) { // Ansonsten w�re das ein leeres
-											// Intervall, das nicht betrachtet
-											// werden muss
+					// Intervall, das nicht betrachtet
+					// werden muss
 					// TODO ggflls. Metadaten aggregieren
 					Q newTI;
 					try {
@@ -178,10 +186,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						// alle anderen F�lle gehen nicht, weil sich die
 						// Intervalle schneiden!
 					} else if (p1.startP && !p2.startP) { // Schnitt (f�r alle
-															// gleich!)
+						// gleich!)
 						saInsert(sa, calcMerge(curr_agg, element), newTI);
 					} else if (!p1.startP && p2.startP) { // Zwischelement E^
-															// --> S
+						// --> S
 						// Muss ein Init auf dem neuen Element sein, da es hier
 						// keinen Schnitt gibt
 						saInsert(sa, calcInit(element), newTI);

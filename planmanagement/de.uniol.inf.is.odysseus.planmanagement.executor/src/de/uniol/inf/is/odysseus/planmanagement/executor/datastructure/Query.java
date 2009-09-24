@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.AbstractQueryReoptimiz
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -356,7 +357,9 @@ public class Query implements IEditableQuery {
 	public void start() {
 		synchronized (this.physicalChilds) {
 			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-				physicalOperator.activateRequest(this);
+				if (physicalOperator instanceof IIterableSource<?>) {
+					((IIterableSource<?>)physicalOperator).activateRequest(this);
+				}
 			}
 		}
 		this.started = true;
@@ -372,7 +375,9 @@ public class Query implements IEditableQuery {
 	public void stop() {
 		synchronized (this.physicalChilds) {
 			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-				physicalOperator.deactivateRequest(this);
+				if (physicalOperator instanceof IIterableSource<?>) {
+					((IIterableSource<?>)physicalOperator).deactivateRequest(this);
+				}
 			}
 		}
 		this.started = false;

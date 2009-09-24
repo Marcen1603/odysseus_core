@@ -2,13 +2,15 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorControl;
 import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
@@ -21,7 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
  */
 public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
-	final protected ArrayList<Subscription<ISource<? extends T>>> subscribedTo = new ArrayList<Subscription<ISource<? extends T>>>();;
+	final protected Vector<Subscription<ISource<? extends T>>> subscribedTo = new Vector<Subscription<ISource<? extends T>>>();
 	final protected Map<POEventType, ArrayList<POEventListener>> eventListener = new HashMap<POEventType, ArrayList<POEventListener>>();
 	final protected ArrayList<POEventListener> genericEventListener = new ArrayList<POEventListener>();;
 
@@ -30,16 +32,19 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final private POEvent openDoneEvent = new POEvent(this,
 			POEventType.OpenDone);
 
-	private POEvent[] processInitEvent = null;
-	private POEvent[] processDoneEvent = null;
+	final private AtomicBoolean isOpen = new AtomicBoolean(false);
+
+	protected POEvent[] processInitEvent = null;
+	protected POEvent[] processDoneEvent = null;
 
 	protected int noInputPorts = -1;
-	
+
 	private String name;
 
-	protected ArrayList<IOperatorOwner> owner = new ArrayList<IOperatorOwner>();
-	protected ArrayList<IOperatorControl> deactivateRequestControls = new ArrayList<IOperatorControl>();
-	
+	protected Vector<IOperatorOwner> owners = new Vector<IOperatorOwner>();
+
+	private volatile boolean allInputsDone = false;
+
 	@Override
 	public boolean isSink() {
 		return true;
@@ -55,36 +60,44 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return isSink() && isSource();
 	}
 
-	public void setNoOfInputPort(int ports) {
+	protected void setInputPortCount(int ports) {
 		if (ports > noInputPorts) {
 			this.noInputPorts = ports;
-			processInitEvent = new POEvent[ports];
-			processDoneEvent = new POEvent[ports];
-			for (int i = 0; i < ports; i++) {
-				processInitEvent[i] = new POPortEvent(this,
+			processInitEvent = new POEvent[noInputPorts];
+			processDoneEvent = new POEvent[noInputPorts];
+			for (int i = 0; i < noInputPorts; i++) {
+				processInitEvent[i] = new POPortEvent(getInstance(),
 						POEventType.ProcessInit, i);
-				processDoneEvent[i] = new POPortEvent(this,
+				processDoneEvent[i] = new POPortEvent(getInstance(),
 						POEventType.ProcessDone, i);
 			}
 		}
 	}
 
+	public int getInputPortCount() {
+		return this.noInputPorts;
+	}
+
 	public void close() {
+		this.isOpen.set(false);
 	};
 
 	@Override
 	final public void open() throws OpenFailedException {
-		if (isActive()) {
+		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
-			synchronized (this.subscribedTo) {
-				for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
-					sub.done = false;
-					sub.target.open();
-				}
-			}
 			fire(openDoneEvent);
+			this.isOpen.set(true);
+			//FIXME subscribedTo richtig locken
+			for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
+				sub.target.open();
+			}
 		}
+	}
+
+	final public boolean isOpen() {
+		return this.isOpen.get();
 	}
 
 	@Override
@@ -120,37 +133,52 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public void done(int port) {
 		process_done(port);
 		synchronized (this.subscribedTo) {
+			this.allInputsDone = true;
 			for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
 				if (sub.port == port) {
 					sub.done = true;
-					return;
+				}
+				if (!sub.done) {
+					this.allInputsDone = false;
 				}
 			}
+		}
+	}
+
+	final public boolean isDone() {
+		synchronized (this.subscribedTo) {
+			return this.allInputsDone;
 		}
 	}
 
 	@Override
 	public void subscribeTo(ISource<? extends T> source, int port) {
 		if (port >= this.noInputPorts) {
-			setNoOfInputPort(port + 1);
+			setInputPortCount(port + 1);
 		}
 		Subscription<ISource<? extends T>> sub = new Subscription<ISource<? extends T>>(
 				source, port);
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.contains(sub)) {
 				this.subscribedTo.add(sub);
-				source.subscribe(this, port);
+				source.subscribe(getInstance(), port);
 			}
 		}
+	}
+
+	//"polymorphic this", used for the delegate sink
+	protected ISink<T> getInstance() {
+		return this;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	final public List<Subscription<ISource<? extends T>>> getSubscribedTo() {
-		synchronized (this.subscribedTo) {
-			return (List<Subscription<ISource<? extends T>>>) this.subscribedTo
-					.clone();
-		}
+		return (List<Subscription<ISource<? extends T>>>) this.subscribedTo.clone();
+	}
+
+	final public Subscription<ISource<? extends T>> getSubscribedTo(int port) {
+		return this.subscribedTo.get(port);
 	}
 
 	/**
@@ -225,21 +253,20 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	// TODO remove methode fuer subscribtions
-	@SuppressWarnings("unchecked")
 	@Override
 	public AbstractSink<T> clone() {
-		synchronized (this.subscribedTo) {
-			try {
-				AbstractSink<T> sink = (AbstractSink<T>) super.clone();
-				for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
-					sub.target.subscribe(this, sub.port);
-				}
-				return sink;
-			} catch (CloneNotSupportedException e) {
-				return null;
-			}
-		}
+		throw new RuntimeException("not implemented");
+		// synchronized (this.subscribedTo) {
+		// try {
+		// AbstractSink<T> sink = (AbstractSink<T>) super.clone();
+		// for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
+		// sub.target.subscribe(this, sub.port);
+		// }
+		// return sink;
+		// } catch (CloneNotSupportedException e) {
+		// return null;
+		// }
+		// }
 	}
 
 	@Override
@@ -267,71 +294,58 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
-		synchronized (this.owner) {
-			this.owner.add(owner);
-		}
+		this.owners.add(owner);
 	}
 
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
-		synchronized (this.owner) {
-			this.owner.remove(owner);
-		}
-		synchronized (this.deactivateRequestControls) {
-			this.deactivateRequestControls.remove(owner);
-		}
+		this.owners.remove(owner);
 	}
 
 	@Override
-	public boolean isOwnedBy(IOperatorOwner owner) {
-		synchronized (this.owner) {
-			return this.owner.contains(owner);
-		}
+	final public boolean isOwnedBy(IOperatorOwner owner) {
+		return this.owners.contains(owner);
 	}
 
 	@Override
-	public boolean hasOwner() {
-		synchronized (this.owner) {
-			return this.owner.size() > 0;
-		}
+	final public boolean hasOwner() {
+		return !this.owners.isEmpty();
 	}
 
 	@Override
-	public ArrayList<IOperatorOwner> getOwner() {
-		synchronized (this.owner) {
-			return this.owner;
-		}
+	final public List<IOperatorOwner> getOwner() {
+		return Collections.unmodifiableList(this.owners);
 	}
 
-	@Override
-	public void activateRequest(IOperatorControl operatorControl) {
-		synchronized (this.deactivateRequestControls) {
-			this.deactivateRequestControls.add(operatorControl);
-		}
-	}
+	// @Override
+	// public void activateRequest(IOperatorControl operatorControl) {
+	// synchronized (this.deactivateRequestControls) {
+	// this.deactivateRequestControls.add(operatorControl);
+	// }
+	// }
+	//
+	// @Override
+	// public void deactivateRequest(IOperatorControl operatorControl) {
+	// synchronized (this.deactivateRequestControls) {
+	// this.deactivateRequestControls.remove(operatorControl);
+	// }
+	// }
+	//
+	// @Override
+	// public boolean deactivateRequestedBy(IOperatorControl operatorControl) {
+	// synchronized (this.deactivateRequestControls) {
+	// return this.deactivateRequestControls.contains(operatorControl);
+	// }
+	// }
 
-	@Override
-	public void deactivateRequest(IOperatorControl operatorControl) {
-		synchronized (this.deactivateRequestControls) {
-			this.deactivateRequestControls.remove(operatorControl);
-		}
-	}
-
-	@Override
-	public boolean deactivateRequestedBy(IOperatorControl operatorControl) {
-		synchronized (this.deactivateRequestControls) {
-			return this.deactivateRequestControls.contains(operatorControl);
-		}
-	}
-
-	@Override
-	public synchronized boolean isActive() {
-		int own = this.owner.size();
-		int deac = this.deactivateRequestControls.size();
-
-		if (own < 1 || own <= deac) {
-			return false;
-		}
-		return true;
-	}
+	// @Override
+	// public synchronized boolean isActive() {
+	// int own = this.owner.size();
+	// int deac = this.deactivateRequestControls.size();
+	//
+	// if (own < 1 || own <= deac) {
+	// return false;
+	// }
+	// return true;
+	// }
 }

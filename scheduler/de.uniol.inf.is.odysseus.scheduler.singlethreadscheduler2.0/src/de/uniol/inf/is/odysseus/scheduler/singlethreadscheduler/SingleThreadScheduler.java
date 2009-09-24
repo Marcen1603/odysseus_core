@@ -78,6 +78,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		public void run() {
 			Collection<ISchedulingStrategy> values = parts.values();
 			Iterator<ISchedulingStrategy> part;
+			try{
 			while (!isInterrupted() && !values.isEmpty()) {
 				part = values.iterator();
 				while (part.hasNext()) {
@@ -87,6 +88,9 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 						part.remove();
 					}
 				}
+			}
+			} catch(Throwable t){
+				t.printStackTrace();
 			}
 		}
 	}
