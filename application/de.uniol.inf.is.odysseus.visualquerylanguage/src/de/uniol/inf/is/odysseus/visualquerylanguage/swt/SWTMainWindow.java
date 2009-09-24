@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
+import de.uniol.inf.is.odysseus.visualquerylanguage.LaunchException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
@@ -177,28 +178,10 @@ public class SWTMainWindow {
 					try {
 						queryController.launchQuery(tabFolder.getSelection()
 								.getControl(), executor);
-					} catch (SecurityException e1) {
+					} catch (LaunchException e1) {
 						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
 						log.error("Error while executing query.");
-					} catch (IllegalArgumentException e1) {
-						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
-						log.error("Error while executing query.");
-					} catch (ClassNotFoundException e1) {
-						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler beim dynamischen Laden der Klassen aufgetreten.");
-						log.error("Error while using reflection for dynamic classloading.");
-					} catch (NoSuchMethodException e1) {
-						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler beim dynamischen Laden von Methoden aufgetreten.");
-						log.error("Error while using reflection for dynamic methodloading.");
-					} catch (InstantiationException e1) {
-						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler beim dynamischen Instanziieren einer Klasse aufgetreten.");
-						log.error("Error while creating an instance of a class.");
-					} catch (IllegalAccessException e1) {
-						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
-						log.error("Error while executing query");
-					} catch (InvocationTargetException e1) {
-						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
-						log.error("Error while executing query");
-					}
+					} 
 				}else if (tabFolder.getSelection().getControl() instanceof Table) {
 					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
 						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
@@ -223,7 +206,66 @@ public class SWTMainWindow {
 		stopQueryItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+				if (tabFolder.getSelection().getControl() instanceof Table) {
+					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
+						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
+							if(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).isStarted()) {
+								try {
+									executor.stopQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
+								} catch (PlanManagementException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}
+						}
+					}
+				}else if (tabFolder.getSelection().getControl() instanceof DefaultGraphArea) {
+					try {
+						IQuery query = executor.getSealedPlan().getQuery(((DefaultGraphArea)tabFolder.getSelection().getControl()).getQueryID());
+						if(query != null && query.isStarted()) {
+							executor.stopQuery(query.getID());
+							((DefaultGraphArea)tabFolder.getSelection().getControl()).setQueryID(-1);
+						}
+						
+					} catch (PlanManagementException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		ToolItem removeQueryItem = new ToolItem(tools, SWT.PUSH);
+		removeQueryItem.setImage(SWTResourceManager.getInstance().getImage(
+				"stopQuery"));
+		removeQueryItem.setToolTipText("Anfrage stoppen");
+		removeQueryItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (tabFolder.getSelection().getControl() instanceof Table) {
+					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
+						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
+								try {
+									executor.removeQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
+								} catch (PlanManagementException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+						}
+					}
+				}else if (tabFolder.getSelection().getControl() instanceof DefaultGraphArea) {
+					try {
+						IQuery query = executor.getSealedPlan().getQuery(((DefaultGraphArea)tabFolder.getSelection().getControl()).getQueryID());
+						if(query != null) {
+							executor.removeQuery(query.getID());
+							((DefaultGraphArea)tabFolder.getSelection().getControl()).setQueryID(-1);
+						}
+						
+					} catch (PlanManagementException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 
@@ -245,25 +287,7 @@ public class SWTMainWindow {
 		queryListTab = new CTabItem(tabFolder, SWT.NULL);
 		queryListTab.setText("Laufende Anfragen");
 		
-		Table table = null;
-		try {
-		if(!executor.getSealedPlan().getQueries().isEmpty()) {
-			table = new Table(tabFolder, SWT.BORDER | SWT.SINGLE);
-			TableColumn tc1 = new TableColumn(table, SWT.LEFT);
-		    tc1.setText("Query ID");
-		    tc1.setWidth(70);
-		    TableItem item;
-			for (IQuery query : executor.getSealedPlan().getQueries()) {
-				item = new TableItem(table, SWT.NONE);
-				item.setText(Integer.toString(query.getID()));
-				item.setData(query);
-			}
-			queryListTab.setControl(table);
-		}
-		} catch (PlanManagementException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		getQueryTable();
 		
 		tabFolder.setSelection(queryListTab);
 
@@ -283,5 +307,36 @@ public class SWTMainWindow {
 		item.setText("Anfrage");
 		item.setControl(graphArea);
 		tabFolder.setSelection(item);
+	}
+	
+	private synchronized Table getQueryTable() {
+		Table table = null;
+		try {
+		if(!executor.getSealedPlan().getQueries().isEmpty()) {
+			table = new Table(tabFolder, SWT.BORDER | SWT.SINGLE);
+			TableColumn tc1 = new TableColumn(table, SWT.LEFT);
+			TableColumn tc2 = new TableColumn(table, SWT.LEFT);
+		    tc1.setText("Query ID");
+		    tc1.setWidth(70);
+		    tc2.setText("Gestartet");
+		    tc2.setWidth(70);
+		    TableItem firstItem;
+			for (IQuery query : executor.getSealedPlan().getQueries()) {
+				firstItem = new TableItem(table, SWT.NONE);
+				firstItem.setData(query);
+				if(query.isStarted()) {
+				    firstItem.setText(new String[] {Integer.toString(query.getID()), "Ja"});
+				}else {
+					firstItem.setText(new String[] {Integer.toString(query.getID()), "Nein"});
+				}
+			}
+			table.setHeaderVisible(true);
+			queryListTab.setControl(table);
+		}
+		} catch (PlanManagementException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return table;
 	}
 }

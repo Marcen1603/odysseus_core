@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
+import de.uniol.inf.is.odysseus.visualquerylanguage.LaunchException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
@@ -72,7 +73,7 @@ public class DefaultQueryController implements IQueryController<IQuery> {
 	}
 
 	@Override
-	public void launchQuery(Control control, IExecutor executor) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public void launchQuery(Control control, IExecutor executor) throws LaunchException {
 		
 		DefaultGraphArea area = null;
 		ILogicalOperator root = null;
@@ -89,11 +90,11 @@ public class DefaultQueryController implements IQueryController<IQuery> {
 				sinkCounter++;
 			}
 		}
-		if (sinkCounter == 1) {
-			root = createOperators(area, executor);
-		}
-
 		try {
+			if (sinkCounter == 1) {
+				root = createOperators(area, executor);
+			}
+			
 			if (root != null) {
 				area.setQueryID(executor.addQuery((ILogicalOperator) root,
 						new ParameterDefaultRoot(null)));
@@ -101,8 +102,8 @@ public class DefaultQueryController implements IQueryController<IQuery> {
 			} else {
 				log.error("Root of the tree is null.");
 			}
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new LaunchException();
 		}
 	}
 
