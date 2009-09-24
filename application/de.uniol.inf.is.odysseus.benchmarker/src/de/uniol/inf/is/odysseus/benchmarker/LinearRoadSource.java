@@ -8,13 +8,11 @@ import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class LinearRoadSource extends
-		AbstractSource<RelationalTuple<? extends IClone>> implements
-		IIterableSource<RelationalTuple<? extends IClone>> {
+		AbstractIterableSource<RelationalTuple<? extends IClone>> {
 
 	private String filename = "datafile3hours.dat.raw";
 	private ObjectInputStream iStream;

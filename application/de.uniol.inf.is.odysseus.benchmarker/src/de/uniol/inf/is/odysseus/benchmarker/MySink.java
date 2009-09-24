@@ -65,8 +65,8 @@ class MySink<M extends ILatency & IPriority> extends
 		super.process_open();
 	}
 	@Override
-	public void setNoOfInputPort(int ports) {
-		super.setNoOfInputPort(ports);
+	protected void setInputPortCount(int ports) {
+		super.setInputPortCount(ports);
 		lock.lock();
 		counter = ports;
 		lock.unlock();
