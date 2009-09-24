@@ -73,6 +73,7 @@ public class ExecutorConsole implements CommandProvider,
 					// Q8
 					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 RANGE 43200000 AS p, nexmark:auction2 RANGE 43200000 AS a WHERE p.id = a.seller" } };
 
+	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration("relational", ITimeInterval.class));
 
@@ -220,15 +221,8 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	private static class Test<T> {
-		public void muh(T x) {
-		}
-	}
-
 	public void _viewer(CommandInterpreter ci) {
 		System.out.println("startviewer");
-		Test<Void> a = null;
-		a.muh(null);
 		try {
 			ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
 			// cfg.useOGL = viewerOGL;
