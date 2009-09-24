@@ -53,7 +53,7 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 		this.nextElems = original.nextElems;
 	}
 	
-	public IClone cloneMe(){
+	public DuplicateEliminationTIPO<T> cloneMe(){
 		return new DuplicateEliminationTIPO<T>(this);
 	}
 
