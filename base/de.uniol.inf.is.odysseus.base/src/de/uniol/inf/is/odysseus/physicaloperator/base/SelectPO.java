@@ -26,13 +26,6 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 			transfer(object);
 		}
 	}
-
-	@Override
-	public SelectPO<T> clone() {
-		SelectPO<T> spo = (SelectPO<T>) super.clone();
-		spo.predicate = this.predicate;
-		return spo;
-	}
 	
 	@Override
 	public void process_open() throws OpenFailedException{

@@ -188,20 +188,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public AbstractSource<T> clone() {
-		AbstractSource<T> obj = null;
-		try {
-			obj = (AbstractSource<T>) super.clone();
-			for (Subscription<ISink<? super T>> sink : this.subscriptions) {
-				obj.subscribe(sink.target, sink.port);
-			}
-		} catch (CloneNotSupportedException e) {
-		}
-		return obj;
-	}
-
 	final protected void propagateDone() {
 		fire(this.doneEvent);
 		this.process_done();

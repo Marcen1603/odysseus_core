@@ -254,22 +254,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public AbstractSink<T> clone() {
-		throw new RuntimeException("not implemented");
-		// synchronized (this.subscribedTo) {
-		// try {
-		// AbstractSink<T> sink = (AbstractSink<T>) super.clone();
-		// for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
-		// sub.target.subscribe(this, sub.port);
-		// }
-		// return sink;
-		// } catch (CloneNotSupportedException e) {
-		// return null;
-		// }
-		// }
-	}
-
-	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
 	}

@@ -36,11 +36,6 @@ class MySink<M extends ILatency & IPriority> extends
 	}
 
 	@Override
-	public MySink<M> clone() {
-		return (MySink<M>) super.clone();
-	}
-
-	@Override
 	protected synchronized void process_next(RelationalTuple<M> object,
 			int port, boolean isReadOnly) {
 		if (resultsToRead == -1 || result.size() < resultsToRead) {

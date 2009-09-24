@@ -189,18 +189,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public AbstractPipe<R, W> clone() {
-		throw new RuntimeException("not implemented");
-		// synchronized (getSubscribedTo()) {
-		// AbstractPipe<R, W> pipe = (AbstractPipe<R, W>) super.clone();
-		// for (Subscription<ISource<? extends R>> sub : getSubscribedTo()) {
-		// sub.target.subscribe(this, sub.port);
-		// }
-		// return pipe;
-		// }
-	}
-
-	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
 	}
