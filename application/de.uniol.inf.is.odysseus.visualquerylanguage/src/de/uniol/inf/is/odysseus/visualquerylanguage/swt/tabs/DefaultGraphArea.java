@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
+import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultGraphModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultNodeModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IGraphModel;
@@ -58,6 +59,7 @@ import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
+import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultModelController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IModelController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
@@ -66,7 +68,6 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourc
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor.CursorManager;
@@ -100,10 +101,12 @@ public class DefaultGraphArea extends Composite implements
 
 	private Composite upperGraphArea = null;
 	SWTStatusLine status = null;
+	
+	private int queryID = -1;
 
 	private final Logger log = LoggerFactory.getLogger(DefaultGraphArea.class);
 
-	public DefaultGraphArea(Composite parent, DefaultQuery query, int style,
+	public DefaultGraphArea(Composite parent, int style,
 			IAdvancedExecutor exec) {
 		super(parent, style);
 
@@ -131,8 +134,10 @@ public class DefaultGraphArea extends Composite implements
 
 		this.symFac = new SWTSymbolElementFactory<INodeContent>();
 		this.positioner = new SugiyamaPositioner(symFac);
-
-		controller = query.getController();
+		
+		DefaultGraphModel<INodeContent> graphModel = new DefaultGraphModel<INodeContent>();
+		this.controller = new DefaultModelController<INodeContent>(graphModel);
+		
 		controller.getModel().addGraphModelChangeListener(this);
 		this.viewGraph = new DefaultGraphView<INodeContent>(controller
 				.getModel());
@@ -618,5 +623,13 @@ public class DefaultGraphArea extends Composite implements
 	@Override
 	public void treeChanged() {
 		refreshTree();
+	}
+	
+	public void setQueryID(int ID) {
+		this.queryID = ID;
+	}
+	
+	public int getQueryID() {
+		return this.queryID;
 	}
 }

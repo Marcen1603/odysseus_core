@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -21,17 +20,21 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IQueryController;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
 
 public class SWTMainWindow {
@@ -42,12 +45,10 @@ public class SWTMainWindow {
 
 	private IAdvancedExecutor executor = null;
 
-	IQueryController<DefaultQuery> queryController = new DefaultQueryController();
+	IQueryController<IQuery> queryController = new DefaultQueryController();
 
 	private CTabFolder tabFolder;
 	CTabItem queryListTab;
-	
-	private HashMap<Integer, DefaultQuery> queryMap = new HashMap<Integer, DefaultQuery>();
 
 	public SWTMainWindow(Display display, IAdvancedExecutor exec)
 			throws IOException {
@@ -198,6 +199,18 @@ public class SWTMainWindow {
 						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
 						log.error("Error while executing query");
 					}
+				}else if (tabFolder.getSelection().getControl() instanceof Table) {
+					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
+						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
+							
+						}
+					}
+					try {
+						executor.startQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
+					} catch (PlanManagementException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 
@@ -210,7 +223,7 @@ public class SWTMainWindow {
 		stopQueryItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				
 			}
 		});
 
@@ -231,6 +244,28 @@ public class SWTMainWindow {
 		
 		queryListTab = new CTabItem(tabFolder, SWT.NULL);
 		queryListTab.setText("Laufende Anfragen");
+		
+		Table table = null;
+		try {
+		if(!executor.getSealedPlan().getQueries().isEmpty()) {
+			table = new Table(tabFolder, SWT.BORDER | SWT.SINGLE);
+			TableColumn tc1 = new TableColumn(table, SWT.LEFT);
+		    tc1.setText("Query ID");
+		    tc1.setWidth(70);
+		    TableItem item;
+			for (IQuery query : executor.getSealedPlan().getQueries()) {
+				item = new TableItem(table, SWT.NONE);
+				item.setText(Integer.toString(query.getID()));
+				item.setData(query);
+			}
+			queryListTab.setControl(table);
+		}
+		} catch (PlanManagementException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		tabFolder.setSelection(queryListTab);
 
 		shell.open();
 		while (!shell.isDisposed()) {
@@ -241,14 +276,12 @@ public class SWTMainWindow {
 	}
 
 	private void createNewGraphTab() {
-		DefaultQuery query = new DefaultQuery("Query");
-		DefaultGraphArea graphArea = new DefaultGraphArea(tabFolder, query, 0,
+		DefaultGraphArea graphArea = new DefaultGraphArea(tabFolder, 0,
 				executor);
 
 		CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
 		item.setText("Anfrage");
 		item.setControl(graphArea);
-		// queryMap.put(queryCounter, query);
 		tabFolder.setSelection(item);
 	}
 }

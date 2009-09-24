@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
@@ -25,34 +26,33 @@ import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
 
-public class DefaultQueryController implements IQueryController<DefaultQuery> {
+public class DefaultQueryController implements IQueryController<IQuery> {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(DefaultQueryController.class);
 
-	private Collection<DefaultQuery> queries;
+	private Collection<IQuery> queries;
 
 	public DefaultQueryController() {
-		this.queries = new ArrayList<DefaultQuery>();
+		this.queries = new ArrayList<IQuery>();
 	}
 
 	@Override
-	public Collection<DefaultQuery> getAllQueries() {
+	public Collection<IQuery> getAllQueries() {
 		return this.queries;
 	}
 
 	@Override
-	public void addQuery(DefaultQuery query) {
+	public void addQuery(IQuery query) {
 		this.queries.add(query);
 	}
 
 	@Override
-	public DefaultQuery getQueryById(int id) {
-		for (DefaultQuery query : this.queries) {
-			if (query.getId() == id) {
+	public IQuery getQueryById(int id) {
+		for (IQuery query : this.queries) {
+			if (query.getID() == id) {
 				return query;
 			}
 		}
@@ -60,8 +60,8 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 	}
 
 	@Override
-	public void removeQuery(DefaultQuery query) {
-		for (DefaultQuery dQuery : this.queries) {
+	public void removeQuery(IQuery query) {
+		for (IQuery dQuery : this.queries) {
 			if (dQuery == query) {
 				this.queries.remove(query);
 				break;
@@ -95,8 +95,9 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 
 		try {
 			if (root != null) {
-				executor.addQuery((ILogicalOperator) root,
-						new ParameterDefaultRoot(null));
+				area.setQueryID(executor.addQuery((ILogicalOperator) root,
+						new ParameterDefaultRoot(null)));
+				
 			} else {
 				log.error("Root of the tree is null.");
 			}
@@ -225,5 +226,4 @@ public class DefaultQueryController implements IQueryController<DefaultQuery> {
 		}
 		return true;
 	}
-
 }
