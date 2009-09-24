@@ -27,19 +27,16 @@ private IGraphModel<C> graph;
 
 	@Override
 	public IModelProvider<C> getModelProvider() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void refreshModel() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void setModelProvider(IModelProvider<C> modelProvider) {
-		// TODO Auto-generated method stub
 		
 	}
 	
