@@ -57,6 +57,7 @@ import de.uniol.inf.is.odysseus.viewer.view.graph.Vector;
 import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
+import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IModelController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
@@ -73,7 +74,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositi
 
 public class DefaultGraphArea extends Composite implements
 		IGraphArea<INodeContent>, IGraphModelChangeListener<INodeContent>,
-		ISelectListener<INodeView<INodeContent>> {
+		ISelectListener<INodeView<INodeContent>> , ISWTTreeChangedListener{
 
 	private static final String XML_FILE = "editor_cfg/parameter.xml";
 
@@ -213,7 +214,7 @@ public class DefaultGraphArea extends Composite implements
 				}
 			}
 		});
-
+		
 		tree = getTree();
 		tree.addMouseListener(new MouseAdapter() {
 
@@ -234,7 +235,7 @@ public class DefaultGraphArea extends Composite implements
 			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (tree.getSelection() != null && e.item instanceof TreeItem
+				if (tree.getSelection() != null && tree.getSelection().length > 0 && e.item instanceof TreeItem
 						&& leftMouseClicked) {
 
 					if (tree.getSelection()[0].getText().equals("Verbindung")) {
@@ -586,9 +587,36 @@ public class DefaultGraphArea extends Composite implements
 		return this.tree;
 	}
 
-	public void addNewSource() {
-		tree = getTree();
-		infoScroll.layout();
-		infoArea.layout();
+	public void refreshTree() {
+		TreeItem treeItem;
+		boolean exists = false; 
+		if(tree.getItem(0).getItems().length == 0) {
+			for(Entry<String, ILogicalOperator> entry : DataDictionary.getInstance().getViews()) {
+				treeItem = new TreeItem(tree.getItem(0), 0);
+				treeItem.setData(entry);
+				treeItem.setText(entry.getKey());
+			}
+		}else {
+			for(Entry<String, ILogicalOperator> entry : DataDictionary.getInstance().getViews()) {
+				for(TreeItem item : tree.getItem(0).getItems()) {
+					if(item.getData().equals(entry)) {
+						exists = true;
+					}
+				}
+				if(exists == false) {
+					treeItem = new TreeItem(tree.getItem(0), 0);
+					treeItem.setData(entry);
+					treeItem.setText(entry.getKey());
+				}
+			}
+			tree.pack();
+			tree.layout();
+		}
+		
+	}
+
+	@Override
+	public void treeChanged() {
+		refreshTree();
 	}
 }

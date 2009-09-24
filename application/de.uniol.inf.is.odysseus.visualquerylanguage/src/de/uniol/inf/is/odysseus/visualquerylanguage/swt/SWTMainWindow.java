@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -25,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
+import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.query.DefaultQuery;
@@ -152,8 +154,14 @@ public class SWTMainWindow {
 		newSourceItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				Collection<ISWTTreeChangedListener> listeners = new ArrayList<ISWTTreeChangedListener>();
+				for (CTabItem item : tabFolder.getItems()) {
+					if(item.getControl() instanceof DefaultGraphArea) {
+						listeners.add((ISWTTreeChangedListener)item.getControl());
+					}
+				}
 				@SuppressWarnings("unused")
-				SWTSourceCreator newSource = new SWTSourceCreator(shell, executor);
+				SWTSourceCreator newSource = new SWTSourceCreator(shell, executor, listeners);
 			}
 		});
 

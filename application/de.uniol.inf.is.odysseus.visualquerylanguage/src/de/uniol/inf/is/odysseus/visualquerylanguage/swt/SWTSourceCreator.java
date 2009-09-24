@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 
 import java.awt.Toolkit;
+import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -13,13 +14,14 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 
 public class SWTSourceCreator{
 	
 	Shell shell;
 
-	public SWTSourceCreator(Shell baseWindow, final IAdvancedExecutor executor) {
-		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE);
+	public SWTSourceCreator(Shell baseWindow, final IAdvancedExecutor executor, final Collection<ISWTTreeChangedListener> listeners) {
+		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE | SWT.APPLICATION_MODAL);
 		shell.setText("Neue Quelle");
 		GridLayout gl = new GridLayout();
 		gl.numColumns = 1;
@@ -37,6 +39,9 @@ public class SWTSourceCreator{
 				try {
 					executor.addQuery(textArea.getText(), executor.getSupportedQueryParser().iterator()
 							.next());
+					for (ISWTTreeChangedListener listener : listeners) {
+						listener.treeChanged();
+					}
 				} catch (PlanManagementException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
