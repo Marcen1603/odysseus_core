@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.validation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ObjectFactory {
 	
-	private final Logger log = LoggerFactory.getLogger(ObjectFactory.class);
 	private static final ObjectFactory objectFac = new ObjectFactory();
 	
 	public static ObjectFactory getInstance() {

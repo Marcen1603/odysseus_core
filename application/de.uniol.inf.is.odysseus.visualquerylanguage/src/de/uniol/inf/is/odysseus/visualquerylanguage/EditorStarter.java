@@ -31,10 +31,12 @@ public class EditorStarter implements CommandProvider, Runnable {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	private void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
 	}
 
+	@SuppressWarnings("unused")
 	private void unbindExecutor(IAdvancedExecutor executor) {
 		if (this.executor == executor) {
 			this.executor = null;
@@ -60,6 +62,7 @@ public class EditorStarter implements CommandProvider, Runnable {
 		}
 
 		try {
+			@SuppressWarnings("unused")
 			SWTMainWindow main = new SWTMainWindow(d, executor);
 		} catch (IOException e) {
 			logger.error("SWTMainWindow not loaded");

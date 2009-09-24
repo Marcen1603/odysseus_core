@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 
 import java.awt.Toolkit;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -182,21 +181,21 @@ public class SWTMainWindow {
 						tabFolder.layout();
 					} catch (LaunchException e1) {
 						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
-						log.error("Error while executing query.");
+						log.error("Error while executing query. Because of: ");
+						e1.printStackTrace();
 					} 
 				}else if (tabFolder.getSelection().getControl() instanceof Table) {
 					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
 						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
-							
+							try {
+								executor.startQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
+								tabFolder.getSelection().setControl(getQueryTable()); 
+								tabFolder.layout();
+							} catch (PlanManagementException e1) {
+								log.error("Query could not be started. Because of: ");
+								e1.printStackTrace();
+							}
 						}
-					}
-					try {
-						executor.startQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
-						tabFolder.getSelection().setControl(getQueryTable()); 
-						tabFolder.layout();
-					} catch (PlanManagementException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
 					}
 				}
 			}
@@ -219,7 +218,7 @@ public class SWTMainWindow {
 									tabFolder.getSelection().setControl(getQueryTable()); 
 									tabFolder.layout();
 								} catch (PlanManagementException e1) {
-									// TODO Auto-generated catch block
+									log.error("Query could not be stopped. Because of: ");
 									e1.printStackTrace();
 								}
 							}
@@ -236,7 +235,7 @@ public class SWTMainWindow {
 						}
 						
 					} catch (PlanManagementException e1) {
-						// TODO Auto-generated catch block
+						log.error("Query could not be stopped. Because of: ");
 						e1.printStackTrace();
 					}
 				}
@@ -258,7 +257,7 @@ public class SWTMainWindow {
 									tabFolder.getSelection().setControl(getQueryTable()); 
 									tabFolder.layout();
 								} catch (PlanManagementException e1) {
-									// TODO Auto-generated catch block
+									log.error("Query could not be deleted. Because of: ");
 									e1.printStackTrace();
 								}
 						}
@@ -274,7 +273,7 @@ public class SWTMainWindow {
 						}
 						
 					} catch (PlanManagementException e1) {
-						// TODO Auto-generated catch block
+						log.error("Query could not be deleted. Because of: ");
 						e1.printStackTrace();
 					}
 				}
@@ -359,7 +358,7 @@ public class SWTMainWindow {
 			queryListTab.setControl(table);
 		}
 		} catch (PlanManagementException e1) {
-			// TODO Auto-generated catch block
+			log.error("Error while trying to get the Sealed Plan. Because of: ");
 			e1.printStackTrace();
 		}
 		return table;

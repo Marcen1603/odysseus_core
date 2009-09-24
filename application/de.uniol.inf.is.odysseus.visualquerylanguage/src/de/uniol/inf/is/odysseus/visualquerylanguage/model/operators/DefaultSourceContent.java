@@ -10,7 +10,6 @@ public class DefaultSourceContent extends AbstractOperator{
 			Collection<IParamConstruct<?>> constructParameters,
 			Collection<IParamSetter<?>> setterParameters) {
 		super(name, typ, image, constructParameters, setterParameters);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

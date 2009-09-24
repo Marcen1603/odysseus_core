@@ -128,7 +128,7 @@ public class DefaultGraphArea extends Composite implements
 			URL xmlFile = Activator.getContext().getBundle().getEntry(XML_FILE);
 			this.parser = new XMLParameterParser(xmlFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			log.error("Parameter couldn't be parsed. Becaus of: ");
 			e.printStackTrace();
 		}
 

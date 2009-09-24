@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.controler;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import org.eclipse.swt.widgets.Control;

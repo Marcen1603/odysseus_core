@@ -129,7 +129,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 					XPathConstants.NODESET);
 			return nodes;
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
+			logger.error("Error while trying to get the Pipe. Because of: ");
 			e.printStackTrace();
 		}
 		return null;
@@ -145,7 +145,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 					XPathConstants.NODESET);
 			return nodes;
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
+			logger.error("Error while trying to get the Pipe. Because of: ");
 			e.printStackTrace();
 		}
 		return null;

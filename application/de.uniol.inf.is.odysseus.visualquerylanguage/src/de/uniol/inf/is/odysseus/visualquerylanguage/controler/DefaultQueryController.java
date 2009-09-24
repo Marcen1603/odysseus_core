@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;

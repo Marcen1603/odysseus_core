@@ -11,12 +11,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 
 public class SWTSourceCreator{
+	
+	private final Logger log = LoggerFactory.getLogger(SWTSourceCreator.class);
 	
 	Shell shell;
 
@@ -43,7 +47,7 @@ public class SWTSourceCreator{
 						listener.treeChanged();
 					}
 				} catch (PlanManagementException e1) {
-					// TODO Auto-generated catch block
+					log.error("Error while trying to add a Query. Because of: ");
 					e1.printStackTrace();
 				}
 			}

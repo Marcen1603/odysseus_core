@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.model.operators;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ParamConstructFactory {
 	
-	private final Logger log = LoggerFactory.getLogger(ParamConstructFactory.class);
 	private static final ParamConstructFactory fac = new ParamConstructFactory();
 	
 	public static ParamConstructFactory getInstance() {
