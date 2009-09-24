@@ -2,10 +2,15 @@ package de.uniol.inf.is.odysseus.rewrite.relational;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.relational.RestructHelper.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * Initializes IRelationalal predicates with the input schemas of a given
+ * ILogicalOperator.
+ * @author Jonas Jacobi
+ */
 public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 
 	private final SDFAttributeList leftSchema;
@@ -17,8 +22,8 @@ public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 	}
 	@Override
 	public void call(IPredicate<?> parameter) {
-		if(parameter instanceof RelationalPredicate) {
-			((RelationalPredicate)parameter).init(leftSchema, rightSchema);				
+		if(parameter instanceof IRelationalPredicate) {
+			((IRelationalPredicate)parameter).init(leftSchema, rightSchema);				
 		}
 	}
 
