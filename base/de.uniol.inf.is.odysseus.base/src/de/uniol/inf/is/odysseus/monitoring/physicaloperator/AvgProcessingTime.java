@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -15,7 +14,7 @@ public class AvgProcessingTime extends AbstractMonitoringData<Double> implements
 	private double runSum = 0;
 	private long runCount = 0;
 
-	public AvgProcessingTime(IObservablePhysicalOperator target) {
+	public AvgProcessingTime(IPhysicalOperator target) {
 		super(target);
 		target.subscribe(this, POEventType.ProcessInit);
 		target.subscribe(this, POEventType.ProcessDone);

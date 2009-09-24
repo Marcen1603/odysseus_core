@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperator;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 
 /**
  * Calculates the Productivity of an Operator by relating the count of the written
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperato
  */
 public class Productivity extends Selectivity {
 
-	public Productivity(IObservablePhysicalOperator po, int sourceCount) {
+	public Productivity(IPhysicalOperator po, int sourceCount) {
 		super(po, sourceCount);	
 	}
 

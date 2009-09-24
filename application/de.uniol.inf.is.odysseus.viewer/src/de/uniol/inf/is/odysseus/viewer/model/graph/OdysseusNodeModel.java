@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.IPublisher;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperator;
 import de.uniol.inf.is.odysseus.viewer.model.meta.IMetadataChangeListener;
 
 public class OdysseusNodeModel extends DefaultNodeModel<IPhysicalOperator> 
@@ -17,7 +16,7 @@ public class OdysseusNodeModel extends DefaultNodeModel<IPhysicalOperator>
 	private IMonitoringDataProvider metadataProvider;
 	private Collection<IMetadataChangeListener<IMonitoringData<?>>> listeners = new ArrayList<IMetadataChangeListener<IMonitoringData<?>>>();
 	
-	public OdysseusNodeModel( IObservablePhysicalOperator content ) {
+	public OdysseusNodeModel( IPhysicalOperator content ) {
 		super( content );
 		metadataProvider = content;
 	}

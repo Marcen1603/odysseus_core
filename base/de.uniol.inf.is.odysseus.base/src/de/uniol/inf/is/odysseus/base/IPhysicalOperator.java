@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IPOEventSender;
 /**
  * @author Marco Grawunder, Jonas Jacobi
  */
-public interface IPhysicalOperator extends IOwnedOperator,
-		IPOEventSender, IMonitoringDataProvider {
+public interface IPhysicalOperator extends IOwnedOperator, IPOEventSender,
+		IMonitoringDataProvider {
 
 	boolean isSource();
 

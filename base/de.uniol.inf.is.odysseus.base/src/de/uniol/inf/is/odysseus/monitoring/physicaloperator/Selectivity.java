@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -16,7 +16,7 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 	private int readCountSum;
 	private int sourceCount;
 
-	public Selectivity(IObservablePhysicalOperator target, int sourceCount) {
+	public Selectivity(IPhysicalOperator target, int sourceCount) {
 		super(target);
 		this.sourceCount = sourceCount;
 		reset();

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperator;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 
 /**
  * 
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperato
 
 public class ClassicSelectivity extends Selectivity {
 
-	public ClassicSelectivity(IObservablePhysicalOperator po, int inputPorts) {
+	public ClassicSelectivity(IPhysicalOperator po, int inputPorts) {
 		super(po, inputPorts);
 	}
 

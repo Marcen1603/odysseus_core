@@ -3,10 +3,9 @@ package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IObservablePhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 public enum MonitoringDataTypes {
 	
@@ -22,7 +21,7 @@ public enum MonitoringDataTypes {
 		this.name = name;
 	}
 	
-	static public IMonitoringData< ? > createMetadata( String type, IObservablePhysicalOperator source ){
+	static public IMonitoringData< ? > createMetadata( String type, IPhysicalOperator source ){
 		int in = 0;
 		if (source instanceof ISink){
 			in = ((ISink)source).getSubscribedTo().size();

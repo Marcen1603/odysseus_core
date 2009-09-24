@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
@@ -16,7 +17,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
  * 
  * @author Jonas Jacobi
  */
-public interface ISource<T> extends IObservablePhysicalOperator {
+public interface ISource<T> extends IPhysicalOperator {
 	/**
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.
