@@ -178,6 +178,8 @@ public class SWTMainWindow {
 					try {
 						queryController.launchQuery(tabFolder.getSelection()
 								.getControl(), executor);
+						tabFolder.getItem(0).setControl(getQueryTable()); 
+						tabFolder.layout();
 					} catch (LaunchException e1) {
 						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
 						log.error("Error while executing query.");
@@ -190,6 +192,8 @@ public class SWTMainWindow {
 					}
 					try {
 						executor.startQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
+						tabFolder.getSelection().setControl(getQueryTable()); 
+						tabFolder.layout();
 					} catch (PlanManagementException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -212,6 +216,8 @@ public class SWTMainWindow {
 							if(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).isStarted()) {
 								try {
 									executor.stopQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
+									tabFolder.getSelection().setControl(getQueryTable()); 
+									tabFolder.layout();
 								} catch (PlanManagementException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
@@ -225,6 +231,8 @@ public class SWTMainWindow {
 						if(query != null && query.isStarted()) {
 							executor.stopQuery(query.getID());
 							((DefaultGraphArea)tabFolder.getSelection().getControl()).setQueryID(-1);
+							tabFolder.getItem(0).setControl(getQueryTable()); 
+							tabFolder.layout();
 						}
 						
 					} catch (PlanManagementException e1) {
@@ -237,8 +245,8 @@ public class SWTMainWindow {
 		
 		ToolItem removeQueryItem = new ToolItem(tools, SWT.PUSH);
 		removeQueryItem.setImage(SWTResourceManager.getInstance().getImage(
-				"stopQuery"));
-		removeQueryItem.setToolTipText("Anfrage stoppen");
+				"deleteQuery"));
+		removeQueryItem.setToolTipText("Anfrage löschen");
 		removeQueryItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -247,6 +255,8 @@ public class SWTMainWindow {
 						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
 								try {
 									executor.removeQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
+									tabFolder.getSelection().setControl(getQueryTable()); 
+									tabFolder.layout();
 								} catch (PlanManagementException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
@@ -259,6 +269,8 @@ public class SWTMainWindow {
 						if(query != null) {
 							executor.removeQuery(query.getID());
 							((DefaultGraphArea)tabFolder.getSelection().getControl()).setQueryID(-1);
+							tabFolder.getItem(0).setControl(getQueryTable()); 
+							tabFolder.layout();
 						}
 						
 					} catch (PlanManagementException e1) {
@@ -266,6 +278,19 @@ public class SWTMainWindow {
 						e1.printStackTrace();
 					}
 				}
+			}
+		});
+		
+		ToolItem refreshQueryList = new ToolItem(tools, SWT.PUSH);
+		refreshQueryList.setImage(SWTResourceManager.getInstance().getImage(
+				"refreshQueryList"));
+		refreshQueryList.setToolTipText("Anfrageliste aktualisiern");
+		refreshQueryList.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				tabFolder.getSelection().setControl(getQueryTable()); 
+				tabFolder.layout();
+				tabFolder.setSelection(0);
 			}
 		});
 
