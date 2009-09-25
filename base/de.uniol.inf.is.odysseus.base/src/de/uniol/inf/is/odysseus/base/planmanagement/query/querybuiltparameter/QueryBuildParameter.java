@@ -4,11 +4,6 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AbstractTypeSafeMap;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterDefaultRoot;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterParserID;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter.ParameterTransformationConfiguration;
 
 /**
  * QueryBuildParameter provides a set of {@link AbstractQueryBuildParameter}.

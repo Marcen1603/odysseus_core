@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.base.planmanagement;
+package de.uniol.inf.is.odysseus.base;
 
 /**
  * Describes an object which could own an operator.

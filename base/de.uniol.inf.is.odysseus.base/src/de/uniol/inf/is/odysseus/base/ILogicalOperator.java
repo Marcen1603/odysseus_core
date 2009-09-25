@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.base;
 import java.net.URI;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

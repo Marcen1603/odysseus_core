@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 import java.util.List;
 import java.util.Vector;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 
 /**
  * @author Jonas Jacobi

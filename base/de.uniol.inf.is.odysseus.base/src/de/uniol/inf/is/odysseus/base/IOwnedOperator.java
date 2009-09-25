@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.base.planmanagement;
+package de.uniol.inf.is.odysseus.base;
 
 import java.util.List;
 

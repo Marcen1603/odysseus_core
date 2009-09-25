@@ -12,7 +12,6 @@ Import-Package:
  de.uniol.inf.is.odysseus.base.planmanagement.plan,
  de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter,
  de.uniol.inf.is.odysseus.physicaloperator.base.plan,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.configuration,

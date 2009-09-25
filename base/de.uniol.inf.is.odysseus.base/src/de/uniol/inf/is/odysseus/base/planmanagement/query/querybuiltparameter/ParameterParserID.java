@@ -1,6 +1,5 @@
-package de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.parameter;
+package de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 
 /**
  * {@link AbstractQueryBuildParameter} which provides an ID of the parser which

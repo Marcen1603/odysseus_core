@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 
 /**
  * An iterator interface for plain sources or buffers.

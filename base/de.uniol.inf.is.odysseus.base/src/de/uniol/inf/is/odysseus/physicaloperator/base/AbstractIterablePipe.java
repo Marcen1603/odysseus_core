@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 import java.util.List;
 import java.util.Vector;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 
 public abstract class AbstractIterablePipe<R, W> extends AbstractPipe<R, W>
 		implements IIterableSource<W> {

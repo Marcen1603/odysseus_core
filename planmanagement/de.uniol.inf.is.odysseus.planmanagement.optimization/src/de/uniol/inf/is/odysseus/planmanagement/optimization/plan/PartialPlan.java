@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;

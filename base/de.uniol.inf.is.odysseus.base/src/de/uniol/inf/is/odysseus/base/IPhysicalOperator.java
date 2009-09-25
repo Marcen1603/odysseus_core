@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.base;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
