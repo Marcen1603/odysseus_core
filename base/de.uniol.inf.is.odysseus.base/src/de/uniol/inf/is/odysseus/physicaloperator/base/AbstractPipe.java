@@ -202,6 +202,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		case ProcessDoneNeg:
 			this.delegateSink.subscribe(listener, type);
 		default:
+			super.subscribe(listener, type);
 		}
 	}
 
