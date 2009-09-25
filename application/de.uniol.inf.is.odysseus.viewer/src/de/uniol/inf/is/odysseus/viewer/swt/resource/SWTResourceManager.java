@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.osgi.framework.Bundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.viewer.Activator;
 
@@ -262,8 +262,8 @@ public class SWTResourceManager {
 	// schief gegangen ist.
 	private static Image loadImage( Device device, String filename ) {
 		try {
-//			URL imageURL = Activator.getContext().getBundle().getEntry(filename);
-			URL imageURL = resourceBundle.getEntry(filename);
+			URL imageURL = Activator.getContext().getBundle().getEntry(filename);
+//			URL imageURL = resourceBundle.getEntry(filename);
 			
 			Image image = new Image(device, imageURL.openStream());
 			
