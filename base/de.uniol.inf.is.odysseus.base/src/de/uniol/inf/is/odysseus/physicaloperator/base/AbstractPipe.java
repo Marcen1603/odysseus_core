@@ -39,7 +39,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	};
 
-	DelegateSink delegateSink = new DelegateSink();
+	final private DelegateSink delegateSink = new DelegateSink();
 
 	public enum OutputMode {
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
