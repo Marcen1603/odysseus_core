@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
  */
 public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		IPipe<R, W> {
-	private class DelegateSink extends AbstractSink<R> {
+	protected class DelegateSink extends AbstractSink<R> {
 
 		@Override
 		protected void process_next(R object, int port, boolean exclusive) {
@@ -39,7 +39,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	};
 
-	final private DelegateSink delegateSink = new DelegateSink();
+	final protected DelegateSink delegateSink = new DelegateSink();
 
 	public enum OutputMode {
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
@@ -198,8 +198,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		switch (type) {
 		case ProcessInit:
 		case ProcessDone:
-		case ProcessInitNeg:
-		case ProcessDoneNeg:
 			this.delegateSink.subscribe(listener, type);
 		default:
 			super.subscribe(listener, type);
@@ -211,8 +209,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		super.subscribeToAll(listener);
 		this.delegateSink.subscribe(listener, POEventType.ProcessInit);
 		this.delegateSink.subscribe(listener, POEventType.ProcessDone);
-		this.delegateSink.subscribe(listener, POEventType.ProcessInitNeg);
-		this.delegateSink.subscribe(listener, POEventType.ProcessDoneNeg);
 	}
 
 	@Override
