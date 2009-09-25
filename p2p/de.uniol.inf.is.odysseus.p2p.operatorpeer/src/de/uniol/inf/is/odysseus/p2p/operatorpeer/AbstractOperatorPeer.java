@@ -88,8 +88,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		return sources;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Map<String, ISource> getSourcesFromWrapperPlanFactory() {
+	public Map<String, ISource<?>> getSourcesFromWrapperPlanFactory() {
 		return WrapperPlanFactory.getSources();
 	}
 

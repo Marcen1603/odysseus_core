@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 //import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ILatency;
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 //public class P2PPipePO<M extends ILatency> extends
-public class P2PPipePO<M extends IClone> extends
+public class P2PPipePO<M extends IMetaAttribute> extends
 		AbstractPipe<RelationalTuple<M>, RelationalTuple<M>> {
 	
 	private String queryId;
@@ -86,7 +87,7 @@ public class P2PPipePO<M extends IClone> extends
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			while(subscribedTo.get(0)==null){
+			while(getSubscribedTo().get(0)==null){
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -94,7 +95,7 @@ public class P2PPipePO<M extends IClone> extends
 					e.printStackTrace();
 				}
 			}
-			setConnectToPipe(subscribedTo.get(0).target, 0);
+			setConnectToPipe(getSubscribedTo().get(0).target, 0);
 		}
 
 		public void transfer(Object o) {
@@ -148,8 +149,7 @@ public class P2PPipePO<M extends IClone> extends
 		return adv;
 	}
 
-	protected void process_next(RelationalTuple<M> object, int port,
-			boolean isReadOnly) {
+	protected void process_next(RelationalTuple<M> object, int port) {
 
 		synchronized (subscribe) {
 			for (StreamHandler sh : subscribe) {
@@ -187,6 +187,11 @@ public class P2PPipePO<M extends IClone> extends
 				sh.done();
 			}
 		}
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
 	}
 	
 

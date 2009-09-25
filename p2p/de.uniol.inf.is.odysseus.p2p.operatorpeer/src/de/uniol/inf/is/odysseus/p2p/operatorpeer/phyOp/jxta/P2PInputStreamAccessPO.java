@@ -7,21 +7,15 @@ import java.io.ObjectInputStream;
 
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.metadata.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IDataTransformation;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.access.help.IDataTransformation;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.IMetaAttribute;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractSource;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IIterableSource;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.OpenFailedException;
 
-public class P2PInputStreamAccessPO<In, Out extends IMetaAttribute<?>> extends
-		AbstractSource<Out> implements IIterableSource<Out>, IP2PInputPO {
+public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> extends
+		AbstractIterableSource<Out> implements IP2PInputPO {
 
 	private PipeAdvertisement adv;
 
