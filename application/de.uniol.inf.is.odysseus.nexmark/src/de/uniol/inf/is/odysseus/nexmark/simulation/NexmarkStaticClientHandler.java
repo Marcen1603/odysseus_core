@@ -19,9 +19,9 @@ import org.xml.sax.SAXException;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.base.xml.DOMHelp;
 import de.uniol.inf.is.odysseus.metadata.base.Container;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
+import de.uniol.inf.is.odysseus.nexmark.xml.DOMHelp;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 class TagMap {
