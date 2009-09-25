@@ -22,8 +22,6 @@ public class DataDictionary {
 	private static final Logger logger = LoggerFactory
 			.getLogger(DataDictionary.class);
 
-	private String STREAM_DEFINITION_FILE;
-
 	static private DataDictionary instance = null;
 
 	private Map<String, ILogicalOperator> viewDefinitions = new HashMap<String, ILogicalOperator>();

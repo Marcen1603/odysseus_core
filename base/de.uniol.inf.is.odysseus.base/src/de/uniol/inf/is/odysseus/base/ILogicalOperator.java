@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.base;
 
-import java.net.URI;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
