@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Pa
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.MinMax;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class RelationalMinMax extends MinMax<RelationalTuple> {
+public class RelationalMinMax extends MinMax<RelationalTuple<?>> {
 
 	int[] attrList = new int[1];
 
@@ -14,20 +14,15 @@ public class RelationalMinMax extends MinMax<RelationalTuple> {
 	}
 	
 	@Override
-	public PartialAggregate<RelationalTuple> init(RelationalTuple in) {
+	public PartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
 		return super.init(in.restrict(attrList, null));
 	}
 	
 	@Override
-	public PartialAggregate<RelationalTuple> merge(
-			PartialAggregate<RelationalTuple> p, RelationalTuple toMerge, boolean createNew) {
+	public PartialAggregate<RelationalTuple<?>> merge(
+			PartialAggregate<RelationalTuple<?>> p, RelationalTuple<?> toMerge,
+			boolean createNew) {
 		return super.merge(p, toMerge.restrict(attrList,null), createNew);
 	}
 	
-//	@Override
-//	public RelationalTuple evaluate(PartialAggregate<RelationalTuple> p) {
-//		return super.evaluate(p);
-//	}
-
-
 }

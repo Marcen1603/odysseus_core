@@ -34,7 +34,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	// reicht hier eine Map
 	//TODO lieber eine factory uebergeben, die e.g. immer die selben instanzen liefert, dann kann auf einiges
 	//gecaste verzichtet werden, weil die typinformationen vorhanden sind
-	static private Map<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple>> fMap = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple>>();
+	static private Map<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple<?>>> fMap = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple<?>>>();
 
 	public RelationalTupleGroupingHelper(SDFAttributeList inputSchema, SDFAttributeList outputSchema, List<SDFAttribute> groupingAttributes, Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super();
@@ -45,12 +45,12 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	}
 
 	@Override
-	public int getGroupID(RelationalTuple elem) {
+	public int getGroupID(RelationalTuple<T> elem) {
 		// Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
 		if (gRestrict == null || gRestrict.length == 0)
 			return 0;
 		// Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
-		RelationalTuple gTuple = elem.restrict(gRestrict, null);
+		RelationalTuple<T> gTuple = elem.restrict(gRestrict, null);
 		// Gibt es diese Kombination schon?
 		Integer id = keyMap.get(gTuple);
 		// Wenn nicht, neu eintragen
@@ -122,9 +122,9 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		return returnTuple;
 	}
 
-	private Evaluator<RelationalTuple> createAggFunction(AggregateFunction key,
+	private Evaluator<RelationalTuple<?>> createAggFunction(AggregateFunction key,
 			int pos) {
-		Evaluator<RelationalTuple> aggFunc = null;
+		Evaluator<RelationalTuple<?>> aggFunc = null;
 		switch (key) {
 		case AVG:
 			aggFunc = new RelationalAvgSum(pos, true);
@@ -147,10 +147,11 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		return aggFunc;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Evaluator<RelationalTuple<T>> getEvaluatorAggFunction(
 			FESortedPair<SDFAttribute, AggregateFunction> p) {
-		Evaluator<RelationalTuple> eval = fMap.get(p);
+		Evaluator<RelationalTuple<?>> eval = fMap.get(p);
 		if (eval == null) {
 			eval = createAggFunction(p.getE2(), inputSchema.indexOf(p.getE1()));
 			fMap.put(p, eval);
@@ -158,6 +159,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		return (Evaluator<RelationalTuple<T>>) (Evaluator) eval;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Initializer<RelationalTuple<T>> getInitAggFunction(
 			FESortedPair<SDFAttribute, AggregateFunction> p) {
@@ -165,6 +167,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		return (Initializer<RelationalTuple<T>>) getEvaluatorAggFunction(p);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Merger<RelationalTuple<T>> getMergerAggFunction(
 			FESortedPair<SDFAttribute, AggregateFunction> p) {
