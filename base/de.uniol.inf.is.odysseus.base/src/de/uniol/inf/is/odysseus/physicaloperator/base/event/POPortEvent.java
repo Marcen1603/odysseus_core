@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.event;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IPOEventSender;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 
 public class POPortEvent extends POEvent {
 
@@ -11,7 +11,7 @@ public class POPortEvent extends POEvent {
 		return port;
 	}
 
-	public POPortEvent(IPOEventSender source, POEventType type, int port) {
+	public POPortEvent(IPhysicalOperator source, POEventType type, int port) {
 		super(source, type);
 		this.port = port;
 	}

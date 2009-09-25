@@ -202,7 +202,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	 * One listener can have multiple subscriptions to the same event sender and
 	 * the same event type
 	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPOEventSender#subscribe(de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventListener,
+	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribe(de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventListener,
 	 *      de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventType)
 	 */
 	@SuppressWarnings("unchecked")
@@ -242,7 +242,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	/**
 	 * One listener can have multiple subscriptions to the same event sender
 	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPOEventSender#subscribeToAll(de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventListener)
+	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribeToAll(de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventListener)
 	 */
 	@Override
 	public void subscribeToAll(POEventListener listener) {
