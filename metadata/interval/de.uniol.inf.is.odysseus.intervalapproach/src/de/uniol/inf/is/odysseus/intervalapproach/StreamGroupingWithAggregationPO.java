@@ -148,7 +148,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@Override
 	protected boolean isDone() {
-		return super.isAllInputsDone() && q.size() == 0;
+		return super.isDone() && q.size() == 0;
 	}
 
 	@Override

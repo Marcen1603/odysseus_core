@@ -52,8 +52,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	private boolean[] inputExclusive;
 
-	private boolean allInputsDone = false;
-
 	@Override
 	public boolean isSink() {
 		return true;
@@ -137,10 +135,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	protected void process_done(int port) {
-	}
-
-	public boolean isAllInputsDone() {
-		return allInputsDone;
 	}
 
 	@Override

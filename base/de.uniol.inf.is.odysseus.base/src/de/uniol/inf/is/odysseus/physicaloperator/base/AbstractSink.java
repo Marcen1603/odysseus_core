@@ -300,36 +300,4 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
-
-	// @Override
-	// public void activateRequest(IOperatorControl operatorControl) {
-	// synchronized (this.deactivateRequestControls) {
-	// this.deactivateRequestControls.add(operatorControl);
-	// }
-	// }
-	//
-	// @Override
-	// public void deactivateRequest(IOperatorControl operatorControl) {
-	// synchronized (this.deactivateRequestControls) {
-	// this.deactivateRequestControls.remove(operatorControl);
-	// }
-	// }
-	//
-	// @Override
-	// public boolean deactivateRequestedBy(IOperatorControl operatorControl) {
-	// synchronized (this.deactivateRequestControls) {
-	// return this.deactivateRequestControls.contains(operatorControl);
-	// }
-	// }
-
-	// @Override
-	// public synchronized boolean isActive() {
-	// int own = this.owner.size();
-	// int deac = this.deactivateRequestControls.size();
-	//
-	// if (own < 1 || own <= deac) {
-	// return false;
-	// }
-	// return true;
-	// }
 }

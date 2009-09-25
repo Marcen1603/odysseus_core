@@ -60,7 +60,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		transferLock.lock();
 		boolean returnValue;
 		synchronized (this.buffer) {
-			returnValue = isAllInputsDone() && this.buffer.isEmpty();
+			returnValue = super.isDone() && this.buffer.isEmpty();
 		}
 		transferLock.unlock();
 		return returnValue;
