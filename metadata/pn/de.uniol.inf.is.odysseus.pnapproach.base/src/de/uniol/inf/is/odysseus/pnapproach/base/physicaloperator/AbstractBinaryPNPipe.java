@@ -12,7 +12,6 @@ public abstract class AbstractBinaryPNPipe<Read extends IMetaAttributeContainer<
 	int RIGHT = 1;
 	
 	protected AbstractBinaryPNPipe(){
-		setNoOfInputPort(2);
 	}
 
 	@Override

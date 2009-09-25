@@ -38,11 +38,4 @@ public class SelectPNPO<T extends IMetaAttributeContainer<? extends IPosNeg>> ex
 		}
 	}
 
-	@Override
-	public SelectPNPO<T> clone() {
-		SelectPNPO<T> spo = (SelectPNPO<T>) super.clone();
-		spo.predicate = this.predicate;
-		return spo;
-	}
-
 }

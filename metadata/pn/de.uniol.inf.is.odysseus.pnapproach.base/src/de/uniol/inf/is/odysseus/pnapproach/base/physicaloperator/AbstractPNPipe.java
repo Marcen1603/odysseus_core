@@ -2,12 +2,16 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator;
 
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
+/**
+ * @author Andre Bolles, Jonas Jacobi
+ */
 public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends IPosNeg>, W extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPipe<R, W>{
 		
 	protected POEvent[] processInitNegEvent = null;
@@ -30,23 +34,18 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 		}
 	}
 	
-	public void setNoOfInputPort(int ports) {
-		if (ports > noInputPorts) {
-			this.noInputPorts = ports;
-			processInitEvent = new POEvent[ports];
-			processDoneEvent = new POEvent[ports];
-			processInitNegEvent = new POEvent[ports];
-			processDoneNegEvent = new POEvent[ports];
-			for (int i = 0; i < ports; i++) {
-				processInitEvent[i] = new POPortEvent(this,
-						POEventType.ProcessInit, i);
-				processDoneEvent[i] = new POPortEvent(this,
-						POEventType.ProcessDone, i);
-				processInitNegEvent[i] = new POPortEvent(this,
-						POEventType.ProcessInitNeg, i);
-				processDoneNegEvent[i] = new POPortEvent(this,
-						POEventType.ProcessDoneNeg, i);
-			}
+	
+	@Override
+	public void subscribeTo(ISource<? extends R> source, int port) {
+		super.subscribeTo(source, port);
+		int portCount = delegateSink.getInputPortCount();
+		processInitNegEvent = new POEvent[portCount];
+		processDoneNegEvent = new POEvent[portCount];
+		for (int i = 0; i < portCount; ++i) {
+			processInitNegEvent[i] = new POPortEvent(this,
+					POEventType.ProcessInitNeg, i);
+			processDoneNegEvent[i] = new POPortEvent(this,
+					POEventType.ProcessDoneNeg, i);
 		}
 	}
 	
