@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.base.predicate;
  * @author Jonas Jacobi
  */
 public class NotPredicate<T> extends AbstractPredicate<T> {
+	private static final long serialVersionUID = -3214605315259491423L;
 	IPredicate<? super T> predicate;
 
 	public NotPredicate() {

@@ -4,6 +4,8 @@ package de.uniol.inf.is.odysseus.base.predicate;
  * @author Jonas Jacobi
  */
 public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
+	private static final long serialVersionUID = 5112319812675937729L;
+
 	private IPredicate<? super T> left;
 
 	private IPredicate<? super T> right;
@@ -39,7 +41,6 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.right = right;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ComplexPredicate<T> clone() {
 		ComplexPredicate<T> newPred;
 		newPred = (ComplexPredicate<T>) super.clone();

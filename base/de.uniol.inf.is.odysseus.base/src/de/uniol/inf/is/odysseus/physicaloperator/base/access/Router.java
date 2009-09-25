@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.base.UnsortedPair;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 
 public class Router extends Thread {
 
@@ -69,7 +68,6 @@ public class Router extends Thread {
 				while (it.hasNext()) {
 					SelectionKey key = (SelectionKey) it.next();
 					it.remove();
-					@SuppressWarnings("unchecked")
 					IRouterReceiver op = (IRouterReceiver) key.attachment();
 					SocketChannel sc = (SocketChannel) key.channel();
 

@@ -84,7 +84,7 @@ public class MyStats {
 		this.offset = this.values.length - this.count;
 	}
 
-	private double getVariance() {
+	public double getVariance() {
 		prepareStats();
 		return this.variance;
 	}

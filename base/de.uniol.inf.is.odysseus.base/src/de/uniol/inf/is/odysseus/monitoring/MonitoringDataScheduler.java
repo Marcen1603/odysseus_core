@@ -46,7 +46,7 @@ public class MonitoringDataScheduler extends ScheduledThreadPoolExecutor {
 	 * anschliessend heruntergefahren.
 	 * @param item Das abzubrechende MetadataItem
 	 */
-	public void cancelPeriodicalMetadataItem(IPeriodicalMonitoringData item) {
+	public void cancelPeriodicalMetadataItem(IPeriodicalMonitoringData<?> item) {
 		
 		/*
 		 * Ein MetadataItem, das zum ScheduledThreadPoolExecutor mit
@@ -57,7 +57,7 @@ public class MonitoringDataScheduler extends ScheduledThreadPoolExecutor {
 		 * und dann dieses Future abbrechen und aus der Queue entfernen.
 		 */
 		
-		ScheduledFuture future = map.remove(item);
+		ScheduledFuture<?> future = map.remove(item);
 		if (future != null) {
 			future.cancel(true);
 			this.getQueue().remove(future);

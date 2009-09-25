@@ -5,6 +5,8 @@ package de.uniol.inf.is.odysseus.base.predicate;
  */
 public class AndPredicate<T> extends ComplexPredicate<T> {
 
+	private static final long serialVersionUID = -3438130138466305862L;
+
 	public AndPredicate() {
 		super();
 	}

@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
-import java.lang.management.MemoryUsage;
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
 /**
@@ -55,8 +53,6 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 	public UnionPO<R> clone() {
 		return new UnionPO<R>(this);
 	}
-
-	private boolean[] done;
 
 	@Override
 	public OutputMode getOutputMode() {

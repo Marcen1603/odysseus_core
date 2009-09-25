@@ -15,7 +15,7 @@ abstract public class Count<T> implements Initializer<T>, Merger<T>, Evaluator<T
 	public synchronized PartialAggregate<T> merge(PartialAggregate<T> p, T toMerge, boolean createNew) {
 		CountPartialAggregate<T> pa = null;
 		if (createNew){
-			pa = new CountPartialAggregate<T>(((CountPartialAggregate) p).getCount());
+			pa = new CountPartialAggregate<T>(((CountPartialAggregate<T>) p).getCount());
 		}else{
 			pa = (CountPartialAggregate<T>) p;
 		}		

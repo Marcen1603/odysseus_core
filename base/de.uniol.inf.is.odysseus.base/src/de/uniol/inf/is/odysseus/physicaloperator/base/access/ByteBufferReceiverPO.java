@@ -3,17 +3,11 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 
 public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		IRouterReceiver {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ByteBufferReceiverPO.class);
 
 	private IObjectHandler<W> handler;
 	private int size = -1;
@@ -34,6 +28,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		this.opened = false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
 		super();
 		handler = (IObjectHandler<W>) byteBufferReceiverPO.handler.clone();

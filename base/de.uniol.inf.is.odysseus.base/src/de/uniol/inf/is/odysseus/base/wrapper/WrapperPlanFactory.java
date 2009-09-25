@@ -15,32 +15,29 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 /**
  * @author Marco Grawunder
- * 
  */
 public class WrapperPlanFactory {
 	
 	private static final Logger logger = LoggerFactory.getLogger( WrapperPlanFactory.class );
 	
-	@SuppressWarnings("unchecked")
-	private static Map<String, ISource> sources = new HashMap<String, ISource>();
+	private static Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
 
 	public synchronized static void init() throws Exception {
 		logger.debug("init wrapper");
 		DataDictionary.getInstance();
 	}
 
-	@SuppressWarnings("unchecked")
-	public synchronized static ISource getAccessPlan(String uri) {
-		ISource po = sources.get(uri);
+	public synchronized static ISource<?> getAccessPlan(String uri) {
+		ISource<?> po = sources.get(uri);
 		return po;
 	}
 
-	public synchronized static void putAccessPlan(String uri, ISource s) {
+	public synchronized static void putAccessPlan(String uri, ISource<?> s) {
 		sources.put(uri, s);
 	}
 	
 	//Fuer P2P
-	public static Map<String, ISource> getSources() {
+	public static Map<String, ISource<?>> getSources() {
 		return sources;
 	}
 

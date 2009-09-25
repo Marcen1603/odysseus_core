@@ -23,8 +23,8 @@ public enum MonitoringDataTypes {
 	
 	static public IMonitoringData< ? > createMetadata( String type, IPhysicalOperator source ){
 		int in = 0;
-		if (source instanceof ISink){
-			in = ((ISink)source).getSubscribedTo().size();
+		if (source instanceof ISink<?>){
+			in = ((ISink<?>)source).getSubscribedTo().size();
 		}
 		
 		if( PRODUCTIVITY.name.equals( type )) {

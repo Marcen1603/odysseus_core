@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.access;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Used for getting DATE attributes out of a streams.

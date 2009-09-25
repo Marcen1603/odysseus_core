@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.In
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Merger;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
 
-public class MinMax<T extends Comparable> implements Initializer<T>, Merger<T>, Evaluator<T>{
+public class MinMax<T extends Comparable<T>> implements Initializer<T>, Merger<T>, Evaluator<T>{
 	
 	boolean isMax = true;
 	

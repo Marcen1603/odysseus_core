@@ -8,12 +8,15 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractMonitoringDataProvider implements IMonitoringDataProvider {
 
+	@SuppressWarnings("unchecked")
 	private Map<String, IMonitoringData> metaDataItem;
 
+	@SuppressWarnings("unchecked")
 	public AbstractMonitoringDataProvider() {
 		this.metaDataItem = new HashMap<String, IMonitoringData>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> IMonitoringData<T> getMonitoringData(String type) {
 		return this.metaDataItem.get(type);
 	}

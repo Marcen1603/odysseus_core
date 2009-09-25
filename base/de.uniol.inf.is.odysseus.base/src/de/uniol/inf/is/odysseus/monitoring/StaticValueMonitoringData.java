@@ -29,6 +29,7 @@ public class StaticValueMonitoringData<T> implements IMonitoringData<T> {
 		return this.value;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public StaticValueMonitoringData<T> clone() {
 		StaticValueMonitoringData<T> ret = null;

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.metadata.base;
 
-import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 
 /**
