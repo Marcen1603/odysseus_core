@@ -70,10 +70,5 @@ public interface ISource<T> extends IPhysicalOperator {
 
 	public void sendPunctuation(PointInTime punctuation);
 	
-	/**
-	 * Name for Operator (Visual Identification) 
-	 */
-	public String getName();
-	public void setName(String name);
 
 }

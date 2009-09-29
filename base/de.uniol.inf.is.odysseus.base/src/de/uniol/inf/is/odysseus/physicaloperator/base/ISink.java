@@ -66,11 +66,4 @@ public interface ISink<T> extends IPhysicalOperator {
 
 	public void processPunctuation(PointInTime timestamp);
 
-	/**
-	 * Name for Operator (Visual Identification)
-	 */
-	public String getName();
-
-	public void setName(String name);
-
 }

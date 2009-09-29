@@ -30,4 +30,10 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public void subscribeToAll(POEventListener listener);
 
 	public void unSubscribeFromAll(POEventListener listener);
+	
+	/**
+	 * Name for Operator (Visual Identification) 
+	 */
+	public String getName();
+	public void setName(String name);
 }
