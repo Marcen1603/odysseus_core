@@ -2,9 +2,12 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +60,9 @@ public class SDFExpression implements Serializable {
 
 	private static final Pattern aggregatePattern = Pattern
 			.compile(aggregateRegexp);
+	
+	private static final Set<String> functions = new HashSet<String>();
+	private static boolean isFunctionsInit = false;
 
 	// TODO alles schon im parser aufloesen und variable/attribut bindings
 	// erstellen
@@ -65,8 +71,22 @@ public class SDFExpression implements Serializable {
 		init(attribute);
 	}
 
-	public static void addFunction(CustomFunction function) {
+	public synchronized static void addFunction(CustomFunction function) {
 		customFunctions.add(function);
+		functions.add(function.getName());
+	}
+	
+	public synchronized static Set<String> getFunctions() {
+		if (!isFunctionsInit) {
+			JEP tmpParser = new JEP();
+			tmpParser.addStandardFunctions();
+			for(Object o : tmpParser.getFunctionTable().keySet()) {
+				functions.add((String) o);
+			}	
+			isFunctionsInit = true;
+		}
+		
+		return Collections.unmodifiableSet(functions);
 	}
 
 	private void init(SDFAttribute attribute) {
