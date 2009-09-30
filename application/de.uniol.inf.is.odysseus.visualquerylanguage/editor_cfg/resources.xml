@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="resourcesSchema.xsd">
-
+	
+	<Image source="editor_cfg/default.png" name="default"/>
 	<Image source="editor_cfg/source.png" name="source"/>
 	<Image source="editor_cfg/Connection.png" name="connection"/>
 	<Image source="editor_cfg/sink.png" name="sink"/>
 	<Image source="editor_cfg/select.png" name="select"/>
-	<Image source="editor_cfg/Pipe.png" name="pipe"/>
+	<Image source="editor_cfg/join.png" name="join"/>
 	<Image source="editor_cfg/NeueAnfrage.png" name="newQuery"/>
 	<Image source="editor_cfg/AnfrageStoppen.png" name="stopQuery"/>
+	<Image source="editor_cfg/projection.png" name="projection"/>
 
 </Resources>

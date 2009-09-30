@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
@@ -22,7 +21,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
-import de.uniol.inf.is.odysseus.visualquerylanguage.LaunchException;
+import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
@@ -72,7 +71,7 @@ public class DefaultQueryController implements IQueryController<IQuery> {
 	}
 
 	@Override
-	public void launchQuery(Control control, IExecutor executor) throws LaunchException {
+	public void launchQuery(Control control, IExecutor executor) throws ReflectionException {
 		
 		DefaultGraphArea area = null;
 		ILogicalOperator root = null;
@@ -95,83 +94,35 @@ public class DefaultQueryController implements IQueryController<IQuery> {
 			}
 			
 			if (root != null) {
-				area.setQueryID(executor.addQuery((ILogicalOperator) root,
-						new ParameterDefaultRoot(null)));
+				area.setQueryID(executor.addQuery(root));
 				
 			} else {
 				log.error("Root of the tree is null.");
 			}
 		} catch (Exception e) {
-			throw new LaunchException();
+			throw new ReflectionException();
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private ILogicalOperator createOperators(DefaultGraphArea area,
-			IExecutor executor) throws ClassNotFoundException,
-			SecurityException, NoSuchMethodException, IllegalArgumentException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException {
+			IExecutor executor){
 		ArrayList<ILogicalOperator> opList = new ArrayList<ILogicalOperator>();
 		ArrayList<INodeModel<INodeContent>> modelList = new ArrayList<INodeModel<INodeContent>>();
-		Class clazz = null;
-		Class[] constructParameters = null;
-		Constructor con = null;
 		ILogicalOperator logOp = null;
 		WindowAO windowOp = null;
-
-		ArrayList<Object> parameterValues = null;
-		Object paramObj = new Object();
-		INodeContent content = null;
+		
 		ILogicalOperator root = null;
 		
 		for (INodeModel<INodeContent> nodeModel : area.getController()
 				.getModel().getNodes()) {
-
-			clazz = Class.forName(nodeModel.getContent().getType());
-
-			content = nodeModel.getContent();
+			
+			logOp = nodeModel.getContent().getOperator();
 			modelList.add(nodeModel);
-
-			if (!content.getConstructParameterList().isEmpty()) {
-				constructParameters = new Class[content
-						.getConstructParameterList().size()];
-				parameterValues = new ArrayList<Object>();
-				for (IParamConstruct<?> param : content
-						.getConstructParameterList()) {
-					Class paramClazz = null;
-					paramClazz = Class.forName(param.getType());
-					paramObj = param.getValue();
-					parameterValues.add(paramObj);
-					constructParameters[param.getPosition()] = paramClazz;
-				}
-				con = clazz.getConstructor(constructParameters);
-				if (content.isOnlySource() && parameterValues.size() == 1
-						&& parameterValues.get(0) instanceof String) {
-					SDFSource source = DataDictionary.getInstance().getSource(
-							(String) parameterValues.get(0));
-					logOp = (ILogicalOperator) con.newInstance(source);
-				} else {
-					if(clazz.newInstance() instanceof WindowAO) {
-						windowOp = (WindowAO) con.newInstance(parameterValues);
-					}else {
-						logOp = (ILogicalOperator) con.newInstance(parameterValues);
-					}
-					
-				}
-			} else {
-				if(clazz.newInstance() instanceof WindowAO) {
-					windowOp = (WindowAO) clazz.newInstance();
-				}else {
-					logOp = (ILogicalOperator) clazz.newInstance();
-				}
+			
+			if(logOp instanceof WindowAO) {
+				windowOp = (WindowAO) logOp;
 			}
-			for (IParamSetter<?> param : content.getSetterParameterList()) {
-				if(param.getValue() != null) {
-					Method method = logOp.getClass().getMethod(param.getSetter(), new Class[] {param.getValue().getClass()});
-					method.invoke(logOp, new Object[]{param.getValue()});
-				}
-			}
+			
 			if(windowOp != null) {
 				opList.add(windowOp);
 			}else {
@@ -207,15 +158,9 @@ public class DefaultQueryController implements IQueryController<IQuery> {
 					}
 				}
 				if(operatorList.get(i) instanceof UnaryLogicalOp) {
-					if(startNodes.size() != 1) {
-						return false;
-					}
 						operatorList.get(i).setInputAO(0, startNodes.get(0));
 						operatorList.get(i).setInputSchema(0, startNodes.get(0).getOutputSchema());
 				}else if(operatorList.get(i) instanceof BinaryLogicalOp) {
-					if(startNodes.size() != 2) {
-						return false;
-					}
 					if(startNodes.get(0) instanceof AbstractLogicalOperator && startNodes.get(1) instanceof AbstractLogicalOperator) {
 						((BinaryLogicalOp)operatorList.get(i)).setLeftInput((AbstractLogicalOperator)startNodes.get(0));
 						((BinaryLogicalOp)operatorList.get(i)).setLeftInputSchema(((AbstractLogicalOperator)startNodes.get(0)).getOutputSchema());

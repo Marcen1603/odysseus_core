@@ -63,7 +63,7 @@
 
 				<xsd:element name="pipes">
 					<xsd:complexType>
-						<xsd:sequence maxOccurs="unbounded">
+						<xsd:sequence maxOccurs="unbounded" minOccurs="0">
 							<xsd:element name="pipe" type="pipe-type" />
 						</xsd:sequence>
 					</xsd:complexType>
@@ -75,7 +75,7 @@
 
 				<xsd:element name="sinks">
 					<xsd:complexType>
-						<xsd:sequence maxOccurs="unbounded">
+						<xsd:sequence maxOccurs="unbounded" minOccurs="0">
 							<xsd:element name="sink" type="sink-type" />
 						</xsd:sequence>
 					</xsd:complexType>

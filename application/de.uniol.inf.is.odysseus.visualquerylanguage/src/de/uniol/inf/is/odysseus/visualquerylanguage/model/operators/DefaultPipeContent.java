@@ -6,9 +6,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class DefaultPipeContent extends AbstractOperator {
 
-
-
-	public DefaultPipeContent(String name, String typ, Image image,
+	public DefaultPipeContent(String name, String typ, Image image, 
 			Collection<IParamConstruct<?>> constructParameters,
 			Collection<IParamSetter<?>> setterParameters) {
 		super(name, typ, image, constructParameters, setterParameters);

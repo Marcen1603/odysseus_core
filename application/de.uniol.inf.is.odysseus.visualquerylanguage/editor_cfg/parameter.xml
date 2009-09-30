@@ -4,21 +4,10 @@
 	
 	<pipes>
 		<pipe>
-			<pipe-name>Select</pipe-name>
+			<pipe-name>Selektion</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO</pipe-type>
-			<pipe-image>Select</pipe-image>
+			<pipe-image>select</pipe-image>
 			<sparams>
-				<setterParameter>
-					<name>Output</name>
-					<type>SDFAttributeList</type>
-					<setter>setOutputSchema</setter>
-				</setterParameter>
-				
-				<setterParameter>
-					<name>OutputValue</name>
-					<type>SDFAttribute</type>
-					<setter></setter>
-				</setterParameter>
 				
 				<setterParameter>
 					<name>Predicate</name>
@@ -26,48 +15,157 @@
 					<setter>setPredicate</setter>
 				</setterParameter>
 				
-				<setterParameter>
-					<name>PredicateFirstValue</name>
-					<type>SDFExpression</type>
-					<setter></setter>
-				</setterParameter>
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Join-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO</pipe-type>
+			<pipe-image>join</pipe-image>
+			
+			<sparams>
 				
 				<setterParameter>
-					<name>PredicateSecondValue</name>
-					<type>SDFAttribute</type>
-					<setter></setter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
 				</setterParameter>
 				
 			</sparams>
 		</pipe>
 		
 		<pipe>
-			<pipe-name>Join</pipe-name>
-			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO</pipe-type>
-			<pipe-image>Join</pipe-image>
+			<pipe-name>Projektion</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO</pipe-type>
+			<pipe-image>projection</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Berechnungs-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.MapAO</pipe-type>
+			<pipe-image>calculate</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Fensteroperator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO</pipe-type>
+			<pipe-image>window</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Aggregation</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO</pipe-type>
+			<pipe-image>aggregate</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Prioritäts-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.priority.PriorityAO</pipe-type>
+			<pipe-image>priority</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Unions-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO</pipe-type>
+			<pipe-image>union</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Intersektion</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.IntersectionAO</pipe-type>
+			<pipe-image>intersection</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Differenz-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO</pipe-type>
+			<pipe-image>difference</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+				</setterParameter>
+				
+			</sparams>
 		</pipe>
 		
 	</pipes>
 	
 	<sinks>
-		<sink>
-			<sink-name>TestSink1</sink-name>
-			<sink-type>Type1</sink-type>
-			<sink-image>sink</sink-image>
-			<cparams>
-				<constructParameter>
-					<name>Param</name>
-					<type>String</type>
-					<position>2</position>
-				</constructParameter>
-			</cparams>
-		</sink>
-		
-		<sink>
-			<sink-name>TestSink2</sink-name>
-			<sink-type>Type2</sink-type>
-			<sink-image>sink</sink-image>
-		</sink>	
+	
 	</sinks>
 
 </Operator-List>

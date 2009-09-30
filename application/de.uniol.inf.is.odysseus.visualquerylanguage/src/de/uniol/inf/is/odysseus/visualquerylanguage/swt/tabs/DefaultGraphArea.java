@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +34,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultGraphModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultNodeModel;
@@ -45,7 +52,6 @@ import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.viewer.swt.select.ISelectListener;
 import de.uniol.inf.is.odysseus.viewer.swt.select.ISelector;
 import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTArrowSymbolElement;
-import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTFillCircleSymbolElement;
 import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTImageSymbolElement;
 import de.uniol.inf.is.odysseus.viewer.swt.symbol.SWTSymbolElementFactory;
 import de.uniol.inf.is.odysseus.viewer.view.graph.DefaultConnectionView;
@@ -59,8 +65,10 @@ import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
+import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultModelController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IModelController;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.AbstractOperator;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
@@ -75,7 +83,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositi
 
 public class DefaultGraphArea extends Composite implements
 		IGraphArea<INodeContent>, IGraphModelChangeListener<INodeContent>,
-		ISelectListener<INodeView<INodeContent>> , ISWTTreeChangedListener{
+		ISelectListener<INodeView<INodeContent>>, ISWTTreeChangedListener {
 
 	private static final String XML_FILE = "editor_cfg/parameter.xml";
 
@@ -101,13 +109,12 @@ public class DefaultGraphArea extends Composite implements
 
 	private Composite upperGraphArea = null;
 	SWTStatusLine status = null;
-	
+
 	private int queryID = -1;
 
 	private final Logger log = LoggerFactory.getLogger(DefaultGraphArea.class);
 
-	public DefaultGraphArea(Composite parent, int style,
-			IAdvancedExecutor exec) {
+	public DefaultGraphArea(Composite parent, int style, IAdvancedExecutor exec) {
 		super(parent, style);
 
 		GridData graphAreaData = new GridData(GridData.FILL_HORIZONTAL
@@ -134,10 +141,10 @@ public class DefaultGraphArea extends Composite implements
 
 		this.symFac = new SWTSymbolElementFactory<INodeContent>();
 		this.positioner = new SugiyamaPositioner(symFac);
-		
+
 		DefaultGraphModel<INodeContent> graphModel = new DefaultGraphModel<INodeContent>();
 		this.controller = new DefaultModelController<INodeContent>(graphModel);
-		
+
 		controller.getModel().addGraphModelChangeListener(this);
 		this.viewGraph = new DefaultGraphView<INodeContent>(controller
 				.getModel());
@@ -213,14 +220,20 @@ public class DefaultGraphArea extends Composite implements
 					addNewNode(e);
 					renderManager.refreshView();
 				} else {
-					setCursor(CursorManager.setStandardCursor());
+					setCursor(CursorManager.setCursor(null));
+					status.setText("Anfragestellung bereit.");
 					connectionChosen = false;
 					connectionStarted = false;
 				}
 			}
 		});
-		
-		tree = getTree();
+
+		try {
+			tree = getTree();
+		} catch (ReflectionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		tree.addMouseListener(new MouseAdapter() {
 
 			public void mouseDown(MouseEvent e) {
@@ -228,7 +241,8 @@ public class DefaultGraphArea extends Composite implements
 					leftMouseClicked = true;
 				} else {
 					leftMouseClicked = false;
-					setCursor(CursorManager.setStandardCursor());
+					setCursor(CursorManager.setCursor(null));
+					status.setText("Anfragestellung bereit.");
 					connNodeList.clear();
 					connectionChosen = false;
 					connectionStarted = false;
@@ -237,25 +251,23 @@ public class DefaultGraphArea extends Composite implements
 		});
 		tree.addSelectionListener(new SelectionAdapter() {
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (tree.getSelection() != null && tree.getSelection().length > 0 && e.item instanceof TreeItem
-						&& leftMouseClicked) {
+				if (tree.getSelection() != null
+						&& tree.getSelection().length > 0
+						&& e.item instanceof TreeItem && leftMouseClicked) {
 
 					if (tree.getSelection()[0].getText().equals("Verbindung")) {
 						connectionChosen();
 					} else {
 						connectionChosen = false;
 						connectionStarted = false;
-						if (tree.getSelection()[0].getData() instanceof Entry) {
-							setCursor(CursorManager.dragButtonCursor("source"));
-						} else if (tree.getSelection()[0].getData() instanceof DefaultSinkContent) {
-							setCursor(CursorManager.dragButtonCursor("sink"));
-						} else if (tree.getSelection()[0].getData() instanceof DefaultPipeContent) {
-							setCursor(CursorManager.dragButtonCursor("pipe"));
+						if (tree.getSelection()[0].getData() instanceof INodeContent) {
+							setCursor(CursorManager
+									.setCursor((INodeContent) tree
+											.getSelection()[0].getData()));
 						} else {
-							setCursor(CursorManager.setStandardCursor());
+							setCursor(CursorManager.setCursor(null));
 						}
 					}
 				}
@@ -285,38 +297,21 @@ public class DefaultGraphArea extends Composite implements
 		renderManager.refreshView();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addNewNode(MouseEvent e) {
 		INodeContent con = null;
 		if (tree.getSelectionCount() != 0
 				&& !CursorManager.getIsStandardCursor()) {
-			if (tree.getSelection()[0].getData() instanceof Entry) {
-				Collection<IParamConstruct<?>> conParamList = new ArrayList<IParamConstruct<?>>();
-				DefaultParamConstruct<String> param = new DefaultParamConstruct<String>(
-						"de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource",
-						0, "URI");
-				param.setValue((String) ((Entry) (tree.getSelection()[0]
-						.getData())).getKey());
-				conParamList.add(param);
-				Collection<IParamSetter<?>> setParamList = new ArrayList<IParamSetter<?>>();
-				con = new DefaultSourceContent(
-						(String) ((Entry) tree.getSelection()[0].getData())
-								.getKey(),
-						"de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO",
-						SWTResourceManager.getInstance().getImage("Source"),
-						conParamList, setParamList);
-			}
-			if (con != null
-					|| tree.getSelection()[0].getData() instanceof INodeContent) {
+			if (tree.getSelection()[0].getData() instanceof INodeContent) {
 				if (con == null) {
 					con = (INodeContent) tree.getSelection()[0].getData();
 				}
 				if (con != null) {
 					INodeContent content = null;
-					if (!con.isOnlySource()) {
+					try {
 						content = createNewINodeContentInstance(con);
-					} else {
-						content = con;
+					} catch (ReflectionException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
 					if (content != null) {
 						INodeModel<INodeContent> node = new DefaultNodeModel<INodeContent>(
@@ -327,63 +322,20 @@ public class DefaultGraphArea extends Composite implements
 						CursorManager.isNotConnection();
 						nodeView.setPosition(this
 								.getRealNodePosition(new Vector(e.x, e.y)));
-						if (content.isOnlySource()) {
-							if (new SWTImageSymbolElement<INodeContent>(
-									"source") != null) {
-								nodeView
-										.getSymbolContainer()
-										.add(
-												new SWTImageSymbolElement<INodeContent>(
-														"source"));
-							} else {
-								nodeView
-										.getSymbolContainer()
-										.add(
-												new SWTFillCircleSymbolElement<INodeContent>(
-														new Color(
-																Display
-																		.getDefault(),
-																new RGB(0, 0, 0))));
-							}
-						} else if (content.isOnlySink()) {
-							if (new SWTImageSymbolElement<INodeContent>("sink") != null) {
-								nodeView
-										.getSymbolContainer()
-										.add(
-												new SWTImageSymbolElement<INodeContent>(
-														"sink"));
-							} else {
-								nodeView
-										.getSymbolContainer()
-										.add(
-												new SWTFillCircleSymbolElement<INodeContent>(
-														new Color(
-																Display
-																		.getDefault(),
-																new RGB(0, 0, 0))));
-							}
-						} else if (content.isPipe()) {
-							if (new SWTImageSymbolElement<INodeContent>("pipe") != null) {
-								nodeView
-										.getSymbolContainer()
-										.add(
-												new SWTImageSymbolElement<INodeContent>(
-														"pipe"));
-							} else {
-								nodeView
-										.getSymbolContainer()
-										.add(
-												new SWTFillCircleSymbolElement<INodeContent>(
-														new Color(
-																Display
-																		.getDefault(),
-																new RGB(0, 0, 0))));
-							}
+						if (SWTResourceManager.getInstance().getImage(
+								(content).getImageName()) != null) {
+							nodeView.getSymbolContainer().add(
+									new SWTImageSymbolElement<INodeContent>(
+											(content).getImageName()));
+						} else {
+							nodeView.getSymbolContainer().add(
+									new SWTImageSymbolElement<INodeContent>(
+											"default"));
 						}
 						viewGraph.insertViewedNode(nodeView);
 						if ((e.stateMask & SWT.SHIFT) == 0
 								&& !CursorManager.getIsConnection()) {
-							this.setCursor(CursorManager.setStandardCursor());
+							this.setCursor(CursorManager.setCursor(null));
 						}
 					}
 				}
@@ -393,22 +345,55 @@ public class DefaultGraphArea extends Composite implements
 
 	private void addNewConnection() {
 		if (!renderManager.getSelector().getSelected().isEmpty()) {
-			if (!connectionStarted
-					&& !((INodeModel<INodeContent>) ((ArrayList<INodeView<INodeContent>>) (renderManager
-							.getSelector().getSelected())).get(0)
-							.getModelNode()).getContent().isOnlySink()) {
+			if (!connectionStarted) {
+				this.status.setText("Verbindung gestartet.");
+				for (INodeView<INodeContent> nodeView : renderManager
+						.getSelector().getSelected()) {
+					if (nodeView.getModelNode().getContent().isOnlySink()) {
+						this.status
+								.setErrorText("Von einer Senke darf keine Verbindung ausgehen.");
+						return;
+					}
+				}
 				connNodeList = new ArrayList<INodeView<INodeContent>>(
 						renderManager.getSelector().getSelected());
 				connectionStarted = true;
-
 			} else if (connectionStarted
 					&& renderManager.getSelector().getSelected().size() == 1) {
 				INodeView<INodeContent> selectedNode = (((ArrayList<INodeView<INodeContent>>) (renderManager
 						.getSelector().getSelected())).get(0));
-				for (INodeView<INodeContent> nodeView : connNodeList) {
-					if (!((INodeModel<INodeContent>) (selectedNode
-							.getModelNode())).getContent().isOnlySource()) {
-						if (!nodeView.getModelNode().getContent().isOnlySink()) {
+
+				if (connNodeList.size() > 2) {
+					connectionStarted = false;
+					this.status
+							.setErrorText("Es dürfen maximal 2 Knoten mit einem anderen Knoten verbunden werden.");
+					renderManager.getSelector().unselectAll();
+					return;
+				}
+				if (selectedNode.getModelNode().getContent().getOperator() instanceof UnaryLogicalOp
+						&& (!selectedNode.getModelNode()
+								.getConnectionsAsEndNode().isEmpty() || connNodeList
+								.size() != 1)) {
+					this.status
+							.setErrorText("Zu diesem Knoten darf es nur eine Verbindung geben.");
+					connectionStarted = false;
+					renderManager.getSelector().unselectAll();
+					return;
+				} else if (selectedNode.getModelNode().getContent()
+						.getOperator() instanceof BinaryLogicalOp
+						&& ((selectedNode.getModelNode()
+								.getConnectionsAsEndNode().size() == 1 && connNodeList
+								.size() != 1) || selectedNode.getModelNode()
+								.getConnectionsAsEndNode().size() == 2)) {
+					this.status
+							.setErrorText("Zu diesem Knoten darf es nur zwei Verbindungen geben.");
+					connectionStarted = false;
+					renderManager.getSelector().unselectAll();
+					return;
+				} else {
+					for (INodeView<INodeContent> nodeView : connNodeList) {
+						if (!((INodeModel<INodeContent>) (selectedNode
+								.getModelNode())).getContent().isOnlySource()) {
 							connectionStarted = false;
 							IConnectionModel<INodeContent> connModel = new DefaultConnectionModel<INodeContent>(
 									nodeView.getModelNode(), selectedNode
@@ -422,52 +407,62 @@ public class DefaultGraphArea extends Composite implements
 							controller.getModel().addConnection(connModel);
 							viewGraph.insertViewedConnection(connView);
 							CursorManager.isNotConnection();
-						} else if (!((INodeModel<INodeContent>) (selectedNode
-								.getModelNode())).getContent().isOnlySink()) {
-							if (!nodeView.getModelNode().getContent()
-									.isOnlySource()) {
-								connectionStarted = false;
-								IConnectionModel<INodeContent> connModel = new DefaultConnectionModel<INodeContent>(
-										selectedNode.getModelNode(), nodeView
-												.getModelNode());
-								IConnectionView<INodeContent> connView = new DefaultConnectionView<INodeContent>(
-										connModel, selectedNode, nodeView);
-								connView
-										.getSymbolContainer()
-										.add(
-												new SWTArrowSymbolElement<INodeContent>(
-														new Color(
-																Display
-																		.getDefault(),
-																new RGB(0, 0, 0))));
-								controller.getModel().addConnection(connModel);
-								viewGraph.insertViewedConnection(connView);
-								CursorManager.isNotConnection();
-							}
+							this.status.setText("Anfragestellung bereit.");
+						} else {
+							this.status
+									.setErrorText("Fehlerhafte Auswahl. Verbindung neu begonnen.");
+							connNodeList = new ArrayList<INodeView<INodeContent>>(
+									renderManager.getSelector().getSelected());
 						}
-					} else {
-						connNodeList = new ArrayList<INodeView<INodeContent>>(
-								renderManager.getSelector().getSelected());
 					}
 				}
+			} else if (renderManager.getSelector().getSelected().size() != 1) {
+				this.status
+						.setErrorText("Es darf nur ein Endknoten ausgewählt werden. Verbindung neu begonnen.");
+				connNodeList = new ArrayList<INodeView<INodeContent>>(
+						renderManager.getSelector().getSelected());
 			}
 		}
 	}
 
-	public Tree getTree() {
+	public Tree getTree() throws ReflectionException {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 300;
 		Tree singleTree = new Tree(infoArea, SWT.SINGLE | SWT.BORDER
 				| SWT.V_SCROLL | SWT.H_SCROLL);
 		singleTree.setLayoutData(gd);
+		IParamConstruct<String> param;
+		Collection<IParamConstruct<?>> conParams;
 		TreeItem item;
 		TreeItem sources = new TreeItem(singleTree, 0);
 		sources.setText("Quellen");
+		INodeContent source;
 		for (Entry<String, ILogicalOperator> entry : DataDictionary
 				.getInstance().getViews()) {
 			item = new TreeItem(sources, 0);
-			item.setData(entry);
-			item.setText(entry.getKey());
+			param = new DefaultParamConstruct<String>("java.lang.String", 0,
+					entry.getKey());
+			param.setValue(entry.getKey());
+			conParams = new ArrayList<IParamConstruct<?>>();
+			conParams.add(param);
+			if (SWTResourceManager.getInstance().getImage("source") != null) {
+				source = new DefaultSourceContent(
+						entry.getKey(),
+						"de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO",
+						SWTResourceManager.getInstance().getImage("source"),
+						conParams, new ArrayList<IParamSetter<?>>());
+				source.setImageName("source");
+			} else {
+				source = new DefaultSourceContent(
+						entry.getKey(),
+						"de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO",
+						SWTResourceManager.getInstance().getImage("default"),
+						conParams, new ArrayList<IParamSetter<?>>());
+				source.setImageName("default");
+			}
+			item.setData(source);
+			item.setText(source.getName());
+
 		}
 		TreeItem sinks = new TreeItem(singleTree, 0);
 		sinks.setText("Senken");
@@ -566,20 +561,60 @@ public class DefaultGraphArea extends Composite implements
 				renderManager.getGraphOffset());
 	}
 
-	private INodeContent createNewINodeContentInstance(INodeContent con) {
+	private INodeContent createNewINodeContentInstance(INodeContent con)
+			throws ReflectionException {
 		INodeContent content = null;
 		if (con instanceof DefaultSourceContent) {
-			content = new DefaultSourceContent(con.getName(), con.getType(),
-					con.getImage(), con.getNewConstructParameterListInstance(),
-					con.getNewSetterParameterListInstance());
-		} else if (con instanceof DefaultSinkContent) {
+			if (con.getConstructParameterList().size() == 1) {
+				IParamConstruct<String> newParam;
+				Collection<IParamConstruct<?>> conParams;
+				for (IParamConstruct<?> param : con.getConstructParameterList()) {
+
+					if (param.getValue() instanceof String) {
+						newParam = new DefaultParamConstruct<String>(param
+								.getType(), param.getPosition(), param
+								.getName());
+						conParams = new ArrayList<IParamConstruct<?>>();
+						newParam.setValue((String)param.getValue());
+						conParams.add(newParam);
+						content = new DefaultSourceContent(con.getName(), con
+								.getType(), con.getImage(), conParams, con
+								.getNewSetterParameterListInstance());
+					}
+				}
+			} else {
+				content = new DefaultSourceContent(con.getName(),
+						con.getType(), con.getImage(), con
+								.getNewConstructParameterListInstance(), con
+								.getNewSetterParameterListInstance());
+			}
+			try {
+				content.setOperator(createOperator(content));
+			} catch (Exception e) {
+				throw new ReflectionException();
+			}
+			(content).setImageName(((AbstractOperator) con).getImageName());
+		}
+		if (con instanceof DefaultSinkContent) {
 			content = new DefaultSinkContent(con.getName(), con.getType(), con
 					.getImage(), con.getNewConstructParameterListInstance(),
 					con.getNewSetterParameterListInstance());
+			try {
+				content.setOperator(createOperator(content));
+			} catch (Exception e) {
+				throw new ReflectionException();
+			}
+			(content).setImageName(((AbstractOperator) con).getImageName());
 		} else if (con instanceof DefaultPipeContent) {
 			content = new DefaultPipeContent(con.getName(), con.getType(), con
 					.getImage(), con.getNewConstructParameterListInstance(),
 					con.getNewSetterParameterListInstance());
+			try {
+				content.setOperator(createOperator(content));
+			} catch (Exception e) {
+				throw new ReflectionException();
+			}
+			(content).setImageName(((AbstractOperator) con).getImageName());
 		}
 		return content;
 	}
@@ -594,42 +629,125 @@ public class DefaultGraphArea extends Composite implements
 
 	public void refreshTree() {
 		TreeItem treeItem;
-		boolean exists = false; 
-		if(tree.getItem(0).getItems().length == 0) {
-			for(Entry<String, ILogicalOperator> entry : DataDictionary.getInstance().getViews()) {
-				treeItem = new TreeItem(tree.getItem(0), 0);
-				treeItem.setData(entry);
-				treeItem.setText(entry.getKey());
+		INodeContent source;
+		IParamConstruct<String> param;
+		Collection<IParamConstruct<?>> conParams;
+		for (Entry<String, ILogicalOperator> entry : DataDictionary
+				.getInstance().getViews()) {
+			treeItem = new TreeItem(tree.getItem(0), 0);
+			param = new DefaultParamConstruct<String>("java.lang.String", 0,
+					entry.getKey());
+			param.setValue(entry.getKey());
+			conParams = new ArrayList<IParamConstruct<?>>();
+			conParams.add(param);
+			if (SWTResourceManager.getInstance().getImage("source") != null) {
+				source = new DefaultSourceContent(
+						entry.getKey(),
+						"de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO",
+						SWTResourceManager.getInstance().getImage("source"),
+						conParams, new ArrayList<IParamSetter<?>>());
+				source.setImageName("source");
+			} else {
+				source = new DefaultSourceContent(
+						entry.getKey(),
+						"de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO",
+						SWTResourceManager.getInstance().getImage("default"),
+						conParams, new ArrayList<IParamSetter<?>>());
+				source.setImageName("default");
 			}
-		}else {
-			for(Entry<String, ILogicalOperator> entry : DataDictionary.getInstance().getViews()) {
-				for(TreeItem item : tree.getItem(0).getItems()) {
-					if(item.getData().equals(entry)) {
-						exists = true;
-					}
-				}
-				if(exists == false) {
-					treeItem = new TreeItem(tree.getItem(0), 0);
-					treeItem.setData(entry);
-					treeItem.setText(entry.getKey());
-				}
-			}
-			tree.pack();
-			tree.layout();
+			treeItem.setData(source);
+			treeItem.setText(source.getName());
 		}
-		
+		tree.pack();
+		tree.layout();
 	}
 
 	@Override
 	public void treeChanged() {
 		refreshTree();
 	}
-	
+
 	public void setQueryID(int ID) {
 		this.queryID = ID;
 	}
-	
+
 	public int getQueryID() {
 		return this.queryID;
+	}
+
+	@SuppressWarnings("unchecked")
+	private ILogicalOperator createOperator(INodeContent content)
+			throws ClassNotFoundException, SecurityException,
+			NoSuchMethodException, IllegalArgumentException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+		Class clazz = null;
+		Class[] constructParameters = null;
+		Constructor con = null;
+		ILogicalOperator logOp = null;
+		WindowAO windowOp = null;
+
+		ArrayList<Object> parameterValues = null;
+		Object paramObj = new Object();
+
+		clazz = Class.forName(content.getType());
+
+		if (!content.getConstructParameterList().isEmpty()) {
+			constructParameters = new Class[content.getConstructParameterList()
+					.size()];
+			parameterValues = new ArrayList<Object>();
+			for (IParamConstruct<?> param : content.getConstructParameterList()) {
+				Class paramClazz = null;
+				paramClazz = Class.forName(param.getType());
+				paramObj = param.getValue();
+				parameterValues.add(paramObj);
+				constructParameters[param.getPosition()] = paramClazz;
+			}
+			if (!content.isOnlySource()) {
+				con = clazz.getConstructor(constructParameters);
+			} else if (content.isOnlySource() && parameterValues.size() == 1
+					&& parameterValues.get(0) instanceof String) {
+				Class sourceClass = Class
+						.forName("de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource");
+				Class[] sourceParameters = new Class[1];
+				sourceParameters[0] = sourceClass;
+				con = clazz.getConstructor(sourceParameters);
+				SDFSource source = DataDictionary.getInstance().getSource(
+						(String) parameterValues.get(0));
+				logOp = (ILogicalOperator) con.newInstance(source);
+				logOp.setOutputSchema(DataDictionary.getInstance().getView(
+						(String) parameterValues.get(0)).getOutputSchema());
+			} else {
+				if (con != null) {
+					if (clazz.newInstance() instanceof WindowAO) {
+						windowOp = (WindowAO) con.newInstance(parameterValues);
+					} else {
+						logOp = (ILogicalOperator) con
+								.newInstance(parameterValues);
+					}
+				}
+
+			}
+		} else {
+			if (clazz.newInstance() instanceof WindowAO) {
+				windowOp = (WindowAO) clazz.newInstance();
+			} else {
+				logOp = (ILogicalOperator) clazz.newInstance();
+			}
+		}
+		for (IParamSetter<?> param : content.getSetterParameterList()) {
+			if (param.getValue() != null) {
+				Method method = logOp.getClass().getMethod(param.getSetter(),
+						new Class[] { param.getValue().getClass() });
+				method.invoke(logOp, new Object[] { param.getValue() });
+			}
+		}
+		if (logOp != null) {
+			return logOp;
+		} else if (windowOp != null) {
+			return windowOp;
+		} else {
+			return null;
+		}
 	}
 }

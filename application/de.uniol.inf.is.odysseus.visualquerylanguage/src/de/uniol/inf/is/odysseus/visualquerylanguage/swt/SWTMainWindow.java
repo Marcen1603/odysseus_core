@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
-import de.uniol.inf.is.odysseus.visualquerylanguage.LaunchException;
+import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
@@ -110,7 +110,7 @@ public class SWTMainWindow {
 		});
 
 		MenuItem removeNodeMenuItem = new MenuItem(nodeSubMenu, SWT.PUSH);
-		removeNodeMenuItem.setText("&Knoten Löschen");
+		removeNodeMenuItem.setText("&Knoten Löschen\tEntf");
 		removeNodeMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -120,6 +120,7 @@ public class SWTMainWindow {
 				}
 			}
 		});
+		removeNodeMenuItem.setAccelerator(SWT.DEL);
 
 		MenuItem sortGraphItem = new MenuItem(nodeSubMenu, SWT.PUSH);
 		sortGraphItem.setText("&Graph automatisch anordnen");
@@ -179,7 +180,7 @@ public class SWTMainWindow {
 								.getControl(), executor);
 						tabFolder.getItem(0).setControl(getQueryTable()); 
 						tabFolder.layout();
-					} catch (LaunchException e1) {
+					} catch (ReflectionException e1) {
 						((DefaultGraphArea)tabFolder.getSelection().getControl()).getStatusLine().setErrorText("Es ist ein Fehler bei der Ausführung der Anfrage aufgetreten.");
 						log.error("Error while executing query. Because of: ");
 						e1.printStackTrace();

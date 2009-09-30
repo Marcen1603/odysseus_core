@@ -17,12 +17,13 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
+import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 
 public class SWTSourceCreator{
 	
 	private final Logger log = LoggerFactory.getLogger(SWTSourceCreator.class);
 	
-	Shell shell;
+	private Shell shell;
 
 	public SWTSourceCreator(Shell baseWindow, final IAdvancedExecutor executor, final Collection<ISWTTreeChangedListener> listeners) {
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE | SWT.APPLICATION_MODAL);
@@ -49,6 +50,9 @@ public class SWTSourceCreator{
 				} catch (PlanManagementException e1) {
 					log.error("Error while trying to add a Query. Because of: ");
 					e1.printStackTrace();
+				} catch (ReflectionException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
 				}
 			}
 		});

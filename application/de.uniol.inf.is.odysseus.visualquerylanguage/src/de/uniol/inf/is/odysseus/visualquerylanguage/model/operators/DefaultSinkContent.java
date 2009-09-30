@@ -6,7 +6,6 @@ import org.eclipse.swt.graphics.Image;
 
 public class DefaultSinkContent extends AbstractOperator{
 
-
 	public DefaultSinkContent(String name, String typ, Image image,
 			Collection<IParamConstruct<?>> constructParameters,
 			Collection<IParamSetter<?>> setterParameters) {
@@ -27,7 +26,5 @@ public class DefaultSinkContent extends AbstractOperator{
 	public boolean isOnlySource() {
 		return false;
 	}
-
-	
 	
 }

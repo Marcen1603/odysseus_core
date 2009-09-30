@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage;
 
-public class LaunchException extends Exception{
+public class ReflectionException extends Exception{
 
 	/**
 	 * 

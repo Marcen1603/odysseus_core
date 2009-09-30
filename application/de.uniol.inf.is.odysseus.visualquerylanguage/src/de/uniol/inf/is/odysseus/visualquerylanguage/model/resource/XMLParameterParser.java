@@ -49,11 +49,13 @@ public class XMLParameterParser implements IParameterConfiguration {
 
 	private boolean newSink = false;
 	private boolean newSinkType = false;
+	private boolean newSinkImage = false;
 	private String sinkName = "";
 	private String sinkType = "";
 	private String sinkImage = "";
 	private boolean newPipe = false;
 	private boolean newPipeType = false;
+	private boolean newPipeImage = false;
 	private String pipeName = "";
 	private String pipeType = "";
 	private String pipeImage = "";
@@ -183,6 +185,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}
 				if(node.getNodeName().equals("pipe-image")) {
 					pipeImage = childNodes.item(i).getNodeValue();
+					newPipeImage = true;
 				}else if (node.getNodeName().equals("pipe-type")) {
 					pipeType = childNodes.item(i).getNodeValue();
 					newPipeType = true;
@@ -196,15 +199,17 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
 				}
-				if (newPipe && newPipeType) {
+				if (newPipe && newPipeType && newPipeImage) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
 					setterParams = new ArrayList<IParamSetter<?>>();
 					Image image = SWTResourceManager.getInstance().getImage(pipeImage);
 					pipe = new DefaultPipeContent(pipeName, pipeType, image, 
 							constructParams, setterParams);
+					pipe.setImageName(pipeImage);
 					pipes.add(pipe);
 					newPipe = false;
 					newPipeType = false;
+					newPipeImage = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (pipeParamComplete()) {
@@ -246,6 +251,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}
 				if(node.getNodeName().equals("sink-image")) {
 					sinkImage = childNodes.item(i).getNodeValue();
+					newSinkImage = true;
 				}else if (node.getNodeName().equals("sink-type")) {
 					sinkType = childNodes.item(i).getNodeValue();
 					newSinkType = true;
@@ -259,15 +265,17 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
 				}
-				if (newSink && newSinkType) {
+				if (newSink && newSinkType && newSinkImage) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
 					setterParams = new ArrayList<IParamSetter<?>>();
 					Image image = SWTResourceManager.getInstance().getImage(sinkImage);
 					sink = new DefaultSinkContent(sinkName, sinkType, image,
 							constructParams, setterParams);
+					sink.setImageName(sinkImage);
 					sinks.add(sink);
 					newSink = false;
 					newSinkType = false;
+					newSinkImage = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (sinkParamComplete()) {

@@ -5,14 +5,19 @@ import java.util.Collection;
 
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+
 public abstract class AbstractOperator implements INodeContent{
 	
 	private String name;
 	private String typ;
+	private String imageName;
 	private Image image;
 	Collection<IParamConstruct<?>> constructParameterList = new ArrayList<IParamConstruct<?>>();
 	Collection<IParamSetter<?>> setterParameterList = new ArrayList<IParamSetter<?>>();
 	private Collection<INodeContentChangeListener<INodeContent>> listeners = new ArrayList<INodeContentChangeListener<INodeContent>>();
+	
+	private ILogicalOperator op;
 	
 	public AbstractOperator(String name, String typ, Image image, Collection<IParamConstruct<?>> constructParameters, Collection<IParamSetter<?>> setterParameters) {
 		this.name = name;
@@ -95,4 +100,23 @@ public abstract class AbstractOperator implements INodeContent{
 		return image;
 	}
 	
+	@Override
+	public void setOperator(ILogicalOperator op) {
+		this.op = op;
+	}
+	
+	@Override
+	public ILogicalOperator getOperator() {
+		return this.op;
+	}
+	
+	@Override
+	public void setImageName(String name) {
+		this.imageName = name;
+	}
+	
+	@Override
+	public String getImageName() {
+		return this.imageName;
+	}
 }
