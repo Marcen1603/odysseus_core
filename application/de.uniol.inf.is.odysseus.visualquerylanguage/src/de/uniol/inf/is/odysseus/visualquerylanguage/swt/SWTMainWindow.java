@@ -186,7 +186,7 @@ public class SWTMainWindow {
 						e1.printStackTrace();
 					} 
 				}else if (tabFolder.getSelection().getControl() instanceof Table) {
-					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
+					if(((Table)(tabFolder.getSelection().getControl())).getSelectionCount() != 0) {
 						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
 							try {
 								executor.startQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
@@ -211,7 +211,7 @@ public class SWTMainWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (tabFolder.getSelection().getControl() instanceof Table) {
-					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
+					if(((Table)(tabFolder.getSelection().getControl())).getSelectionCount() != 0) {
 						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
 							if(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).isStarted()) {
 								try {
@@ -251,7 +251,7 @@ public class SWTMainWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (tabFolder.getSelection().getControl() instanceof Table) {
-					if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0] != null) {
+					if(((Table)(tabFolder.getSelection().getControl())).getSelectionCount() != 0) {
 						if(((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData() instanceof IQuery) {
 								try {
 									executor.removeQuery(((IQuery)((Table)(tabFolder.getSelection().getControl())).getSelection()[0].getData()).getID());
@@ -287,13 +287,12 @@ public class SWTMainWindow {
 		refreshQueryList.setToolTipText("Anfrageliste aktualisiern");
 		refreshQueryList.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				tabFolder.getSelection().setControl(getQueryTable()); 
+			public void widgetSelected(SelectionEvent e) { 
 				tabFolder.layout();
 				tabFolder.setSelection(0);
 			}
 		});
-
+		
 		tabFolder = new CTabFolder(shell, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		tabFolder.setLayoutData(gd);

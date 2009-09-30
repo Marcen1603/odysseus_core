@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Fragment-Host: de.uniol.inf.is.odysseus.viewer
+Bundle-Activator: de.uniol.inf.is.odysseus.visualquerylanguage.Activator
 Bundle-ManifestVersion: 2
 Bundle-Name: Visualquerylanguage
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.visualquerylanguage

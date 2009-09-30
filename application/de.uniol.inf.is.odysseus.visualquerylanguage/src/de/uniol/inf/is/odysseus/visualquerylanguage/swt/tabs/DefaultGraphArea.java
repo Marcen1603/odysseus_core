@@ -658,7 +658,6 @@ public class DefaultGraphArea extends Composite implements
 			treeItem.setData(source);
 			treeItem.setText(source.getName());
 		}
-		tree.pack();
 		tree.layout();
 	}
 

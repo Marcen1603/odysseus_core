@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+
 public class SWTParameterEditor {
 	
 	private final Logger log = LoggerFactory.getLogger(SWTSourceCreator.class);
@@ -38,70 +40,21 @@ public class SWTParameterEditor {
 		compLayout.numColumns = 6;
 		comp.setLayout(compLayout);
 		
-		if(type.equals("Predicate")) {
-			Button avg = new Button(comp, SWT.PUSH);
-			avg.addSelectionListener(new SelectionAdapter() {
+		Button button;
+		
+		for (String func : SDFExpression.getFunctions()) {
+			button = new Button(comp, SWT.PUSH);
+			button.setText(func);
+			button.addSelectionListener(new SelectionAdapter() {
+				
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					textArea.setText(textArea.getText() + "AVG");
+					if(e.getSource() instanceof Button) {
+					textArea.setText(textArea.getText() + ((Button)e.getSource()).getText());
+					}
 				}
+				
 			});
-			avg.setText("AVG");
-			
-			Button smaller = new Button(comp, SWT.PUSH);
-			smaller.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textArea.setText(textArea.getText() + "<");
-				}
-			});
-			smaller.setText("<");
-			
-			Button bigger = new Button(comp, SWT.PUSH);
-			bigger.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textArea.setText(textArea.getText() + ">");
-				}
-			});
-			bigger.setText(">");
-			
-			Button plus = new Button(comp, SWT.PUSH);
-			plus.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textArea.setText(textArea.getText() + "+");
-				}
-			});
-			plus.setText("+");
-			
-			Button minus = new Button(comp, SWT.PUSH);
-			minus.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textArea.setText(textArea.getText() + "-");
-				}
-			});
-			minus.setText("-");
-			
-			Button mult = new Button(comp, SWT.PUSH);
-			mult.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textArea.setText(textArea.getText() + "*");
-				}
-			});
-			mult.setText("*");
-			
-			Button div = new Button(comp, SWT.PUSH);
-			div.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textArea.setText(textArea.getText() + "/");
-				}
-			});
-			div.setText("/");
-			
 		}
 		
 		Button applyButton = new Button(shell, SWT.PUSH);
