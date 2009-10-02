@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.priority;
 
-import java.lang.annotation.Target;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
