@@ -1,10 +1,16 @@
 package de.uniol.inf.is.odysseus.priority;
 
+import java.lang.annotation.Target;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
 
 /**
  * @author Jonas Jacobi
@@ -33,6 +39,8 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 			if (curPriority.getValue().evaluate(next)) {
 				next.getMetadata().setPriority(curPriority.getKey());
 				transfer(next);
+				ITimeInterval time = (ITimeInterval) next.getMetadata();
+				sendPunctuation(time.getStart());
 				return;
 			}
 		}
@@ -40,5 +48,19 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 		transfer(next);
 		return;
 	}
+	
+	@Override
+	public void sendPunctuation(PointInTime punctuation) {
+		synchronized (this.subscriptions) {
+			for (Subscription<ISource<? extends T>> sub : delegateSink.getSubscribedTo()) {
+				if(sub.target.isSink()) {
+					ISink<?> sink = (ISink<?>) sub.target;
+					sink.processPunctuation(punctuation);
+				} 
+			}
+			super.sendPunctuation(punctuation);
+		}
+	}	
+	
 
 }
