@@ -47,19 +47,5 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 		transfer(next);
 		return;
 	}
-	
-	@Override
-	public void sendPunctuation(PointInTime punctuation) {
-		synchronized (this.subscriptions) {
-			for (Subscription<ISource<? extends T>> sub : delegateSink.getSubscribedTo()) {
-				if(sub.target.isSink()) {
-					ISink<?> sink = (ISink<?>) sub.target;
-					sink.processPunctuation(punctuation);
-				} 
-			}
-			super.sendPunctuation(punctuation);
-		}
-	}	
-	
 
 }

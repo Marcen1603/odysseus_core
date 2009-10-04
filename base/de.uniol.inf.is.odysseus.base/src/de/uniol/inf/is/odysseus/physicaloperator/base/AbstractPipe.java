@@ -222,4 +222,18 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		super.unSubscribeFromAll(listener);
 		this.delegateSink.unSubscribeFromAll(listener);
 	}
+	
+	@Override
+	public void sendPunctuation(PointInTime punctuation) {
+		synchronized (this.subscriptions) {
+			for (Subscription<ISource<? extends R>> sub : delegateSink.getSubscribedTo()) {
+				if(sub.target.isSink()) {
+					ISink<?> sink = (ISink<?>) sub.target;
+					sink.processPunctuation(punctuation);
+				} 
+			}
+			super.sendPunctuation(punctuation);
+		}
+	}	
+	
 }
