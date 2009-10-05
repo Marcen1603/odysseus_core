@@ -26,5 +26,4 @@ Export-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.metamodel.validator.error,
  de.uniol.inf.is.odysseus.cep.metamodel.validator.warning,
  de.uniol.inf.is.odysseus.cep.metamodel.xml,
- de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter,
- de.uniol.inf.is.odysseus.cep.statemachinefactory
+ de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter
