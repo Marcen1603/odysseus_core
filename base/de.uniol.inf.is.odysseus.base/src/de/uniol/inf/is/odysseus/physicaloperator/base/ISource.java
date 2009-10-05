@@ -34,12 +34,13 @@ public interface ISource<T> extends IPhysicalOperator {
 	 * @param object
 	 *            the parameter for processNext.
 	 */
+	public void transfer(T object, int sourcePort);
 	public void transfer(T object);
-	
 	
 	/**
 	 * Same as above, but for transfering a batch of elements.
 	 */
+	public void transfer(Collection<T> object, int sourcePort);
 	public void transfer(Collection<T> object);
 	
 	/**

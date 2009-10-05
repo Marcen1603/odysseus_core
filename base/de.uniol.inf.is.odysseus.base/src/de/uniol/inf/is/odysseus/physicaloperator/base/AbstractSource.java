@@ -104,7 +104,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void transfer(T object) {
+	public void transfer(T object, int sourcePort) {
 		fire(this.pushInitEvent);
 		process_transfer(object);
 		// DEBUG
@@ -121,16 +121,27 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// }
 		fire(this.pushDoneEvent);
 	}
+	
+	public void transfer(T object) {
+		transfer(object,0);
+	};
 
 	@Override
-	public void transfer(Collection<T> object) {
+	public void transfer(Collection<T> object, int sourcePort) {
 		// TODO events erzeugen und verschicken, bzw. ein spezielles
 		// transferbatchevent
 		synchronized (this.subscriptions) {
 			for (Subscription<ISink<? super T>> sink : this.subscriptions) {
-				sink.target.process(object, sink.targetPort, isTransferExclusive());
+				if (sink.sourcePort == sourcePort){
+					sink.target.process(object, sink.sinkPort, isTransferExclusive());
+				}
 			}
 		}
+	}
+	
+	@Override
+	public void transfer(Collection<T> object) {
+		transfer(object,0);
 	}
 
 	/**
@@ -163,7 +174,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected void process_transfer(T object) {
 		synchronized (this.subscriptions) {
 			for (Subscription<ISink<? super T>> sink : this.subscriptions) {
-				sink.target.process(object, sink.targetPort, !this.hasSingleConsumer);
+				sink.target.process(object, sink.sinkPort, !this.hasSingleConsumer);
 			}
 		}
 	}
@@ -193,7 +204,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.process_done();
 		synchronized (subscriptions) {
 			for (Subscription<ISink<? super T>> sub : subscriptions) {
-				sub.target.done(sub.targetPort);
+				sub.target.done(sub.sinkPort);
 			}
 		}
 	}

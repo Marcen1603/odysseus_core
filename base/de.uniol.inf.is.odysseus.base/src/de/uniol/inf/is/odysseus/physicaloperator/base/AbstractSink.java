@@ -135,7 +135,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		synchronized (this.subscribedTo) {
 			this.allInputsDone = true;
 			for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
-				if (sub.targetPort == port) {
+				if (sub.sinkPort == port) {
 					sub.done = true;
 				}
 				if (!sub.done) {

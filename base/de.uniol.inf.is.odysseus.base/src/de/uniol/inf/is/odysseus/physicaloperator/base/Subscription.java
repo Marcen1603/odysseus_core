@@ -5,21 +5,21 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 public class Subscription<K> {
 	final public K target;
-	final public int targetPort;
 	final public int sinkPort;
+	final public int sourcePort;
 	public boolean done = false;
 
-	public Subscription(K target, int targetPort, int sourcePort) {
+	public Subscription(K target, int sinkPort, int sourcePort) {
 		this.target = target;
-		this.targetPort = targetPort;
-		this.sinkPort = sourcePort;
+		this.sinkPort = sinkPort;
+		this.sourcePort = sourcePort;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + targetPort;
+		result = prime * result + sinkPort;
 		result = prime * result + ((target == null) ? 0 : target.hashCode());
 		return result;
 	}
@@ -33,7 +33,7 @@ public class Subscription<K> {
 		if (getClass() != obj.getClass())
 			return false;
 		Subscription<?> other = (Subscription<?>) obj;
-		if (targetPort != other.targetPort)
+		if (sinkPort != other.sinkPort)
 			return false;
 		if (target == null) {
 			if (other.target != null)
@@ -45,6 +45,6 @@ public class Subscription<K> {
 	
 	@Override
 	public String toString() {
-		return target+" "+targetPort+" "+sinkPort;
+		return target+" "+sinkPort+" "+sourcePort;
 	}
 }
