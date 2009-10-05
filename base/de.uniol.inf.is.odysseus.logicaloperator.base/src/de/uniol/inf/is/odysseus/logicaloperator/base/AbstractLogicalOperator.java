@@ -25,6 +25,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private String poname = null;
 
 	private List<ILogicalOperator> inputAO = new ArrayList<ILogicalOperator>();
+	private List<Integer> inputAOOutputPort = new ArrayList<Integer>(); 
 
 	private List<SDFAttributeList> inputSchemas = new ArrayList<SDFAttributeList>();
 
@@ -38,9 +39,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private IPredicate predicate = null;;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator po) {
-		this.inputAO = po.inputAO;
-		outputSchema = po.outputSchema;
-		predicate = po.predicate;
+		this.inputAO = new ArrayList<ILogicalOperator>(po.inputAO);
+		this.inputAOOutputPort = new ArrayList<Integer>(po.inputAOOutputPort);
+		outputSchema = new SDFAttributeList(po.outputSchema);
+		predicate =  po.predicate;
 		inputSchemas = new ArrayList<SDFAttributeList>(po.inputSchemas);
 
 		physInputPOs = po.physInputPOs == null ? null
@@ -62,6 +64,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			clone = (AbstractLogicalOperator) super.clone();
 
 			clone.inputAO = new ArrayList<ILogicalOperator>(this.inputAO);
+			clone.inputAOOutputPort = new ArrayList<Integer>(this.inputAOOutputPort);
 			clone.inputSchemas = new ArrayList<SDFAttributeList>(
 					this.inputSchemas);
 			if (this.outputSchema != null)
@@ -155,11 +158,20 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.predicate = predicate;
 	}
 
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((inputAO == null) ? 0 : inputAO.hashCode());
+		result = prime
+				* result
+				+ ((inputAOOutputPort == null) ? 0 : inputAOOutputPort
+						.hashCode());
 		result = prime * result
 				+ ((inputSchemas == null) ? 0 : inputSchemas.hashCode());
 		result = prime * result
@@ -173,11 +185,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return result;
 	}
 
-	/**
-	 * Make sure that every subclass that adds fields overrides this method.
-	 * Uses getClass() == obj.getClass() instead of instanceOf comparison to
-	 * ensure the symmetric attribute of the equals method.
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -193,6 +201,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			if (other.inputAO != null)
 				return false;
 		} else if (!inputAO.equals(other.inputAO))
+			return false;
+		if (inputAOOutputPort == null) {
+			if (other.inputAOOutputPort != null)
+				return false;
+		} else if (!inputAOOutputPort.equals(other.inputAOOutputPort))
 			return false;
 		if (inputSchemas == null) {
 			if (other.inputSchemas != null)
@@ -267,9 +280,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator)
 	 */
 	public void setInputAO(int pos, ILogicalOperator input) {
-		this.inputAO.set(pos, input);
+		setInputAO(pos, input,0);
 	}
-
+	
+	public void setInputAO(int pos, ILogicalOperator input, int from) {
+		this.inputAO.set(pos, input);
+		this.inputAOOutputPort.set(pos, from);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -279,10 +296,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	public void setNoOfInputs(int count) {
 		this.inputAO = new ArrayList<ILogicalOperator>(count);
+		this.inputAOOutputPort = new ArrayList<Integer>(count);
 		this.physInputPOs = new ArrayList<IPhysicalOperator>(count);
 		for (int i = 0; i < count; i++) {
 			inputAO.add(null);
 			inputSchemas.add(null);
+			inputAOOutputPort.add(null);
 			physInputPOs.add(null);
 		}
 	}
@@ -296,6 +315,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	public ILogicalOperator getInputAO(int pos) {
 		return inputAO.get(pos);
+	}
+	
+	public int getInputAOOutputPort(int pos){
+		return inputAOOutputPort.get(pos);
 	}
 
 	/*
@@ -321,19 +344,27 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * (de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator)
 	 */
+	@Override
 	public boolean replaceInput(ILogicalOperator oldInput,
 			ILogicalOperator newInput) {
+		return replaceInput(oldInput, newInput,0);
+	}
+
+	@Override
+	public boolean replaceInput(ILogicalOperator oldInput,
+			ILogicalOperator newInput, int newFrom) {
 		boolean replaced = false;
 		for (int i = 0; i < getNumberOfInputs(); ++i) {
 			if (this.inputAO.get(i) == oldInput) {
 				this.inputAO.set(i, newInput);
+				this.inputAOOutputPort.set(i, newFrom);
 				replaced = true;
 			}
 		}
 		// System.out.println("Replace Input "+replaced);
 		return replaced;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

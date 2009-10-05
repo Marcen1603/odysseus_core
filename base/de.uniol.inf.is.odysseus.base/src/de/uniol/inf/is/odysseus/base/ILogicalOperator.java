@@ -45,17 +45,21 @@ public interface ILogicalOperator extends IClone, IOwnedOperator {
 
 	public void setInputSchema(int pos, SDFAttributeList schema);
 
-	public void setInputAO(int pos, ILogicalOperator input);
+	public void setInputAO(int to, ILogicalOperator input);
+	public void setInputAO(int to, ILogicalOperator input, int from);
 
 	public void setNoOfInputs(int count);
 
 	public ILogicalOperator getInputAO(int pos);
+	public int getInputAOOutputPort(int pos);
 
 	public List<ILogicalOperator> getInputAOs();
 
 	public boolean replaceInput(ILogicalOperator oldInput,
 			ILogicalOperator newInput);
 
+	public boolean replaceInput(ILogicalOperator oldInput, ILogicalOperator newInput, int newFrom);
+	
 	public int getInputPort(ILogicalOperator abstractLogicalOperator);
 
 	public int getNumberOfInputs();

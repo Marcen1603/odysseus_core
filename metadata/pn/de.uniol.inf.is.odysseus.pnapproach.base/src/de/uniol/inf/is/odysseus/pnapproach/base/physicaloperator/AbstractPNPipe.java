@@ -36,8 +36,8 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 	
 	
 	@Override
-	public void subscribeTo(ISource<? extends R> source, int port) {
-		super.subscribeTo(source, port);
+	public void subscribeTo(ISource<? extends R> source, int sinkPort, int sourcePort) {
+		super.subscribeTo(source, sinkPort, sourcePort);
 		int portCount = delegateSink.getInputPortCount();
 		processInitNegEvent = new POEvent[portCount];
 		processDoneNegEvent = new POEvent[portCount];

@@ -135,7 +135,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		synchronized (this.subscribedTo) {
 			this.allInputsDone = true;
 			for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
-				if (sub.port == port) {
+				if (sub.targetPort == port) {
 					sub.done = true;
 				}
 				if (!sub.done) {
@@ -152,16 +152,16 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void subscribeTo(ISource<? extends T> source, int port) {
-		if (port >= this.noInputPorts) {
-			setInputPortCount(port + 1);
+	public void subscribeTo(ISource<? extends T> source, int sinkPort, int sourcePort) {
+		if (sinkPort >= this.noInputPorts) {
+			setInputPortCount(sinkPort + 1);
 		}
 		Subscription<ISource<? extends T>> sub = new Subscription<ISource<? extends T>>(
-				source, port);
+				source, sinkPort, sourcePort);
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.contains(sub)) {
 				this.subscribedTo.add(sub);
-				source.subscribe(getInstance(), port);
+				source.subscribe(getInstance(), sinkPort, sourcePort);
 			}
 		}
 	}
@@ -211,10 +211,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void unsubscribeSubscriptionTo(ISource<? extends T> source, int port) {
+	public void unsubscribeSubscriptionTo(ISource<? extends T> source, int sinkPort, int sourcePort) {
 		if (this.subscribedTo.remove(new Subscription<ISource<? extends T>>(
-				source, port))) {
-			source.unsubscribe(this, port);
+				source, sinkPort, sourcePort))) {
+			source.unsubscribe(this, sinkPort, sourcePort);
 		}
 	}
 

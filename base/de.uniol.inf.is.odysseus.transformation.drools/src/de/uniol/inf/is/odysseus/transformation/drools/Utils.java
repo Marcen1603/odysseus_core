@@ -16,7 +16,7 @@ public class Utils {
 		}
 		for (int i = 0; i < logicalOp.getNumberOfInputs(); ++i) {
 			((ISource) logicalOp.getPhysInputPO(i)).subscribe(
-					(ISink) physicalOp, i);
+					(ISink) physicalOp, i, logicalOp.getInputAOOutputPort(i));
 		}
 	}
 }

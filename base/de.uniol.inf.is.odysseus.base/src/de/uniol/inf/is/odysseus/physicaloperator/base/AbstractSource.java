@@ -91,13 +91,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	};
 
 	@Override
-	final public void subscribe(ISink<? super T> sink, int port) {
+	final public void subscribe(ISink<? super T> sink, int sinkPort, int sourcePort) {
 		Subscription<ISink<? super T>> sub = new Subscription<ISink<? super T>>(
-				sink, port);
+				sink, sinkPort, sourcePort);
 		synchronized (this.subscriptions) {
 			if (!this.subscriptions.contains(sub)) {
 				this.subscriptions.add(sub);
-				sink.subscribeTo(this, port);
+				sink.subscribeTo(this, sinkPort, sourcePort);
 				this.hasSingleConsumer = this.subscriptions.size() == 1;
 			}
 		}
@@ -128,7 +128,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// transferbatchevent
 		synchronized (this.subscriptions) {
 			for (Subscription<ISink<? super T>> sink : this.subscriptions) {
-				sink.target.process(object, sink.port, isTransferExclusive());
+				sink.target.process(object, sink.targetPort, isTransferExclusive());
 			}
 		}
 	}
@@ -163,17 +163,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected void process_transfer(T object) {
 		synchronized (this.subscriptions) {
 			for (Subscription<ISink<? super T>> sink : this.subscriptions) {
-				sink.target.process(object, sink.port, !this.hasSingleConsumer);
+				sink.target.process(object, sink.targetPort, !this.hasSingleConsumer);
 			}
 		}
 	}
 
 	@Override
-	final public void unsubscribe(ISink<? super T> sink, int port) {
+	final public void unsubscribe(ISink<? super T> sink, int sinkPort, int sourcePort) {
 		synchronized (this.subscriptions) {
 			if (this.subscriptions.remove(new Subscription<ISink<? super T>>(
-					sink, port))) {
-				sink.unsubscribeSubscriptionTo(this, port);
+					sink, sinkPort, sourcePort))) {
+				sink.unsubscribeSubscriptionTo(this, sinkPort, sourcePort);
 			}
 			this.hasSingleConsumer = this.subscriptions.size() == 1;
 		}
@@ -193,7 +193,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.process_done();
 		synchronized (subscriptions) {
 			for (Subscription<ISink<? super T>> sub : subscriptions) {
-				sub.target.done(sub.port);
+				sub.target.done(sub.targetPort);
 			}
 		}
 	}

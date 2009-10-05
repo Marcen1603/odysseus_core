@@ -163,9 +163,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void subscribeTo(ISource<? extends R> source, int port) {
+	public void subscribeTo(ISource<? extends R> source, int sinkPort, int sourcePort) {
 		// TODO vernuenftig synchronosieren
-		this.delegateSink.subscribeTo(source, port);
+		this.delegateSink.subscribeTo(source, sinkPort, sourcePort);
 	}
 
 	public Subscription<ISource<? extends R>> getSubscribedTo(int port) {
@@ -178,8 +178,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void unsubscribeSubscriptionTo(ISource<? extends R> source, int port) {
-		this.delegateSink.unsubscribeSubscriptionTo(source, port);
+	public void unsubscribeSubscriptionTo(ISource<? extends R> source, int sinkPort, int sourcePort) {
+		this.delegateSink.unsubscribeSubscriptionTo(source, sinkPort, sourcePort);
 	}
 
 	@Override

@@ -55,14 +55,14 @@ public interface ISink<T> extends IPhysicalOperator {
 	 * @param port
 	 *            the input port the source is connected to
 	 */
-	public void subscribeTo(ISource<? extends T> source, int port);
+	public void subscribeTo(ISource<? extends T> source, int sinkPort, int sourcePort);
 
 	/**
 	 * Get all sources, the ISink is subscribed to.
 	 */
 	public List<Subscription<ISource<? extends T>>> getSubscribedTo();
 
-	public void unsubscribeSubscriptionTo(ISource<? extends T> source, int port);
+	public void unsubscribeSubscriptionTo(ISource<? extends T> source, int sinkPort, int sourcePort);
 
 	public void processPunctuation(PointInTime timestamp);
 

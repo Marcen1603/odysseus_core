@@ -33,7 +33,7 @@ public class Benchmark implements IBenchmark {
 		BenchmarkResult result = new BenchmarkResult();
 		MySink sink = new MySink(result, config.maxResults);
 		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
-		latency.subscribe(sink, 0);
+		latency.subscribe(sink, 0, 0);
 
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(
 				"relational", ITimeInterval.class.getName(), ILatency.class

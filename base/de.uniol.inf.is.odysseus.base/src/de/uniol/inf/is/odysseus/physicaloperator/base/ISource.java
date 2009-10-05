@@ -56,12 +56,12 @@ public interface ISource<T> extends IPhysicalOperator {
 	 *            the input port of the <b>{@link ISink}</b> this source gets
 	 *            subscribed to.
 	 */
-	public void subscribe(ISink<? super T> sink, int port);
+	public void subscribe(ISink<? super T> sink, int sinkPort, int sourcePort);
 
 	/**
 	 * Remove a subscription.
 	 */
-	public void unsubscribe(ISink<? super T> sink, int port);
+	public void unsubscribe(ISink<? super T> sink, int sinkPort, int sourcePort);
 
 	/**
 	 * Get all current subscriptions.
