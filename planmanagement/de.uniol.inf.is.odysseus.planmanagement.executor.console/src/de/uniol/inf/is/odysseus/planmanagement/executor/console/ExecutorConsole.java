@@ -1,11 +1,24 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.console;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.osgi.framework.Bundle;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
+import org.osgi.service.prefs.PreferencesService;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
@@ -36,15 +49,128 @@ import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
 public class ExecutorConsole implements CommandProvider,
 		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener {
 
+	private static final String METHOD = "method";
+
+	private static final String ARGUMENTS = "arguments";
+
+	private static final String MACROS_NODE = "/macros";
+
 	private IAdvancedExecutor executor;
 
 	private String parser;
 
-	private ConsoleFunctions support = new ConsoleFunctions();
+	private static ConsoleFunctions support = new ConsoleFunctions();
 
 	private ViewerStarter wnd;
 
 	private boolean usePriority = false;
+
+	private Lock preferencesLock = new ReentrantLock();
+
+	private PreferencesService preferences = null;
+
+	private Boolean isRecordingMacro = false;
+
+	private Map<String, List<Command>> macros = new HashMap<String, List<Command>>();
+	private String currentMacro = null;
+
+	private static class DelegateCommandInterpreter implements
+			CommandInterpreter {
+		final private CommandInterpreter ci;
+		int i = 0;
+		final private String[] args;
+
+		public DelegateCommandInterpreter(CommandInterpreter ci, String[] args) {
+			this.ci = ci;
+			this.args = args;
+		}
+
+		@Override
+		public Object execute(String cmd) {
+			return ci.execute(cmd);
+		}
+
+		@Override
+		public String nextArgument() {
+			if (i < args.length) {
+				return this.args[i++];
+			}
+			return null;
+		}
+
+		@Override
+		public void print(Object o) {
+			ci.print(o);
+		}
+
+		@Override
+		public void printBundleResource(Bundle bundle, String resource) {
+			ci.printBundleResource(bundle, resource);
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void printDictionary(Dictionary dic, String title) {
+			ci.printDictionary(dic, title);
+		}
+
+		@Override
+		public void printStackTrace(Throwable t) {
+			ci.printStackTrace(t);
+		}
+
+		@Override
+		public void println() {
+			ci.println();
+		}
+
+		@Override
+		public void println(Object o) {
+			ci.println(o);
+		}
+	}
+
+	private static class Command {
+
+		private static final String DELIMITER = "|||";
+		public String name;
+		private String[] args;
+
+		public void setArgs(String[] args2) {
+			this.args = args2;
+		}
+
+		public String getArgsAsString() {
+			StringBuilder builder = new StringBuilder();
+			for (String arg : args) {
+				if (arg.contains(DELIMITER)) {
+					System.err.println("fixme: argument may not contain '|||'");
+					throw new RuntimeException(
+							"fixme: argument may not contain '|||'");
+				}
+				builder.append(DELIMITER);
+				builder.append(arg);
+			}
+			return builder.toString();
+		}
+
+		public void setArgsFromString(String str) {
+			String[] tmpArgs = str.split(DELIMITER);
+			ArrayList<String> newArgs = new ArrayList<String>();
+			for (String tmp : tmpArgs) {
+				if (tmp.isEmpty()) {
+					continue;
+				} else {
+					newArgs.add(tmp);
+				}
+			}
+			this.args = newArgs.toArray(new String[newArgs.size()]);
+		}
+
+		public String[] getArgs() {
+			return this.args;
+		}
+	}
 
 	private String[][] nexmarkQ = new String[][] {
 			{
@@ -76,6 +202,8 @@ public class ExecutorConsole implements CommandProvider,
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration("relational", ITimeInterval.class));
+
+	private LinkedList<Command> currentCommands;
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		System.out.println("executor gebunden");
@@ -111,7 +239,8 @@ public class ExecutorConsole implements CommandProvider,
 		throw new Exception("No parser found");
 	}
 
-	public void _ps(CommandInterpreter ci) {
+	@Help(description = "show available parser")
+	public void _lsparser(CommandInterpreter ci) {
 		Set<String> parserList = null;
 		try {
 			parserList = this.executor.getSupportedQueryParser();
@@ -131,8 +260,10 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(description = "sets the current parser", parameter = "<parser id>")
 	public void _parser(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			try {
 				if (this.executor.getSupportedQueryParser().contains(args[0])) {
@@ -149,7 +280,8 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	public void _bs(CommandInterpreter ci) {
+	@Help(description = "show available buffer placement strategies")
+	public void _lsbuffer(CommandInterpreter ci) {
 		Set<String> bufferList = this.executor
 				.getRegisteredBufferPlacementStrategies();
 		if (bufferList != null) {
@@ -173,7 +305,8 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	public void _sstrats(CommandInterpreter ci) {
+	@Help(description = "show available scheduling strategies")
+	public void _lsschedulingstrategies(CommandInterpreter ci) {
 		Set<String> list = this.executor
 				.getRegisteredSchedulingStrategyFactories();
 		if (list != null) {
@@ -192,7 +325,8 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	public void _sscheduler(CommandInterpreter ci) {
+	@Help(description = "show available schedulers")
+	public void _lsscheduler(CommandInterpreter ci) {
 		Set<String> list = this.executor.getRegisteredSchedulerFactories();
 		if (list != null) {
 			String current = executor.getCurrentScheduler();
@@ -212,8 +346,10 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "<scheduler id>", description = "set scheduler")
 	public void _scheduler(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			executor.setScheduler(args[0], args[1]);
 		} else {
@@ -221,8 +357,10 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(description = "show query viewer")
 	public void _viewer(CommandInterpreter ci) {
 		System.out.println("startviewer");
+		addCommand(support.getArgs(ci));
 		try {
 			ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
 			// cfg.useOGL = viewerOGL;
@@ -234,8 +372,10 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "<buffer placement strategy id>", description = "set the buffer placement strategy")
 	public void _buffer(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			try {
 				String bufferName = args[0];
@@ -267,93 +407,40 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	public void _man(CommandInterpreter ci) {
-		ci.println("ExecutorInfo - more detailed information on the excutor");
-		ci.println("");
+		TreeMap<String, Help> methodHelps = new TreeMap<String, Help>();
+		// sort relevant methods by name
+		for (Method method : this.getClass().getMethods()) {
+			String methodName = method.getName();
 
-		ci.println("parser PARSERID - set current parser");
-		ci.println("");
-
-		ci.println("ps - show available parser");
-		ci.println("");
-
-		ci.println("buffer BUFFERID - set current bufferplacement strategy");
-		ci.println("");
-
-		ci.println("bs - show available bufferplacement strategy");
-		ci.println("");
-
-		ci.println("sscheduler - show available scheduler");
-		ci.println("");
-
-		ci.println("sstrats - show available scheduling strategy factories");
-		ci.println("");
-
-		ci
-				.println("scheduler SCHEDULER STRATEGY - set current scheduler with strategy");
-		ci.println("");
-
-		ci.println("schedule - start scheduling");
-		ci.println("");
-
-		ci.println("stopschedule - stop scheduling");
-		ci.println("");
-
-		ci.println("qs - show all registered queries");
-		ci.println("");
-
-		ci.println("qstop QUERYID - stop query with QUERYID");
-		ci.println("");
-
-		ci.println("qstart QUERYID - stop query with QUERYID");
-		ci.println("");
-
-		ci
-				.println("meta QUERYID - dump meta data of the query with QUERYID (only if root is a sink)");
-		ci.println("");
-
-		ci
-				.println("dumpp QUERYID - dump physical plan of the query with QUERYID");
-		ci.println("");
-
-		ci.println("dumpr - dump physical plan of all registered roots.");
-		ci.println("");
-
-		ci
-				.println("dumpe - dump all physical operators of the current execution plan.");
-		ci.println("");
-
-		ci.println("remove QUERYID - remove query with QUERYID");
-		ci.println("");
-
-		ci
-				.println("usePriorities [value] - shows if priorities are enabled / switches usage of priorities on/off");
-
-		ci
-				.println("add QUERYSTRING [S] - add query [with console-output-sink]");
-		ci.println("Examples:");
-		ci
-				.println("add 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'");
-		ci.println("add 'SELECT (a * 2) as value FROM test WHERE a > 2' S");
-		ci.println("");
-		
-		ci.println("nms Register NIO Nexmark Sources on Port");
-		ci.println("");
-
-		ci.println("nmsn Register Nexmark Sources on Port");
-		ci.println("");
-		
-		ci.println("nmq [0-5]|* [nio] Execute Nexmark Queries");
-		ci.println("");
+			if (methodName.startsWith("_")) {
+				if (method.isAnnotationPresent(Help.class)) {
+					methodHelps.put(methodName.substring(1), method
+							.getAnnotation(Help.class));
+				}
+			}
+		}
+		for (Map.Entry<String, Help> curHelp : methodHelps.entrySet()) {
+			ci.print(curHelp.getKey());
+			Help help = curHelp.getValue();
+			if (!help.parameter().isEmpty()) {
+				ci.print(" ");
+				ci.print(help.parameter());
+			}
+			ci.print(" - ");
+			ci.println(help.description());
+		}
 	}
 
+	@Help(description = "dump all physical operators of the current execution plan")
 	public void _dumpe(CommandInterpreter ci) {
+		addCommand();
 		IExecutionPlan plan = this.executor.getExecutionPlan();
 
 		int i = 1;
 		ci.println("Registered source:");
 		for (IIterableSource<?> isource : plan.getSources()) {
 			ci.println(i++ + ": " + isource.toString() + ", Owner:"
-					+ this.support.getOwnerIDs(isource.getOwner()));
+					+ support.getOwnerIDs(isource.getOwner()));
 		}
 
 		ci.println("");
@@ -366,8 +453,10 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	@SuppressWarnings("unchecked")
+	@Help(description = "dump physical plan of all registered roots")
 	public void _dumpr(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		int depth = 0;
 		if (args != null && args.length > 0) {
 			depth = Integer.valueOf(args[1]);
@@ -385,9 +474,9 @@ public class ExecutorConsole implements CommandProvider,
 					.getRoots()) {
 				buff = new StringBuffer();
 				if (root.isSink()) {
-					this.support.dumpPlan((ISink) root, depth, buff);
+					support.dumpPlan((ISink) root, depth, buff);
 				} else {
-					this.support.dumpPlan((ISource) root, depth, buff);
+					support.dumpPlan((ISource) root, depth, buff);
 				}
 				ci.println(count++ + ". root:");
 				ci.println(buff.toString());
@@ -398,8 +487,10 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	@SuppressWarnings("unchecked")
+	@Help(parameter = "<query id>", description = "dump the physical plan of a query")
 	public void _dumpp(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			int depth = 0;
@@ -415,10 +506,10 @@ public class ExecutorConsole implements CommandProvider,
 				if (query != null) {
 					StringBuffer buff = new StringBuffer();
 					if (query.getSealedRoot().isSink()) {
-						this.support.dumpPlan((ISink) query.getSealedRoot(),
-								depth, buff);
+						support.dumpPlan((ISink) query.getSealedRoot(), depth,
+								buff);
 					} else {
-						this.support.dumpPlan((ISource) query.getSealedRoot(),
+						support.dumpPlan((ISource) query.getSealedRoot(),
 								depth, buff);
 					}
 					ci.println("Physical plan of query: " + qnum);
@@ -435,16 +526,19 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	@SuppressWarnings("unchecked")
+	@Help(parameter = "<query id>", description = "dump meta data of the query with QUERYID (only if root is a sink)")
 	public void _meta(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
 				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
 					if (query.getSealedRoot().isSink()) {
-						this.support.printPlanMetadata((ISink) query
-								.getSealedRoot());
+						support
+								.printPlanMetadata((ISink) query
+										.getSealedRoot());
 
 					} else {
 						ci.println("Root is no sink.");
@@ -459,15 +553,19 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(description = "register NIO nexmark sources")
 	public void _nmsN(CommandInterpreter ci) {
 		_nexmarkSourcesNIO(ci);
 	}
-	
-	public void _nmsn(CommandInterpreter ci){
+
+	@Help(description = "register NIO nexmark sources")
+	public void _nmsn(CommandInterpreter ci) {
 		_nexmarkSourcesNIO(ci);
 	}
-	
+
+	@Help(description = "register NIO nexmark sources")
 	public void _nexmarkSourcesNIO(CommandInterpreter ci) {
+		addCommand();
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
 		q[1] = "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
@@ -487,11 +585,14 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Nexmark Sources with NIO added.");
 	}
 
+	@Help(description = "register nexmark sources")
 	public void _nms(CommandInterpreter ci) {
 		_nexmarkSources(ci);
 	}
 
+	@Help(description = "register nexmark sources")
 	public void _nexmarkSources(CommandInterpreter ci) {
+		addCommand();
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430";
 		q[1] = "CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432";
@@ -511,8 +612,10 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Nexmark Sources without NIO added.");
 	}
 
+	@Help(parameter = "<query id | *> [n]", description = "add nexmark queries (single query via id, or all via '*'). parameter 'n' registers a NIO query.")
 	public void _nmq(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length >= 1) {
 			int j = 0;
 			if (args.length > 1 && args[1].startsWith("n")) {
@@ -547,8 +650,10 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	@SuppressWarnings("unchecked")
+	@Help(parameter = "<on|off>", description = "turns usage of priorities on|off")
 	public void _usePriorities(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		try {
 			if (args.length == 1) {
 				usePriority = toBoolean(args[0]);
@@ -595,8 +700,16 @@ public class ExecutorConsole implements CommandProvider,
 				+ "' to boolean value");
 	}
 
+	// .println("add QUERYSTRING [S] - add query [with console-output-sink]");
+	// ci.println("Examples:");
+	// ci
+	// .println("add 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'");
+	// ci.println("add 'SELECT (a * 2) as value FROM test WHERE a > 2' S");
+	// ci.println("");
+	@Help(parameter = "<query string> [S]", description = "add query [with console-output-sink]\n\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			try {
 				if (args.length > 1 && args[1].toUpperCase().equals("S")) {
@@ -618,7 +731,9 @@ public class ExecutorConsole implements CommandProvider,
 		blah();
 	}
 
-	public void _qs(CommandInterpreter ci) {
+	@Help(description = "show registered queries")
+	public void _lsqueries(CommandInterpreter ci) {
+		addCommand();
 		try {
 			System.out
 					.println("Current registered queries (ID | STARTED | PARSERID):");
@@ -630,8 +745,10 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "<query id>", description = "remove query")
 	public void _remove(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
@@ -644,8 +761,66 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "<macro name>", description = "remove macro")
+	public void _removemacro(CommandInterpreter ci) {
+		String name = ci.nextArgument();
+		if (name == null) {
+			_man(ci);
+			return;
+		}
+		if (!this.macros.containsKey(name)) {
+			return;
+		}
+
+		this.macros.remove(name);
+
+		this.preferencesLock.lock();
+		try {
+			if (this.preferences == null) {
+				return;
+			}
+
+			Preferences macrosNode = this.preferences.getSystemPreferences()
+					.node(MACROS_NODE);
+			if (macrosNode.nodeExists(name)) {
+				Preferences macroNode = macrosNode.node(name);
+				macroNode.removeNode();
+
+			}
+			ci.println("macro removed");
+		} catch (BackingStoreException e) {
+			ci.println("could not remove macro from backing store: "
+					+ e.getMessage());
+		} finally {
+			this.preferencesLock.unlock();
+		}
+	}
+
+	@Help(description = "remove all macros")
+	public void _clearmacros(CommandInterpreter ci) {
+		this.macros.clear();
+
+		this.preferencesLock.lock();
+		try {
+			if (this.preferences == null) {
+				return;
+			}
+
+			this.preferences.getSystemPreferences().node(MACROS_NODE)
+					.removeNode();
+			ci.println("macros cleared");
+		} catch (BackingStoreException e) {
+			ci.println("could not remove macros from backing store: "
+					+ e.getMessage());
+		} finally {
+			this.preferencesLock.unlock();
+		}
+	}
+
+	@Help(parameter = "<query id>", description = "stop execution of query")
 	public void _qstop(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
@@ -658,8 +833,10 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "<query id>", description = "start execution of query")
 	public void _qstart(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
+		addCommand(args);
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
@@ -672,7 +849,9 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(description = "start scheduler")
 	public void _schedule(CommandInterpreter ci) {
+		addCommand();
 		try {
 			this.executor.startExecution();
 		} catch (PlanManagementException e) {
@@ -681,12 +860,172 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
+	@Help(description = "stop scheduler")
 	public void _stopschedule(CommandInterpreter ci) {
+		addCommand();
 		try {
 			this.executor.stopExecution();
 		} catch (PlanManagementException e) {
 			ci.println(e.getMessage());
 			ci.printStackTrace(e);
+		}
+	}
+
+	@Help(description = "show all available macros")
+	public void _lsmacros(CommandInterpreter ci) {
+		ci.println("Macros:");
+		for (String name : macros.keySet()) {
+			ci.print("\t");
+			ci.println(name);
+		}
+	}
+
+	@Help(parameter = "<macro name>", description = "show macro content")
+	public void _macro(CommandInterpreter ci) {
+		String macroName = ci.nextArgument();
+		if (macroName == null) {
+			_man(ci);
+			return;
+		}
+
+		List<Command> macro = this.macros.get(macroName);
+		if (macro == null) {
+			ci.println("No such macro: " + macroName);
+			return;
+		}
+
+		ci.println("Macro " + macroName);
+		for (Command cmd : macro) {
+			ci.print("\t");
+			ci.print(cmd.name.substring(1));
+			for (String arg : cmd.getArgs()) {
+				ci.print(" ");
+				ci.println(arg);
+			}
+		}
+	}
+
+	private void addCommand(String... args) {
+		synchronized (isRecordingMacro) {
+			if (!isRecordingMacro) {
+				return;
+			}
+			Command command = new Command();
+			StackTraceElement trace = Thread.currentThread().getStackTrace()[2];
+			command.name = trace.getMethodName();
+			args = args == null ? new String[0] : args;
+			command.setArgs(args);
+			this.currentCommands.add(command);
+		}
+	}
+
+	@Help(parameter = "<macro name>", description = "execute macro")
+	public void _runmacro(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		if (args.length != 1) {
+			_man(ci);
+			return;
+		}
+		addCommand(args);
+		String name = args[0];
+
+		List<Command> macro = this.macros.get(name);
+		if (macro == null) {
+			ci.println("no such macro: " + name);
+			return;
+		}
+		ci.println("--- running macro: " + name + " ---");
+		try {
+			for (Command command : macro) {
+
+				Method m = this.getClass().getMethod(command.name,
+						CommandInterpreter.class);
+
+				CommandInterpreter delegateCi = new DelegateCommandInterpreter(
+						ci, command.getArgs());
+
+				m.invoke(this, delegateCi);
+			}
+			ci.println("--- macro done ---");
+		} catch (Exception e) {
+			ci.println("error during execution of macro");
+			ci.printStackTrace(e);
+		}
+	}
+
+	@Help(parameter = "<macro name>", description = "begin macro recording")
+	public void _startrecord(CommandInterpreter ci) {
+		synchronized (isRecordingMacro) {
+			if (isRecordingMacro) {
+				ci
+						.println("you are already recording macro. nested recording is not possible.");
+				return;
+			}
+			String macroName = ci.nextArgument();
+			if (macroName == null) {
+				_man(ci);
+				return;
+			}
+
+			if (this.macros.containsKey(macroName)) {
+				ci.println("a macro already exists under the name '"
+						+ macroName
+						+ "'. you have to remove it first (removeMacro "
+						+ macroName + ")");
+				return;
+			}
+			this.currentCommands = new LinkedList<Command>();
+			this.currentMacro = macroName;
+			this.macros.put(macroName, this.currentCommands);
+			isRecordingMacro = true;
+			ci.println("macro recording started");
+		}
+	}
+
+	@Help(description = "finish recording of macro")
+	public void _stoprecord(CommandInterpreter ci) {
+		synchronized (isRecordingMacro) {
+			if (!isRecordingMacro) {
+				return;
+			}
+			if (this.currentCommands.isEmpty()) {
+				ci
+						.println("macro recording stopped - emtpy macro isn't stored.");
+				return;
+			}
+			this.preferencesLock.lock();
+			try {
+				if (this.preferences == null) {
+					ci
+							.println("macro cannot be persisted. it is still available during this session.");
+					return;
+				}
+
+				Preferences macrosNode = this.preferences
+						.getSystemPreferences().node(MACROS_NODE);
+				Preferences currentMacroNode = macrosNode.node(currentMacro);
+				Integer i = 0;
+				for (Command command : this.currentCommands) {
+					Preferences commandNode = currentMacroNode.node(i
+							.toString());
+					commandNode.put(METHOD, command.name);
+					commandNode.put(ARGUMENTS, command.getArgsAsString());
+					++i;
+				}
+				try {
+					macrosNode.flush();
+				} catch (BackingStoreException e) {
+					e.printStackTrace();
+					return;
+				}
+
+			} finally {
+				this.preferencesLock.unlock();
+				this.currentCommands = null;
+				this.currentMacro = null;
+				isRecordingMacro = false;
+				ci.print("macro recording stopped");
+			}
 		}
 	}
 
@@ -735,4 +1074,50 @@ public class ExecutorConsole implements CommandProvider,
 			}
 		}
 	}
+
+	public void bindPreferences(PreferencesService preferences) {
+		preferencesLock.lock();
+		try {
+			this.preferences = preferences;
+			restoreMacros();
+		} finally {
+			preferencesLock.unlock();
+		}
+	}
+
+	private void restoreMacros() {
+		Preferences macrosNode = this.preferences.getSystemPreferences().node(
+				MACROS_NODE);
+		try {
+			for (String macroName : macrosNode.childrenNames()) {
+				Preferences macroNode = macrosNode.node(macroName);
+				String[] commands = macroNode.childrenNames();
+				List<Command> commandList = new ArrayList<Command>(
+						commands.length);
+				// command names could be unsorted, so create names
+				// by counting
+				for (int i = 0; i < commands.length; ++i) {
+					Preferences commandNode = macroNode.node(String.valueOf(i));
+					Command command = new Command();
+					command.name = commandNode.get(METHOD, null);
+					command.setArgsFromString(commandNode.get(ARGUMENTS, null));
+					commandList.add(command);
+				}
+				this.macros.put(macroName, commandList);
+			}
+		} catch (Exception e) {
+			System.err.println("could not load macros: " + e.getMessage());
+			this.preferences = null;
+		}
+	}
+
+	public void unbindPreferences(PreferencesService preferences) {
+		preferencesLock.lock();
+		try {
+			this.preferences = null;
+		} finally {
+			preferencesLock.unlock();
+		}
+	}
+
 }
