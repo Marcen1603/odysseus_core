@@ -161,7 +161,16 @@ public class ExecutorConsole implements CommandProvider,
 				if (tmp.isEmpty()) {
 					continue;
 				} else {
-					newArgs.add(tmp);
+					StringBuilder builder = new StringBuilder();
+					boolean containsSpace = tmp.contains(" ");
+					if (containsSpace) {
+						builder.append('\'');
+					}
+					builder.append(tmp);
+					if (containsSpace) {
+						builder.append('\'');
+					}
+					newArgs.add(builder.toString());
 				}
 			}
 			this.args = newArgs.toArray(new String[newArgs.size()]);
