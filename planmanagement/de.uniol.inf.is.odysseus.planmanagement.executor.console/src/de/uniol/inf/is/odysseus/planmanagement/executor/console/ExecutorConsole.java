@@ -900,8 +900,9 @@ public class ExecutorConsole implements CommandProvider,
 			ci.print(cmd.name.substring(1));
 			for (String arg : cmd.getArgs()) {
 				ci.print(" ");
-				ci.println(arg);
+				ci.print(arg);
 			}
+			ci.println();
 		}
 	}
 
