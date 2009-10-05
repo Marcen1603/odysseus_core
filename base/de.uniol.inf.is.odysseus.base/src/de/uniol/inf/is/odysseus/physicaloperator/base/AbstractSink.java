@@ -166,7 +166,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	//"polymorphic this", used for the delegate sink
+	//"delegatable this", used for the delegate sink
 	protected ISink<T> getInstance() {
 		return this;
 	}
