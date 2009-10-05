@@ -15,6 +15,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTTimedTuple node, Object data);
   public Object visit(ASTTimeInterval node, Object data);
   public Object visit(ASTSocket node, Object data);
+  public Object visit(ASTSilab node, Object data);
   public Object visit(ASTChannel node, Object data);
   public Object visit(ASTHost node, Object data);
   public Object visit(ASTCSVSource node, Object data);
@@ -76,4 +77,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTSpatialCompareOperator node, Object data);
   public Object visit(ASTOSGI node, Object data);
 }
-/* JavaCC - OriginalChecksum=c40a3569e5266c559b33b56ddbd9f60f (do not edit this line) */
+/* JavaCC - OriginalChecksum=6022fd543da01a7a7323125c33648182 (do not edit this line) */

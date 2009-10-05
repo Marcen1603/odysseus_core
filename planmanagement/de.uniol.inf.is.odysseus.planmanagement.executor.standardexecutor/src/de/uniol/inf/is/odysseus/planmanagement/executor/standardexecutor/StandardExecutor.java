@@ -72,7 +72,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
+	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor#
 	 * setDefaultBufferPlacementStrategy(java.lang.String)
 	 */
 	@Override

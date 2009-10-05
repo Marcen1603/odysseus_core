@@ -78,7 +78,7 @@ public class ExecutorConsole implements CommandProvider,
 			new TransformationConfiguration("relational", ITimeInterval.class));
 
 	public void bindExecutor(IAdvancedExecutor executor) {
-		System.out.println("executor begunden");
+		System.out.println("executor gebunden");
 		this.executor = executor;
 
 		this.executor.addErrorEventListener(this);

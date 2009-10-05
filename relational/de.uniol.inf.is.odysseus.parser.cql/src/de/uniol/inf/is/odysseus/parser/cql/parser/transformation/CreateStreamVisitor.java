@@ -18,7 +18,9 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -145,6 +147,35 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setPort(port);
 		source.setHost(host);
 		source.setOutputSchema(this.attributes);
+		DataDictionary.getInstance().setView(name, source);
+		return data;
+	}
+	
+	@Override
+	public Object visit(ASTSilab node, Object data){
+		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
+		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
+		AccessAO source = null;
+		
+		// TODO Tuple mode and MV mode are not supported with SILAB yet.
+//		if (node.useTupleMode()) {
+//			source = new AccessAO(new SDFSource(name,
+//					"RelationalInputStreamAccessPO"));
+//			source.setPort(port);
+//			source.setHost(host);
+//		} else if (node.useMVMode()) {
+//			source = new AccessAO(new SDFSource(name,
+//					"RelationalAtomicDataInputStreamAccessMVPO"));
+//			source.setPort(port);
+//			source.setHost(host);
+//			source.setOutputSchema(this.attributes);
+//		} else {
+			source = new AccessAO(new SDFSource(name,
+					"RelationalSILABInputStreamAccessPO"));
+			source.setPort(port);
+			source.setHost(host);
+			source.setOutputSchema(this.attributes);
+//		}
 		DataDictionary.getInstance().setView(name, source);
 		return data;
 	}

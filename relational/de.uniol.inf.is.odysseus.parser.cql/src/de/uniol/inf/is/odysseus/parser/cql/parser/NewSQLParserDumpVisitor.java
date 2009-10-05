@@ -369,4 +369,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTSilab node, Object data) {
+		// TODO Auto-generated method stub
+		return pvisit(node);
+	}
+
 }
