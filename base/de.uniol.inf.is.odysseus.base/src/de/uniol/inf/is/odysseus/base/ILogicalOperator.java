@@ -52,6 +52,8 @@ public interface ILogicalOperator extends IClone, IOwnedOperator {
 
 	public ILogicalOperator getInputAO(int pos);
 	public int getInputAOOutputPort(int pos);
+	public int getInputAOOutputPort(ILogicalOperator op);
+	public int getInputAOOutputPort(IPhysicalOperator op);
 
 	public List<ILogicalOperator> getInputAOs();
 

@@ -320,7 +320,25 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public int getInputAOOutputPort(int pos){
 		return inputAOOutputPort.get(pos);
 	}
+	
+	public int getInputAOOutputPort(ILogicalOperator op){
+		for (int i = 0; i < getNumberOfInputs(); ++i) {
+			if (this.inputAO.get(i) == op) {
+				return inputAOOutputPort.get(i);
+			}
+		}
+		return 0;
+	}
 
+	public int getInputAOOutputPort(IPhysicalOperator op){
+		for (int i = 0; i < getNumberOfInputs(); ++i) {
+			if (this.physInputPOs.get(i) == op) {
+				return inputAOOutputPort.get(i);
+			}
+		}
+		return 0;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
