@@ -83,16 +83,6 @@ public class StandardExecutor extends AbstractExecutor implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.osgi.framework.console.CommandProvider#getHelp()
-	 */
-	@Override
-	public String getHelp() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider#getInfos()
 	 */
