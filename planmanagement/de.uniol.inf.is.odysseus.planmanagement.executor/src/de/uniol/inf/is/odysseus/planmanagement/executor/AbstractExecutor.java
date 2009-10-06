@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.eclipse.osgi.framework.console.CommandInterpreter;
-import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +44,7 @@ import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
  * 
  */
 public abstract class AbstractExecutor implements IExecutor, IScheduleable,
-		ISettingChangeListener, CommandProvider, IOptimizable,
+		ISettingChangeListener, IOptimizable,
 		IQueryReoptimizeListener, IPlanReoptimizeListener {
 
 	/**
@@ -261,16 +259,6 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 
 		throw new NoCompilerLoadedException();
-	}
-
-	/**
-	 * _ExecutorInfo schreibt Informationen über die Ausführungsumgebung in die
-	 * Konsole. Kann in der OSGi-Konsole verwendet werden.
-	 * 
-	 * @param ci
-	 */
-	public void _ExecutorInfo(CommandInterpreter ci) {
-		System.out.print(getInfos());
 	}
 
 	/**

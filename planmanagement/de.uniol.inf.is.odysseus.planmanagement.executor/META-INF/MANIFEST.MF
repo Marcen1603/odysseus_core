@@ -19,7 +19,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.planmanagement.optimization.plan,
  de.uniol.inf.is.odysseus.scheduler.manager,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory,
- org.eclipse.osgi.framework.console,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

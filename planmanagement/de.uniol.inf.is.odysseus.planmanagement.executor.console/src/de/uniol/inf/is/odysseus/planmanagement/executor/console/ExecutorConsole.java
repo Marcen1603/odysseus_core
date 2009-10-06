@@ -247,6 +247,15 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		throw new Exception("No parser found");
 	}
+	
+	/**
+	 * _ExecutorInfo schreibt Informationen über die Ausführungsumgebung in die
+	 * Konsole. Kann in der OSGi-Konsole verwendet werden.
+	 */
+	@Help(description="show internal information about the executor")
+	public void _ExecutorInfo(CommandInterpreter ci) {
+		System.out.print(this.executor.getInfos());
+	}
 
 	@Help(description = "show available parser")
 	public void _lsparser(CommandInterpreter ci) {
