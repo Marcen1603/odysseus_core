@@ -4,6 +4,10 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * @author Marco Grawunder
+ */
+
 public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1L;

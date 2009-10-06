@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public class SelectPO<T> extends AbstractPipe<T, T> {
 
@@ -12,6 +12,10 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 
 	public SelectPO(IPredicate<? super T> predicate) {
 		this.predicate = predicate.clone();
+	}
+	
+	public SelectPO(SelectPO<T> po){
+		this.predicate = po.predicate.clone();		
 	}
 
 	@Override
@@ -21,7 +25,6 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 	
 	@Override
 	protected synchronized void process_next(T object, int port) {
-//		System.out.println("SelectPO (" + this.hashCode() + "): " + object);
 		if (predicate.evaluate(object)) {
 			transfer(object);
 		}
@@ -32,5 +35,44 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 		super.process_open();
 		this.predicate.init();
 	}
+	
+	@Override
+	protected SelectPO<T> clone() throws CloneNotSupportedException {
+		return new SelectPO<T>(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((predicate == null) ? 0 : predicate.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SelectPO<?> other = (SelectPO<?>) obj;
+		if (predicate == null) {
+			if (other.predicate != null)
+				return false;
+		} else if (!predicate.equals(other.predicate))
+			return false;
+		return true;
+	}
+	
+	
 
 }

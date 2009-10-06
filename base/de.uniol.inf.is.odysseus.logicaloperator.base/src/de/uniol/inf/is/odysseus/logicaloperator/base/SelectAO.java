@@ -19,17 +19,10 @@ public class SelectAO extends UnaryLogicalOp {
 
 	public SelectAO(SelectAO po) {
 		super(po);
-		setPOName(po.getPOName());
 	}
 
 	public SelectAO(IPredicate<?> predicate) {
 		setPredicate(predicate);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void setPredicate(IPredicate predicate) {
-		super.setPredicate(predicate);
 	}
 
 	public SelectAO clone() {

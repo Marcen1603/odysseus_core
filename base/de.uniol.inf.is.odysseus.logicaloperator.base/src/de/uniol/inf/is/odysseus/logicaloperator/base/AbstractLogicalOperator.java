@@ -44,7 +44,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		outputSchema = new SDFAttributeList(po.outputSchema);
 		predicate =  po.predicate;
 		inputSchemas = new ArrayList<SDFAttributeList>(po.inputSchemas);
-
+		setPOName(po.getPOName());
 		physInputPOs = po.physInputPOs == null ? null
 				: new ArrayList<IPhysicalOperator>(po.physInputPOs);
 	}
