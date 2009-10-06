@@ -39,7 +39,9 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 				next.getMetadata().setPriority(curPriority.getKey());
 				transfer(next);
 				ITimeInterval time = (ITimeInterval) next.getMetadata();
-				sendPunctuation(time.getStart());
+				if(curPriority.getKey() != this.defaultPriority) {
+					sendPunctuation(time.getStart());
+				}
 				return;
 			}
 		}
@@ -47,5 +49,10 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 		transfer(next);
 		return;
 	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp) {
+		sendPunctuation(timestamp);
+	}		
 
 }

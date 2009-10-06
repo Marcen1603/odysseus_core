@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
@@ -30,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *            Datentyp
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
-		extends AbstractPipe<T, T> {
+		extends AbstractPunctuationPipe<T, T> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(JoinTIPO.class);
 	private ISweepArea<T>[] areas;
@@ -39,8 +41,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected IDataMergeFunction<T> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferFunction<T> transferFunction;
-	protected SDFAttributeList outputSchema; 
-	
+	protected SDFAttributeList outputSchema;
+
+	private int otherport = 0;
+	private int port = 0;
+
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
@@ -106,9 +111,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
+
 	@Override
 	protected void process_next(T object, int port) {
+		currentPort = port;
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
 			// JJ: weil man schon fertig sein
@@ -119,7 +125,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			// werden muss, man also ressourcen spart
 			return;
 		}
-		int otherport = port ^ 1;
+		this.port = port;
+		otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
 		synchronized (this.areas[otherport]) {
 			areas[otherport].purgeElements(object, order);
@@ -203,6 +210,22 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	public ITransferFunction<T> getTransferFunction() {
 		return transferFunction;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void cleanInternalStates(PointInTime punctuation,
+			IMetaAttributeContainer<?> current) {
+
+		//TODO noch in der Entwicklung...
+		/*logger.info("Cleaning JoinTIPO SweepAreas...");
+		IMetaAttributeContainer<?> purgeInterval = (IMetaAttributeContainer<?>) current.clone();
+		ITimeInterval punctuationInterval = (ITimeInterval) purgeInterval.getMetadata();
+		punctuationInterval.setStart(punctuation);
+
+		Order order = Order.fromOrdinal(port);
+		areas[otherport].purgeElements((T)purgeInterval, order);*/
+
 	}
 
 }

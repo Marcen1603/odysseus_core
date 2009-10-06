@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
@@ -47,4 +48,10 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	public RelationalProjectPO<T> clone() {
 		return new RelationalProjectPO<T>(this);
 	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp) {
+		sendPunctuation(timestamp);
+	}	
+	
 }

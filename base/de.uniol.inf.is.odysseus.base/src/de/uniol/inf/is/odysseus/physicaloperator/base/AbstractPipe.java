@@ -232,7 +232,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 					sink.processPunctuation(punctuation);
 				} 
 			}
-			super.sendPunctuation(punctuation);
+			//super.sendPunctuation(punctuation);
 		}
 	}	
 	
