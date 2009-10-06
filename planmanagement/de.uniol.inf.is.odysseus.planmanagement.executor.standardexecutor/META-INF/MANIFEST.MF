@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: New Simpleexecutor Plug-in
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.simpleexecutor
+Bundle-Name: Standardexecutor Plug-in
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.standardxecutor
 Bundle-Version: 1.0.0
 Import-Package: 
  de.uniol.inf.is.odysseus.base,
