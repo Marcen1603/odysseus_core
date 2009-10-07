@@ -42,9 +42,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.viewer.ViewerStarter;
-import de.uniol.inf.is.odysseus.viewer.ViewerStarterConfiguration;
-import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
 
 public class ExecutorConsole implements CommandProvider,
 		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener {
@@ -61,7 +58,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	private static ConsoleFunctions support = new ConsoleFunctions();
 
-	private ViewerStarter wnd;
+	// private ViewerStarter wnd;
 
 	private boolean usePriority = false;
 
@@ -155,21 +152,14 @@ public class ExecutorConsole implements CommandProvider,
 		}
 
 		public void setArgsFromString(String str) {
-			String[] tmpArgs = str.split(DELIMITER);
+			String[] tmpArgs = str.split("\\|\\|\\|");
 			ArrayList<String> newArgs = new ArrayList<String>();
 			for (String tmp : tmpArgs) {
 				if (tmp.isEmpty()) {
 					continue;
 				} else {
 					StringBuilder builder = new StringBuilder();
-					boolean containsSpace = tmp.contains(" ");
-					if (containsSpace) {
-						builder.append('\'');
-					}
 					builder.append(tmp);
-					if (containsSpace) {
-						builder.append('\'');
-					}
 					newArgs.add(builder.toString());
 				}
 			}
@@ -247,12 +237,12 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		throw new Exception("No parser found");
 	}
-	
+
 	/**
 	 * _ExecutorInfo schreibt Informationen über die Ausführungsumgebung in die
 	 * Konsole. Kann in der OSGi-Konsole verwendet werden.
 	 */
-	@Help(description="show internal information about the executor")
+	@Help(description = "show internal information about the executor")
 	public void _ExecutorInfo(CommandInterpreter ci) {
 		System.out.print(this.executor.getInfos());
 	}
@@ -377,17 +367,17 @@ public class ExecutorConsole implements CommandProvider,
 
 	@Help(description = "show query viewer")
 	public void _viewer(CommandInterpreter ci) {
-		System.out.println("startviewer");
-		addCommand(support.getArgs(ci));
-		try {
-			ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
-			// cfg.useOGL = viewerOGL;
-			wnd = new ViewerStarter(null, cfg);
-			Thread thread = new Thread(wnd, "ViewerThread");
-			thread.start();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+		// System.out.println("startviewer");
+		// addCommand(support.getArgs(ci));
+		// try {
+		// ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
+		// // cfg.useOGL = viewerOGL;
+		// wnd = new ViewerStarter(null, cfg);
+		// Thread thread = new Thread(wnd, "ViewerThread");
+		// thread.start();
+		// } catch (Throwable e) {
+		// e.printStackTrace();
+		// }
 	}
 
 	@Help(parameter = "<buffer placement strategy id>", description = "set the buffer placement strategy")
@@ -1073,25 +1063,25 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	public void blah() {
-		if (wnd != null) {
-			ArrayList<IPhysicalOperator> queries = null;
-			try {
-				queries = this.executor.getSealedPlan().getRoots();
-			} catch (PlanManagementException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			for (IPhysicalOperator query : queries) {
-				if (query == null) {
-					continue;
-				}
-				if (query.isSink()) {
-					OdysseusModelProviderSink mp = new OdysseusModelProviderSink(
-							(ISink<?>) query);
-					wnd.setModelProvider(mp);
-				}
-			}
-		}
+		// if (wnd != null) {
+		// ArrayList<IPhysicalOperator> queries = null;
+		// try {
+		// queries = this.executor.getSealedPlan().getRoots();
+		// } catch (PlanManagementException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// for (IPhysicalOperator query : queries) {
+		// if (query == null) {
+		// continue;
+		// }
+		// if (query.isSink()) {
+		// OdysseusModelProviderSink mp = new OdysseusModelProviderSink(
+		// (ISink<?>) query);
+		// wnd.setModelProvider(mp);
+		// }
+		// }
+		// }
 	}
 
 	public void bindPreferences(PreferencesService preferences) {
