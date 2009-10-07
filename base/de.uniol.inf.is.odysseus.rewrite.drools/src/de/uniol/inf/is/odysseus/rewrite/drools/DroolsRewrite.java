@@ -10,7 +10,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
-import org.drools.audit.WorkingMemoryConsoleLogger;
 import org.drools.rule.Package;
 import org.drools.rule.Rule;
 import org.osgi.framework.BundleContext;
@@ -62,7 +61,7 @@ public class DroolsRewrite implements IRewrite {
 		}
 
 		session.startProcess("RuleFlow");
-			
+
 		session.fireAllRules();
 		session.dispose();
 		if (logger.isInfoEnabled()) {
@@ -117,26 +116,31 @@ public class DroolsRewrite implements IRewrite {
 	}
 
 	public void activate(ComponentContext context) {
-		this.bundleContext = context.getBundleContext();
-		RuleAgent ra = RuleAgentFactory.createRuleAgent(this.bundleContext,
-				RULE_PATH, LOGGER_NAME);
-		this.ruleBaseLock.readLock().lock();
 		try {
-			this.rulebase = ra.getRuleBase();
-			this.ruleNames = new HashSet<String>();
-			Package pkg = this.rulebase.getPackage(PACKAGE_NAME);
-			for (Rule rule : pkg.getRules()) {
-				this.ruleNames.add(rule.getName());
+			this.bundleContext = context.getBundleContext();
+			RuleAgent ra = RuleAgentFactory.createRuleAgent(this.bundleContext,
+					RULE_PATH, LOGGER_NAME);
+			this.ruleBaseLock.readLock().lock();
+			try {
+				this.rulebase = ra.getRuleBase();
+				this.ruleNames = new HashSet<String>();
+				Package pkg = this.rulebase.getPackage(PACKAGE_NAME);
+				for (Rule rule : pkg.getRules()) {
+					this.ruleNames.add(rule.getName());
+				}
+			} finally {
+				this.ruleBaseLock.readLock().unlock();
 			}
-		} finally {
-			this.ruleBaseLock.readLock().unlock();
+		} catch (Throwable t) {
+			logger.error(t.getMessage());
+			throw new RuntimeException(t);
 		}
 	}
 
 	/*
-	 * The locking mechanism allows multiple parallel calls to this method,
-	 * but only one call at a time to rewritePlan(ILogicalOperator, Set<String>)
-	 * as those use different rules and modify the singular rulebase.
+	 * The locking mechanism allows multiple parallel calls to this method, but
+	 * only one call at a time to rewritePlan(ILogicalOperator, Set<String>) as
+	 * those use different rules and modify the singular rulebase.
 	 */
 	@Override
 	public ILogicalOperator rewritePlan(ILogicalOperator plan) {

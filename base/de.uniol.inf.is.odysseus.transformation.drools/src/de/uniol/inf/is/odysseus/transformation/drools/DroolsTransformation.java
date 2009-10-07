@@ -44,10 +44,15 @@ public class DroolsTransformation implements ITransformation {
 	}
 
 	protected void activate(ComponentContext context) {
-		BundleContext bundleContext = context.getBundleContext();
-		RuleAgent ra = RuleAgentFactory.createRuleAgent(bundleContext,
-				RULE_PATH, LOGGER_NAME);
-		this.rulebase = ra.getRuleBase();
+		try {
+			BundleContext bundleContext = context.getBundleContext();
+			RuleAgent ra = RuleAgentFactory.createRuleAgent(bundleContext,
+					RULE_PATH, LOGGER_NAME);
+			this.rulebase = ra.getRuleBase();
+		} catch (Throwable t) {
+			logger.error(t.getMessage());
+			throw new RuntimeException(t);
+		}
 	}
 
 	@Override
