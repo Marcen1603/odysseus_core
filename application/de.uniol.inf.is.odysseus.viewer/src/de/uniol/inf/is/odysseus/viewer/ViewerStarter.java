@@ -16,86 +16,88 @@ public class ViewerStarter implements Runnable {
 	private IModelProvider<IPhysicalOperator> modelProvider;
 	private static final String SHELL_TITLE = "ODYSSEUS - Query Plan Viewer";
 	private static final int SHELL_SIZE = 800;
-	
-	private static final Logger logger = LoggerFactory.getLogger( ViewerStarter.class );
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ViewerStarter.class);
 	private IController<IPhysicalOperator> controller;
 	private SWTMainWindow viewer;
 	private ViewerStarterConfiguration config;
-	
+
 	public ViewerStarter(IModelProvider<IPhysicalOperator> modelProvider) {
-		this(modelProvider, null );
+		this(modelProvider, null);
 	}
 
 	public ViewerStarter() {
 		this(null);
 	}
-	
-	public ViewerStarter( IModelProvider<IPhysicalOperator> modelProvider, ViewerStarterConfiguration cfg ) {
-		setModelProvider(modelProvider);	
+
+	public ViewerStarter(IModelProvider<IPhysicalOperator> modelProvider,
+			ViewerStarterConfiguration cfg) {
+		setModelProvider(modelProvider);
 		config = cfg;
-		if( config == null )
+		if (config == null)
 			config = new ViewerStarterConfiguration();
 	}
-	
-	public void setModelProvider(IModelProvider<IPhysicalOperator> modelProvider){
+
+	public void setModelProvider(IModelProvider<IPhysicalOperator> modelProvider) {
 		this.modelProvider = modelProvider;
-		if (controller != null){
-			controller.setModelProvider( modelProvider );
-			
+		if (controller != null) {
+			controller.setModelProvider(modelProvider);
+
 			Display.getDefault().asyncExec(new Runnable() {
-				public void run(){
-					viewer.reloadModel();			
+				public void run() {
+					viewer.reloadModel();
 				}
-			});			
-			
+			});
+
 		}
 	}
-	
+
 	@Override
 	public void run() {
-		
+
 		final Display display = new Display();
 		try {
-			
+
 			controller = new DefaultController<IPhysicalOperator>();
-			if (modelProvider != null){
-				controller.setModelProvider( modelProvider );
+			if (modelProvider != null) {
+				controller.setModelProvider(modelProvider);
 			}
-	
+
 			// View erzeugen
 			final Shell shell = new Shell(display);
-			shell.setText( SHELL_TITLE );
-			shell.setSize( SHELL_SIZE, SHELL_SIZE );
-			
-			if( config.useOGL )
+			shell.setText(SHELL_TITLE);
+			shell.setSize(SHELL_SIZE, SHELL_SIZE);
+
+			if (config.useOGL)
 				logger.info("Using OpenGL for rendering");
 			else
 				logger.info("Using SWT for rendering");
-			viewer = new SWTMainWindow( shell, controller, config.useOGL);
-			
+			viewer = new SWTMainWindow(shell, controller, config.useOGL);
+
 			shell.open();
-	
-			logger.info( "Viewer started!" );
-	
-			while( !shell.isDisposed() ) {
+
+			logger.info("Viewer started!");
+
+			while (!shell.isDisposed()
+					&& !Thread.currentThread().isInterrupted()) {
 				try {
-					if( !display.readAndDispatch() )
+					if (!display.readAndDispatch())
 						display.sleep();
-				} catch( Exception ex ) {
+				} catch (Exception ex) {
 					ex.printStackTrace();
 					new SWTExceptionWindow(shell, ex);
 				}
 			}
-			
+
 		} finally {
-			logger.info( "Viewer closed!" );
-			
-			if( viewer != null )
+			logger.info("Viewer closed!");
+
+			if (viewer != null)
 				viewer.dispose();
-	
-			if( !display.isDisposed() )
+
+			if (!display.isDisposed())
 				display.dispose();
 		}
-		System.exit( 0 ); // nur zum DEBUG	
 	}
 }
