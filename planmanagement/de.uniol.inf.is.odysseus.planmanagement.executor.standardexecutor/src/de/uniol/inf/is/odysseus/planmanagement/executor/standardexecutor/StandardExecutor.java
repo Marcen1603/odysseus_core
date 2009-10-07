@@ -222,6 +222,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		// store optimized queries
 		for (IEditableQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
 		}
 
 		this.logger.debug("Queries added (Count: " + newQueries.size() + ").");
@@ -378,8 +380,6 @@ public class StandardExecutor extends AbstractExecutor implements
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this,
-					QueryPlanModificationEvent.QUERY_ADDED, query));
 			return query.getID();
 		} catch (Exception e) {
 			this.logger.error("Error adding Queries. Details: "
