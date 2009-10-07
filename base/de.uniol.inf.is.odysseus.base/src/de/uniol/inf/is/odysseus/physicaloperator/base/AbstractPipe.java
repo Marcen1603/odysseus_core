@@ -63,6 +63,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		this.delegateSink.close();
 		super.close();
 	};
+	
+	protected int getInputPortCount() {
+		return this.delegateSink.noInputPorts;
+	}
 
 	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
 	// etc.)
