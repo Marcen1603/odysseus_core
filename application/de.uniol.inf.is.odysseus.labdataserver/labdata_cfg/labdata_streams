@@ -1,0 +1,177 @@
+CREATE STREAM CarLocStream (
+	m_iType INTEGER,   -- Type:
+				   --	. 0: position report
+				   --	. 2: account balance request
+				   --	. 3: daily expenditure request
+				   --	. 4: travel time request			 
+		m_iTime INTEGER,   -- 0...10799 (second), timestamp position report emitted
+		m_iVid INTEGER,	   -- 0...MAXINT, vehicle identifier
+		m_iSpeed INTEGER,  -- 0...100, speed of the vehicle
+		m_iXway INTEGER,   -- 0...L-1, express way
+		m_iLane INTEGER,   -- 0...4, lane
+		m_iDir INTEGER,    -- 0..1, direction
+		m_iSeg INTEGER,    -- 0...99, segment
+		m_iPos INTEGER    -- 0...527999, position of the vehicle
+	)
+
+CREATE STREAM movingObjectsOL(
+	type STRING,
+	id INTEGER,
+	sequenceNo INTEGER,
+	objectType INTEGER,
+	timestamp INTEGER,
+	x DOUBLE,
+	y DOUBLE,
+	speed DOUBLE,
+	xNext DOUBLE,
+	yNext DOUBLE
+) SOCKET MV localhost : 55570
+
+
+CREATE STREAM fas:EnviroFusion1(
+	timestamp LONG,
+	id INTEGER,
+	position POINT3D,
+	trajectory LINE3D,
+	boundingBox SOLID3D
+) SOCKET TUPLE localhost : 55544
+
+CREATE STREAM fas:EnviroFusion2(
+	timestamp LONG,
+	id INTEGER,
+	position POINT3D,
+	boundingBox SOLID3D
+) SOCKET TUPLE localhost : 55545
+
+CREATE STREAM fas:EgoFusion(
+	timestamp LONG,
+	speed INTEGER,
+	position POINT3D,
+	trajectory LINE3D,
+	boundingBox SOLID3D
+) SOCKET TUPLE localhost : 55546
+
+CREATE STREAM test:labdata (
+	timestamp LONG,
+	epoch INTEGER,
+	moteid INTEGER,
+	temperature DOUBLE,
+	humidity DOUBLE,
+	light DOUBLE,
+	voltage DOUBLE
+) SOCKET localhost : 55555
+
+CREATE STREAM test:labdataMV (
+	timestamp LONG,
+	epoch INTEGER,
+	moteid INTEGER,
+	temperature MV 0.5 0.2 0.0 0.0,
+	humidity MV 0.2 2.0 0.0 0.0,
+	light MV 0.0 0.0 20.0 0.0,
+	voltage MV 0.0 0.0 0.0 0.4
+) SOCKET MV localhost : 55560
+
+
+CREATE STREAM fas:viewCar(
+	timestamp LONG,
+	runtime LONG,
+	gps_time DATE HH:mm:ss.SS,
+	gps_velocity MV 1.5 1.0 1.0 0.0,
+	engine_rpm MV 1.0 20.0 1.0 0.0,
+	speed MV 1.0 1.0 1.5 0.0,
+	brake_pressure MV 0.0 0.0 0.0 0.2
+) SOCKET MV localhost : 55561
+
+CREATE STREAM viewCar:brakesCorr(
+	timestamp LONG,
+	gps_time DATE HH:mm:ss.SS,
+	speed DOUBLE,
+	pressure DOUBLE,
+	accel MV 0.125 0.295,
+	avgPressure MV 0.295 0.7
+) SOCKET MV localhost : 55562
+
+CREATE STREAM viewCar:brakesUnCorr(
+	timestamp LONG,
+	gps_time DATE HH:mm:ss.SS,
+	speed DOUBLE,
+	pressure DOUBLE,
+	accel MV 0.125 0.0,
+	avgPressure MV 0.0 0.7
+) SOCKET MV localhost : 55563
+
+CREATE STREAM nexmark:person (
+	timestamp LONG,
+	id INTEGER,
+	name STRING,
+	email STRING,
+	creditcard STRING,
+	city STRING,
+	state STRING
+) SOCKET TUPLE localhost : 65430
+
+CREATE STREAM nexmark:bid (
+	timestamp LONG,
+	auction INTEGER,
+	bidder INTEGER,
+	datetime LONG,
+	price DOUBLE
+) SOCKET TUPLE localhost : 65432
+
+CREATE STREAM nexmark:auction (
+	timestamp LONG,
+	id INTEGER,
+	itemname STRING,
+	description STRING,
+	initialbid INTEGER,
+	reserve INTEGER,
+	expires LONG,
+	seller INTEGER ,
+	category INTEGER
+) SOCKET TUPLE localhost : 65431
+
+
+CREATE STREAM nexmark:category (
+  id INTEGER,
+  name STRING,
+  description STRING,
+  parentid INTEGER
+) SOCKET TUPLE localhost : 65433
+
+CREATE STREAM nexmark:person2 (
+	timestamp LONG,
+	id INTEGER,
+	name STRING,
+	email STRING,
+	creditcard STRING,
+	city STRING,
+	state STRING
+) CHANNEL localhost : 65440
+
+CREATE STREAM nexmark:bid2 (
+	timestamp LONG,
+	auction INTEGER,
+	bidder INTEGER,
+	datetime LONG,
+	price DOUBLE
+) CHANNEL localhost : 65442
+
+CREATE STREAM nexmark:auction2 (
+	timestamp LONG,
+	id INTEGER,
+	itemname STRING,
+	description STRING,
+	initialbid INTEGER,
+	reserve INTEGER,
+	expires LONG,
+	seller INTEGER ,
+	category INTEGER
+) CHANNEL localhost : 65441
+
+
+CREATE STREAM nexmark:category2 (
+  id INTEGER,
+  name STRING,
+  description STRING,
+  parentid INTEGER
+) CHANNEL localhost : 65443
