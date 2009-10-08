@@ -6,7 +6,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.AbstractPunctuationBuffer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>
@@ -25,7 +24,6 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 		return OutputMode.INPUT;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	final protected synchronized void process_next(T object, int port) {
 		
@@ -48,7 +46,7 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 	}
 
 	@Override
-	protected void cleanInternalStates(PointInTime punctuation,
+	public void cleanInternalStates(PointInTime punctuation,
 			IMetaAttributeContainer<?> current) {
 	}
 }

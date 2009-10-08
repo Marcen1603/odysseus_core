@@ -7,49 +7,22 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 
-abstract public class AbstractPunctuationBuffer<W extends IMetaAttributeContainer<?>, R>  extends BufferedPipe<W>{
+abstract public class AbstractPunctuationBuffer<W extends IMetaAttributeContainer<?>, R>  extends BufferedPipe<W> implements IPunctuationPipe<W,W>{
 	final protected List<PointInTime> punctuationStorage = new ArrayList<PointInTime>();
 
-	/**
-	 * Tests if the given input object matches with a number of stored punctuations
-	 * and is used to handle punctuations when they get out of date (cleaning the
-	 * punctuationStorage, send punctuations, ...).
-	 * @param object input data with a timestamp
-	 */
+	
+	protected PunctuationStorage<W,W> storage = new PunctuationStorage<W,W>(this); 
+	
 	protected void updatePunctuationData(W object) {
-		
-		if (punctuationStorage.size() > 0) {
-			ITimeInterval time = (ITimeInterval) object.getMetadata();
-			PointInTime start = time.getStart();
-			
-			List<PointInTime> toDelete = new ArrayList<PointInTime>();
-			
-			for (PointInTime each : punctuationStorage) {
-				if(start.afterOrEquals(each)) {
-					sendPunctuation(each);
-					cleanInternalStates(each, object);
-					toDelete.add(each);
-				}
-			}
-			
-			for(PointInTime each : toDelete) {
-				punctuationStorage.remove(each);
-			}
-		}
+		storage.updatePunctuationData(object);
 	}	
 	
-	/**
-	 * 
-	 * @param punctuation
-	 * @param current
-	 */
-	abstract protected void cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
+	abstract public void cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
 	
 	@Override
 	public void processPunctuation(PointInTime timestamp) {
-		if(!punctuationStorage.contains(timestamp)) {
-			punctuationStorage.add(timestamp);
-		}
+		storage.subscribePort(1);
+		storage.storePunctuation(timestamp);
 	}	
 	
 	@Override

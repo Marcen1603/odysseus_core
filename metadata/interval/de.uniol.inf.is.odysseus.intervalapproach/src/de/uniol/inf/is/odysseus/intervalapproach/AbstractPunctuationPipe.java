@@ -1,13 +1,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
@@ -21,35 +15,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
  * @param <R>
  */
 public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<?>, R>
-		extends AbstractPipe<R, W> {
+		extends AbstractPipe<R,W> implements IPunctuationPipe<R,W> {
+	
+    protected PunctuationStorage<W,R> storage = new PunctuationStorage<W,R>(this); 
 
-	final protected List<List<PointInTime>> punctuationStorage = new ArrayList<List<PointInTime>>();
-	protected int currentPort = 0;
-
-	/**
-	 * Tests if the given input object matches with a number of stored
-	 * punctuations and is used to handle punctuations when they get out of date
-	 * (cleaning the punctuationStorage, send punctuations, ...).
-	 * 
-	 * @param object
-	 *            input data with a timestamp
-	 */
 	protected void updatePunctuationData(W object) {
-		if (punctuationStorage.size() > 0) {
-			ITimeInterval time = (ITimeInterval) object.getMetadata();
-			PointInTime start = time.getStart();
-
-			Iterator<PointInTime> i = punctuationStorage.get(currentPort)
-					.iterator();
-			while (i.hasNext()) {
-				PointInTime curPoint = i.next();
-				if (start.afterOrEquals(curPoint)) {
-					sendPunctuation(curPoint);
-					cleanInternalStates(curPoint, object);
-					i.remove();
-				}
-			}
-		}
+		storage.updatePunctuationData(object);
 	}
 
 	@Override
@@ -58,29 +29,15 @@ public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<
 	public void subscribeTo(ISource<? extends R> source, int sinkPort,
 			int sourcePort) {
 		super.subscribeTo(source, sinkPort, sourcePort);
-		for (int i = punctuationStorage.size(); i < getInputPortCount(); ++i) {
-			punctuationStorage.add(new LinkedList<PointInTime>());
-		}
+		storage.subscribePort(getInputPortCount());
 	}
 
-	/**
-	 * 
-	 * @param punctuation
-	 * @param current
-	 */
-	abstract protected void cleanInternalStates(PointInTime punctuation,
+	abstract public void cleanInternalStates(PointInTime punctuation,
 			IMetaAttributeContainer<?> current);
 
 	@Override
 	public void processPunctuation(PointInTime timestamp) {
-		//JJ: TODO das contains ist unter umstaenden relativ teuer.
-		//wenn das oft aufgerufen werden muss, ist zu ueberlegen
-		//statt einer liste einen baum zu verwenden (priority list).
-		//die frage ist ausserdem, ob ein paar duplikate nicht weniger
-		//kosten, als ein haeufiges contains(). bitte drueber nachdenken ;).
-		if (!punctuationStorage.get(currentPort).contains(timestamp)) {
-			punctuationStorage.get(currentPort).add(timestamp);
-		}
+		storage.storePunctuation(timestamp);
 	}
 
 	@Override

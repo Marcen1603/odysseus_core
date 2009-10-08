@@ -114,7 +114,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
-		currentPort = port;
+		storage.setCurrentPort(port);
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
 			// JJ: weil man schon fertig sein
@@ -214,9 +214,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void cleanInternalStates(PointInTime punctuation,
+	public void cleanInternalStates(PointInTime punctuation,
 			IMetaAttributeContainer<?> current) {
-
 		//TODO noch in der Entwicklung...
 		/*logger.info("Cleaning JoinTIPO SweepAreas...");
 		IMetaAttributeContainer<?> purgeInterval = (IMetaAttributeContainer<?>) current.clone();
