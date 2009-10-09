@@ -4,12 +4,12 @@ public class CollectorAO extends AbstractLogicalOperator {
 
 	public CollectorAO(AbstractLogicalOperator po) {
 		super(po);
-		setPOName("CollectorPO");
+		setName("CollectorPO");
 	}
 
 	public CollectorAO() {
 		super();
-		setPOName("CollectorPO");
+		setName("CollectorPO");
 	}
 
 	public @Override

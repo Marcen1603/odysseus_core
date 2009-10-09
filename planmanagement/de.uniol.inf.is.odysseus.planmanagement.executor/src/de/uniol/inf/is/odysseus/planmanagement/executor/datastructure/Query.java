@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.datastructure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -15,7 +16,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 /**
  * Query is a standard implementation of a query in odysseus. Each query has an
@@ -191,9 +192,9 @@ public class Query implements IEditableQuery {
 			}
 			if (curSource instanceof IPipe) {
 				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
-				for (Subscription<? extends ISource<?>> subscription : pipe
+				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
 						.getSubscribedTo()) {
-					sources.push(subscription.target);
+					sources.push(subscription.getTarget());
 				}
 			}
 		}
@@ -211,11 +212,11 @@ public class Query implements IEditableQuery {
 		if (sink instanceof ISource<?>) {
 			return getChildren((ISource<?>) sink);
 		}
-		List<? extends Subscription<? extends ISource<?>>> slist = sink
+		Collection<? extends PhysicalSubscription<? extends ISource<?>>> slist = sink
 				.getSubscribedTo();
 		ArrayList<IPhysicalOperator> ret = new ArrayList<IPhysicalOperator>();
-		for (Subscription<? extends ISource<?>> s : slist) {
-			ret.addAll(getChildren(s.target));
+		for (PhysicalSubscription<? extends ISource<?>> s : slist) {
+			ret.addAll(getChildren(s.getTarget()));
 		}
 		return ret;
 	}

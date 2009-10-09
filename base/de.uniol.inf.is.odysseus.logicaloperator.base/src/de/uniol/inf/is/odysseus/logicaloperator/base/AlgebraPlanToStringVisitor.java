@@ -1,13 +1,15 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.ISubscriber;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
  * Builds an string representation of a logical algebra tree 
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
-public class AlgebraPlanToStringVisitor implements INodeVisitor<ILogicalOperator, String> {
+public class AlgebraPlanToStringVisitor implements INodeVisitor<ISubscriber<ILogicalOperator, LogicalSubscription>, String> {
 
 	private StringBuilder builder;
 	private boolean wasup;
@@ -17,7 +19,7 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ILogicalOperator
 	}
 	
 	@Override
-	public void descend(ILogicalOperator op) {
+	public void descend(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
 		if (this.wasup) {
 			this.builder.append(',');
 		} else {
@@ -27,13 +29,13 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ILogicalOperator
 	}
 
 	@Override
-	public void node(ILogicalOperator op) {
+	public void node(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
 		this.builder.append(' ');
-		this.builder.append(op.getPOName());
+		this.builder.append(((ILogicalOperator)sub).getName());
 	}
 
 	@Override
-	public void ascend(ILogicalOperator op) {
+	public void ascend(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
 		if (this.wasup) {
 			this.builder.append(" )");	
 		}

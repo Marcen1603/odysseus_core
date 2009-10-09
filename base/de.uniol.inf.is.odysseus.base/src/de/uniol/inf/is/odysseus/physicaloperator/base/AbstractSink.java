@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
  */
 public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
-	final protected Vector<Subscription<ISource<? extends T>>> subscribedTo = new Vector<Subscription<ISource<? extends T>>>();
+	final protected Vector<PhysicalSubscription<ISource<? extends T>>> subscribedTo = new Vector<PhysicalSubscription<ISource<? extends T>>>();
 	final protected Map<POEventType, ArrayList<POEventListener>> eventListener = new HashMap<POEventType, ArrayList<POEventListener>>();
 	final protected ArrayList<POEventListener> genericEventListener = new ArrayList<POEventListener>();;
 
@@ -90,8 +90,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			fire(openDoneEvent);
 			this.isOpen.set(true);
 			//FIXME subscribedTo richtig locken
-			for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
-				sub.target.open();
+			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
+				sub.getTarget().open();
 			}
 		}
 	}
@@ -134,11 +134,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		process_done(port);
 		synchronized (this.subscribedTo) {
 			this.allInputsDone = true;
-			for (Subscription<ISource<? extends T>> sub : this.subscribedTo) {
-				if (sub.sinkPort == port) {
-					sub.done = true;
+			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
+				if (sub.getSinkPort() == port) {
+					sub.setDone(true);
 				}
-				if (!sub.done) {
+				if (!sub.isDone()) {
 					this.allInputsDone = false;
 				}
 			}
@@ -156,7 +156,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		if (sinkPort >= this.noInputPorts) {
 			setInputPortCount(sinkPort + 1);
 		}
-		Subscription<ISource<? extends T>> sub = new Subscription<ISource<? extends T>>(
+		PhysicalSubscription<ISource<? extends T>> sub = new PhysicalSubscription<ISource<? extends T>>(
 				source, sinkPort, sourcePort);
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.contains(sub)) {
@@ -173,11 +173,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@SuppressWarnings("unchecked")
 	@Override
-	final public List<Subscription<ISource<? extends T>>> getSubscribedTo() {
-		return (List<Subscription<ISource<? extends T>>>) this.subscribedTo.clone();
+	final public List<PhysicalSubscription<ISource<? extends T>>> getSubscribedTo() {
+		return (List<PhysicalSubscription<ISource<? extends T>>>) this.subscribedTo.clone();
 	}
 
-	final public Subscription<ISource<? extends T>> getSubscribedTo(int port) {
+	final public PhysicalSubscription<ISource<? extends T>> getSubscribedTo(int port) {
 		return this.subscribedTo.get(port);
 	}
 
@@ -212,12 +212,18 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void unsubscribeSubscriptionTo(ISource<? extends T> source, int sinkPort, int sourcePort) {
-		if (this.subscribedTo.remove(new Subscription<ISource<? extends T>>(
-				source, sinkPort, sourcePort))) {
-			source.unsubscribe(this, sinkPort, sourcePort);
-		}
+		unsubscribeTo(new PhysicalSubscription<ISource<? extends T>>(source, sinkPort, sourcePort));
 	}
 
+	@Override
+	public void unsubscribeTo(PhysicalSubscription<ISource<? extends T>> subscription) {
+		if (this.subscribedTo.remove(subscription)) {
+			subscription.getTarget().unsubscribe(this, subscription.getSinkPort(), subscription.getSourcePort());
+		}	
+		
+	}
+	
+	
 	/**
 	 * One listener can have multiple subscriptions to the same event sender
 	 * 

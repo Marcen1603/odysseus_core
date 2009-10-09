@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 /**
  * @author Jonas Jacobi

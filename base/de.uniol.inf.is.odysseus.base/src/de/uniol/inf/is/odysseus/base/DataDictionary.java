@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -19,8 +19,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
  */
 public class DataDictionary {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(DataDictionary.class);
+//	private static final Logger logger = LoggerFactory
+//			.getLogger(DataDictionary.class);
 
 	static private DataDictionary instance = null;
 
@@ -40,7 +40,7 @@ public class DataDictionary {
 
 	public synchronized static DataDictionary getInstance() {
 		if (instance == null) {
-			logger.debug("Create new DataDictionary");
+//			logger.debug("Create new DataDictionary");
 			instance = new DataDictionary();
 		}
 		return instance;

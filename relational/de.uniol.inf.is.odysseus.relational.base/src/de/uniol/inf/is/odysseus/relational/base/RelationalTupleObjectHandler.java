@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
@@ -22,7 +21,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 		IObjectHandler<RelationalTuple<M>> {
 
-	private static final Logger logger = LoggerFactory.getLogger( RelationalTupleObjectHandler.class );
+	//private static final Logger logger = LoggerFactory.getLogger( RelationalTupleObjectHandler.class );
 	ByteBuffer byteBuffer = null;
 	private IAtomicDataHandler[] dataHandler;
 		
@@ -84,7 +83,7 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 	private void checkOverflow(ByteBuffer buffer, int size) {
 		if (size+byteBuffer.position()>=byteBuffer.capacity()){
 			// TODO: Effizientere �berlaufbehandlung?
-			logger.warn("RelationalTupleObjectHandler OVERFLOW");
+			//logger.warn("RelationalTupleObjectHandler OVERFLOW");
 			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit()+size+byteBuffer.position())*2);
 			newBB.put(byteBuffer);
 			byteBuffer = newBB;

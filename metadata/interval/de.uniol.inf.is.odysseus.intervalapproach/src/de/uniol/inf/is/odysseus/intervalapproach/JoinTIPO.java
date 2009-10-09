@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -33,8 +33,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
 		extends AbstractPunctuationPipe<T, T> {
-	private static final Logger logger = LoggerFactory
-			.getLogger(JoinTIPO.class);
+//	private static final Logger logger = LoggerFactory
+//			.getLogger(JoinTIPO.class);
 	private ISweepArea<T>[] areas;
 	private IPredicate<? super T> joinPredicate;
 
@@ -44,8 +44,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected SDFAttributeList outputSchema;
 
 	private int otherport = 0;
-	private int port = 0;
-
+		
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
@@ -125,7 +124,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			// werden muss, man also ressourcen spart
 			return;
 		}
-		this.port = port;
 		otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
 		synchronized (this.areas[otherport]) {
@@ -159,10 +157,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	}
 
 	private T merge(T left, T right, Order order) {
-		if (logger.isTraceEnabled()) {
-			logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
-					+ " AND " + right);
-		}
+//		if (logger.isTraceEnabled()) {
+//			logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
+//					+ " AND " + right);
+//		}
 		T mergedData;
 		K mergedMetadata;
 		if (order == Order.LeftRight) {
@@ -197,10 +195,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	}
 
 	protected boolean isDone() {
-		if (getSubscribedTo(0).done) {
-			return getSubscribedTo(1).done || areas[0].isEmpty();
+		if (getSubscribedTo(0).isDone()) {
+			return getSubscribedTo(1).isDone() || areas[0].isEmpty();
 		} else {
-			return getSubscribedTo(0).done && areas[1].isEmpty();
+			return getSubscribedTo(0).isDone() && areas[1].isEmpty();
 		}
 	}
 

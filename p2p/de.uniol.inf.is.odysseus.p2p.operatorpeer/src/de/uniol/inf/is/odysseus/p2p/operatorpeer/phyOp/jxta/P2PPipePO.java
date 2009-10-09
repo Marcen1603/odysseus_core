@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 //import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.ISink;
 //import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.ISource;
 //import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.Subscription;
@@ -95,7 +95,7 @@ public class P2PPipePO<M extends IMetaAttribute> extends
 					e.printStackTrace();
 				}
 			}
-			setConnectToPipe(getSubscribedTo().get(0).target, 0);
+			setConnectToPipe(getSubscribedTo().get(0).getTarget(), 0);
 		}
 
 		public void transfer(Object o) {
@@ -163,14 +163,14 @@ public class P2PPipePO<M extends IMetaAttribute> extends
 	}
 
 	private static void setConnectToPipe(ISink<?> mySink, int depth) {
-		for (Subscription<? extends ISource<?>> source : mySink
+		for (PhysicalSubscription<? extends ISource<?>> source : mySink
 				.getSubscribedTo()) {
-			setConnectToPipe(source.target, depth + 1);
+			setConnectToPipe(source.getTarget(), depth + 1);
 		}
 	}
 
 	private static void setConnectToPipe(ISource<?> source, int depth) {
-		if (source instanceof ISink) {
+		if (source instanceof ISink<?>) {
 			setConnectToPipe((ISink<?>) source, depth);
 		} else {
 			if (IP2PInputPO.class.isAssignableFrom(source.getClass())){

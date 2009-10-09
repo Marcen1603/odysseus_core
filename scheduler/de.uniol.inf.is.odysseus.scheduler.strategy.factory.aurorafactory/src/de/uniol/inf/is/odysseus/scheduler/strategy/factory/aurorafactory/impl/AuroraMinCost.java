@@ -6,7 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
@@ -33,17 +33,17 @@ public class AuroraMinCost extends AbstractExecListSchedulingStrategy {
 	}
 
 	private void postOrderAdd(ISink<?> sink, List<IIterableSource<?>> execList) {
-		for (Subscription<? extends ISource<?>> sub : sink.getSubscribedTo()) {
-			if (execList.contains(sub.target)) {
+		for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedTo()) {
+			if (execList.contains(sub.getTarget())) {
 				continue;
 			}
-			if (!(sub.target instanceof ISink)) {
+			if (!(sub.getTarget() instanceof ISink<?>)) {
 				continue;
 			} else {
-				postOrderAdd((ISink<?>) sub.target, execList);
+				postOrderAdd((ISink<?>) sub.getTarget(), execList);
 			}
 		}
-		if (sink instanceof IIterableSource && this.getPlan().getIterableSource().contains(sink)) {
+		if (sink instanceof IIterableSource<?> && this.getPlan().getIterableSource().contains(sink)) {
 			execList.add((IIterableSource<?>) sink);
 		}
 	}

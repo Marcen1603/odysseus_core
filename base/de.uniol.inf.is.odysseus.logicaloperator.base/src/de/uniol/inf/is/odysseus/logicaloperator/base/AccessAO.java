@@ -66,7 +66,7 @@ public class AccessAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public String getPOName() {
+	public String getName() {
 		return this.getClass().getSimpleName();
 	}
 	
@@ -140,7 +140,7 @@ public class AccessAO extends AbstractLogicalOperator {
 	
 	@Override
 	public String toString() {
-		return getPOName() + " (" + this.getSource().getURI() + ")";
+		return getName() + " (" + this.getSource().getURI() + ")";
 	}
 	
 }

@@ -69,18 +69,14 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			if (expressions.isEmpty()) {
 				// createrestrictlist
 				ProjectAO project = new ProjectAO();
+				project.subscribeTo(top);
 				project.setInputSchema(inputSchema);
 				project.setOutputSchema(outputSchema);
-				int[] restrictList = new int[outputSchema.size()];
-				int i = 0;
-				for (SDFAttribute attr : outputSchema) {
-					restrictList[i++] = inputSchema.indexOf(attr);
-				}
-				project.setRestrictList(restrictList);
-				project.setInputAO(top);
+				project.updateRestrictList();
 				top = project;
 			} else {
 				MapAO map = new MapAO();
+				map.subscribeTo(top);
 				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(
 						outputSchema.size());
 
@@ -96,7 +92,6 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 						outputExpressions.add(exprIt.next());
 					}
 				}
-				map.setInputAO(top);
 				map.setExpressions(outputExpressions);
 				top = map;
 			}
@@ -105,7 +100,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			((ProjectAO) top).setProjectVector(this.projectionVector);
 		}
 		RenameAO rename = new RenameAO();
-		rename.setInputAO(top);
+		rename.subscribeTo(top);
 		rename.setInputSchema(top.getOutputSchema());
 		rename.setOutputSchema(this.aliasSchema);
 

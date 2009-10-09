@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
  */
 public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends SweepArea<T> implements Comparable<DefaultTISweepArea<T>> {
-	private static final Logger logger = LoggerFactory.getLogger(ISweepArea.class);
+	//private static final Logger logger = LoggerFactory.getLogger(ISweepArea.class);
 
 	public DefaultTISweepArea() {
 		super(new MetadataComparator<ITimeInterval>());
@@ -55,9 +55,9 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 					++i;
 					it.remove();
 				} else {
-					if (logger.isTraceEnabled() && i > 0) {
-						logger.trace("Purged " + i + " elements");
-					}
+//					if (logger.isTraceEnabled() && i > 0) {
+//						logger.trace("Purged " + i + " elements");
+//					}
 					return;
 				}
 			}

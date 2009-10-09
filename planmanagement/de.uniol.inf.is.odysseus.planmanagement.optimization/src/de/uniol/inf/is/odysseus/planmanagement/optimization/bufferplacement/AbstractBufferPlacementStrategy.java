@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement;
 
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Stack;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 /**
  * TODO: sollte von Jonas oder Marco dokumentiert werden.
@@ -46,20 +47,20 @@ public abstract class AbstractBufferPlacementStrategy implements
 	
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan.isSink()) {
-			for (Subscription<? extends ISource<?>> s : ((ISink<?>) plan)
+			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
 					.getSubscribedTo()) {
-				addBuffers(s.target);
+				addBuffers(s.getTarget());
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
-			Subscription<? extends ISource<?>> s) {
+			PhysicalSubscription<? extends ISource<?>> s) {
 		// TODO Warnings
-		s.target.unsubscribe((ISink) sink, s.sinkPort,0);
-		buffer.subscribe(sink, s.sinkPort,0);
-		s.target.subscribe(buffer, 0,0);
+		s.getTarget().unsubscribe((ISink) sink, s.getSinkPort(),0);
+		buffer.subscribe(sink, s.getSinkPort(),0);
+		s.getTarget().subscribe(buffer, 0,0);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,16 +73,16 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 		while (!sinks.isEmpty()) {
 			ISink<?> sink = sinks.pop();
-			List<? extends Subscription<? extends ISource<?>>> subscriptions = sink
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions = sink
 					.getSubscribedTo();
-			for (Subscription<? extends ISource<?>> s : subscriptions) {
-				if (s.target.isSink()) {
-					if (s.target instanceof IBuffer) {
+			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
+				if (s.getTarget().isSink()) {
+					if (s.getTarget() instanceof IBuffer) {
 						// if there are already buffers in the subplan
 						// we don't want to insert additional ones
 						continue;
 					}
-					ISink<?> childSink = (ISink<?>) s.target;
+					ISink<?> childSink = (ISink<?>) s.getTarget();
 					sinks.push(childSink);
 					if (bufferNeeded(subscriptions, childSink)) {
 						IBuffer buffer = createNewBuffer();
@@ -100,7 +101,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 	abstract protected IBuffer<?> createNewBuffer();
 
 	abstract protected boolean bufferNeeded(
-			List<? extends Subscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink);
 
 }

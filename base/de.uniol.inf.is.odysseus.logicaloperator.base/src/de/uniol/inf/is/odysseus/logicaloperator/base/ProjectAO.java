@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import java.util.Arrays;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -101,5 +102,18 @@ public class ProjectAO extends UnaryLogicalOp {
 	
 	public void setProjectVector(double[] vector){
 		this.projectVector = vector;
+	}
+	
+	public void updateRestrictList(){
+		restrictList = calcRestrictList(getInputSchema(), getOutputSchema());
+	}
+	
+	public static int[] calcRestrictList(SDFAttributeList in, SDFAttributeList out){
+		int[] ret = new int[out.size()];
+		int i=0;
+		for (SDFAttribute a:out){
+			ret[i++] = in.indexOf(a);
+		}
+		return ret;
 	}
 }

@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 
 public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1558576598140153762L;
+	public static final int LEFT = 0;
+	public static final int RIGHT = 1;
 
 	public BinaryLogicalOp(AbstractLogicalOperator po) {
 		super(po);
@@ -14,48 +17,38 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 
 	public BinaryLogicalOp() {
 		super();
-		setNoOfInputs(2);
+	}
+	
+	public ILogicalOperator getLeftInput(){
+		return getSubscribedTo(LEFT).getTarget();
+	}
+	
+	public ILogicalOperator getRightInput(){
+		return getSubscribedTo(RIGHT).getTarget();
 	}
 
-	public void setLeftInput(AbstractLogicalOperator po) {
-		setInputAO(0, po);
+	public void setLeftInput(ILogicalOperator source) {
+		subscribeTo(source, LEFT, 0);
 	}
 
-	public ILogicalOperator getLeftInput() {
-		return getInputAO(0);
+	public void setRightInput(ILogicalOperator source) {
+		subscribeTo(source, RIGHT, 0);
 	}
-
-	public void setRightInput(AbstractLogicalOperator po) {
-		setInputAO(1, po);
-	}
-
-	public ILogicalOperator getRightInput() {
-		return getInputAO(1);
-	}
-
-	public SDFAttributeList getLeftInputSchema() {
-		return getInputSchema(0);
-	}
-
+	
 	public void setLeftInputSchema(SDFAttributeList schema) {
-		setInputSchema(0, schema);
+		setInputSchema(LEFT, schema);
 	}
-
-	public SDFAttributeList getRightInputSchema() {
-		return getInputSchema(1);
-	}
-
+	
 	public void setRightInputSchema(SDFAttributeList schema) {
-		setInputSchema(1, schema);
-	}
-
-	public IPhysicalOperator getLeftPhysInput() {
-		return getPhysInputPO(0);
+		setInputSchema(RIGHT, schema);
 	}
 	
-	public IPhysicalOperator getRightPhysInput() {
-		return getPhysInputPO(1);
+	public ISource<?> getLeftPhysInput(){
+		return getPhysSubscriptionTo(LEFT)==null?null:getPhysSubscriptionTo(LEFT).getTarget();
 	}
 
-	
+	public ISource<?> getRightPhysInput(){
+		return getPhysSubscriptionTo(RIGHT)==null?null:getPhysSubscriptionTo(RIGHT).getTarget();
+	}
+
 }

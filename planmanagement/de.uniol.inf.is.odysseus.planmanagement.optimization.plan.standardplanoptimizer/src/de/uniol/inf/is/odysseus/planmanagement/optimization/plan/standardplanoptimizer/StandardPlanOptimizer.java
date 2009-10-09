@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -15,7 +16,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
@@ -177,9 +178,9 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 			}
 			if (curSource instanceof IPipe) {
 				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
-				for (Subscription<? extends ISource<?>> subscription : pipe
+				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
 						.getSubscribedTo()) {
-					sources.push(subscription.target);
+					sources.push(subscription.getTarget());
 				}
 			}
 		}
@@ -199,11 +200,11 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		if (sink instanceof ISource) {
 			return iterableSources((ISource<?>) sink);
 		}
-		List<? extends Subscription<? extends ISource<?>>> slist = sink
+		Collection<? extends PhysicalSubscription<? extends ISource<?>>> slist = sink
 				.getSubscribedTo();
 		ArrayList<IIterableSource<?>> ret = new ArrayList<IIterableSource<?>>();
-		for (Subscription<? extends ISource<?>> s : slist) {
-			ret.addAll(iterableSources(s.target));
+		for (PhysicalSubscription<? extends ISource<?>> s : slist) {
+			ret.addAll(iterableSources(s.getTarget()));
 		}
 		return ret;
 	}

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisemen
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
@@ -97,8 +97,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 			PipeAdvertisement pipeAdv = createSocketAdvertisement();
 			P2PPipeAO p2ppipe = new P2PPipeAO(pipeAdv.toString());
-			p2ppipe.setNoOfInputs(1);
-			p2ppipe.setInputAO(0, ao);
+			p2ppipe.subscribe(ao, 0, 0);
 			IIterableSource<?> temp = null;
 			try {
 				temp = (IIterableSource<?>) getoPeer().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
@@ -123,30 +122,30 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //				e.printStackTrace();
 //			}
 
-			Subscription<? extends ISource<?>> temp2 = (Subscription<? extends ISource<?>>) ((ISink) temp)
-					.getSubscribedTo().get(0);
+			PhysicalSubscription<? extends ISource<?>> temp2 = (PhysicalSubscription<? extends ISource<?>>) ((ISink) temp)
+					.getSubscribedTo(0);
 
 			while (true) {
-				if (temp2.target instanceof IIterableSource) {
+				if (temp2.getTarget() instanceof IIterableSource) {
 					break;
 				}
-				if (((ISink) temp2.target).getSubscribedTo().size() == 0) {
+				if (((ISink) temp2.getTarget()).getSubscribedTo().size() == 0) {
 					break;
 				}
-				Subscription<? extends ISource<?>> temp3 = (Subscription<? extends ISource<?>>) ((ISink) temp2.target)
-						.getSubscribedTo().get(0);
+				PhysicalSubscription<? extends ISource<?>> temp3 = (PhysicalSubscription<? extends ISource<?>>) ((ISink) temp2.getTarget())
+						.getSubscribedTo(0);
 				if (temp3 == null)
 					break;
 				else
 					temp2 = temp3;
 			}
 
-			if (!(temp2.target instanceof IIterableSource)) {
+			if (!(temp2.getTarget() instanceof IIterableSource)) {
 				continue;
 			}
 
-			((IP2PInputPO) temp2.target).setP2P(true);
-			((IP2PInputPO) temp2.target).setConnectToPipe(false);
+			((IP2PInputPO) temp2.getTarget()).setP2P(true);
+			((IP2PInputPO) temp2.getTarget()).setConnectToPipe(false);
 
 			SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory
 					.newAdvertisement(SourceAdvertisement

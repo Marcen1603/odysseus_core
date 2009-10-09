@@ -85,7 +85,7 @@ public class WindowAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public String getPOName() {
+	public String getName() {
 		return WindowAO.class.getSimpleName();
 	}
 
@@ -107,7 +107,7 @@ public class WindowAO extends UnaryLogicalOp {
 	 * value of the window operator consists of bindings.
 	 */
 	public void calcOutElements(){
-        ILogicalOperator po = getInputAO();
+        ILogicalOperator po = getSubscribedTo(0).getTarget();
 
         if (po != null){
             SDFAttributeList l1 = po.getOutputSchema();		

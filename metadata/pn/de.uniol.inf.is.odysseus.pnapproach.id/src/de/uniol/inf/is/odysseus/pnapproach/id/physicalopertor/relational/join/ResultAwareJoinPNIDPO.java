@@ -483,10 +483,10 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 	 }
 	
 	protected boolean isDone() { 
-		if (getSubscribedTo(0).done) {
-			return getSubscribedTo(1).done || areas[0].isEmpty();
+		if (getSubscribedTo(0).isDone()) {
+			return getSubscribedTo(1).isDone() || areas[0].isEmpty();
 		} else {
-			return getSubscribedTo(0).done  && areas[1].isEmpty();
+			return getSubscribedTo(0).isDone()  && areas[1].isEmpty();
 		}
 	}
 

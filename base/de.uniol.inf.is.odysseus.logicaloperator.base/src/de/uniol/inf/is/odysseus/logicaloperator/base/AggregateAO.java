@@ -69,7 +69,7 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	public void addAggregation(SDFAttribute attribute,
 			AggregateFunction function, SDFAttribute outAttribute) {
-		if (getOutElements().contains(outAttribute)) {
+		if (getOutputSchema().contains(outAttribute)) {
 			throw new IllegalArgumentException(
 					"multiple definitions of element " + outAttribute);
 		}

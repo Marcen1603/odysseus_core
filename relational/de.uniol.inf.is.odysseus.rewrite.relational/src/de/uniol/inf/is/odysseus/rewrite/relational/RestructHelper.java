@@ -1,17 +1,22 @@
 package de.uniol.inf.is.odysseus.rewrite.relational;
 
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
+
 
 /**
  * This class provides functions to support Restructuring Aspects
@@ -21,61 +26,92 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 
 public class RestructHelper {
-
+	
 	/**
-	 * Sets newSon at father on fatherPort and son to newSon n newSonPort Does
-	 * not change Schemata, because it depends on newSon operator type (e.g.
-	 * join)
 	 * 
-	 * @param fatherPort
-	 *            Port on which son is registered
-	 * @param newSonPort
-	 *            newSon input port to which son should be moved
-	 * @param father
-	 *            father node
-	 * @param son
-	 *            node to move behind newSon
-	 * @param newSon
-	 *            node to move between father and son
+	 * @param op
+	 * @param reserveOutputSchema: If true the inputschema of all father nodes is set to the output
+	 * schema of the replaced node. E.g. used for deletion of rename-Operation
+	 * @return
 	 */
-	private static void switchOp(int fatherPort, int sonPort, int newSonPort,
-			AbstractLogicalOperator father, AbstractLogicalOperator son, AbstractLogicalOperator newSon) {
-		// Set new son at fathers fatherPort
-		father.setInputAO(fatherPort, newSon);
-		// Set old Input from newSon on newSonPort to son on sonPort
-		son.setInputAO(sonPort, newSon.getInputAO(newSonPort));
-		// Set son as Input on new Son
-		newSon.setInputAO(newSonPort, son);
+	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op, boolean reserveOutputSchema){
+		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
+		Collection<LogicalSubscription> fathers = op.getSubscribtions();
+		LogicalSubscription child = op.getSubscribedTo(0);
+		// remove Connection between child and op
+		op.unsubscribeTo(child);
+		// Subscribe Child to every father of op
+		for (LogicalSubscription father:fathers){
+			op.unsubscribe(father);
+			child.getTarget().subscribe(father.getTarget(), father.getSinkPort(), child.getSourcePort());
+			ret.add(child.getTarget());
+		}
+		ret.add(child.getTarget());
+		
+		
+		return ret;
 	}
 
-//	public static void pushDownSelection(int newSonPort, AbstractLogicalOperator father,
-//			SelectAO selectPO, JoinAO joinPO) {
-//		int i = -1;
-//		// TODO: While oder if ?? 5.11.08 While, falls der Operator mehrfach am
-//		// Vater hängt muss
-//		// er auch hier jetzt direkt mehrfach getauscht werden. Hinterher geht
-//		// das nicht mehr (?)
-//		while ((i = father.getInputPort(selectPO)) != -1) {
-//			pushDownSelection(i, newSonPort, father, selectPO, joinPO);
-//		}
-//	}
+	/**	Insert an operator in the tree at some special point and update all subscriptions
+	 * i.e. the new Operator gets all subscriptions currently bound to the after operator
+	 * and create a new subscription from toInsert to after
+	 * 
+	 * @param toInsert Operator that should be inserted as child of the after operator 
+	 * @param after
+	 * @return
+	 */
+	public static Collection<ILogicalOperator> insertOperator(ILogicalOperator toInsert, ILogicalOperator after, int sinkPort){
+		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
+		Collection<LogicalSubscription> sinks = after.getSubscribtions();
+		LogicalSubscription source = after.getSubscribedTo(sinkPort);
+		for (LogicalSubscription s: sinks){
+			ret.add(s.getTarget());
+			after.unsubscribeSubscriptionTo(s.getTarget(), s.getSinkPort(), s.getSourcePort());
+			toInsert.subscribeTo(s.getTarget(), s.getSinkPort(), s.getSourcePort());
+			toInsert.setInputSchema(sinkPort, s.getInputSchema());
+		}
+		after.subscribeTo(toInsert, sinkPort, source.getSourcePort());
+		after.setInputSchema(sinkPort, toInsert.getOutputSchema());
+		return ret;
+	}
+	
+	/**
+	 * Switches two unary operators in a Plan (i.e. no new Operator need to be defined)
+	 * Cannot be used if one of the operators is binary!
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	
+	public static Collection<ILogicalOperator> switchOperator(UnaryLogicalOp a, UnaryLogicalOp b){
+		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
+		Collection<LogicalSubscription> subs = b.getSubscribtions(a);
+		ret.addAll(removeOperator(a, true));
+		for (LogicalSubscription l:subs){
+			ret.addAll(insertOperator(a, b, l.getSinkPort()));
+		}
+		return ret;
+	}
+	
+	public static Collection<ILogicalOperator> removeRename(RenameAO op){
+		return removeOperator(op, true);
+	}
 
-//	public static void pushDownSelection(int fatherPort, int newSonPort,
-//			AbstractLogicalOperator father, SelectAO selectPO, JoinAO joinPO) {
-//		// Change Operators
-//		// 0 because selectPO is a unaryOp
-//		switchOp(fatherPort, 0, newSonPort, father, selectPO, joinPO);
-//		// Change schemas
-//		SDFAttributeList jInSchema = joinPO.getInputSchema(newSonPort);
-//		selectPO.setInputSchema(jInSchema);
-//		selectPO.setOutputSchema(jInSchema);
-//		// Whats this for?
-//		CQLParser.initPredicates(selectPO);
-//		joinPO.setOutputSchema(SDFAttributeList.union(joinPO.getInputAO(0)
-//				.getOutputSchema(), joinPO.getInputAO(1).getOutputSchema()));
-//
-//	}
+	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op){
+		return removeOperator(op, false);
+	}
 
+	public static boolean subsetPredicate(
+			IPredicate<RelationalTuple<?>> predicate,
+			ILogicalOperator op) {
+		for(LogicalSubscription l:op.getSubscribedTo()){
+			if (!subsetPredicate(predicate, l.getTarget().getOutputSchema() )){
+				return false;
+			}	
+		}
+		return true;
+	}
+	
 	public static boolean subsetPredicate(
 			IPredicate<RelationalTuple<?>> predicate,
 			SDFAttributeList attributes) {
@@ -102,21 +138,7 @@ public class RestructHelper {
 		});
 		return retValue[0];
 	}
-//	FIXME WTF das kann nie funktioniert haben ...
-//	public static SDFAttributeList unionPredicate(IPredicate attributes1,
-//			SDFAttributeList attributes2) {
-//		if (attributes1 instanceof RelationalTuple) {
-//			RelationalTuple att = (RelationalTuple) attributes1;
-//			return SDFAttributeList.union(att.getSchema(), attributes2);
-//		} else if (attributes1 instanceof RelationalPredicate) {
-//			RelationalPredicate att = (RelationalPredicate) attributes1;
-//			SDFAttributeList list = new SDFAttributeList(att.getAttributes());
-//			return SDFAttributeList.union(list, attributes2);
-//		} else {
-//			return attributes2;
-//		}
-//	}
-
+	
 	public static interface IUnaryFunctor<T> {
 		public void call(T parameter);
 	}
@@ -127,7 +149,7 @@ public class RestructHelper {
 		predicates.push(p);
 		while (!predicates.isEmpty()) {
 			IPredicate<?> curPred = predicates.pop();
-			if (curPred instanceof ComplexPredicate) {
+			if (curPred instanceof ComplexPredicate<?>) {
 				predicates.push(((ComplexPredicate<?>) curPred).getLeft());
 				predicates.push(((ComplexPredicate<?>) curPred).getRight());
 			} else {
@@ -135,4 +157,5 @@ public class RestructHelper {
 			}
 		}
 	}
+
 }

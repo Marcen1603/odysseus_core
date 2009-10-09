@@ -38,7 +38,7 @@ public class UnionAO extends BinaryLogicalOp{
 		ILogicalOperator po2 = getRightInput();
 	
 		if (po1 != null && po2 != null){
-			SDFAttributeList l1 = po1.getOutElements();
+			SDFAttributeList l1 = po1.getOutputSchema();
 			//SDFAttributeList l2 = po2.getOutElements();
 			// Hier koennte man noch ueberpruefen, ob die Inhalte von l1 und l2 uebereinstimmen ...
 			

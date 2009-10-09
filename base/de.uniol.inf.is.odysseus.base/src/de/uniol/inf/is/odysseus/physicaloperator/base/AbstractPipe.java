@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
@@ -45,8 +45,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
 	};
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AbstractPipe.class);
+//	private static final Logger logger = LoggerFactory
+//			.getLogger(AbstractPipe.class);
 
 	abstract protected void process_next(R object, int port);
 
@@ -143,10 +143,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	final public synchronized void done(int port) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(this + "(" + hashCode() + ") done on port " + port
-					+ " called");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this + "(" + hashCode() + ") done on port " + port
+//					+ " called");
+//		}
 		process_done(port);
 		this.delegateSink.done(port);
 		if (isDone()) {
@@ -171,13 +171,20 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		// TODO vernuenftig synchronosieren
 		this.delegateSink.subscribeTo(source, sinkPort, sourcePort);
 	}
+	
+	@Override
+	public void unsubscribeTo(
+			PhysicalSubscription<ISource<? extends R>> subscription) {
+		this.delegateSink.unsubscribeTo(subscription);
+		
+	}
 
-	public Subscription<ISource<? extends R>> getSubscribedTo(int port) {
+	public PhysicalSubscription<ISource<? extends R>> getSubscribedTo(int port) {
 		return this.delegateSink.getSubscribedTo(port);
 	}
 
 	@Override
-	final public List<Subscription<ISource<? extends R>>> getSubscribedTo() {
+	final public List<PhysicalSubscription<ISource<? extends R>>> getSubscribedTo() {
 		return delegateSink.getSubscribedTo();
 	}
 
@@ -230,9 +237,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	public void sendPunctuation(PointInTime punctuation) {
 		synchronized (this.subscriptions) {
-			for (Subscription<ISource<? extends R>> sub : delegateSink.getSubscribedTo()) {
-				if(sub.target.isSink()) {
-					ISink<?> sink = (ISink<?>) sub.target;
+			for (PhysicalSubscription<ISource<? extends R>> sub : delegateSink.getSubscribedTo()) {
+				if(sub.getTarget().isSink()) {
+					ISink<?> sink = (ISink<?>) sub.getTarget();
 					sink.processPunctuation(punctuation);
 				} 
 			}

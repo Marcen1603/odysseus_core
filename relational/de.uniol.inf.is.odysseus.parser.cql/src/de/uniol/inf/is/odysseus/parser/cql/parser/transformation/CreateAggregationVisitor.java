@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
@@ -38,7 +39,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	public void init(ILogicalOperator top, AttributeResolver attributeResolver) {
 		ao = new AggregateAO();
 		this.top = top;
-		ao.setInputAO(top);
+		ao.subscribeTo(top);
 		ao.setInputSchema(top.getOutputSchema());
 		select = null;
 		this.attributeResolver = attributeResolver;
@@ -155,7 +156,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTHavingClause node, Object data) {
 		select = new SelectAO();
-		select.setInputAO(ao);
+		select.subscribeTo(ao);
 		IPredicate<RelationalTuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate((ASTPredicate) node
 				.jjtGetChild(0), this.attributeResolver);
@@ -166,9 +167,24 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	}
 
 	public ILogicalOperator getResult() {
+		// remove possible subscriptions!!
 		if (this.select != null) {
+			for (LogicalSubscription l: select.getSubscribtions()){				
+				select.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
+			}
 			return this.select;
 		}
-		return this.ao.hasAggregations() || hasGrouping ? this.ao : top;
+		if (this.ao.hasAggregations() || hasGrouping ){
+			for (LogicalSubscription l: ao.getSubscribtions()){				
+				ao.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
+			}
+			return this.ao;
+		}else{
+			for (LogicalSubscription l: top.getSubscribtions()){				
+				top.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
+			}
+			return top;
+		}
+			
 	}
 }

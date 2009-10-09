@@ -17,12 +17,12 @@ public class IntersectionAO extends BinaryLogicalOp {
      */
     public IntersectionAO(IntersectionAO intersectionPO) {
         super(intersectionPO);
-        setPOName(intersectionPO.getPOName());
+        setName(intersectionPO.getName());
     }
 
     public IntersectionAO(){
     	super();
-    	setPOName("IntersectionPO");
+    	setName("IntersectionPO");
     }
     
 	public @Override

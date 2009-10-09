@@ -6,8 +6,10 @@ import java.util.List;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
+import org.drools.audit.WorkingMemoryConsoleLogger;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +17,7 @@ import de.uniol.inf.is.drools.RuleAgentFactory;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.ITransformation;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
@@ -32,17 +35,26 @@ public class DroolsTransformation implements ITransformation {
 	private static Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
 
 	private static void addLogicalOperatorToSession(StatefulSession session,
-			ILogicalOperator op) {
+			ILogicalOperator op, List<ILogicalOperator> inserted) {
 		if (op == null) {
 			return;
 		}
 
-		session.insert(op);
-		for (int i = 0; i < op.getNumberOfInputs(); ++i) {
-			addLogicalOperatorToSession(session, op.getInputAO(i));
-		}
+		if (!inserted.contains(op)){
+			//logger.info("insert into wm: "+op);
+			session.insert(op);
+			inserted.add(op);
+		
+			for (LogicalSubscription sub: op.getSubscribedTo()){
+				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
+			}
+			for (LogicalSubscription sub: op.getSubscribtions()){
+				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
+			}
+		}		
 	}
-
+	
+	
 	protected void activate(ComponentContext context) {
 		try {
 			BundleContext bundleContext = context.getBundleContext();
@@ -61,26 +73,29 @@ public class DroolsTransformation implements ITransformation {
 		StatefulSession session = rulebase.newStatefulSession();
 		session.insert(config);
 		TopAO top = new TopAO();
-		top.setInputAO(0, op);
-
+		top.subscribeTo(op, 0, 0);
+		
 		session.insert(config);
-		addLogicalOperatorToSession(session, top);
+		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
+		addLogicalOperatorToSession(session, top, list);
 		if (logger.isInfoEnabled()) {
 			logger.info("transformation of: "
-					+ AbstractTreeWalker.prefixWalk(op,
+					+ AbstractTreeWalker.prefixWalk(top,
 							new AlgebraPlanToStringVisitor()));
+			logger.info("added to working memory "+list);
 		}
 
 		session.insert(this);
 		session.startProcess("flow");
 
-		// WorkingMemoryConsoleLogger lg = new
-		// WorkingMemoryConsoleLogger(session);
-		// lg.clearFilters();
+//		WorkingMemoryConsoleLogger lg = new
+//		WorkingMemoryConsoleLogger(session);
+//		lg.clearFilters();
 
 		session.fireAllRules();
 
-		IPhysicalOperator physicalPO = top.getPhysInputPO(0);
+		IPhysicalOperator physicalPO = top.getPhysSubscriptionTo(0)==null?null:top.getPhysSubscriptionTo(0).getTarget();
+		
 		if (physicalPO == null) {
 			List<ILogicalOperator> errors = new ArrayList<ILogicalOperator>();
 			session.setGlobal("untranslatedOperators", errors);
@@ -94,6 +109,7 @@ public class DroolsTransformation implements ITransformation {
 			logger.info("transformation result: info not yet implemented: "
 					+ physicalPO);
 		}
+		top.subscribeTo(op, 0, 0);
 		return physicalPO;
 	}
 }

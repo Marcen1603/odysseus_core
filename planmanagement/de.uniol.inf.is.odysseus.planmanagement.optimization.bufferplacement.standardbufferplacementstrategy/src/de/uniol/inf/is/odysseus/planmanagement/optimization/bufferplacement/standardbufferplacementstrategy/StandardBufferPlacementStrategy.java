@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.osgi.service.component.ComponentContext;
 
@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 
 /**
@@ -27,7 +27,7 @@ public class StandardBufferPlacementStrategy extends
 	// add buffer, if we are a binary operator or if the bottom
 	// operator is a binary one
 	protected boolean bufferNeeded(
-			List<? extends Subscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {
 		return subscriptions.size() > 1
 				|| childSink.getSubscribedTo().size() > 1;

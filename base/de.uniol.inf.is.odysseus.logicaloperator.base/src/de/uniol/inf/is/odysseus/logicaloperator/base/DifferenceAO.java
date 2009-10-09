@@ -17,7 +17,7 @@ public class DifferenceAO extends BinaryLogicalOp{
      */
     public DifferenceAO(DifferenceAO differencePO) {
         super(differencePO);
-        setPOName("DifferencePO");
+        setName("DifferencePO");
     }
 
     /**
@@ -25,7 +25,7 @@ public class DifferenceAO extends BinaryLogicalOp{
      */
     public DifferenceAO() {
         super();
-        setPOName("DifferencePO");
+        setName("DifferencePO");
     }
 
 	public @Override

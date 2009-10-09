@@ -1,17 +1,18 @@
-/*
- * Created on 07.06.2006
- *
- */
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.base.Subscription;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -19,34 +20,33 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractLogicalOperator implements Serializable,
 		ILogicalOperator {
-
+	
 	private static final long serialVersionUID = -4425148851059140851L;
 
-	private String poname = null;
-
-	private List<ILogicalOperator> inputAO = new ArrayList<ILogicalOperator>();
-	private List<Integer> inputAOOutputPort = new ArrayList<Integer>(); 
-
-	private List<SDFAttributeList> inputSchemas = new ArrayList<SDFAttributeList>();
-
-	private List<IPhysicalOperator> physInputPOs;
-
 	private ArrayList<IOperatorOwner> owner = new ArrayList<IOperatorOwner>();
+	
+	protected Map<Integer, LogicalSubscription> subscribedTo = new HashMap<Integer, LogicalSubscription>();
+	protected Map<Integer, LogicalSubscription> subscriptions = new HashMap<Integer,LogicalSubscription>();;
+	
+	private Map<Integer, Subscription<ISource<?>>> physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>();
+	// cache access to bounded physOperators
+	private Map<Integer, ISource<?>> physInputOperators = new HashMap<Integer, ISource<?>>();
+	
+	private String name = null;
 
 	private SDFAttributeList outputSchema = null;
 
 	@SuppressWarnings("unchecked")
 	private IPredicate predicate = null;;
 
-	public AbstractLogicalOperator(AbstractLogicalOperator po) {
-		this.inputAO = new ArrayList<ILogicalOperator>(po.inputAO);
-		this.inputAOOutputPort = new ArrayList<Integer>(po.inputAOOutputPort);
-		outputSchema = new SDFAttributeList(po.outputSchema);
-		predicate =  po.predicate;
-		inputSchemas = new ArrayList<SDFAttributeList>(po.inputSchemas);
-		setPOName(po.getPOName());
-		physInputPOs = po.physInputPOs == null ? null
-				: new ArrayList<IPhysicalOperator>(po.physInputPOs);
+	public AbstractLogicalOperator(AbstractLogicalOperator op) {
+		this.subscribedTo = new HashMap<Integer, LogicalSubscription>(op.subscribedTo);
+		this.subscriptions = new HashMap<Integer, LogicalSubscription>(op.subscriptions);
+		outputSchema = new SDFAttributeList(op.outputSchema);
+		predicate =  op.predicate;
+		setName(op.getName());
+		physSubscriptionTo = op.physSubscriptionTo == null ? null
+				: new HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
 	}
 
 	public AbstractLogicalOperator() {
@@ -62,16 +62,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		AbstractLogicalOperator clone;
 		try {
 			clone = (AbstractLogicalOperator) super.clone();
-
-			clone.inputAO = new ArrayList<ILogicalOperator>(this.inputAO);
-			clone.inputAOOutputPort = new ArrayList<Integer>(this.inputAOOutputPort);
-			clone.inputSchemas = new ArrayList<SDFAttributeList>(
-					this.inputSchemas);
+			clone.subscribedTo = new HashMap<Integer, LogicalSubscription>(this.subscribedTo);
+			clone.subscriptions = new HashMap<Integer, LogicalSubscription>(this.subscriptions);
 			if (this.outputSchema != null)
 				clone.outputSchema = this.outputSchema.clone();
-			clone.physInputPOs = new ArrayList<IPhysicalOperator>(
-					this.physInputPOs);
-			clone.poname = this.poname;
+			clone.physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>(
+					this.physSubscriptionTo);
+			clone.name = this.name;
 			if (this.predicate != null)
 				clone.predicate = this.predicate.clone();
 
@@ -82,25 +79,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#deepClone
-	 * ()
-	 */
-	public AbstractLogicalOperator deepClone() {
-		AbstractLogicalOperator clone = this.clone();
-		ArrayList<ILogicalOperator> inputs = new ArrayList<ILogicalOperator>();
-		// TODO erzeugt bei mehreren verweisen auf die selbe ao instanz im baum
-		// mehrere kopien, sollte daran also subplansharing erkannt werden,
-		// ginge das hiermit verloren
-		for (ILogicalOperator curAo : this.inputAO) {
-			inputs.add(curAo.deepClone());
-		}
-		clone.inputAO = inputs;
-		return clone;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -109,17 +87,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * getOutputSchema()
 	 */
 	public SDFAttributeList getOutputSchema() {
-		return getOutElements();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#getOutElements
-	 * ()
-	 */
-	public SDFAttributeList getOutElements() {
 		return outputSchema;
 	}
 
@@ -158,88 +125,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.predicate = predicate;
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((inputAO == null) ? 0 : inputAO.hashCode());
-		result = prime
-				* result
-				+ ((inputAOOutputPort == null) ? 0 : inputAOOutputPort
-						.hashCode());
-		result = prime * result
-				+ ((inputSchemas == null) ? 0 : inputSchemas.hashCode());
-		result = prime * result
-				+ ((outputSchema == null) ? 0 : outputSchema.hashCode());
-		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-		result = prime * result
-				+ ((physInputPOs == null) ? 0 : physInputPOs.hashCode());
-		result = prime * result + ((poname == null) ? 0 : poname.hashCode());
-		result = prime * result
-				+ ((predicate == null) ? 0 : predicate.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AbstractLogicalOperator other = (AbstractLogicalOperator) obj;
-		if (inputAO == null) {
-			if (other.inputAO != null)
-				return false;
-		} else if (!inputAO.equals(other.inputAO))
-			return false;
-		if (inputAOOutputPort == null) {
-			if (other.inputAOOutputPort != null)
-				return false;
-		} else if (!inputAOOutputPort.equals(other.inputAOOutputPort))
-			return false;
-		if (inputSchemas == null) {
-			if (other.inputSchemas != null)
-				return false;
-		} else if (!inputSchemas.equals(other.inputSchemas))
-			return false;
-		if (outputSchema == null) {
-			if (other.outputSchema != null)
-				return false;
-		} else if (!outputSchema.equals(other.outputSchema))
-			return false;
-		if (owner == null) {
-			if (other.owner != null)
-				return false;
-		} else if (!owner.equals(other.owner))
-			return false;
-		if (physInputPOs == null) {
-			if (other.physInputPOs != null)
-				return false;
-		} else if (!physInputPOs.equals(other.physInputPOs))
-			return false;
-		if (poname == null) {
-			if (other.poname != null)
-				return false;
-		} else if (!poname.equals(other.poname))
-			return false;
-		if (predicate == null) {
-			if (other.predicate != null)
-				return false;
-		} else if (!predicate.equals(other.predicate))
-			return false;
-		return true;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -248,9 +133,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * (int)
 	 */
 	public SDFAttributeList getInputSchema(int pos) {
-		SDFAttributeList ret = inputSchemas.get(pos);
+		LogicalSubscription s = subscribedTo.get(pos);
+		SDFAttributeList ret =  s.getInputSchema();
 		if (ret == null) {
-			ILogicalOperator op = getInputAO(pos);
+			ILogicalOperator op = s.getTarget();
 			if (op != null) {
 				ret = op.getOutputSchema();
 			}
@@ -268,145 +154,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
 	 */
 	public void setInputSchema(int pos, SDFAttributeList schema) {
-		inputSchemas.set(pos, schema);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#setInputAO
-	 * (int,
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator)
-	 */
-	public void setInputAO(int pos, ILogicalOperator input) {
-		setInputAO(pos, input,0);
-	}
-	
-	public void setInputAO(int pos, ILogicalOperator input, int from) {
-		this.inputAO.set(pos, input);
-		this.inputAOOutputPort.set(pos, from);
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#setNoOfInputs
-	 * (int)
-	 */
-	public void setNoOfInputs(int count) {
-		this.inputAO = new ArrayList<ILogicalOperator>(count);
-		this.inputAOOutputPort = new ArrayList<Integer>(count);
-		this.physInputPOs = new ArrayList<IPhysicalOperator>(count);
-		for (int i = 0; i < count; i++) {
-			inputAO.add(null);
-			inputSchemas.add(null);
-			inputAOOutputPort.add(null);
-			physInputPOs.add(null);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#getInputAO
-	 * (int)
-	 */
-	public ILogicalOperator getInputAO(int pos) {
-		return inputAO.get(pos);
-	}
-	
-	public int getInputAOOutputPort(int pos){
-		return inputAOOutputPort.get(pos);
-	}
-	
-	public int getInputAOOutputPort(ILogicalOperator op){
-		for (int i = 0; i < getNumberOfInputs(); ++i) {
-			if (this.inputAO.get(i) == op) {
-				return inputAOOutputPort.get(i);
-			}
-		}
-		return 0;
-	}
-
-	public int getInputAOOutputPort(IPhysicalOperator op){
-		for (int i = 0; i < getNumberOfInputs(); ++i) {
-			if (this.physInputPOs.get(i) == op) {
-				return inputAOOutputPort.get(i);
-			}
-		}
-		return 0;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#getInputAOs
-	 * ()
-	 */
-	public List<ILogicalOperator> getInputAOs() {
-		return this.inputAO;
-	}
-
-	public List<IPhysicalOperator> getPhysInputPOs() {
-		return this.physInputPOs;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#replaceInput
-	 * (de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator,
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator)
-	 */
-	@Override
-	public boolean replaceInput(ILogicalOperator oldInput,
-			ILogicalOperator newInput) {
-		return replaceInput(oldInput, newInput,0);
-	}
-
-	@Override
-	public boolean replaceInput(ILogicalOperator oldInput,
-			ILogicalOperator newInput, int newFrom) {
-		boolean replaced = false;
-		for (int i = 0; i < getNumberOfInputs(); ++i) {
-			if (this.inputAO.get(i) == oldInput) {
-				this.inputAO.set(i, newInput);
-				this.inputAOOutputPort.set(i, newFrom);
-				replaced = true;
-			}
-		}
-		// System.out.println("Replace Input "+replaced);
-		return replaced;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#getInputPort
-	 * (de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator)
-	 */
-	public int getInputPort(ILogicalOperator abstractLogicalOperator) {
-		for (int i = 0; i < getNumberOfInputs(); i++) {
-			if (getInputAO(i) == abstractLogicalOperator) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#
-	 * getNumberOfInputs()
-	 */
-	public int getNumberOfInputs() {
-		return inputAO.size();
+		subscribedTo.get(pos).setInputSchema(schema);
 	}
 
 	/*
@@ -416,11 +164,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#getPOName
 	 * ()
 	 */
-	public String getPOName() {
-		if (poname == null) {
+	public String getName() {
+		if (name == null) {
 			return this.getClass().getSimpleName();
 		} else {
-			return poname;
+			return name;
 		}
 	}
 
@@ -431,8 +179,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#setPOName
 	 * (java.lang.String)
 	 */
-	public void setPOName(String name) {
-		this.poname = name;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/*
@@ -442,9 +190,24 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#setPhysInputPO
 	 * (int, de.uniol.inf.is.odysseus.base.IPhysicalOperator)
 	 */
-	public void setPhysInputPO(int port, IPhysicalOperator physPO) {
-		this.physInputPOs.set(port, physPO);
+	public void setPhysSubscriptionTo(Subscription<ISource<?>> subscription) {
+		this.physSubscriptionTo.put(subscription.getSinkPort(), subscription);
+		this.physInputOperators.put(subscription.getSinkPort(), subscription.getTarget());
 	}
+	
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort){
+		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkPort, sourcePort));
+	}
+	
+	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo(){
+		return physSubscriptionTo.values();
+	}
+
+	@Override
+	public Collection<ISource<?>> getPhysInputPO() {
+		return physInputOperators.values();
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -453,52 +216,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#getPhysInputPO
 	 * (int)
 	 */
-	public IPhysicalOperator getPhysInputPO(int port) {
-		if (this.physInputPOs == null) {
-			this.physInputPOs = new ArrayList<IPhysicalOperator>();
-			return null;
-		}
-		if (port >= 0 && port < this.physInputPOs.size()) {
-			return this.physInputPOs.get(port);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#
-	 * setPhysInputAtAOPosition
-	 * (de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator,
-	 * de.uniol.inf.is.odysseus.base.IPhysicalOperator)
-	 */
-	public void setPhysInputAtAOPosition(
-			ILogicalOperator abstractLogicalOperator, IPhysicalOperator source) {
-		for (int i = 0; i < getNumberOfInputs(); i++) {
-			if (getInputAO(i) == abstractLogicalOperator) {
-				setPhysInputPO(i, source);
-				// break;
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#replaceInput
-	 * (de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator,
-	 * de.uniol.inf.is.odysseus.base.IPhysicalOperator)
-	 */
-	public void replaceInput(ILogicalOperator abstractLogicalOperator,
-			IPhysicalOperator source) {
-		for (int i = 0; i < getNumberOfInputs(); i++) {
-			if (getInputAO(i) == abstractLogicalOperator) {
-				setPhysInputPO(i, source);
-				setInputAO(i, null);
-				// break;
-			}
-		}
+	public Subscription<ISource<?>> getPhysSubscriptionTo(int port) {
+		return this.physSubscriptionTo.get(port);
 	}
 
 	@Override
@@ -526,4 +245,103 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return this.owner;
 	}
 
+	//"delegatable this", used for the delegate sink
+	protected ILogicalOperator getInstance() {
+		return this;
+	}
+	
+	@Override
+	public void subscribeTo(ILogicalOperator source, int sinkPort, int sourcePort) {
+		LogicalSubscription sub = new LogicalSubscription(source, sinkPort, sourcePort);
+		synchronized (this.subscribedTo) {
+			if (!this.subscribedTo.containsKey(sinkPort)) {
+				this.subscribedTo.put(sinkPort, sub);
+				source.subscribe(getInstance(), sinkPort, sourcePort);
+			}
+		}
+	}
+
+	@Override
+	public void unsubscribeSubscriptionTo(ILogicalOperator source, int sinkPort, int sourcePort) {
+		if (this.subscribedTo.remove(sinkPort) != null) {
+			source.unsubscribe(this, sinkPort, sourcePort);
+		}
+	}
+	
+	@Override
+	public void unsubscribeTo(LogicalSubscription subscription) {
+		unsubscribeSubscriptionTo(subscription.getTarget(), subscription.getSinkPort(), subscription.getSourcePort());
+	}
+		
+	@Override
+	final public Collection<LogicalSubscription> getSubscribedTo() {
+		return this.subscribedTo.values();
+	}
+	
+	@Override
+	public LogicalSubscription getSubscribedTo(int i) {
+		return this.subscribedTo.get(i);
+	}
+	
+	@Override
+	public Collection<LogicalSubscription> getSubscribedTo(ILogicalOperator a) {
+		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
+		for(LogicalSubscription l:subscribedTo.values()){
+			if (l.getTarget() == a){
+				subs.add(l);
+			}
+		}
+		return subs;
+	}
+
+	
+	@Override
+	final public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
+		LogicalSubscription sub = new LogicalSubscription(
+				sink, sinkPort, sourcePort);
+		synchronized (this.subscriptions) {
+			if (!this.subscriptions.containsKey(sinkPort)) {
+				this.subscriptions.put(sinkPort, sub);
+				sink.subscribeTo(this, sinkPort, sourcePort);
+			}
+		}
+	}
+	
+	@Override
+	final public void unsubscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
+		synchronized (this.subscriptions) {
+			if (this.subscriptions.remove(sinkPort) != null) {
+				sink.unsubscribeSubscriptionTo(this, sinkPort, sourcePort);
+			}
+		}
+	}
+	
+	@Override
+	public void unsubscribe(LogicalSubscription subscription) {
+		unsubscribe(subscription.getTarget(), subscription.getSinkPort(), subscription.getSourcePort());
+	}
+
+	@Override
+	final public Collection<LogicalSubscription> getSubscribtions() {
+		synchronized (this.subscriptions) {
+			return this.subscriptions.values();
+		}
+	}
+
+	@Override
+	public Collection<LogicalSubscription> getSubscribtions(ILogicalOperator a) {
+		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
+		for(LogicalSubscription l:subscriptions.values()){
+			if (l.getTarget() == a){
+				subs.add(l);
+			}
+		}
+		return subs;
+	}
+	
+	@Override
+	public int getNumberOfInputs() {
+		return this.subscribedTo.size();
+	}
+		
 }

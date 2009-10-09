@@ -7,8 +7,8 @@ package de.uniol.inf.is.odysseus.base.wrapper;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -18,12 +18,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
  */
 public class WrapperPlanFactory {
 	
-	private static final Logger logger = LoggerFactory.getLogger( WrapperPlanFactory.class );
+	//private static final Logger logger = LoggerFactory.getLogger( WrapperPlanFactory.class );
 	
 	private static Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
 
 	public synchronized static void init() throws Exception {
-		logger.debug("init wrapper");
+		//logger.debug("init wrapper");
 		DataDictionary.getInstance();
 	}
 

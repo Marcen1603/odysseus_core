@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
 abstract public class AbstractExecListSchedulingStrategy extends
@@ -161,9 +161,9 @@ abstract public class AbstractExecListSchedulingStrategy extends
 				}
 			}
 		}
-		for (Subscription<? extends ISink<?>> sub: s.getSubscribtions() ){
-			if (sub.target instanceof ISource<?>){
-				getPathToRoot((ISource<?>)sub.target, schedulableOps, allOps, virtualOps);
+		for (PhysicalSubscription<? extends ISink<?>> sub: s.getSubscribtions() ){
+			if (sub.getTarget() instanceof ISource<?>){
+				getPathToRoot((ISource<?>)sub.getTarget(), schedulableOps, allOps, virtualOps);
 			}
 		}
 	}
@@ -193,12 +193,12 @@ abstract public class AbstractExecListSchedulingStrategy extends
 				|| sink.getSubscribedTo().size() == 0) {
 			leafs.add((ISource<?>) sink);
 		} else {
-			for (Subscription<? extends ISource<?>> sub : sink.getSubscribedTo()) {
-				if (sub.target instanceof ISink<?>) {
-					findLeafs((ISink<?>) sub.target, leafs);
+			for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedTo()) {
+				if (sub.getTarget() instanceof ISink<?>) {
+					findLeafs((ISink<?>) sub.getTarget(), leafs);
 				} else {
 					// Only ISource
-					leafs.add(sub.target);
+					leafs.add(sub.getTarget());
 				}
 			}
 		}

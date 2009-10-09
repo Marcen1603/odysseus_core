@@ -88,7 +88,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (node.hasAlias()) {
 			sourceString = node.getAlias();
 			operator = new RenameAO();
-			operator.setInputAO(0, access);
+			operator.subscribeTo(access,0,0);
 			SDFAttributeList newSchema = createAliasSchema(node.getAlias(),
 					access);
 			operator.setInputSchema(0, newSchema);
@@ -118,7 +118,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator inputOp = access;
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
-			inputOp.setInputAO(0, access);
+			inputOp.subscribeTo(access,0,0);
 			inputOp.setInputSchema(0, access.getOutputSchema());
 			inputOp.setOutputSchema(createAliasSchema(node.getAlias(), access));
 			sourceName = node.getAlias();
@@ -133,7 +133,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private WindowAO createWindow(ASTWindow windowNode, AbstractLogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
-		window.setInputAO(inputOp);
+		window.subscribeTo(inputOp,0,0);
 		window.setOutputSchema(inputOp.getOutputSchema());
 
 		if (windowNode.isPartitioned()) {
@@ -188,12 +188,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (inputOp instanceof WindowAO) {
 			return true;
 		}
-		int numberOfInputs = inputOp.getNumberOfInputs();
+		int numberOfInputs = inputOp.getSubscribedTo().size();
 		if (inputOp instanceof ExistenceAO) {
 			numberOfInputs = 1;// don't check subselects in existenceaos
 		}
 		for (int i = 0; i < numberOfInputs; ++i) {
-			if (containsWindow(inputOp.getInputAO(i))) {
+			if (containsWindow(inputOp.getSubscribedTo(i).getTarget())) {
 				return true;
 			}
 		}
@@ -214,7 +214,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		ASTIdentifier asIdentifier = (ASTIdentifier) asNode.jjtGetChild(0);
 		RenameAO rename = new RenameAO();
-		rename.setInputAO(result);
+		rename.subscribeTo(result,0,0);
 		rename.setInputSchema(result.getOutputSchema());
 		rename.setOutputSchema(createAliasSchema(asIdentifier.getName(), result));
 		this.attributeResolver.addSource(asIdentifier.getName(), rename);

@@ -69,7 +69,7 @@ public class SortAO extends UnaryLogicalOp{
     public SortAO(SDFAttributeList set) {
         super();
         this.sortAttribs = set;
-        setPOName("SortPO");
+        setName("SortPO");
     }
 
     /**
@@ -78,7 +78,7 @@ public class SortAO extends UnaryLogicalOp{
     public SortAO(SortAO sortPO) {
         super(sortPO);
         this.sortAttribs = sortPO.sortAttribs;
-        setPOName("SortAO");
+        setName("SortAO");
     }
 
     /**
@@ -86,7 +86,7 @@ public class SortAO extends UnaryLogicalOp{
      */
     public SortAO() {
         super();
-        setPOName("SortAO");
+        setName("SortAO");
     }
 
 
@@ -111,11 +111,6 @@ public class SortAO extends UnaryLogicalOp{
 	public @Override
 	SortAO clone() {
 		return new SortAO(this);
-	}
-	
-	public void calcOutElements(){
-		this.setInputSchema(this.getInputAO().getOutputSchema());
-		this.setOutputSchema(this.getInputAO().getOutElements());
 	}
 	
 	public boolean[] getAscending() {

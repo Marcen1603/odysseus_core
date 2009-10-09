@@ -178,8 +178,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
 		}
 		this.priorities.add(priority);
-		TopAO dummy = new TopAO();
-		dummy.setInputAO(op);
+		// TODO: Warum dies? MG erstmal auskommentiert, da sonst doppelte Wurzeln für eine Anfrage
+//		TopAO dummy = new TopAO();
+//		dummy.subscribeTo(op,0,0);		
 		plans.add(op);
 		return plans;
 	}
@@ -218,8 +219,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 						"inputs of set operator have different schemas");
 			}
 		}
-		setOperator.setInputAO(0, left);
-		setOperator.setInputAO(1, right);
+		setOperator.subscribeTo(left,0,0);
+		setOperator.subscribeTo(right,1,1);
 		setOperator.setOutputSchema(left.getOutputSchema());
 		return setOperator;
 	}
@@ -277,14 +278,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public static void initPredicates(ILogicalOperator curInputAO) {
 		if (curInputAO.getPredicate() != null) {
 			SDFAttributeList rightInputSchema = null;
-			if (curInputAO.getNumberOfInputs() > 1) {
+			if (curInputAO.getSubscribedTo().size() > 1) {
 				rightInputSchema = curInputAO.getInputSchema(1);
 			}
 			initPredicate(curInputAO.getPredicate(), curInputAO
 					.getInputSchema(0), rightInputSchema);
 		}
-		for (int i = 0; i < curInputAO.getNumberOfInputs(); ++i) {
-			initPredicates(curInputAO.getInputAO(i));
+		for (int i = 0; i < curInputAO.getSubscribedTo().size(); ++i) {
+			initPredicates(curInputAO.getSubscribedTo(i).getTarget());
 		}
 	}
 

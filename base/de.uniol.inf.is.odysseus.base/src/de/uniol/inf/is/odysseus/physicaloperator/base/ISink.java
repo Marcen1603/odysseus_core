@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import java.util.Collection;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.ISubscriber;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
 /**
@@ -18,9 +18,8 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
  * 
  * @author Jonas Jacobi
  */
-public interface ISink<T> extends IPhysicalOperator {
-
-	/**
+public interface ISink<T> extends IPhysicalOperator, ISubscriber<ISource<? extends T>, PhysicalSubscription<ISource<? extends T>>> {
+		/**
 	 * Process an element.
 	 * 
 	 * @param object
@@ -46,23 +45,6 @@ public interface ISink<T> extends IPhysicalOperator {
 	 *            the input port the source is connected to.
 	 */
 	public void done(int port);
-
-	/**
-	 * Subscribe to a {@link ISource}. The method gets called automatically from
-	 * a {@link ISource}, if {@link ISource#subscribe(ISink, int)} is called on
-	 * it.
-	 * 
-	 * @param port
-	 *            the input port the source is connected to
-	 */
-	public void subscribeTo(ISource<? extends T> source, int sinkPort, int sourcePort);
-
-	/**
-	 * Get all sources, the ISink is subscribed to.
-	 */
-	public List<Subscription<ISource<? extends T>>> getSubscribedTo();
-
-	public void unsubscribeSubscriptionTo(ISource<? extends T> source, int sinkPort, int sourcePort);
 
 	public void processPunctuation(PointInTime timestamp);
 

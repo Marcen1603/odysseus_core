@@ -38,7 +38,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 
 		ArrayList<AbstractLogicalOperator> tempList = new ArrayList<AbstractLogicalOperator>();
 
-		splittPlan(plan, 0, plan.getNumberOfInputs(),
+		splittPlan(plan, 0, plan.getSubscribedTo().size(),
 				createSocketAdvertisement().toString(), tempList);
 		return tempList;
 	}
@@ -58,7 +58,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 
 	private void splittPlan(ILogicalOperator iLogicalOperator, int no, int sizeOld, String current,
 			ArrayList<AbstractLogicalOperator> list) {
-		int inputCount = iLogicalOperator.getNumberOfInputs();
+		int inputCount = iLogicalOperator.getSubscribedTo().size();
 		String temp;
 		P2PPipeAO p2ppipe = new P2PPipeAO(current);
 		String adv = createSocketAdvertisement().toString();
@@ -71,42 +71,38 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 			String adv2 = createSocketAdvertisement().toString();
 			P2PAccessAO p2paccess2 = new P2PAccessAO(adv2);
 			temp = adv2;
-			tempAO.setNoOfInputs(inputCount);
-
-			if (iLogicalOperator.getInputAO(0) instanceof AccessAO) {
-				SDFSource source = ((AccessAO) iLogicalOperator.getInputAO(0)).getSource();
+			
+			if (iLogicalOperator.getSubscribedTo(0).getTarget() instanceof AccessAO) {
+				SDFSource source = ((AccessAO) iLogicalOperator.getSubscribedTo(0).getTarget()).getSource();
 				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
 						.getSources().get(source.toString()).toString();
 				p2paccess.setAdv(sourceAdv);
 			}
-			if (iLogicalOperator.getInputAO(1) instanceof AccessAO) {
-				SDFSource source = ((AccessAO) iLogicalOperator.getInputAO(1)).getSource();
+			if (iLogicalOperator.getSubscribedTo(1).getTarget() instanceof AccessAO) {
+				SDFSource source = ((AccessAO) iLogicalOperator.getSubscribedTo(1).getTarget()).getSource();
 				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
 						.getSources().get(source.toString()).toString();
 				p2paccess2.setAdv(sourceAdv);
 			}
 
-			tempAO.setInputAO(0, p2paccess);
-			tempAO.setInputAO(1, p2paccess2);
+			tempAO.subscribeTo(p2paccess,0,0);
+			tempAO.subscribeTo(p2paccess2,1,0);
 		} else {
 			// Wenn der naechste Operator ein AccessAO ist dann kann dieser
 			// Operator uebersprungen werden
-			if (iLogicalOperator.getInputAO(0) instanceof AccessAO) {
-				SDFSource source = ((AccessAO) iLogicalOperator.getInputAO(0)).getSource();
+			if (iLogicalOperator.getSubscribedTo(0).getTarget() instanceof AccessAO) {
+				SDFSource source = ((AccessAO) iLogicalOperator.getSubscribedTo(0).getTarget()).getSource();
 				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
 						.getSources().get(source.toString()).toString();
 				p2paccess.setAdv(sourceAdv);
-				tempAO.setNoOfInputs(inputCount);
-				tempAO.setInputAO(0, p2paccess);
+				tempAO.subscribeTo(p2paccess,0,0);
 				temp = adv;
 			} else {
-				tempAO.setNoOfInputs(inputCount);
-				tempAO.setInputAO(0, p2paccess);
+				tempAO.subscribeTo(p2paccess,0,0);
 				temp = adv;
 			}
 		}
-		p2ppipe.setNoOfInputs(1);
-		p2ppipe.setInputAO(0, tempAO);
+		p2ppipe.subscribeTo(tempAO,0,0);
 
 		this.setIDSizes(p2ppipe);
 		list.add(p2ppipe);
@@ -115,10 +111,10 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 			if (i == 1) {
 				adv = temp;
 			}
-			if (iLogicalOperator.getInputAO(i) instanceof AccessAO) {
+			if (iLogicalOperator.getSubscribedTo(i).getTarget() instanceof AccessAO) {
 				return;
 			}
-			splittPlan(iLogicalOperator.getInputAO(i), i, inputCount, adv, list);
+			splittPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), i, inputCount, adv, list);
 		}
 	}
 

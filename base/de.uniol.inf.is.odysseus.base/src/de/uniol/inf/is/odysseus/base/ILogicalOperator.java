@@ -1,89 +1,33 @@
 package de.uniol.inf.is.odysseus.base;
 
-import java.util.List;
+import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public interface ILogicalOperator extends IClone, IOwnedOperator {
+public interface ILogicalOperator extends IClone, IOwnedOperator, 
+	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>{
 
 	public ILogicalOperator clone();
 
-	public ILogicalOperator deepClone();
-
-	/**
-	 * @return the outElements
-	 * @uml.property name="outElements"
-	 */
 	public SDFAttributeList getOutputSchema();
-
-	public SDFAttributeList getOutElements();
-
-	/**
-	 * @param outElements
-	 *            the outElements to set
-	 * @uml.property name="outElements"
-	 */
 	public void setOutputSchema(SDFAttributeList outElements);
-
-	/**
-	 * @return the predicate
-	 * @uml.property name="predicate"
-	 */
-	@SuppressWarnings("unchecked")
 	public IPredicate getPredicate();
-
-	/**
-	 * @param predicate
-	 *            the predicate to set
-	 * @uml.property name="predicate"
-	 */
-	@SuppressWarnings("unchecked")
 	public void setPredicate(IPredicate predicate);
-
 	public SDFAttributeList getInputSchema(int pos);
-
 	public void setInputSchema(int pos, SDFAttributeList schema);
-
-	public void setInputAO(int to, ILogicalOperator input);
-	public void setInputAO(int to, ILogicalOperator input, int from);
-
-	public void setNoOfInputs(int count);
-
-	public ILogicalOperator getInputAO(int pos);
-	public int getInputAOOutputPort(int pos);
-	public int getInputAOOutputPort(ILogicalOperator op);
-	public int getInputAOOutputPort(IPhysicalOperator op);
-
-	public List<ILogicalOperator> getInputAOs();
-
-	public boolean replaceInput(ILogicalOperator oldInput,
-			ILogicalOperator newInput);
-
-	public boolean replaceInput(ILogicalOperator oldInput, ILogicalOperator newInput, int newFrom);
-	
-	public int getInputPort(ILogicalOperator abstractLogicalOperator);
-
+	public String getName();
+	public void setName(String name);
+	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort);
+	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);
+	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();
+	// Currently needed for Transformation --> we should get rid of this!
+	public Collection<ISource<?>> getPhysInputPO();
 	public int getNumberOfInputs();
 
-	public String getPOName();
-
-	public void setPOName(String name);
-
-	public int hashCode();
-
-	public boolean equals(Object obj);
-
-	public void setPhysInputPO(int port, IPhysicalOperator physPO);
-
-	public IPhysicalOperator getPhysInputPO(int port);
-	
-	public List<IPhysicalOperator> getPhysInputPOs();
-
-	public void setPhysInputAtAOPosition(
-			ILogicalOperator abstractLogicalOperator,
-			IPhysicalOperator source);
-
-	public void replaceInput(ILogicalOperator abstractLogicalOperator,
-			IPhysicalOperator source);
+	public Collection<LogicalSubscription> getSubscribtions(ILogicalOperator a);
+	public Collection<LogicalSubscription> getSubscribedTo(ILogicalOperator a);
 }

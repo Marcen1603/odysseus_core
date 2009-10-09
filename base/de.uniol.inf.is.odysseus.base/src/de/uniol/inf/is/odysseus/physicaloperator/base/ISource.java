@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import java.util.Collection;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.ISubscribable;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
  * 
  * @author Jonas Jacobi
  */
-public interface ISource<T> extends IPhysicalOperator {
+public interface ISource<T> extends IPhysicalOperator, ISubscribable<ISink<? super T>, PhysicalSubscription<ISink<? super T>>>{
 	/**
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.
@@ -47,27 +47,6 @@ public interface ISource<T> extends IPhysicalOperator {
 	 * Close down the connection/do not read any more data
 	 */
 	public void close();
-
-	/**
-	 * Subscribes a {@link ISink} to this source. Has to call
-	 * {@link ISink#subscribeTo(ISource, int)} with this and port as parameters on
-	 * the sink.
-	 * 
-	 * @param port
-	 *            the input port of the <b>{@link ISink}</b> this source gets
-	 *            subscribed to.
-	 */
-	public void subscribe(ISink<? super T> sink, int sinkPort, int sourcePort);
-
-	/**
-	 * Remove a subscription.
-	 */
-	public void unsubscribe(ISink<? super T> sink, int sinkPort, int sourcePort);
-
-	/**
-	 * Get all current subscriptions.
-	 */
-	public List<Subscription<ISink<? super T>>> getSubscribtions();
 
 	public void sendPunctuation(PointInTime punctuation);
 	

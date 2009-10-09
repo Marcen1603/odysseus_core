@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
  */
 public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeContainer<M>> extends
 		JoinTIPO<M, T> {
-	private static final Logger logger = LoggerFactory.getLogger(LeftJoinTIPO.class);
+//	private static final Logger logger = LoggerFactory.getLogger(LeftJoinTIPO.class);
 	
 	private HashMap<T, PointInTime> left_t_tilde;
 	private LeftMergeFunction<T> dataMerge;
@@ -148,10 +148,10 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	}
 
 	private T merge(T left, T right, Order order) {
-		if (logger.isTraceEnabled()) {
-			logger.trace("LeftJoinTIPO (" + hashCode() + ") start merging: " + left
-					+ " AND " + right);
-		}
+//		if (logger.isTraceEnabled()) {
+//			logger.trace("LeftJoinTIPO (" + hashCode() + ") start merging: " + left
+//					+ " AND " + right);
+//		}
 		T mergedData;
 		M mergedMetadata;
 		if (order == Order.LeftRight) {
@@ -183,10 +183,10 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	 }
 	
 	protected boolean isDone() { 
-		if (getSubscribedTo(0).done) {
-			return getSubscribedTo(1).done || areas[0].isEmpty();
+		if (getSubscribedTo(0).isDone()) {
+			return getSubscribedTo(1).isDone() || areas[0].isEmpty();
 		} else {
-			return getSubscribedTo(0).done  && areas[1].isEmpty();
+			return getSubscribedTo(0).isDone()  && areas[1].isEmpty();
 		}
 	}
 }

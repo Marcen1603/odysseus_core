@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.console;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -9,7 +10,7 @@ import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 public class ConsoleFunctions {
 	
@@ -45,9 +46,9 @@ public class ConsoleFunctions {
 		b.append(mySink.getSubscribedTo());
 		b.append(")\n");
 
-		for (Subscription<? extends ISource<?>> source : mySink
+		for (PhysicalSubscription<? extends ISource<?>> source : mySink
 				.getSubscribedTo()) {
-			dumpPlan(source.target, depth + 1, b);
+			dumpPlan(source.getTarget(), depth + 1, b);
 		}
 	}
 
@@ -81,10 +82,10 @@ public class ConsoleFunctions {
 					+ sink.getMonitoringData(type).getValue());
 		}
 
-		List<Subscription<ISource>> subscriptions = sink.getSubscribedTo();
-		for (int i = 0; i < subscriptions.size(); i++) {
-			if (subscriptions.get(i).target instanceof ISink) {
-				printPlanMetadata((ISink) subscriptions.get(i).target);
+		Collection<PhysicalSubscription<ISource>> subscriptions = sink.getSubscribedTo();
+		for (PhysicalSubscription<ISource> sub :  subscriptions) {
+			if (sub.getTarget().isSink()) {
+				printPlanMetadata((ISink) sub.getTarget());
 			}
 		}
 	}

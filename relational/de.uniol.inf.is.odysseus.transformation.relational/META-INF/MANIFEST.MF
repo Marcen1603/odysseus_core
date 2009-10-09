@@ -21,5 +21,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.access,
  de.uniol.inf.is.odysseus.relational.base.predicate,
- de.uniol.inf.is.odysseus.sourcedescription.sdf.description
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
+ org.slf4j;version="1.5.6"
 Bundle-ClassPath: .

@@ -11,17 +11,18 @@ public class TopAO extends UnaryLogicalOp {
 
 	public TopAO(TopAO po) {
 		super(po);
-		setPOName(po.getPOName());
+		setName(po.getName());
 	}
 
 	public TopAO() {
 		super();
-		setPOName("TopAO");
+		setName("TopAO");
 	}
 
 	public @Override
 	TopAO clone() {
 		return new TopAO(this);
 	}
+	
 
 }

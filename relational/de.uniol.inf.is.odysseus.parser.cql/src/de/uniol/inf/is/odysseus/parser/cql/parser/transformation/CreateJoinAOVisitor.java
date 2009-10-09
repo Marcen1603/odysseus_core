@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Stack;
 import org.nfunk.jep.ParseException;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -74,14 +76,15 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		return createJoin(name, data);
 	}
-	
+
 	@Override
 	public Object visit(ASTElementPriorities node, Object data) {
 		return data;
 	}
 
 	private Object createJoin(String alias, Object data) {
-		final AbstractLogicalOperator source = this.attributeResolver.getSource(alias);
+		final AbstractLogicalOperator source = this.attributeResolver
+				.getSource(alias);
 
 		if (data == null) {
 			return source;
@@ -90,8 +93,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator leftSource = (AbstractLogicalOperator) data;
 		JoinAO join = new JoinAO();
 
-		join.setLeftInput(leftSource);
-		join.setRightInput(source);
+		join.subscribeTo(leftSource, 0, 0);
+		join.subscribeTo(source, 1, 0);
 		SDFAttributeList newList = new SDFAttributeList(leftSource
 				.getOutputSchema());
 		newList.addAll(source.getOutputSchema());
@@ -178,7 +181,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		if (selectPredicate != null) {
 			SelectAO selectAO = new SelectAO();
-			selectAO.setInputAO(curInputAO);
+			selectAO.subscribeTo(curInputAO);
 			selectAO.setOutputSchema(curInputAO.getOutputSchema());
 			selectAO.setPredicate(selectPredicate);
 			return selectAO;
@@ -188,13 +191,14 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private AbstractLogicalOperator createQuantificationPlan(AbstractLogicalOperator curInputAO,
+	private AbstractLogicalOperator createQuantificationPlan(
+			AbstractLogicalOperator curInputAO,
 			IPredicate<RelationalTuple<?>> pred) {
 		if (pred instanceof ComplexPredicate) {
 			AbstractLogicalOperator left = createQuantificationPlan(curInputAO,
 					((ComplexPredicate) pred).getLeft());
-			AbstractLogicalOperator right = createQuantificationPlan(curInputAO,
-					((ComplexPredicate) pred).getRight());
+			AbstractLogicalOperator right = createQuantificationPlan(
+					curInputAO, ((ComplexPredicate) pred).getRight());
 
 			if (pred instanceof AndPredicate) {
 				if (left instanceof SelectAO) {
@@ -220,8 +224,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 					}
 				}
 				UnionAO result = new UnionAO();
-				result.setInputAO(0, left);
-				result.setInputAO(1, right);
+				result.subscribeTo(left, 0, 0);
+				result.subscribeTo(right, 1, 0);
 				result.setOutputSchema(left.getOutputSchema());
 				return result;
 			}
@@ -237,31 +241,37 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			AbstractQuantificationPredicate astPredicate = ((QuantificationPredicate) tmpPred)
 					.getAstPredicate();
 			astPredicate.setNegatived(negatived);
-			return (AbstractLogicalOperator) astPredicate.jjtAccept(this, curInputAO);
+			return (AbstractLogicalOperator) astPredicate.jjtAccept(this,
+					curInputAO);
 		} else {
 			SelectAO selectAO = new SelectAO();
 			selectAO.setPredicate(pred);
-			selectAO.setInputAO(curInputAO);
+			selectAO.subscribeTo(curInputAO);
 			selectAO.setOutputSchema(curInputAO.getOutputSchema());
 			return selectAO;
 		}
 	}
 
-	private void replaceBottomOps(ILogicalOperator plan, ILogicalOperator replacement,
-			ILogicalOperator oldInput) {
+	private void replaceBottomOps(ILogicalOperator plan,
+			ILogicalOperator replacement, ILogicalOperator oldInput) {
 		List<ILogicalOperator> bottomOps = new LinkedList<ILogicalOperator>();
 		getBottomOperators(plan, oldInput, bottomOps);
 		for (ILogicalOperator curOp : bottomOps) {
-			curOp.replaceInput(oldInput, replacement);
+			for (LogicalSubscription l : curOp.getSubscribedTo(oldInput)) {
+				l.getTarget().unsubscribe(curOp, l.getSinkPort(),
+						l.getSourcePort());
+				replacement
+						.subscribe(curOp, l.getSinkPort(), l.getSourcePort());
+			}
 		}
 	}
 
-	private void getBottomOperators(ILogicalOperator right, ILogicalOperator bottom,
-			List<ILogicalOperator> ops) {
-		for (int i = 0; i < right.getNumberOfInputs(); ++i) {
-			ILogicalOperator curInput = right.getInputAO(i);
+	private void getBottomOperators(ILogicalOperator op,
+			ILogicalOperator bottom, List<ILogicalOperator> ops) {
+		for (LogicalSubscription s : op.getSubscribedTo()) {
+			ILogicalOperator curInput = s.getTarget();
 			if (curInput == bottom) {
-				ops.add(right);
+				ops.add(op);
 				return;
 			} else {
 				getBottomOperators(curInput, bottom, ops);
@@ -287,9 +297,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAllPredicate node, Object data) {
-		return createExistenceAO(node, (AbstractLogicalOperator) data,
-				node.isNegatived() ? ExistenceAO.Type.EXISTS
-						: ExistenceAO.Type.NOT_EXISTS);
+		return createExistenceAO(node, (AbstractLogicalOperator) data, node
+				.isNegatived() ? ExistenceAO.Type.EXISTS
+				: ExistenceAO.Type.NOT_EXISTS);
 	}
 
 	private String toExpression(ILogicalOperator subquery) {
@@ -320,9 +330,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAnyPredicate node, Object data) {
-		return createExistenceAO(node, (AbstractLogicalOperator) data,
-				node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
-						: ExistenceAO.Type.EXISTS);
+		return createExistenceAO(node, (AbstractLogicalOperator) data, node
+				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
+				: ExistenceAO.Type.EXISTS);
 	}
 
 	private ExistenceAO createExistenceAO(IExistencePredicate node,
@@ -370,9 +380,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTInPredicate node, Object data) {
-		return createExistenceAO(node, (AbstractLogicalOperator) data,
-				node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
-						: ExistenceAO.Type.EXISTS);
+		return createExistenceAO(node, (AbstractLogicalOperator) data, node
+				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
+				: ExistenceAO.Type.EXISTS);
 	}
 
 }

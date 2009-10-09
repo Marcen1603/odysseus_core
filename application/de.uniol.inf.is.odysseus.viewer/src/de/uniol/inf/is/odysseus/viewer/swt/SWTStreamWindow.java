@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModelChangeListener;
 import de.uniol.inf.is.odysseus.viewer.model.stream.DefaultStreamConnection;
@@ -159,7 +159,7 @@ public class SWTStreamWindow<In, Out> implements INodeModelChangeListener<IPhysi
 		} else if( content instanceof ISink ) {
 			ArrayList<?> list = ( ArrayList< ? > )((ISink<?>)content).getSubscribedTo();
 			for( Object obj : list ) 
-				sources.add( (ISource<? extends In>)((Subscription<?>)obj).target );
+				sources.add( (ISource<? extends In>)((PhysicalSubscription<?>)obj).getTarget() );
 		} else 
 			throw new IllegalArgumentException("could not identify type of content of node " + node );
 

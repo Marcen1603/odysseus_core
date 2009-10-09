@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultGraphModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
@@ -106,18 +106,18 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 		traversedObjects.add( sink );
 		
 		// Subscriptions folgen
-		List< Subscription< ISource<? extends T> >> sources = sink.getSubscribedTo();
-		for( Subscription< ISource<? extends T> > sub : sources ) {
-			if( sub.target instanceof ISink<?> ) {
-				parse( (ISink<?>)sub.target, graphModel, node, false );
+		Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedTo();
+		for( PhysicalSubscription< ISource<? extends T> > sub : sources ) {
+			if( sub.getTarget() instanceof ISink<?> ) {
+				parse( (ISink<?>)sub.getTarget(), graphModel, node, false );
 			} else {
-				parse( sub.target, graphModel, node, false );
+				parse( sub.getTarget(), graphModel, node, false );
 			}
 		}
 		
 		if( sink instanceof ISource<?> ) {
-			for (Subscription<? extends ISink<?>> sub: ((ISource<?>)sink).getSubscribtions() ){
-				parse( (ISink<?>)sub.target, graphModel, node, true );
+			for (PhysicalSubscription<? extends ISink<?>> sub: ((ISource<?>)sink).getSubscribtions() ){
+				parse( (ISink<?>)sub.getTarget(), graphModel, node, true );
 			}
 		}
 	}
@@ -163,8 +163,8 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 		traversedObjects.add( source );
 		
 		// Subscriptions folgen
-		for (Subscription<? extends ISink<?>> sub: source.getSubscribtions() ){
-			parse( (ISink<?>)sub.target, graphModel, node, true );
+		for (PhysicalSubscription<? extends ISink<?>> sub: source.getSubscribtions() ){
+			parse( (ISink<?>)sub.getTarget(), graphModel, node, true );
 		}
 	}
 }

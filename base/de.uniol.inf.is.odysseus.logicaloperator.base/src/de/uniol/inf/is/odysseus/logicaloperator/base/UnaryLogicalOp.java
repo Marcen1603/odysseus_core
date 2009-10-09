@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.Subscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -15,32 +17,31 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 
 	public UnaryLogicalOp(AbstractLogicalOperator po) {
 		super(po);
-		setNoOfInputs(1);
 	}
 
 	public UnaryLogicalOp() {
 		super();
-		setNoOfInputs(1);
-	}
-
-	public void setInputAO(ILogicalOperator po) {
-		setInputAO(PORTNUMBER, po);
-	}
-
-	public ILogicalOperator getInputAO() {
-		return getInputAO(PORTNUMBER);
 	}
 
 	public SDFAttributeList getInputSchema() {
-		return getInputSchema(0);
+		return getInputSchema(PORTNUMBER);
 	}
 
 	public void setInputSchema(SDFAttributeList schema) {
-		setInputSchema(0, schema);
+		setInputSchema(PORTNUMBER, schema);
 	}
 
-	public IPhysicalOperator getPhysInputPO() {
-		return getPhysInputPO(0);
+	public ILogicalOperator getInputAO(){
+		return getSubscribedTo(PORTNUMBER)==null?null:getSubscribedTo(PORTNUMBER).getTarget();
 	}
+	
+	public Subscription<ISource<?>> getPhysSubscriptionTo() {
+		return getPhysSubscriptionTo(PORTNUMBER);
+	}
+	
+	public void subscribeTo(ILogicalOperator source){
+		subscribeTo(source, 0, 0);
+	}
+
 	
 }
