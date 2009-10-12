@@ -95,4 +95,8 @@ public class DataDictionary {
 	public Set<Entry<String, ILogicalOperator>> getViews() {
 		return viewDefinitions.entrySet();
 	}
+	
+	public void clearViews() {
+		this.viewDefinitions.clear();
+	}
 }

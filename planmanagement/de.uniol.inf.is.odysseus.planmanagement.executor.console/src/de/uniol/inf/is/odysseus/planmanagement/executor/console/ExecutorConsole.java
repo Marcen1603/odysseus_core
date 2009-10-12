@@ -20,6 +20,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 import org.osgi.service.prefs.PreferencesService;
 
+import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListe
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -823,6 +825,15 @@ public class ExecutorConsole implements CommandProvider,
 		} finally {
 			this.preferencesLock.unlock();
 		}
+	}
+	
+	@Help(description="removes all registered sources")
+	public void _clearsources(CommandInterpreter ci) {
+		WrapperPlanFactory.clearSources();
+		DataDictionary.getInstance().sourceTypeMap.clear();
+		DataDictionary.getInstance().entityMap.clear();
+		DataDictionary.getInstance().attributeMap.clear();
+		DataDictionary.getInstance().clearViews();
 	}
 
 	@Help(parameter = "<query id>", description = "stop execution of query")

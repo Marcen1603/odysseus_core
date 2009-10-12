@@ -37,8 +37,12 @@ public class WrapperPlanFactory {
 	}
 	
 	//Fuer P2P
-	public static Map<String, ISource<?>> getSources() {
+	public synchronized static Map<String, ISource<?>> getSources() {
 		return sources;
+	}
+
+	public synchronized static void clearSources() {
+		sources.clear();
 	}
 
 }
