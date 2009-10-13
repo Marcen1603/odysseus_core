@@ -25,6 +25,14 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute> {
 		super(attributes1);
 	}
 
+	public SDFAttributeList(SDFAttribute[] attributes1) {
+		super();
+		for (SDFAttribute a:attributes1){
+			this.add(a);
+		}
+	}
+	
+	
 	public SDFAttributeList(Collection<SDFAttribute> attributes1) {
 		super();
 		super.addAll(attributes1);
