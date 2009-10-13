@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface ILogicalOperator extends IClone, IOwnedOperator, 
@@ -14,12 +13,20 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 
 	public SDFAttributeList getOutputSchema();
 	public void setOutputSchema(SDFAttributeList outElements);
-	public IPredicate getPredicate();
-	public void setPredicate(IPredicate predicate);
 	public SDFAttributeList getInputSchema(int pos);
 	public void setInputSchema(int pos, SDFAttributeList schema);
+	
+//	/**
+//	 * Use InputSchemas to determine OutputSchema
+//	 */
+//	public void calcOutputSchema();
+	
+	public IPredicate getPredicate();
+	public void setPredicate(IPredicate predicate);
+
 	public String getName();
 	public void setName(String name);
+	
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
 	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort);
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);

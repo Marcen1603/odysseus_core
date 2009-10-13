@@ -116,4 +116,19 @@ public class ProjectAO extends UnaryLogicalOp {
 		}
 		return ret;
 	}
+
+	//@Override
+	public void calcOutputSchema() {
+		// TODO: Works only in relational case
+		SDFAttribute[] out = new SDFAttribute[restrictList.length];
+		SDFAttributeList in = getInputSchema();
+		
+		int pos = 0;
+		for (int i: restrictList){
+			out[pos++] = in.get(i); 
+		}
+		
+		setOutputSchema(new SDFAttributeList(out));
+		
+	}
 }
