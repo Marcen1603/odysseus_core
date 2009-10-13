@@ -60,8 +60,6 @@ public class ExecutorConsole implements CommandProvider,
 
 	private static ConsoleFunctions support = new ConsoleFunctions();
 
-	// private ViewerStarter wnd;
-
 	private boolean usePriority = false;
 
 	private Lock preferencesLock = new ReentrantLock();
@@ -367,21 +365,6 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@Help(description = "show query viewer")
-	public void _viewer(CommandInterpreter ci) {
-		// System.out.println("startviewer");
-		// addCommand(support.getArgs(ci));
-		// try {
-		// ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
-		// // cfg.useOGL = viewerOGL;
-		// wnd = new ViewerStarter(null, cfg);
-		// Thread thread = new Thread(wnd, "ViewerThread");
-		// thread.start();
-		// } catch (Throwable e) {
-		// e.printStackTrace();
-		// }
-	}
-
 	@Help(parameter = "<buffer placement strategy id>", description = "set the buffer placement strategy")
 	public void _buffer(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -638,8 +621,6 @@ public class ExecutorConsole implements CommandProvider,
 			} else {
 				addQuery(nexmarkQ[j][Integer.parseInt(args[0])]);
 			}
-			// TODO remove wenn viewer auf events reagiert
-			blah();
 		} else {
 			ci.println("usage [0-5]|* [nio]");
 		}
@@ -710,12 +691,6 @@ public class ExecutorConsole implements CommandProvider,
 				+ "' to boolean value");
 	}
 
-	// .println("add QUERYSTRING [S] - add query [with console-output-sink]");
-	// ci.println("Examples:");
-	// ci
-	// .println("add 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'");
-	// ci.println("add 'SELECT (a * 2) as value FROM test WHERE a > 2' S");
-	// ci.println("");
 	@Help(parameter = "<query string> [S]", description = "add query [with console-output-sink]\n\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -737,8 +712,6 @@ public class ExecutorConsole implements CommandProvider,
 		} else {
 			ci.println("No query argument.");
 		}
-		// TODO: DAS HIER IST NUR EIN HACK!!
-		blah();
 	}
 
 	@Help(description = "show registered queries")
@@ -826,8 +799,8 @@ public class ExecutorConsole implements CommandProvider,
 			this.preferencesLock.unlock();
 		}
 	}
-	
-	@Help(description="removes all registered sources")
+
+	@Help(description = "removes all registered sources")
 	public void _clearsources(CommandInterpreter ci) {
 		WrapperPlanFactory.clearSources();
 		DataDictionary.getInstance().sourceTypeMap.clear();
@@ -919,7 +892,14 @@ public class ExecutorConsole implements CommandProvider,
 			ci.print(cmd.name.substring(1));
 			for (String arg : cmd.getArgs()) {
 				ci.print(" ");
+				boolean containsSpace = arg.contains(" ");
+				if (containsSpace) {
+					ci.print("'");
+				}
 				ci.print(arg);
+				if (containsSpace) {
+					ci.print("'");
+				}
 			}
 			ci.println();
 		}
@@ -1071,28 +1051,6 @@ public class ExecutorConsole implements CommandProvider,
 	@Override
 	public void sendErrorEvent(ErrorEvent eventArgs) {
 		System.out.println("Error Event: " + eventArgs.getMessage());
-	}
-
-	public void blah() {
-		// if (wnd != null) {
-		// ArrayList<IPhysicalOperator> queries = null;
-		// try {
-		// queries = this.executor.getSealedPlan().getRoots();
-		// } catch (PlanManagementException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// for (IPhysicalOperator query : queries) {
-		// if (query == null) {
-		// continue;
-		// }
-		// if (query.isSink()) {
-		// OdysseusModelProviderSink mp = new OdysseusModelProviderSink(
-		// (ISink<?>) query);
-		// wnd.setModelProvider(mp);
-		// }
-		// }
-		// }
 	}
 
 	public void bindPreferences(PreferencesService preferences) {
