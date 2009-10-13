@@ -98,7 +98,7 @@ public class RestructHelper {
 		return ret;
 	}
 	
-	public static Collection<ILogicalOperator> removeRename(RenameAO op){
+	public static Collection<ILogicalOperator> removeOperator(RenameAO op){
 		return removeOperator(op, true);
 	}
 
