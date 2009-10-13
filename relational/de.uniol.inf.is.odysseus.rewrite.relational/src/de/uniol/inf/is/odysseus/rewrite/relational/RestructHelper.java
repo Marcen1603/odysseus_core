@@ -29,21 +29,26 @@ public class RestructHelper {
 	
 	/**
 	 * 
-	 * @param op
+	 * @param remove
 	 * @param reserveOutputSchema: If true the inputschema of all father nodes is set to the output
 	 * schema of the replaced node. E.g. used for deletion of rename-Operation
 	 * @return
 	 */
-	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op, boolean reserveOutputSchema){
+	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp remove, boolean reserveOutputSchema){
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-		Collection<LogicalSubscription> fathers = op.getSubscribtions();
-		LogicalSubscription child = op.getSubscribedTo(0);
+		Collection<LogicalSubscription> fathers = remove.getSubscribtions();
+		LogicalSubscription child = remove.getSubscribedTo(0);
 		// remove Connection between child and op
-		op.unsubscribeTo(child);
+		remove.unsubscribeTo(child);
 		// Subscribe Child to every father of op
 		for (LogicalSubscription father:fathers){
-			op.unsubscribe(father);
+			remove.unsubscribe(father);
 			child.getTarget().subscribe(father.getTarget(), father.getSinkPort(), child.getSourcePort());
+			if (reserveOutputSchema){
+				father.getTarget().setInputSchema(father.getSinkPort(), remove.getOutputSchema());				
+			}else{
+				father.getTarget().setInputSchema(father.getSinkPort(), child.getTarget().getOutputSchema());
+			}
 			ret.add(child.getTarget());
 		}
 		ret.add(child.getTarget());
