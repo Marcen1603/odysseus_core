@@ -101,7 +101,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void process(R object, int port, boolean exclusive) {
+	public void process(R object, int port, boolean exclusive) {		
 		setInputExclusive(exclusive, port);
 		this.delegateSink.process(object, port, exclusive);
 	}
@@ -237,13 +237,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	public void sendPunctuation(PointInTime punctuation) {
 		synchronized (this.subscriptions) {
-			for (PhysicalSubscription<ISource<? extends R>> sub : delegateSink.getSubscribedTo()) {
-				if(sub.getTarget().isSink()) {
-					ISink<?> sink = (ISink<?>) sub.getTarget();
-					sink.processPunctuation(punctuation);
-				} 
-			}
-			//super.sendPunctuation(punctuation);
+			super.sendPunctuation(punctuation);
 		}
 	}	
 	
