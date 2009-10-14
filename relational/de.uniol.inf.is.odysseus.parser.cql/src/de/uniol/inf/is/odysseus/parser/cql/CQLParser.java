@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.IntersectionAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAS;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAdvance;
@@ -118,36 +117,21 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	private static CQLParser instance = null;
 	private static NewSQLParser parser;
 
-	public static synchronized IQueryParser getInstance(){
-		if (instance == null){
+	public static synchronized IQueryParser getInstance() {
+		if (instance == null) {
 			instance = new CQLParser();
 		}
 		return instance;
 	}
-	
+
 	@Override
 	public String getLanguage() {
 		return "CQL";
 	}
-	
+
 	public synchronized List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
-		
-		try {
-			if (parser == null) {
-				parser = new NewSQLParser(new StringReader(query));
-			} else {
-				NewSQLParser.ReInit(new StringReader(query));
-			}
-			ASTStatement statement = NewSQLParser.Statement();
-			CQLParser cqlParser = new CQLParser();
-			cqlParser.visit(statement, null);
-			return cqlParser.plans;
-		} catch (ParseException e) {
-			throw new QueryParseException(e);
-		} catch (NoClassDefFoundError e) {
-			throw new QueryParseException("parse error: missing plugin for language feature", e.getCause());
-		}
+		return parse(new StringReader(query));
 	}
 
 	public synchronized List<ILogicalOperator> parse(Reader reader)
@@ -164,6 +148,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			return cqlParser.plans;
 		} catch (ParseException e) {
 			throw new QueryParseException(e);
+		} catch (NoClassDefFoundError e) {
+			throw new QueryParseException(
+					"parse error: missing plugin for language feature", e
+							.getCause());
 		}
 	}
 
@@ -172,15 +160,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	public Object visit(ASTPriorizedStatement node, Object data) {
-		AbstractLogicalOperator op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
+		AbstractLogicalOperator op = (AbstractLogicalOperator) node
+				.jjtGetChild(0).jjtAccept(this, data);
 		Integer priority = 0;
 		if (node.jjtGetNumChildren() == 2) {
 			priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
 		}
 		this.priorities.add(priority);
-		// TODO: Warum dies? MG erstmal auskommentiert, da sonst doppelte Wurzeln für eine Anfrage
-//		TopAO dummy = new TopAO();
-//		dummy.subscribeTo(op,0,0);		
+		// TODO: Warum dies? MG erstmal auskommentiert, da sonst doppelte
+		// Wurzeln für eine Anfrage
+		// TopAO dummy = new TopAO();
+		// dummy.subscribeTo(op,0,0);
 		plans.add(op);
 		return plans;
 	}
@@ -189,8 +179,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		if (node.jjtGetNumChildren() == 1) {
 			return node.jjtGetChild(0).jjtAccept(this, data);
 		}
-		AbstractLogicalOperator left = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
-		AbstractLogicalOperator right = (AbstractLogicalOperator) node.jjtGetChild(2).jjtAccept(this, data);
+		AbstractLogicalOperator left = (AbstractLogicalOperator) node
+				.jjtGetChild(0).jjtAccept(this, data);
+		AbstractLogicalOperator right = (AbstractLogicalOperator) node
+				.jjtGetChild(2).jjtAccept(this, data);
 		ILogicalOperator setOperator = null;
 		switch (((ASTSetOperator) node.jjtGetChild(1)).getOperation()) {
 		case INTERSECT:
@@ -219,46 +211,50 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 						"inputs of set operator have different schemas");
 			}
 		}
-		setOperator.subscribeTo(left,0,0);
-		setOperator.subscribeTo(right,1,1);
+		setOperator.subscribeTo(left, 0, 0);
+		setOperator.subscribeTo(right, 1, 1);
 		setOperator.setOutputSchema(left.getOutputSchema());
 		return setOperator;
 	}
 
 	public Object visit(ASTSelectStatement statement, Object data) {
-		try{
-		CreateAccessAOVisitor access = new CreateAccessAOVisitor();
-		access.visit(statement, null);
-		AttributeResolver attributeResolver = access.getAttributeResolver();
+		try {
+			CreateAccessAOVisitor access = new CreateAccessAOVisitor();
+			access.visit(statement, null);
+			AttributeResolver attributeResolver = access.getAttributeResolver();
 
-		new CheckAttributes(attributeResolver).visit(statement, null);
+			new CheckAttributes(attributeResolver).visit(statement, null);
 
-		CheckGroupBy checkGroupBy = new CheckGroupBy();
-		checkGroupBy.init(attributeResolver);
-		checkGroupBy.visit(statement, null);
-		if (!checkGroupBy.checkOkay()) {
-			throw new RuntimeException("missing attributes in GROUP BY clause");
-		}
+			CheckGroupBy checkGroupBy = new CheckGroupBy();
+			checkGroupBy.init(attributeResolver);
+			checkGroupBy.visit(statement, null);
+			if (!checkGroupBy.checkOkay()) {
+				throw new RuntimeException(
+						"missing attributes in GROUP BY clause");
+			}
 
-		CheckHaving checkHaving = new CheckHaving();
-		checkHaving.init(attributeResolver);
-		checkHaving.visit(statement, null);
+			CheckHaving checkHaving = new CheckHaving();
+			checkHaving.init(attributeResolver);
+			checkHaving.visit(statement, null);
 
-		CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor();
-		joinVisitor.init(attributeResolver);
-		ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(statement, null);
+			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor();
+			joinVisitor.init(attributeResolver);
+			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(
+					statement, null);
 
-		CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
-		aggregationVisitor.init(top, attributeResolver);
-		aggregationVisitor.visit(statement, null);
-		top = aggregationVisitor.getResult();
+			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
+			aggregationVisitor.init(top, attributeResolver);
+			aggregationVisitor.visit(statement, null);
+			top = aggregationVisitor.getResult();
 
-		top = new CreateProjectionVisitor().createProjection(statement, top,
-				attributeResolver);
-		CreatePriorityAOVisitor prioVisitor = new CreatePriorityAOVisitor(top);
-		prioVisitor.visit(statement, null);
-		top = prioVisitor.getTopOperator();
-		return top;
+			top = new CreateProjectionVisitor().createProjection(statement,
+					top, attributeResolver);
+			CreatePriorityAOVisitor prioVisitor = new CreatePriorityAOVisitor();
+			prioVisitor.setTopOperator(top);
+			prioVisitor.setAttributeResolver(attributeResolver);
+			prioVisitor.visit(statement, null);
+			top = prioVisitor.getTopOperator();
+			return top;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
