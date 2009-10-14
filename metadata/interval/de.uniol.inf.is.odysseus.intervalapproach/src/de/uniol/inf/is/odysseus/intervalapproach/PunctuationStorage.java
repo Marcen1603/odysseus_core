@@ -42,15 +42,18 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 	 *            input data with a timestamp
 	 */
 	protected void updatePunctuationData(W object) {
+		
 		if (storage.size() > 0) {
 			ITimeInterval time = (ITimeInterval) object.getMetadata();
 			PointInTime start = time.getStart();
 
 			Iterator<PointInTime> i = storage.get(currentPort)
 					.iterator();
-			while (i.hasNext()) {
-				PointInTime curPoint = i.next();
-				if (start.afterOrEquals(curPoint)) {
+			while (i.hasNext()) {			
+
+				PointInTime curPoint = i.next();			
+				
+				if (start.beforeOrEquals(curPoint)) {
 					pipe.sendPunctuation(curPoint);
 					pipe.cleanInternalStates(curPoint, object);
 					i.remove();
@@ -73,7 +76,12 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 		//kosten, als ein haeufiges contains(). bitte drueber nachdenken ;).
 		//JS: Okay, da hast du wohl recht mit dem contains. Duplikate waeren
 		//allerdings nicht so gut, da man die Punctuations ja auch irgendwann
-		//rausschreibt. Spaetestens da muss man ja mit ihnen umgehen.		
+		//rausschreibt. Spaetestens da muss man ja mit ihnen umgehen.	
+		
+		if(storage.size() > 1) {
+			currentPort = currentPort^1; // Geht, weil push-basiert und synchronisierte Weitergabe erfolgt
+		}
+		
 		if (!storage.get(currentPort).contains(timestamp)) {
 			storage.get(currentPort).add(timestamp);
 		}

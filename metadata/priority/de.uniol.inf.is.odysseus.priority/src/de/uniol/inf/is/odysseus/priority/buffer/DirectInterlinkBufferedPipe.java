@@ -27,7 +27,7 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 	@Override
 	final protected synchronized void process_next(T object, int port) {
 		
-		storage.setCurrentPort(0);
+		storage.setCurrentPort(port);
 		
 		byte prio = object.getMetadata().getPriority();
 		

@@ -113,6 +113,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
+		
 		storage.setCurrentPort(port);
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
@@ -214,14 +215,20 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	@Override
 	public void cleanInternalStates(PointInTime punctuation,
 			IMetaAttributeContainer<?> current) {
-		//TODO noch in der Entwicklung...
-		/*logger.info("Cleaning JoinTIPO SweepAreas...");
+
+		/*
+		 //Schon besser, macht aber noch nicht alles richtig
+		 System.out.println("Cleaning JoinTIPO SweepAreas...");
 		IMetaAttributeContainer<?> purgeInterval = (IMetaAttributeContainer<?>) current.clone();
 		ITimeInterval punctuationInterval = (ITimeInterval) purgeInterval.getMetadata();
 		punctuationInterval.setStart(punctuation);
 
-		Order order = Order.fromOrdinal(port);
-		areas[otherport].purgeElements((T)purgeInterval, order);*/
+		Order order = Order.fromOrdinal(storage.getCurrentPort());
+		areas[storage.getCurrentPort()^1].purgeElements((T)purgeInterval, order);
+		
+		System.out.println(areas[0].toString());
+		System.out.println("****");
+		System.out.println(areas[1].toString());*/
 
 	}
 
