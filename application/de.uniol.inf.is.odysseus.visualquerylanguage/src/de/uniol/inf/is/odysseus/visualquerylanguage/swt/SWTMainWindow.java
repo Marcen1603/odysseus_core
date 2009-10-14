@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
-import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultQueryController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IQueryController;
@@ -41,11 +40,11 @@ public class SWTMainWindow {
 
 	private final Logger log = LoggerFactory.getLogger(SWTMainWindow.class);
 
-	private final Shell shell;
+	private static Shell shell;
 
 	private IAdvancedExecutor executor = null;
 
-	IQueryController<IQuery> queryController = new DefaultQueryController();
+	IQueryController queryController = new DefaultQueryController();
 
 	private CTabFolder tabFolder;
 	CTabItem queryListTab;
@@ -151,7 +150,7 @@ public class SWTMainWindow {
 		
 		ToolItem newSourceItem = new ToolItem(tools, SWT.PUSH);
 		newSourceItem.setImage(SWTResourceManager.getInstance().getImage(
-				"newQuery"));
+				"neueQuelle"));
 		newSourceItem.setToolTipText("Neue Quelle hinzufügen");
 		newSourceItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -169,7 +168,7 @@ public class SWTMainWindow {
 
 		ToolItem startQueryItem = new ToolItem(tools, SWT.PUSH);
 		startQueryItem.setImage(SWTResourceManager.getInstance().getImage(
-				"newQuery"));
+				"start"));
 		startQueryItem.setToolTipText("Anfrage ausführen");
 		startQueryItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -245,7 +244,7 @@ public class SWTMainWindow {
 		
 		ToolItem removeQueryItem = new ToolItem(tools, SWT.PUSH);
 		removeQueryItem.setImage(SWTResourceManager.getInstance().getImage(
-				"deleteQuery"));
+				"delete"));
 		removeQueryItem.setToolTipText("Anfrage löschen");
 		removeQueryItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -283,7 +282,7 @@ public class SWTMainWindow {
 		
 		ToolItem refreshQueryList = new ToolItem(tools, SWT.PUSH);
 		refreshQueryList.setImage(SWTResourceManager.getInstance().getImage(
-				"refreshQueryList"));
+				"refresh"));
 		refreshQueryList.setToolTipText("Anfrageliste aktualisiern");
 		refreshQueryList.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -362,5 +361,9 @@ public class SWTMainWindow {
 			e1.printStackTrace();
 		}
 		return table;
+	}
+	
+	public static Shell getShell() {
+		return shell;
 	}
 }

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 
 public class SWTSourceCreator{

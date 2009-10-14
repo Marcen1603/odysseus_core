@@ -1,77 +1,35 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.controler;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eclipse.swt.widgets.Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
 
-public class DefaultQueryController implements IQueryController<IQuery> {
+public class DefaultQueryController implements IQueryController{
 
 	private static final Logger log = LoggerFactory
 			.getLogger(DefaultQueryController.class);
 
-	private Collection<IQuery> queries;
-
 	public DefaultQueryController() {
-		this.queries = new ArrayList<IQuery>();
+		
 	}
 
 	@Override
-	public Collection<IQuery> getAllQueries() {
-		return this.queries;
-	}
-
-	@Override
-	public void addQuery(IQuery query) {
-		this.queries.add(query);
-	}
-
-	@Override
-	public IQuery getQueryById(int id) {
-		for (IQuery query : this.queries) {
-			if (query.getID() == id) {
-				return query;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public void removeQuery(IQuery query) {
-		for (IQuery dQuery : this.queries) {
-			if (dQuery == query) {
-				this.queries.remove(query);
-				break;
-			} else {
-				log.info("Query not in list.");
-			}
-		}
-	}
-
-	@Override
-	public void launchQuery(Control control, IExecutor executor) throws ReflectionException {
+	public void launchQuery(Control control, IAdvancedExecutor executor) throws ReflectionException {
 		
 		DefaultGraphArea area = null;
 		ILogicalOperator root = null;

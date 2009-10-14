@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 
 import java.awt.Toolkit;
+import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -9,11 +10,14 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class SWTParameterEditor {
@@ -22,7 +26,7 @@ public class SWTParameterEditor {
 	
 	private Shell shell;
 	
-	public SWTParameterEditor(Shell baseWindow, final String type) {
+	public SWTParameterEditor(Shell baseWindow, final String type, Collection<SDFAttributeList> inputSchemas) {
 		
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE | SWT.APPLICATION_MODAL);
 		shell.setText("Neue Quelle");
@@ -55,6 +59,13 @@ public class SWTParameterEditor {
 				}
 				
 			});
+		}
+		
+		Combo combo = new Combo(shell, SWT.NULL);
+		for (SDFAttributeList sdfAttributeList : inputSchemas) {
+			for (SDFAttribute sdfAttribute : sdfAttributeList) {
+				combo.add(sdfAttribute.toString());
+			}
 		}
 		
 		Button applyButton = new Button(shell, SWT.PUSH);

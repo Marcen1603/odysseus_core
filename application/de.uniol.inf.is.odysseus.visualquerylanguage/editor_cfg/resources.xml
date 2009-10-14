@@ -8,7 +8,11 @@
 	<Image source="editor_cfg/select.png" name="select"/>
 	<Image source="editor_cfg/join.png" name="join"/>
 	<Image source="editor_cfg/NeueAnfrage.png" name="newQuery"/>
-	<Image source="editor_cfg/AnfrageStoppen.png" name="stopQuery"/>
+	<Image source="editor_cfg/stop.png" name="stopQuery"/>
 	<Image source="editor_cfg/projection.png" name="projection"/>
+	<Image source="editor_cfg/play.png" name="start"/>
+	<Image source="editor_cfg/refresh.png" name="refresh"/>
+	<Image source="editor_cfg/delete.png" name="delete"/>
+	<Image source="editor_cfg/neueQuelle.png" name="neueQuelle"/>
 
 </Resources>

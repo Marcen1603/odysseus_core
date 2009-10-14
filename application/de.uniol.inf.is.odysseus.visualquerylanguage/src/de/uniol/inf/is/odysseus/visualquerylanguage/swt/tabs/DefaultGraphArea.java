@@ -64,7 +64,6 @@ import de.uniol.inf.is.odysseus.viewer.view.graph.Vector;
 import de.uniol.inf.is.odysseus.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.visualquerylanguage.Activator;
-import de.uniol.inf.is.odysseus.visualquerylanguage.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.DefaultModelController;
 import de.uniol.inf.is.odysseus.visualquerylanguage.controler.IModelController;
@@ -77,6 +76,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor.CursorManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositioner;
