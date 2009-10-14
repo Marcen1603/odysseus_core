@@ -34,7 +34,7 @@ public class DefaultNodeView<C> implements INodeView<C> {
 		if( conn.getViewedEndNode().equals( this ) ) {
 			connectionsAsEnd.add( conn );
 		}
-		if( conn.getViewedStartNode().equals( this )) {
+		if( this.equals(conn.getViewedStartNode())) {
 			connectionsAsStart.add( conn );
 		}
 	}

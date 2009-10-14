@@ -14,15 +14,34 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 
 	private ILogicalOperator top;
+	private AttributeResolver resolver;
 
-	public CreatePriorityAOVisitor(ILogicalOperator top) {
+	public CreatePriorityAOVisitor() {
+	}
+
+	public void setTopOperator(ILogicalOperator top) {
 		this.top = top;
+		initResolver();
+	}
+
+	private void initResolver() {
+		if (this.top == null || this.resolver == null) {
+			return;
+		}
+		for (SDFAttribute attribute : this.top.getOutputSchema()) {
+			resolver.addAttribute((CQLAttribute) attribute);
+		}
+	}
+
+	public void setAttributeResolver(AttributeResolver resolver) {
+		this.resolver = resolver;
+		initResolver();
 	}
 
 	@Override
 	public Object visit(ASTElementPriorities node, Object data) {
 		PriorityAO<RelationalTuple<? extends IPriority>> ao = new PriorityAO<RelationalTuple<? extends IPriority>>();
-		ao.subscribeTo(top,0,0);
+		ao.subscribeTo(top, 0, 0);
 		ao.setOutputSchema(top.getOutputSchema());
 		ao.setInputSchema(0, top.getOutputSchema());
 		node.childrenAccept(this, ao);
@@ -34,14 +53,10 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTElementPriority node, Object data) {
 		PriorityAO<RelationalTuple<IPriority>> ao = (PriorityAO<RelationalTuple<IPriority>>) data;
-		AttributeResolver tmpResolver = new AttributeResolver();
-		for (SDFAttribute attribute : this.top.getOutputSchema()) {
-			tmpResolver.addAttribute((CQLAttribute) attribute);
-		}
 
 		IPredicate<RelationalTuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate(node.getPredicate(),
-				tmpResolver);
+				resolver);
 		ao.setPriority(node.getPriority(), predicate);
 		return data;
 	}
@@ -53,7 +68,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 				.getPriority());
 		return data;
 	}
-	
+
 	public ILogicalOperator getTopOperator() {
 		return top;
 	}

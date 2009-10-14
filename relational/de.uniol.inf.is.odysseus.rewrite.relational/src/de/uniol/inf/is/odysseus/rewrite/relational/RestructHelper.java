@@ -36,7 +36,7 @@ public class RestructHelper {
 	 */
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp remove, boolean reserveOutputSchema){
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-		Collection<LogicalSubscription> fathers = remove.getSubscribtions();
+		Collection<LogicalSubscription> fathers = remove.getSubscriptions();
 		LogicalSubscription child = remove.getSubscribedTo(0);
 		// remove Connection between child and op
 		remove.unsubscribeTo(child);
@@ -67,7 +67,7 @@ public class RestructHelper {
 	 */
 	public static Collection<ILogicalOperator> insertOperator(ILogicalOperator toInsert, ILogicalOperator after, int sinkPort){
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-		Collection<LogicalSubscription> sinks = after.getSubscribtions();
+		Collection<LogicalSubscription> sinks = after.getSubscriptions();
 		LogicalSubscription source = after.getSubscribedTo(sinkPort);
 		for (LogicalSubscription s: sinks){
 			ret.add(s.getTarget());

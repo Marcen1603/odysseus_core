@@ -53,7 +53,7 @@ public class DroolsRewrite implements IRewrite {
 
 	public ILogicalOperator rewritePlanInternal(ILogicalOperator plan) {
 		
-		logger.info("Current Top subscriptions  "+plan.getSubscribtions().toString());
+		logger.info("Current Top subscriptions  "+plan.getSubscriptions().toString());
 		
 		StatefulSession session = rulebase.newStatefulSession();
 		TopAO top = new TopAO();
@@ -133,7 +133,7 @@ public class DroolsRewrite implements IRewrite {
 			for (LogicalSubscription sub: op.getSubscribedTo()){
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
-			for (LogicalSubscription sub: op.getSubscribtions()){
+			for (LogicalSubscription sub: op.getSubscriptions()){
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
 		}		

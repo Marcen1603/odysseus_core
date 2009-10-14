@@ -37,7 +37,7 @@ public class Utils {
 			ILogicalOperator logical, ISource physical) {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
-		for (LogicalSubscription l : logical.getSubscribtions()) {
+		for (LogicalSubscription l : logical.getSubscriptions()) {
 			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkPort(),
 					l.getSourcePort());
 			ret.add(l.getTarget());

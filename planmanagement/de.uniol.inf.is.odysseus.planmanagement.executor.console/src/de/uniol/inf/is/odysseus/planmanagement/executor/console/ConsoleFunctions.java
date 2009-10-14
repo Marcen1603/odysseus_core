@@ -69,7 +69,7 @@ public class ConsoleFunctions {
 				b.append(((IIterableSource<?>)source).isActive());
 			}
 			b.append("(");
-			b.append(source.getSubscribtions());
+			b.append(source.getSubscriptions());
 			b.append(")\n");
 		}		
 	}

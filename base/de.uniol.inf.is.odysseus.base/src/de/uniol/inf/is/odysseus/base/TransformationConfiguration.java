@@ -2,19 +2,20 @@ package de.uniol.inf.is.odysseus.base;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 public class TransformationConfiguration {
 	private final Set<String> metaTypes;
 	private final String dataType;
-	private Properties options;
+	private Map<String, Object> options;
 
 	public TransformationConfiguration(String dataType, String... metaTypes) {
 		this.dataType = dataType;
 		this.metaTypes = toSet(metaTypes);
-		this.options = new Properties();
+		this.options = new HashMap<String, Object>();
 	}
 
 	public TransformationConfiguration(final String dataType,

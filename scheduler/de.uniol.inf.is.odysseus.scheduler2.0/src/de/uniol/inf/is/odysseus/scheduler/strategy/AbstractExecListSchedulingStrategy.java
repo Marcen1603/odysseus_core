@@ -161,7 +161,7 @@ abstract public class AbstractExecListSchedulingStrategy extends
 				}
 			}
 		}
-		for (PhysicalSubscription<? extends ISink<?>> sub: s.getSubscribtions() ){
+		for (PhysicalSubscription<? extends ISink<?>> sub: s.getSubscriptions() ){
 			if (sub.getTarget() instanceof ISource<?>){
 				getPathToRoot((ISource<?>)sub.getTarget(), schedulableOps, allOps, virtualOps);
 			}

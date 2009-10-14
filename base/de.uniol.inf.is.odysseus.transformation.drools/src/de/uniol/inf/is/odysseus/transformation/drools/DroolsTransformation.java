@@ -48,7 +48,7 @@ public class DroolsTransformation implements ITransformation {
 			for (LogicalSubscription sub: op.getSubscribedTo()){
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
-			for (LogicalSubscription sub: op.getSubscribtions()){
+			for (LogicalSubscription sub: op.getSubscriptions()){
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
 		}		

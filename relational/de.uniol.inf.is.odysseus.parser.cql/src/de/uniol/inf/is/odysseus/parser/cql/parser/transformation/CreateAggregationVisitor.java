@@ -169,18 +169,18 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	public ILogicalOperator getResult() {
 		// remove possible subscriptions!!
 		if (this.select != null) {
-			for (LogicalSubscription l: select.getSubscribtions()){				
+			for (LogicalSubscription l: select.getSubscriptions()){				
 				select.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
 			}
 			return this.select;
 		}
 		if (this.ao.hasAggregations() || hasGrouping ){
-			for (LogicalSubscription l: ao.getSubscribtions()){				
+			for (LogicalSubscription l: ao.getSubscriptions()){				
 				ao.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
 			}
 			return this.ao;
 		}else{
-			for (LogicalSubscription l: top.getSubscribtions()){				
+			for (LogicalSubscription l: top.getSubscriptions()){				
 				top.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
 			}
 			return top;

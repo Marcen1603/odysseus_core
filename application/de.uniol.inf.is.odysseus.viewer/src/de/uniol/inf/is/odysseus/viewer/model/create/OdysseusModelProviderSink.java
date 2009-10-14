@@ -116,7 +116,7 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 		}
 		
 		if( sink instanceof ISource<?> ) {
-			for (PhysicalSubscription<? extends ISink<?>> sub: ((ISource<?>)sink).getSubscribtions() ){
+			for (PhysicalSubscription<? extends ISink<?>> sub: ((ISource<?>)sink).getSubscriptions() ){
 				parse( (ISink<?>)sub.getTarget(), graphModel, node, true );
 			}
 		}
@@ -163,7 +163,7 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 		traversedObjects.add( source );
 		
 		// Subscriptions folgen
-		for (PhysicalSubscription<? extends ISink<?>> sub: source.getSubscribtions() ){
+		for (PhysicalSubscription<? extends ISink<?>> sub: source.getSubscriptions() ){
 			parse( (ISink<?>)sub.getTarget(), graphModel, node, true );
 		}
 	}

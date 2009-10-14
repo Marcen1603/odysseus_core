@@ -322,7 +322,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	final public Collection<LogicalSubscription> getSubscribtions() {
+	final public Collection<LogicalSubscription> getSubscriptions() {
 		synchronized (this.subscriptions) {
 			return this.subscriptions.values();
 		}

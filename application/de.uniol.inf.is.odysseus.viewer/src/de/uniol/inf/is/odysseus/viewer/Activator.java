@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.viewer;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -35,7 +36,8 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 		context = bc;
 		SWTResourceManager.resourceBundle = bc.getBundle();
 		// TODO config aus properties service lesen
-
+		// do initialization inside a thread, so bundle startup
+		// isn't blocked by execTracker.waitForService(0)
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -54,16 +56,21 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 								"Viewer Thread");
 						viewerThread.start();
 						executor.addPlanModificationListener(Activator.this);
+						updateModel(executor.getSealedPlan().getRoots());
 					} else {
 						logger.error("cannot get executor service");
 					}
 					execTracker.close();
 				} catch (InterruptedException e) {
 					logger.error("cannot get executor service");
+				} catch (PlanManagementException e) {
+					logger.error(e.getMessage());
 				}
 			}
 
 		});
+		// daemon thread, so shutdown can be completed,
+		// even if waitForService(0) is blocking
 		t.setDaemon(true);
 		t.start();
 	}
@@ -85,21 +92,29 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		System.out.println("MMMMMMMMMMMMMMUUUHHH");
-		ArrayList<IPhysicalOperator> roots;
 		try {
-			roots = eventArgs.getSender().getSealedPlan().getRoots();
-			if (!roots.isEmpty()) {
-				IPhysicalOperator lastRoot = roots.get(roots.size() - 1);
-				if (lastRoot instanceof ISink<?>) {
-					this.viewerStarter
-							.setModelProvider(new OdysseusModelProviderSink(
-									(ISink<?>) lastRoot));
-				}
-			}
+			ArrayList<IPhysicalOperator> roots = eventArgs.getSender()
+					.getSealedPlan().getRoots();
+			updateModel(roots);
 		} catch (PlanManagementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private void updateModel(ArrayList<IPhysicalOperator> roots) {
+		if (!roots.isEmpty()) {
+			ListIterator<IPhysicalOperator> li = roots.listIterator(roots
+					.size());
+			IPhysicalOperator lastRoot = null;
+			do {
+				lastRoot = li.previous();
+			} while (li.hasPrevious() && lastRoot == null);
+			if (lastRoot != null && lastRoot instanceof ISink<?>) {
+				this.viewerStarter
+						.setModelProvider(new OdysseusModelProviderSink(
+								(ISink<?>) lastRoot));
+			}
 		}
 	}
 
