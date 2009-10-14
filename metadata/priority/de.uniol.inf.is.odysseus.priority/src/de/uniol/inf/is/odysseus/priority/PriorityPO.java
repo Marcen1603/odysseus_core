@@ -40,7 +40,7 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 				transfer(next);
 				ITimeInterval time = (ITimeInterval) next.getMetadata();
 				if(curPriority.getKey() != this.defaultPriority) {
-					sendPunctuation(time.getStart());
+					sendPunctuation(time.getEnd());
 				}
 				return;
 			}

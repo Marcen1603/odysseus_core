@@ -50,10 +50,10 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 			Iterator<PointInTime> i = storage.get(currentPort)
 					.iterator();
 			while (i.hasNext()) {			
-
-				PointInTime curPoint = i.next();			
 				
-				if (start.beforeOrEquals(curPoint)) {
+				PointInTime curPoint = i.next();			
+
+				if (start.afterOrEquals(curPoint)) {
 					pipe.sendPunctuation(curPoint);
 					pipe.cleanInternalStates(curPoint, object);
 					i.remove();
@@ -69,6 +69,7 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 	}
 
 	public void storePunctuation(PointInTime timestamp) {
+
 		//JJ: TODO das contains ist unter umstaenden relativ teuer.
 		//wenn das oft aufgerufen werden muss, ist zu ueberlegen
 		//statt einer liste einen baum zu verwenden (priority list).
