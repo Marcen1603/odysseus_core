@@ -17,5 +17,5 @@ public interface IPunctuationPipe<W,R> extends IPipe<W,R>{
 	 * @param punctuation the punctuation getting out of date
 	 * @param current the current processed data stream element
 	 */
-	public void cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
+	public boolean cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
 }

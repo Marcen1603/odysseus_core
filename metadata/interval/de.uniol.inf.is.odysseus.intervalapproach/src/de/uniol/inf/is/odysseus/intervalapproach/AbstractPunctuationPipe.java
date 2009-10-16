@@ -32,7 +32,7 @@ public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<
 		storage.subscribePort(getInputPortCount());
 	}
 
-	abstract public void cleanInternalStates(PointInTime punctuation,
+	abstract public boolean cleanInternalStates(PointInTime punctuation,
 			IMetaAttributeContainer<?> current);
 
 	@Override

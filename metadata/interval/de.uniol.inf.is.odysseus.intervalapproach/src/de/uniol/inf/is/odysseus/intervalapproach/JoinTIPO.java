@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * implementierten Operators entspricht jedoch der Logik eines JoinOperators im
  * Intervallansatz.
  * 
- * @author Jonas Jacobi, abolles
+ * @author Jonas Jacobi, abolles, jan steinke
  * 
  * @param <K>
  *            Metadatentyp
@@ -42,6 +42,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferFunction<T> transferFunction;
 	protected SDFAttributeList outputSchema;
+	protected IDummyDataCreationFunction<K,T> creationFunction;
 
 	private int otherport = 0;
 		
@@ -113,7 +114,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
-		
+
 		storage.setCurrentPort(port);
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
@@ -155,6 +156,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			T newElement = merge(object, next, order);
 			transferFunction.transfer(newElement);
 		}
+
+		storage.updatePunctuationData(object);
 	}
 
 	private T merge(T left, T right, Order order) {
@@ -211,25 +214,40 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		return transferFunction;
 	}
 
+	public IDummyDataCreationFunction<K, T> getCreationFunction() {
+		return creationFunction;
+	}
+
+	public void setCreationFunction(
+			IDummyDataCreationFunction<K, T> creationFunction) {
+		this.creationFunction = creationFunction;
+	}	
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void cleanInternalStates(PointInTime punctuation,
-			IMetaAttributeContainer<?> current) {
-
-		/*
-		 //Schon besser, macht aber noch nicht alles richtig
-		 System.out.println("Cleaning JoinTIPO SweepAreas...");
-		IMetaAttributeContainer<?> purgeInterval = (IMetaAttributeContainer<?>) current.clone();
-		ITimeInterval punctuationInterval = (ITimeInterval) purgeInterval.getMetadata();
-		punctuationInterval.setStart(punctuation);
-
-		Order order = Order.fromOrdinal(storage.getCurrentPort());
-		areas[storage.getCurrentPort()^1].purgeElements((T)purgeInterval, order);
+	public boolean cleanInternalStates(PointInTime punctuation,
+			IMetaAttributeContainer<?> current) {	
 		
-		System.out.println(areas[0].toString());
-		System.out.println("****");
-		System.out.println(areas[1].toString());*/
+		Order order = Order.fromOrdinal(storage.getCurrentPort());
 
+		Iterator<T> priorities = areas[storage.getCurrentPort()].iterator();
+		
+		// Kann die Punctuation keinem priorisierten Element mehr zugeordnet werden, braucht man sie nicht
+		// mehr fuers Join.
+		boolean finished = true;
+		
+		while(priorities.hasNext())  {
+			T element = priorities.next();
+			
+			if(creationFunction.hasMetadata(element) && element.getMetadata().getStart().equals(punctuation)) {
+				IMetaAttributeContainer<?> purgeInterval = creationFunction.createMetadata((T) element);
+				areas[storage.getCurrentPort()^1].purgeElements((T)purgeInterval, order);
+				element = (T) purgeInterval;
+				finished = false;
+			}
+		}
+
+		return finished;
 	}
 
 }

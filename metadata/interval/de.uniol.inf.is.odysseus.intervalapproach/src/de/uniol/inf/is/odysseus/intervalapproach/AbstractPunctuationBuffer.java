@@ -7,6 +7,15 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 
+/**
+ * Provides basic functionality for interval based buffers to handle data
+ * streams in presence of punctuations.
+ * 
+ * @author Jan Steinke
+ * 
+ * @param <W>
+ * @param <R>
+ */
 abstract public class AbstractPunctuationBuffer<W extends IMetaAttributeContainer<?>, R>  extends BufferedPipe<W> implements IPunctuationPipe<W,W>{
 	final protected List<PointInTime> punctuationStorage = new ArrayList<PointInTime>();
 
@@ -17,7 +26,7 @@ abstract public class AbstractPunctuationBuffer<W extends IMetaAttributeContaine
 		storage.updatePunctuationData(object);
 	}	
 	
-	abstract public void cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
+	abstract public boolean cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
 	
 	@Override
 	public void processPunctuation(PointInTime timestamp) {

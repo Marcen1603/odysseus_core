@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.priority.buffer;
 
+import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -48,7 +49,8 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 	}
 
 	@Override
-	public void cleanInternalStates(PointInTime punctuation,
+	public boolean cleanInternalStates(PointInTime punctuation,
 			IMetaAttributeContainer<?> current) {
+		return true;
 	}
 }
