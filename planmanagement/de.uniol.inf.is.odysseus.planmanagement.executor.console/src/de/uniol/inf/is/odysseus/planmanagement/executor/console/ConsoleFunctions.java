@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.priority.PriorityPO;
 
 public class ConsoleFunctions {
 	
@@ -73,6 +74,40 @@ public class ConsoleFunctions {
 			b.append(")\n");
 		}		
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void changePunctuationState(ISource<?> source, int depth, boolean usePunctuations, StringBuffer b) {
+		if(source == null) {
+			return;
+		}
+		
+		if(source instanceof PriorityPO) {
+			b.append("PriorityPO - Punctuations: " + usePunctuations);
+			((PriorityPO) source).setPunctuationActive(usePunctuations);
+		}		
+		
+		if (source instanceof ISink) {
+			changePunctuationState((ISink<?>) source, depth, usePunctuations, b);
+		} 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void changePunctuationState(ISink<?> mySink, int depth, boolean usePunctuations, StringBuffer b) {
+		if(mySink == null) {
+			return;
+		}
+
+		if(mySink instanceof PriorityPO) {
+			b.append("PriorityPO - Punctuations: " + usePunctuations);
+			((PriorityPO) mySink).setPunctuationActive(usePunctuations);
+		}		
+		
+		for (PhysicalSubscription<? extends ISource<?>> source : mySink
+				.getSubscribedTo()) {
+			changePunctuationState(source.getTarget(), depth + 1,usePunctuations, b);
+		}
+		
+	}	
 	
 	@SuppressWarnings("unchecked")
 	public void printPlanMetadata(ISink sink) {

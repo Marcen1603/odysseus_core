@@ -444,6 +444,46 @@ public class ExecutorConsole implements CommandProvider,
 			ci.println(partialPlan.toString());
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Help(description = "<on|off> - Adds or removes punctuation support inside every available PriorityPO.")
+	public void _addPunctuations(CommandInterpreter ci) {
+		boolean usePunctuations = false;
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		try {
+			if (args != null && args.length >= 1) {
+				int depth = 0;
+				if(args.length >= 2) {
+					depth = Integer.valueOf(args[1]);
+
+					if (depth < 1) {
+						depth = 1;
+					}
+				}
+				
+				StringBuffer buff = new StringBuffer();
+				usePunctuations = toBoolean(args[0]);
+				
+				for (IPhysicalOperator root : this.executor.getSealedPlan()
+						.getRoots()) {
+
+					if (root.isSink()) {
+						support.changePunctuationState((ISink) root, depth, usePunctuations, buff);
+					} else {
+						support.changePunctuationState((ISource) root, depth, usePunctuations, buff);
+					}
+				}		
+				ci.println(buff.toString());
+				
+			}
+		} catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+		ci.println("punctuations are "
+				+ (usePunctuations ? "activated" : "deactivated"));
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@Help(description = "dump physical plan of all registered roots")

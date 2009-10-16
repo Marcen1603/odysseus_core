@@ -19,11 +19,13 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 
 	private final Map<Byte, IPredicate<? super T>> priorites;
 	private final byte defaultPriority;
-	
+	private boolean isPunctuationActive;
+
 	public PriorityPO(PriorityAO<T> priorityAO) {
 		super();
 		this.priorites = priorityAO.getPriorities();
 		this.defaultPriority = priorityAO.getDefaultPriority();
+		this.isPunctuationActive = priorityAO.isPunctuationActive();
 	}
 
 	@Override
@@ -39,7 +41,7 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 				next.getMetadata().setPriority(curPriority.getKey());
 				transfer(next);
 				ITimeInterval time = (ITimeInterval) next.getMetadata();
-				if(curPriority.getKey() != 0) {
+				if(curPriority.getKey() != 0 && isPunctuationActive) {
 					sendPunctuation(time.getStart());
 				}
 				return;
@@ -54,5 +56,13 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>> 
 	public void processPunctuation(PointInTime timestamp) {
 		sendPunctuation(timestamp);
 	}		
+	
+	public boolean isPunctuationActive() {
+		return isPunctuationActive;
+	}
+
+	public void setPunctuationActive(boolean isPunctuationActive) {
+		this.isPunctuationActive = isPunctuationActive;
+	}	
 
 }
