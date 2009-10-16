@@ -8,8 +8,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriority;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
 public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 
@@ -27,9 +26,6 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 	private void initResolver() {
 		if (this.top == null || this.resolver == null) {
 			return;
-		}
-		for (SDFAttribute attribute : this.top.getOutputSchema()) {
-			resolver.addAttribute((CQLAttribute) attribute);
 		}
 	}
 
@@ -55,8 +51,12 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 		PriorityAO<RelationalTuple<IPriority>> ao = (PriorityAO<RelationalTuple<IPriority>>) data;
 
 		IPredicate<RelationalTuple<?>> predicate;
+		IAttributeResolver tmpResolver = new DirectAttributeResolver(top
+				.getOutputSchema());
+		// TODO resolving mit dem anderen resolver auch machen und
+		// dementsprechend position des aos setzen
 		predicate = CreatePredicateVisitor.toPredicate(node.getPredicate(),
-				resolver);
+				tmpResolver);
 		ao.setPriority(node.getPriority(), predicate);
 		return data;
 	}
