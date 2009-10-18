@@ -354,7 +354,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@Help(parameter = "<scheduler id>", description = "set scheduler")
+	@Help(parameter = "<scheduler id id_strategy>", description = "set scheduler and it's strategy")
 	public void _scheduler(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
