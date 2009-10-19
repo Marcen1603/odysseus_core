@@ -5,6 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.auroraf
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.monitoring.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.base.plan,
  de.uniol.inf.is.odysseus.priority,
