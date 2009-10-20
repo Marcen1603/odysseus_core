@@ -1,8 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rewrite Priority
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.priority
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.priority;singleton:=true
 Bundle-Version: 1.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools;bundle-version="1.0.1"
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.priority
+Import-Package: de.uniol.inf.is.odysseus.priority,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.6"
+Bundle-ClassPath: .
