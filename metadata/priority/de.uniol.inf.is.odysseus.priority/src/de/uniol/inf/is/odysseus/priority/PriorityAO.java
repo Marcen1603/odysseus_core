@@ -85,8 +85,17 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 	}
 
 	public boolean isPunctuationActive() {
-		// TODO Auto-generated method stub
 		return isPunctuationActive;
 	}
+	
+	private boolean isActive = true;
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}	
 
 }
