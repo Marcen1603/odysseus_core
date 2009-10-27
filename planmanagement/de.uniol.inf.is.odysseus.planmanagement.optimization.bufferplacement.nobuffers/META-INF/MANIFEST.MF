@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: No Buffers
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.nobuffers
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement
+Service-Component: OSGI-INF/component.xml
