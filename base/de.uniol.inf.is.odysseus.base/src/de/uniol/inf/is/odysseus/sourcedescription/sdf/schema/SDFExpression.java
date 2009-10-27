@@ -44,6 +44,16 @@ public class SDFExpression implements Serializable {
 	private Object value;
 
 	private List<SDFAttribute> attributes;
+	
+	/**
+	 * Using prediction functions you know
+	 * in advance of query processing, which
+	 * attributes have to be used and where
+	 * they are located in the schema. So the
+	 * attribute positions can be initialized
+	 * in advance.
+	 */
+	private int[] attributePositions;
 
 	private SDFAttribute attribute;
 
@@ -151,8 +161,22 @@ public class SDFExpression implements Serializable {
 				setValue(myParser.evaluate(myNode));
 			}
 		} catch (ParseException e) {
+			System.out.println("Expr: " + value);
 			throw new IllegalArgumentException(e);
 		}
+	}
+	
+	public void initAttributePositions(SDFAttributeList schema){
+		this.attributePositions = new int[this.attributes.size()];
+		
+		int j = 0;
+		for (SDFAttribute curAttribute : this.attributes) {
+			this.attributePositions[j++] = schema.indexOf(curAttribute);
+		}
+	}
+	
+	public int[] getAttributePositions(){
+		return this.attributePositions;
 	}
 
 	/**
@@ -172,6 +196,7 @@ public class SDFExpression implements Serializable {
 		} else {
 			init(expression.attribute);
 		}
+		this.attributePositions = expression.attributePositions;
 	}
 
 	private Variable toVariable(String token) {
