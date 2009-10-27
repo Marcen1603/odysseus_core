@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Operator-List xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="parameterSchema.xsd">
+	
+	<pipes>
+		<pipe>
+			<pipe-name>Selektion</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO</pipe-type>
+			<pipe-image>select</pipe-image>
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Join-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO</pipe-type>
+			<pipe-image>join</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>false</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Projektion</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO</pipe-type>
+			<pipe-image>projection</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Berechnungs-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.MapAO</pipe-type>
+			<pipe-image>calculate</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Fensteroperator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO</pipe-type>
+			<pipe-image>window</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Aggregation</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO</pipe-type>
+			<pipe-image>aggregate</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Prioritäts-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.priority.PriorityAO</pipe-type>
+			<pipe-image>priority</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Unions-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO</pipe-type>
+			<pipe-image>union</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Intersektion</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.IntersectionAO</pipe-type>
+			<pipe-image>intersection</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+		<pipe>
+			<pipe-name>Differenz-Operator</pipe-name>
+			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO</pipe-type>
+			<pipe-image>difference</pipe-image>
+			
+			<sparams>
+				
+				<setterParameter>
+					<name>Predicate</name>
+					<type>RelationalPredicate</type>
+					<setter>setPredicate</setter>
+					<editor>true</editor>
+				</setterParameter>
+				
+			</sparams>
+		</pipe>
+		
+	</pipes>
+	
+	<sinks>
+	
+	</sinks>
+
+</Operator-List>

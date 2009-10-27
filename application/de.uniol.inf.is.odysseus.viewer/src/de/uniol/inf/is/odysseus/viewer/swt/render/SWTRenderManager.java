@@ -453,6 +453,8 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 				}
 				
 				if( graphView != null ) {
+					
+					// Knoten finden
 					Collection<INodeView<C>> nodesToSelect = new ArrayList<INodeView<C>>();
 					for( INodeView<C> nodeDisplay : graphView.getViewedNodes() ) {
 						
@@ -468,7 +470,10 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 						}
 					}
 					nodeSelector.select( nodesToSelect );
-								
+					
+					// Verbindungen finden
+					
+					
 					refreshView();
 				}
 			}	

@@ -14,6 +14,7 @@ public class SWTImageSymbolElement<C> extends AbstractUnfreezableSWTSymbolElemen
 	
 	public SWTImageSymbolElement( String imageName ) {
 		this.imageName = imageName;
+		loadImage();
 	}
 	
 	@Override
@@ -28,6 +29,14 @@ public class SWTImageSymbolElement<C> extends AbstractUnfreezableSWTSymbolElemen
 			
 			gc.drawImage( image, 0, 0, imageWidth, imageHeight, pos.getX(), pos.getY(), width, height );
 		}
+	}
+	
+	public final int getImageHeight() {
+		return imageHeight;
+	}
+	
+	public final int getImageWidth() {
+		return imageWidth;
 	}
 
 	private void loadImage() {
