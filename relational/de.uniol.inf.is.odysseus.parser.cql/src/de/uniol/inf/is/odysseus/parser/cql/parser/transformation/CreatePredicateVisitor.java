@@ -172,7 +172,6 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 						.jjtGetChild(2);
 				ArrayList leftVRows = leftVector.getMatrix();
 				
-				int x = 0;
 
 				double[][] leftM = new double[leftRows.size()][((ArrayList) leftRows
 						.get(0)).size()];
