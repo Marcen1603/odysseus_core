@@ -1,27 +1,32 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.model.operators;
 
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultParamSetter<T> implements IParamSetter<T>{
 	
 	private String type;
+	private Collection<String> typeList;
 	private T value;
 	private String setter;
 	private String name = "";
+	private boolean hasEditor = false;
 	
 	private static final Logger logger = LoggerFactory
 	.getLogger(DefaultParamSetter.class);
 	
-	public DefaultParamSetter (String type, String setter, String name) {
+	public DefaultParamSetter (String type, Collection<String> typeList, String setter, String name) {
 		this.type = type;
+		this.typeList = typeList;
 		this.setter = setter;
 		this.name = name;
 	}
 
 	@Override
-	public String getType() {
-		return type;
+	public Collection<String> getTypeList() {
+		return typeList;
 	}
 
 	@Override
@@ -53,6 +58,21 @@ public class DefaultParamSetter<T> implements IParamSetter<T>{
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public boolean hasEditor() {
+		return this.hasEditor;
+	}
+	
+	@Override
+	public void setEditor(boolean hasEditor) {
+		this.hasEditor = hasEditor;
+	}
+
+	@Override
+	public String getType() {
+		return this.type;
 	}
 
 }

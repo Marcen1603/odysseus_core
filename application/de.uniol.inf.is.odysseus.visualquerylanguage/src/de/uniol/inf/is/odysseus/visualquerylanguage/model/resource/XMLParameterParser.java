@@ -61,8 +61,11 @@ public class XMLParameterParser implements IParameterConfiguration {
 	private String pipeImage = "";
 	private String pName = "";
 	private String pType = "";
+	private Collection<String> pTypeList = new ArrayList<String>();
 	private Integer pPosition = null;
 	private String pSetter = "";
+	private boolean pEditor = false;
+	private boolean newEditor = false;
 	DefaultSourceContent source = null;
 	DefaultSinkContent sink = null;
 	DefaultPipeContent pipe = null;
@@ -191,13 +194,18 @@ public class XMLParameterParser implements IParameterConfiguration {
 					newPipeType = true;
 				}else if (node.getNodeName().equals("name")) {
 					pName = childNodes.item(i).getNodeValue();
-				}else if (node.getNodeName().equals("type")) {
+				}else if (node.getNodeName().equals("ptype")) {
 					pType = childNodes.item(i).getNodeValue();
+				}else if(node.getNodeName().equals("type")) {
+					pTypeList.add(childNodes.item(i).getNodeValue());
 				}else if (node.getNodeName().equals("position")) {
 					pPosition = Integer.parseInt(childNodes.item(i)
 							.getNodeValue());
 				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
+				}else if (node.getNodeName().equals("editor")) {
+					pEditor = Boolean.parseBoolean(childNodes.item(i).getNodeValue());
+					newEditor = true;
 				}
 				if (newPipe && newPipeType && newPipeImage) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
@@ -210,26 +218,30 @@ public class XMLParameterParser implements IParameterConfiguration {
 					newPipe = false;
 					newPipeType = false;
 					newPipeImage = false;
+					newEditor = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (pipeParamComplete()) {
 						if (pPosition != null && pipe != null) {
 							pipes.remove(pipe);
-							pipe.getConstructParameterList().add(
-									ParamConstructFactory.getInstance().createParam(pType, pPosition, pName));
+							IParamConstruct<?> cParam = ParamConstructFactory.getInstance().createParam(pType, pTypeList, pPosition, pName);
+							cParam.setEditor(pEditor);
+							pipe.getConstructParameterList().add(cParam);
 							pName = "";
 							pType = "";
 							pPosition = null;
 							pipes.add(pipe);
 						} else if (!pSetter.isEmpty() && pipe != null) {
 							pipes.remove(pipe);
-							pipe.getSetterParameterList().add(
-									ParamSetterFactory.getInstance().createParam(pType, pSetter, pName));
+							IParamSetter<?> sParam = ParamSetterFactory.getInstance().createParam(pType, pTypeList, pSetter, pName);
+							sParam.setEditor(pEditor);
+							pipe.getSetterParameterList().add(sParam);
 							pName = "";
 							pType = "";
 							pSetter = "";
 							pipes.add(pipe);
 						}
+						pTypeList = new ArrayList<String>();
 					}
 				}
 				getPipeNodes(childNodes.item(i));
@@ -257,13 +269,18 @@ public class XMLParameterParser implements IParameterConfiguration {
 					newSinkType = true;
 				}else if (node.getNodeName().equals("name")) {
 					pName = childNodes.item(i).getNodeValue();
-				}else if (node.getNodeName().equals("type")) {
+				}else if (node.getNodeName().equals("ptype")) {
 					pType = childNodes.item(i).getNodeValue();
+				}else if(node.getNodeName().equals("type")) {
+					pTypeList.add(childNodes.item(i).getNodeValue());
 				}else if (node.getNodeName().equals("position")) {
 					pPosition = Integer.parseInt(childNodes.item(i)
 							.getNodeValue());
 				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
+				}else if (node.getNodeName().equals("editor")) {
+					pEditor = Boolean.parseBoolean(childNodes.item(i).getNodeValue());
+					newEditor = true;
 				}
 				if (newSink && newSinkType && newSinkImage) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
@@ -276,26 +293,30 @@ public class XMLParameterParser implements IParameterConfiguration {
 					newSink = false;
 					newSinkType = false;
 					newSinkImage = false;
+					newEditor = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (sinkParamComplete()) {
 						if (pPosition != null && sink != null) {
 							sinks.remove(sink);
-							sink.getConstructParameterList().add(
-									ParamConstructFactory.getInstance().createParam(pType, pPosition, pName));
+							IParamConstruct<?> cParam = ParamConstructFactory.getInstance().createParam(pType, pTypeList, pPosition, pName);
+							cParam.setEditor(pEditor);
+							sink.getConstructParameterList().add(cParam);
 							pName = "";
 							pType = "";
 							pPosition = null;
 							sinks.add(sink);
 						} else if (!pSetter.isEmpty() && sink != null) {
 							sinks.remove(sink);
-							sink.getSetterParameterList().add(
-									ParamSetterFactory.getInstance().createParam(pType, pSetter, pName));
+							IParamSetter<?> sParam = ParamSetterFactory.getInstance().createParam(pType, pTypeList, pSetter, pName);
+							sParam.setEditor(pEditor);
+							sink.getSetterParameterList().add(sParam);
 							pName = "";
 							pType = "";
 							pSetter = "";
 							sinks.add(sink);
 						}
+						pTypeList = new ArrayList<String>();
 					}
 				}
 				getSinkNodes(childNodes.item(i));
@@ -315,6 +336,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 		} else if (pPosition != null && !pSetter.isEmpty()) {
 			logger.warn("Parameter has Position and Setter");
 			return false;
+		}else if (newEditor == false) {
+			return false;
 		}
 		return true;
 	}
@@ -326,10 +349,12 @@ public class XMLParameterParser implements IParameterConfiguration {
 			return false;
 		} else if (pType.isEmpty()) {
 			return false;
-		} else if (pPosition == null && pSetter.isEmpty()) {
+		}else if (pPosition == null && pSetter.isEmpty()) {
 			return false;
 		} else if (pPosition != null && !pSetter.isEmpty()) {
 			logger.warn("Parameter has Position and Setter");
+			return false;
+		}else if (newEditor == false) {
 			return false;
 		}
 		return true;

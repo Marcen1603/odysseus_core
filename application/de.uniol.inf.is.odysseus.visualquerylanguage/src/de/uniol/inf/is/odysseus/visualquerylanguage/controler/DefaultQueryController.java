@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.controler;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.swt.widgets.Control;
 import org.slf4j.Logger;
@@ -17,6 +21,8 @@ import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParam;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
 
 public class DefaultQueryController implements IQueryController{
@@ -28,6 +34,7 @@ public class DefaultQueryController implements IQueryController{
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void launchQuery(Control control, IAdvancedExecutor executor) throws ReflectionException {
 		
@@ -42,6 +49,20 @@ public class DefaultQueryController implements IQueryController{
 
 		for (INodeModel<INodeContent> nodeModel : area.getController()
 				.getModel().getNodes()) {
+			for (IParamSetter<?> param : nodeModel.getContent().getSetterParameterList()) {
+				try {
+					Object value = getParamValue(getParamClasses(param), param.getValue(), param.getTypeList().size()-1);
+					Class paramClass = Class.forName(param.getType());
+					Class opClass = nodeModel.getContent().getOperator().getClass();
+					Class[] pClass = new Class[1];
+					pClass[0] = paramClass;
+					Method m = opClass.getMethod(param.getSetter(), pClass);
+					m.invoke(value);
+				} catch (Exception e) {
+					log.error("While trying to create Parameters.");
+					e.printStackTrace();
+				}
+			}
 			if (nodeModel.getConnectionsAsStartNode().isEmpty()) {
 				sinkCounter++;
 			}
@@ -67,7 +88,6 @@ public class DefaultQueryController implements IQueryController{
 		ArrayList<ILogicalOperator> opList = new ArrayList<ILogicalOperator>();
 		ArrayList<INodeModel<INodeContent>> modelList = new ArrayList<INodeModel<INodeContent>>();
 		ILogicalOperator logOp = null;
-		WindowAO windowOp = null;
 		
 		ILogicalOperator root = null;
 		
@@ -77,21 +97,10 @@ public class DefaultQueryController implements IQueryController{
 			logOp = nodeModel.getContent().getOperator();
 			modelList.add(nodeModel);
 			
-			if(logOp instanceof WindowAO) {
-				windowOp = (WindowAO) logOp;
-			}
-			
-			if(windowOp != null) {
-				opList.add(windowOp);
-			}else {
-				opList.add(logOp);
-			}
+			opList.add(logOp);
+
 			if(nodeModel.getConnectionsAsStartNode().isEmpty()) {
-				if(windowOp != null) {
-					root = windowOp;
-				}else {
 					root = logOp;
-				}
 			}
 		}
 		
@@ -128,5 +137,38 @@ public class DefaultQueryController implements IQueryController{
 				}
 		}
 		return true;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	private Class[] getParamClasses(IParam<?> param) {
+		Class paramTypes[] = new Class[param.getTypeList().size()];
+		Object paramArray[] = param.getTypeList().toArray();
+		for (int i = paramArray.length - 1; i >= 0; i--) {
+			try {
+				paramTypes[i] = Class.forName((String)paramArray[i]);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return paramTypes;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private Object getParamValue(Class[] classes, Object value, int index)
+			throws SecurityException, NoSuchMethodException,
+			IllegalArgumentException, InstantiationException,
+			IllegalAccessException, InvocationTargetException {
+		Constructor con = null;
+		con = classes[index-1].getConstructor(classes[index]);
+		Object[] argList =  new Object[1];
+		argList[0] = value;
+		Object object = con.newInstance(argList);
+		if(index-1 != 0) {
+			object = getParamValue(classes, object, --index);
+		}
+		return object;
 	}
 }

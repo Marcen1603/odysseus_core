@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.model.operators;
 
+import java.util.Collection;
+
 
 public class ParamSetterFactory {
 	
@@ -13,8 +15,8 @@ public class ParamSetterFactory {
 		
 	}
 	
-	public DefaultParamSetter<?> createParam(String type, String setter, String name) {
-		DefaultParamSetter<Object> sParam = new DefaultParamSetter<Object>(type, setter, name);
+	public DefaultParamSetter<?> createParam(String type, Collection<String> typeList, String setter, String name) {
+		DefaultParamSetter<Object> sParam = new DefaultParamSetter<Object>(type, typeList, setter, name);
 		return sParam;
 	}
 	

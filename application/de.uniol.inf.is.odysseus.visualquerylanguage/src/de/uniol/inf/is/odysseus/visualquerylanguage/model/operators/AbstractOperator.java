@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 public abstract class AbstractOperator implements INodeContent{
 	
 	private String name;
-	private String typ;
+	private String type;
 	private String imageName;
 	private Image image;
 	Collection<IParamConstruct<?>> constructParameterList = new ArrayList<IParamConstruct<?>>();
@@ -19,9 +19,9 @@ public abstract class AbstractOperator implements INodeContent{
 	
 	private ILogicalOperator op;
 	
-	public AbstractOperator(String name, String typ, Image image, Collection<IParamConstruct<?>> constructParameters, Collection<IParamSetter<?>> setterParameters) {
+	public AbstractOperator(String name, String type, Image image, Collection<IParamConstruct<?>> constructParameters, Collection<IParamSetter<?>> setterParameters) {
 		this.name = name;
-		this.typ = typ;
+		this.type = type;
 		this.image = image;
 		this.constructParameterList = constructParameters;
 		this.setterParameterList = setterParameters;
@@ -46,7 +46,7 @@ public abstract class AbstractOperator implements INodeContent{
 
 	@Override
 	public String getType() {
-		return typ;
+		return type;
 	}
 
 
@@ -81,7 +81,9 @@ public abstract class AbstractOperator implements INodeContent{
 	public Collection<IParamConstruct<?>> getNewConstructParameterListInstance() {
 		Collection<IParamConstruct<?>> list = new ArrayList<IParamConstruct<?>>();
 		for (IParamConstruct<?> iParamConstruct : constructParameterList) {
-			list.add(ParamConstructFactory.getInstance().createParam(iParamConstruct.getType(), iParamConstruct.getPosition(), iParamConstruct.getName()));
+			IParamConstruct<?> param = ParamConstructFactory.getInstance().createParam(iParamConstruct.getType(), iParamConstruct.getTypeList(), iParamConstruct.getPosition(), iParamConstruct.getName());
+			param.setEditor(iParamConstruct.hasEditor());
+			list.add(param);
 		}
 		return list;
 	}
@@ -90,7 +92,9 @@ public abstract class AbstractOperator implements INodeContent{
 	public Collection<IParamSetter<?>> getNewSetterParameterListInstance() {
 		Collection<IParamSetter<?>> list = new ArrayList<IParamSetter<?>>();
 		for (IParamSetter<?> iParamSetter : setterParameterList) {
-			list.add(ParamSetterFactory.getInstance().createParam(iParamSetter.getType(), iParamSetter.getSetter(), iParamSetter.getName()));
+			IParamSetter<?> param = ParamSetterFactory.getInstance().createParam(iParamSetter.getType(), iParamSetter.getTypeList(), iParamSetter.getSetter(), iParamSetter.getName());
+			param.setEditor(iParamSetter.hasEditor());
+			list.add(param);
 		}
 		return list;
 	}

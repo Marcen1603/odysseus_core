@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.validation;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+
 
 public class ObjectFactory {
 	
@@ -21,6 +24,10 @@ public class ObjectFactory {
 		}else if(paramType.equals("java.lang.Integer")) {
 			if(Validator.getInstance().validateInteger(value)) {
 				return Integer.parseInt(value);
+			}
+		}else if(paramType.equals("de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate")) {
+			if(Validator.getInstance().validateSDFExpression(value)) {
+				return new SDFExpression(new SDFAttribute(value));
 			}
 		}
 		

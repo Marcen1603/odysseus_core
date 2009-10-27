@@ -6,8 +6,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
@@ -73,6 +76,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeC
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
+import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParam;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
@@ -324,9 +328,10 @@ public class DefaultGraphArea extends Composite implements
 								.getRealNodePosition(new Vector(e.x, e.y)));
 						if (SWTResourceManager.getInstance().getImage(
 								(content).getImageName()) != null) {
-							nodeView.getSymbolContainer().add(
-									new SWTImageSymbolElement<INodeContent>(
-											(content).getImageName()));
+							SWTImageSymbolElement<INodeContent> sym = new SWTImageSymbolElement<INodeContent>((content).getImageName());
+							nodeView.getSymbolContainer().add( sym );
+							nodeView.setWidth( sym.getImageWidth() );
+							nodeView.setHeight( sym.getImageHeight() );
 						} else {
 							nodeView.getSymbolContainer().add(
 									new SWTImageSymbolElement<INodeContent>(
@@ -362,6 +367,8 @@ public class DefaultGraphArea extends Composite implements
 					&& renderManager.getSelector().getSelected().size() == 1) {
 				INodeView<INodeContent> selectedNode = (((ArrayList<INodeView<INodeContent>>) (renderManager
 						.getSelector().getSelected())).get(0));
+				ILogicalOperator endOp = selectedNode.getModelNode()
+						.getContent().getOperator();
 
 				if (connNodeList.size() > 2) {
 					connectionStarted = false;
@@ -370,7 +377,7 @@ public class DefaultGraphArea extends Composite implements
 					renderManager.getSelector().unselectAll();
 					return;
 				}
-				if (selectedNode.getModelNode().getContent().getOperator() instanceof UnaryLogicalOp
+				if (endOp instanceof UnaryLogicalOp
 						&& (!selectedNode.getModelNode()
 								.getConnectionsAsEndNode().isEmpty() || connNodeList
 								.size() != 1)) {
@@ -379,8 +386,7 @@ public class DefaultGraphArea extends Composite implements
 					connectionStarted = false;
 					renderManager.getSelector().unselectAll();
 					return;
-				} else if (selectedNode.getModelNode().getContent()
-						.getOperator() instanceof BinaryLogicalOp
+				} else if (endOp instanceof BinaryLogicalOp
 						&& ((selectedNode.getModelNode()
 								.getConnectionsAsEndNode().size() == 1 && connNodeList
 								.size() != 1) || selectedNode.getModelNode()
@@ -394,16 +400,30 @@ public class DefaultGraphArea extends Composite implements
 					for (INodeView<INodeContent> nodeView : connNodeList) {
 						if (!((INodeModel<INodeContent>) (selectedNode
 								.getModelNode())).getContent().isOnlySource()) {
+							if (endOp instanceof UnaryLogicalOp) {
+								endOp.subscribeTo(nodeView.getModelNode()
+										.getContent().getOperator(), 0, 0);
+							} else if (endOp instanceof BinaryLogicalOp) {
+								if (endOp.getSubscribedTo().isEmpty()) {
+									endOp.subscribeTo(nodeView.getModelNode()
+											.getContent().getOperator(), 0, 0);
+								} else {
+									endOp.subscribeTo(nodeView.getModelNode()
+											.getContent().getOperator(), 1, 0);
+								}
+							}
 							connectionStarted = false;
 							IConnectionModel<INodeContent> connModel = new DefaultConnectionModel<INodeContent>(
 									nodeView.getModelNode(), selectedNode
 											.getModelNode());
 							IConnectionView<INodeContent> connView = new DefaultConnectionView<INodeContent>(
 									connModel, nodeView, selectedNode);
-							connView.getSymbolContainer().add(
-									new SWTArrowSymbolElement<INodeContent>(
-											new Color(Display.getDefault(),
-													new RGB(0, 0, 0))));
+							SWTArrowSymbolElement<INodeContent> ele = new SWTArrowSymbolElement<INodeContent>(
+									new Color(Display.getDefault(),
+											new RGB(0, 0, 0)));
+							ele.setConnectionView(connView);
+							connView.getSymbolContainer().add(ele);
+
 							controller.getModel().addConnection(connModel);
 							viewGraph.insertViewedConnection(connView);
 							CursorManager.isNotConnection();
@@ -440,8 +460,8 @@ public class DefaultGraphArea extends Composite implements
 		for (Entry<String, ILogicalOperator> entry : DataDictionary
 				.getInstance().getViews()) {
 			item = new TreeItem(sources, 0);
-			param = new DefaultParamConstruct<String>("java.lang.String", 0,
-					entry.getKey());
+			param = new DefaultParamConstruct<String>("java.lang.String",
+					new ArrayList<String>(), 0, entry.getKey());
 			param.setValue(entry.getKey());
 			conParams = new ArrayList<IParamConstruct<?>>();
 			conParams.add(param);
@@ -487,6 +507,16 @@ public class DefaultGraphArea extends Composite implements
 		ArrayList<IConnectionView<INodeContent>> connViewDeleteList;
 		for (INodeView<INodeContent> nodeView : renderManager.getSelector()
 				.getSelected()) {
+			for (LogicalSubscription subscription : nodeView.getModelNode()
+					.getContent().getOperator().getSubscribtions()) {
+				nodeView.getModelNode().getContent().getOperator().unsubscribe(
+						subscription);
+			}
+			for (LogicalSubscription subscription : nodeView.getModelNode()
+					.getContent().getOperator().getSubscribedTo()) {
+				nodeView.getModelNode().getContent().getOperator()
+						.unsubscribeTo(subscription);
+			}
 			connViewDeleteList = new ArrayList<IConnectionView<INodeContent>>(
 					nodeView.getAllConnections());
 			for (IConnectionView<INodeContent> connView : connViewDeleteList) {
@@ -500,6 +530,7 @@ public class DefaultGraphArea extends Composite implements
 			controller.getModel().removeNode(nodeView.getModelNode());
 			viewGraph.removeViewedNode(nodeView);
 		}
+		renderManager.getSelector().unselectAll();
 	}
 
 	private void connectionChosen() {
@@ -510,7 +541,7 @@ public class DefaultGraphArea extends Composite implements
 	private void addParameterArea(INodeView<INodeContent> nodeView) {
 		if (!parameterAreasShown.containsKey(nodeView)) {
 
-			SWTParameterArea p = new SWTParameterArea(infoArea,
+			SWTParameterArea p = new SWTParameterArea(this, infoArea,
 					(DefaultNodeView<INodeContent>) nodeView);
 			parameterAreasShown.put(nodeView, p);
 			log.debug("ParameterArea for " + nodeView + " created");
@@ -572,10 +603,10 @@ public class DefaultGraphArea extends Composite implements
 
 					if (param.getValue() instanceof String) {
 						newParam = new DefaultParamConstruct<String>(param
-								.getType(), param.getPosition(), param
-								.getName());
+								.getType(), param.getTypeList(), param
+								.getPosition(), param.getName());
 						conParams = new ArrayList<IParamConstruct<?>>();
-						newParam.setValue((String)param.getValue());
+						newParam.setValue((String) param.getValue());
 						conParams.add(newParam);
 						content = new DefaultSourceContent(con.getName(), con
 								.getType(), con.getImage(), conParams, con
@@ -633,10 +664,10 @@ public class DefaultGraphArea extends Composite implements
 		IParamConstruct<String> param;
 		Collection<IParamConstruct<?>> conParams;
 		for (Entry<String, ILogicalOperator> entry : DataDictionary
-				.getInstance().getViews()) {
+				.getInstance().getViews()){
 			treeItem = new TreeItem(tree.getItem(0), 0);
-			param = new DefaultParamConstruct<String>("java.lang.String", 0,
-					entry.getKey());
+			param = new DefaultParamConstruct<String>("java.lang.String",
+					new ArrayList<String>(), 0, entry.getKey());
 			param.setValue(entry.getKey());
 			conParams = new ArrayList<IParamConstruct<?>>();
 			conParams.add(param);
@@ -683,8 +714,8 @@ public class DefaultGraphArea extends Composite implements
 		Class clazz = null;
 		Class[] constructParameters = null;
 		Constructor con = null;
-		ILogicalOperator logOp = null;
-		WindowAO windowOp = null;
+		Object logOp = null;
+		ILogicalOperator sourceOp = null;
 
 		ArrayList<Object> parameterValues = null;
 		Object paramObj = new Object();
@@ -696,11 +727,9 @@ public class DefaultGraphArea extends Composite implements
 					.size()];
 			parameterValues = new ArrayList<Object>();
 			for (IParamConstruct<?> param : content.getConstructParameterList()) {
-				Class paramClazz = null;
-				paramClazz = Class.forName(param.getType());
-				paramObj = param.getValue();
-				parameterValues.add(paramObj);
+				Class paramClazz = Class.forName(param.getType());
 				constructParameters[param.getPosition()] = paramClazz;
+				parameterValues.add(param.getValue());
 			}
 			if (!content.isOnlySource()) {
 				con = clazz.getConstructor(constructParameters);
@@ -713,26 +742,17 @@ public class DefaultGraphArea extends Composite implements
 				con = clazz.getConstructor(sourceParameters);
 				SDFSource source = DataDictionary.getInstance().getSource(
 						(String) parameterValues.get(0));
-				logOp = (ILogicalOperator) con.newInstance(source);
-				logOp.setOutputSchema(DataDictionary.getInstance().getView(
+				sourceOp = (ILogicalOperator) con.newInstance(source);
+				sourceOp.setOutputSchema(DataDictionary.getInstance().getView(
 						(String) parameterValues.get(0)).getOutputSchema());
 			} else {
 				if (con != null) {
-					if (clazz.newInstance() instanceof WindowAO) {
-						windowOp = (WindowAO) con.newInstance(parameterValues);
-					} else {
-						logOp = (ILogicalOperator) con
-								.newInstance(parameterValues);
-					}
+					logOp = con	.newInstance(parameterValues);
 				}
 
 			}
 		} else {
-			if (clazz.newInstance() instanceof WindowAO) {
-				windowOp = (WindowAO) clazz.newInstance();
-			} else {
-				logOp = (ILogicalOperator) clazz.newInstance();
-			}
+			logOp = (ILogicalOperator) clazz.newInstance();
 		}
 		for (IParamSetter<?> param : content.getSetterParameterList()) {
 			if (param.getValue() != null) {
@@ -741,10 +761,10 @@ public class DefaultGraphArea extends Composite implements
 				method.invoke(logOp, new Object[] { param.getValue() });
 			}
 		}
-		if (logOp != null) {
-			return logOp;
-		} else if (windowOp != null) {
-			return windowOp;
+		if(sourceOp != null) {
+			return sourceOp;
+		}else if (logOp != null) {
+			return (ILogicalOperator) logOp;
 		} else {
 			return null;
 		}

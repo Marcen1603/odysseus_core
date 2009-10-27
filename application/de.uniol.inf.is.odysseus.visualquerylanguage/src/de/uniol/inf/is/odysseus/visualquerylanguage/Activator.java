@@ -3,6 +3,10 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
+
+
+
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -10,7 +14,7 @@ public class Activator implements BundleActivator {
 	
 	static BundleContext context;
 
-	public void start(BundleContext bc) throws Exception {
+	public void start(final BundleContext bc) throws Exception {
 		context = bc;
 		SWTResourceManager.resourceBundle = bc.getBundle();
 	}

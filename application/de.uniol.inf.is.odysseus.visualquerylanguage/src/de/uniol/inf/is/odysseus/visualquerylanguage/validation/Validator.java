@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+
 public class Validator {
 	
 	private final Logger log = LoggerFactory.getLogger(Validator.class);
@@ -34,6 +37,10 @@ public class Validator {
 		}
 		
 		return false;
+	}
+	
+	public boolean validateSDFExpression(String value) {
+		return true;
 	}
 	
 	public boolean validateString(String value, String regex) {

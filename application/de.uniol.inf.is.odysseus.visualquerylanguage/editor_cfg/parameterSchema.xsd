@@ -4,16 +4,26 @@
 	<xsd:complexType name="constr-param-type">
 		<xsd:all>
 			<xsd:element name="name" type="xsd:string" minOccurs="1" />
-			<xsd:element name="type" type="xsd:string" minOccurs="1" />
+			<xsd:element name="ptype" type="xsd:string" minOccurs="1" />
+			<xsd:element name="typelist" type="param-type-list" minOccurs="1" />
 			<xsd:element name="position" type="xsd:int" minOccurs="1" />
+			<xsd:element name="editor" type="xsd:boolean" minOccurs="1" />
 		</xsd:all>
+	</xsd:complexType>
+	
+	<xsd:complexType name="param-type-list">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element name="type" type="xsd:string" minOccurs="1" />
+		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="setter-param-type">
 		<xsd:all>
 			<xsd:element name="name" type="xsd:string" minOccurs="1" />
-			<xsd:element name="type" type="xsd:string" minOccurs="1" />
+			<xsd:element name="ptype" type="xsd:string" minOccurs="1" />
+			<xsd:element name="typelist" type="param-type-list" minOccurs="1" />
 			<xsd:element name="setter" type="xsd:string" minOccurs="1" />
+			<xsd:element name="editor" type="xsd:boolean" minOccurs="1" />
 		</xsd:all>
 	</xsd:complexType>
 

@@ -23,6 +23,7 @@ public class EditorStarter implements CommandProvider, Runnable {
 
 	public void _visual(CommandInterpreter interpreter) {
 		Thread thread = new Thread(this);
+		thread.setDaemon(true);
 		thread.start();
 	}
 
@@ -49,12 +50,13 @@ public class EditorStarter implements CommandProvider, Runnable {
 		Display d = new Display();
 
 		try {
-			URL xmlFile = Activator.getContext().getBundle().getEntry(
+			URL xmlFile = de.uniol.inf.is.odysseus.viewer.Activator.getContext().getBundle().getEntry(
 					"editor_cfg/resources.xml");
-			URL xsdFile = Activator.getContext().getBundle().getEntry(
+			URL xsdFile = de.uniol.inf.is.odysseus.viewer.Activator.getContext().getBundle().getEntry(
 					"editor_cfg/resourcesSchema.xsd");
 			XMLResourceConfiguration cfg = new XMLResourceConfiguration(
 					xmlFile, xsdFile);
+			SWTResourceManager.getInstance().freeAllResources();
 			SWTResourceManager.getInstance().load(d, cfg);
 		} catch (IOException e) {
 			logger.error("Could not load XMLConfiguration because ");
