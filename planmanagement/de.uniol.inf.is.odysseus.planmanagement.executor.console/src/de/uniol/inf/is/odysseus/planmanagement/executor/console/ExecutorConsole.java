@@ -31,6 +31,8 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -61,6 +63,8 @@ public class ExecutorConsole implements CommandProvider,
 	private static ConsoleFunctions support = new ConsoleFunctions();
 
 	private boolean usePriority = false;
+	
+	private boolean useObjectFusionConfig = false;
 
 	private Lock preferencesLock = new ReentrantLock();
 
@@ -705,7 +709,33 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		ci.println("priorities are "
 				+ (usePriority ? "activated" : "deactivated"));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Help(parameter ="<on|off>", description = "turn usage of object fusion configuration on|off")
+	public void _useObjectFusionConfig(CommandInterpreter ci){
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		try{
+			if (args.length == 1) {
+				useObjectFusionConfig = toBoolean(args[0]);
+				TransformationConfiguration trafoConfig;
+				if (useObjectFusionConfig) {
+					trafoConfig = new TransformationConfiguration("relational",
+							ITimeInterval.class, IPredictionFunction.class, IProbability.class);
+				} else {
+					trafoConfig = new TransformationConfiguration("relational",
+							ITimeInterval.class);
 
+				}
+				this.trafoConfigParam = new ParameterTransformationConfiguration(
+						trafoConfig);
+			}
+		}catch(IllegalArgumentException e){
+			ci.println(e.getMessage());
+		}
+		ci.println("Object fusion configuration is " + 
+				(useObjectFusionConfig ? "activated" : "deactivated"));
 	}
 
 	private boolean toBoolean(String string) {
