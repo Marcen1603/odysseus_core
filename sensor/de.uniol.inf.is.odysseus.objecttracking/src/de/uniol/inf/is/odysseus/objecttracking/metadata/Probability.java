@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.probability.metadata;
+package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 public class Probability implements IProbability{
 
