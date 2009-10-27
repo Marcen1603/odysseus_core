@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.IMetaAttribute;
-
 /**
  * This interface will be implemented by
  * probability prediction functions, since
