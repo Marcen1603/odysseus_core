@@ -1,13 +1,19 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
-/** Ist nur eine Hilfsklasse um den obersten Knoten eines Plans eindeutig
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+
+/**
+ * Ist nur eine Hilfsklasse um den obersten Knoten eines Plans eindeutig
  * bestimmen zu koennen.
+ * 
  * @author Marco Grawunder
- *
+ * 
  */
 public class TopAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 6533111765567598018L;
+	private ISink<?> physicalInput;
 
 	public TopAO(TopAO po) {
 		super(po);
@@ -23,6 +29,16 @@ public class TopAO extends UnaryLogicalOp {
 	TopAO clone() {
 		return new TopAO(this);
 	}
-	
+
+	public void setPhysicalInputPO(ISink<?> physical) {
+		this.physicalInput = physical;
+	}
+
+	public IPhysicalOperator getPhysicalInput() {
+		if (physicalInput != null) {
+			return physicalInput;
+		}
+		return getPhysSubscriptionsTo().iterator().next().getTarget();
+	}
 
 }

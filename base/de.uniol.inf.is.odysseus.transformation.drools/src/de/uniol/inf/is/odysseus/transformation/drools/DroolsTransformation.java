@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.transformation.drools;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
@@ -40,21 +41,20 @@ public class DroolsTransformation implements ITransformation {
 			return;
 		}
 
-		if (!inserted.contains(op)){
-			//logger.info("insert into wm: "+op);
+		if (!inserted.contains(op)) {
+			// logger.info("insert into wm: "+op);
 			session.insert(op);
 			inserted.add(op);
-		
-			for (LogicalSubscription sub: op.getSubscribedTo()){
+
+			for (LogicalSubscription sub : op.getSubscribedTo()) {
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
-			for (LogicalSubscription sub: op.getSubscriptions()){
+			for (LogicalSubscription sub : op.getSubscribtions()) {
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
-		}		
+		}
 	}
-	
-	
+
 	protected void activate(ComponentContext context) {
 		try {
 			BundleContext bundleContext = context.getBundleContext();
@@ -74,7 +74,7 @@ public class DroolsTransformation implements ITransformation {
 		session.insert(config);
 		TopAO top = new TopAO();
 		top.subscribeTo(op, 0, 0);
-		
+
 		session.insert(config);
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
@@ -82,21 +82,21 @@ public class DroolsTransformation implements ITransformation {
 			logger.info("transformation of: "
 					+ AbstractTreeWalker.prefixWalk(top,
 							new AlgebraPlanToStringVisitor()));
-			logger.info("added to working memory "+list);
+			logger.info("added to working memory " + list);
 		}
 
 		session.insert(this);
 		session.startProcess("flow");
 
-//		WorkingMemoryConsoleLogger lg = new
-//		WorkingMemoryConsoleLogger(session);
-//		lg.clearFilters();
+		// WorkingMemoryConsoleLogger lg = new
+		// WorkingMemoryConsoleLogger(session);
+		// lg.clearFilters();
 
 		session.fireAllRules();
-
-		IPhysicalOperator physicalPO = top.getPhysSubscriptionTo(0)==null?null:top.getPhysSubscriptionTo(0).getTarget();
-		
-		if (physicalPO == null) {
+		IPhysicalOperator physicalPO = null; 
+		try {
+			physicalPO = top.getPhysicalInput();
+		} catch (NoSuchElementException e) {
 			List<ILogicalOperator> errors = new ArrayList<ILogicalOperator>();
 			session.setGlobal("untranslatedOperators", errors);
 			session.startProcess("collect_errors");
