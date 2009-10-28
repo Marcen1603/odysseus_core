@@ -101,20 +101,20 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			node.jjtGetChild(i).jjtAccept(this, newData);
 		}
 		
-		// the restrict list must be set
-		int[] restrictList = new int[projection.getOutputSchema().getAttributeCount()];
-		for(int i = 0; i<projection.getOutputSchema().getAttributeCount(); i++){
-			SDFAttribute outAttr = projection.getOutputSchema().getAttribute(i);
-			for(int u = 0; u<projection.getInputSchema().getAttributeCount(); u++){
-				
-				SDFAttribute inAttr = projection.getInputSchema().getAttribute(u);
-				if(outAttr.compareTo(inAttr) == 0){
-					restrictList[i] = u;
-				}
-			}
-		}
-		
-		projection.setRestrictList(restrictList);
+//		// the restrict list must be set
+//		int[] restrictList = new int[projection.getOutputSchema().getAttributeCount()];
+//		for(int i = 0; i<projection.getOutputSchema().getAttributeCount(); i++){
+//			SDFAttribute outAttr = projection.getOutputSchema().getAttribute(i);
+//			for(int u = 0; u<projection.getInputSchema().getAttributeCount(); u++){
+//				
+//				SDFAttribute inAttr = projection.getInputSchema().getAttribute(u);
+//				if(outAttr.compareTo(inAttr) == 0){
+//					restrictList[i] = u;
+//				}
+//			}
+//		}
+//		
+//		projection.setRestrictList(restrictList);
 		
 		((ArrayList)data).add(projection);
 		

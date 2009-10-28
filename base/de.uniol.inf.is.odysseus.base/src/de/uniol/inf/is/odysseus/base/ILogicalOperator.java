@@ -16,7 +16,11 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	public SDFAttributeList getInputSchema(int pos);
 	public void setInputSchema(int pos, SDFAttributeList schema);
 	
-//	/**
+	public void subscribeTo(ILogicalOperator source, int sinkPort,
+			int sourcePort, SDFAttributeList inputSchema);
+	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema);	
+
+	//	/**
 //	 * Use InputSchemas to determine OutputSchema
 //	 */
 //	public void calcOutputSchema();

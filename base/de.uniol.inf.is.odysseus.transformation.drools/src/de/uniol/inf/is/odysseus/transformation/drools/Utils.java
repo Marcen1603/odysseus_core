@@ -30,7 +30,7 @@ public class Utils {
 			physical.subscribeTo((ISource) psub.getTarget(),
 					psub.getSinkPort(), psub.getSourcePort());
 		}
-		for (LogicalSubscription l : logical.getSubscribtions()) {
+		for (LogicalSubscription l : logical.getSubscriptions()) {
 			ILogicalOperator target = l.getTarget();
 			if (target instanceof TopAO) {
 				((TopAO) target).setPhysicalInputPO(physical);

@@ -508,7 +508,7 @@ public class DefaultGraphArea extends Composite implements
 		for (INodeView<INodeContent> nodeView : renderManager.getSelector()
 				.getSelected()) {
 			for (LogicalSubscription subscription : nodeView.getModelNode()
-					.getContent().getOperator().getSubscribtions()) {
+					.getContent().getOperator().getSubscriptions()) {
 				nodeView.getModelNode().getContent().getOperator().unsubscribe(
 						subscription);
 			}

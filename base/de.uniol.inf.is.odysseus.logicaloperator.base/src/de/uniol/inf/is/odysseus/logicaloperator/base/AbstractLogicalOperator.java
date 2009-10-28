@@ -252,15 +252,22 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	
 	@Override
 	public void subscribeTo(ILogicalOperator source, int sinkPort, int sourcePort) {
-		LogicalSubscription sub = new LogicalSubscription(source, sinkPort, sourcePort);
+		subscribeTo(source, sinkPort, sourcePort, null);
+	}
+	
+	@Override
+	public void subscribeTo(ILogicalOperator source, int sinkPort,
+			int sourcePort, SDFAttributeList inputSchema) {	
+		LogicalSubscription sub = new LogicalSubscription(source, sinkPort, sourcePort, inputSchema);
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.containsKey(sinkPort)) {
 				this.subscribedTo.put(sinkPort, sub);
-				source.subscribe(getInstance(), sinkPort, sourcePort);
+				source.subscribe(getInstance(), sinkPort, sourcePort, inputSchema);
 			}
 		}
+		
 	}
-
+	
 	@Override
 	public void unsubscribeSubscriptionTo(ILogicalOperator source, int sinkPort, int sourcePort) {
 		if (this.subscribedTo.remove(sinkPort) != null) {
@@ -294,11 +301,15 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return subs;
 	}
 
-	
 	@Override
 	final public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
+		subscribe(sink, sinkPort, sourcePort, null);
+	}
+	
+	@Override
+	final public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema) {
 		LogicalSubscription sub = new LogicalSubscription(
-				sink, sinkPort, sourcePort);
+				sink, sinkPort, sourcePort, inputSchema);
 		synchronized (this.subscriptions) {
 			if (!this.subscriptions.containsKey(sinkPort)) {
 				this.subscriptions.put(sinkPort, sub);
