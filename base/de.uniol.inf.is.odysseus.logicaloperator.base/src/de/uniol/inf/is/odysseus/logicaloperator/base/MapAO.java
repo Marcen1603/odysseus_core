@@ -69,7 +69,7 @@ public class MapAO extends ProjectAO {
 		super.setOutputSchema(outElements);
 		checkSchema();
 	}
-
+	
 	@Override
 	public MapAO clone() {
 		return new MapAO(this);
