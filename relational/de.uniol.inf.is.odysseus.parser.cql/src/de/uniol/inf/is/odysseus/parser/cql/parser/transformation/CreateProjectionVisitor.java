@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -174,6 +175,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			}
 			CQLAttribute attribute = new CQLAttribute(null, aliasExpression
 					.getAlias());
+			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			outputSchema.add(attribute);
 			aliasSchema.add(attribute);
 		} else {
