@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
-import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ProjectMVAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionExpression;
@@ -114,18 +113,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		return rename;
 	}
 	
-	public ProjectMVAO createMVProjection(SDFAttributeList inputSchema){
-		ProjectMVAO project = new ProjectMVAO();
-		project.subscribeTo(top);
-		project.setInputSchema(inputSchema);
-		project.setOutputSchema(outputSchema);
-		//project.updateRestrictList();
-		// cannot be done if a MapAO is used, so it must be done
-		// here
-		project.setProjectMatrix(this.projectionMatrix);
-		project.setProjectVector(this.projectionVector);
-		
-		return project;
+	public ProjectAO createMVProjection(SDFAttributeList inputSchema){
+		ProjectMVAOFactory tmp = new ProjectMVAOFactory();
+		return tmp.createProjectMVAO(top, inputSchema, inputSchema, projectionMatrix, projectionVector);
 	}
 
 	@Override
