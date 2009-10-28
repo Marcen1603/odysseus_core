@@ -158,7 +158,7 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 
 				return new ProbabilityPredicate(leftSource, leftM, leftV,
 						rightSource, rightM, rightV, xL, xU, prob, probPred
-								.getCovOperandType(), probPred.getCompareOperator());
+								.getCovOperandType().toString(), probPred.getCompareOperator());
 			} else {
 				// the first child will be an matrix expression
 				ASTMatrixExpression leftMatrix = (ASTMatrixExpression) probPred

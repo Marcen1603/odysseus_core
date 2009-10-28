@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ProjectMVAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionExpression;
@@ -68,11 +69,16 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			// do, otherwise a Map operator is needed
 			if (expressions.isEmpty()) {
 				// createrestrictlist
-				ProjectAO project = new ProjectAO();
+				ProjectMVAO project = new ProjectMVAO();
 				project.subscribeTo(top);
 				project.setInputSchema(inputSchema);
 				project.setOutputSchema(outputSchema);
 				project.updateRestrictList();
+				
+				// cannot be done if a MapAO is used, so it must be done
+				// here
+				project.setProjectMatrix(this.projectionMatrix);
+				project.setProjectVector(this.projectionVector);
 				top = project;
 			} else {
 				MapAO map = new MapAO();
@@ -96,8 +102,6 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				top = map;
 			}
 			top.setOutputSchema(outputSchema);
-			((ProjectAO) top).setProjectMatrix(this.projectionMatrix);
-			((ProjectAO) top).setProjectVector(this.projectionVector);
 		}
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(top);
