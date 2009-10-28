@@ -13,6 +13,10 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 2539966167342852544L;
 
+	private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>();
+
+	private List<SDFAttribute> groupingAttributes = new ArrayList<SDFAttribute>();
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -47,11 +51,7 @@ public class AggregateAO extends UnaryLogicalOp {
 			return false;
 		return true;
 	}
-
-	private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>();
-
-	private List<SDFAttribute> groupingAttributes = new ArrayList<SDFAttribute>();
-
+	
 	public AggregateAO() {
 		super();
 		aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>();
