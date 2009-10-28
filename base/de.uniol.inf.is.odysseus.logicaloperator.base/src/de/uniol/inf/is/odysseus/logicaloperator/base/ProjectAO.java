@@ -19,8 +19,6 @@ public class ProjectAO extends UnaryLogicalOp {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(projectMatrix);
-		result = prime * result + Arrays.hashCode(projectVector);
 		result = prime * result + Arrays.hashCode(restrictList);
 		return result;
 	}
@@ -34,26 +32,12 @@ public class ProjectAO extends UnaryLogicalOp {
 		if (getClass() != obj.getClass())
 			return false;
 		ProjectAO other = (ProjectAO) obj;
-		if (!Arrays.equals(projectMatrix, other.projectMatrix))
-			return false;
-		if (!Arrays.equals(projectVector, other.projectVector))
-			return false;
 		if (!Arrays.equals(restrictList, other.restrictList))
 			return false;
 		return true;
 	}
 
 	private int[] restrictList = new int[0];
-	
-	/**
-	 * only used in multivariate case
-	 */
-	private double[][] projectMatrix;
-	
-	/**
-	 * only used in multivariate case
-	 */
-	private double[] projectVector;
 
 	public ProjectAO(ProjectAO projectAO) {
 		super(projectAO);
@@ -62,8 +46,6 @@ public class ProjectAO extends UnaryLogicalOp {
 			restrictList = new int[length];
 			System.arraycopy(projectAO.restrictList, 0, restrictList, 0, length);
 		}
-		this.projectMatrix = projectAO.projectMatrix;
-		this.projectVector = projectAO.projectVector;
 	}
 
 	public ProjectAO() {
@@ -86,22 +68,6 @@ public class ProjectAO extends UnaryLogicalOp {
 	
 	public void setRestrictList(int[] list){
 		this.restrictList = list;
-	}
-	
-	public double[][] getProjectMatrix(){
-		return this.projectMatrix;
-	}
-	
-	public void setProjectMatrix(double[][] matrix){
-		this.projectMatrix = matrix;
-	}
-	
-	public double[] getProjectVector(){
-		return this.projectVector;
-	}
-	
-	public void setProjectVector(double[] vector){
-		this.projectVector = vector;
 	}
 	
 	public void updateRestrictList(){
