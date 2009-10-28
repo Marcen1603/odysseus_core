@@ -9,7 +9,9 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
@@ -97,6 +99,34 @@ public class RestructHelper {
 		}
 		return ret;
 	}
+	
+//	public static Collection<ILogicalOperator> switchOperator(ProjectAO a, SelectAO b){
+//		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
+//		// Set Fathers of Projection to Fathers of Selection 
+//		Collection<LogicalSubscription> projectSinks = a.getSubscriptions();
+//		for (LogicalSubscription s: projectSinks){
+//			s.getTarget().unsubscribeTo(s);
+//			s.getTarget().subscribeTo(b, s.getSinkPort(), s.getSourcePort(), s.getInputSchema());			
+//			ret.add(s.getTarget());
+//		}
+//		// Set Children of Selection to Children of Projection
+//		Collection<LogicalSubscription> selectSources = b.getSubscribedTo();
+//		for (LogicalSubscription s: selectSources){
+//			s.getTarget().unsubscribe(s);
+//			s.getTarget().subscribe(a, s.getSinkPort(), s.getSourcePort(), s.getInputSchema());
+//			ret.add(s.getTarget());
+//		}
+//		// Set 
+//		Collection<LogicalSubscription> l = a.getSubscribedTo(); 
+//		for (LogicalSubscription s: l){
+//			
+//		}
+//		
+//		b.subscribeTo(a, 0, 0, )
+//		
+//		
+//		return ret;
+//	}
 	
 	public static Collection<ILogicalOperator> removeOperator(RenameAO op){
 		return removeOperator(op, true);
