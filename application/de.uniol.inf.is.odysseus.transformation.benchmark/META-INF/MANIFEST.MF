@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Benchmark
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.benchmark
+Bundle-Version: 1.0.0
+Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.3"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.benchmarker.impl,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.transformation.drools
