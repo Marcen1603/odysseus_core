@@ -5,6 +5,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.IQueryParser;
+import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTLogicalPlan;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ParseException;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParser;
@@ -15,6 +19,8 @@ public class ProceduralParser implements IQueryParser{
 
 	public static IQueryParser instance;
 	
+	public static final String language = "";
+	
 	public static synchronized IQueryParser getInstance(){
 		if (instance == null){
 			instance = new ProceduralParser();
@@ -23,10 +29,10 @@ public class ProceduralParser implements IQueryParser{
 	}
 	
 	@Override
-	public List<AbstractLogicalOperator> parse(String query)
-			throws ParseException {
+	public List<ILogicalOperator> parse(String query)
+			throws QueryParseException {
 		// TODO Auto-generated method stub
-		List<AbstractLogicalOperator> listOfPlans = new ArrayList<AbstractLogicalOperator>();
+		List<ILogicalOperator> listOfPlans = new ArrayList<ILogicalOperator>();
 		
 		InitAttributesVisitor initAttrs = new InitAttributesVisitor();
 		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor();
@@ -35,7 +41,7 @@ public class ProceduralParser implements IQueryParser{
 		ASTLogicalPlan logicalPlan = null;
 		try {
 			logicalPlan = exprParser.LogicalPlan();
-		} catch (de.uniol.inf.is.odysseus.querytranslation.procedural.parser.ParseException e) {
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -52,10 +58,16 @@ public class ProceduralParser implements IQueryParser{
 	}
 
 	@Override
-	public List<AbstractLogicalOperator> parse(Reader reader)
-			throws ParseException {
+	public List<ILogicalOperator> parse(Reader reader)
+			throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getLanguage() {
+		// TODO Auto-generated method stub
+		return "PQLHack";
 	}
 
 }
