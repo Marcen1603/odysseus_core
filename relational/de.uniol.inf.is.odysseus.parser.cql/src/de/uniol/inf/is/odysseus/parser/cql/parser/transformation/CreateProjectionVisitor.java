@@ -76,7 +76,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 					project.subscribeTo(top);
 					project.setInputSchema(inputSchema);
 					project.setOutputSchema(outputSchema);
-					project.updateRestrictList();
+					//project.updateRestrictList();
 					top = project;
 				}
 				else{
@@ -119,7 +119,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		project.subscribeTo(top);
 		project.setInputSchema(inputSchema);
 		project.setOutputSchema(outputSchema);
-		project.updateRestrictList();
+		//project.updateRestrictList();
 		// cannot be done if a MapAO is used, so it must be done
 		// here
 		project.setProjectMatrix(this.projectionMatrix);
