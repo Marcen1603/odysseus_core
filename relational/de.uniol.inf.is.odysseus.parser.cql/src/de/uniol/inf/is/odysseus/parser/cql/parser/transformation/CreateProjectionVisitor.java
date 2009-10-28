@@ -69,17 +69,19 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			// do, otherwise a Map operator is needed
 			if (expressions.isEmpty()) {
 				// createrestrictlist
-				ProjectMVAO project = new ProjectMVAO();
-				project.subscribeTo(top);
-				project.setInputSchema(inputSchema);
-				project.setOutputSchema(outputSchema);
-				//project.updateRestrictList();
 				
-				// cannot be done if a MapAO is used, so it must be done
-				// here
-				project.setProjectMatrix(this.projectionMatrix);
-				project.setProjectVector(this.projectionVector);
-				top = project;
+				if(projectionMatrix == null){
+					ProjectAO project = new ProjectAO();
+					project.subscribeTo(top);
+					project.setInputSchema(inputSchema);
+					project.setOutputSchema(outputSchema);
+					project.updateRestrictList();
+					top = project;
+				}
+				else{
+					ProjectAO project = createMVProjection(inputSchema);
+					top = project;
+				}
 			} else {
 				MapAO map = new MapAO();
 				map.subscribeTo(top);
@@ -109,6 +111,20 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		rename.setOutputSchema(this.aliasSchema);
 
 		return rename;
+	}
+	
+	public ProjectMVAO createMVProjection(SDFAttributeList inputSchema){
+		ProjectMVAO project = new ProjectMVAO();
+		project.subscribeTo(top);
+		project.setInputSchema(inputSchema);
+		project.setOutputSchema(outputSchema);
+		project.updateRestrictList();
+		// cannot be done if a MapAO is used, so it must be done
+		// here
+		project.setProjectMatrix(this.projectionMatrix);
+		project.setProjectVector(this.projectionVector);
+		
+		return project;
 	}
 
 	@Override
