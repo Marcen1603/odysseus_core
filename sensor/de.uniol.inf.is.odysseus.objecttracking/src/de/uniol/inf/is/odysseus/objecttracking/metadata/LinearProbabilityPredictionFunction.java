@@ -73,10 +73,11 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	public static long counter;
 	public static long durationExpr;
 	
+	public LinearProbabilityPredictionFunction(){
+	}
 	
 	/**
-	 * 
-	 * @param expressions the expressions to be used to predict the attribute values
+	 * @deprecated Use default constructor and {@link LinearProbabilityPredictionFunction#init(SDFExpression[], ITimeInterval, double[][])} instead
 	 */
 	public LinearProbabilityPredictionFunction(SDFExpression[] expressions, ITimeInterval interval, double[][] noiseMatrix){
 		if(expressions != null){
@@ -139,6 +140,30 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	
 	public LinearProbabilityPredictionFunction clone(){
 		return new LinearProbabilityPredictionFunction(this);
+	}
+	
+	/**
+	 * This method will be used instead of the constructor with the same parameters, due to 
+	 * change in Odysseus. Now, metadata objects will be created centralized and than updated
+	 * by a MetadataUpdater. The centralized mechanism simply uses a default constructor.
+	 * 
+	 * @param expressions the expressions to be used to predict the attribute values
+	 * @param interval the interval, in which this prediction function is valid
+	 * @param noiseMatrix the matrix used to add noise to covariance matrix of the tuple to be predicted
+	 */
+	public void init(SDFExpression[] expressions, ITimeInterval interval, double[][] noiseMatrix){
+		if(expressions != null){
+			this.expressions = new SDFExpression[expressions.length];
+			for(int attrIndex = 0; attrIndex < expressions.length; attrIndex++){
+				if(expressions[attrIndex] != null){
+					this.expressions[attrIndex] = expressions[attrIndex].clone();
+				}
+			}
+			
+			this.variables = new int[expressions.length][];
+		}
+		this.interval = interval;
+		this.noiseMatrix = noiseMatrix;
 	}
 	
 	/**

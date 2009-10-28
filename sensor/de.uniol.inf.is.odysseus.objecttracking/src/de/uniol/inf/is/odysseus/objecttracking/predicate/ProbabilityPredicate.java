@@ -67,7 +67,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	SDFAttributeList leftSchema;
 	SDFAttributeList rightSchema;
 
-	OperandTypes calculationType;
+	String calculationType;
 
 	MatLab matlab;
 
@@ -99,7 +99,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	public ProbabilityPredicate(String leftSource, double[][] leftMatrix,
 			double[] leftVector, String rightSource, double[][] rightMatrix,
 			double[] rightVector, double[] xLow, double[] xUp, double prob,
-			OperandTypes type, String compareOperator) {
+			String operandType, String compareOperator) {
 		this.leftSource = leftSource;
 		this.leftMatrix = new RealMatrixImpl(leftMatrix);
 		if (leftVector != null) {
@@ -116,7 +116,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		this.xUp = xUp;
 		this.prob = prob;
 
-		this.calculationType = type;
+		this.calculationType = operandType;
 		this.compareOperator = compareOperator;
 	}
 
@@ -137,10 +137,12 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	}
 
 	public void init() {
-		try {
-			this.matlab = new MatLab();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(this.matlab == null){
+			try {
+				this.matlab = new MatLab();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -149,7 +151,11 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		this.rightSchema = rightSchema;
 		
 		if(this.matlab == null){
-			this.
+			try{
+				this.matlab = new MatLab();
+			}catch(Exception e ){
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -373,7 +379,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 		// subtracting or adding the vectors
 		double[] resultVector = null;
-		if (calculationType == OperandTypes.MINUS) {
+		if (calculationType.equalsIgnoreCase("MINUS")) {
 			resultVector = projectedLeft.subtract(projectedRight).getColumn(0);
 		} else {
 			resultVector = projectedLeft.add(projectedRight).getColumn(0);

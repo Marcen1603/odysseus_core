@@ -43,6 +43,12 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	public IntervalProbabilityLatencyPrediction(){
 		this.prob = new Probability();
 		this.latency = new Latency();
+		// TODO prüfen, ob diese eine Klasse ausreicht
+		// wenn man verschiedene Klassen für PredictionFunctions braucht, dann
+		// muss man irgendwie einen Unterscheidungsmechanismus
+		// einbauen, der entscheidet, wann welches Objekt
+		// erzeugt wird
+		this.predFct = new LinearProbabilityPredictionFunction();
 	}
 	
 	public IntervalProbabilityLatencyPrediction(IntervalProbabilityLatencyPrediction copy){

@@ -2,12 +2,13 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata.factory;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IntervalProbabilityLatencyPrediction;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.Latency;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.Probability;
-import de.uniol.inf.is.odysseus.queryexecution.po.relational.object.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.querytranslation.parser.transformation.CQLAttribute;
+import de.uniol.inf.is.odysseus.latency.Latency;
+import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author Andre Bolles
  *
  */
-public class IntervalProbabilityLatencyPredictionMFactory implements IMetadataFactory<IntervalProbabilityLatencyPrediction, MVRelationalTuple<IntervalProbabilityLatencyPrediction>>{
+public class IntervalProbabilityLatencyPredictionMFactory implements IMetadataUpdater<IntervalProbabilityLatencyPrediction, MVRelationalTuple<IntervalProbabilityLatencyPrediction>>{
 
 	SDFAttributeList schema;
 	
@@ -30,16 +31,8 @@ public class IntervalProbabilityLatencyPredictionMFactory implements IMetadataFa
 	}
 	
 	@Override
-	public IntervalProbabilityLatencyPrediction createMetadata(
-			MVRelationalTuple<IntervalProbabilityLatencyPrediction> inElem) {
-		return this.createMetadata();
-	}
-
-	@Override
-	public IntervalProbabilityLatencyPrediction createMetadata() {
-		// TODO auch andere PredictionFunction als linear sollten genutzt werden können
-		IntervalProbabilityLatencyPrediction mData = new IntervalProbabilityLatencyPrediction(new LinearProbabilityPredictionFunction(null, null, null), new Probability(), new Latency());
-		mData.setLatencyStart(System.nanoTime());
+	public void updateMetadata(MVRelationalTuple<IntervalProbabilityLatencyPrediction> inElem) {
+		inElem.getMetadata().setLatencyStart(System.nanoTime());
 		
 		double[][] cov = null;
 		int counter = 0;
@@ -57,9 +50,7 @@ public class IntervalProbabilityLatencyPredictionMFactory implements IMetadataFa
 			}
 		}
 		
-		mData.setCovariance(cov);
-		
-		return mData;
+		inElem.getMetadata().setCovariance(cov);
 	}
 
 }
