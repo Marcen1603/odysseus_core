@@ -4,6 +4,8 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 
 
 /**
@@ -11,21 +13,15 @@ package de.uniol.inf.is.odysseus.logicaloperator.base;
  *
  */
 public class DifferenceAO extends BinaryLogicalOp{
+	
+	private static final long serialVersionUID = 4518770628909423647L;
 
-    /**
-     * @param differencePO
-     */
     public DifferenceAO(DifferenceAO differencePO) {
         super(differencePO);
-        setName("DifferencePO");
     }
 
-    /**
-     * 
-     */
     public DifferenceAO() {
         super();
-        setName("DifferencePO");
     }
 
 	public @Override
@@ -33,7 +29,10 @@ public class DifferenceAO extends BinaryLogicalOp{
 		return new DifferenceAO(this);
 	}
 
-
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema(LEFT);
+	}
 
   
 

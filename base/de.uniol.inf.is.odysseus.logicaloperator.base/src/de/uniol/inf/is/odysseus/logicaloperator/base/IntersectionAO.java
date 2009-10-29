@@ -4,6 +4,8 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 
 
 /**
@@ -12,22 +14,24 @@ package de.uniol.inf.is.odysseus.logicaloperator.base;
  */
 public class IntersectionAO extends BinaryLogicalOp {
 
-    /**
-     * @param intersectionPO
-     */
+	private static final long serialVersionUID = -3649143474548582941L;
+
     public IntersectionAO(IntersectionAO intersectionPO) {
         super(intersectionPO);
-        setName(intersectionPO.getName());
     }
 
     public IntersectionAO(){
     	super();
-    	setName("IntersectionPO");
     }
     
-	public @Override
-	IntersectionAO clone() {
+	@Override
+	public IntersectionAO clone() {
 		return new IntersectionAO(this);
 	}
 
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema(LEFT);
+	}
+	
 }

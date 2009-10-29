@@ -10,9 +10,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * @author Marco Grawunder
  */
-public class ProjectAO extends UnaryLogicalOp {
+public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable{
 	private static final long serialVersionUID = 5487345119018834806L;
 
+	private SDFAttributeList outputSchema = null;
+	
 	public ProjectAO() {
 		super();
 	}
@@ -31,6 +33,15 @@ public class ProjectAO extends UnaryLogicalOp {
 		return calcRestrictList(this.getInputSchema(), this.getOutputSchema());
 	}
 
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		this.outputSchema = outputSchema.clone();
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
 	
 	public static int[] calcRestrictList(SDFAttributeList in, SDFAttributeList out){
 		int[] ret = new int[out.size()];

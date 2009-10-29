@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class PriorityAO<T> extends UnaryLogicalOp {
@@ -97,5 +98,10 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}	
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema();
+	}
 
 }

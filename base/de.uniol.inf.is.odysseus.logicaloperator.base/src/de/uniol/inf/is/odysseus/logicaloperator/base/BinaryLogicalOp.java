@@ -27,21 +27,21 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 		return getSubscribedTo(RIGHT).getTarget();
 	}
 
-	public void setLeftInput(ILogicalOperator source) {
-		subscribeTo(source, LEFT, 0);
+	public void setLeftInput(ILogicalOperator source, SDFAttributeList inputSchema) {
+		subscribeTo(source, LEFT, 0, inputSchema);
 	}
 
-	public void setRightInput(ILogicalOperator source) {
-		subscribeTo(source, RIGHT, 0);
+	public void setRightInput(ILogicalOperator source, SDFAttributeList inputSchema) {
+		subscribeTo(source, RIGHT, 0, inputSchema);
 	}
 	
-	public void setLeftInputSchema(SDFAttributeList schema) {
-		setInputSchema(LEFT, schema);
-	}
-	
-	public void setRightInputSchema(SDFAttributeList schema) {
-		setInputSchema(RIGHT, schema);
-	}
+//	public void setLeftInputSchema(SDFAttributeList schema) {
+//		setInputSchema(LEFT, schema);
+//	}
+//	
+//	public void setRightInputSchema(SDFAttributeList schema) {
+//		setInputSchema(RIGHT, schema);
+//	}
 	
 	public ISource<?> getLeftPhysInput(){
 		return getPhysSubscriptionTo(LEFT)==null?null:getPhysSubscriptionTo(LEFT).getTarget();

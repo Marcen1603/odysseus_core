@@ -92,7 +92,6 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			SDFAttributeList newSchema = createAliasSchema(node.getAlias(),
 					access);
 			operator.setInputSchema(0, newSchema);
-			operator.setOutputSchema(newSchema);
 		}
 
 		this.attributeResolver.addSource(sourceString, operator);
@@ -120,7 +119,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			inputOp = new RenameAO();
 			inputOp.subscribeTo(access,0,0);
 			inputOp.setInputSchema(0, access.getOutputSchema());
-			inputOp.setOutputSchema(createAliasSchema(node.getAlias(), access));
+			((RenameAO)inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
 			sourceName = node.getAlias();
 		}
 
@@ -133,8 +132,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private WindowAO createWindow(ASTWindow windowNode, AbstractLogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
-		window.subscribeTo(inputOp,0,0);
-		window.setOutputSchema(inputOp.getOutputSchema());
+		window.subscribeTo(inputOp,0,0, inputOp.getOutputSchema());
 
 		if (windowNode.isPartitioned()) {
 			if (containsWindow(inputOp)) {
@@ -214,8 +212,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		ASTIdentifier asIdentifier = (ASTIdentifier) asNode.jjtGetChild(0);
 		RenameAO rename = new RenameAO();
-		rename.subscribeTo(result,0,0);
-		rename.setInputSchema(result.getOutputSchema());
+		rename.subscribeTo(result,0,0, result.getOutputSchema());
 		rename.setOutputSchema(createAliasSchema(asIdentifier.getName(), result));
 		this.attributeResolver.addSource(asIdentifier.getName(), rename);
 		return null;

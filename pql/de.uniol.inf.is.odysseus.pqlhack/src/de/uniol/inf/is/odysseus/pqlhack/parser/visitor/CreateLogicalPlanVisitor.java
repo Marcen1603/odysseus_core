@@ -89,8 +89,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		AbstractLogicalOperator inputForProjection = 
 			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
 		
-		projection.setInputSchema(inputForProjection.getOutputSchema());
-		projection.subscribeTo(inputForProjection);
+		projection.subscribeTo(inputForProjection, inputForProjection.getOutputSchema());
 		
 		// the further children are the identifiers
 		for(int i = 1; i<node.jjtGetNumChildren(); i++){
@@ -132,7 +131,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// the first child is the input operator
 		AbstractLogicalOperator inputForSelection =
 			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
-		selection.subscribeTo(inputForSelection);
+		selection.subscribeTo(inputForSelection, inputForSelection.getOutputSchema());
 		
 		newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
@@ -142,9 +141,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		initPredicate(predicate, selection.getInputSchema(), null);
 		
 		selection.setPredicate(predicate);
-		
-		selection.setInputSchema(inputForSelection.getOutputSchema());
-		selection.setOutputSchema(inputForSelection.getOutputSchema());
 		
 		((ArrayList)data).add(selection);
 		
@@ -168,18 +164,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
 		AbstractLogicalOperator rightIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
-		
-		join.setInputSchema(0, leftIn.getOutputSchema());
-		join.setInputSchema(1, rightIn.getOutputSchema());
-		
-		join.subscribeTo(leftIn, 0, 0);
-		join.subscribeTo(rightIn, 1, 0);
-		
-		SDFAttributeList newList = new SDFAttributeList(leftIn
-				.getOutputSchema());
-		newList.addAll(rightIn.getOutputSchema());
-		join.setOutputSchema(newList);
-		
+			
+		join.subscribeTo(leftIn, 0, 0, leftIn.getOutputSchema());
+		join.subscribeTo(rightIn, 1, 0, rightIn.getOutputSchema());
+				
 		((ArrayList)data).add(join);
 		
 		return data;
@@ -204,13 +192,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// of the window's input is used for determining an
 		// ON attribute
 		AbstractLogicalOperator inputForWindow = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
-		win.subscribeTo(inputForWindow);
+		win.subscribeTo(inputForWindow, inputForWindow.getOutputSchema());
 		
 		win.setWindowSize(Integer.parseInt(((ASTNumber)node.jjtGetChild(1)).getValue()));
 		win.setWindowAdvance(Integer.parseInt(((ASTNumber)node.jjtGetChild(2)).getValue()));
-		
-		win.setInputSchema(inputForWindow.getOutputSchema());
-		win.setOutputSchema(inputForWindow.getOutputSchema());
 		
 		// there exists a timestamp attribute
 		if(node.jjtGetNumChildren() == 4){
@@ -251,10 +236,8 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		AbstractLogicalOperator inputForPrediction =
 			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
 		
-		prediction.setInputSchema(0, inputForPrediction.getOutputSchema());
-		prediction.setOutputSchema(inputForPrediction.getOutputSchema());
-		
-		prediction.subscribeTo(inputForPrediction);
+
+		prediction.subscribeTo(inputForPrediction, inputForPrediction.getOutputSchema());
 		
 		for(int i = 1; i<node.jjtGetNumChildren(); i++){
 			

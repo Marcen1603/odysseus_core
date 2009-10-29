@@ -62,9 +62,8 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
-			inputOp.subscribeTo(access, 0, 0);
-			inputOp.setInputSchema(0, access.getOutputSchema());
-			inputOp.setOutputSchema(createAliasSchema(node.getAlias(), access));
+			inputOp.subscribeTo(access, 0, 0, access.getOutputSchema());
+			((RenameAO)inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
 			sourceName = node.getAlias();
 		}
 

@@ -33,20 +33,9 @@ public class UnionAO extends BinaryLogicalOp{
 		return new UnionAO(this);
 	}
 
-	public void calcOutElements() {
-		ILogicalOperator po1 = getLeftInput();
-		ILogicalOperator po2 = getRightInput();
-	
-		if (po1 != null && po2 != null){
-			SDFAttributeList l1 = po1.getOutputSchema();
-			//SDFAttributeList l2 = po2.getOutElements();
-			// Hier koennte man noch ueberpruefen, ob die Inhalte von l1 und l2 uebereinstimmen ...
-			
-			SDFAttributeList jList = new SDFAttributeList();
-			// Alle von links
-			jList.addAttributes(l1);
-			this.setOutputSchema(jList);
-		}
-	}     
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema(LEFT);
+	}
 
 }

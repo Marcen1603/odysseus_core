@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class AccessAO extends AbstractLogicalOperator {
+public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSettable{
 
 	private static final long serialVersionUID = 6119364096911629084L;
 
@@ -13,9 +14,9 @@ public class AccessAO extends AbstractLogicalOperator {
 	 * Die Uri der von diesem AccessPO gekapselten Quelle
 	 */
 	protected SDFSource source = null;
-
+	private SDFAttributeList outputSchema;
+	
 	private int port;
-
 	private String host;
 	
 	/**
@@ -39,6 +40,9 @@ public class AccessAO extends AbstractLogicalOperator {
 	public AccessAO(AccessAO po){
 		super(po);
 		this.source = po.source;
+		this.port = po.port;
+		this.host = po.host;
+		this.outputSchema = outputSchema.clone();
 	}
 	
 	public AccessAO(SDFSource source) {
@@ -60,6 +64,16 @@ public class AccessAO extends AbstractLogicalOperator {
 		this.source = source;
 	}
 
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		this.outputSchema = outputSchema.clone();
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
+	
 	@Override
 	public AccessAO clone() {
 		return new AccessAO(this);

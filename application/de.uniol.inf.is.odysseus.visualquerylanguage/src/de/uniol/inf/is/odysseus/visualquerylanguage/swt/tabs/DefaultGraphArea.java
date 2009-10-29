@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -743,8 +744,10 @@ public class DefaultGraphArea extends Composite implements
 				SDFSource source = DataDictionary.getInstance().getSource(
 						(String) parameterValues.get(0));
 				sourceOp = (ILogicalOperator) con.newInstance(source);
-				sourceOp.setOutputSchema(DataDictionary.getInstance().getView(
-						(String) parameterValues.get(0)).getOutputSchema());
+				if (sourceOp instanceof OutputSchemaSettable){
+					((OutputSchemaSettable)sourceOp).setOutputSchema(DataDictionary.getInstance().getView(
+							(String) parameterValues.get(0)).getOutputSchema());
+				}
 			} else {
 				if (con != null) {
 					logOp = con	.newInstance(parameterValues);

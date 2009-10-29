@@ -39,8 +39,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	public void init(ILogicalOperator top, AttributeResolver attributeResolver) {
 		ao = new AggregateAO();
 		this.top = top;
-		ao.subscribeTo(top);
-		ao.setInputSchema(top.getOutputSchema());
+		ao.subscribeTo(top,0,0,top.getOutputSchema());
 		select = null;
 		this.attributeResolver = attributeResolver;
 		this.hasGrouping = false;
@@ -156,13 +155,11 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTHavingClause node, Object data) {
 		select = new SelectAO();
-		select.subscribeTo(ao);
+		select.subscribeTo(ao,0,0,ao.getOutputSchema());
 		IPredicate<RelationalTuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate((ASTPredicate) node
 				.jjtGetChild(0), this.attributeResolver);
 		select.setPredicate(predicate);
-		select.setOutputSchema(ao.getOutputSchema());
-
 		return select;
 	}
 

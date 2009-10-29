@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class PredictionAO<T> extends UnaryLogicalOp{
@@ -56,5 +57,10 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 	@Override
 	public PredictionAO clone() {
 		return new PredictionAO(this);
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema();
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class SplitAO extends UnaryLogicalOp {
 
@@ -58,6 +59,11 @@ public class SplitAO extends UnaryLogicalOp {
 		} else if (!predicates.equals(other.predicates))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema();
 	}
 	
 	

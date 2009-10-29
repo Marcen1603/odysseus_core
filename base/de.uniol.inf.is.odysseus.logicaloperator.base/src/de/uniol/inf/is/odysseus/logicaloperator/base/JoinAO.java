@@ -4,7 +4,9 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Marco Grawunder
@@ -13,22 +15,17 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 public class JoinAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 3710951139395164614L;
-
+	private SDFAttributeList outputSchema = null;
+	
 	public JoinAO() {
 		super();
 	}
 
-	/**
-	 * @param joinPredicate
-	 */
 	public JoinAO(IPredicate<?> joinPredicate) {
 		super();
 		this.setPredicate(joinPredicate);
 	}
 
-	/**
-	 * @param po
-	 */
 	public JoinAO(JoinAO joinPO) {
 		super(joinPO);
 	}
@@ -50,4 +47,17 @@ public class JoinAO extends BinaryLogicalOp {
 		return ret.toString();
 	}
 
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		// The Sum of all InputSchema
+		if (outputSchema == null || recalcOutputSchemata){
+			outputSchema = new SDFAttributeList();
+			for (LogicalSubscription l:getSubscribedTo()){
+				outputSchema.addAttributes(l.getInputSchema());
+			}
+			recalcOutputSchemata = false;
+		}
+		return outputSchema;
+	}
+	
 }

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +20,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO.Type;
+import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
-import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -93,12 +92,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator leftSource = (AbstractLogicalOperator) data;
 		JoinAO join = new JoinAO();
 
-		join.subscribeTo(leftSource, 0, 0);
-		join.subscribeTo(source, 1, 0);
-		SDFAttributeList newList = new SDFAttributeList(leftSource
-				.getOutputSchema());
-		newList.addAll(source.getOutputSchema());
-		join.setOutputSchema(newList);
+		join.subscribeTo(leftSource, 0, 0, leftSource.getOutputSchema());
+		join.subscribeTo(source, 1, 0, source.getOutputSchema());
 		return join;
 	}
 
@@ -181,8 +176,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		if (selectPredicate != null) {
 			SelectAO selectAO = new SelectAO();
-			selectAO.subscribeTo(curInputAO);
-			selectAO.setOutputSchema(curInputAO.getOutputSchema());
+			selectAO.subscribeTo(curInputAO,curInputAO.getOutputSchema());
 			selectAO.setPredicate(selectPredicate);
 			return selectAO;
 		}
@@ -224,9 +218,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 					}
 				}
 				UnionAO result = new UnionAO();
-				result.subscribeTo(left, 0, 0);
-				result.subscribeTo(right, 1, 0);
-				result.setOutputSchema(left.getOutputSchema());
+				result.subscribeTo(left, 0, 0, left.getOutputSchema());
+				result.subscribeTo(right, 1, 0, right.getOutputSchema());
 				return result;
 			}
 			throw new IllegalArgumentException("unsupported predicate type");
@@ -246,8 +239,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		} else {
 			SelectAO selectAO = new SelectAO();
 			selectAO.setPredicate(pred);
-			selectAO.subscribeTo(curInputAO);
-			selectAO.setOutputSchema(curInputAO.getOutputSchema());
+			selectAO.subscribeTo(curInputAO, curInputAO.getOutputSchema());
 			return selectAO;
 		}
 	}
@@ -338,15 +330,14 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	private ExistenceAO createExistenceAO(IExistencePredicate node,
 			AbstractLogicalOperator inputAO, Type type) {
 		ExistenceAO existsAO = new ExistenceAO();
-		existsAO.setLeftInput(inputAO);
-		existsAO.setOutputSchema(inputAO.getOutputSchema());
+		existsAO.setLeftInput(inputAO, inputAO.getOutputSchema());
 		AbstractLogicalOperator subquery = subquery(node.getQuery());
 		if (node.getTuple().jjtGetNumChildren() != subquery.getOutputSchema()
 				.size()) {
 			throw new IllegalArgumentException(
 					"wrong number of outputs in predicate subquery");
 		}
-		existsAO.setRightInput(subquery);
+		existsAO.setRightInput(subquery, subquery.getOutputSchema());
 		existsAO.setType(type);
 		try {
 			String expression = node.getTuple().toString()
@@ -370,9 +361,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTExists node, Object data) {
 		AbstractLogicalOperator inputAO = (AbstractLogicalOperator) data;
 		ExistenceAO existsAO = new ExistenceAO();
-		existsAO.setLeftInput(inputAO);
-		existsAO.setOutputSchema(inputAO.getOutputSchema());
-		existsAO.setRightInput(subquery(node.getQuery()));
+		existsAO.setLeftInput(inputAO, inputAO.getOutputSchema());
+		existsAO.setRightInput(subquery(node.getQuery()), subquery(node.getQuery()).getOutputSchema());
 		existsAO.setType(node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);
 		return existsAO;

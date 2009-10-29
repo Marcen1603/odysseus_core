@@ -10,6 +10,7 @@ import org.nfunk.jep.ParseException;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
@@ -72,8 +73,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				
 				if(projectionMatrix == null){
 					ProjectAO project = new ProjectAO();
-					project.subscribeTo(top);
-					project.setInputSchema(inputSchema);
+					project.subscribeTo(top, inputSchema);
 					project.setOutputSchema(outputSchema);
 					//project.updateRestrictList();
 					top = project;
@@ -84,7 +84,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				}
 			} else {
 				MapAO map = new MapAO();
-				map.subscribeTo(top);
+				map.subscribeTo(top, inputSchema);
 				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(
 						outputSchema.size());
 
@@ -103,16 +103,16 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				map.setExpressions(outputExpressions);
 				top = map;
 			}
-			top.setOutputSchema(outputSchema);
+			((OutputSchemaSettable)top).setOutputSchema(outputSchema);
 		}
 		RenameAO rename = new RenameAO();
-		rename.subscribeTo(top);
-		rename.setInputSchema(top.getOutputSchema());
+		rename.subscribeTo(top, top.getOutputSchema());
 		rename.setOutputSchema(this.aliasSchema);
 
 		return rename;
 	}
 	
+
 	public ProjectAO createMVProjection(SDFAttributeList inputSchema){
 		ProjectMVAOFactory tmp = new ProjectMVAOFactory();
 		return tmp.createProjectMVAO(top, inputSchema, inputSchema, projectionMatrix, projectionVector);

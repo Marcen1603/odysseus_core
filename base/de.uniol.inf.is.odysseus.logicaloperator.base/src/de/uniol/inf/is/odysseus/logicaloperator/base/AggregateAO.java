@@ -17,6 +17,8 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	private List<SDFAttribute> groupingAttributes = new ArrayList<SDFAttribute>();
 
+	private SDFAttributeList outputSchema = null;
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,15 +58,15 @@ public class AggregateAO extends UnaryLogicalOp {
 		super();
 		aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>();
 		groupingAttributes = new ArrayList<SDFAttribute>();
-		super.setOutputSchema(new SDFAttributeList());
+		outputSchema = new SDFAttributeList();
 	}
 
 	public AggregateAO(AggregateAO op) {
 		super(op);
-		super.setOutputSchema(op.getOutputSchema());
 		aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>(
 				op.aggregations);
 		groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
+		outputSchema = op.outputSchema.clone();
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -109,26 +111,21 @@ public class AggregateAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outElements) {
-		throw new RuntimeException("setOutElements is not allowed for "
-				+ AggregateAO.class.getSimpleName());
-	}
-
-	@Override
 	public void setInputSchema(int pos, SDFAttributeList schema) {
 		if (pos != 0) {
 			throw new IllegalArgumentException("illegal input port: " + pos);
 		}
-//		if (this.getInputSchema() == null) {
-			super.setInputSchema(pos, schema);
-//		} else {
-//			throw new RuntimeException("setInputSchema may be called only once");
-//		}
+		super.setInputSchema(pos, schema);
 	}
 
 	@Override
 	public AggregateAO clone() {
 		return new AggregateAO(this);
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
 	}
 	
 }

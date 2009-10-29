@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Jonas Jacobi
@@ -67,4 +68,9 @@ public class ExistenceAO extends BinaryLogicalOp implements Cloneable {
 		return type;
 	}
 
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema(LEFT);
+	}
+	
 }

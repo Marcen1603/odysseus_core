@@ -27,9 +27,9 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		return getInputSchema(PORTNUMBER);
 	}
 
-	public void setInputSchema(SDFAttributeList schema) {
-		setInputSchema(PORTNUMBER, schema);
-	}
+//	public void setInputSchema(SDFAttributeList schema) {
+//		setInputSchema(PORTNUMBER, schema);
+//	}
 
 	public ILogicalOperator getInputAO(){
 		return getSubscribedTo(PORTNUMBER)==null?null:getSubscribedTo(PORTNUMBER).getTarget();
@@ -39,8 +39,8 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		return getPhysSubscriptionTo(PORTNUMBER);
 	}
 	
-	public void subscribeTo(ILogicalOperator source){
-		subscribeTo(source, 0, 0);
+	public void subscribeTo(ILogicalOperator source, SDFAttributeList inputSchema){
+		subscribeTo(source, 0, 0, inputSchema);
 	}
 
 	

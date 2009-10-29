@@ -101,21 +101,6 @@ public class WindowAO extends UnaryLogicalOp {
 		this.partitionedBy = partitionedBy;
 	}
 	
-	/**
-	 * This method will be used if the window operator in placed after a
-	 * triplepattern matching operator in a query plan. In this case the return
-	 * value of the window operator consists of bindings.
-	 */
-	public void calcOutElements(){
-        ILogicalOperator po = getSubscribedTo(0).getTarget();
-
-        if (po != null){
-            SDFAttributeList l1 = po.getOutputSchema();		
-            SDFAttributeList jList = new SDFAttributeList();
-            jList.addAttributes(l1);
-            this.setOutputSchema(jList);
-        }
-	}
 
 	@Override
 	public int hashCode() {
@@ -162,5 +147,10 @@ public class WindowAO extends UnaryLogicalOp {
 		} else if (!windowType.equals(other.windowType))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema();
 	}
 }

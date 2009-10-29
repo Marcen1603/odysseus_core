@@ -28,13 +28,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	protected Map<Integer, LogicalSubscription> subscribedTo = new HashMap<Integer, LogicalSubscription>();
 	protected Map<Integer, LogicalSubscription> subscriptions = new HashMap<Integer,LogicalSubscription>();;
 	
+	protected boolean recalcOutputSchemata = false;
+	
 	private Map<Integer, Subscription<ISource<?>>> physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>();
 	// cache access to bounded physOperators
 	private Map<Integer, ISource<?>> physInputOperators = new HashMap<Integer, ISource<?>>();
 	
 	private String name = null;
-
-	private SDFAttributeList outputSchema = null;
 
 	@SuppressWarnings("unchecked")
 	private IPredicate predicate = null;;
@@ -42,7 +42,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		this.subscribedTo = new HashMap<Integer, LogicalSubscription>(op.subscribedTo);
 		this.subscriptions = new HashMap<Integer, LogicalSubscription>(op.subscriptions);
-		outputSchema = new SDFAttributeList(op.outputSchema);
 		predicate =  op.predicate;
 		setName(op.getName());
 		physSubscriptionTo = op.physSubscriptionTo == null ? null
@@ -64,8 +63,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			clone = (AbstractLogicalOperator) super.clone();
 			clone.subscribedTo = new HashMap<Integer, LogicalSubscription>(this.subscribedTo);
 			clone.subscriptions = new HashMap<Integer, LogicalSubscription>(this.subscriptions);
-			if (this.outputSchema != null)
-				clone.outputSchema = this.outputSchema.clone();
 			clone.physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>(
 					this.physSubscriptionTo);
 			clone.name = this.name;
@@ -77,28 +74,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		} catch (CloneNotSupportedException e) {
 			return null;
 		}
-	}
-
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#
-	 * getOutputSchema()
-	 */
-	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#
-	 * setOutputSchema
-	 * (de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
-	 */
-	public void setOutputSchema(SDFAttributeList outElements) {
-		this.outputSchema = outElements;
 	}
 
 	/*
@@ -155,6 +130,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	public void setInputSchema(int pos, SDFAttributeList schema) {
 		subscribedTo.get(pos).setInputSchema(schema);
+		recalcOutputSchemata = true;
 	}
 
 	/*
@@ -263,6 +239,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			if (!this.subscribedTo.containsKey(sinkPort)) {
 				this.subscribedTo.put(sinkPort, sub);
 				source.subscribe(getInstance(), sinkPort, sourcePort, inputSchema);
+				recalcOutputSchemata = true;
 			}
 		}
 		
@@ -271,6 +248,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public void unsubscribeSubscriptionTo(ILogicalOperator source, int sinkPort, int sourcePort) {
 		if (this.subscribedTo.remove(sinkPort) != null) {
+			recalcOutputSchemata = true;
 			source.unsubscribe(this, sinkPort, sourcePort);
 		}
 	}
@@ -313,7 +291,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		synchronized (this.subscriptions) {
 			if (!this.subscriptions.containsKey(sinkPort)) {
 				this.subscriptions.put(sinkPort, sub);
-				sink.subscribeTo(this, sinkPort, sourcePort);
+				sink.subscribeTo(this, sinkPort, sourcePort, inputSchema);
+				recalcOutputSchemata = true;
 			}
 		}
 	}
@@ -323,6 +302,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		synchronized (this.subscriptions) {
 			if (this.subscriptions.remove(sinkPort) != null) {
 				sink.unsubscribeSubscriptionTo(this, sinkPort, sourcePort);
+				recalcOutputSchemata = true;
 			}
 		}
 	}

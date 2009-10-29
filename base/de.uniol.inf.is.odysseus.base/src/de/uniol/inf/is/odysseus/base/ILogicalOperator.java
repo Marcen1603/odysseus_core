@@ -10,20 +10,13 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>{
 
 	public ILogicalOperator clone();
-
 	public SDFAttributeList getOutputSchema();
-	public void setOutputSchema(SDFAttributeList outElements);
 	public SDFAttributeList getInputSchema(int pos);
-	public void setInputSchema(int pos, SDFAttributeList schema);
+	//public void setInputSchema(int pos, SDFAttributeList schema);
 	
 	public void subscribeTo(ILogicalOperator source, int sinkPort,
 			int sourcePort, SDFAttributeList inputSchema);
 	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema);	
-
-	//	/**
-//	 * Use InputSchemas to determine OutputSchema
-//	 */
-//	public void calcOutputSchema();
 	
 	public IPredicate getPredicate();
 	public void setPredicate(IPredicate predicate);

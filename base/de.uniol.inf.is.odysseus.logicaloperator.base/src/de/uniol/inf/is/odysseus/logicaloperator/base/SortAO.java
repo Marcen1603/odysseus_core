@@ -121,5 +121,10 @@ public class SortAO extends UnaryLogicalOp{
 		this.ascending = ascending;
 	}
 	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema();
+	}
+	
 
 }
