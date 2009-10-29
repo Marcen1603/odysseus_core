@@ -6,8 +6,11 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 
 public class RestructHelper {
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp remove, boolean reserveOutputSchema){
@@ -49,57 +52,33 @@ public class RestructHelper {
 		return ret;
 	}
 	
-	/**
-	 * Switches two unary operators in a Plan (i.e. no new Operator need to be defined)
-	 * Cannot be used if one of the operators is binary!
-	 * @param a
-	 * @param b
-	 * @return
-	 */
 	
-	public static Collection<ILogicalOperator> switchOperator(UnaryLogicalOp a, UnaryLogicalOp b){
+	public static Collection<ILogicalOperator> switchOperatorInternal(UnaryLogicalOp father, UnaryLogicalOp son){
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-		Collection<LogicalSubscription> subs = b.getSubscribtions(a);
-		ret.addAll(removeOperator(a, true));
-		for (LogicalSubscription l:subs){
-			ret.addAll(insertOperator(a, b, l.getSinkPort()));
+		
+		// unsubscribe a from b
+		LogicalSubscription fatherToSon = father.getSubscribedTo(0);
+		father.unsubscribe(fatherToSon);
+		
+		// Set Fathers of Projection to Fathers of Selection 
+		Collection<LogicalSubscription> fatherSinks = father.getSubscriptions();
+		for (LogicalSubscription s: fatherSinks){
+			s.getTarget().unsubscribeTo(s);
+			s.getTarget().subscribeTo(son, s.getSinkPort(), s.getSourcePort(), s.getInputSchema());			
+			ret.add(s.getTarget());
 		}
-		return ret;
-	}
-	
-//	public static Collection<ILogicalOperator> switchOperator(ProjectAO a, SelectAO b){
-//		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-//		// Set Fathers of Projection to Fathers of Selection 
-//		Collection<LogicalSubscription> projectSinks = a.getSubscriptions();
-//		for (LogicalSubscription s: projectSinks){
-//			s.getTarget().unsubscribeTo(s);
-//			s.getTarget().subscribeTo(b, s.getSinkPort(), s.getSourcePort(), s.getInputSchema());			
-//			ret.add(s.getTarget());
-//		}
-//		// Set Children of Selection to Children of Projection
-//		Collection<LogicalSubscription> selectSources = b.getSubscribedTo();
-//		for (LogicalSubscription s: selectSources){
-//			s.getTarget().unsubscribe(s);
-//			s.getTarget().subscribe(a, s.getSinkPort(), s.getSourcePort(), s.getInputSchema());
-//			ret.add(s.getTarget());
-//		}
-//		// Set 
-//		Collection<LogicalSubscription> l = a.getSubscribedTo(); 
-//		for (LogicalSubscription s: l){
-//			
-//		}
-//		
-//		b.subscribeTo(a, 0, 0, )
-//		
-//		
-//		return ret;
-//	}
-	
-	public static Collection<ILogicalOperator> removeOperator(RenameAO op){
-		return removeOperator(op, true);
-	}
+		// Set Children of Selection to Children of Projection
+		Collection<LogicalSubscription> sonSources = son.getSubscribedTo();
+		for (LogicalSubscription s: sonSources){
+			s.getTarget().unsubscribe(s);
+			s.getTarget().subscribe(father, s.getSinkPort(), s.getSourcePort(), s.getInputSchema());
+			ret.add(s.getTarget());
+		}
 
-	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op){
-		return removeOperator(op, false);
+		// subscribe Select to Project
+		son.subscribeTo(father, father.getOutputSchema());		
+		
+		return ret;
+		
 	}
 }
