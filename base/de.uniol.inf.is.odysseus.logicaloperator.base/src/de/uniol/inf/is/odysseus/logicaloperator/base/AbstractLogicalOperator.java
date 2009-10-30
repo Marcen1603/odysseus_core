@@ -112,12 +112,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		SDFAttributeList ret = null;
 		if (s!=null){
 			ret =  s.getInputSchema();
-//			if (ret == null) {
-//				ILogicalOperator op = s.getTarget();
-//				if (op != null) {
-//					ret = op.getOutputSchema();
-//				}
-//			}
+			if (ret == null) {
+				ILogicalOperator op = s.getTarget();
+				if (op != null) {
+					ret = op.getOutputSchema();
+				}
+			}
 		}
 		return ret;
 	}
@@ -130,10 +130,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * (int,
 	 * de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
 	 */
-	public void setInputSchema(int pos, SDFAttributeList schema) {
-		subscribedTo.get(pos).setInputSchema(schema);
-		recalcOutputSchemata = true;
-	}
+//	public void setInputSchema(int pos, SDFAttributeList schema) {
+//		subscribedTo.get(pos).setInputSchema(schema);
+//		recalcOutputSchemata = true;
+//	}
 
 	/*
 	 * (non-Javadoc)

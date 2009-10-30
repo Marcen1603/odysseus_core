@@ -11,15 +11,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
-public class Utils {
+public class TransformationHelper {
 
 	public static Collection<ILogicalOperator> replace(
 			ILogicalOperator logical, IPipe physical) {
 		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical);
 		ret.addAll(replace(logical, (ISource) physical));
-		System.out.println("Collection replace " + ret);
 		return ret;
-
 	}
 
 	public static Collection<ILogicalOperator> replace(

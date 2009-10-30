@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
+import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PriorityAOHelper {
 
@@ -72,13 +74,13 @@ public class PriorityAOHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static  void insertPriorityAO(AbstractLogicalOperator current, PriorityAO prioAO) {
+	public static  void insertPriorityAO(AbstractLogicalOperator current, PriorityAO prioAO) {	
 		for(LogicalSubscription sub :  current.getSubscriptions()) {
 			sub.getTarget().unsubscribeSubscriptionTo(current, sub.getSinkPort(),sub.getSourcePort());
-			prioAO.subscribe(sub.getTarget(), sub.getSinkPort(),sub.getSourcePort());
+			prioAO.subscribe(sub.getTarget(), sub.getSinkPort(),sub.getSourcePort(), sub.getInputSchema());
 		}
 
-		current.subscribe(prioAO, 0, 0);	
+		current.subscribe(prioAO, 0, 0, current.getOutputSchema());	
 	}
 
 	public static boolean isCriticalAO(AbstractLogicalOperator current) {

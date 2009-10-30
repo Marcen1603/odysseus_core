@@ -111,14 +111,6 @@ public class AggregateAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public void setInputSchema(int pos, SDFAttributeList schema) {
-		if (pos != 0) {
-			throw new IllegalArgumentException("illegal input port: " + pos);
-		}
-		super.setInputSchema(pos, schema);
-	}
-
-	@Override
 	public AggregateAO clone() {
 		return new AggregateAO(this);
 	}

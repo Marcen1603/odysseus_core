@@ -57,7 +57,7 @@ public class DroolsRewrite implements IRewrite {
 		
 		StatefulSession session = rulebase.newStatefulSession();
 		TopAO top = new TopAO();
-		top.subscribeTo(plan, 0, 0);
+		plan.subscribe(top, 0, 0, plan.getOutputSchema());
 		
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);

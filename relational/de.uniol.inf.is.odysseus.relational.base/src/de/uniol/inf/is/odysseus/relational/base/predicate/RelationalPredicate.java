@@ -48,8 +48,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		}
 	}
 
-	private int indexOf(SDFAttributeList rightSchema, CQLAttribute cqlAttr) {
-		Iterator<SDFAttribute> it = rightSchema.iterator();
+	private int indexOf(SDFAttributeList schema, CQLAttribute cqlAttr) {
+		Iterator<SDFAttribute> it = schema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {
 			if (cqlAttr.equalsCQL((CQLAttribute) it.next())) {
 				return i;

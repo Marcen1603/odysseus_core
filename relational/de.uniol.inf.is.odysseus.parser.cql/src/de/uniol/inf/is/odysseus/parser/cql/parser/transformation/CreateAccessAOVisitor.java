@@ -88,10 +88,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (node.hasAlias()) {
 			sourceString = node.getAlias();
 			operator = new RenameAO();
-			operator.subscribeTo(access,0,0);
 			SDFAttributeList newSchema = createAliasSchema(node.getAlias(),
 					access);
-			operator.setInputSchema(0, newSchema);
+			operator.subscribeTo(access,0,0, newSchema);
 		}
 
 		this.attributeResolver.addSource(sourceString, operator);
@@ -117,8 +116,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator inputOp = access;
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
-			inputOp.subscribeTo(access,0,0);
-			inputOp.setInputSchema(0, access.getOutputSchema());
+			inputOp.subscribeTo(access,0,0, access.getOutputSchema());
 			((RenameAO)inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
 			sourceName = node.getAlias();
 		}

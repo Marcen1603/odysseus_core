@@ -22,7 +22,8 @@ public class RestructHelper {
 		// Subscribe Child to every father of op
 		for (LogicalSubscription father:fathers){
 			remove.unsubscribe(father); 
-			child.getTarget().subscribe(father.getTarget(), father.getSinkPort(), child.getSourcePort(), reserveOutputSchema?remove.getOutputSchema():child.getTarget().getOutputSchema());
+			child.getTarget().subscribe(father.getTarget(), father.getSinkPort(), child.getSourcePort(), 
+					reserveOutputSchema?remove.getOutputSchema():child.getTarget().getOutputSchema());
 			ret.add(child.getTarget());
 			ret.add(father.getTarget());
 		}	

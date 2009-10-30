@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.drools
-Bundle-Version: 1.0.3
+Bundle-Version: 1.0.4
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.drools,
  de.uniol.inf.is.odysseus.base,
@@ -29,7 +29,8 @@ Import-Package: de.uniol.inf.is.drools,
  org.drools.agent,
  org.osgi.framework;version="1.5.0",
  org.osgi.service.component;version="1.1.0",
- org.slf4j;version="1.5.6"
+ org.slf4j,
+ org.slf4j.spi;version="1.5.6"
 Service-Component: OSGI-INF/DroolsTransformation.xml
 Require-Bundle: de.uniol.org.drools;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.transformation.drools
