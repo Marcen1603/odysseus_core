@@ -125,8 +125,8 @@ public class RelationalRestructHelper {
 		Collection<ILogicalOperator> ret = removeOperator(father);
 		ret.add(selLeft);
 		
-		ret.addAll(RestructHelper.insertOperator(selLeft, son, 0));
-		ret.addAll(RestructHelper.insertOperator(selRight, son, 1));
+		ret.addAll(RestructHelper.insertOperator(selLeft, son, 0, 0, 0));
+		ret.addAll(RestructHelper.insertOperator(selRight, son, 1, 0,  0));
 		return ret;		
 	}
 	
@@ -138,10 +138,11 @@ public class RelationalRestructHelper {
 		return switchOperatorInternal(father, son, toInsert);
 	}	
 
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, JoinAO son, Collection<ILogicalOperator> toInsert){
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father, JoinAO son, Collection<ILogicalOperator> toInsert,
+			Collection<ILogicalOperator> toRemove){
 		final JoinAO join = son;
 		final SelectAO sel = father;
-		
+		toRemove.add(sel);
 		Collection<ILogicalOperator> ret = removeOperator(sel);
 	
 		boolean hasSameInput = (join.getLeftInput() == join.getRightInput());
@@ -153,7 +154,7 @@ public class RelationalRestructHelper {
 		//we don't want to create two separate selections as new inputs, but set
 		//one selection as input on both ports
 		if (hasSameInput) {
-			ret.addAll(RestructHelper.insertOperator(newSel, join, 1));
+			ret.addAll(RestructHelper.insertOperator(newSel, join, 1, 0, 0));
 		} else {
 			newSel = createSelection(sel, join, 1, ret);
 			if (newSel != null) {
@@ -169,7 +170,7 @@ public class RelationalRestructHelper {
 		}
 		SelectAO newSel = new SelectAO();
 		newSel.setPredicate(select.getPredicate());
-		ret.addAll(RestructHelper.insertOperator(newSel, join, port));
+		ret.addAll(RestructHelper.insertOperator(newSel, join, port, 0, 0));
 		return newSel;
 	}
 

@@ -24,9 +24,8 @@ public class RestructHelper {
 			remove.unsubscribe(father); 
 			child.getTarget().subscribe(father.getTarget(), father.getSinkPort(), child.getSourcePort(), reserveOutputSchema?remove.getOutputSchema():child.getTarget().getOutputSchema());
 			ret.add(child.getTarget());
-		}
-		ret.add(child.getTarget());
-		
+			ret.add(father.getTarget());
+		}	
 		
 		return ret;
 	}
@@ -39,16 +38,14 @@ public class RestructHelper {
 	 * @param after
 	 * @return
 	 */
-	public static Collection<ILogicalOperator> insertOperator(ILogicalOperator toInsert, ILogicalOperator after, int sinkPort){
+	public static Collection<ILogicalOperator> insertOperator(ILogicalOperator toInsert, ILogicalOperator after, int sinkPort, int toInsertSinkPort, int toInsertSourcePort){
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-		Collection<LogicalSubscription> sinks = after.getSubscriptions();
 		LogicalSubscription source = after.getSubscribedTo(sinkPort);
-		for (LogicalSubscription s: sinks){
-			ret.add(s.getTarget());
-			after.unsubscribeSubscriptionTo(s.getTarget(), s.getSinkPort(), s.getSourcePort());
-			toInsert.subscribeTo(s.getTarget(), s.getSinkPort(), s.getSourcePort(),s.getInputSchema());
-		}
-		after.subscribeTo(toInsert, sinkPort, source.getSourcePort(), toInsert.getOutputSchema());
+		ret.add(source.getTarget());
+		after.unsubscribeTo(source);
+		source.getTarget().subscribe(toInsert, toInsertSinkPort, source.getSourcePort(), source.getTarget().getOutputSchema());
+		toInsert.subscribe(after, sinkPort, toInsertSourcePort, toInsert.getOutputSchema());		
+		ret.add(after);
 		return ret;
 	}
 	
