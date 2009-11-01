@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.priority.buffer;
 
-import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
