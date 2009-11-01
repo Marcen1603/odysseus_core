@@ -10,6 +10,8 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.priority,
- de.uniol.inf.is.odysseus.priority_interval,
- org.apache.log4j;version="1.2.15",
- org.slf4j;version="1.5.6"
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.monitoring.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.base.access,
+ de.uniol.inf.is.odysseus.physicaloperator.base.event,
+ de.uniol.inf.is.odysseus.priority_interval
