@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
 
@@ -60,7 +61,6 @@ public abstract class AbstractPriorityMinLatency extends
 		List<Integer> joins = new ArrayList<Integer>();
 
 		for (ISource<?> s : toSchedule) {
-
 			List<IIterableSource<?>> schPath = new LinkedList<IIterableSource<?>>();
 			List<ISource<?>> opPath = new LinkedList<ISource<?>>();
 
@@ -68,10 +68,9 @@ public abstract class AbstractPriorityMinLatency extends
 			initMetadata(opPath);
 			FESortedPair<Double, List<IIterableSource<?>>> pWithCost = new FESortedPair<Double, List<IIterableSource<?>>>(
 					calcPathCost(opPath), schPath);
-
 			if (hasToBePrefered(s, opPath, joins)) {
 				pWithCost.setE1(-1.0);
-				executePriorisationActivation(s);
+				executePriorisationActivation(s, opPath);
 			}
 
 			pathes.add(pWithCost);
@@ -96,9 +95,11 @@ public abstract class AbstractPriorityMinLatency extends
 
 		for (ISource<?> operator : opPath) {
 
-			if (operator instanceof PriorityPO<?>) {
+			if (operator instanceof PriorityPO<?>
+					|| operator instanceof PostPriorisationPO<?>) {
 				priority = true;
 			}
+
 			if (operator instanceof JoinTIPO<?, ?>) {
 				join = true;
 				if (joins.contains(operator.hashCode())) {
@@ -117,6 +118,7 @@ public abstract class AbstractPriorityMinLatency extends
 		return false;
 	}
 
-	abstract protected void executePriorisationActivation(ISource<?> source);
+	abstract protected void executePriorisationActivation(ISource<?> source,
+			List<ISource<?>> opPath);
 
 }

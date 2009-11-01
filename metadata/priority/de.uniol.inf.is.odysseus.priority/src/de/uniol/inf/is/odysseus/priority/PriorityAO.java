@@ -1,13 +1,18 @@
 package de.uniol.inf.is.odysseus.priority;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.ISubscriber;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-@SuppressWarnings({ "unchecked", "serial" })
+@SuppressWarnings( { "unchecked", "serial" })
 public class PriorityAO<T> extends UnaryLogicalOp {
 
 	@Override
@@ -41,7 +46,7 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 
 	private Map<Byte, IPredicate<? super T>> priorities;
 	private byte defaultPriority;
-	
+
 	public byte getDefaultPriority() {
 		return defaultPriority;
 	}
@@ -54,11 +59,11 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 		this.priorities = new TreeMap<Byte, IPredicate<? super T>>();
 		this.defaultPriority = 0;
 	}
-	
+
 	public PriorityAO(PriorityAO priorityAO) {
 		this.priorities = priorityAO.priorities;
 	}
-	
+
 	public Map<Byte, IPredicate<? super T>> getPriorities() {
 		return priorities;
 	}
@@ -66,10 +71,11 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 	public void setPriorities(Map<Byte, IPredicate<? super T>> priorities) {
 		this.priorities = priorities;
 	}
-	
+
 	public void setPriority(byte priority, IPredicate<? super T> predicate) {
 		if (this.priorities.containsKey(priority)) {
-			throw new IllegalArgumentException("rdefinition of priority: " + priority);
+			throw new IllegalArgumentException("rdefinition of priority: "
+					+ priority);
 		}
 		this.priorities.put(priority, predicate);
 	}
@@ -80,7 +86,7 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 	}
 
 	private boolean isPunctuationActive = false;
-	
+
 	public void setPunctuationActive(boolean isPunctuationActive) {
 		this.isPunctuationActive = isPunctuationActive;
 	}
@@ -89,15 +95,15 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 		return isPunctuationActive;
 	}
 	
-	private boolean isActive = true;
-
-	public boolean isActive() {
-		return isActive;
+	public void setCopartners(List<PostPriorisationAO<?>> copartners) {
+		this.copartners = copartners;
 	}
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}	
+	public List<PostPriorisationAO<?>> getCopartners() {
+		return copartners;
+	}
+
+	private List<PostPriorisationAO<?>> copartners = new ArrayList<PostPriorisationAO<?>>();
 	
 	@Override
 	public SDFAttributeList getOutputSchema() {
