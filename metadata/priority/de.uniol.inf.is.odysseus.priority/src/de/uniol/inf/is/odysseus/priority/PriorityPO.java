@@ -1,17 +1,13 @@
 package de.uniol.inf.is.odysseus.priority;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 /**
  * @author Jonas Jacobi, Jan Steinke
@@ -56,11 +52,12 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 				ITimeInterval time = (ITimeInterval) next.getMetadata();
 				if (curPriority.getKey() != 0 && isPunctuationActive) {
 					sendPunctuation(time.getStart());
-
-					for (PostPriorisationPO<?> each : copartners) {
-						each.addTimeInterval(time);
-					}
 				}
+				
+				for (PostPriorisationPO<?> each : copartners) {
+					each.addTimeInterval(time);
+				}
+				
 				return;
 			}
 		}

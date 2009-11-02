@@ -17,3 +17,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.osgi.service.component
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/AuroraMinCostIterFactory.xml, OSGI-INF/AuroraMinLatencyIterFactory.xml, OSGI-INF/SimplePriorityMinLatencyFactory.xml, OSGI-INF/PriorityMinLatencyFactory.xml
+Require-Bundle: de.uniol.inf.is.odysseus.base

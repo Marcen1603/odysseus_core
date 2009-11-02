@@ -25,9 +25,11 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override
 	public void handlePostPriorisation(T next) {
 		next.getMetadata().setPriority((byte) (defaultPriority+1));
+		
+		
+		
 		// TODO PostPriorisationBuffer macht erst einmal das gleiche wie PostPriorisationPO
-		// Spaeter soll nach erfolgreicher Nachpriorisierung der Buffer wieder aktiviert werden
-		// => evtl. dann auch nach PostPriorisationFunctionality auslagern
+		// => Funktionalitaet momentan noch nicht fertig
 
 	}
 

@@ -38,7 +38,6 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 		
 		while(it.hasNext()) {
 			ITimeInterval each = it.next();
-			
 			if(TimeInterval.inside(current, each)) {
 				result = true;
 			} else if(TimeInterval.startsBefore(each, current)){
@@ -65,7 +64,6 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 		if(hasToBePrefered(currentInterval) || 
 				(joinFragment != null && joinFragment.evaluate(next))) {
 			pipe.handlePostPriorisation(next);
-			
 		}	
 	}
 	
