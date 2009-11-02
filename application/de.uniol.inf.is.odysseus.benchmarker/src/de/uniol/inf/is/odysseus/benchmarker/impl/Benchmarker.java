@@ -1,4 +1,5 @@
-//package de.uniol.inf.is.odysseus.benchmarker;
+package de.uniol.inf.is.odysseus.benchmarker.impl;
+//package de.uniol.inf.is.odysseus.benchmarker.impl;
 //
 //import java.util.ArrayList;
 //import java.util.List;
@@ -276,7 +277,7 @@
 //				+ "</useMultiQueryApproach>");
 //		System.out.println("  <multiThreaded>" + useMultithreaded
 //				+ "</multiThreaded>");		
-//		BenchmarkResult result = b.start(query,queryNTimes, env, lang, resultsToRead, usePN
+//		AbstractBenchmarkResult result = b.start(query,queryNTimes, env, lang, resultsToRead, usePN
 //				|| usePNID, useMV, usePrediction, fileName, useMultiQueryApproach, printPlanMetadata, printOutput);
 //
 //		System.out.println(result);
@@ -406,7 +407,7 @@
 //		logger.debug("Init Benchmarker done");
 //	}
 //
-//	public BenchmarkResult start(String query, int queryNTimes, ExecutionEnvironment env,
+//	public AbstractBenchmarkResult start(String query, int queryNTimes, ExecutionEnvironment env,
 //			String queryLang, long resultsToRead, boolean usePN, boolean useMV, boolean usePrediction,
 //			String fileName, boolean useMultiQueryApproach,
 //			boolean printPlanMetadata, boolean printOutput) throws ParseException,
@@ -416,7 +417,7 @@
 //		for (int i=0;i<queryNTimes;i++){	
 //			plans.addAll(env.translateAndRestruct(queryLang, query));
 //		}
-//		BenchmarkResult result = new BenchmarkResult();
+//		AbstractBenchmarkResult result = new AbstractBenchmarkResult();
 //		result.setWriteResultsToFile(fileName != null);
 //		result.setFileName(fileName);
 //

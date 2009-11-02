@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.benchmarker;
+package de.uniol.inf.is.odysseus.benchmarker.impl;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;

@@ -1,23 +1,26 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Benchmarker Plug-in
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.benchmarker
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.benchmarker.impl
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.benchmarker.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.benchmarker.impl.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.benchmarker,
  de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.base.planmanagement.configuration,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.interval_latency,
  de.uniol.inf.is.odysseus.interval_latency_priority,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.configuration,
  de.uniol.inf.is.odysseus.planmanagement.executor.configuration.setting,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
- de.uniol.inf.is.odysseus.priority,
+ de.uniol.inf.is.odysseus.priority;resolution:=optional,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.scheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory;version="2.0.0",
@@ -27,10 +30,16 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component;version="1.1.0",
+ org.osgi.service.framework;version="1.0.0",
+ org.osgi.util.tracker;version="1.4.2",
+ org.simpleframework.xml,
+ org.simpleframework.xml.core,
+ org.simpleframework.xml.transform,
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
-Require-Bundle: de.uniol.inf.is.odysseus.planmanagement.executor
-Export-Package: de.uniol.inf.is.odysseus.benchmarker
+Require-Bundle: de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.base
+Export-Package: de.uniol.inf.is.odysseus.benchmarker.impl
 Bundle-ClassPath: ostermillerutils_1_07_00.jar,
  .
