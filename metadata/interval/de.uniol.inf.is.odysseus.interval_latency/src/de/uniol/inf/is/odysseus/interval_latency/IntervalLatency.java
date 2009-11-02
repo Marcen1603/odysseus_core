@@ -11,6 +11,11 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	private static final long serialVersionUID = -3129934770814427153L;
 	private long start;
 	private long end;
+	
+	public IntervalLatency() {
+		this.start = 0;
+		this.end = 0;
+	}
 
 	public IntervalLatency(IntervalLatency clone) {
 		super(clone);
