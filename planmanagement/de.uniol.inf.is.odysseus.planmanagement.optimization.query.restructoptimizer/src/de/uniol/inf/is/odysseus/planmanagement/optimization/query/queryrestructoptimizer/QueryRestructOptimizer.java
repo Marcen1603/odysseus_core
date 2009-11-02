@@ -48,9 +48,10 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		// query.getSealedRoot() || (restruct != null && restruct == ParameterDoRestruct.TRUE)
 		//
 		// (Wolf)
-		if (query.getSealedRoot() == null || restruct == null
-				|| restruct == ParameterDoRestruct.FALSE) {
-			try {
+//		if (query.getSealedRoot() == null || restruct == null
+//				|| restruct == ParameterDoRestruct.FALSE) {
+		if (query.getSealedRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
+		try {
 				// create the physical plan
 				IPhysicalOperator physicalPlan = compiler.transform(query
 						.getSealedLogicalPlan(), query.getBuildParameter()

@@ -46,11 +46,14 @@ public abstract class AbstractBufferPlacementStrategy implements
 	}
 	
 	public void addBuffers(IPhysicalOperator plan) {
-		if (plan.isSink()) {
+		if (plan.isSink() && !plan.isSource()) {
 			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
 					.getSubscribedTo()) {
 				addBuffers(s.getTarget());
 			}
+		}
+		if (plan.isSource()){
+			addBuffers((ISource) plan);
 		}
 	}
 
