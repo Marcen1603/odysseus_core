@@ -12,6 +12,12 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	private long start;
 	private long end;
 
+	public IntervalLatency(IntervalLatency clone) {
+		super(clone);
+		this.start = clone.start;
+		this.end = clone.end;
+	}
+	
 	@Override
 	public long getLatency() {
 		return end - start;
@@ -39,10 +45,7 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 
 	@Override
 	public IntervalLatency clone() {
-		IntervalLatency newObj = (IntervalLatency) super.clone();
-		newObj.start = this.start;
-		newObj.end = this.end;
-		return newObj;
+		return new IntervalLatency(this);
 	}
 
 }
