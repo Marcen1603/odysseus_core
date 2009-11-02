@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.benchmarker.impl;
+package de.uniol.inf.is.odysseus.benchmarker;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -9,24 +9,21 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
+import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-/**
- * @author Jonas Jacobi
- */
-class BenchmarkSink<M extends ILatency> extends
+class MySink<M extends ILatency & IPriority> extends
 		AbstractSink<RelationalTuple<M>> {
 
 	private Lock lock = new ReentrantLock();
-	private BlockingQueue<IBenchmarkResult<M>> resultQueue = new ArrayBlockingQueue<IBenchmarkResult<M>>(1);
-	private IBenchmarkResult<M> result;
+	private BlockingQueue<BenchmarkResult> resultQueue = new ArrayBlockingQueue<BenchmarkResult>(1);
+	private BenchmarkResult result;
 	private long resultsToRead = -1;
 	public int counter = 0;
 
-	public BenchmarkSink(IBenchmarkResult<M> result, long resultsToRead) {
+	public MySink(BenchmarkResult result, long resultsToRead) {
 		this.result = result;
 		this.resultsToRead = resultsToRead;
 	}
@@ -42,17 +39,13 @@ class BenchmarkSink<M extends ILatency> extends
 	protected synchronized void process_next(RelationalTuple<M> object,
 			int port, boolean isReadOnly) {
 		if (resultsToRead == -1 || result.size() < resultsToRead) {
-			addToResult(object);
+			result.add(object.getMetadata());
 		} else {
 			lock.lock();
 			inputDone();
 			done(port);
 			lock.unlock();
 		}
-	}
-
-	protected void addToResult(RelationalTuple<M> object) {
-		result.add(object.getMetadata());
 	}
 
 	private void inputDone() {
@@ -74,7 +67,7 @@ class BenchmarkSink<M extends ILatency> extends
 		lock.unlock();
 	}
 
-	public IBenchmarkResult<M> waitForResult() throws InterruptedException {
+	public BenchmarkResult waitForResult() throws InterruptedException {
 		return resultQueue.take();
 	}
 
