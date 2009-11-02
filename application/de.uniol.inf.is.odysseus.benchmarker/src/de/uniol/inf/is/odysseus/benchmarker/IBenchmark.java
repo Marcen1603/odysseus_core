@@ -1,16 +1,27 @@
 package de.uniol.inf.is.odysseus.benchmarker;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 
 public interface IBenchmark {
-	public void setSchedulingStrategy(String schedStrat);
-	public void setScheduler(String scheduler);
-	public void setBufferPlacementStrategy(String bufferPlacement);
-	public void addQuery(String language, String query);
-	public void setDataType(String dataType);
-	public void setMetadataTypes(String... types);
-	public void setOption(String name, Object value);	
-	public void setResultFactory(String className);
-	public void setMaxResults(long maxresults);
-	
-	public <T> IBenchmarkResult<T> runBenchmark() throws BenchmarkException;
+
+	public static class Configuration {
+		public long maxResults;
+		public String language;
+		public String scheduler;
+		public String schedulingStrategy;
+		public String bufferPlacement;
+		public AbstractQueryBuildParameter<?>[] buildParameters; 
+		
+		public Configuration() {
+			this.bufferPlacement = "Standard Buffer Placement";
+			this.scheduler = "Single Thread Scheduler";
+			this.schedulingStrategy = "Round Robin (Iter)";
+			this.maxResults = -1;
+			this.buildParameters = null;
+		}
+	}
+
+	public BenchmarkResult runBenchmark(String query, String language,
+			Configuration config) throws BenchmarkException;
+
 }
