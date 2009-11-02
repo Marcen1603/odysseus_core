@@ -13,6 +13,7 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	private long end;
 	
 	public IntervalLatency() {
+		super();
 		this.start = 0;
 		this.end = 0;
 	}
