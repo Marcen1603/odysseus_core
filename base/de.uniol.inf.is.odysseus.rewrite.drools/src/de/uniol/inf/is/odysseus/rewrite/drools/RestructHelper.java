@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 
 public class RestructHelper {
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp remove, boolean reserveOutputSchema){
-		System.out.println(" Remove Operator "+remove+ " "+reserveOutputSchema);
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 		Collection<LogicalSubscription> fathers = remove.getSubscriptions();
 		LogicalSubscription child = remove.getSubscribedTo(0);
