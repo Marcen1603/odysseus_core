@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.rewrite.relational;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -21,6 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -34,15 +37,41 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 
 public class RelationalRestructHelper {
-	
-	/**
-	 * 
-	 * @param remove
-	 * @param reserveOutputSchema: If true the inputschema of all father nodes is set to the output
-	 * schema of the replaced node. E.g. used for deletion of rename-Operation
-	 * @return
-	 */
 
+	public static boolean containsAllSources(ILogicalOperator op, Set sources) {
+		List<SDFAttribute> schema = op.getOutputSchema();
+		Set schemaSources = sourcesOfAttributes(schema);
+		for(Object source : sources) {
+			if (!schemaSources.contains(source)) {
+				return false;
+			}
+		} 
+		return true;
+	}
+
+	public static Set sourcesOfPredicate(IPredicate predicate) {
+		final HashSet<String> sources = new HashSet<String>();
+		visitPredicates((IPredicate<?>)predicate, new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
+			public void call(IPredicate<?> pred) {
+				List<SDFAttribute> attributes = ((IRelationalPredicate)pred).getAttributes();
+				//this should be a call to sourcesOfAttributes, but
+				//there are strange compilation errors when sourcesOfAttributes
+				//get called from here
+				for (SDFAttribute attribute : attributes) {
+					sources.add(((CQLAttribute) attribute).getSourceName());
+				}
+			}
+		});
+		return sources;
+	}
+
+	public static Set sourcesOfAttributes(List attributes) {
+		HashSet<String> sources = new HashSet<String>();
+		for (Object attribute : attributes) {
+			sources.add(((CQLAttribute) attribute).getSourceName());
+		}
+		return sources;
+	}
 
 	public static boolean subsetPredicate(
 			IPredicate<RelationalTuple<?>> predicate,

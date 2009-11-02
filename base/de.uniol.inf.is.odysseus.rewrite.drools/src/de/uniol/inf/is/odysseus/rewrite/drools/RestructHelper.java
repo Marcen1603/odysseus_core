@@ -6,14 +6,11 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 
 public class RestructHelper {
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp remove, boolean reserveOutputSchema){
+		System.out.println(" Remove Operator "+remove+ " "+reserveOutputSchema);
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 		Collection<LogicalSubscription> fathers = remove.getSubscriptions();
 		LogicalSubscription child = remove.getSubscribedTo(0);
@@ -32,7 +29,7 @@ public class RestructHelper {
 	}
 
 	/**	Insert an operator in the tree at some special point and update all subscriptions
-	 * i.e. the new Operator gets all subscriptions currently bound to the after operator
+	 * i.e. the new Operator gets all subscriptions currently bound to the after operator (looking from root!)
 	 * and create a new subscription from toInsert to after
 	 * 
 	 * @param toInsert Operator that should be inserted as child of the after operator 
