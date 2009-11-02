@@ -37,4 +37,12 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 		start = timestamp;
 	}
 
+	@Override
+	public IntervalLatency clone() {
+		IntervalLatency newObj = (IntervalLatency) super.clone();
+		newObj.start = this.start;
+		newObj.end = this.end;
+		return newObj;
+	}
+
 }
