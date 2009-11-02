@@ -31,6 +31,7 @@ AbstractIterableSource<RelationalTuple<M>> {
 	private IAtomicDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
+	private SDFAttributeList outputSchema;
 
 	private boolean p2p = false;
 	public boolean connectToPipe = false;
@@ -157,5 +158,9 @@ AbstractIterableSource<RelationalTuple<M>> {
 		System.out.println("TRANSFER BUFFER: " + this.buffer);
 		transfer(this.buffer);
 		this.buffer = null;
+	}
+	
+	public SDFAttributeList getOutputSchema(){
+		return this.outputSchema;
 	}
 }
