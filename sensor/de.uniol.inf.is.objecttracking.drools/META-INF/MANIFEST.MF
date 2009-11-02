@@ -7,6 +7,5 @@ Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.objecttracking.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.transformation.drools

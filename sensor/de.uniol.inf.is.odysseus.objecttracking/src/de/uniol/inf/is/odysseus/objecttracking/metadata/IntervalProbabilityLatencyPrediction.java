@@ -139,12 +139,19 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	}
 
 	@Override
-	public int[][] getVariables(SDFAttributeList schema) {
+	public void initVariables() {
 		// TODO Auto-generated method stub
-		if(this.predFct == null){
-			return null;
+		if(this.predFct != null){
+			this.predFct.initVariables();
 		}
-		return this.predFct.getVariables(schema);
+	}
+	
+	@Override
+	public int[][] getVariables(){
+		if(this.predFct != null){
+			return this.predFct.getVariables();
+		}
+		return null;
 	}
 
 	@Override

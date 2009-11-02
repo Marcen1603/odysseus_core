@@ -21,8 +21,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class RelationalProjectPredictionMVPO<T extends IProbability & IPredictionFunction> extends RelationalProjectMVPO<T> {
 
 	
-	public RelationalProjectPredictionMVPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema) {
-		super(restrictList, projectMatrix, projectVector, inputSchema);
+	public RelationalProjectPredictionMVPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
+		super(restrictList, projectMatrix, projectVector, inputSchema, outputSchema);
 	}
 	
 	public RelationalProjectPredictionMVPO(RelationalProjectPredictionMVPO<T> copy) {
@@ -66,11 +66,20 @@ public class RelationalProjectPredictionMVPO<T extends IProbability & IPredictio
 	 * the prediction function will be updated and only
 	 * expressions affecting any of the output attributes
 	 * will be in the prediction function.
+	 * 
+	 * This cannot be done in advance, since every element
+	 * in a data stream can have a different prediction function.
+	 * 
+	 * TODO: Da die Menge an Prädiktionsfunktionen endlich ist,
+	 * wird man wohl auch das vorher berechnen können und dann
+	 * einfach nur schon aus den bekannten Prädiktionsfunktionen
+	 * auswählen, ob null gesetzt werden muss oder nicht.
+	 * 
 	 * @param mData The prediction function to be updated
 	 * @return the updated prediction function.
 	 */
 	private T updatePrdFct(T mData){
-		int[][] variables = mData.getVariables(this.inputSchema);
+		int[][] variables = mData.getVariables();
 		SDFExpression[] expressions = mData.getPredictionFunction();
 		
 		int[][] newVariables = new int[this.restrictList.length][];
@@ -82,6 +91,7 @@ public class RelationalProjectPredictionMVPO<T extends IProbability & IPredictio
 		for(int i: this.restrictList){
 			newVariables[i] = variables[i];
 			newExpressions[i] = expressions[i];
+			newExpressions[i].initAttributePositions(this.outputSchema);
 		}
 		
 		for(int i =0; i<newVariables.length; i++){
@@ -99,6 +109,11 @@ public class RelationalProjectPredictionMVPO<T extends IProbability & IPredictio
 			}
 		}
 		
+		// if all needed prediction functions only use variables
+		// that are availabe after the projection
+		// then these prediction functions can be used further
+		mData.setPredictionFunction(newExpressions);
+		mData.initVariables();
 		return mData;
 	}
 }

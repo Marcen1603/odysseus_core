@@ -37,6 +37,7 @@ public class PredictionPO<T extends IMetaAttributeContainer<M>, M extends IPredi
 			if (curPredictionFunction.getValue().evaluate(next)) {
 				next.getMetadata().setPredictionFunction(curPredictionFunction.getKey());
 				next.getMetadata().setTimeInterval(new TimeInterval(next.getMetadata().getStart(), next.getMetadata().getEnd()));
+				next.getMetadata().initVariables();
 				transfer(next);
 				return;
 			}

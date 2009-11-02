@@ -23,12 +23,15 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 	RealMatrix projectMatrix;
 	RealMatrix projectVector;
 	SDFAttributeList inputSchema;
+	SDFAttributeList outputSchema;
 	
-	public RelationalProjectMVPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema) {
+	public RelationalProjectMVPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,
+			SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
 		this.restrictList = restrictList;
 		this.projectMatrix = projectMatrix;
 		this.projectVector = projectVector;
 		this.inputSchema = inputSchema;
+		this.outputSchema = outputSchema;
 		
 		final RelationalProjectMVPO<T> t = this;
 		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,

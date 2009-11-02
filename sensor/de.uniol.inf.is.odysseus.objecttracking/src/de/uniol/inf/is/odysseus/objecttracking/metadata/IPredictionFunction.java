@@ -31,5 +31,7 @@ public interface IPredictionFunction<T extends MetaAttributeContainer<M>, M exte
 	
 	public SDFExpression[] getPredictionFunction();
 	
-	public int[][] getVariables(SDFAttributeList schema);
+	public void initVariables();
+	
+	public int[][] getVariables();
 }

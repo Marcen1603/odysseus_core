@@ -190,7 +190,11 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 		}
 		
 //		this.variables = this.getVariables(schema);
-		this.variables = this.getVariables2();
+		
+		// The following must not be done any more, since
+		// this will be done in the method initVariables (former getVariables2)
+		// called in PredictionPO operator
+//		this.variables = this.getVariables2();
 		
 		synchronized (this.expressions) {
 			
@@ -290,7 +294,11 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 		}
 		
 //		this.variables = this.getVariables(schema);
-		this.variables = this.getVariables2();
+		
+		// The following must not be done any more, since
+		// this will be done in the method initVariables (former getVariables2)
+		// called in PredictionPO operator
+//		this.variables = this.getVariables2();
 		
 		M metadata = object.getMetadata();
 		double[][] covValues = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
@@ -427,7 +435,6 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	 * 
 	 * @param schema
 	 */
-	@Override
 	@Deprecated
 	public int[][] getVariables(SDFAttributeList schema){
 		int[][] tempVars = new int[this.variables.length][]; // this.variables.length = this.expressions.length
@@ -462,14 +469,24 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	 * can be determined in advance of query processing.
 	 * @return
 	 */
-	public int[][] getVariables2(){
-		int[][] tempVars = new int[this.variables.length][];
+	public void initVariables(){
+		this.variables = new int[this.variables.length][];
 		for(int u = 0; u<expressions.length; u++){
 			SDFExpression expression = expressions[u];
 			if(expression != null)
-				tempVars[u] = expression.getAttributePositions();
+				this.variables[u] = expression.getAttributePositions();
 		}
-		return tempVars;
+	}
+	
+	/**
+	 * @return the initialized variable positions
+	 */
+	public int[][] getVariables(){
+		return this.variables;
+	}
+	
+	public void setSchema(){
+
 	}
 	
 	/**
