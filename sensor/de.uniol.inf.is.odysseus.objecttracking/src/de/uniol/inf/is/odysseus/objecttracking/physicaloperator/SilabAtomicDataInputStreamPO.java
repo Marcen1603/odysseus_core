@@ -5,62 +5,53 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-import org.w3c.dom.views.AbstractView;
-
-import de.uniol.inf.is.odysseus.base.IOperatorOwner;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.DateHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IntegerHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.LongHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.StringHandler;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * @author Jonas Jacobi, Andre Bolles
+ * @author Dennis Wiemann
  */
-public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
-		AbstractIterableSource<MVRelationalTuple<M>>{
-
-	// private IMetadataFactory<M, RelationalTuple<M>> metadataFactory;
+public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends
+AbstractIterableSource<RelationalTuple<M>> {
+	
 	final private String hostName;
 	final private int port;
 	private ObjectInputStream channel;
 	private boolean isOpen;
-	private MVRelationalTuple<M> buffer;
+	private RelationalTuple<M> buffer;
 	private IAtomicDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
-	private SDFAttributeList outputSchema;
-
-
-	private int limit;
-	
-	private int counter;
 
 	private boolean p2p = false;
-	private boolean connectToPipe = false;
+	public boolean connectToPipe = false;
+
+	public boolean isConnectToPipe() {
+		return connectToPipe;
+	}
 
 	public void setConnectToPipe(boolean connectToPipe) {
 		this.connectToPipe = connectToPipe;
 	}
-
-	public AtomicDataInputStreamAccessMVPO(String host, int port,
+	
+	public SilabAtomicDataInputStreamPO(String host, int port,
 			SDFAttributeList schema) {
 		this.hostName = host;
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
 		createDataReader(schema);
-		this.outputSchema = schema;
 	}
-
+	
 	private void createDataReader(SDFAttributeList schema) {
-		this.outputSchema = schema;
 		this.dataReader = new IAtomicDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
@@ -77,14 +68,12 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 				this.dataReader[i++] = new DoubleHandler();
 			} else if (uri.equals("String")) {
 				this.dataReader[i++] = new StringHandler();
-			} else if (uri.equals("Date")) {
-				this.dataReader[i++] = new DateHandler();
 			} else {
 				throw new RuntimeException("illegal datatype");
 			}
 		}
 	}
-
+	
 	@Override
 	protected void process_done() {
 		super.process_done();
@@ -92,13 +81,11 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
-
+	protected void process_open() throws OpenFailedException {
 		if (!p2p) {
 			if (this.isOpen) {
 				return;
 			}
-
 			try {
 				Socket socket = new Socket(this.hostName, this.port);
 				this.channel = new ObjectInputStream(socket.getInputStream());
@@ -110,11 +97,11 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 			}
 			this.isOpen = true;
 			this.isDone = false;
-		}
+		}	
 	}
 
 	@Override
-	public synchronized boolean hasNext() {
+	public boolean hasNext() {
 
 		if (p2p) {
 			if (!connectToPipe) {
@@ -128,8 +115,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 						this.channel = new ObjectInputStream(s.getInputStream());
 					} catch (Exception e) {
 						// throw new OpenFailedException(e.getMessage());
-						System.err
-								.println("Konnte Quelle nicht öffnen");
+						System.err.println("Konnte Quelle nicht öffnen");
 						try {
 							Thread.sleep(5000);
 						} catch (InterruptedException e1) {
@@ -148,21 +134,17 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 				this.attributeData[i] = dataReader[i].readData();
 			}
 		} catch (EOFException e) {
-			// System.out.println("READER DONE.");
 			this.isDone = true;
 			propagateDone();
 			return false;
 		} catch (IOException e) {
-			// System.out.println("READER DONE.");
 			// TODO wie mit diesem fehler umgehen?
 			return false;
 		}
-
-		this.buffer = new MVRelationalTuple<M>(this.attributeData);
-		return true;
-		// this.buffer = new MVRelationalTuple<M>(this.outputSchema,
-		// this.attributeData);
+		this.buffer = new RelationalTuple<M>(this.attributeData);
 		// this.buffer.setMetadata(this.metadataFactory.createMetadata());
+
+		return true;
 	}
 
 	@Override
@@ -171,20 +153,9 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 	}
 
 	@Override
-	public synchronized void transferNext() {
-//		System.out.println("BUFFER No: " + this.counter++ + " TRANSFER: " + this.buffer);
+	public void transferNext() {
+		System.out.println("TRANSFER BUFFER: " + this.buffer);
 		transfer(this.buffer);
 		this.buffer = null;
 	}
-	
-	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
-	}
-
-	//
-	// public void setMetadataFactory(
-	// IMetadataFactory<M, RelationalTuple<M>> metadataFactory) {
-	// this.metadataFactory = metadataFactory;
-	// }
-
 }
