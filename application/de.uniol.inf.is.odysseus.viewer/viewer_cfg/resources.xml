@@ -29,6 +29,23 @@
 	<Image source="viewer_cfg/metadataPO.png" name="metadataPO" />
 	<Image source="viewer_cfg/accessPO.png" name="accessPO" />
 	<Image source="viewer_cfg/pipe.png" name="aggrGroup" />
+	
+	<Image source="viewer_cfg/prioBuffer.png" name="prioBuffer" />
+	<Image source="viewer_cfg/directInterlinkBuffer.png" name="directInterlinkBuffer" />
+	<Image source="viewer_cfg/renamePO.png" name="renamePO" />
+	<Image source="viewer_cfg/intersectPO.png" name="intersectPO" />
+	<Image source="viewer_cfg/unionPO.png" name="unionPO" />
+	<Image source="viewer_cfg/differencePO.png" name="differencePO" />
+	<Image source="viewer_cfg/p2paccessPO.png" name="p2paccessPO" />
+	<Image source="viewer_cfg/p2ppipePO.png" name="p2ppipePO" />
+	<Image source="viewer_cfg/filterPO.png" name="filterPO" />
+	<Image source="viewer_cfg/associatePO.png" name="associatePO" />
+	<Image source="viewer_cfg/mapPO.png" name="mapPO" />
+	<Image source="viewer_cfg/predictionPO.png" name="predictionPO" />
+	<Image source="viewer_cfg/splitPO.png" name="splitPO" />
+	<Image source="viewer_cfg/priorityPO.png" name="priorityPO" />
+	<Image source="viewer_cfg/fixedsetPO.png" name="fixedSetPO" />
+	<Image source="viewer_cfg/emptyPO.png" name="emptyPO" />
 
 	<Image source="viewer_cfg/select.png" name="select" />
 	<Image source="viewer_cfg/metaNew.png" name="metaNew" />
@@ -37,3 +54,4 @@
 	<Image source="viewer_cfg/metaReload.png" name="metaReload" />
 
 </Resources>
+

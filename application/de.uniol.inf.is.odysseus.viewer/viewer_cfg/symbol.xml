@@ -17,7 +17,7 @@
 	</Symbol>
 	
 	<Symbol nodeName="BenchmarkPO">
-		<Size width="25" height="25"/>
+		<Size width="92" height="28"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="benchmarkPO"/>
 		</SymbolElement>
@@ -73,6 +73,19 @@
 		</SymbolElement>
 	</Symbol>
 	
+	<Symbol nodeName="FixedSetPO">
+		<Size width="91" height="27"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="fixedSetPO"/>
+		</SymbolElement>
+	</Symbol>
+	
+	<Symbol nodeName="PriorityPO">
+		<Size width="91" height="27"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="priorityPO"/>
+		</SymbolElement>
+	</Symbol>	
 
 	<Symbol nodeName="StreamGroupingWithAggregationPO">
 		<Size width="92" height="27"/>
@@ -88,6 +101,83 @@
 			<Parameter key="resource" value="latency"/>
 		</SymbolElement>
 	</Symbol>
+
+	<Symbol nodeName="PriorityBufferedPipe">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="prioBuffer" />
+		</SymbolElement>
+	</Symbol>
+		
+	<Symbol nodeName="DirectInterlinkBufferedPipe">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="directInterlinkBuffer" />
+		</SymbolElement>
+	</Symbol>
+	
+	<Symbol nodeName="UnionPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="unionPO" />
+		</SymbolElement>
+	</Symbol>
+	
+	<Symbol nodeName="DifferencePO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="differencePO" />
+		</SymbolElement>
+	</Symbol>
+
+	<Symbol nodeName="P2PAccessPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="p2paccessPO" />
+		</SymbolElement>
+	</Symbol>
+
+	<Symbol nodeName="P2PPipePO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="p2ppipePO" />
+		</SymbolElement>
+	</Symbol>
+
+	<Symbol nodeName="FilterPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="filterPO" />
+		</SymbolElement>
+	</Symbol>
+
+	<Symbol nodeName="AssociatePO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="associatePO" />
+		</SymbolElement>
+	</Symbol>
+
+	<Symbol nodeName="MapPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="mapPO" />
+		</SymbolElement>
+	</Symbol>
+
+	<Symbol nodeName="PredictionPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="predictionPO" />
+		</SymbolElement>
+	</Symbol>
+
+	<Symbol nodeName="SplitPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="splitPO" />
+		</SymbolElement>
+	</Symbol>	
 			
 	<Default>
 		<Size width="92" height="27"/>
