@@ -45,7 +45,6 @@
 	<Image source="viewer_cfg/splitPO.png" name="splitPO" />
 	<Image source="viewer_cfg/priorityPO.png" name="priorityPO" />
 	<Image source="viewer_cfg/fixedsetPO.png" name="fixedSetPO" />
-	<Image source="viewer_cfg/emptyPO.png" name="emptyPO" />
 
 	<Image source="viewer_cfg/select.png" name="select" />
 	<Image source="viewer_cfg/metaNew.png" name="metaNew" />
