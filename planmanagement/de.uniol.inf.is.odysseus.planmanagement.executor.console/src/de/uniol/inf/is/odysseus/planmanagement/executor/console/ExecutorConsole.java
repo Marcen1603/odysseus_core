@@ -31,8 +31,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -63,7 +61,7 @@ public class ExecutorConsole implements CommandProvider,
 	private static ConsoleFunctions support = new ConsoleFunctions();
 
 	private boolean usePriority = false;
-	
+
 	private boolean useObjectFusionConfig = false;
 
 	private Lock preferencesLock = new ReentrantLock();
@@ -448,7 +446,7 @@ public class ExecutorConsole implements CommandProvider,
 			ci.println(partialPlan.toString());
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Help(description = "<on|off> - Adds or removes punctuation support inside every available PriorityPO.")
 	public void _addPunctuations(CommandInterpreter ci) {
@@ -458,28 +456,30 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			if (args != null && args.length >= 1) {
 				int depth = 0;
-				if(args.length >= 2) {
+				if (args.length >= 2) {
 					depth = Integer.valueOf(args[1]);
 
 					if (depth < 1) {
 						depth = 1;
 					}
 				}
-				
+
 				StringBuffer buff = new StringBuffer();
 				usePunctuations = toBoolean(args[0]);
-				
+
 				for (IPhysicalOperator root : this.executor.getSealedPlan()
 						.getRoots()) {
 
 					if (root.isSink()) {
-						support.changePunctuationState((ISink) root, depth, usePunctuations, buff);
+						support.changePunctuationState((ISink) root, depth,
+								usePunctuations, buff);
 					} else {
-						support.changePunctuationState((ISource) root, depth, usePunctuations, buff);
+						support.changePunctuationState((ISource) root, depth,
+								usePunctuations, buff);
 					}
-				}		
+				}
 				ci.println(buff.toString());
-				
+
 			}
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -710,19 +710,22 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("priorities are "
 				+ (usePriority ? "activated" : "deactivated"));
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Help(parameter ="<on|off>", description = "turn usage of object fusion configuration on|off")
-	public void _useObjectFusionConfig(CommandInterpreter ci){
+	@Help(parameter = "<on|off>", description = "turn usage of object fusion configuration on|off")
+	public void _useObjectFusionConfig(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
-		try{
+		try {
 			if (args.length == 1) {
 				useObjectFusionConfig = toBoolean(args[0]);
 				TransformationConfiguration trafoConfig;
 				if (useObjectFusionConfig) {
-					trafoConfig = new TransformationConfiguration("relational",
-							ITimeInterval.class, IPredictionFunction.class, IProbability.class);
+					trafoConfig = new TransformationConfiguration(
+							"relational",
+							ITimeInterval.class.getName(),
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction",
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability");
 				} else {
 					trafoConfig = new TransformationConfiguration("relational",
 							ITimeInterval.class);
@@ -731,11 +734,11 @@ public class ExecutorConsole implements CommandProvider,
 				this.trafoConfigParam = new ParameterTransformationConfiguration(
 						trafoConfig);
 			}
-		}catch(IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			ci.println(e.getMessage());
 		}
-		ci.println("Object fusion configuration is " + 
-				(useObjectFusionConfig ? "activated" : "deactivated"));
+		ci.println("Object fusion configuration is "
+				+ (useObjectFusionConfig ? "activated" : "deactivated"));
 	}
 
 	private boolean toBoolean(String string) {
