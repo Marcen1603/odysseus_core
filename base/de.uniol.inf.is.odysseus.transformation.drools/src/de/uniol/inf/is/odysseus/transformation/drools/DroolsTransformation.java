@@ -111,7 +111,6 @@ public class DroolsTransformation implements ITransformation {
 		TopAO top = new TopAO();
 		op.subscribe(top, 0, 0, op.getOutputSchema());
 
-		session.insert(config);
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
 
