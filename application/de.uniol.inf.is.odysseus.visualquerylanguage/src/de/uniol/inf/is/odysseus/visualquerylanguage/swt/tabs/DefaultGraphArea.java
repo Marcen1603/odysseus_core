@@ -6,10 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,9 +36,9 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
@@ -77,7 +75,6 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeC
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSinkContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultSourceContent;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParam;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
@@ -329,10 +326,11 @@ public class DefaultGraphArea extends Composite implements
 								.getRealNodePosition(new Vector(e.x, e.y)));
 						if (SWTResourceManager.getInstance().getImage(
 								(content).getImageName()) != null) {
-							SWTImageSymbolElement<INodeContent> sym = new SWTImageSymbolElement<INodeContent>((content).getImageName());
-							nodeView.getSymbolContainer().add( sym );
-							nodeView.setWidth( sym.getImageWidth() );
-							nodeView.setHeight( sym.getImageHeight() );
+							SWTImageSymbolElement<INodeContent> sym = new SWTImageSymbolElement<INodeContent>(
+									(content).getImageName());
+							nodeView.getSymbolContainer().add(sym);
+							nodeView.setWidth(sym.getImageWidth());
+							nodeView.setHeight(sym.getImageHeight());
 						} else {
 							nodeView.getSymbolContainer().add(
 									new SWTImageSymbolElement<INodeContent>(
@@ -398,48 +396,79 @@ public class DefaultGraphArea extends Composite implements
 					renderManager.getSelector().unselectAll();
 					return;
 				} else {
+					Collection<ILogicalOperator> opList = new ArrayList<ILogicalOperator>();
 					for (INodeView<INodeContent> nodeView : connNodeList) {
-						if (!((INodeModel<INodeContent>) (selectedNode
-								.getModelNode())).getContent().isOnlySource()) {
-							if (endOp instanceof UnaryLogicalOp) {
-								endOp.subscribeTo(nodeView.getModelNode()
-										.getContent().getOperator(), 0, 0);
-							} else if (endOp instanceof BinaryLogicalOp) {
-								if (endOp.getSubscribedTo().isEmpty()) {
+						if(nodeView.getModelNode().getContent().getOperator() instanceof JoinAO) {
+						for (int i = 0; i < nodeView.getModelNode().getContent().getOperator().getNumberOfInputs(); i++) {
+							System.out.println(nodeView.getModelNode().getContent().getOperator().getInputSchema(i));
+						}
+						}
+						if (nodeView.getModelNode().getContent().getOperator()
+								.getOutputSchema() == null
+								|| nodeView.getModelNode().getContent()
+										.getOperator().getOutputSchema()
+										.isEmpty()) {
+							this.status
+									.setErrorText("Einer der ausgewählten Startknoten besitzt kein Ausgabeschema.");
+							opList = new ArrayList<ILogicalOperator>();
+							connectionStarted = false;
+							renderManager.getSelector().unselectAll();
+							break;
+						} else {
+							opList.add(nodeView.getModelNode().getContent()
+									.getOperator());
+						}
+					}
+
+					if (!opList.isEmpty()) {
+						for (INodeView<INodeContent> nodeView : connNodeList) {
+
+							if (!((INodeModel<INodeContent>) (selectedNode
+									.getModelNode())).getContent()
+									.isOnlySource()) {
+								if (endOp instanceof UnaryLogicalOp) {
 									endOp.subscribeTo(nodeView.getModelNode()
 											.getContent().getOperator(), 0, 0);
-								} else {
-									endOp.subscribeTo(nodeView.getModelNode()
-											.getContent().getOperator(), 1, 0);
+								} else if (endOp instanceof BinaryLogicalOp) {
+									if (endOp.getSubscribedTo().isEmpty()) {
+										endOp.subscribeTo(nodeView
+												.getModelNode().getContent()
+												.getOperator(), 0, 0);
+									} else {
+										endOp.subscribeTo(nodeView
+												.getModelNode().getContent()
+												.getOperator(), 1, 0);
+									}
 								}
-							}
-							connectionStarted = false;
-							IConnectionModel<INodeContent> connModel = new DefaultConnectionModel<INodeContent>(
-									nodeView.getModelNode(), selectedNode
-											.getModelNode());
-							IConnectionView<INodeContent> connView = new DefaultConnectionView<INodeContent>(
-									connModel, nodeView, selectedNode);
-							SWTArrowSymbolElement<INodeContent> ele = new SWTArrowSymbolElement<INodeContent>(
-									new Color(Display.getDefault(),
-											new RGB(0, 0, 0)));
-							ele.setConnectionView(connView);
-							connView.getSymbolContainer().add(ele);
+								connectionStarted = false;
+								IConnectionModel<INodeContent> connModel = new DefaultConnectionModel<INodeContent>(
+										nodeView.getModelNode(), selectedNode
+												.getModelNode());
+								IConnectionView<INodeContent> connView = new DefaultConnectionView<INodeContent>(
+										connModel, nodeView, selectedNode);
+								SWTArrowSymbolElement<INodeContent> ele = new SWTArrowSymbolElement<INodeContent>(
+										new Color(Display.getDefault(),
+												new RGB(0, 0, 0)));
+								ele.setConnectionView(connView);
+								connView.getSymbolContainer().add(ele);
 
-							controller.getModel().addConnection(connModel);
-							viewGraph.insertViewedConnection(connView);
-							CursorManager.isNotConnection();
-							this.status.setText("Anfragestellung bereit.");
-						} else {
-							this.status
-									.setErrorText("Fehlerhafte Auswahl. Verbindung neu begonnen.");
-							connNodeList = new ArrayList<INodeView<INodeContent>>(
-									renderManager.getSelector().getSelected());
+								controller.getModel().addConnection(connModel);
+								viewGraph.insertViewedConnection(connView);
+								CursorManager.isNotConnection();
+								this.status.setText("Anfragestellung bereit.");
+							} else {
+								this.status
+										.setErrorText("Fehlerhafte Auswahl. Anderen Knoten auswählen.");
+								connNodeList = new ArrayList<INodeView<INodeContent>>(
+										renderManager.getSelector()
+												.getSelected());
+							}
 						}
 					}
 				}
 			} else if (renderManager.getSelector().getSelected().size() != 1) {
 				this.status
-						.setErrorText("Es darf nur ein Endknoten ausgewählt werden. Verbindung neu begonnen.");
+						.setErrorText("Es darf nur ein Endknoten ausgewählt werden. Anderen Knoten auswählen.");
 				connNodeList = new ArrayList<INodeView<INodeContent>>(
 						renderManager.getSelector().getSelected());
 			}
@@ -505,26 +534,9 @@ public class DefaultGraphArea extends Composite implements
 	}
 
 	public void removeNodes() {
-		ArrayList<IConnectionView<INodeContent>> connViewDeleteList;
 		for (INodeView<INodeContent> nodeView : renderManager.getSelector()
 				.getSelected()) {
-			for (LogicalSubscription subscription : nodeView.getModelNode()
-					.getContent().getOperator().getSubscriptions()) {
-				nodeView.getModelNode().getContent().getOperator().unsubscribe(
-						subscription);
-			}
-			for (LogicalSubscription subscription : nodeView.getModelNode()
-					.getContent().getOperator().getSubscribedTo()) {
-				nodeView.getModelNode().getContent().getOperator()
-						.unsubscribeTo(subscription);
-			}
-			connViewDeleteList = new ArrayList<IConnectionView<INodeContent>>(
-					nodeView.getAllConnections());
-			for (IConnectionView<INodeContent> connView : connViewDeleteList) {
-				controller.getModel().removeConnection(
-						connView.getModelConnection());
-				viewGraph.removeViewedConnection(connView);
-			}
+			removeConnections(nodeView);
 		}
 		for (INodeView<INodeContent> nodeView : renderManager.getSelector()
 				.getSelected()) {
@@ -532,6 +544,67 @@ public class DefaultGraphArea extends Composite implements
 			viewGraph.removeViewedNode(nodeView);
 		}
 		renderManager.getSelector().unselectAll();
+	}
+
+	private void removeConnections(INodeView<INodeContent> nodeView) {
+		for (LogicalSubscription subscription : nodeView.getModelNode()
+				.getContent().getOperator().getSubscriptions()) {
+			nodeView.getModelNode().getContent().getOperator().unsubscribe(
+					subscription);
+		}
+		for (LogicalSubscription subscription : nodeView.getModelNode()
+				.getContent().getOperator().getSubscribedTo()) {
+			nodeView.getModelNode().getContent().getOperator().unsubscribeTo(
+					subscription);
+		}
+		ArrayList<IConnectionView<INodeContent>> connViewDeleteList = new ArrayList<IConnectionView<INodeContent>>(
+				nodeView.getAllConnections());
+		for (IConnectionView<INodeContent> connView : connViewDeleteList) {
+			controller.getModel().removeConnection(
+					connView.getModelConnection());
+			viewGraph.removeViewedConnection(connView);
+		}
+	}
+
+	public void removeSingelConnection(INodeView<INodeContent> nodeView1,
+			INodeView<INodeContent> nodeView2,
+			IConnectionModel<INodeContent> startConn,
+			IConnectionModel<INodeContent> endConn) {
+		ArrayList<IConnectionView<INodeContent>> connViewDeleteList = new ArrayList<IConnectionView<INodeContent>>(
+				nodeView1.getAllConnections());
+		if (endConn != null) {
+			for (LogicalSubscription subscription : nodeView1.getModelNode()
+					.getContent().getOperator().getSubscriptions()) {
+				if (nodeView2.getModelNode().getContent().getOperator().equals(
+						subscription.getTarget())) {
+					nodeView1.getModelNode().getContent().getOperator()
+							.unsubscribe(subscription);
+				}
+			}
+			for (IConnectionView<INodeContent> connView : connViewDeleteList) {
+				if (connView.getModelConnection().equals(endConn)) {
+					controller.getModel().removeConnection(
+							connView.getModelConnection());
+					viewGraph.removeViewedConnection(connView);
+				}
+			}
+		} else if (startConn != null) {
+			for (LogicalSubscription subscription : nodeView1.getModelNode()
+					.getContent().getOperator().getSubscribedTo()) {
+				if (nodeView2.getModelNode().getContent().getOperator().equals(
+						subscription.getTarget())) {
+					nodeView1.getModelNode().getContent().getOperator()
+							.unsubscribeTo(subscription);
+				}
+			}
+			for (IConnectionView<INodeContent> connView : connViewDeleteList) {
+				if (connView.getModelConnection().equals(startConn)) {
+					controller.getModel().removeConnection(
+							connView.getModelConnection());
+					viewGraph.removeViewedConnection(connView);
+				}
+			}
+		}
 	}
 
 	private void connectionChosen() {
@@ -664,8 +737,9 @@ public class DefaultGraphArea extends Composite implements
 		INodeContent source;
 		IParamConstruct<String> param;
 		Collection<IParamConstruct<?>> conParams;
+		tree.getItem(0).removeAll();
 		for (Entry<String, ILogicalOperator> entry : DataDictionary
-				.getInstance().getViews()){
+				.getInstance().getViews()) {
 			treeItem = new TreeItem(tree.getItem(0), 0);
 			param = new DefaultParamConstruct<String>("java.lang.String",
 					new ArrayList<String>(), 0, entry.getKey());
@@ -719,7 +793,6 @@ public class DefaultGraphArea extends Composite implements
 		ILogicalOperator sourceOp = null;
 
 		ArrayList<Object> parameterValues = null;
-		Object paramObj = new Object();
 
 		clazz = Class.forName(content.getType());
 
@@ -744,13 +817,15 @@ public class DefaultGraphArea extends Composite implements
 				SDFSource source = DataDictionary.getInstance().getSource(
 						(String) parameterValues.get(0));
 				sourceOp = (ILogicalOperator) con.newInstance(source);
-				if (sourceOp instanceof OutputSchemaSettable){
-					((OutputSchemaSettable)sourceOp).setOutputSchema(DataDictionary.getInstance().getView(
-							(String) parameterValues.get(0)).getOutputSchema());
+				if (sourceOp instanceof OutputSchemaSettable) {
+					((OutputSchemaSettable) sourceOp)
+							.setOutputSchema(DataDictionary.getInstance()
+									.getView((String) parameterValues.get(0))
+									.getOutputSchema());
 				}
 			} else {
 				if (con != null) {
-					logOp = con	.newInstance(parameterValues);
+					logOp = con.newInstance(parameterValues);
 				}
 
 			}
@@ -764,9 +839,9 @@ public class DefaultGraphArea extends Composite implements
 				method.invoke(logOp, new Object[] { param.getValue() });
 			}
 		}
-		if(sourceOp != null) {
+		if (sourceOp != null) {
 			return sourceOp;
-		}else if (logOp != null) {
+		} else if (logOp != null) {
 			return (ILogicalOperator) logOp;
 		} else {
 			return null;

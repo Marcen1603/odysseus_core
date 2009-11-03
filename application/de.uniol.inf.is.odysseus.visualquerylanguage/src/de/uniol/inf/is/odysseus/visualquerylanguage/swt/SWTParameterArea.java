@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -48,7 +47,6 @@ public class SWTParameterArea implements ISWTParameterListener {
 
 	private Table table = null;
 	private TableEditor editor = null;
-	private TableViewer tableViewer = null;
 
 	private DefaultGraphArea area;
 
@@ -94,7 +92,6 @@ public class SWTParameterArea implements ISWTParameterListener {
 		}
 
 		if (table != null) {
-			tableViewer = new TableViewer(table);
 			editor = new TableEditor(table);
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.grabHorizontal = true;
@@ -175,8 +172,8 @@ public class SWTParameterArea implements ISWTParameterListener {
 					final Text text = new Text(table, SWT.NONE);
 					text.setText(value.toString());
 					editor.setEditor(text, item, 1);
-					tableViewer.cancelEditing();
 					editor.layout();
+					repaint();
 				} catch (Exception e) {
 					log.error("Wrong Value for Paramtype.");
 					area.getStatusLine().setErrorText(
@@ -201,7 +198,6 @@ public class SWTParameterArea implements ISWTParameterListener {
 				final Text text = new Text(table, SWT.NONE);
 				Listener textListener = new Listener() {
 					public void handleEvent(final Event e) {
-						table.setEnabled(false);
 							Object obj = null;
 							switch (e.type) {
 							case SWT.FocusOut:
@@ -302,5 +298,11 @@ public class SWTParameterArea implements ISWTParameterListener {
 				return;
 			index++;
 		}
+	}
+	
+	private void repaint() {
+		Collection<INodeView<INodeContent>> selected = area.getRenderer().getSelector().getSelected();
+		area.getRenderer().getSelector().unselectAll();
+		area.getRenderer().getSelector().select(selected);
 	}
 }
