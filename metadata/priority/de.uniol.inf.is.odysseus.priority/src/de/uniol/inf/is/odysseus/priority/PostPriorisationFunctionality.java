@@ -71,17 +71,25 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 		
 		if(hasToBePrefered(currentInterval)) {		
 			
+			boolean cancelPostPriorisation = false;
+			
 			Iterator<IPredicate<? super T>> it = joinFragment.iterator();
 			
 			while(it.hasNext()) {
-				IPredicate<? super T> current = it.next();
 				// Wenn Aquivalenzvergleich erfuellt wird, dann kann Nachpriorisierung abgebrochen werden
-				if(current.evaluate(next)) {
-					deactivate = true;
+				deactivate = true;
+				
+				IPredicate<? super T> current = it.next();
+				// Wird Datenstromelement spaeter gefiltert, dann brauch nicht nachpriorisiert werden
+				if(!current.evaluate(next)) {
+					cancelPostPriorisation = true;
+					break;
 				}
 			}
 			
-			pipe.handlePostPriorisation(next, deactivate);
+			if(!cancelPostPriorisation) {
+				pipe.handlePostPriorisation(next, deactivate);
+			}
 		}	
 	}
 	
