@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.base;
 
+import java.io.Serializable;
+
 
 /**
  * 
@@ -8,7 +10,11 @@ package de.uniol.inf.is.odysseus.base;
  * @param <K>
  */
 
-public class Subscription<K> implements ISubscription<K> {
+public class Subscription<K> implements ISubscription<K>, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5744808958349736195L;
 	private K target;
 	private int sinkPort;
 	private int sourcePort;
