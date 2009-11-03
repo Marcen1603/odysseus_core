@@ -48,7 +48,7 @@ public class JoinAO extends BinaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public synchronized SDFAttributeList getOutputSchema() {
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata){
 			outputSchema = new SDFAttributeList();
