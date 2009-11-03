@@ -22,4 +22,5 @@ Export-Package: de.uniol.inf.is.odysseus.priority,
  de.uniol.inf.is.odysseus.priority.punctuation
 Bundle-Activator: de.uniol.inf.is.odysseus.priority.Activator
 Service-Component: OSGI-INF/PunctuationBufferPlacement.xml,
- OSGI-INF/PostPriorisationBufferPlacement.xml
+ OSGI-INF/PostPriorisationBufferPlacement.xml,
+ OSGI-INF/PostPriorisationCombinedPlacement.xml
