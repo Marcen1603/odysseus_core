@@ -31,7 +31,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author Andre Bolles
  *
  */
-public class LinearProbabilityPredictionFunction<M extends IProbability> extends AbstractPredictionFunction<MVRelationalTuple<M>, M> implements IHasNoiseMatrix{
+public class LinearProbabilityPredictionFunction<M extends IProbability>
+			extends AbstractPredictionFunction<MVRelationalTuple<M>, M>
+			implements IProbabilityPredictionFunction<MVRelationalTuple<M>, M>{
 		
 	/**
 	 * This matrix contains all variables, that are used for
@@ -67,6 +69,19 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	 * the prediction function.
 	 */
 	double[][] noiseMatrix;
+	
+	/**
+	 * The covariance matrix only references to measurement attributes.
+	 * However, the first measurement attribute has not necessarily to be the
+	 * first attribute in the schema and so on. So, we have to find the measurement
+	 * attribute positions.
+	 * 
+	 * This array contains the positions of the measurement values.
+	 * restrictList[0] contains the position of the first measurement attribute in the
+	 * schema, restrictList[1] contains the position of the second measurement attribute
+	 * in the schema and so on.
+	 */
+	int[] restrictList;
 	
 	public static long durationData;
 	public static long durationMData;
@@ -151,7 +166,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	 * @param interval the interval, in which this prediction function is valid
 	 * @param noiseMatrix the matrix used to add noise to covariance matrix of the tuple to be predicted
 	 */
-	public void init(SDFExpression[] expressions, ITimeInterval interval, double[][] noiseMatrix){
+	public void init(SDFExpression[] expressions, int[][] variables, ITimeInterval interval, double[][] noiseMatrix){
 		if(expressions != null){
 			this.expressions = new SDFExpression[expressions.length];
 			for(int attrIndex = 0; attrIndex < expressions.length; attrIndex++){
@@ -160,7 +175,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 				}
 			}
 			
-			this.variables = new int[expressions.length][];
+			this.variables = variables;
 		}
 		this.interval = interval;
 		this.noiseMatrix = noiseMatrix;
@@ -253,15 +268,8 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 				}
 				
 				
-			}
-			
-
-			
-
-			
+			}			
 			M newMetadata = (M)object.getMetadata().clone();
-			
-			
 			
 			MVRelationalTuple<M> outputVal = new MVRelationalTuple<M>(tempValues);
 			outputVal.setMetadata(newMetadata);
@@ -276,7 +284,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 		}
 	}
 	
-	public M predictMetadata(SDFAttributeList schema, MVRelationalTuple<M> object, PointInTime t){
+	public M predictMetadata(SDFAttributeList schem, MVRelationalTuple<M> object, PointInTime t){
 		long start = System.currentTimeMillis();
 		// if the PointInTime t is not in the interval, during which the expressions are applicable,
 		// throw an exception
@@ -317,14 +325,17 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 		
 		// int the following array, the an entry restrictList[0] contains
 		// the position of the first measurement attribute in the schema
-		int[] restrictList = new int[metadata.getCovariance().length];
 		
-		int counter = 0;
-		for(int i = 0; i<schema.getAttributeCount(); i++){
-			if(SDFDatatypes.isMeasurementValue(schema.getAttribute(i).getDatatype())){
-				restrictList[counter++] = i;
-			}
-		}
+		// Andre: I think the following should not be done here, but in
+		// the constructor of the prediction function
+//		int[] restrictList = new int[metadata.getCovariance().length];
+//		
+//		int counter = 0;
+//		for(int i = 0; i<schema.getAttributeCount(); i++){
+//			if(SDFDatatypes.isMeasurementValue(schema.getAttribute(i).getDatatype())){
+//				restrictList[counter++] = i;
+//			}
+//		}
 		
 		// update the covariance matrix
 		// H * \Sigma * H^T + Q 
@@ -467,10 +478,16 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	/**
 	 * This method uses the fact, that the variable positions
 	 * can be determined in advance of query processing.
+	 * 
+	 * TODO Andre: Diese Methode wird noch im RelationalProjectPredictionMVPO benutzt.
+	 * Sollte aber eigentlich nicht mehr benutzt werden, da sich auch die Prädiktions-
+	 * funktion, die nach einer Projektion noch verwendet werden kann, auf der logischen
+	 * Ebene vorberechnet werden kann. (Ist aber jetzt zuviel Aufwand, um das einzubauen).
+	 * 
 	 * @return
 	 */
 	public void initVariables(){
-		this.variables = new int[this.variables.length][];
+		this.variables = new int[this.expressions.length][];
 		for(int u = 0; u<expressions.length; u++){
 			SDFExpression expression = expressions[u];
 			if(expression != null)
@@ -483,6 +500,10 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	 */
 	public int[][] getVariables(){
 		return this.variables;
+	}
+	
+	public void setVariables(int[][] vars){
+		this.variables = vars;
 	}
 	
 	public void setSchema(){
@@ -529,5 +550,9 @@ public class LinearProbabilityPredictionFunction<M extends IProbability> extends
 	public SDFExpression[] getPredictionFunction() {
 		// TODO Auto-generated method stub
 		return this.expressions;
+	}
+	
+	public void setRestrictList(int[] restrictList){
+		this.restrictList = restrictList;
 	}
 }

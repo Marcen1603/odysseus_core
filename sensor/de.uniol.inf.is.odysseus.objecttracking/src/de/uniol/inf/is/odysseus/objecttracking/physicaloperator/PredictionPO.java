@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.PredictionAO;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
@@ -17,27 +17,34 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * 
  * @author Andre Bolles
  */
-public class PredictionPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunction & ITimeInterval> extends AbstractPipe<T, T>{
+public class PredictionPO<T extends IMetaAttributeContainer<M>, M extends IProbabilityPredictionFunction & ITimeInterval> extends AbstractPipe<T, T>{
 
-	private final Map<SDFExpression[], IPredicate<? super T>> predictionFunctions;
+	private final Map<IPredicate<? super T>, SDFExpression[]> predictionFunctions;
+	private final Map<IPredicate<? super T>, int[][]> variables;
+	private final int[] restrictList;
 	private final SDFExpression[] defaultPredictionFunction;
 	
 	public PredictionPO(PredictionAO<T> predictionAO) {
 		super();
 		this.predictionFunctions = predictionAO.getPredictionFunctions();
 		this.defaultPredictionFunction = predictionAO.getDefaultPredictionFunction();
+		this.variables = predictionAO.getVariables();
+		this.restrictList = predictionAO.getRestrictList();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T next, int port) {
 		
-		for (Map.Entry<SDFExpression[], IPredicate<? super T>> curPredictionFunction : this.predictionFunctions
+		for (Map.Entry<IPredicate<? super T>, SDFExpression[]> curPredictionFunction : this.predictionFunctions
 				.entrySet()) {
-			if (curPredictionFunction.getValue().evaluate(next)) {
-				next.getMetadata().setPredictionFunction(curPredictionFunction.getKey());
+			if (curPredictionFunction.getKey().evaluate(next)) {
+				// The keys in predictionFunctions and variables are the same, so
+				// a mapping between both entries exists.
+				next.getMetadata().setPredictionFunction(curPredictionFunction.getValue());
+				next.getMetadata().setVariables(this.variables.get(curPredictionFunction.getKey()));
+				next.getMetadata().setRestrictList(this.restrictList);
 				next.getMetadata().setTimeInterval(new TimeInterval(next.getMetadata().getStart(), next.getMetadata().getEnd()));
-				next.getMetadata().initVariables();
 				transfer(next);
 				return;
 			}

@@ -137,14 +137,6 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		}
 		return this.predFct.getPredictionFunction();
 	}
-
-	@Override
-	public void initVariables() {
-		// TODO Auto-generated method stub
-		if(this.predFct != null){
-			this.predFct.initVariables();
-		}
-	}
 	
 	@Override
 	public int[][] getVariables(){
@@ -152,6 +144,13 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 			return this.predFct.getVariables();
 		}
 		return null;
+	}
+	
+	@Override
+	public void setVariables(int[][] vars){
+		if(this.predFct != null){
+			this.predFct.setVariables(vars);
+		}
 	}
 
 	@Override
@@ -169,6 +168,14 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	@Override
 	public IntervalProbabilityLatencyPrediction clone(){
 		return new IntervalProbabilityLatencyPrediction(this);
+	}
+
+	@Override
+	public void initVariables() {
+		if(this.predFct != null){
+			this.predFct.initVariables();
+		}
+		
 	}
 
 }

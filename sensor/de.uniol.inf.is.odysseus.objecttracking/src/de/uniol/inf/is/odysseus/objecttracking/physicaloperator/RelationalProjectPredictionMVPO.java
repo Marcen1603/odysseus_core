@@ -4,8 +4,8 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  *
  * @param <T>
  */
-public class RelationalProjectPredictionMVPO<T extends IProbability & IPredictionFunction> extends RelationalProjectMVPO<T> {
+public class RelationalProjectPredictionMVPO<T extends IProbability & IProbabilityPredictionFunction> extends RelationalProjectMVPO<T> {
 
 	
 	public RelationalProjectPredictionMVPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema, SDFAttributeList outputSchema) {

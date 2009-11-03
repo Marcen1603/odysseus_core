@@ -27,11 +27,13 @@ public interface IPredictionFunction<T extends MetaAttributeContainer<M>, M exte
 	
 	public void setPredictionFunction(SDFExpression[] expressions);
 	
+	public void setVariables(int[][] variables);
+	
 	public void setTimeInterval(ITimeInterval timeInterval);
 	
 	public SDFExpression[] getPredictionFunction();
 	
-	public void initVariables();
-	
 	public int[][] getVariables();
+	
+	public void initVariables();
 }
