@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.listener;
 
+import java.sql.Wrapper;
 import java.util.Enumeration;
 
 import net.jxta.discovery.DiscoveryEvent;
@@ -8,10 +9,16 @@ import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.priority.Priority;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListener {
 
@@ -38,6 +45,7 @@ private AdministrationPeerJxtaImpl adminPeer;
 
 	@Override
 	public void discoveryEvent(DiscoveryEvent ev) {
+
 		DiscoveryResponseMsg res = ev.getResponse();
 		SourceAdvertisement adv = null;
 		Enumeration<Advertisement> en = res.getAdvertisements();
@@ -49,13 +57,17 @@ private AdministrationPeerJxtaImpl adminPeer;
 						adv = (SourceAdvertisement) temp2;
 						PipeAdvertisement pipeAdv = MessageTool.createPipeAdvertisementFromXml(adv.getSourceSocket());
 						adminPeer.getSources().put(adv.getSourceName(), pipeAdv);
+						// Hier wird noch das Schema der Quelle zum DataDictionary hinzugefügt, damit der Compiler mit den Informationen arbeiten kann
+						if(DataDictionary.getInstance().sourceTypeMap.isEmpty() || !DataDictionary.getInstance().sourceTypeMap.containsKey(adv.getSourceName())) {
+							AdministrationPeerJxtaImpl.getInstance().getExecutor().addQuery(adv.getSourceScheme(), "CQL", new ParameterPriority(2));
+						}
+						
 					}
 					else{
 						return;
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					// TODO: handle exception
 				}
 
 			}

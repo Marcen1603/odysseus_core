@@ -31,6 +31,16 @@ Serializable, Cloneable, Comparable {
 	private static final long serialVersionUID = 1L;
 
 	private String sourceName;
+	
+	private String sourceScheme;
+
+	public String getSourceScheme() {
+		return sourceScheme;
+	}
+
+	public void setSourceScheme(String sourceScheme) {
+		this.sourceScheme = sourceScheme;
+	}
 
 	private ID id = ID.nullID;
 	
@@ -70,13 +80,14 @@ Serializable, Cloneable, Comparable {
 	private final static String sourceSocketTag = "sourceSocket";
 	private final static String peerTag = "peer";
 	private final static String sourceIdTag = "sourceId";
+	private final static String sourceSchemeTag = "sourceScheme";
 
 	/**
 	 * Indexable fields. Advertisements must define the indexables, in order to
 	 * properly index and retrieve these advertisements locally and on the
 	 * network
 	 */
-	private final static String[] fields = { idTag, sourceIdTag, sourceNameTag};
+	private final static String[] fields = { idTag, sourceIdTag, sourceNameTag, sourceSchemeTag};
 
 	public SourceAdvertisement(Element root) {
 		TextElement doc = (TextElement) root;
@@ -151,6 +162,10 @@ Serializable, Cloneable, Comparable {
 			setSourceId(elem.getTextValue());
 			return true;
 		}
+		if(elem.getName().equals(sourceSchemeTag)) {
+			setSourceScheme(elem.getTextValue());
+			return true;
+		}
 		
 
 		return false;
@@ -178,7 +193,8 @@ Serializable, Cloneable, Comparable {
 		adv.appendChild(e);
 		e = adv.createElement(sourceIdTag, getSourceId().toString().trim());
 		adv.appendChild(e);
-		
+		e = adv.createElement(sourceSchemeTag, getSourceScheme().toString().trim());
+		adv.appendChild(e);
 		return adv;
 	}
 

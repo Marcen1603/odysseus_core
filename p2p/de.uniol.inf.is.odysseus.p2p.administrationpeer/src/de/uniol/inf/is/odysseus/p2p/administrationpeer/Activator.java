@@ -13,7 +13,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		administrationPeer = AdministrationPeerJxtaImpl.getInstance();
-		administrationPeer.startPeer();
+		System.out.println("Starte Verwaltungs-Peer");
 	}
 
 	/*
@@ -23,5 +23,6 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		administrationPeer.stopPeer();
 	}
+
 
 }

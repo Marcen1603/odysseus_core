@@ -5,15 +5,21 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.operatorpeer.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.base.wrapper,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.nexmark.generator,
+ de.uniol.inf.is.odysseus.nexmark.simulation,
  de.uniol.inf.is.odysseus.p2p,
+ de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base,
  de.uniol.inf.is.odysseus.p2p.utils.jxta,
  de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.base.access,
  de.uniol.inf.is.odysseus.physicaloperator.base.event,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
  de.uniol.inf.is.odysseus.planmanagement.optimization.plan,
  de.uniol.inf.is.odysseus.priority,
@@ -29,6 +35,8 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  net.jxta.endpoint,
  net.jxta.exception,
  net.jxta.id,
+ net.jxta.impl.peer,
+ net.jxta.peer,
  net.jxta.peergroup,
  net.jxta.pipe,
  net.jxta.platform,
@@ -37,3 +45,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/component.xml, OSGI-INF/Administrationpeer.xml, OSGI-INF/AbstractOperatorPeer.xml
+Require-Bundle: de.uniol.inf.is.odysseus.base

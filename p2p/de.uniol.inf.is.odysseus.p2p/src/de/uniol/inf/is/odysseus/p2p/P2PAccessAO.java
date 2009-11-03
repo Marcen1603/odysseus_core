@@ -5,8 +5,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
+
 public class P2PAccessAO extends AbstractLogicalOperator implements OutputSchemaSettable{
 	
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -3777262633714509945L;
 	//Advertisement zu einer Quelle
 	private String adv;
@@ -14,6 +19,7 @@ public class P2PAccessAO extends AbstractLogicalOperator implements OutputSchema
 	
 	public P2PAccessAO(String adv) {
 		this.adv = adv;
+		System.out.println("Advertisement im P2PAO Stream" +this.adv.toString());
 	}
 
 	public String getAdv() {
@@ -33,6 +39,5 @@ public class P2PAccessAO extends AbstractLogicalOperator implements OutputSchema
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
-	
 	
 }

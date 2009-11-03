@@ -26,6 +26,7 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 		super();
 		this.adv = adv;
 		this.queryId = queryId;
+		System.out.println("Initialisiere StreamHandler auf dem Thin-Peer: "+this.adv.toString());
 	}
 
 	@Override
@@ -33,6 +34,7 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 
 		while (socket == null) {
 			try {
+				System.out.println("Bauen Socket auf mit diesem Adv: "+adv.toString());
 				socket = new JxtaSocket(ThinPeerJxtaImpl.getInstance()
 						.getNetPeerGroup(), null, adv, 8000, true);
 				break;
@@ -43,14 +45,16 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 		}
 
 		try {
+			System.out.println("Versuche InputStream zu bekommen");
 			in = socket.getInputStream();
 			this.iStream = new ObjectInputStream(new BufferedInputStream(in));
+			System.out.println("hat Objekt bekommen");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Object o = null;
 		while (true) {
+			System.out.println("Lesen des Objektes");
 			try {
 				o = iStream.readObject();
 				if ((o instanceof Integer) && (((Integer) o).equals(0))){
@@ -65,6 +69,8 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 				e.printStackTrace();
 			}
 			// Empfangene Daten der Gui hinzufuegen
+			if(!ThinPeerJxtaImpl.getInstance().getGui().isEnabled())
+				ThinPeerJxtaImpl.getInstance().getGui().setEnabled(true);
 			ThinPeerJxtaImpl.getInstance().getGui().addResult(queryId, o);
 		}
 

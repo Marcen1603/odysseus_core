@@ -11,22 +11,24 @@ import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.p2p.P2PAccessAO;
 import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.splitting.ISplittingStrategy;
-import de.uniol.inf.is.odysseus.priority.PriorityAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 
 public class OneOperatorPerSubplanStrategyJxtaImpl implements
 		ISplittingStrategy {
 
-	PeerGroup netPeerGroup;
+	private PeerGroup netPeerGroup;
+
+	public PeerGroup getNetPeerGroup() {
+		return netPeerGroup;
+	}
+
+	public void setNetPeerGroup(PeerGroup netPeerGroup) {
+		this.netPeerGroup = netPeerGroup;
+	}
 
 	public OneOperatorPerSubplanStrategyJxtaImpl(PeerGroup netPeerGroup) {
 		super();
@@ -34,11 +36,14 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 	}
 
 	@Override
-	public ArrayList<AbstractLogicalOperator> splittPlan(AbstractLogicalOperator plan) {
+	public ArrayList<AbstractLogicalOperator> splitPlan(AbstractLogicalOperator plan) {
 
 		ArrayList<AbstractLogicalOperator> tempList = new ArrayList<AbstractLogicalOperator>();
-
-		splittPlan(plan, 0, plan.getSubscribedTo().size(),
+//		if(plan instanceof AccessAO) {
+//			tempList.add(plan);
+//			return tempList;
+//		}
+		splitPlan(plan,
 				createSocketAdvertisement().toString(), tempList);
 		return tempList;
 	}
@@ -56,10 +61,10 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 		return advertisement;
 	}
 
-	private void splittPlan(ILogicalOperator iLogicalOperator, int no, int sizeOld, String current,
+	private void splitPlan(ILogicalOperator iLogicalOperator, String current,
 			ArrayList<AbstractLogicalOperator> list) {
 		int inputCount = iLogicalOperator.getSubscribedTo().size();
-		String temp;
+		String temp = null;
 		P2PPipeAO p2ppipe = new P2PPipeAO(current);
 		String adv = createSocketAdvertisement().toString();
 		P2PAccessAO p2paccess = new P2PAccessAO(adv);
@@ -87,10 +92,11 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 
 			tempAO.subscribeTo(p2paccess,0,0);
 			tempAO.subscribeTo(p2paccess2,1,0);
-		} else {
+		} else if(inputCount == 1){
 			// Wenn der naechste Operator ein AccessAO ist dann kann dieser
 			// Operator uebersprungen werden
 			if (iLogicalOperator.getSubscribedTo(0).getTarget() instanceof AccessAO) {
+				System.out.println("Wir landen beim splitten hier");
 				SDFSource source = ((AccessAO) iLogicalOperator.getSubscribedTo(0).getTarget()).getSource();
 				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
 						.getSources().get(source.toString()).toString();
@@ -98,13 +104,22 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 				tempAO.subscribeTo(p2paccess,0,0);
 				temp = adv;
 			} else {
+				System.out.println("oder etwa hier?");
 				tempAO.subscribeTo(p2paccess,0,0);
 				temp = adv;
 			}
+		} else if(inputCount == 0) {
+			//dann sind wir wohl accessao selbst
+			SDFSource source = ((AccessAO) iLogicalOperator).getSource();
+			String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
+			.getSources().get(source.toString()).toString();
+			p2paccess.setAdv(sourceAdv);
+			tempAO = p2paccess;
 		}
 		p2ppipe.subscribeTo(tempAO,0,0);
+		System.out.println("das connection pipe f√ºr den Thin-Peer am Ende"+p2ppipe.getAdv().toString());
 
-		this.setIDSizes(p2ppipe);
+//		this.setIDSizes(p2ppipe);
 		list.add(p2ppipe);
 
 		for (int i = 0; i < inputCount; ++i) {
@@ -114,12 +129,12 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 			if (iLogicalOperator.getSubscribedTo(i).getTarget() instanceof AccessAO) {
 				return;
 			}
-			splittPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), i, inputCount, adv, list);
+			splitPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), adv, list);
 		}
 	}
 
 	private void setIDSizes(ILogicalOperator plan) {
-		// TODO: Klaeren wof¸r die IDSizes notwendig sind, wird das ¸berhaupt irgendwo genutzt?
+		// TODO: Klaeren wofÔøΩr die IDSizes notwendig sind, wird das ÔøΩberhaupt irgendwo genutzt?
 		
 //		for (int i = 0; i < plan.getNumberOfInputs(); i++) {
 //			setIDSizes(plan.getInputAO(i));

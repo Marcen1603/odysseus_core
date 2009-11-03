@@ -9,6 +9,9 @@ import java.util.List;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
@@ -21,19 +24,37 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.queryAdmini
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.queryAdministration.Subplan;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.queryAdministration.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.queryAdministration.Subplan.SubplanStatus;
+import de.uniol.inf.is.odysseus.p2p.partitioning.base.IPartitioner;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
-import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 
 public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 
+	
+	// Partitionierungskomponente
+	private IPartitioner partitioner;
+
+
+	private ICompiler compiler = null;
+	
+	
+	public ICompiler getCompiler() {
+		return compiler;
+	}
+	
+	public QueryResultHandlerJxtaImpl(ICompiler compiler) {
+		this.compiler = compiler;
+	}
+	
+	//Quatsch
 	public static boolean BIDDING = true;
 
 	public void handleQueryResult(Object _msg, Object _namespace) {
+		
+
+		
 		
 		Message msg = (Message) _msg;
 		
@@ -51,20 +72,17 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 		if (queryResult.equals("granted")) {
 			Log.logAction(queryId, "Zusage für die Verwaltung der Anfrage bekommen.");
 			
-			// TODO: Dieses hier an ein ExecutionEnvironment auslagern!!
+			
+			
+			//Nach der Zusage für die Verwaltung einer Anfrage wird folgend die Anfrage übersetzt und optimiert
 			
 			List<ILogicalOperator> plan = null;
-			AbstractLogicalOperator restructPlan = null;
 			try {
-				plan = CQLParser.getInstance().parse(AdministrationPeerJxtaImpl.getInstance()
-						.getQueries().get(queryId).getQuery());
-				
-				// TODO: Restrukturierung wieder einbauen, sobald das wieder funktioniert
-//				IRestructure restructure = new RelationalRestructure();
-//				restructure.init();
-//				restructPlan = restructure.restructPlan(plan.get(0));
-			} catch (QueryParseException e1) {
-				e1.printStackTrace();
+				getCompiler().getInfos();
+				plan = getCompiler().translateQuery(AdministrationPeerJxtaImpl.getInstance()
+							.getQueries().get(queryId).getQuery(), "CQL");
+			} catch (QueryParseException e3) {
+				e3.printStackTrace();
 				Log.logAction(queryId, "Fehler bei der Übersetzung der Anfrage");
 				sendSourceFailure(queryId);
 				return;
@@ -72,52 +90,92 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				e2.printStackTrace();
 				sendSourceFailure(queryId);
 				return;
-			}
+			}			
+			
+			AbstractLogicalOperator restructPlan = (AbstractLogicalOperator) getCompiler().restructPlan(plan.get(0));
+			
+			
+//				plan = CQLParser.getInstance().parse(AdministrationPeerJxtaImpl.getInstance()
+//						.getQueries().get(queryId).getQuery());
+				
+//				IRestructure restructure = new RelationalRestructure();
+//				restructure.init();
+//				restructPlan = restructure.restructPlan(plan.get(0));
 
+
+				
+			
+
+			
+			
+			//------------------------------------------------------------Aufteilungsphase---------------------------------------------//
+			
+			//Prüfen, ob Partitionierungsdienst überhaupt anwesend ist
+			if(getPartitioner()!=null) {
+				getPartitioner().splitPlan(restructPlan);
+				System.out.println("Partionierung aktiv");
+			}
+			
+			
+			
+			
 			// ThinPeer zieht nur die Daten direkt aus der Quelle
 			// Passiert bei Abfragen wie Select * From quelle
 			// also bei Abfragen die nur aus einem AccessAO bestehen.
-			if (restructPlan instanceof AccessAO) {
-				SDFSource source = ((AccessAO) restructPlan).getSource();
-				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
-						.getSources().get(source.toString()).toString();
-				PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl
-						.getInstance().getNetPeerGroup().getPeerAdvertisement();
-
-				Message thinPeerResponse = MessageTool.createSimpleMessage(
-						"ResultStreaming", "queryId", queryId, MessageTool
-								.createPipeAdvertisementFromXml(sourceAdv),
-						peerAdv);
-				MessageTool.sendMessage(AdministrationPeerJxtaImpl
-						.getInstance().getNetPeerGroup(),
-						AdministrationPeerJxtaImpl.getInstance().getQueries()
-								.get(queryId).getResponseSocketThinPeer(),
-						thinPeerResponse);
-				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
-						queryId).setStatus(Status.RUN);
-
-				Log.setSubplans(queryId, 0);
-				Log.setSplittingStrategy(queryId, "Keine verwendet");
+//			if (restructPlan instanceof AccessAO) {
+//				System.out.println("ja ist");
+//				SDFSource source = ((AccessAO) restructPlan).getSource();
+//				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
+//						.getSources().get(source.toString()).toString();
+//				PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
+//
+//				Message thinPeerResponse = MessageTool.createSimpleMessage(
+//						"ResultStreaming", "queryId", queryId, MessageTool
+//								.createPipeAdvertisementFromXml(sourceAdv),
+//						peerAdv);
+//				MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(),
+//						AdministrationPeerJxtaImpl.getInstance().getQueries()
+//								.get(queryId).getResponseSocketThinPeer(),
+//						thinPeerResponse);
+//				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
+//						queryId).setStatus(Status.RUN);
+//
+//				Log.setSubplans(queryId, 0);
+//				Log.setSplittingStrategy(queryId, "Keine verwendet");
+//				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
+//						.getQueries().get(queryId).getStatus().toString());
+//
+//				return;
+				
+//			} 
+//			else { 
+//				Log.logAction(queryId, "Plan splitten");
+				ArrayList<AbstractLogicalOperator> splitPlan = AdministrationPeerJxtaImpl.getInstance().splitPlan(restructPlan);
+				System.out.println("split");
+				for(AbstractLogicalOperator op : splitPlan) {
+				}
+				
+				Log.setSubplans(queryId, splitPlan.size());
+				Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl.getInstance().getSplitter().getName());
 				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
 						.getQueries().get(queryId).getStatus().toString());
 
-				return;
-			} else {
-				Log.logAction(queryId, "Plan splitten");
-				ArrayList<AbstractLogicalOperator> splittPlan = AdministrationPeerJxtaImpl
-						.getInstance().splittPlan(restructPlan);
-
-				Log.setSubplans(queryId, splittPlan.size());
-				Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl
-						.getInstance().getSplitter().getName());
-				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
-						.getQueries().get(queryId).getStatus().toString());
-
 				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
-						queryId).setSubplans(splittPlan);
+						queryId).setSubplans(splitPlan);
 
-			}
+//			}
 
+			
+			
+			
+			
+
+			
+			//--------------------------------------Verteilungsphase---------------------------------------------------//
+			
+			
+			
+			
 			if (BIDDING) {
 				Log.logAction(queryId, "Anfrage ausschreiben");
 				// Anfragen ausschreiben
@@ -131,8 +189,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 								.getAdvertisementType());
 
 				adv
-						.setBiddingPipe(((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl
-								.getInstance().getSocketServerListener())
+						.setBiddingPipe(((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getSocketServerListener())
 								.getServerPipeAdvertisement().toString());
 				adv.setQueryId(queryId.toString());
 				adv.setLanguage(language);
@@ -147,10 +204,8 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				}
 			} else {
 				// Anfragen direkt verteilen
-				HashMap<String, ExtendedPeerAdvertisement> operatorPeers = AdministrationPeerJxtaImpl
-						.getInstance().getOperatorPeers();
-				ArrayList<Subplan> subPlans = AdministrationPeerJxtaImpl
-						.getInstance().getQueries().get(queryId.toString())
+				HashMap<String, ExtendedPeerAdvertisement> operatorPeers = AdministrationPeerJxtaImpl.getInstance().getOperatorPeers();
+				ArrayList<Subplan> subPlans = AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId.toString())
 						.getSubPlans();
 				ArrayList<String> operatorPeersRandomList = new ArrayList<String>();
 				operatorPeersRandomList.addAll(operatorPeers.keySet());
@@ -158,22 +213,19 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				for (Subplan s : subPlans) {
 					if (subplannumber == 0) {
 						String pipeAdv = ((P2PPipeAO) s.getAo()).getAdv();
-						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl
-								.getInstance().getNetPeerGroup()
+						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup()
 								.getPeerAdvertisement();
 
 						Message thinPeerResponse = MessageTool
 								.createSimpleMessage(
 										"ResultStreaming",
 										"queryId",
-										AdministrationPeerJxtaImpl
-												.getInstance().getQueries()
+										AdministrationPeerJxtaImpl.getInstance().getQueries()
 												.get(queryId).getId(),
 										MessageTool
 												.createPipeAdvertisementFromXml(pipeAdv),
 										peerAdv);
-						MessageTool.sendMessage(AdministrationPeerJxtaImpl
-								.getInstance().netPeerGroup,
+						MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().netPeerGroup,
 								AdministrationPeerJxtaImpl.getInstance()
 										.getQueries().get(queryId)
 										.getResponseSocketThinPeer(),
@@ -192,14 +244,13 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 									"adminPipeAdvertisement",
 									"subPlanId",
 									 "events",
-									AdministrationPeerJxtaImpl.getInstance()
+									 AdministrationPeerJxtaImpl.getInstance()
 											.getQueries().get(queryId).getId(),
-									AdministrationPeerJxtaImpl.getInstance()
+											AdministrationPeerJxtaImpl.getInstance()
 											.getQueries().get(queryId)
 											.getLanguage(),
 									"granted",
-									((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl
-											.getInstance()
+									((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance()
 											.getSocketServerListener())
 											.getServerPipeAdvertisement()
 											.toString(),
@@ -207,12 +258,10 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 									AdministrationPeerJxtaImpl.getInstance()
 											.getEvents(),
 									s.getAo(),
-									((EventListenerJxtaImpl) AdministrationPeerJxtaImpl
-											.getInstance().getEventListener())
+									((EventListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getEventListener())
 											.getPipeAdv());
 					// Erfolg
-					MessageTool.sendMessage(AdministrationPeerJxtaImpl
-							.getInstance().netPeerGroup, MessageTool
+					MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().netPeerGroup, MessageTool
 							.createPipeAdvertisementFromXml(adv.getPipe()),
 							response);
 
@@ -247,7 +296,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 
 	}
 
-	private static void sendSourceFailure(String queryId) {
+	private  void sendSourceFailure(String queryId) {
 
 		MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance()
 				.getNetPeerGroup(), AdministrationPeerJxtaImpl.getInstance()
@@ -257,7 +306,9 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 		Log.logAction(queryId, "Absage für die Verwaltung der Anfrage bekommen.");
 	}
 	
-	
+	public IPartitioner getPartitioner() {
+		return partitioner;
+	}
 	
 	
 }

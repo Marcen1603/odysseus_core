@@ -55,9 +55,11 @@ public class QuerySpezificationHandlerJxtaImpl {
 		Log.addQuery(adv.getQueryId());
 		Log.logAction(adv.getQueryId(), "Ausschreibung für Anfrageausführung gefunden !");
 
+		//TODO: Erstmal für alles bewerben abschalten
+		
 		// Strategy ob sich überhaupt beworben werden soll
-		if (OperatorPeerJxtaImpl.getInstance().getBiddingStrategy().doBidding(
-				null)) {
+//		if (OperatorPeerJxtaImpl.getInstance().getBiddingStrategy().doBidding(
+//				null)) {
 			MessageTool.sendMessage(OperatorPeerJxtaImpl.getInstance()
 					.getNetPeerGroup(), pipeAdv, MessageTool
 					.createSimpleMessage("ExecutionBid", "queryId", "peerId",
@@ -66,11 +68,11 @@ public class QuerySpezificationHandlerJxtaImpl {
 									.getPeerID().toString(), pipe));
 			Log.logAction(adv.getQueryId(), "Für Anfrageausführung beworben !");
 
-		} else {
-			OperatorPeerJxtaImpl.getInstance().getQueries().get(
-					adv.getQueryId()).setStatus(Query.Status.DENIED);
-			Log.logAction(adv.getQueryId(), "Für Anfrageausführung nicht beworben !");
-		}
+//		} else {
+//			OperatorPeerJxtaImpl.getInstance().getQueries().get(
+//					adv.getQueryId()).setStatus(Query.Status.DENIED);
+//			Log.logAction(adv.getQueryId(), "Für Anfrageausführung nicht beworben !");
+//		}
 
 	}
 

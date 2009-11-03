@@ -20,12 +20,13 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 			try {
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			synchronized (AdministrationPeerJxtaImpl.getInstance().getQueries()) {
+				if(!AdministrationPeerJxtaImpl.getInstance().getQueries().isEmpty()) {
 				AdministrationPeerJxtaImpl.getInstance()
 						.getBiddingHandlerStrategy().handleBidding();
+				}
 			}
 
 		}

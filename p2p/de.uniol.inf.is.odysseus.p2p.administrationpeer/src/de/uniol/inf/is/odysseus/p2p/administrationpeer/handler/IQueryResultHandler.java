@@ -5,4 +5,5 @@ public interface IQueryResultHandler {
 	
 	void handleQueryResult(Object msg, Object namespace);
 	
+	
 }

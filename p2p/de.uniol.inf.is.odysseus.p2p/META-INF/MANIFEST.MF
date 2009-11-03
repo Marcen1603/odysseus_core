@@ -22,3 +22,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.utils.jxta,
  de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements
+Require-Bundle: Jxta_Plugin;bundle-version="1.0.0"

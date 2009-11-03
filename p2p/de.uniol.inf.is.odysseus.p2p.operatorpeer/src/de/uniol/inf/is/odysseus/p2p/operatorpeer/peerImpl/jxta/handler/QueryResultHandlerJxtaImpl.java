@@ -2,26 +2,29 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import net.jxta.endpoint.Message;
+import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.base.ITransformation;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.TransformationException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQueryResultHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener.P2PPOEventListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.phyOp.jxta.P2PPipePO;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PPipePO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.base.ITransformation;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import net.jxta.endpoint.Message;
-import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 	
 	private ITransformation trafo = null;
+	
+	private int temporalID;
 	
 	public QueryResultHandlerJxtaImpl(ITransformation trafo) {
 		this.setTrafo(trafo);
@@ -29,7 +32,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 	
 	@SuppressWarnings("unchecked")
 	public void handleQueryResult(Object _msg, Object _namespace) {
-
+		System.out.println("mach erstmal die transformation");
 		Message msg = (Message) _msg;
 
 		String namespace = (String) _namespace;
@@ -56,12 +59,17 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 					.setStatus(Status.GRANTED);
 			//TODO: Transformationen -> Rewrite
 			//Evtl. eine TansformationConfiguration angeben
-			ISource<?> source = null;
 			try {
-				source = (ISource<?>) getTrafo().transform(ao, null);
-			} catch (TransformationException e1) {
-				e1.printStackTrace();
+				temporalID = OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(ao, new ParameterPriority(2));
+			} catch (PlanManagementException e2) {
+				e2.printStackTrace();
 			}
+//			ISource<?> source = null;
+//			try {
+//				source = (ISource<?>) getTrafo().transform(ao,null);
+//			} catch (TransformationException e1) {
+//				e1.printStackTrace();
+//			}
 			
 //			RelationalPipesTransform trafo = new RelationalPipesTransform();
 //			trafo.init();
@@ -81,16 +89,19 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 //			}
 //			OperatorPeerJxtaImpl.getInstance().getScheduler().addPlan(source,
 //					Thread.NORM_PRIORITY);
-			OperatorPeerJxtaImpl.getInstance().getScheduler().getSources().add((IIterableSource<?>) source);
-			((P2PPipePO) source).setQueryId(queryId);
+			
+			//TODO: Hier wieder einkommentieren
+//			OperatorPeerJxtaImpl.getInstance().getScheduler().getSources().add((IIterableSource<?>) source);
+//			OperatorPeerJxtaImpl.getInstance().getExecutor().add
+//			((P2PPipePO) source).setQueryId(queryId);
 
 			// **LOGGING**//
 
-			Log.setScheduler(queryId, OperatorPeerJxtaImpl.getInstance()
-					.getScheduler().getClass().getSimpleName());
-			Log.setSchedulerStrategy(queryId, OperatorPeerJxtaImpl
-					.getInstance().getSchedulerStrategy().getClass()
-					.getSimpleName());
+//			Log.setScheduler(queryId, OperatorPeerJxtaImpl.getInstance()
+//					.getScheduler().getClass().getSimpleName());
+//			Log.setSchedulerStrategy(queryId, OperatorPeerJxtaImpl
+//					.getInstance().getSchedulerStrategy().getClass()
+//					.getSimpleName());
 			Log.logAction(queryId,
 					"Habe die Zusage für die Ausführung des Teilplanes "
 							+ subPlanId + " für Anfrage " + queryId);
@@ -106,21 +117,29 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				OperatorPeerJxtaImpl.getInstance().getGui().addSubplans(
 						queryId, count);
 			}
-			for (POEventType event : eventList) {
-				source.subscribe(new P2PPOEventListenerJxtaImpl(queryId,
-						eventPipe), event);
-			}
+//			for (POEventType event : eventList) {
+//				source.subscribe(new P2PPOEventListenerJxtaImpl(queryId,
+//						eventPipe), event);
+//			}
+//			try {
+//				source.open();
+//			} catch (OpenFailedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			try {
-				source.open();
-			} catch (OpenFailedException e) {
-				// TODO Auto-generated catch block
+//				if(!OperatorPeerJxtaImpl.getInstance().getExecutor().isRunning()) {
+					System.out.println("starte Ausführung");
+					OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
+					OperatorPeerJxtaImpl.getInstance().getExecutor().startQuery(temporalID);
+//				}
+			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}
-
-			if (!OperatorPeerJxtaImpl.getInstance().getScheduler().isRunning()) {
-				OperatorPeerJxtaImpl.getInstance().getScheduler()
-						.startScheduling();
-			}
+//			if (!OperatorPeerJxtaImpl.getInstance().getScheduler().isRunning()) {
+//				OperatorPeerJxtaImpl.getInstance().getScheduler()
+//						.startScheduling();
+//			}
 			OperatorPeerJxtaImpl.getInstance().getQueries().get(queryId)
 					.setStatus(Status.RUN);
 

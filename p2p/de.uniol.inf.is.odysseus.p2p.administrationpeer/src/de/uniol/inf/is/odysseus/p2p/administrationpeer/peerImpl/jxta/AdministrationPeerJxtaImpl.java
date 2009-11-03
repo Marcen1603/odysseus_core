@@ -15,6 +15,7 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.handler.BiddingHandlerJxtaImpl;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.bi
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.splitting.OneOperatorPerSubplanStrategyJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.CacheTool;
+import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryTranslationSpezification;
@@ -102,20 +104,47 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public PipeService pipeService;
 
-	public HashMap<String, QueryJxtaImpl> queries = new HashMap<String, QueryJxtaImpl>();
+	private HashMap<String, QueryJxtaImpl> queries = new HashMap<String, QueryJxtaImpl>();
 	
 	public HashMap<String, ExtendedPeerAdvertisement> operatorPeers = new HashMap<String, ExtendedPeerAdvertisement>();
 	
 	private static AdministrationPeerJxtaImpl instance = null;
 	
-	
+//	
+//	private ICompiler compiler;
+//	
+//	public ICompiler getCompiler() {
+//		return compiler;
+//	}
+//	
+//	public void bindCompiler(ICompiler compiler) {
+//		this.compiler = compiler;
+//		System.out.println("macht den bind beim administrationspeer" +compiler);
+//		startPeer();
+//	}
+//	
+//	public void unbindCompiler(ICompiler compiler) {
+//		if(this.compiler == compiler){
+//			System.out.println("macht leider unbind");
+//			this.compiler = null;
+//		}
+//	}
+//
+//	
 
-	private AdministrationPeerJxtaImpl(){
+	//für die korrekte Nutzung in OSGi muss der Konstruktor public sein. Damit der "Singleton" in weiteren Programmaufrufen unberührt bleibt, wurde noch die Instanz der Static Variablen zugewiesen. 
+	public AdministrationPeerJxtaImpl(){
+		instance = this;
 	}
 	
-	public static AdministrationPeerJxtaImpl getInstance(){
-		if (instance==null)
+	/**
+	 * Entspricht nicht mehr dem Singleton, wird allerdings in vielen Teilen gebraucht, so dass der Workaround über den public Konstruktor gewählt wurde.
+	 * @return
+	 */
+	public synchronized static AdministrationPeerJxtaImpl getInstance(){
+		if (instance==null) {
 			instance = new AdministrationPeerJxtaImpl();
+		}
 		return instance;
 	}
 	
@@ -140,6 +169,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	}
 
 	public HashMap<String, QueryJxtaImpl> getQueries() {
+		System.out.println("HOLE QUERIES");
 		return queries;
 	}
 
@@ -288,6 +318,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		manager.waitForRendezvousConnection(CONNECTION_TIME);
 
 		netPeerGroup = manager.getNetPeerGroup();
+		PeerGroupTool.setPeerGroup(netPeerGroup);
 		discoveryService = netPeerGroup.getDiscoveryService();
 		pipeService = netPeerGroup.getPipeService();
 		AdvertisementFactory.registerAdvertisementInstance(
@@ -347,8 +378,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	}
 
 	@Override
-	protected void initQueryResultHandler() {
-		this.queryResultHandler = new QueryResultHandlerJxtaImpl();
+	protected void initQueryResultHandler(ICompiler compiler) {
+		this.queryResultHandler = new QueryResultHandlerJxtaImpl(compiler);
 		
 	}
 
@@ -365,7 +396,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initEventListener() {
-		PipeAdvertisement adv = AdvertisementTools.getServerPipeAdvertisement(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup());
+		PipeAdvertisement adv = AdvertisementTools.getServerPipeAdvertisement(getNetPeerGroup());
 		eventListener = new EventListenerJxtaImpl(adv);
 	}
 

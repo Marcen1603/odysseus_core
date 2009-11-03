@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.IPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.gui.MainWindow;
@@ -18,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IBiddingHandlerS
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IHotPeerStrategy;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.bidding.IBiddingStrategy;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.splitting.ISplittingStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
 public abstract class AbstractAdministrationPeer implements IPeer {
 
@@ -63,6 +66,57 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	protected IEventListener eventListener;
 	
+	protected boolean peerStarted = false;
+	
+	private IAdvancedExecutor executor;
+	
+	public IAdvancedExecutor getExecutor() {
+		return executor;
+	}
+
+	private ICompiler compiler;
+	
+	public ICompiler getCompiler() {
+		return compiler;
+	}
+	
+	
+	
+	public void bindCompiler(ICompiler compiler) {
+		this.compiler = compiler;
+
+	}
+	
+	public void unbindCompiler(ICompiler compiler) {
+		if(this.compiler == compiler){
+			this.compiler = null;
+		}
+	}
+
+	public void bindExecutor(IAdvancedExecutor executor) {
+		System.out.println("Binde Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
+//		if(getExecutor()==null) {
+//			//synchronisieren von executor
+				this.executor = executor;
+//			if(getTrafo()!=null && !this.peerStarted) {
+//				this.peerStarted  = true;
+//				startPeer();
+//			}
+//		}
+				if(!peerStarted) {
+					startPeer();
+					peerStarted = true;
+				}
+	}
+	
+	public void unbindExecutor(IAdvancedExecutor executor) {
+		if(this.executor == executor) {
+			this.executor = null;
+		}
+	}
+	
+
+
 	public IEventListener getEventListener() {
 		return eventListener;
 	}
@@ -100,6 +154,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	}
 
 	private void init() {
+		initWrapperPlanFactory();
 		initSocketServerListener();
 		initOperatorPeerListener();
 		initBiddingStrategy();
@@ -111,10 +166,12 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		initAliveHandler();
 		initHotPeerFinder();
 		initBiddingHandlerStrategy();
-		initQueryResultHandler();
+		initQueryResultHandler(getCompiler());
 		initHotPeerStrategy();
 	}
 	
+
+
 	protected abstract void initSourceListener();
 
 	protected abstract void initQuerySpezificationListener();
@@ -128,6 +185,8 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	protected abstract void initOperatorPeerListener();
 	
 	protected abstract void initAliveHandler();
+	
+	
 	
 	protected MainWindow gui;
 	
@@ -144,6 +203,13 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 			gui = new MainWindow();
 	}
 	
+	protected void initWrapperPlanFactory() {
+		try {
+			WrapperPlanFactory.init();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void setSocketServerListener(ISocketServerListener socketServerListener) {
 		this.socketServerListener = socketServerListener;
@@ -153,13 +219,14 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		this.splitter = splitter;
 	}
 
-	final public ArrayList<AbstractLogicalOperator> splittPlan(AbstractLogicalOperator plan){
-		return splitter.splittPlan(plan);
+	final public ArrayList<AbstractLogicalOperator> splitPlan(AbstractLogicalOperator plan){
+		return splitter.splitPlan(plan);
 	}
 
 	protected abstract void startNetwork();
 
 	public void startPeer() {
+		
 		startNetwork();
 		init();
 		startGui();
@@ -171,7 +238,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		startAliveHandler();
 		startHotPeerFinder();
 		startEventListener();
-		
+		System.out.println("Alle Dienste gestartet");
 	}
 
 	private void startEventListener() {
@@ -256,7 +323,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	protected abstract void initHotPeerFinder();
 	
-	protected abstract void initQueryResultHandler();
+	protected abstract void initQueryResultHandler(ICompiler compiler);
 	
 	protected abstract void initHotPeerStrategy();
 	

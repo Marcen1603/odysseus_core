@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.jxta.document.AdvertisementFactory;
@@ -15,27 +14,17 @@ import net.jxta.id.IDFactory;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.queryAdministration.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query;
-//import de.uniol.inf.is.odysseus.p2p.operatorpeer.transformer.relational.jxta.RelationalPipesTransform;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.base.ITransformation;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.PartialPlan;
-import de.uniol.inf.is.odysseus.transformation.drools.DroolsTransformation;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.ISource;
-//import de.uniol.inf.is.odysseus.queryoptimization.trafo.factories.PriorityMode;
-//import de.uniol.inf.is.odysseus.queryoptimization.trafo.relational.RelationalPipesTransform;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
 
 public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 	private class ConnectionHandler extends Thread {
@@ -118,7 +107,7 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 //						}
 						// TODO: Im Moment zu Testzwecken hart gecoded. ändern!!!
 						IIterableSource<?> source = (IIterableSource<?>) getoPeer().getTrafo().transform(ao, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
-						OperatorPeerJxtaImpl.getInstance().getScheduler().getSources().add(source);
+//						OperatorPeerJxtaImpl.getInstance().getScheduler().getSources().add(source);
 //						OperatorPeerJxtaImpl.getInstance().getScheduler()
 //								.addPlan(source, Thread.NORM_PRIORITY);
 						String queryId = MessageTool.getMessageElementAsString(
@@ -137,23 +126,24 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 						Log
 								.logAction(queryId,
 										"Habe eine Aufforderung bekommen, als HotPeer für diese Anfrage zu agieren.");
-						Log.setScheduler(queryId, OperatorPeerJxtaImpl
-								.getInstance().getScheduler().getClass()
-								.getSimpleName());
-						Log.setSchedulerStrategy(queryId, OperatorPeerJxtaImpl
-								.getInstance().getSchedulerStrategy()
-								.getClass().getSimpleName());
+						//TODO: Executor hier einbauen
+//						Log.setScheduler(queryId, OperatorPeerJxtaImpl
+//								.getInstance().getScheduler().getClass()
+//								.getSimpleName());
+//						Log.setSchedulerStrategy(queryId, OperatorPeerJxtaImpl
+//								.getInstance().getSchedulerStrategy()
+//								.getClass().getSimpleName());
 						try {
 							source.open();
 						} catch (OpenFailedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-
-						if (!OperatorPeerJxtaImpl.getInstance().getScheduler()
-								.isRunning()) {
-							OperatorPeerJxtaImpl.getInstance().getScheduler()
-									.startScheduling();
+						
+						if (!OperatorPeerJxtaImpl.getInstance().getExecutor().isRunning()) {
+							OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
+//							OperatorPeerJxtaImpl.getInstance().getScheduler()
+//									.startScheduling();
 						}
 					}
 				}

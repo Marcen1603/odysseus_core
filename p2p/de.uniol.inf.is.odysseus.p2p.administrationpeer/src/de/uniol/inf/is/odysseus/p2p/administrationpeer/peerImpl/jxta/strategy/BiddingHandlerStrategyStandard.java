@@ -22,14 +22,21 @@ public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 
 	@Override
 	public void handleBidding() {
+		System.out.println("Behandle das Bidding tatsächlich");
 		for (String s : AdministrationPeerJxtaImpl.getInstance().getQueries()
 				.keySet()) {
-			// Sind mehr Angebote als Teilpläne vorhanden
+			System.out.println("in die schleife");
+			// Sind mehr oder exakt Angebote als Teilpläne vorhanden
 			if (AdministrationPeerJxtaImpl.getInstance().getQueries().get(s)
 					.getBiddings().size() >= AdministrationPeerJxtaImpl
-					.getInstance().getQueries().get(s).getSubPlans().size()
+					.getInstance().getQueries().get(s).getSubPlans().size() && AdministrationPeerJxtaImpl
+					.getInstance().getQueries().get(s).getSubPlans().size()>0
 					&& AdministrationPeerJxtaImpl.getInstance().getQueries()
 							.get(s).getStatus() != Query.Status.RUN) {
+				System.out.println("Vergleich "+AdministrationPeerJxtaImpl.getInstance().getQueries().get(s)
+					.getBiddings().size()+ " mit "+AdministrationPeerJxtaImpl
+					.getInstance().getQueries().get(s).getSubPlans().size());
+				System.out.println("erstes if");
 				// Wenn ja dann wird einfach den ersten Bewerbern
 				// jeweils ein Teilplan
 				// zugesprochen. Könnte man noch in Strategie auslagern.
@@ -120,11 +127,12 @@ public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 							.getQueries().get(s).getId(), "Running");
 				}
 			} else {
-
+				System.out.println("erstes else");
 				if (AdministrationPeerJxtaImpl.getInstance().getQueries()
 						.get(s).getRetries() >= 3
 						&& AdministrationPeerJxtaImpl.getInstance()
 								.getQueries().get(s).getSubPlans().size() != 0) {
+					System.out.println("erstes else zweites if");
 					// Es kommen nicht genug Angebote also wird die
 					// Anfrage abgebrochen
 					String queryId = AdministrationPeerJxtaImpl.getInstance()
@@ -144,6 +152,7 @@ public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 							.remove(queryId);
 					Log.removeQuery(queryId);
 				} else {
+					System.out.println("RETRY WARUM???");
 					AdministrationPeerJxtaImpl.getInstance().getQueries()
 							.get(s).addRetry();
 				}

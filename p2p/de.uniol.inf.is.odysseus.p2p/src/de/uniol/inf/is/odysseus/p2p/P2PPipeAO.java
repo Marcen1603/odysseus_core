@@ -7,9 +7,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class P2PPipeAO extends UnaryLogicalOp implements OutputSchemaSettable{
 	
-	private static final long serialVersionUID = 4504556208585245530L;
-	//PipeAdvertisement auf dem das Socket gebunden wird, um P2PAccessAOs mit Daten zu versorgen
-	String adv;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4079953031372502548L;
+	//PipeAdvertisement, auf dem das Socket gebunden wird, um P2PAccessAOs mit Daten zu versorgen
+	private String adv;
 	private SDFAttributeList outputSchema;
 
 	public P2PPipeAO(String adv) {
@@ -23,7 +26,8 @@ public class P2PPipeAO extends UnaryLogicalOp implements OutputSchemaSettable{
 	public void setAdv(String adv) {
 		this.adv = adv;
 	}
-	
+
+
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		this.outputSchema = outputSchema.clone();
@@ -33,5 +37,5 @@ public class P2PPipeAO extends UnaryLogicalOp implements OutputSchemaSettable{
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
-	
+
 }
