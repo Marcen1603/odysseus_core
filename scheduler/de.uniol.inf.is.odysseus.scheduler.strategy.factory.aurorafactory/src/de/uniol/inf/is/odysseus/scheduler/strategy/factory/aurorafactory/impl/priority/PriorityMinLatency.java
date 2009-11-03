@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.priority;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 
@@ -18,7 +18,7 @@ public class PriorityMinLatency extends AbstractPriorityMinLatency{
 	@Override
 	protected void executePriorisationActivation(ISource<?> source, List<ISource<?>> opPath) {
 		
-		IPredicate joinPredicate = null;
+		List joinPredicate = new ArrayList();
 		
 		for(ISource<?> op : opPath) {		
 			if(op instanceof PostPriorisationPO<?>) {
@@ -29,9 +29,16 @@ public class PriorityMinLatency extends AbstractPriorityMinLatency{
 				}
 			}
 			
-			if(op instanceof JoinTIPO<?,?>) {
-				joinPredicate = ((JoinTIPO<?,?>) op).getJoinPredicate();
+			if(op instanceof SelectPO<?>) {
+				joinPredicate.add(((SelectPO<?>) op).getPredicate());
 			}
+			
+			/*if(op instanceof JoinTIPO<?,?>) {
+				if(((JoinTIPO<?,?>) op).getJoinPredicate() != null) {
+				System.out.println("JOIN: " + ((JoinTIPO<?,?>) op).getJoinPredicate().toString());
+				joinPredicate.add(((JoinTIPO<?,?>) op).getJoinPredicate());
+				}
+			}*/
 		}
 	}
 

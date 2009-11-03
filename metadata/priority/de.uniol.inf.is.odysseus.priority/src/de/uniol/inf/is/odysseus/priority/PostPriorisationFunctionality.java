@@ -11,14 +11,16 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? extends IPriority>> {
 	
-	private IPredicate<? super T> joinFragment = null;
+	private List<IPredicate<? super T>> joinFragment = null;
+	
+	private boolean deactivate = false;
 
-	public IPredicate<? super T> getJoinFragment() {
+	public List<IPredicate<? super T>> getJoinFragment() {
 		return joinFragment;
 	}
 
-	public void setJoinFragment(IPredicate<? super T> joinFragment) {
-		this.joinFragment = joinFragment;
+	public void setJoinFragment(List<IPredicate<? super T>> fragment) {
+		this.joinFragment = fragment;
 	}
 
 
@@ -44,11 +46,16 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 				it.remove();
 			}
 		}
+		// Wenn Gueltigkeitszeitraum verlassen wird, dann kann Nachpriorisierung abgebrochen werden
+		if(priorisationIntervals.size() == 0) {
+			deactivate = true;
+		}
 		
 		return result;
 	}	
 	
 	public List<ITimeInterval> getPriorisationIntervals() {
+		pipe.setActive(true);
 		return priorisationIntervals;
 	}
 
@@ -58,12 +65,23 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 	}	
 	
 	public void executePostPriorisation(T next) {
-
+		deactivate = false;
+		
 		ITimeInterval currentInterval = (ITimeInterval) next.getMetadata();
 		
-		if(hasToBePrefered(currentInterval) || 
-				(joinFragment != null && joinFragment.evaluate(next))) {
-			pipe.handlePostPriorisation(next);
+		if(hasToBePrefered(currentInterval)) {		
+			
+			Iterator<IPredicate<? super T>> it = joinFragment.iterator();
+			
+			while(it.hasNext()) {
+				IPredicate<? super T> current = it.next();
+				// Wenn Aquivalenzvergleich erfuellt wird, dann kann Nachpriorisierung abgebrochen werden
+				if(current.evaluate(next)) {
+					deactivate = true;
+				}
+			}
+			
+			pipe.handlePostPriorisation(next, deactivate);
 		}	
 	}
 	

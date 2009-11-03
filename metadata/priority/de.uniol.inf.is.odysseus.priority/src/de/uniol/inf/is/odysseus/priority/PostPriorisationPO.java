@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.priority;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.AbstractPunctuationPipe;
@@ -45,8 +47,15 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	}
 	
 	@Override	
-	public void handlePostPriorisation(T next) {
+	public void handlePostPriorisation(T next, boolean deactivate) {
 		next.getMetadata().setPriority((byte) (defaultPriority+1));
+		
+		ITimeInterval time = (ITimeInterval) next.getMetadata();
+		sendPunctuation(time.getStart());
+		
+		if(deactivate) {
+			this.setActive(false);
+		}
 	}
 
 	@Override
@@ -73,7 +82,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	}
 
 	@Override
-	public void setJoinFragment(IPredicate<? super T> fragment) {
+	public void setJoinFragment(List<IPredicate<? super T>> fragment) {
 		functionality.setJoinFragment(fragment);
 	};		
 

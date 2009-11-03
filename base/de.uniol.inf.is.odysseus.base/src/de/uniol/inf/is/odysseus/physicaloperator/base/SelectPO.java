@@ -11,6 +11,10 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 
 	private IPredicate<? super T> predicate;
 
+	public IPredicate<? super T> getPredicate() {
+		return predicate;
+	}
+
 	public SelectPO(IPredicate<? super T> predicate) {
 		this.predicate = predicate.clone();
 	}

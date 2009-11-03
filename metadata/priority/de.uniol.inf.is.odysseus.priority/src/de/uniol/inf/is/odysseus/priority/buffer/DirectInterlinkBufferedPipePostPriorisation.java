@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.priority.buffer;
 
+import java.util.Iterator;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -20,17 +23,36 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override
 	public void addTimeInterval(ITimeInterval time) {
 		functionality.getPriorisationIntervals().add(time);
+		
+		/*
+		 * Wird ein neues Element als Basis fuer die Nachpriorisierung
+		 * hinzugefuegt, muessen alle zwischengespeicherten Datenstromelemente
+		 * auf ihre moegliche Nachpriorisierung hin geprueft werden.
+		 */
+		if(isActive) {
+			
+			Iterator<T> it = buffer.iterator();
+			
+			while(it.hasNext()) {
+				functionality.executePostPriorisation(it.next());
+			}
+		}		
+		
 	}
 
 	@Override
-	public void handlePostPriorisation(T next) {
+	public void handlePostPriorisation(T next, boolean deactivate) {
+
 		next.getMetadata().setPriority((byte) (defaultPriority+1));
 		
+		transfer(next);
 		
+		ITimeInterval time = (ITimeInterval) next.getMetadata();
+		sendPunctuation(time.getStart());
 		
-		// TODO PostPriorisationBuffer macht erst einmal das gleiche wie PostPriorisationPO
-		// => Funktionalitaet momentan noch nicht fertig
-
+		if(deactivate) {
+			this.setActive(false);
+		}
 	}
 
 	@Override	
@@ -44,9 +66,9 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	}	
 
 	@Override
-	public void setJoinFragment(IPredicate<? super T> fragment) {
+	public void setJoinFragment(List<IPredicate<? super T>> fragment) {
 		functionality.setJoinFragment(fragment);
-	}
+	};
 	
 	@Override
 	public void transfer(T object) {
