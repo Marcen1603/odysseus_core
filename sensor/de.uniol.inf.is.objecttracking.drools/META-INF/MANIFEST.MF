@@ -6,12 +6,15 @@ Bundle-Version: 1.0.1
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.logicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.objecttracking.metadata.factory,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator,
+ de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join,
  de.uniol.inf.is.odysseus.objecttracking.predicate,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.transformation.drools
