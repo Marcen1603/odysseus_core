@@ -13,6 +13,7 @@ import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
@@ -21,7 +22,11 @@ import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class SourceHandlerJxtaImpl implements ISourceHandler {
@@ -64,8 +69,9 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //					e.printStackTrace();
 //				}
 				try {
-//					((AccessAO)v.getValue()).getSource().setSourceType("RelationalInputStreamAccessPO");
+//					((AccessAO)v.getValue()).getSource().setSourceType("P2PSocketInputStreamAccessPO");
 					viewPlan = (ISource<?>) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(v.getValue(), new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
+//					viewPlan = (ISource<?>) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(v.getValue(), null);
 				} catch (TransformationException e) {
 					e.printStackTrace();
 				}
@@ -91,12 +97,15 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 			PipeAdvertisement pipeAdv = createSocketAdvertisement();
 			P2PPipeAO p2ppipe = new P2PPipeAO(pipeAdv.toString());
-			p2ppipe.setPhysSubscriptionTo(viewPlan, 0, 0);
+//			p2ppipe.setPhysSubscriptionTo(viewPlan, 0, 0);
 //			p2ppipe.subscribeTo(ao, 0, 0);
 //			AbstractPipe p2pipePO = null;
+			AbstractPipe phys = null;
+			
 			try {
 				System.out.println("einmal initialisieren");
-				OperatorPeerJxtaImpl.getInstance().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
+				phys = (AbstractPipe) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
+				phys.subscribeTo(viewPlan, 0, 0);
 			} catch (TransformationException e1) {
 				e1.printStackTrace();
 			}

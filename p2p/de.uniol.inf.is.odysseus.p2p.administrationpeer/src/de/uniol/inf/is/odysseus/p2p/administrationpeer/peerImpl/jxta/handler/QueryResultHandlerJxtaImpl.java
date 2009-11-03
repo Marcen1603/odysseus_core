@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.queryAdmini
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.queryAdministration.Subplan;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.queryAdministration.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.queryAdministration.Subplan.SubplanStatus;
-import de.uniol.inf.is.odysseus.p2p.partitioning.base.IPartitioner;
+//import de.uniol.inf.is.odyssesus.p2p.partitioning.base.IPartitioner;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
@@ -34,7 +34,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 
 	
 	// Partitionierungskomponente
-	private IPartitioner partitioner;
+//	private IPartitioner partitioner;
 
 
 	private ICompiler compiler = null;
@@ -111,10 +111,10 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 			//------------------------------------------------------------Aufteilungsphase---------------------------------------------//
 			
 			//Prüfen, ob Partitionierungsdienst überhaupt anwesend ist
-			if(getPartitioner()!=null) {
-				getPartitioner().splitPlan(restructPlan);
-				System.out.println("Partionierung aktiv");
-			}
+//			if(getPartitioner()!=null) {
+//				getPartitioner().splitPlan(restructPlan);
+//				System.out.println("Partionierung aktiv");
+//			}
 			
 			
 			
@@ -306,9 +306,9 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 		Log.logAction(queryId, "Absage für die Verwaltung der Anfrage bekommen.");
 	}
 	
-	public IPartitioner getPartitioner() {
-		return partitioner;
-	}
+//	public IPartitioner getPartitioner() {
+//		return partitioner;
+//	}
 	
 	
 }
