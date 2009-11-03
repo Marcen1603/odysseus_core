@@ -12,7 +12,6 @@ public class PriorityMinLatency extends AbstractPriorityMinLatency{
 		super(plan, useIter);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void executePriorisationActivation(ISource<?> source, List<ISource<?>> opPath) {
 	

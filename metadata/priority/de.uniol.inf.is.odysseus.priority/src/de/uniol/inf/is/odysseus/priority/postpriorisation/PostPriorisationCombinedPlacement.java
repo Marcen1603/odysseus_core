@@ -74,7 +74,7 @@ public class PostPriorisationCombinedPlacement extends
 						
 						PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
 						postBuf.setDefaultPriority(prioPO.getDefaultPriority());
-						postBuf.subscribe(new PostPriorisationEventListener(), POEventType.PostPriorisation);
+						postBuf.subscribe(new PostPriorisationEventListener(postPO, prioPO), POEventType.PostPriorisation);
 						prioPO.getCopartners().add(postBuf);
 						
 						
