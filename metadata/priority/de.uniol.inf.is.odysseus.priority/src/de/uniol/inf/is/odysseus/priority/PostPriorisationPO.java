@@ -24,6 +24,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		this.isActive = postAO.isActive();
 		this.defaultPriority = postAO.getDefaultPriority();
 		this.functionality = new PostPriorisationFunctionality<T>(this);
+		setJoinFragment(postAO.getPredicates());
 	}	
 	
 	@Override	
@@ -48,7 +49,8 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	}
 	
 	@Override	
-	public void handlePostPriorisation(T next, boolean deactivate) {
+	public void handlePostPriorisation(T next, boolean deactivate,
+			boolean matchPredicate) {
 		next.getMetadata().setPriority((byte) (defaultPriority+1));
 
 		ITimeInterval time = (ITimeInterval) next.getMetadata();

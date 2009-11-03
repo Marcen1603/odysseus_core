@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.event;
 //	PutElementToBuffer, GetElementFromBuffer}
 public enum POEventType {
 	OpenInit, OpenDone,
+	PostPriorisation,
 	ProcessInit, ProcessDone, ProcessInitNeg, ProcessDoneNeg,
 	PushInit, PushDone, PushInitNeg, PushDoneNeg,
 	Done

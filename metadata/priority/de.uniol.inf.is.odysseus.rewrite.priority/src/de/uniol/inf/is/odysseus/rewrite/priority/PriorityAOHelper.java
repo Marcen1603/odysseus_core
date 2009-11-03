@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.rewrite.priority;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -8,11 +10,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationAO;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
-import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PriorityAOHelper {
 
@@ -43,19 +44,24 @@ public class PriorityAOHelper {
 		IPredicate predicate = join.getPredicate();
 
 		for(LogicalSubscription sub : fathers) {
-			searchForPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base);
+			searchForPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base, new ArrayList<IPredicate>());
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public static  void searchForPriorityAOPosistion(AbstractLogicalOperator current, IPredicate predicate, PriorityAO base) {
+	public static  void searchForPriorityAOPosistion(AbstractLogicalOperator current, IPredicate predicate, PriorityAO base,
+			List<IPredicate> fragments) {
 		if(current instanceof PriorityAO) {
 			return;
 		}
 
 		if(current instanceof JoinAO) {
 			handleJoin(current, base);
+		}
+		
+		if(current instanceof SelectAO) {
+			fragments.add(current.getPredicate());
 		}
 
 		if(isCriticalAO(current) || 
@@ -67,13 +73,14 @@ public class PriorityAOHelper {
 			prioAO.setDefaultPriority(base.getDefaultPriority());
 			// Operator erst einmal deaktivieren, damit er nicht die normale Berechnung stört
 			prioAO.setActive(false);
+			prioAO.setPredicates(fragments);
 			insertPriorityAO(current, prioAO);
 			base.getCopartners().add(prioAO);
 
 		} else {
 			Collection<LogicalSubscription> fathers = current.getSubscribedTo();
 			for(LogicalSubscription sub : fathers) {
-				searchForPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base);
+				searchForPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base, fragments);
 			}
 		}
 		

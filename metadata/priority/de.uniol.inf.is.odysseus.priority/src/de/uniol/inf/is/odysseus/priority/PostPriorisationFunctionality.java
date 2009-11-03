@@ -65,6 +65,11 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 	}
 
 	public void executePostPriorisation(T next) {
+		
+		if(next.getMetadata().getPriority() > 0) {
+			return;
+		}
+		
 		deactivate = false;
 
 		ITimeInterval currentInterval = (ITimeInterval) next.getMetadata();
@@ -72,7 +77,8 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 		if (hasToBePrefered(currentInterval)) {
 
 			boolean cancelPostPriorisation = false;
-
+			boolean matchPredicate = false;
+			
 			if (joinFragment != null) {
 
 				Iterator<IPredicate<? super T>> it = joinFragment.iterator();
@@ -89,11 +95,15 @@ public class PostPriorisationFunctionality<T extends IMetaAttributeContainer<? e
 						cancelPostPriorisation = true;
 						break;
 					}
+					
+					if(!cancelPostPriorisation) {
+						matchPredicate = true;
+					}
 				}
 			}
 
 			if (!cancelPostPriorisation) {
-				pipe.handlePostPriorisation(next, deactivate);
+				pipe.handlePostPriorisation(next, deactivate, matchPredicate);
 			}
 		}
 	}

@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.AbstractPunctuationBuffer;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationFunctionality;
@@ -111,7 +113,8 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 
 
 	@Override	
-	public void handlePostPriorisation(IMetaAttributeContainer<? extends IPriority> next, boolean deactivate) {
+	public void handlePostPriorisation(IMetaAttributeContainer<? extends IPriority> next, boolean deactivate,
+			boolean matchPredicate) {
 		next.getMetadata().setPriority((byte) (defaultPriority+1));
 
 		ITimeInterval time = (ITimeInterval) next.getMetadata();
@@ -120,6 +123,11 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 		if(deactivate) {
 			this.setActive(false);
 		}
+		
+		if(matchPredicate) {
+			fire(new POEvent(this, POEventType.PostPriorisation));
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")

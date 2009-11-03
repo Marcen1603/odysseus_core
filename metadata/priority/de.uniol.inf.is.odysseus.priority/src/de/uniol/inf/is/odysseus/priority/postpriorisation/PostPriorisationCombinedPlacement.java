@@ -10,11 +10,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostPriorisation;
+import de.uniol.inf.is.odysseus.priority.postpriorisation.event.PostPriorisationEventListener;
 
 public class PostPriorisationCombinedPlacement extends
 		AbstractBufferPlacementStrategy {
@@ -72,6 +74,7 @@ public class PostPriorisationCombinedPlacement extends
 						
 						PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
 						postBuf.setDefaultPriority(prioPO.getDefaultPriority());
+						postBuf.subscribe(new PostPriorisationEventListener(), POEventType.PostPriorisation);
 						prioPO.getCopartners().add(postBuf);
 						
 						

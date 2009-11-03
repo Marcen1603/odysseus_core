@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.priority;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -7,6 +9,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class PostPriorisationAO<T> extends UnaryLogicalOp {
 	private boolean isActive = true;
 
+	private List predicates;
+	
 	public boolean isActive() {
 		return isActive;
 	}
@@ -28,6 +32,14 @@ public class PostPriorisationAO<T> extends UnaryLogicalOp {
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return getInputSchema();
+	}
+
+	public void setPredicates(List predicates) {
+		this.predicates = predicates;
+	}
+
+	public List getPredicates() {
+		return predicates;
 	}	
 	
 }

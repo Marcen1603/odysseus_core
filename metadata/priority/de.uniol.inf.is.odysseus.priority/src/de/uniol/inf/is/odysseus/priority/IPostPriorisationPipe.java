@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public interface IPostPriorisationPipe<T extends IMetaAttributeContainer<? extends IPriority>>{
-	public void handlePostPriorisation(T next, boolean deactivate);
+	public void handlePostPriorisation(T next, boolean deactivate, boolean matchPredicate);
 	public void setJoinFragment(List<IPredicate<? super T>> fragment);
 	public List<IPredicate<? super T>> getJoinFragment();
 	public void addTimeInterval(ITimeInterval time);
