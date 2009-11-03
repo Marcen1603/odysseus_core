@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
@@ -68,10 +69,17 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
+				//TODO: Hinzufügen eines logischen oder physischen Plans.
 				try {
 //					((AccessAO)v.getValue()).getSource().setSourceType("P2PSocketInputStreamAccessPO");
 					viewPlan = (ISource<?>) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(v.getValue(), new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
 //					viewPlan = (ISource<?>) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(v.getValue(), null);
+					try {
+						OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(v.getValue());
+					} catch (PlanManagementException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				} catch (TransformationException e) {
 					e.printStackTrace();
 				}
@@ -102,13 +110,22 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //			AbstractPipe p2pipePO = null;
 			AbstractPipe phys = null;
 			
-			try {
-				System.out.println("einmal initialisieren");
-				phys = (AbstractPipe) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
-				phys.subscribeTo(viewPlan, 0, 0);
-			} catch (TransformationException e1) {
-				e1.printStackTrace();
-			}
+//			try {
+//				System.out.println("einmal initialisieren");
+//				phys = (AbstractPipe) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
+//				System.out.println("ist viewplan null?"+(viewPlan==null));
+//				phys.subscribeTo(viewPlan, 0, 0);
+//				try {
+//					OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(viewPlan, new ParameterPriority(2));
+//				} catch (PlanManagementException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//
+//			} catch (TransformationException e1) {
+//				e1.printStackTrace();
+//			}
+			
 //			WrapperPlanFactory.getAccessPlan(s).subscribe( p2pipePO, 0, 0);
 			
 			System.out.println("Analyse nach dem übersetzen");
@@ -208,11 +225,11 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //			physOp = null;
 //			continue;
 //		}
-
 	}
 	
 	try {
 		System.out.println("Starte Executor");
+		OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(viewPlan, new ParameterPriority(2));
 		OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
 	} catch (PlanManagementException e1) {
 		e1.printStackTrace();
