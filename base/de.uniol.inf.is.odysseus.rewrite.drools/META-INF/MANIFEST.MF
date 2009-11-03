@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: drools rewrite
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.drools
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml

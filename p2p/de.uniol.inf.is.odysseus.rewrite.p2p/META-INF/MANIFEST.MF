@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: P2P Rewrite Plug-In
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.p2p;singleton:=true
+Bundle-Version: 1.0.0
+Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.p2p,
+ de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base
