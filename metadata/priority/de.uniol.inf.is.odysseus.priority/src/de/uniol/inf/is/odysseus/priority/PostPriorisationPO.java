@@ -13,6 +13,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
  
 	private boolean isActive = true;
 	private byte defaultPriority;
+	private PriorityPO<?> priorisationOwner = null;
 	
 
 	private PostPriorisationFunctionality<T> functionality;
@@ -49,7 +50,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	@Override	
 	public void handlePostPriorisation(T next, boolean deactivate) {
 		next.getMetadata().setPriority((byte) (defaultPriority+1));
-		
+
 		ITimeInterval time = (ITimeInterval) next.getMetadata();
 		sendPunctuation(time.getStart());
 		
@@ -84,6 +85,22 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	@Override
 	public void setJoinFragment(List<IPredicate<? super T>> fragment) {
 		functionality.setJoinFragment(fragment);
+	}
+
+	@Override
+	public PriorityPO<?> getPhysicalPostPriorisationRoot() {
+		return priorisationOwner;
+	}
+
+	@Override
+	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO) {
+		priorisationOwner = priorityPO;
+		
+	}
+
+	@Override
+	public List<IPredicate<? super T>> getJoinFragment() {
+		return functionality.getJoinFragment();
 	};		
 
 }

@@ -39,4 +39,10 @@ public class StandardBufferPlacementStrategy extends
 		// TODO Warnings
 		return new BufferedPipe();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void initBuffer(IBuffer buffer) {
+		// do nothing. It's only a standard placement strategy.
+	}
 }

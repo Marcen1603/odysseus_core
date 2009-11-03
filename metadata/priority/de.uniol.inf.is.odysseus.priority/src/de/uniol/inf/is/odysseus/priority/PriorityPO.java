@@ -28,6 +28,11 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 	}
 
 	private final byte defaultPriority;
+	
+	public byte getDefaultPriority() {
+		return defaultPriority;
+	}
+
 	private boolean isPunctuationActive;
 
 	public PriorityPO(PriorityAO<T> priorityAO) {

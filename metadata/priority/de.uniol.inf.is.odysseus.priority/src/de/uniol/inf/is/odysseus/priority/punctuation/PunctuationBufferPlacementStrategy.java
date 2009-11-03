@@ -39,4 +39,11 @@ public class PunctuationBufferPlacementStrategy  extends
 	protected IBuffer<?> createNewBuffer() {
 		return  new DirectInterlinkBufferedPipe();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void initBuffer(IBuffer buffer) {
+		// do nothing. It's only for punctuations
+	}	
+	
 }

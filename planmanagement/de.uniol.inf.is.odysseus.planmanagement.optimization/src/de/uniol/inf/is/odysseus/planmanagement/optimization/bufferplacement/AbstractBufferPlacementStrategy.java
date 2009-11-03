@@ -64,7 +64,11 @@ public abstract class AbstractBufferPlacementStrategy implements
 		s.getTarget().unsubscribe((ISink) sink, s.getSinkPort(),0);
 		buffer.subscribe(sink, s.getSinkPort(),0);
 		s.getTarget().subscribe(buffer, 0,0);
+		initBuffer(buffer);
 	}
+	
+	@SuppressWarnings("unchecked")
+	protected abstract void initBuffer(IBuffer buffer);
 
 	@SuppressWarnings("unchecked")
 	public void addBuffers(ISource<?> myplan) {

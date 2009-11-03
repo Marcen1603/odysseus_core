@@ -2,59 +2,29 @@ package de.uniol.inf.is.odysseus.priority.buffer;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.AbstractPunctuationBuffer;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationFunctionality;
+import de.uniol.inf.is.odysseus.priority.PriorityPO;
 
 public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttributeContainer<? extends IPriority>>
-		extends DirectInterlinkBufferedPipe<T> implements
-		IPostPriorisationPipe<T> {
-
+		extends AbstractPunctuationBuffer<T,T> implements IPostPriorisationPipe<IMetaAttributeContainer<? extends IPriority>> {
+	Lock directLinkLock = new ReentrantLock();
+	
 	private boolean isActive = true;
 	private byte defaultPriority;
+	private PriorityPO<?> priorisationOwner = null;	
+	@SuppressWarnings("unchecked")
+	private PostPriorisationFunctionality functionality;
 	
-
-	private PostPriorisationFunctionality<T> functionality;
-	
-	@Override
-	public void addTimeInterval(ITimeInterval time) {
-		functionality.getPriorisationIntervals().add(time);
-		
-		/*
-		 * Wird ein neues Element als Basis fuer die Nachpriorisierung
-		 * hinzugefuegt, muessen alle zwischengespeicherten Datenstromelemente
-		 * auf ihre moegliche Nachpriorisierung hin geprueft werden.
-		 */
-		if(isActive) {
-			
-			Iterator<T> it = buffer.iterator();
-			
-			while(it.hasNext()) {
-				functionality.executePostPriorisation(it.next());
-			}
-		}		
-		
-	}
-
-	@Override
-	public void handlePostPriorisation(T next, boolean deactivate) {
-
-		next.getMetadata().setPriority((byte) (defaultPriority+1));
-		
-		transfer(next);
-		
-		ITimeInterval time = (ITimeInterval) next.getMetadata();
-		sendPunctuation(time.getStart());
-		
-		if(deactivate) {
-			this.setActive(false);
-		}
-	}
-
 	@Override	
 	public boolean isActive() {
 		return isActive;
@@ -63,24 +33,120 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override	
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
-	}	
-
-	@Override
-	public void setJoinFragment(List<IPredicate<? super T>> fragment) {
-		functionality.setJoinFragment(fragment);
-	};
+	}		
+	
+	@SuppressWarnings("unchecked")
+	public DirectInterlinkBufferedPipePostPriorisation() {
+		this.functionality = new PostPriorisationFunctionality(this);
+	}
+	
 	
 	@Override
-	public void transfer(T object) {
-		if(isActive) {
+	public void transferNext() {
+		directLinkLock.lock();
+		super.transferNext();
+		directLinkLock.unlock();
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.INPUT;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	final protected synchronized void process_next(T object, int port) {
+		
+		storage.setCurrentPort(port);
+		
+		if(isActive()) {
 			functionality.executePostPriorisation(object);
 		}
 		
-		transfer(object,0);
-		
-		if(isActive) {		
-			updatePunctuationData(object);
-		}
-	}	
+		sendElement(object);
 
+	}
+	
+	public void sendElement(T object) {
+		byte prio = object.getMetadata().getPriority();
+		
+		// Load Shedding
+		if (prio < 0){
+			return;
+		}
+		
+		if (prio > 0) {
+			directLinkLock.lock();
+			transfer(object);
+			directLinkLock.unlock();
+		} else {
+			synchronized (this.buffer) {
+				this.buffer.add(object);
+			}
+		}
+	}
+
+	@Override
+	public boolean cleanInternalStates(PointInTime punctuation,
+			IMetaAttributeContainer<?> current) {
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override	
+	public void addTimeInterval(ITimeInterval time) {
+		functionality.getPriorisationIntervals().add(time);
+		
+		Iterator<T> it = buffer.iterator();
+		
+		// Puffer bei jeder potenziellen Nachpriorisierung nachpriorisieren
+		while(it.hasNext()) {
+			T object = it.next();
+			functionality.executePostPriorisation(object);
+			if(object.getMetadata().getPriority() > 0) {
+				sendElement(object);
+			}
+		}
+	}
+
+
+	@Override	
+	public void handlePostPriorisation(IMetaAttributeContainer<? extends IPriority> next, boolean deactivate) {
+		next.getMetadata().setPriority((byte) (defaultPriority+1));
+
+		ITimeInterval time = (ITimeInterval) next.getMetadata();
+		sendPunctuation(time.getStart());
+		
+		if(deactivate) {
+			this.setActive(false);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setJoinFragment(List<IPredicate<? super IMetaAttributeContainer<? extends IPriority>>> fragment) {
+		functionality.setJoinFragment(fragment);
+	}
+
+	@Override
+	public PriorityPO<?> getPhysicalPostPriorisationRoot() {
+		return priorisationOwner;
+	}
+
+	@Override
+	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO) {
+		priorisationOwner = priorityPO;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IPredicate<? super IMetaAttributeContainer<? extends IPriority>>> getJoinFragment() {
+		return functionality.getJoinFragment();
+	};
+	
+	public void setDefaultPriority(byte priority) {
+		this.defaultPriority = priority;
+	}
+	
 }
