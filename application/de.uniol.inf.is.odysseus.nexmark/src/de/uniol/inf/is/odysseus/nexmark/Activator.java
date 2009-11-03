@@ -22,6 +22,13 @@ public class Activator implements BundleActivator {
 		args[0] = "-pr"; 
 		args[1] = System.getenv("pr");
 		args[2] = "-useNIO";
+		String uN = System.getenv("useNIO");
+		if (uN != null){
+			boolean useNIO = Boolean.parseBoolean(uN);
+			if (!useNIO) args[2] = "";
+		}
+		
+		logger.debug("NexMark started "+args[0]+" "+args[1]+" "+args[2]);
 		if (args[1] != null){
 			NexmarkServer.main(args);
 		}
