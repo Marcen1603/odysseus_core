@@ -36,6 +36,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private String[] metadataTypes;
 	private ArrayList<AbstractQueryBuildParameter<?>> buildParameters;
 	private List<UnsortedPair<String, String>> queries;
+	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
+
+	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();
+	private IAdvancedExecutor executor;
+
 
 	public Benchmark() {
 		this.dataType = "relational";
@@ -81,10 +86,6 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return this.buildParameters;
 	}
 
-	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
-
-	private AtomicReference<ErrorEvent> error;
-	private IAdvancedExecutor executor;
 
 	@SuppressWarnings("unchecked")
 	@Override
