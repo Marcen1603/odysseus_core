@@ -17,13 +17,13 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 
 	private final Map<Byte, IPredicate<? super T>> priorites;
 
-	protected List<PostPriorisationPO<?>> copartners;
+	protected List<IPostPriorisationPipe<?>> copartners;
 
-	public void setCopartners(List<PostPriorisationPO<?>> copartners) {
+	public void setCopartners(List<IPostPriorisationPipe<?>> copartners) {
 		this.copartners = copartners;
 	}
 
-	public List<PostPriorisationPO<?>> getCopartners() {
+	public List<IPostPriorisationPipe<?>> getCopartners() {
 		return copartners;
 	}
 
@@ -54,7 +54,7 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 					sendPunctuation(time.getStart());
 				}
 				
-				for (PostPriorisationPO<?> each : copartners) {
+				for (IPostPriorisationPipe<?> each : copartners) {
 					each.addTimeInterval(time);
 				}
 				
