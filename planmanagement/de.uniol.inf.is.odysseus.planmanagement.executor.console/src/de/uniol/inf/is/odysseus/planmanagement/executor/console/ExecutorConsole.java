@@ -775,6 +775,45 @@ public class ExecutorConsole implements CommandProvider,
 				+ "' to boolean value");
 	}
 
+	
+	@Help(parameter = "<query string without CREATE>", description = "CREATE Command\n\tExample: CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )")
+	public void _CREATE(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		StringBuffer q = new StringBuffer("CREATE "); 
+		for (int i=0;i<args.length-1;i++){
+			q.append(args[i]).append(" ");
+		}
+		try {
+			q.append(args[args.length-1]);
+			this.executor.addQuery(q.toString(), parser(),this.trafoConfigParam);
+		} catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+	}
+	
+	@Help(parameter = "<query string without SELECT> [<S>]", description = "add query [with console-output-sink]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
+	public void _SELECT(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		StringBuffer q = new StringBuffer("SELECT "); 
+		for (int i=0;i<args.length-1;i++){
+			q.append(args[i]).append(" ");
+		}
+		try {
+			if (args[args.length-1].toUpperCase().equals("<S>")){
+				this.executor.addQuery(q.toString(), parser(),
+						new ParameterDefaultRoot(new MySink()),
+						this.trafoConfigParam);
+			} else {
+				q.append(args[args.length-1]);
+				this.executor.addQuery(q.toString(), parser(),
+						this.trafoConfigParam);
+			}
+		} catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+	}
+		
+		
 	@Help(parameter = "<query string> [S]", description = "add query [with console-output-sink]\n\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
