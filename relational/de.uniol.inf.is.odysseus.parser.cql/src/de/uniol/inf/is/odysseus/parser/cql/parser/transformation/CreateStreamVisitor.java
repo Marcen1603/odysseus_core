@@ -181,7 +181,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSilab node, Object data){
 		// TODO: Behandlung, wenn kein Visitor gefunden wird
 		try {
-			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser");
+			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.SILABVisitor");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
