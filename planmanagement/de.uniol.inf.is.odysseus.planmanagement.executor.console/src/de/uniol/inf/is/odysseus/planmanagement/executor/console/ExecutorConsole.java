@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.console;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -58,6 +63,12 @@ public class ExecutorConsole implements CommandProvider,
 
 	private String parser;
 	
+	/**
+	 * This is the bath to files, to read queries from.
+	 * This path can be set by command addPath.
+	 */
+	private String path;
+
 	private static ConsoleFunctions support = new ConsoleFunctions();
 
 	private boolean usePriority = false;
@@ -764,44 +775,6 @@ public class ExecutorConsole implements CommandProvider,
 				+ "' to boolean value");
 	}
 
-	@Help(parameter = "<query string without CREATE>", description = "CREATE Command\n\tExample: CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )")
-	public void _CREATE(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		StringBuffer q = new StringBuffer("CREATE "); 
-		for (int i=0;i<args.length-1;i++){
-			q.append(args[i]).append(" ");
-		}
-		try {
-			q.append(args[args.length-1]);
-			this.executor.addQuery(q.toString(), parser(),this.trafoConfigParam);
-		} catch (Exception e) {
-			ci.println(e.getMessage());
-		}
-	}
-	
-	@Help(parameter = "<query string without SELECT> [<S>]", description = "add query [with console-output-sink]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
-	public void _SELECT(CommandInterpreter ci) {
-		String[] args = support.getArgs(ci);
-		StringBuffer q = new StringBuffer("SELECT "); 
-		for (int i=0;i<args.length-1;i++){
-			q.append(args[i]).append(" ");
-		}
-		try {
-			if (args[args.length-1].toUpperCase().equals("<S>")){
-				this.executor.addQuery(q.toString(), parser(),
-						new ParameterDefaultRoot(new MySink()),
-						this.trafoConfigParam);
-			} else {
-				q.append(args[args.length-1]);
-				this.executor.addQuery(q.toString(), parser(),
-						this.trafoConfigParam);
-			}
-		} catch (Exception e) {
-			ci.println(e.getMessage());
-		}
-	}
-		
-		
 	@Help(parameter = "<query string> [S]", description = "add query [with console-output-sink]\n\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -823,6 +796,65 @@ public class ExecutorConsole implements CommandProvider,
 		} else {
 			ci.println("No query argument.");
 		}
+	}
+	
+	@Help(parameter = "<filename> [S]", description = "add query declared in <filename> [with console-output-sink]")
+	public void _addFromFile(CommandInterpreter ci){
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		
+		if(args != null && args.length > 0){
+			BufferedReader br = null;
+			File file = null;
+			try {
+				file = new File(this.path != null ? this.path + args[0] : args[0]);
+				br = new BufferedReader(new FileReader(file));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				ci.println("File not found: " + file.getAbsolutePath());
+				return;
+			}
+
+			String queries = "";
+			try {
+				String line = null;
+				while((line = br.readLine()) != null ){
+					queries += line + "\n";
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				ci.printStackTrace(e);
+				return;
+			}
+			
+			try{
+				if(args.length > 1 && args[1].toUpperCase().equals("S")){
+					this.executor.addQuery(queries, parser(),
+							new ParameterDefaultRoot(new MySink()),
+							this.trafoConfigParam);
+				} else {
+					this.executor.addQuery(queries, parser(),
+							this.trafoConfigParam);
+				}
+			}catch(Exception e){
+				ci.printStackTrace(e);
+			}
+		}
+	}
+	
+	@Help(parameter = "<path>",
+			description = "Sets the path from which to read files." +
+					"E. g. setPath 'C:\\Users\\name\\' and addFromFile 'queries.txt' uses the file C:\\Users\\name\\queries.txt")
+	public void _setPath(CommandInterpreter ci){
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		
+		if(args == null || args.length == 0){
+			ci.println("No path defined.");
+			return;
+		}
+		
+		this.path = args[0].endsWith("\\") ? args[0] : args[0] + "\\";
 	}
 
 	@Help(description = "show registered queries")
