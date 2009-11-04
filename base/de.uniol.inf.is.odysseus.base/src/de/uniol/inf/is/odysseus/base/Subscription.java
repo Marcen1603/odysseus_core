@@ -43,6 +43,10 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		return target+" "+sinkPort+" "+sourcePort;
 	}
 
+	// ACHTUNG: BEI DER GENERIERUNG VON HASHCODE UND EQUALS
+	// DARF NIEMALS EIN EQUALS AUF DEN TARGETS ERFOLGEN, DA DIE WIEDER IHRE 
+	// SUBSCRIPTIONS TESTEN WÜRDEN --> REKURSION --> STACK OVERFLOW!!
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
