@@ -230,12 +230,15 @@ public class NexmarkServer {
 			}
 			server.start();
 		} catch (IOException e) {
-			printHelp();
+			printHelp(e);
 		}
 	}
 
-	private static void printHelp() {
-		String error = "NEXMark Server: Wrong Arguments. Arguments are:"
+	private static void printHelp(Exception e) {
+		if (e != null){
+			System.err.println(e.getMessage()+"\n\n");
+		}
+		String error = "NEXMark Server Usage: "
 				+ "\n  -ports|-p <personPort>, <auctionPort>, <bidPort>, <categoryPort> (to specify specific ports)"
 				+ "\n  -port_range|-pr <startPort> (to specify a port range, personPort is <startPort>, auctionPort is <startPort> + 1, ..."
 				+ "\n  -element_limit|-el <elementLimit> (to specify an optional element Limit. If started with this option only <elementLimit> elements are created."
