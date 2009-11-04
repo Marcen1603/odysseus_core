@@ -145,7 +145,7 @@ public class DroolsTransformation implements ITransformation {
 			info("transformation result: info not yet implemented: "
 					+ physicalPO);
 		}
-		op.subscribe(top, 0, 0, op.getOutputSchema());
+		op.unsubscribe(top, 0, 0);
 		return physicalPO;
 	}
 
