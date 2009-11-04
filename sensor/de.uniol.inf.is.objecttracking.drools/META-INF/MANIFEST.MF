@@ -17,4 +17,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join,
  de.uniol.inf.is.odysseus.objecttracking.predicate,
  de.uniol.inf.is.odysseus.physicaloperator.base,
- de.uniol.inf.is.odysseus.transformation.drools
+ de.uniol.inf.is.odysseus.transformation.drools,
+ org.apache.commons.math.linear
