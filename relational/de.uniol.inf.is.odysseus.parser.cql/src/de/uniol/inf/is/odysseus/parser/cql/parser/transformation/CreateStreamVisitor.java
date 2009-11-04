@@ -36,6 +36,30 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public SDFAttributeList getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(SDFAttributeList attributes) {
+		this.attributes = attributes;
+	}
+
+	public ILogicalOperator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(ILogicalOperator operator) {
+		this.operator = operator;
+	}
+
 	SDFAttributeList attributes;
 	ILogicalOperator operator;
 
@@ -159,33 +183,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
 		// TODO: Behandlung, wenn kein Visitor gefunden wird
 		return v.visit(node,data);
-/**		
-		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
-		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
-		AccessAO source = null;
-		
-		// TODO Tuple mode and MV mode are not supported with SILAB yet.
-//		if (node.useTupleMode()) {
-//			source = new AccessAO(new SDFSource(name,
-//					"RelationalInputStreamAccessPO"));
-//			source.setPort(port);
-//			source.setHost(host);
-//		} else if (node.useMVMode()) {
-//			source = new AccessAO(new SDFSource(name,
-//					"RelationalAtomicDataInputStreamAccessMVPO"));
-//			source.setPort(port);
-//			source.setHost(host);
-//			source.setOutputSchema(this.attributes);
-//		} else {
-			source = new AccessAO(new SDFSource(name,
-					"RelationalSILABInputStreamAccessPO"));
-			source.setPort(port);
-			source.setHost(host);
-			source.setOutputSchema(this.attributes);
-//		}
-		DataDictionary.getInstance().setView(name, source);
-		return data;
-		**/
+
 	}
 
 	// @Override
