@@ -230,7 +230,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	
 	@Override
 	public void subscribeTo(ILogicalOperator source, int sinkPort, int sourcePort) {
-		subscribeTo(source, sinkPort, sourcePort, null);
+		if (source.getOutputSchema() == null){
+			throw new IllegalArgumentException("No schema set at source "+source);
+		}else{
+			subscribeTo(source, sinkPort, sourcePort, source.getOutputSchema());
+		}
 	}
 	
 	@Override
@@ -283,7 +287,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	final public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
-		subscribe(sink, sinkPort, sourcePort, null);
+		if (this.getOutputSchema() == null){
+			throw new IllegalArgumentException("No schema set at source "+this);
+		}else{
+			subscribeTo(sink, sinkPort, sourcePort, this.getOutputSchema());
+		}
 	}
 	
 	@Override
