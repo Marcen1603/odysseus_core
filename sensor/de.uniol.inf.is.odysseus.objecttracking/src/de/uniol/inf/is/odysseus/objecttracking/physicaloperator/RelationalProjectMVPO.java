@@ -6,6 +6,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ProjectMVAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -24,6 +25,14 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 	RealMatrix projectVector;
 	SDFAttributeList inputSchema;
 	SDFAttributeList outputSchema;
+	
+	public RelationalProjectMVPO(ProjectMVAO ao){
+		this.restrictList = ao.determineRestrictList();
+		this.projectMatrix = new RealMatrixImpl(ao.getProjectMatrix());
+		this.projectVector = new RealMatrixImpl(ao.getProjectVector());
+		this.inputSchema = ao.getInputSchema();
+		this.outputSchema = ao.getOutputSchema();
+	}
 	
 	public RelationalProjectMVPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,
 			SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
