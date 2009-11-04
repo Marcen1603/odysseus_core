@@ -157,7 +157,7 @@ public class SWTStreamWindow<In, Out> implements INodeModelChangeListener<IPhysi
 		if( content instanceof ISource ) {
 			sources.add( (ISource<? extends In>)content );
 		} else if( content instanceof ISink ) {
-			ArrayList<?> list = ( ArrayList< ? > )((ISink<?>)content).getSubscribedTo();
+			Collection list = ((ISink<?>)content).getSubscribedTo();
 			for( Object obj : list ) 
 				sources.add( (ISource<? extends In>)((PhysicalSubscription<?>)obj).getTarget() );
 		} else 
