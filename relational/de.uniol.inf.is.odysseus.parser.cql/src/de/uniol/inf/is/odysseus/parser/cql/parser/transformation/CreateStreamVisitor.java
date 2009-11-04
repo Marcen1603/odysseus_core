@@ -157,6 +157,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSilab node, Object data){
 		
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
+		// TODO: Behandlung, wenn kein Visitor gefunden wird
 		return v.visit(node,data);
 /**		
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
