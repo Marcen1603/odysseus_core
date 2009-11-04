@@ -10,11 +10,11 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 
-public class SILABVisitor extends CreateStreamVisitor implements IVisitor{
+public class SILABVisitor implements IVisitor{
 
 	static boolean registerd = VisitorFactory.getInstance().setVisitor(new SILABVisitor(), "Silab");
 	@Override
-	public Object visit(SimpleNode node, Object data) {
+	public Object visit(SimpleNode node, Object data, Object baseObject) {
 			
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
@@ -33,13 +33,13 @@ public class SILABVisitor extends CreateStreamVisitor implements IVisitor{
 //			source.setHost(host);
 //			source.setOutputSchema(this.attributes);
 //		} else {
-			source = new AccessAO(new SDFSource(this.getName(),
+			source = new AccessAO(new SDFSource(((CreateStreamVisitor)baseObject).getName(),
 					"RelationalSILABInputStreamAccessPO"));
 			source.setPort(port);
 			source.setHost(host);
-			source.setOutputSchema(this.getAttributes());
+			source.setOutputSchema(((CreateStreamVisitor)baseObject).getAttributes());
 //		}
-		DataDictionary.getInstance().setView(this.getName(), source);
+		DataDictionary.getInstance().setView(((CreateStreamVisitor)baseObject).getName(), source);
 		return data;
 		
 	}

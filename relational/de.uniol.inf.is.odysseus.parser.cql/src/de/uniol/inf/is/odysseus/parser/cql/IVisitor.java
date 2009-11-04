@@ -4,5 +4,5 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 
 public interface IVisitor {
 
-	public Object visit(SimpleNode node, Object data); 
+	public Object visit(SimpleNode node, Object data, Object baseObject); 
 }

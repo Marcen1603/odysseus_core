@@ -179,10 +179,15 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	
 	@Override
 	public Object visit(ASTSilab node, Object data){
-		
-		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
 		// TODO: Behandlung, wenn kein Visitor gefunden wird
-		return v.visit(node,data);
+		try {
+			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
+		return v.visit(node,data, this);
 
 	}
 
