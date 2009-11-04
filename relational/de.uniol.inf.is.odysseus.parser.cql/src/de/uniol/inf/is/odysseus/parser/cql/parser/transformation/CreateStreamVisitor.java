@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
+import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
@@ -153,6 +155,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	
 	@Override
 	public Object visit(ASTSilab node, Object data){
+		
+		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
+		return v.visit(node,data);
+/**		
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
 		AccessAO source = null;
@@ -178,6 +184,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 //		}
 		DataDictionary.getInstance().setView(name, source);
 		return data;
+		**/
 	}
 
 	// @Override
