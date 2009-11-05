@@ -6,7 +6,7 @@ import java.util.Set;
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
+import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IHotPeerListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.queryAdministration.QueryJxtaImpl;
@@ -75,7 +75,7 @@ public class HotPeerListenerJxtaImpl implements IHotPeerListener {
 		
 								//Ein neues Advertisement setzen
 								AbstractLogicalOperator ao = subPlan.getAo().clone();
-								((P2PPipeAO) ao).setAdv(AdvertisementTools.getServerPipeAdvertisement(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup()).toString());
+								((P2PSinkAO) ao).setAdv(AdvertisementTools.getServerPipeAdvertisement(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup()).toString());
 								//Ende neues Advertisement setzen
 								
 								Message response = MessageTool.createSimpleMessage(
@@ -84,7 +84,7 @@ public class HotPeerListenerJxtaImpl implements IHotPeerListener {
 												.getQueries().get(s).getId(),
 										"granted", ao);
 								MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(), MessageTool.createPipeAdvertisementFromXml(AdministrationPeerJxtaImpl.getInstance().getOperatorPeers().get(peerId).getPipe()), response);
-								((SubplanJxtaImpl) subPlan).getHotPeers().put(peerId, MessageTool.createPipeAdvertisementFromXml(((P2PPipeAO) ao).getAdv()));
+								((SubplanJxtaImpl) subPlan).getHotPeers().put(peerId, MessageTool.createPipeAdvertisementFromXml(((P2PSinkAO) ao).getAdv()));
 								break;
 							}
 						}

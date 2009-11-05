@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
+import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IQueryResultHandler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
@@ -213,7 +213,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				int subplannumber = 0;
 				for (Subplan s : subPlans) {
 					if (subplannumber == 0) {
-						String pipeAdv = ((P2PPipeAO) s.getAo()).getAdv();
+						String pipeAdv = ((P2PSinkAO) s.getAo()).getAdv();
 						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup()
 								.getPeerAdvertisement();
 

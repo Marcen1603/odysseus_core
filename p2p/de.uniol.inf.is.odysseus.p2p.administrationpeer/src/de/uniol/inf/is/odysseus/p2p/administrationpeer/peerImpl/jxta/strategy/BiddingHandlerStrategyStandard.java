@@ -5,7 +5,7 @@ import java.util.Collections;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
+import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.listener.EventListenerJxtaImpl;
@@ -53,7 +53,7 @@ public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 						continue;
 					}
 					if (subplannumber == 0) {
-						String pipeAdv = ((P2PPipeAO) subplan.getAo()).getAdv();
+						String pipeAdv = ((P2PSinkAO) subplan.getAo()).getAdv();
 						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl
 								.getInstance().getNetPeerGroup()
 								.getPeerAdvertisement();

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -14,29 +13,16 @@ import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.interval_latency.IntervalLatency;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
+import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PPipePO;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PSocketInputStreamAccessPO;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PSinkPO;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class SourceHandlerJxtaImpl implements ISourceHandler {
 
@@ -53,7 +39,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
-		P2PPipePO pipe = null;
+		P2PSinkPO pipe = null;
 		MetadataCreationPO source = null;
 		// init sources
 		Set<Entry<String, ILogicalOperator>> views = DataDictionary.getInstance()
@@ -79,12 +65,12 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //					e.printStackTrace();
 //				}
 				//TODO: Hinzufügen eines logischen oder physischen Plans.
-				P2PPipeAO p2ppipe = null;
+				P2PSinkAO p2ppipe = null;
 				PipeAdvertisement pipeAdv = null;
 				try {
 					System.out.println("TRANSFORMIERE DIE QUELLEN");
 					pipeAdv = createSocketAdvertisement();
-				    p2ppipe = new P2PPipeAO(pipeAdv.toString());
+				    p2ppipe = new P2PSinkAO(pipeAdv.toString());
 //				    ((AccessAO)v.getValue()).subscribe(p2ppipe, 0, 0,((AccessAO)v.getValue()).getOutputSchema());
 //					p2ppipe.subscribe(((AccessAO)v.getValue()), 0, 0);
 					
@@ -93,7 +79,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 					ao.getSource().setSourceType("RelationalInputStreamAccessPO");
 					ao.subscribe(p2ppipe, 0, 0,((AccessAO)v.getValue()).getOutputSchema());
 //					((AccessAO)v.getValue()).getSource().setSourceType("P2PSocketInputStreamAccessPO");
-//	//				pipe =   (P2PPipePO) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
+//	//				pipe =   (P2PSinkPO) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
 //					p2ppipe.subscribeTo(ao,0,0,ao.getOutputSchema());
 //					source =  (MetadataCreationPO) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(ao, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
 //		//			System.out.println("leer? "+pipe.getSubscribedTo().isEmpty()+" leer?"+pipe.getSubscriptions().isEmpty());
@@ -144,7 +130,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //			ao.setOutputSchema(entity.getAttributes());
 
 //			PipeAdvertisement pipeAdv = createSocketAdvertisement();
-//			P2PPipeAO p2ppipe = new P2PPipeAO(pipeAdv.toString());
+//			P2PSinkAO p2ppipe = new P2PSinkAO(pipeAdv.toString());
 ////			p2ppipe.setPhysSubscriptionTo(viewPlan, 0, 0);
 ////			p2ppipe.subscribeTo(ao, 0, 0);
 ////			AbstractPipe p2pipePO = null;

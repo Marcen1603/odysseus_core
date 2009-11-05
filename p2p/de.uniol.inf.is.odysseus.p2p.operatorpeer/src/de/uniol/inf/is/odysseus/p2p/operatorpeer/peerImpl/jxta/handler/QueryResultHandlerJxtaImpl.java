@@ -6,19 +6,14 @@ import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.P2PAccessAO;
+import de.uniol.inf.is.odysseus.p2p.P2PSourceAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQueryResultHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener.P2PPOEventListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PPipePO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -66,7 +61,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				System.out.println("Access " +ao.toString());
 				for(LogicalSubscription ls : ao.getSubscribedTo()) {
 					System.out.println("SubscribedTo " +ls.getTarget().toString());
-					System.out.println("Das Advertisement ist?"+((P2PAccessAO)ls.getTarget()).getAdv());
+					System.out.println("Das Advertisement ist?"+((P2PSourceAO)ls.getTarget()).getAdv());
 				}
 				for(LogicalSubscription ls : ao.getSubscriptions()) {
 					System.out.println("Subscriptions " +ls.getTarget().toString());

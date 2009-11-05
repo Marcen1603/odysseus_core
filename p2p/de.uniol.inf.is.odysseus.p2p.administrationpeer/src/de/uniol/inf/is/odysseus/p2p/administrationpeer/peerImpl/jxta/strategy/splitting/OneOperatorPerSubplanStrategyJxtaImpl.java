@@ -11,8 +11,8 @@ import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.p2p.P2PAccessAO;
-import de.uniol.inf.is.odysseus.p2p.P2PPipeAO;
+import de.uniol.inf.is.odysseus.p2p.P2PSourceAO;
+import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.splitting.ISplittingStrategy;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -65,16 +65,16 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 			ArrayList<AbstractLogicalOperator> list) {
 		int inputCount = iLogicalOperator.getSubscribedTo().size();
 		String temp = null;
-		P2PPipeAO p2ppipe = new P2PPipeAO(current);
+		P2PSinkAO p2ppipe = new P2PSinkAO(current);
 		String adv = createSocketAdvertisement().toString();
-		P2PAccessAO p2paccess = new P2PAccessAO(adv);
+		P2PSourceAO p2paccess = new P2PSourceAO(adv);
 		System.out.println("Der Übergebene LogicalOperator im split ist leer? "+(iLogicalOperator==null));
 		AbstractLogicalOperator tempAO = (AbstractLogicalOperator) iLogicalOperator.clone();
 		if (inputCount == 2) {
 			// Wenn es sich um einen Operator mit 2 Eingabeports handelt dann
 			// muss noch ein 2 P2PAccessAO rangehangen werden
 			String adv2 = createSocketAdvertisement().toString();
-			P2PAccessAO p2paccess2 = new P2PAccessAO(adv2);
+			P2PSourceAO p2paccess2 = new P2PSourceAO(adv2);
 			temp = adv2;
 			
 			if (iLogicalOperator.getSubscribedTo(0).getTarget() instanceof AccessAO) {
