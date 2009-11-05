@@ -428,16 +428,19 @@ public class DefaultGraphArea extends Composite implements
 									.isOnlySource()) {
 								if (endOp instanceof UnaryLogicalOp) {
 									endOp.subscribeTo(nodeView.getModelNode()
-											.getContent().getOperator(), 0, 0);
+											.getContent().getOperator(), 0, 0, nodeView.getModelNode()
+											.getContent().getOperator().getOutputSchema());
 								} else if (endOp instanceof BinaryLogicalOp) {
 									if (endOp.getSubscribedTo().isEmpty()) {
 										endOp.subscribeTo(nodeView
 												.getModelNode().getContent()
-												.getOperator(), 0, 0);
+												.getOperator(), 0, 0, nodeView.getModelNode()
+												.getContent().getOperator().getOutputSchema());
 									} else {
 										endOp.subscribeTo(nodeView
 												.getModelNode().getContent()
-												.getOperator(), 1, 0);
+												.getOperator(), 1, 0, nodeView.getModelNode()
+												.getContent().getOperator().getOutputSchema());
 									}
 								}
 								connectionStarted = false;

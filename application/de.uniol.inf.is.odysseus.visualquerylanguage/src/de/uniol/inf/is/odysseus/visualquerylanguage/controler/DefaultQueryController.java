@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
@@ -51,7 +52,8 @@ public class DefaultQueryController implements IQueryController{
 				.getModel().getNodes()) {
 			for (IParamSetter<?> param : nodeModel.getContent().getSetterParameterList()) {
 				try {
-					Object value = getParamValue(getParamClasses(param), param.getValue(), param.getTypeList().size()-1);
+					Class[] paramClasses = getParamClasses(param);
+					Object value = getParamValue(paramClasses, param.getValue(), param.getTypeList().size()-1);
 					Class paramClass = Class.forName(param.getType());
 					Class opClass = nodeModel.getContent().getOperator().getClass();
 					Class[] pClass = new Class[1];
@@ -168,4 +170,5 @@ public class DefaultQueryController implements IQueryController{
 		}
 		return object;
 	}
+	
 }
