@@ -59,7 +59,7 @@ public class DefaultQueryController implements IQueryController{
 					Class[] pClass = new Class[1];
 					pClass[0] = paramClass;
 					Method m = opClass.getMethod(param.getSetter(), pClass);
-					m.invoke(value);
+					m.invoke(nodeModel.getContent().getOperator(), value);
 				} catch (Exception e) {
 					log.error("While trying to create Parameters.");
 					e.printStackTrace();
