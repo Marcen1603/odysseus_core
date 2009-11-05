@@ -894,6 +894,8 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		
 		this.path = args[0].endsWith("\\") ? args[0] : args[0] + "\\";
+		
+		ci.println("Path has been set. New path: " + this.path);
 	}
 
 	@Help(description = "show registered queries")
