@@ -11,10 +11,12 @@ import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 /**
  * Alle Quellen werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und in regelmaessigen Abstaenden ausgeschrieben.
@@ -49,7 +51,15 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //				AccessAO ao = new AccessAO();
 //				ao.setSource(((AccessAO)v.getValue()).getSource());
 //				//TODO: Auf NIO umstellen
-//				ao.getSource().setSourceType("RelationalInputStreamAccessPO");
+//				 ((AccessAO)v.getValue()).getSource().setSourceType("RelationalInputStreamAccessPO");
+//				 try {
+//
+//					OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(v.getValue(), new ParameterPriority(2));
+//					OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
+//				} catch (PlanManagementException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 //				ao.subscribe(p2ppipe, 0, 0,((AccessAO)v.getValue()).getOutputSchema());
 //				//Überschreibe den alten Wert der Quelle im DD
 //				DataDictionary.getInstance().setView(v.getKey(), p2ppipe);
@@ -64,7 +74,9 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 				adv.setPeer(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
 						.getPeerAdvertisement().toString());
 				adv.setSourceId(v.getKey());
+				System.out.println("wie siehts hier aus: "+OperatorPeerJxtaImpl.getInstance().getSources().get(v.getKey()).toString());
 				adv.setSourceScheme(OperatorPeerJxtaImpl.getInstance().getSources().get(v.getKey()));
+				System.out.println("wie sieht das SourceAdvertisement aus?"+adv.toString());
 				advList.add(adv);
 				
 			}

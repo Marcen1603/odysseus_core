@@ -50,33 +50,33 @@ public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 					if (subplan.getStatus() == Subplan.SubplanStatus.CLOSED) {
 						continue;
 					}
-					if (subplannumber == 0) {
-						String pipeAdv = ((P2PSinkAO) subplan.getAo()).getAdv();
-						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl
-								.getInstance().getNetPeerGroup()
-								.getPeerAdvertisement();
-						Log
-								.logAction(AdministrationPeerJxtaImpl
-										.getInstance().getQueries().get(s)
-										.getId(),
-										"Sende Bezugsmöglichkeit für Ergebnis an Thin-Peer");
-						Message thinPeerResponse = MessageTool
-								.createSimpleMessage(
-										"ResultStreaming",
-										"queryId",
-										AdministrationPeerJxtaImpl
-												.getInstance().getQueries()
-												.get(s).getId(),
-										MessageTool
-												.createPipeAdvertisementFromXml(pipeAdv),
-										peerAdv);
-						MessageTool.sendMessage(AdministrationPeerJxtaImpl
-								.getInstance().netPeerGroup,
-								AdministrationPeerJxtaImpl.getInstance()
-										.getQueries().get(s)
-										.getResponseSocketThinPeer(),
-								thinPeerResponse);
-					}
+//					if (subplannumber == 0) {
+//						String pipeAdv = ((P2PSinkAO) subplan.getAo()).getAdv();
+//						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl
+//								.getInstance().getNetPeerGroup()
+//								.getPeerAdvertisement();
+//						Log
+//								.logAction(AdministrationPeerJxtaImpl
+//										.getInstance().getQueries().get(s)
+//										.getId(),
+//										"Sende Bezugsmöglichkeit für Ergebnis an Thin-Peer");
+//						Message thinPeerResponse = MessageTool
+//								.createSimpleMessage(
+//										"ResultStreaming",
+//										"queryId",
+//										AdministrationPeerJxtaImpl
+//												.getInstance().getQueries()
+//												.get(s).getId(),
+//										MessageTool
+//												.createPipeAdvertisementFromXml(pipeAdv),
+//										peerAdv);
+//						MessageTool.sendMessage(AdministrationPeerJxtaImpl
+//								.getInstance().netPeerGroup,
+//								AdministrationPeerJxtaImpl.getInstance()
+//										.getQueries().get(s)
+//										.getResponseSocketThinPeer(),
+//								thinPeerResponse);
+//					}
 
 					PipeAdvertisement opPeer = ((BidJxtaImpl) AdministrationPeerJxtaImpl
 							.getInstance().getQueries().get(s).getBiddings()
@@ -125,12 +125,10 @@ public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 							.getQueries().get(s).getId(), "Running");
 				}
 			} else {
-				System.out.println("erstes else");
 				if (AdministrationPeerJxtaImpl.getInstance().getQueries()
 						.get(s).getRetries() >= 3
 						&& AdministrationPeerJxtaImpl.getInstance()
 								.getQueries().get(s).getSubPlans().size() != 0) {
-					System.out.println("erstes else zweites if");
 					// Es kommen nicht genug Angebote also wird die
 					// Anfrage abgebrochen
 					String queryId = AdministrationPeerJxtaImpl.getInstance()

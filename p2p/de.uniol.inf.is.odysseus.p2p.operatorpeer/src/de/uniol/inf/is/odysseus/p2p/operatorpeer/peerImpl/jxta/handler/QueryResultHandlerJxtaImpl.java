@@ -45,24 +45,14 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 		MessageTool.getEvents(events);
 
 		if (result.equals("granted") || namespace.equals("DoQuery")) {
+			
 			AbstractLogicalOperator ao = (AbstractLogicalOperator) MessageTool.getObjectFromMessage(msg, 0);
+			System.out.println("Will ausführen mit? "+ao.toString());
 			OperatorPeerJxtaImpl.getInstance().getQueries().get(queryId)
 					.getSubPlans().put(subPlanId, ao);
 			OperatorPeerJxtaImpl.getInstance().getQueries().get(queryId)
 					.setStatus(Status.GRANTED);
-			//TODO: Transformationen -> Rewrite
-			//Evtl. eine TansformationConfiguration angeben
 			try {
-				System.out.println("Wie sieht der Teilplan aus?");
-				System.out.println("Access " +ao.toString());
-				for(LogicalSubscription ls : ao.getSubscribedTo()) {
-					System.out.println("SubscribedTo " +ls.getTarget().toString());
-					System.out.println("Das Advertisement ist?"+((P2PSourceAO)ls.getTarget()).getAdv());
-				}
-				for(LogicalSubscription ls : ao.getSubscriptions()) {
-					System.out.println("Subscriptions " +ls.getTarget().toString());
-					
-				}
 				temporalID = OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(ao, new ParameterPriority(2));
 			} catch (PlanManagementException e2) {
 				e2.printStackTrace();

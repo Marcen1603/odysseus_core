@@ -196,7 +196,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initSourceListener() {
-		this.sourceListener = new SourceListenerJxtaImpl();
+		this.sourceListener = new SourceListenerJxtaImpl(getExecutor());
 
 	}
 

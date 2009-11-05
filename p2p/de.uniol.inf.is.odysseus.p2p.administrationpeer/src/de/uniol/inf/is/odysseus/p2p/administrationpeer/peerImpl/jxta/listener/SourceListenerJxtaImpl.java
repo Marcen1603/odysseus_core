@@ -7,22 +7,31 @@ import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
-import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
 public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListener {
 
 	
 	private int WAIT_TIME=10000;
+	
+	private IAdvancedExecutor executor;
+
+	public IAdvancedExecutor getExecutor() {
+		return executor;
+	}
 
 	public SourceListenerJxtaImpl(){
 	}
 	
+	public SourceListenerJxtaImpl(IAdvancedExecutor executor) {
+		this.executor = executor;
+	}
+
 	@Override
 	public void run() {
 		while (true) {
@@ -48,11 +57,10 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 					Object source = en.nextElement();
 					if (source instanceof SourceAdvertisement ){
 						adv = (SourceAdvertisement) source;
-//						PipeAdvertisement pipeAdv = MessageTool.createPipeAdvertisementFromXml(adv.getSourceSocket());
 						AdministrationPeerJxtaImpl.getInstance().getSources().put(adv.getSourceName(), adv);
 						// Hier wird noch das Schema der Quelle zum DataDictionary hinzugefügt, damit der Compiler mit den Informationen arbeiten kann
 						if(DataDictionary.getInstance().sourceTypeMap.isEmpty() || !DataDictionary.getInstance().sourceTypeMap.containsKey(adv.getSourceName())) {
-							AdministrationPeerJxtaImpl.getInstance().getExecutor().addQuery(adv.getSourceScheme(), "CQL", new ParameterPriority(2));
+							getExecutor().addQuery(adv.getSourceScheme(), "CQL", new ParameterPriority(2));
 						}
 						
 					}
