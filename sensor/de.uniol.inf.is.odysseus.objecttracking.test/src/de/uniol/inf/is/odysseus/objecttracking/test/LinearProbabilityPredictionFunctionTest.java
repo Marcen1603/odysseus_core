@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class LinearProbabilityPredictionFunctionTest {
 
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args){
 		try{
 			SDFAttributeList schema = new SDFAttributeList();

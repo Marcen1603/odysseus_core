@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
-@SuppressWarnings(value={"unchecked","static-access"})
+@SuppressWarnings("all") 
 
 public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, NewSQLParserConstants {/*@bgen(jjtree)*/
   protected static JJTNewSQLParserState jjtree = new JJTNewSQLParserState();
