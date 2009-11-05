@@ -35,45 +35,49 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 	public void start(final BundleContext bc) throws Exception {
 		context = bc;
 		SWTResourceManager.resourceBundle = bc.getBundle();
-		// TODO config aus properties service lesen
-		// do initialization inside a thread, so bundle startup
-		// isn't blocked by execTracker.waitForService(0)
-		Thread t = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				ServiceTracker execTracker = new ServiceTracker(bc,
-						IAdvancedExecutor.class.getName(), null);
-				execTracker.open();
-				IAdvancedExecutor executor;
-				try {
-					executor = (IAdvancedExecutor) execTracker
-							.waitForService(0);
-					if (executor != null) {
-						ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
-						viewerStarter = new ViewerStarter(null, cfg);
-						viewerThread = new Thread(viewerStarter,
-								"Viewer Thread");
-						viewerThread.start();
-						executor.addPlanModificationListener(Activator.this);
-						updateModel(executor.getSealedPlan().getRoots());
-					} else {
+		String uViewer = System.getenv("useViewer");
+		if ("true".equalsIgnoreCase(uViewer)){
+			// TODO config aus properties service lesen
+			// do initialization inside a thread, so bundle startup
+			// isn't blocked by execTracker.waitForService(0)
+			Thread t = new Thread(new Runnable() {
+	
+				@Override
+				public void run() {
+					ServiceTracker execTracker = new ServiceTracker(bc,
+							IAdvancedExecutor.class.getName(), null);
+					execTracker.open();
+					IAdvancedExecutor executor;
+					try {
+						executor = (IAdvancedExecutor) execTracker
+								.waitForService(0);
+						if (executor != null) {
+							ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
+							viewerStarter = new ViewerStarter(null, cfg);
+							viewerThread = new Thread(viewerStarter,
+									"Viewer Thread");
+							viewerThread.start();
+							executor.addPlanModificationListener(Activator.this);
+							updateModel(executor.getSealedPlan().getRoots());
+						} else {
+							logger.error("cannot get executor service");
+						}
+						execTracker.close();
+					} catch (InterruptedException e) {
 						logger.error("cannot get executor service");
+					} catch (PlanManagementException e) {
+						logger.error(e.getMessage());
 					}
-					execTracker.close();
-				} catch (InterruptedException e) {
-					logger.error("cannot get executor service");
-				} catch (PlanManagementException e) {
-					logger.error(e.getMessage());
 				}
-			}
-
-		});
-		// daemon thread, so shutdown can be completed,
-		// even if waitForService(0) is blocking
-		t.setDaemon(true);
-		t.start();
+	
+			});
+			// daemon thread, so shutdown can be completed,
+			// even if waitForService(0) is blocking
+			t.setDaemon(true);
+			t.start();
+		}
 	}
+		
 
 	@Override
 	public void stop(BundleContext arg0) throws Exception {
