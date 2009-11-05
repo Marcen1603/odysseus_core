@@ -736,7 +736,9 @@ public class ExecutorConsole implements CommandProvider,
 							"relational",
 							ITimeInterval.class.getName(),
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbabilityPredictionFunction",
-							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability");
+							"de.uniol.inf.is.odysseus.latency.ILatency",
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability"
+							);
 				} else {
 					trafoConfig = new TransformationConfiguration("relational",
 							ITimeInterval.class);
