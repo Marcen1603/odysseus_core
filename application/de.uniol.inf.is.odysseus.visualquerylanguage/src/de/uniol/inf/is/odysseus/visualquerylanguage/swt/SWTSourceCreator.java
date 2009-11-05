@@ -57,7 +57,7 @@ public class SWTSourceCreator{
 		});
 		
 		Button cancelButton = new Button(shell, SWT.PUSH);
-		cancelButton.setText("Schliessen");
+		cancelButton.setText("Schlieﬂen");
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
