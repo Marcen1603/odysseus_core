@@ -66,17 +66,4 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 	}
 
 
-//	@Override
-//	public void setConnectToPipe(boolean connectToPipe) {
-//		this.connectToPipe = connectToPipe;
-//	}
-
-//	public boolean isP2P() {
-//		return p2p;
-//	}
-//
-//	public void setP2P(boolean p2p) {
-//		this.p2p = p2p;
-//	}
-
 }

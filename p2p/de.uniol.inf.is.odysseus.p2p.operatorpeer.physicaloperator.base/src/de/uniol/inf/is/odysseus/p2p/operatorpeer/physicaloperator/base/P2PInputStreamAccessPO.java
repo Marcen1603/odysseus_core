@@ -133,18 +133,18 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		return done;
 	}
 
-	@Override
-	public synchronized void transferNext() {
-		System.out
-				.println("Transferiere aber---------------------------------------------------");
-		// if (buffer != null){
-		if (hasNext()) {
-			transfer(buffer);
-
-		}
-		buffer = null;
-
-	}
+//	@Override
+//	public synchronized void transferNext() {
+//		System.out
+//				.println("Transferiere aber---------------------------------------------------");
+//		// if (buffer != null){
+//		if (hasNext()) {
+//			transfer(buffer);
+//
+//		}
+//		buffer = null;
+//
+//	}
 
 	@Override
 	protected void process_done() {
