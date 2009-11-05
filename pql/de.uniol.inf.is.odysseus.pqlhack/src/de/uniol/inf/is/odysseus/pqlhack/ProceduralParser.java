@@ -21,6 +21,8 @@ public class ProceduralParser implements IQueryParser{
 	
 	public static final String language = "";
 	
+	private ProceduralExpressionParser parser;
+	
 	public static synchronized IQueryParser getInstance(){
 		if (instance == null){
 			instance = new ProceduralParser();
@@ -28,8 +30,8 @@ public class ProceduralParser implements IQueryParser{
 		return instance;
 	}
 	
-	@Override
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
 		// TODO Auto-generated method stub
@@ -38,7 +40,13 @@ public class ProceduralParser implements IQueryParser{
 		InitAttributesVisitor initAttrs = new InitAttributesVisitor();
 		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor();
 		
-		new ProceduralExpressionParser(new StringReader(query));
+		if(this.parser == null){
+			this.parser = new ProceduralExpressionParser(new StringReader(query));
+		}
+		else{
+			ProceduralExpressionParser.ReInit(new StringReader(query));
+		}
+
 		ASTLogicalPlan logicalPlan = null;
 		try {
 			logicalPlan = ProceduralExpressionParser.LogicalPlan();
