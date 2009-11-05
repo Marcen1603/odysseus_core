@@ -950,7 +950,7 @@ public class ExecutorConsole implements CommandProvider,
 			if (macrosNode.nodeExists(name)) {
 				Preferences macroNode = macrosNode.node(name);
 				macroNode.removeNode();
-
+				macrosNode.flush();
 			}
 			ci.println("macro removed");
 		} catch (BackingStoreException e) {
