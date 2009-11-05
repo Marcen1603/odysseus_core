@@ -10,45 +10,24 @@ import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-//import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.AbstractInputStreamAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IDataTransformation;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
 
-
-public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> extends
-		AbstractIterableSource<Out> {
+public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
+		extends AbstractInputStreamAccessPO<In, Out> {
 
 	private PipeAdvertisement adv;
-
 	private JxtaSocket socket;
 
-	private Out buffer;
-
-	private ObjectInputStream iStream;
-
-	private boolean done = false;
-
-	private InputStream in;
-
-	final private IDataTransformation<In, Out> transformation;
-
 	private ConnectionHandler con;
-	
 	private boolean connectToPipe = false;
-
 	private PeerGroup peerGroup;
 
 	class ConnectionHandler extends Thread {
 
-		public ConnectionHandler() {
-
-		}
-
 		public void run() {
-			while (!connectToPipe){
+			while (!connectToPipe) {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
@@ -57,8 +36,9 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 			}
 			while (socket == null) {
 				try {
-					socket = new JxtaSocket(getPeerGroup(), null, adv, 8000, true);
-					System.out.println("JxtaSocket erzeugt "+adv.toString());
+					socket = new JxtaSocket(getPeerGroup(), null, adv, 8000,
+							true);
+					System.out.println("JxtaSocket erzeugt " + adv.toString());
 					break;
 				} catch (IOException e2) {
 					// Timeout passiert weil ein anderer Peer seinen
@@ -67,7 +47,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 					// bis der P2PPipePO
 					// geöffnet ist. Hier noch sinnvolles Abruchskriterium
 					// nötig.
-					socket  = null;
+					socket = null;
 					e2.printStackTrace();
 				}
 			}
@@ -75,19 +55,20 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 
 	}
 
-	public P2PInputStreamAccessPO(
-			IDataTransformation<In, Out> transformation, String adv, PeerGroup peergroup) {
-		super();
-		this.transformation = transformation;
+	public P2PInputStreamAccessPO(IDataTransformation<In, Out> transformation,
+			String adv, PeerGroup peergroup) {
+		super(transformation);
 		this.adv = MessageTool.createPipeAdvertisementFromXml(adv);
 		this.peerGroup = peergroup;
-		System.out.println("Initialisiere P2PInputStreamAccessPO: "+this.adv.toString());
-		
+		System.out.println("Initialisiere P2PInputStreamAccessPO: "
+				+ this.adv.toString());
+
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		System.out.println("Process open p2pInput--------------------------------------------------------------");
+		done = false;
 		con = new ConnectionHandler();
 		con.start();
 	}
@@ -97,11 +78,11 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 	public synchronized boolean hasNext() {
 		System.out.println("HAS NEXT P2PInput?");
 		if (socket == null) {
-//			if (con == null || !con.isAlive()) {
-//				con = new ConnectionHandler();
-//				con.start();
-//			}
-			if (buffer != null){
+			// if (con == null || !con.isAlive()) {
+			// con = new ConnectionHandler();
+			// con.start();
+			// }
+			if (buffer != null) {
 				return true;
 			}
 			return false;
@@ -111,18 +92,18 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 		}
 		try {
 			if (this.iStream == null) {
-				in = socket.getInputStream();
+				InputStream in = socket.getInputStream();
 				this.iStream = new ObjectInputStream(in);
 			}
 
 			Object o = this.iStream.readObject();
-			if ((o instanceof Integer) && (((Integer) o).equals(0))){
+			if ((o instanceof Integer) && (((Integer) o).equals(0))) {
 				propagateDone();
 				return false;
-			} else if(o instanceof String){
+			} else if (o instanceof String) {
 				System.out.println("TestDaten erhalten");
 			}
-			
+
 			In inElem = (In) o;
 
 			if (inElem == null) {
@@ -136,10 +117,10 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 			propagateDone();
 			return false;
 		} catch (IOException e) {
-			//Hier müsste er dann auf einen HotPeer wechseln
+			// Hier müsste er dann auf einen HotPeer wechseln
 			e.printStackTrace();
 			return false;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			// TODO fehlerzustand irgendwie signalisieren?
 			propagateDone();
@@ -154,11 +135,12 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 
 	@Override
 	public synchronized void transferNext() {
-		System.out.println("Transferiere aber---------------------------------------------------");
-//		if (buffer != null){
-		if(hasNext()) {
+		System.out
+				.println("Transferiere aber---------------------------------------------------");
+		// if (buffer != null){
+		if (hasNext()) {
 			transfer(buffer);
-			
+
 		}
 		buffer = null;
 
@@ -180,16 +162,16 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 	}
 
 	public void setConnectedToPipe(boolean connectToPipe) {
-		if(connectToPipe) {
-			System.out.println("ConnectToPipe auf true gesetzt bei InputStreamAccess Adv " +adv.toString());
+		if (connectToPipe) {
+			System.out
+					.println("ConnectToPipe auf true gesetzt bei InputStreamAccess Adv "
+							+ adv.toString());
 		}
 		this.connectToPipe = connectToPipe;
 	}
 
-	
 	public PeerGroup getPeerGroup() {
 		return peerGroup;
 	}
-
 
 }
