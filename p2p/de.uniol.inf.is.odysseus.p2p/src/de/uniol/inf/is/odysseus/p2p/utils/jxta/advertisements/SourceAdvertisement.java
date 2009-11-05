@@ -57,17 +57,6 @@ Serializable, Cloneable, Comparable {
 		this.sourceId = sourceId;
 	}
 
-	public String getSourceSocket() {
-		return sourceSocket;
-	}
-
-	public void setSourceSocket(String sourceSocket) {
-		this.sourceSocket = sourceSocket;
-	}
-
-	private String sourceSocket;
-
-
 	public String getPeer() {
 		return peer;
 	}
@@ -78,7 +67,6 @@ Serializable, Cloneable, Comparable {
 
 	private final static String sourceNameTag = "sourceName";
 	private final static String idTag = "id";
-	private final static String sourceSocketTag = "sourceSocket";
 	private final static String peerTag = "peer";
 	private final static String sourceIdTag = "sourceId";
 	private final static String sourceSchemeTag = "sourceScheme";
@@ -151,10 +139,6 @@ Serializable, Cloneable, Comparable {
 			setSourceName(elem.getTextValue());
 			return true;
 		}
-		if (elem.getName().equals(sourceSocketTag)) {
-			setSourceSocket(elem.getTextValue());
-			return true;
-		}
 		if (elem.getName().equals(peerTag)) {
 			setPeer(elem.getTextValue());
 			return true;
@@ -187,8 +171,6 @@ Serializable, Cloneable, Comparable {
 		e = adv.createElement(idTag, getID().toString());
 		adv.appendChild(e);
 		e = adv.createElement(sourceNameTag, getSourceName().trim());		
-		adv.appendChild(e);
-		e = adv.createElement(sourceSocketTag, getSourceSocket().toString().trim());
 		adv.appendChild(e);
 		e = adv.createElement(peerTag, getPeer().toString().trim());
 		adv.appendChild(e);

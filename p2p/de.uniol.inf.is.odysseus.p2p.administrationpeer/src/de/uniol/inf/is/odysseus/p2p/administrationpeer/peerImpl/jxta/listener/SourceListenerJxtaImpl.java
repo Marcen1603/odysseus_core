@@ -17,12 +17,10 @@ import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisemen
 
 public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListener {
 
-private AdministrationPeerJxtaImpl adminPeer;
 	
 	private int WAIT_TIME=10000;
 
-	public SourceListenerJxtaImpl(AdministrationPeerJxtaImpl adminPeer){
-		this.adminPeer = adminPeer;
+	public SourceListenerJxtaImpl(){
 	}
 	
 	@Override
@@ -32,7 +30,7 @@ private AdministrationPeerJxtaImpl adminPeer;
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			adminPeer.getDiscoveryService().getRemoteAdvertisements(null,
+			AdministrationPeerJxtaImpl.getInstance().getDiscoveryService().getRemoteAdvertisements(null,
 					DiscoveryService.ADV, "sourceName", "*", 20,
 					this);
 		}
@@ -47,11 +45,11 @@ private AdministrationPeerJxtaImpl adminPeer;
 		if (en != null) {
 			while (en.hasMoreElements()) {
 				try {
-					Object temp2 = en.nextElement();
-					if (temp2 instanceof SourceAdvertisement ){
-						adv = (SourceAdvertisement) temp2;
-						PipeAdvertisement pipeAdv = MessageTool.createPipeAdvertisementFromXml(adv.getSourceSocket());
-						adminPeer.getSources().put(adv.getSourceName(), pipeAdv);
+					Object source = en.nextElement();
+					if (source instanceof SourceAdvertisement ){
+						adv = (SourceAdvertisement) source;
+//						PipeAdvertisement pipeAdv = MessageTool.createPipeAdvertisementFromXml(adv.getSourceSocket());
+						AdministrationPeerJxtaImpl.getInstance().getSources().put(adv.getSourceName(), adv);
 						// Hier wird noch das Schema der Quelle zum DataDictionary hinzugefügt, damit der Compiler mit den Informationen arbeiten kann
 						if(DataDictionary.getInstance().sourceTypeMap.isEmpty() || !DataDictionary.getInstance().sourceTypeMap.containsKey(adv.getSourceName())) {
 							AdministrationPeerJxtaImpl.getInstance().getExecutor().addQuery(adv.getSourceScheme(), "CQL", new ParameterPriority(2));

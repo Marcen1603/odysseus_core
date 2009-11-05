@@ -94,7 +94,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public PeerGroup netPeerGroup;
 
-	public HashMap<String, PipeAdvertisement> sources = new HashMap<String, PipeAdvertisement>();
+	public HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
 
 	public DiscoveryService discoveryService;
 
@@ -173,7 +173,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		return queries;
 	}
 
-	public HashMap<String, PipeAdvertisement> getSources() {
+	public HashMap<String, SourceAdvertisement> getSources() {
 		return sources;
 	}
 
@@ -196,7 +196,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initSourceListener() {
-		this.sourceListener = new SourceListenerJxtaImpl(this);
+		this.sourceListener = new SourceListenerJxtaImpl();
 
 	}
 
@@ -225,7 +225,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		this.pipeService = pipeService;
 	}
 
-	public void setSources(HashMap<String, PipeAdvertisement> sources) {
+	public void setSources(HashMap<String, SourceAdvertisement> sources) {
 		this.sources = sources;
 	}
 

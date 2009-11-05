@@ -78,7 +78,6 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 			
 			List<ILogicalOperator> plan = null;
 			try {
-				getCompiler().getInfos();
 				plan = getCompiler().translateQuery(AdministrationPeerJxtaImpl.getInstance()
 							.getQueries().get(queryId).getQuery(), "CQL");
 			} catch (QueryParseException e3) {
@@ -122,49 +121,66 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 			// ThinPeer zieht nur die Daten direkt aus der Quelle
 			// Passiert bei Abfragen wie Select * From quelle
 			// also bei Abfragen die nur aus einem AccessAO bestehen.
-			if (restructPlan instanceof AccessAO) {
-				System.out.println("ja ist");
-				SDFSource source = ((AccessAO) restructPlan).getSource();
-				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
-						.getSources().get(source.toString()).toString();
-				PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
-
-				Message thinPeerResponse = MessageTool.createSimpleMessage(
-						"ResultStreaming", "queryId", queryId, MessageTool
-								.createPipeAdvertisementFromXml(sourceAdv),
-						peerAdv);
-				MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(),
-						AdministrationPeerJxtaImpl.getInstance().getQueries()
-								.get(queryId).getResponseSocketThinPeer(),
-						thinPeerResponse);
-				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
-						queryId).setStatus(Status.RUN);
-
-				Log.setSubplans(queryId, 0);
-				Log.setSplittingStrategy(queryId, "Keine verwendet");
-				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
-						.getQueries().get(queryId).getStatus().toString());
-				
-
+//			if (restructPlan instanceof AccessAO) {
+//				System.out.println("ja ist");
+//				SDFSource source = ((AccessAO) restructPlan).getSource();
+//				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
+//						.getSources().get(source.toString()).toString();
+//				PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
+//
+//				Message thinPeerResponse = MessageTool.createSimpleMessage(
+//						"ResultStreaming", "queryId", queryId, MessageTool
+//								.createPipeAdvertisementFromXml(sourceAdv),
+//						peerAdv);
+//				MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(),
+//						AdministrationPeerJxtaImpl.getInstance().getQueries()
+//								.get(queryId).getResponseSocketThinPeer(),
+//						thinPeerResponse);
+//				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
+//						queryId).setStatus(Status.RUN);
+//
+//				Log.setSubplans(queryId, 0);
+//				Log.setSplittingStrategy(queryId, "Keine verwendet");
+//				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
+//						.getQueries().get(queryId).getStatus().toString());
+//				
+//
 //				return;
-				
-			} 
-			else { 
+//				
+//			} 
+//			else { 
+			
+			//TODO: erste p2psink ist immer mit dem Adv des thinpeers bestückt, alle anderen können eine eigene bekommen
+			
 				Log.logAction(queryId, "Plan splitten");
 				ArrayList<AbstractLogicalOperator> splitPlan = AdministrationPeerJxtaImpl.getInstance().splitPlan(restructPlan);
-				System.out.println("split");
-				for(@SuppressWarnings("unused") AbstractLogicalOperator op : splitPlan) {
-				}
+				AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId).setSubplans(splitPlan);
 				
 				Log.setSubplans(queryId, splitPlan.size());
 				Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl.getInstance().getSplitter().getName());
 				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
 						.getQueries().get(queryId).getStatus().toString());
+				// get(0), weil die subpläne von den senken zu den quellen gehen und wir die p2psink für den thin-peer wollen
+				Subplan topSink = AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId.toString()).getSubPlans().get(0);
+				String pipeAdv = ((P2PSinkAO) topSink.getAo()).getAdv();
+				PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup()
+						.getPeerAdvertisement();
 
-				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
-						queryId).setSubplans(splitPlan);
-
-			}
+				Message thinPeerResponse = MessageTool
+						.createSimpleMessage(
+								"ResultStreaming",
+								"queryId",
+								AdministrationPeerJxtaImpl.getInstance().getQueries()
+										.get(queryId).getId(),
+								MessageTool
+										.createPipeAdvertisementFromXml(pipeAdv),
+								peerAdv);
+				MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().netPeerGroup,
+						AdministrationPeerJxtaImpl.getInstance()
+								.getQueries().get(queryId)
+								.getResponseSocketThinPeer(),
+						thinPeerResponse);
+//			}
 
 			
 			
@@ -203,87 +219,88 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else {
-				// Anfragen direkt verteilen
-				HashMap<String, ExtendedPeerAdvertisement> operatorPeers = AdministrationPeerJxtaImpl.getInstance().getOperatorPeers();
-				ArrayList<Subplan> subPlans = AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId.toString())
-						.getSubPlans();
-				ArrayList<String> operatorPeersRandomList = new ArrayList<String>();
-				operatorPeersRandomList.addAll(operatorPeers.keySet());
-				int subplannumber = 0;
-				for (Subplan s : subPlans) {
-					if (subplannumber == 0) {
-						String pipeAdv = ((P2PSinkAO) s.getAo()).getAdv();
-						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup()
-								.getPeerAdvertisement();
-
-						Message thinPeerResponse = MessageTool
-								.createSimpleMessage(
-										"ResultStreaming",
-										"queryId",
-										AdministrationPeerJxtaImpl.getInstance().getQueries()
-												.get(queryId).getId(),
-										MessageTool
-												.createPipeAdvertisementFromXml(pipeAdv),
-										peerAdv);
-						MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().netPeerGroup,
-								AdministrationPeerJxtaImpl.getInstance()
-										.getQueries().get(queryId)
-										.getResponseSocketThinPeer(),
-								thinPeerResponse);
-					}
-
-					Collections.shuffle(operatorPeersRandomList);
-					ExtendedPeerAdvertisement adv = operatorPeers
-							.get(operatorPeersRandomList.get(0));
-					Message response = MessageTool
-							.createSimpleMessage(
-									"DoQuery",
-									"queryId",
-									"language",
-									"result",
-									"adminPipeAdvertisement",
-									"subPlanId",
-									 "events",
-									 AdministrationPeerJxtaImpl.getInstance()
-											.getQueries().get(queryId).getId(),
-											AdministrationPeerJxtaImpl.getInstance()
-											.getQueries().get(queryId)
-											.getLanguage(),
-									"granted",
-									((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance()
-											.getSocketServerListener())
-											.getServerPipeAdvertisement()
-											.toString(),
-									s.getId(),
-									AdministrationPeerJxtaImpl.getInstance()
-											.getEvents(),
-									s.getAo(),
-									((EventListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getEventListener())
-											.getPipeAdv());
-					// Erfolg
-					MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().netPeerGroup, MessageTool
-							.createPipeAdvertisementFromXml(adv.getPipe()),
-							response);
-
-					// Den Peer setzen der gerade den Teilplan ausführt
-					((SubplanJxtaImpl) AdministrationPeerJxtaImpl.getInstance()
-							.getQueries().get(queryId).getSubPlans().get(
-									subplannumber)).setPeerId(adv.getPeerId());
-					// Socket von dem Peer setzen der gerade den Teilplan
-					// ausführt
-					((SubplanJxtaImpl) AdministrationPeerJxtaImpl.getInstance()
-							.getQueries().get(queryId).getSubPlans().get(
-									subplannumber)).setResponseSocket(adv
-							.getPipe());
-					AdministrationPeerJxtaImpl.getInstance().getQueries().get(
-							queryId).getSubPlans().get(subplannumber)
-							.setStatus(SubplanStatus.CLOSED);
-
-					subplannumber++;
-				}
-
-			}
+			} 
+//			else {
+//				// Anfragen direkt verteilen
+//				HashMap<String, ExtendedPeerAdvertisement> operatorPeers = AdministrationPeerJxtaImpl.getInstance().getOperatorPeers();
+//				ArrayList<Subplan> subPlans = AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId.toString())
+//						.getSubPlans();
+//				ArrayList<String> operatorPeersRandomList = new ArrayList<String>();
+//				operatorPeersRandomList.addAll(operatorPeers.keySet());
+//				int subplannumber = 0;
+//				for (Subplan s : subPlans) {
+//					if (subplannumber == 0) {
+//						String pipeAdv = ((P2PSinkAO) s.getAo()).getAdv();
+//						PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup()
+//								.getPeerAdvertisement();
+//
+//						Message thinPeerResponse = MessageTool
+//								.createSimpleMessage(
+//										"ResultStreaming",
+//										"queryId",
+//										AdministrationPeerJxtaImpl.getInstance().getQueries()
+//												.get(queryId).getId(),
+//										MessageTool
+//												.createPipeAdvertisementFromXml(pipeAdv),
+//										peerAdv);
+//						MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().netPeerGroup,
+//								AdministrationPeerJxtaImpl.getInstance()
+//										.getQueries().get(queryId)
+//										.getResponseSocketThinPeer(),
+//								thinPeerResponse);
+//					}
+//
+//					Collections.shuffle(operatorPeersRandomList);
+//					ExtendedPeerAdvertisement adv = operatorPeers
+//							.get(operatorPeersRandomList.get(0));
+//					Message response = MessageTool
+//							.createSimpleMessage(
+//									"DoQuery",
+//									"queryId",
+//									"language",
+//									"result",
+//									"adminPipeAdvertisement",
+//									"subPlanId",
+//									 "events",
+//									 AdministrationPeerJxtaImpl.getInstance()
+//											.getQueries().get(queryId).getId(),
+//											AdministrationPeerJxtaImpl.getInstance()
+//											.getQueries().get(queryId)
+//											.getLanguage(),
+//									"granted",
+//									((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance()
+//											.getSocketServerListener())
+//											.getServerPipeAdvertisement()
+//											.toString(),
+//									s.getId(),
+//									AdministrationPeerJxtaImpl.getInstance()
+//											.getEvents(),
+//									s.getAo(),
+//									((EventListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getEventListener())
+//											.getPipeAdv());
+//					// Erfolg
+//					MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().netPeerGroup, MessageTool
+//							.createPipeAdvertisementFromXml(adv.getPipe()),
+//							response);
+//
+//					// Den Peer setzen der gerade den Teilplan ausführt
+//					((SubplanJxtaImpl) AdministrationPeerJxtaImpl.getInstance()
+//							.getQueries().get(queryId).getSubPlans().get(
+//									subplannumber)).setPeerId(adv.getPeerId());
+//					// Socket von dem Peer setzen der gerade den Teilplan
+//					// ausführt
+//					((SubplanJxtaImpl) AdministrationPeerJxtaImpl.getInstance()
+//							.getQueries().get(queryId).getSubPlans().get(
+//									subplannumber)).setResponseSocket(adv
+//							.getPipe());
+//					AdministrationPeerJxtaImpl.getInstance().getQueries().get(
+//							queryId).getSubPlans().get(subplannumber)
+//							.setStatus(SubplanStatus.CLOSED);
+//
+//					subplannumber++;
+//				}
+//
+//			}
 
 		} else if (queryResult.equals("denied")) {
 			// Status erstmal auf Denied ist im Moment unnötig, da die Anfrage

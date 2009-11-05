@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import net.jxta.document.AdvertisementFactory;
@@ -13,16 +11,17 @@ import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
+/**
+ * Alle Quellen werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und in regelmaessigen Abstaenden ausgeschrieben.
+ * 
+ * @author Mart Köhler
+ *
+ */
 public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 	private ArrayList<SourceAdvertisement> advList = new ArrayList<SourceAdvertisement>();
@@ -38,88 +37,81 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
-		MetadataCreationPO source = null;
-		// init sources
-		Set<Entry<String, ILogicalOperator>> views = DataDictionary.getInstance()
-				.getViews();
-		for (Entry<String, ILogicalOperator> v : views) {
-			if (WrapperPlanFactory.getAccessPlan(v.getKey()) == null) {
+
+		// Wollen jede View bzw. Quelle ausschreiben
+		for (Entry<String, ILogicalOperator> v : DataDictionary.getInstance()
+				.getViews()) {
+//			P2PSinkAO p2ppipe = null;
+//			PipeAdvertisement pipeAdv = null;
+			if(v.getValue() instanceof AccessAO) {
+//				pipeAdv = createSocketAdvertisement();
+//			    p2ppipe = new P2PSinkAO(pipeAdv.toString());
+//				AccessAO ao = new AccessAO();
+//				ao.setSource(((AccessAO)v.getValue()).getSource());
+//				//TODO: Auf NIO umstellen
+//				ao.getSource().setSourceType("RelationalInputStreamAccessPO");
+//				ao.subscribe(p2ppipe, 0, 0,((AccessAO)v.getValue()).getOutputSchema());
+//				//Überschreibe den alten Wert der Quelle im DD
+//				DataDictionary.getInstance().setView(v.getKey(), p2ppipe);
 				
+				// Erzeuge Advertisement zur Quelle und füge in die advList für das spätere publishen
+				SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory
+				.newAdvertisement(SourceAdvertisement
+						.getAdvertisementType());
+
+				adv.setSourceName(v.getKey());
+//				adv.setSourceSocket(pipeAdv.toString());
+				adv.setPeer(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
+						.getPeerAdvertisement().toString());
+				adv.setSourceId(v.getKey());
+				adv.setSourceScheme(OperatorPeerJxtaImpl.getInstance().getSources().get(v.getKey()));
+				advList.add(adv);
+				
+			}
+			
+//			if (WrapperPlanFactory.getAccessPlan(v.getKey()) == null) {
+//				P2PSinkAO p2ppipe = null;
+//				PipeAdvertisement pipeAdv = null;
 //				try {
-//					System.out.println(OperatorPeerJxtaImpl.getInstance().getTrafo().getClass().toString());
-//					if (OperatorPeerJxtaImpl.getInstance().getTrafo().getClass() == RelationalPipesTransform.class) {
-//						viewPlan = ((RelationalPipesTransform) OperatorPeerJxtaImpl
-//								.getInstance().getTrafo()).transformPNID(v.getValue(),
-//								OperatorPeerJxtaImpl
-//										.getInstance().getPrioMode());
-//					} else {
-//						return;
-//					}
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
+//					pipeAdv = createSocketAdvertisement();
+//				    p2ppipe = new P2PSinkAO(pipeAdv.toString());
+//					
+//					AccessAO ao = new AccessAO();
+//					ao.setSource(((AccessAO)v.getValue()).getSource());
+//					ao.getSource().setSourceType("RelationalInputStreamAccessPO");
+//					ao.subscribe(p2ppipe, 0, 0,((AccessAO)v.getValue()).getOutputSchema());
+//					OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(p2ppipe, new ParameterPriority(2));
+////					OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
+//					System.out.println("Setze Advertisement");
+//					SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory
+//					.newAdvertisement(SourceAdvertisement
+//							.getAdvertisementType());
+//
+//					adv.setSourceName(v.getKey());
+//					adv.setSourceSocket(pipeAdv.toString());
+//					adv.setPeer(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
+//							.getPeerAdvertisement().toString());
+//					adv.setSourceId(v.getKey());
+//					adv.setSourceScheme(OperatorPeerJxtaImpl.getInstance().getSources().get(v.getKey()));
+//					advList.add(adv);
+//				} catch (PlanManagementException e) {
 //					e.printStackTrace();
 //				}
-				//TODO: Hinzufügen eines logischen oder physischen Plans.
-				P2PSinkAO p2ppipe = null;
-				PipeAdvertisement pipeAdv = null;
-				try {
-					System.out.println("TRANSFORMIERE DIE QUELLEN");
-					pipeAdv = createSocketAdvertisement();
-				    p2ppipe = new P2PSinkAO(pipeAdv.toString());
-//				    ((AccessAO)v.getValue()).subscribe(p2ppipe, 0, 0,((AccessAO)v.getValue()).getOutputSchema());
-//					p2ppipe.subscribe(((AccessAO)v.getValue()), 0, 0);
-					
-					AccessAO ao = new AccessAO();
-					ao.setSource(((AccessAO)v.getValue()).getSource());
-					ao.getSource().setSourceType("RelationalInputStreamAccessPO");
-					ao.subscribe(p2ppipe, 0, 0,((AccessAO)v.getValue()).getOutputSchema());
-//					((AccessAO)v.getValue()).getSource().setSourceType("P2PSocketInputStreamAccessPO");
-//	//				pipe =   (P2PSinkPO) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(p2ppipe, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
-//					p2ppipe.subscribeTo(ao,0,0,ao.getOutputSchema());
-//					source =  (MetadataCreationPO) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(ao, new TransformationConfiguration("relational", "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval"));
-//		//			System.out.println("leer? "+pipe.getSubscribedTo().isEmpty()+" leer?"+pipe.getSubscriptions().isEmpty());
-//					source.subscribe(  pipe, 0, 0);
-//				//	List<PhysicalSubscription<ISource>> subsc = (List<PhysicalSubscription<ISource>>) pipe.getSubscribedTo();
-//			//		PhysicalSubscription<ISource> subscElem = subsc.get(0);
-//		//			System.out.println("subscriptions leer? "+subscElem.getTarget().getSubscriptions().isEmpty());
-//					viewPlan = (ISource<?>) OperatorPeerJxtaImpl.getInstance().getTrafo().transform(v.getValue(), null);
-//					OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(subscElem.getTarget(), new ParameterPriority(2));
-					OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(p2ppipe, new ParameterPriority(2));
-//					OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
-					System.out.println("Setze Advertisement");
-					SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory
-					.newAdvertisement(SourceAdvertisement
-							.getAdvertisementType());
-
-			adv.setSourceName(v.getKey());
-			adv.setSourceSocket(pipeAdv.toString());
-			adv.setPeer(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
-					.getPeerAdvertisement().toString());
-			adv.setSourceId(v.getKey());
-			adv.setSourceScheme(OperatorPeerJxtaImpl.getInstance().getSources().get(v.getKey()));
-			advList.add(adv);
-				} catch (PlanManagementException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			WrapperPlanFactory.putAccessPlan(v.getKey(), source);
-			
-			
-			}
+//			WrapperPlanFactory.putAccessPlan(v.getKey(), source);
+//			
+//			
+//			}
 		}
 
 		
-		Iterator<String> it = OperatorPeerJxtaImpl.getInstance()
-				.getSourcesFromWrapperPlanFactory().keySet().iterator();
-
-		while (it.hasNext()) {
-			String s = it.next();
-			if (!OperatorPeerJxtaImpl.getInstance().getSources().containsKey(s)) {
-				continue;
-			}
+//		Iterator<String> it = OperatorPeerJxtaImpl.getInstance()
+//				.getSourcesFromWrapperPlanFactory().keySet().iterator();
+//
+//		while (it.hasNext()) {
+//			String s = it.next();
+//			if (!OperatorPeerJxtaImpl.getInstance().getSources().containsKey(s)) {
+//				continue;
+//			}
 //
 //			SDFSource source = DataDictionary.getInstance().getSource(s);
 //			
@@ -250,7 +242,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 //			physOp = null;
 //			continue;
 //		}
-	}
+//	}
 	
 //	try {
 //		System.out.println("Starte Executor");
@@ -265,11 +257,11 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		
 		
 		
-		
+		//Publishe alle Quellen
 		while (true) {
 			for (SourceAdvertisement adv : advList) {
 				try {
-					System.out.println("Publishe Informationen zu gekapselten Quellen");
+					System.out.println("Publishe Quelle "+adv.getSourceName());
 					OperatorPeerJxtaImpl.getInstance().getDiscoveryService()
 							.publish(adv, LIFETIME, LIFETIME);
 				} catch (IOException e) {
@@ -277,11 +269,6 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 				}
 				OperatorPeerJxtaImpl.getInstance().getDiscoveryService()
 						.remotePublish(adv, 31000);
-				try {
-					OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
-				} catch (PlanManagementException e) {
-					e.printStackTrace();
-				}
 			}
 			try {
 				Thread.sleep(LIFETIME - 1);
@@ -302,7 +289,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 				.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		advertisement.setPipeID(socketID);
 		advertisement.setType(PipeService.UnicastType);
-		advertisement.setName("Operator Peer Socket");
+		advertisement.setName("Source Distribution Socket");
 
 		return advertisement;
 	}

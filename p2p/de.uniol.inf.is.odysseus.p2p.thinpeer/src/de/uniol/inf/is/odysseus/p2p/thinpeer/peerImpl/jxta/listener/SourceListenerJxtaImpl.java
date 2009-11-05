@@ -48,11 +48,8 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 					Object temp2 = en.nextElement();
 					if (temp2 instanceof SourceAdvertisement) {
 						adv = (SourceAdvertisement) temp2;
-						PipeAdvertisement pipeAdv = MessageTool
-								.createPipeAdvertisementFromXml(adv
-										.getSourceSocket());
 						ThinPeerJxtaImpl.getInstance().getSources().put(adv.getSourceName(),
-								pipeAdv);
+								adv);
 					} else {
 						return;
 					}

@@ -68,6 +68,8 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	protected boolean peerStarted = false;
 	
+	
+	
 	private IAdvancedExecutor executor;
 	
 	public IAdvancedExecutor getExecutor() {

@@ -82,7 +82,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	private HashMap<String, Query> queries = new HashMap<String, Query>();
 
-	private HashMap<String, PipeAdvertisement> sources = new HashMap<String, PipeAdvertisement>();
+	private HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
 
 	private static ThinPeerJxtaImpl instance = null;
 
@@ -252,11 +252,11 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		}
 	}
 
-	public HashMap<String, PipeAdvertisement> getSources() {
+	public HashMap<String, SourceAdvertisement> getSources() {
 		return sources;
 	}
 
-	public void setSources(HashMap<String, PipeAdvertisement> sources) {
+	public void setSources(HashMap<String, SourceAdvertisement> sources) {
 		this.sources = sources;
 	}
 

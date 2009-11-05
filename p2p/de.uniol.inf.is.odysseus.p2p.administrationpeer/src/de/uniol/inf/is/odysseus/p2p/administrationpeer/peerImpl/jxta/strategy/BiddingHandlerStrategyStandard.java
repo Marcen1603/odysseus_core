@@ -22,10 +22,8 @@ public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 
 	@Override
 	public void handleBidding() {
-		System.out.println("Behandle das Bidding tatsächlich");
 		for (String s : AdministrationPeerJxtaImpl.getInstance().getQueries()
 				.keySet()) {
-			System.out.println("in die schleife");
 			// Sind mehr oder exakt Angebote als Teilpläne vorhanden
 			if (AdministrationPeerJxtaImpl.getInstance().getQueries().get(s)
 					.getBiddings().size() >= AdministrationPeerJxtaImpl
