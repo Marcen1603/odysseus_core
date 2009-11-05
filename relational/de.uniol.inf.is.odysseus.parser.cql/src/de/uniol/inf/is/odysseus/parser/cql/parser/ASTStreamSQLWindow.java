@@ -17,6 +17,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 	}
 
 	/** Accept the visitor. * */
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
@@ -53,10 +54,12 @@ public class ASTStreamSQLWindow extends ASTWindow {
 		this.offset = offset;
 	}
 
+	@Override
 	public boolean hasOffset() {
 		return this.offset != null;
 	}
 
+	@Override
 	public ASTIdentifier getOn() {
 		if (this.type == Type.ON) {
 			return (ASTIdentifier) jjtGetChild(2);
@@ -64,6 +67,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 		return null;
 	}
 
+	@Override
 	public long getTimeout() {
 		return this.timeout;
 	}
@@ -72,6 +76,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 		this.timeout = timeout;
 	}
 
+	@Override
 	public boolean hasTimeout() {
 		return this.timeout != null;
 	}

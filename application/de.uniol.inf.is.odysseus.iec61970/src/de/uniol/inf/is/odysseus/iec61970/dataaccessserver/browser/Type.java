@@ -21,7 +21,13 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IType;
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("unchecked")
 public class Type extends UnicastRemoteObject implements IType {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2853457067089130227L;
 
 	public Type() throws RemoteException {
 		super();

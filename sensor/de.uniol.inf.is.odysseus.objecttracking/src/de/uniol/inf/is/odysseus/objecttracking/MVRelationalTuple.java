@@ -20,8 +20,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author Andre Bolles
  *
  */
+@SuppressWarnings("unchecked")
 public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T> implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8921538607877809462L;
 	private int[] measurementValuePositions;
 	
 	public int[] getMeasurementValuePositions() {
@@ -315,6 +320,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		return newAttrList;
 	}
 	
+	@Override
 	public MVRelationalTuple<T> clone() {
 		return new MVRelationalTuple<T>(this);
 	}

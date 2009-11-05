@@ -20,6 +20,7 @@ public class Priority implements IPriority{
 		this.prio = prio;
 	}
 	
+	@Override
 	public IPriority clone(){
 		return new Priority(this);
 	}

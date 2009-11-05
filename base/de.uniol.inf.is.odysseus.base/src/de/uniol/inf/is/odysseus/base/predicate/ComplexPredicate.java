@@ -41,6 +41,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.right = right;
 	}
 
+	@Override
 	public ComplexPredicate<T> clone() {
 		ComplexPredicate<T> newPred;
 		newPred = (ComplexPredicate<T>) super.clone();
@@ -49,6 +50,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		return newPred;
 	}
 	
+	@Override
 	public void init(){
 		this.left.init();
 		this.right.init();

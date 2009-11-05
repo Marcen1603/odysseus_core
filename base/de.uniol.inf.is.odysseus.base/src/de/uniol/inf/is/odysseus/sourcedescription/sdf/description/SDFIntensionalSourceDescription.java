@@ -79,6 +79,7 @@ public class SDFIntensionalSourceDescription extends SDFElement {
 		return (SDFAccessPattern) this.accessPatterns.get(index);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString() + "\n");
 		ret.append("lokales Schema " + this.localSchema.toString() + "\n");

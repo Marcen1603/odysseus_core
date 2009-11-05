@@ -70,7 +70,8 @@ public class SimpleNode implements Node {
      toString(String), otherwise overriding toString() is probably all
      you need to do. */
 
-  public String toString() { return NewSQLParserTreeConstants.jjtNodeName[id]; }
+  @Override
+public String toString() { return NewSQLParserTreeConstants.jjtNodeName[id]; }
   public String toString(String prefix) { return prefix + toString(); }
 
   /* Override this method if you want to customize how the node dumps

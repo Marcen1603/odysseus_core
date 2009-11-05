@@ -35,6 +35,7 @@ public class Container<Type, MetaType extends IMetaAttribute> extends MetaAttrib
 		this.cargo = c;
 	}
 	
+	@Override
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
 		sb.append("Container: " + this.cargo.toString() + "   <|>   " + this.getMetadata().toString());

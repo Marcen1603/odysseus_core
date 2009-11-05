@@ -1,12 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer;
 
-import java.security.KeyStore.Entry;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
@@ -23,8 +19,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
-import de.uniol.inf.is.odysseus.transformation.drools.DroolsTransformation;
 
 public abstract class AbstractOperatorPeer implements IPeer {
 
@@ -92,8 +86,6 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 	protected ITransformation trafo;
 
-	private boolean peerStarted = false;
-	
 	public IBiddingStrategy getBiddingStrategy() {
 		return biddingStrategy;
 	}

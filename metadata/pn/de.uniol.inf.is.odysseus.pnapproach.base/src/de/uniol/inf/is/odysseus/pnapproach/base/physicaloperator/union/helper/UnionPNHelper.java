@@ -12,6 +12,7 @@ public class UnionPNHelper<T extends IMetaAttributeContainer<? extends IPosNeg>>
 		return elem.getMetadata().getTimestamp();	
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T getReferenceElement(PointInTime minTs, T elem){
 		T retval = (T)elem.clone();
 		PosNeg pn = new PosNeg();

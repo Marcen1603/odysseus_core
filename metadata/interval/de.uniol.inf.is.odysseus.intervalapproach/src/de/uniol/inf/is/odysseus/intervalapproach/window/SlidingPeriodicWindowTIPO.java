@@ -71,6 +71,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 		this.slideNo = original.slideNo;
 	}
 
+	@Override
 	public SlidingPeriodicWindowTIPO<R> clone() {
 		return new SlidingPeriodicWindowTIPO<R>(this);
 	}
@@ -80,6 +81,8 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
 	public void process_next(R object, int port) {
 		long t_s = object.getMetadata().getStart().getMainPoint();
 		long delta = this.windowAdvance;

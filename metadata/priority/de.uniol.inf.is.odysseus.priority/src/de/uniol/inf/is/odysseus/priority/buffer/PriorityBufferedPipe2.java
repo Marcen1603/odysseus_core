@@ -10,8 +10,6 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterablePipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends IPriority>>
@@ -51,6 +49,7 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 		return OutputMode.INPUT;
 	}
 
+	@Override
 	protected void process_next(T object, int port) {
 		byte prio = object.getMetadata().getPriority();
 

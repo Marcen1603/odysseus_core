@@ -8,6 +8,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceDescriptio
 
 
 public class ResourceDescriptionIterator<E> extends UnicastRemoteObject implements IResourceDescriptionIterator<E> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6052485887573227469L;
 	ArrayList<E> list = null;
 	int pointer;
 

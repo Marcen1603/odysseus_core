@@ -23,6 +23,7 @@ public class SingleThreadSchedulerFactory extends AbstractSchedulerFactory {
 	 *            OSGi {@link ComponentContext} provides informations about the
 	 *            OSGi environment.
 	 */
+	@Override
 	protected void activate(ComponentContext context) {
 		super.activate(context);
 	}

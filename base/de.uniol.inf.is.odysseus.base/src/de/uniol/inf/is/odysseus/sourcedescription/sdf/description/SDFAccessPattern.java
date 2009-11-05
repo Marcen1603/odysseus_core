@@ -58,6 +58,7 @@ public class SDFAccessPattern extends SDFElement {
         return outputPatt;
     }
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString() + ": {");
 		if (this.inputPatt != null)

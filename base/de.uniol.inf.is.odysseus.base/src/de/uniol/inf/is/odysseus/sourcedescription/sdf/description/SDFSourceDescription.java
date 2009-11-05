@@ -113,6 +113,7 @@ public class SDFSourceDescription extends SDFElement {
         return aboutSource;
     }
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString() + "\n");
 		if (this.aboutSource != null)

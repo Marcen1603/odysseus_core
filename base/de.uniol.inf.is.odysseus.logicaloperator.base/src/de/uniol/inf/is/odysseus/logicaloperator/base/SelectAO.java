@@ -4,7 +4,6 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -27,6 +26,7 @@ public class SelectAO extends UnaryLogicalOp {
 		setPredicate(predicate);
 	}
 
+	@Override
 	public SelectAO clone() {
 		return new SelectAO(this);
 	}

@@ -4,6 +4,8 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("unchecked")
+
 public class ASTMatrixExpression extends SimpleNode {
   public ArrayList matrix;
   
@@ -17,7 +19,8 @@ public class ASTMatrixExpression extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
   

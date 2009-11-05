@@ -13,6 +13,7 @@ public class ChainStrategyFactory extends AbstractSchedulingStrategyFactory {
 	
 	private boolean useIter = true;
 
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void activate(ComponentContext context){
 		super.activate(context);

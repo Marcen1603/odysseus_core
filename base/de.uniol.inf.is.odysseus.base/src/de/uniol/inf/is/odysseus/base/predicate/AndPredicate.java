@@ -34,6 +34,7 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 		return new AndPredicate<T>(this);
 	}
 	
+	@Override
 	public String toString() {
 		return "(" + getLeft().toString() + ") AND (" + getRight().toString() + ")";
 	}

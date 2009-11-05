@@ -21,6 +21,7 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 	protected POEvent pushDoneNegEvent = new POEvent(this,
 			POEventType.PushDoneNeg);
 	
+	@Override
 	public void process(R object, int port, boolean exclusive) {
 		// if (!isOpen()) System.err.println(this+" PROCESS BEFORE OPEN!!!");
 		// evtl. spaeter wieder einbauen? Exception?
@@ -49,6 +50,7 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 		}
 	}
 	
+	@Override
 	final public void transfer(W object) {
 		if(object.getMetadata().getElementType() == ElementType.POSITIVE ){
 			super.transfer(object);

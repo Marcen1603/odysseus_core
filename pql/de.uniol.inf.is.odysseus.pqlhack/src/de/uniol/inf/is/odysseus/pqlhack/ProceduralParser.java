@@ -29,6 +29,7 @@ public class ProceduralParser implements IQueryParser{
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
 		// TODO Auto-generated method stub
@@ -37,10 +38,10 @@ public class ProceduralParser implements IQueryParser{
 		InitAttributesVisitor initAttrs = new InitAttributesVisitor();
 		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor();
 		
-		ProceduralExpressionParser exprParser = new ProceduralExpressionParser(new StringReader(query));
+		new ProceduralExpressionParser(new StringReader(query));
 		ASTLogicalPlan logicalPlan = null;
 		try {
-			logicalPlan = exprParser.LogicalPlan();
+			logicalPlan = ProceduralExpressionParser.LogicalPlan();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

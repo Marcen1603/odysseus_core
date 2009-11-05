@@ -44,6 +44,7 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	}
 
 	
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer("[");
 		for (int i = 0; i < elements.size(); i++) {
@@ -97,6 +98,7 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	}
 
 
+	@Override
 	public boolean equals(Object o) {
 		return elements.equals(o);
 	}
@@ -105,6 +107,7 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 		return elements.get(index);
 	}
 
+	@Override
 	public int hashCode() {
 		return elements.hashCode();
 	}

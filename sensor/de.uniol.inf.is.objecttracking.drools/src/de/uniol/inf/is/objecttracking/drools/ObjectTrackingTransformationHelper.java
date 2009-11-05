@@ -1,36 +1,5 @@
 package de.uniol.inf.is.objecttracking.drools;
 
-import java.io.IOException;
-import java.text.ParseException;
-
-import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.PredictionAO;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.factory.IntervalProbabilityLatencyPredictionMFactory;
-import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.PredictionPO;
-import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.RelationalProjectMVPO;
-//import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.IntervalProbabilityLatencyPredictionMergeFunction;
-//import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.PredictionJoinTIPO;
-//import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.RelationalJoinTIMVPredictionSweepArea;
-import de.uniol.inf.is.odysseus.objecttracking.predicate.ProbabilityPredicate;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-
 public class ObjectTrackingTransformationHelper {
 
 //	@Override

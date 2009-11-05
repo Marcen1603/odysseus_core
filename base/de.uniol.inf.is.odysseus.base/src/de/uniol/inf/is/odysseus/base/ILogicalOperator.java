@@ -18,7 +18,9 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	public void subscribe(ILogicalOperator sink, int sinkPort, 
 			int sourcePort, SDFAttributeList inputSchema);	
 	
+	@SuppressWarnings("unchecked")
 	public IPredicate getPredicate();
+	@SuppressWarnings("unchecked")
 	public void setPredicate(IPredicate predicate);
 
 	public String getName();

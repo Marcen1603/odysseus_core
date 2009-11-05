@@ -74,12 +74,14 @@ public class SymbolTableEntry {
 	/**
 	 * Gibt eine flache Kopie des Symboltabelleneintrags zurück.
 	 */
+	@Override
 	public SymbolTableEntry clone() {
 		SymbolTableEntry newEntry = new SymbolTableEntry(this.getScheme());
 		newEntry.setValue(this.value);
 		return newEntry;
 	}
 
+	@Override
 	public String toString() {
 		return this.getScheme().getVariableName() + ": " + this.value; 
 	}

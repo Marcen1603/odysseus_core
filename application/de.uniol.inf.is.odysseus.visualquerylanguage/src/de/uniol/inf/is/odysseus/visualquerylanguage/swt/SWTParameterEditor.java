@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent
 
 public class SWTParameterEditor {
 
+	@SuppressWarnings("unused")
 	private final Logger log = LoggerFactory.getLogger(SWTParameterEditor.class);
 
 	private Shell shell;

@@ -33,6 +33,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.serializable.ResourceID;
  */
 public class ResourceIDService extends UnicastRemoteObject implements
 		IResourceIDService {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1463495666205939679L;
 	private static ResourceIDService service;
 	private ArrayList<IResourceID> itemGroup;
 	private ArrayList<IResourceID> nodeGroup;
@@ -65,7 +69,6 @@ public class ResourceIDService extends UnicastRemoteObject implements
 		typeGroup = new ArrayList<IResourceID>();
 		container = new HashMap<Long, String>();
 		fragment = new HashMap<Long, String>();
-		URI uri = null;
 		System.out.println("Lese Datenmodell ein...");
 		initNodes(m);
 		initInstances(m);
@@ -265,7 +268,6 @@ public class ResourceIDService extends UnicastRemoteObject implements
 //			
 //		}
 			
-		boolean isDefinedByProperty = false;
 		boolean isAssociatedToNode = false;
 		OntClass ontClass = m.getOntClass(Server.protocolNS+"#Item");
 		ExtendedIterator iter = ontClass.listInstances();

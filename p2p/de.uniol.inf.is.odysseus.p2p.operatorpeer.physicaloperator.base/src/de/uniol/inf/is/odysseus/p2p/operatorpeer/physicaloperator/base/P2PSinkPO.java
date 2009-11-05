@@ -26,6 +26,7 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 
 	class ConnectionListener extends Thread {
 
+		@Override
 		public void run() {
 			System.out.println("Starte Pipe Thread");
 			JxtaServerSocket server = null;
@@ -139,6 +140,7 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 	}
 
 
+	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 
 		synchronized (subscribe) {

@@ -21,6 +21,7 @@ public class SDFQuality extends SDFEntity {
 		super.setDatatype(dt);
 	}
 
+	@Override
 	public void setDatatype(SDFDatatype datatype) {
 		// Ignorieren. Der Datentyp darf nicht veraendert werden
 	}

@@ -92,6 +92,7 @@ public class SDFEntity extends SDFSchemaElement {
 		this.attributes = attrs;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString() + "\n");
 		for (int i = 0; i < getNoOfSuperclasses(); i++) {

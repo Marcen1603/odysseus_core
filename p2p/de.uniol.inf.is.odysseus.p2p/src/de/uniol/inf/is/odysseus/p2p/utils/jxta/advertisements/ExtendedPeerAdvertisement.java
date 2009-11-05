@@ -19,7 +19,7 @@ import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-
+@SuppressWarnings("unchecked")
 public class ExtendedPeerAdvertisement extends Advertisement implements
 		Serializable, Cloneable, Comparable {
 

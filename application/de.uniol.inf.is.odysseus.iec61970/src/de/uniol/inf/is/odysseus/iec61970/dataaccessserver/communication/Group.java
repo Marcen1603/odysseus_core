@@ -14,6 +14,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IGroupManager;
  *
  */
 public class Group extends UnicastRemoteObject implements IGroup {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5708362550520749951L;
 	String groupName;
 	IGroupManager gm = null;
 	

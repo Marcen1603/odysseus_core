@@ -101,6 +101,7 @@ public class NexmarkStaticClientHandler extends Thread {
 	 * Bearbeitet eine Anfrage an den Nexmark Benchmark Server. In den
 	 * OutputStream des Socktes werden die Simulationsdaten geschrieben.
 	 */
+	@Override
 	public void run() {
 
 		try {

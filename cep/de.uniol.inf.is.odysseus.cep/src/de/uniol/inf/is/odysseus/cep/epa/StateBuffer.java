@@ -71,6 +71,7 @@ public class StateBuffer {
 	/**
 	 * gibt eine tiefe Kopie des StateBuffers zurück.
 	 */
+	@Override
 	public StateBuffer clone() {
 		LinkedList<MatchedEvent> newEventList = new LinkedList<MatchedEvent>();
 		for (MatchedEvent me : this.events) {

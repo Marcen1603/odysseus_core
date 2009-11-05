@@ -53,6 +53,7 @@ public class HSDAObject implements Serializable, IClone{
 	public void setQuality(String quality) {
 		this.quality = quality;
 	}
+	@Override
 	public IClone clone() {
 		return new HSDAObject(id,value,quality,timestamp);
 		

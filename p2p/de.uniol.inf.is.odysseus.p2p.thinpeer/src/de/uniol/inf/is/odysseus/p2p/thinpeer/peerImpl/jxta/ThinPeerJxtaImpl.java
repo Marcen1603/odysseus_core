@@ -232,6 +232,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	}
 
+	@Override
 	public void stopNetwork() {
 		netPeerGroup.stopApp();
 		manager.stopNetwork();

@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
@@ -24,6 +23,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author abolles
  *
  */
+@SuppressWarnings("unchecked")
 public class RelationalJoinTIMVPredictionSweepArea<M extends IPredictionFunction & ITimeInterval & IProbability, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
 
 	SDFAttributeList leftSchema;

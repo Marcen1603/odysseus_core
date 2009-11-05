@@ -10,6 +10,7 @@ public class SDFAndOperator extends SDFLogicalOperator {
 		super(URI);
 	}
 
+	@Override
 	public String toString() {
 		return "AND";
 	}
@@ -17,7 +18,8 @@ public class SDFAndOperator extends SDFLogicalOperator {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFLogicalOperator#evaluate(boolean, boolean)
      */
-    public boolean evaluate(boolean left, boolean right) {
+    @Override
+	public boolean evaluate(boolean left, boolean right) {
         return left && right;
     }
 }

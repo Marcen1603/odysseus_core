@@ -35,6 +35,7 @@ public class SDFFunction extends SDFElement {
         return reverseFunction;
     }
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString() + "\n");
 		// Achtung Gefahr von Endlosschleifen, wenn hier nicht getURI verwendet

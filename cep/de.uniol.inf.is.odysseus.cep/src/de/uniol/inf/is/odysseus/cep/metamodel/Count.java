@@ -42,6 +42,7 @@ public class Count extends SymbolTableOperation {
 		}
 	}
 
+	@Override
 	public String toString(String indent) {
 		String str = indent + "Count: " + this.hashCode();
 		indent += "  ";

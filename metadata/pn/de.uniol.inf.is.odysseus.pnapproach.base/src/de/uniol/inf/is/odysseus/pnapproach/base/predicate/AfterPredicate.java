@@ -9,8 +9,10 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  * @author abolles
  *
  */
+@SuppressWarnings("unchecked")
 public class AfterPredicate<M extends IPosNeg> extends AbstractPredicate<IMetaAttributeContainer<M>>{
 
+	private static final long serialVersionUID = 1L;
 	public static AfterPredicate theInstance = new AfterPredicate();
 	
 	@Deprecated
@@ -22,6 +24,7 @@ public class AfterPredicate<M extends IPosNeg> extends AbstractPredicate<IMetaAt
 		return e1.getMetadata().getTimestamp().after(e2.getMetadata().getTimestamp());
 	}
 	
+	@Override
 	public AfterPredicate clone(){
 		return theInstance;
 	}

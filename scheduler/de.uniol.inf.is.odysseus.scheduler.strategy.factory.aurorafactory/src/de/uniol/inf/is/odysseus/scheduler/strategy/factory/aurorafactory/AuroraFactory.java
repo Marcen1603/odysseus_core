@@ -41,6 +41,7 @@ public class AuroraFactory extends AbstractSchedulingStrategyFactory {
 		this.useIter = true;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void activate(ComponentContext context){
 		super.activate(context);

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iec61970.library.server.service;
 
-import java.nio.channels.SocketChannel;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

@@ -89,7 +89,8 @@ public class SDFOutputAttributeBinding extends SDFAttributeBindung {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung#merge(de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung, de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung)
      */
-    public SDFAttributeBindung createMerge(SDFAttributeBindung leftAttributeBinding, SDFAttributeBindung rightAttributeBinding)
+    @Override
+	public SDFAttributeBindung createMerge(SDFAttributeBindung leftAttributeBinding, SDFAttributeBindung rightAttributeBinding)
             throws SDFAttributeBindingNotMergeableException {       
         return merge((SDFOutputAttributeBinding) leftAttributeBinding, (SDFOutputAttributeBinding) rightAttributeBinding);
     }

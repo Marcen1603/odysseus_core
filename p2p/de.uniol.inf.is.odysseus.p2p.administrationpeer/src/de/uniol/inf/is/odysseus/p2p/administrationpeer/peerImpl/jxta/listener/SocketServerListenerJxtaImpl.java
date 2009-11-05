@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.util.Iterator;
 
 import net.jxta.endpoint.Message;
-import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISocketServerListener;
@@ -29,6 +28,7 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 			this.socket = socket;
 		}
 
+		@Override
 		public void run() {
 			sendAndReceiveData(socket);
 		}

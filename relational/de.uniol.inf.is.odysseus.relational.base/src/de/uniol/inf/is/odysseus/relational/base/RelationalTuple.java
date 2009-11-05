@@ -39,6 +39,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	// -----------------------------------------------------------------
 	// static Hilfsmethoden
 	// -----------------------------------------------------------------
+	@Override
 	public RelationalTuple<T> clone() {
 		return new RelationalTuple<T>(this);
 	}
@@ -235,6 +236,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	// -----------------------------------------------------------------
 	// Vergleichsmethoden
 	// -----------------------------------------------------------------
+	@Override
 	@SuppressWarnings("unchecked")
 	public final boolean equals(Object o) {
 		return this.compareTo((RelationalTuple) o) == 0;
@@ -282,6 +284,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	// Ausgabe
 	// -----------------------------------------------------------------
 
+	@Override
 	public final String toString() {
 		StringBuffer retBuff = new StringBuffer();
 		if (attributes.length > 0){
@@ -467,6 +470,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return false;
 	}
 
+	@Override
 	public final int hashCode() {
 		int ret = 0;
 		for (Object o : this.attributes) {

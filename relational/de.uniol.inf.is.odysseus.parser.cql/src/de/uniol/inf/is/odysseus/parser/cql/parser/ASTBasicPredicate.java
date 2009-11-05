@@ -13,7 +13,8 @@ public class ASTBasicPredicate extends AbstractPredicate {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
   
@@ -22,7 +23,8 @@ public class ASTBasicPredicate extends AbstractPredicate {
 		+ jjtGetChild(2).toString();
   }
   
-  public String toString() {
+  @Override
+public String toString() {
 	  return getPredicate();
   }
 }

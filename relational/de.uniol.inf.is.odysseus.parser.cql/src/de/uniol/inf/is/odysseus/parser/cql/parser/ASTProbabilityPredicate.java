@@ -3,7 +3,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
-
+@SuppressWarnings("unchecked")
 public class ASTProbabilityPredicate extends AbstractPredicate {
   private ArrayList xLow;
   private ArrayList xUp;
@@ -33,7 +33,8 @@ public class ASTProbabilityPredicate extends AbstractPredicate {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
   

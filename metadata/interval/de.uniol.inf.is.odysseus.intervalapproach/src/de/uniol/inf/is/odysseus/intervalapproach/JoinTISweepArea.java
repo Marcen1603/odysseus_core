@@ -8,12 +8,14 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 public class JoinTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends DefaultTISweepArea<T> {
 
+	@Override
 	public void insert(T s) {
 		synchronized (this.elements) {
 			this.elements.addLast(s);
 		}
 	};
 	
+	@Override
 	public Iterator<T> queryCopy(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
 		synchronized(this.elements){

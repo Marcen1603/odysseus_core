@@ -4,6 +4,7 @@ public class SDFGreaterOrEqualThanOperator implements SDFCompareOperator {
 	public SDFGreaterOrEqualThanOperator() {
 	}
 
+	@Override
 	public String toString() {
 		return ">=";
 	}

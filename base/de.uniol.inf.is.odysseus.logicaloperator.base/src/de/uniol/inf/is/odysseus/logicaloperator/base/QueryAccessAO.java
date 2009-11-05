@@ -5,6 +5,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 
 public class QueryAccessAO extends AccessAO {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3737401487581114190L;
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

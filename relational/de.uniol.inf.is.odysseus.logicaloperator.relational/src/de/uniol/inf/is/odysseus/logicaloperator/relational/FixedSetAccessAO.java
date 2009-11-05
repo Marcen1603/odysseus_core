@@ -37,6 +37,7 @@ public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		@SuppressWarnings("unchecked")
 		FixedSetAccessAO other = (FixedSetAccessAO) obj;
 		if (!Arrays.equals(tuples, other.tuples))
 			return false;

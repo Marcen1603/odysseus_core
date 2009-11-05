@@ -12,6 +12,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceID;
  *
  */
 public class ResourceID extends UnicastRemoteObject implements IResourceID {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2646568776331336286L;
 	private  long container;
 	private  long fragment;
 	

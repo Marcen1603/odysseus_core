@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
+@SuppressWarnings("unchecked")
 public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 
 	@Override
@@ -50,7 +51,6 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 		return new RelationalPredicate(expression);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTAndPredicate node, Object data) {
 		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) node
@@ -60,7 +60,6 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 		return new AndPredicate<RelationalTuple<?>>(left, right);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTOrPredicate node, Object data) {
 		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) node
@@ -70,7 +69,6 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 		return new OrPredicate<RelationalTuple<?>>(left, right);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTNotPredicate node, Object data) {
 		IPredicate<RelationalTuple<?>> predicate = (IPredicate<RelationalTuple<?>>) node
@@ -126,7 +124,7 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 
 				ASTMatrixExpression rightVector = (ASTMatrixExpression) probPred
 						.jjtGetChild(5);
-				ArrayList rightVRows = rightVector.getMatrix();
+				rightVector.getMatrix();
 
 				double[][] rightM = new double[rightRows.size()][((ArrayList) rightRows
 						.get(0)).size()];
@@ -227,7 +225,6 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static IPredicate<RelationalTuple<?>> toPredicate(ASTPredicate predicate, IAttributeResolver resolver) {
 		return (IPredicate<RelationalTuple<?>>) new CreatePredicateVisitor()
 				.visit(predicate, resolver);

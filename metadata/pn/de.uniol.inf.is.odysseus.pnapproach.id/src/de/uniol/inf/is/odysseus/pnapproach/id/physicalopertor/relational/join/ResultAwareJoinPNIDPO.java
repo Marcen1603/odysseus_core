@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.pnapproach.id.physicalopertor.relational.join;
 
-import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,10 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -53,6 +50,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 	protected int lastPort;
 	protected int lookahead;
 	
+	@SuppressWarnings("unchecked")
 	public ResultAwareJoinPNIDPO(IDataMergeFunction<T> dataMerge,
 			IPNMetadataMergeFunction<M> metadataMerge,
 			ResultAwarePNTransferFunction<M, T> transferFunction, DefaultPNIDSweepArea<T>[] areas,
@@ -83,6 +81,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 		return OutputMode.NEW_ELEMENT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum?? propagateDone gemeint?
@@ -163,8 +162,6 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 					int usePort = 0;
 					T left = null;
 					T right = null;
-					boolean do_left = true;
-					boolean do_right = true;
 					while(counter < this.lookahead && (iter_right.hasNext() || iter_left.hasNext())){
 						if(iter_right.hasNext() && iter_left.hasNext()){
 							left = iter_left.next();
@@ -397,7 +394,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 		Order otherOrder = Order.fromOrdinal(otherport);
 		synchronized(this.nareas){
 			synchronized(this.areas){
-				Iterator<T> negatives = this.nareas[otherport].extractAllElements();
+				Iterator<T> negatives = this.nareas[otherport].iterator();
 				while(negatives.hasNext()){
 					T neg = negatives.next();
 					areas[otherport].insert(neg, null);
@@ -406,6 +403,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 					neg.setMetadata(newMData);
 					this.transferFunction.transfer(neg);
 				}
+				this.nareas[otherport].clear();
 			}
 		}
 	}
@@ -482,6 +480,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 		 areas[1].clear();
 	 }
 	
+	@Override
 	protected boolean isDone() { 
 		if (getSubscribedTo(0).isDone()) {
 			return getSubscribedTo(1).isDone() || areas[0].isEmpty();

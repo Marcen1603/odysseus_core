@@ -61,6 +61,7 @@ public class CQLAttribute extends SDFAttribute {
 				+ attributeName);
 	}
 
+	@Override
 	public CQLAttribute clone() {
 		return new CQLAttribute(this);
 	}

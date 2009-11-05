@@ -57,6 +57,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * @see
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#clone()
 	 */
+	@Override
 	public AbstractLogicalOperator clone() {
 		AbstractLogicalOperator clone;
 		try {

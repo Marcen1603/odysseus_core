@@ -38,6 +38,7 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute> {
 		super.addAll(attributes1);
 	}
 
+	@Override
 	public SDFAttributeList clone() {
 		return new SDFAttributeList(this);
 	}

@@ -16,6 +16,10 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
  */
 public class TotallyBeforePredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3010416001774544889L;
 	private static final TotallyBeforePredicate predicate = new TotallyBeforePredicate();
 
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> input) {
@@ -28,6 +32,7 @@ public class TotallyBeforePredicate extends AbstractPredicate<IMetaAttributeCont
 				.getMetadata());
 	}
 
+	@Override
 	public TotallyBeforePredicate clone() {
 		return this;
 	}

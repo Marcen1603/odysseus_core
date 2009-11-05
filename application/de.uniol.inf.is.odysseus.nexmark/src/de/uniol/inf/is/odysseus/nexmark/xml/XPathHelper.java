@@ -25,7 +25,7 @@ public class XPathHelper {
 	public static String dumpSingleElement(InputSource input, String xpathExpr) {
 		try {
 			NodeList nl = XPathHelper.processXPath(xpathExpr,input);
-			for (int i=0;i<nl.getLength();i++){
+			for (int i=0;i<nl.getLength();){
 				Node n = nl.item(i).getFirstChild();
 				if (n!= null){
 					return n.getTextContent();

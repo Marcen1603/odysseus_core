@@ -6,9 +6,7 @@ import java.util.Iterator;
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
@@ -21,12 +19,14 @@ import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostP
 public class PostPriorisationBufferPlacement extends
 		AbstractBufferPlacementStrategy {
 
+	@Override
 	protected void activate(ComponentContext context) {
 		super.activate(context);
 	}
 
 	// add buffer, if we are a binary operator or if the bottom
 	// operator is a binary one
+	@Override
 	protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {

@@ -35,6 +35,7 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 			this.socket = socket;
 		}
 
+		@Override
 		public void run() {
 			sendAndReceiveData(socket);
 		}

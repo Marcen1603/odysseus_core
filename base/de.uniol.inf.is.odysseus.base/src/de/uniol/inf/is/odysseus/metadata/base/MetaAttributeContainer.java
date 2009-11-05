@@ -34,6 +34,7 @@ public class MetaAttributeContainer<T extends IMetaAttribute> implements IMetaAt
 		return metadata;
 	}
 
+	@Override
 	public MetaAttributeContainer<T> clone() {
 		return new MetaAttributeContainer<T>(this);
 	}

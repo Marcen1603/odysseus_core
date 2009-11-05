@@ -25,11 +25,11 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 	// stores which attributes are needed at which position for
 	// variable bindings
-	private int[] attributePositions;
+//	private int[] attributePositions;
 
 	// fromRightChannel[i] stores if the getAttribute(attributePositions[i])
 	// should be called on the left or on the right input tuple
-	private boolean[] fromRightChannel;
+//	private boolean[] fromRightChannel;
 
 	/**
 	 * Contains the values xLow for calculuating P(xLow[0] <= x <= xUp[0],...)
@@ -136,6 +136,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		this.rightSchema = rightSchema;
 	}
 
+	@Override
 	public void init() {
 		if(this.matlab == null){
 			try {
@@ -201,8 +202,6 @@ public class ProbabilityPredicate<T extends IProbability> extends
 			Object[] matlabRes = null;
 			double resProb = 0;
 			try {
-				long start = 0;
-				long end = 0;
 				// Only calc multivariate, if dim > 1
 				if (xLow.length > 1) {
 					// start = System.nanoTime();
@@ -269,8 +268,6 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 				Object[] matlabRes = null;
 				try {
-					long start = 0;
-					long end = 0;
 
 					double[] x = new double[2];
 					x[0] = xLow[0];
@@ -391,24 +388,20 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 		Object[] matlabRes = null;
 		try {
-			long start = 0;
-			long end = 0;
 			// Only calc multivariate, if dim > 1
 			if (xLow.length > 1) {
-				start = System.nanoTime();
+				System.nanoTime();
 				matlabRes = this.matlab.calcMVN(1, this.xLow, this.xUp,
 						resultVector, resultCov);
-				end = System.nanoTime();
 			}
 			// calc normal if dim = 1
 			else {
 				double[] x = new double[2];
 				x[0] = xLow[0];
 				x[1] = xUp[0];
-				start = System.nanoTime();
+				System.nanoTime();
 				matlabRes = this.matlab.calcNormCDF(1, x, resultVector,
 						resultCov);
-				end = System.nanoTime();
 			}
 
 			// matlabRes = this.matlab.calcMVN(1, this.xLow, this.xUp,

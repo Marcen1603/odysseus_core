@@ -114,6 +114,7 @@ public class SymbolTable {
 	/**
 	 * Gibt eine tiefe Kopie der Symboltabelle zurück
 	 */
+	@Override
 	public SymbolTable clone() {
 		LinkedList<SymbolTableEntry> newEntries = new LinkedList<SymbolTableEntry>();
 		for (SymbolTableEntry entries : this.entries) {
@@ -122,6 +123,7 @@ public class SymbolTable {
 		return new SymbolTable(newEntries);
 	}
 	
+	@Override
 	public String toString() {
 		String str = "Symbol table (entries: " + this.entries.size() + "):";
 		for (SymbolTableEntry entry : this.entries) {

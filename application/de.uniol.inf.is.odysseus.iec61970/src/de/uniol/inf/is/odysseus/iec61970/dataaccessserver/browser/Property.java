@@ -21,7 +21,13 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IProperty;
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("unchecked")
 public class Property extends UnicastRemoteObject implements IProperty {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7509951825891898018L;
 
 	public Property() throws RemoteException {
 		super();

@@ -22,6 +22,7 @@ public class ASTIdentifier extends SimpleNode {
 	}
 
 	/** Accept the visitor. * */
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}

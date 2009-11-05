@@ -20,12 +20,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.Abst
 public class StandardBufferPlacementStrategy extends
 		AbstractBufferPlacementStrategy {
 
+	@Override
 	protected void activate(ComponentContext context){
 		super.activate(context);
 	}
 	
 	// add buffer, if we are a binary operator or if the bottom
 	// operator is a binary one
+	@Override
 	protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {

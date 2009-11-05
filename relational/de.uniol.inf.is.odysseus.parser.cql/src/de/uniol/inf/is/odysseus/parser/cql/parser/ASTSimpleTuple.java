@@ -7,7 +7,7 @@ import java.util.Iterator;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-
+@SuppressWarnings("unchecked")
 public class ASTSimpleTuple extends SimpleNode {
 	public ASTSimpleTuple(int id) {
 		super(id);
@@ -18,6 +18,7 @@ public class ASTSimpleTuple extends SimpleNode {
 	}
 
 	/** Accept the visitor. * */
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}

@@ -26,6 +26,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 
 	class ConnectionHandler extends Thread {
 
+		@Override
 		public void run() {
 			while (!connectToPipe) {
 				try {

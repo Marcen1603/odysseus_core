@@ -13,6 +13,10 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  */
 public class SlidingAndJumpingDeltaWindowPNPredicate<T extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPredicate<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1138770857347924972L;
 	long windowSize;
 	long windowAdvance;
 	
@@ -47,6 +51,7 @@ public class SlidingAndJumpingDeltaWindowPNPredicate<T extends IMetaAttributeCon
 		return false;
 	}
 	
+	@Override
 	public SlidingAndJumpingDeltaWindowPNPredicate<T> clone(){
 		return new SlidingAndJumpingDeltaWindowPNPredicate<T>(this);
 	}

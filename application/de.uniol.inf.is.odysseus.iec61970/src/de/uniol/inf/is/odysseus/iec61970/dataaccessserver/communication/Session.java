@@ -11,8 +11,13 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IGroup;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
 
 public class Session extends UnicastRemoteObject implements ISession {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4879889959746383820L;
 	private String sessionStartTime;
 	private ArrayList<IGroup> groups;
+	@SuppressWarnings("unused")
 	private Selector selector = null;
 	public Session() throws RemoteException {
 		super();

@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
-	@SuppressWarnings("unused")
 	//private static final Logger logger = LoggerFactory.getLogger(ISource.class);
 	final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final protected Map<POEventType, ArrayList<POEventListener>> eventListener = new HashMap<POEventType, ArrayList<POEventListener>>();

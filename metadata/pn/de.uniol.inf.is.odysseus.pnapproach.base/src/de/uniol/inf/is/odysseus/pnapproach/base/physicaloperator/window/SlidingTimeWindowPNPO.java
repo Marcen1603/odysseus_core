@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.predicate.SlidingTimeWindowPredi
  * 
  * @author Andre Bolles
  */
+@SuppressWarnings("unchecked")
 public class SlidingTimeWindowPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> extends
 	AbstractNonBlockingWindowPNPO<M, T> {
 
@@ -28,6 +29,7 @@ public class SlidingTimeWindowPNPO<M extends IPosNeg, T extends IMetaAttributeCo
 		super(name);
 	}
 
+	@Override
 	protected PointInTime calcWindowEnd(PointInTime startTimestamp) {
 		return WindowCalculator.calcSlidingWindowEnd(startTimestamp, this.windowSize);
 	}

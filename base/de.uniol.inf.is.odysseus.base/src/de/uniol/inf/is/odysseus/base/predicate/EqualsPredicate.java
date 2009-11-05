@@ -19,6 +19,7 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 		return (EqualsPredicate<T>) predicate;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public EqualsPredicate<T> clone() {
 		return predicate;

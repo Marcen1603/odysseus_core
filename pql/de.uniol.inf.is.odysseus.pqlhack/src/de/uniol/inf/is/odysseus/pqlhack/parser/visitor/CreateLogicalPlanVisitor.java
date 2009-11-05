@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -53,6 +52,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
+@SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
@@ -363,7 +363,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return data;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTAndPredicate node, Object data) {
 		// pass only the attribute resolver to the children
@@ -385,7 +384,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return data;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTOrPredicate node, Object data) {
 		// pass only the attribute resolver to the children
@@ -406,7 +404,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return data;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTNotPredicate node, Object data) {
 		// pass only the attribute resolver to the children
@@ -483,7 +480,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
 		WindowAO window = (WindowAO)((ArrayList)data).get(1);
-		ILogicalOperator inputForWindow = window.getInputAO();
+		//ILogicalOperator inputForWindow = window.getInputAO();
 		
 		ASTIdentifier onId = (ASTIdentifier)node.jjtGetChild(0);
 		
@@ -505,7 +502,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static void initPredicate(IPredicate predicate,
 			SDFAttributeList left, SDFAttributeList right) {
 		if (predicate instanceof ComplexPredicate) {

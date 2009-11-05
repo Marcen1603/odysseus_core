@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.listener;
 
-import java.sql.Wrapper;
 import java.util.Enumeration;
 
 import net.jxta.discovery.DiscoveryEvent;
@@ -10,15 +9,11 @@ import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.priority.Priority;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListener {
 

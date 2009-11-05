@@ -7,13 +7,17 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
 public class SlidingTimeWindowPredicate<T extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPredicate<T> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6486548910841710973L;
 	long windowSize;
 	
 	public SlidingTimeWindowPredicate(long windowSize){
 		this.windowSize = windowSize;
 	}
 	
-	public SlidingTimeWindowPredicate(SlidingTimeWindowPredicate old){
+	public SlidingTimeWindowPredicate(SlidingTimeWindowPredicate<T> old){
 		this.windowSize = old.windowSize;
 	}
 
@@ -30,7 +34,8 @@ public class SlidingTimeWindowPredicate<T extends IMetaAttributeContainer<? exte
 		return false;
 	}
 	
-	public SlidingTimeWindowPredicate clone(){
-		return new SlidingTimeWindowPredicate(this);
+	@Override
+	public SlidingTimeWindowPredicate<T> clone(){
+		return new SlidingTimeWindowPredicate<T>(this);
 	}
 }

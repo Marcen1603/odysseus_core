@@ -153,7 +153,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				Log.logAction(queryId, "Plan splitten");
 				ArrayList<AbstractLogicalOperator> splitPlan = AdministrationPeerJxtaImpl.getInstance().splitPlan(restructPlan);
 				System.out.println("split");
-				for(AbstractLogicalOperator op : splitPlan) {
+				for(@SuppressWarnings("unused") AbstractLogicalOperator op : splitPlan) {
 				}
 				
 				Log.setSubplans(queryId, splitPlan.size());

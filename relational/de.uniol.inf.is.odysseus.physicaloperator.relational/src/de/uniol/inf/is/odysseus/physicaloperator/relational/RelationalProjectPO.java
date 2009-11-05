@@ -15,9 +15,6 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 
 	public RelationalProjectPO(int[] restrictList) {
 		this.restrictList = restrictList;
-		final RelationalProjectPO<T> t = this;
-//		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,
-//				"selectivity", 1d));
 	}
 
 	public RelationalProjectPO(RelationalProjectPO<T> relationalProjectPO) {
@@ -25,9 +22,6 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		int length = relationalProjectPO.restrictList.length;
 		restrictList = new int[length];
 		System.arraycopy(relationalProjectPO.restrictList, 0, restrictList, 0, length);
-		final RelationalProjectPO<T> t = this;
-//		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,
-//				"selectivity", 1d));
 	}
 
 	@Override

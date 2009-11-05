@@ -2,11 +2,6 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.util.LinkedList;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-
-import org.nfunk.jep.JEP;
-
 /**
  * Objekte dieser Klasse stellen das Ausgabeschema des EPA dar.
  * 

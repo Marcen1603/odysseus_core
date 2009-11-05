@@ -21,7 +21,12 @@ import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceID;
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("deprecation")
 public class ResourceDescription extends UnicastRemoteObject implements IResourceDescription{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1405187724157823412L;
 	private static ResourceDescription service = null;
 	public synchronized static ResourceDescription getInstance() throws RemoteException {
 		if (service == null) {

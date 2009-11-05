@@ -17,7 +17,8 @@ public class ASTSilab extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
   

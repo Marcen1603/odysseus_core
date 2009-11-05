@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 
 
-
+@SuppressWarnings("unchecked")
 public class DataAccessHandler<T> implements IDataAccessHandler<T>{
 	private byte[] receiveObj;
 	private T object;
@@ -71,6 +71,7 @@ public void setObjSize(int size) {
 	this.receiveObj = new byte[objSize]; 
 }
 
+@Override
 public IDataAccessHandler<T> clone() {
 	return new DataAccessHandler(this);
 	

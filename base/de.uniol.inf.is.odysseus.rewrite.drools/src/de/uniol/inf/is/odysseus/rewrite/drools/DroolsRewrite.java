@@ -13,7 +13,6 @@ import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
 import org.drools.rule.Package;
 import org.drools.rule.Rule;
-import org.mvel2.optimizers.impl.refl.nodes.ArrayLength;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;

@@ -6,6 +6,10 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
 public class BeforePredicate extends AbstractPredicate<IMetaAttributeContainer<? extends IPosNeg>>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9185637480957451344L;
 	public static BeforePredicate theInstance = new BeforePredicate();
 	
 	@Deprecated
@@ -17,6 +21,7 @@ public class BeforePredicate extends AbstractPredicate<IMetaAttributeContainer<?
 		return e1.getMetadata().getTimestamp().before(e2.getMetadata().getTimestamp());
 	}
 	
+	@Override
 	public BeforePredicate clone(){
 		return theInstance;
 	}

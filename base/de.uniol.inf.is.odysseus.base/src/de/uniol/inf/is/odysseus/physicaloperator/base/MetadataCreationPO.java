@@ -20,6 +20,7 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@Override
 	public void process_next(In object, int port) {
 		try {
 			object.setMetadata(type.newInstance());
@@ -29,6 +30,7 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		this.transfer(object);
 	}
 
+	@Override
 	public String toString() {
 		return super.toString() + " " + type.getName();
 	}

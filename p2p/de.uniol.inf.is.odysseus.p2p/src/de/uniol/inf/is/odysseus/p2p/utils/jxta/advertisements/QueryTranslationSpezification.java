@@ -17,15 +17,9 @@ import net.jxta.document.StructuredDocument;
 import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
-import net.jxta.document.XMLDocument;
-import net.jxta.document.XMLElement;
-import net.jxta.endpoint.TextDocumentMessageElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-import net.jxta.peergroup.PeerGroupID;
-import net.jxta.protocol.PeerAdvertisement;
-import net.jxta.protocol.PipeAdvertisement;
-
+@SuppressWarnings("unchecked")
 public class QueryTranslationSpezification extends Advertisement implements
 		Serializable, Cloneable, Comparable {
 
@@ -284,7 +278,7 @@ public class QueryTranslationSpezification extends Advertisement implements
 		QueryTranslationSpezification advTutorial = (QueryTranslationSpezification) AdvertisementFactory.newAdvertisement(QueryTranslationSpezification.getAdvertisementType());
 
        
-		PeerGroupID id = IDFactory.newPeerGroupID();
+		IDFactory.newPeerGroupID();
 		//advTutorial.setID(ID.nullID);
         advTutorial.setQuery("Select * From nexmark:person");
 	}

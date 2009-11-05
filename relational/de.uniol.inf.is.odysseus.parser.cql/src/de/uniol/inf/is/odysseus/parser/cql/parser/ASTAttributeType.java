@@ -3,11 +3,11 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
-
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
+@SuppressWarnings("unchecked")
 public class ASTAttributeType extends SimpleNode {
 	private SDFDatatype type;
 	
@@ -56,6 +56,7 @@ public class ASTAttributeType extends SimpleNode {
 	}
 
 	/** Accept the visitor. * */
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}

@@ -58,6 +58,7 @@ public class Min extends SymbolTableOperation {
 		}
 	}
 
+	@Override
 	public String toString(String indent) {
 		String str = indent + "Min: " + this.hashCode();
 		indent += "  ";

@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * 
  * @author Andre Bolles
  */
+@SuppressWarnings("unchecked")
 public class PredictionPO<T extends IMetaAttributeContainer<M>, M extends IProbabilityPredictionFunction & ITimeInterval> extends AbstractPipe<T, T>{
 
 	private final Map<IPredicate<? super T>, SDFExpression[]> predictionFunctions;
@@ -32,7 +33,6 @@ public class PredictionPO<T extends IMetaAttributeContainer<M>, M extends IProba
 		this.restrictList = predictionAO.getRestrictList();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T next, int port) {
 		
@@ -58,6 +58,7 @@ public class PredictionPO<T extends IMetaAttributeContainer<M>, M extends IProba
 		return;
 	}
 	
+	@Override
 	public OutputMode getOutputMode(){
 		return OutputMode.MODIFIED_INPUT;
 	}

@@ -55,6 +55,7 @@ public class MatchedEvent {
 	/**
 	 * Gibt eine tiefe Kopie des MatchedEvent-Objekts zurück.
 	 */
+	@Override
 	public MatchedEvent clone() {
 		MatchedEvent newPrevious = null;
 		if (this.previous != null) {

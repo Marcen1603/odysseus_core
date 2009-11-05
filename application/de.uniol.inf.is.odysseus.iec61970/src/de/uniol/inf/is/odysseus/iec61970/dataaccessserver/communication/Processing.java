@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("unchecked")
 public class Processing implements Runnable{
 	private List queue = new LinkedList();
 	private Server server = null;

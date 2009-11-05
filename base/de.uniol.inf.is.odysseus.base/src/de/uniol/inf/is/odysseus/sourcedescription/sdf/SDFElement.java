@@ -74,6 +74,7 @@ public abstract class SDFElement implements Serializable{
 	}
 
     // TODO: Warum ist das so??? ueberpruefen
+	@Override
 	public String toString() {
 		return getURI(true);
 		//return getQualName();
@@ -127,6 +128,7 @@ public abstract class SDFElement implements Serializable{
 	 * @see #hashCode()
 	 * @see java.util.Hashtable
 	 */
+	@Override
 	public boolean equals(Object obj) {     
 	    if (obj instanceof SDFElement){
 	        return URI.equals(((SDFElement) obj).getURI(false));
@@ -172,6 +174,7 @@ public abstract class SDFElement implements Serializable{
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 * @see java.util.Hashtable
 	 */
+	@Override
 	public int hashCode() {
 		return URI.hashCode();
 	}

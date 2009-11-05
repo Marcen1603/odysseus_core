@@ -11,9 +11,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-
+@SuppressWarnings("unchecked")
 public class TransformationHelper {
-
+	
 	public static Collection<ILogicalOperator> replace(
 			ILogicalOperator logical, IPipe physical) {
 		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical);

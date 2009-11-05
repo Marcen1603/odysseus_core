@@ -13,6 +13,10 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 public class OverlapsPredicate extends
 		AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7697071354543915488L;
 	private static final OverlapsPredicate predicate = new OverlapsPredicate();
 
 	public static OverlapsPredicate getInstance() {

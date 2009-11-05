@@ -21,6 +21,7 @@ class ConnectionHandler extends Thread {
 		this.socket = socket;
 	}
 
+	@Override
 	public void run() {
 		sendAndReceiveData(socket);
 	}

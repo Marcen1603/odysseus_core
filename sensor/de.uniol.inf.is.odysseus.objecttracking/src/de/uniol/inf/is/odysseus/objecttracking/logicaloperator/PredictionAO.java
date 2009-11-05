@@ -12,8 +12,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
-
+@SuppressWarnings("unchecked")
 public class PredictionAO<T> extends UnaryLogicalOp{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1917550706455197576L;
 
 	private Map<IPredicate<? super T>, SDFExpression[]> predictionFunctions;
 	
@@ -118,7 +123,6 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 	public void initRestrictList(){
 		ArrayList<Integer> tempList = new ArrayList<Integer>();
 		
-		int counter = 0;
 		for(int i = 0; i<this.getInputSchema().getAttributeCount(); i++){
 			if(SDFDatatypes.isMeasurementValue(this.getInputSchema().getAttribute(i).getDatatype())){
 				tempList.add(i);

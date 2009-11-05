@@ -45,6 +45,11 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
 */
 public class ApplicationGui extends javax.swing.JFrame implements ActionListener{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6188433132736871226L;
+
 	{
 		//Set Look & Feel
 		try {
@@ -267,7 +272,7 @@ public class ApplicationGui extends javax.swing.JFrame implements ActionListener
 			}
 		}
 		else if(e.getActionCommand().equals(deselect.getActionCommand())) {
-			ArrayList<String> pathnames = new ArrayList<String>();
+//			ArrayList<String> pathnames = new ArrayList<String>();
 //			for(int zeile : pathnameTable.getSelectedRows()) {
 //				pathnames.add((String) pathnameTable.getValueAt(zeile, 0));
 //			}

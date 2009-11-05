@@ -14,6 +14,11 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISimpleIO;
  */
 public class SimpleIO extends UnicastRemoteObject implements ISimpleIO {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2095506155352888665L;
+
 	protected SimpleIO() throws RemoteException {
 		super();
 	}

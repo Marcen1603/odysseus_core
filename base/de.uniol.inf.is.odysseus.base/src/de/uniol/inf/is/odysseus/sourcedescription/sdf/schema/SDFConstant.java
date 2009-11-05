@@ -32,6 +32,7 @@ public abstract class SDFConstant extends SDFSchemaElement {
 		return this.doubleValue;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString());
 		ret.append(" Konstantenwert:");
@@ -43,7 +44,8 @@ public abstract class SDFConstant extends SDFSchemaElement {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj instanceof SDFConstant){
              //System.out.println("SDFConstant:equals this "+this.getString()+" == "+((SDFConstant)obj).getString());
              return ((SDFConstant)obj).getString().equals(this.getString());

@@ -234,6 +234,7 @@ class MessageSender extends Thread{
 		this.message = message;
 	}
 	
+	@Override
 	public void run(){
 		while(socket == null){
 			try {

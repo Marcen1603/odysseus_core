@@ -48,6 +48,7 @@ public class TransformationConfiguration {
 		return metaTypes;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("data type: ");

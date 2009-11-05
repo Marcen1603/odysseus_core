@@ -9,12 +9,12 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.PosNeg;
 
 public class PNMetaMergeFunction implements IMetadataMergeFunction<IPosNeg> {
 	
-	private int leftIDSize;
-	private int rightIDSize;
+//	private int leftIDSize;
+//	private int rightIDSize;
 	
 	public PNMetaMergeFunction(int leftIDSize, int rightIDSize){
-		this.leftIDSize = leftIDSize;
-		this.rightIDSize = rightIDSize;
+//		this.leftIDSize = leftIDSize;
+//		this.rightIDSize = rightIDSize;
 	}
 	
 	@Override

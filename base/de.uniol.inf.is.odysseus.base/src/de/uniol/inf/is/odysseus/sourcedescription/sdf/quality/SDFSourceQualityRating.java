@@ -78,6 +78,7 @@ public class SDFSourceQualityRating {
         return qualityLevel;
     }
 
+	@Override
 	public String toString() {
 		return "(" + source.toString() + ", " + qualityAspect.toString() + ", "
 				+ qualityLevel + ")";

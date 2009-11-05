@@ -35,7 +35,7 @@ package de.uniol.inf.is.odysseus.nexmark.generator;
 import java.nio.CharBuffer;
 import java.util.Random;
 import java.util.Vector;
-
+@SuppressWarnings("unchecked")
 class PersonGen {
 	
 	
@@ -161,7 +161,8 @@ class PersonGen {
         m_address.m_stZipcode = String.valueOf(m_rnd.nextInt(99999) + 1);
     }
 
-    private void genProfile() {
+    @SuppressWarnings("unused")
+	private void genProfile() {
         if (m_rnd.nextBoolean()) {
             m_profile.has_education = true;
             m_profile.m_stEducation =

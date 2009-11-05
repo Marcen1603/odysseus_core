@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import org.junit.*;
 
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.RelationalReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.Count;
 import de.uniol.inf.is.odysseus.cep.metamodel.Set;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
@@ -13,7 +12,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import static org.junit.Assert.*;
-
+@SuppressWarnings("unchecked")
 public class SymbolTableTest {
 
 	private SymbolTable symTab;
@@ -44,6 +43,7 @@ public class SymbolTableTest {
 	 * @param number
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private LinkedList<RelationalTuple> generateEvents(int number) {
 		LinkedList<RelationalTuple> tuples = new LinkedList<RelationalTuple>();
 		for (int i = 0; i < number; i++) {
@@ -61,6 +61,7 @@ public class SymbolTableTest {
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private SDFAttributeList generateEventScheme() {
 		SDFAttributeList list = new SDFAttributeList();
 		list.add(new SDFAttribute("attribute1"));

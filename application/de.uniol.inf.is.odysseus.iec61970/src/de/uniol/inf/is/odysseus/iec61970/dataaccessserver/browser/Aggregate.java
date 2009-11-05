@@ -18,6 +18,11 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IAggregate;
  */
 public class Aggregate extends UnicastRemoteObject implements IAggregate {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3120505509211887076L;
+
 	public Aggregate() throws RemoteException {
 		super();
 	}

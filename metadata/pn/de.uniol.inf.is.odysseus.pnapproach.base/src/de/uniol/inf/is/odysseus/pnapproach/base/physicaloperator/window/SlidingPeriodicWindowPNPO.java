@@ -69,7 +69,8 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
         this.windowAdvance = original.windowAdvance;
     }
     
-    public SlidingPeriodicWindowPNPO<R> clone(){
+    @Override
+	public SlidingPeriodicWindowPNPO<R> clone(){
         return new SlidingPeriodicWindowPNPO<R>(this);
     }
     
@@ -78,7 +79,9 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
     	return OutputMode.MODIFIED_INPUT;
     }
     
-    public void process_next(R next, int port){	
+    @SuppressWarnings("unchecked")
+	@Override
+	public void process_next(R next, int port){	
 		long t_s = next.getMetadata().getTimestamp().getMainPoint();
 		long delta = this.windowAdvance;
 		long winSize = this.windowSize;

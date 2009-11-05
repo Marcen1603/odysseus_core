@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement;
 
 import java.util.Collection;
 import java.util.Dictionary;
-import java.util.List;
 import java.util.Stack;
 
 import org.osgi.service.component.ComponentContext;
@@ -33,6 +32,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 		setName(context.getProperties());
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void setName(Dictionary properties){
 		name = ((String)properties.get("component.readableName"));
 		if (name == null){
@@ -45,6 +45,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 		return name;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan.isSink() && !plan.isSource()) {
 			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)

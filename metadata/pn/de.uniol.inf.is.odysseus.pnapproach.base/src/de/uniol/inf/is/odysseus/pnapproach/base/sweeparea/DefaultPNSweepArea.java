@@ -112,6 +112,7 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 	 * If you want to remove elements by inserting a negative element use
 	 * insert(element, null) instead.
 	 */
+	@Override
 	public void insert(T element){
 		super.insert(element);
 	}
@@ -199,7 +200,7 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 	public int insertAndRemovedWrongScheduled(T s){
 		int count = 0;
 		if(s.getMetadata().getElementType() == ElementType.NEGATIVE){
-			T removed = null;
+			//T removed = null;
 			boolean removedWrongScheduled = false;
 			Iterator<T> iter = this.elements.iterator();
 			for(int i = 0; iter.hasNext(); i++){
@@ -209,7 +210,7 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 				if(s.equals(old) && old.getMetadata().getElementType() == ElementType.POSITIVE &&
 						s.getMetadata().getTimestamp().beforeOrEquals(old.getMetadata().getTimestamp())){
 					iter.remove();
-					removed = old;
+					//removed = old;
 					removedWrongScheduled = true;
 					count++;
 				}

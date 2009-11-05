@@ -17,6 +17,7 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		super(attribute);
 	}
 
+	@Override
 	public SDFAttribute clone() {
 		return new SDFAttribute(this);
 	}

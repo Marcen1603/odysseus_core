@@ -136,6 +136,7 @@ public class StateMachineInstance {
 	/**
 	 * Gibt eine tiefe Kopie der Automateninstanz zurück.
 	 */
+	@Override
 	public StateMachineInstance clone() {
 		return new StateMachineInstance(this.currentState, this.matchingTrace
 				.clone(), this.symTab.clone());

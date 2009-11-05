@@ -14,10 +14,12 @@ public class ASTPredicate extends AbstractPredicate {
 	}
 
 	/** Accept the visitor. * */
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
 	
+	@Override
 	public String toString() {
 		return jjtGetChild(0).toString();
 	}

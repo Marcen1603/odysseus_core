@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -36,6 +35,7 @@ import de.uniol.inf.is.odysseus.iec61970.library.serializable.TSDAObject;
  * @author Mart Köhler
  * 
  */
+@SuppressWarnings("unchecked")
 public class Provider implements Runnable {
 	private InetAddress hostAddress;
 	private int inPort;
@@ -156,7 +156,7 @@ public class Provider implements Runnable {
 				try {
 					System.err.println("Schicke "+buf.remaining()+" Bytes an: "+socketChannel.socket().getInetAddress().getHostAddress()+":"+socketChannel.socket().getLocalPort());
 					socketChannel.write(sizeBuffer);
-				int nw = socketChannel.write(buf); // Bytes senden	
+				socketChannel.write(buf);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -243,7 +243,7 @@ public class Provider implements Runnable {
 		System.out.println("Connect auf port:"+serverSocketChannel.socket().getLocalPort());
 		//Verbindung akzeptieren
 		SocketChannel socketChannel = serverSocketChannel.accept();
-		Socket socket = socketChannel.socket();
+		socketChannel.socket();
 		socketChannel.configureBlocking(false);
 		// jetzt kann gelesen werden, nachdem die Verbindung komplett aufgebaut wurde.
 			socketChannel.register(Provider.selector, SelectionKey.OP_READ);
@@ -284,7 +284,6 @@ public class Provider implements Runnable {
 	}
 
 private void buildObject(ByteBuffer buffer) {
-	byte[] temp = null;
 	if(receiveObj==null) {
 		this.receiveObj = new byte[size]; 
 		//4 wegen der size

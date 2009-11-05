@@ -6,7 +6,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
-import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.statemachinefactory.SMF1;
 
 public class MatchingTraceTest {

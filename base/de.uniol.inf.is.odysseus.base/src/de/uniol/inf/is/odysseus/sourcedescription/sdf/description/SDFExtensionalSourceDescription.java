@@ -32,6 +32,7 @@ public class SDFExtensionalSourceDescription extends SDFElement {
 		return this.descriptionPredicates.get(index);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString() + "\n");
 		for (int i = 0; i < descriptionPredicates.size(); i++) {

@@ -20,6 +20,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IItem;
  *
  */
 public class GroupManager extends UnicastRemoteObject implements IGroupManager{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1090820186303752675L;
 	private ICallBack callBack = null;
 	private ArrayList<ItemDescription> itemDescriptions;
 	private ArrayList<IResourceID> subscriptions;

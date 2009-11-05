@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.im
 
 public class DynamicRandomStrategyFactory extends AbstractSchedulingStrategyFactory {
 
+	@Override
 	protected void activate(ComponentContext context){
 		super.activate(context);
 	}

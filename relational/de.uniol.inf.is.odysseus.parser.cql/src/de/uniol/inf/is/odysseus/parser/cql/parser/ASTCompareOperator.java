@@ -30,10 +30,12 @@ public class ASTCompareOperator extends SimpleNode {
 	}
 
 	/** Accept the visitor. * */
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
 
+	@Override
 	public String toString() {
 		return this.operator;
 	}

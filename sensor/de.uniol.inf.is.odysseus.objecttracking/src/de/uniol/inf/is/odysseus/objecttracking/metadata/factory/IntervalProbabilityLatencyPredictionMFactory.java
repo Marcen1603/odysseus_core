@@ -2,17 +2,14 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata.factory;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
-
+@SuppressWarnings("unchecked")
 /**
  * This class generates a new IntervalProbabilityLatencyPrediction object.
  * It fills latencyStart and the covariance. The start timestamp must be

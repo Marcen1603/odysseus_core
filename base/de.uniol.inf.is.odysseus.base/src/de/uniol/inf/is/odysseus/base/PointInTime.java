@@ -178,6 +178,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		}
 	}
 
+	@Override
 	public String toString() {
 		if (isInfinite()) {
 			return "\u221E";

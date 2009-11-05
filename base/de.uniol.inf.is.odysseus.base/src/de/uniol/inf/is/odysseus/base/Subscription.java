@@ -71,6 +71,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		@SuppressWarnings("unchecked")
 		Subscription other = (Subscription) obj;
 		if (sinkPort != other.sinkPort)
 			return false;

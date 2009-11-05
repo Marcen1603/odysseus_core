@@ -17,6 +17,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 		super();
 	}
 
+	@Override
 	public void insert(T s) {
 		synchronized (this.elements) {
 			if (((IPriority)s.getMetadata()).getPriority() == 0) {
@@ -88,6 +89,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 	 * 
 	 * @return
 	 */
+	@Override
 	public Iterator<T> extractElements(ITimeInterval validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		Iterator<T> li = elements.iterator();
@@ -107,6 +109,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 		return retval.iterator();
 	}
 
+	@Override
 	public Iterator<T> queryCopy(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
 		switch (order) {

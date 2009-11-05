@@ -8,13 +8,17 @@ import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-
+@SuppressWarnings("unchecked")
 /**
  * This is a metadata item, that implements TimeInterval, IProbability and IPredictionFunction.
  * It works only for relational tuples.
  */
 public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContainer<M>, M extends IProbability> extends TimeInterval implements IPredictionFunction<T, M>, IProbability, ILatency{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8162178186554923626L;
 	/** Since we use probabilities in this metadata,
 	 * the prediction function should also consider
 	 * the probabilities.

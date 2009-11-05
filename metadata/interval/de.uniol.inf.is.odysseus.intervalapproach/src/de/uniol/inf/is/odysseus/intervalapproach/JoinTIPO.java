@@ -10,8 +10,6 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
@@ -198,6 +196,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		areas[1].clear();
 	}
 
+	@Override
 	protected boolean isDone() {
 		if (getSubscribedTo(0).isDone()) {
 			return getSubscribedTo(1).isDone() || areas[0].isEmpty();

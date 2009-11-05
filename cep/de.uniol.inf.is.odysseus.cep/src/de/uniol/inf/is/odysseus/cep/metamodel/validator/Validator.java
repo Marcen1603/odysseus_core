@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.validator.error.NoTransitionListEr
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.error.StateNotInStateSetError;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.error.TransitionWithoutDestinationStateError;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.warning.UnreachableStateWarning;
-
+@SuppressWarnings("unchecked")
 /**
  * Objekte dieser Klasse können im Metamodell spezifizierte Automaten
  * überprüfen, indem alle Invarianten überprüft werden.

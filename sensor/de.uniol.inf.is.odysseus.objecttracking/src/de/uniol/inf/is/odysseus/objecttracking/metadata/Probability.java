@@ -27,10 +27,12 @@ public class Probability implements IProbability{
 		this.cov = sigma;
 	}
 	
+	@Override
 	public IProbability clone(){
 		return new Probability(this.cov);
 	}
 	
+	@Override
 	public String toString(){
 		if(this.cov == null || this.cov.length == 0){
 			return "Cov: empty";

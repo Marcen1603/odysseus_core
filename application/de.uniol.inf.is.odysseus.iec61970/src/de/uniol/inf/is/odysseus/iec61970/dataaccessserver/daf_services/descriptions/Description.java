@@ -8,6 +8,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IDescription;
 
 
 public class Description extends UnicastRemoteObject implements IDescription{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9033580652969169106L;
 	private ArrayList<String[]> triple = new ArrayList<String[]>(); 
 	protected Description(ArrayList<String[]> triple) throws RemoteException {
 		super();

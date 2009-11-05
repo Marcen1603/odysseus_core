@@ -63,6 +63,7 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void process_next(MVRelationalTuple<T> object, int port) {
 		
 		// first project the metadata:
@@ -169,6 +170,7 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 		}
 	}
 	
+	@Override
 	public OutputMode getOutputMode(){
 		return OutputMode.MODIFIED_INPUT;
 	}

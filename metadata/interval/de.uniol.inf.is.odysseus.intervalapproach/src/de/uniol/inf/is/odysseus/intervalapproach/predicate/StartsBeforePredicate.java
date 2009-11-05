@@ -6,8 +6,13 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class StartsBeforePredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1689799456375135808L;
 	private static final StartsBeforePredicate instance = new StartsBeforePredicate();
 	
+	@Override
 	public StartsBeforePredicate clone(){
 		return this;
 	}

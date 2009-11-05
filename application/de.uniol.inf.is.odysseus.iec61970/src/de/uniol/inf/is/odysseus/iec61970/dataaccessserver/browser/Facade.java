@@ -18,6 +18,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IType;
  *
  */
 public class Facade extends UnicastRemoteObject implements IFacade{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -393806112254469669L;
 	private String mode;
 	private IItem item;
 	private INode node;

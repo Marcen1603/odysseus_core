@@ -78,6 +78,7 @@ public class PosNeg implements IPosNeg{
 		this.setTimestamp(timestamp);
 	}
 
+	@Override
 	public PosNeg clone(){
 		return new PosNeg(this);
 	}
@@ -92,6 +93,7 @@ public class PosNeg implements IPosNeg{
 		return 1;
 	}
 	
+	@Override
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("ElementType: " + this.type + " ID: " + this.id + " Timestamp: " + this.timestamp);

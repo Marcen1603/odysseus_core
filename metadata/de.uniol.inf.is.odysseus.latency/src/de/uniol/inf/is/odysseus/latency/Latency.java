@@ -46,6 +46,7 @@ public class Latency implements ILatency{
 		
 	}
 	
+	@Override
 	public ILatency clone(){
 		return new Latency(this);
 	}

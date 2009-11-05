@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -42,6 +41,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 	protected int lastPort;
 	protected int lookahead;
 
+	@SuppressWarnings("unchecked")
 	public JoinPNPO(IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<M> metadataMerge,
 			PNTransferFunction<T> transferFunction, DefaultPNSweepArea<T>[] areas,
@@ -72,6 +72,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 		return OutputMode.NEW_ELEMENT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum?? propagateDone gemeint?
@@ -236,8 +237,8 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 					int usePort = 0;
 					T left = null;
 					T right = null;
-					boolean do_left = true;
-					boolean do_right = true;
+//					boolean do_left = true;
+//					boolean do_right = true;
 					while(counter < this.lookahead && (iter_right.hasNext() || iter_left.hasNext())){
 						if(iter_right.hasNext() && iter_left.hasNext()){
 							left = iter_left.next();
@@ -366,7 +367,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 		Order otherOrder = Order.fromOrdinal(otherport);
 		synchronized(this.nareas){
 			synchronized(this.areas){
-				Iterator<T> negatives = this.nareas[otherport].extractAllElements();
+				Iterator<T> negatives = this.nareas[otherport].iterator();
 			
 				while(negatives.hasNext()){
 					T neg = negatives.next();
@@ -381,6 +382,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 						transferFunction.transfer(newElement);
 					}
 				}
+				this.nareas[otherport].clear();
 			}
 		}
 		
@@ -431,6 +433,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 		return this.isDone[port];
 	}
 	
+	@Override
 	protected boolean isDone() { 
 		if (getSubscribedTo(0).isDone()) {
 			return getSubscribedTo(1).isDone() || areas[0].isEmpty();

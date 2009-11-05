@@ -58,6 +58,7 @@ public class Max extends SymbolTableOperation {
 		}
 	}
 
+	@Override
 	public String toString(String indent) {
 		String str = indent + "Max: " + this.hashCode();
 		indent += "  ";

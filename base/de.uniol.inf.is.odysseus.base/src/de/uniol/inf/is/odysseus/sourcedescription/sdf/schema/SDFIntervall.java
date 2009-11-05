@@ -127,6 +127,7 @@ public class SDFIntervall extends SDFElement{
         return rightIsOpen;
     }
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
 		if (this.leftIsOpen)

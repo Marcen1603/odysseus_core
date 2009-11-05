@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Marco Grawunder
  * 
  */
-
+@SuppressWarnings("unchecked")
 public class RelationalRestructHelper {
 
 	public static boolean containsAllSources(ILogicalOperator op, Set sources) {

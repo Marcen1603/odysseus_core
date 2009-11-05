@@ -83,6 +83,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 					T merged = merge(object, next, leftRight);
 					
 					if(merged.getMetadata().getStart().after(t_tilde)){
+						@SuppressWarnings("unchecked")
 						T leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
 						
 						leftUnbound.getMetadata().setStart(t_tilde);
@@ -96,6 +97,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 				
 				PointInTime ts_max_right = this.areas[otherport].getMaxTs();
 				if(ts_max_right != null && ts_max_right.after(t_tilde)){
+					@SuppressWarnings("unchecked")
 					T leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
 					leftUnbound.getMetadata().setStart(t_tilde);
 					PointInTime t_end = PointInTime.min(ts_max_right, object.getMetadata().getEnd());
@@ -124,6 +126,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			T invalid = invalids.next();
 			PointInTime invalid_t_tilde = this.left_t_tilde.get(invalid);
 			if(invalid_t_tilde.before(invalid.getMetadata().getEnd())){
+				@SuppressWarnings("unchecked")
 				T leftUnbound = this.dataMerge.createLeftFilledUp((T)invalid.clone());
 				leftUnbound.getMetadata().setStart(invalid_t_tilde);
 				transferFunction.transfer(leftUnbound);
@@ -136,6 +139,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			PointInTime e_hat_t_tilde = this.left_t_tilde.get(e_hat);
 			T merged = this.merge(e_hat, object, leftRight);
 			if(merged.getMetadata().getStart().after(e_hat_t_tilde)){
+				@SuppressWarnings("unchecked")
 				T leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat.clone());
 				leftUnbound.getMetadata().setStart(e_hat_t_tilde);
 				leftUnbound.getMetadata().setEnd(merged.getMetadata().getStart());
@@ -182,6 +186,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		 areas[1].clear();
 	 }
 	
+	@Override
 	protected boolean isDone() { 
 		if (getSubscribedTo(0).isDone()) {
 			return getSubscribedTo(1).isDone() || areas[0].isEmpty();

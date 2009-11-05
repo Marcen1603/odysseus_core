@@ -5,8 +5,11 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-@SuppressWarnings("serial")
+@SuppressWarnings("unchecked")
 public class PostPriorisationAO<T> extends UnaryLogicalOp {
+
+	private static final long serialVersionUID = 4238316182706318260L;
+
 	private boolean isActive = true;
 
 	private List predicates;

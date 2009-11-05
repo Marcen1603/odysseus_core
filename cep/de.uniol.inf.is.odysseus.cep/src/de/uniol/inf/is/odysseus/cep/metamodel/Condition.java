@@ -100,6 +100,7 @@ public class Condition {
 		return str;
 	}
 
+	@Override
 	public String toString() {
 		return this.getLabel();
 	}

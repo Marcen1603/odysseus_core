@@ -59,6 +59,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	abstract public OutputMode getOutputMode();
 
+	@Override
 	public void close() {
 		this.delegateSink.close();
 		super.close();

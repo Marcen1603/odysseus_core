@@ -184,7 +184,8 @@ public class SDFInputAttributeBinding extends SDFAttributeBindung {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung#merge(de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung, de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung)
      */
-    public SDFAttributeBindung createMerge(SDFAttributeBindung leftAttributeBinding, SDFAttributeBindung rightAttributeBinding) 
+    @Override
+	public SDFAttributeBindung createMerge(SDFAttributeBindung leftAttributeBinding, SDFAttributeBindung rightAttributeBinding) 
     	throws SDFAttributeBindingNotMergeableException{
         return merge((SDFInputAttributeBinding)leftAttributeBinding ,(SDFInputAttributeBinding)rightAttributeBinding);
     }
@@ -229,6 +230,7 @@ public class SDFInputAttributeBinding extends SDFAttributeBindung {
     }
 
 	
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
 		if (this.necessity.isOptional()) {

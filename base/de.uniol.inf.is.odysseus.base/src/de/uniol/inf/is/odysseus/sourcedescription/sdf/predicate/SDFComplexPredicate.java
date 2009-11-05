@@ -94,6 +94,7 @@ public class SDFComplexPredicate extends SDFPredicate {
 		return op;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString() + " ");
 		if (this.isNegatived) {
@@ -116,11 +117,13 @@ public class SDFComplexPredicate extends SDFPredicate {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFPredicate#getAllAttributes()
 	 */
+	@Override
 	public SDFAttributeList getAllAttributes() {
 		return SDFAttributeList.union(this.left.getAllAttributes(), this.right
 				.getAllAttributes());
 	}
 
+	@Override
 	public SDFAttributeList getAllAttributesWithCompareOperator(
 			SDFCompareOperator op) {
 		return SDFAttributeList.union(left
@@ -128,12 +131,14 @@ public class SDFComplexPredicate extends SDFPredicate {
 				.getAllAttributesWithCompareOperator(op));
 	}
 
+	@Override
 	public void getAllPredicatesWithCompareOperator(SDFCompareOperator op,
 			List<SDFSimplePredicate> resultList) {
 		left.getAllPredicatesWithCompareOperator(op, resultList);
 		right.getAllPredicatesWithCompareOperator(op, resultList);
 	}
 
+	@Override
 	public boolean evaluate(Map<SDFAttribute, Object> attributeAssignment) {
 		boolean val = this.op.evaluate(this.left.evaluate(attributeAssignment),
 				this.right.evaluate(attributeAssignment));
@@ -174,6 +179,7 @@ public class SDFComplexPredicate extends SDFPredicate {
 		xmlRetValue.append("</complexPredicate>\n");
 	}
 
+	@Override
 	public String toSQL() {
 		return "("
 				+ left.toSQL()
@@ -182,10 +188,12 @@ public class SDFComplexPredicate extends SDFPredicate {
 				+ right.toSQL() + ")";
 	}
 
+	@Override
 	public boolean isNegatived() {
 		return isNegatived;
 	}
 
+	@Override
 	public void negate() {
 		this.isNegatived = !this.isNegatived;
 	}

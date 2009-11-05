@@ -6,6 +6,10 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class LiesInPredicate extends AbstractPredicate<IMetaAttributeContainer<? extends ITimeInterval>>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1178472407512980479L;
 	private static final LiesInPredicate instance = new LiesInPredicate();
 	
 	public boolean evaluate(IMetaAttributeContainer<? extends ITimeInterval> left, IMetaAttributeContainer<? extends ITimeInterval> right){
@@ -23,6 +27,7 @@ public class LiesInPredicate extends AbstractPredicate<IMetaAttributeContainer<?
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
 	public LiesInPredicate clone(){
 		return this;
 	}

@@ -259,6 +259,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return end;
 	}
 
+	@Override
 	public String toString() {
 		return "[" + getStart().toString() + "," + getEnd().toString() + ")";
 	}

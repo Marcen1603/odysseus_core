@@ -58,6 +58,7 @@ public class Sum extends SymbolTableOperation {
 		}
 	}
 
+	@Override
 	public String toString(String indent) {
 		String str = indent + "Sum: " + this.hashCode();
 		indent += "  ";

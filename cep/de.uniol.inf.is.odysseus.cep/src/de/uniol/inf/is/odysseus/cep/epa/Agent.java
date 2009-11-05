@@ -13,7 +13,6 @@ import java.util.logging.SimpleFormatter;
 import org.nfunk.jep.JEP;
 import org.nfunk.jep.Variable;
 
-import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.ComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
@@ -180,6 +179,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 				/*
 				 * Über Variablen iterieren und neu belegen.
 				 */
+				@SuppressWarnings("unchecked")
 				Set<String> varNames = transition.getCondition()
 						.getExpression().getSymbolTable().keySet();
 				Iterator<String> varIt = varNames.iterator();
@@ -298,6 +298,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 				for (OutputSchemeEntry entry : this.stateMachine
 						.getOutputScheme().getEntries()) {
 					JEP expr = entry.getExpression();
+					@SuppressWarnings("unchecked")
 					Set<String> varNames = expr.getSymbolTable().keySet();
 					Iterator<String> varIt = varNames.iterator();
 					while (varIt.hasNext()) {

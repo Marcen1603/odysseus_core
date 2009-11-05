@@ -16,6 +16,7 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
+	@SuppressWarnings("unchecked")
 	public void start(BundleContext context) throws Exception {
 		MetadataRegistry.addMetadataType(IntervalProbabilityLatencyPrediction.class, ITimeInterval.class, IProbability.class, ILatency.class, IPredictionFunction.class);
 	}
@@ -24,6 +25,7 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@SuppressWarnings("unchecked")
 	public void stop(BundleContext context) throws Exception {
 		MetadataRegistry.removeCombinedMetadataType(IntervalProbabilityLatencyPrediction.class);
 	}

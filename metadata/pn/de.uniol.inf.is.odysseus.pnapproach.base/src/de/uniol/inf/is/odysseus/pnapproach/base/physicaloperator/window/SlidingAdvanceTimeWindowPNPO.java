@@ -28,13 +28,14 @@ public class SlidingAdvanceTimeWindowPNPO<M extends IPosNeg, T extends IMetaAttr
 		super(name);
 	}
 
+	@Override
 	protected PointInTime calcWindowEnd(PointInTime startTimestamp) {
 		return WindowCalculator.calcSlidingDeltaWindowEnd(startTimestamp, this.windowAdvance, this.windowSize);
 	}
 
 	@Override
 	public SlidingAdvanceTimeWindowPNPO<M, T> clone() {
-		return new SlidingAdvanceTimeWindowPNPO(this);
+		return new SlidingAdvanceTimeWindowPNPO<M,T>(this);
 	}
 
 }

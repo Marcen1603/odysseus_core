@@ -142,6 +142,7 @@ public class SDFQualityNormalization {
         return veryBad;
     }
 
+	@Override
 	public String toString() {
 		return "(" + qualityElement + ", " + veryGood.toString() + ","
 				+ good.toString() + "," + medium.toString() + ", "

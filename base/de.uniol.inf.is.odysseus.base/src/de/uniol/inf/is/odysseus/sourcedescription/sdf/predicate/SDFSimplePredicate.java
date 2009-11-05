@@ -58,6 +58,7 @@ public class SDFSimplePredicate extends SDFPredicate {
 		return this.compareOp;
 	}
 
+	@Override
 	public Object clone() {
 		return new SDFSimplePredicate(this);
 	}
@@ -106,6 +107,7 @@ public class SDFSimplePredicate extends SDFPredicate {
 		return this.rightExpression;
 	}
 
+	@Override
 	public String toString() {
 		return (this.isNegatived ? "NOT (" : "") + this.leftExpression.toString() + " " + this.compareOp.toString()
 				+ " " + this.rightExpression.toString()+(this.isNegatived ? ")" : "");

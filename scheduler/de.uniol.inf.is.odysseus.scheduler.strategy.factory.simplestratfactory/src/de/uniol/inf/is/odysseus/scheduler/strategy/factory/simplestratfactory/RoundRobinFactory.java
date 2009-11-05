@@ -24,6 +24,7 @@ public class RoundRobinFactory extends AbstractSchedulingStrategyFactory {
 		//logger.info("Round Robin Factory created");
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void activate(ComponentContext context){
 		super.activate(context);

@@ -7,14 +7,10 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 
 /**
@@ -31,6 +27,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author Andre Bolles
  *
  */
+
+@SuppressWarnings("unchecked")
 public class LinearProbabilityPredictionFunction<M extends IProbability>
 			extends AbstractPredictionFunction<MVRelationalTuple<M>, M>
 			implements IProbabilityPredictionFunction<MVRelationalTuple<M>, M>{
@@ -153,6 +151,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 //		}
 	}
 	
+	@Override
 	public LinearProbabilityPredictionFunction clone(){
 		return new LinearProbabilityPredictionFunction(this);
 	}

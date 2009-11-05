@@ -74,6 +74,7 @@ public class SuperPeerJxtaImpl extends AbstractSuperPeer {
 
 	}
 
+	@Override
 	public void startNetwork() {
 		if (manager.getNetPeerGroup() == null) {
 			try {

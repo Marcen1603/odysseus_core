@@ -40,6 +40,7 @@ public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>
 		}
 	}
 
+	@Override
 	public final void process_open() {
 	}
 

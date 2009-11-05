@@ -26,8 +26,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.viewer.Activator;
-
 public class XMLDiagramConfiguration implements IDiagramConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger( XMLDiagramConfiguration.class );

@@ -238,6 +238,7 @@ public class DefaultGraphArea extends Composite implements
 		}
 		tree.addMouseListener(new MouseAdapter() {
 
+			@Override
 			public void mouseDown(MouseEvent e) {
 				if (e.button == 1) {
 					leftMouseClicked = true;

@@ -30,6 +30,7 @@ public class JoinAO extends BinaryLogicalOp {
 		super(joinPO);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public synchronized void setPredicate(IPredicate joinPredicate) {
 		super.setPredicate(joinPredicate);

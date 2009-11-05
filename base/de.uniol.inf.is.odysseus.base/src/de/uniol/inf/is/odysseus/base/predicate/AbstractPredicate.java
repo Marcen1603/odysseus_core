@@ -15,6 +15,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	public void init(){
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public AbstractPredicate<T> clone(){
 		try{

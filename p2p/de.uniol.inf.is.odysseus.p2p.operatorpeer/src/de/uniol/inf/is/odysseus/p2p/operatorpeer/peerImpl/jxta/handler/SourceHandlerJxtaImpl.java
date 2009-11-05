@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PSinkPO;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -39,7 +38,6 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
-		P2PSinkPO pipe = null;
 		MetadataCreationPO source = null;
 		// init sources
 		Set<Entry<String, ILogicalOperator>> views = DataDictionary.getInstance()

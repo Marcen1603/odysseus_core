@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * This is an operator for removing duplicates that are valid
@@ -23,13 +23,13 @@ public class DuplicateEliminationPNPO<T extends IMetaAttributeContainer<? extend
 	 * the attributelist to emulate the left schema for the
 	 * equality predicate
 	 */
-	private SDFAttributeList leftPredicateSchema;
+	//private SDFAttributeList leftPredicateSchema;
 	
 	/**
 	 * the attributelist to emulate the right schema for the
 	 * equality predicate
 	 */
-	private SDFAttributeList rightPredicateSchema;
+	//private SDFAttributeList rightPredicateSchema;
 	
 	/**
 	 * the sweep area for this operator;
@@ -62,6 +62,7 @@ public class DuplicateEliminationPNPO<T extends IMetaAttributeContainer<? extend
 		return OutputMode.INPUT;
 	}
 	
+	@Override
 	public synchronized void process_next(T next, int port) {		
 		doPositiveNegative(next);
 	}
@@ -111,6 +112,7 @@ public class DuplicateEliminationPNPO<T extends IMetaAttributeContainer<? extend
 		}
 	}
 	
+	@Override
 	public final void process_open(){
 	}
 	

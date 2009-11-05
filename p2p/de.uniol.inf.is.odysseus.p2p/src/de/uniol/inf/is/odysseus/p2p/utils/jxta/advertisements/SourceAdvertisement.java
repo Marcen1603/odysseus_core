@@ -25,6 +25,7 @@ import net.jxta.id.IDFactory;
  * @author christian
  *
  */
+@SuppressWarnings("unchecked")
 public class SourceAdvertisement extends Advertisement implements
 Serializable, Cloneable, Comparable {
 

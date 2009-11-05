@@ -4,6 +4,7 @@ public class SDFEqualOperator implements SDFCompareOperator {
 	public SDFEqualOperator() {
 	}
 
+	@Override
 	public String toString() {
 		return "==";
 	}

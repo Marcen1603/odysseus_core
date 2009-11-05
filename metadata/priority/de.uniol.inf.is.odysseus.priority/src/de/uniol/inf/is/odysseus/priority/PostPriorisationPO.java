@@ -19,6 +19,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	private PostPriorisationFunctionality<T> functionality;
 
 	
+	@SuppressWarnings("unchecked")
 	public PostPriorisationPO(PostPriorisationAO<T> postAO) {
 		super();
 		this.isActive = postAO.isActive();
@@ -72,6 +73,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		functionality.getPriorisationIntervals().add(time);
 	}
 	
+	@Override
 	public void transfer(T object) {
 		if(isActive) {
 			functionality.executePostPriorisation(object);

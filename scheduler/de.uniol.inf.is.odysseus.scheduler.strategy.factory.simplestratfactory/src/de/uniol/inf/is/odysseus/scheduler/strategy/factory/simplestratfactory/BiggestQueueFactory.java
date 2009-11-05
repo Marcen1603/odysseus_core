@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.im
  */
 public class BiggestQueueFactory extends AbstractSchedulingStrategyFactory {
 
+	@Override
 	protected void activate(ComponentContext context){
 		super.activate(context);
 	}

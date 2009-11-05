@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.iec61970.library.client.service.ICallBack;
 import de.uniol.inf.is.odysseus.iec61970.library.client.service.IShutdownCallBack;
 public class CallBack extends UnicastRemoteObject implements ICallBack{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1656176217561007838L;
 	public static int bufferSize = 1024;
 	private IShutdownCallBack shutdownCallback = null;
 	private long benchMilliSek;

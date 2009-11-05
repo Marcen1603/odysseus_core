@@ -31,9 +31,7 @@ import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpez
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
@@ -187,6 +185,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		this.queries = queries;
 	}
 
+	@Override
 	public void startNetwork() {
 		
 		if (RANDOM_NAME) {
@@ -292,6 +291,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	}
 
+	@Override
 	public void stopNetwork() {
 		manager.stopNetwork();
 	}

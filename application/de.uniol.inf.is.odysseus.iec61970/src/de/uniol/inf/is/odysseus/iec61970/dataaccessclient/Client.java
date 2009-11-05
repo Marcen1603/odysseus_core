@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.iec61970.dataaccessclient;
 
-import java.io.IOException;
+
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.iec61970.dataaccessclient.gui.ApplicationGui;
 import de.uniol.inf.is.odysseus.iec61970.library.client.service.ICallBack;
 import de.uniol.inf.is.odysseus.iec61970.library.client.service.IClient;
 import de.uniol.inf.is.odysseus.iec61970.library.client.service.IShutdownCallBack;
-import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IDescriptionStorage;
+//import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IDescriptionStorage;
 import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceDescriptionIterator;
 import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceID;
 import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceIDService;
@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
  * @author Mart Köhler
  * 
  */
+@SuppressWarnings("unchecked")
 public class Client implements IClient {
 	public static Registry registry = null;
 	public static InitialContext ictx = null;
@@ -45,7 +46,7 @@ public class Client implements IClient {
 	private IServer server;
 	private IFacade facade = null;
 	private static IResourceIDService idService;
-	private static IDescriptionStorage descService;
+	//private static IDescriptionStorage descService;
 	public static boolean hMode;
 
 	public Client() {
@@ -62,7 +63,7 @@ public class Client implements IClient {
 			//Transfer Modus ermitteln
 			hMode = getServer().getTransferMode();
 			idService = (IResourceIDService) ictx.lookup("rmi://" + serverHost + ":" + "1099" + "/hsda_tsda_server/ResourceIDService/");
-			descService = (IDescriptionStorage) ictx.lookup("rmi://" + serverHost + ":" + "1099" + "/hsda_tsda_server/ResourceDescriptionService/");
+			//descService = (IDescriptionStorage) ictx.lookup("rmi://" + serverHost + ":" + "1099" + "/hsda_tsda_server/ResourceDescriptionService/");
 			//wir wollen eine konstante Verbindung aufbauen und später Subscriptions machen
 			//Durch das erzeugen einer Session können wir auf die Facade zugreifen
 			// Wir missbrauchen aber bei der ersten Erzeugung des Session die Schnittstellen, um ein Mapping auf SDF zu realisieren. Danach brauchen wir die Facade quasi nciht mehr, weil
@@ -80,10 +81,7 @@ public class Client implements IClient {
 		} catch (NamingException e) {
 			System.out.println("Host Server nicht erreichbar...");
 			System.exit(0);
-		} catch (IOException e) {
-			System.out.println("I/O Fehler...");
-			System.exit(0);
-		}
+		} 
 	}
 	
 
@@ -119,7 +117,8 @@ public class Client implements IClient {
 			e.printStackTrace();
 		}
 		System.setSecurityManager(new RMISecurityManager());
-		Client client = new Client();
+		//Client client = 
+			new Client();
 	}
 	public static void showDescription(List<IResourceID> list,IResourceDescriptionIterator<StmtIterator> desc) throws RemoteException {
 		for(IResourceID id : list) {

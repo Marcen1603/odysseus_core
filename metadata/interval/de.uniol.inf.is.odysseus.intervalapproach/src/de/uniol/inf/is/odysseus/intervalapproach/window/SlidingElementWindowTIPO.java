@@ -6,7 +6,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractWindowTIPO<T> {
 
@@ -41,10 +40,11 @@ public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInt
 	}
 	
 	@Override
-	public SlidingElementWindowTIPO clone() {
+	public SlidingElementWindowTIPO<T> clone() {
 		return new SlidingElementWindowTIPO<T>(this);
 	}
 	
+	@Override
 	public void process_open(){
 	}
 	

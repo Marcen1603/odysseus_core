@@ -47,6 +47,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
  * 
  */
 public class Server extends UnicastRemoteObject implements IServer {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7094718337597698709L;
 	// RMI Registry globaler Zugriff
 	public static Registry registry = null;
 	// Globaler Zugriff auf die Registry über JNDI

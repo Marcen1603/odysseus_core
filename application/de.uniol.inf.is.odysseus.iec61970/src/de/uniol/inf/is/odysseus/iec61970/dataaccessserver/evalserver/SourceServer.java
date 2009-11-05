@@ -36,7 +36,9 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IServer;
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("unchecked")
 public class SourceServer implements Runnable{
+	@SuppressWarnings("unused")
 	private BufferedReader readFile = null;
 	private SocketChannel socketChannel = null;
 	private ArrayList<Long> ResourceIDContainer;
@@ -46,6 +48,7 @@ public class SourceServer implements Runnable{
 	private InitialContext ictx = null;
 	private IResourceIDService service = null;
 	private IServer server = null;
+	@SuppressWarnings("unused")
 	private Registry registry = null;
 	public long sent = 0;
 	private boolean hMode;
@@ -87,7 +90,7 @@ public class SourceServer implements Runnable{
 			
 			this.quality.add("Good");
 			this.quality.add("Bad");
-			this.hMode = hMode;
+			//this.hMode = hMode;
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (NamingException e) {

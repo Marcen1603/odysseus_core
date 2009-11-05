@@ -16,8 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
-import java.util.Set;
-
 import com.Ostermiller.util.CSVParser;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
@@ -28,7 +26,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
-
 /**
  * Simple server for sending <a
  * href="http://db.csail.mit.edu/labdata/labdata.html">Intel lab data</a>
@@ -57,10 +54,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 public class LabdataServer {
 	private static final String DEFAULT_PROPERTIES_FILE = "labdata_cfg/labdataserver.ini";
 	private static final String DEFAULT_PORT = "55555";
-	@SuppressWarnings("unchecked")
 	private static Object[][] cachedValues = null;
 
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException,
 			ClassNotFoundException {
 		String filename = DEFAULT_PROPERTIES_FILE;
@@ -215,6 +210,7 @@ class TupleHandler extends ClientHandler {
 		super(s, stream, limit, inputFile, cachedValues, accelerationFactor);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
 		System.out.println("|->Connection from " + s.getRemoteSocketAddress());
@@ -281,6 +277,7 @@ class RawHandler extends ClientHandler {
 		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
 		System.out.println("|->Connection from " + s.getRemoteSocketAddress());
@@ -378,8 +375,8 @@ class CSVHandler extends ClientHandler {
 			}
 			oStream = new ObjectOutputStream(s.getOutputStream());
 
-			Long lastTimestamp = null;
-			Long diff = 0L;
+//			Long lastTimestamp = null;
+//			Long diff = 0L;
 			int i = 0;
 			long startDuration = System.nanoTime();
 			CSVParser csvParser = new CSVParser(new FileInputStream(inputFile));

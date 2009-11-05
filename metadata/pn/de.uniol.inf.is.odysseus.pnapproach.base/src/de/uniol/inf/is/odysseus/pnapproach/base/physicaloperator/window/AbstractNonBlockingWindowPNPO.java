@@ -57,6 +57,7 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		// ein neues negatives Element in den Ausgabedatenstrom
 		Iterator<T> negs = this.sa.extractElements(object, Order.LeftRight);
 		while(negs.hasNext()){
+			@SuppressWarnings("unchecked")
 			T neg = (T)negs.next().clone();
 			T modifiedElem = this.dFac.createData(neg);
 			neg.getMetadata().setTimestamp(this.calcWindowEnd(neg.getMetadata().getTimestamp()));
@@ -86,9 +87,12 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		return this.windowAdvance;
 	}
 	
+	@Override
 	public void process_done(){
-		Iterator<T> negs = this.sa.extractAllElements();
+		//Iterator<T> negs = this.sa.extractAllElements();
+		Iterator<T> negs = this.sa.iterator();
 		while(negs.hasNext()){
+			@SuppressWarnings("unchecked")
 			T neg = (T)negs.next().clone();
 			T modifiedElem = this.dFac.createData(neg);
 			neg.getMetadata().setTimestamp(this.calcWindowEnd(neg.getMetadata().getTimestamp()));
@@ -98,6 +102,7 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 			
 			this.transfer(modifiedElem);
 		}
+		sa.clear();
 	}
 
 	protected abstract PointInTime calcWindowEnd(PointInTime startTimestamp);

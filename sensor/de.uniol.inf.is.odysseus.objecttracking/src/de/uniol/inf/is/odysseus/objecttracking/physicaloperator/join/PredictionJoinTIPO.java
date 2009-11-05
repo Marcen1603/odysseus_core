@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
@@ -33,6 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @param <T>
  *            Datentyp
  */
+@SuppressWarnings("unchecked")
 public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredictionFunction, T extends MVRelationalTuple<K>>
 		extends AbstractPipe<T, T> {
 
@@ -280,6 +280,7 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 		System.out.println("Compares: " + RelationalJoinTIMVPredictionSweepArea.compareCounter);
 	}
 
+	@Override
 	protected boolean isDone() {
 		if (getSubscribedTo(0).isDone()) {
 			return getSubscribedTo(1).isDone() || areas[0].isEmpty();

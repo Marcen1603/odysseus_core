@@ -88,6 +88,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		return new RelationalPredicate(this);
 	}
 
+	@Override
 	public String toString() {
 		return this.expression.toString();
 	}

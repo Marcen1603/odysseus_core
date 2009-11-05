@@ -22,6 +22,11 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IItem;
  */
 public class Item extends UnicastRemoteObject implements IItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1581504842664402423L;
+
 	public Item() throws RemoteException {
 		super();
 	}

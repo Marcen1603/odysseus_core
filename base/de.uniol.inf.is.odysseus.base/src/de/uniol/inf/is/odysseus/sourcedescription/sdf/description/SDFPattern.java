@@ -89,6 +89,7 @@ abstract public class SDFPattern extends SDFElement {
 		return allAttribs;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
 		for (int i = 0; i < getAttributeAttributeBindingPairCount(); i++) {

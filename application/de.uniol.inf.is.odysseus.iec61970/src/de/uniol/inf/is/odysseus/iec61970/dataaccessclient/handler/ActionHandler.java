@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.iec61970.library.server.service.IFacade;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-
+@SuppressWarnings("unchecked")
 /**
  * Führt hier bei einer Subscription in der GUI die nötigen Schritte aus, um den entsprechenden Operator zu starten
  * @author Mart Köhler

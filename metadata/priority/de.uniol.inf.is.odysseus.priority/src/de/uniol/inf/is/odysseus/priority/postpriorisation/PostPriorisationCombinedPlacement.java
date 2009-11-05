@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostPriorisation;
@@ -21,12 +20,14 @@ import de.uniol.inf.is.odysseus.priority.postpriorisation.event.PostPriorisation
 public class PostPriorisationCombinedPlacement extends
 		AbstractBufferPlacementStrategy {
 
+	@Override
 	protected void activate(ComponentContext context) {
 		super.activate(context);
 	}
 
 	// add buffer, if we are a binary operator or if the bottom
 	// operator is a binary one
+	@Override
 	protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {

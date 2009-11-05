@@ -99,6 +99,7 @@ public class SWTParameterArea implements ISWTParameterListener {
 			final int EDITABLECOLUMN = 1;
 
 			table.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					// Clean up any previous editor control
 					Control oldEditor = editor.getEditor();

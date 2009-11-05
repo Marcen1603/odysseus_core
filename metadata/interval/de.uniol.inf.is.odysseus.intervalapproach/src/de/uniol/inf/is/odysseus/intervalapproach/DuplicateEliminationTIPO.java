@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * This is an operator for removing duplicates that are valid
@@ -27,13 +27,13 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 	 * the attributelist to emulate the left schema for the
 	 * equality predicate
 	 */
-	private SDFAttributeList leftPredicateSchema;
+	//private SDFAttributeList leftPredicateSchema;
 	
 	/**
 	 * the attributelist to emulate the right schema for the
 	 * equality predicate
 	 */
-	private SDFAttributeList rightPredicateSchema;
+	//private SDFAttributeList rightPredicateSchema;
 	
 	/**
 	 * the sweep area for this operator;
@@ -118,6 +118,7 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 //			// <<<<<<<<<<<<<<<<<<<<<<<<<<
 	}
 	
+	@Override
 	public final void process_open(){
 	}
 	

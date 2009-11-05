@@ -16,14 +16,19 @@ import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IDescription;
 import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceDescriptionIterator;
 import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceID;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.INode;
-import de.uniol.inf.is.odysseus.iec61970.library.server.service.IType;
 
 /**
  * Schnittstelle von Node in HSDA/TSDA
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("unchecked")
 public class Node extends UnicastRemoteObject implements INode {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2084470139577448745L;
 
 	public Node() throws RemoteException {
 		super();
@@ -43,12 +48,12 @@ public class Node extends UnicastRemoteObject implements INode {
 	public IResourceDescriptionIterator<IDescription> findByParent(IResourceID resourceID)
 			throws RemoteException {
 		ArrayList<IDescription> resultList = new ArrayList<IDescription>();
-		boolean exist = false;
-		for(IResourceID elem : ResourceIDService.getInstance().getNodeGroup()) {
-			if(elem.equals(resourceID)) {
-				exist = true;	
-			}
-		}
+//		boolean exist = false;
+//		for(IResourceID elem : ResourceIDService.getInstance().getNodeGroup()) {
+//			if(elem.equals(resourceID)) {
+//				exist = true;	
+//			}
+//		}
 		for(IResourceID elem : ResourceIDService.getInstance().getNodeGroup()) {
 			IDescription desc = DescriptionStorage.getInstance().getDescription(elem);
 			for(String[] dataset : desc.getDescription()) {
@@ -91,18 +96,18 @@ public class Node extends UnicastRemoteObject implements INode {
 	//Es wird die Type ID übergeben und zu einem gebenen Node alle Kinder gesucht, die von diesem Type id sind. TODO: noch richtig zu implementieren. Fraglich, ob das gebraucht wird
 	public IResourceDescriptionIterator<IDescription> findByType(IResourceID typeID)
 				throws RemoteException {
-		ArrayList<IDescription> resultList = new ArrayList<IDescription>();
+		new ArrayList<IDescription>();
 		IDescription typeDesc = DescriptionStorage.getInstance().getDescription(typeID);
 		for(String[] desc: typeDesc.getDescription()) {
 			System.out.println(typeDesc.getSubject(desc) +" "+typeDesc.getPredicate(desc)+ " "+typeDesc.getObject(desc));
 		}
-		IType type = new Type();
-		for(IResourceID instance : ResourceIDService.getInstance().getInstanceGroup()) {
-			IDescription instanceDesc = type.findByInstance(instance);
+//		IType type = new Type();
+//		for(IResourceID instance : ResourceIDService.getInstance().getInstanceGroup()) {
+//			IDescription instanceDesc = type.findByInstance(instance);
 //			for(String[] desc :instanceDesc.getDescription()) {
 //				if(instanceDesc.getSubject(desc).equals())
 //			}
-		}
+//		}
 		
 //		ArrayList<IDescription> resultList = new ArrayList<IDescription>();
 //		URI typeURI = null;

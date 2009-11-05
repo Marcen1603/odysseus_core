@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  *
  * @param <T>
  */
+@SuppressWarnings("unchecked")
 public class RelationalProjectPredictionMVPO<T extends IProbability & IProbabilityPredictionFunction> extends RelationalProjectMVPO<T> {
 
 	

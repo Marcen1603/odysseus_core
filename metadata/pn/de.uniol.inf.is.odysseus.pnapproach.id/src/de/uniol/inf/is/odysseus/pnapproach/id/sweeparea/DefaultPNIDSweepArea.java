@@ -113,6 +113,7 @@ public class DefaultPNIDSweepArea<T extends IMetaAttributeContainer<? extends IP
 	 * If you want to remove elements by inserting a negative element use
 	 * insert(element, null) instead.
 	 */
+	@Override
 	public void insert(T element){
 		super.insert(element);
 	}
@@ -171,7 +172,7 @@ public class DefaultPNIDSweepArea<T extends IMetaAttributeContainer<? extends IP
 	public int insertAndRemovedWrongScheduled(T s){
 		int count = 0;
 		if(s.getMetadata().getElementType() == ElementType.NEGATIVE){
-			T removed = null;
+			//T removed = null;
 			boolean removedWrongScheduled = false;
 			Iterator<T> iter = this.elements.iterator();
 			for(int i = 0; iter.hasNext(); i++){
@@ -181,7 +182,7 @@ public class DefaultPNIDSweepArea<T extends IMetaAttributeContainer<? extends IP
 				if(this.checkIDs(s.getMetadata().getID(), old.getMetadata().getID()) && old.getMetadata().getElementType() == ElementType.POSITIVE &&
 						s.getMetadata().getTimestamp().beforeOrEquals(old.getMetadata().getTimestamp())){
 					iter.remove();
-					removed = old;
+					//removed = old;
 					removedWrongScheduled = true;
 					count++;
 				}

@@ -96,6 +96,7 @@ public abstract class SDFSchemaMapping extends SDFElement {
 		}
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer("SchemaMapping " + super.toString()
 				+ "\n");

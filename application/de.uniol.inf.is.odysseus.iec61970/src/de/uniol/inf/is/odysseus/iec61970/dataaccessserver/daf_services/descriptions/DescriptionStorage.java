@@ -14,6 +14,10 @@ import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceID;
  *
  */
 public class DescriptionStorage extends UnicastRemoteObject implements IDescriptionStorage{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1615974196757752592L;
 	private static DescriptionStorage service = null;
 	private HashMap<IResourceID,IDescription> descriptionStore;
 	

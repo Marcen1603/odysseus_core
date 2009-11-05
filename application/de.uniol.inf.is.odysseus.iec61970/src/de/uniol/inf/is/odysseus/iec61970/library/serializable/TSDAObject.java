@@ -10,7 +10,12 @@ import de.uniol.inf.is.odysseus.iec61970.library.daf_service.IResourceID;
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("unchecked")
 public class TSDAObject implements Serializable, IClone{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -368026762298227727L;
 	private IResourceID id;
 	//value, timestamp, quality
 	private ArrayList<ArrayList> data;
@@ -24,6 +29,7 @@ public class TSDAObject implements Serializable, IClone{
 	public ArrayList<ArrayList> getData() {
 		return data;
 	}
+	@Override
 	public IClone clone() {
 		return new TSDAObject(id,data);
 	}

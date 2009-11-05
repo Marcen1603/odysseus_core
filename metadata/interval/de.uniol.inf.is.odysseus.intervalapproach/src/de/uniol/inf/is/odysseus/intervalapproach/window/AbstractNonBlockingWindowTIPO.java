@@ -4,8 +4,6 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
@@ -24,7 +22,6 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttributeCont
 		return OutputMode.MODIFIED_INPUT;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 		ITimeInterval time = object.getMetadata();
@@ -34,6 +31,7 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttributeCont
 
 	protected abstract PointInTime calcWindowEnd(ITimeInterval interval);
 
+	@Override
 	public void process_open() {
 	}
 

@@ -2,16 +2,12 @@ package de.uniol.inf.is.odysseus.cep.statemachinefactory;
 
 import java.util.LinkedList;
 
-import org.nfunk.jep.JEP;
-import org.nfunk.jep.Node;
-
 import de.uniol.inf.is.odysseus.cep.metamodel.Action;
 import de.uniol.inf.is.odysseus.cep.metamodel.Condition;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.Set;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
-import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;

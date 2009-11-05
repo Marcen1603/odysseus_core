@@ -37,7 +37,8 @@ public class RelationalReader extends AbstractEventReader {
 	public Object getValue(String identifier, Object event) {
 		if (identifier.isEmpty())
 			return null;//Leere Attribut id bei bstimmten Aggregationen (z.B. Count)
-		RelationalTuple tuple = (RelationalTuple) event;
+		
+		RelationalTuple<?> tuple = (RelationalTuple<?>) event;
 		return tuple.getAttribute(this.scheme.get(identifier));
 	}
 

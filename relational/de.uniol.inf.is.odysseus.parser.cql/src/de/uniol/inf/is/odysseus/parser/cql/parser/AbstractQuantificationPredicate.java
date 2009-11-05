@@ -16,6 +16,7 @@ public abstract class AbstractQuantificationPredicate extends AbstractPredicate 
 	}
 
 	/** Accept the visitor. * */
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}

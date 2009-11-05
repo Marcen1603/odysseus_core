@@ -134,7 +134,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 		}
 	}
 
-	private void setIDSizes(ILogicalOperator plan) {
+//	private void setIDSizes(ILogicalOperator plan) {
 		// TODO: Klaeren wof�r die IDSizes notwendig sind, wird das �berhaupt irgendwo genutzt?
 		
 //		for (int i = 0; i < plan.getNumberOfInputs(); i++) {
@@ -165,7 +165,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 //			plan.setInputIDSize(0, plan.getInputAO(0).getOutputIDSize());
 //			plan.setOutputIDSize(plan.getInputIDSize(0));
 //		}
-	}
+//	}
 
 	@Override
 	public String getName() {

@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.base.Subscription;
 
 public class PhysicalSubscription<K> extends Subscription<K> {
 
+	private static final long serialVersionUID = -6266008340674321020L;
 	private boolean done;
 	
 	public PhysicalSubscription(K target, int sinkPort, int sourcePort) {

@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
 
-import java.util.ArrayList;
-
 import net.jxta.endpoint.Message;
-import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
@@ -14,20 +11,19 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 	
 	private ITransformation trafo = null;
 	
+	@SuppressWarnings("unused")
 	private int temporalID;
 	
 	public QueryResultHandlerJxtaImpl(ITransformation trafo) {
 		this.setTrafo(trafo);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void handleQueryResult(Object _msg, Object _namespace) {
 		System.out.println("mach erstmal die transformation");
 		Message msg = (Message) _msg;
@@ -43,10 +39,10 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 		String events = MessageTool.getMessageElementAsString(namespace,
 				"events", msg);
 
-		PipeAdvertisement eventPipe = MessageTool.getResponsePipe(namespace,
+		MessageTool.getResponsePipe(namespace,
 				msg, 0);
 
-		ArrayList<POEventType> eventList = MessageTool.getEvents(events);
+		MessageTool.getEvents(events);
 
 		if (result.equals("granted") || namespace.equals("DoQuery")) {
 			AbstractLogicalOperator ao = (AbstractLogicalOperator) MessageTool.getObjectFromMessage(msg, 0);

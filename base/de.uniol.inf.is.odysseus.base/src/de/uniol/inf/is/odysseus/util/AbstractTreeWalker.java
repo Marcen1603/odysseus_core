@@ -1,10 +1,9 @@
 package de.uniol.inf.is.odysseus.util;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.ISubscribable;
 import de.uniol.inf.is.odysseus.base.ISubscriber;
 import de.uniol.inf.is.odysseus.base.ISubscription;
 
+@SuppressWarnings("unchecked")
 public class AbstractTreeWalker {
 	public static <R,T extends ISubscriber, H extends ISubscription<T>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {
 		visitor.node(node);

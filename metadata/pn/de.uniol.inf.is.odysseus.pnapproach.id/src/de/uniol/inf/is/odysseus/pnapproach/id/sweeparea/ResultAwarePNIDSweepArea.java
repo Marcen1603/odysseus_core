@@ -47,8 +47,6 @@ public class ResultAwarePNIDSweepArea<T extends IMetaAttributeContainer<? extend
 	public int insertAndRemovedWrongScheduled(T s){
 		int count = 0;
 		if(s.getMetadata().getElementType() == ElementType.NEGATIVE){
-			T removed = null;
-			boolean removedWrongScheduled = false;
 			Iterator<T> iter = this.elements.iterator();
 			for(int i = 0; iter.hasNext(); i++){
 				T old = iter.next();
@@ -57,8 +55,6 @@ public class ResultAwarePNIDSweepArea<T extends IMetaAttributeContainer<? extend
 				if(this.checkIDs(s.getMetadata().getID(), old.getMetadata().getID()) && old.getMetadata().getElementType() == ElementType.POSITIVE &&
 						s.getMetadata().getTimestamp().beforeOrEquals(old.getMetadata().getTimestamp())){
 					iter.remove();
-					removed = old;
-					removedWrongScheduled = true;
 					count++;
 				}
 			}

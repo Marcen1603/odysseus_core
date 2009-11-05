@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-import org.w3c.dom.views.AbstractView;
-
-import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -39,9 +36,9 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 	private SDFAttributeList outputSchema;
 
 
-	private int limit;
-	
-	private int counter;
+//	private int limit;
+//	
+//	private int counter;
 
 	private boolean p2p = false;
 	private boolean connectToPipe = false;

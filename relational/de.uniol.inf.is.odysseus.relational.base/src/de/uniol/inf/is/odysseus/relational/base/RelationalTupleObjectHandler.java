@@ -146,7 +146,7 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 	public RelationalTupleObjectHandler<M> clone() {
 		return new RelationalTupleObjectHandler<M>(this);
 	}
-	
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		SDFAttributeList schema = new SDFAttributeList();
 		SDFAttribute a = new SDFAttribute("a_int");
@@ -166,7 +166,8 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 		h.put(1,100l);
 		h.put(2,100.0d);
 		h.put(3,"Hallo Folks");
-		ByteBuffer buffer = h.getByteBuffer();
+			
+		h.getByteBuffer();
 		RelationalTuple<IMetaAttribute> r = h.create();
 		System.out.println(r);
 		

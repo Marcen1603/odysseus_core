@@ -96,6 +96,7 @@ public abstract class SDFSchemaElement extends SDFElement {
         return unit;
     }
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(super.toString());
 //		if (getDatatype() != null)

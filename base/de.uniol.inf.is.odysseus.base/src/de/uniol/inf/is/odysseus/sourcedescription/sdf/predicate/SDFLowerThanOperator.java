@@ -4,6 +4,7 @@ public class SDFLowerThanOperator implements SDFCompareOperator {
 	public SDFLowerThanOperator() {
 	}
 
+	@Override
 	public String toString() {
 		return "<";
 	}

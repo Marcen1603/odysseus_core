@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.iec61970.dataaccessclient.CallBack;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.IFacade;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 
 
@@ -31,7 +30,7 @@ public class IEC61970DataAccessPO<W extends IClone> extends AbstractPipe<ByteBuf
 	private String host;
 	private int port;
 	boolean opened;
-	private boolean hMode;
+	//private boolean hMode;
 	private ISession session;
 	private IFacade facade;
 	private List<String> pathnames;
@@ -216,6 +215,7 @@ public class IEC61970DataAccessPO<W extends IClone> extends AbstractPipe<ByteBuf
 	/**
 	 * Durch stoppen des Routers werden alle Aktivitäten beendet
 	 */
+	@Override
 	public void close() {
 		//			if(!session.getGroups().isEmpty()) {
 //				session.getGroups().get(0).getGroupManager().removeEntry();

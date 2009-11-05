@@ -129,6 +129,7 @@ public class MatchingTrace {
 	/**
 	 * Gibte eine tiefe Kopie des Matchingtrace zurück
 	 */
+	@Override
 	public MatchingTrace clone() {
 		LinkedList<StateBuffer> stateBuffer = new LinkedList<StateBuffer>();
 		for (StateBuffer tmpBuffer : this.stateBuffer) {
