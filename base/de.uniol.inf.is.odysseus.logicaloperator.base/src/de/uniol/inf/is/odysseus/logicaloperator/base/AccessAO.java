@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSettable{
 
-	private static final long serialVersionUID = 6119364096911629084L;
 
+	private static final long serialVersionUID = -5423444612698319659L;
 	/**
 	 * Die Uri der von diesem AccessPO gekapselten Quelle
 	 */
@@ -42,7 +42,7 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 		this.source = po.source;
 		this.port = po.port;
 		this.host = po.host;
-		this.outputSchema = outputSchema.clone();
+		this.outputSchema = po.outputSchema.clone();
 	}
 	
 	public AccessAO(SDFSource source) {
