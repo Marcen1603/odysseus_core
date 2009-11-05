@@ -14,7 +14,7 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 
 	private PipeAdvertisement adv;
 
-	private JxtaSocket socket;
+	private JxtaSocket socket = null;
 
 	private ObjectInputStream iStream;
 
@@ -31,7 +31,7 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 
 	@Override
 	public void run() {
-
+		System.out.println("Bin im StreamHandler Thread");
 		while (socket == null) {
 			try {
 				System.out.println("Bauen Socket auf mit diesem Adv: "+adv.toString());
@@ -58,9 +58,13 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 			try {
 				o = iStream.readObject();
 				if ((o instanceof Integer) && (((Integer) o).equals(0))){
+					System.out.println("lese objekt als Integer");
 					iStream.close();
 					socket.close();
 					break;
+				}
+				else {
+					System.out.println("Lese objekt als was anderes");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

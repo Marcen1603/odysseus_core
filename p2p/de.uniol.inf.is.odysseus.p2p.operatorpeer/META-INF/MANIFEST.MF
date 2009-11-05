@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.p2p.operatorpeer.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.base.wrapper,
+ de.uniol.inf.is.odysseus.interval_latency,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.p2p,

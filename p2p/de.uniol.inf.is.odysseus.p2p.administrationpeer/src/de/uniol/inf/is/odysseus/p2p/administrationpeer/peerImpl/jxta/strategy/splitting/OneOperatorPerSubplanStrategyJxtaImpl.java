@@ -68,7 +68,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 		P2PPipeAO p2ppipe = new P2PPipeAO(current);
 		String adv = createSocketAdvertisement().toString();
 		P2PAccessAO p2paccess = new P2PAccessAO(adv);
-
+		System.out.println("Der Übergebene LogicalOperator im split ist leer? "+(iLogicalOperator==null));
 		AbstractLogicalOperator tempAO = (AbstractLogicalOperator) iLogicalOperator.clone();
 		if (inputCount == 2) {
 			// Wenn es sich um einen Operator mit 2 Eingabeports handelt dann
@@ -109,6 +109,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 				temp = adv;
 			}
 		} else if(inputCount == 0) {
+			System.out.println("splitte hier den plan");
 			//dann sind wir wohl accessao selbst
 			SDFSource source = ((AccessAO) iLogicalOperator).getSource();
 			String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
@@ -116,7 +117,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 			p2paccess.setAdv(sourceAdv);
 			tempAO = p2paccess;
 		}
-		p2ppipe.subscribeTo(tempAO,0,0);
+		p2ppipe.subscribeTo(tempAO,0,0, tempAO.getOutputSchema());
 		System.out.println("das connection pipe für den Thin-Peer am Ende"+p2ppipe.getAdv().toString());
 
 //		this.setIDSizes(p2ppipe);

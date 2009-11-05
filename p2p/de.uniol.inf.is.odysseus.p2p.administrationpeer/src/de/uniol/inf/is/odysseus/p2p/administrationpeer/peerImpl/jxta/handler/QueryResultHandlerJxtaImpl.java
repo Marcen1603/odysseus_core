@@ -122,34 +122,35 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 			// ThinPeer zieht nur die Daten direkt aus der Quelle
 			// Passiert bei Abfragen wie Select * From quelle
 			// also bei Abfragen die nur aus einem AccessAO bestehen.
-//			if (restructPlan instanceof AccessAO) {
-//				System.out.println("ja ist");
-//				SDFSource source = ((AccessAO) restructPlan).getSource();
-//				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
-//						.getSources().get(source.toString()).toString();
-//				PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
-//
-//				Message thinPeerResponse = MessageTool.createSimpleMessage(
-//						"ResultStreaming", "queryId", queryId, MessageTool
-//								.createPipeAdvertisementFromXml(sourceAdv),
-//						peerAdv);
-//				MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(),
-//						AdministrationPeerJxtaImpl.getInstance().getQueries()
-//								.get(queryId).getResponseSocketThinPeer(),
-//						thinPeerResponse);
-//				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
-//						queryId).setStatus(Status.RUN);
-//
-//				Log.setSubplans(queryId, 0);
-//				Log.setSplittingStrategy(queryId, "Keine verwendet");
-//				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
-//						.getQueries().get(queryId).getStatus().toString());
-//
+			if (restructPlan instanceof AccessAO) {
+				System.out.println("ja ist");
+				SDFSource source = ((AccessAO) restructPlan).getSource();
+				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
+						.getSources().get(source.toString()).toString();
+				PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
+
+				Message thinPeerResponse = MessageTool.createSimpleMessage(
+						"ResultStreaming", "queryId", queryId, MessageTool
+								.createPipeAdvertisementFromXml(sourceAdv),
+						peerAdv);
+				MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(),
+						AdministrationPeerJxtaImpl.getInstance().getQueries()
+								.get(queryId).getResponseSocketThinPeer(),
+						thinPeerResponse);
+				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
+						queryId).setStatus(Status.RUN);
+
+				Log.setSubplans(queryId, 0);
+				Log.setSplittingStrategy(queryId, "Keine verwendet");
+				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
+						.getQueries().get(queryId).getStatus().toString());
+				
+
 //				return;
 				
-//			} 
-//			else { 
-//				Log.logAction(queryId, "Plan splitten");
+			} 
+			else { 
+				Log.logAction(queryId, "Plan splitten");
 				ArrayList<AbstractLogicalOperator> splitPlan = AdministrationPeerJxtaImpl.getInstance().splitPlan(restructPlan);
 				System.out.println("split");
 				for(AbstractLogicalOperator op : splitPlan) {
@@ -163,7 +164,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				AdministrationPeerJxtaImpl.getInstance().getQueries().get(
 						queryId).setSubplans(splitPlan);
 
-//			}
+			}
 
 			
 			

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.ITransformation;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.p2p.P2PAccessAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQueryResultHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
@@ -60,6 +62,16 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 			//TODO: Transformationen -> Rewrite
 			//Evtl. eine TansformationConfiguration angeben
 			try {
+				System.out.println("Wie sieht der Teilplan aus?");
+				System.out.println("Access " +ao.toString());
+				for(LogicalSubscription ls : ao.getSubscribedTo()) {
+					System.out.println("SubscribedTo " +ls.getTarget().toString());
+					System.out.println("Das Advertisement ist?"+((P2PAccessAO)ls.getTarget()).getAdv());
+				}
+				for(LogicalSubscription ls : ao.getSubscriptions()) {
+					System.out.println("Subscriptions " +ls.getTarget().toString());
+					
+				}
 				temporalID = OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(ao, new ParameterPriority(2));
 			} catch (PlanManagementException e2) {
 				e2.printStackTrace();
@@ -131,7 +143,6 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 //				if(!OperatorPeerJxtaImpl.getInstance().getExecutor().isRunning()) {
 					System.out.println("starte Ausführung");
 					OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
-					OperatorPeerJxtaImpl.getInstance().getExecutor().startQuery(temporalID);
 //				}
 			} catch (PlanManagementException e) {
 				e.printStackTrace();

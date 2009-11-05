@@ -85,6 +85,7 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 												"ResultStreaming", "queryId",
 												msg));
 						Thread t = new Thread(shandler);
+						System.out.println("will StreamHandler Thread ausführen");
 						t.start();
 					}
 					if (namespace.equals("QueryFailed")) {

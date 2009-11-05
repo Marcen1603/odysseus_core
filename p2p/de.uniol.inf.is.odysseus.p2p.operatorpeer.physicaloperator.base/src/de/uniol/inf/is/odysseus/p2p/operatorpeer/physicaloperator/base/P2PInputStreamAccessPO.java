@@ -14,9 +14,12 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IDataTransformation;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
+
 
 public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> extends
-		AbstractIterableSource<Out> implements IP2PInputPO {
+		AbstractIterableSource<Out> {
 
 	private PipeAdvertisement adv;
 
@@ -55,7 +58,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 			while (socket == null) {
 				try {
 					socket = new JxtaSocket(getPeerGroup(), null, adv, 8000, true);
-					System.out.println("JxtaSocket erzeugt");
+					System.out.println("JxtaSocket erzeugt "+adv.toString());
 					break;
 				} catch (IOException e2) {
 					// Timeout passiert weil ein anderer Peer seinen
@@ -84,6 +87,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 	
 	@Override
 	protected void process_open() throws OpenFailedException {
+		System.out.println("Process open p2pInput--------------------------------------------------------------");
 		con = new ConnectionHandler();
 		con.start();
 	}
@@ -91,6 +95,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized boolean hasNext() {
+		System.out.println("HAS NEXT P2PInput?");
 		if (socket == null) {
 //			if (con == null || !con.isAlive()) {
 //				con = new ConnectionHandler();
@@ -114,6 +119,8 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 			if ((o instanceof Integer) && (((Integer) o).equals(0))){
 				propagateDone();
 				return false;
+			} else if(o instanceof String){
+				System.out.println("TestDaten erhalten");
 			}
 			
 			In inElem = (In) o;
@@ -147,7 +154,9 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 
 	@Override
 	public synchronized void transferNext() {
-		if (buffer != null){
+		System.out.println("Transferiere aber---------------------------------------------------");
+//		if (buffer != null){
+		if(hasNext()) {
 			transfer(buffer);
 			
 		}
@@ -172,16 +181,11 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> 
 
 	public void setConnectedToPipe(boolean connectToPipe) {
 		if(connectToPipe) {
-			System.out.println("ConnectToPipe auf true gesetzt bei Adv " +adv.toString());
+			System.out.println("ConnectToPipe auf true gesetzt bei InputStreamAccess Adv " +adv.toString());
 		}
 		this.connectToPipe = connectToPipe;
 	}
 
-	@Override
-	public void setP2P(boolean p2p) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public PeerGroup getPeerGroup() {
 		return peerGroup;

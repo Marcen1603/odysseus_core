@@ -60,11 +60,10 @@ public class P2PSocketInputStreamAccessPO<In, Out extends IMetaAttributeContaine
 	@SuppressWarnings("unchecked")
 	@Override
 	final synchronized public boolean hasNext() {
-		System.out.println("HASNEXT");
 		if (p2p) {
-			if (!connectToPipe) {
-				return false;
-			}
+//			if (!connectToPipe) {
+//				return false;
+//			}
 			if (this.iStream == null) {
 				Socket s;
 				while (true) {
@@ -72,6 +71,7 @@ public class P2PSocketInputStreamAccessPO<In, Out extends IMetaAttributeContaine
 						s = new Socket(host, port);
 						System.out.println("Host: "+host+" Port: "+port);
 						this.iStream = new ObjectInputStream(s.getInputStream());
+						
 					} catch (Exception e) {
 						// throw new OpenFailedException(e.getMessage());
 						System.err
@@ -94,7 +94,9 @@ public class P2PSocketInputStreamAccessPO<In, Out extends IMetaAttributeContaine
 			return true;
 		}
 		try {
+			System.out.println("Lese Objekt aus dem Datenstrom");
 			In inElem = (In) this.iStream.readObject();
+			System.err.println("hier");
 			if (inElem == null) {
 				// TODO: Darf eigentlich gar nicht sein ...
 				throw new Exception("null element from socket");
@@ -131,6 +133,7 @@ public class P2PSocketInputStreamAccessPO<In, Out extends IMetaAttributeContaine
 				throw new NoSuchElementException();
 			}
 		}
+		System.out.println("transferiere buffer aus p2psocketinputstream....");
 		transfer(buffer);
 		buffer = null;
 	}
