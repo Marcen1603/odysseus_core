@@ -239,6 +239,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		prediction.subscribeTo(inputForPrediction, inputForPrediction.getOutputSchema());
 		
+		// Now, since the input schema for this operator is available , we
+		// can initialize the restrict list for the operator that contains
+		// the positions of the measurement attributes in the schema
+		prediction.initRestrictList();
+		
 		for(int i = 1; i<node.jjtGetNumChildren(); i++){
 			
 			// handle the standard prediction definitions
