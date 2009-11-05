@@ -15,12 +15,6 @@ AbstractIterableSource<Out>{
 	protected Out buffer;
 	protected boolean done = false;
 	
-	public AbstractInputStreamAccessPO(ObjectInputStream iStream,
-			IDataTransformation<In, Out> transformation) {
-		this.iStream = iStream;
-		this.transformation = transformation;
-	}
-	
 	public AbstractInputStreamAccessPO(IDataTransformation<In, Out> transformation) {
 		this.transformation = transformation;
 	}

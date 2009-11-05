@@ -13,11 +13,6 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 	private String host;
 	private int port;
 
-	public InputStreamAccessPO(ObjectInputStream iStream,
-			IDataTransformation<In, Out> transformation) {
-		super(iStream,transformation);
-	}
-
 	public InputStreamAccessPO(String host, int port,
 			IDataTransformation<In, Out> transformation) {
 		super(transformation);
