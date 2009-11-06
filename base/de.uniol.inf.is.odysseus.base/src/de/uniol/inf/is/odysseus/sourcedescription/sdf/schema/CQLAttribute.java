@@ -24,6 +24,19 @@ public class CQLAttribute extends SDFAttribute {
 		this.attributeName = attributeName;
 	}
 
+	public CQLAttribute(String sourceAndAttributeName){
+		super(sourceAndAttributeName);
+		int pointPos = sourceAndAttributeName.lastIndexOf(".");
+		if (pointPos > 0){
+			this.sourceName = sourceAndAttributeName.substring(0,pointPos);
+			this.attributeName = sourceAndAttributeName.substring(pointPos+1);
+		}else{
+			this.sourceName = null;
+			this.attributeName = sourceAndAttributeName;
+		}
+		
+	}
+	
 	public CQLAttribute(CQLAttribute attribute) {
 		super(attribute);
 		this.sourceName = attribute.sourceName;
@@ -87,5 +100,13 @@ public class CQLAttribute extends SDFAttribute {
 			}
 		} 
 		return this.attributeName.equals(attr.attributeName);
+	}
+
+	public static void main(String[] args) {
+		String test = "Marco.Grawunder.Test";
+		CQLAttribute attr = new CQLAttribute(test);
+		System.out.println(attr.getSourceName());
+		System.out.println(attr.getAttributeName());
+		
 	}
 }
