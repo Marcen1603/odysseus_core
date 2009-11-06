@@ -8,4 +8,5 @@ public interface ILatency extends IMetaAttribute{
 	public long getLatencyStart();
 	public long getLatencyEnd();
 	public long getLatency();
+	public ILatency clone();
 }

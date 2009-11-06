@@ -6,8 +6,7 @@ public class Latency implements ILatency{
 	private long lend;
 	
 	public Latency(){
-		this.lstart = 0;
-		this.lend = 0;
+		this.lstart = System.nanoTime();
 	}
 	
 	public Latency(long start, long end){
