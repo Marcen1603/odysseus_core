@@ -37,9 +37,15 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
 
 		// if a logical rewrite should be processed.
+		ILogicalOperator sealedLogicalPlan = query
+				.getSealedLogicalPlan();
+		
+		if (sealedLogicalPlan == null) {
+			return;
+		}
+		
 		if (restruct != null && restruct == ParameterDoRestruct.TRUE) {
-			ILogicalOperator newLogicalAlgebra = compiler.restructPlan(query
-					.getSealedLogicalPlan());
+			ILogicalOperator newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan);
 			// set new logical plan.
 			query.setLogicalPlan(newLogicalAlgebra);
 		}
@@ -53,8 +59,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		if (query.getSealedRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
 		try {
 				// create the physical plan
-				IPhysicalOperator physicalPlan = compiler.transform(query
-						.getSealedLogicalPlan(), query.getBuildParameter()
+				IPhysicalOperator physicalPlan = compiler.transform(sealedLogicalPlan, query.getBuildParameter()
 						.getTransformationConfiguration());
 
 				IBufferPlacementStrategy bufferPlacementStrategy = query
