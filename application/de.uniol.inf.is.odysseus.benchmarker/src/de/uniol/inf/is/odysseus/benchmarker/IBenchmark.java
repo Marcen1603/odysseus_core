@@ -11,6 +11,7 @@ public interface IBenchmark {
 	public void setOption(String name, Object value);	
 	public void setResultFactory(String className);
 	public void setMaxResults(long maxresults);
+	public String[] getMetadataTypes();
 	
 	public <T> IBenchmarkResult<T> runBenchmark() throws BenchmarkException;
 }
