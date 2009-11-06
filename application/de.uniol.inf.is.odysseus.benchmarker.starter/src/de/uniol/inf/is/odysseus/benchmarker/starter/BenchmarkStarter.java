@@ -12,9 +12,9 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
-import de.jonasjacobi.Args;
-import de.jonasjacobi.ArgsException;
-import de.jonasjacobi.Args.REQUIREMENT;
+import de.uniol.inf.is.odysseus.args.Args;
+import de.uniol.inf.is.odysseus.args.ArgsException;
+import de.uniol.inf.is.odysseus.args.Args.REQUIREMENT;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 
