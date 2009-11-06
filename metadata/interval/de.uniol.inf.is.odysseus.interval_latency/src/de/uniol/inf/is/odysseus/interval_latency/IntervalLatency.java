@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.interval_latency;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.latency.Latency;
 
 /**
  * @author Jonas Jacobi
@@ -9,44 +10,41 @@ import de.uniol.inf.is.odysseus.latency.ILatency;
 public class IntervalLatency extends TimeInterval implements ILatency {
 
 	private static final long serialVersionUID = -3129934770814427153L;
-	private long start;
-	private long end;
+	private final ILatency latency;
 	
 	public IntervalLatency() {
-		super();
-		this.start = 0;
-		this.end = 0;
+		latency = new Latency();
 	}
+	
 
 	public IntervalLatency(IntervalLatency clone) {
 		super(clone);
-		this.start = clone.start;
-		this.end = clone.end;
+		this.latency = clone.latency.clone();
 	}
 	
 	@Override
-	public long getLatency() {
-		return end - start;
+	public final long getLatency() {
+		return latency.getLatency();
 	}
 
 	@Override
-	public long getLatencyEnd() {
-		return end;
+	public final long getLatencyEnd() {
+		return latency.getLatencyEnd();
 	}
 
 	@Override
-	public long getLatencyStart() {
-		return start;
+	public final long getLatencyStart() {
+		return latency.getLatencyStart();
 	}
 
 	@Override
-	public void setLatencyEnd(long timestamp) {
-		end = timestamp;
+	public final void setLatencyEnd(long timestamp) {
+		latency.setLatencyEnd(timestamp);
 	}
 
 	@Override
-	public void setLatencyStart(long timestamp) {
-		start = timestamp;
+	public final void setLatencyStart(long timestamp) {
+		latency.setLatencyStart(timestamp);
 	}
 
 	@Override
