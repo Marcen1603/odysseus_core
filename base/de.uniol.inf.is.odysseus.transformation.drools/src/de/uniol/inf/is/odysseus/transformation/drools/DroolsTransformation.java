@@ -7,10 +7,8 @@ import java.util.NoSuchElementException;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
-//import org.drools.audit.WorkingMemoryConsoleLogger;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +21,8 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
@@ -38,37 +38,37 @@ public class DroolsTransformation implements ITransformation {
 	// Dieses hier ist ein Hack damit das Drools-Plugin keine Fehler liefert!
 	private void error(String message) {
 		initLogger();
-		if (_logger != null){
+		if (_logger != null) {
 			_logger.error(message);
 		}
 	}
-	
-	private static void info(String info){
+
+	private static void info(String info) {
 		initLogger();
-		if (_logger != null){
+		if (_logger != null) {
 			_logger.info(info);
 		}
 	}
-	
-	private static Logger initLogger(){
-		try{
+
+	private static Logger initLogger() {
+		try {
 			_logger = LoggerFactory.getLogger(LOGGER_NAME);
 			return _logger;
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	private boolean isInfoEnabled() {
 		initLogger();
-		if (_logger != null){
+		if (_logger != null) {
 			return _logger.isInfoEnabled();
-		}else{
+		} else {
 			return false;
 		}
 	}
-	
+
 	private static void addLogicalOperatorToSession(StatefulSession session,
 			ILogicalOperator op, List<ILogicalOperator> inserted) {
 		if (op == null) {
@@ -76,7 +76,7 @@ public class DroolsTransformation implements ITransformation {
 		}
 
 		if (!inserted.contains(op)) {
-			info("insert into wm: "+op);
+			info("insert into wm: " + op);
 			session.insert(op);
 			inserted.add(op);
 
@@ -101,8 +101,6 @@ public class DroolsTransformation implements ITransformation {
 		}
 	}
 
-
-
 	@Override
 	public IPhysicalOperator transform(ILogicalOperator op,
 			TransformationConfiguration config) throws TransformationException {
@@ -118,18 +116,18 @@ public class DroolsTransformation implements ITransformation {
 			info("transformation of: "
 					+ AbstractTreeWalker.prefixWalk(top,
 							new AlgebraPlanToStringVisitor()));
-			info("added to working memory "+list);
+			info("added to working memory " + list);
 		}
 
 		session.insert(this);
 		session.startProcess("flow");
 
-//		 WorkingMemoryConsoleLogger lg = new
-//		 WorkingMemoryConsoleLogger(session);
-//		 lg.clearFilters();
+		// WorkingMemoryConsoleLogger lg = new
+		// WorkingMemoryConsoleLogger(session);
+		// lg.clearFilters();
 
 		session.fireAllRules();
-		IPhysicalOperator physicalPO = null; 
+		IPhysicalOperator physicalPO = null;
 		try {
 			physicalPO = top.getPhysicalInput();
 		} catch (NoSuchElementException e) {
@@ -142,12 +140,25 @@ public class DroolsTransformation implements ITransformation {
 		}
 		session.dispose();
 		if (isInfoEnabled()) {
-			info("transformation result: info not yet implemented: "
-					+ physicalPO);
+			info("transformation result: " + planToString(physicalPO, ""));
 		}
 		op.unsubscribe(top, 0, 0);
 		return physicalPO;
 	}
 
+	@SuppressWarnings("unchecked")
+	private String planToString(IPhysicalOperator physicalPO, String indent) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(indent);
+		builder.append(physicalPO);
+		builder.append('\n');
+		if (physicalPO.isSink()) {
+			for (PhysicalSubscription sub : ((ISink<?>) physicalPO)
+					.getSubscribedTo()) {
+				builder.append(planToString((IPhysicalOperator) sub.getTarget(), "  " + indent));
+			}
+		}
+		return builder.toString();
+	}
 
 }
