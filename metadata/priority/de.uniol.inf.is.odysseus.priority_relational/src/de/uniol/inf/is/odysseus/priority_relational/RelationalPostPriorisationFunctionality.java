@@ -21,6 +21,8 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 	private List<IPredicate<? super T>> joinFragment = null;
 
 	private boolean deactivate = false;
+	
+	private Byte currentPriority = null;
 
 	public List<IPredicate<? super T>> getJoinFragment() {
 		return joinFragment;
@@ -30,7 +32,7 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 		this.joinFragment = fragment;
 	}
 
-	private List<ITimeInterval> priorisationIntervals = new ArrayList<ITimeInterval>();
+	private List<IMetaAttributeContainer<? extends IPriority>> priorisationIntervals = new ArrayList<IMetaAttributeContainer<? extends IPriority>>();
 
 	private IPostPriorisationPipe<T> pipe;
 
@@ -44,14 +46,16 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 
 	public boolean hasToBePrefered(ITimeInterval current) {
 
-		Iterator<ITimeInterval> it = priorisationIntervals.iterator();
-
-		boolean result = false;
+		Iterator<IMetaAttributeContainer<? extends IPriority>> it = priorisationIntervals.iterator();
 
 		while (it.hasNext()) {
-			ITimeInterval each = it.next();
+			
+			IMetaAttributeContainer<? extends IPriority> next = it.next();
+			
+			ITimeInterval each = (ITimeInterval) next.getMetadata();
 			if (TimeInterval.inside(current, each)) {
-				result = true;
+				currentPriority = new Byte(((IPriority) next.getMetadata()).getPriority());
+				return true;
 			} else if (TimeInterval.startsBefore(each, current)) {
 				it.remove();
 			}
@@ -61,17 +65,16 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 		if (priorisationIntervals.size() == 0) {
 			deactivate = true;
 		}
-
-		return result;
+		return false;
 	}
 
-	public List<ITimeInterval> getPriorisationIntervals() {
+	public List<IMetaAttributeContainer<? extends IPriority>> getPriorisationIntervals() {
 		pipe.setActive(true);
 		return priorisationIntervals;
 	}
 
 	public void setPriorisationIntervals(
-			List<ITimeInterval> priorisationIntervals) {
+			List<IMetaAttributeContainer<? extends IPriority>> priorisationIntervals) {
 		this.priorisationIntervals = priorisationIntervals;
 	}
 
@@ -84,7 +87,7 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 		deactivate = false;
 
 		ITimeInterval currentInterval = (ITimeInterval) next.getMetadata();
-
+		
 		if (hasToBePrefered(currentInterval)) {
 
 			boolean cancelPostPriorisation = false;
@@ -121,6 +124,12 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 
 				}
 			}
+
+			if(currentPriority == null) {
+				return;
+			}
+
+			next.getMetadata().setPriority(currentPriority);
 
 			if (!cancelPostPriorisation) {
 				pipe.handlePostPriorisation(next, deactivate, matchPredicate);

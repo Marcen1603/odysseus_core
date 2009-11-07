@@ -12,23 +12,23 @@ public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPri
 extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
  
 	private boolean isActive = true;
-	private byte defaultPriority;
 	private PriorityPO<?> priorisationOwner = null;
 	
 
-	private IPostPriorisationFunctionality<T> functionality;
+	@SuppressWarnings("unchecked")
+	private IPostPriorisationFunctionality functionality;
 	@SuppressWarnings("unchecked")
 	private List predicates;
 
 	
-	public IPostPriorisationFunctionality<T> getPostPriorisationFunctionality() {
+	@SuppressWarnings("unchecked")
+	public IPostPriorisationFunctionality getPostPriorisationFunctionality() {
 		return functionality;
 	}
 	
 	public PostPriorisationPO(PostPriorisationAO<T> postAO) {
 		super();
 		this.isActive = postAO.isActive();
-		this.defaultPriority = postAO.getDefaultPriority();
 		this.predicates = postAO.getPredicates();
 	}	
 	
@@ -62,7 +62,6 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	@Override	
 	public void handlePostPriorisation(T next, boolean deactivate,
 			boolean matchPredicate) {
-		next.getMetadata().setPriority((byte) (defaultPriority+1));
 
 		ITimeInterval time = (ITimeInterval) next.getMetadata();
 		sendPunctuation(time.getStart());
@@ -78,11 +77,9 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		return true;
 	}
 
-	@Override	
-	public void addTimeInterval(ITimeInterval time) {
-		functionality.getPriorisationIntervals().add(time);
-	}
+
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void transfer(T object) {
 		if(isActive) {
@@ -96,6 +93,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setJoinFragment(List<IPredicate<? super T>> fragment) {
 		functionality.setJoinFragment(fragment);
@@ -112,9 +110,17 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IPredicate<? super T>> getJoinFragment() {
 		return functionality.getJoinFragment();
-	};		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
+		functionality.getPriorisationIntervals().add(time);
+	}
+
 
 }

@@ -60,7 +60,7 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 				}
 				
 				for (IPostPriorisationPipe<?> each : copartners) {
-					each.addTimeInterval(time);
+					each.addTimeInterval((IMetaAttributeContainer<?>)next);
 				}
 				
 				return;

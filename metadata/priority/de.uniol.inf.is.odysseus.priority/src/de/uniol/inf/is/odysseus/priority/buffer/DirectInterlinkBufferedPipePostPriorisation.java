@@ -23,7 +23,6 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	Lock directLinkLock = new ReentrantLock();
 
 	private boolean isActive = true;
-	private byte defaultPriority;
 	private PriorityPO<?> priorisationOwner = null;
 	@SuppressWarnings("unchecked")
 	private IPostPriorisationFunctionality functionality;
@@ -91,7 +90,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addTimeInterval(ITimeInterval time) {
+	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
 		if (functionality != null) {
 			functionality.getPriorisationIntervals().add(time);
 
@@ -112,7 +111,6 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	public void handlePostPriorisation(
 			IMetaAttributeContainer<? extends IPriority> next,
 			boolean deactivate, boolean matchPredicate) {
-		next.getMetadata().setPriority((byte) (defaultPriority + 1));
 
 		ITimeInterval time = (ITimeInterval) next.getMetadata();
 		sendPunctuation(time.getStart());
@@ -151,9 +149,6 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 		return functionality.getJoinFragment();
 	};
 
-	public void setDefaultPriority(byte priority) {
-		this.defaultPriority = priority;
-	}
 
 	@Override
 	public void setPostPriorisationFunctionality(

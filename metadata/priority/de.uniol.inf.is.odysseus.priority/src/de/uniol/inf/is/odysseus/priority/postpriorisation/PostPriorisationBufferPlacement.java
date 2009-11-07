@@ -77,8 +77,6 @@ public class PostPriorisationBufferPlacement extends
 						postBuf.setJoinFragment(postPO.getJoinFragment());	
 						
 						PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
-						postBuf.setDefaultPriority(prioPO.getDefaultPriority());
-						
 						Iterator itCopartners = prioPO.getCopartners().iterator();
 						
 						while(itCopartners.hasNext()) {

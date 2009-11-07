@@ -10,10 +10,10 @@ public interface IPostPriorisationPipe<T extends IMetaAttributeContainer<? exten
 	public void handlePostPriorisation(T next, boolean deactivate, boolean matchPredicate);
 	public void setJoinFragment(List<IPredicate<? super T>> fragment);
 	public List<IPredicate<? super T>> getJoinFragment();
-	public void addTimeInterval(ITimeInterval time);
 	public boolean isActive();
 	public void setActive(boolean active);
 	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO);
 	public PriorityPO<?> getPhysicalPostPriorisationRoot();
 	public void setPostPriorisationFunctionality(IPostPriorisationFunctionality<T> functionality);
+	public void addTimeInterval(IMetaAttributeContainer<?> next);
 }
