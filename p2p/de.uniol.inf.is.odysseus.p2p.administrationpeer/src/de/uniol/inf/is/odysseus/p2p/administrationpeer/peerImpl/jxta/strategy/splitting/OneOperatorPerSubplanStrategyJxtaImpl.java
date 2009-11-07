@@ -88,8 +88,8 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 //				p2paccess2.setAdv(sourceAdv);
 //			}
 
-			tempAO.subscribeTo(p2paccess,0,0);
-			tempAO.subscribeTo(p2paccess2,1,0);
+			tempAO.subscribeTo(p2paccess,0,0, tempAO.getOutputSchema());
+			tempAO.subscribeTo(p2paccess2,1,0, tempAO.getOutputSchema());
 		} else if(outputCount == 1){
 			// Wenn der naechste Operator ein AccessAO ist dann kann dieser
 			// Operator uebersprungen werden
@@ -101,7 +101,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 //				tempAO.subscribeTo(p2paccess,0,0);
 //				temp = adv;
 //			} else {
-				tempAO.subscribeTo(p2paccess,0,0);
+				tempAO.subscribeTo(p2paccess,0,0, tempAO.getOutputSchema());
 				temp = adv;
 //			}
 		  // Wir befinden uns bei der Source. Zur Sicherheit nochmal geprüft

@@ -196,7 +196,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 						{
 							query = new JTextArea();
 							jPanel1.add(query);
-							query.setText("select * from nexmark:person");
+							query.setText("select * from nexmark:person2");
 							query.setBounds(12, 35, 287, 292);
 						}
 						{

@@ -152,10 +152,10 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 			
 			//TODO: erste p2psink ist immer mit dem Adv des thinpeers bestückt, alle anderen können eine eigene bekommen
 			
-				Log.logAction(queryId, "Plan splitten");
+				Log.logAction(queryId, "Operatorplan aufteilen");
 				ArrayList<AbstractLogicalOperator> splitPlan = AdministrationPeerJxtaImpl.getInstance().splitPlan(restructPlan);
 				AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId).setSubplans(splitPlan);
-				
+				Log.logAction(queryId, "Operatorplan in "+splitPlan.size()+" Teile aufgeteilt");
 				Log.setSubplans(queryId, splitPlan.size());
 				Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl.getInstance().getSplitter().getName());
 				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
