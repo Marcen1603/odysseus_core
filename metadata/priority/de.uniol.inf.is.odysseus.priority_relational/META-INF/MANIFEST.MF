@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Priority_interval
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.priority_relational
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.predicate,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.priority,
+ de.uniol.inf.is.odysseus.relational.base.predicate,
+ org.osgi.framework;version="1.5.0",
+ org.slf4j;version="1.5.6"
+Export-Package: de.uniol.inf.is.odysseus.priority_relational
