@@ -15,4 +15,5 @@ public interface IPostPriorisationPipe<T extends IMetaAttributeContainer<? exten
 	public void setActive(boolean active);
 	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO);
 	public PriorityPO<?> getPhysicalPostPriorisationRoot();
+	public void setPostPriorisationFunctionality(IPostPriorisationFunctionality<T> functionality);
 }

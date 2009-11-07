@@ -14,6 +14,8 @@ public class PostPriorisationAO<T> extends UnaryLogicalOp {
 
 	private List predicates;
 	
+	private IPostPriorisationFunctionality postPriorisationFunctionality;
+	
 	public boolean isActive() {
 		return isActive;
 	}
@@ -43,6 +45,15 @@ public class PostPriorisationAO<T> extends UnaryLogicalOp {
 
 	public List getPredicates() {
 		return predicates;
+	}
+
+	public void setPostPriorisationFunctionality(
+			IPostPriorisationFunctionality postPriorisationFunctionality) {
+		this.postPriorisationFunctionality = postPriorisationFunctionality;
+	}
+
+	public IPostPriorisationFunctionality getPostPriorisationFunctionality() {
+		return postPriorisationFunctionality;
 	}	
 	
 }

@@ -12,37 +12,32 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import de.uniol.inf.is.odysseus.priority.IPostPriorisationFunctionality;
 import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.priority.PostPriorisationFunctionality;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 
 public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttributeContainer<? extends IPriority>>
-		extends AbstractPunctuationBuffer<T,T> implements IPostPriorisationPipe<IMetaAttributeContainer<? extends IPriority>> {
+		extends AbstractPunctuationBuffer<T, T> implements
+		IPostPriorisationPipe<IMetaAttributeContainer<? extends IPriority>> {
 	Lock directLinkLock = new ReentrantLock();
-	
+
 	private boolean isActive = true;
 	private byte defaultPriority;
-	private PriorityPO<?> priorisationOwner = null;	
+	private PriorityPO<?> priorisationOwner = null;
 	@SuppressWarnings("unchecked")
-	private PostPriorisationFunctionality functionality;
-	
-	@Override	
+	private IPostPriorisationFunctionality functionality;
+
+	@Override
 	public boolean isActive() {
 		return isActive;
 	}
-	
-	@Override	
+
+	@Override
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
-	}		
-	
-	@SuppressWarnings("unchecked")
-	public DirectInterlinkBufferedPipePostPriorisation() {
-		this.functionality = new PostPriorisationFunctionality(this);
 	}
-	
-	
+
 	@Override
 	public void transferNext() {
 		directLinkLock.lock();
@@ -54,29 +49,29 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	final protected synchronized void process_next(T object, int port) {
-		
+
 		storage.setCurrentPort(port);
-		
-		if(isActive()) {
+
+		if (isActive() && functionality != null) {
 			functionality.executePostPriorisation(object);
 		}
-		
+
 		sendElement(object);
 
 	}
-	
+
 	public void sendElement(T object) {
 		byte prio = object.getMetadata().getPriority();
-		
+
 		// Load Shedding
-		if (prio < 0){
+		if (prio < 0) {
 			return;
 		}
-		
+
 		if (prio > 0) {
 			directLinkLock.lock();
 			transfer(object);
@@ -95,44 +90,47 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override	
+	@Override
 	public void addTimeInterval(ITimeInterval time) {
-		functionality.getPriorisationIntervals().add(time);
-		
-		Iterator<T> it = buffer.iterator();
-		
-		// Puffer bei jeder potenziellen Nachpriorisierung nachpriorisieren
-		while(it.hasNext()) {
-			T object = it.next();
-			functionality.executePostPriorisation(object);
-			if(object.getMetadata().getPriority() > 0) {
-				sendElement(object);
+		if (functionality != null) {
+			functionality.getPriorisationIntervals().add(time);
+
+			Iterator<T> it = buffer.iterator();
+
+			// Puffer bei jeder potenziellen Nachpriorisierung nachpriorisieren
+			while (it.hasNext()) {
+				T object = it.next();
+				functionality.executePostPriorisation(object);
+				if (object.getMetadata().getPriority() > 0) {
+					sendElement(object);
+				}
 			}
 		}
 	}
 
-
-	@Override	
-	public void handlePostPriorisation(IMetaAttributeContainer<? extends IPriority> next, boolean deactivate,
-			boolean matchPredicate) {
-		next.getMetadata().setPriority((byte) (defaultPriority+1));
+	@Override
+	public void handlePostPriorisation(
+			IMetaAttributeContainer<? extends IPriority> next,
+			boolean deactivate, boolean matchPredicate) {
+		next.getMetadata().setPriority((byte) (defaultPriority + 1));
 
 		ITimeInterval time = (ITimeInterval) next.getMetadata();
 		sendPunctuation(time.getStart());
-		
-		if(deactivate) {
+
+		if (deactivate) {
 			this.setActive(false);
 		}
 		
-		if(matchPredicate) {
+		if (matchPredicate) {
 			fire(new POEvent(this, POEventType.PostPriorisation));
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setJoinFragment(List<IPredicate<? super IMetaAttributeContainer<? extends IPriority>>> fragment) {
+	public void setJoinFragment(
+			List<IPredicate<? super IMetaAttributeContainer<? extends IPriority>>> fragment) {
 		functionality.setJoinFragment(fragment);
 	}
 
@@ -144,7 +142,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override
 	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO) {
 		priorisationOwner = priorityPO;
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -152,9 +150,16 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	public List<IPredicate<? super IMetaAttributeContainer<? extends IPriority>>> getJoinFragment() {
 		return functionality.getJoinFragment();
 	};
-	
+
 	public void setDefaultPriority(byte priority) {
 		this.defaultPriority = priority;
 	}
-	
+
+	@Override
+	public void setPostPriorisationFunctionality(
+			IPostPriorisationFunctionality<IMetaAttributeContainer<? extends IPriority>> functionality) {
+		this.functionality = functionality;
+
+	}
+
 }

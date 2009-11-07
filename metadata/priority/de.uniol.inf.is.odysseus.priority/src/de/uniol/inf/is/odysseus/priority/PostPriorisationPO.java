@@ -16,17 +16,27 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	private PriorityPO<?> priorisationOwner = null;
 	
 
-	private PostPriorisationFunctionality<T> functionality;
+	private IPostPriorisationFunctionality<T> functionality;
+	@SuppressWarnings("unchecked")
+	private List predicates;
 
 	
-	@SuppressWarnings("unchecked")
+	public IPostPriorisationFunctionality<T> getPostPriorisationFunctionality() {
+		return functionality;
+	}
+	
 	public PostPriorisationPO(PostPriorisationAO<T> postAO) {
 		super();
 		this.isActive = postAO.isActive();
 		this.defaultPriority = postAO.getDefaultPriority();
-		this.functionality = new PostPriorisationFunctionality<T>(this);
-		setJoinFragment(postAO.getPredicates());
+		this.predicates = postAO.getPredicates();
 	}	
+	
+	@SuppressWarnings("unchecked")
+	public void setPostPriorisationFunctionality(IPostPriorisationFunctionality functionality) {
+		this.functionality = functionality;
+		setJoinFragment(predicates);
+	}
 	
 	@Override	
 	public boolean isActive() {

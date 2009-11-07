@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFEqualOperator;
+
 /**
  * @author Jonas Jacobi
  */
@@ -96,4 +98,9 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	public List<SDFAttribute> getAttributes() {
 		return this.expression.getAllAttributes();
 	}
+	
+	public boolean isSetOperator(String symbol) {
+		return expression.isSetOperator(symbol);
+	}
+	
 }

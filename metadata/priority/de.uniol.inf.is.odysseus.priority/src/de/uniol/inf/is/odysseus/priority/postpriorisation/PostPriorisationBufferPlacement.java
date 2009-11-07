@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.priority.IPostPriorisationFunctionality;
 import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
@@ -69,8 +70,11 @@ public class PostPriorisationBufferPlacement extends
 					if((ISource<?>)sub.getTarget() instanceof PostPriorisationPO<?>) {
 						
 						PostPriorisationPO postPO = (PostPriorisationPO)sub.getTarget();
-						DirectInterlinkBufferedPipePostPriorisation<?> postBuf = (DirectInterlinkBufferedPipePostPriorisation<?>) buffer;
-						postBuf.setJoinFragment(postPO.getJoinFragment());
+
+						DirectInterlinkBufferedPipePostPriorisation postBuf = (DirectInterlinkBufferedPipePostPriorisation) buffer;
+						IPostPriorisationFunctionality functionality = postPO.getPostPriorisationFunctionality();
+						postBuf.setPostPriorisationFunctionality(functionality.newInstance(postBuf));
+						postBuf.setJoinFragment(postPO.getJoinFragment());	
 						
 						PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
 						postBuf.setDefaultPriority(prioPO.getDefaultPriority());

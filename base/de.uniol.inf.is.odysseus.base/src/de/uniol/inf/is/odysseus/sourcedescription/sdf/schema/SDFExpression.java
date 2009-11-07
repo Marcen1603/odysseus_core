@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.nfunk.jep.ASTConstant;
+import org.nfunk.jep.ASTFunNode;
 import org.nfunk.jep.JEP;
 import org.nfunk.jep.Node;
 import org.nfunk.jep.ParseException;
@@ -38,6 +39,11 @@ public class SDFExpression implements Serializable {
 	private int varCounter;
 	//Für P2P als transient gekennzeichnet
 	private transient Node myNode;
+
+	public boolean isSetOperator(String symbol) {
+		ASTFunNode fun = (ASTFunNode) myNode;
+		return fun.getOperator().getSymbol().equals(symbol);
+	}
 
 	private String expression;
 

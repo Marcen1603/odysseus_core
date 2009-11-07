@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.priority.IPostPriorisationFunctionality;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostPriorisation;
@@ -19,7 +20,7 @@ import de.uniol.inf.is.odysseus.priority.postpriorisation.event.PostPriorisation
 
 public class PostPriorisationCombinedPlacement extends
 		AbstractBufferPlacementStrategy {
-
+	
 	@Override
 	protected void activate(ComponentContext context) {
 		super.activate(context);
@@ -59,7 +60,7 @@ public class PostPriorisationCombinedPlacement extends
 
 	@SuppressWarnings("unchecked")
 	private void updateBufferData(IBuffer buffer, IPhysicalOperator father) {
-		if (father.isSink()) {
+		if (father.isSink() && buffer instanceof DirectInterlinkBufferedPipePostPriorisation) {
 			Iterator<?> it = ((ISink) father).getSubscribedTo().iterator();
 
 			while (it.hasNext()) {
@@ -70,8 +71,11 @@ public class PostPriorisationCombinedPlacement extends
 					if((ISource<?>)sub.getTarget() instanceof PostPriorisationPO<?>) {
 						
 						PostPriorisationPO postPO = (PostPriorisationPO)sub.getTarget();
-						DirectInterlinkBufferedPipePostPriorisation<?> postBuf = (DirectInterlinkBufferedPipePostPriorisation<?>) buffer;
-						postBuf.setJoinFragment(postPO.getJoinFragment());
+
+						DirectInterlinkBufferedPipePostPriorisation postBuf = (DirectInterlinkBufferedPipePostPriorisation) buffer;
+						IPostPriorisationFunctionality functionality = postPO.getPostPriorisationFunctionality();
+						postBuf.setPostPriorisationFunctionality(functionality.newInstance(postBuf));
+						postBuf.setJoinFragment(postPO.getJoinFragment());			
 						
 						PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
 						postBuf.setDefaultPriority(prioPO.getDefaultPriority());
