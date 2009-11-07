@@ -16,6 +16,8 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeContainer<? extends IPriority>> implements IPostPriorisationFunctionality<T> {
 
+	public static final String OPERATOR_EQUALS = "==";
+	
 	private List<IPredicate<? super T>> joinFragment = null;
 
 	private boolean deactivate = false;
@@ -102,7 +104,7 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 					IPredicate<? super T> current = it.next();
 					
 					if(current instanceof IRelationalPredicate) {
-						if(!((RelationalPredicate) current).isSetOperator("==")) {
+						if(!((RelationalPredicate) current).isSetOperator(OPERATOR_EQUALS)) {
 							matchPredicate = false;
 							deactivate = false;
 						}
