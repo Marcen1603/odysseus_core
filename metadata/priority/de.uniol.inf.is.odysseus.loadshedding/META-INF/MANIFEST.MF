@@ -8,6 +8,9 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.base.event,
+ de.uniol.inf.is.odysseus.physicaloperator.base.plan,
  org.osgi.framework
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: de.uniol.inf.is.odysseus.loadshedding.Activator
+Export-Package: de.uniol.inf.is.odysseus.loadshedding,
+ de.uniol.inf.is.odysseus.loadshedding.monitoring

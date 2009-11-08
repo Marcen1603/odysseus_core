@@ -26,6 +26,8 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	private PriorityPO<?> priorisationOwner = null;
 	@SuppressWarnings("unchecked")
 	private IPostPriorisationFunctionality functionality;
+	
+	private final POEvent finished = new POEvent(this, POEventType.PostPriorisation);
 
 	@Override
 	public boolean isActive() {
@@ -120,7 +122,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 		}
 		
 		if (matchPredicate) {
-			fire(new POEvent(this, POEventType.PostPriorisation));
+			fire(finished);
 		}
 
 	}

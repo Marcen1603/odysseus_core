@@ -40,8 +40,8 @@ public abstract class AbstractPriorityMinLatency extends
 
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(IPartialPlan plan) {
+		
 		List<IIterableSource<?>> toSchedule = plan.getIterableSource();
-
 		List<IIterableSource<?>> execList = init(toSchedule);
 
 		return execList;
@@ -53,7 +53,7 @@ public abstract class AbstractPriorityMinLatency extends
 		this.iterator = this.executionList.iterator();
 	}
 
-	private List<IIterableSource<?>> init(List<IIterableSource<?>> toSchedule) {
+	protected List<IIterableSource<?>> init(List<IIterableSource<?>> toSchedule) {
 		List<FESortedPair<Double, List<IIterableSource<?>>>> pathes = new LinkedList<FESortedPair<Double, List<IIterableSource<?>>>>();
 		List<IIterableSource<?>> execList = new LinkedList<IIterableSource<?>>();
 		// Calc for every to schedule operator the path to the root;

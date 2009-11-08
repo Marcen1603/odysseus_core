@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.AuroraMinLatencyLoadSheddingFactory">
+   <property name="component.readableName" type="String" value="Aurora Min Latency with Load Shedding"/>
+   <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.AuroraFactory"/>
+   <property name="aurora.strategy" type="String" value="MIN_LATENCY_LOAD_SHEDDING"/>
+   <property name="execlist.useIter" type="Boolean" value="true"/>
+    <service>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory"/>
+   </service>
+</scr:component>

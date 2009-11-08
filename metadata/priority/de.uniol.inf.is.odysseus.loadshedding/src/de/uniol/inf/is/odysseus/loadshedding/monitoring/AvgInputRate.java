@@ -1,59 +1,49 @@
 package de.uniol.inf.is.odysseus.loadshedding.monitoring;
 
-import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
+import de.uniol.inf.is.odysseus.loadshedding.LoadManager;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 
-public class AvgInputRate extends AbstractMonitoringData<Double> implements
+public class AvgInputRate implements
 		POEventListener {
 
 	public static final double UNKOWN = -1;
+	private LoadManager target;
 
-	public AvgInputRate(IMonitoringDataProvider target) {
-		super(target);
-		// TODO Auto-generated constructor stub
+	public AvgInputRate(LoadManager target) {
+		this.target = target;
 	}
 
-	private int sources = 0;
-	private int read = 0;
+	private double streams = 0;
+	private double read = 0;
 
-	public void addSource(IPhysicalOperator source) {
-		sources++;
+	public void addInputStream(IPhysicalOperator source) {
+		streams++;
 	}
 
-	public void removeSource(IPhysicalOperator source) {
-		sources--;
+	public void removeInputStream(IPhysicalOperator source) {
+		streams--;
+	}
+
+	public Double getAvgInputRate() {
+		if (streams == 0) {
+			return UNKOWN;
+		} else {
+			double result = read/streams;
+			return result;
+		}
 	}
 
 	@Override
 	public void poEventOccured(POEvent poEvent) {
 		read++;
-
+		target.updateLoadSheddingState();
 	}
-
-	@Override
-	public String getType() {
-		// TODO Auto-generated method stub
-		return MonitoringDataTypes.ELEMENTS_READ.name;
-	}
-
-	@Override
-	public Double getValue() {
-		if (sources == 0) {
-			return UNKOWN;
-		} else {
-			return new Double(read / sources);
-		}
-	}
-
-	@Override
+	
 	public void reset() {
 		read = 0;
-		sources = 0;
-
 	}
+
 
 }
