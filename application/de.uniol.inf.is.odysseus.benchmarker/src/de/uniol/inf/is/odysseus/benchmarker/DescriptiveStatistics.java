@@ -77,13 +77,11 @@ public class DescriptiveStatistics {
 		this.mean = ((double) this.sum) / this.count;
 		Arrays.sort(this.values);
 		this.offset = this.values.length - this.count;
-		if (offset != this.values.length) {
-			this.min = this.values[offset];
-			this.max = this.values[this.values.length - 1];
-		} else {
-			this.min = 0;
-			this.max = 0;
+		if (offset == this.values.length) {
+			return;
 		}
+		this.min = this.values[offset];
+		this.max = this.values[this.values.length - 1];
 
 		for (int i = offset; i < this.values.length; ++i) {
 			dev = this.values[i] - mean;
