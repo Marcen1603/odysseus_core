@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
@@ -182,7 +183,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	@Override
 	public Object visit(ASTSlidingTimeWindow node, Object data) {
 		// TODO Auto-generated method stub
-		WindowAO win = new WindowAO();
+		WindowAO win = new WindowAO(WindowType.SLIDING_TIME_WINDOW);
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
