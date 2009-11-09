@@ -40,11 +40,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		ILogicalOperator sealedLogicalPlan = query
 				.getSealedLogicalPlan();
 		
-		if (sealedLogicalPlan == null) {
-			return;
-		}
-		
-		if (restruct != null && restruct == ParameterDoRestruct.TRUE) {
+		if (sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE) {
 			ILogicalOperator newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan);
 			// set new logical plan.
 			query.setLogicalPlan(newLogicalAlgebra);
