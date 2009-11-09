@@ -41,9 +41,4 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 	private ISource<?> getRightPhysInput(){
 		return getPhysSubscriptionTo(RIGHT)==null?null:getPhysSubscriptionTo(RIGHT).getTarget();
 	}
-
-	@Override
-	public boolean isAllPhysicalInputSet() {
-		return getLeftPhysInput() != null && getRightPhysInput() != null;
-	}
 }

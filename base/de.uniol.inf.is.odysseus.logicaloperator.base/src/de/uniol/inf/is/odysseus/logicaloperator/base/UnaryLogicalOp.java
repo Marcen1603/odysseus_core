@@ -42,9 +42,4 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		subscribeTo(source, 0, 0, inputSchema);
 	}
 	
-	public boolean isAllPhysicalInputSet(){
-		return getPhysSubscriptionTo() != null;
-	}
-
-	
 }

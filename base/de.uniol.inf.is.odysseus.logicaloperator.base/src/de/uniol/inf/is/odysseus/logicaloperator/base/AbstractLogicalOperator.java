@@ -151,6 +151,16 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		}
 	}
 
+	@Override
+	public boolean isAllPhysicalInputSet() {
+		for(Integer i : this.subscribedTo.keySet()){
+			if (this.physInputOperators.get(i) == null ) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
