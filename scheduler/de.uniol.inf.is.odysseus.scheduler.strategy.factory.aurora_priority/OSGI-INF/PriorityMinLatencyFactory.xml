@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.PriorityMinLatencyFactory">
+   <property name="component.readableName" type="String" value="Priority Min Latency with PriorityPOs"/>
+   <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.AuroraPriorityFactory"/>
+   <property name="aurora_priority.strategy" type="String" value="PO_MIN_LATENCY_PUNCTUATION"/>
+   <property name="execlist.useIter" type="Boolean" value="true"/>
+    <service>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory"/>
+   </service>
+</scr:component>
