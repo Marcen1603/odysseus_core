@@ -6,9 +6,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 
 public class MetadataRegistry {
+	private static Logger logger = LoggerFactory
+			.getLogger(MetadataRegistry.class);
+
 	private static Map<Set<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<Set<String>, Class<? extends IMetaAttribute>>();
 
 	public static void addMetadataType(
@@ -24,8 +30,9 @@ public class MetadataRegistry {
 			try {
 				if (implementationType.getMethod("clone", null)
 						.getDeclaringClass() != implementationType) {
-					throw new IllegalArgumentException(
-							"implementation class does not declare a clone method, this will lead to runtime exceptions");
+					String msg = "implementation class does not declare a clone method, this will lead to runtime exceptions";
+					logger.error(msg);
+					throw new IllegalArgumentException(msg);
 				}
 			} catch (SecurityException e) {
 				// TODO loggen
