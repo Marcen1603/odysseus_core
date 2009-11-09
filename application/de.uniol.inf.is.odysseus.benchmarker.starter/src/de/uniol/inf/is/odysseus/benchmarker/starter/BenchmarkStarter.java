@@ -143,7 +143,7 @@ public class BenchmarkStarter {
 			metaTypes = metaTypesStr.split(":");
 		}
 
-		if (arguments.hasParameter(PRIORITY)) {
+		if (arguments.get(PRIORITY)) {
 			metaTypes = Arrays.copyOf(metaTypes, metaTypes.length + 1);
 			metaTypes[metaTypes.length - 1] = "de.uniol.inf.is.odysseus.priority.IPriority";
 			benchmark
@@ -152,11 +152,11 @@ public class BenchmarkStarter {
 
 		benchmark.setMetadataTypes(metaTypes);
 
-		if (arguments.hasParameter(PUNCTUATIONS)) {
+		if (arguments.get(PUNCTUATIONS)) {
 			benchmark.setUsePunctuations(true);
 		}
 		
-		if (arguments.hasParameter(LOAD_SHEDDING)) {
+		if (arguments.get(LOAD_SHEDDING)) {
 			benchmark.setUseLoadShedding(true);
 		}
 		
