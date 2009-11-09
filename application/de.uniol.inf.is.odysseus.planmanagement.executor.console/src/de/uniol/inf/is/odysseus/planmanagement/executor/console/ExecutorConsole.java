@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -1149,6 +1150,74 @@ public class ExecutorConsole implements CommandProvider,
 			ci.println("error during execution of macro");
 			ci.printStackTrace(e);
 		}
+	}
+	
+	public void _runFromFile(CommandInterpreter ci){
+		String[] args = support.getArgs(ci);
+		if(args.length != 1){
+			_man(ci);
+			return;
+		}
+		addCommand(args);
+		
+		BufferedReader br = null;
+		File file = null;
+		try {
+			file = new File(this.path != null ? this.path + args[0] : args[0]);
+			br = new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			ci.println("File not found: " + file.getAbsolutePath());
+			return;
+		}
+
+		
+		try {
+			ci.println("--- running macro from file: " + file.getAbsolutePath() + " ---");
+			String line = null;
+			while((line = br.readLine()) != null ){
+				String commandString = line;
+				
+				String[] commandAndArgs = commandString.split(" ");
+				String[] currentArgs = new String[commandAndArgs.length -1];
+				System.arraycopy(commandAndArgs, 1, currentArgs, 0, commandAndArgs.length - 1);
+				Command command = new Command();
+				command.name = "_" + commandAndArgs[0];
+				command.setArgs(currentArgs);
+				
+				Method m = this.getClass().getMethod(command.name,
+						CommandInterpreter.class);
+
+				CommandInterpreter delegateCi = new DelegateCommandInterpreter(
+						ci, command.getArgs());
+
+				m.invoke(this, delegateCi);
+				
+			}
+			
+			ci.println("--- macro from file " + file.getAbsolutePath() + " done ---");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			ci.printStackTrace(e);
+			return;
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	@Help(parameter = "<macro name>", description = "begin macro recording")
