@@ -55,7 +55,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		if (query.getSealedRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
 		try {
 				// create the physical plan
-				IPhysicalOperator physicalPlan = compiler.transform(sealedLogicalPlan, query.getBuildParameter()
+				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
 						.getTransformationConfiguration());
 
 				IBufferPlacementStrategy bufferPlacementStrategy = query
