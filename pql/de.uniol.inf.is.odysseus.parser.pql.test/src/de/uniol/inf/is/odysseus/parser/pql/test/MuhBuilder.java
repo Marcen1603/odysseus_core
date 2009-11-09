@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.parser.pql.test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parser.pql.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.pql.Parameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class MuhBuilder implements IOperatorBuilder {
@@ -19,5 +22,12 @@ public class MuhBuilder implements IOperatorBuilder {
 		}
 		return op;
 	}
+
+	@Override
+	public Set<Parameter<?>> getParameters() {
+		return Collections.emptySet();
+	}
+	
+	
 
 }
