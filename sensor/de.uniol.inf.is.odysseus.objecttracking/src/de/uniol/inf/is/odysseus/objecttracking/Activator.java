@@ -6,8 +6,8 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
 
 public class Activator implements BundleActivator {
@@ -18,7 +18,7 @@ public class Activator implements BundleActivator {
 	 */
 	@SuppressWarnings("unchecked")
 	public void start(BundleContext context) throws Exception {
-		MetadataRegistry.addMetadataType(IntervalProbabilityLatencyPrediction.class, ITimeInterval.class, IProbability.class, ILatency.class, IPredictionFunction.class);
+		MetadataRegistry.addMetadataType(IntervalProbabilityLatencyPrediction.class, ITimeInterval.class, IProbability.class, ILatency.class, IProbabilityPredictionFunction.class);
 	}
 
 	/*

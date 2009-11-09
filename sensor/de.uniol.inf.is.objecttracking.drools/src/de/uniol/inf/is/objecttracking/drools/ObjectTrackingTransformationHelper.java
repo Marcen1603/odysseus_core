@@ -1,6 +1,34 @@
 package de.uniol.inf.is.objecttracking.drools;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.base.ISubscription;
+import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.AbstractSensorAccessPO;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 public class ObjectTrackingTransformationHelper {
+	
+	public static SDFAttributeList getOutputSchema(MetadataCreationPO mPO){
+		List<ISubscription<ISource>> subscriptionsTo = mPO.getSubscribedTo();
+		SDFAttributeList outputSchema = null;
+		for(ISubscription<ISource> sub: subscriptionsTo){
+			// if the target of this subscription is not a sink
+			// than it must be an AccessAO
+			if(!sub.getTarget().isSink()){
+				if(sub.getTarget() instanceof AbstractSensorAccessPO){
+					outputSchema = ((AbstractSensorAccessPO)sub.getTarget()).getOutputSchema();
+				}
+			}
+		}
+		
+		if(outputSchema == null){
+			throw new RuntimeException("Not AccessPO child found for MetadataCreationPO : " + mPO);
+		}
+		
+		return outputSchema;
+	}
 
 //	@Override
 //	public ISource<?> createAccessPO(AccessAO accessAO) throws IOException {

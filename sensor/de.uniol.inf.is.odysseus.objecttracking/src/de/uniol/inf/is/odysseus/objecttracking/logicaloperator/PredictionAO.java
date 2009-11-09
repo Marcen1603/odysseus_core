@@ -50,6 +50,7 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 		super();
 		this.predictionFunctions = new HashMap<IPredicate<? super T>, SDFExpression[]>();
 		this.defaultPredictionFunction = null;
+		this.variables = new TreeMap<IPredicate<? super T>, int[][]>();
 	}
 	
 	public PredictionAO(PredictionAO predictionAO) {

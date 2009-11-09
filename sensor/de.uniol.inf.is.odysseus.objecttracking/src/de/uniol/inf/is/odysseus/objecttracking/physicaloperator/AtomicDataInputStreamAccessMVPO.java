@@ -21,8 +21,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * @author Jonas Jacobi, Andre Bolles
  */
-public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
-		AbstractIterableSource<MVRelationalTuple<M>>{
+public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M>{
 
 	// private IMetadataFactory<M, RelationalTuple<M>> metadataFactory;
 	final private String hostName;
@@ -174,6 +173,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends
 		this.buffer = null;
 	}
 	
+	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}

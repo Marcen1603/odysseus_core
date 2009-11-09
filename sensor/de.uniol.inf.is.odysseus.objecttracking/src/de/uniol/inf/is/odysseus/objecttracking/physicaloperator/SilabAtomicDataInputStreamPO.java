@@ -20,8 +20,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * @author Dennis Wiemann
  */
-public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends
-AbstractIterableSource<RelationalTuple<M>> {
+public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends AbstractSensorAccessPO<RelationalTuple<M>, M>{
 	
 	final private String hostName;
 	final private int port;
@@ -50,6 +49,7 @@ AbstractIterableSource<RelationalTuple<M>> {
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
 		createDataReader(schema);
+		this.outputSchema = schema;
 	}
 	
 	private void createDataReader(SDFAttributeList schema) {
@@ -160,6 +160,7 @@ AbstractIterableSource<RelationalTuple<M>> {
 		this.buffer = null;
 	}
 	
+	@Override
 	public SDFAttributeList getOutputSchema(){
 		return this.outputSchema;
 	}
