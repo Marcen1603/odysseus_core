@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rewrite Load Shedding
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.loadshedding;singleton:=true
-Bundle-Version: 1.0.2
-Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools;bundle-version="1.0.1"
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.loadshedding;singleton:=true
+Bundle-Version: 1.0.0
+Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.priority,
