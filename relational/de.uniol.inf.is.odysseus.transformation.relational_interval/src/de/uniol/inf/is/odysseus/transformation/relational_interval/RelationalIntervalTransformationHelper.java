@@ -7,11 +7,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
 public class RelationalIntervalTransformationHelper {
-
-	public static int getWindowOnAttrPos(AbstractWindowTIPO windowPO){
-		return windowPO.getWindowAO().getInputSchema().indexOf(
-					windowPO.getWindowAO().getWindowOn());
-	}
 	
 	public static MetadataUpdatePO initWindowOn(AbstractWindowTIPO windowPO){
 		int attrPos = windowPO.getWindowAO().getInputSchema().indexOf(
