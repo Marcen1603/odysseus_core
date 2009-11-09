@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	@SuppressWarnings("unchecked")
@@ -24,11 +25,11 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 
 	protected void createSubscriptions(ILogicalOperator operator,
-			List<ILogicalOperator> inputOps, int inputPortCount) {
+			List<ILogicalOperator> inputOps, int inputPortCount, SDFAttributeList schema) {
 		checkInputSize(inputOps, inputPortCount);
 		int i = 0;
 		for (ILogicalOperator op : inputOps) {
-			operator.subscribeTo(op, i++, 0);
+			operator.subscribeTo(op, i++, 0, schema);
 		}
 	}
 
