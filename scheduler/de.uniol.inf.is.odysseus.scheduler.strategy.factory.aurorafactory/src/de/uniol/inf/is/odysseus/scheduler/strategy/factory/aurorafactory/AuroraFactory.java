@@ -9,14 +9,11 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingStrategyFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinCost;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinLatency;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.priority.PriorityMinLatency;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.priority.SimplePriorityMinLatency;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.loadshedding.AuroraMinLatencyLoadShedding;
 
 
 public class AuroraFactory extends AbstractSchedulingStrategyFactory {
 
-	static public enum AuroraStrategy{MIN_LATENCY, MIN_COST, MIN_MEM, MIN_LATENCY_PUNCTUATION, PO_MIN_LATENCY_PUNCTUATION,MIN_LATENCY_LOAD_SHEDDING}
+	static public enum AuroraStrategy{MIN_LATENCY, MIN_COST, MIN_MEM}
 
 	private AuroraStrategy strategy;;
 	private boolean useIter;
@@ -58,12 +55,6 @@ public class AuroraFactory extends AbstractSchedulingStrategyFactory {
 			return new AuroraMinLatency(plan, useIter);
 		case MIN_COST:
 			return new AuroraMinCost(plan, useIter);
-		case MIN_LATENCY_PUNCTUATION:
-			return new SimplePriorityMinLatency(plan, useIter);
-		case PO_MIN_LATENCY_PUNCTUATION:
-			return new PriorityMinLatency(plan, useIter);
-		case MIN_LATENCY_LOAD_SHEDDING:
-			return new AuroraMinLatencyLoadShedding(plan,useIter);
 		case MIN_MEM:
 			//return new AuroraMinMemory(plan);
 			throw new RuntimeException("Not implemented");
