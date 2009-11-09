@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Relational_priority
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.relational_priority
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.3
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.priority,
