@@ -28,18 +28,16 @@ public class MetadataRegistry {
 						"combined metadatatype already exists");
 			}
 			try {
-				if (implementationType.getMethod("clone", null)
+				if (implementationType.getMethod("clone", (Class<?>) null)
 						.getDeclaringClass() != implementationType) {
 					String msg = "implementation class does not declare a clone method, this will lead to runtime exceptions";
 					logger.error(msg);
 					throw new IllegalArgumentException(msg);
 				}
-			} catch (SecurityException e) {
-				// TODO loggen
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO loggen
-				e.printStackTrace();
+			} catch (Exception e) {
+				logger.error("could not register metadatatype: "
+						+ implementationType.getName() + ", reason:\n\t"
+						+ e.getMessage());
 			}
 			combinedMetadataTypes.put(typeSet, implementationType);
 		}
