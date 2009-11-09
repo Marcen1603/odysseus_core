@@ -26,6 +26,7 @@ public class TransformationConfiguration {
 			tmp.add(type.getName());
 		}
 		this.metaTypes = Collections.unmodifiableSet(tmp);
+		this.options = new HashMap<String, Object>();
 	}
 
 	public boolean metaTypesEqual(String... types) {
