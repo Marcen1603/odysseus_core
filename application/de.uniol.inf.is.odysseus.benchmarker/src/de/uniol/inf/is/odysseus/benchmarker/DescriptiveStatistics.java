@@ -26,7 +26,8 @@ public class DescriptiveStatistics {
 	private double sum = 0;
 	private int offset;
 	final private double[] percentiles = new double[100];
-	//percentileMap is a little hack to only have selected values occur in xml serialization
+	// percentileMap is a little hack to only have selected values occur in xml
+	// serialization
 	@ElementMap(attribute = true, entry = "percentile", key = "percent", value = "value")
 	private Map<Integer, Double> percentileMap;
 	@Element
@@ -76,10 +77,14 @@ public class DescriptiveStatistics {
 		this.mean = ((double) this.sum) / this.count;
 		Arrays.sort(this.values);
 		this.offset = this.values.length - this.count;
-		
-		this.min = this.values[offset];
-		this.max = this.values[this.values.length - 1];
-		
+		if (offset != this.values.length) {
+			this.min = this.values[offset];
+			this.max = this.values[this.values.length - 1];
+		} else {
+			this.min = 0;
+			this.max = 0;
+		}
+
 		for (int i = offset; i < this.values.length; ++i) {
 			dev = this.values[i] - mean;
 			accum += dev * dev;
@@ -88,12 +93,12 @@ public class DescriptiveStatistics {
 		this.variance = (accum - (accum2 * accum2 / count)) / count;
 		this.standardDeviation = Math.sqrt(this.variance);
 
-		//precalculate percentiles, so memory for values can be freed 
+		// precalculate percentiles, so memory for values can be freed
 		for (int i = 0; i < 100; ++i) {
 			this.percentiles[i] = calculatePercentile(i);
 		}
 		this.values = null;
-		
+
 		this.percentileMap = new TreeMap<Integer, Double>();
 		addPersistablePercentiles(5, 10, 25, 50, 75, 90, 95);
 	}
