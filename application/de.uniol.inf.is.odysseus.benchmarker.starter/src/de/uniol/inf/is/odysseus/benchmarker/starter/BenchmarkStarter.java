@@ -29,6 +29,8 @@ public class BenchmarkStarter {
 	private static final String QUERY = "-query";
 	private static final String MAX_RESULTS = "-max_results";
 	private static final String PRIORITY = "-priority";
+	private static final String PUNCTUATIONS = "-punctuations";
+	private static final String LOAD_SHEDDING = "-load_shedding";
 	private static final String ECLIPSE_DEBUG = "-debug";
 	private static final String ECLIPSE_CLEAN = "-clean";
 	private static final String ECLIPSE_CONSOLE = "-console";
@@ -150,6 +152,14 @@ public class BenchmarkStarter {
 
 		benchmark.setMetadataTypes(metaTypes);
 
+		if (arguments.hasParameter(PUNCTUATIONS)) {
+			benchmark.setUsePunctuations(true);
+		}
+		
+		if (arguments.hasParameter(LOAD_SHEDDING)) {
+			benchmark.setUseLoadShedding(true);
+		}
+		
 		if (arguments.hasParameter(MAX_RESULTS)) {
 			Long maxResults = arguments.getLong(MAX_RESULTS);
 			benchmark.setMaxResults(maxResults);
@@ -190,6 +200,11 @@ public class BenchmarkStarter {
 				.addBoolean(
 						PRIORITY,
 						" - enables tracking of latencies of prioritized elements, automatically adds 'de.uniol.inf.is.odysseus.priority.IPriority' to metadata types");
+		
+		arguments.addBoolean(PUNCTUATIONS, " - enables usage of punctuations");
+		
+		arguments.addBoolean(LOAD_SHEDDING, " - enables usage of load shedding");
+		
 		arguments
 				.addString(
 						ECLIPSE_DEBUG,
@@ -201,6 +216,7 @@ public class BenchmarkStarter {
 		arguments
 				.addBoolean(ECLIPSE_CONSOLE,
 						" - adds -console when starting the embedded equinox environment");
+		
 
 		arguments.parse(args);
 	}

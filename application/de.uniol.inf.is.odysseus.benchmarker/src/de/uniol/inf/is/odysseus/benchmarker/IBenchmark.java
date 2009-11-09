@@ -14,4 +14,6 @@ public interface IBenchmark {
 	public String[] getMetadataTypes();
 	
 	public <T> IBenchmarkResult<T> runBenchmark() throws BenchmarkException;
+	public void setUsePunctuations(boolean b);
+	public void setUseLoadShedding(boolean b);
 }

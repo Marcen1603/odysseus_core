@@ -36,10 +36,15 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private String[] metadataTypes;
 	private ArrayList<AbstractQueryBuildParameter<?>> buildParameters;
 	private List<UnsortedPair<String, String>> queries;
+	private boolean usePunctuations;
+	private boolean useLoadShedding;
+	
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();
 	private IAdvancedExecutor executor;
+	
+	
 
 
 	public Benchmark() {
@@ -51,6 +56,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		this.metadataTypes = new String[] { ITimeInterval.class.getName(),
 				ILatency.class.getName() };
 		this.resultFactory = new LatencyBenchmarkResultFactory();
+		this.usePunctuations = false;
+		this.useLoadShedding = false;
 	}
 
 	public void activate(ComponentContext c) {
@@ -101,6 +108,9 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(
 				dataType, getMetadataTypes());
+		trafoConfig.setOption("usePunctuations", this.usePunctuations);
+		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
+		
 		try {
 			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
@@ -195,6 +205,16 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	@Override
 	public void setMaxResults(long maxResults) {
 		this.maxResults = maxResults;
+	}
+
+	@Override
+	public void setUseLoadShedding(boolean b) {
+		this.useLoadShedding = b;
+	}
+
+	@Override
+	public void setUsePunctuations(boolean b) {
+		this.usePunctuations = b;
 	}
 
 }
