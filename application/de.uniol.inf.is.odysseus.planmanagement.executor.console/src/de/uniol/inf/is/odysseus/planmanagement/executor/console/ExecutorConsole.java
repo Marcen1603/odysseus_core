@@ -458,7 +458,6 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Help(description = "<on|off> - Adds or removes punctuation support inside every available PriorityPO.")
 	public void _addPunctuations(CommandInterpreter ci) {
 		boolean usePunctuations = false;
@@ -466,30 +465,16 @@ public class ExecutorConsole implements CommandProvider,
 		addCommand(args);
 		try {
 			if (args != null && args.length >= 1) {
-				int depth = 0;
-				if (args.length >= 2) {
-					depth = Integer.valueOf(args[1]);
 
-					if (depth < 1) {
-						depth = 1;
-					}
-				}
-
-				StringBuffer buff = new StringBuffer();
 				usePunctuations = toBoolean(args[0]);
 
-				for (IPhysicalOperator root : this.executor.getSealedPlan()
-						.getRoots()) {
-
-					if (root.isSink()) {
-						support.changePunctuationState((ISink) root, depth,
-								usePunctuations, buff);
-					} else {
-						support.changePunctuationState((ISource) root, depth,
-								usePunctuations, buff);
+				if(usePunctuations) {
+					trafoConfigParam.getValue().setOption("usePunctuations", true);
+				} else {
+					if(trafoConfigParam.getValue().getOption("usePunctuations") != null) {
+						trafoConfigParam.getValue().setOption("usePunctuations", null);
 					}
 				}
-				ci.println(buff.toString());
 
 			}
 		} catch (Exception e) {
@@ -499,6 +484,33 @@ public class ExecutorConsole implements CommandProvider,
 				+ (usePunctuations ? "activated" : "deactivated"));
 
 	}
+	
+	@Help(description = "<on|off> - Adds or removes load shedding support.")
+	public void _addLoadShedding(CommandInterpreter ci) {
+		boolean useLoadShedding = false;
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		try {
+			if (args != null && args.length >= 1) {
+
+				useLoadShedding = toBoolean(args[0]);
+
+				if(useLoadShedding) {
+					trafoConfigParam.getValue().setOption("useLoadShedding", true);
+				} else {
+					if(trafoConfigParam.getValue().getOption("useLoadShedding") != null) {
+						trafoConfigParam.getValue().setOption("useLoadShedding", null);
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+		ci.println("Load shedding is "
+				+ (useLoadShedding ? "activated" : "deactivated"));
+
+	}	
 
 	@SuppressWarnings("unchecked")
 	@Help(description = "dump physical plan of all registered roots")
