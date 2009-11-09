@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * @author Jonas Jacobi
  */
-
 public class BenchmarkBuilder extends AbstractOperatorBuilder {
 
 	private static final String PROCESSING_TIME = "TIME";

@@ -35,7 +35,7 @@ public class PQLParser implements IQueryParser {
 				PQLParserImpl.ReInit(reader);
 			}
 
-			return Collections.singletonList(PQLParserImpl.query());
+			return PQLParserImpl.query();
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
