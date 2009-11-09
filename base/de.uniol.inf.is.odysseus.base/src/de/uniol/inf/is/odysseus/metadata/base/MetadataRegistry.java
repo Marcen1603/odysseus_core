@@ -31,12 +31,11 @@ public class MetadataRegistry {
 				if (implementationType.getMethod("clone", (Class<?>) null)
 						.getDeclaringClass() != implementationType) {
 					String msg = "implementation class does not declare a clone method, this will lead to runtime exceptions";
-					logger.error(msg);
 					throw new IllegalArgumentException(msg);
 				}
 			} catch (Exception e) {
-				logger.error("could not register metadatatype: "
-						+ implementationType.getName() + ", reason:\n\t"
+				logger.warn("could not check wether '"
+						+ implementationType.getName() + "' supports clone() method, reason:\n\t"
 						+ e.getMessage());
 			}
 			combinedMetadataTypes.put(typeSet, implementationType);
