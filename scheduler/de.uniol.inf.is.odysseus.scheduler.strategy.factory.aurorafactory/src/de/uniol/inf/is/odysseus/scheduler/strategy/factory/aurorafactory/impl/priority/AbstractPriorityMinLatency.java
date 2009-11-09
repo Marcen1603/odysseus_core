@@ -8,6 +8,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
+import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
@@ -22,18 +23,18 @@ public abstract class AbstractPriorityMinLatency extends
 		super(plan, true);
 	}
 
-	private void initMetadata(List<ISource<?>> opPath) {
+	protected void initMetadata(List<ISource<?>> opPath) {
 		for (ISource<?> s : opPath) {
-			if (!s.providesMonitoringData("estimated productivity")) {
-				s.addMonitoringData("estimated productivity",
+			if (!s.providesMonitoringData(MonitoringDataTypes.ESTIMATED_PRODUCTIVITY.name)) {
+				s.addMonitoringData(MonitoringDataTypes.ESTIMATED_PRODUCTIVITY.name,
 						new StaticValueMonitoringData<Double>(s,
-								"estimated productivity", 1d));
+								MonitoringDataTypes.ESTIMATED_PRODUCTIVITY.name, 1d));
 			}
 
-			if (!s.providesMonitoringData("estimated processing cost")) {
-				s.addMonitoringData("estimated processing cost",
+			if (!s.providesMonitoringData(MonitoringDataTypes.ESTIMATED_PROCESSING_COST.name)) {
+				s.addMonitoringData(MonitoringDataTypes.ESTIMATED_PROCESSING_COST.name,
 						new StaticValueMonitoringData<Double>(s,
-								"estimated processing cost", 1d));
+								MonitoringDataTypes.ESTIMATED_PROCESSING_COST.name, 1d));
 			}
 		}
 	}
