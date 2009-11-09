@@ -8,7 +8,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.priority,
  de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
