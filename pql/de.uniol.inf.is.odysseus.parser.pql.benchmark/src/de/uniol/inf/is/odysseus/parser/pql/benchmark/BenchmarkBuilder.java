@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.benchmarker.BenchmarkAO;
 import de.uniol.inf.is.odysseus.parser.pql.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
+import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 
 public class BenchmarkBuilder extends AbstractOperatorBuilder {
 
@@ -21,12 +22,11 @@ public class BenchmarkBuilder extends AbstractOperatorBuilder {
 				Integer.class);
 		Double selectivity = getParameter(parameters, SELECTIVITY, Double.class);
 
+		SDFAttributeList schema = inputOps.get(0).getOutputSchema();	
 		BenchmarkAO benchmarkAO = new BenchmarkAO(processingTimeInns,
 				selectivity);
-		createSubscriptions(benchmarkAO, inputOps, 1);
-		SDFAttributeList schema = inputOps.get(0).getOutputSchema();
-		benchmarkAO.setInputSchema(0, schema);
-		benchmarkAO.setOutputSchema(schema);
+		createSubscriptions(benchmarkAO, inputOps, 1, schema);
+
 		return benchmarkAO;
 	}
 }

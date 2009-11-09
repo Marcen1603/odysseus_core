@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.benchmark.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.benchmarker,
+ de.uniol.inf.is.odysseus.benchmarker.impl,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.parser.pql,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,

@@ -31,7 +31,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
-import de.uniol.inf.is.odysseus.benchmarker.IBenchmark.Configuration;
+//import de.uniol.inf.is.odysseus.benchmarker.IBenchmark.Configuration;
 
 public class ViewWidget extends Composite {
 
@@ -143,16 +143,16 @@ public class ViewWidget extends Composite {
 		this.btnExecute.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				Configuration config = new Configuration();
-				try {
-					System.out
-							.println(benchmarker
-									.runBenchmark(
-											"CREATE STREAM XX (a INTEGER) FROM (([0,5),1), ([2,5),3)); SELECT * FROM XX",
-											"CQL", config));
-				} catch (BenchmarkException e1) {
-					e1.printStackTrace();
-				}
+//				Configuration config = new Configuration();
+//				try {
+//					System.out
+//							.println(benchmarker
+//									.runBenchmark(
+//											"CREATE STREAM XX (a INTEGER) FROM (([0,5),1), ([2,5),3)); SELECT * FROM XX",
+//											"CQL", config));
+//				} catch (BenchmarkException e1) {
+//					e1.printStackTrace();
+//				}
 			}
 		});
 		this.setSize(new Point(609, 400));
