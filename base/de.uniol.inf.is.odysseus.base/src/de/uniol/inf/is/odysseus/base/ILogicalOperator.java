@@ -26,12 +26,13 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	public String getName();
 	public void setName(String name);
 	
+	boolean isAllPhysicalInputSet();
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
 	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort);
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();
 	// Currently needed for Transformation --> we should get rid of this!
-	public Collection<ISource<?>> getPhysInputPO();
+	public Collection<ISource<?>> getPhysInputPOs();
 	public int getNumberOfInputs();
 
 	public Collection<LogicalSubscription> getSubscribtions(ILogicalOperator a);

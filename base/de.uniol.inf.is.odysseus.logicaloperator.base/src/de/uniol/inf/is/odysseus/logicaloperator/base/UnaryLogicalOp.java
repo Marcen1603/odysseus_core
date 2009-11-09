@@ -41,6 +41,10 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 	public void subscribeTo(ILogicalOperator source, SDFAttributeList inputSchema){
 		subscribeTo(source, 0, 0, inputSchema);
 	}
+	
+	public boolean isAllPhysicalInputSet(){
+		return getPhysSubscriptionTo() != null;
+	}
 
 	
 }

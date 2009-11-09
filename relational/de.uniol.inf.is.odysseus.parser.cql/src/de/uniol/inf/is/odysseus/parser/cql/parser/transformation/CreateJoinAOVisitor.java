@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
@@ -330,14 +331,15 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	private ExistenceAO createExistenceAO(IExistencePredicate node,
 			AbstractLogicalOperator inputAO, Type type) {
 		ExistenceAO existsAO = new ExistenceAO();
-		existsAO.setLeftInput(inputAO, inputAO.getOutputSchema());
+		
+		existsAO.subscribeTo(inputAO,BinaryLogicalOp.LEFT,0, inputAO.getOutputSchema());
 		AbstractLogicalOperator subquery = subquery(node.getQuery());
 		if (node.getTuple().jjtGetNumChildren() != subquery.getOutputSchema()
 				.size()) {
 			throw new IllegalArgumentException(
 					"wrong number of outputs in predicate subquery");
 		}
-		existsAO.setRightInput(subquery, subquery.getOutputSchema());
+		existsAO.subscribeTo(subquery,BinaryLogicalOp.RIGHT,0, subquery.getOutputSchema());
 		existsAO.setType(type);
 		try {
 			String expression = node.getTuple().toString()
@@ -361,8 +363,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTExists node, Object data) {
 		AbstractLogicalOperator inputAO = (AbstractLogicalOperator) data;
 		ExistenceAO existsAO = new ExistenceAO();
-		existsAO.setLeftInput(inputAO, inputAO.getOutputSchema());
-		existsAO.setRightInput(subquery(node.getQuery()), subquery(node.getQuery()).getOutputSchema());
+		existsAO.subscribeTo(inputAO,BinaryLogicalOp.LEFT,0, inputAO.getOutputSchema());
+		existsAO.subscribeTo(subquery(node.getQuery()), BinaryLogicalOp.RIGHT,0, subquery(node.getQuery()).getOutputSchema());
 		existsAO.setType(node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);
 		return existsAO;

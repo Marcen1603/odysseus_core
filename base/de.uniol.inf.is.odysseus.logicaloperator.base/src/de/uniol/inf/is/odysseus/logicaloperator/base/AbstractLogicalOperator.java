@@ -183,7 +183,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public Collection<ISource<?>> getPhysInputPO() {
+	public Collection<ISource<?>> getPhysInputPOs() {
 		return physInputOperators.values();
 	}
 	

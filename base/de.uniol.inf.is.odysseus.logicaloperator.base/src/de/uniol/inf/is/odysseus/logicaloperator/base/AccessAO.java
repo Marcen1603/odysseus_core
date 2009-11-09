@@ -156,5 +156,10 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 	public String toString() {
 		return getName() + " (" + this.getSource().getURI() + ")";
 	}
+
+	@Override
+	public boolean isAllPhysicalInputSet() {
+		return true;
+	}
 	
 }

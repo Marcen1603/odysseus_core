@@ -23,4 +23,13 @@ public class MuhOperator extends AbstractLogicalOperator {
 		return outputSchema;
 	}
 	
+	@Override
+	public boolean isAllPhysicalInputSet() {
+		boolean set = true;
+		for (int i=0;i<getNumberOfInputs() && set;i++){
+			set = set && (getPhysSubscriptionTo(i) != null);
+		}
+		return set;
+	}
+	
 }

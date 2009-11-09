@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
 public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
@@ -27,28 +26,24 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 		return getSubscribedTo(RIGHT).getTarget();
 	}
 
-	public void setLeftInput(ILogicalOperator source, SDFAttributeList inputSchema) {
-		subscribeTo(source, LEFT, 0, inputSchema);
-	}
-
-	public void setRightInput(ILogicalOperator source, SDFAttributeList inputSchema) {
-		subscribeTo(source, RIGHT, 0, inputSchema);
-	}
-	
-//	public void setLeftInputSchema(SDFAttributeList schema) {
-//		setInputSchema(LEFT, schema);
+//	public void setLeftInput(ILogicalOperator source, SDFAttributeList inputSchema) {
+//		subscribeTo(source, LEFT, 0, inputSchema);
 //	}
-//	
-//	public void setRightInputSchema(SDFAttributeList schema) {
-//		setInputSchema(RIGHT, schema);
-//	}
+//
+//	public void setRightInput(ILogicalOperator source, SDFAttributeList inputSchema) {
+//		subscribeTo(source, RIGHT, 0, inputSchema);
+//	}	
 	
-	public ISource<?> getLeftPhysInput(){
+	private ISource<?> getLeftPhysInput(){
 		return getPhysSubscriptionTo(LEFT)==null?null:getPhysSubscriptionTo(LEFT).getTarget();
 	}
 
-	public ISource<?> getRightPhysInput(){
+	private ISource<?> getRightPhysInput(){
 		return getPhysSubscriptionTo(RIGHT)==null?null:getPhysSubscriptionTo(RIGHT).getTarget();
 	}
 
+	@Override
+	public boolean isAllPhysicalInputSet() {
+		return getLeftPhysInput() != null && getRightPhysInput() != null;
+	}
 }
