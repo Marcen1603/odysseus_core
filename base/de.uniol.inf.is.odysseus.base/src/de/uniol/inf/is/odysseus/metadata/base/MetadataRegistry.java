@@ -11,7 +11,8 @@ import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 public class MetadataRegistry {
 	private static Map<Set<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<Set<String>, Class<? extends IMetaAttribute>>();
 
-	public static void addMetadataType(Class<? extends IMetaAttribute> implementationType,
+	public static void addMetadataType(
+			Class<? extends IMetaAttribute> implementationType,
 			Class<? extends IMetaAttribute>... combinationOfInterfaces) {
 		HashSet<String> typeSet = toStringSet(combinationOfInterfaces);
 		synchronized (combinedMetadataTypes) {
@@ -20,11 +21,25 @@ public class MetadataRegistry {
 				throw new IllegalArgumentException(
 						"combined metadatatype already exists");
 			}
+			try {
+				if (implementationType.getMethod("clone", null)
+						.getDeclaringClass() != implementationType) {
+					throw new IllegalArgumentException(
+							"implementation class does not declare a clone method, this will lead to runtime exceptions");
+				}
+			} catch (SecurityException e) {
+				// TODO loggen
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO loggen
+				e.printStackTrace();
+			}
 			combinedMetadataTypes.put(typeSet, implementationType);
 		}
 	}
 
-	public static Class<? extends IMetaAttribute> getMetadataType(String... types) {
+	public static Class<? extends IMetaAttribute> getMetadataType(
+			String... types) {
 		HashSet<String> typeSet = new HashSet<String>();
 		for (String typeString : types) {
 			typeSet.add(typeString);
@@ -32,9 +47,11 @@ public class MetadataRegistry {
 		return getMetadataType(typeSet);
 	}
 
-	public static Class<? extends IMetaAttribute> getMetadataType(Set<String> types) {
+	public static Class<? extends IMetaAttribute> getMetadataType(
+			Set<String> types) {
 		synchronized (combinedMetadataTypes) {
-			Class<? extends IMetaAttribute> type = combinedMetadataTypes.get(types);
+			Class<? extends IMetaAttribute> type = combinedMetadataTypes
+					.get(types);
 			if (type == null) {
 				throw new IllegalArgumentException("No metadata type for: "
 						+ types.toString());
@@ -43,7 +60,7 @@ public class MetadataRegistry {
 			return type;
 		}
 	}
-	
+
 	public static Set<Set<String>> getAvailableMetadataCombinations() {
 		synchronized (combinedMetadataTypes) {
 			return combinedMetadataTypes.keySet();
