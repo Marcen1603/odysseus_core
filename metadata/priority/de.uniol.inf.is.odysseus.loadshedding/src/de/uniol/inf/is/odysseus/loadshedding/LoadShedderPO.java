@@ -14,6 +14,7 @@ public class LoadShedderPO<T extends IMetaAttributeContainer<?>> extends
 	private Random rand = new Random(System.currentTimeMillis());
 
 	private int rate = NO_LOAD_SHEDDING;
+	private double weight = 0;
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -55,4 +56,12 @@ public class LoadShedderPO<T extends IMetaAttributeContainer<?>> extends
 		this.rate = rate;
 	}
 
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}	
+	
 }
