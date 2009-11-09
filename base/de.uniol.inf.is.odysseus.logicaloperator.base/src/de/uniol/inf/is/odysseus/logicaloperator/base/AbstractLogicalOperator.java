@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
@@ -26,7 +27,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private ArrayList<IOperatorOwner> owner = new ArrayList<IOperatorOwner>();
 	
 	protected Map<Integer, LogicalSubscription> subscribedTo = new HashMap<Integer, LogicalSubscription>();
-	protected Map<Integer, LogicalSubscription> subscriptions = new HashMap<Integer,LogicalSubscription>();;
+	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
 	
 	protected boolean recalcOutputSchemata = false;
 	
@@ -41,7 +42,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		this.subscribedTo = new HashMap<Integer, LogicalSubscription>(op.subscribedTo);
-		this.subscriptions = new HashMap<Integer, LogicalSubscription>(op.subscriptions);
+		this.subscriptions = new Vector<LogicalSubscription>(op.subscriptions);
 		predicate =  op.predicate;
 		setName(op.getName());
 		physSubscriptionTo = op.physSubscriptionTo == null ? null
@@ -63,7 +64,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		try {
 			clone = (AbstractLogicalOperator) super.clone();
 			clone.subscribedTo = new HashMap<Integer, LogicalSubscription>(this.subscribedTo);
-			clone.subscriptions = new HashMap<Integer, LogicalSubscription>(this.subscriptions);
+			clone.subscriptions = new Vector<LogicalSubscription>(this.subscriptions);
 			clone.physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>(
 					this.physSubscriptionTo);
 			clone.name = this.name;
@@ -309,43 +310,42 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	final public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema) {
 		LogicalSubscription sub = new LogicalSubscription(
 				sink, sinkPort, sourcePort, inputSchema);
-		synchronized (this.subscriptions) {
-			if (!this.subscriptions.containsKey(sinkPort)) {
-				this.subscriptions.put(sinkPort, sub);
-				sink.subscribeTo(this, sinkPort, sourcePort, inputSchema);
-				recalcOutputSchemata = true;
-			}
-		}
+				if (!this.subscriptions.contains(sub)){
+					this.subscriptions.add(sub);
+					sink.subscribeTo(this, sinkPort, sourcePort, inputSchema);
+					recalcOutputSchemata = true;
+				}
 	}
+	
 	
 	@Override
 	final public void unsubscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
-		synchronized (this.subscriptions) {
-			if (this.subscriptions.remove(sinkPort) != null) {
-				sink.unsubscribeSubscriptionTo(this, sinkPort, sourcePort);
-				recalcOutputSchemata = true;
-			}
-		}
+		unsubscribe(new LogicalSubscription(sink, sinkPort, sourcePort));
 	}
 	
 	@Override
 	public void unsubscribe(LogicalSubscription subscription) {
-		unsubscribe(subscription.getTarget(), subscription.getSinkPort(), subscription.getSourcePort());
-	}
-
-	@Override
-	final public Collection<LogicalSubscription> getSubscriptions() {
-		synchronized (this.subscriptions) {
-			return this.subscriptions.values();
+		if (this.subscriptions.remove(subscription)) {
+			subscription.getTarget().unsubscribeSubscriptionTo(this, subscription.getSinkPort(), subscription.getSourcePort());
+			recalcOutputSchemata = true;
 		}
 	}
 
 	@Override
-	public Collection<LogicalSubscription> getSubscribtions(ILogicalOperator a) {
+	final public Collection<LogicalSubscription> getSubscriptions() {
+		//TODO: Unterscheiden, ob mit der Liste Änderungen durchgeführt werden sollen, oder ob nur
+		// gelesen werden soll.
+		return new Vector<LogicalSubscription>(this.subscriptions);
+	}
+
+	@Override
+	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a) {
 		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
-		for(LogicalSubscription l:subscriptions.values()){
-			if (l.getTarget() == a){
-				subs.add(l);
+		synchronized(subscriptions){
+			for(LogicalSubscription l:subscriptions){
+				if (l.getTarget() == a){
+					subs.add(l);	
+				}
 			}
 		}
 		return subs;

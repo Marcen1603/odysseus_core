@@ -35,6 +35,6 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	public Collection<ISource<?>> getPhysInputPOs();
 	public int getNumberOfInputs();
 
-	public Collection<LogicalSubscription> getSubscribtions(ILogicalOperator a);
+	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a);
 	public Collection<LogicalSubscription> getSubscribedTo(ILogicalOperator a);
 }

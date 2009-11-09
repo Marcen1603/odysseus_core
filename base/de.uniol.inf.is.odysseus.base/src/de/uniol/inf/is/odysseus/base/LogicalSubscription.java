@@ -30,5 +30,17 @@ public class LogicalSubscription extends Subscription<ILogicalOperator> implemen
 	public SDFAttributeList getInputSchema() {
 		return inputSchema;
 	}
+	
+	
+	//ACHTUNG. NICHT ÄNDERN!
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 		
 }

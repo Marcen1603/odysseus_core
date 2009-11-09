@@ -7,6 +7,9 @@ import java.util.NoSuchElementException;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
+//import org.drools.audit.WorkingMemoryConsoleLogger;
+//import org.drools.event.DebugAgendaEventListener;
+//import org.drools.event.DebugWorkingMemoryEventListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
@@ -121,11 +124,16 @@ public class DroolsTransformation implements ITransformation {
 
 		session.insert(this);
 		session.startProcess("flow");
-
+//
 //		 WorkingMemoryConsoleLogger lg = new
 //		 WorkingMemoryConsoleLogger(session);
 //		 lg.clearFilters();
+//		 session.addEventListener( new DebugAgendaEventListener() );
+//		 session.addEventListener( new DebugWorkingMemoryEventListener() );
 
+
+		 
+		 
 		session.fireAllRules();
 		IPhysicalOperator physicalPO = null;
 		try {
