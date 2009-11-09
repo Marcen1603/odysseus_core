@@ -1152,6 +1152,8 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 	
+	@Help(parameter = "<file name>", description = "runs commands contained in a file. The filename can be specified in an absolute manner or, together with \"setPath\" command in" +
+			" a relative manner.")
 	public void _runFromFile(CommandInterpreter ci){
 		String[] args = support.getArgs(ci);
 		if(args.length != 1){
