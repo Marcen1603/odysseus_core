@@ -8,4 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.benchmarker.impl,
  de.uniol.inf.is.odysseus.logicaloperator.base,
- de.uniol.inf.is.odysseus.transformation.drools
+ de.uniol.inf.is.odysseus.transformation.drools,
+ de.uniol.inf.is.odysseus.priority
