@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.uniol.inf.is.odysseus.rewrite.p2p" default="build.jars" basedir=".">
+
+	<property name="p2.build.repo" value="file:${buildDirectory}/buildRepo"/>
+	<property name="basews" value="${ws}"/>
+	<property name="baseos" value="${os}"/>
+	<property name="basearch" value="${arch}"/>
+	<property name="basenl" value="${nl}"/>
+	<property name="bundleId" value="de.uniol.inf.is.odysseus.rewrite.p2p"/>
+	<property name="bundleVersion" value="1.0.0"/>
+	<property name="p2.publishonerror" value="false"/>
+
+	<!-- Compiler settings. -->
+	<property name="javacFailOnError" value="false"/>
+	<property name="javacDebugInfo" value="on"/>
+	<property name="javacVerbose" value="false"/>
+	<property name="logExtension" value=".log"/>
+	<property name="compilerArg" value=""/>
+	<property name="javacSource" value="1.3"/>
+	<property name="javacTarget" value="1.2"/>
+	<condition property="dir_bootclasspath" value="${java.home}/../Classes">
+		<os family="mac"/>
+	</condition>
+	<property name="dir_bootclasspath" value="${java.home}/lib"/>
+	<path id="path_bootclasspath">
+		<fileset dir="${dir_bootclasspath}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<property name="bootclasspath" refid="path_bootclasspath"/>
+	<condition property="bundleBootClasspath" value="${JavaSE-1.6}"	>
+		<isset property="JavaSE-1.6"/>
+	</condition>
+	<condition property="bundleJavacSource" value="1.6"	>
+		<isset property="JavaSE-1.6"/>
+	</condition>
+	<condition property="bundleJavacTarget" value="1.6"	>
+		<isset property="JavaSE-1.6"/>
+	</condition>
+	<property name="bundleJavacSource" value="${javacSource}"/>
+	<property name="bundleJavacTarget" value="${javacTarget}"/>
+	<property name="bundleBootClasspath" value="${bootclasspath}"/>
+
+	<target name="init" depends="properties">
+		<condition property="pluginTemp" value="${buildTempFolder}/plugins"		>
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="pluginTemp" value="${basedir}"/>
+		<condition property="build.result.folder" value="${pluginTemp}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0"		>
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="build.result.folder" value="${basedir}"/>
+		<property name="temp.folder" value="${basedir}/temp.folder"/>
+		<property name="plugin.destination" value="${basedir}"/>
+		<condition property="p2.publish.parts" value="true"		>
+			<istrue value="${p2.gathering}"/>
+		</condition>
+		<property name="compilation.problem.marker" value="${build.result.folder}/compilation.problem"/>
+		<condition property="compilation.problem.marker.exists" value="true"		>
+			<and>
+			<available file="${compilation.problem.marker}"/>
+			<isfalse value="p2.publishonerror"/>
+			</and>
+		</condition>
+	</target>
+
+	<target name="properties" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+
+	</target>
+
+	<target name="build.update.jar" depends="init" description="Build the plug-in: de.uniol.inf.is.odysseus.rewrite.p2p for an update site.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<jar destfile="${plugin.destination}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0.jar" basedir="${temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0" filesetmanifest="merge"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="@dot" depends="init" unless="@dot" description="Create jar: de.uniol.inf.is.odysseus.rewrite.p2p @dot.">
+		<delete dir="${build.result.folder}/@dot"/>
+		<mkdir dir="${build.result.folder}/@dot"/>
+		<path id="@dot.classpath">
+			<pathelement path="../../base/de.uniol.inf.is.odysseus.rewrite.drools/bin/"/>
+			<pathelement path="../../base/de.uniol.inf.is.odysseus.rewrite.drools/@dot"/>
+			<pathelement path="../../relational/de.uniol.inf.is.odysseus.rewrite.relational/bin/"/>
+			<pathelement path="../../relational/de.uniol.inf.is.odysseus.rewrite.relational/@dot"/>
+			<pathelement path="../../metadata/priority/de.uniol.inf.is.odysseus.rewrite.relational_priority/@dot"/>
+			<pathelement path="../../metadata/priority/de.uniol.inf.is.odysseus.rewrite.priority/bin/"/>
+			<pathelement path="../../metadata/priority/de.uniol.inf.is.odysseus.rewrite.priority/@dot"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_rule_agent/bin/"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_rule_agent/@dot"/>
+			<pathelement path="../../resources/de.uniol.org.drools/bin"/>
+			<pathelement path="../../resources/de.uniol.org.drools/drools-api-5.0.1.jar"/>
+			<pathelement path="../../resources/de.uniol.org.drools/drools-compiler-5.0.1.jar"/>
+			<pathelement path="../../resources/de.uniol.org.drools/janino-2.5.15.jar"/>
+			<pathelement path="../../resources/de.uniol.org.drools/mvel2-2.0.10.jar"/>
+			<pathelement path="../../resources/de.uniol.org.drools/xstream-1.3.1.jar"/>
+			<pathelement path="../../resources/de.uniol.org.drools/antlr-runtime-3.1.1.jar"/>
+			<pathelement path="../../resources/de.uniol.org.drools/bin/"/>
+			<pathelement path="../../resources/de.uniol.org.drools/@dot"/>
+			<pathelement path="../../resources/de.uniol.org.drools/org.eclipse.jdt.core_3.5.0.v_963.jar"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/bin/"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/@dot"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/drools-api-5.0.1.jar"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/drools-compiler-5.0.1.jar"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/janino-2.5.15.jar"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/mvel2-2.0.10.jar"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/xstream-1.3.1.jar"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/antlr-runtime-3.1.1.jar"/>
+			<pathelement path="../../resources/de.uniol.inf.is.drools.osgi_path_scanner/org.eclipse.jdt.core_3.5.0.v_963.jar"/>
+			<pathelement path="../../resources/org.dynamicjava.classloading_utils"/>
+			<pathelement path="../../resources/org.dynamicjava.classloading_utils/@dot"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.osgi_3.5.1.R35x_v20090827.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/javax.transaction_1.1.1.v200909161740.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.persistence.jpa.equinox.weaving_1.1.2.v20090612-r4475.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.osgi.services_3.2.0.v20090520-1800.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/javax.servlet_2.5.0.v200806031605.jar"/>
+			<pathelement path="../../resources/com.springsource.slf4j.api/com.springsource.slf4j.api-1.5.6.jar"/>
+			<pathelement path="../../resources/com.springsource.slf4j.log4j/com.springsource.slf4j.log4j-1.5.6.jar"/>
+			<pathelement path="../../resources/com.springsource.slf4j.log4j/com.springsource.slf4j.api-1.5.6.jar"/>
+			<pathelement path="../../resources/com.springsource.org.apache.log4j/com.springsource.org.apache.log4j-1.2.15.jar"/>
+			<pathelement path="../../resources/log4jproperties/@dot"/>
+			<pathelement path="../../resources/log4jproperties/com.springsource.org.apache.log4j-1.2.15.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/javax.mail_1.4.0.v200905040518.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/javax.activation_1.1.0.v200906290531.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.net4j.jms.api_1.0.0.v200906160348/lib/jms.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.equinox.preferences_3.2.300.v20090520-1800.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.equinox.common_3.5.1.R35x_v20090807-1100.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20090429-1800/runtime_registry_compatibility.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20090429-1800"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.equinox.registry_3.4.100.v20090520-1800.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.eclipse.core.jobs_3.4.100.v20090429-1800.jar"/>
+			<pathelement path="../../base/de.uniol.inf.is.odysseus.base/bin/"/>
+			<pathelement path="../../base/de.uniol.inf.is.odysseus.base/@dot"/>
+			<pathelement path="../../resources/JepModified"/>
+			<pathelement path="../../resources/JepModified/@dot"/>
+			<pathelement path="../../base/de.uniol.inf.is.odysseus.logicaloperator.base/bin/"/>
+			<pathelement path="../../base/de.uniol.inf.is.odysseus.logicaloperator.base/@dot"/>
+			<pathelement path="../../metadata/priority/de.uniol.inf.is.odysseus.priority/bin/"/>
+			<pathelement path="../../metadata/priority/de.uniol.inf.is.odysseus.priority/@dot"/>
+			<pathelement path="../../metadata/interval/de.uniol.inf.is.odysseus.intervalapproach/bin/"/>
+			<pathelement path="../../metadata/interval/de.uniol.inf.is.odysseus.intervalapproach/@dot"/>
+			<pathelement path="../../planmanagement/de.uniol.inf.is.odysseus.planmanagement.optimization/bin/"/>
+			<pathelement path="../../planmanagement/de.uniol.inf.is.odysseus.planmanagement.optimization/@dot"/>
+			<pathelement path="../../scheduler/de.uniol.inf.is.odysseus.scheduler2.0/bin/"/>
+			<pathelement path="../../scheduler/de.uniol.inf.is.odysseus.scheduler2.0/@dot"/>
+			<pathelement path="../../relational/de.uniol.inf.is.odysseus.logicaloperator.relational/bin/"/>
+			<pathelement path="../../relational/de.uniol.inf.is.odysseus.logicaloperator.relational/@dot"/>
+			<pathelement path="../../relational/de.uniol.inf.is.odysseus.relational.base/bin/"/>
+			<pathelement path="../../relational/de.uniol.inf.is.odysseus.relational.base/@dot"/>
+			<pathelement path="../de.uniol.inf.is.odysseus.p2p/bin/"/>
+			<pathelement path="../de.uniol.inf.is.odysseus.p2p/@dot"/>
+			<pathelement path="../../resources/Jxta Plugin"/>
+			<pathelement path="../../resources/Jxta Plugin/@dot"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.mortbay.jetty.util_6.1.15.v200905182336.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.mortbay.jetty.server_6.1.15.v200905151201.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.jasper_5.5.17.v200903231320.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/javax.servlet.jsp_2.0.0.v200806031607.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.commons.el_1.0.0.v200806031608.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.commons.logging_1.0.4.v200904062259.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-antlr.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-apache-bcel.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-apache-bsf.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-apache-log4j.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-apache-oro.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-apache-regexp.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-apache-resolver.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-commons-logging.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-commons-net.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-jai.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-javamail.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-jdepend.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-jmf.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-jsch.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-junit.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-launcher.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-netrexx.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-nodeps.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-starteam.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-stylebook.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-swing.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-trax.jar"/>
+			<pathelement path="../../../../../Programme/eclipse/eclipse/plugins/org.apache.ant_1.7.1.v20090120-1145/lib/ant-weblogic.jar"/>
+			<pathelement path="../de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base/bin/"/>
+			<pathelement path="../de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base/@dot"/>
+			<pathelement path="../../metadata/priority/de.uniol.inf.is.odysseus.interval_latency_priority/bin/"/>
+			<pathelement path="../../metadata/priority/de.uniol.inf.is.odysseus.interval_latency_priority/@dot"/>
+			<pathelement path="../../metadata/de.uniol.inf.is.odysseus.latency/bin/"/>
+			<pathelement path="../../metadata/de.uniol.inf.is.odysseus.latency/@dot"/>
+		</path>
+		<!-- compile the source code -->
+		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}"		>
+			<compilerarg line="${compilerArg}" compiler="${build.compiler}"/>
+			<classpath refid="@dot.classpath" />
+			<src path="src/"			/>
+			<compilerarg value="@${basedir}/javaCompiler...args" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+			<compilerarg line="-log '${build.result.folder}/@dot${logExtension}'" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+		</javac>
+		<antcall target="checkCompilationResults"/>
+		<!-- Copy necessary resources -->
+		<copy todir="${build.result.folder}/@dot" failonerror="true" overwrite="false">
+			<fileset dir="src/">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.htm*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="src.zip" depends="init" unless="src.zip">
+		<mkdir dir="${build.result.folder}"/>
+		<antcall target="zip.src.zip"/>
+	</target>
+	<target name="zip.src.zip">
+		<zip destfile="${build.result.folder}/src.zip" filesonly="false" whenempty="skip" update="false">
+			<fileset dir="src/">
+				<include name="**/*.java"/>
+			</fileset>
+		</zip>
+	</target>
+	<target name="copy.src.zip">
+		<copy todir="${source.destination.folder}/" failonerror="true" overwrite="true">
+			<fileset dir="src/">
+				<include name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build.jars" depends="init" description="Compile classes and build nested jars for the plug-in: de.uniol.inf.is.odysseus.rewrite.p2p.">
+		<delete file="${compilation.problem.marker}" quiet="true"/>
+		<available property="@dot" file="${build.result.folder}/@dot"/>
+		<antcall target="@dot"/>
+	</target>
+
+	<target name="checkCompilationResults" if="compilation.error.occured">
+		<echo file="${compilation.problem.marker}" message="de.uniol.inf.is.odysseus.rewrite.p2p : compilation.error.occured=${compilation.error.occured}"/>
+	</target>
+
+	<target name="build.sources" depends="init">
+		<available property="src.zip" file="${build.result.folder}/src.zip"/>
+		<antcall target="src.zip"/>
+	</target>
+
+	<target name="publish.bin.parts" depends="init" if="p2.publish.parts" unless="compilation.problem.marker.exists">
+		<mkdir dir="${build.result.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0"/>
+		<copy todir="${build.result.folder}" failonerror="true" overwrite="true">
+			<fileset dir="${basedir}">
+				<include name="META-INF/MANIFEST.MF"/>
+				<include name="plugin.xml"/>
+				<include name="fragment.xml"/>
+			</fileset>
+		</copy>
+		<antcall target="apitools.generation">
+			<param name="target.folder" value="${build.result.folder}"/>
+			<param name="projectLocation" value="${basedir}"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
+			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
+		</antcall>
+		<eclipse.gatherBundle 
+		   metadataRepository="${p2.build.repo}"
+		   artifactRepository="${p2.build.repo}"
+		   buildResultFolder="${build.result.folder}"
+		   baseDirectory="${basedir}"
+		/>
+	</target>
+
+	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0"/>
+		<copy todir="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0" failonerror="true" overwrite="false">
+			<fileset dir="${build.result.folder}/@dot">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<copy todir="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0" failonerror="true" overwrite="true">
+			<fileset dir="${basedir}">
+				<include name="META-INF/"/>
+			</fileset>
+		</copy>
+		<antcall target="apitools.generation">
+			<param name="target.folder" value="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0"/>
+			<param name="projectLocation" value="${basedir}"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
+			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
+		</antcall>
+	</target>
+
+	<target name="build.zips" depends="init">
+	</target>
+
+	<target name="gather.sources" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0"/>
+		<copy file="${build.result.folder}/src.zip" todir="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0" failonerror="false" overwrite="false"/>
+		<antcall target="copy.src.includes">
+			<param name="source.destination.folder" value="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0"/>
+		</antcall>
+	</target>
+
+	<target name="gather.individual.sources" depends="init">
+		<antcall target="copy.src.zip">
+			<param name="source.destination.folder" value="${destination.temp.folder}"/>
+		</antcall>
+		<antcall target="copy.src.includes">
+			<param name="source.destination.folder" value="${destination.temp.folder}"/>
+		</antcall>
+	</target>
+
+	<target name="copy.src.includes" depends="init">
+	</target>
+
+	<target name="gather.logs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0"/>
+		<copy todir="${destination.temp.folder}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0" failonerror="false" overwrite="false">
+			<fileset dir="${build.result.folder}">
+				<include name="@dot${logExtension}"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="clean" depends="init" description="Clean the plug-in: de.uniol.inf.is.odysseus.rewrite.p2p of all the zips, jars and logs created.">
+		<delete dir="${build.result.folder}/@dot"/>
+		<delete file="${build.result.folder}/src.zip"/>
+		<delete file="${plugin.destination}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0.jar"/>
+		<delete file="${plugin.destination}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0.zip"/>
+		<delete dir="${temp.folder}"/>
+		<delete file="${compilation.problem.marker}" quiet="true"/>
+	</target>
+
+	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
+		<eclipse.convertPath fileSystemPath="E:/development/osgi/odysseus/p2p/de.uniol.inf.is.odysseus.rewrite.p2p" property="resourcePath"/>
+		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
+	</target>
+
+	<target name="zip.plugin" depends="init" description="Create a zip containing all the elements for the plug-in: de.uniol.inf.is.odysseus.rewrite.p2p.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="build.sources"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.sources">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<delete>
+			<fileset dir="${temp.folder}">
+				<include name="**/*.bin${logExtension}"/>
+			</fileset>
+		</delete>
+		<zip destfile="${plugin.destination}/de.uniol.inf.is.odysseus.rewrite.p2p_1.0.0.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="apitools.generation" if="generateAPIDescription">
+		<apitooling.apigeneration  projectName="${projectName}" project="${projectLocation}" binary="${binary.folders}" target="${target.folder}"		/>
+	</target>
+
+</project>
