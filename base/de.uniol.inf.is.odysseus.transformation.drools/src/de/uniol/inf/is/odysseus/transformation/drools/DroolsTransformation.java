@@ -122,9 +122,9 @@ public class DroolsTransformation implements ITransformation {
 		session.insert(this);
 		session.startProcess("flow");
 
-		// WorkingMemoryConsoleLogger lg = new
-		// WorkingMemoryConsoleLogger(session);
-		// lg.clearFilters();
+//		 WorkingMemoryConsoleLogger lg = new
+//		 WorkingMemoryConsoleLogger(session);
+//		 lg.clearFilters();
 
 		session.fireAllRules();
 		IPhysicalOperator physicalPO = null;
@@ -140,7 +140,7 @@ public class DroolsTransformation implements ITransformation {
 		}
 		session.dispose();
 		if (isInfoEnabled()) {
-			info("transformation result: " + planToString(physicalPO, ""));
+			info("transformation result: \n" + planToString(physicalPO, ""));
 		}
 		op.unsubscribe(top, 0, 0);
 		return physicalPO;
