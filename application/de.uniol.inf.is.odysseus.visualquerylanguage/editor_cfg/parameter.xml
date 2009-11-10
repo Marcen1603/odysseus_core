@@ -22,9 +22,19 @@
 					<editor>true</editor>
 				</setterParameter>
 				
+				<setterParameter>
+					<name>Name</name>
+					<ptype>java.lang.String</ptype>
+					<typelist>
+						<type>java.lang.String</type>
+					</typelist>
+					<setter>setName</setter>
+					<editor>false</editor>
+				</setterParameter>
+				
 			</sparams>
 		</pipe>
-		
+
 		<pipe>
 			<pipe-name>Join-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO</pipe-type>
@@ -36,6 +46,8 @@
 					<name>Predicate</name>
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
+						<type>de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
@@ -58,7 +70,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
@@ -80,7 +92,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
@@ -102,7 +114,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
@@ -124,7 +136,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
@@ -146,7 +158,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
@@ -168,7 +180,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
@@ -190,7 +202,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
@@ -212,7 +224,7 @@
 					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
 					<typelist>
 						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression</type>
-						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute</type>
+						<type>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute</type>
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>

@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.DefaultPipeContent;
@@ -75,9 +76,19 @@ public class SWTParameterArea implements ISWTParameterListener {
 		} else if (content instanceof DefaultPipeContent) {
 			nameLabel.setText("Pipename: " + content.getName());
 		}
-
-		Label typLabel = new Label(comp, SWT.LEFT);
-		typLabel.setText("Typ: " + content.getType());
+		
+		if(content.getOperator().getOutputSchema() != null && !content.getOperator().getOutputSchema().isEmpty()) {
+			Label typLabel = new Label(comp, SWT.LEFT);
+			String outPut = "";
+			for (SDFAttribute att : content.getOperator().getOutputSchema()) {
+				if(outPut.isEmpty()) {
+					outPut = att.toString();
+				}else {
+					outPut += ", " + att.toString();
+				}
+			}
+			typLabel.setText("Ausgabeschema: " + outPut);
+		}
 
 		if (!content.isOnlySource()
 				&& (!content.getConstructParameterList().isEmpty() || !content
@@ -189,7 +200,7 @@ public class SWTParameterArea implements ISWTParameterListener {
 	public void handleEvent(Event event) {
 		Rectangle clientArea = table.getClientArea();
 		Point pt = new Point(event.x, event.y);
-		int index = table.getTopIndex();
+		int index = table.getSelectionIndex();
 		while (index < table.getItemCount()) {
 			boolean visible = false;
 			final TableItem item = table.getItem(index);

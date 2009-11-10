@@ -72,33 +72,18 @@ public class SWTMainWindow {
 
 		this.executor = exec;
 
-		// Menu von Timo
 		Menu menu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menu);
 		MenuItem fileItem = new MenuItem(menu, SWT.CASCADE);
 		fileItem.setText("&Datei");
-		MenuItem editItem = new MenuItem(menu, SWT.CASCADE);
-		editItem.setText("&Bearbeiten");
-		MenuItem viewItem = new MenuItem(menu, SWT.CASCADE);
-		viewItem.setText("&Ansicht");
 		MenuItem graphItem = new MenuItem(menu, SWT.CASCADE);
 		graphItem.setText("&Graph");
-		MenuItem configItem = new MenuItem(menu, SWT.CASCADE);
-		configItem.setText("&Optionen");
 
-		// Submenus von Timo
 		Menu fileSubMenu = new Menu(shell, SWT.DROP_DOWN);
 		fileItem.setMenu(fileSubMenu);
-		Menu editSubMenu = new Menu(shell, SWT.DROP_DOWN);
-		editItem.setMenu(editSubMenu);
-		Menu viewSubMenu = new Menu(shell, SWT.DROP_DOWN);
-		viewItem.setMenu(viewSubMenu);
 		Menu graphSubMenu = new Menu(shell, SWT.DROP_DOWN);
 		graphItem.setMenu(graphSubMenu);
-		Menu configSubMenu = new Menu(shell, SWT.DROP_DOWN);
-		configItem.setMenu(configSubMenu);
 
-		// DATEI von Timo
 		MenuItem exitMenuItem = new MenuItem(fileSubMenu, SWT.PUSH);
 		exitMenuItem.setText("&Beenden");
 		exitMenuItem.addSelectionListener(new SelectionAdapter() {
@@ -358,6 +343,45 @@ public class SWTMainWindow {
 			public void widgetSelected(SelectionEvent e) {
 				tabFolder.layout();
 				tabFolder.setSelection(0);
+			}
+		});
+		
+		ToolItem deleteNode = new ToolItem(tools, SWT.PUSH);
+		deleteNode.setImage(SWTResourceManager.getInstance().getImage(
+				"deleteNode"));
+		deleteNode.setToolTipText("Knoten löschen");
+		deleteNode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (tabFolder.getSelection().getControl() instanceof DefaultGraphArea) {
+					((DefaultGraphArea) (tabFolder.getSelection().getControl()))
+							.removeNodes();
+				}
+			}
+		});
+		
+		ToolItem deleteConnection = new ToolItem(tools, SWT.PUSH);
+		deleteConnection.setImage(SWTResourceManager.getInstance().getImage(
+				"deleteConnection"));
+		deleteConnection.setToolTipText("Verbindung löschen");
+		deleteConnection.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DefaultGraphArea area = null;
+				if (tabFolder.getSelection().getControl() instanceof DefaultGraphArea) {
+					area = (DefaultGraphArea) tabFolder.getSelection()
+							.getControl();
+				}
+				if (area != null) {
+					if (deleteConnection()) {
+						area.getStatusLine().setText("Verbindung gelöscht");
+					} else {
+						area
+								.getStatusLine()
+								.setErrorText(
+										"Keine Verbindung zwischen den Knoten vorhanden.");
+					}
+				}
 			}
 		});
 

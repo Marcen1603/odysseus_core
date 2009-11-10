@@ -46,6 +46,7 @@ public class SWTParameterEditor {
 				| SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		textArea.setLayoutData(gd);
+		textArea.setText(item.getText(1));
 
 		Composite comp = new org.eclipse.swt.widgets.Composite(shell,
 				SWT.BORDER);
