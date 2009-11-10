@@ -53,7 +53,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 
 	@SuppressWarnings("unchecked")
 	@Override
-	final protected synchronized void process_next(T object, int port) {
+	protected synchronized void process_next(T object, int port) {
 
 		storage.setCurrentPort(port);
 

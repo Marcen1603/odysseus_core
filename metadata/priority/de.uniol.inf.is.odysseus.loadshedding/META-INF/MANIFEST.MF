@@ -18,5 +18,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: de.uniol.inf.is.odysseus.loadshedding.Activator
 Export-Package: de.uniol.inf.is.odysseus.loadshedding,
+ de.uniol.inf.is.odysseus.loadshedding.bufferplacement,
  de.uniol.inf.is.odysseus.loadshedding.monitoring
 Service-Component: OSGI-INF/LoadSheddingBufferPlacement.xml
