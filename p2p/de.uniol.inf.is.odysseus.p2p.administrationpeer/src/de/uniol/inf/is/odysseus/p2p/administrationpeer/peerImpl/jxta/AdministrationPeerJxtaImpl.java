@@ -132,6 +132,11 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 //
 //	
 
+	public void activate() {
+		System.out.println("Starte Admin-Peer");
+		startPeer();
+	}
+	
 	//für die korrekte Nutzung in OSGi muss der Konstruktor public sein. Damit der "Singleton" in weiteren Programmaufrufen unberührt bleibt, wurde noch die Instanz der Static Variablen zugewiesen. 
 	public AdministrationPeerJxtaImpl(){
 		instance = this;

@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.bidding.IBidding
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.splitting.ISplittingStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
+
 public abstract class AbstractAdministrationPeer implements IPeer {
 
 	protected IQuerySpezificationListener querySpezificationListener;
@@ -77,6 +78,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	}
 
 	private ICompiler compiler;
+
 	
 	public ICompiler getCompiler() {
 		return compiler;
@@ -85,6 +87,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	
 	public void bindCompiler(ICompiler compiler) {
+		System.out.println("Binde Compiler");
 		this.compiler = compiler;
 
 	}
@@ -105,10 +108,10 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 //				startPeer();
 //			}
 //		}
-				if(!peerStarted) {
-					startPeer();
-					peerStarted = true;
-				}
+//				if(!peerStarted) {
+//					startPeer();
+//					peerStarted = true;
+//				}
 	}
 	
 	public void unbindExecutor(IAdvancedExecutor executor) {
@@ -117,7 +120,24 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		}
 	}
 	
-
+//	public void bindDummy(IDummy dummy) {
+//		try {
+//		if(this.dummy == null)  {
+//		System.out.println("binde dummy");
+//		this.dummy = dummy;
+//		}
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+//	public void unbindDummy(IDummy dummy) {
+//		System.out.println("unbind dummy");
+//		if(this.dummy == dummy) {
+//			this.dummy = null;
+//		}
+//	}
+	
 
 	public IEventListener getEventListener() {
 		return eventListener;
