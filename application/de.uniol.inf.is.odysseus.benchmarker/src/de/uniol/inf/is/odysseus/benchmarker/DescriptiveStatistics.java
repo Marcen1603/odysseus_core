@@ -88,7 +88,8 @@ public class DescriptiveStatistics {
 			accum += dev * dev;
 			accum2 += dev;
 		}
-		this.variance = (accum - (accum2 * accum2 / count)) / count;
+//		this.variance = (accum - (accum2 * accum2 / count)) / count;TODO was hab ich hier berechnet? :)
+		this.variance = accum/(count-1);
 		this.standardDeviation = Math.sqrt(this.variance);
 
 		// precalculate percentiles, so memory for values can be freed
