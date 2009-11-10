@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.queryAdmini
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.BiddingHandlerStrategyStandard;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.HotPeerStrategyRandom;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.bidding.MaxQueryBiddingStrategyJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.splitting.OneOperatorPerSubplanStrategyJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
@@ -205,10 +204,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	}
 
-	@Override
-	protected void initSplitter() {
-		this.splitter = new OneOperatorPerSubplanStrategyJxtaImpl(netPeerGroup);
-	}
 
 	public void setDiscoveryService(DiscoveryService discoveryService) {
 		this.discoveryService = discoveryService;
@@ -323,6 +318,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		manager.waitForRendezvousConnection(CONNECTION_TIME);
 
 		netPeerGroup = manager.getNetPeerGroup();
+		System.out.println("Setze peergroup auf "+netPeerGroup);
 		PeerGroupTool.setPeerGroup(netPeerGroup);
 		discoveryService = netPeerGroup.getDiscoveryService();
 		pipeService = netPeerGroup.getPipeService();

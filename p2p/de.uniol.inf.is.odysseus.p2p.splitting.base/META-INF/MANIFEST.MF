@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Operatorplan Splitting Base
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.splitting.base
+Bundle-Version: 1.0.0
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.p2p.splitting.refinement.base,
+ org.osgi.framework;version="1.3.0"
+Export-Package: de.uniol.inf.is.odysseus.p2p.splitting.base
+Service-Component: OSGI-INF/AbstractSplittingStrategy.xml

@@ -157,7 +157,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId).setSubplans(splitPlan);
 				Log.logAction(queryId, "Operatorplan in "+splitPlan.size()+" Teile aufgeteilt");
 				Log.setSubplans(queryId, splitPlan.size());
-				Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl.getInstance().getSplitter().getName());
+				Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl.getInstance().getSplitting().getName());
 				Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
 						.getQueries().get(queryId).getStatus().toString());
 				// get(0), weil die subpläne von den senken zu den quellen gehen und wir die p2psink für den thin-peer wollen

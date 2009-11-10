@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IBiddingHandlerStrategy;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IHotPeerStrategy;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.bidding.IBiddingStrategy;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.splitting.ISplittingStrategy;
+import de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
 
@@ -51,8 +51,6 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 
 	protected ISocketServerListener socketServerListener;
 	
-	protected ISplittingStrategy splitter;
-	
 	protected ISourceListener sourceListener;
 	
 	private Thread sourceListenerThread;
@@ -69,6 +67,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	protected boolean peerStarted = false;
 	
+	protected ISplittingStrategy splitting;
 	
 	
 	private IAdvancedExecutor executor;
@@ -100,23 +99,23 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		System.out.println("Binde Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
-//		if(getExecutor()==null) {
-//			//synchronisieren von executor
-				this.executor = executor;
-//			if(getTrafo()!=null && !this.peerStarted) {
-//				this.peerStarted  = true;
-//				startPeer();
-//			}
-//		}
-//				if(!peerStarted) {
-//					startPeer();
-//					peerStarted = true;
-//				}
+		this.executor = executor;
 	}
 	
 	public void unbindExecutor(IAdvancedExecutor executor) {
 		if(this.executor == executor) {
 			this.executor = null;
+		}
+	}
+	
+	public void bindSplitting(ISplittingStrategy splitting) {
+		System.out.println("Binde Splitting");
+		this.splitting = splitting;
+	}
+	
+	public void unbindSplitting(ISplittingStrategy splitting) {
+		if(this.splitting == splitting) {
+			this.splitting = null;
 		}
 	}
 	
@@ -161,8 +160,8 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		return socketServerListener;
 	}
 
-	public ISplittingStrategy getSplitter() {
-		return splitter;
+	public ISplittingStrategy getSplitting() {
+		return splitting;
 	}
 	
 	String events =  "OpenInit,OpenDone,ProcessInit,ProcessDone,ProcessInitNeg,ProcessDoneNeg,PushInit,PushDone,PushInitNeg,PushDoneNeg,Done" ;
@@ -183,7 +182,6 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		initEventListener();
 		initQuerySpezificationListener();
 		initSourceListener();
-		initSplitter();
 		initBiddingHandler();
 		initAliveHandler();
 		initHotPeerFinder();
@@ -199,8 +197,6 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	protected abstract void initQuerySpezificationListener();
 
 	protected abstract void initSocketServerListener();
-	
-	protected abstract void initSplitter();
 	
 	protected abstract void initBiddingHandler();
 	
@@ -237,12 +233,8 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		this.socketServerListener = socketServerListener;
 	}
 
-	public void setSplitter(ISplittingStrategy splitter) {
-		this.splitter = splitter;
-	}
-
 	final public ArrayList<AbstractLogicalOperator> splitPlan(AbstractLogicalOperator plan){
-		return splitter.splitPlan(plan);
+		return this.splitting.splitPlan(plan);
 	}
 
 	protected abstract void startNetwork();

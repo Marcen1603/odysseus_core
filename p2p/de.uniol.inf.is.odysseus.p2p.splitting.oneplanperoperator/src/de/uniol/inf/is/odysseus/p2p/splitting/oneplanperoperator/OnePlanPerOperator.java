@@ -1,6 +1,8 @@
-package de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.splitting;
+package de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator;
 
 import java.util.ArrayList;
+
+import org.w3c.dom.views.AbstractView;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
@@ -13,45 +15,37 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.P2PSourceAO;
 import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.splitting.ISplittingStrategy;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
+import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
 
-public class OneOperatorPerSubplanStrategyJxtaImpl implements
-		ISplittingStrategy {
+public class OnePlanPerOperator extends
+		AbstractSplittingStrategy {
 
-	private PeerGroup netPeerGroup;
+	
+	private ArrayList<AbstractLogicalOperator> splitList;
 
-	public PeerGroup getNetPeerGroup() {
-		return netPeerGroup;
-	}
 
-	public void setNetPeerGroup(PeerGroup netPeerGroup) {
-		this.netPeerGroup = netPeerGroup;
-	}
-
-	public OneOperatorPerSubplanStrategyJxtaImpl(PeerGroup netPeerGroup) {
+	public OnePlanPerOperator() {
 		super();
-		this.netPeerGroup = netPeerGroup;
+		this.splitList = new ArrayList<AbstractLogicalOperator>();
 	}
 
 	@Override
 	public ArrayList<AbstractLogicalOperator> splitPlan(AbstractLogicalOperator plan) {
 
-		ArrayList<AbstractLogicalOperator> tempList = new ArrayList<AbstractLogicalOperator>();
-//		if(plan instanceof AccessAO) {
-//			tempList.add(plan);
-//			return tempList;
-//		}
 		splitPlan(plan,
-				createSocketAdvertisement().toString(), tempList);
-		return tempList;
+				createSocketAdvertisement().toString());
+		if(getRefinement()!=null) {
+			setSplitList(getRefinement().refinePlan(this.splitList));
+		}
+		
+		return getSplitList();
 	}
 
 	public PipeAdvertisement createSocketAdvertisement() {
 		PipeID socketID = null;
 
-		socketID = (PipeID) IDFactory.newPipeID(netPeerGroup.getPeerGroupID());
+		socketID = (PipeID) IDFactory.newPipeID(PeerGroupTool.getPeerGroup().getPeerGroupID());
 		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		advertisement.setPipeID(socketID);
@@ -61,8 +55,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 		return advertisement;
 	}
 
-	private void splitPlan(ILogicalOperator iLogicalOperator, String current,
-			ArrayList<AbstractLogicalOperator> list) {
+	private void splitPlan(ILogicalOperator iLogicalOperator, String current) {
 		int outputCount = iLogicalOperator.getSubscribedTo().size();
 		String temp = null;
 		P2PSinkAO p2ppipe = new P2PSinkAO(current);
@@ -116,8 +109,7 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 //		}
 		p2ppipe.subscribeTo(tempAO,0,0, tempAO.getOutputSchema());
 
-//		this.setIDSizes(p2ppipe);
-		list.add(p2ppipe);
+		getSplitList().add(p2ppipe);
 
 		for (int i = 0; i < outputCount; ++i) {
 			if (i == 1) {
@@ -126,46 +118,23 @@ public class OneOperatorPerSubplanStrategyJxtaImpl implements
 			if (iLogicalOperator instanceof AccessAO) {
 				return;
 			}
-			splitPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), adv, list);
+			splitPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), adv);
 		}
 	}
-
-//	private void setIDSizes(ILogicalOperator plan) {
-		// TODO: Klaeren wof�r die IDSizes notwendig sind, wird das �berhaupt irgendwo genutzt?
-		
-//		for (int i = 0; i < plan.getNumberOfInputs(); i++) {
-//			setIDSizes(plan.getInputAO(i));
-//		}
-//
-//		if (plan instanceof AccessAO) {
-//			plan.setInputIDSize(0, 0);
-//			plan.setOutputIDSize(0);
-//		} else if (plan instanceof ProjectAO) {
-//			plan.setInputIDSize(0, plan.getInputAO(0).getOutputIDSize());
-//			plan.setOutputIDSize(plan.getInputIDSize(0));
-//		} else if (plan instanceof MapAO) {
-//			plan.setInputIDSize(0, plan.getInputAO(0).getOutputIDSize());
-//			plan.setOutputIDSize(plan.getInputIDSize(0));
-//		} else if (plan instanceof JoinAO) {
-//			plan.setInputIDSize(0, plan.getInputAO(0).getOutputIDSize());
-//			plan.setInputIDSize(1, plan.getInputAO(1).getOutputIDSize());
-//			plan.setOutputIDSize(plan.getInputIDSize(0)
-//					+ plan.getInputIDSize(1));
-//		} else if (plan instanceof SelectAO) {
-//			plan.setInputIDSize(0, plan.getInputAO(0).getOutputIDSize());
-//			plan.setOutputIDSize(plan.getInputIDSize(0));
-//		} else if (plan instanceof WindowAO) {
-//			plan.setInputIDSize(0, plan.getInputAO(0).getOutputIDSize());
-//			plan.setOutputIDSize(plan.getInputIDSize(0));
-//		} else if (plan instanceof PriorityAO) {
-//			plan.setInputIDSize(0, plan.getInputAO(0).getOutputIDSize());
-//			plan.setOutputIDSize(plan.getInputIDSize(0));
-//		}
-//	}
 
 	@Override
 	public String getName() {
 		return "OneOperatorPerPeer";
+	}
+	
+	
+	public ArrayList<AbstractLogicalOperator> getSplitList() {
+		return splitList;
+	}
+
+
+	public void setSplitList(ArrayList<AbstractLogicalOperator> splitList) {
+		this.splitList = splitList;
 	}
 
 }
