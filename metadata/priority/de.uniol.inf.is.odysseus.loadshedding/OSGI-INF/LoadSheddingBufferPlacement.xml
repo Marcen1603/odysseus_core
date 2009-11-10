@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.loadshedding.bufferplacement">
+   <property name="component.readableName" type="String" value="A4 Load Shedding Buffer Placement"/>
+   <implementation class="de.uniol.inf.is.odysseus.loadshedding.bufferplacement.LoadSheddingBufferPlacement"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy"/>
+   </service>
+</scr:component>

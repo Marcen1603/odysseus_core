@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.loadshedding;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostPriorisation;
 
-public class LoadShedderPO<T extends IMetaAttributeContainer<?>> extends
-		AbstractPipe<T, T> {
+public class DirectLoadSheddingBuffer<T extends IMetaAttributeContainer<? extends IPriority>>
+extends DirectInterlinkBufferedPipePostPriorisation<T> {
 
 	public static final int NO_LOAD_SHEDDING = -1;
 
@@ -16,10 +16,7 @@ public class LoadShedderPO<T extends IMetaAttributeContainer<?>> extends
 	private int rate = NO_LOAD_SHEDDING;
 	private double weight = 0;
 
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
+
 
 	@Override
 	protected void process_next(T next, int port) {
@@ -29,7 +26,7 @@ public class LoadShedderPO<T extends IMetaAttributeContainer<?>> extends
 			IPriority prio = (IPriority) next.getMetadata();
 
 			if (prio.getPriority() > 0) {
-				transfer(next);
+				super.process_next(next, port);
 			} else {
 
 				rand.setSeed(System.currentTimeMillis());
@@ -37,13 +34,13 @@ public class LoadShedderPO<T extends IMetaAttributeContainer<?>> extends
 				// alles kaputt zu machen (=> nicht so etwas wie
 				// "loesche jedes 4.")
 				if (rand.nextBoolean()) {
-					transfer(next);
+					super.process_next(next, port);
 				} else {
 					rate--;
 				}
 			}
 		} else {
-			transfer(next);
+			super.process_next(next, port);
 		}
 
 	}
