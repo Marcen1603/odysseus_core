@@ -12,8 +12,6 @@ import org.drools.agent.RuleAgent;
 //import org.drools.event.DebugWorkingMemoryEventListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.drools.RuleAgentFactory;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -27,6 +25,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 /**
  * @author Jonas Jacobi
@@ -36,41 +35,6 @@ public class DroolsTransformation implements ITransformation {
 	private static final String RULE_PATH = "/resources/transformation/rules";
 	private static final String LOGGER_NAME = "transformation";
 	private RuleBase rulebase;
-	private static Logger _logger = null;
-
-	// Dieses hier ist ein Hack damit das Drools-Plugin keine Fehler liefert!
-	private void error(String message) {
-		initLogger();
-		if (_logger != null) {
-			_logger.error(message);
-		}
-	}
-
-	private static void info(String info) {
-		initLogger();
-		if (_logger != null) {
-			_logger.info(info);
-		}
-	}
-
-	private static Logger initLogger() {
-		try {
-			_logger = LoggerFactory.getLogger(LOGGER_NAME);
-			return _logger;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private boolean isInfoEnabled() {
-		initLogger();
-		if (_logger != null) {
-			return _logger.isInfoEnabled();
-		} else {
-			return false;
-		}
-	}
 
 	private static void addLogicalOperatorToSession(StatefulSession session,
 			ILogicalOperator op, List<ILogicalOperator> inserted) {
@@ -79,7 +43,7 @@ public class DroolsTransformation implements ITransformation {
 		}
 
 		if (!inserted.contains(op)) {
-			info("insert into wm: " + op);
+			LoggerHelper.getInstance(LOGGER_NAME).info("insert into wm: " + op);
 			session.insert(op);
 			inserted.add(op);
 
@@ -99,7 +63,7 @@ public class DroolsTransformation implements ITransformation {
 					RULE_PATH, LOGGER_NAME);
 			this.rulebase = ra.getRuleBase();
 		} catch (Throwable t) {
-			error(t.getMessage());
+			LoggerHelper.getInstance(LOGGER_NAME).error(t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -115,11 +79,11 @@ public class DroolsTransformation implements ITransformation {
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
 
-		if (isInfoEnabled()) {
-			info("transformation of: "
+		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
+			LoggerHelper.getInstance(LOGGER_NAME).info("transformation of: "
 					+ AbstractTreeWalker.prefixWalk(top,
 							new AlgebraPlanToStringVisitor()));
-			info("added to working memory " + list);
+			LoggerHelper.getInstance(LOGGER_NAME).info("added to working memory " + list);
 		}
 
 		session.insert(this);
@@ -147,8 +111,8 @@ public class DroolsTransformation implements ITransformation {
 			throw new TransformationException(config, errors);
 		}
 		session.dispose();
-		if (isInfoEnabled()) {
-			info("transformation result: \n" + planToString(physicalPO, ""));
+		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
+			LoggerHelper.getInstance(LOGGER_NAME).info("transformation result: \n" + planToString(physicalPO, ""));
 		}
 		op.unsubscribe(top, 0, 0);
 		return physicalPO;

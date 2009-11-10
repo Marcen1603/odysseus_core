@@ -6,14 +6,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 public class MetadataRegistry {
-	private static Logger logger = LoggerFactory
-			.getLogger(MetadataRegistry.class);
+
+	private static final String LOGGER_NAME = MetadataRegistry.class.getName();
 
 	private static Map<Set<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<Set<String>, Class<? extends IMetaAttribute>>();
 
@@ -34,7 +32,7 @@ public class MetadataRegistry {
 					throw new IllegalArgumentException(msg);
 				}
 			} catch (Exception e) {
-				logger.warn("could not check wether '"
+				LoggerHelper.getInstance(LOGGER_NAME).warn("could not check wether '"
 						+ implementationType.getName() + "' supports clone() method, reason:\n\t"
 						+ e.getMessage());
 			}
