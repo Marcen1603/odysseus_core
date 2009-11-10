@@ -14,5 +14,7 @@
 	<Image source="editor_cfg/refresh.png" name="refresh"/>
 	<Image source="editor_cfg/delete.png" name="delete"/>
 	<Image source="editor_cfg/neueQuelle.png" name="neueQuelle"/>
+	<Image source="editor_cfg/deleteConnection.png" name="deleteConnection"/>
+	<Image source="editor_cfg/deleteNode.png" name="deleteNode"/>
 
 </Resources>
