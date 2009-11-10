@@ -22,7 +22,7 @@ public class PlanManagementException extends Exception {
 	 * @param e original {@link Exception} which occurs. 
 	 */
 	public PlanManagementException(Exception e) {
-		this(e.getMessage());
+		this.initCause(e);
 		this.setStackTrace(e.getStackTrace());
 	}
 

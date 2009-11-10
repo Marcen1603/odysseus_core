@@ -22,8 +22,7 @@ public class QueryAddException extends PlanManagementException {
 	 * @param exception Exception {@link Exception} which occurs. 
 	 */
 	public QueryAddException(Exception exception) {
-		this(exception.getMessage());
-		this.setStackTrace(exception.getStackTrace());
+		super(exception);
 	}
 
 	/**
