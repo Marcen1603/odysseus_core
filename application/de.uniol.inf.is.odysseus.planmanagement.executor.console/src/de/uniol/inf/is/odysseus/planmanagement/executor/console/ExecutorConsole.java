@@ -62,7 +62,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	private IAdvancedExecutor executor;
 
-	private String parser;
+	private String parser = null;
 	
 	/**
 	 * This is the bath to files, to read queries from.
@@ -226,22 +226,26 @@ public class ExecutorConsole implements CommandProvider,
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
+		
+		// Typically no compiler is loaded here, so the following
+		// code will always break
 
-		try {
-			// Default is CQL
-			for (String p: this.executor.getSupportedQueryParser()){
-				if ("CQL".equalsIgnoreCase(p)){
-					parser = p;
-				}
-			}
-			// Only if CQL-Parser isn't bound, set another Parser
-			if (this.parser == null ){
-				this.parser = this.executor.getSupportedQueryParser().iterator()
-						.next();
-			}
-		} catch (PlanManagementException e) {
-			System.out.println("Error setting parser.");
-		}
+//		try {
+//			// Default is CQL
+//			for (String p: this.executor.getSupportedQueryParser()){
+//				if ("CQL".equalsIgnoreCase(p)){
+//					parser = p;
+//				}
+//			}
+//			// Only if CQL-Parser isn't bound, set another Parser
+//			if (this.parser == null && executor.getSupportedQueryParser()!=null){
+//				this.parser = this.executor.getSupportedQueryParser().iterator()
+//						.next();
+//			}
+//		} catch (PlanManagementException e) {
+//			System.out.println("Error setting parser.");
+//			e.printStackTrace();
+//		}
 	}
 
 	public void unbindExecutor(IAdvancedExecutor executor) {
@@ -276,6 +280,10 @@ public class ExecutorConsole implements CommandProvider,
 		Set<String> parserList = null;
 		try {
 			parserList = this.executor.getSupportedQueryParser();
+			// "Set" Default-Parser
+			if (parser == null && parserList.size() > 0){
+				parser = parserList.iterator().next();
+			}
 		} catch (PlanManagementException e) {
 			ci.println(e.getMessage());
 		}
