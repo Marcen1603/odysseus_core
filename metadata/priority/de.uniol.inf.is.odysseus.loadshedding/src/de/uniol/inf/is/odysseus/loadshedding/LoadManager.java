@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.loadshedding;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.loadshedding.monitoring.AvgInputRate;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
