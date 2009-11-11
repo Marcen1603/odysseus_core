@@ -41,7 +41,7 @@ public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
 	@Override
 	public void deactivateLoadShedding(List<DirectLoadSheddingBuffer<?>> shedders) {
 		for(DirectLoadSheddingBuffer<?> each : shedders) {
-			each.setRate(1);
+			each.setRate(DirectLoadSheddingBuffer.NO_LOAD_SHEDDING);
 		}
 	}	
 
