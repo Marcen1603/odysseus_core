@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypeCons
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
- * 
+ * A class for multivariate stream processing.
  * @author Andre Bolles
  *
  */

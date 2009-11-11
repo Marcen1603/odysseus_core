@@ -43,6 +43,10 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 			CQLAttribute cqlAttr = (CQLAttribute) curAttribute;
 			int pos = indexOf(leftSchema, cqlAttr);
 			if (pos == -1) {
+				// if you get here, there is an attribute
+				// in the predicate that does not exist
+				// in the left schema, so there must also be
+				// a right schema
 				pos = indexOf(rightSchema, cqlAttr);
 				this.fromRightChannel[i] = true;
 			}
