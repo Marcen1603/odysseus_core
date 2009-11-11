@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
+import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionExpression;
@@ -41,9 +43,12 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	private List<SDFExpression> expressions = new ArrayList<SDFExpression>();
 	private SDFAttributeList outputSchema = new SDFAttributeList();
+
+
 	private SDFAttributeList aliasSchema = new SDFAttributeList();
 
 	double[][] projectionMatrix = null;
+
 	double[] projectionVector = null;
 
 	public CreateProjectionVisitor() {
@@ -79,8 +84,16 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 					top = project;
 				}
 				else{
-					ProjectAO project = createMVProjection(inputSchema);
-					top = project;
+					
+					// TODO: Behandlung, wenn kein Visitor gefunden wird
+					try {
+						Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						throw new RuntimeException("Invalid use of multivariate projection -- Missing plug-in!!!.");
+					}
+					IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
+					top = (ILogicalOperator)v.visit(null, null, this);
 				}
 			} else {
 				MapAO map = new MapAO();
@@ -110,12 +123,6 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		rename.setOutputSchema(this.aliasSchema);
 
 		return rename;
-	}
-	
-
-	public ProjectAO createMVProjection(SDFAttributeList inputSchema){
-		ProjectMVAOFactory tmp = new ProjectMVAOFactory();
-		return tmp.createProjectMVAO(top, inputSchema, inputSchema, projectionMatrix, projectionVector);
 	}
 
 	@Override
@@ -231,5 +238,25 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 						+ attribute);
 			}
 		}
+	}
+	
+	public ILogicalOperator getTop() {
+		return top;
+	}
+
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
+
+	public SDFAttributeList getAliasSchema() {
+		return aliasSchema;
+	}
+	
+	public double[][] getProjectionMatrix() {
+		return projectionMatrix;
+	}
+
+	public double[] getProjectionVector() {
+		return projectionVector;
 	}
 }

@@ -86,10 +86,12 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 //				e.printStackTrace();
 //			}
 //		}
-		this.measurementValuePositions = new int[copy.measurementValuePositions.length];
-		System.arraycopy(copy.measurementValuePositions, 0, 
-				this.measurementValuePositions, 0, 
-				copy.measurementValuePositions.length);
+		if(copy.measurementValuePositions != null){
+			this.measurementValuePositions = new int[copy.measurementValuePositions.length];
+			System.arraycopy(copy.measurementValuePositions, 0, 
+					this.measurementValuePositions, 0, 
+					copy.measurementValuePositions.length);
+		}
 	}
 
 	/**

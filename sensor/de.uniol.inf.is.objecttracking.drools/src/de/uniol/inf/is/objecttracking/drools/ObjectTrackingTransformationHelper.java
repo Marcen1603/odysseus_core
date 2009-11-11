@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class ObjectTrackingTransformationHelper {
 	
+	@SuppressWarnings("unchecked")
 	public static SDFAttributeList getOutputSchema(MetadataCreationPO mPO){
 		List<ISubscription<ISource>> subscriptionsTo = mPO.getSubscribedTo();
 		SDFAttributeList outputSchema = null;

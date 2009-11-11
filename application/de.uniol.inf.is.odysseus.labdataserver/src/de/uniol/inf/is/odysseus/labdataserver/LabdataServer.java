@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.labdataserver;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
 import com.Ostermiller.util.CSVParser;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
@@ -71,6 +73,7 @@ public class LabdataServer {
 			throw e;
 		}
 		
+//		String inputFile = "C:\\Diss\\OdysseusOSGi\\application\\de.uniol.inf.is.odysseus.labdataserver\\labdata_cfg\\movingObjectsOL.csv";
 		String inputFile = "labdata_cfg/" + cfg.getProperty("inputfile", "labdata");
 		URL inputFileURL = Activator.getContext().getBundle().getEntry(inputFile);
 		
@@ -109,7 +112,7 @@ public class LabdataServer {
 
 		ObjectInputStream iStream = null;
 		if (limit > 0) {
-			System.out.println("Begin caching of " + limit + " values");
+			System.out.println("Begin caching of " + limit + " values from file: " + inputFileURL);
 			if (!useCSV) {
 				
 				iStream = new ObjectInputStream(inputFileURL.openStream());
@@ -379,10 +382,7 @@ class CSVHandler extends ClientHandler {
 //			Long diff = 0L;
 			int i = 0;
 			long startDuration = System.nanoTime();
-			CSVParser csvParser = new CSVParser(new FileInputStream(inputFile));
-			csvParser.changeDelimiter(this.csvDelim);
-			csvParser.getLine(); // first line are the attribute names, so do
-			// not process it.
+
 			while (limit < 1 || i < limit) {
 				if (limit > 0) {
 					for (int u = 0; u < cachedValues[i].length; u++) {
@@ -402,6 +402,19 @@ class CSVHandler extends ClientHandler {
 						}
 					}
 				} else {
+					URL inputFileURL = Activator.getContext().getBundle().getEntry(inputFile);
+					CSVParser csvParser = null;
+					File file = null;
+					try{
+						file = new File(inputFile);
+						csvParser = new CSVParser(inputFileURL.openStream());
+					}catch(Exception e){
+						System.out.println("File not found: " + file.getAbsolutePath());
+						return;
+					}
+					csvParser.changeDelimiter(this.csvDelim);
+					csvParser.getLine(); // first line are the attribute names, so do
+					// not process it.
 					String[] line = null;
 					try {
 						line = csvParser.getLine();

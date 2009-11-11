@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -50,18 +50,18 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 		super();
 		this.predictionFunctions = new HashMap<IPredicate<? super T>, SDFExpression[]>();
 		this.defaultPredictionFunction = null;
-		this.variables = new TreeMap<IPredicate<? super T>, int[][]>();
+		this.variables = new HashMap<IPredicate<? super T>, int[][]>();
 	}
 	
 	public PredictionAO(PredictionAO predictionAO) {
 		super(predictionAO);
-		this.predictionFunctions = new TreeMap<IPredicate<? super T>, SDFExpression[]>();
+		this.predictionFunctions = new HashMap<IPredicate<? super T>, SDFExpression[]>();
 		Set<Entry<IPredicate<? super T>, SDFExpression[]>> entries = predictionAO.predictionFunctions.entrySet();
 		for(Map.Entry<IPredicate<? super T>, SDFExpression[]> curEntry: entries){
 			this.predictionFunctions.put(curEntry.getKey(), curEntry.getValue());
 		}
 		
-		this.variables = new TreeMap<IPredicate<? super T>, int[][]>();
+		this.variables = new HashMap<IPredicate<? super T>, int[][]>();
 		Set<Entry<IPredicate<? super T>, int[][]>> variablesEntries = predictionAO.variables.entrySet();
 		for(Map.Entry<IPredicate<? super T>, int[][]> curEntry: variablesEntries){
 			this.variables.put(curEntry.getKey(), curEntry.getValue());

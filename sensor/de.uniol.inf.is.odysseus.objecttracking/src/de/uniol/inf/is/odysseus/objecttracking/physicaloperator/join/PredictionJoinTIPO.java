@@ -107,8 +107,14 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 	 */
 	public void initDefaultAreas(){
 		this.areas = new RelationalJoinTIMVPredictionSweepArea[2];
+		
 		this.areas[0] = new RelationalJoinTIMVPredictionSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
+		this.areas[0].setQueryPredicate(this.joinPredicate);
+		// the remove predicate is set automatically
+		
 		this.areas[1] = new RelationalJoinTIMVPredictionSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
+		this.areas[1].setQueryPredicate(this.joinPredicate);
+		// the remove predicate is set automatically
 	}
 	
 	public ITransferFunction<T> getTransferFunction() {

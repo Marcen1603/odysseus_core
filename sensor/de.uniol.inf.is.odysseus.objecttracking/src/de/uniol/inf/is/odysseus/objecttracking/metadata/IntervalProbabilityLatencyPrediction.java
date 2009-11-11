@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * This is a metadata item, that implements TimeInterval, IProbability and IPredictionFunction.
  * It works only for relational tuples.
  */
-public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContainer<M>, M extends IProbability> extends TimeInterval implements IPredictionFunction<T, M>, IProbability, ILatency{
+public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContainer<M>, M extends IProbability> extends TimeInterval implements IProbabilityPredictionFunction<T, M>, IProbability, ILatency{
 
 	/**
 	 * 
@@ -24,12 +24,12 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	 * the probabilities.
 	 * 
 	 */
-	private IPredictionFunction<T, M> predFct;
+	private IProbabilityPredictionFunction<T, M> predFct;
 	public IPredictionFunction<T, M> getPredFct() {
 		return predFct;
 	}
 
-	public void setPredFct(IPredictionFunction<T, M> predFct) {
+	public void setPredFct(IProbabilityPredictionFunction<T, M> predFct) {
 		this.predFct = predFct;
 	}
 
@@ -59,10 +59,10 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		super(copy);
 		this.prob = (IProbability)copy.prob.clone();
 		this.latency = (ILatency)copy.latency.clone();
-		this.predFct = (IPredictionFunction)copy.predFct.clone();
+		this.predFct = (IProbabilityPredictionFunction)copy.predFct.clone();
 	}
 	
-	public IntervalProbabilityLatencyPrediction(IPredictionFunction<T, M> predFct, IProbability prob, ILatency latency){
+	public IntervalProbabilityLatencyPrediction(IProbabilityPredictionFunction<T, M> predFct, IProbability prob, ILatency latency){
 		this.predFct = predFct;
 		this.prob = prob;
 		this.latency = latency;
@@ -180,6 +180,21 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 			this.predFct.initVariables();
 		}
 		
+	}
+
+	@Override
+	public void setNoiseMatrix(double[][] noiseMatrix) {
+		if(this.predFct != null){
+			this.predFct.setNoiseMatrix(noiseMatrix);
+		}
+		
+	}
+
+	@Override
+	public void setRestrictList(int[] restrictList) {
+		if(this.predFct != null){
+			this.predFct.setRestrictList(restrictList);
+		}
 	}
 
 }
