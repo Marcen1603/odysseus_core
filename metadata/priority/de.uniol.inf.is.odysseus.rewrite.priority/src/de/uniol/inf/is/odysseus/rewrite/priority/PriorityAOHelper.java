@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.rewrite.priority;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
@@ -18,19 +18,22 @@ import de.uniol.inf.is.odysseus.priority.PriorityAO;
 public class PriorityAOHelper {
 
 	@SuppressWarnings("unchecked")
-	public static void searchForJoinsAndPlacePriorityAOs(AbstractLogicalOperator current, PriorityAO base) {
-		Collection<LogicalSubscription> childs = current.getSubscriptions();
+	public synchronized static void searchForJoinsAndPlacePostPriorityAOs(AbstractLogicalOperator current, PriorityAO base) {
 
-		
 		if(current instanceof PriorityAO) {
 			base = (PriorityAO) current;
 		}
 		
-		for(LogicalSubscription sub : childs) {
+		Iterator<LogicalSubscription> it = current.getSubscriptions().iterator();
+		
+		while(it.hasNext()) {
+			LogicalSubscription sub = it.next();
+			
 			if(sub.getTarget() instanceof JoinAO) {
+				System.out.println(sub.getTarget() + " :: " + sub.getTarget().hashCode() + " ?? " );
 				handleJoin((AbstractLogicalOperator) sub.getTarget(), base);
 			} else {
-				searchForJoinsAndPlacePriorityAOs((AbstractLogicalOperator)sub.getTarget(), base);
+				searchForJoinsAndPlacePostPriorityAOs((AbstractLogicalOperator)sub.getTarget(), base);
 			}
 		} 
 		
@@ -38,19 +41,21 @@ public class PriorityAOHelper {
 
 
 	@SuppressWarnings("unchecked")
-	public static  void handleJoin(AbstractLogicalOperator join, PriorityAO base) {
+	public synchronized static  void handleJoin(AbstractLogicalOperator join, PriorityAO base) {
 		
-		Collection<LogicalSubscription> fathers = join.getSubscribedTo();
 		IPredicate predicate = join.getPredicate();
 
-		for(LogicalSubscription sub : fathers) {
-			searchForPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base, new ArrayList<IPredicate>());
+		Iterator<LogicalSubscription> it = join.getSubscribedTo().iterator();
+		
+		while(it.hasNext()) {
+			LogicalSubscription sub = it.next();
+			searchForPostPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base, new ArrayList<IPredicate>());
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public static  void searchForPriorityAOPosistion(AbstractLogicalOperator current, IPredicate predicate, PriorityAO base,
+	public synchronized static  void searchForPostPriorityAOPosistion(AbstractLogicalOperator current, IPredicate predicate, PriorityAO base,
 			List<IPredicate> fragments) {
 		if(current instanceof PriorityAO) {
 			return;
@@ -74,29 +79,34 @@ public class PriorityAOHelper {
 			// Operator erst einmal deaktivieren, damit er nicht die normale Berechnung stört
 			prioAO.setActive(false);
 			prioAO.setPredicates(fragments);
-			insertPriorityAO(current, prioAO);
+			insertPostPriorityAO(current, prioAO);
 			base.getCopartners().add(prioAO);
 
 		} else {
-			Collection<LogicalSubscription> fathers = current.getSubscribedTo();
-			for(LogicalSubscription sub : fathers) {
-				searchForPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base, fragments);
+			Iterator<LogicalSubscription> it = current.getSubscribedTo().iterator();
+			
+			while(it.hasNext()) {
+				LogicalSubscription sub = it.next();
+				searchForPostPriorityAOPosistion((AbstractLogicalOperator) sub.getTarget(), predicate, base, fragments);
 			}
 		}
 		
 	}
 
 	@SuppressWarnings("unchecked")
-	public static  void insertPriorityAO(AbstractLogicalOperator current, PostPriorisationAO prioAO) {	
-		for(LogicalSubscription sub :  current.getSubscriptions()) {
-			sub.getTarget().unsubscribeSubscriptionTo(current, sub.getSinkPort(),sub.getSourcePort());
+	public synchronized static  void insertPostPriorityAO(AbstractLogicalOperator current, PostPriorisationAO prioAO) {	
+		Iterator<LogicalSubscription> it = current.getSubscriptions().iterator();
+		
+		while(it.hasNext()) {
+			LogicalSubscription sub = it.next();
+			//sub.getTarget().unsubscribeSubscriptionTo(current, sub.getSinkPort(),sub.getSourcePort());
 			prioAO.subscribe(sub.getTarget(), sub.getSinkPort(),sub.getSourcePort(), sub.getInputSchema());
 		}
 
 		current.subscribe(prioAO, 0, 0, current.getOutputSchema());	
 	}
 
-	public static boolean isCriticalAO(AbstractLogicalOperator current) {
+	public synchronized static boolean isCriticalAO(AbstractLogicalOperator current) {
 		if(current instanceof TopAO || current instanceof ProjectAO || current instanceof BinaryLogicalOp) {
 			return true;
 		}
