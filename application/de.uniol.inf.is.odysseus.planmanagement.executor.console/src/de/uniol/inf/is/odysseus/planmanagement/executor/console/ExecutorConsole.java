@@ -870,10 +870,15 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 	
-	@Help(parameter = "<filename> [S]", description = "add query declared in <filename> [with console-output-sink]")
+	@Help(parameter = "<filename> [S] [useProp]", description = "add query declared in <filename> [with console-output-sink] [filepath automatically read from user.files")
 	public void _addFromFile(CommandInterpreter ci){
 		String[] args = support.getArgs(ci);
 		addCommand(args);
+		
+		
+		if(args.length == 2 && args[1].equalsIgnoreCase("useProp")){
+			this.path = System.getProperty("user.files");
+		}
 		
 		if(args != null && args.length > 0){
 			BufferedReader br = null;
@@ -926,7 +931,7 @@ public class ExecutorConsole implements CommandProvider,
 			return;
 		}
 		
-		this.path = args[0].endsWith("\\") ? args[0] : args[0] + "\\";
+		this.path = args[0].endsWith("/") ? args[0] : args[0] + "/";
 		
 		ci.println("Path has been set. New path: " + this.path);
 	}
@@ -1170,15 +1175,17 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 	
-	@Help(parameter = "<file name>", description = "runs commands contained in a file. The filename can be specified in an absolute manner or, together with \"setPath\" command in" +
-			" a relative manner.")
+	@Help(parameter = "<file name> [useProp]", description = "runs commands contained in a file.\n" +
+			"The filename can be specified in an absolute manner or, together with \"setPath\" command in a relative manner.\n" +
+			"If useProp option is set, then the path to the file will be automatically read from system property user.files.")
 	public void _runFromFile(CommandInterpreter ci){
 		String[] args = support.getArgs(ci);
-		if(args.length != 1){
-			_man(ci);
-			return;
-		}
+		
 		addCommand(args);
+		
+		if(args.length == 2 && args[1].equalsIgnoreCase("useProp")){
+			this.path = System.getProperty("user.files");
+		}
 		
 		BufferedReader br = null;
 		File file = null;

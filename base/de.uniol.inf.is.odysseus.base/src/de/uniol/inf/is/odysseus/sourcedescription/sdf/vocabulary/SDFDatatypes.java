@@ -64,7 +64,7 @@ public class SDFDatatypes extends SDF {
 
 	public static boolean isString(
 			de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype type) {
-		return type.getURI(false).equals(String);
+		return type.getURI(false).equals("String");
 	}
 
 	public static boolean isDate(SDFDatatype type){
