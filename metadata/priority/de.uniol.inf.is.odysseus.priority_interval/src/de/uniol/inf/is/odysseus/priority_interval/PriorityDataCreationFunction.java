@@ -32,25 +32,5 @@ public class PriorityDataCreationFunction<K extends IMetaAttribute,T extends IMe
 		
 		return false;
 	}
-/*
-	@SuppressWarnings("unchecked")
-	@Override
-	public IMetaAttributeContainer<IntervalPriority> createMetadata(
-			IMetaAttributeContainer<IntervalPriority> source) {
-		IMetaAttributeContainer<IntervalPriority> dummy = (IMetaAttributeContainer<IntervalPriority>) source.clone();
-		
-		dummy.getMetadata().setPriority((byte) 0);
-		return dummy;
-	}
-
-	@Override
-	public boolean hasMetadata(IMetaAttributeContainer<IntervalPriority> source) {
-		if(source.getMetadata().getPriority() > 0) {
-			return true;
-		}
-		
-		return false;
-	}*/
-
 
 }
