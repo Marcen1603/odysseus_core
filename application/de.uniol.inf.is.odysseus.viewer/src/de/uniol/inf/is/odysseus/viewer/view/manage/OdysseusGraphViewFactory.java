@@ -142,9 +142,21 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 		// Schauen, ob neue Verbindungen hinzugekommen sind
 		for( IConnectionModel<IPhysicalOperator> connModel : graph.getConnections() ) {
 			if( findConnectionDisplay( graphDisplay, connModel).isEmpty() ) {
+				
+				INodeView<IPhysicalOperator> startNode = findFirstNodeDisplay(graphDisplay, connModel.getStartNode());
+				INodeView<IPhysicalOperator> endNode = findFirstNodeDisplay(graphDisplay, connModel.getEndNode());
+				
+				if( startNode == null ) {
+					logger.error("StartNode für die Verbindung " + connModel.toString() + " nicht gefunden");
+					continue;
+				}
+				if( endNode == null ) {
+					logger.error("EndNode für die Verbindung " + connModel.toString() + " nicht gefunden");
+					continue;
+				}
+				
 				DefaultConnectionView<IPhysicalOperator> connView = new DefaultConnectionView<IPhysicalOperator>(connModel,
-						findFirstNodeDisplay(graphDisplay, connModel.getStartNode()), 
-						findFirstNodeDisplay(graphDisplay, connModel.getEndNode()));
+						startNode, endNode);
 				
 				createConnectionSymbol( connView, symbolFactory );
 				graphDisplay.insertViewedConnection( connView );

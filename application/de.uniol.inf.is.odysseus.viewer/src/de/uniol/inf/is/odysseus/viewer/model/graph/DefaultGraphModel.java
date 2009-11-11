@@ -104,7 +104,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 	@Override
 	public void removeNode( INodeModel< C > node ) {
 		nodes.remove( node );
-		for( IConnectionModel<C> conn : node.getConnections() ) {
+		for( IConnectionModel<C> conn : node.getConnections().toArray(new IConnectionModel[0]) ) {
 			removeConnection( conn );
 		}
 	}

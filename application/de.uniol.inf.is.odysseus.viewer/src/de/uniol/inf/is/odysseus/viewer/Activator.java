@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderMultipleSink;
 import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 
@@ -36,26 +37,23 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 		context = bc;
 		SWTResourceManager.resourceBundle = bc.getBundle();
 		String uViewer = System.getenv("useViewer");
-		if ("true".equalsIgnoreCase(uViewer)){
+		if ("true".equalsIgnoreCase(uViewer)) {
 			// TODO config aus properties service lesen
 			// do initialization inside a thread, so bundle startup
 			// isn't blocked by execTracker.waitForService(0)
 			Thread t = new Thread(new Runnable() {
-	
+
 				@Override
 				public void run() {
-					ServiceTracker execTracker = new ServiceTracker(bc,
-							IAdvancedExecutor.class.getName(), null);
+					ServiceTracker execTracker = new ServiceTracker(bc, IAdvancedExecutor.class.getName(), null);
 					execTracker.open();
 					IAdvancedExecutor executor;
 					try {
-						executor = (IAdvancedExecutor) execTracker
-								.waitForService(0);
+						executor = (IAdvancedExecutor) execTracker.waitForService(0);
 						if (executor != null) {
 							ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
 							viewerStarter = new ViewerStarter(null, cfg);
-							viewerThread = new Thread(viewerStarter,
-									"Viewer Thread");
+							viewerThread = new Thread(viewerStarter, "Viewer Thread");
 							viewerThread.start();
 							executor.addPlanModificationListener(Activator.this);
 							updateModel(executor.getSealedPlan().getRoots());
@@ -69,7 +67,7 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 						logger.error(e.getMessage());
 					}
 				}
-	
+
 			});
 			// daemon thread, so shutdown can be completed,
 			// even if waitForService(0) is blocking
@@ -77,7 +75,6 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 			t.start();
 		}
 	}
-		
 
 	@Override
 	public void stop(BundleContext arg0) throws Exception {
@@ -97,8 +94,7 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		try {
-			ArrayList<IPhysicalOperator> roots = eventArgs.getSender()
-					.getSealedPlan().getRoots();
+			ArrayList<IPhysicalOperator> roots = eventArgs.getSender().getSealedPlan().getRoots();
 			updateModel(roots);
 		} catch (PlanManagementException e) {
 			// TODO Auto-generated catch block
@@ -108,16 +104,23 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 
 	private void updateModel(ArrayList<IPhysicalOperator> roots) {
 		if (!roots.isEmpty()) {
-			ListIterator<IPhysicalOperator> li = roots.listIterator(roots
-					.size());
+			
+//			ArrayList<ISink<?>> sinks = new ArrayList<ISink<?>>();
+//			
+//			for( IPhysicalOperator o : roots ) {
+//				if( o instanceof ISink<?>)
+//					sinks.add((ISink<?>)o);
+//			}
+//			
+//			this.viewerStarter.setModelProvider(new OdysseusModelProviderMultipleSink(sinks));
+			
+			ListIterator<IPhysicalOperator> li = roots.listIterator(roots.size());
 			IPhysicalOperator lastRoot = null;
 			do {
 				lastRoot = li.previous();
 			} while (li.hasPrevious() && lastRoot == null);
 			if (lastRoot != null && lastRoot instanceof ISink<?>) {
-				this.viewerStarter
-						.setModelProvider(new OdysseusModelProviderSink(
-								(ISink<?>) lastRoot));
+				this.viewerStarter.setModelProvider(new OdysseusModelProviderSink((ISink<?>) lastRoot));
 			}
 		}
 	}

@@ -66,7 +66,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 			final INodeView<C> startNode = conn.getViewedStartNode();
 			final INodeView<C> endNode = conn.getViewedEndNode();
 						
-			if( !startNode.isVisible() || !endNode.isVisible() )
+			if( startNode == null || !startNode.isVisible() || endNode == null || !endNode.isVisible() )
 				continue;
 				
 			final Vector start = startNode.getPosition()
