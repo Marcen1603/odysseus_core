@@ -262,7 +262,8 @@ public class Query implements IEditableQuery {
 			if (this.parameters.getDefaultRoot() != null) {
 				defaultRoot = this.parameters.getDefaultRoot();
 
-				// register default root
+				// register default root TODO hier koennen fehler uebersprungen werden, wenn
+				//root keine source ist
 				if (defaultRoot != null && defaultRoot.isSink()
 						&& root.isSource()) {
 					((ISink) defaultRoot).subscribeTo((ISource) root, 0,0);
