@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.loadshedding.bufferplacement;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBuffer;
+import de.uniol.inf.is.odysseus.loadshedding.LoadManager;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -50,7 +51,9 @@ AbstractBufferPlacementStrategy {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
-		
+		if(buffer instanceof DirectLoadSheddingBuffer) {
+			LoadManager.getInstance(null).addLoadShedder((DirectLoadSheddingBuffer)buffer);
+		}
 	}
 
 }

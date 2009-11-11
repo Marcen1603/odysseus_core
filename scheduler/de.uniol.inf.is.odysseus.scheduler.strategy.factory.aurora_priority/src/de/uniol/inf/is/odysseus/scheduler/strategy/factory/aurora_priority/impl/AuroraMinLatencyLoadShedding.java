@@ -19,7 +19,7 @@ public class AuroraMinLatencyLoadShedding extends AbstractPriorityMinLatency{
 	protected List<IIterableSource<?>> calculateExecutionList(
 			IPartialPlan plan) {
 		
-		LoadManager manager = LoadManager.getInstance();
+		LoadManager manager = LoadManager.getInstance(null);
 		manager.addCapacities(plan);		
 		
 		List<IIterableSource<?>> toSchedule = plan.getIterableSource();
