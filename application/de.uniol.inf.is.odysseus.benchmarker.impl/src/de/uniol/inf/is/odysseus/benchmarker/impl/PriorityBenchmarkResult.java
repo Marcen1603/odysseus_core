@@ -15,6 +15,7 @@ public class PriorityBenchmarkResult<T extends ILatency & IPriority> extends
 	public void add(T object) {
 		if (object.getPriority() == 0) {
 			super.add(object);
+			getStatistics().addValue(object.getLatency());
 		} else {
 			++size;
 			prioritizedStats.addValue(object.getLatency());
