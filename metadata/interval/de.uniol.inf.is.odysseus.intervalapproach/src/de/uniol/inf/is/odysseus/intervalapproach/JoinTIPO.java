@@ -31,8 +31,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
 		extends AbstractPunctuationPipe<T, T> {
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(JoinTIPO.class);
+	// private static final Logger logger = LoggerFactory
+	// .getLogger(JoinTIPO.class);
 	private ISweepArea<T>[] areas;
 	private IPredicate<? super T> joinPredicate;
 
@@ -40,10 +40,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferFunction<T> transferFunction;
 	protected SDFAttributeList outputSchema;
-	protected IDummyDataCreationFunction<K,T> creationFunction;
+	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	private int otherport = 0;
-		
+
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
@@ -159,10 +159,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	}
 
 	private T merge(T left, T right, Order order) {
-//		if (logger.isTraceEnabled()) {
-//			logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
-//					+ " AND " + right);
-//		}
+		// if (logger.isTraceEnabled()) {
+		// logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
+		// + " AND " + right);
+		// }
 		T mergedData;
 		K mergedMetadata;
 		if (order == Order.LeftRight) {
@@ -220,33 +220,40 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public void setCreationFunction(
 			IDummyDataCreationFunction<K, T> creationFunction) {
 		this.creationFunction = creationFunction;
-	}	
-	
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean cleanInternalStates(PointInTime punctuation,
-			IMetaAttributeContainer<?> current) {	
-		
+			IMetaAttributeContainer<?> current) {
+
 		Order order = Order.fromOrdinal(storage.getCurrentPort());
 
 		Iterator<T> priorities = areas[storage.getCurrentPort()].iterator();
-		
-		// Kann die Punctuation keinem priorisierten Element mehr zugeordnet werden, braucht man sie nicht
-		// mehr fuers Join.
-		boolean finished = true;
-		
-		while(priorities.hasNext())  {
-			T element = priorities.next();
-			
-			if(creationFunction.hasMetadata(element) && element.getMetadata().getStart().equals(punctuation)) {
-				IMetaAttributeContainer<?> purgeInterval = creationFunction.createMetadata((T) element);
-				areas[storage.getCurrentPort()^1].purgeElements((T)purgeInterval, order);
-				element = (T) purgeInterval;
-				finished = false;
-			}
-		}
 
-		return finished;
+		if (creationFunction != null) {
+			// Kann die Punctuation keinem priorisierten Element mehr zugeordnet
+			// werden, braucht man sie nicht
+			// mehr fuers Join.
+			boolean finished = true;
+
+			while (priorities.hasNext()) {
+				T element = priorities.next();
+
+				if (creationFunction.hasMetadata(element)
+						&& element.getMetadata().getStart().equals(punctuation)) {
+					IMetaAttributeContainer<?> purgeInterval = creationFunction
+							.createMetadata((T) element);
+					areas[storage.getCurrentPort() ^ 1].purgeElements(
+							(T) purgeInterval, order);
+					element = (T) purgeInterval;
+					finished = false;
+				}
+			}
+			return finished;
+		}
+		return false;
+		
 	}
 
 }
