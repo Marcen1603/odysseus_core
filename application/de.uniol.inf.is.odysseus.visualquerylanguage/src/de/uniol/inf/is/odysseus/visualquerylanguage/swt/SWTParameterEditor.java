@@ -13,8 +13,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,7 @@ public class SWTParameterEditor {
 	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
 
 	public SWTParameterEditor(Shell baseWindow, final INodeContent content,
-			Collection<SDFAttributeList> inputSchemas, final TableItem item) {
+			Collection<SDFAttributeList> inputSchemas, Composite actualComp) {
 
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE
 				| SWT.APPLICATION_MODAL);
@@ -46,7 +48,11 @@ public class SWTParameterEditor {
 				| SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		textArea.setLayoutData(gd);
-		textArea.setText(item.getText(1));
+		for (Control c : actualComp.getChildren()) {
+			if(c instanceof Text) {
+				textArea.setText(((Text)c).getText());
+			}
+		}
 
 		Composite comp = new org.eclipse.swt.widgets.Composite(shell,
 				SWT.BORDER);
@@ -129,7 +135,7 @@ public class SWTParameterEditor {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (ISWTParameterListener listener : listeners) {
-					listener.setValue(item, textArea.getText());
+					listener.setValue(textArea.getText());
 				}
 				shell.dispose();
 			}

@@ -218,7 +218,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 					newPipe = false;
 					newPipeType = false;
 					newPipeImage = false;
-					newEditor = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (pipeParamComplete()) {
@@ -230,6 +229,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pPosition = null;
+							newEditor = false;
 							pipes.add(pipe);
 						} else if (!pSetter.isEmpty() && pipe != null) {
 							pipes.remove(pipe);
@@ -239,6 +239,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pSetter = "";
+							newEditor = false;
 							pipes.add(pipe);
 						}
 						pTypeList = new ArrayList<String>();
@@ -293,7 +294,6 @@ public class XMLParameterParser implements IParameterConfiguration {
 					newSink = false;
 					newSinkType = false;
 					newSinkImage = false;
-					newEditor = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (sinkParamComplete()) {
@@ -305,6 +305,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pPosition = null;
+							newEditor = false;
 							sinks.add(sink);
 						} else if (!pSetter.isEmpty() && sink != null) {
 							sinks.remove(sink);
@@ -314,6 +315,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pSetter = "";
+							newEditor = false;
 							sinks.add(sink);
 						}
 						pTypeList = new ArrayList<String>();

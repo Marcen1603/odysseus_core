@@ -79,6 +79,8 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstr
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTTreeChangedListener;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTOutputEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor.CursorManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositioner;
@@ -399,11 +401,6 @@ public class DefaultGraphArea extends Composite implements
 				} else {
 					Collection<ILogicalOperator> opList = new ArrayList<ILogicalOperator>();
 					for (INodeView<INodeContent> nodeView : connNodeList) {
-						if(nodeView.getModelNode().getContent().getOperator() instanceof JoinAO) {
-						for (int i = 0; i < nodeView.getModelNode().getContent().getOperator().getNumberOfInputs(); i++) {
-							System.out.println(nodeView.getModelNode().getContent().getOperator().getInputSchema(i));
-						}
-						}
 						if (nodeView.getModelNode().getContent().getOperator()
 								.getOutputSchema() == null
 								|| nodeView.getModelNode().getContent()
@@ -427,6 +424,10 @@ public class DefaultGraphArea extends Composite implements
 							if (!((INodeModel<INodeContent>) (selectedNode
 									.getModelNode())).getContent()
 									.isOnlySource()) {
+								if(endOp instanceof OutputSchemaSettable) {
+									new SWTOutputEditor(SWTMainWindow.getShell(), opList, endOp);
+								}
+								
 								if (endOp instanceof UnaryLogicalOp) {
 									endOp.subscribeTo(nodeView.getModelNode()
 											.getContent().getOperator(), 0, 0, nodeView.getModelNode()

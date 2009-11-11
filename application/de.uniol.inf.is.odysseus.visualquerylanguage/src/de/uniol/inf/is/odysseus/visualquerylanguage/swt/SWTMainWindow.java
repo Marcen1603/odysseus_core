@@ -341,8 +341,9 @@ public class SWTMainWindow {
 		refreshQueryList.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				tabFolder.layout();
+				getQueryTable();
 				tabFolder.setSelection(0);
+				tabFolder.layout();
 			}
 		});
 		
