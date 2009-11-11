@@ -220,6 +220,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		System.out.println("executor gebunden");
+			
 		this.executor = executor;
 
 		this.executor.addErrorEventListener(this);
@@ -227,8 +228,17 @@ public class ExecutorConsole implements CommandProvider,
 		this.executor.addPlanModificationListener(this);
 
 		try {
-			this.parser = this.executor.getSupportedQueryParser().iterator()
-					.next();
+			// Default is CQL
+			for (String p: this.executor.getSupportedQueryParser()){
+				if ("CQL".equalsIgnoreCase(p)){
+					parser = p;
+				}
+			}
+			// Only if CQL-Parser isn't bound, set another Parser
+			if (this.parser == null ){
+				this.parser = this.executor.getSupportedQueryParser().iterator()
+						.next();
+			}
 		} catch (PlanManagementException e) {
 			System.out.println("Error setting parser.");
 		}
