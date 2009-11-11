@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.nfunk.jep.ParseException;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
@@ -44,7 +42,6 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	private List<SDFExpression> expressions = new ArrayList<SDFExpression>();
 	private SDFAttributeList outputSchema = new SDFAttributeList();
 
-
 	private SDFAttributeList aliasSchema = new SDFAttributeList();
 
 	double[][] projectionMatrix = null;
@@ -75,25 +72,27 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			// do, otherwise a Map operator is needed
 			if (expressions.isEmpty()) {
 				// createrestrictlist
-				
-				if(projectionMatrix == null){
+
+				if (projectionMatrix == null) {
 					ProjectAO project = new ProjectAO();
 					project.subscribeTo(top, inputSchema);
 					project.setOutputSchema(outputSchema);
-					//project.updateRestrictList();
+					// project.updateRestrictList();
 					top = project;
-				}
-				else{
-					
+				} else {
+
 					// TODO: Behandlung, wenn kein Visitor gefunden wird
 					try {
-						Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
+						Class
+								.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						throw new RuntimeException("Invalid use of multivariate projection -- Missing plug-in!!!.");
+						throw new RuntimeException(
+								"Invalid use of multivariate projection -- Missing plug-in!!!.");
 					}
-					IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
-					top = (ILogicalOperator)v.visit(null, null, this);
+					IVisitor v = VisitorFactory.getInstance().getVisitor(
+							"ProbabilityPredicate");
+					top = (ILogicalOperator) v.visit(null, null, this);
 				}
 			} else {
 				MapAO map = new MapAO();
@@ -116,7 +115,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				map.setExpressions(outputExpressions);
 				top = map;
 			}
-			((OutputSchemaSettable)top).setOutputSchema(outputSchema);
+			((OutputSchemaSettable) top).setOutputSchema(outputSchema);
 		}
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(top, top.getOutputSchema());
@@ -164,12 +163,8 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 						"Missing alias identifier in SELECT-clause for expression "
 								+ expression.toString());
 			}
-			try {
-				expressions.add(new SDFExpression(null, expression.toString(),
-						this.attributeResolver));
-			} catch (ParseException e) {
-				throw new IllegalArgumentException(e);
-			}
+			expressions.add(new SDFExpression(null, expression.toString(),
+					this.attributeResolver));
 			CQLAttribute attribute = new CQLAttribute(null, aliasExpression
 					.getAlias());
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
@@ -239,7 +234,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			}
 		}
 	}
-	
+
 	public ILogicalOperator getTop() {
 		return top;
 	}
@@ -251,7 +246,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	public SDFAttributeList getAliasSchema() {
 		return aliasSchema;
 	}
-	
+
 	public double[][] getProjectionMatrix() {
 		return projectionMatrix;
 	}

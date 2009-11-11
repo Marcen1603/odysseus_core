@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import org.nfunk.jep.ParseException;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
@@ -177,7 +175,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		if (selectPredicate != null) {
 			SelectAO selectAO = new SelectAO();
-			selectAO.subscribeTo(curInputAO,curInputAO.getOutputSchema());
+			selectAO.subscribeTo(curInputAO, curInputAO.getOutputSchema());
 			selectAO.setPredicate(selectPredicate);
 			return selectAO;
 		}
@@ -331,31 +329,28 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	private ExistenceAO createExistenceAO(IExistencePredicate node,
 			AbstractLogicalOperator inputAO, Type type) {
 		ExistenceAO existsAO = new ExistenceAO();
-		
-		existsAO.subscribeTo(inputAO,BinaryLogicalOp.LEFT,0, inputAO.getOutputSchema());
+
+		existsAO.subscribeTo(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
+				.getOutputSchema());
 		AbstractLogicalOperator subquery = subquery(node.getQuery());
 		if (node.getTuple().jjtGetNumChildren() != subquery.getOutputSchema()
 				.size()) {
 			throw new IllegalArgumentException(
 					"wrong number of outputs in predicate subquery");
 		}
-		existsAO.subscribeTo(subquery,BinaryLogicalOp.RIGHT,0, subquery.getOutputSchema());
+		existsAO.subscribeTo(subquery, BinaryLogicalOp.RIGHT, 0, subquery
+				.getOutputSchema());
 		existsAO.setType(type);
-		try {
-			String expression = node.getTuple().toString()
-					+ node.getCompareOperator().toString()
-					+ toExpression(subquery);
-			AttributeResolver tmpResolver = new AttributeResolver(
-					this.attributeResolver);
-			for (SDFAttribute attr : subquery.getOutputSchema()) {
-				tmpResolver.addAttribute((CQLAttribute) attr);
-			}
-			RelationalPredicate predicate = new RelationalPredicate(
-					new SDFExpression("", expression, tmpResolver));
-			existsAO.setPredicate(predicate);
-		} catch (ParseException e) {
-			throw new IllegalArgumentException(e);
+		String expression = node.getTuple().toString()
+				+ node.getCompareOperator().toString() + toExpression(subquery);
+		AttributeResolver tmpResolver = new AttributeResolver(
+				this.attributeResolver);
+		for (SDFAttribute attr : subquery.getOutputSchema()) {
+			tmpResolver.addAttribute((CQLAttribute) attr);
 		}
+		RelationalPredicate predicate = new RelationalPredicate(
+				new SDFExpression("", expression, tmpResolver));
+		existsAO.setPredicate(predicate);
 		return existsAO;
 	}
 
@@ -363,8 +358,10 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTExists node, Object data) {
 		AbstractLogicalOperator inputAO = (AbstractLogicalOperator) data;
 		ExistenceAO existsAO = new ExistenceAO();
-		existsAO.subscribeTo(inputAO,BinaryLogicalOp.LEFT,0, inputAO.getOutputSchema());
-		existsAO.subscribeTo(subquery(node.getQuery()), BinaryLogicalOp.RIGHT,0, subquery(node.getQuery()).getOutputSchema());
+		existsAO.subscribeTo(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
+				.getOutputSchema());
+		existsAO.subscribeTo(subquery(node.getQuery()), BinaryLogicalOp.RIGHT,
+				0, subquery(node.getQuery()).getOutputSchema());
 		existsAO.setType(node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);
 		return existsAO;

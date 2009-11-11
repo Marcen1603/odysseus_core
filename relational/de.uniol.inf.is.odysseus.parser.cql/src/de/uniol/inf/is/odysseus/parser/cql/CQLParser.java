@@ -108,6 +108,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpressionParseException;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
@@ -146,12 +147,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			CQLParser cqlParser = new CQLParser();
 			cqlParser.visit(statement, null);
 			return cqlParser.plans;
-		} catch (ParseException e) {
-			throw new QueryParseException(e);
 		} catch (NoClassDefFoundError e) {
 			throw new QueryParseException(
 					"parse error: missing plugin for language feature", e
 							.getCause());
+		} catch (Exception e) {
+			throw new QueryParseException(e);
 		}
 	}
 

@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
-import org.nfunk.jep.ParseException;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -39,13 +37,8 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTBasicPredicate node, Object data) {
-		SDFExpression expression;
-		try {
-			expression = new SDFExpression("", node.getPredicate(),
-					(IAttributeResolver) data);
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
+		SDFExpression expression = new SDFExpression("", node.getPredicate(),
+				(IAttributeResolver) data);
 		return new RelationalPredicate(expression);
 	}
 
@@ -83,32 +76,36 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTProbabilityPredicate probPred, Object data) {
 		try {
-			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
+			Class
+					.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
 		} catch (Exception e) {
 			throw new RuntimeException(
 					"invalid use of probability predicates - missing plugin");
 		}
-		
-		IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
-		return (ILogicalOperator)v.visit(probPred, null, null);
+
+		IVisitor v = VisitorFactory.getInstance().getVisitor(
+				"ProbabilityPredicate");
+		return (ILogicalOperator) v.visit(probPred, null, null);
 	}
 
 	@Override
 	public Object visit(ASTSpatialPredicate node, Object data) {
 		try {
-//			IPredicateBuilder builder = (IPredicateBuilder) Class
-//					.forName(
-//							"de.uniol.inf.is.querytranslation.parser.transformation.SpatialPredicateBuilder")
-//					.newInstance();
-//			return builder.createPredicate(node, (IAttributeResolver) data);
-			throw new RuntimeException("ohne predicate builder machen, wenn das paket da ist das nehmen und als optionalen import markieren");
+			// IPredicateBuilder builder = (IPredicateBuilder) Class
+			// .forName(
+			// "de.uniol.inf.is.querytranslation.parser.transformation.SpatialPredicateBuilder")
+			// .newInstance();
+			// return builder.createPredicate(node, (IAttributeResolver) data);
+			throw new RuntimeException(
+					"ohne predicate builder machen, wenn das paket da ist das nehmen und als optionalen import markieren");
 		} catch (Exception e) {
 			throw new RuntimeException(
 					"invalid use of spatial predicates - missing plugin");
 		}
 	}
-	
-	public static IPredicate<RelationalTuple<?>> toPredicate(ASTPredicate predicate, IAttributeResolver resolver) {
+
+	public static IPredicate<RelationalTuple<?>> toPredicate(
+			ASTPredicate predicate, IAttributeResolver resolver) {
 		return (IPredicate<RelationalTuple<?>>) new CreatePredicateVisitor()
 				.visit(predicate, resolver);
 	}
