@@ -490,7 +490,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	@Override
 	public Set<String> getSupportedQueryParser()
 			throws NoCompilerLoadedException {
-		return compiler().getSupportedQueryParser();
+		ICompiler c = compiler();
+		return c.getSupportedQueryParser();
 	}
 
 	/* (non-Javadoc)

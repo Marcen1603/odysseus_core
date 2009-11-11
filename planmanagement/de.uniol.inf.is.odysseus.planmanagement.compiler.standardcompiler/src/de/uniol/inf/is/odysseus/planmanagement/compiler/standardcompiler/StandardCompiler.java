@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
@@ -34,7 +34,7 @@ public class StandardCompiler implements ICompiler {
 	/**
 	 * {@link IQueryParser} service list
 	 */
-	protected HashMap<String, IQueryParser> parserList = new HashMap<String, IQueryParser>();
+	protected TreeMap<String, IQueryParser> parserList = new TreeMap<String, IQueryParser>();
 
 	/**
 	 * {@link IRewrite} service
