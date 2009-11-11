@@ -30,7 +30,6 @@ public class PriorityAOHelper {
 			LogicalSubscription sub = it.next();
 			
 			if(sub.getTarget() instanceof JoinAO) {
-				System.out.println(sub.getTarget() + " :: " + sub.getTarget().hashCode() + " ?? " );
 				handleJoin((AbstractLogicalOperator) sub.getTarget(), base);
 			} else {
 				searchForJoinsAndPlacePostPriorityAOs((AbstractLogicalOperator)sub.getTarget(), base);
