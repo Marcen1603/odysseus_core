@@ -12,7 +12,7 @@ public class DefaultParamConstruct<T> implements IParamConstruct<T> {
 	private Collection<String> typeList;
 	private T value;
 	private String name = "";
-	private boolean hasEditor = false;
+	private String editor = "";
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DefaultParamConstruct.class);
@@ -61,13 +61,13 @@ public class DefaultParamConstruct<T> implements IParamConstruct<T> {
 	}
 
 	@Override
-	public boolean hasEditor() {
-		return this.hasEditor;
+	public String getEditor() {
+		return this.editor;
 	}
 	
 	@Override
-	public void setEditor(boolean hasEditor) {
-		this.hasEditor = hasEditor;
+	public void setEditor(String editor) {
+		this.editor = editor;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ public abstract class AbstractOperator implements INodeContent{
 	private String type;
 	private String imageName;
 	private Image image;
+	private String editor;
 	Collection<IParamConstruct<?>> constructParameterList = new ArrayList<IParamConstruct<?>>();
 	Collection<IParamSetter<?>> setterParameterList = new ArrayList<IParamSetter<?>>();
 	private Collection<INodeContentChangeListener<INodeContent>> listeners = new ArrayList<INodeContentChangeListener<INodeContent>>();
@@ -82,7 +83,7 @@ public abstract class AbstractOperator implements INodeContent{
 		Collection<IParamConstruct<?>> list = new ArrayList<IParamConstruct<?>>();
 		for (IParamConstruct<?> iParamConstruct : constructParameterList) {
 			IParamConstruct<?> param = ParamConstructFactory.getInstance().createParam(iParamConstruct.getType(), iParamConstruct.getTypeList(), iParamConstruct.getPosition(), iParamConstruct.getName());
-			param.setEditor(iParamConstruct.hasEditor());
+			param.setEditor(iParamConstruct.getEditor());
 			list.add(param);
 		}
 		return list;
@@ -93,7 +94,7 @@ public abstract class AbstractOperator implements INodeContent{
 		Collection<IParamSetter<?>> list = new ArrayList<IParamSetter<?>>();
 		for (IParamSetter<?> iParamSetter : setterParameterList) {
 			IParamSetter<?> param = ParamSetterFactory.getInstance().createParam(iParamSetter.getType(), iParamSetter.getTypeList(), iParamSetter.getSetter(), iParamSetter.getName());
-			param.setEditor(iParamSetter.hasEditor());
+			param.setEditor(iParamSetter.getEditor());
 			list.add(param);
 		}
 		return list;
@@ -122,5 +123,15 @@ public abstract class AbstractOperator implements INodeContent{
 	@Override
 	public String getImageName() {
 		return this.imageName;
+	}
+	
+	@Override
+	public String getEditor() {
+		return this.editor;
+	}
+	
+	@Override
+	public void setEditor(String editor) {
+		this.editor = editor;
 	}
 }

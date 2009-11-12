@@ -7,6 +7,7 @@
 			<pipe-name>Selektion</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO</pipe-type>
 			<pipe-image>select</pipe-image>
+			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -19,7 +20,7 @@
 						<type>java.lang.String</type>
 					</typelist>
 					<setter>setPredicate</setter>
-					<editor>true</editor>
+					<editor>PredicateEditor</editor>
 				</setterParameter>
 				
 				<setterParameter>
@@ -39,6 +40,7 @@
 			<pipe-name>Join-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO</pipe-type>
 			<pipe-image>join</pipe-image>
+			<pipe-editor>NoEditor</pipe-editor>
 			
 			<sparams>
 				
@@ -62,7 +64,7 @@
 			<pipe-name>Projektion</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO</pipe-type>
 			<pipe-image>projection</pipe-image>
-			
+			<pipe-editor>ProjectEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -85,7 +87,7 @@
 			<pipe-name>Berechnungs-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.MapAO</pipe-type>
 			<pipe-image>calculate</pipe-image>
-			
+			<pipe-editor>ProjectEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -108,7 +110,7 @@
 			<pipe-name>Fensteroperator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO</pipe-type>
 			<pipe-image>window</pipe-image>
-			
+			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -131,7 +133,7 @@
 			<pipe-name>Aggregation</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO</pipe-type>
 			<pipe-image>aggregate</pipe-image>
-			
+			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -154,7 +156,7 @@
 			<pipe-name>Prioritäts-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.priority.PriorityAO</pipe-type>
 			<pipe-image>priority</pipe-image>
-			
+			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -177,7 +179,7 @@
 			<pipe-name>Unions-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO</pipe-type>
 			<pipe-image>union</pipe-image>
-			
+			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -200,7 +202,7 @@
 			<pipe-name>Intersektion</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.IntersectionAO</pipe-type>
 			<pipe-image>intersection</pipe-image>
-			
+			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -223,7 +225,7 @@
 			<pipe-name>Differenz-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO</pipe-type>
 			<pipe-image>difference</pipe-image>
-			
+			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>
@@ -246,7 +248,7 @@
 			<pipe-name>Umbennenungs-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO</pipe-type>
 			<pipe-image>rename</pipe-image>
-			
+			<pipe-editor>RenameEditor</pipe-editor>
 			<sparams>
 				
 				<setterParameter>

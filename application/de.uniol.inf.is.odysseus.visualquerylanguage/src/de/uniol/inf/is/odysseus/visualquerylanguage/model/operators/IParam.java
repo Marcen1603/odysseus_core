@@ -10,7 +10,7 @@ public interface IParam<T> {
 	public void setValue(T value);
 	public void setName(String name);
 	public String getName();
-	public boolean hasEditor();
-	public void setEditor(boolean hasEditor);
+	public String getEditor();
+	public void setEditor(String editor);
 	
 }

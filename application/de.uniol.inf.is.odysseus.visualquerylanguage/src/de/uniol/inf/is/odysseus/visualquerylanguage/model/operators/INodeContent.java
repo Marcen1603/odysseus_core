@@ -28,5 +28,8 @@ public interface INodeContent {
 	
 	public ILogicalOperator getOperator();
 	public void setOperator(ILogicalOperator op);
+	
+	public String getEditor();
+	public void setEditor(String editor);
 
 }

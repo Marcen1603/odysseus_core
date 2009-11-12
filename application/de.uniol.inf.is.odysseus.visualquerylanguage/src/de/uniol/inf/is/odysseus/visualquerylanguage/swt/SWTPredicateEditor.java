@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,16 +24,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 
-public class SWTParameterEditor {
+public class SWTPredicateEditor {
 
 	@SuppressWarnings("unused")
-	private final Logger log = LoggerFactory.getLogger(SWTParameterEditor.class);
+	private final Logger log = LoggerFactory.getLogger(SWTPredicateEditor.class);
 
 	private Shell shell;
 
 	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
 
-	public SWTParameterEditor(Shell baseWindow, final INodeContent content,
+	public SWTPredicateEditor(Shell baseWindow, final INodeContent content,
 			Collection<SDFAttributeList> inputSchemas, Composite actualComp) {
 
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE

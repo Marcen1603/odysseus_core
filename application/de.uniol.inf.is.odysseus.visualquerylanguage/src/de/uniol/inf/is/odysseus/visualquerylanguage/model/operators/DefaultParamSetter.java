@@ -12,7 +12,7 @@ public class DefaultParamSetter<T> implements IParamSetter<T>{
 	private T value;
 	private String setter;
 	private String name = "";
-	private boolean hasEditor = false;
+	private String editor = "";
 	
 	private static final Logger logger = LoggerFactory
 	.getLogger(DefaultParamSetter.class);
@@ -61,13 +61,13 @@ public class DefaultParamSetter<T> implements IParamSetter<T>{
 	}
 	
 	@Override
-	public boolean hasEditor() {
-		return this.hasEditor;
+	public String getEditor() {
+		return this.editor;
 	}
 	
 	@Override
-	public void setEditor(boolean hasEditor) {
-		this.hasEditor = hasEditor;
+	public void setEditor(String editor) {
+		this.editor = editor;
 	}
 
 	@Override

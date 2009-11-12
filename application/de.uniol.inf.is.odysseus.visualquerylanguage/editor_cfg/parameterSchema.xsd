@@ -7,7 +7,7 @@
 			<xsd:element name="ptype" type="xsd:string" minOccurs="1" />
 			<xsd:element name="typelist" type="param-type-list" minOccurs="1" />
 			<xsd:element name="position" type="xsd:int" minOccurs="1" />
-			<xsd:element name="editor" type="xsd:boolean" minOccurs="1" />
+			<xsd:element name="editor" type="xsd:string" minOccurs="1" />
 		</xsd:all>
 	</xsd:complexType>
 	
@@ -23,7 +23,7 @@
 			<xsd:element name="ptype" type="xsd:string" minOccurs="1" />
 			<xsd:element name="typelist" type="param-type-list" minOccurs="1" />
 			<xsd:element name="setter" type="xsd:string" minOccurs="1" />
-			<xsd:element name="editor" type="xsd:boolean" minOccurs="1" />
+			<xsd:element name="editor" type="xsd:string" minOccurs="1" />
 		</xsd:all>
 	</xsd:complexType>
 
@@ -47,6 +47,7 @@
 				minOccurs="1" maxOccurs="1"/>
 			<xsd:element name="pipe-image" type="xsd:string"
 				minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="pipe-editor" type="xsd:string" minOccurs="1" />
 			<xsd:element name="cparams" type="constructor-param-list" minOccurs="0" maxOccurs="1"/>
 			<xsd:element name="sparams" type="setter-param-list" minOccurs="0" maxOccurs="1"/>
 		</xsd:sequence>
@@ -60,6 +61,7 @@
 				minOccurs="1" maxOccurs="1"/>
 			<xsd:element name="sink-image" type="xsd:string"
 				minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="sink-editor" type="xsd:string" minOccurs="1" />
 			<xsd:element name="cparams" type="constructor-param-list" minOccurs="0" maxOccurs="1"/>
 			<xsd:element name="sparams" type="setter-param-list" minOccurs="0" maxOccurs="1"/>
 		</xsd:sequence>

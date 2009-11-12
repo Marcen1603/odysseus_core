@@ -36,11 +36,12 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultGraphModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultNodeModel;
@@ -78,6 +79,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTParameterListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTTreeChangedListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTOutputEditor;
@@ -87,7 +89,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositi
 
 public class DefaultGraphArea extends Composite implements
 		IGraphArea<INodeContent>, IGraphModelChangeListener<INodeContent>,
-		ISelectListener<INodeView<INodeContent>>, ISWTTreeChangedListener {
+		ISelectListener<INodeView<INodeContent>>, ISWTTreeChangedListener, ISWTParameterListener {
 
 	private static final String XML_FILE = "editor_cfg/parameter.xml";
 
@@ -425,7 +427,8 @@ public class DefaultGraphArea extends Composite implements
 									.getModelNode())).getContent()
 									.isOnlySource()) {
 								if(endOp instanceof OutputSchemaSettable) {
-									new SWTOutputEditor(SWTMainWindow.getShell(), opList, endOp);
+									SWTOutputEditor editor = new SWTOutputEditor(SWTMainWindow.getShell(), opList, endOp, selectedNode.getModelNode().getContent());
+									editor.addParameterListener(this);
 								}
 								
 								if (endOp instanceof UnaryLogicalOp) {
@@ -703,7 +706,8 @@ public class DefaultGraphArea extends Composite implements
 			} catch (Exception e) {
 				throw new ReflectionException();
 			}
-			(content).setImageName(((AbstractOperator) con).getImageName());
+			content.setImageName(((AbstractOperator) con).getImageName());
+			content.setEditor(((AbstractOperator) con).getEditor());
 		}
 		if (con instanceof DefaultSinkContent) {
 			content = new DefaultSinkContent(con.getName(), con.getType(), con
@@ -714,7 +718,8 @@ public class DefaultGraphArea extends Composite implements
 			} catch (Exception e) {
 				throw new ReflectionException();
 			}
-			(content).setImageName(((AbstractOperator) con).getImageName());
+			content.setImageName(((AbstractOperator) con).getImageName());
+			content.setEditor(((AbstractOperator) con).getEditor());
 		} else if (con instanceof DefaultPipeContent) {
 			content = new DefaultPipeContent(con.getName(), con.getType(), con
 					.getImage(), con.getNewConstructParameterListInstance(),
@@ -724,7 +729,8 @@ public class DefaultGraphArea extends Composite implements
 			} catch (Exception e) {
 				throw new ReflectionException();
 			}
-			(content).setImageName(((AbstractOperator) con).getImageName());
+			content.setImageName(((AbstractOperator) con).getImageName());
+			content.setEditor(((AbstractOperator) con).getEditor());
 		}
 		return content;
 	}
@@ -850,6 +856,17 @@ public class DefaultGraphArea extends Composite implements
 			return (ILogicalOperator) logOp;
 		} else {
 			return null;
+		}
+	}
+
+	@Override
+	public void setValue(Object value) {
+		
+		INodeView<INodeContent> nodeView = ((ArrayList<INodeView<INodeContent>>) (renderManager
+				.getSelector().getSelected())).get(0);
+		ILogicalOperator operator = nodeView.getModelNode().getContent().getOperator();
+		if(operator instanceof OutputSchemaSettable) {
+			((OutputSchemaSettable)operator).setOutputSchema((SDFAttributeList)value);
 		}
 	}
 }

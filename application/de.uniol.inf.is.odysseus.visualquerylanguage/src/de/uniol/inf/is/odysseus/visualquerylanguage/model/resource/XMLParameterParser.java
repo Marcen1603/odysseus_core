@@ -64,8 +64,12 @@ public class XMLParameterParser implements IParameterConfiguration {
 	private Collection<String> pTypeList = new ArrayList<String>();
 	private Integer pPosition = null;
 	private String pSetter = "";
-	private boolean pEditor = false;
+	private String pEditor = "";
 	private boolean newEditor = false;
+	private String pipeEditor = "";
+	private boolean newPipeEditor = false;
+	private String sinkEditor = "";
+	private boolean newSinkEditor = false;
 	DefaultSourceContent source = null;
 	DefaultSinkContent sink = null;
 	DefaultPipeContent pipe = null;
@@ -192,6 +196,9 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}else if (node.getNodeName().equals("pipe-type")) {
 					pipeType = childNodes.item(i).getNodeValue();
 					newPipeType = true;
+				}else if(node.getNodeName().equals("pipe-editor")) {
+					pipeEditor = childNodes.item(i).getNodeValue();
+					newPipeEditor = true;
 				}else if (node.getNodeName().equals("name")) {
 					pName = childNodes.item(i).getNodeValue();
 				}else if (node.getNodeName().equals("ptype")) {
@@ -204,20 +211,22 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
 				}else if (node.getNodeName().equals("editor")) {
-					pEditor = Boolean.parseBoolean(childNodes.item(i).getNodeValue());
+					pEditor = childNodes.item(i).getNodeValue();
 					newEditor = true;
 				}
-				if (newPipe && newPipeType && newPipeImage) {
+				if (newPipe && newPipeType && newPipeImage && newPipeEditor) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
 					setterParams = new ArrayList<IParamSetter<?>>();
 					Image image = SWTResourceManager.getInstance().getImage(pipeImage);
 					pipe = new DefaultPipeContent(pipeName, pipeType, image, 
 							constructParams, setterParams);
 					pipe.setImageName(pipeImage);
+					pipe.setEditor(pipeEditor);
 					pipes.add(pipe);
 					newPipe = false;
 					newPipeType = false;
 					newPipeImage = false;
+					newPipeEditor = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (pipeParamComplete()) {
@@ -229,7 +238,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pPosition = null;
-							newEditor = false;
+							pEditor = "";
+							newEditor = true;
 							pipes.add(pipe);
 						} else if (!pSetter.isEmpty() && pipe != null) {
 							pipes.remove(pipe);
@@ -239,7 +249,8 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pSetter = "";
-							newEditor = false;
+							pEditor = "";
+							newEditor = true;
 							pipes.add(pipe);
 						}
 						pTypeList = new ArrayList<String>();
@@ -268,6 +279,9 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}else if (node.getNodeName().equals("sink-type")) {
 					sinkType = childNodes.item(i).getNodeValue();
 					newSinkType = true;
+				}else if(node.getNodeName().equals("sink-editor")) {
+					sinkEditor = childNodes.item(i).getNodeValue();
+					newSinkEditor = true;
 				}else if (node.getNodeName().equals("name")) {
 					pName = childNodes.item(i).getNodeValue();
 				}else if (node.getNodeName().equals("ptype")) {
@@ -280,20 +294,22 @@ public class XMLParameterParser implements IParameterConfiguration {
 				}else if (node.getNodeName().equals("setter")) {
 					pSetter = childNodes.item(i).getNodeValue();
 				}else if (node.getNodeName().equals("editor")) {
-					pEditor = Boolean.parseBoolean(childNodes.item(i).getNodeValue());
+					pEditor = childNodes.item(i).getNodeValue();
 					newEditor = true;
 				}
-				if (newSink && newSinkType && newSinkImage) {
+				if (newSink && newSinkType && newSinkImage && newSinkEditor) {
 					constructParams = new ArrayList<IParamConstruct<?>>();
 					setterParams = new ArrayList<IParamSetter<?>>();
 					Image image = SWTResourceManager.getInstance().getImage(sinkImage);
 					sink = new DefaultSinkContent(sinkName, sinkType, image,
 							constructParams, setterParams);
 					sink.setImageName(sinkImage);
+					sink.setEditor(sinkEditor);
 					sinks.add(sink);
 					newSink = false;
 					newSinkType = false;
 					newSinkImage = false;
+					newSinkEditor = false;
 				}
 				if (pPosition != null || !pSetter.isEmpty()) {
 					if (sinkParamComplete()) {
@@ -305,6 +321,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pPosition = null;
+							pEditor = "";
 							newEditor = false;
 							sinks.add(sink);
 						} else if (!pSetter.isEmpty() && sink != null) {
@@ -315,6 +332,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pName = "";
 							pType = "";
 							pSetter = "";
+							pEditor = "";
 							newEditor = false;
 							sinks.add(sink);
 						}
@@ -338,7 +356,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 		} else if (pPosition != null && !pSetter.isEmpty()) {
 			logger.warn("Parameter has Position and Setter");
 			return false;
-		}else if (newEditor == false) {
+		}else if (!newEditor) {
 			return false;
 		}
 		return true;
@@ -356,7 +374,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 		} else if (pPosition != null && !pSetter.isEmpty()) {
 			logger.warn("Parameter has Position and Setter");
 			return false;
-		}else if (newEditor == false) {
+		}else if (!newEditor) {
 			return false;
 		}
 		return true;

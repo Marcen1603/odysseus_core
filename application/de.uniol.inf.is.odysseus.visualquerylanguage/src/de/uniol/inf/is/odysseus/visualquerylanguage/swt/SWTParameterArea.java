@@ -110,7 +110,7 @@ public class SWTParameterArea {
 							inputs.add(subscription.getTarget()
 									.getOutputSchema());
 						}
-						SWTParameterEditor paramEditor = new SWTParameterEditor(
+						SWTPredicateEditor paramEditor = new SWTPredicateEditor(
 								SWTMainWindow.getShell(), nodeView
 										.getModelNode().getContent(), inputs, cComp);
 						paramEditor.addSWTParameterListener(cComp);
@@ -122,7 +122,7 @@ public class SWTParameterArea {
 				Text t = new Text(cComp, SWT.SINGLE);
 				GridData textGridData = new GridData(GridData.FILL_HORIZONTAL);
 				t.setLayoutData(textGridData);
-				if(cParam.hasEditor()) {
+				if(EditorChecker.getInstance().hasPredicateEditor(cParam.getEditor())) {
 					cButton.setEnabled(true);
 				}
 				String value = "";
@@ -160,7 +160,7 @@ public class SWTParameterArea {
 							inputs.add(subscription.getTarget()
 									.getOutputSchema());
 						}
-						SWTParameterEditor paramEditor = new SWTParameterEditor(
+						SWTPredicateEditor paramEditor = new SWTPredicateEditor(
 								SWTMainWindow.getShell(), nodeView
 										.getModelNode().getContent(), inputs, sComp);
 						paramEditor.addSWTParameterListener(sComp);
@@ -172,7 +172,7 @@ public class SWTParameterArea {
 				Text t = new Text(sComp, SWT.SINGLE);
 				GridData textGridData = new GridData(GridData.FILL_HORIZONTAL);
 				t.setLayoutData(textGridData);
-				if(sParam.hasEditor()) {
+				if(EditorChecker.getInstance().hasPredicateEditor(sParam.getEditor())) {
 					sButton.setEnabled(true);
 					t.setEditable(false);
 					Color c = new Color(Display.getCurrent(), 255, 255, 255);
