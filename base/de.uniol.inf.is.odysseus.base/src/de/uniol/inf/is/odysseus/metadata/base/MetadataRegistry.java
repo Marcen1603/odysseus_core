@@ -26,7 +26,7 @@ public class MetadataRegistry {
 						"combined metadatatype already exists");
 			}
 			try {
-				if (implementationType.getMethod("clone", (Class<?>) null)
+				if (implementationType.getMethod("clone", null)
 						.getDeclaringClass() != implementationType) {
 					String msg = "implementation class does not declare a clone method, this will lead to runtime exceptions";
 					throw new IllegalArgumentException(msg);
