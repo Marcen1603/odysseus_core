@@ -645,9 +645,6 @@ public class DefaultGraphArea extends Composite implements
 		for (INodeView<INodeContent> iNodeView : renderManager.getSelector()
 				.getSelected()) {
 			addParameterArea(iNodeView);
-			for (IParamSetter<?> setter : iNodeView.getModelNode().getContent().getSetterParameterList()) {
-				System.out.println(setter.getValue());
-			}
 		}
 		infoScroll.setMinSize(infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		infoArea.layout();
