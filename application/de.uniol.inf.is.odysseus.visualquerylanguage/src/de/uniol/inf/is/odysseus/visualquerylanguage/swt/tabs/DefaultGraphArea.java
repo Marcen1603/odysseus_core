@@ -40,7 +40,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultConnectionModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.DefaultGraphModel;
@@ -623,7 +622,7 @@ public class DefaultGraphArea extends Composite implements
 	private void addParameterArea(INodeView<INodeContent> nodeView) {
 		if (!parameterAreasShown.containsKey(nodeView)) {
 
-			SWTParameterArea p = new SWTParameterArea(this, infoArea,
+			SWTParameterArea p = new SWTParameterArea(infoArea,
 					(DefaultNodeView<INodeContent>) nodeView);
 			parameterAreasShown.put(nodeView, p);
 			log.debug("ParameterArea for " + nodeView + " created");
@@ -646,6 +645,9 @@ public class DefaultGraphArea extends Composite implements
 		for (INodeView<INodeContent> iNodeView : renderManager.getSelector()
 				.getSelected()) {
 			addParameterArea(iNodeView);
+			for (IParamSetter<?> setter : iNodeView.getModelNode().getContent().getSetterParameterList()) {
+				System.out.println(setter.getValue());
+			}
 		}
 		infoScroll.setMinSize(infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		infoArea.layout();

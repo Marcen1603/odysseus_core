@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -32,7 +31,6 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParam;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamConstruct;
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter;
-import de.uniol.inf.is.odysseus.visualquerylanguage.swt.tabs.DefaultGraphArea;
 
 public class SWTParameterArea {
 
@@ -41,12 +39,9 @@ public class SWTParameterArea {
 	private Composite comp;
 	private INodeView<INodeContent> nodeView;
 
-	private DefaultGraphArea area;
-
-	public SWTParameterArea(final DefaultGraphArea area, Composite parent,
+	public SWTParameterArea(Composite parent,
 			final INodeView<INodeContent> nodeView) {
-
-		this.area = area;
+		
 		this.nodeView = nodeView;
 		INodeContent content = nodeView.getModelNode().getContent();
 
@@ -172,18 +167,27 @@ public class SWTParameterArea {
 				Text t = new Text(sComp, SWT.SINGLE);
 				GridData textGridData = new GridData(GridData.FILL_HORIZONTAL);
 				t.setLayoutData(textGridData);
-				if(EditorChecker.getInstance().hasPredicateEditor(sParam.getEditor())) {
-					sButton.setEnabled(true);
-					t.setEditable(false);
-					Color c = new Color(Display.getCurrent(), 255, 255, 255);
-					t.setBackground(c);
-				}
 				String value = "";
 				if (sParam.getValue() != null) {
 					value = sParam.getValue().toString();
 				}
 				t.setText(value);
 				t.setData(sParam);
+				if(EditorChecker.getInstance().hasPredicateEditor(sParam.getEditor())) {
+					sButton.setEnabled(true);
+					t.setEditable(false);
+					Color c = new Color(Display.getCurrent(), 255, 255, 255);
+					t.setBackground(c);
+				}else {
+					t.addModifyListener(new ModifyListener() {
+						
+						@SuppressWarnings("unchecked")
+						@Override
+						public void modifyText(ModifyEvent e) {
+							((IParam)((Text)e.getSource()).getData()).setValue(((Text)e.getSource()).getText());
+						}
+					});
+				}
 			}
 		}
 	}
