@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpressionParseException;
 
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor{
@@ -357,12 +358,12 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	@Override
 	public Object visit(ASTBasicPredicate node, Object data) {
 		SDFExpression expression;
-		try {
+//		try {
 			expression = new SDFExpression("", node.getPredicate(),
 					(IAttributeResolver) ((ArrayList) data).get(0));
-		} catch (org.nfunk.jep.ParseException e) {
-			throw new RuntimeException(e);
-		}
+//		} catch (SDFExpressionParseException e) {
+//			throw new RuntimeException(e);
+//		}
 		
 		((ArrayList)data).add(new RelationalPredicate(expression));
 		
