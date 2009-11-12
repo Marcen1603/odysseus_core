@@ -29,7 +29,7 @@ public class DescriptiveStatistics {
 	// percentileMap is a little hack to only have selected values occur in xml
 	// serialization
 	@ElementMap(attribute = true, entry = "percentile", key = "percent", value = "value")
-	private Map<Integer, Double> percentileMap;
+	private Map<Integer, Double> percentileMap = new TreeMap<Integer, Double>();
 	@Element
 	private double mean;
 	@Element
