@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Args
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.args
+Bundle-Version: 1.0.0
+Export-Package: de.uniol.inf.is.odysseus.args,
+ de.uniol.inf.is.odysseus.args.marshaller
