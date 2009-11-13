@@ -32,7 +32,8 @@ public class Activator extends Plugin {
 		super.start(context);
 		plugin = this;
 		for (Bundle bundle : context.getBundles()) {
-			if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null
+			boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
+			if (bundle != context.getBundle() && !isFragment
 					&& bundle.getState() == Bundle.RESOLVED) {
 				try {
 					bundle.start();
