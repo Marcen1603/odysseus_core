@@ -19,9 +19,17 @@ public class SWTStatusLine {
 		statusText.setLayoutData( data );
 	}
 	
-	public void setText( String text ) {
-		statusText.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
-		statusText.setText( text );
+	public void setText( final String text ) {
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				statusText.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
+			}
+		});
+		statusText.setText( text );				
+
 	}
 	
 	public String getText() {
@@ -29,7 +37,13 @@ public class SWTStatusLine {
 	}
 	
 	public void setErrorText( String text ) {
-		statusText.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				statusText.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
+			}
+		});
+
 		statusText.setText( text );
 	}
 	

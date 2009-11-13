@@ -85,7 +85,14 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 		this.statusText = statusText;		
 		comp.setLayout(new FillLayout());
 		this.canvas = new Canvas(comp, SWT.BORDER);
-		this.canvas.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				SWTRenderManager.this.canvas.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+			}
+		});
+		
 		
 		canvas.addListener( SWT.Resize, new Listener() {
 

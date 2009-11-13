@@ -56,7 +56,7 @@
 		<pipe>
 			<pipe-name>Berechnungs-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.MapAO</pipe-type>
-			<pipe-image>calculate</pipe-image>
+			<pipe-image>rename</pipe-image>
 			
 			<sparams>
 				
