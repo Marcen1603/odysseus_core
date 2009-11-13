@@ -38,6 +38,7 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 		SWTResourceManager.resourceBundle = bc.getBundle();
 		String uViewer = System.getenv("useViewer");
 		if ("true".equalsIgnoreCase(uViewer)) {
+			logger.debug("Starte den Viewer");
 			// TODO config aus properties service lesen
 			// do initialization inside a thread, so bundle startup
 			// isn't blocked by execTracker.waitForService(0)
@@ -120,7 +121,9 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 				lastRoot = li.previous();
 			} while (li.hasPrevious() && lastRoot == null);
 			if (lastRoot != null && lastRoot instanceof ISink<?>) {
-				this.viewerStarter.setModelProvider(new OdysseusModelProviderSink((ISink<?>) lastRoot));
+				if (viewerThread != null){
+					this.viewerStarter.setModelProvider(new OdysseusModelProviderSink((ISink<?>) lastRoot));
+				}
 			}
 		}
 	}
