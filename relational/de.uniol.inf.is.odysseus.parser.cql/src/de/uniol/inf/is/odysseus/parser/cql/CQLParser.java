@@ -91,7 +91,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTupleSet;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ParseException;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckAttributes;
@@ -108,7 +107,6 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpressionParseException;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
