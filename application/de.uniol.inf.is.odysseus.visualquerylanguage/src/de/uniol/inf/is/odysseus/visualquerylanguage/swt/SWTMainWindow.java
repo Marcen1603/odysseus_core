@@ -417,13 +417,19 @@ public class SWTMainWindow {
 	}
 
 	private void createNewGraphTab() {
-		DefaultGraphArea graphArea = new DefaultGraphArea(tabFolder, 0,
-				executor);
+		Display.getCurrent().asyncExec(new Thread() {
+			@Override
+			public void run(){
+				DefaultGraphArea graphArea = new DefaultGraphArea(tabFolder, 0,
+						executor);
 
-		CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
-		item.setText("Anfrage");
-		item.setControl(graphArea);
-		tabFolder.setSelection(item);
+				CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
+				item.setText("Anfrage");
+				item.setControl(graphArea);
+				tabFolder.setSelection(item);
+			}
+		});
+
 	}
 
 	private synchronized Table getQueryTable() {

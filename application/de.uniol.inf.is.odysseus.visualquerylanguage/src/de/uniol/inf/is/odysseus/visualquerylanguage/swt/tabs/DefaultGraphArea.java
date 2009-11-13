@@ -185,7 +185,7 @@ public class DefaultGraphArea extends Composite implements
 		formData.right = new FormAttachment(sash, 0);
 		comp.setLayoutData(formData);
 
-		status = new SWTStatusLine(this);
+		status = new SWTStatusLine(DefaultGraphArea.this);
 		status.setText("Anfrageerstellung bereit.");
 
 		this.renderManager = new SWTRenderManager<INodeContent>(comp, status,
@@ -215,8 +215,15 @@ public class DefaultGraphArea extends Composite implements
 		infoScroll.setExpandHorizontal(true);
 		infoScroll.setExpandVertical(true);
 
-		renderManager.getCanvas().setBackground(
-				Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				renderManager.getCanvas().setBackground(
+						Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+			}
+		});
+		
 		renderManager.getCanvas().addMouseListener(new MouseAdapter() {
 
 			@Override

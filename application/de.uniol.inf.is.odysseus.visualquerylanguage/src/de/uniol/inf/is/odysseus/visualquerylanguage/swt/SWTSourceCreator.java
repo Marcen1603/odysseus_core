@@ -34,6 +34,8 @@ public class SWTSourceCreator{
 		final StyledText textArea = new StyledText(shell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		textArea.setLayoutData(gd);
+		// TODO: Nur zum Testen, wieder entfernen
+		textArea.setText("CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )");
 		
 		Button createSourceButton = new Button(shell, SWT.PUSH);
 		createSourceButton.setText("Neue Quelle erstellen");
