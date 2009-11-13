@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
 
+@SuppressWarnings("all")
 public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, NewSQLParserConstants {/*@bgen(jjtree)*/
   protected static JJTNewSQLParserState jjtree = new JJTNewSQLParserState();
 
@@ -3407,27 +3408,6 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     finally { jj_save(17, xla); }
   }
 
-  static private boolean jj_3R_37() {
-    if (jj_3R_72()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_20() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_37()) {
-    jj_scanpos = xsp;
-    if (jj_3R_38()) {
-    jj_scanpos = xsp;
-    if (jj_3R_39()) {
-    jj_scanpos = xsp;
-    if (jj_3R_40()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
   static private boolean jj_3R_71() {
     if (jj_scan_token(K_NOT)) return true;
     if (jj_3R_19()) return true;
@@ -4773,6 +4753,27 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
 
   static private boolean jj_3R_38() {
     if (jj_3R_23()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_37() {
+    if (jj_3R_72()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_20() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_37()) {
+    jj_scanpos = xsp;
+    if (jj_3R_38()) {
+    jj_scanpos = xsp;
+    if (jj_3R_39()) {
+    jj_scanpos = xsp;
+    if (jj_3R_40()) return true;
+    }
+    }
+    }
     return false;
   }
 
