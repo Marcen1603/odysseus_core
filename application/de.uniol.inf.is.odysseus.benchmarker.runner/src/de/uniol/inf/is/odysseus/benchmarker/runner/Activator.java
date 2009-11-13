@@ -28,20 +28,26 @@ public class Activator extends Plugin {
 	 * @see
 	 * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		for (Bundle bundle : context.getBundles()) {
-			boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
-			if (bundle != context.getBundle() && !isFragment
-					&& bundle.getState() == Bundle.RESOLVED) {
-				try {
-					bundle.start();
-				} catch (Exception e) {
-					e.printStackTrace();
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				for (Bundle bundle : context.getBundles()) {
+					boolean isFragment = bundle.getHeaders().get(
+							Constants.FRAGMENT_HOST) != null;
+					if (bundle != context.getBundle() && !isFragment
+							&& bundle.getState() == Bundle.RESOLVED) {
+						try {
+							bundle.start();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
-		}
+		});
+		t.start();
 	}
 
 	/*
