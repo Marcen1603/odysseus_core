@@ -33,9 +33,17 @@ import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
  */
 public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 	
+	// Ueberwacht Groesse von SweepAreas der JoinTIPOs
 	List<AvgTempMemUsageListener> listeners = new ArrayList<AvgTempMemUsageListener>();
+	
+	// Ueberwacht die Groesse der Zwischenpuffer
 	List<AvgTempMemUsageListener> listenersBuffer = new ArrayList<AvgTempMemUsageListener>();
+	
+	// Ueberwacht die Gesamten Groessen der PunctuationStorages in allen Operatoren/Puffern
 	List<AvgTempMemUsageListener> listenersPunc = new ArrayList<AvgTempMemUsageListener>();
+	
+	// Ueberwacht Extra die PunctuationStorages der vorhandenen Joins
+	List<AvgTempMemUsageListener> listenersPuncJoin = new ArrayList<AvgTempMemUsageListener>();
 	
 	@Override
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
@@ -58,6 +66,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 				storeBenchmarkResult(listeners, "memUsage.properties");
 				storeBenchmarkResult(listenersBuffer, "memUsageBuffer.properties");
 				storeBenchmarkResult(listenersPunc, "memUsagePunc.properties");
+				storeBenchmarkResult(listenersPuncJoin, "memUsagePuncJoin.properties");
 				hash.clear();
 			}
 		}
@@ -103,6 +112,10 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 				AvgTempMemUsageListener listener = new AvgTempMemUsageListener((JoinTIPO) op);
 				listeners.add(listener);
 				op.subscribe(listener, POEventType.PushDone);
+				
+				AvgTempMemUsageListener listenerStorage = new AvgTempMemUsageListener(((JoinTIPO) op).getStorage());
+				listenersPuncJoin.add(listenerStorage);
+				op.subscribe(listenerStorage, POEventType.PushDone);
 				
 				hash.put(op.hashCode(), op);
 			}
