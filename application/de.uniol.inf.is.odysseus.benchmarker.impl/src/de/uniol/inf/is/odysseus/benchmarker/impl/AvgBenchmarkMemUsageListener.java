@@ -81,8 +81,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 			}
 			
 			if(op instanceof DirectInterlinkBufferedPipe) {
-				AvgTempMemUsageListener listener = new AvgTempMemUsageListener(op);
-				System.out.println(op.getName());
+				AvgTempMemUsageListener listener = new AvgTempMemUsageListener(((DirectInterlinkBufferedPipe)op).getStorage());
 				listenersPunc.add(listener);
 				op.subscribe(listener, POEventType.PushDone);				
 			}

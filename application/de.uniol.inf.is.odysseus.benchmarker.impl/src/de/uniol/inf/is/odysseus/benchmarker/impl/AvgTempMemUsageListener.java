@@ -30,10 +30,8 @@ public class AvgTempMemUsageListener implements POEventListener {
 		this.value = op;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void poEventOccured(POEvent poEvent) {
-
+	@SuppressWarnings("unchecked")	
+	public void calcCurrent() {
 		double tmp = 0;
 
 		if (value instanceof JoinTIPO) {
@@ -45,11 +43,8 @@ public class AvgTempMemUsageListener implements POEventListener {
 		} else if (value instanceof IBuffer) {
 			tmp = ((IBuffer) value).size();
 		} else if (value instanceof PunctuationStorage) {
-			System.out.println("PUNC!!!!");
 			PunctuationStorage punc = (PunctuationStorage) value;
-			for (Object eachPort : punc.getStorage()) {
-				tmp += ((List<PointInTime>) eachPort).size();
-			}
+			tmp = punc.size();
 		}
 
 		if (min == -1 || tmp < min) {
@@ -62,7 +57,12 @@ public class AvgTempMemUsageListener implements POEventListener {
 
 		collected += tmp;
 		called_times++;
+	}
+	
 
+	@Override
+	public void poEventOccured(POEvent poEvent) {
+		calcCurrent();
 	}
 
 	public double getAverage() {
