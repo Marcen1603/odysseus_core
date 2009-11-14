@@ -85,4 +85,12 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 		storage.get(currentPort).add(timestamp);
 	}
 
+	public int size() {
+		int size = 0;
+		for(List<PointInTime> each : storage) {
+			size += each.size();
+		}
+		return size;
+	}
+
 }

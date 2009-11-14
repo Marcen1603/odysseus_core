@@ -46,4 +46,8 @@ public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<
 		updatePunctuationData(object);
 	};
 
+	public PunctuationStorage<W,R> getStorage() {
+		return storage;
+	}	
+	
 }

@@ -26,6 +26,10 @@ abstract public class AbstractPunctuationBuffer<W extends IMetaAttributeContaine
 		storage.updatePunctuationData(object);
 	}	
 	
+	public PunctuationStorage<W,W> getStorage() {
+		return storage;
+	}
+	
 	abstract public boolean cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
 	
 	@Override
