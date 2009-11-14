@@ -12,6 +12,11 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling;
 public class PlanExecutionEvent extends AbstractPlanExecutionEvent<String> {
 
 	/**
+	 * ID for an event after initializing the plan and before starting the execution.
+	 */
+	public static final String EXECUTION_PREPARED = "EXECUTION_PREPARED";
+
+	/**
 	 * ID for an event after stopping the execution.
 	 */
 	public static String EXECUTION_STOPPED = "EXECUTION_STOPPED";

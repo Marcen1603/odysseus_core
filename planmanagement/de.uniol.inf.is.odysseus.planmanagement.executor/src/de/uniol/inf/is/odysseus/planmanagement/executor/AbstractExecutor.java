@@ -366,6 +366,10 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		this.logger.info("Start Scheduler.");
 		try {
 			this.executionPlan.open();
+			
+			firePlanExecutionEvent(new PlanExecutionEvent(this,
+					PlanExecutionEvent.EXECUTION_PREPARED));			
+			
 			schedulerManager().startScheduling();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
