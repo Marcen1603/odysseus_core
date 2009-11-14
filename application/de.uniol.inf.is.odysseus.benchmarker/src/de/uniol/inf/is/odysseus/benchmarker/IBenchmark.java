@@ -16,4 +16,5 @@ public interface IBenchmark {
 	public <T> IBenchmarkResult<T> runBenchmark() throws BenchmarkException;
 	public void setUsePunctuations(boolean b);
 	public void setUseLoadShedding(boolean b);
+	public void setBenchmarkMemUsage(boolean b);
 }

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class Benchmark implements IErrorEventListener, IBenchmark {
@@ -38,6 +39,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private List<UnsortedPair<String, String>> queries;
 	private boolean usePunctuations;
 	private boolean useLoadShedding;
+	private boolean useBenchmarkMemUsage;
 	
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 
@@ -114,7 +116,12 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		try {
 			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
+			if(useBenchmarkMemUsage) {
+				executor.addPlanExecutionListener(new AvgBenchmarkMemUsageListener());
+			}
+
 			executor.addErrorEventListener(this);
+			
 
 			ArrayList<AbstractQueryBuildParameter<?>> parameters = new ArrayList<AbstractQueryBuildParameter<?>>();
 			parameters
@@ -215,6 +222,13 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	@Override
 	public void setUsePunctuations(boolean b) {
 		this.usePunctuations = b;
+	}
+
+
+	@Override
+	public void setBenchmarkMemUsage(boolean b) {
+		this.useBenchmarkMemUsage = b;
+		
 	}
 
 }
