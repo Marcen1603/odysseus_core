@@ -12,18 +12,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
  */
 public class AvgTempMemUsageListener  implements POEventListener{
 
-	double min = -1;
-	public double getMin() {
-		return min;
-	}
-
-	public double getMax() {
-		return max;
-	}
-
-	double max = -1;
-	double collected;
-	double called_times;
+	private double min = -1;
+	private double max = -1;
+	private double collected;
+	private double called_times;
 	
 	@SuppressWarnings( "unchecked" )
 	private JoinTIPO op;
@@ -46,11 +38,11 @@ public class AvgTempMemUsageListener  implements POEventListener{
 		}
 		
 		if(min == -1 || tmp < min) {
-			min = tmp;
+			this.min = tmp;
 		}
 		
 		if(max == -1 || tmp > max) {
-			max = tmp;
+			this.max = tmp;
 		}
 		
 		collected += tmp;
@@ -64,6 +56,14 @@ public class AvgTempMemUsageListener  implements POEventListener{
 		} else {
 			return collected/called_times;
 		}
+	}
+	
+	public double getMin() {
+		return min;
+	}
+
+	public double getMax() {
+		return max;
 	}
 
 }

@@ -89,11 +89,11 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 			mean_sum += tmp;
 			
 			if(min == -1 || tmp < min) {
-				min = tmp;
+				min = each.getMin();
 			}
 			
 			if(max == -1 || tmp > max) {
-				max = tmp;
+				max = each.getMax();
 			}			
 			
 		}
