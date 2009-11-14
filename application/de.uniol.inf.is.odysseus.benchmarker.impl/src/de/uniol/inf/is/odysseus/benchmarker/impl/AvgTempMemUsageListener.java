@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
@@ -18,10 +20,10 @@ public class AvgTempMemUsageListener  implements POEventListener{
 	private double called_times;
 	
 	@SuppressWarnings( "unchecked" )
-	private JoinTIPO op;
+	private IPhysicalOperator op;
 	
 	@SuppressWarnings("unchecked")
-	public AvgTempMemUsageListener(JoinTIPO op) {
+	public AvgTempMemUsageListener(IPhysicalOperator op) {
 		this.op = op;
 	}
 
@@ -29,12 +31,16 @@ public class AvgTempMemUsageListener  implements POEventListener{
 	@Override
 	public void poEventOccured(POEvent poEvent) {
 		
-		final ISweepArea[] areas = op.getAreas();
-		
 		double tmp = 0;
 		
-		for(ISweepArea each : areas) {
-			tmp += each.size();
+		if(op instanceof JoinTIPO) {
+			final ISweepArea[] areas = ((JoinTIPO)op).getAreas();
+
+			for(ISweepArea each : areas) {
+				tmp += each.size();
+			}
+		} else if(op instanceof IBuffer) {
+			tmp = ((IBuffer)op).size();
 		}
 		
 		if(min == -1 || tmp < min) {

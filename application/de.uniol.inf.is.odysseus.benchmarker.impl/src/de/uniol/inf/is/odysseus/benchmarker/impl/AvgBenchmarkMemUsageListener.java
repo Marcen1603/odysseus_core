@@ -13,6 +13,8 @@ import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -30,6 +32,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecut
 public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 	
 	List<AvgTempMemUsageListener> listeners = new ArrayList<AvgTempMemUsageListener>();
+	List<AvgTempMemUsageListener> listenersBuffer = new ArrayList<AvgTempMemUsageListener>();
 	
 	@Override
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
@@ -41,12 +44,16 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 					for(ISink<?> op : each.getRoots()) {
 						addMemListeners(op);
 					}
+					for(IIterableSource<?> op : each.getIterableSource()) {
+						addMemListeners(op);
+					}
 				}
 			}			
 			
 			if(((PlanExecutionEvent) eventArgs).getID().equals(PlanExecutionEvent.EXECUTION_STOPPED)) {
 				System.out.println("Plan execution finished...create benchmark results!");
-				storeBenchmarkResult();
+				storeBenchmarkResult(listeners, "memUsage.properties");
+				storeBenchmarkResult(listenersBuffer, "memUsageBuffer.properties");
 				hash.clear();
 			}
 		}
@@ -54,6 +61,27 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 	}
 
 	private Map<Integer,IPhysicalOperator> hash = new HashMap<Integer,IPhysicalOperator>();
+	
+	private void addMemListeners(IIterableSource<?> op) {
+		for(PhysicalSubscription<?> sub : op.getSubscriptions()) {
+			
+			if(op instanceof IBuffer && hash.get(op.hashCode()) == null) {
+				System.out.println("Monitoring temp memory usage for: " + op.getName() + " with hash " + op.hashCode());
+				
+				AvgTempMemUsageListener listener = new AvgTempMemUsageListener((IBuffer) op);
+				System.out.println(op.getName());
+				listenersBuffer.add(listener);
+				op.subscribe(listener, POEventType.PushDone);
+				
+				hash.put(op.hashCode(), op);
+			}
+			
+			if(((IPhysicalOperator)sub.getTarget()).isSink()) {
+				addMemListeners((ISink<?>) sub.getTarget());
+			}
+		}
+		
+	}	
 	
 	@SuppressWarnings("unchecked")
 	private void addMemListeners(ISink<?> op) {
@@ -75,7 +103,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 		}
 	}
 	
-	public void storeBenchmarkResult() {
+	public void storeBenchmarkResult(List<AvgTempMemUsageListener> list, String file) {
 		double mean_sum = 0;
 		double operators = 0;
 		
@@ -83,7 +111,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 		double min = -1;
 		double max = -1;
 		
-		for(AvgTempMemUsageListener each : listeners) {
+		for(AvgTempMemUsageListener each : list) {
 			double tmp = each.getAverage();
 			operators++;
 			mean_sum += tmp;
@@ -111,7 +139,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 		props.put("max", String.valueOf(max));
 
 		try {
-			props.store(new FileWriter("memUsage.properties"), "Memory Usage - Benchmark Results:");
+			props.store(new FileWriter(file), "Memory Usage - Benchmark Results:");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
