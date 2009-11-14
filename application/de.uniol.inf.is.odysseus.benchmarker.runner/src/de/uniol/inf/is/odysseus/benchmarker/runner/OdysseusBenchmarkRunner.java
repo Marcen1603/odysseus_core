@@ -91,6 +91,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String LOAD_SHEDDING = "-load_shedding";
 	private static final String OUT = "-out";
 	private static final String WAIT = "-wait";
+	private static final String MEMORY_USAGE = "-memUsage";
 
 	// private static Logger logger =
 	// LoggerFactory.getLogger(BenchmarkStarter.class);
@@ -143,6 +144,10 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			Long maxResults = arguments.getLong(MAX_RESULTS);
 			benchmark.setMaxResults(maxResults);
 		}
+		
+		if(arguments.get(MEMORY_USAGE)) {
+			benchmark.setBenchmarkMemUsage(true);
+		}
 
 		String queryLanguage = arguments.get(QUERY_LANGUAGE);
 		String query = arguments.get(QUERY);
@@ -184,6 +189,8 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 		arguments
 				.addBoolean(LOAD_SHEDDING, " - enables usage of load shedding");
+		
+		arguments.addBoolean(MEMORY_USAGE, " - activates the listener to benchmark memory usage");		
 
 		arguments
 				.addString(OUT, REQUIREMENT.OPTIONAL,
