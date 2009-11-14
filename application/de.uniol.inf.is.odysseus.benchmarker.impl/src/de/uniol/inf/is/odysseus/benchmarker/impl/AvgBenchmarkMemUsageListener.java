@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecut
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEvent;
 
+import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
+
 /**
  * Called after initializing the plan and stopping the execution. AvgBenchmarkMemUsageListener produces
  * memory usage statistics based uppon collected data by AvgTempMemUsageListener during the plan execution.
@@ -33,6 +35,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 	
 	List<AvgTempMemUsageListener> listeners = new ArrayList<AvgTempMemUsageListener>();
 	List<AvgTempMemUsageListener> listenersBuffer = new ArrayList<AvgTempMemUsageListener>();
+	List<AvgTempMemUsageListener> listenersPunc = new ArrayList<AvgTempMemUsageListener>();
 	
 	@Override
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
@@ -54,6 +57,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 				System.out.println("Plan execution finished...create benchmark results!");
 				storeBenchmarkResult(listeners, "memUsage.properties");
 				storeBenchmarkResult(listenersBuffer, "memUsageBuffer.properties");
+				storeBenchmarkResult(listenersPunc, "memUsagePunc.properties");
 				hash.clear();
 			}
 		}
@@ -62,20 +66,27 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 
 	private Map<Integer,IPhysicalOperator> hash = new HashMap<Integer,IPhysicalOperator>();
 	
+	@SuppressWarnings("unchecked")
 	private void addMemListeners(IIterableSource<?> op) {
 		for(PhysicalSubscription<?> sub : op.getSubscriptions()) {
 			
 			if(op instanceof IBuffer && hash.get(op.hashCode()) == null) {
 				System.out.println("Monitoring temp memory usage for: " + op.getName() + " with hash " + op.hashCode());
 				
-				AvgTempMemUsageListener listener = new AvgTempMemUsageListener((IBuffer) op);
-				System.out.println(op.getName());
+				AvgTempMemUsageListener listener = new AvgTempMemUsageListener(op);
 				listenersBuffer.add(listener);
 				op.subscribe(listener, POEventType.PushDone);
 				
 				hash.put(op.hashCode(), op);
 			}
 			
+			if(op instanceof DirectInterlinkBufferedPipe) {
+				AvgTempMemUsageListener listener = new AvgTempMemUsageListener(op);
+				System.out.println(op.getName());
+				listenersPunc.add(listener);
+				op.subscribe(listener, POEventType.PushDone);				
+			}
+			 
 			if(((IPhysicalOperator)sub.getTarget()).isSink()) {
 				addMemListeners((ISink<?>) sub.getTarget());
 			}
