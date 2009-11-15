@@ -11,6 +11,7 @@ import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.P2PSourceAO;
@@ -62,6 +63,16 @@ public class OnePlanPerOperator extends
 		String adv = createSocketAdvertisement().toString();
 		P2PSourceAO p2paccess = new P2PSourceAO(adv);
 		AbstractLogicalOperator tempAO = (AbstractLogicalOperator) iLogicalOperator.clone();
+		if(!tempAO.getSubscribedTo().isEmpty()) {
+			for(LogicalSubscription ls : tempAO.getSubscribedTo()) {
+				tempAO.unsubscribeTo(ls);
+			}
+		}
+		if(!tempAO.getSubscriptions().isEmpty()) {
+			for(LogicalSubscription ls :tempAO.getSubscriptions()) {
+				tempAO.unsubscribe(ls);
+			}
+		}
 		// Bei Operatoren mit zwei Eingabeports
 		if (outputCount == 2) {
 			String adv2 = createSocketAdvertisement().toString();
