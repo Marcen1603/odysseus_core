@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-script test.txt</programArgs>
+      <programArgs>-query_language CQL -query &quot;SELECT b.itemname FROM (SELECT id, itemname FROM nexmark:auction2 RANGE 1day SET PRIORITY 1 WHERE id &gt; 5, 0 DEFAULT) AS b, (SELECT auction FROM nexmark:bid2 RANGE 1day SET PRIORITY 1 WHERE auction &gt; 5, 0 DEFAULT) AS c WHERE b.id = c.auction&quot; -priority -max_results 50 -punctuations -buffer_placement &quot;A Punctuation Buffer Placement&quot; -memUsage</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>

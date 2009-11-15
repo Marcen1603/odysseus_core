@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.benchmarker.runner;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.equinox.app.IApplication;
@@ -26,7 +23,6 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 	private static final String DEFAULT_OUT_FILE = "result.xml";
 	private static final int DEFAULT_WAIT = 0;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -34,97 +30,43 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	 * IApplicationContext)
 	 */
 	public Object start(IApplicationContext context) throws Exception {
-		String[] args = (String[]) context.getArguments().get(
-				IApplicationContext.APPLICATION_ARGS);
-
-		boolean useScripts = false;
-		int index = 0;
-
-		for (int i = 0; i < args.length; i++) {
-			String each = args[i];
-			if (each.equals(SCRIPT)) {
-				useScripts = true;
-				index = i + 1;
-			}
-		}
-
-		if (useScripts) {
-			String file = args[index];
-			executeMultipleBenchmarkRuns(file);
-		} else {
-			executeSingleBenchmarkRun(args, "");
-		}
-
-		return IApplication.EXIT_OK;
-	}
-
-	private void executeMultipleBenchmarkRuns(String file) {
-		BufferedReader in;
-		try {
-			in = new BufferedReader(new FileReader(file));
-			ArrayList<String> args = new ArrayList<String>();
-			String line = null;
-			int i = 0;
-			while ((line = in.readLine()) != null) {
-				if (!line.equals("#")) {
-					args.add(line);
-				} else {
-					String[] tmp = new String[0];
-					System.out.println("Running benchmark from script. Iteration: " + i);
-					executeSingleBenchmarkRun(args.toArray(tmp), String
-							.valueOf(i));
-					args.clear();
-					i++;
-				}
-				
-
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	private synchronized void executeSingleBenchmarkRun(String[] args, String numFile)
-			throws Exception {
-		
+		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		Args arguments = new Args();
-		BundleContext ctx = Activator.getDefault().getBundle()
-				.getBundleContext();
+		BundleContext ctx = Activator.getDefault().getBundle().getBundleContext();
 		try {
 			initArgs(arguments, args);
 
 			ServiceTracker t = new ServiceTracker(ctx, IBenchmark.class
 					.getName(), null);
 			t.open();
-			int wait = arguments.hasParameter(WAIT) ? arguments
-					.getInteger(WAIT) : DEFAULT_WAIT;
+			int wait = arguments.hasParameter(WAIT) ? arguments.getInteger(WAIT) : DEFAULT_WAIT;
 			IBenchmark benchmark = (IBenchmark) t.waitForService(wait);
 			if (benchmark == null) {
 				throw new Exception("cannot find benchmark service");
 			}
-			
-			benchmark.clearSources();
 
 			configureBenchmark(benchmark, arguments);
 
 			IBenchmarkResult<?> result = benchmark.runBenchmark();
-			String filename = numFile + DEFAULT_OUT_FILE;
-			if (arguments.hasParameter(OUT)) {
+			String filename = DEFAULT_OUT_FILE;
+			if (arguments.hasParameter(OUT)){
 				filename = arguments.get(OUT);
 			}
-
+			
+			
 			Serializer serializer = new Persister();
 			serializer.write(result, new File(filename));
 		} catch (ArgsException e) {
 			e.printStackTrace();
 			System.out.println("usage:\n");
 			System.out.println(arguments.getHelpText());
+			return -1;
 		} catch (Throwable t) {
 			t.printStackTrace();
-		}
+			return -1;
+		} 
 
+		return IApplication.EXIT_OK;
 	}
 
 	/*
@@ -150,7 +92,6 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String OUT = "-out";
 	private static final String WAIT = "-wait";
 	private static final String MEMORY_USAGE = "-memUsage";
-	private static final String SCRIPT = "-script";
 
 	// private static Logger logger =
 	// LoggerFactory.getLogger(BenchmarkStarter.class);
@@ -203,8 +144,8 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			Long maxResults = arguments.getLong(MAX_RESULTS);
 			benchmark.setMaxResults(maxResults);
 		}
-
-		if (arguments.get(MEMORY_USAGE)) {
+		
+		if(arguments.get(MEMORY_USAGE)) {
 			benchmark.setBenchmarkMemUsage(true);
 		}
 
@@ -222,11 +163,6 @@ public class OdysseusBenchmarkRunner implements IApplication {
 				"<scheduling strategy> - sets the scheduling strategy");
 		arguments.addString(BUFFER_PLACEMENT, REQUIREMENT.OPTIONAL,
 				"<buffer strategy> - sets the buffer placement strategy");
-		arguments
-				.addString(
-						SCRIPT,
-						REQUIREMENT.OPTIONAL,
-						"<script file> - loads a set of configurations from a file with each line as a single benchmarker run");
 		arguments.addString(DATA_TYPE, REQUIREMENT.OPTIONAL,
 				"<data type> - sets the data type (default=relational)");
 		arguments
@@ -253,19 +189,14 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 		arguments
 				.addBoolean(LOAD_SHEDDING, " - enables usage of load shedding");
-
-		arguments.addBoolean(MEMORY_USAGE,
-				" - activates the listener to benchmark memory usage");
+		
+		arguments.addBoolean(MEMORY_USAGE, " - activates the listener to benchmark memory usage");		
 
 		arguments
 				.addString(OUT, REQUIREMENT.OPTIONAL,
 						"<filename> - writes results in file <filename> (default=result.xml)");
 
-		arguments
-				.addInteger(
-						WAIT,
-						REQUIREMENT.OPTIONAL,
-						"<time in ms> - wait for time ms for the benchmarker to become available (default is infinite waiting)");
+		arguments.addInteger(WAIT, REQUIREMENT.OPTIONAL, "<time in ms> - wait for time ms for the benchmarker to become available (default is infinite waiting)");
 		arguments.parse(args);
 	}
 }
