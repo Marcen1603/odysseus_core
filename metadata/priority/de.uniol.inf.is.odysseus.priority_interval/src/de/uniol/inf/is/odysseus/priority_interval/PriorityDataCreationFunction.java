@@ -17,6 +17,7 @@ public class PriorityDataCreationFunction<K extends IMetaAttribute,T extends IMe
 	public T createMetadata(T source) {
 		try {
 			source.setMetadata(type.newInstance());
+			((IPriority)source.getMetadata()).setPriority((byte) 0);
 			return source;
 		} catch (Exception ex) {
 			ex.printStackTrace();
