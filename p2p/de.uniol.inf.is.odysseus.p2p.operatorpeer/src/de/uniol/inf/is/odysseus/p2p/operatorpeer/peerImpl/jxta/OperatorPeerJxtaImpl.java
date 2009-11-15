@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler.SourceHan
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener.QuerySpezificationListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.strategy.bidding.MaxQueryBiddingStrategyJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query;
+import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
@@ -97,6 +97,11 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	public  HashMap<String, Query> queries = new HashMap<String, Query>();
 	
+	
+	public void activate() {
+		System.out.println("OSGi Services für den Operator-Peer geladen.");
+		startPeer();
+	}
 	
 	public static OperatorPeerJxtaImpl instance = null;
 	

@@ -2,14 +2,12 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.base.ITransformation;
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.P2PSourceAO;
+import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQueryResultHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -25,7 +23,6 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 	}
 	
 	public void handleQueryResult(Object _msg, Object _namespace) {
-		System.out.println("mach erstmal die transformation");
 		Message msg = (Message) _msg;
 
 		String namespace = (String) _namespace;
@@ -35,7 +32,7 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 		String queryId = MessageTool.getMessageElementAsString(namespace,
 				"queryId", msg);
 		String subPlanId = MessageTool.getMessageElementAsString(namespace,
-				"subPlanId", msg);
+				"subplanId", msg);
 		String events = MessageTool.getMessageElementAsString(namespace,
 				"events", msg);
 
@@ -43,16 +40,13 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 				msg, 0);
 
 		MessageTool.getEvents(events);
-
+		//TODO: Prüfen, ob Plan bekannt ist, wenn nein, dann handelt es sich um eine direkte Zuweisung, wenn ja, dann schauen, ob man darauf geboten hat
 		if (result.equals("granted") || namespace.equals("DoQuery")) {
-			
-			AbstractLogicalOperator ao = (AbstractLogicalOperator) MessageTool.getObjectFromMessage(msg, 0);
-			System.out.println("Will ausführen mit? "+ao.toString());
-			OperatorPeerJxtaImpl.getInstance().getQueries().get(queryId)
-					.getSubPlans().put(subPlanId, ao);
+			AbstractLogicalOperator ao = OperatorPeerJxtaImpl.getInstance().getQueries().get(queryId).getSubPlans().get(subPlanId).getAo();
 			OperatorPeerJxtaImpl.getInstance().getQueries().get(queryId)
 					.setStatus(Status.GRANTED);
 			try {
+				System.out.println("Füge hinzu: "+ao.toString());
 				temporalID = OperatorPeerJxtaImpl.getInstance().getExecutor().addQuery(ao, new ParameterPriority(2));
 			} catch (PlanManagementException e2) {
 				e2.printStackTrace();

@@ -110,6 +110,8 @@ public abstract class AbstractOperatorPeer implements IPeer {
 //		return schedulerStrategy;
 //	}
 
+
+	
 	public ISocketServerListener getSocketServerListener() {
 		return socketServerListener;
 	}
@@ -198,7 +200,6 @@ public abstract class AbstractOperatorPeer implements IPeer {
 				this.trafo = transformation;
 //			if(getExecutor()!=null && !this.peerStarted) {
 //				this.peerStarted  = true;
-				startPeer();
 //			}
 //		}
 	}

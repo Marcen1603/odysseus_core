@@ -74,9 +74,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 				adv.setPeer(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
 						.getPeerAdvertisement().toString());
 				adv.setSourceId(v.getKey());
-				System.out.println("wie siehts hier aus: "+OperatorPeerJxtaImpl.getInstance().getSources().get(v.getKey()).toString());
 				adv.setSourceScheme(OperatorPeerJxtaImpl.getInstance().getSources().get(v.getKey()));
-				System.out.println("wie sieht das SourceAdvertisement aus?"+adv.toString());
 				advList.add(adv);
 				
 			}

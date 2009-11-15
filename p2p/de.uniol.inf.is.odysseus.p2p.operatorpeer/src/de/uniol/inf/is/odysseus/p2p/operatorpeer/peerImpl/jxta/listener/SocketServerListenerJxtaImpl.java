@@ -21,8 +21,9 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.queryAdministration.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query;
+import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.Query;
+import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 
@@ -65,7 +66,7 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 					} else if (namespace.equals("DoQuery")) {
 						String queryId = MessageTool.getMessageElementAsString(
 								"DoQuery", "queryId", msg);
-						Query q = new Query();
+						QueryJxtaImpl q = new QueryJxtaImpl();
 						q.setId(queryId);
 
 						String language = MessageTool
@@ -75,7 +76,7 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 						String pipeAdv = MessageTool.getMessageElementAsString(
 								"DoQuery", "adminPipeAdvertisement", msg);
 
-						q.setAdminPeerPipeAdvertisement(MessageTool
+						q.setAdminPeerPipe(MessageTool
 								.createPipeAdvertisementFromXml(pipeAdv));
 
 						q.setLanguage(language);

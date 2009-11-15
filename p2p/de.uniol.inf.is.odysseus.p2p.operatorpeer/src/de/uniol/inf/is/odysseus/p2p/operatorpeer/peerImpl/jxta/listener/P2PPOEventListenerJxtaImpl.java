@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
@@ -78,8 +79,10 @@ public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 
 	@Override
 	public void sendEvent(POEvent poEvent) {
-		Message msg = MessageTool.createSimpleMessage("Event", "queryId",
-				"event", queryId, poEvent.getPOEventType().toString());
+		HashMap<String, Object> messageElements = new HashMap<String, Object>();
+		messageElements.put("queryId", queryId);
+		messageElements.put("event", poEvent.getPOEventType().toString());
+		Message msg = MessageTool.createSimpleMessage("Event", messageElements);
 
 		try {
 			oout.writeObject(msg);

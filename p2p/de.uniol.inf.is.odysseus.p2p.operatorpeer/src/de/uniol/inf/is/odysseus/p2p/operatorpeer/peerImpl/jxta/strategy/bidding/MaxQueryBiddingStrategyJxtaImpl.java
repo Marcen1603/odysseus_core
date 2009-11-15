@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.strategy.bidding;
 
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.queryAdministration.Query;
+import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.strategy.bidding.IBiddingStrategy;
 
 public class MaxQueryBiddingStrategyJxtaImpl implements IBiddingStrategy {
