@@ -1,9 +1,17 @@
 package de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+
 import javax.swing.DefaultListModel;
 
+import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.Query;
+import de.uniol.inf.is.odysseus.p2p.Subplan;
 
 public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 
@@ -40,8 +48,7 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 						.addElement((ThinPeerJxtaImpl.getInstance()
 								.getQueries().get(s).getId()
 								+ "("
-								+ ThinPeerJxtaImpl.getInstance().getQueries()
-										.get(s).getBiddings().size() + ") - " + ThinPeerJxtaImpl
+								+ getAllBiddings(s) + ") - " + ThinPeerJxtaImpl
 								.getInstance().getQueries().get(s).getStatus()));
 			}
 			ThinPeerJxtaImpl.getInstance().getGui().getQuerys().setModel(model);
@@ -72,6 +79,18 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 			ThinPeerJxtaImpl.getInstance().getGui().getSources()
 					.setModel(model);
 		}
+	}
+	
+	public int getAllBiddings(String query) {
+		int biddingCounter = 0;
+		
+		Collection subplans = ((QueryJxtaImpl)ThinPeerJxtaImpl.getInstance().getQueries().get(query)).getSubPlans().values();
+		Iterator iter = subplans.iterator();
+		while(iter.hasNext()) {
+			Subplan sub = (Subplan)iter.next();
+			biddingCounter += sub.getBiddings().size();
+		}
+		return biddingCounter;
 	}
 
 }

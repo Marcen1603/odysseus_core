@@ -40,15 +40,12 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 				break;
 			} catch (IOException e2) {
 				socket = null;
-				System.err.println("Quell-Peer noch nicht bereit ?");
 			}
 		}
 
 		try {
-			System.out.println("Versuche InputStream zu bekommen");
 			in = socket.getInputStream();
 			this.iStream = new ObjectInputStream(new BufferedInputStream(in));
-			System.out.println("hat Objekt bekommen");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -58,13 +55,9 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 			try {
 				o = iStream.readObject();
 				if ((o instanceof Integer) && (((Integer) o).equals(0))){
-					System.out.println("lese objekt als Integer");
 					iStream.close();
 					socket.close();
 					break;
-				}
-				else {
-					System.out.println("Lese objekt als was anderes");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

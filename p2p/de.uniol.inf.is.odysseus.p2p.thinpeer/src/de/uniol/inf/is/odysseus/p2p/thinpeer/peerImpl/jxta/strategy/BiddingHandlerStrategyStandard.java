@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IBiddingHandlerStrategy;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.Bid;
+import de.uniol.inf.is.odysseus.p2p.Bid;
 
 public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
 

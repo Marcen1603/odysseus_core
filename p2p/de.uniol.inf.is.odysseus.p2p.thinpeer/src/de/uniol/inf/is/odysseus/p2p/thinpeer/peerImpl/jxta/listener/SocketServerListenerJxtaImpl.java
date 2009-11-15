@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.ErrorPopup;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler.StreamHandlerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.queryAdministration.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 
 public class SocketServerListenerJxtaImpl implements ISocketServerListener {
@@ -65,7 +65,7 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 						PeerAdvertisement peerAdv = MessageTool
 								.getPeerAdvertisement("Bidding", msg);
 						((QueryJxtaImpl) ThinPeerJxtaImpl.getInstance()
-								.getQueries().get(query)).addBidding(pipeAdv,
+								.getQueries().get(query)).addAdminBidding(pipeAdv,
 								peerAdv);
 					}
 					if (namespace.equals("UnknownSource")) {

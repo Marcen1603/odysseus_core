@@ -1,13 +1,16 @@
 package de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.queryAdministration.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.queryAdministration.Query.Status;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.Bid;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.BidJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.Query.Status;
+import de.uniol.inf.is.odysseus.p2p.Bid;
+import de.uniol.inf.is.odysseus.p2p.Query;
+import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 
 /**
@@ -33,20 +36,18 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 			try {
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			for (String s : ThinPeerJxtaImpl.getInstance().getQueries()
 					.keySet()) {
-				if (ThinPeerJxtaImpl.getInstance().getQueries().get(s)
-						.getBiddings().size() == 0
+				if (((QueryJxtaImpl)ThinPeerJxtaImpl.getInstance().getQueries().get(s)).getAdminPeerBidding().size() == 0
 						&& ThinPeerJxtaImpl.getInstance().getQueries().get(s)
 								.getStatus() == Status.OPEN) {
 					ThinPeerJxtaImpl.getInstance().getQueries().get(s)
-							.incFailed();
+							.addRetry();
 					if (ThinPeerJxtaImpl.getInstance().getQueries().get(s)
-							.getFailed() > 5) {
+							.getRetries() > 5) {
 						ThinPeerJxtaImpl.getInstance().getQueries().get(s)
 								.setStatus(Status.CANCELED);
 					}
@@ -56,10 +57,11 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 				if (ThinPeerJxtaImpl.getInstance().getQueries().get(s)
 						.getStatus() == Status.OPEN) {
 					ThinPeerJxtaImpl.getInstance().getQueries().get(s)
-							.setStatus(Status.STOPBIDDING);
+							.setStatus(Status.NOBIDDING);
 					ArrayList<Bid> biddings = new ArrayList<Bid>();
-					for (Bid bid : ThinPeerJxtaImpl.getInstance().getQueries()
-							.get(s).getBiddings().values()) {
+					QueryJxtaImpl q = ((QueryJxtaImpl)ThinPeerJxtaImpl.getInstance().getQueries().get(s));
+					
+					for (Bid bid : q.getAdminPeerBidding().values()) {
 						biddings.add(bid);
 					}
 
@@ -69,13 +71,14 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 							.getBiddingHandlerStrategy().handleBiddings(
 									biddings);
 
+					HashMap<String, Object> messageElements = new HashMap<String, Object>();
+					messageElements.put("queryId", ThinPeerJxtaImpl.getInstance().getQueries().get(s).getId());
+					messageElements.put("result", "granted");
+					
 					MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
 							.getNetPeerGroup(), ((BidJxtaImpl) bid)
 							.getResponseSocket(), MessageTool
-							.createSimpleMessage("BiddingResult", "queryId",
-									"result", ThinPeerJxtaImpl.getInstance()
-											.getQueries().get(s).getId(),
-									"granted"));
+							.createSimpleMessage("BiddingResult", messageElements));
 					((QueryJxtaImpl) ThinPeerJxtaImpl.getInstance()
 							.getQueries().get(s))
 							.setAdminPeerPipe(((BidJxtaImpl) bid)
@@ -84,7 +87,7 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 					ThinPeerJxtaImpl.getInstance().getGui().addAdminPeer(
 							ThinPeerJxtaImpl.getInstance().getQueries().get(s)
 									.getId(),
-							((BidJxtaImpl) bid).getPeer().getName());
+							bid.getPeerId());
 
 					ThinPeerJxtaImpl.getInstance().getGui().addStatus(
 							ThinPeerJxtaImpl.getInstance().getQueries().get(s)

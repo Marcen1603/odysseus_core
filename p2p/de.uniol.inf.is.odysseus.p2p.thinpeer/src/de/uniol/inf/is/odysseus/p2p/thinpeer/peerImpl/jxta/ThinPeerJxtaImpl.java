@@ -13,6 +13,7 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler.GuiUpdaterJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler.BiddingHandlerJxtaImpl;
@@ -21,8 +22,8 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.listener.Administrati
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.strategy.BiddingHandlerStrategyStandard;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.queryAdministration.Query;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.queryAdministration.Query.Status;
+import de.uniol.inf.is.odysseus.p2p.Query;
+import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
@@ -80,7 +81,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	private PeerGroup netPeerGroup;
 
-	private HashMap<String, Query> queries = new HashMap<String, Query>();
+	private HashMap<String, QueryJxtaImpl> queries = new HashMap<String, QueryJxtaImpl>();
 
 	private HashMap<String, SourceAdvertisement> sources = new HashMap<String, SourceAdvertisement>();
 
@@ -101,7 +102,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		return adminPeers;
 	}
 
-	public HashMap<String, Query> getQueries() {
+	public HashMap<String, QueryJxtaImpl> getQueries() {
 		return queries;
 	}
 
