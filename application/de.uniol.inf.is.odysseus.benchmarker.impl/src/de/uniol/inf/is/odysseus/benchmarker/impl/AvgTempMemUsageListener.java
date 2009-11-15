@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.PunctuationStorage;
@@ -49,8 +45,10 @@ public class AvgTempMemUsageListener implements POEventListener {
 			PunctuationStorage punc = (PunctuationStorage) value;
 			tmp = punc.size();
 		}
-		
-		stats.addValue(tmp);
+		try {
+			stats.addValue(tmp);
+		} catch(Exception e) {
+		}
 	}
 
 
