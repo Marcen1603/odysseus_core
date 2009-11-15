@@ -12,24 +12,26 @@ import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.queryAdministration.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.bidding.IBiddingStrategy;
+import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryTranslationSpezification;
 
+/**
+ * Finden und bewerben von Anfragen, welche durch Thin-Peers ausgeschrieben werden. 
+ * 
+ * @author Mart Köhler
+ *
+ */
 public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationListener,
 		DiscoveryListener {
 	
-	private IBiddingStrategy biddingStrategy;
 	
 	private int ADVS_PER_PEER = 6;
 	
 	private int WAIT_TIME = 6000;
 
-	public QuerySpezificationListenerJxtaImpl(IBiddingStrategy biddingStrategy) {
+	public QuerySpezificationListenerJxtaImpl() {
 		AdministrationPeerJxtaImpl.getInstance().getDiscoveryService().addDiscoveryListener(this);
-		this.biddingStrategy = biddingStrategy;
-		// queries = new HashSet<String>();
 	}
 
 	public void run() {
@@ -61,7 +63,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 						return;
 					}
 
-					if (AdministrationPeerJxtaImpl.getInstance().getQueries().keySet().contains(adv.getQueryId())) {
+					if (AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().keySet().contains(adv.getQueryId())) {
 						//Diese Ausschreibung wurde schon gefunden und kann ignoriert werden
 						continue;
 					}
@@ -74,17 +76,18 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					q.setResponseSocketThinPeer(pipeAdv);
 					PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
 					
-					synchronized(AdministrationPeerJxtaImpl.getInstance().getQueries()){
-						AdministrationPeerJxtaImpl.getInstance().getQueries().put(adv
+					synchronized(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries()){
+						AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().put(adv
 							.getQueryId().toString(),q);
 						Log.addQuery(adv.getQueryId());
 						Log.logAction(adv.getQueryId(), "Anfrage gefunden !");
 					}
 					
-					if (biddingStrategy.bidding(q)){
-						MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(), pipeAdv, MessageTool.createSimpleMessage("Bidding", "query", adv.getQueryId(),  ((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getSocketServerListener()).getServerPipeAdvertisement(), peerAdv));
+					//TODO: einkommentieren, war zu testzwecken auskommentiert
+//					if (biddingStrategy.bidding(q)){
+						MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(), pipeAdv, MessageTool.createMessage("Bidding", "query", adv.getQueryId(),  ((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getSocketServerListener()).getServerPipeAdvertisement(), peerAdv));
 						Log.logAction(adv.getQueryId(), "Für Anfrage beworben !");
-					}
+//					}
 					
 					
 					

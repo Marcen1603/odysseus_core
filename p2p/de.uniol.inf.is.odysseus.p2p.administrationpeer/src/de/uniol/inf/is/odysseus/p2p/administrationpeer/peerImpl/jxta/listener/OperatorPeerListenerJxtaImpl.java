@@ -12,6 +12,12 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IOperatorPeerLis
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
 
+/**
+ * Hier werden im Netzwerk gefundene Operator-Peers zu den bekannten hinzugefügts
+ * 
+ * @author Mart Köhler
+ *
+ */
 public class OperatorPeerListenerJxtaImpl implements IOperatorPeerListener,
 		DiscoveryListener {
 	// Wie oft soll nach AdminPeers gesucht werden

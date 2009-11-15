@@ -14,6 +14,12 @@ import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.Administrat
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
+/**
+ * Operator-Peers mit Quellen werden separat ausgeschrieben, so dass diese gesondert gesucht und eingetragen werden
+ * 
+ * @author Mart Köhler
+ *
+ */
 public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListener {
 
 	

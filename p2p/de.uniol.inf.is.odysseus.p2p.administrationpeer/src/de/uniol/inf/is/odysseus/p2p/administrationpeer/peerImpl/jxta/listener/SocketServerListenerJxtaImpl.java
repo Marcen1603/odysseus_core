@@ -10,11 +10,11 @@ import java.util.Iterator;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
+import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.queryAdministration.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.queryAdministration.Query.Status;
+import de.uniol.inf.is.odysseus.p2p.jxta.*;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 
@@ -65,8 +65,8 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 						q.setId(queryId);
 						q.setResponseSocketThinPeer(adv);
 						q.setStatus(Status.BIDDING);
-						synchronized(AdministrationPeerJxtaImpl.getInstance().getQueries()){
-							AdministrationPeerJxtaImpl.getInstance().getQueries().put(queryId, q);
+						synchronized(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries()){
+							AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().put(queryId, q);
 							Log.addQuery(queryId);
 							Log.logAction(queryId, "Anfrage direkt empfangen !");
 						}
@@ -84,10 +84,13 @@ public class SocketServerListenerJxtaImpl implements ISocketServerListener {
 						
 						String peerId = MessageTool.getMessageElementAsString(
 								"ExecutionBid", "peerId", msg);
+						//TODO: SubplanId in Nachricht einbauen
+						String subplanId = MessageTool.getMessageElementAsString(
+								"ExecutionBid", "subplanId", msg);
 						Log.logAction(queryId, "Gebot von einem Operator-Peer eingegangen.");
 						//Füge das Gebot der Query hinzu
-						AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId).addBidding(pipeAdv, peerId);
-						Log.addBid(queryId, AdministrationPeerJxtaImpl.getInstance().getQueries().get(queryId).getBiddings().size());
+						((QueryJxtaImpl)AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().get(queryId)).addBidding(pipeAdv, peerId, subplanId);
+						Log.addBid(queryId, AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().get(queryId).getSubPlans().get(subplanId).getBiddings().size());
 					}
 					if (namespace.equals("Event")) {
 						String queryId = MessageTool.getMessageElementAsString("Event", "queryId", msg);
