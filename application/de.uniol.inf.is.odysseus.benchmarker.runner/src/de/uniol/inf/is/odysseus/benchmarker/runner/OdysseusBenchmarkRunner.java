@@ -53,9 +53,21 @@ public class OdysseusBenchmarkRunner implements IApplication {
 				filename = arguments.get(OUT);
 			}
 			
-			
 			Serializer serializer = new Persister();
 			serializer.write(result, new File(filename));
+			
+			if(arguments.hasParameter(MEMORY_USAGE)) {
+				for(int i=0; i < benchmark.getMemUsageJoin().size();i++) {
+					serializer.write(benchmark.getMemUsageJoin().get(i), new File(i + "JOIN" + filename));
+				}
+			/*	for(int i=0; i < benchmark.getMemUsageJoinPunctuations().size();i++) {
+					serializer.write(benchmark.getMemUsageJoinPunctuations().get(i), new File(i + "JOINPUNC" + filename));
+				}
+				for(int i=0; i < benchmark.getMemUsagePuffer().size();i++) {
+					serializer.write(benchmark.getMemUsagePuffer().get(i), new File(i + "BUFFER" + filename));
+				}*/
+			}			
+			
 		} catch (ArgsException e) {
 			e.printStackTrace();
 			System.out.println("usage:\n");

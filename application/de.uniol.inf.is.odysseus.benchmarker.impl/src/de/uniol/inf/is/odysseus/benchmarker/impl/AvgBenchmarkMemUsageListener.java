@@ -12,6 +12,8 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
+import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
@@ -45,6 +47,11 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 	// Ueberwacht Extra die PunctuationStorages der vorhandenen Joins
 	List<AvgTempMemUsageListener> listenersPuncJoin = new ArrayList<AvgTempMemUsageListener>();
 	
+	
+	List<DescriptiveStatistics> statsJoinSweepArea = null;
+	List<DescriptiveStatistics> statsBufferSize = null;
+	List<DescriptiveStatistics> statsJoinPunctuationStorage = null;
+	
 	@Override
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
 		if(eventArgs instanceof PlanExecutionEvent) {
@@ -63,10 +70,9 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 			
 			if(((PlanExecutionEvent) eventArgs).getID().equals(PlanExecutionEvent.EXECUTION_STOPPED)) {
 				System.out.println("Plan execution finished...create benchmark results!");
-				storeBenchmarkResult(listeners, "memUsage.properties");
-				storeBenchmarkResult(listenersBuffer, "memUsageBuffer.properties");
-				storeBenchmarkResult(listenersPunc, "memUsagePunc.properties");
-				storeBenchmarkResult(listenersPuncJoin, "memUsagePuncJoin.properties");
+				statsJoinSweepArea = calcMemUsageBenchmarkResult(listeners);
+				statsBufferSize = calcMemUsageBenchmarkResult(listenersPuncJoin);
+				statsJoinPunctuationStorage = calcMemUsageBenchmarkResult(listenersBuffer);
 				hash.clear();
 			}
 		}
@@ -126,48 +132,23 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 		}
 	}
 	
-	public void storeBenchmarkResult(List<AvgTempMemUsageListener> list, String file) {
-		double mean_sum = 0;
-		double operators = 0;
-		
-		
-		double min = -1;
-		double max = -1;
-		
+	public List<DescriptiveStatistics> calcMemUsageBenchmarkResult(List<AvgTempMemUsageListener> list) {
+		List<DescriptiveStatistics> stats = new ArrayList<DescriptiveStatistics>();
 		for(AvgTempMemUsageListener each : list) {
-			double tmp = each.getAverage();
-			operators++;
-			mean_sum += tmp;
-			
-			if(min == -1 || tmp < min) {
-				min = each.getMin();
-			}
-			
-			if(max == -1 || tmp > max) {
-				max = each.getMax();
-			}			
-			
+			stats.add(each.getStats());	
 		}
-		
-		double mean = -1;
-		
-		if(operators > 0) {
-			mean = mean_sum/operators;
-		}
-		
-		Properties props = new Properties();
-		props.put("operators", String.valueOf(operators));
-		props.put("mean", String.valueOf(mean));
-		props.put("min", String.valueOf(min));
-		props.put("max", String.valueOf(max));
-
-		try {
-			props.store(new FileWriter(file), "Memory Usage - Benchmark Results:");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return stats;
 	}
 	
+	public List<DescriptiveStatistics> getMemUsageJoinStatistics() {
+		return statsJoinSweepArea;
+	}
 
-
+	public List<DescriptiveStatistics> getMemUsageBufferStatistics() {
+		return statsBufferSize;
+	}
+	
+	public List<DescriptiveStatistics> getMemUsageJoinPunctuationStatistics() {
+		return statsJoinPunctuationStorage;
+	}	
 }

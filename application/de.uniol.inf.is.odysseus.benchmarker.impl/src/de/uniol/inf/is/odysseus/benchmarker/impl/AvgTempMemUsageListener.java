@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.PunctuationStorage;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
@@ -19,20 +20,22 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
  */
 public class AvgTempMemUsageListener implements POEventListener {
 
-	private double min = -1;
-	private double max = -1;
-	private double collected;
-	private double called_times;
-
 	private Object value;
+	
+	private DescriptiveStatistics stats = new DescriptiveStatistics();
+
+	public DescriptiveStatistics getStats() {
+		return stats;
+	}
 
 	public AvgTempMemUsageListener(Object op) {
 		this.value = op;
 	}
 
-	@SuppressWarnings("unchecked")	
-	public void calcCurrent() {
-		double tmp = 0;
+	@SuppressWarnings("unchecked")
+	@Override
+	public synchronized void poEventOccured(POEvent poEvent) {
+		long tmp = 0;
 
 		if (value instanceof JoinTIPO) {
 			final ISweepArea[] areas = ((JoinTIPO) value).getAreas();
@@ -46,39 +49,10 @@ public class AvgTempMemUsageListener implements POEventListener {
 			PunctuationStorage punc = (PunctuationStorage) value;
 			tmp = punc.size();
 		}
-
-		if (min == -1 || tmp < min) {
-			this.min = tmp;
-		}
-
-		if (max == -1 || tmp > max) {
-			this.max = tmp;
-		}
-
-		collected += tmp;
-		called_times++;
-	}
-	
-
-	@Override
-	public void poEventOccured(POEvent poEvent) {
-		calcCurrent();
+		
+		stats.addValue(tmp);
 	}
 
-	public double getAverage() {
-		if (called_times == 0) {
-			return -1;
-		} else {
-			return collected / called_times;
-		}
-	}
 
-	public double getMin() {
-		return min;
-	}
-
-	public double getMax() {
-		return max;
-	}
 
 }

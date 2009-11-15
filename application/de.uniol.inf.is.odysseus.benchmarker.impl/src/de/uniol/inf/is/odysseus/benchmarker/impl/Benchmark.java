@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Ab
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
+import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
@@ -45,6 +46,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();
 	private IAdvancedExecutor executor;
+	private AvgBenchmarkMemUsageListener avgMemListener = null;
 	
 	
 
@@ -117,7 +119,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
 			if(useBenchmarkMemUsage) {
-				executor.addPlanExecutionListener(new AvgBenchmarkMemUsageListener());
+				this.avgMemListener  = new AvgBenchmarkMemUsageListener();
+				executor.addPlanExecutionListener(avgMemListener);
 			}
 
 			executor.addErrorEventListener(this);
@@ -229,6 +232,30 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	public void setBenchmarkMemUsage(boolean b) {
 		this.useBenchmarkMemUsage = b;
 		
+	}
+
+	@Override
+	public List<DescriptiveStatistics> getMemUsageJoin() {
+		if(useBenchmarkMemUsage) {
+			return avgMemListener.getMemUsageJoinStatistics();
+		}
+		return null;
+	}
+
+	@Override
+	public List<DescriptiveStatistics> getMemUsageJoinPunctuations() {
+		if(useBenchmarkMemUsage) {
+			return avgMemListener.getMemUsageJoinPunctuationStatistics();
+		}
+		return null;
+	}
+
+	@Override
+	public List<DescriptiveStatistics> getMemUsagePuffer() {
+		if(useBenchmarkMemUsage) {
+			return avgMemListener.getMemUsageBufferStatistics();
+		}
+		return null;
 	}
 
 }

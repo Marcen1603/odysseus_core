@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.benchmarker;
 
+import java.util.List;
+
 
 public interface IBenchmark {
 	public void setSchedulingStrategy(String schedStrat);
@@ -16,5 +18,10 @@ public interface IBenchmark {
 	public <T> IBenchmarkResult<T> runBenchmark() throws BenchmarkException;
 	public void setUsePunctuations(boolean b);
 	public void setUseLoadShedding(boolean b);
+	
+	
 	public void setBenchmarkMemUsage(boolean b);
+	public List<DescriptiveStatistics> getMemUsageJoin();
+	public List<DescriptiveStatistics> getMemUsagePuffer();
+	public List<DescriptiveStatistics> getMemUsageJoinPunctuations();
 }
