@@ -1,11 +1,20 @@
 package de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements;
 
+import java.beans.XMLEncoder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
+
+import de.uniol.inf.is.odysseus.p2p.Subplan;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
@@ -17,15 +26,22 @@ import net.jxta.document.StructuredDocument;
 import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
+import net.jxta.endpoint.Message;
+import net.jxta.endpoint.MessageElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 
-@SuppressWarnings("unchecked")
+/**
+ * Repraesentiert eine Ausschreibung eines Subplans
+ * 
+ * @author Mart Köhler
+ *
+ */
 public class QueryExecutionSpezification extends Advertisement implements
 		Serializable, Cloneable, Comparable {
 
 	/**
-	 * 
+	 * TODO: Prüfen, ob Serialisierung des Operatorplans funktioniert 
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -35,10 +51,31 @@ public class QueryExecutionSpezification extends Advertisement implements
 	
 	private String language;
 	
-	private String type = "QueryExecutionAdv";
+	private String type = "QueryExecutionAdv"; 
 	
+	private String subplan;
+
+	private String subplanId;
 	
-	
+	public String getSubplan() {
+		
+		return this.subplan;
+		
+	}
+
+	public void setSubplan(String subplan) {
+		
+		this.subplan = subplan;
+	}
+
+	public String getSubplanId() {
+		return subplanId;
+	}
+
+	public void setSubplanId(String subplanId) {
+		this.subplanId = subplanId;
+	}
+
 	public String getType() {
 		return type;
 	}
@@ -77,6 +114,8 @@ public class QueryExecutionSpezification extends Advertisement implements
 	private final static String idTag = "id";
 	private final static String biddingPipeTag = "biddingPipe";
 	private final static String queryIdTag = "queryId";
+	private final static String subplanIdTag = "subplanId";
+	private final static String subplanTag = "subplan";
 	private final static String languageTag = "language";
 	private final static String typeTag = "type";
 	/**
@@ -84,7 +123,7 @@ public class QueryExecutionSpezification extends Advertisement implements
 	 * properly index and retrieve these advertisements locally and on the
 	 * network
 	 */
-	private final static String[] fields = { idTag, queryIdTag, languageTag, typeTag };
+	private final static String[] fields = { idTag, queryIdTag, subplanIdTag, subplanTag, languageTag, typeTag };
 
 	public QueryExecutionSpezification(Element root) {
 		TextElement doc = (TextElement) root;
@@ -153,6 +192,14 @@ public class QueryExecutionSpezification extends Advertisement implements
 			setQueryId(elem.getTextValue());
 			return true;
 		}
+		if(elem.getName().equals(subplanTag)) {
+			setSubplan(elem.getTextValue());
+			return true;
+		}
+		if (elem.getName().equals(subplanIdTag)) {
+			setSubplanId(elem.getTextValue());
+			return true;
+		}
 		if (elem.getName().equals(languageTag)) {
 			setLanguage(elem.getTextValue());
 			return true;
@@ -182,6 +229,10 @@ public class QueryExecutionSpezification extends Advertisement implements
 		e = adv.createElement(biddingPipeTag, getBiddingPipe().toString().trim());
 		adv.appendChild(e);
 		e = adv.createElement(queryIdTag, getQueryId().toString().trim());
+		adv.appendChild(e);
+		e = adv.createElement(subplanIdTag, getSubplanId().toString().trim());
+		adv.appendChild(e);
+		e = adv.createElement(subplanTag, getSubplan().toString());
 		adv.appendChild(e);
 		e = adv.createElement(languageTag, getLanguage().toString().trim());
 		adv.appendChild(e);

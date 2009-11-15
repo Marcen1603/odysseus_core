@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.utils.jxta;
 
+import java.beans.XMLEncoder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import net.jxta.document.AdvertisementFactory;
@@ -22,12 +24,13 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
+import de.uniol.inf.is.odysseus.p2p.Subplan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 
 public class MessageTool {
 	
 	@SuppressWarnings("unchecked")
-	public static Message createSimpleMessage(String namespace,
+	public static Message createMessage(String namespace,
 			String namespace2, String message, PipeAdvertisement responsePipe, PeerAdvertisement peerAdvertisement) {
 		Message response = new Message();
 		MessageElement respElement = new StringMessageElement(namespace2,
@@ -121,6 +124,25 @@ public class MessageTool {
 		
 	}
 	
+	
+	public synchronized static Object getObjectFromMessage(Message msg, String elem){
+		MessageElement advElement = msg.getMessageElement(elem);
+		
+		Object obj = null;
+		  try {
+		    ByteArrayInputStream bis = new ByteArrayInputStream (advElement.getBytes(true));
+		    ObjectInputStream ois = new ObjectInputStream (bis);
+		    obj = ois.readObject();
+		  }
+		  catch (IOException ex) {
+		    ex.printStackTrace();
+		  }
+		  catch (ClassNotFoundException ex) {
+		    ex.printStackTrace();
+		  }
+		return obj;
+	}
+	
 	public synchronized static Object getObjectFromMessage(Message msg, int number){
 		
 		MessageElement advElement = msg.getMessageElement("ao"+number);
@@ -151,71 +173,71 @@ public class MessageTool {
 
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static Message createSimpleMessage(String namespace, Object ... msgElements){
-		
+	
+	public static Message createSimpleMessage(String namespace, Map<String,Object> messageElements) {
 		Message response = new Message();
+		int pipeCounter = 0;
+		int aoCounter = 0;
 		
-		ArrayList<String> stringElements = new ArrayList<String>();
-		ArrayList<PipeAdvertisement> pipeElements = new ArrayList<PipeAdvertisement>();
-		ArrayList<Object> objectElements = new ArrayList<Object>();
-		
-		for (int i=0;i<msgElements.length;i++){
-			if (msgElements[i] instanceof String){
-				stringElements.add((String) msgElements[i]); 
+		for(String elem : messageElements.keySet()) {
+			if(messageElements.get(elem) instanceof String) {
+				response.addMessageElement(namespace, new StringMessageElement(elem, (CharSequence) messageElements.get(elem), null));
 			}
-			else if(msgElements[i] instanceof PipeAdvertisement){
-				pipeElements.add((PipeAdvertisement) msgElements[i]);
+			else if(messageElements.get(elem) instanceof PipeAdvertisement) {
+				TextDocumentMessageElement responsePipeAdv = new TextDocumentMessageElement(
+			            "pipeAdv"+pipeCounter++, 
+			            (XMLDocument) ((PipeAdvertisement)messageElements.get(elem)).getDocument(MimeMediaType.XMLUTF8),
+			            null);
+				response.addMessageElement(namespace, responsePipeAdv);
 			}
-			else{
-				objectElements.add(msgElements[i]);
-			}
-		}
-		
-		int help = stringElements.size() / 2;
-		
-		for (int i=0;i<help;i++){
-			MessageElement respElement = new StringMessageElement(stringElements.get(i),
-					stringElements.get(i+help), null);
-			response.addMessageElement(namespace, respElement);
-		}
-		
-		for (int i=0;i<pipeElements.size();i++){
-			TextDocumentMessageElement responsePipeAdv = new TextDocumentMessageElement(
-		            "pipeAdv"+i, 
-		            (XMLDocument) pipeElements.get(i).getDocument(MimeMediaType.XMLUTF8),
-		            null);
-			response.addMessageElement(namespace, responsePipeAdv);
-		}
-		
-		for (int i = 0; i < objectElements.size(); i++) {
-			
-			byte [] data = null;
-			if (objectElements.get(i) != null){
-				 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			      ObjectOutputStream oos;
-				try {
-					oos = new ObjectOutputStream(bos);
-					oos.writeObject(objectElements.get(i));
-				    oos.flush();
-				    oos.close();
-				    bos.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			else if(messageElements.get(elem) instanceof Subplan) {
+				byte [] data = null;
+				if (messageElements.get(elem) != null){
+					 ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				      ObjectOutputStream oos;
+					try {
+						oos = new ObjectOutputStream(bos);
+						oos.writeObject(messageElements.get(elem));
+					    oos.flush();
+					    oos.close();
+					    bos.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				      data = bos.toByteArray();
 				}
-			      data = bos.toByteArray();
+				System.out.println("Baue subplan bytearray zusammen");
+				MessageElement query = new ByteArrayMessageElement("subplan", null, data, null);
+				response.addMessageElement(namespace, query);
+			}
+			else {
+				byte [] data = null;
+				if (messageElements.get(elem) != null){
+					 ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				      ObjectOutputStream oos;
+					try {
+						oos = new ObjectOutputStream(bos);
+						oos.writeObject(messageElements.get(elem));
+					    oos.flush();
+					    oos.close();
+					    bos.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				      data = bos.toByteArray();
+				}
+				
+				MessageElement query = new ByteArrayMessageElement("ao"+aoCounter++, null, data, null);
+				response.addMessageElement(namespace, query);
+				
 			}
 			
-			MessageElement query = new ByteArrayMessageElement("ao"+i, null, data, null);
-			response.addMessageElement(namespace, query);
 		}
-		
 		// JXTA Workaround um MessageElemente ueber Socket zu versenden.
-		response.addMessageElement(null, new StringMessageElement(stringElements.get(0), stringElements.get(1),null));
-		return response;	
+		response.addMessageElement(null, new StringMessageElement("empty", "empty",null));
+		return response;
 	}
-
+	
 }
 
 class MessageSender extends Thread{
