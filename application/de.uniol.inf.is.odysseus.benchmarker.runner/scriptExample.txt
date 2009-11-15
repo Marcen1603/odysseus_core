@@ -1,0 +1,16 @@
+-query_language
+CQL
+-query
+SELECT b.itemname FROM (SELECT id, itemname FROM nexmark:auction2 RANGE 1day SET PRIORITY 1 WHERE id > 5, 0 DEFAULT) AS b, (SELECT auction FROM nexmark:bid2 RANGE 1day SET PRIORITY 1 WHERE auction > 5, 0 DEFAULT) AS c WHERE b.id = c.auction
+-priority
+-max_results
+1
+#
+-query_language
+CQL
+-query
+SELECT b.itemname FROM (SELECT id, itemname FROM nexmark:auction2 RANGE 1day SET PRIORITY 1 WHERE id > 5, 0 DEFAULT) AS b, (SELECT auction FROM nexmark:bid2 RANGE 1day SET PRIORITY 1 WHERE auction > 5, 0 DEFAULT) AS c WHERE b.id = c.auction
+-priority
+-max_results
+2
+#

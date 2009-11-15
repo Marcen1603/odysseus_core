@@ -17,4 +17,6 @@ public interface IBenchmark {
 	public void setUsePunctuations(boolean b);
 	public void setUseLoadShedding(boolean b);
 	public void setBenchmarkMemUsage(boolean b);
+	
+	public void clearSources();
 }

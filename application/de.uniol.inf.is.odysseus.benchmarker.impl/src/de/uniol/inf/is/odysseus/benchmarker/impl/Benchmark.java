@@ -9,6 +9,7 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.UnsortedPair;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
@@ -16,6 +17,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListe
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
@@ -228,6 +230,16 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	@Override
 	public void setBenchmarkMemUsage(boolean b) {
 		this.useBenchmarkMemUsage = b;
+		
+	}
+
+	@Override
+	public void clearSources() {
+		WrapperPlanFactory.clearSources();
+		DataDictionary.getInstance().sourceTypeMap.clear();
+		DataDictionary.getInstance().entityMap.clear();
+		DataDictionary.getInstance().attributeMap.clear();
+		DataDictionary.getInstance().clearViews();
 		
 	}
 
