@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.Query;
-import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 

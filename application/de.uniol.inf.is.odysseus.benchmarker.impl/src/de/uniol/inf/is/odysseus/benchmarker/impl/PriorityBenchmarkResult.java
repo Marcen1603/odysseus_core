@@ -17,6 +17,7 @@ public class PriorityBenchmarkResult<T extends ILatency & IPriority> extends
 	@Element(name="prioritizedStatistics")
 	private DescriptiveStatistics prioritizedStats = new DescriptiveStatistics();
 
+	@Override
 	public void add(T object) {
 		if (object.getPriority() == 0) {
 			super.add(object);

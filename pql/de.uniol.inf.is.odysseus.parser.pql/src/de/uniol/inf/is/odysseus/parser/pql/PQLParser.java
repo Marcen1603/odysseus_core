@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.parser.pql;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;

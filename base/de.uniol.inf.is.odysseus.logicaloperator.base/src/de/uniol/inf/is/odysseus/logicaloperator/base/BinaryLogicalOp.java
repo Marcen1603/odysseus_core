@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 
 public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
@@ -34,11 +33,11 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 //		subscribeTo(source, RIGHT, 0, inputSchema);
 //	}	
 	
-	private ISource<?> getLeftPhysInput(){
-		return getPhysSubscriptionTo(LEFT)==null?null:getPhysSubscriptionTo(LEFT).getTarget();
-	}
-
-	private ISource<?> getRightPhysInput(){
-		return getPhysSubscriptionTo(RIGHT)==null?null:getPhysSubscriptionTo(RIGHT).getTarget();
-	}
+//	private ISource<?> getLeftPhysInput(){
+//		return getPhysSubscriptionTo(LEFT)==null?null:getPhysSubscriptionTo(LEFT).getTarget();
+//	}
+//
+//	private ISource<?> getRightPhysInput(){
+//		return getPhysSubscriptionTo(RIGHT)==null?null:getPhysSubscriptionTo(RIGHT).getTarget();
+//	}
 }

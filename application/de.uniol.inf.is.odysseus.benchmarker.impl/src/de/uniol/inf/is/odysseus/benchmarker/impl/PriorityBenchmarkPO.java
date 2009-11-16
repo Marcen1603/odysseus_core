@@ -29,6 +29,7 @@ public class PriorityBenchmarkPO<T extends IMetaAttributeContainer<? extends IPr
 		return oldVals[curP];
 	};
 	
+	@Override
 	protected void setOldVal(T element, double d) {
 		byte curP = element.getMetadata().getPriority();
 		oldVals[curP] = d;

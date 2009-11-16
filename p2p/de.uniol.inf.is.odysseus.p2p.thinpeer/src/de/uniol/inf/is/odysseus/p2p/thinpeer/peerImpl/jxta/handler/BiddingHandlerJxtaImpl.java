@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
@@ -9,7 +8,6 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.Bid;
-import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 

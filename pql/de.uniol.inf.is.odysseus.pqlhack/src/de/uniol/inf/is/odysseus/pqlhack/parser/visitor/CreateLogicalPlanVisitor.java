@@ -52,7 +52,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpressionParseException;
 
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor{

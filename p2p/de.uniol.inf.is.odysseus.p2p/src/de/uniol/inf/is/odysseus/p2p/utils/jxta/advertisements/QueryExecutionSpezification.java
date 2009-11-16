@@ -1,20 +1,11 @@
 package de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements;
 
-import java.beans.XMLEncoder;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
-
-import de.uniol.inf.is.odysseus.p2p.Subplan;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
@@ -26,8 +17,6 @@ import net.jxta.document.StructuredDocument;
 import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
-import net.jxta.endpoint.Message;
-import net.jxta.endpoint.MessageElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 

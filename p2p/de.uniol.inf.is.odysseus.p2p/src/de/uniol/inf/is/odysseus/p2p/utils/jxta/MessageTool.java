@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p.utils.jxta;
 
-import java.beans.XMLEncoder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.impl;
 
 import java.util.List;
-import java.util.ArrayList;
-
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 
 public class SimplePriorityMinLatency extends AbstractPriorityMinLatency{

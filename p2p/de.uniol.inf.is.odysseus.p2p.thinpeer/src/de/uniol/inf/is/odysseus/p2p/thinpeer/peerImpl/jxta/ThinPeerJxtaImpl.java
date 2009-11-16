@@ -12,7 +12,6 @@ import net.jxta.exception.PeerGroupException;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
-import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler.GuiUpdaterJxtaImpl;
@@ -22,7 +21,6 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.listener.Administrati
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.strategy.BiddingHandlerStrategyStandard;
-import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;

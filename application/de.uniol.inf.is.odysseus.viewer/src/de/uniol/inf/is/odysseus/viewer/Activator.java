@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderMultipleSink;
 import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 

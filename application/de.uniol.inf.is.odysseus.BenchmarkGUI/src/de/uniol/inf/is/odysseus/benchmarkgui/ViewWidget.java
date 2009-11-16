@@ -12,16 +12,11 @@ import org.eclipse.swt.dnd.TreeDropTargetEffect;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.BundleContext;
@@ -29,7 +24,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
 //import de.uniol.inf.is.odysseus.benchmarker.IBenchmark.Configuration;
 
@@ -61,6 +55,7 @@ public class ViewWidget extends Composite {
 			this.tree = tree;
 		}
 
+		@Override
 		public void dragOver(DropTargetEvent event) {
 			if (event.detail == DND.DROP_NONE) {
 				return;

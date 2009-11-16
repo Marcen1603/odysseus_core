@@ -7,10 +7,8 @@ import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
-import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
 
 public class SourceListenerJxtaImpl implements ISourceListener,

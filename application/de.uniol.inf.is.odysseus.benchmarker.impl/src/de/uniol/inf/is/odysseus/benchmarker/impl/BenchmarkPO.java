@@ -26,6 +26,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractP
 		this.selectivity = selectivity;
 	};
 
+	@Override
 	@SuppressWarnings("unchecked")
 	protected final void process_next(R object, int port) {
 		long end = System.nanoTime() + this.processingTime;

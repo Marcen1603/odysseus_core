@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class Benchmark implements IErrorEventListener, IBenchmark {

@@ -2,11 +2,8 @@ package de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator;
 
 import java.util.ArrayList;
 
-import org.w3c.dom.views.AbstractView;
-
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
-import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;

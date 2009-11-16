@@ -7,7 +7,6 @@ import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IntegerHandler;

@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.handler;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
@@ -10,7 +8,6 @@ import javax.swing.DefaultListModel;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.Subplan;
 
 public class GuiUpdaterJxtaImpl implements IGuiUpdater {

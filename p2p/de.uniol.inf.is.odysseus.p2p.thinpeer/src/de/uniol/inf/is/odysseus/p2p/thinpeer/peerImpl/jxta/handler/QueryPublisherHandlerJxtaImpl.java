@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;

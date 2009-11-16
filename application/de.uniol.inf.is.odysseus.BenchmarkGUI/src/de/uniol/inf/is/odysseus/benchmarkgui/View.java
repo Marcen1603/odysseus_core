@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.benchmarkgui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -40,6 +39,7 @@ public class View extends ViewPart implements ServiceListener {
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		this.widget = new ViewWidget(parent, SWT.DEFAULT);
 
@@ -49,6 +49,7 @@ public class View extends ViewPart implements ServiceListener {
 		removeScheduler.setText("remove");
 		
 		removeScheduler.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final TreeItem[] items = widget.getTreeScheduler().getSelection();
 				Display.getDefault().asyncExec(new Runnable() {
@@ -141,6 +142,7 @@ public class View extends ViewPart implements ServiceListener {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		this.widget.setFocus();
 	}
