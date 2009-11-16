@@ -35,13 +35,11 @@ extends DirectInterlinkBufferedPipePostPriorisation<T> {
 				// "loesche jedes 4.")
 				if (rand.nextBoolean()) {
 					super.process_next(next, port);
-					System.out.println("Verwerfe Element!");
 				} else {
 					rate--;
 				}
 			}
 		} else {
-			System.out.println("Load Shedder nicht aktiv!");
 			super.process_next(next, port);
 		}
 
