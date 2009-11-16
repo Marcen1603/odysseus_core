@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.priority;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 	}
 
 	private final byte defaultPriority;
-	
+
 	public byte getDefaultPriority() {
 		return defaultPriority;
 	}
@@ -40,6 +41,7 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 		this.priorites = priorityAO.getPriorities();
 		this.defaultPriority = priorityAO.getDefaultPriority();
 		this.isPunctuationActive = priorityAO.isPunctuationActive();
+		this.copartners = new ArrayList<IPostPriorisationPipe<?>>();
 	}
 
 	@Override
@@ -58,11 +60,13 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 				if (curPriority.getKey() != 0 && isPunctuationActive) {
 					sendPunctuation(time.getStart());
 				}
-				
-				for (IPostPriorisationPipe<?> each : copartners) {
-					each.addTimeInterval((IMetaAttributeContainer<?>)next);
+
+				if (copartners != null) {
+					for (IPostPriorisationPipe<?> each : copartners) {
+						each.addTimeInterval((IMetaAttributeContainer<?>) next);
+					}
 				}
-				
+
 				return;
 			}
 		}
