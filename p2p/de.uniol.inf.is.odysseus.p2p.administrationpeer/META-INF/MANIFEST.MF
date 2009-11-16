@@ -36,3 +36,8 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: component.xml, OSGI-INF/component.xml, OSGI-INF/AbstractAdministrationPeer.xml, OSGI-INF/Activator.xml, OSGI-INF/Foo.xml, OSGI-INF/AbstractAministrationpeer.xml, OSGI-INF/Administrationpeer.xml, OSGI-INF/AbstractAdministrationpeer.xml
 Require-Bundle: Apache_Commons_Codec;bundle-version="1.0.0"
+Export-Package: de.uniol.inf.is.odysseus.p2p.administrationpeer,
+ de.uniol.inf.is.odysseus.p2p.administrationpeer.gui,
+ de.uniol.inf.is.odysseus.p2p.administrationpeer.handler,
+ de.uniol.inf.is.odysseus.p2p.administrationpeer.listener,
+ de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy
