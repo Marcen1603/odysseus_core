@@ -47,7 +47,7 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 	 * @param object
 	 *            input data with a timestamp
 	 */
-	protected void updatePunctuationData(W object) {
+	public void updatePunctuationData(W object) {
 
 		if (storage.size() > 0) {
 			ITimeInterval time = (ITimeInterval) object.getMetadata();
