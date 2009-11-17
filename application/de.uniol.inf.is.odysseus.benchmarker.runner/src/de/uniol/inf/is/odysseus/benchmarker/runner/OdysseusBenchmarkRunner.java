@@ -157,7 +157,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			benchmark.setMaxResults(maxResults);
 		}
 		
-		if(arguments.get(MEMORY_USAGE)) {
+		if(arguments.hasParameter(MEMORY_USAGE)) {
 			benchmark.setBenchmarkMemUsage(true);
 		}
 
