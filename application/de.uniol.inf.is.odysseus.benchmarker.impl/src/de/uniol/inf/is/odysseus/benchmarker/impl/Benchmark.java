@@ -39,7 +39,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private List<UnsortedPair<String, String>> queries;
 	private boolean usePunctuations;
 	private boolean useLoadShedding;
-	private boolean useBenchmarkMemUsage;
+	private boolean useBenchmarkMemUsage = false;
 	
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 

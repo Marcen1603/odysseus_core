@@ -56,7 +56,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			Serializer serializer = new Persister();
 			serializer.write(result, new File(filename));
 			
-			if(arguments.hasParameter(MEMORY_USAGE)) {
+			if(arguments.get(MEMORY_USAGE)) {
 				for(int i=0; i < benchmark.getMemUsageJoin().size();i++) {
 					serializer.write(benchmark.getMemUsageJoin().get(i), new File(i + "JOIN" + filename));
 				}
@@ -157,7 +157,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			benchmark.setMaxResults(maxResults);
 		}
 		
-		if(arguments.hasParameter(MEMORY_USAGE)) {
+		if(arguments.get(MEMORY_USAGE)) {
 			benchmark.setBenchmarkMemUsage(true);
 		}
 
