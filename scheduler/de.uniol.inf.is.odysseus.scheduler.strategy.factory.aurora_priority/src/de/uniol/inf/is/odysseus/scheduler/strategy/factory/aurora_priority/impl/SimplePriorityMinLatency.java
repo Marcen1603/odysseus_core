@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.impl
 import java.util.List;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 
 public class SimplePriorityMinLatency extends AbstractPriorityMinLatency{
@@ -11,6 +12,7 @@ public class SimplePriorityMinLatency extends AbstractPriorityMinLatency{
 		super(plan, useIter);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void executePriorisationActivation(ISource<?> source, List<ISource<?>> opPath) {
 		// Muss nichts weiter machen, als copartners zu entfernen, da die Strategie nur Teilplaene bevorzugt,
@@ -20,10 +22,16 @@ public class SimplePriorityMinLatency extends AbstractPriorityMinLatency{
 			if(op instanceof PriorityPO<?>) {
 				PriorityPO<?> prio = (PriorityPO<?>) op;
 				if(prio.getCopartners() != null) {
+					
+					for(IPostPriorisationPipe each : prio.getCopartners()) {
+						each.setActive(false);
+					}
+					
 					prio.getCopartners().clear();
 				}
 			}
-		}		
+			
+		}	
 		
 	}
 
