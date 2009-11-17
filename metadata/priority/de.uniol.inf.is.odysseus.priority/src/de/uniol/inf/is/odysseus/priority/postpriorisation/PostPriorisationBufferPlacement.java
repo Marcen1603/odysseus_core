@@ -59,43 +59,29 @@ public class PostPriorisationBufferPlacement extends
 
 	@SuppressWarnings("unchecked")
 	private void updateBufferData(IBuffer buffer, IPhysicalOperator father) {
-		if (father.isSink()) {
-			Iterator<?> it = ((ISink) father).getSubscribedTo().iterator();
+		
+		if(father.isSource() && father instanceof PostPriorisationPO) {
+			PostPriorisationPO postPO = (PostPriorisationPO) father;
 
-			while (it.hasNext()) {
-				PhysicalSubscription<?> sub = (PhysicalSubscription<?>) it
-						.next();
-				if (((ISource<?>)sub.getTarget()).isSink()) {
-					
-					if((ISource<?>)sub.getTarget() instanceof PostPriorisationPO<?>) {
-						
-						PostPriorisationPO postPO = (PostPriorisationPO)sub.getTarget();
-
-						DirectInterlinkBufferedPipePostPriorisation postBuf = (DirectInterlinkBufferedPipePostPriorisation) buffer;
-						IPostPriorisationFunctionality functionality = postPO.getPostPriorisationFunctionality();
-						postBuf.setPostPriorisationFunctionality(functionality.newInstance(postBuf));
-						postBuf.setJoinFragment(postPO.getJoinFragment());	
-						
-						PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
-						Iterator itCopartners = prioPO.getCopartners().iterator();
-						
-						while(itCopartners.hasNext()) {
-							IPostPriorisationPipe copartner = (IPostPriorisationPipe) itCopartners.next();
-							if(copartner.equals(postPO)) {
-								postPO.setActive(false);
-								itCopartners.remove();
-							}
-						}
-						
-						prioPO.getCopartners().add(postBuf);
-						
-						
-					} else {
-						updateBufferData(buffer, (ISink) sub.getTarget());
-					}
+			DirectInterlinkBufferedPipePostPriorisation postBuf = (DirectInterlinkBufferedPipePostPriorisation) buffer;
+			IPostPriorisationFunctionality functionality = postPO.getPostPriorisationFunctionality();
+			postBuf.setPostPriorisationFunctionality(functionality.newInstance(postBuf));
+			postBuf.setJoinFragment(postPO.getJoinFragment());	
+			postBuf.setActive(true);
+			PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
+			Iterator itCopartners = prioPO.getCopartners().iterator();
+			
+			while(itCopartners.hasNext()) {
+				IPostPriorisationPipe copartner = (IPostPriorisationPipe) itCopartners.next();
+				if(copartner instanceof PostPriorisationPO) {
+					postPO.setActive(false);
+					itCopartners.remove();
 				}
 			}
+			
+			prioPO.getCopartners().add(postBuf);
 		}
+		
 	}
 
 }

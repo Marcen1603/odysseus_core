@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.impl;
 
+import java.util.Iterator;
 import java.util.List;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
@@ -24,13 +25,16 @@ public class SimplePriorityMinLatency extends AbstractPriorityMinLatency{
 				PriorityPO<?> prio = (PriorityPO<?>) op;
 				if(prio.getCopartners() != null) {
 					
-					for(IPostPriorisationPipe each : prio.getCopartners()) {
+					Iterator<IPostPriorisationPipe<?>> it = prio.getCopartners().iterator();
+					
+					while(it.hasNext()) {
+						IPostPriorisationPipe<?> each = it.next();
 						if(each instanceof PostPriorisationPO) {
 							each.setActive(false);
+							it.remove();
 						}
 					}
-					
-					prio.getCopartners().clear();
+
 				}
 			}
 			

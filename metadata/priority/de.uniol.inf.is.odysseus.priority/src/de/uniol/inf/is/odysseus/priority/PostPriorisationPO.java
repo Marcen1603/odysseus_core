@@ -119,6 +119,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
+		setActive(true);
 		functionality.getPriorisationIntervals().add(time.clone());
 	}
 
