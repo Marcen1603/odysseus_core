@@ -34,6 +34,9 @@ public class DirectAttributeResolver implements IAttributeResolver {
 				}
 			}
 		}
+		if (found == null) {
+			throw new IllegalArgumentException("no such attribute: " + name);
+		}
 		return found;
 	}
 
