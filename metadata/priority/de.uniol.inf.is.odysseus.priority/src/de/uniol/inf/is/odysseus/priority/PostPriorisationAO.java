@@ -11,7 +11,7 @@ public class PostPriorisationAO<T> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4238316182706318260L;
 
-	private boolean isActive = true;
+	private boolean isActive = false;
 
 	private List predicates;
 	
