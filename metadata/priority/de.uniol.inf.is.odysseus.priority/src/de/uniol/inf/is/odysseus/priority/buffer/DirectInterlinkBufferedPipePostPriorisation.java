@@ -94,7 +94,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override
 	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
 		if (functionality != null) {
-			functionality.getPriorisationIntervals().add(time);
+			functionality.getPriorisationIntervals().add(time.clone());
 
 			Iterator<T> it = buffer.iterator();
 
