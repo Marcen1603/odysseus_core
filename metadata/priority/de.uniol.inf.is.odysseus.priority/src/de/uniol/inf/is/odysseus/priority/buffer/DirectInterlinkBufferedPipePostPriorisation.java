@@ -22,7 +22,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 		IPostPriorisationPipe<IMetaAttributeContainer<? extends IPriority>> {
 	Lock directLinkLock = new ReentrantLock();
 
-	private boolean isActive = true;
+	private boolean isActive = false;
 	private PriorityPO<?> priorisationOwner = null;
 	@SuppressWarnings("unchecked")
 	private IPostPriorisationFunctionality functionality;
@@ -54,9 +54,9 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(T object, int port) {
-
+		
 		storage.setCurrentPort(port);
-
+		
 		if (isActive() && functionality != null) {
 			functionality.executePostPriorisation(object);
 		}
@@ -94,6 +94,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override
 	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
 		if (functionality != null) {
+			setActive(true);
 			functionality.getPriorisationIntervals().add(time.clone());
 
 			Iterator<T> it = buffer.iterator();
