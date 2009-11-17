@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="resourcesSchema.xsd">
+	
+	<Image source="editor_cfg/default.png" name="default"/>
+	<Image source="editor_cfg/source.png" name="source"/>
+	<Image source="editor_cfg/Connection.png" name="connection"/>
+	<Image source="editor_cfg/sink.png" name="sink"/>
+	<Image source="editor_cfg/select.png" name="select"/>
+	<Image source="editor_cfg/join.png" name="join"/>
+	<Image source="editor_cfg/NeueAnfrage.png" name="newQuery"/>
+	<Image source="editor_cfg/stop.png" name="stopQuery"/>
+	<Image source="editor_cfg/projection.png" name="projection"/>
+	<Image source="editor_cfg/play.png" name="start"/>
+	<Image source="editor_cfg/refresh.png" name="refresh"/>
+	<Image source="editor_cfg/delete.png" name="delete"/>
+	<Image source="editor_cfg/neueQuelle.png" name="neueQuelle"/>
+
+</Resources>
