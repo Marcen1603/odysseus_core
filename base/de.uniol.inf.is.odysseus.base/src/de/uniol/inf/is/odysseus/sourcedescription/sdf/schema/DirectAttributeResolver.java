@@ -1,9 +1,5 @@
-package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
+package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Jonas Jacobi
