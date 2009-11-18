@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.priority.IPostPriorisationFunctionality;
+import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostPriorisation;
@@ -45,7 +46,6 @@ public class PostPriorisationCombinedPlacement extends
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
-
 		if (buffer instanceof DirectInterlinkBufferedPipePostPriorisation) {
 
 			Iterator<PhysicalSubscription> it = buffer.getSubscribedTo()
@@ -60,34 +60,18 @@ public class PostPriorisationCombinedPlacement extends
 
 	@SuppressWarnings("unchecked")
 	private void updateBufferData(IBuffer buffer, IPhysicalOperator father) {
-		if (father.isSink() && buffer instanceof DirectInterlinkBufferedPipePostPriorisation) {
-			Iterator<?> it = ((ISink) father).getSubscribedTo().iterator();
+		if(father.isSource() && father instanceof PostPriorisationPO) {
+			PostPriorisationPO postPO = (PostPriorisationPO) father;
 
-			while (it.hasNext()) {
-				PhysicalSubscription<?> sub = (PhysicalSubscription<?>) it
-						.next();
-				if (((ISource<?>)sub.getTarget()).isSink()) {
-					
-					if((ISource<?>)sub.getTarget() instanceof PostPriorisationPO<?>) {
-						
-						PostPriorisationPO postPO = (PostPriorisationPO)sub.getTarget();
-
-						DirectInterlinkBufferedPipePostPriorisation postBuf = (DirectInterlinkBufferedPipePostPriorisation) buffer;
-						IPostPriorisationFunctionality functionality = postPO.getPostPriorisationFunctionality();
-						postBuf.setPostPriorisationFunctionality(functionality.newInstance(postBuf));
-						postBuf.setJoinFragment(postPO.getJoinFragment());			
-						
-						PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
-						postBuf.subscribe(new PostPriorisationEventListener(postPO, prioPO), POEventType.PostPriorisation);
-						if(prioPO != null && prioPO.getCopartners() != null) {
-							prioPO.getCopartners().add(postBuf);
-						}
-						
-						
-					} else {
-						updateBufferData(buffer, (ISink) sub.getTarget());
-					}
-				}
+			DirectInterlinkBufferedPipePostPriorisation postBuf = (DirectInterlinkBufferedPipePostPriorisation) buffer;
+			IPostPriorisationFunctionality functionality = postPO.getPostPriorisationFunctionality();
+			postBuf.setPostPriorisationFunctionality(functionality.newInstance(postBuf));
+			postBuf.setJoinFragment(postPO.getJoinFragment());	
+			postBuf.setActive(true);
+			PriorityPO prioPO = postPO.getPhysicalPostPriorisationRoot();
+			postBuf.subscribe(new PostPriorisationEventListener(postPO, prioPO), POEventType.PostPriorisation);
+			if(prioPO != null && prioPO.getCopartners() != null) {
+				prioPO.getCopartners().add(postBuf);
 			}
 		}
 	}
