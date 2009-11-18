@@ -20,24 +20,13 @@ import de.uniol.inf.is.odysseus.priority.PriorityPO;
 public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttributeContainer<? extends IPriority>>
 		extends AbstractPunctuationBuffer<T, T> implements
 		IPostPriorisationPipe<IMetaAttributeContainer<? extends IPriority>> {
+	
 	Lock directLinkLock = new ReentrantLock();
-
-	private boolean isActive = false;
-	private PriorityPO<?> priorisationOwner = null;
 	@SuppressWarnings("unchecked")
 	private IPostPriorisationFunctionality functionality;
-	
-	private final POEvent finished = new POEvent(this, POEventType.PostPriorisation);
-
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
-
-	@Override
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+	private PriorityPO<?> postPriorisationRoot;
+	private boolean active;
+	private POEvent finished = new POEvent(this, POEventType.PostPriorisation);
 
 	@Override
 	public void transferNext() {
@@ -50,6 +39,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -57,14 +47,13 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 		
 		storage.setCurrentPort(port);
 		
-		if (isActive() && functionality != null) {
+		if(active && functionality != null) {
 			functionality.executePostPriorisation(object);
 		}
 
 		sendElement(object);
-
 	}
-
+	
 	public void sendElement(T object) {
 		byte prio = object.getMetadata().getPriority();
 
@@ -90,24 +79,9 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
-		if (functionality != null) {
-			setActive(true);
-			functionality.getPriorisationIntervals().add(time.clone());
-
-			Iterator<T> it = buffer.iterator();
-
-			// Puffer bei jeder potenziellen Nachpriorisierung nachpriorisieren
-			while (it.hasNext()) {
-				T object = it.next();
-				functionality.executePostPriorisation(object);
-				if (object.getMetadata().getPriority() > 0) {
-					sendElement(object);
-				}
-			}
-		}
+	public PriorityPO<?> getPhysicalPostPriorisationRoot() {
+		return postPriorisationRoot;
 	}
 
 	@Override
@@ -125,39 +99,56 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 		if (matchPredicate) {
 			fire(finished);
 		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void setJoinFragment(
-			List<IPredicate<? super IMetaAttributeContainer<? extends IPriority>>> fragment) {
-		functionality.setJoinFragment(fragment);
+		
 	}
 
 	@Override
-	public PriorityPO<?> getPhysicalPostPriorisationRoot() {
-		return priorisationOwner;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override
 	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO) {
-		priorisationOwner = priorityPO;
+		this.postPriorisationRoot = priorityPO;
+		
+	}
 
+	@Override
+	public void setPostPriorisationFunctionality(
+			IPostPriorisationFunctionality<IMetaAttributeContainer<? extends IPriority>> functionality) {
+		this.functionality = functionality;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
+		setActive(true);
+		functionality.getPriorisationIntervals().add(time.clone());
+		
+		Iterator<T> it = buffer.iterator();
+
+		// Puffer bei jeder potenziellen Nachpriorisierung nachpriorisieren
+		while (it.hasNext()) {
+			T object = it.next();
+			functionality.executePostPriorisation(object);
+			if (object.getMetadata().getPriority() > 0) {
+				sendElement(object);
+				it.remove();
+			}
+		}		
+		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IPredicate<? super IMetaAttributeContainer<? extends IPriority>>> getJoinFragment() {
 		return functionality.getJoinFragment();
-	};
+	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setPostPriorisationFunctionality(
-			IPostPriorisationFunctionality<IMetaAttributeContainer<? extends IPriority>> functionality) {
-		this.functionality = functionality;
-
+	public void setJoinFragment(List fragment) {
+		functionality.setJoinFragment(fragment);
 	}
 
 }
