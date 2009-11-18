@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.priority_interval;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IInlineMetadataMergeFunction;
@@ -15,10 +16,9 @@ public class PriorityIntervalMergeFunction implements
 				.setPriority(inLeft.getPriority() > inRight.getPriority() ? inLeft
 						.getPriority()
 						: inRight.getPriority());
-		ITimeInterval mergedInterval = TimeInterval.intersection((ITimeInterval)inLeft, (ITimeInterval)inRight);
-	
-		((IntervalPriority) result).setStart(mergedInterval.getStart());
-		((IntervalPriority) result).setEnd(mergedInterval.getEnd());
+		
+		((ITimeInterval)result).setStart(PointInTime.max(((ITimeInterval)inLeft).getStart(), ((ITimeInterval)inRight).getStart()));
+		((ITimeInterval)result).setEnd(PointInTime.min(((ITimeInterval)inLeft).getEnd(), ((ITimeInterval)inRight).getEnd()));
 	}
 
 }
