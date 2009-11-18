@@ -56,18 +56,20 @@ public class DefaultQueryController implements IQueryController {
 					Object value = null;
 					if (!param.getTypeList().isEmpty()) {
 						Class[] paramClasses = getParamClasses(param);
-						value = getParamValue(paramClasses, param
-								.getValue(), param.getTypeList().size() - 1);
-					}else {
+						value = getParamValue(paramClasses, param.getValue(),
+								param.getTypeList().size() - 1);
+					} else {
 						value = param.getValue();
 					}
-					Class paramClass = Class.forName(param.getType());
-					Class opClass = nodeModel.getContent().getOperator()
-							.getClass();
-					Class[] pClass = new Class[1];
-					pClass[0] = paramClass;
-					Method m = opClass.getMethod(param.getSetter(), pClass);
-					m.invoke(nodeModel.getContent().getOperator(), value);
+					if (value != null) {
+						Class paramClass = Class.forName(param.getType());
+						Class opClass = nodeModel.getContent().getOperator()
+								.getClass();
+						Class[] pClass = new Class[1];
+						pClass[0] = paramClass;
+						Method m = opClass.getMethod(param.getSetter(), pClass);
+						m.invoke(nodeModel.getContent().getOperator(), value);
+					}
 				} catch (Exception e) {
 					log.error("While trying to create Parameters.");
 					e.printStackTrace();
@@ -189,13 +191,17 @@ public class DefaultQueryController implements IQueryController {
 				con = classes[index - 1].getConstructor(classes[index]);
 			}
 		}
-		Object[] argList = new Object[1];
-		argList[0] = value;
-		Object object = con.newInstance(argList);
-		if (index - 1 > 0 || index != 0) {
-			object = getParamValue(classes, object, --index);
+		if (value != null) {
+			Object[] argList = new Object[1];
+			argList[0] = value;
+			Object object = con.newInstance(argList);
+
+			if (index - 1 > 0 || index != 0) {
+				object = getParamValue(classes, object, --index);
+			}
+			return object;
 		}
-		return object;
+		return null;
 	}
 
 }

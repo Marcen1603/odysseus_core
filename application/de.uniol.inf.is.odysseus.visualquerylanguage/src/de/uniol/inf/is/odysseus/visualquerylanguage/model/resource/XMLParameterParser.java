@@ -239,7 +239,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pType = "";
 							pPosition = null;
 							pEditor = "";
-							newEditor = true;
+							newEditor = false;
 							pipes.add(pipe);
 						} else if (!pSetter.isEmpty() && pipe != null) {
 							pipes.remove(pipe);
@@ -250,7 +250,7 @@ public class XMLParameterParser implements IParameterConfiguration {
 							pType = "";
 							pSetter = "";
 							pEditor = "";
-							newEditor = true;
+							newEditor = false;
 							pipes.add(pipe);
 						}
 						pTypeList = new ArrayList<String>();
