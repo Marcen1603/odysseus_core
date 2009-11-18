@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -30,6 +32,7 @@ public class SWTPredicateEditor {
 	private final Logger log = LoggerFactory.getLogger(SWTPredicateEditor.class);
 
 	private Shell shell;
+	private SDFAttributeList schema = new SDFAttributeList();
 
 	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
 
@@ -67,6 +70,7 @@ public class SWTPredicateEditor {
 		for (SDFAttributeList sdfAttributeList : inputSchemas) {
 			if (sdfAttributeList != null) {
 				for (SDFAttribute sdfAttribute : sdfAttributeList) {
+					schema.add(sdfAttribute);
 					if (sdfAttribute != null) {
 						button = new Button(comp, SWT.PUSH);
 						button.setLayoutData(new GridData(
@@ -133,8 +137,10 @@ public class SWTPredicateEditor {
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				DirectAttributeResolver resolver = new DirectAttributeResolver(schema);
+				RelationalPredicate pred = new RelationalPredicate(new SDFExpression("", textArea.getText(), resolver));
 				for (ISWTParameterListener listener : listeners) {
-					listener.setValue(textArea.getText());
+					listener.setValue(pred);
 				}
 				shell.dispose();
 			}
