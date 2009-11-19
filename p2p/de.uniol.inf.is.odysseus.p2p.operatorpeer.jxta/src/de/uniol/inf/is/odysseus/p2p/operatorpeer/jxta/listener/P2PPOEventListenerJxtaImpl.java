@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IP2PPOEventListener;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.logging.Log;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 
 public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler;
 
 
 import java.io.ByteArrayInputStream;
@@ -18,9 +18,9 @@ import org.apache.commons.codec.binary.Base64InputStream;
 import de.uniol.inf.is.odysseus.p2p.Subplan;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQuerySpezificationHandler;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener.SocketServerListenerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.logging.Log;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
 

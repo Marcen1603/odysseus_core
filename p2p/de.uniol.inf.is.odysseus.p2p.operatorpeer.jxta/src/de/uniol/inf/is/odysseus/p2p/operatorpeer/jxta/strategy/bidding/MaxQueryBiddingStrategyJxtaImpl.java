@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.strategy.bidding;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.strategy.bidding;
 
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.strategy.bidding.IBiddingStrategy;
 

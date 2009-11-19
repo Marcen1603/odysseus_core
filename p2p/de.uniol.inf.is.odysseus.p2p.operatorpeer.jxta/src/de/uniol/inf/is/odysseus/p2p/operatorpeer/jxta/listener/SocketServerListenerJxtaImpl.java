@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +19,8 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.ISocketServerListener;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.logging.Log;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;

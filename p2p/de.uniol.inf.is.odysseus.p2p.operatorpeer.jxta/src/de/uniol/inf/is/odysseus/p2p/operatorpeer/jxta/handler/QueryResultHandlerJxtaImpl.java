@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler;
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.base.ITransformation;
@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQueryResultHandler;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.logging.Log;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.logging.Log;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -117,7 +117,8 @@ public class QueryResultHandlerJxtaImpl implements IQueryResultHandler {
 			try {
 //				if(!OperatorPeerJxtaImpl.getInstance().getExecutor().isRunning()) {
 					System.out.println("starte Ausführung");
-					OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
+					if(!OperatorPeerJxtaImpl.getInstance().getExecutor().isRunning())
+						OperatorPeerJxtaImpl.getInstance().getExecutor().startExecution();
 //				}
 			} catch (PlanManagementException e) {
 				e.printStackTrace();

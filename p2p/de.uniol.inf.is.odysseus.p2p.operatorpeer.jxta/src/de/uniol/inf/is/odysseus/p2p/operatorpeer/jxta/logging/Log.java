@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.logging;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.logging;
 
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 
 public class Log {
 

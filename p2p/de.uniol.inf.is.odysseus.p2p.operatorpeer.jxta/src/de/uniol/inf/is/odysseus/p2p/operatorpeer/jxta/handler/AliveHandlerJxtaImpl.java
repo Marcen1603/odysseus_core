@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler;
 
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener.SocketServerListenerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
 
 public class AliveHandlerJxtaImpl implements IAliveHandler {

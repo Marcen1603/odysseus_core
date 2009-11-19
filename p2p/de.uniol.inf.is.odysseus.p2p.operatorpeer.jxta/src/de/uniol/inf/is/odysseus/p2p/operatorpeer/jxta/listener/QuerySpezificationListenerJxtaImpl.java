@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.listener;
+package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -9,9 +9,9 @@ import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.QuerySpezificationHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IQuerySpezificationListener;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.peerImpl.jxta.handler.QuerySpezificationHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
 
 public class QuerySpezificationListenerJxtaImpl implements
