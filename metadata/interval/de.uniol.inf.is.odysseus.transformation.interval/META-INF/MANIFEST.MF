@@ -5,11 +5,13 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.interval;singleton:
 Bundle-Version: 1.0.11
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.base.planmanagement,
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.window,
  de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.base.aggregate,
