@@ -10,8 +10,8 @@ import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
+import de.uniol.inf.is.odysseus.p2p.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IP2PPOEventListener;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.logging.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 

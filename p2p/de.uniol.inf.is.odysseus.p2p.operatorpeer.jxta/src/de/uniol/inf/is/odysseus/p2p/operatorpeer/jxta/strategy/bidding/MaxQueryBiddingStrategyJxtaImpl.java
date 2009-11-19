@@ -18,10 +18,14 @@ public class MaxQueryBiddingStrategyJxtaImpl implements IBiddingStrategy {
 			}
 
 		}
-		if (i >= MAXQUERIES)
+		if (i >= MAXQUERIES) {
+			System.out.println("nein biete nicht");
 			return false;
-		else
+		}
+		else {
+			System.out.println("ja biete");
 			return true;
+		}
 	}
 
 }

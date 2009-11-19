@@ -9,8 +9,10 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
+import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
 
-public class MainWindow extends javax.swing.JFrame {
+
+public class MainWindow extends AbstractMainWindow {
 	/**
 	 * 
 	 */
@@ -65,6 +67,7 @@ public class MainWindow extends javax.swing.JFrame {
 		}
 	}
 	
+	@Override
 	public void addTab(String queryId){
 		JPanel panel = new JPanel();
 		
@@ -113,32 +116,57 @@ public class MainWindow extends javax.swing.JFrame {
 		tabs.addTab(queryId, panel);
 		
 	}
-
+	@Override
 	public void addStatus(String queryId, String status){
 		listStatus.get(queryId).setText(status);
 	}
-	
+	@Override
 	public void addSubplans(String queryId, int count){
 		listSubplan.get(queryId).setText(String.valueOf(count));
 	}
-	
+	@Override
 	public void addScheduler(String queryId, String scheduler){
 		listScheduler.get(queryId).setText(scheduler);
 	}
-	
+	@Override
 	public void addSchedulerStrategy(String queryId, String strategy){
 		listSchedulerStrategy.get(queryId).setText(strategy);
 	}
-	
+	@Override
 	public void addAction(String queryId, String action){
 		listActions.get(queryId).add(action,0);
 	}
+	@Override
 	public void addOperation(String queryId, String operation){
 		listOperations.get(queryId).add(operation,0);
 	}
-	
+	@Override
 	public boolean isQuery(String queryId){
 		return listActions.get(queryId) != null;
+	}
+
+	@Override
+	public void addBids(String queryId, String s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addEvent(String queryId, String event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addSplitting(String queryId, String s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeQuery(String queryId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

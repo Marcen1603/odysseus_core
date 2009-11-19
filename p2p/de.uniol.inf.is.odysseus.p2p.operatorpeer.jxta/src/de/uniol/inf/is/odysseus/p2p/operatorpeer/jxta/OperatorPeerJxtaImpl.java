@@ -259,7 +259,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			}
 			
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -269,10 +268,8 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 				System.out.println("Aufruf startnetwork");
 				manager.startNetwork();
 			} catch (PeerGroupException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -15,10 +15,11 @@ import net.jxta.protocol.PipeAdvertisement;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 
+import de.uniol.inf.is.odysseus.p2p.Query;
 import de.uniol.inf.is.odysseus.p2p.Subplan;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQuerySpezificationHandler;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.logging.Log;
+import de.uniol.inf.is.odysseus.p2p.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
@@ -68,6 +69,7 @@ public class QuerySpezificationHandlerJxtaImpl implements IQuerySpezificationHan
 						.createPipeAdvertisementFromXml(adv.getBiddingPipe()));
 				OperatorPeerJxtaImpl.getInstance().getQueries().put(
 						adv.getQueryId(), q);
+				Log.addQuery(adv.getQueryId());
 			}
 			
 			 Object obj = null;
@@ -85,12 +87,11 @@ public class QuerySpezificationHandlerJxtaImpl implements IQuerySpezificationHan
 			    ex.printStackTrace();
 			  }
 			  OperatorPeerJxtaImpl.getInstance().getQueries().get(adv.getQueryId()).getSubPlans().put(adv.getSubplanId(), (Subplan) obj);
-			
-
+			HashMap<String, Query> test = OperatorPeerJxtaImpl.getInstance().getQueries();
 		}
-		
-		Log.addQuery(adv.getQueryId());
-		Log.logAction(adv.getQueryId(), "Ausschreibung für Anfrageausführung gefunden !");
+
+
+//		Log.logAction(adv.getQueryId(), "Ausschreibung für Anfrageausführung gefunden !");
 
 		//TODO: Für bestimmten Subplan bewerben bzw. das auch senden BEWERBUNG HIER ENTSCHEIDEN
 		

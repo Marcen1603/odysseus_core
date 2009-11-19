@@ -7,9 +7,10 @@ import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.IPeer;
+import de.uniol.inf.is.odysseus.p2p.IQueryResultHandler;
+import de.uniol.inf.is.odysseus.p2p.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQueryResultHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.ISocketServerListener;
@@ -32,7 +33,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 	protected MainWindow gui;
 	
-	private boolean guiEnabled = true;
+//	private boolean guiEnabled = true;
 
 	protected IPriority priority;
 
@@ -135,6 +136,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 
 	private void init() {
+		Log.setWindow(getGui());
 		initSources(this);
 //		initWrapperPlanFactory();
 //		initTransformation();
@@ -264,13 +266,13 @@ public abstract class AbstractOperatorPeer implements IPeer {
 //		}
 //	}
 
-	public boolean isGuiEnabled() {
-		return guiEnabled;
-	}
+//	public boolean isGuiEnabled() {
+//		return guiEnabled;
+//	}
 
-	protected void publishSources(){
-		
-	}
+//	protected void publishSources(){
+//		
+//	}
 
 	public void setBiddingStrategy(IBiddingStrategy biddingStrategy) {
 		this.biddingStrategy = biddingStrategy;
@@ -310,7 +312,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 	}
 
 	private void startGui() {
-		if (isGuiEnabled())
+//		if (isGuiEnabled())
 			gui = new MainWindow();
 	}
 
@@ -324,7 +326,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		startServerSocketListener();
 		startAliveHandler();
 		startQuerySpezificationFinder();
-		publishSources();
+//		publishSources();
 	}
 	
 	protected void startQuerySpezificationFinder() {
