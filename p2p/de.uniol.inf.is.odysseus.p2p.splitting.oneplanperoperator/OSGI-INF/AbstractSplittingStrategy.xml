@@ -4,4 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy"/>
    </service>
+   <reference bind="bindRefinement" cardinality="0..1" interface="de.uniol.inf.is.odysseus.p2p.splitting.refinement.base.IRefinementStrategy" name="IRefinementStrategy" policy="static" unbind="unbindRefinement"/>
 </scr:component>
