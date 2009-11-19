@@ -21,7 +21,7 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 
 /**
- * Repraesentiert eine Ausschreibung eines Subplans
+ * Repraesentiert eine Ausschreibung eines Subplans mit einer serialisierten Version des dazugehörigen Operatorplans
  * 
  * @author Mart Köhler
  *
@@ -29,9 +29,6 @@ import net.jxta.id.IDFactory;
 public class QueryExecutionSpezification extends Advertisement implements
 		Serializable, Cloneable, Comparable {
 
-	/**
-	 * TODO: Prüfen, ob Serialisierung des Operatorplans funktioniert 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private ID id = ID.nullID;

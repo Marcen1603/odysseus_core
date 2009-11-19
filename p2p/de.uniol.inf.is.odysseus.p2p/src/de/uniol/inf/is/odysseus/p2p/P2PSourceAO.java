@@ -14,11 +14,13 @@ public class P2PSourceAO extends P2PAO implements OutputSchemaSettable {
 
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
+		System.out.println("outputschema im p2psource wird gesetzt");
 		this.outputSchema = outputSchema.clone();
 	}
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
+		System.out.println("outputschema im p2psource wird geholt");
 		return outputSchema;
 	}
 
