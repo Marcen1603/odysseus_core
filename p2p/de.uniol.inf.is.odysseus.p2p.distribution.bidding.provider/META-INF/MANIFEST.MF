@@ -9,8 +9,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.distribution.provider,
+ de.uniol.inf.is.odysseus.p2p.gui,
  de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.utils.jxta,
+ de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements,
  net.jxta,
  net.jxta.access,
  net.jxta.codat,
@@ -38,3 +40,4 @@ Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  net.jxta.util.documentSerializable,
  org.osgi.framework;version="1.3.0"
 Service-Component: OSGI-INF/BiddingProvider.xml
+Require-Bundle: Apache_Commons_Codec;bundle-version="1.0.0"
