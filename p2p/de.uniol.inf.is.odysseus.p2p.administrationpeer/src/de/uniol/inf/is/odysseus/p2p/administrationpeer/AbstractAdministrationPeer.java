@@ -6,18 +6,16 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.IPeer;
+import de.uniol.inf.is.odysseus.p2p.IQueryResultHandler;
+import de.uniol.inf.is.odysseus.p2p.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IAliveHandler;
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IBiddingHandler;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IQueryResultHandler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IHotPeerListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IOperatorPeerListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IBiddingHandlerStrategy;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IHotPeerStrategy;
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.bidding.IBiddingStrategy;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -31,11 +29,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 
 	private Thread socketListenerThread;
 	
-//	private Thread biddingHandlerThread;
-	
 	private Thread operatorPeerListenerThread;
-	
-
 	
 	private Thread aliveHandlerThread;
 	
@@ -45,8 +39,6 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	protected IOperatorPeerListener operatorPeerListener;
 	
-//	protected IBiddingHandler biddingHandler;
-	
 	protected IHotPeerListener hotPeerFinder;
 
 	protected ISocketServerListener socketServerListener;
@@ -55,16 +47,10 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	private Thread sourceListenerThread;
 	
-//	protected IBiddingStrategy biddingStrategy;
-	
 	protected IQueryResultHandler queryResultHandler;
 	
 	//TODO: Muss hier weg und in ein eigenes Plugin :-)
 	protected IHotPeerStrategy hotPeerStrategy;
-	
-//	protected IBiddingHandlerStrategy biddingHandlerStrategy;
-	
-
 	
 	protected boolean peerStarted = false;
 	
@@ -82,8 +68,10 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 
 	public void bindDistributionProvider(IDistributionProvider dp) {
 		System.out.println("Binde Distribution Provider");
+		
 		this.distributionProvider = dp;
-		this.distributionProvider.initializeService();
+
+		
 	}
 	
 	public void unbindDistributionProvider(IDistributionProvider dp) {
@@ -140,20 +128,8 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		}
 	}
 	
-
-
-//	public IBiddingHandlerStrategy getBiddingHandlerStrategy() {
-//		return biddingHandlerStrategy;
-//	}
-
 	public IHotPeerStrategy getHotPeerStrategy() {
 		return hotPeerStrategy;
-	}
-
-	private boolean guiEnabled = true;
-	
-	public boolean isGuiEnabled() {
-		return guiEnabled;
 	}
 
 	public ISocketServerListener getSocketServerListener() {
@@ -208,7 +184,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	}
 	
 	private void startGui(){
-		if (isGuiEnabled())
+//		if (isGuiEnabled())
 			gui = new MainWindow();
 	}
 	
@@ -231,7 +207,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	protected abstract void startNetwork();
 
 	public void startPeer() {
-		
+		System.out.println("startPeer()");
 		startNetwork();
 		init();
 		startGui();
@@ -242,6 +218,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		startOperatorPeerListener();
 		startAliveHandler();
 		startHotPeerFinder();
+		Log.setWindow(getGui());
 		System.out.println("Alle Dienste gestartet");
 	}
 
@@ -293,6 +270,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		if (socketListenerThread != null && socketListenerThread.isAlive()) {
 			socketListenerThread.interrupt();
 		}
+		
 		this.socketListenerThread = new Thread(socketServerListener);
 		socketListenerThread.start();
 	}
@@ -334,7 +312,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		stopNetwork();
 	}
 	
-	protected void stopServerSocketListener() {
-		this.socketListenerThread.interrupt();
-	}
+//	protected void stopServerSocketListener() {
+//		this.socketListenerThread.interrupt();
+//	}
 }

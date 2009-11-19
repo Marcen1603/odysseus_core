@@ -4,9 +4,14 @@ import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
 
+/**
+ * TODO: Über einen neuen Rückkanal Alive bestätigen
+ * 
+ * @author Mart Köhler
+ *
+ */
 public class AliveHandlerJxtaImpl implements IAliveHandler {
 
 	private final int WAIT_TIME = 10000;
@@ -17,8 +22,8 @@ public class AliveHandlerJxtaImpl implements IAliveHandler {
 		ExtendedPeerAdvertisement adv = new ExtendedPeerAdvertisement();
 		adv.setPeerName(AdministrationPeerJxtaImpl.getInstance()
 				.getNetPeerGroup().getPeerName());
-		adv.setPipe(((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl
-				.getInstance().getSocketServerListener())
+		adv.setPipe(AdministrationPeerJxtaImpl
+				.getInstance()
 				.getServerPipeAdvertisement().toString());
 		adv.setType("AdministrationPeer");
 		adv.setPeerId(AdministrationPeerJxtaImpl.getInstance()

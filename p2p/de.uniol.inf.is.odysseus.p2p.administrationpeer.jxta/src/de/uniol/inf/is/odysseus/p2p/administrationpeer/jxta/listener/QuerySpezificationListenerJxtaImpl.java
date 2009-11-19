@@ -9,9 +9,11 @@ import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IQuerySpezificationListener;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.logging.Log;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IThinPeerBiddingStrategy;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.MaxQueryBiddingStrategyJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryTranslationSpezification;
@@ -29,9 +31,14 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 	private int ADVS_PER_PEER = 6;
 	
 	private int WAIT_TIME = 6000;
+	
+	private IThinPeerBiddingStrategy biddingStrategy;
 
 	public QuerySpezificationListenerJxtaImpl() {
 		AdministrationPeerJxtaImpl.getInstance().getDiscoveryService().addDiscoveryListener(this);
+		//TODO: In Abhängigkeit der bereits laufenden Gebote und der laufenden Anfragen eine eigene Strategie?
+		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getActiveQueries());
+		
 	}
 
 	public void run() {
@@ -63,7 +70,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 						return;
 					}
 
-					if (AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().keySet().contains(adv.getQueryId())) {
+					if (AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().keySet().contains(adv.getQueryId()) || AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getActiveQueries().keySet().contains(adv.getQueryId())) {
 						//Diese Ausschreibung wurde schon gefunden und kann ignoriert werden
 						continue;
 					}
@@ -76,18 +83,17 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					q.setResponseSocketThinPeer(pipeAdv);
 					PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
 					
-					synchronized(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries()){
-						AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().put(adv
+					synchronized(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries()){
+						AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().put(adv
 							.getQueryId().toString(),q);
 						Log.addQuery(adv.getQueryId());
 						Log.logAction(adv.getQueryId(), "Anfrage gefunden !");
 					}
 					
-					//TODO: einkommentieren, war zu testzwecken auskommentiert
-//					if (biddingStrategy.bidding(q)){
-						MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(), pipeAdv, MessageTool.createMessage("Bidding", "query", adv.getQueryId(),  ((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getSocketServerListener()).getServerPipeAdvertisement(), peerAdv));
+					if (biddingStrategy.bidding(q)){
+						MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup(), pipeAdv, MessageTool.createMessage("Bidding", "query", adv.getQueryId(),  AdministrationPeerJxtaImpl.getInstance().getServerPipeAdvertisement(), peerAdv));
 						Log.logAction(adv.getQueryId(), "Für Anfrage beworben !");
-//					}
+					}
 					
 					
 					

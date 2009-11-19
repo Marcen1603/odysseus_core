@@ -10,7 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-public class MainWindow extends javax.swing.JFrame {
+import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
+
+public class MainWindow extends AbstractMainWindow {
 
 	/**
 	 * 
@@ -59,6 +61,7 @@ public class MainWindow extends javax.swing.JFrame {
 					tabs = new JTabbedPane();
 					jPanel1.add(tabs);
 					tabs.setBounds(12, 63, 750, 237);
+					
 				}
 			}
 			pack();
@@ -67,7 +70,7 @@ public class MainWindow extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}
-
+	@Override
 	public void addTab(String queryId) {
 		JPanel panel = new JPanel();
 
@@ -111,31 +114,31 @@ public class MainWindow extends javax.swing.JFrame {
 
 		tabs.addTab(queryId, panel);
 	}
-
+	@Override
 	public void addAction(String queryId, String action) {
 		listMessages.get(queryId).add(action, 0);
 	}
-
+	@Override
 	public void addEvent(String queryId, String event) {
 		listEvents.get(queryId).add(event, 0);
 	}
-
+	@Override
 	public void addSubplans(String queryId, int s) {
 		listSubplans.get(queryId).setText(String.valueOf(s));
 	}
-
+	@Override
 	public void addStatus(String queryId, String s) {
 		listStatus.get(queryId).setText(s);
 	}
-
+	@Override
 	public void addBids(String queryId, String s) {
 		listBids.get(queryId).setText(s);
 	}
-
+	@Override
 	public void addSplitting(String queryId, String s) {
 		listSplitting.get(queryId).setText(s);
 	}
-
+	@Override
 	public void removeQuery(String queryId) {
 		for (int i = 0; i < tabs.getTabCount(); i++) {
 			if (tabs.getTitleAt(i).equals(queryId)) {
@@ -150,6 +153,30 @@ public class MainWindow extends javax.swing.JFrame {
 		listStatus.remove(queryId);
 		listBids.remove(queryId);
 
+	}
+
+	@Override
+	public void addOperation(String queryId, String operation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addScheduler(String queryId, String scheduler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addSchedulerStrategy(String queryId, String strategy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isQuery(String queryId) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

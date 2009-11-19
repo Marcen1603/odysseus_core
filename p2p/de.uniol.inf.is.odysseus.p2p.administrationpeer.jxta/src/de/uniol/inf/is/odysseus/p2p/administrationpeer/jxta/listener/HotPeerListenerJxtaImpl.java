@@ -36,8 +36,8 @@ public class HotPeerListenerJxtaImpl implements IHotPeerListener {
 			}
 			if (AdministrationPeerJxtaImpl.getInstance().getOperatorPeers().size()==0)
 				continue;
-			for (String s : AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().keySet()){
-				QueryJxtaImpl q = (QueryJxtaImpl)AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().get(s);
+			for (String s : AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().keySet()){
+				QueryJxtaImpl q = (QueryJxtaImpl)AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().get(s);
 				for (Subplan subPlan : q.getSubPlans().values()){
 					if (subPlan.getPeerId().equals("") || subPlan.getStatus()!=SubplanStatus.CLOSED){
 						continue;
@@ -80,7 +80,7 @@ public class HotPeerListenerJxtaImpl implements IHotPeerListener {
 								//Ende neues Advertisement setzen
 													
 								HashMap<String, Object> messageElements = new HashMap<String, Object>();
-								messageElements.put("queryId", AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getQueries().get(s).getId());
+								messageElements.put("queryId", AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().get(s).getId());
 								messageElements.put("result", "granted");
 								messageElements.put("operatorplan", ao);
 								
