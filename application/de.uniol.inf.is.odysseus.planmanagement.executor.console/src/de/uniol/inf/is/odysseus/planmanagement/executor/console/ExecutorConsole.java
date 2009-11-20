@@ -530,6 +530,33 @@ public class ExecutorConsole implements CommandProvider,
 				+ (useLoadShedding ? "activated" : "deactivated"));
 
 	}	
+	
+	@Help(description = "<on|off> - Adds or removes optimized post priorsation functionality.")
+	public void _addExtendedPostPriorisation(CommandInterpreter ci) {
+		boolean useExtPostPriorisation = false;
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		try {
+			if (args != null && args.length >= 1) {
+
+				useExtPostPriorisation = toBoolean(args[0]);
+
+				if(useExtPostPriorisation) {
+					trafoConfigParam.getValue().setOption("useExtendedPostPriorisation", true);
+				} else {
+					if(trafoConfigParam.getValue().getOption("useExtendedPostPriorisation") != null) {
+						trafoConfigParam.getValue().setOption("useExtendedPostPriorisation", null);
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+		ci.println("Extended Post Priorisation is "
+				+ (useExtPostPriorisation ? "activated" : "deactivated"));
+
+	}		
 
 	@SuppressWarnings("unchecked")
 	@Help(description = "dump physical plan of all registered roots")

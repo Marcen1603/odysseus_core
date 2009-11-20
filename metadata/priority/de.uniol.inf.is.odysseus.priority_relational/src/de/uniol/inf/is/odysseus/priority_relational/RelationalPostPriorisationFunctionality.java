@@ -18,11 +18,11 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 
 	public static final String OPERATOR_EQUALS = "==";
 	
-	private List<IPredicate<? super T>> joinFragment = null;
+	protected List<IPredicate<? super T>> joinFragment = null;
 
-	private boolean deactivate = false;
+	protected boolean deactivate = false;
 	
-	private Byte currentPriority = null;
+	protected Byte currentPriority = null;
 
 	public List<IPredicate<? super T>> getJoinFragment() {
 		return joinFragment;
@@ -34,7 +34,7 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 
 	private List<IMetaAttributeContainer<? extends IPriority>> priorisationIntervals = new ArrayList<IMetaAttributeContainer<? extends IPriority>>();
 
-	private IPostPriorisationPipe<T> pipe;
+	protected IPostPriorisationPipe<T> pipe;
 
 	public RelationalPostPriorisationFunctionality(IPostPriorisationPipe<T> pipe) {
 		this.pipe = pipe;
