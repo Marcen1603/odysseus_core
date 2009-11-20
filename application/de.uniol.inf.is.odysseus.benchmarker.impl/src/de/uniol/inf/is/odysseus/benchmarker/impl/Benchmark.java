@@ -39,6 +39,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private List<UnsortedPair<String, String>> queries;
 	private boolean usePunctuations;
 	private boolean useLoadShedding;
+	private boolean extendedPostPriorisation = false;
 	private boolean useBenchmarkMemUsage = false;
 	
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
@@ -113,6 +114,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
+		trafoConfig.setOption("useExtendedPostPriorisation", this.extendedPostPriorisation);
 		
 		try {
 			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
@@ -255,6 +257,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			return avgMemListener.getMemUsageBufferStatistics();
 		}
 		return null;
+	}
+	
+	@Override
+	public void setExtendedPostPriorisation(boolean b) {
+		this.extendedPostPriorisation = b;	
 	}
 
 }

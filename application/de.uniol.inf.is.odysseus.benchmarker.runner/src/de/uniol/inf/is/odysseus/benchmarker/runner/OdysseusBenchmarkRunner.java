@@ -101,6 +101,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String PRIORITY = "-priority";
 	private static final String PUNCTUATIONS = "-punctuations";
 	private static final String LOAD_SHEDDING = "-load_shedding";
+	private static final String EXTENDED_POSTPRIORISATION = "-extPostPOs";
 	private static final String OUT = "-out";
 	private static final String WAIT = "-wait";
 	private static final String MEMORY_USAGE = "-memUsage";
@@ -146,6 +147,10 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 		if (arguments.get(PUNCTUATIONS)) {
 			benchmark.setUsePunctuations(true);
+		}
+		
+		if(arguments.get(EXTENDED_POSTPRIORISATION)) {
+			benchmark.setExtendedPostPriorisation(true);
 		}
 
 		if (arguments.get(LOAD_SHEDDING)) {
@@ -201,6 +206,9 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 		arguments
 				.addBoolean(LOAD_SHEDDING, " - enables usage of load shedding");
+		
+		arguments
+		.addBoolean(LOAD_SHEDDING, " - enables extended post priorisation");		
 		
 		arguments.addBoolean(MEMORY_USAGE, " - activates the listener to benchmark memory usage");		
 
