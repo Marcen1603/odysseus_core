@@ -208,7 +208,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 				.addBoolean(LOAD_SHEDDING, " - enables usage of load shedding");
 		
 		arguments
-		.addBoolean(LOAD_SHEDDING, " - enables extended post priorisation");		
+		.addBoolean(EXTENDED_POSTPRIORISATION, " - enables extended post priorisation");		
 		
 		arguments.addBoolean(MEMORY_USAGE, " - activates the listener to benchmark memory usage");		
 
