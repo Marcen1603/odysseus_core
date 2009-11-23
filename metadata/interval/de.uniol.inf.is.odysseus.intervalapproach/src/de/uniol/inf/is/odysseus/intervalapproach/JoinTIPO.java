@@ -112,7 +112,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
-
+		
 		storage.setCurrentPort(port);
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
@@ -154,8 +154,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			T newElement = merge(object, next, order);
 			transferFunction.transfer(newElement);
 		}
-
-		storage.updatePunctuationData(object);
+		
+		synchronized (this.areas) {
+			storage.updatePunctuationData(object);
+		}
+		
 	}
 
 	private T merge(T left, T right, Order order) {
@@ -229,31 +232,37 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 		Order order = Order.fromOrdinal(storage.getCurrentPort());
 
-		Iterator<T> priorities = areas[storage.getCurrentPort()].iterator();
+		synchronized (areas[storage.getCurrentPort()]) {
 
-		if (creationFunction != null) {
-			// Kann die Punctuation keinem priorisierten Element mehr zugeordnet
-			// werden, braucht man sie nicht
-			// mehr fuers Join.
-			boolean finished = true;
+			Iterator<T> priorities = areas[storage.getCurrentPort()].iterator();
 
-			while (priorities.hasNext()) {
-				T element = priorities.next();
+			if (creationFunction != null) {
+				// Kann die Punctuation keinem priorisierten Element mehr
+				// zugeordnet
+				// werden, braucht man sie nicht
+				// mehr fuers Join.
+				boolean finished = true;
 
-				if (creationFunction.hasMetadata(element)
-						&& element.getMetadata().getStart().equals(punctuation)) {
-					IMetaAttributeContainer<?> purgeInterval = creationFunction
-							.createMetadata((T) element);
-					areas[storage.getCurrentPort() ^ 1].purgeElements(
-							(T) purgeInterval, order);
-					element = (T) purgeInterval;
-					finished = false;
+				while (priorities.hasNext()) {
+					T element = priorities.next();
+
+					if (creationFunction.hasMetadata(element)
+							&& element.getMetadata().getStart().equals(
+									punctuation)) {
+						IMetaAttributeContainer<?> purgeInterval = creationFunction
+								.createMetadata((T) element.clone());
+						synchronized (areas[storage.getCurrentPort() ^ 1]) {
+								areas[storage.getCurrentPort() ^ 1].purgeElements(
+									(T) purgeInterval, order);
+							finished = false;
+						}
+					}
 				}
+				return finished;
 			}
-			return finished;
 		}
 		return false;
-		
+
 	}
 
 }
