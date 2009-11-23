@@ -2,8 +2,7 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.AdministrationPeerJxtaImpl;
+//import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 
 public class Activator implements BundleActivator {
 	private AbstractAdministrationPeer administrationPeer;

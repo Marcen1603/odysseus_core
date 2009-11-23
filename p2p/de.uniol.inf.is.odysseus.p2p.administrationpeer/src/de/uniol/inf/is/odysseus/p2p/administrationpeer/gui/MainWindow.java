@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.gui;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.List;
+import java.awt.event.ActionEvent;
 import java.util.HashMap;
 
 import javax.swing.JLabel;
@@ -177,6 +178,30 @@ public class MainWindow extends AbstractMainWindow {
 	public boolean isQuery(String queryId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addAdminPeer(String queryId, String adminPeer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addResult(String queryId, Object o) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addTab(String queryId, String queryAsString) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
