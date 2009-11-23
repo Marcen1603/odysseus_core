@@ -2,6 +2,5 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta">
    <implementation class="de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor" name="IAdvancedExecutor" policy="static" unbind="unbindExecutor"/>
-   <reference bind="bindTransformation" cardinality="1..1" interface="de.uniol.inf.is.odysseus.base.ITransformation" name="ITransformation" policy="static" unbind="unbindTransformation"/>
-   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.ICompiler" name="ICompiler" policy="static" unbind="unbindCompiler"/>
+   <reference bind="bindDistributionClient" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient" name="IDistributionClient" policy="static" unbind="unbindDistributionClient"/>
 </scr:component>

@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 
 /**
  * Alle Quellen werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und in regelmaessigen Abstaenden ausgeschrieben.

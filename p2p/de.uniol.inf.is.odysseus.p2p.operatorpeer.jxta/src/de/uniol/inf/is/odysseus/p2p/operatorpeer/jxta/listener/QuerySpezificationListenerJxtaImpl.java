@@ -12,12 +12,11 @@ import net.jxta.protocol.DiscoveryResponseMsg;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.QuerySpezificationHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 
 public class QuerySpezificationListenerJxtaImpl implements
 		IQuerySpezificationListener, DiscoveryListener {
 
-	private Map<String,QueryExecutionSpezification> qes = new HashMap<String, QueryExecutionSpezification>();
 	
 	public QuerySpezificationListenerJxtaImpl() {
 

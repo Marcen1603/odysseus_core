@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.SocketServerListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 
 public class AliveHandlerJxtaImpl implements IAliveHandler {
 	private final int WAIT_TIME = 10000;
@@ -16,9 +15,8 @@ public class AliveHandlerJxtaImpl implements IAliveHandler {
 		ExtendedPeerAdvertisement adv = new ExtendedPeerAdvertisement();
 		adv.setPeerName(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
 				.getPeerName());
-		adv.setPipe(((SocketServerListenerJxtaImpl) OperatorPeerJxtaImpl
-				.getInstance().getSocketServerListener())
-				.getServerPipeAdvertisement().toString());
+		adv.setPipe( OperatorPeerJxtaImpl
+				.getInstance().getServerPipeAdvertisement().toString());
 		adv.setType("OperatorPeer");
 		adv.setPeerId(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
 				.getPeerID().toString());

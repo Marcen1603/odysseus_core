@@ -15,15 +15,13 @@ import net.jxta.protocol.PipeAdvertisement;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 
-import de.uniol.inf.is.odysseus.p2p.Query;
-import de.uniol.inf.is.odysseus.p2p.Subplan;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IQuerySpezificationHandler;
-import de.uniol.inf.is.odysseus.p2p.Log;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.SocketServerListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 
 /**
  * Gefundene Anfragen werden hier behandelt
@@ -40,6 +38,7 @@ public class QuerySpezificationHandlerJxtaImpl implements IQuerySpezificationHan
 		if (OperatorPeerJxtaImpl.getInstance().getQueries().keySet().contains(
 				adv.getQueryId())) {
 			if(OperatorPeerJxtaImpl.getInstance().getQueries().get(adv.getQueryId()).getSubPlans().containsKey(adv.getSubplanId())) {
+				System.out.println("hab ich schon");
 				return;
 			}
 		}
@@ -51,14 +50,12 @@ public class QuerySpezificationHandlerJxtaImpl implements IQuerySpezificationHan
 			xml = (XMLDocument) StructuredDocumentFactory
 					.newStructuredDocument(MimeMediaType.XMLUTF8, sr);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		pipeAdv = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(xml);
-		PipeAdvertisement pipe = ((SocketServerListenerJxtaImpl) OperatorPeerJxtaImpl
-				.getInstance().getSocketServerListener())
-				.getServerPipeAdvertisement();
+		PipeAdvertisement pipe =  OperatorPeerJxtaImpl
+				.getInstance().getServerPipeAdvertisement();
 		synchronized (OperatorPeerJxtaImpl.getInstance().getQueries()) {
 			//Existiert die Query bereits
 			if(OperatorPeerJxtaImpl.getInstance().getQueries().get(adv.getQueryId())==null) {
@@ -87,7 +84,6 @@ public class QuerySpezificationHandlerJxtaImpl implements IQuerySpezificationHan
 			    ex.printStackTrace();
 			  }
 			  OperatorPeerJxtaImpl.getInstance().getQueries().get(adv.getQueryId()).getSubPlans().put(adv.getSubplanId(), (Subplan) obj);
-			HashMap<String, Query> test = OperatorPeerJxtaImpl.getInstance().getQueries();
 		}
 
 
@@ -100,13 +96,14 @@ public class QuerySpezificationHandlerJxtaImpl implements IQuerySpezificationHan
 //				null)) {
 		
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
+		messageElements.put("ExecutionBid", "positive");
 		messageElements.put("queryId", adv.getQueryId());
 		messageElements.put("peerId", OperatorPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerID().toString());
 		messageElements.put("subplanId", adv.getSubplanId());
 		messageElements.put("pipeAdvertisement", pipe);
 			MessageTool.sendMessage(OperatorPeerJxtaImpl.getInstance()
 					.getNetPeerGroup(), pipeAdv, MessageTool
-					.createSimpleMessage("ExecutionBid", messageElements));
+					.createSimpleMessage("BiddingProvider", messageElements));
 			Log.logAction(adv.getQueryId(), "Für Anfrageausführung beworben !");
 
 //		} else {

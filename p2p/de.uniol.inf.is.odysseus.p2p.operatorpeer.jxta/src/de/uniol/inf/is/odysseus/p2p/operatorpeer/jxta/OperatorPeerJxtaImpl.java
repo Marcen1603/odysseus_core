@@ -14,22 +14,19 @@ import net.jxta.pipe.PipeService;
 import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
-//import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGenerator;
-//import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
-//import de.uniol.inf.is.odysseus.nexmark.simulation.NexmarkServer;
+import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.QueryResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.QuerySpezificationListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.SocketServerListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.strategy.bidding.MaxQueryBiddingStrategyJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.Query;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.CacheTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryTranslationSpezification;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
@@ -79,9 +76,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	
 	private static final String HTTP_INTERFACE_ADDRESS = "";
 	
-//	private static final String trafoMode = "PNID";
-	
-	private static final String trafoMode = "TI";
 	
 	public DiscoveryService discoveryService;
 
@@ -95,7 +89,9 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	public  HashMap<String, ILogicalOperator> plans = new HashMap<String, ILogicalOperator>();
 
-	public  HashMap<String, Query> queries = new HashMap<String, Query>();
+
+
+	private PipeAdvertisement serverPipeAdvertisement;
 	
 	
 	public void activate() {
@@ -117,13 +113,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	}
 	
 	
-	
-	public static String getTrafoMode() {
-		return trafoMode;
-	}
-
-	
-
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
@@ -148,9 +137,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		return plans;
 	}
 
-	public HashMap<String, Query> getQueries() {
-		return queries;
-	}
 
 	@Override
 	protected void initQuerySpezificationFinder() {
@@ -236,7 +222,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 					manager.getConfigurator().addSeedRelay(
 							new URI(TCP_RELAY_URI));
 				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -305,37 +290,12 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	}
 
 	@Override
-	protected void initBiddingStrategy() {
-		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl();
-		
-	}
-
-	@Override
-	protected void initQueryResultHandler() {
-		this.queryResultHandler = new QueryResultHandlerJxtaImpl(getTrafo());
-		
-	}
-
-	@Override
 	protected void initSources(AbstractOperatorPeer aPeer) {
-//		NexmarkServer server = new NexmarkServer(<personPort>, <auctionPort>, <bidPort>, <categoryPort>, <elementLimit>);
-		
-//		NexmarkServer server = null;
-//		try {
-//			server = new NexmarkServer(65430,65431,65432,65433,10000,true);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	    server.start();
 	    
-//		getSources().put("nexmark:person", "CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430");
 		getSources().put("nexmark:person2", "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440");
 		getSources().put("nexmark:auction2", "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441");
 		getSources().put("nexmark:bid2", "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442");
 		
-//		getSources().put("nexmark:bid", "CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432");
-//		q[2] = "CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65431";
-//		q[3] = "CREATE STREAM nexmark:category (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65433";
 		for (String s : getSources().values()) {
 			try {		
 				aPeer.getExecutor().addQuery(s, "CQL", new ParameterPriority(2) );
@@ -347,18 +307,40 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			}
 		}
 
-		//Beispielhaft Nexmark Server starten und Sourcen hinzufügen
-		
-
-//		sources.add("nexmark:auction");
-//		sources.add("nexmark:bid");
-//		sources.add("nexmark:category");
 	}
 
 
+
+	
 	@Override
 	protected void initSourceHandler(AbstractOperatorPeer aPeer) {
 		System.out.println("SourceHandler initialisieren");
 		this.sourceHandler = new SourceHandlerJxtaImpl((OperatorPeerJxtaImpl)aPeer);
 		
-	}}
+	}
+	
+	@Override
+	protected void initServerResponseConnection() {
+		setServerPipeAdvertisement(AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
+//		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory
+//		.newAdvertisement(PipeAdvertisement.getAdvertisementType());
+//		advertisement.setPipeID(IDFactory.newPipeID(OperatorPeerJxtaImpl.getInstance()
+//		.getNetPeerGroup().getPeerGroupID()));
+//		advertisement.setType(PipeService.UnicastType);
+//		advertisement.setName("serverPipe");
+//		return advertisement;
+		
+	}
+
+	private void setServerPipeAdvertisement(
+			PipeAdvertisement serverPipeAdvertisement) {
+		this.serverPipeAdvertisement = serverPipeAdvertisement;
+		
+	}
+
+	public PipeAdvertisement getServerPipeAdvertisement() {
+		return this.serverPipeAdvertisement;
+
+	}
+	
+}
