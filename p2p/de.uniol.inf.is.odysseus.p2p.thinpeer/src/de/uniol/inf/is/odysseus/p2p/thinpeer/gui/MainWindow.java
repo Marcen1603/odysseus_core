@@ -18,12 +18,19 @@ import javax.swing.JTextArea;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-
+import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.ThinPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 
-public class MainWindow extends javax.swing.JFrame implements ActionListener {
+public class MainWindow extends AbstractMainWindow implements ActionListener {
+	
+	//Thin-Peer spezifisch
+	protected JList adminPeers;
+	protected JLabel adminPeersLabel;
+	protected JList querys;
+	protected JList sources;
+	protected JProgressBar sourcesProgress;
+	protected JTabbedPane tabs;
 
 	/**
 	 * 
@@ -42,10 +49,6 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 	}
 
 	private JProgressBar adminPeerProgress;
-
-	private JList adminPeers;
-
-	private JLabel adminPeersLabel;
 	private JButton close;
 	private JButton doQuery;
 	private JLabel header;
@@ -56,17 +59,13 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 	private JLabel makeQuery;
 	private JTextArea query;
 	private JPanel queryPanel;
-	private JList querys;
 	private JLabel querysLabel;
 	private JProgressBar querysProgress;
-	private JList sources;
 	private JLabel sourcesLabel;
-	private JProgressBar sourcesProgress;
-	private JTabbedPane tabs;
 	AbstractThinPeer thinPeer;
 
 	public MainWindow() {
-		super();
+		super("Odysseus Thin-Peer");
 		initGUI();
 	}
 
@@ -84,9 +83,9 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 				&& !adminPeers.isSelectionEmpty()) {
 			String adminPeer = "";
 			ExtendedPeerAdvertisement adv = null;
-			for (String s : ThinPeerJxtaImpl.getInstance().getAdminPeers()
+			for (String s : thinPeer.getAdminPeers()
 					.keySet()) {
-				adv = ThinPeerJxtaImpl.getInstance().getAdminPeers().get(s);
+				adv = (ExtendedPeerAdvertisement) thinPeer.getAdminPeers().get(s);
 				if (adv.getPeerName().equals(
 						"AdministrationPeer_"
 								+ adminPeers.getSelectedValue().toString())) {
@@ -103,12 +102,12 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 		}
 
 	}
-
+	@Override
 	public void addResult(String queryId, Object o) {
 		List l = listResults.get(queryId);
 		l.add(o.toString(), 0);
 	}
-
+	@Override
 	public void addTab(String queryId, String queryAsString) {
 		jPanel1 = new JPanel();
 		List l = new List();
@@ -139,12 +138,13 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 		jPanel1.setSize(900, 373);
 		jPanel1.add(information);
 	}
-
+	@Override
 	public void addAdminPeer(String queryId, String adminPeer) {
 		JLabel label = listAdminPeer.get(queryId);
 		label.setText(adminPeer);
 	}
 
+	@Override
 	public void addStatus(String queryId, String status) {
 		JLabel label = listStatus.get(queryId);
 		label.setText(status);
@@ -153,23 +153,18 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 	public JProgressBar getAdminPeerProgress() {
 		return adminPeerProgress;
 	}
-
 	public JList getAdminPeers() {
 		return adminPeers;
 	}
-
 	public JLabel getAdminPeersLabel() {
 		return adminPeersLabel;
 	}
-
 	public JList getQuerys() {
 		return querys;
 	}
-
 	public JList getSources() {
 		return sources;
 	}
-
 	public JProgressBar getSourcesProgress() {
 		return sourcesProgress;
 	}
@@ -326,6 +321,72 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
 
 	public void setSourcesProgress(JProgressBar sourcesProgress) {
 		this.sourcesProgress = sourcesProgress;
+	}
+
+	@Override
+	public void addAction(String queryId, String action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addBids(String queryId, String s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addEvent(String queryId, String event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addOperation(String queryId, String operation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addScheduler(String queryId, String scheduler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addSchedulerStrategy(String queryId, String strategy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addSplitting(String queryId, String s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addSubplans(String queryId, int s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addTab(String queryId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isQuery(String queryId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void removeQuery(String queryId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

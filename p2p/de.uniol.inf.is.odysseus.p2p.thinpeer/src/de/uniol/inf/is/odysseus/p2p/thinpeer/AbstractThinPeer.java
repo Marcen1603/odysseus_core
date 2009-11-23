@@ -1,16 +1,18 @@
 package de.uniol.inf.is.odysseus.p2p.thinpeer;
 
-import de.uniol.inf.is.odysseus.p2p.IPeer;
+import java.util.HashMap;
+
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
+import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceListener;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.peerImpl.jxta.strategy.RandomIdGenerator;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IBiddingHandlerStrategy;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 
 public abstract class AbstractThinPeer implements IPeer {
 
@@ -41,6 +43,13 @@ public abstract class AbstractThinPeer implements IPeer {
 	protected IQueryPublisher queryPublisher;
 
 	protected IBiddingHandlerStrategy biddingHandlerStrategy;
+	
+	public static HashMap<String,Object> adminPeers;
+	
+	
+	public HashMap<String,Object> getAdminPeers() {
+		return adminPeers;
+	}
 
 	public MainWindow getGui() {
 		return gui;
@@ -54,6 +63,7 @@ public abstract class AbstractThinPeer implements IPeer {
 		gui = new MainWindow(this);
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
+		Log.setWindow(getGui());
 		Thread t = new Thread(guiUpdater);
 		t.start();
 	}
@@ -126,6 +136,7 @@ public abstract class AbstractThinPeer implements IPeer {
 		initSourceListener();
 		initIdGenerator();
 		initBiddingHandlerStrategy();
+		initAdminPeerList();
 	}
 
 	public ISocketServerListener getSocketServerListener() {
@@ -137,10 +148,11 @@ public abstract class AbstractThinPeer implements IPeer {
 		this.socketServerListener = socketServerListener;
 	}
 
-	protected void initIdGenerator() {
-		this.idGenerator = new RandomIdGenerator();
-	}
 
+	protected abstract void initAdminPeerList();
+	
+	protected abstract void initIdGenerator();
+	
 	protected abstract void initAdministrationPeerListener();
 
 	protected abstract void initQueryBiddingHandler();
