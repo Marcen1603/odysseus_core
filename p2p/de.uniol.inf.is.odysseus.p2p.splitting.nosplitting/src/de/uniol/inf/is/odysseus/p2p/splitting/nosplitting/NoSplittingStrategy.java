@@ -2,22 +2,15 @@ package de.uniol.inf.is.odysseus.p2p.splitting.nosplitting;
 
 import java.util.ArrayList;
 
-import org.w3c.dom.views.AbstractView;
-
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
-import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.p2p.P2PSourceAO;
-import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 
 public class NoSplittingStrategy extends
 		AbstractSplittingStrategy {
@@ -28,6 +21,7 @@ public class NoSplittingStrategy extends
 
 	public NoSplittingStrategy() {
 		super();
+		System.out.println("instanz von splitting");
 		this.splitList = new ArrayList<AbstractLogicalOperator>();
 	}
 

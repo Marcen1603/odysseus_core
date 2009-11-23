@@ -6,4 +6,5 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 
 public interface IRefinementStrategy {
 	public ArrayList<AbstractLogicalOperator> refinePlan(ArrayList<AbstractLogicalOperator> ao);
+	public String getName();
 }
