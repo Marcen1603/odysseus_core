@@ -5,27 +5,24 @@ import java.util.HashMap;
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.Bid;
-import de.uniol.inf.is.odysseus.p2p.Query;
-import de.uniol.inf.is.odysseus.p2p.Subplan;
-import de.uniol.inf.is.odysseus.p2p.Subplan.SubplanStatus;
-import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.EventListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.IEventListener;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Bid;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan.SubplanStatus;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.SubplanJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 
 public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 
 	int WAIT_TIME = 10000;
 	private HashMap<String, Query> queries;
-	private IEventListener eventListener;
 	private String events;
 
-	public BiddingHandlerJxtaImpl(HashMap<String, Query> queries, String events, IEventListener eventListener) {
+	public BiddingHandlerJxtaImpl(HashMap<String, Query> queries, String events) {
 		this.queries = queries;
-		this.eventListener = eventListener;
 		this.events = events;
 	}
 
@@ -79,11 +76,9 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 					messageElements.put("subplanId", subplan.getId());
 					messageElements.put("result", "granted");
 					messageElements.put("events", getEvents());
-					messageElements.put("pipeAdvertisement", ((EventListenerJxtaImpl) getEventListener())
-									.getPipeAdv());
-					
 					Message response = MessageTool.createSimpleMessage(
-							"QueryResult", messageElements);
+							"BiddingClient", messageElements);
+					Log.addEvent(q.getId(), "Sende Zusage für Teilplan "+subplan.getId());
 					// Sende die Zusage
 					MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), opPeer, response);
 					
@@ -154,10 +149,6 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 		// TODO: Erstmal irgendein Bid zurückgeben, in Strategie auslagern.
 		
 		return (BidJxtaImpl) biddings.get(0);
-	}
-
-	public IEventListener getEventListener() {
-		return eventListener;
 	}
 
 	public String getEvents() {

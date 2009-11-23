@@ -4,15 +4,18 @@ Bundle-Name: Bidding Provider
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.distribution.provider,
  de.uniol.inf.is.odysseus.p2p.gui,
  de.uniol.inf.is.odysseus.p2p.jxta,
- de.uniol.inf.is.odysseus.p2p.utils.jxta,
- de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements,
+ de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
+ de.uniol.inf.is.odysseus.p2p.jxta.utils,
+ de.uniol.inf.is.odysseus.p2p.logicaloperator,
+ de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.queryhandling,
  net.jxta,
  net.jxta.access,
  net.jxta.codat,
@@ -39,5 +42,5 @@ Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  net.jxta.util,
  net.jxta.util.documentSerializable,
  org.osgi.framework;version="1.3.0"
-Service-Component: OSGI-INF/BiddingProvider.xml
+Service-Component: OSGI-INF/BiddingProvider.xml, OSGI-INF/EventHandler.xml, OSGI-INF/BiddingMessageResultHandler.xml
 Require-Bundle: Apache_Commons_Codec;bundle-version="1.0.0"

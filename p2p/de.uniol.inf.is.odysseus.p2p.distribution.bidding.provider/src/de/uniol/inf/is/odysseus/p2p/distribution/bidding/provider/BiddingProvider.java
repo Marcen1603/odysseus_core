@@ -4,56 +4,43 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
+import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
-
 import org.apache.commons.codec.binary.Base64OutputStream;
 
 
-import de.uniol.inf.is.odysseus.p2p.IQueryResultHandler;
-import de.uniol.inf.is.odysseus.p2p.Log;
-import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
-import de.uniol.inf.is.odysseus.p2p.Query;
-import de.uniol.inf.is.odysseus.p2p.Subplan;
-import de.uniol.inf.is.odysseus.p2p.Query.Status;
-import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.BiddingHandlerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.IBiddingHandler;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
-import de.uniol.inf.is.odysseus.p2p.distribution.provider.IServerSocketConnectionHandler;
+import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.BiddingHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.BiddingMessageResultHandler;
+import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.AdvertisementTools;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 
 public class BiddingProvider extends AbstractDistributionProvider {
 
 	private Thread biddingHandlerThread;
 	private Thread eventListenerThread;
 	private IBiddingHandler biddingHandler;
-//	private IThinPeerBiddingStrategy biddingStrategy;
-	protected IEventListener eventListener;
 	private String events =  "OpenInit,OpenDone,ProcessInit,ProcessDone,ProcessInitNeg,ProcessDoneNeg,PushInit,PushDone,PushInitNeg,PushDoneNeg,Done" ;
-	private IServerSocketConnectionHandler connectionHandler;
-	private PipeAdvertisement serverPipeAdvertisement;
 	private DiscoveryService discoveryService;
-	private IQueryResultHandler queryResultHandler;
-	
-	public PipeAdvertisement getServerPipeAdvertisement() {
-		return serverPipeAdvertisement;
-	}
+	private IMessageHandler messageHandler;
+	public HashMap<String, Query> managedQueries = null;
 
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
-	}
-
-	public IQueryResultHandler getQueryResultHandler() {
-		return queryResultHandler;
 	}
 
 	@Override
@@ -62,31 +49,47 @@ public class BiddingProvider extends AbstractDistributionProvider {
 	}
 
 	public BiddingProvider() {
-		initializeService();
+		super();
+
+		this.setMessageHandler(new BiddingMessageResultHandler(getManagedQueries()));
 	}
 	
 	@Override
 	public void initializeService() {
 		System.out.println("Initialisiere Bidding Provider Dienste");
-			initEventListener();
+//			initEventListener();
 			initBiddingHandler();
-			initServerSocketConnectionHandler();
+			initMessageHandler();
+			
 	}
 	
-
-	private void initServerSocketConnectionHandler() {
-		this.connectionHandler = new ServerSocketConnectionHandler(this);
+	@Override
+	public HashMap<String, Query> getManagedQueries() {
+		return managedQueries;
 	}
 
-	@Override
-	public void startService() {
-		startEventListener();
-		startBiddingHandler();
+	public void setManagedQueries(HashMap<String, Query> managedQueries) {
+		this.managedQueries = managedQueries;
+	}
+
+	private void startDiscoveryService() {
+		this.discoveryService = PeerGroupTool.getPeerGroup().getDiscoveryService();
+	}
+
+	public void initMessageHandler() {
+		this.setMessageHandler(new BiddingMessageResultHandler(getManagedQueries()));
 		
 	}
 
 	@Override
-	public void distributePlan(Query query) {
+	public void startService() {
+//		startEventListener();
+		startBiddingHandler();
+		startDiscoveryService();
+	}
+
+	@Override
+	public void distributePlan(Query query, Object serverResponse) {
 		// get("1"), weil die subpläne von den senken zu den quellen gehen und wir die p2psink für den thin-peer wollen
 		Subplan topSink = query.getSubPlans().get("1");
 		String pipeAdv = ((P2PSinkAO) topSink.getAo()).getAdv();
@@ -118,7 +121,7 @@ public class BiddingProvider extends AbstractDistributionProvider {
 								.getAdvertisementType());
 
 				adv
-						.setBiddingPipe(getServerPipeAdvertisement().toString());
+						.setBiddingPipe(((PipeAdvertisement)serverResponse).toString());
 				adv.setQueryId(query.getId());
 				adv.setSubplanId(subplan.getId());
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -167,30 +170,38 @@ public class BiddingProvider extends AbstractDistributionProvider {
 	biddingHandlerThread.start();
 	}
 
+	/**
+	 * In Intervallen werden die Gebote zu den Queries überprüft und Teilpläne den entsprechenden Operator-Peers zugewiesen.
+	 */
 	private void initBiddingHandler() {
-		this.biddingHandler = new BiddingHandlerJxtaImpl(getManagedQueries(), getEvents(), getEventListener());
+		this.biddingHandler = new BiddingHandlerJxtaImpl(getManagedQueries(), getEvents());
 	}
 	
 
-	private void initEventListener() {
-
-		eventListener = new EventListenerJxtaImpl();
-	}	
-	
-	private void startEventListener() {
-		if (eventListenerThread != null
-				&& eventListenerThread.isAlive()) {
-			eventListenerThread.interrupt();
-		}
-		//PipeAdvertisement muss noch gesetzt werden. Erst dann, wenn alle Dienste initialisiert wurden. PeerGroupTool wird erst nach der Service Einbindung initialisiert
-		((EventListenerJxtaImpl)eventListener).setPipeAdv(AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
-		eventListenerThread = new Thread(eventListener);
-		eventListenerThread.start();
-		
-	}
-	public IEventListener getEventListener() {
-		return eventListener;
-	}
+//	private void initEventListener() {
+//
+//		eventListener = new EventListenerJxtaImpl();
+//	}	
+//	
+//	private void startEventListener() {
+//		if (eventListenerThread != null
+//				&& eventListenerThread.isAlive()) {
+//			eventListenerThread.interrupt();
+//		}
+//		//PipeAdvertisement muss noch gesetzt werden. Erst dann, wenn alle Dienste initialisiert wurden. PeerGroupTool wird erst nach der Service Einbindung initialisiert
+//		try {
+//			PipeAdvertisement pa = AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup());
+//		((EventListenerJxtaImpl)eventListener).setPipeAdv(pa);
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		eventListenerThread = new Thread(eventListener);
+//		eventListenerThread.start();
+//		
+//	}
+//	public IEventListener getEventListener() {
+//		return eventListener;
+//	}
 
 	public String getEvents() {
 		return events;
@@ -200,24 +211,13 @@ public class BiddingProvider extends AbstractDistributionProvider {
 		this.events = events;
 	}
 
-	@Override
-	public IServerSocketConnectionHandler getServerSocketConnectionHandler() {
-		return connectionHandler;
+
+	public void setMessageHandler(IMessageHandler messageHandler) {
+		this.messageHandler = messageHandler;
 	}
 
-	@Override
-	public void setParameter(Object... param) {
-		for(Object elem : param) {
-			//aus ((SocketServerListenerJxtaImpl) AdministrationPeerJxtaImpl.getInstance().getSocketServerListener()).getServerPipeAdvertisement().toString()
-			if(elem instanceof PipeAdvertisement) {
-				this.serverPipeAdvertisement = (PipeAdvertisement)elem;
-			}
-			else if(elem instanceof DiscoveryService) {
-				this.discoveryService = (DiscoveryService)elem;
-			}
-			else if(elem instanceof IQueryResultHandler) {
-				this.queryResultHandler = (IQueryResultHandler)elem;
-			}
-		}
+	public IMessageHandler getMessageHandler() {
+		return messageHandler;
 	}
+
 }
