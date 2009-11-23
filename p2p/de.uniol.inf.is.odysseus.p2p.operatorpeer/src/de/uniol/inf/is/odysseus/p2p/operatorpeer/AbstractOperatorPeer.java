@@ -3,23 +3,22 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.base.ITransformation;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.p2p.IPeer;
-import de.uniol.inf.is.odysseus.p2p.IQueryResultHandler;
-import de.uniol.inf.is.odysseus.p2p.Log;
+import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IQuerySpezificationListener;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.ISocketServerListener;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.strategy.bidding.IBiddingStrategy;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
+import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 
 public abstract class AbstractOperatorPeer implements IPeer {
 
@@ -29,23 +28,13 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 	private Thread aliveHandlerThread;
 
-	protected IBiddingStrategy biddingStrategy;
-
 	protected MainWindow gui;
 	
-//	private boolean guiEnabled = true;
-
 	protected IPriority priority;
-
-	protected IQueryResultHandler queryResultHandler;
 
 	protected IQuerySpezificationListener querySpezificationFinder;
 
 	private Thread querySpezificationFinderThread;
-
-//	protected IScheduler scheduler;
-	
-//	private ISchedulingStrategyFactory schedulerStrategy;
 
 	private Thread socketListenerThread;
 
@@ -55,27 +44,52 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 	private Thread sourceHandlerThread;
 	
-	private ICompiler compiler;
+	protected HashMap<String, String> sources = new HashMap<String, String>();
 	
-	public ICompiler getCompiler() {
-		return compiler;
+	private Map<String, IMessageHandler> messageHandler = new HashMap<String, IMessageHandler>();
+	
+	public  HashMap<String, Query> queries = new HashMap<String, Query>();
+	
+	public HashMap<String, Query> getQueries() {
+		return queries;
 	}
 	
+//	public void bindMessageHandler(IMessageHandler messageHandler) {
+//		this.messageHandler.put(messageHandler.getInterestedNamespace(), messageHandler);
+//	}
+//	
+//	public void unbindMessageHandler(IMessageHandler messageHandler) {
+//		if(this.messageHandler.containsKey(messageHandler.getInterestedNamespace())) {
+//			this.messageHandler.remove(messageHandler.getInterestedNamespace());
+//		}
+//	}
 	
-	
-	public void bindCompiler(ICompiler compiler) {
-		this.compiler = compiler;
+	private IDistributionClient distributionClient;
 
-	}
-	
-	public void unbindCompiler(ICompiler compiler) {
-		if(this.compiler == compiler){
-			this.compiler = null;
+
+	public void bindDistributionClient(IDistributionClient dc) {
+		System.out.println("binde DistributionClient");
+		this.distributionClient = dc;
+		this.distributionClient.setManagedQueries(getQueries());
+		this.distributionClient.initializeService();
+		try {
+			getMessageHandler().put(this.distributionClient.getMessageHandler().getInterestedNamespace(), this.distributionClient.getMessageHandler());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
+	
+	public void unbindDistributionClient(IDistributionClient dc) {
+		if(this.distributionClient == dc) {
+			this.distributionClient = null;			
+		}
 
-//	protected ArrayList<String> sources = new ArrayList<String>();
-	protected HashMap<String, String> sources = new HashMap<String, String>();
+	}
+	
+	public IDistributionClient getDistributionClient() {
+		return distributionClient;
+	}
 
 	public HashMap<String, String> getSources() {
 		return sources;
@@ -85,11 +99,6 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		this.sources = sources;
 	}
 
-	protected ITransformation trafo;
-
-	public IBiddingStrategy getBiddingStrategy() {
-		return biddingStrategy;
-	}
 
 	public MainWindow getGui() {
 		return gui;
@@ -99,36 +108,13 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		return priority;
 	}
 
-	public IQueryResultHandler getQueryResultHandler() {
-		return queryResultHandler;
-	}
-
-//	public IScheduler getScheduler() {
-//		return scheduler;
-//	}
-
-//	public ISchedulingStrategyFactory getSchedulerStrategy() {
-//		return schedulerStrategy;
-//	}
-
-
-	
 	public ISocketServerListener getSocketServerListener() {
 		return socketServerListener;
 	}
 
-//	public ArrayList<String> getSources() {
-//		return sources;
-//	}
-
 	public Map<String, ISource<?>> getSourcesFromWrapperPlanFactory() {
 		return WrapperPlanFactory.getSources();
 	}
-
-	public ITransformation getTrafo() {
-		return trafo;
-	}
-	
 	
 	public IAdvancedExecutor getExecutor() {
 		return executor;
@@ -136,24 +122,17 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 
 	private void init() {
+		initServerResponseConnection();
 		Log.setWindow(getGui());
 		initSources(this);
-//		initWrapperPlanFactory();
-//		initTransformation();
 		initPriorityMode();
-		//TODO:Init Source, wenn wir tatsächlich Sources besitzen. Da die WrapperPlanFactory initialisiert wurde, ist diese folglich leer
 		initSourceHandler(this);
-//		initAliveHandler();
-		initBiddingStrategy();
 		initSocketServerListener(this);
-//		initSchedulerStrategy();
-//		initScheduler();
 		initExecutor();
 		initDistributor();
 		initPartitioner();
 		initMonitoring();
 		initQuerySpezificationFinder();
-		initQueryResultHandler();
 	}
 
 	private void initMonitoring() {
@@ -180,14 +159,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		System.out.println("Binde Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
-//		if(getExecutor()==null) {
-//			//synchronisieren von executor
-				this.executor = executor;
-//			if(getTrafo()!=null && !this.peerStarted) {
-//				this.peerStarted  = true;
-//				startPeer();
-//			}
-//		}
+		this.executor = executor;
 	}
 	
 	public void unbindExecutor(IAdvancedExecutor executor) {
@@ -196,87 +168,23 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		}
 	}
 	
-	public void bindTransformation(ITransformation transformation) {
-		System.out.println("Binde Transformation: "+ transformation.toString());
-//		if(getTrafo()==null) {
-				this.trafo = transformation;
-//			if(getExecutor()!=null && !this.peerStarted) {
-//				this.peerStarted  = true;
-//			}
-//		}
-	}
-	
-	public void unbindTransformation(ITransformation transformation) {
-		if(this.trafo == transformation) {
-			this.trafo = null;
-		}
-	}
 	
 	
 	protected abstract void initAliveHandler();
-
-	protected abstract void initBiddingStrategy();
 
 	protected void initPriorityMode() {
 		this.priority = new Priority();
 	}
 
-	protected abstract void initQueryResultHandler();
-
 	protected abstract void initQuerySpezificationFinder();
-
-	
-	
-	
-//	private void initScheduler() {
-//		// TODO: Hier jetzt direkt ein Executor verwenden
-//		//scheduler = new SingleThreadScheduler();
-//		
-//		
-////		IPartitioningStrategy partitionStrategy = new SplittBeforeIIteratable();
-////		scheduler = new SimpleThreadedScheduler(schedulerStrategy,
-////				new FullBufferPlacementStrategy(prioMode),
-////				partitionStrategy);
-//	}
-
-//	private void initSchedulerStrategy() {
-//		//this.schedulerStrategy = new RoundRobinFactory();
-//	}
 
 	protected abstract void initSocketServerListener(AbstractOperatorPeer aPeer);
 
 	protected abstract void initSourceHandler(AbstractOperatorPeer aPeer);
 
 	protected abstract void initSources(AbstractOperatorPeer aPeer);
-
 	
-//	//TODO: Als Dienst einfügen
-//	protected void initTransformation() {
-//		this.trafo = new DroolsTransformation();
-//	}
-
-//	protected void initWrapperPlanFactory() {
-//		try {
-////			WrapperPlanFactory.init();
-//			for(java.util.Map.Entry<String, ILogicalOperator> entry :  DataDictionary.getInstance().getViews()) {
-//				System.out.println("Entry: "+entry.getKey());
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-//	public boolean isGuiEnabled() {
-//		return guiEnabled;
-//	}
-
-//	protected void publishSources(){
-//		
-//	}
-
-	public void setBiddingStrategy(IBiddingStrategy biddingStrategy) {
-		this.biddingStrategy = biddingStrategy;
-	}
+	protected abstract void initServerResponseConnection();
 
 	public void setGui(MainWindow gui) {
 		this.gui = gui;
@@ -286,22 +194,12 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		this.priority = priority;
 	}
 
-//	public void setScheduler(IScheduler scheduler) {
-//		this.scheduler = scheduler;
-//	}
 
 	public void setSocketServerListener(
 			ISocketServerListener socketServerListener) {
 		this.socketServerListener = socketServerListener;
 	}
 
-//	public void setSources(ArrayList<String> sources) {
-//		this.sources = sources;
-//	}
-
-	public void setTrafo(ITransformation trafo) {
-		this.trafo = trafo;
-	}
 
 	protected void startAliveHandler() {
 		if (aliveHandlerThread != null && aliveHandlerThread.isAlive()) {
@@ -312,8 +210,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 	}
 
 	private void startGui() {
-//		if (isGuiEnabled())
-			gui = new MainWindow();
+		gui = new MainWindow();
 	}
 
 	protected abstract void startNetwork();
@@ -326,7 +223,6 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		startServerSocketListener();
 		startAliveHandler();
 		startQuerySpezificationFinder();
-//		publishSources();
 	}
 	
 	protected void startQuerySpezificationFinder() {
@@ -359,5 +255,17 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 	public void stopPeer() {
 		stopNetwork();
+	}
+
+
+
+	public void setMessageHandler(Map<String, IMessageHandler> messageHandler) {
+		this.messageHandler = messageHandler;
+	}
+
+
+
+	public Map<String, IMessageHandler> getMessageHandler() {
+		return messageHandler;
 	}
 }
