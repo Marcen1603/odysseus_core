@@ -1,13 +1,14 @@
-package de.uniol.inf.is.odysseus.p2p;
+package de.uniol.inf.is.odysseus.p2p.gui;
+
 
 import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
 
 
 public class Log {
-
-	
 	
 	private static AbstractMainWindow window;
+
+
 
 	public static void setWindow(AbstractMainWindow w) {
 		window = w;
@@ -82,6 +83,30 @@ public class Log {
 			getWindow().addSchedulerStrategy(
 					queryId, schedulerStrategy);
 
+	}
+
+	public static void addAdminPeer(String queryId, String adminPeerName) {
+		getWindow().addAdminPeer(queryId, adminPeerName);
+		
+	}
+
+	public static void addStatus(String queryId, String string) {
+		getWindow().addStatus(queryId, string);
+		
+	}
+
+	public static void addTab(String id, String query) {
+		getWindow().addTab(id, query);
+		
+	}
+
+	public static void addResult(String queryId, Object o) {
+		getWindow().addResult(queryId, o);
+		
+	}
+	
+	public static void addEvent(String queryId, String event) {
+		getWindow().addEvent(queryId, event);
 	}
 
 

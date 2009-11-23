@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.p2p;
+package de.uniol.inf.is.odysseus.p2p.queryhandling;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 
 public abstract class Query {
@@ -40,6 +41,8 @@ public abstract class Query {
 	private String query;
 	
 	private String language;
+	
+	private ILogicalOperator plan;
 	
 	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
 
@@ -143,5 +146,12 @@ public abstract class Query {
 
 		setQuery(queryID);
 		setId(queryID);
+	}
+	public ILogicalOperator getLogicalOperatorplan() {
+		return this.plan;
+	}
+	
+	public void setLogicalOperatorplan (ILogicalOperator plan) {
+		this.plan = plan;
 	}
 }

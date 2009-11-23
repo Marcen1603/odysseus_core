@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p;
+package de.uniol.inf.is.odysseus.p2p.queryhandling;
 
 import java.util.Date;
 

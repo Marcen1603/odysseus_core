@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p;
+package de.uniol.inf.is.odysseus.p2p.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 
