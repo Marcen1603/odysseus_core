@@ -10,10 +10,10 @@ import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IOperatorPeerListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 
 /**
- * Hier werden im Netzwerk gefundene Operator-Peers zu den bekannten hinzugefügts
+ * Hier werden im Netzwerk gefundene Operator-Peers zu den bekannten hinzugefügt
  * 
  * @author Mart Köhler
  *
@@ -44,7 +44,6 @@ public class OperatorPeerListenerJxtaImpl implements IOperatorPeerListener,
 						.getLocalAdvertisements(DiscoveryService.ADV, "type",
 								"OperatorPeer");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

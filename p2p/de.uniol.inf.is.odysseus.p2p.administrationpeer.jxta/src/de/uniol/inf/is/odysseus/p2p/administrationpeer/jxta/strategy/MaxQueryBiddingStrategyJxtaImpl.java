@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IThinPeerBiddingStrategy;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IThinPeerBiddingStrategy;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.Query;
-import de.uniol.inf.is.odysseus.p2p.Query.Status;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query.Status;
 
 public class MaxQueryBiddingStrategyJxtaImpl implements IThinPeerBiddingStrategy {
 	// Es soll nur geboten werden, wenn die Anzahl an Anfragen die schon

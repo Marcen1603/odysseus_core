@@ -7,15 +7,15 @@ import java.util.Set;
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IHotPeerListener;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.Subplan;
-import de.uniol.inf.is.odysseus.p2p.Subplan.SubplanStatus;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan.SubplanStatus;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.SubplanJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.AdvertisementTools;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 
 public class HotPeerListenerJxtaImpl implements IHotPeerListener {
 

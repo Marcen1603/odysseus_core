@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta;
 
-import java.awt.List;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
@@ -17,32 +15,22 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.handler.BiddingHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.QueryResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.HotPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.OperatorPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.QuerySpezificationListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SocketServerListenerJxtaImpl;
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SourceListenerJxtaImpl;
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.BiddingHandlerStrategyStandard;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.HotPeerStrategyRandom;
-//import de.uniol.inf.is.odysseus.p2p.administrationpeer.peerImpl.jxta.strategy.bidding.MaxQueryBiddingStrategyJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.AdvertisementTools;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.CacheTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryExecutionSpezification;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryTranslationSpezification;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
@@ -111,6 +99,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	private PipeAdvertisement serverPipeAdvertisement;
 	
+	
+	
 	public void setServerPipeAdvertisement(PipeAdvertisement serverPipeAdvertisement) {
 		this.serverPipeAdvertisement = serverPipeAdvertisement;
 	}
@@ -129,11 +119,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		
 
 		startPeer();
-		//nach startPeer, weil dann die nötigen Parameter initialisiert wurden
-		getDistributionProvider().setParameter(getServerPipeAdvertisement(), getDiscoveryService(), getQueryResultHandler());
-		//nicht in startPeer(), weil erst die Parameter korrekt gesetzt sein müssen, damit der Service funktioniert
-		//Da serverPipeAdvertisement Jxta spezifisch ist, muss die Behandlung hier stattfinden
-		getDistributionProvider().startService();
+
 		
 		
 //		try {
@@ -180,6 +166,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	
 	//für die korrekte Nutzung in OSGi muss der Konstruktor public sein. Damit der "Singleton" in weiteren Programmaufrufen unberührt bleibt, wurde noch die Instanz der Static Variablen zugewiesen. 
 	public AdministrationPeerJxtaImpl(){
+		System.out.println("instanz");
 		instance = this;
 	}
 	
@@ -218,11 +205,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	public HashMap<String, SourceAdvertisement> getSources() {
 		return sources;
 	}
-
-//	@Override
-//	protected void initBiddingHandler() {
-//		this.biddingHandler = new BiddingHandlerJxtaImpl();
-//	}
+	
+	
 
 	@Override
 	protected void initQuerySpezificationListener() {
@@ -231,8 +215,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	}
 
 	@Override
-	protected void initSocketServerListener() {
-		this.socketServerListener = new SocketServerListenerJxtaImpl();
+	protected void initSocketServerListener(AbstractAdministrationPeer aPeer) {
+		this.socketServerListener = new SocketServerListenerJxtaImpl(aPeer);
 
 	}
 
@@ -354,7 +338,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		}
 		
 		manager.waitForRendezvousConnection(CONNECTION_TIME);
-
 		netPeerGroup = manager.getNetPeerGroup();
 		System.out.println("Setze peergroup auf "+netPeerGroup);
 		PeerGroupTool.setPeerGroup(netPeerGroup);
@@ -380,7 +363,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 			discoveryService.publish(netPeerGroup.getPeerAdvertisement(),13000,13000);
 			discoveryService.remotePublish(netPeerGroup.getPeerAdvertisement(),13000);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -403,12 +385,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		aliveHandler = new AliveHandlerJxtaImpl();
 		
 	}
-//
-//	@Override
-//	protected void initBiddingStrategy() {
-//		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl();
-//		
-//	}
 
 	@Override
 	protected void initHotPeerFinder() {
@@ -419,6 +395,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	@Override
 	protected void initQueryResultHandler() {
 		this.queryResultHandler = new QueryResultHandlerJxtaImpl();
+		getMessageHandler().put(this.queryResultHandler.getInterestedNamespace(), this.queryResultHandler);
 		
 	}
 
@@ -428,10 +405,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		
 	}
 
-//	@Override
-//	protected void initBiddingHandlerStrategy() {
-//		this.biddingHandlerStrategy = new BiddingHandlerStrategyStandard();
-//	}
+	@Override
+	protected void initServerResponseConnection() {
+		setServerPipeAdvertisement(AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
+	}
 
 
 

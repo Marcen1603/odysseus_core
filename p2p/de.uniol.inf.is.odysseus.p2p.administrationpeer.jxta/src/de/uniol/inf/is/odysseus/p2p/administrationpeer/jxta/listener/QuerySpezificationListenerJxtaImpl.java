@@ -9,14 +9,14 @@ import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.Log;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IQuerySpezificationListener;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IThinPeerBiddingStrategy;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.strategy.IThinPeerBiddingStrategy;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.MaxQueryBiddingStrategyJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.QueryTranslationSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 
 /**
  * Finden und bewerben von Anfragen, welche durch Thin-Peers ausgeschrieben werden. 
@@ -37,7 +37,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 	public QuerySpezificationListenerJxtaImpl() {
 		AdministrationPeerJxtaImpl.getInstance().getDiscoveryService().addDiscoveryListener(this);
 		//TODO: In Abhängigkeit der bereits laufenden Gebote und der laufenden Anfragen eine eigene Strategie?
-		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getActiveQueries());
+		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries());
 		
 	}
 
@@ -70,7 +70,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 						return;
 					}
 
-					if (AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().keySet().contains(adv.getQueryId()) || AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getActiveQueries().keySet().contains(adv.getQueryId())) {
+					if (AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().keySet().contains(adv.getQueryId()) ) {
 						//Diese Ausschreibung wurde schon gefunden und kann ignoriert werden
 						continue;
 					}

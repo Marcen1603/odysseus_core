@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.advertisements.ExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 
 /**
  * TODO: Über einen neuen Rückkanal Alive bestätigen
