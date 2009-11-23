@@ -6,4 +6,5 @@ Bundle-Version: 1.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.p2p,
+ de.uniol.inf.is.odysseus.p2p.logicaloperator,
  de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base
