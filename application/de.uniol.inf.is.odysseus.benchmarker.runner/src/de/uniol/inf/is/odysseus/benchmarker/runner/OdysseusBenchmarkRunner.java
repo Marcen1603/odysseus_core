@@ -58,7 +58,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			
 			if(arguments.get(MEMORY_USAGE)) {
 				for(int i=0; i < benchmark.getMemUsageJoin().size();i++) {
-					serializer.write(benchmark.getMemUsageJoin().get(i), new File(i + "JOIN" + filename));
+					serializer.write(benchmark.getMemUsageJoin().get(i), new File(filename + "JOIN" + i));
 				}
 			/*	for(int i=0; i < benchmark.getMemUsageJoinPunctuations().size();i++) {
 					serializer.write(benchmark.getMemUsageJoinPunctuations().get(i), new File(i + "JOINPUNC" + filename));
