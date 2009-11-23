@@ -13,11 +13,11 @@ import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.p2p.P2PAO;
-import de.uniol.inf.is.odysseus.p2p.P2PSourceAO;
-import de.uniol.inf.is.odysseus.p2p.P2PSinkAO;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSourceAO;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
 
 public class OnePlanPerOperator extends

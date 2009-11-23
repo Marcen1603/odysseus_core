@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
+import net.jxta.util.JxtaServerPipe;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -30,22 +31,25 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		public void run() {
 			System.out.println("Starte Pipe Thread");
 			JxtaServerSocket server = null;
+			JxtaServerPipe serverPipe = null;
 			try {
+//				serverPipe = new JxtaServerPipe(getPeerGroup(), adv, 1000);
+//				serverPipe.setPipeTimeout(0);
 				server = new JxtaServerSocket(getPeerGroup(), adv, 1000);
-				System.out.println("Jxta ServerSocket Adv: "+adv.toString());
 				server.setSoTimeout(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			while (true) {
-
+//				JxtaBiDiPipe biPipe = null;
 				Socket socket = null;
 				try {
+//					biPipe = serverPipe.accept();
 					socket = server.accept();
 
 					if (socket != null) {
 						synchronized (subscribe) {
-							System.out.println("Subscriber gefunden für Pipe: "+getAdv().toString());
+							System.out.println("Subscriber gefunden für P2PSink: "+getAdv().toString());
 							StreamHandler temp = new StreamHandler(socket);
 							subscribe.add(temp);
 						}
@@ -83,22 +87,22 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 					e.printStackTrace();
 				}
 			}
-			for(PhysicalSubscription<?> subscription : getSubscribedTo()) {
-				System.out.println("Setze alle Subscriber auf connected: "+getSubscribedTo().get(0).getTarget().toString());
-				setConnectedToPipe((ISource<?>)subscription.getTarget(), 0);
-			}
+//			for(PhysicalSubscription<?> subscription : getSubscribedTo()) {
+//				System.out.println("Setze alle Subscriber auf connected: "+getSubscribedTo().get(0).getTarget().toString());
+//				setConnectedToPipe((ISource<?>)subscription.getTarget(), 0);
+//			}
 			
 //			setConnectedToPipe(getSubscribedTo().get(0).getTarget(), 0);
 		}
 
 		public void transfer(Object o) {
+			System.out.println("sink transfer "+adv.getID().toString());
 			try {
 				oout.writeObject(o);
 				oout.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Transferiere- Pipe mit der Advertisement: "+getAdv().toString());
 			//TODO: GUI AUSGABE durch Registrierung?!?!
 //			if (queryId!=null && OperatorPeerJxtaImpl.getInstance().isGuiEnabled()){
 //				OperatorPeerJxtaImpl.getInstance().getGui().addOperation(queryId, o.toString());
@@ -134,7 +138,6 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		super();
 		this.peerGroup = peerGroup;
 		this.adv = MessageTool.createPipeAdvertisementFromXml(adv);
-		System.out.println("Initialisiere P2PPipePO: "+this.adv.toString());
 		ConnectionListener listener = new ConnectionListener();
 		listener.start();
 	}
@@ -142,7 +145,6 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
-
 		synchronized (subscribe) {
 			for (StreamHandler sh : subscribe) {
 				sh.transfer(object);

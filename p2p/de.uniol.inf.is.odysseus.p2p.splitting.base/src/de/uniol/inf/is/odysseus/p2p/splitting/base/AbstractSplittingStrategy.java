@@ -9,6 +9,10 @@ public abstract class AbstractSplittingStrategy implements ISplittingStrategy {
 
 	private IRefinementStrategy refinement = null;
 
+	public AbstractSplittingStrategy() {
+		
+	}
+	
 	@Override
 	public abstract ArrayList<AbstractLogicalOperator> splitPlan(
 			AbstractLogicalOperator ao);

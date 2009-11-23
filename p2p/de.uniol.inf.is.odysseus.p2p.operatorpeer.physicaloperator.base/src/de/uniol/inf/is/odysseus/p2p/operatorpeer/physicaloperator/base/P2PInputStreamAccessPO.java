@@ -10,9 +10,10 @@ import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.p2p.utils.jxta.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.AbstractInputStreamAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IDataTransformation;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		extends AbstractInputStreamAccessPO<In, Out> {
@@ -21,24 +22,25 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	private JxtaSocket socket;
 
 	private ConnectionHandler con;
-	private boolean connectToPipe = false;
+//	private boolean connectToPipe = false;
 	private PeerGroup peerGroup;
 
 	class ConnectionHandler extends Thread {
 
 		@Override
 		public void run() {
-			while (!connectToPipe) {
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+//			while (true) {
+//				try {
+//					Thread.sleep(200);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
 			while (socket == null) {
 				try {
-					socket = new JxtaSocket(getPeerGroup(), null, adv, 8000,
+					socket = new JxtaSocket(getPeerGroup(), null, adv, 15000,
 							true);
+					
 					System.out.println("JxtaSocket erzeugt " + adv.toString());
 					break;
 				} catch (IOException e2) {
@@ -68,8 +70,27 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		System.out.println("Process open p2pInput--------------------------------------------------------------");
+
 		done = false;
+//		while (socket == null) {
+//			System.out.println("Process open p2pInput--------------------------------------------------------------");
+//			try {
+//				socket = new JxtaSocket(getPeerGroup(), null, adv, 8000,
+//						true);
+//				System.out.println("JxtaSocket erzeugt " + adv.toString());
+//				break;
+//			} catch (IOException e2) {
+//				// Timeout passiert weil ein anderer Peer seinen
+//				// P2PPipePOfalse
+//				// noch nicht geöffnet hat, daher wird es solange probiert
+//				// bis der P2PPipePO
+//				// geöffnet ist. Hier noch sinnvolles Abruchskriterium
+//				// nötig.
+//				socket = null;
+//				e2.printStackTrace();
+//			}
+//		}
+//		System.out.println("Geht doch noch was=");
 		con = new ConnectionHandler();
 		con.start();
 	}
@@ -77,7 +98,6 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized boolean hasNext() {
-		System.out.println("HAS NEXT P2PInput?");
 		if (socket == null) {
 			// if (con == null || !con.isAlive()) {
 			// con = new ConnectionHandler();
@@ -96,13 +116,12 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 				InputStream in = socket.getInputStream();
 				this.iStream = new ObjectInputStream(in);
 			}
-
 			Object o = this.iStream.readObject();
 			if ((o instanceof Integer) && (((Integer) o).equals(0))) {
 				propagateDone();
 				return false;
-			} else if (o instanceof String) {
-				System.out.println("TestDaten erhalten");
+			} else if (o instanceof RelationalTuple) {
+				System.out.println("tuple received "+adv.getID().toString());
 			}
 
 			In inElem = (In) o;
@@ -110,7 +129,6 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 			if (inElem == null) {
 				throw new Exception("null element from socket");
 			}
-			System.out.println("Bekomme Element aus dem Datenstrom");
 			buffer = this.transformation.transform(inElem);
 			return true;
 		} catch (EOFException e) {
@@ -158,18 +176,18 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		}
 	}
 
-	public boolean isConnectedToPipe() {
-		return connectToPipe;
-	}
-
-	public void setConnectedToPipe(boolean connectToPipe) {
-		if (connectToPipe) {
-			System.out
-					.println("ConnectToPipe auf true gesetzt bei InputStreamAccess Adv "
-							+ adv.toString());
-		}
-		this.connectToPipe = connectToPipe;
-	}
+//	public boolean isConnectedToPipe() {
+//		return connectToPipe;
+//	}
+//
+//	public void setConnectedToPipe(boolean connectToPipe) {
+//		if (connectToPipe) {
+//			System.out
+//					.println("ConnectToPipe auf true gesetzt bei InputStreamAccess Adv "
+//							+ adv.toString());
+//		}
+//		this.connectToPipe = connectToPipe;
+//	}
 
 	public PeerGroup getPeerGroup() {
 		return peerGroup;
