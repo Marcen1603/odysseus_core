@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.jxta;
 
-import de.uniol.inf.is.odysseus.p2p.Bid;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Bid;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 

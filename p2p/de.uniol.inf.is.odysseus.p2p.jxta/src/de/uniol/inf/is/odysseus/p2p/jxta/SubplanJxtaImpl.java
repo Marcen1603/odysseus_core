@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.Subplan;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 
 public class SubplanJxtaImpl extends Subplan{

@@ -9,7 +9,7 @@ import java.util.Map;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.p2p.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
 public class QueryJxtaImpl extends Query implements Serializable {
 	
@@ -20,6 +20,7 @@ public class QueryJxtaImpl extends Query implements Serializable {
 	private PipeAdvertisement responseSocketThinPeer;
 	private PipeAdvertisement adminPeerPipe;
 	private Map<String,BidJxtaImpl> adminPeerBidding;
+
 
 	public Map<String, BidJxtaImpl> getAdminPeerBidding() {
 		return adminPeerBidding;
@@ -77,5 +78,7 @@ public class QueryJxtaImpl extends Query implements Serializable {
 	public PipeAdvertisement getAdminPeerPipe() {
 		return adminPeerPipe;
 	}
+	
+
 
 }
