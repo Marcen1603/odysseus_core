@@ -4,7 +4,9 @@ Bundle-Name: Client
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.client
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.client.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.osgi.framework;version="1.3.0"
+Import-Package: de.uniol.inf.is.odysseus.p2p,
+ de.uniol.inf.is.odysseus.p2p.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.queryhandling,
+ org.osgi.framework;version="1.3.0"
 Export-Package: de.uniol.inf.is.odysseus.p2p.distribution.client
