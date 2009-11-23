@@ -1,18 +1,46 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 
-import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 
-public class BiddingClient implements IDistributionClient {
 
+import de.uniol.inf.is.odysseus.p2p.distribution.client.AbstractDistributionClient;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+
+public class BiddingClient extends AbstractDistributionClient {
+	private IMessageHandler queryResultHandler;
+
+	public BiddingClient() {
+	}
+	
 	@Override
 	public String getDistributionStrategy() {
-		return "Bidding";
+		return "BiddingClient";
 	}
 
 	@Override
-	public boolean initializeService() {
-		// TODO Auto-generated method stub
-		return false;
+	public void initializeService() {
+		initQueryResultHandler();
 	}
+
+	private void initQueryResultHandler() {
+		queryResultHandler = new QueryResultHandlerJxtaImpl(getManagedQueries());
+		
+	}
+
+	@Override
+	public void startService() {
+		
+	}
+
+	@Override
+	public IMessageHandler getMessageHandler() {
+		return this.queryResultHandler;
+	}
+
+
+
+	
+	
+
+
 
 }
