@@ -39,7 +39,7 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 	/**
 	 * List of all query roots.
 	 */
-	private List<IPhysicalOperator> roots;
+	private List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 
 	/**
 	 * Describes if the physical operators are opened.
@@ -109,10 +109,8 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 	@Override
 	public void open() throws OpenFailedException {
 		if (!isOpen()) {
-			if (roots != null) {
-				for (IPhysicalOperator r : roots) {
-					r.open();
-				}
+			for (IPhysicalOperator r : roots) {
+				r.open();
 			}
 		}
 	}
