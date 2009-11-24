@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
-import net.jxta.util.JxtaServerPipe;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -31,7 +30,7 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		public void run() {
 			System.out.println("Starte Pipe Thread");
 			JxtaServerSocket server = null;
-			JxtaServerPipe serverPipe = null;
+			//JxtaServerPipe serverPipe = null;
 			try {
 //				serverPipe = new JxtaServerPipe(getPeerGroup(), adv, 1000);
 //				serverPipe.setPipeTimeout(0);

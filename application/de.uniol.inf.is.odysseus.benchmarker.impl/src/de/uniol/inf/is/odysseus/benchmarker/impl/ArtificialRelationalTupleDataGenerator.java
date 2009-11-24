@@ -26,8 +26,8 @@ public class ArtificialRelationalTupleDataGenerator {
 		String outputFilename = args[1];
 		ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(
 				outputFilename));
-		int lineCount = 0;
-		String line = null;
+//		int lineCount = 0;
+//		String line = null;
 		try {
 			
 			int[] epochs = new int[20];

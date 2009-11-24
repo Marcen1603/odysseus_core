@@ -74,7 +74,7 @@ public class OnePlanPerOperator extends
 		// Bei Operatoren mit zwei Eingabeports
 		if (outputCount == 2) {
 			String adv2 = createSocketAdvertisement().toString();
-			P2PSourceAO p2paccess2 = new P2PSourceAO(adv2);
+		//	P2PSourceAO p2paccess2 = new P2PSourceAO(adv2);
 			temp = adv2;
 			
 //			if (iLogicalOperator.getSubscribedTo(0).getTarget() instanceof AccessAO) {

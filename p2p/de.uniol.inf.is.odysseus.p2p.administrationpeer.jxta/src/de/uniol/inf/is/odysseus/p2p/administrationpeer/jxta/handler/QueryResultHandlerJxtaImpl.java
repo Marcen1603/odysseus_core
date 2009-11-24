@@ -4,14 +4,13 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.IActionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
@@ -54,7 +53,7 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 			try {
 				//Anfrage Übersetzen und in Query kapseln
 				plan = AdministrationPeerJxtaImpl.getInstance().getCompiler().translateQuery(AdministrationPeerJxtaImpl.getInstance().
-						getDistributionProvider().getManagedQueries().get(queryId).getQuery(), "CQL");
+						getDistributionProvider().getManagedQueries().get(queryId).getQuery(), language);
 			} catch (QueryParseException e3) {
 				e3.printStackTrace();
 				Log.logAction(queryId, "Fehler bei der Übersetzung der Anfrage");

@@ -90,6 +90,7 @@ public class ViewWidget extends Composite {
 	private Group grpBufferPlacement = null;
 	private Tree treeBufferPlacement = null;
 	private Button btnExecute = null;
+	@SuppressWarnings("unused")
 	private IBenchmark benchmarker = null;
 
 	public ViewWidget(Composite parent, int style) {

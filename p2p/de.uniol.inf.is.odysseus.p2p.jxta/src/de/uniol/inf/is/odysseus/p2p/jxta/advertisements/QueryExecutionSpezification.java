@@ -26,6 +26,7 @@ import net.jxta.id.IDFactory;
  * @author Mart Köhler
  *
  */
+@SuppressWarnings("unchecked")
 public class QueryExecutionSpezification extends Advertisement implements
 		Serializable, Cloneable, Comparable {
 

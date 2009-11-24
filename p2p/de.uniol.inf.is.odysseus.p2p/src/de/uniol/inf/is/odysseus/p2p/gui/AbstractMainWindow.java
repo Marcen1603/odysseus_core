@@ -4,10 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JProgressBar;
-import javax.swing.JTabbedPane;
+
 
 
 /**

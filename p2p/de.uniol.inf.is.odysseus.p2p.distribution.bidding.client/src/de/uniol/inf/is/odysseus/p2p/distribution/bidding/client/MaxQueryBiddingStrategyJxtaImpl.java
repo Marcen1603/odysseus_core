@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
-
 public class MaxQueryBiddingStrategyJxtaImpl implements IBiddingStrategy {
 
 	private static int MAXQUERIES = 10;

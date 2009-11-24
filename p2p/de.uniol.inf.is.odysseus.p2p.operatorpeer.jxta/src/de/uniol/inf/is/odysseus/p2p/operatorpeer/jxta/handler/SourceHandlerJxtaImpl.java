@@ -34,7 +34,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		this.setoPeer(aPeer);
 	}
 
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public void run() {
 

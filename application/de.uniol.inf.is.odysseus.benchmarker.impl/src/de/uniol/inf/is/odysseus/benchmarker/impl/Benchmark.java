@@ -42,6 +42,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private boolean extendedPostPriorisation = false;
 	private boolean useBenchmarkMemUsage = false;
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();

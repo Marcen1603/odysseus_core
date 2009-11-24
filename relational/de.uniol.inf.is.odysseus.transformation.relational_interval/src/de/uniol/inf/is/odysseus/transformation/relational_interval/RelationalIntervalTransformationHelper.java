@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttribute
 
 public class RelationalIntervalTransformationHelper {
 	
+	@SuppressWarnings("unchecked")
 	public static MetadataUpdatePO initWindowOn(AbstractWindowTIPO windowPO){
 		int attrPos = windowPO.getWindowAO().getInputSchema().indexOf(
 				windowPO.getWindowAO().getWindowOn());

@@ -45,6 +45,7 @@ public class View extends ViewPart implements ServiceListener {
 
 		this.menuScheduler = new Menu(widget.getTreeScheduler());
 		MenuItem removeScheduler = new MenuItem(menuScheduler, SWT.PUSH);
+		@SuppressWarnings("unused")
 		MenuItem separator = new MenuItem(menuScheduler, SWT.SEPARATOR);
 		removeScheduler.setText("remove");
 		

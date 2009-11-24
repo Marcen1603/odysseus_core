@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener;
 
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;

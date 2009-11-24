@@ -26,9 +26,10 @@ import net.jxta.socket.JxtaSocket;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 
+@SuppressWarnings("unchecked")
 public class MessageTool {
 	
-	@SuppressWarnings("unchecked")
+	
 	public static Message createMessage(String namespace,
 			String namespace2, String message, PipeAdvertisement responsePipe, PeerAdvertisement peerAdvertisement) {
 		Message response = new Message();
@@ -59,7 +60,6 @@ public class MessageTool {
 		new MessageSender(netPeerGroup, adv, message).start();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static PipeAdvertisement getResponsePipe(String namespace, Message msg, int number){
 		MessageElement advElement = msg.getMessageElement(
 				namespace, "pipeAdv"+number);
@@ -78,7 +78,6 @@ public class MessageTool {
 		return pipeAdv;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static PeerAdvertisement getPeerAdvertisement(String namespace, Message msg){
 		MessageElement advElement = msg.getMessageElement(
 				namespace, "peerAdv");
@@ -103,7 +102,7 @@ public class MessageTool {
 		return query.toString();
 	}
 	
-	@SuppressWarnings("unchecked")
+
 	public static PipeAdvertisement createPipeAdvertisementFromXml(String xmlAdv){
 		PipeAdvertisement pipeAdv = null;
 		StringReader sr = new StringReader(xmlAdv);

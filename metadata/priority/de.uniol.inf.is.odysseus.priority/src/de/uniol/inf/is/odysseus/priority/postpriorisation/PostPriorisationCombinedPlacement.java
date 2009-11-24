@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.priority.IPostPriorisationFunctionality;
-import de.uniol.inf.is.odysseus.priority.IPostPriorisationPipe;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostPriorisation;
