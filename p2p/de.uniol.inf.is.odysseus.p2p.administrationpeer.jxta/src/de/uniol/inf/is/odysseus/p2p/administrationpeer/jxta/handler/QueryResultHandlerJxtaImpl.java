@@ -4,8 +4,6 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-
 import net.jxta.endpoint.Message;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.QueryParseException;

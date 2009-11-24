@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
@@ -15,6 +16,10 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.QueryResultHandlerJxtaImpl;
@@ -31,6 +36,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
@@ -122,44 +128,45 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 		
 		
-//		try {
-//			System.out.println("Adde Queries");
-//			getExecutor().addQuery("CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440", "CQL", new ParameterPriority(2) );
-//			getExecutor().addQuery("CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441", "CQL", new ParameterPriority(2));
-//			getExecutor().addQuery("CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442", "CQL",  new ParameterPriority(2));
-////			getExecutor().addQuery("CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430", "CQL", new ParameterPriority(2) );
-////			getExecutor().addQuery("CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65431", "CQL", new ParameterPriority(2));
-////			getExecutor().addQuery("CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432", "CQL",  new ParameterPriority(2));
-//		System.out.println("Adde Queries fertig");
-//		} catch (PlanManagementException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		ArrayList<ILogicalOperator> lo = null;
-//		try {
-//			System.out.println("translate query");
-////			 lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87", "CQL");
-//			lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT id FROM nexmark:person2 WHERE id<1000", "CQL");
-//		} catch (QueryParseException e) {
-//			e.printStackTrace();
-//		}
-////		getCompiler().restructPlan((ILogicalOperator) lo);
-//		System.out.println("split");
-//		ArrayList<AbstractLogicalOperator> alo = getSplitting().splitPlan((AbstractLogicalOperator) lo.get(0));
-//		for(AbstractLogicalOperator elem : alo) {
-//			try {
-//				getExecutor().addQuery(elem, new ParameterPriority(2));
-//				
-//			} catch (PlanManagementException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		try {
-//			getExecutor().startExecution();
-//		} catch (PlanManagementException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			System.out.println("Adde Queries");
+			getExecutor().addQuery("CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440", "CQL", new ParameterPriority(2) );
+			getExecutor().addQuery("CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441", "CQL", new ParameterPriority(2));
+			getExecutor().addQuery("CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442", "CQL",  new ParameterPriority(2));
+//			getExecutor().addQuery("CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430", "CQL", new ParameterPriority(2) );
+//			getExecutor().addQuery("CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65431", "CQL", new ParameterPriority(2));
+//			getExecutor().addQuery("CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432", "CQL",  new ParameterPriority(2));
+		System.out.println("Adde Queries fertig");
+		} catch (PlanManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ArrayList<ILogicalOperator> lo = null;
+		try {
+			System.out.println("translate query");
+//			 lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87", "CQL");
+//			lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT * FROM nexmark:person2 WHERE id<1000", "CQL");
+			lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT id FROM nexmark:person2", "CQL");
+		} catch (QueryParseException e) {
+			e.printStackTrace();
+		}
+//		getCompiler().restructPlan((ILogicalOperator) lo);
+		System.out.println("split");
+		ArrayList<AbstractLogicalOperator> alo = getSplitting().splitPlan((AbstractLogicalOperator) lo.get(0));
+		for(AbstractLogicalOperator elem : alo) {
+			try {
+				getExecutor().addQuery(elem, new ParameterPriority(2));
+				
+			} catch (PlanManagementException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			getExecutor().startExecution();
+		} catch (PlanManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	
