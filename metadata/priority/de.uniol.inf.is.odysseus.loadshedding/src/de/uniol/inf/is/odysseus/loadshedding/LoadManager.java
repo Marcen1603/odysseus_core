@@ -94,16 +94,6 @@ public class LoadManager {
 		double percentToRemove = state-1.0;
 		
 		strategy.activateLoadShedding(percentToRemove,shedders);
-		
-		/*
-		 * Sind die zu verwerfenden Daten mehr als oder gleich 100%, dann
-		 * nutzt auch Load Shedding nichts mehr.
-		 */
-		if(percentToRemove >= 1) {
-			return;
-		} else {
-			//TODO: Load Shedder aktivieren
-		}
 	}
 	
 	private void deactivateLoadShedding() {
