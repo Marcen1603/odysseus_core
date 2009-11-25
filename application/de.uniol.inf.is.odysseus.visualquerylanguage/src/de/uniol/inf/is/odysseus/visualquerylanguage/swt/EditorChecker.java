@@ -40,5 +40,12 @@ public class EditorChecker {
 		}
 		return false;
 	}
+	
+	public boolean hasAggregateEditor(String editor) {
+		if(editor != null && editor.equals("AggregateEditor")) {
+			return true;
+		}
+		return false;
+	}
 
 }

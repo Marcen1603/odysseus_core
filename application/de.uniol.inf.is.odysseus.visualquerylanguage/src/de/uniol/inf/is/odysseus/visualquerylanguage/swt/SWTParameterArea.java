@@ -132,6 +132,23 @@ public class SWTParameterArea {
 						}
 					});
 					cButton.setEnabled(true);
+				} else if(EditorChecker.getInstance().hasAggregateEditor(cParam.getEditor())) {
+					cButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+							for (LogicalSubscription subscription : nodeView
+									.getModelNode().getContent().getOperator()
+									.getSubscribedTo()) {
+								inputs.add(subscription.getTarget()
+										.getOutputSchema());
+							}
+							SWTAggregateEditor paramEditor = new SWTAggregateEditor(
+									SWTMainWindow.getShell(), inputs);
+							paramEditor.addSWTParameterListener(cComp);
+						}
+					});
 				}
 				String value = "";
 				if (cParam.getValue() != null) {
@@ -151,7 +168,7 @@ public class SWTParameterArea {
 				Label l = new Label(sComp, SWT.NONE);
 				l.setText(sParam.getSetter());
 				GridData labelGridData = new GridData();
-				labelGridData.widthHint = 80;
+				labelGridData.widthHint = 120;
 				l.setLayoutData(labelGridData);
 
 				Button sButton = new Button(sComp, SWT.PUSH);
@@ -199,6 +216,27 @@ public class SWTParameterArea {
 						public void widgetSelected(SelectionEvent e) {
 							SWTWindowEditor paramEditor = new SWTWindowEditor(
 									SWTMainWindow.getShell());
+							paramEditor.addSWTParameterListener(sComp);
+						}
+					});
+					sButton.setEnabled(true);
+					t.setEditable(false);
+					Color c = new Color(Display.getCurrent(), 255, 255, 255);
+					t.setBackground(c);
+				} else if(EditorChecker.getInstance().hasAggregateEditor(sParam.getEditor())) {
+					sButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+							for (LogicalSubscription subscription : nodeView
+									.getModelNode().getContent().getOperator()
+									.getSubscribedTo()) {
+								inputs.add(subscription.getTarget()
+										.getOutputSchema());
+							}
+							SWTAggregateEditor paramEditor = new SWTAggregateEditor(
+									SWTMainWindow.getShell(), inputs);
 							paramEditor.addSWTParameterListener(sComp);
 						}
 					});
