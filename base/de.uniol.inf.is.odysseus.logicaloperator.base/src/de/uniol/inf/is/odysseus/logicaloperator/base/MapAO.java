@@ -1,14 +1,68 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * @author Jonas Jacobi
  */
-public class MapAO extends ProjectAO {
+public class MapAO extends UnaryLogicalOp {
+
+	private static final long serialVersionUID = -2120387285754464451L;
+	private List<SDFExpression> expressions;
+	private SDFAttributeList outputSchema = null;
+	
+	public MapAO() {
+		super();
+	}
+
+	public MapAO(MapAO ao) {
+		super(ao);
+		this.expressions = ao.expressions;
+	}
+
+	public List<SDFExpression> getExpressions() {
+		return expressions;
+	}
+
+	private void calcOutputSchema(){
+		SDFAttributeList inputSchema = getInputSchema();
+		if (inputSchema!=null){
+			this.outputSchema = new SDFAttributeList();
+			// Find existing Attributes
+			for (SDFExpression expr: expressions){
+				if (expr.isSingleAttribute()){
+					outputSchema.add(expr.getSingleAttribute());
+				}else{
+					outputSchema.add(new SDFAttribute(expr.toString()));
+				}
+				
+			}
+		}
+	}
+	
+	public void setExpressions(List<SDFExpression> expressions) {
+		this.expressions = expressions;
+		calcOutputSchema();
+	}
+
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		if (outputSchema == null) calcOutputSchema();
+		return outputSchema;
+	}
+
+	@Override
+	public MapAO clone() {
+		return new MapAO(this);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -33,46 +87,6 @@ public class MapAO extends ProjectAO {
 		} else if (!expressions.equals(other.expressions))
 			return false;
 		return true;
-	}
-
-	private static final long serialVersionUID = -2120387285754464451L;
-	public List<SDFExpression> expressions;
-
-	public MapAO() {
-		super();
-	}
-
-	public MapAO(MapAO ao) {
-		super(ao);
-		this.expressions = ao.expressions;
-	}
-
-	public List<SDFExpression> getExpressions() {
-		return expressions;
-	}
-
-	public void setExpressions(List<SDFExpression> expressions) {
-		this.expressions = expressions;
-		checkSchema();
-	}
-
-	private void checkSchema() throws RuntimeException {
-		if (this.expressions != null && this.getOutputSchema() != null
-				&& this.expressions.size() != this.getOutputSchema().size()) {
-			throw new RuntimeException(
-					"output schema and expressions do not match");
-		}
-	}
-	
-	@Override
-	public void setOutputSchema(SDFAttributeList outElements) {
-		super.setOutputSchema(outElements);
-		checkSchema();
-	}
-	
-	@Override
-	public MapAO clone() {
-		return new MapAO(this);
 	}
 
 }

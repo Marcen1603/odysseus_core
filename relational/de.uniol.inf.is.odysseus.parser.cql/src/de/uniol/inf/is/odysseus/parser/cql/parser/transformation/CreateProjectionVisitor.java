@@ -94,6 +94,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 							"ProbabilityPredicate");
 					top = (ILogicalOperator) v.visit(null, null, this);
 				}
+				((OutputSchemaSettable) top).setOutputSchema(outputSchema);
 			} else {
 				MapAO map = new MapAO();
 				map.subscribeTo(top, inputSchema);
@@ -115,7 +116,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				map.setExpressions(outputExpressions);
 				top = map;
 			}
-			((OutputSchemaSettable) top).setOutputSchema(outputSchema);
+			
 		}
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(top, top.getOutputSchema());

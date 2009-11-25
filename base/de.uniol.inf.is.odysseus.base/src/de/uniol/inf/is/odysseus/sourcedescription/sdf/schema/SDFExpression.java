@@ -59,8 +59,11 @@ public class SDFExpression implements Serializable {
 	private int[] attributePositions;
 
 	private SDFAttribute attribute;
+	
 
 	private IAttributeResolver attributeResolver;
+	private boolean isSingleAttribute = false;
+	private SDFAttribute sAttribute = null;
 
 	private static final List<CustomFunction> customFunctions = new ArrayList<CustomFunction>();
 
@@ -82,6 +85,16 @@ public class SDFExpression implements Serializable {
 	public SDFExpression(SDFAttribute attribute) {
 		this.variableArray = new Variable[0];
 		init(attribute);
+		isSingleAttribute  = true;
+		sAttribute = attribute;
+	}
+	
+	public boolean isSingleAttribute(){
+		return isSingleAttribute;
+	}
+	
+	public SDFAttribute getSingleAttribute(){
+		return sAttribute;
 	}
 
 	public synchronized static void addFunction(CustomFunction function) {
