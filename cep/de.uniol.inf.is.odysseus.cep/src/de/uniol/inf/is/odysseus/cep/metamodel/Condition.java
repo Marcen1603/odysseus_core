@@ -52,18 +52,6 @@ public class Condition {
 		return expression;
 	}
 
-	/**
-	 * Setzt eine neue Transitionsbedingung.
-	 * 
-	 * @param expression
-	 *            Die neue Transitionsbedingung. Die im Ausdruck verwendeten
-	 *            Namen müssen dem Schema für Variablennamen entsprechen. Darf
-	 *            nicht null sein.
-	 */
-	@Deprecated
-	public void setExpression(JEP expression) {
-		this.expression = expression;
-	}
 
 	/**
 	 * Liefert die textuelle Repräsentation der Transitionsbedingung.
