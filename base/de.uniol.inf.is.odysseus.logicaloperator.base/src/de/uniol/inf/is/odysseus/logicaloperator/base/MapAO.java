@@ -35,13 +35,19 @@ public class MapAO extends UnaryLogicalOp {
 		SDFAttributeList inputSchema = getInputSchema();
 		if (inputSchema!=null){
 			this.outputSchema = new SDFAttributeList();
-			// Find existing Attributes
 			for (SDFExpression expr: expressions){
-				if (expr.isSingleAttribute()){
-					outputSchema.add(expr.getSingleAttribute());
-				}else{
-					outputSchema.add(new SDFAttribute(expr.toString()));
-				}
+				SDFAttribute attr = new SDFAttribute(expr.getExpression());
+				outputSchema.add(attr);
+
+				// Alles Quatsch :-)
+				//				
+//				if (expr.isSingleAttribute()){
+//					outputSchema.add(expr.getSingleAttribute());
+//				}else if (inputSchema.contains(attr)){
+//					outputSchema.add(attr);
+//				} else{
+//					outputSchema.add(new SDFAttribute(expr.toString()));
+//				}
 				
 			}
 		}
