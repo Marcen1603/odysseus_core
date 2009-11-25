@@ -387,6 +387,12 @@ public class DefaultGraphArea extends Composite implements
 					renderManager.getSelector().unselectAll();
 					return;
 				}
+				if(connNodeList.size() == 1) {
+					if(connNodeList.get(0).equals(selectedNode)) {
+						this.status.setErrorText("Ein Knoten darf nicht mit sich selbst verbunden werden.");
+						return;
+					}
+				}
 				if (endOp instanceof UnaryLogicalOp
 						&& (!selectedNode.getModelNode()
 								.getConnectionsAsEndNode().isEmpty() || connNodeList

@@ -95,7 +95,7 @@ public class SWTOutputEditor {
 		}
 
 		Button applyButton = new Button(shell, SWT.PUSH);
-		applyButton.setText("Parameter hinzufügen");
+		applyButton.setText("Neues Outputschema setzen");
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

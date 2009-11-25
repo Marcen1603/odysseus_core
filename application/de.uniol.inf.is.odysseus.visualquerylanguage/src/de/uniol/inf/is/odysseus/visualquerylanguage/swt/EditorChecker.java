@@ -33,5 +33,12 @@ public class EditorChecker {
 		}
 		return false;
 	}
+	
+	public boolean hasWindowEditor(String editor) {
+		if(editor != null && editor.equals("WindowTypeEditor")) {
+			return true;
+		}
+		return false;
+	}
 
 }

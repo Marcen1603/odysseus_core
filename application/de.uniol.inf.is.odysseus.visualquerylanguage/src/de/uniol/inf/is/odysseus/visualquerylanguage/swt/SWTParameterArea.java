@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.viewer.view.graph.INodeView;
@@ -41,7 +42,7 @@ public class SWTParameterArea {
 
 	public SWTParameterArea(Composite parent,
 			final INodeView<INodeContent> nodeView) {
-		
+
 		this.nodeView = nodeView;
 		INodeContent content = nodeView.getModelNode().getContent();
 
@@ -63,25 +64,25 @@ public class SWTParameterArea {
 		} else if (content instanceof DefaultPipeContent) {
 			nameLabel.setText("Pipename: " + content.getName());
 		}
-		
-		if(content.getOperator().getOutputSchema() != null && !content.getOperator().getOutputSchema().isEmpty()) {
+
+		if (content.getOperator().getOutputSchema() != null
+				&& !content.getOperator().getOutputSchema().isEmpty()) {
 			Label typLabel = new Label(comp, SWT.LEFT);
 			String outPut = "";
 			for (SDFAttribute att : content.getOperator().getOutputSchema()) {
-				if(outPut.isEmpty()) {
+				if (outPut.isEmpty()) {
 					outPut = att.toString();
-				}else {
+				} else {
 					outPut += ", " + att.toString();
 				}
 			}
 			typLabel.setText("Ausgabeschema: " + outPut);
-			
+
 		}
 
 		if (!content.isOnlySource()
 				&& (!content.getConstructParameterList().isEmpty() || !content
 						.getSetterParameterList().isEmpty())) {
-
 
 			for (IParamConstruct<?> cParam : content
 					.getConstructParameterList()) {
@@ -90,34 +91,46 @@ public class SWTParameterArea {
 				cComp.setLayout(gl);
 				GridData gd = new GridData(GridData.FILL_BOTH);
 				cComp.setLayoutData(gd);
-				
+
 				Button cButton = new Button(cComp, SWT.PUSH);
 				cButton.setText("Editor");
-				cButton.setEnabled(false);
-				cButton.addSelectionListener(new SelectionAdapter() {
-					
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
-						for (LogicalSubscription subscription : nodeView
-								.getModelNode().getContent().getOperator()
-								.getSubscribedTo()) {
-							inputs.add(subscription.getTarget()
-									.getOutputSchema());
-						}
-						SWTPredicateEditor paramEditor = new SWTPredicateEditor(
-								SWTMainWindow.getShell(), nodeView
-										.getModelNode().getContent(), inputs, cComp);
-						paramEditor.addSWTParameterListener(cComp);
-					}
-				});
 				GridData buttonGridData = new GridData();
 				cButton.setLayoutData(buttonGridData);
 				cButton.setEnabled(false);
 				Text t = new Text(cComp, SWT.SINGLE);
 				GridData textGridData = new GridData(GridData.FILL_HORIZONTAL);
 				t.setLayoutData(textGridData);
-				if(EditorChecker.getInstance().hasPredicateEditor(cParam.getEditor())) {
+				if (EditorChecker.getInstance().hasPredicateEditor(
+						cParam.getEditor())) {
+					cButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+							for (LogicalSubscription subscription : nodeView
+									.getModelNode().getContent().getOperator()
+									.getSubscribedTo()) {
+								inputs.add(subscription.getTarget()
+										.getOutputSchema());
+							}
+							SWTPredicateEditor paramEditor = new SWTPredicateEditor(
+									SWTMainWindow.getShell(), nodeView
+											.getModelNode().getContent(),
+									inputs, cComp);
+							paramEditor.addSWTParameterListener(cComp);
+						}
+					});
+					cButton.setEnabled(true);
+				} else if (EditorChecker.getInstance().hasWindowEditor(
+						cParam.getEditor())) {
+					cButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							SWTWindowEditor windowEditor = new SWTWindowEditor(SWTMainWindow.getShell());
+							windowEditor.addSWTParameterListener(cComp);
+						}
+					});
 					cButton.setEnabled(true);
 				}
 				String value = "";
@@ -134,33 +147,15 @@ public class SWTParameterArea {
 				sComp.setLayout(gl);
 				GridData gd = new GridData(GridData.FILL_BOTH);
 				sComp.setLayoutData(gd);
-				
+
 				Label l = new Label(sComp, SWT.NONE);
 				l.setText(sParam.getSetter());
 				GridData labelGridData = new GridData();
 				labelGridData.widthHint = 80;
 				l.setLayoutData(labelGridData);
-				
+
 				Button sButton = new Button(sComp, SWT.PUSH);
 				sButton.setText("Editor");
-				sButton.setEnabled(false);
-				sButton.addSelectionListener(new SelectionAdapter() {
-					
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
-						for (LogicalSubscription subscription : nodeView
-								.getModelNode().getContent().getOperator()
-								.getSubscribedTo()) {
-							inputs.add(subscription.getTarget()
-									.getOutputSchema());
-						}
-						SWTPredicateEditor paramEditor = new SWTPredicateEditor(
-								SWTMainWindow.getShell(), nodeView
-										.getModelNode().getContent(), inputs, sComp);
-						paramEditor.addSWTParameterListener(sComp);
-					}
-				});
 				GridData buttonGridData = new GridData();
 				sButton.setLayoutData(buttonGridData);
 				sButton.setEnabled(false);
@@ -173,18 +168,52 @@ public class SWTParameterArea {
 				}
 				t.setText(value);
 				t.setData(sParam);
-				if(EditorChecker.getInstance().hasPredicateEditor(sParam.getEditor())) {
+				if (EditorChecker.getInstance().hasPredicateEditor(
+						sParam.getEditor())) {
+					sButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+							for (LogicalSubscription subscription : nodeView
+									.getModelNode().getContent().getOperator()
+									.getSubscribedTo()) {
+								inputs.add(subscription.getTarget()
+										.getOutputSchema());
+							}
+							SWTPredicateEditor paramEditor = new SWTPredicateEditor(
+									SWTMainWindow.getShell(), nodeView
+											.getModelNode().getContent(), inputs,
+									sComp);
+							paramEditor.addSWTParameterListener(sComp);
+						}
+					});
 					sButton.setEnabled(true);
 					t.setEditable(false);
 					Color c = new Color(Display.getCurrent(), 255, 255, 255);
 					t.setBackground(c);
-				}else {
+				} else if(EditorChecker.getInstance().hasWindowEditor(sParam.getEditor())) {
+					sButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							SWTWindowEditor paramEditor = new SWTWindowEditor(
+									SWTMainWindow.getShell());
+							paramEditor.addSWTParameterListener(sComp);
+						}
+					});
+					sButton.setEnabled(true);
+					t.setEditable(false);
+					Color c = new Color(Display.getCurrent(), 255, 255, 255);
+					t.setBackground(c);
+				} else {
 					t.addModifyListener(new ModifyListener() {
-						
+
 						@SuppressWarnings("unchecked")
 						@Override
 						public void modifyText(ModifyEvent e) {
-							((IParam)((Text)e.getSource()).getData()).setValue(((Text)e.getSource()).getText());
+							((IParam) ((Text) e.getSource()).getData())
+									.setValue(((Text) e.getSource()).getText());
 						}
 					});
 				}
@@ -197,8 +226,8 @@ public class SWTParameterArea {
 
 		log.debug("ParameterArea for " + nodeView + " disposed");
 	}
-	
-	private class ActualComp extends Composite implements ISWTParameterListener{
+
+	private class ActualComp extends Composite implements ISWTParameterListener {
 
 		public ActualComp(Composite parent, int style) {
 			super(parent, style);
@@ -208,17 +237,17 @@ public class SWTParameterArea {
 		@Override
 		public void setValue(Object value) {
 			Text t = null;
-			for(Control c : this.getChildren()) {
-				if(c instanceof Text) {
-					t = (Text)c;
+			for (Control c : this.getChildren()) {
+				if (c instanceof Text) {
+					t = (Text) c;
 				}
 			}
 			t.setText(value.toString());
-			if(t.getData() instanceof IParam) {
-				((IParam)t.getData()).setValue(value);
+			if (t.getData() instanceof IParam) {
+				((IParam) t.getData()).setValue(value);
 			}
 		}
-		
+
 	}
-	
+
 }

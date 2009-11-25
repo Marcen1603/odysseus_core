@@ -98,12 +98,31 @@
 			<sparams>
 				
 				<setterParameter>
-					<name>Predicate</name>
-					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
+					<name>WindowSize</name>
+					<ptype>java.lang.Long</ptype>
 					<typelist>
 					</typelist>
-					<setter>setPredicate</setter>
-					<editor>true</editor>
+					<setter>setWindowSize</setter>
+					<editor>false</editor>
+				</setterParameter>
+				
+				<setterParameter>
+					<name>WindowAdvance</name>
+					<ptype>java.lang.Long</ptype>
+					<typelist>
+						<type>java.lang.Long</type>
+					</typelist>
+					<setter>setWindowAdvance</setter>
+					<editor>false</editor>
+				</setterParameter>
+				
+				<setterParameter>
+					<name>WindowTyoe</name>
+					<ptype>de.uniol.inf.is.odysseus.logicaloperator.base.WindowType</ptype>
+					<typelist>
+					</typelist>
+					<setter>setWindowType</setter>
+					<editor>WindowTypeEditor</editor>
 				</setterParameter>
 				
 			</sparams>
