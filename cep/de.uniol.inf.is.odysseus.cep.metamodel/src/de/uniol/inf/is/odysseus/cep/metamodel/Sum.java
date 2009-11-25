@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidDataTypeForSymTabOperationException;
+import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTabOperationException;
 
 /**
  * Symboltabellen-Operation, die den Wert eines Attributs aufsummiert.

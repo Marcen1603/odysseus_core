@@ -1,16 +1,16 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidDataTypeForSymTabOperationException;
+import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTabOperationException;
 
 /**
- * Diese Klasse stellt einen Maximumoperator für die Symboltabelle dar.
+ * Diese Klasse stellt einen Minimumoperator für die Symboltabelle dar.
  * 
  * @author Thomas Vogelgesang
  * 
  */
-public class Max extends SymbolTableOperation {
+public class Min extends SymbolTableOperation {
 
-	public Max() {
+	public Min() {
 		super();
 	}
 
@@ -39,30 +39,29 @@ public class Max extends SymbolTableOperation {
 		if (oldValue instanceof Integer && eventValue instanceof Integer) {
 			int a = ((Integer) oldValue).intValue();
 			int b = ((Integer) eventValue).intValue();
-			return (b > a) ? new Integer(b) : oldValue;
+			return (b < a) ? new Integer(b) : oldValue;
 		} else if (oldValue instanceof Long && eventValue instanceof Long) {
 			long a = ((Long) oldValue).longValue();
 			long b = ((Long) eventValue).longValue();
-			return (b > a) ? new Long(b) : oldValue;
+			return (b < a) ? new Long(b) : oldValue;
 		} else if (oldValue instanceof Float && eventValue instanceof Float) {
 			float a = ((Float) oldValue).floatValue();
 			float b = ((Float) eventValue).floatValue();
-			return (b > a) ? new Float(b) : oldValue;
+			return (b < a) ? new Float(b) : oldValue;
 		} else if (oldValue instanceof Double && eventValue instanceof Double) {
 			double a = ((Double) oldValue).doubleValue();
 			double b = ((Double) eventValue).doubleValue();
-			return (b > a) ? new Double(b) : oldValue;
+			return (b < a) ? new Double(b) : oldValue;
 		} else {
 			throw new InvalidDataTypeForSymTabOperationException(
-					"Expected object of type java.lang.Integer");
+			"Expected object of type java.lang.Integer");
 		}
 	}
 
 	@Override
 	public String toString(String indent) {
-		String str = indent + "Max: " + this.hashCode();
+		String str = indent + "Min: " + this.hashCode();
 		indent += "  ";
 		return str;
 	}
-
 }

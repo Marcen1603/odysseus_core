@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidDataTypeForSymTabOperationException;
+import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTabOperationException;
+
 
 /**
  * Diese Klasse stellt eine Zähl-Operatoren für die Symboltabelle dar.

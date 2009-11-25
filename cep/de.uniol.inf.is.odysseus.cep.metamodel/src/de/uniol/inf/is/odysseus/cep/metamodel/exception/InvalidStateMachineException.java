@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.epa.exceptions;
+package de.uniol.inf.is.odysseus.cep.metamodel.exception;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 

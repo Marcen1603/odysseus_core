@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.cep.epa.Agent;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
@@ -410,7 +410,7 @@ public class Validator {
 		if (varName == null) {
 			return false;
 		} else {
-			String[] split = varName.split(Agent.SEPERATOR);
+			String[] split = varName.split(CepVariable.getSeperator());
 			if (split.length == 4) {
 				if (!this.checkName(split[0]) || !this.checkName(split[1]))
 					return false;
@@ -426,7 +426,7 @@ public class Validator {
 			} else if (split.length == 2) {
 				if (!this.checkName(split[0]) || !this.checkName(split[1]))
 					return false;
-				if (!varName.endsWith(Agent.SEPERATOR + Agent.SEPERATOR))
+				if (!varName.endsWith(CepVariable.getSeperator() + CepVariable.getSeperator()))
 					return false;
 				
 			} else {
@@ -453,13 +453,16 @@ public class Validator {
 	private boolean checkActualVarName(String name) {
 		if (name == null)
 			return false;
-		String[] split = name.split(Agent.SEPERATOR);
+		String[] split = name.split(CepVariable.getSeperator());
 		for (int i = 0; i < 3; i++) {
 			if (!split[i].isEmpty())
 				return false;
 		}
-		if (!this.checkName(Agent.getAttributeName(name)))
+		//if (!this.checkName(Agent.getAttributeName(name)))
+		if (!this.checkName(CepVariable.getAttributeName(name)))
 			return false;
 		return true;
 	}
+
+
 }

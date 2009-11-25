@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import org.nfunk.jep.JEP;
 
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedExpressionLabelException;
+import de.uniol.inf.is.odysseus.cep.metamodel.exception.UndefinedExpressionLabelException;
 
 /**
  * Eine Instanz diser Klasse stellt einen Eintrag im Ausgabeschema dar.

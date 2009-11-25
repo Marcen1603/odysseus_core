@@ -5,6 +5,9 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.cep.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.cep.metamodel,
+ de.uniol.inf.is.odysseus.cep.metamodel.exception,
+ de.uniol.inf.is.odysseus.cep.metamodel.validator,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.physicaloperator.base,
@@ -19,10 +22,4 @@ Export-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
  de.uniol.inf.is.odysseus.cep.epa.eventreading,
- de.uniol.inf.is.odysseus.cep.epa.exceptions,
- de.uniol.inf.is.odysseus.cep.metamodel,
- de.uniol.inf.is.odysseus.cep.metamodel.validator,
- de.uniol.inf.is.odysseus.cep.metamodel.validator.error,
- de.uniol.inf.is.odysseus.cep.metamodel.validator.warning,
- de.uniol.inf.is.odysseus.cep.metamodel.xml,
- de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter
+ de.uniol.inf.is.odysseus.cep.epa.exceptions

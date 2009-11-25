@@ -63,35 +63,6 @@ public class SymbolTable {
 	}
 
 	/**
-	 * Aktualisiert einen Wert in der Symboltabelle.
-	 * 
-	 * @param name
-	 *            Name der Variablen, die in der Symboltabelle aktualisiert
-	 *            werden soll. Darf nicht null sein.
-	 * @param event
-	 *            Das Event, das soeben konsumiert wird.
-	 * @throws VarNotFoundInSymTabException
-	 *             Wenn der übergebene Variablenname nicht in der Symboltabelle
-	 *             gefunden werden konnte.
-	 */
-	@Deprecated //verändert Wert direkt und nicht über Operation!
-	public void update(String name, Object value)
-			throws VarNotFoundInSymTabException {
-		boolean found = false;
-		for (SymbolTableEntry entry : this.entries) {
-			if (entry.getScheme().getVariableName().equals(name)) {
-				entry.setValue(value);
-				found = true;
-			}
-		}
-		if (!found) {
-			throw new VarNotFoundInSymTabException(
-					"The variable with the given name cannot be found in symbol table: "
-							+ name);
-		}
-	}
-
-	/**
 	 * Liefert den zu einer Variablen gehörenden Wert oder null, falls noch kein
 	 * Wert in der Symboltabelle gespeichert ist oder in der Symboltabelle kein
 	 * passender Eintrag zur Variable existiert.

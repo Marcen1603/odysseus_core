@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.epa.exceptions;
+package de.uniol.inf.is.odysseus.cep.metamodel.exception;
 
 /**
  * Diese Exception stellt eine fehlende textuelle Beschreibung eines

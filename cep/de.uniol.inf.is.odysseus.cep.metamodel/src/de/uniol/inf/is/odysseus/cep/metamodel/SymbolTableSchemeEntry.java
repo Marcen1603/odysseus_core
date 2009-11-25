@@ -2,9 +2,6 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.uniol.inf.is.odysseus.cep.epa.Agent;
-import de.uniol.inf.is.odysseus.cep.epa.StateBuffer;
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAdapter;
 
 /**
@@ -75,12 +72,12 @@ public class SymbolTableSchemeEntry {
 	 *         <operationname>_<statename>_<index>_<attributname>
 	 */
 	public String getVariableName() {
-		String name = this.operation.getName() + Agent.SEPERATOR;  
-		name += this.stateIdentifier + Agent.SEPERATOR;
+		String name = this.operation.getName() + CepVariable.getSeperator();  
+		name += this.stateIdentifier + CepVariable.getSeperator();
 		if (this.index >= 0) {
 			name += this.index;
 		}
-		return name + Agent.SEPERATOR + this.attribute;
+		return name + CepVariable.getSeperator() + this.attribute;
 	}
 
 	/**

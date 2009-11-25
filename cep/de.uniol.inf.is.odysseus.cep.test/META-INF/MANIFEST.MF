@@ -9,4 +9,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.relational.base,
  org.osgi.framework;version="1.3.0"
-Require-Bundle: de.uniol.inf.is.odysseus.cep.relational;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.cep.relational;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.cep.metamodel

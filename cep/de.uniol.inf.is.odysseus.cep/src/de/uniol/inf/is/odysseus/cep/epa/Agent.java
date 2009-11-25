@@ -17,13 +17,14 @@ import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.ComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidStateMachineException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedConsumptionModeException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndeterminableVariableValueException;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.ConsumptionMode;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
+import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -38,17 +39,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
  */
 public class Agent extends AbstractPipe<Object, Object> {
 
-	/**
-	 * Trennzeichen für die einzelnen Bestandteile der Variablen.
-	 */
-	public static final String SEPERATOR = "_";
-	/**
-	 * Präfix einer Variable, die sich auf das aktuelle Event bezieht. Besteht
-	 * aus 2 aufeinander folgenden Unterstrichen, da sowohl der
-	 * Event/state-Identifier, als auch der Index leer sind.
-	 */
-	@Deprecated
-	public static final String ACT_EVENT_PREFIX = "__";
 	/**
 	 * Factory zum erzeugen komplexer Events
 	 */
@@ -189,10 +179,10 @@ public class Agent extends AbstractPipe<Object, Object> {
 					this.debug("Setze Variable " + var.getName());
 					if (Agent.isActEventName(var.getName())) {
 						// Variable bezieht sich auf aktuelles Event
-						var.setValue(this.eventReader.getValue(Agent
+						var.setValue(this.eventReader.getValue(CepVariable
 								.getAttributeName(var.getName()), object));
 						this.debug("Neuer Wert: "
-								+ this.eventReader.getValue(Agent
+								+ this.eventReader.getValue(CepVariable
 										.getAttributeName(var.getName()),
 										object));
 					} else {
@@ -314,7 +304,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 							// variablenwert steht nicht in der symboltabelle
 							// -> wert im MatchingTrace suchen (teuer?!)
 							String[] split = var.getName().split(
-									Agent.SEPERATOR);
+									CepVariable.getSeperator());
 							StateBuffer buffer = instance.getMatchingTrace()
 									.getStateBuffer(split[1]);
 							if (buffer != null) {
@@ -593,7 +583,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 *         bezieht, ansonsten false.
 	 */
 	public static boolean isActEventName(String name) {
-		String[] split = name.split(Agent.SEPERATOR);
+		String[] split = name.split(CepVariable.getSeperator());
 		if (split[0].isEmpty() && split[1].isEmpty() && split[2].isEmpty()) {
 			return true;
 		} else {
@@ -601,9 +591,6 @@ public class Agent extends AbstractPipe<Object, Object> {
 		}
 	}
 
-	public static String getAttributeName(String varName) {
-		String[] split = varName.split(Agent.SEPERATOR);
-		return split[3];
-	}
+
 
 }
