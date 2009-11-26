@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFa
  * 
  * One Thread for global sources and one for the registered partial plans.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Marco Grawunder
  * 
  */
 public class SingleThreadScheduler extends AbstractScheduler implements
@@ -53,7 +53,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	/**
 	 * Runnable for execution the global sources.
 	 */
-	private final SourceExecutor sourceExecutor = new SourceExecutor();
+	//private final List<SourceExecutor sourceExecutor = new SourceExecutor();
 
 	/**
 	 * Thread for execution the registered partial plans.
@@ -63,7 +63,8 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	/**
 	 * Thread for execution the global sources.
 	 */
-	private Thread sourceThread;
+	//private Thread sourceThread;
+	private List<Thread> sourceThreads = new ArrayList<Thread>();
 
 	/**
 	 * Thread for execution the registered partial plans. Based on scheduling
@@ -101,34 +102,34 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * @author Wolf Bauer
 	 * 
 	 */
-	private class SourceExecutor implements Runnable {
-		@Override
-		public void run() {
-			boolean sourcesDone = false;
-			while (isRunning() && !sourcesDone) {
-				synchronized (sourcesToSchedule) {
-					Iterator<IIterableSource<?>> source = sourcesToSchedule
-							.iterator();
-					if (sourcesToSchedule.isEmpty()) {
-						sourcesDone = true;
-					}
-					while (source.hasNext()) {
-						IIterableSource<?> next = source.next();
-						if (next.isDone() || !next.isActive()) {
-							source.remove();
-							if (sourcesToSchedule.isEmpty()) {
-								sourcesDone = true;
-							}
-						} else {
-							if (next.hasNext()) {
-								next.transferNext();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+//	private class SourceExecutor implements Runnable {
+//		@Override
+//		public void run() {
+//			boolean sourcesDone = false;
+//			while (isRunning() && !sourcesDone) {
+//				synchronized (sourcesToSchedule) {
+//					Iterator<IIterableSource<?>> source = sourcesToSchedule
+//							.iterator();
+//					if (sourcesToSchedule.isEmpty()) {
+//						sourcesDone = true;
+//					}
+//					while (source.hasNext()) {
+//						IIterableSource<?> next = source.next();
+//						if (next.isDone() || !next.isActive()) {
+//							source.remove();
+//							if (sourcesToSchedule.isEmpty()) {
+//								sourcesDone = true;
+//							}
+//						} else {
+//							if (next.hasNext()) {
+//								next.transferNext();
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -146,11 +147,26 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		thread = new ExecutorThread();
 
 		thread.setUncaughtExceptionHandler(this);
-		sourceThread = new Thread(this.sourceExecutor);
-		sourceThread.setPriority(Thread.MAX_PRIORITY);
+		//sourceThread = new Thread(this.sourceExecutor);
+		
+		for (IIterableSource<?> source: sourcesToSchedule){
+			final IIterableSource<?> s = source;
+			Thread sThread = 
+			new Thread(){
+				public void run() {
+					while (s.hasNext()) {
+						s.transferNext();
+					}
+				};
+			};
+			sThread.start();
+			sourceThreads.add(sThread);
+		}
+		
+//		sourceThread.setPriority(Thread.MAX_PRIORITY);
 		thread.setPriority(Thread.NORM_PRIORITY);
 
-		sourceThread.start();
+//		sourceThread.start();
 		try {
 			Thread.sleep(300);
 		} catch (InterruptedException e) {
@@ -171,7 +187,9 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			throw new SchedulingException("scheduler isn't running");
 		}
 		// stop the scheduler thread
-		sourceThread.interrupt();
+		for (Thread sourceThread: sourceThreads){
+			sourceThread.interrupt();
+		}
 		super.stopScheduling();
 	}
 
@@ -249,7 +267,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		if (!this.thread.equals(t)) {
 			this.thread.interrupt();
 		}
-		if (!this.sourceThread.equals(t)) {
+		if (!this.sourceThreads.contains(t)) {
 			super.stopScheduling();
 		}
 
