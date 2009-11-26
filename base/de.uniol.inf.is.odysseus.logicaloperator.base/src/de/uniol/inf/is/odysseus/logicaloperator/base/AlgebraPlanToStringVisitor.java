@@ -13,9 +13,16 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ISubscriber<ILog
 
 	private StringBuilder builder;
 	private boolean wasup;
+	private boolean showSchema;
 
 	public AlgebraPlanToStringVisitor() {
 		reset();
+	}
+	
+	public AlgebraPlanToStringVisitor(boolean showSchema) {
+		reset();
+		this.showSchema = showSchema;
+		
 	}
 	
 	@Override
@@ -32,6 +39,9 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ISubscriber<ILog
 	public void node(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
 		this.builder.append(' ');
 		this.builder.append(((ILogicalOperator)sub).getName());
+		if(showSchema) {
+			this.builder.append("["+((ILogicalOperator)sub).getOutputSchema()+"]");
+		}
 	}
 
 	@Override
