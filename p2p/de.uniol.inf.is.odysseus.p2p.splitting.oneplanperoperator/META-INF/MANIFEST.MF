@@ -40,3 +40,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  net.jxta.util,
  net.jxta.util.documentSerializable
 Service-Component: OSGI-INF/AbstractSplittingStrategy.xml
+Require-Bundle: de.uniol.inf.is.odysseus.base

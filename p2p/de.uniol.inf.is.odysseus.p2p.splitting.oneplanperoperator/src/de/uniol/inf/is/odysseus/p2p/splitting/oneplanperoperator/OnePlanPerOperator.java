@@ -2,7 +2,8 @@ package de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
+
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import net.jxta.pipe.PipeID;
@@ -12,36 +13,42 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
-import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSourceAO;
-import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
-import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
+import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSourceAO;
+import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
 import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class OnePlanPerOperator extends
 		AbstractSplittingStrategy {
 
 	
-	private ArrayList<AbstractLogicalOperator> splitList;
-
-
-	public OnePlanPerOperator() {
-		super();
-		this.splitList = new ArrayList<AbstractLogicalOperator>();
-	}
 
 	@Override
 	public ArrayList<AbstractLogicalOperator> splitPlan(AbstractLogicalOperator plan) {
-
-		splitPlan(plan,
-				createSocketAdvertisement().toString());
-		if(getRefinement()!=null) {
-			setSplitList(getRefinement().refinePlan(this.splitList));
+		ArrayList<AbstractLogicalOperator> splitList = new ArrayList<AbstractLogicalOperator>();
+		try {
+			System.out.println(AbstractTreeWalker.prefixWalk(plan,
+								new AlgebraPlanToStringVisitor()));
+			splitPlan(plan,
+					createSocketAdvertisement().toString(), splitList);
+			System.out.println("zeige split");
+			for(AbstractLogicalOperator ao : splitList) {
+				System.out.println(AbstractTreeWalker.prefixWalk(ao,
+						new AlgebraPlanToStringVisitor(true)));
+			}
+			if(getRefinement()!=null) {
+				return getRefinement().refinePlan(splitList);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		return getSplitList();
+		return splitList;
 	}
 
 	public PipeAdvertisement createSocketAdvertisement() {
@@ -57,17 +64,17 @@ public class OnePlanPerOperator extends
 		return advertisement;
 	}
 
-	private void splitPlan(ILogicalOperator iLogicalOperator, String current) {
+	private void splitPlan(ILogicalOperator iLogicalOperator, String current, List<AbstractLogicalOperator> splitList) {
 		int outputCount = iLogicalOperator.getSubscribedTo().size();
 		String temp = null;
 		P2PSinkAO p2psink = new P2PSinkAO(current);
 		String adv = createSocketAdvertisement().toString();
- 		P2PSourceAO p2paccess = new P2PSourceAO(p2psink.getAdv());
+ 		P2PSourceAO p2psource = new P2PSourceAO(p2psink.getAdv());
  		//für den ersten Operator
  		if(iLogicalOperator.getSubscriptions().isEmpty()) {
  			P2PSinkAO tempAO = new P2PSinkAO(createSocketAdvertisement().toString());
  			tempAO.subscribeTo(iLogicalOperator, 0, 0, iLogicalOperator.getOutputSchema());
- 			getSplitList().add(tempAO);
+ 			splitList.add(tempAO);
  		}
 //		AbstractLogicalOperator tempAO = (AbstractLogicalOperator) iLogicalOperator.clone();
  		if(!(iLogicalOperator instanceof P2PAO)) {
@@ -124,18 +131,23 @@ public class OnePlanPerOperator extends
 //			for(LogicalSubscription subscription : tempAO.getSubscribedTo()) {
 //				tempAO.unsubscribeTo(subscription);
 //			}
-			
-			
-			RestructHelper.insertOperator(p2paccess, iLogicalOperator, 0, 0, 0);
-//			p2paccess.setOutputSchema(p2paccess.getSubscribedTo().iterator().next().getTarget().getOutputSchema());
-			RestructHelper.insertOperator(p2psink, p2paccess,0,0,0);
-			p2paccess.setOutputSchema(p2psink.getOutputSchema());
-			Collection<LogicalSubscription> col = p2paccess.getSubscribedTo();
-			for(LogicalSubscription elem : col) {
-				if(elem.getTarget().equals(p2psink)) {
-					elem.setInputSchema(elem.getTarget().getOutputSchema());
-				}
+			for(LogicalSubscription log : iLogicalOperator.getSubscribedTo()) {
+				//TODO hier noch weiter machen
 			}
+			RestructHelper.insertOperator(p2psource, iLogicalOperator, 0, 0, 0);
+			System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
+					new AlgebraPlanToStringVisitor(true)));
+//			p2paccess.setOutputSchema(p2paccess.getSubscribedTo().iterator().next().getTarget().getOutputSchema());
+			RestructHelper.insertOperator(p2psink, p2psource,0,0,0);
+			System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
+					new AlgebraPlanToStringVisitor(true)));
+//			p2paccess.setOutputSchema(p2psink.getOutputSchema());
+			Collection<LogicalSubscription> col = p2psource.getSubscribedTo();
+//			for(LogicalSubscription elem : col) {
+//				if(elem.getTarget().equals(p2psink)) {
+//					elem.setInputSchema(elem.getTarget().getOutputSchema());
+//				}
+//			}
 //			Collection<ILogicalOperator> sw = RestructHelper.switchOperatorInternal(p2psink, p2paccess);
 //			p2psink.unsubscribeSubscriptionTo(p2paccess, 0, 0);
 //			Collection<ILogicalOperator> ins = RestructHelper.insertOperator(p2psink, iLogicalOperator, 0, 0, 0);
@@ -199,15 +211,15 @@ public class OnePlanPerOperator extends
 //		getSplitList().add(p2paccess);
  		}
  		else if(iLogicalOperator instanceof P2PSinkAO) {
- 			getSplitList().add((AbstractLogicalOperator) iLogicalOperator);
+ 			splitList.add((AbstractLogicalOperator) iLogicalOperator);
  		}
- 		if(iLogicalOperator instanceof ProjectAO) {
- 			Iterator<LogicalSubscription> iter = iLogicalOperator.getSubscribedTo().iterator();
- 			while(iter.hasNext()) {
- 				LogicalSubscription subscr = iter.next();
- 				subscr.setInputSchema(subscr.getTarget().getOutputSchema());
- 			}
- 		}
+// 		if(iLogicalOperator instanceof ProjectAO) {
+// 			Iterator<LogicalSubscription> iter = iLogicalOperator.getSubscribedTo().iterator();
+// 			while(iter.hasNext()) {
+// 				LogicalSubscription subscr = iter.next();
+// 				subscr.setInputSchema(subscr.getTarget().getOutputSchema());
+// 			}
+// 		}
 		for (int i = 0; i < outputCount; ++i) {
 			if (i == 1) {
 				adv = temp;
@@ -215,7 +227,7 @@ public class OnePlanPerOperator extends
 			if (iLogicalOperator instanceof AccessAO) {
 				return;
 			}
-			splitPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), adv);
+			splitPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), adv, splitList);
 			//Nach der Rekursion Verbindung zwischen P2PSource und P2PSinks kappen
 			if(iLogicalOperator instanceof P2PSourceAO) {
 				((P2PSourceAO)iLogicalOperator).unsubscribeTo(iLogicalOperator.getSubscribedTo(0));
@@ -228,14 +240,5 @@ public class OnePlanPerOperator extends
 		return "OneOperatorPerPeer";
 	}
 	
-	
-	public ArrayList<AbstractLogicalOperator> getSplitList() {
-		return splitList;
-	}
-
-
-	public void setSplitList(ArrayList<AbstractLogicalOperator> splitList) {
-		this.splitList = splitList;
-	}
 
 }
