@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
@@ -64,7 +65,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * Thread for execution the global sources.
 	 */
 	//private Thread sourceThread;
-	private List<Thread> sourceThreads = new ArrayList<Thread>();
+	private List<Thread> sourceThreads = new Vector<Thread>();
 
 	/**
 	 * Thread for execution the registered partial plans. Based on scheduling
@@ -154,13 +155,17 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			Thread sThread = 
 			new Thread(){
 				public void run() {
-					while (s.hasNext()) {
-						s.transferNext();
+					sourceThreads.add(this);
+					while (!s.isDone() && s.isActive()){
+						while (s.hasNext()) {
+							s.transferNext();							
+						}
+						Thread.yield();
 					}
+					sourceThreads.remove(this);
 				};
 			};
-			sThread.start();
-			sourceThreads.add(sThread);
+			sThread.start();			
 		}
 		
 //		sourceThread.setPriority(Thread.MAX_PRIORITY);
