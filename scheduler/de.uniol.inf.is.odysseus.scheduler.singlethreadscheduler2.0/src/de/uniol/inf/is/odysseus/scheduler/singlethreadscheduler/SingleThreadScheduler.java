@@ -44,7 +44,8 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	/**
 	 * All global sources which should be executed.
 	 */
-	final private ArrayList<IIterableSource<?>> sourcesToSchedule = new ArrayList<IIterableSource<?>>();
+	// final private ArrayList<IIterableSource<?>> sourcesToSchedule = new
+	// ArrayList<IIterableSource<?>>();
 
 	/**
 	 * All registered partial plans with their scheduling strategy.
@@ -54,18 +55,18 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	/**
 	 * Runnable for execution the global sources.
 	 */
-	//private final List<SourceExecutor sourceExecutor = new SourceExecutor();
+	// private final List<SourceExecutor sourceExecutor = new SourceExecutor();
 
 	/**
 	 * Thread for execution the registered partial plans.
 	 */
-	private ExecutorThread thread;
+	private ExecutorThread execThread;
 
 	/**
 	 * Thread for execution the global sources.
 	 */
-	//private Thread sourceThread;
-	private List<Thread> sourceThreads = new Vector<Thread>();
+	// private Thread sourceThread;
+	private List<SingleSourceExecutor> sourceThreads = new Vector<SingleSourceExecutor>();
 
 	/**
 	 * Thread for execution the registered partial plans. Based on scheduling
@@ -75,62 +76,62 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * 
 	 */
 	private class ExecutorThread extends Thread {
+		
+		private boolean terminate;
 
+		public void terminate() {
+			terminate = true;
+		};
+		
 		@Override
 		public void run() {
+			terminate = false;
 			Collection<ISchedulingStrategy> values = parts.values();
 			Iterator<ISchedulingStrategy> part;
-			try{
-			while (!isInterrupted() && !values.isEmpty()) {
-				part = values.iterator();
-				while (part.hasNext()) {
-					if (part.next().schedule(timeSlicePerStrategy)) {// part
-						// is
-						// done
-						part.remove();
+			try {
+				while (!isInterrupted() && !values.isEmpty() && !terminate) {
+					part = values.iterator();
+					while (part.hasNext()) {
+						if (part.next().schedule(timeSlicePerStrategy)) {// part
+							// is
+							// done
+							part.remove();
+						}
 					}
 				}
-			}
-			} catch(Throwable t){
+			} catch (Throwable t) {
 				t.printStackTrace();
 			}
 		}
 	}
+	
+	private class SingleSourceExecutor extends Thread{
+		
+		private IIterableSource<?> s;
+		
+		boolean terminate = false;
+		
+		public SingleSourceExecutor(IIterableSource<?> s){
+			this.s = s;
+		}
+		
+		public void run() {
+			sourceThreads.add(this);
+			terminate = false;
+			while (!s.isDone() && s.isActive() && !terminate) {
+				while (s.hasNext()) {
+					s.transferNext();
+				}
+				Thread.yield();
+			}
+			sourceThreads.remove(this);
+		}
 
-	/**
-	 * Runnable for execution the global sources.
-	 * 
-	 * @author Wolf Bauer
-	 * 
-	 */
-//	private class SourceExecutor implements Runnable {
-//		@Override
-//		public void run() {
-//			boolean sourcesDone = false;
-//			while (isRunning() && !sourcesDone) {
-//				synchronized (sourcesToSchedule) {
-//					Iterator<IIterableSource<?>> source = sourcesToSchedule
-//							.iterator();
-//					if (sourcesToSchedule.isEmpty()) {
-//						sourcesDone = true;
-//					}
-//					while (source.hasNext()) {
-//						IIterableSource<?> next = source.next();
-//						if (next.isDone() || !next.isActive()) {
-//							source.remove();
-//							if (sourcesToSchedule.isEmpty()) {
-//								sourcesDone = true;
-//							}
-//						} else {
-//							if (next.hasNext()) {
-//								next.transferNext();
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
+		public void terminate() {
+			terminate = true;
+		};
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -145,39 +146,25 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		}
 
 		super.startScheduling();
-		thread = new ExecutorThread();
+		execThread = new ExecutorThread();
 
-		thread.setUncaughtExceptionHandler(this);
-		//sourceThread = new Thread(this.sourceExecutor);
-		
-		for (IIterableSource<?> source: sourcesToSchedule){
-			final IIterableSource<?> s = source;
-			Thread sThread = 
-			new Thread(){
-				public void run() {
-					sourceThreads.add(this);
-					while (!s.isDone() && s.isActive()){
-						while (s.hasNext()) {
-							s.transferNext();							
-						}
-						Thread.yield();
-					}
-					sourceThreads.remove(this);
-				};
-			};
-			sThread.start();			
+		execThread.setUncaughtExceptionHandler(this);
+		// sourceThread = new Thread(this.sourceExecutor);
+
+		for (SingleSourceExecutor source : sourceThreads) {
+			source.start();
 		}
-		
-//		sourceThread.setPriority(Thread.MAX_PRIORITY);
-		thread.setPriority(Thread.NORM_PRIORITY);
 
-//		sourceThread.start();
+		// sourceThread.setPriority(Thread.MAX_PRIORITY);
+		execThread.setPriority(Thread.NORM_PRIORITY);
+
+		// sourceThread.start();
 		try {
 			Thread.sleep(300);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		thread.start();
+		execThread.start();
 	}
 
 	/*
@@ -192,7 +179,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			throw new SchedulingException("scheduler isn't running");
 		}
 		// stop the scheduler thread
-		for (Thread sourceThread: sourceThreads){
+		for (Thread sourceThread : sourceThreads) {
 			sourceThread.interrupt();
 		}
 		super.stopScheduling();
@@ -230,12 +217,17 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
-	public void setSources(List<IIterableSource<?>> sources) {
-		if (sources != null) {
-			synchronized (this.sourcesToSchedule) {
-				this.sourcesToSchedule.clear();
-				this.sourcesToSchedule.addAll(sources);
+	public void setSources(List<IIterableSource<?>> sourcesToSchedule) {
+		if (sourcesToSchedule != null) {
+			for (SingleSourceExecutor source : sourceThreads) {
+				source.terminate();
 			}
+
+			for (IIterableSource<?> source : sourcesToSchedule) {
+				final IIterableSource<?> s = source;
+				new SingleSourceExecutor(s);
+			}
+
 		}
 	}
 
@@ -250,15 +242,6 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		return (ArrayList<IPartialPlan>) this.parts.keySet();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#getSources()
-	 */
-	@Override
-	public ArrayList<IIterableSource<?>> getSources() {
-		return this.sourcesToSchedule;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -269,8 +252,8 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 */
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
-		if (!this.thread.equals(t)) {
-			this.thread.interrupt();
+		if (!this.execThread.equals(t)) {
+			this.execThread.terminate();
 		}
 		if (!this.sourceThreads.contains(t)) {
 			super.stopScheduling();
