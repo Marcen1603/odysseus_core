@@ -101,7 +101,9 @@ abstract public class AbstractExecListSchedulingStrategy extends
 		while(executionListHasElements()){
 			if (iter.hasNext()){
 				IIterableSource<?> s = iter.next();
-				if (s.hasNext()) return s;
+				// QUATSCH!!!
+				//if (s.hasNext()) return s;
+				return s;
 			}else{
 				iter = getExecutionListIterator();
 			}
