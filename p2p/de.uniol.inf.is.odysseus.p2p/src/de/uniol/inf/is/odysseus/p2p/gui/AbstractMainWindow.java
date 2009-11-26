@@ -4,9 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
-
-
-
 /**
  * Abstraktion der grafischen Darstellung der Peer GUIs
  * 

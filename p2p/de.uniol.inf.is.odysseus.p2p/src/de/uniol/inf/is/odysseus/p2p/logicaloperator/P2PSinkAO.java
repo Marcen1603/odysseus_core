@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.p2p.logicaloperator;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class P2PSinkAO extends P2PAO {
+public class P2PSinkAO extends P2PAO{
 
 	private static final long serialVersionUID = -4079953031372502548L;
 	

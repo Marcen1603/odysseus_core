@@ -9,7 +9,6 @@ abstract public class P2PAO extends UnaryLogicalOp {
 	
 	public P2PAO(String adv) {
 		this.adv = adv;
-		System.out.println("Advertisement im P2PAO Stream" +this.adv.toString());
 	}
 
 	public String getAdv() {
