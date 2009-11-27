@@ -37,4 +37,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  net.jxta.socket,
  net.jxta.util,
  net.jxta.util.documentSerializable
-Service-Component: OSGI-INF/NoSplittingStrategy.xml
+Service-Component: OSGI-INF/AbstractSplittingStrategy.xml
