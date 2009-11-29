@@ -61,10 +61,11 @@ public class OdysseusBenchmarkRunner implements IApplication {
 					String memFile = filename.replaceAll(".xml", i + "JOIN.xml" );
 					serializer.write(benchmark.getMemUsageJoin().get(i), new File(memFile));
 				}
-			/*	for(int i=0; i < benchmark.getMemUsageJoinPunctuations().size();i++) {
-					serializer.write(benchmark.getMemUsageJoinPunctuations().get(i), new File(i + "JOINPUNC" + filename));
+				for(int i=0; i < benchmark.getMemUsageJoinPunctuations().size();i++) {
+					String memFile = filename.replaceAll(".xml", i + "JOIN2.xml" );
+					serializer.write(benchmark.getMemUsageJoinPunctuations().get(i), new File(memFile));
 				}
-				for(int i=0; i < benchmark.getMemUsagePuffer().size();i++) {
+				/*	for(int i=0; i < benchmark.getMemUsagePuffer().size();i++) {
 					serializer.write(benchmark.getMemUsagePuffer().get(i), new File(i + "BUFFER" + filename));
 				}*/
 			}			

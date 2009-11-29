@@ -62,9 +62,9 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	@Override	
 	public void handlePostPriorisation(T next, boolean deactivate,
 			boolean matchPredicate) {
-
-		ITimeInterval time = (ITimeInterval) next.getMetadata();
-		sendPunctuation(time.getStart());
+		// TODO Punctuations nur senden, sobald sie auch im Gesamtsystem aktiviert sind
+		//ITimeInterval time = (ITimeInterval) next.getMetadata();
+		//sendPunctuation(time.getStart());
 		
 		if(deactivate) {
 			this.setActive(false);

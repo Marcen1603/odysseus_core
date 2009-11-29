@@ -89,8 +89,9 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 			IMetaAttributeContainer<? extends IPriority> next,
 			boolean deactivate, boolean matchPredicate) {
 
-		ITimeInterval time = (ITimeInterval) next.getMetadata();
-		sendPunctuation(time.getStart());
+		// TODO Punctuations nur senden, sobald sie auch im Gesamtsystem aktiviert sind
+		//ITimeInterval time = (ITimeInterval) next.getMetadata();
+		//sendPunctuation(time.getStart());
 
 		if (deactivate) {
 			this.setActive(false);

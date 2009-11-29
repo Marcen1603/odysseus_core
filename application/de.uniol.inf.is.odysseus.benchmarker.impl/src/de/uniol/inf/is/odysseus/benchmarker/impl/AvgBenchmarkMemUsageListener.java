@@ -63,8 +63,8 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 			if(((PlanExecutionEvent) eventArgs).getID().equals(PlanExecutionEvent.EXECUTION_STOPPED)) {
 				System.out.println("Plan execution finished...create benchmark results!");
 				statsJoinSweepArea = calcMemUsageBenchmarkResult(listeners);
-				statsBufferSize = calcMemUsageBenchmarkResult(listenersPuncJoin);
-				statsJoinPunctuationStorage = calcMemUsageBenchmarkResult(listenersBuffer);
+				statsBufferSize = calcMemUsageBenchmarkResult(listenersBuffer);
+				statsJoinPunctuationStorage = calcMemUsageBenchmarkResult(listenersPuncJoin);
 				hash.clear();
 			}
 		}
