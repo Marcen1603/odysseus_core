@@ -100,7 +100,11 @@ public class WindowAO extends UnaryLogicalOp {
 		this.partitionedBy = partitionedBy;
 	}
 	
-
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema();
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -148,8 +152,5 @@ public class WindowAO extends UnaryLogicalOp {
 		return true;
 	}
 	
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return getInputSchema();
-	}
+
 }
