@@ -7,7 +7,6 @@ import java.util.Stack;
 
 import org.nfunk.jep.JEP;
 import org.nfunk.jep.Variable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +16,10 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedConsumptionModeException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndeterminableVariableValueException;
-import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.ConsumptionMode;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
+import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
@@ -186,7 +185,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 							// variablenwert steht nicht in der symboltabelle
 							// -> wert im MatchingTrace suchen (teuer?!)
 							String[] split = var.getName().split(
-									CepVariable.getSeperator());
+									SymbolTableSchemeEntry.getSeperator());
 							StateBuffer<R> buffer = instance.getMatchingTrace()
 									.getStateBuffer(split[1]);
 							if (buffer != null) {
@@ -266,10 +265,10 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 					if (logger.isDebugEnabled()) logger.debug("Setze Variable " + var.getName());
 					if (Agent.isActEventName(var.getName())) {
 						// Variable bezieht sich auf aktuelles Event
-						var.setValue(this.eventReader.getValue(CepVariable
+						var.setValue(this.eventReader.getValue(SymbolTableSchemeEntry
 								.getAttributeName(var.getName()), object));
 						if (logger.isDebugEnabled()) logger.debug("Neuer Wert: "
-								+ this.eventReader.getValue(CepVariable
+								+ this.eventReader.getValue(SymbolTableSchemeEntry
 										.getAttributeName(var.getName()),
 										object));
 					} else {
@@ -534,7 +533,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	 *         bezieht, ansonsten false.
 	 */
 	public static boolean isActEventName(String name) {
-		String[] split = name.split(CepVariable.getSeperator());
+		String[] split = name.split(SymbolTableSchemeEntry.getSeperator());
 		if (split[0].isEmpty() && split[1].isEmpty() && split[2].isEmpty()) {
 			return true;
 		} else {

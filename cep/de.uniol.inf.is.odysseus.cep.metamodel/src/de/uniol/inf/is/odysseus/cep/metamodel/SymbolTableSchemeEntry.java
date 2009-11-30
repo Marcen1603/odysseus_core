@@ -27,7 +27,7 @@ public class SymbolTableSchemeEntry<T> {
 	 * ID des Attributs. Muss von der verwendeten Implementierung von @link
 	 * {@link AbstractEventReader} aufgelöst werden können.
 	 */
-	private String attribute;
+	private String attributename;
 	/**
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
@@ -53,10 +53,20 @@ public class SymbolTableSchemeEntry<T> {
 			int index, String attribute, SymbolTableOperation<T> operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
-		this.attribute = attribute;
+		this.attributename = attribute;
 		this.setOperation(operation);
 	}
+	
+	public SymbolTableSchemeEntry(String varName){
+		String[] split = varName.split(getSeperator());
+		this.operation =  SymbolTableOperationFactory.getOperation(split[0]);
+		this.stateIdentifier = split[1];
+		this.index = Integer.parseInt(split[2]);
+		this.attributename = split[3];
+	} 
 
+	
+	
 	/**
 	 * leerer Standardkonstruktor
 	 */
@@ -72,12 +82,14 @@ public class SymbolTableSchemeEntry<T> {
 	 *         <operationname>_<statename>_<index>_<attributname>
 	 */
 	public String getVariableName() {
-		String name = this.operation.getName() + CepVariable.getSeperator();  
-		name += this.stateIdentifier + CepVariable.getSeperator();
+		StringBuffer ret = new StringBuffer();
+		ret.append(this.operation.getName()).append(getSeperator());  
+		ret.append(this.stateIdentifier).append(getSeperator());
 		if (this.index >= 0) {
-			name += this.index;
+			ret.append(this.index);
 		}
-		return name + CepVariable.getSeperator() + this.attribute;
+		ret.append(getSeperator()).append(this.attributename);
+		return ret.toString();
 	}
 
 	/**
@@ -158,7 +170,7 @@ public class SymbolTableSchemeEntry<T> {
 	 * @return Der Name des Attributs, auf das sich der Eintrag bezieht.
 	 */
 	public String getAttribute() {
-		return attribute;
+		return attributename;
 	}
 
 	/**
@@ -170,8 +182,8 @@ public class SymbolTableSchemeEntry<T> {
 	 *            nur aus Buchstaben und Zahlen bestehen darf, wobei das erste
 	 *            Zeichen ein Buchstabe sein muss.
 	 */
-	public void setAttribute(String attribute) {
-		this.attribute = attribute;
+	public void setAttribute(String attributename) {
+		this.attributename = attributename;
 	}
 
 	public String toString(String indent) {
@@ -182,4 +194,13 @@ public class SymbolTableSchemeEntry<T> {
 		return str;
 	}
 
+	public static String getSeperator(){
+		return "_";
+	}
+	
+	public static String getAttributeName(String varName) {
+		String[] split = varName.split(getSeperator());
+		return split[3];
+	}
+	
 }

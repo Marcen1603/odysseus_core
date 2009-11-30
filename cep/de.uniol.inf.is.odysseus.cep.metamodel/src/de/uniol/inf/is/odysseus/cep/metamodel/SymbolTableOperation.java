@@ -22,6 +22,8 @@ public abstract class SymbolTableOperation<T> {
 	 * unveränderte Referenz von oldValue oder ein neu erzeugtes Objekt
 	 * zurückgeben!
 	 * 
+	 * TODO: Evtl. nachdenken, ob man T nicht entsprechend einschr�nkt
+	 * 
 	 * @param oldValue
 	 *            Der alte Wert aus der Symboltabelle. Darf innerhalb der
 	 *            Methode nicht verändert werden!
