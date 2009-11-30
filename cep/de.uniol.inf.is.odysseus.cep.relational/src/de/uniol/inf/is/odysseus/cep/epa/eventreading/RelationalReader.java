@@ -19,7 +19,6 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 	 *            Das relationale Schema der Tupel, die gelesen werden sollen.
 	 */
 	public RelationalReader(SDFAttributeList scheme) {
-		super();
 		this.scheme = new HashMap<String, Integer>();
 		for (int i = 0; i < scheme.getAttributeCount(); i++) {
 			this.scheme.put(scheme.get(i).toString(), new Integer(i));

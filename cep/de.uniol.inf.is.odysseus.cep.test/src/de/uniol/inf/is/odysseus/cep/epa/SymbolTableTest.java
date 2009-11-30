@@ -1,18 +1,24 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.LinkedList;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.RelationalReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Count;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import static org.junit.Assert.*;
 @SuppressWarnings("all")
 public class SymbolTableTest {
 
@@ -72,39 +78,40 @@ public class SymbolTableTest {
 
 	@Test
 	public void test() {
-//		assertTrue(this.symTab.getValue("state1_1_attribute1") == null);
-//		assertTrue(this.symTab.getValue("state2__attribute1") == null);
-//		assertTrue(this.symTab.getValue("not_1_existingname") == null);
-//		assertTrue(this.symTab.getValue("123____:invaild_name") == null);
-//
-//		this.symTab.getEntries().get(0).setValue(new Integer(1));
-//		this.symTab.getEntries().get(1).setValue(new Integer(2));
-//
-//		assertTrue(this.symTab.getValue("state1_1_attribute1") != null);
-//		assertTrue(this.symTab.getValue("state2__attribute1") != null);
-//		assertTrue(this.symTab.getValue("not_1_existingname") == null);
-//		assertTrue(this.symTab.getValue("123____:invaild_name") == null);
-//
-//		assertEquals(new Integer(1), this.symTab
-//				.getValue("state1_1_attribute1"));
-//		assertEquals(new Integer(2), this.symTab.getValue("state2__attribute1"));
+		assertTrue(this.symTab.getValue("state1_1_attribute1") == null);
+		assertTrue(this.symTab.getValue("state2__attribute1") == null);
+		assertTrue(this.symTab.getValue("not_1_existingname") == null);
+		assertTrue(this.symTab.getValue("123____:invaild_name") == null);
+
+
+		this.symTab.getEntries().get(0).setValue(new Integer(1));
+		this.symTab.getEntries().get(1).setValue(new Integer(2));
+
+		assertTrue(this.symTab.getValue("state1_1_attribute1") != null);
+		assertTrue(this.symTab.getValue("state2__attribute1") != null);
+		assertTrue(this.symTab.getValue("not_1_existingname") == null);
+		assertTrue(this.symTab.getValue("123____:invaild_name") == null);
+
+		assertEquals(new Integer(1), this.symTab
+				.getValue("state1_1_attribute1"));
+		assertEquals(new Integer(2), this.symTab.getValue("state2__attribute1"));
 	}
 	
-//	@Test
-//	public void test2() {
-//		RelationalReader reader = new RelationalReader(this
-//				.generateEventScheme());
-//		LinkedList<RelationalTuple> events = this.generateEvents(100);
-//		int i = 0;
-//		for (RelationalTuple event : events) {
-//			for (SymbolTableEntry entry : this.symTab.getEntries()) {
-//				entry.executeOperation(event, reader);
-//				if (entry.getScheme().getEventIdentifier().equals("state1"))
-//					assertEquals(new Integer(i), entry.getValue());
-//				if (entry.getScheme().getEventIdentifier().equals("state2"))
-//					assertEquals(new Integer(i+1), entry.getValue());
-//			}
-//			i++;
-//		}
-//	}
+	@Test
+	public void test2() {
+		RelationalReader reader = new RelationalReader(this
+				.generateEventScheme());
+		LinkedList<RelationalTuple> events = this.generateEvents(100);
+		int i = 0;
+		for (RelationalTuple event : events) {
+			for (SymbolTableEntry entry : this.symTab.getEntries()) {				
+				entry.executeOperation(reader.getValue(entry.getScheme().getAttribute(), event));
+				if (entry.getScheme().getStateIdentifier().equals("state1"))
+					assertEquals(new Integer(i), entry.getValue());
+				if (entry.getScheme().getStateIdentifier().equals("state2"))
+					assertEquals(new Integer(i+1), entry.getValue());
+			}
+			i++;
+		}
+	}
 }

@@ -41,7 +41,7 @@ public class SymbolTableEntry<T> {
 	 * @param value
 	 *            Der neue Wert des Eintrags, nicht null.
 	 */
-	protected void setValue(T value) {
+	public void setValue(T value) {
 		this.value = value;
 	}
 
