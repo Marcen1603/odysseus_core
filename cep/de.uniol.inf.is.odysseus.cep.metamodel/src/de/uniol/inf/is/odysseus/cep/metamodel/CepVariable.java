@@ -57,6 +57,7 @@ public class CepVariable<T> {
 		this.setOperation(operation);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public CepVariable(String varName){
 		String[] split = varName.split(getSeperator());
 		this.operation =  SymbolTableOperationFactory.getOperation(split[0]);
