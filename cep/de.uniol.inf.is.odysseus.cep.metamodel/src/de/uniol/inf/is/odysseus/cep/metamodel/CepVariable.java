@@ -5,12 +5,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAdapter;
 
 /**
- * Eintrag des Symboltabellenschemas.
+ * Cep-Varible mit Moeglichkeiten zur Konvertierung mit einem String.
  * 
  * @author Thomas Vogelgesang
  * 
  */
-public class SymbolTableSchemeEntry<T> {
+public class CepVariable<T> {
 
 	/**
 	 * ID eines Events / Zustands. Darf nur aus Buchstaben und Ziffern bestehen,
@@ -49,7 +49,7 @@ public class SymbolTableSchemeEntry<T> {
 	 *            Operation, die bei der Aktualisierung des Eintrags ausgeführt
 	 *            werden soll
 	 */
-	public SymbolTableSchemeEntry(int entryID, String stateIdentifier,
+	public CepVariable(int entryID, String stateIdentifier,
 			int index, String attribute, SymbolTableOperation<T> operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
@@ -57,7 +57,7 @@ public class SymbolTableSchemeEntry<T> {
 		this.setOperation(operation);
 	}
 	
-	public SymbolTableSchemeEntry(String varName){
+	public CepVariable(String varName){
 		String[] split = varName.split(getSeperator());
 		this.operation =  SymbolTableOperationFactory.getOperation(split[0]);
 		this.stateIdentifier = split[1];
@@ -70,7 +70,7 @@ public class SymbolTableSchemeEntry<T> {
 	/**
 	 * leerer Standardkonstruktor
 	 */
-	public SymbolTableSchemeEntry() {
+	public CepVariable() {
 	}
 
 	/**

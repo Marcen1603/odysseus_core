@@ -7,7 +7,7 @@ import org.junit.*;
 import de.uniol.inf.is.odysseus.cep.metamodel.Count;
 import de.uniol.inf.is.odysseus.cep.metamodel.Write;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -22,10 +22,10 @@ public class SymbolTableTest {
 	public void setUp() {
 		this.scheme = new SymbolTableScheme();
 		this.scheme.getEntries().add(
-				new SymbolTableSchemeEntry(1, "state1", 1, "attribute1",
+				new CepVariable(1, "state1", 1, "attribute1",
 						new Write()));
 		this.scheme.getEntries().add(
-				new SymbolTableSchemeEntry(2, "state2", -1, "attribute1",
+				new CepVariable(2, "state2", -1, "attribute1",
 						new Count()));
 		this.symTab = new SymbolTable(this.scheme);
 	}

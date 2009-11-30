@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.Write;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
 @SuppressWarnings("unchecked")
@@ -51,7 +51,7 @@ public class SMF2 extends StateMachineFactory {
 
 		this.symbolTableScheme = new SymbolTableScheme();
 		this.symbolTableScheme.getEntries().add(
-				new SymbolTableSchemeEntry(0, "abcd", 1, "xyz", new Write()));
+				new CepVariable(0, "abcd", 1, "xyz", new Write()));
 	}
 
 }

@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndeterminableVariableValueEx
 import de.uniol.inf.is.odysseus.cep.metamodel.ConsumptionMode;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
@@ -185,7 +185,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 							// variablenwert steht nicht in der symboltabelle
 							// -> wert im MatchingTrace suchen (teuer?!)
 							String[] split = var.getName().split(
-									SymbolTableSchemeEntry.getSeperator());
+									CepVariable.getSeperator());
 							StateBuffer<R> buffer = instance.getMatchingTrace()
 									.getStateBuffer(split[1]);
 							if (buffer != null) {
@@ -265,10 +265,10 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 					if (logger.isDebugEnabled()) logger.debug("Setze Variable " + var.getName());
 					if (Agent.isActEventName(var.getName())) {
 						// Variable bezieht sich auf aktuelles Event
-						var.setValue(this.eventReader.getValue(SymbolTableSchemeEntry
+						var.setValue(this.eventReader.getValue(CepVariable
 								.getAttributeName(var.getName()), object));
 						if (logger.isDebugEnabled()) logger.debug("Neuer Wert: "
-								+ this.eventReader.getValue(SymbolTableSchemeEntry
+								+ this.eventReader.getValue(CepVariable
 										.getAttributeName(var.getName()),
 										object));
 					} else {
@@ -533,7 +533,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	 *         bezieht, ansonsten false.
 	 */
 	public static boolean isActEventName(String name) {
-		String[] split = name.split(SymbolTableSchemeEntry.getSeperator());
+		String[] split = name.split(CepVariable.getSeperator());
 		if (split[0].isEmpty() && split[1].isEmpty() && split[2].isEmpty()) {
 			return true;
 		} else {

@@ -13,7 +13,7 @@ public class SymbolTableScheme<T> {
 	/**
 	 * Liste aller Einträge in der Symboltabelle
 	 */
-	private LinkedList<SymbolTableSchemeEntry<T>> entries;
+	private LinkedList<CepVariable<T>> entries;
 
 	/**
 	 * Erzeugt ein Symboltabellenschema aus einer Liste von
@@ -22,7 +22,7 @@ public class SymbolTableScheme<T> {
 	 * @param entries
 	 *            Liste mit den Einträgen des Symboltabellenschemas
 	 */
-	public SymbolTableScheme(LinkedList<SymbolTableSchemeEntry<T>> entries) {
+	public SymbolTableScheme(LinkedList<CepVariable<T>> entries) {
 		this.entries = entries;
 	}
 
@@ -30,7 +30,7 @@ public class SymbolTableScheme<T> {
 	 * Erzeugt ein leeres Symboltabellenschema
 	 */
 	public SymbolTableScheme() {
-		this.entries = new LinkedList<SymbolTableSchemeEntry<T>>();
+		this.entries = new LinkedList<CepVariable<T>>();
 	}
 
 	/**
@@ -38,7 +38,7 @@ public class SymbolTableScheme<T> {
 	 * 
 	 * @return Liste mit allen Symboltabellen-Schema-Einträgen.
 	 */
-	public LinkedList<SymbolTableSchemeEntry<T>> getEntries() {
+	public LinkedList<CepVariable<T>> getEntries() {
 		return entries;
 	}
 
@@ -48,14 +48,14 @@ public class SymbolTableScheme<T> {
 	 * @param entries
 	 *            Liste der Einträge im Symboltabellenschema. Nicht null.
 	 */
-	public void setEntries(LinkedList<SymbolTableSchemeEntry<T>> entries) {
+	public void setEntries(LinkedList<CepVariable<T>> entries) {
 		this.entries = entries;
 	}
 	
 	public String toString(String indent) {
 		String str = indent + "SymTabScheme: " + this.hashCode();
 		indent += "  ";
-		for (SymbolTableSchemeEntry<T> entry : this.entries) {
+		for (CepVariable<T> entry : this.entries) {
 			str += entry.toString(indent);
 		}
 		return str;

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 
 /**
  * Instanzen dieser Klasse stellen Einträge in einer Symboltabelle dar.
@@ -13,7 +13,7 @@ public class SymbolTableEntry<T> {
 	/**
 	 * Referenz auf das Schema des Symboltabelleneintrags
 	 */
-	private SymbolTableSchemeEntry<T> scheme;
+	private CepVariable<T> scheme;
 	/**
 	 * Der Wert einer Variablen
 	 */
@@ -22,7 +22,7 @@ public class SymbolTableEntry<T> {
 	/**
 	 * Erzeugt leeren Eintrag. Der Wert des Eintrags bleibt uninitialisiert!
 	 */
-	public SymbolTableEntry(SymbolTableSchemeEntry<T> entryScheme) {
+	public SymbolTableEntry(CepVariable<T> entryScheme) {
 		this.scheme = entryScheme;
 	}
 
@@ -50,7 +50,7 @@ public class SymbolTableEntry<T> {
 	 * 
 	 * @return Das zum Eintrag gehörende Schema.
 	 */
-	public SymbolTableSchemeEntry<T> getScheme() {
+	public CepVariable<T> getScheme() {
 		return scheme;
 	}
 
