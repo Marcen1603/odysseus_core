@@ -9,29 +9,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 public abstract class SDFSchemaElement extends SDFElement {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = -6044873167369148445L;
-
-	/**
-	 * @uml.property  name="datatype"
-	 * @uml.associationEnd  
-	 */
-    private SDFDatatype datatype = null;
-
-    /**
-	 * @uml.property  name="dtConstraint"
-	 * @uml.associationEnd  
-	 */
+	private SDFDatatype datatype = null;
     private Map<String, SDFDatatypeConstraint> dtConstraints = new HashMap<String, SDFDatatypeConstraint>();
-
-    /**
-	 * @uml.property  name="unit"
-	 * @uml.associationEnd  
-	 */
     private SDFUnit unit = null;
-
 
 	public SDFSchemaElement(String URI) {
 		super(URI);
@@ -44,54 +25,24 @@ public abstract class SDFSchemaElement extends SDFElement {
 		this.unit = copy.unit;
 	}
 
-    /**
-     * 
-     * @uml.property name="datatype"
-     */
     public void setDatatype(SDFDatatype datatype) {
         this.datatype = datatype;
     }
-
-    /**
-     * 
-     * @uml.property name="datatype"
-     */
     public SDFDatatype getDatatype() {
         return datatype;
     }
-
-    /**
-     * 
-     * @uml.property name="dtConstraint"
-     */
     public void addDtConstraint(String uri, SDFDatatypeConstraint dtConstraint) {
         this.dtConstraints.put(uri, dtConstraint);
     }
-
-    /**
-     * 
-     * @uml.property name="dtConstraint"
-     */
     public SDFDatatypeConstraint getDtConstraint(String uri) {
         return dtConstraints.get(uri);
     }
-
     public Collection<SDFDatatypeConstraint> getDtConstraints() {
         return dtConstraints.values();
     }
-
-    /**
-     * 
-     * @uml.property name="unit"
-     */
     public void setUnit(SDFUnit unit) {
         this.unit = unit;
     }
-
-    /**
-     * 
-     * @uml.property name="unit"
-     */
     public SDFUnit getUnit() {
         return unit;
     }

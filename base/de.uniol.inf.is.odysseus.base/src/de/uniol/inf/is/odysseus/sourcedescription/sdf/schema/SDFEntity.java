@@ -6,50 +6,29 @@ import java.util.ArrayList;
  * @author  Marco Grawunder
  */
 public class SDFEntity extends SDFSchemaElement {
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -5891495267668181672L;
 	
-    /**
-	 * @uml.property  name="idAttributes"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
+	private static final long serialVersionUID = -5891495267668181672L;	
     private SDFAttributeList  idAttributes = new SDFAttributeList();
-    /**
-	 * @uml.property  name="attributes"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
     private SDFAttributeList attributes = new SDFAttributeList();
-    /**
-	 * @uml.property  name="constants"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
     private SDFConstantList constants = new SDFConstantList();
     
     private ArrayList<SDFEntity> subClassOf = new ArrayList<SDFEntity>();
-
-	// Evtl. noch weitere Daten??
 
 	public SDFEntity(String URI) {
 		super(URI);
 	}
 
-	public void addIdAttribute(SDFAttribute idAttribute) {
-		idAttributes.add(idAttribute);
+	public boolean isIdentifiying(SDFAttribute attribute){
+		return idAttributes.contains(attribute);
 	}
-
-	public SDFAttribute getIdAttribute(int index) {
-		return (SDFAttribute) idAttributes.get(index);
+	
+	public SDFAttributeList getIdAttributes(){
+		return idAttributes;
 	}
-
-	public int getNoOfIdAttributes() {
-		return idAttributes.size();
-	}
-
-	public void addAttribute(SDFAttribute attribute) {
+	
+	public void addAttribute(SDFAttribute attribute, boolean isIdentifying) {
 		attributes.add(attribute);
+		if (isIdentifying) idAttributes.add(attribute);
 	}
 
 	public SDFAttribute getAttribute(int index) {
@@ -60,7 +39,7 @@ public class SDFEntity extends SDFSchemaElement {
 		return this.attributes;
 	}
 
-	public int getNoOfAttributes() {
+	public int attribizeSize() {
 		return attributes.size();
 	}
 
@@ -72,7 +51,7 @@ public class SDFEntity extends SDFSchemaElement {
 		return (SDFConstant) constants.get(index);
 	}
 
-	public int getNoOfConstants() {
+	public int constantSize() {
 		return constants.size();
 	}
 
@@ -100,17 +79,15 @@ public class SDFEntity extends SDFSchemaElement {
 			// alle Attribute, Konstanten etc. mit ausgedruckt werden
 			ret.append(" isA " + getSuperclass(i).getURI(true) + "\n");
 		}
-		for (int i = 0; i < getNoOfIdAttributes(); i++) {
-			ret.append("\t\t hasIdAttribute "
-					+ this.getIdAttribute(i).toString() + "\n");
+		ret.append("\t\t Attributes \n");
+		for (SDFAttribute a: attributes) {
+			ret.append("\t\t").append(a.toString());
+			if (isIdentifiying(a)) ret.append(" identifying ");
+			ret.append("\n");
 		}
-		for (int i = 0; i < this.getNoOfAttributes(); i++) {
-			ret.append("\t\t hasAttribute " + this.getAttribute(i).toString()
-					+ "\n");
-		}
-		for (int i = 0; i < this.getNoOfConstants(); i++) {
-			ret.append("\t\t hasConstant " + this.getConstant(i).toString()
-					+ "\n");
+		ret.append("\t\t Constants \n");
+		for (SDFConstant c:constants) {
+			ret.append("\t\t").append(c.toString()).append("\n");
 		}
 		return ret.toString();
 	}
