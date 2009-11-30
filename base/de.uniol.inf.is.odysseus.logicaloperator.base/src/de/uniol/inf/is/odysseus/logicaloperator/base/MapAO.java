@@ -1,10 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFAttributeBindung;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
