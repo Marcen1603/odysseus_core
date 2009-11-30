@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 
 public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Object> {
 

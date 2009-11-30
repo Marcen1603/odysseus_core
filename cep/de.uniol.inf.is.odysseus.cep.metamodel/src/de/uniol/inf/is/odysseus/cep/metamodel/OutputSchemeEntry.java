@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.util.Set;
+
 import org.nfunk.jep.JEP;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.UndefinedExpressionLabelException;
@@ -69,7 +71,7 @@ public class OutputSchemeEntry {
 	 * 
 	 * @return JEP-Ausruck, der den Auszugebenden Ausdruck codiert.
 	 */
-	public JEP getExpression() {
+	private JEP getExpression() {
 		return this.expression;
 	}
 
@@ -79,6 +81,19 @@ public class OutputSchemeEntry {
 		str += indent + "Label: " + this.label;
 		str += indent + "Expression" + this.expression.getValue();
 		return str;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Set<String> getVarNames() {
+		return getExpression().getSymbolTable().keySet();
+	}
+	
+	public void setValue(String varName, Object newValue) {
+		expression.getVar(varName).setValue(newValue);
+	}
+
+	public Object getValueAsObject() {
+		return expression.getValueAsObject();
 	}
 
 }

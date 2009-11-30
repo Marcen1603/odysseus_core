@@ -2,11 +2,8 @@ package de.uniol.inf.is.odysseus.cep.epa;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.Stack;
 
-import org.nfunk.jep.JEP;
-import org.nfunk.jep.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +13,10 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedConsumptionModeException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndeterminableVariableValueException;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.ConsumptionMode;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
-import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
@@ -144,104 +141,6 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 		if (logger.isDebugEnabled()) logger.debug("Verarbeitung abgeschlossen\n");
 	}
 
-	private LinkedList<W> validateFinalStates(
-			LinkedList<StateMachineInstance<R>> outdatedInstances) {
-		LinkedList<W> complexEvents = new LinkedList<W>();
-		for (Iterator<StateMachineInstance<R>> i = this.instances.iterator(); i
-				.hasNext();) {
-			StateMachineInstance<R> instance = i.next();
-
-			/*
-			 * Durch das Markieren der veralteten Automateninstanzen und das
-			 * nachträgliche entfernen, kann instance bereits veraltet sein.
-			 * Diese muss damit als gelöscht gelten, obwohl sie noch in der
-			 * Instanzen-Liste enthalten ist. Eine Verarbeitung solcher
-			 * Instanzen kann eventuell zu fehlerhaftem Verhalten führen. Um das
-			 * zu verhindern, müssen diese Instanzen bei der Verarbeitung
-			 * übersprungen werden.
-			 */
-			if (outdatedInstances.contains(instance))
-				continue;
-
-			if (instance.getCurrentState().isAccepting()) {
-				// Werte in den Symboltabellen der JEP-Ausdrücke im
-				// Ausgabeschema setzen:
-				for (OutputSchemeEntry entry : this.stateMachine
-						.getOutputScheme().getEntries()) {
-					JEP expr = entry.getExpression();
-					@SuppressWarnings("unchecked")
-					Set<String> varNames = expr.getSymbolTable().keySet();
-					Iterator<String> varIt = varNames.iterator();
-					while (varIt.hasNext()) {
-						Variable var = expr.getVar(varIt.next());
-						/*
-						 * 2 mögliche Fälle: 1. variablenwert steht in der
-						 * symboltabelle 2. variablenwert steht in einem
-						 * konsumierten Event
-						 */
-						Object value = instance.getSymTab().getValue(
-								var.getName());
-						if (value == null) {
-							// variablenwert steht nicht in der symboltabelle
-							// -> wert im MatchingTrace suchen (teuer?!)
-							String[] split = var.getName().split(
-									CepVariable.getSeperator());
-							StateBuffer<R> buffer = instance.getMatchingTrace()
-									.getStateBuffer(split[1]);
-							if (buffer != null) {
-								try {
-									R event = null;
-									if (split[2].isEmpty()) {
-										/*
-										 * leerer String an Index-Position heißt
-										 * oberstes Buffer Element (Das Element,
-										 * welches zuletzt vom Buffer konsumiert
-										 * wurde).
-										 */
-										event = buffer.getEvents().getLast()
-												.getEvent();
-									} else {
-										int index = Integer.parseInt(split[2]);
-										event = buffer.getEvents().get(index)
-												.getEvent();
-									}
-									value = this.eventReader.getValue(split[3],
-											event);
-								} catch (Exception e) {
-									throw new UndeterminableVariableValueException(
-											"'"
-													+ var.getName()
-													+ "' not found in symbol table. Cannot find related event in state buffer."
-													+ "");
-								}
-							} else {
-								throw new UndeterminableVariableValueException(
-										"'"
-												+ var.getName()
-												+ "' not found in symbol table. Cannot find related state buffer '"
-												+ split[0]
-												+ "' in matching trace.");
-							}
-						}
-						var.setValue(value);
-					}
-				}
-				complexEvents.add(this.complexEventFactory.createComplexEvent(
-						this.stateMachine.getOutputScheme(), instance
-								.getMatchingTrace(), instance.getSymTab()));
-				/*
-				 * An dieser Stelle muss die Instanz, die zum Complex Event
-				 * geführt hat, als veraltet markiert werden. Je nach
-				 * Consumption-Mode müssen auch die verwandten Instanzen als
-				 * veraltet markiert werden.
-				 */
-				outdatedInstances.addAll(this
-						.getRemovableInstancesByConsumptionMode(instance));
-			}
-		}
-		return complexEvents;
-	}
-
 	private void validateTransitions(R object,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> branchedInstances) {
@@ -254,57 +153,17 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 				/*
 				 * Über Variablen iterieren und neu belegen.
 				 */
-				@SuppressWarnings("unchecked")
-				Set<String> varNames = transition.getCondition()
-						.getExpression().getSymbolTable().keySet();
-				Iterator<String> varIt = varNames.iterator();
-				
-				while (varIt.hasNext()) {
-					Variable var = transition.getCondition().getExpression()
-							.getVar(varIt.next());
-					if (logger.isDebugEnabled()) logger.debug("Setze Variable " + var.getName());
-					if (Agent.isActEventName(var.getName())) {
-						// Variable bezieht sich auf aktuelles Event
-						var.setValue(this.eventReader.getValue(CepVariable
-								.getAttributeName(var.getName()), object));
-						if (logger.isDebugEnabled()) logger.debug("Neuer Wert: "
-								+ this.eventReader.getValue(CepVariable
-										.getAttributeName(var.getName()),
-										object));
-					} else {
-						// Variable bezieht sich auf historisches (bereits
-						// konsumiertes Event)
-						var.setValue(instance.getSymTab().getValue(
-								var.getName()));
-						if (logger.isDebugEnabled()) logger.debug("Neuer Wert: "
-								+ instance.getSymTab().getValue(var.getName()));
-					}
-				}
+				updateVariables(object, instance, transition);
 				try {
-					/*
-					 * C-Semantik: Alles ungleich 0 oder null ist true! JEP tut
-					 * komische Dinge: - Vergleichsoperatoren liefern
-					 * Boolean-Objekte und NaN getValue() - alle anderen
-					 * Operatoren liefern Double-Objekte (auch für boolesche
-					 * Operatoren, immer 0.0 oder 1.0)
-					 */
-					double conditionValue = transition.getCondition()
-							.getExpression().getValue();
-					if (Double.isNaN(conditionValue)) {
-						Boolean boolVal = (Boolean) transition.getCondition()
-								.getExpression().getValueAsObject();
-						conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
-					}
-					if (conditionValue != 0.0) {
+					if (transition.evaluate()){
 						takeTransition.push(transition);
 						if (logger.isDebugEnabled()) logger.debug("Transitionsbedingung ist true: "
 								+ transition.getCondition().getLabel()
 								+ " (Wert: "
-								+ transition.getCondition().getExpression()
-										.getValue()
+								+ transition.getCondition().getValue()
 								+ ", "
-								+ transition.getCondition().getExpression()
-										.getErrorInfo() + ")");
+								+ transition.getCondition().getErrorInfo() + ")");
+
 					}
 				} catch (Exception e) {
 					// System.out.println(transition.getCondition().getLabel());
@@ -348,6 +207,123 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 		}
 	}
 
+	private void updateVariables(R object, 
+								 StateMachineInstance<R> instance,
+								 Transition transition) {
+		for (String varName: transition.getCondition().getVarNames()){				
+			if (logger.isDebugEnabled()) logger.debug("Setze Variable " + varName);
+			
+			Object newValue = null;
+			if (Agent.isActEventName(varName)) {
+				// Variable bezieht sich auf aktuelles Event
+				newValue = this.eventReader.getValue(CepVariable.getAttributeName(varName), object);	
+			} else {
+				// Variable bezieht sich auf historisches (bereits
+				// konsumiertes Event)
+				newValue = instance.getSymTab().getValue(varName);
+			}
+			transition.getCondition().setValue(varName, newValue);
+			if (logger.isDebugEnabled()){
+				logger.debug("Neuer Wert: "+newValue);
+			}
+		}
+	}
+
+	private LinkedList<W> validateFinalStates(
+			LinkedList<StateMachineInstance<R>> outdatedInstances) {
+		LinkedList<W> complexEvents = new LinkedList<W>();
+		for (Iterator<StateMachineInstance<R>> i = this.instances.iterator(); i
+				.hasNext();) {
+			StateMachineInstance<R> instance = i.next();
+
+			/*
+			 * Durch das Markieren der veralteten Automateninstanzen und das
+			 * nachträgliche entfernen, kann instance bereits veraltet sein.
+			 * Diese muss damit als gelöscht gelten, obwohl sie noch in der
+			 * Instanzen-Liste enthalten ist. Eine Verarbeitung solcher
+			 * Instanzen kann eventuell zu fehlerhaftem Verhalten führen. Um das
+			 * zu verhindern, müssen diese Instanzen bei der Verarbeitung
+			 * übersprungen werden.
+			 */
+			if (outdatedInstances.contains(instance))
+				continue;
+
+			if (instance.getCurrentState().isAccepting()) {
+				// Werte in den Symboltabellen der JEP-Ausdrücke im
+				// Ausgabeschema setzen:
+				for (OutputSchemeEntry entry : this.stateMachine
+						.getOutputScheme().getEntries()) {
+	
+					
+					for (String varName:entry.getVarNames()){
+
+						//Variable var = expr.getVar(varIt.next());
+						/*
+						 * 2 mögliche Fälle: 1. variablenwert steht in der
+						 * symboltabelle 2. variablenwert steht in einem
+						 * konsumierten Event
+						 */
+						Object value = instance.getSymTab().getValue(varName);
+						if (value == null) {
+							// variablenwert steht nicht in der symboltabelle
+							// -> wert im MatchingTrace suchen (teuer?!)
+							String[] split = varName.split(CepVariable.getSeperator());
+							StateBuffer<R> buffer = instance.getMatchingTrace()
+									.getStateBuffer(split[1]);
+							if (buffer != null) {
+								try {
+									R event = null;
+									if (split[2].isEmpty()) {
+										/*
+										 * leerer String an Index-Position heißt
+										 * oberstes Buffer Element (Das Element,
+										 * welches zuletzt vom Buffer konsumiert
+										 * wurde).
+										 */
+										event = buffer.getEvents().getLast()
+												.getEvent();
+									} else {
+										int index = Integer.parseInt(split[2]);
+										event = buffer.getEvents().get(index)
+												.getEvent();
+									}
+									value = this.eventReader.getValue(split[3],
+											event);
+								} catch (Exception e) {
+									throw new UndeterminableVariableValueException(
+											"'"
+													+ varName
+													+ "' not found in symbol table. Cannot find related event in state buffer."
+													+ "");
+								}
+							} else {
+								throw new UndeterminableVariableValueException(
+										"'"
+												+ varName
+												+ "' not found in symbol table. Cannot find related state buffer '"
+												+ split[0]
+												+ "' in matching trace.");
+							}
+						}
+						entry.setValue(varName,value);
+					}
+				}
+				complexEvents.add(this.complexEventFactory.createComplexEvent(
+						this.stateMachine.getOutputScheme(), instance
+								.getMatchingTrace(), instance.getSymTab()));
+				/*
+				 * An dieser Stelle muss die Instanz, die zum Complex Event
+				 * geführt hat, als veraltet markiert werden. Je nach
+				 * Consumption-Mode müssen auch die verwandten Instanzen als
+				 * veraltet markiert werden.
+				 */
+				outdatedInstances.addAll(this
+						.getRemovableInstancesByConsumptionMode(instance));
+			}
+		}
+		return complexEvents;
+	}
+	
 	/**
 	 * Liefert das Factory-Objekt für komplexe Events.
 	 * 

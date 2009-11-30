@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
 import de.uniol.inf.is.odysseus.cep.epa.SymbolTable;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.ComplexEventFactory;
 
 public class RelationalCreator<R> extends ComplexEventFactory<R,RelationalTuple<?>> {
 
@@ -26,8 +27,7 @@ public class RelationalCreator<R> extends ComplexEventFactory<R,RelationalTuple<
 			 * getValueAsObject jedes beliebige Objekt über einen JEp-Ausdruck
 			 * weitergegeben werden (siehe JEPTest.java)
 			 */
-			attributes[i] = outputscheme.getEntries().get(i).getExpression()
-					.getValueAsObject();
+			attributes[i] = outputscheme.getEntries().get(i).getValueAsObject();
 		}
 		// TODO: Metadaten setzen!!
 		return new RelationalTuple(attributes);

@@ -151,4 +151,21 @@ public class Transition {
 		return str;
 	}
 
+	public boolean evaluate() {
+
+		/*
+		 * C-Semantik: Alles ungleich 0 oder null ist true! JEP tut
+		 * komische Dinge: - Vergleichsoperatoren liefern
+		 * Boolean-Objekte und NaN getValue() - alle anderen
+		 * Operatoren liefern Double-Objekte (auch für boolesche
+		 * Operatoren, immer 0.0 oder 1.0)
+		 */
+		double conditionValue = getCondition().getValue();
+		if (Double.isNaN(conditionValue)) {
+			Boolean boolVal = (Boolean) getCondition().getValueAsObject();
+			conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
+		}
+		return (conditionValue != 0.0);
+	}
+
 }

@@ -5,9 +5,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAdapter;
 
 /**
- * Cep-Varible mit Moeglichkeiten zur Konvertierung mit einem String.
+ * Cep-Varible mit Moeglichkeiten zur Konvertierung in einem String.
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 public class CepVariable<T> {

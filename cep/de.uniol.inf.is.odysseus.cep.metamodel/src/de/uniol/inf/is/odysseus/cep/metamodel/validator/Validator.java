@@ -196,7 +196,7 @@ public class Validator {
 						e.setRelated(transition);
 						exceptions.add(e);
 					} else {
-						if (transition.getCondition().getExpression() == null) {
+						if (transition.getCondition().getLabel() == null) {
 							/*
 							 * Invariante 10
 							 */
@@ -208,8 +208,7 @@ public class Validator {
 							 * Invariante 17
 							 */
 							for (String name : (Set<String>) transition
-									.getCondition().getExpression()
-									.getSymbolTable().keySet()) {
+									.getCondition().getVarNames()) {
 								if (!this.checkActualVarName(name)
 										&& !this.checkHistoricalVarName(name)) {
 									InvalidVariableNameError e2 = new InvalidVariableNameError();
@@ -375,8 +374,7 @@ public class Validator {
 		} else {
 			for (OutputSchemeEntry entry : stateMachine.getOutputScheme()
 					.getEntries()) {
-				Set<String> varNames = entry.getExpression().getSymbolTable()
-						.keySet();
+				Set<String> varNames = entry.getVarNames();
 				for (String name : varNames) {
 					if (!this.checkActualVarName(name)
 							&& !this.checkHistoricalVarName(name)) {

@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
-import javax.xml.bind.annotation.XmlTransient;
+import java.util.Set;
 
 import org.nfunk.jep.JEP;
+import org.nfunk.jep.Variable;
 
 /**
- * Diese Klasse kapselt die Transitionsbedingung. Da die Klasse zur Zeit nur
- * eine Referenz enthält kann sie in Zukunft unter Umständen entfallen.
+ * Diese Klasse kapselt die Transitionsbedingung. 
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 public class Condition {
@@ -41,17 +41,6 @@ public class Condition {
 	
 	public Condition() {
 	}
-
-	/**
-	 * Liefert die Transitionsbedingung.
-	 * 
-	 * @return Die Transitionsbedingung.
-	 */
-	@XmlTransient
-	public JEP getExpression() {
-		return expression;
-	}
-
 
 	/**
 	 * Liefert die textuelle Repräsentation der Transitionsbedingung.
@@ -91,5 +80,30 @@ public class Condition {
 	@Override
 	public String toString() {
 		return this.getLabel();
+	}
+
+	@SuppressWarnings("unchecked")
+	public Set<String> getVarNames() {
+		return expression.getSymbolTable().keySet();
+	}
+
+	public Variable getVar(String name) {
+		return expression.getVar(name);
+	}
+
+	public double getValue() {
+		return expression.getValue();
+	}
+
+	public Object getValueAsObject() {
+		return expression.getValueAsObject();
+	}
+
+	public String getErrorInfo() {
+		return expression.getErrorInfo();
+	}
+
+	public void setValue(String varName, Object newValue) {
+		expression.getVar(varName).setValue(newValue);
 	}
 }
