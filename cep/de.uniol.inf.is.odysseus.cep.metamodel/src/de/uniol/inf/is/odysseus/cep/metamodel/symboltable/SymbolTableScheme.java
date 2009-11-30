@@ -1,6 +1,8 @@
-package de.uniol.inf.is.odysseus.cep.metamodel;
+package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 import java.util.LinkedList;
+
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 
 /**
  * Objekte dieser Klasse repräsentieren das Schema einer Symboltabelle

@@ -1,8 +1,7 @@
-package de.uniol.inf.is.odysseus.cep.epa;
+package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 
 /**
  * Instanzen dieser Klasse stellen die Symboltabelle einer AutomatenInstanz dar.

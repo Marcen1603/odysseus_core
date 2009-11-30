@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.metamodel;
+package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTabOperationException;
 
@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author Thomas Vogelgesang
  * 
  */
-public class Count extends SymbolTableOperation<Integer> {
+public class Count extends AbstractSymbolTableOperation<Integer> {
 
 	public Count() {
 		super();

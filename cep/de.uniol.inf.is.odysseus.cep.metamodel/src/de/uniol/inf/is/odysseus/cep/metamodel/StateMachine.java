@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import javax.xml.bind.annotation.*;
 
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
+
 /**
  * Objekte dieser Klasse kapseln den für das CEP erforderlichen Automaten sowie
  * sämtliche Schemata für Symboltabelle und Event-Aggregation
@@ -40,7 +42,7 @@ public class StateMachine {
 	 * die abgeschlossene Automateninstanz oder alle damit verbundenen
 	 * Automateninstanzen aus dem Instanzspeicher entfernt werden.
 	 */
-	private ConsumptionMode consumptionMode;
+	private EConsumptionMode consumptionMode;
 
 	/**
 	 * Erzeugt einen neuen Automaten aus seinen Bestandteilen. Die
@@ -61,7 +63,7 @@ public class StateMachine {
 		this.initialState = initialState;
 		this.symTabScheme = symTabScheme;
 		this.outputScheme = outputScheme;
-		this.consumptionMode = ConsumptionMode.allMatches;
+		this.consumptionMode = EConsumptionMode.allMatches;
 	}
 
 	/**
@@ -157,7 +159,7 @@ public class StateMachine {
 	 * 
 	 * @return Die Matching-Strategie des Automaten.
 	 */
-	public ConsumptionMode getConsumptionMode() {
+	public EConsumptionMode getConsumptionMode() {
 		return this.consumptionMode;
 	}
 
@@ -167,7 +169,7 @@ public class StateMachine {
 	 * @param strategy
 	 *            Die neue Matching-Strategie, nicht null.
 	 */
-	public void setConsumptionMode(ConsumptionMode strategy) {
+	public void setConsumptionMode(EConsumptionMode strategy) {
 		this.consumptionMode = strategy;
 	}
 	

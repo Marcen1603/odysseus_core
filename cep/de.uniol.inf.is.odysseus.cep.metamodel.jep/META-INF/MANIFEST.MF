@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Metamodell Jep
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.metamodel.jep
+Bundle-Version: 1.0.0
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: JepModified;bundle-version="1.0.0"
+Import-Package: de.uniol.inf.is.odysseus.cep.metamodel,
+ de.uniol.inf.is.odysseus.cep.metamodel.exception
+Export-Package: de.uniol.inf.is.odysseus.cep.metamodel.jep

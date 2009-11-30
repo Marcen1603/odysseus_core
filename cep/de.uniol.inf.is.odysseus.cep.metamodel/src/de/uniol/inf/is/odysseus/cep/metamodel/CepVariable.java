@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperation;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAdapter;
 
 /**
@@ -32,7 +34,7 @@ public class CepVariable<T> {
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
 	 */
-	private SymbolTableOperation<T> operation;
+	private ISymbolTableOperation<T> operation;
 
 	/**
 	 * Erzeugt einen Eintrag-Objekt für das Symboltabellenschema
@@ -50,7 +52,7 @@ public class CepVariable<T> {
 	 *            werden soll
 	 */
 	public CepVariable(int entryID, String stateIdentifier,
-			int index, String attribute, SymbolTableOperation<T> operation) {
+			int index, String attribute, ISymbolTableOperation<T> operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
 		this.attributename = attribute;
@@ -65,8 +67,6 @@ public class CepVariable<T> {
 		this.index = Integer.parseInt(split[2]);
 		this.attributename = split[3];
 	} 
-
-	
 	
 	/**
 	 * leerer Standardkonstruktor
@@ -100,7 +100,7 @@ public class CepVariable<T> {
 	 *            Eine konkrete Implementierung der Symboltabellenoperation,
 	 *            nicht null.
 	 */
-	public void setOperation(SymbolTableOperation<T> operation) {
+	public void setOperation(ISymbolTableOperation<T> operation) {
 		this.operation = operation;
 	}
 
@@ -110,7 +110,7 @@ public class CepVariable<T> {
 	 * @return Die Symboltabellenoperation des Eintrags.
 	 */
 	@XmlJavaTypeAdapter(SymbolTableOperationAdapter.class)
-	public SymbolTableOperation<T> getOperation() {
+	public ISymbolTableOperation<T> getOperation() {
 		return operation;
 	}
 

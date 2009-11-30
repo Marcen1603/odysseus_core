@@ -2,12 +2,12 @@ package de.uniol.inf.is.odysseus.cep.statemachinefactory;
 
 import java.util.LinkedList;
 
-
-import de.uniol.inf.is.odysseus.cep.metamodel.Action;
-import de.uniol.inf.is.odysseus.cep.metamodel.Condition;
+import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
+import de.uniol.inf.is.odysseus.cep.metamodel.ICondition;
+import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPCondition;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 @SuppressWarnings("unchecked")
 public class SMF1 extends StateMachineFactory {
@@ -46,8 +46,8 @@ public class SMF1 extends StateMachineFactory {
 			boolean acc = (i == 0) ? true : false;
 			outTransitions = new LinkedList<Transition>();
 			if (dest != null) {
-				Condition cond = new Condition("x + 1");
-				outTransitions.add(new Transition(i, dest, cond, Action.discard));
+				ICondition cond = new JEPCondition("x + 1");
+				outTransitions.add(new Transition(i, dest, cond, EAction.discard));
 			}
 			State s = new State("state" + i, acc, outTransitions);
 			dest = s;

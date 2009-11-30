@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.metamodel;
+package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTabOperationException;
 
@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author tommy
  * 
  */
-public class Sum extends SymbolTableOperation<Number> {
+public class Sum extends AbstractSymbolTableOperation<Number> {
 
 	public Sum() {
 		super();

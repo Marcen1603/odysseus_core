@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.cep.epa.eventgeneration;
 
 import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
-import de.uniol.inf.is.odysseus.cep.epa.SymbolTable;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.ComplexEventFactory;
+import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.AbstractComplexEventFactory;
 
-public class RelationalCreator<R> extends ComplexEventFactory<R,RelationalTuple<?>> {
+public class RelationalCreator<R> extends AbstractComplexEventFactory<R,RelationalTuple<?>> {
 
 	/**
 	 * Erzeugt einen neuen Creator für relationale Tupel vom Typ
@@ -16,10 +16,9 @@ public class RelationalCreator<R> extends ComplexEventFactory<R,RelationalTuple<
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public RelationalTuple<?> createComplexEvent(OutputScheme outputscheme,
-			MatchingTrace matchingTrace, SymbolTable symTab) {
+			MatchingTrace<R> matchingTrace, SymbolTable symTab) {
 		Object[] attributes = new Object[outputscheme.getEntries().size()];
 		for (int i = 0; i < outputscheme.getEntries().size(); i++) {
 			/*
@@ -29,7 +28,7 @@ public class RelationalCreator<R> extends ComplexEventFactory<R,RelationalTuple<
 			 */
 			attributes[i] = outputscheme.getEntries().get(i).getValueAsObject();
 		}
-		// TODO: Metadaten setzen!!
+		// TODO: Metadaten setzen, nur wie?
 		return new RelationalTuple(attributes);
 	}
 

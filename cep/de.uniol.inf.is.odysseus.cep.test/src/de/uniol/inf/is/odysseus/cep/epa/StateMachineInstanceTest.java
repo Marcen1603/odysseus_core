@@ -4,7 +4,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedActionException;
-import de.uniol.inf.is.odysseus.cep.metamodel.Action;
+import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.statemachinefactory.SMF1;
 @SuppressWarnings("unchecked")
@@ -48,17 +48,17 @@ public class StateMachineInstanceTest {
 		}
 
 		try {
-			instance.executeAction(Action.discard, null, null);
+			instance.executeAction(EAction.discard, null, null);
 		} catch (UndefinedActionException e) {
 		}
 
 		try {
-			instance.executeAction(Action.consume, null, null);
+			instance.executeAction(EAction.consume, null, null);
 		} catch (UndefinedActionException e) {
 		}
 
 		try {
-			instance.executeAction(Action.consume, new Integer(1), null);
+			instance.executeAction(EAction.consume, new Integer(1), null);
 		} catch (UndefinedActionException e) {
 		}
 

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
 
 /**
  * Diese Fabrikklasse erstellt gültige Automaten im Metamodel. Die erstellten

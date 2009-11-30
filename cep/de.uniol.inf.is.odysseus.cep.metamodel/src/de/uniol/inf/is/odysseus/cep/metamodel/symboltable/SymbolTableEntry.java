@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.epa;
+package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 

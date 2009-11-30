@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.cep.metamodel;
+package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
+
 
 /**
  * Symboltabellen-Operator, der den Wert einer Variable in der Symboltabelle
@@ -7,7 +8,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
  * @author Thomas Vogelgesang
  * 
  */
-public class Write<T> extends SymbolTableOperation<T> {
+public class Write<T> extends AbstractSymbolTableOperation<T> {
 
 	public Write() {
 		super();

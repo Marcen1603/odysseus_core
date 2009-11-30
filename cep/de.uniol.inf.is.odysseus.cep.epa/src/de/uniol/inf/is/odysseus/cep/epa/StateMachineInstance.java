@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedActionException;
-import de.uniol.inf.is.odysseus.cep.metamodel.Action;
+import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableEntry;
 
 /**
  * Die StateMachineInstance repräsentiert eine Instanz des an den EPA
@@ -108,9 +110,9 @@ public class StateMachineInstance<R> {
 	 * @throws UndefinedActionException
 	 *             Wenn die auszuführende Aktion nicht definiert ist.
 	 */
-	public void executeAction(Action action, R event,
-			AbstractEventReader<R,?> eventReader) throws UndefinedActionException {
-		if (action == Action.consume) {
+	public void executeAction(EAction action, R event,
+			IEventReader<R,?> eventReader) throws UndefinedActionException {
+		if (action == EAction.consume) {
 			this.matchingTrace.addEvent(event, this.currentState);
 			// Symboltabelle aktualisieren
 			for (SymbolTableEntry<?> entry : this.symTab.getEntries()) {
@@ -125,7 +127,7 @@ public class StateMachineInstance<R> {
 					}
 				}
 			}
-		} else if (action == Action.discard) {
+		} else if (action == EAction.discard) {
 			// in diesem Fall ist nichts zu tun
 		} else {
 			throw new UndefinedActionException("The action "

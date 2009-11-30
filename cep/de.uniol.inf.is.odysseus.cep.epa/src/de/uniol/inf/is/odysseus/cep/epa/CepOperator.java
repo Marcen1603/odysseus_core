@@ -7,15 +7,15 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.ComplexEventFactory;
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
+import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedConsumptionModeException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndeterminableVariableValueException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
-import de.uniol.inf.is.odysseus.cep.metamodel.ConsumptionMode;
-import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.EConsumptionMode;
+import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
@@ -31,19 +31,19 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
  * @author Thomas Vogelgesang
  * 
  */
-public class Agent<R,W> extends AbstractPipe<R, W> {
+public class CepOperator<R,W> extends AbstractPipe<R, W> {
 
-	Logger logger = LoggerFactory.getLogger(Agent.class); 
+	Logger logger = LoggerFactory.getLogger(CepOperator.class); 
 	
 	/**
 	 * Factory zum erzeugen komplexer Events
 	 */
-	private ComplexEventFactory<R,W> complexEventFactory;
+	private IComplexEventFactory<R,W> complexEventFactory;
 	/**
 	 * Referenz auf eine eventReader Implementierung zum datenmodellunabhängigen
 	 * Auslesen von Events.
 	 */
-	private AbstractEventReader<R,?> eventReader;
+	private IEventReader<R,?> eventReader;
 	/**
 	 * Referenz auf den Verzweigungsspeicher
 	 */
@@ -61,7 +61,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	/**
 	 * leerer Standardkonstruktor
 	 */
-	public Agent() {
+	public CepOperator() {
 		super();
 	}
 
@@ -84,8 +84,8 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	 *             Falls der übergebene Automat nicht die erforderlichen
 	 *             Invarianten einhält.
 	 */
-	public Agent(StateMachine stateMachine, AbstractEventReader<R,?> eventReader,
-			ComplexEventFactory<R,W> complexEventFactory, boolean validate)
+	public CepOperator(StateMachine stateMachine, IEventReader<R,?> eventReader,
+			IComplexEventFactory<R,W> complexEventFactory, boolean validate)
 			throws Exception {
 		super();
 		this.stateMachine = stateMachine;
@@ -214,7 +214,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 			if (logger.isDebugEnabled()) logger.debug("Setze Variable " + varName);
 			
 			Object newValue = null;
-			if (Agent.isActEventName(varName)) {
+			if (CepOperator.isActEventName(varName)) {
 				// Variable bezieht sich auf aktuelles Event
 				newValue = this.eventReader.getValue(CepVariable.getAttributeName(varName), object);	
 			} else {
@@ -251,7 +251,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 			if (instance.getCurrentState().isAccepting()) {
 				// Werte in den Symboltabellen der JEP-Ausdrücke im
 				// Ausgabeschema setzen:
-				for (OutputSchemeEntry entry : this.stateMachine
+				for (IOutputSchemeEntry entry : this.stateMachine
 						.getOutputScheme().getEntries()) {
 	
 					
@@ -329,7 +329,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	 * 
 	 * @return Das Factory-Objekt für komplexe Events.
 	 */
-	public ComplexEventFactory<R,W> getComplexEventFactory() {
+	public IComplexEventFactory<R,W> getComplexEventFactory() {
 		return complexEventFactory;
 	}
 
@@ -340,7 +340,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	 * @param complexEventFactory
 	 *            Das neue Factory-Objekt für komplexe Events, nicht null.
 	 */
-	public void setComplexEventFactory(ComplexEventFactory<R,W> complexEventFactory) {
+	public void setComplexEventFactory(IComplexEventFactory<R,W> complexEventFactory) {
 		this.complexEventFactory = complexEventFactory;
 	}
 
@@ -349,7 +349,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	 * 
 	 * @return Das Event-Reader-Objekt.
 	 */
-	public AbstractEventReader<R,?> getEventReader() {
+	public IEventReader<R,?> getEventReader() {
 		return eventReader;
 	}
 
@@ -360,7 +360,7 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	 * @param eventReader
 	 *            Das neue Event-Reader-Objekt, nicht null.
 	 */
-	public void setEventReader(AbstractEventReader<R,?> eventReader) {
+	public void setEventReader(IEventReader<R,?> eventReader) {
 		this.eventReader = eventReader;
 	}
 
@@ -412,11 +412,11 @@ public class Agent<R,W> extends AbstractPipe<R, W> {
 	private LinkedList<StateMachineInstance<R>> getRemovableInstancesByConsumptionMode(
 			StateMachineInstance<R> instance) {
 		LinkedList<StateMachineInstance<R>> outdated = null;
-		if (this.stateMachine.getConsumptionMode() == ConsumptionMode.onlyOneMatch) {
+		if (this.stateMachine.getConsumptionMode() == EConsumptionMode.onlyOneMatch) {
 			outdated = this.branchingBuffer
 					.getAllNestedStateMachineInstances(instance);
 			this.branchingBuffer.removeAllNestedBranches(instance);
-		} else if (this.stateMachine.getConsumptionMode() == ConsumptionMode.allMatches) {
+		} else if (this.stateMachine.getConsumptionMode() == EConsumptionMode.allMatches) {
 			outdated = new LinkedList<StateMachineInstance<R>>();
 			outdated.add(instance);
 			this.branchingBuffer.removeBranch(instance);

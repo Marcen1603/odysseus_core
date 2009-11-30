@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.AbstractOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
@@ -372,7 +372,7 @@ public class Validator {
 		if (stateMachine.getOutputScheme() == null) {
 			errors.add(new MissingOutputSchemeError());
 		} else {
-			for (OutputSchemeEntry entry : stateMachine.getOutputScheme()
+			for (AbstractOutputSchemeEntry entry : stateMachine.getOutputScheme()
 					.getEntries()) {
 				Set<String> varNames = entry.getVarNames();
 				for (String name : varNames) {

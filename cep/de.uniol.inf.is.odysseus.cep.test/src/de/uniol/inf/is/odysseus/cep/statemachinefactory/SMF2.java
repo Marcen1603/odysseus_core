@@ -2,15 +2,15 @@ package de.uniol.inf.is.odysseus.cep.statemachinefactory;
 
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.cep.metamodel.Action;
-import de.uniol.inf.is.odysseus.cep.metamodel.Condition;
-import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
-import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
-import de.uniol.inf.is.odysseus.cep.metamodel.Write;
-import de.uniol.inf.is.odysseus.cep.metamodel.State;
-import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
+import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
+import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
+import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
+import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPCondition;
+import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPOutputSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 
 @SuppressWarnings("unchecked")
 public class SMF2 extends StateMachineFactory {
@@ -30,10 +30,10 @@ public class SMF2 extends StateMachineFactory {
 	@Override
 	protected void initComponents(Object[] args) {
 		LinkedList<Transition> transistions1 = new LinkedList<Transition>();
-		transistions1.add(new Transition(0, null, new Condition("1"),
-				Action.discard));
-		transistions1.add(new Transition(1, null, new Condition("1"),
-				Action.discard));
+		transistions1.add(new Transition(0, null, new JEPCondition("1"),
+				EAction.discard));
+		transistions1.add(new Transition(1, null, new JEPCondition("1"),
+				EAction.discard));
 		State state1 = new State("state1", false, transistions1);
 		transistions1 = new LinkedList<Transition>();
 		State state2 = new State("state2", true, transistions1);
@@ -45,9 +45,9 @@ public class SMF2 extends StateMachineFactory {
 		this.initialState = state1;
 
 		this.outputScheme = new OutputScheme();
-		this.outputScheme.getEntries().add(new OutputSchemeEntry("1"));
+		this.outputScheme.getEntries().add(new JEPOutputSchemeEntry("1"));
 		this.outputScheme.getEntries().add(
-				new OutputSchemeEntry("state1__attribute1"));
+				new JEPOutputSchemeEntry("state1__attribute1"));
 
 		this.symbolTableScheme = new SymbolTableScheme();
 		this.symbolTableScheme.getEntries().add(

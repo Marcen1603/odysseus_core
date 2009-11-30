@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.cep.metamodel;
+package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
+
 
 public class SymbolTableOperationFactory {
 
 	@SuppressWarnings("unchecked")
-	public static <T> SymbolTableOperation getOperation(String name) {
+	public static <T> AbstractSymbolTableOperation getOperation(String name) {
 		if (name == null || name.length() == 0){
 			return null;
 		}

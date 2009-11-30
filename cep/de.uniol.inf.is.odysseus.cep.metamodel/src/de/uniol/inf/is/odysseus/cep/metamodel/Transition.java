@@ -25,11 +25,11 @@ public class Transition {
 	/**
 	 * Die Transitionsbedingung
 	 */
-	private Condition condition;
+	private ICondition condition;
 	/**
 	 * Die Automatenausgabe / Aktion für die Transition
 	 */
-	private Action action;
+	private EAction action;
 
 	/**
 	 * Default-Konstruktor
@@ -50,8 +50,8 @@ public class Transition {
 	 *            Die Aktion, die für eine erfüllte Transitionsbedingung
 	 *            ausgeführt wird.
 	 */
-	public Transition(int id, State nextState, Condition condition,
-			Action action) {
+	public Transition(int id, State nextState, ICondition condition,
+			EAction action) {
 		this.id = id;
 		this.nextState = nextState;
 		this.condition = condition;
@@ -107,7 +107,7 @@ public class Transition {
 	 * 
 	 * @return Die Transitionsbedingung.
 	 */
-	public Condition getCondition() {
+	public ICondition getCondition() {
 		return condition;
 	}
 
@@ -117,7 +117,7 @@ public class Transition {
 	 * @param condition
 	 *            Die neue Transitionsbedingung, nicht null.
 	 */
-	public void setCondition(Condition condition) {
+	public void setCondition(AbstractCondition condition) {
 		this.condition = condition;
 	}
 
@@ -126,7 +126,7 @@ public class Transition {
 	 * 
 	 * @return Die Action der Transition.
 	 */
-	public Action getAction() {
+	public EAction getAction() {
 		return action;
 	}
 
@@ -136,7 +136,7 @@ public class Transition {
 	 * @param action
 	 *            Die neue Action der Transition, nicht null.
 	 */
-	public void setAction(Action action) {
+	public void setAction(EAction action) {
 		this.action = action;
 	}
 
