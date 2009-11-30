@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
  * @author Thomas Vogelgesang
  * 
  */
-public class StateMachineInstance {
+public class StateMachineInstance<R> {
 
 	/**
 	 * Referenz auf den aktuellen Zustand der Automateninstanz
@@ -27,7 +27,7 @@ public class StateMachineInstance {
 	/**
 	 * Referenz auf den Puffer für bereits konsumierte Events
 	 */
-	private MatchingTrace matchingTrace;
+	private MatchingTrace<R> matchingTrace;
 
 	/**
 	 * erzeugt eine neue Automateninstanz
@@ -38,13 +38,13 @@ public class StateMachineInstance {
 	 */
 	public StateMachineInstance(StateMachine stateMachine) {
 		this.currentState = stateMachine.getInitialState();
-		this.matchingTrace = new MatchingTrace(stateMachine.getStates());
+		this.matchingTrace = new MatchingTrace<R>(stateMachine.getStates());
 		this.symTab = new SymbolTable(stateMachine.getSymTabScheme());
 	}
 
 	/**
 	 * Vertseckter Konstruktor der nur für die clone()-Methode benötigt wird und
-	 * daher ansonsten nciht benutzt werden sollte
+	 * daher ansonsten nicht benutzt werden sollte
 	 * 
 	 * @param currentState
 	 *            Referenz auf den aktuellen Zustand
@@ -54,7 +54,7 @@ public class StateMachineInstance {
 	 *            (Tiefe) Kopie der Symboltabelle
 	 */
 	private StateMachineInstance(State currentState,
-			MatchingTrace matchingTrace, SymbolTable symTab) {
+			MatchingTrace<R> matchingTrace, SymbolTable symTab) {
 		this.currentState = currentState;
 		this.matchingTrace = matchingTrace;
 		this.symTab = symTab;
@@ -94,7 +94,7 @@ public class StateMachineInstance {
 	 * 
 	 * @return Puffer mit allen von der AUtomateninstanz konsumierten Events
 	 */
-	public MatchingTrace getMatchingTrace() {
+	public MatchingTrace<R> getMatchingTrace() {
 		return matchingTrace;
 	}
 
@@ -108,20 +108,20 @@ public class StateMachineInstance {
 	 * @throws UndefinedActionException
 	 *             Wenn die auszuführende Aktion nicht definiert ist.
 	 */
-	public void executeAction(Action action, Object event,
-			AbstractEventReader eventReader) throws UndefinedActionException {
+	public void executeAction(Action action, R event,
+			AbstractEventReader<R,?> eventReader) throws UndefinedActionException {
 		if (action == Action.consume) {
 			this.matchingTrace.addEvent(event, this.currentState);
 			// Symboltabelle aktualisieren
-			for (SymbolTableEntry entry : this.symTab.getEntries()) {
+			for (SymbolTableEntry<?> entry : this.symTab.getEntries()) {
 				if (entry.getScheme().getStateIdentifier().equals(
 						this.currentState.getId())) {
 					if (entry.getScheme().getIndex() == this.matchingTrace
 							.getStateBuffer(this.currentState).getEvents()
 							.size()-1) {
-						entry.executeOperation(event, eventReader);
+						entry.executeOperation(eventReader.getValue(entry.getScheme().getAttribute(), event));
 					} else if (entry.getScheme().getIndex() < 0) {
-						entry.executeOperation(event, eventReader);
+						entry.executeOperation(eventReader.getValue(entry.getScheme().getAttribute(), event));
 					}
 				}
 			}
@@ -137,8 +137,8 @@ public class StateMachineInstance {
 	 * Gibt eine tiefe Kopie der Automateninstanz zurück.
 	 */
 	@Override
-	public StateMachineInstance clone() {
-		return new StateMachineInstance(this.currentState, this.matchingTrace
+	public StateMachineInstance<R> clone() {
+		return new StateMachineInstance<R>(this.currentState, this.matchingTrace
 				.clone(), this.symTab.clone());
 	}
 	

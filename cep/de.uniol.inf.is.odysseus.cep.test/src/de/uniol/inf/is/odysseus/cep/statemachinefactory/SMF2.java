@@ -6,14 +6,15 @@ import de.uniol.inf.is.odysseus.cep.metamodel.Action;
 import de.uniol.inf.is.odysseus.cep.metamodel.Condition;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputSchemeEntry;
-import de.uniol.inf.is.odysseus.cep.metamodel.Set;
+import de.uniol.inf.is.odysseus.cep.metamodel.Write;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 
+@SuppressWarnings("unchecked")
 public class SMF2 extends StateMachineFactory {
-
+	
 	public SMF2() {
 		super();
 	}
@@ -50,7 +51,7 @@ public class SMF2 extends StateMachineFactory {
 
 		this.symbolTableScheme = new SymbolTableScheme();
 		this.symbolTableScheme.getEntries().add(
-				new SymbolTableSchemeEntry(0, "abcd", 1, "xyz", new Set()));
+				new SymbolTableSchemeEntry(0, "abcd", 1, "xyz", new Write()));
 	}
 
 }

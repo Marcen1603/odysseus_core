@@ -11,15 +11,15 @@ import java.util.LinkedList;
  * @author Thomas Vogelgesang
  * 
  */
-public class BranchingBuffer {
+public class BranchingBuffer<R> {
 
-	private LinkedList<Branch> branches;
+	private LinkedList<Branch<R>> branches;
 	
 	/**
 	 * Erzeugt einen neuen leeren BranchingBuffer.
 	 */
 	public BranchingBuffer() {
-		this.branches = new LinkedList<Branch>();
+		this.branches = new LinkedList<Branch<R>>();
 	}
 
 	/**
@@ -36,16 +36,16 @@ public class BranchingBuffer {
 	 *            die aus originalInstance hervorgegangenen
 	 *            Automateninstanzen
 	 */
-	public void addBranch(StateMachineInstance originalInstance,
-			LinkedList<StateMachineInstance> newInstances) {
-		Branch parent = this.findBranch(originalInstance);
+	public void addBranch(StateMachineInstance<R> originalInstance,
+			LinkedList<StateMachineInstance<R>> newInstances) {
+		Branch<R> parent = this.findBranch(originalInstance);
 		if (parent == null) {
-			parent = new Branch(originalInstance, null);
+			parent = new Branch<R>(originalInstance, null);
 			this.branches.add(parent);
 		}
 
 		for (int i = 0; i < newInstances.size(); i++) {
-			Branch newBranch = new Branch(newInstances.get(i), parent);
+			Branch<R> newBranch = new Branch<R>(newInstances.get(i), parent);
 			parent.getChildren().add(newBranch);
 		}
 	}
@@ -63,18 +63,18 @@ public class BranchingBuffer {
 	 *            die aus originalInstance hervorgegangenen
 	 *            Automateninstanz
 	 */
-	public void addBranch(StateMachineInstance originalInstance,
-			StateMachineInstance newInstance) {
+	public void addBranch(StateMachineInstance<R> originalInstance,
+			StateMachineInstance<R> newInstance) {
 		if (newInstance == null || originalInstance == null) {
 			throw new NullPointerException();
 		}
-		Branch parent = this.findBranch(originalInstance);
+		Branch<R> parent = this.findBranch(originalInstance);
 		if (parent == null) {
-			parent = new Branch(originalInstance, null);
+			parent = new Branch<R>(originalInstance, null);
 			this.branches.add(parent);
 		}
 
-		Branch newBranch = new Branch(newInstance, parent);
+		Branch<R> newBranch = new Branch<R>(newInstance, parent);
 		parent.getChildren().add(newBranch);
 	}
 
@@ -87,9 +87,9 @@ public class BranchingBuffer {
 	 * @return die Verzweigung der Automateninstanz instance oder null,
 	 *         falls keine Verzweigung vorhanden ist
 	 */
-	private Branch findBranch(StateMachineInstance instance) {
+	private Branch<R> findBranch(StateMachineInstance<R> instance) {
 		for (int i = 0; i < this.branches.size(); i++) {
-			Branch result = findBranch(instance, this.branches.get(i));
+			Branch<R> result = findBranch(instance, this.branches.get(i));
 			if (result != null) {
 				return result;
 			}
@@ -113,12 +113,12 @@ public class BranchingBuffer {
 	 * @return Das Verzweigungsobjekt, das die Automateninstanz instance
 	 *         enthält oder null, falls nicht gefunden wurde.
 	 */
-	private Branch findBranch(StateMachineInstance instance, Branch branch) {
+	private Branch<R> findBranch(StateMachineInstance<R> instance, Branch<R> branch) {
 		if (branch.getInstance() == instance) {
 			return branch;
 		} else {
 			for (int i = 0; i < branch.getChildren().size(); i++) {
-				Branch result = this.findBranch(instance, branch.getChildren()
+				Branch<R> result = this.findBranch(instance, branch.getChildren()
 						.get(i));
 				if (result != null) {
 					return result;
@@ -136,8 +136,8 @@ public class BranchingBuffer {
 	 *            Die Automateninstanz, die aus dem Verzweigungsspeicher
 	 *            entfernt werden soll.
 	 */
-	public void removeAllNestedBranches(StateMachineInstance instance) {
-		Branch searchedBranch = this.findBranch(instance);
+	public void removeAllNestedBranches(StateMachineInstance<R> instance) {
+		Branch<R> searchedBranch = this.findBranch(instance);
 		if (searchedBranch != null) {
 			while (searchedBranch.getParent() != null) {
 				searchedBranch = searchedBranch.getParent();
@@ -152,8 +152,8 @@ public class BranchingBuffer {
 	 * 
 	 * @param instance
 	 */
-	public void removeBranch(StateMachineInstance instance) {
-		Branch searchedBranch = this.findBranch(instance);
+	public void removeBranch(StateMachineInstance<R> instance) {
+		Branch<R> searchedBranch = this.findBranch(instance);
 		if (searchedBranch != null) {
 			if (searchedBranch.getParent() == null) {
 				// aus liste entfernen, children in liste einfügen
@@ -164,7 +164,7 @@ public class BranchingBuffer {
 				this.branches.remove(searchedBranch);
 			} else {
 				// parent der children auf parent setzen
-				Branch parent = searchedBranch.getParent();
+				Branch<R> parent = searchedBranch.getParent();
 				parent.getChildren().remove(searchedBranch);
 				for (int i = 0; i < searchedBranch.getChildren().size(); i++) {
 					parent.getChildren().add(
@@ -184,7 +184,7 @@ public class BranchingBuffer {
 	 * @return Die Wurzel des Verzweigungsbaums, in dem branch enthalten
 	 *         ist.
 	 */
-	private Branch getRoot(Branch branch) {
+	private Branch<R> getRoot(Branch<R> branch) {
 		if (branch.getParent() != null) {
 			return this.getRoot(branch.getParent());
 		} else {
@@ -204,12 +204,12 @@ public class BranchingBuffer {
 	 * @return Liste mit allen Automateninstanzen, die mit instance
 	 *         verwandt sind.
 	 */
-	public LinkedList<StateMachineInstance> getAllNestedStateMachineInstances(
-			StateMachineInstance instance) {
-		LinkedList<StateMachineInstance> instances = new LinkedList<StateMachineInstance>();
-		Branch searchedBranch = this.findBranch(instance);
+	public LinkedList<StateMachineInstance<R>> getAllNestedStateMachineInstances(
+			StateMachineInstance<R> instance) {
+		LinkedList<StateMachineInstance<R>> instances = new LinkedList<StateMachineInstance<R>>();
+		Branch<R> searchedBranch = this.findBranch(instance);
 		if (searchedBranch != null) {
-			Branch root = this.getRoot(searchedBranch);
+			Branch<R> root = this.getRoot(searchedBranch);
 			this.addAllSubInstancesToList(root, instances);
 			instances.add(root.getInstance());
 		}
@@ -226,17 +226,17 @@ public class BranchingBuffer {
 	 *            Liste der Instanzen. Wird von der Methode manipuliert, darf
 	 *            nicht null sein.
 	 */
-	private void addAllSubInstancesToList(Branch branch,
-			LinkedList<StateMachineInstance> instances) {
+	private void addAllSubInstancesToList(Branch<R> branch,
+			LinkedList<StateMachineInstance<R>> instances) {
 		if (branch.getChildren() != null) {
-			for (Branch child : branch.getChildren()) {
+			for (Branch<R> child : branch.getChildren()) {
 				instances.add(child.getInstance());
 				this.addAllSubInstancesToList(child, instances);
 			}
 		}
 	}
 
-	protected LinkedList<Branch> getBranches() {
+	protected LinkedList<Branch<R>> getBranches() {
 		return branches;
 	}
 	

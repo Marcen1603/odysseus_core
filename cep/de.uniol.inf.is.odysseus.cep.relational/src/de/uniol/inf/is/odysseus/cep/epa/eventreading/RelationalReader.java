@@ -6,7 +6,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class RelationalReader extends AbstractEventReader {
+public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Object> {
 
 	HashMap<String, Integer> scheme;
 
@@ -35,7 +35,7 @@ public class RelationalReader extends AbstractEventReader {
 	 *            vom Typ {@link RelationalTuple} sein!
 	 */
 	@Override
-	public Object getValue(String identifier, Object event) {
+	public Object getValue(String identifier, RelationalTuple<?> event) {
 		if (identifier.isEmpty())
 			return null;//Leere Attribut id bei bstimmten Aggregationen (z.B. Count)
 		

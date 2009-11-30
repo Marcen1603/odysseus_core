@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author Thomas Vogelgesang
  * 
  */
-public class Max extends SymbolTableOperation {
+public class Max extends SymbolTableOperation<Number> {
 
 	public Max() {
 		super();
@@ -31,8 +31,7 @@ public class Max extends SymbolTableOperation {
 	 *             {@link java.lang.Integer} sind.
 	 */
 	@Override
-	public Object execute(Object oldValue, Object eventValue)
-			throws InvalidDataTypeForSymTabOperationException {
+	public Number execute(Number oldValue, Number eventValue){
 		if (oldValue == null) {
 			return eventValue;
 		}
@@ -48,14 +47,14 @@ public class Max extends SymbolTableOperation {
 			float a = ((Float) oldValue).floatValue();
 			float b = ((Float) eventValue).floatValue();
 			return (b > a) ? new Float(b) : oldValue;
-		} else if (oldValue instanceof Double && eventValue instanceof Double) {
+		} else if (oldValue instanceof Double && eventValue instanceof Double)  {
 			double a = ((Double) oldValue).doubleValue();
 			double b = ((Double) eventValue).doubleValue();
 			return (b > a) ? new Double(b) : oldValue;
 		} else {
 			throw new InvalidDataTypeForSymTabOperationException(
-					"Expected object of type java.lang.Integer");
-		}
+			"Expected object of type java.lang.Integer");
+}
 	}
 
 	@Override

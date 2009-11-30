@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
 
 /**
@@ -9,21 +8,21 @@ import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
  * @author Thomas Vogelgesang
  * 
  */
-public class SymbolTableEntry {
+public class SymbolTableEntry<T> {
 
 	/**
 	 * Referenz auf das Schema des Symboltabelleneintrags
 	 */
-	private SymbolTableSchemeEntry scheme;
+	private SymbolTableSchemeEntry<T> scheme;
 	/**
 	 * Der Wert einer Variablen
 	 */
-	private Object value;
+	private T value;
 
 	/**
 	 * Erzeugt leeren Eintrag. Der Wert des Eintrags bleibt uninitialisiert!
 	 */
-	public SymbolTableEntry(SymbolTableSchemeEntry entryScheme) {
+	public SymbolTableEntry(SymbolTableSchemeEntry<T> entryScheme) {
 		this.scheme = entryScheme;
 	}
 
@@ -32,7 +31,7 @@ public class SymbolTableEntry {
 	 * 
 	 * @return
 	 */
-	public Object getValue() {
+	public T getValue() {
 		return value;
 	}
 
@@ -42,7 +41,7 @@ public class SymbolTableEntry {
 	 * @param value
 	 *            Der neue Wert des Eintrags, nicht null.
 	 */
-	protected void setValue(Object value) {
+	protected void setValue(T value) {
 		this.value = value;
 	}
 
@@ -51,7 +50,7 @@ public class SymbolTableEntry {
 	 * 
 	 * @return Das zum Eintrag gehörende Schema.
 	 */
-	public SymbolTableSchemeEntry getScheme() {
+	public SymbolTableSchemeEntry<T> getScheme() {
 		return scheme;
 	}
 
@@ -60,23 +59,19 @@ public class SymbolTableEntry {
 	 * Symboltabelle aus, wodurch der Eintrag auf den Stand des sich gerade in
 	 * der Verarbeitung befindlichen Events aktualisiert wird.
 	 * 
-	 * @param event
-	 *            Das Event, das gerade verarbeitet wird.
-	 * @param eventReader
-	 *            Eine konkrete EventReader-Implementierung, die das übergebene
-	 *            Event auslesen kann.
 	 */
-	public void executeOperation(Object event, AbstractEventReader eventReader) {
-		Object value = eventReader.getValue(this.scheme.getAttribute(), event);
-		this.value = this.scheme.getOperation().execute(this.value, value);
+	@SuppressWarnings("unchecked")
+	public void executeOperation(Object value) {
+		// TODO: ist der Cast das hinten schlau? Geht das �berhaupt anders?
+		this.value = this.scheme.getOperation().execute(this.value, (T)value);
 	}
 
 	/**
 	 * Gibt eine flache Kopie des Symboltabelleneintrags zurück.
 	 */
 	@Override
-	public SymbolTableEntry clone() {
-		SymbolTableEntry newEntry = new SymbolTableEntry(this.getScheme());
+	public SymbolTableEntry<T> clone() {
+		SymbolTableEntry<T> newEntry = new SymbolTableEntry<T>(this.getScheme());
 		newEntry.setValue(this.value);
 		return newEntry;
 	}

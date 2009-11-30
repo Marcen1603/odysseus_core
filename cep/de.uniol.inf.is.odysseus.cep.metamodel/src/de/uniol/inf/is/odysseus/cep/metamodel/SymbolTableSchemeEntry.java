@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAd
  * @author Thomas Vogelgesang
  * 
  */
-public class SymbolTableSchemeEntry {
+public class SymbolTableSchemeEntry<T> {
 
 	/**
 	 * ID eines Events / Zustands. Darf nur aus Buchstaben und Ziffern bestehen,
@@ -32,7 +32,7 @@ public class SymbolTableSchemeEntry {
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
 	 */
-	private SymbolTableOperation operation;
+	private SymbolTableOperation<T> operation;
 
 	/**
 	 * Erzeugt einen Eintrag-Objekt für das Symboltabellenschema
@@ -50,7 +50,7 @@ public class SymbolTableSchemeEntry {
 	 *            werden soll
 	 */
 	public SymbolTableSchemeEntry(int entryID, String stateIdentifier,
-			int index, String attribute, SymbolTableOperation operation) {
+			int index, String attribute, SymbolTableOperation<T> operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
 		this.attribute = attribute;
@@ -87,7 +87,7 @@ public class SymbolTableSchemeEntry {
 	 *            Eine konkrete Implementierung der Symboltabellenoperation,
 	 *            nicht null.
 	 */
-	public void setOperation(SymbolTableOperation operation) {
+	public void setOperation(SymbolTableOperation<T> operation) {
 		this.operation = operation;
 	}
 
@@ -97,7 +97,7 @@ public class SymbolTableSchemeEntry {
 	 * @return Die Symboltabellenoperation des Eintrags.
 	 */
 	@XmlJavaTypeAdapter(SymbolTableOperationAdapter.class)
-	public SymbolTableOperation getOperation() {
+	public SymbolTableOperation<T> getOperation() {
 		return operation;
 	}
 

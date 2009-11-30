@@ -4,14 +4,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import org.nfunk.jep.JEP;
 import org.nfunk.jep.Variable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.ComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
@@ -31,48 +29,38 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
 /**
  * Objekte dieser Klasse stellen die Grundkomponente für das Complex Event
- * Processing dar. Sie sind als Operator in den physikalischen Ablaufplan
+ * Processing dar. Sie sind als Operator in den physischen Ablaufplan
  * integrierbar und steuern die gesamte Verarbeitung von komplexen Events
  * 
  * @author Thomas Vogelgesang
  * 
  */
-public class Agent extends AbstractPipe<Object, Object> {
+public class Agent<R,W> extends AbstractPipe<R, W> {
 
+	Logger logger = LoggerFactory.getLogger(Agent.class); 
+	
 	/**
 	 * Factory zum erzeugen komplexer Events
 	 */
-	private ComplexEventFactory complexEventFactory;
+	private ComplexEventFactory<R,W> complexEventFactory;
 	/**
 	 * Referenz auf eine eventReader Implementierung zum datenmodellunabhängigen
 	 * Auslesen von Events.
 	 */
-	private AbstractEventReader eventReader;
+	private AbstractEventReader<R,?> eventReader;
 	/**
 	 * Referenz auf den Verzweigungsspeicher
 	 */
-	private BranchingBuffer branchingBuffer;
+	private BranchingBuffer<R> branchingBuffer;
 	/**
 	 * Liste aller Automaten-Instanzen, die gerade vom EPA verarbeitet werden
 	 */
-	private LinkedList<StateMachineInstance> instances;
+	private LinkedList<StateMachineInstance<R>> instances;
 	/**
 	 * Der Automat, der das zu suchende Event-Muster sowie die Event-Aggregation
 	 * und die Struktur des Zwischenspeichers enthält
 	 */
 	private StateMachine stateMachine;
-	/**
-	 * true, wenn die CEP-Komponente im Debug Modus benutz wird, false sonst
-	 */
-	private boolean debug;
-	/**
-	 * LogManager fürs debuggen
-	 */
-	private LogManager logMan;
-	/**
-	 * Standard Logger fürs debuggen
-	 */
-	private Logger defLog;
 
 	/**
 	 * leerer Standardkonstruktor
@@ -100,15 +88,15 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 *             Falls der übergebene Automat nicht die erforderlichen
 	 *             Invarianten einhält.
 	 */
-	public Agent(StateMachine stateMachine, AbstractEventReader eventReader,
-			ComplexEventFactory complexEventFactory, boolean validate)
+	public Agent(StateMachine stateMachine, AbstractEventReader<R,?> eventReader,
+			ComplexEventFactory<R,W> complexEventFactory, boolean validate)
 			throws Exception {
 		super();
 		this.stateMachine = stateMachine;
 		this.complexEventFactory = complexEventFactory;
 		this.eventReader = eventReader;
-		this.instances = new LinkedList<StateMachineInstance>();
-		this.branchingBuffer = new BranchingBuffer();
+		this.instances = new LinkedList<StateMachineInstance<R>>();
+		this.branchingBuffer = new BranchingBuffer<R>();
 		if (validate) {
 			Validator validator = new Validator();
 			ValidationResult result = validator.validate(stateMachine);
@@ -116,19 +104,6 @@ public class Agent extends AbstractPipe<Object, Object> {
 				throw new InvalidStateMachineException(result);
 			}
 		}
-		this.debug = false;
-
-		// preparing logger:
-		this.logMan = LogManager.getLogManager();
-		this.logMan.addLogger(Logger.getLogger("default"));
-		this.defLog = this.logMan.getLogger("default");
-		this.defLog.setLevel(Level.ALL);
-		try {
-			this.defLog.addHandler(new FileHandler("%h/cep.log"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		this.defLog.getHandlers()[0].setFormatter(new SimpleFormatter());
 	}
 
 	@Override
@@ -140,135 +115,42 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 * Verarbeitet ein übergebenes Event.
 	 */
 	@Override
-	protected void process_next(Object object, int port) {
-		this.debug("Beginne Verarbeitung von Event " + object);
-		this.debug(this.getStats());
+	protected void process_next(R object, int port) {
+		if (logger.isDebugEnabled()) logger.debug("Beginne Verarbeitung von Event " + object);
+		if (logger.isDebugEnabled()) logger.debug(this.getStats());
 
-		this.instances.add(new StateMachineInstance(this.stateMachine));
+		this.instances.add(new StateMachineInstance<R>(this.stateMachine));
 		if (object == null)
 			throw new InvalidEventException(
 					"The event to be processed is null.");
 
-		LinkedList<StateMachineInstance> outdatedInstances = new LinkedList<StateMachineInstance>();
-		LinkedList<StateMachineInstance> branchedInstances = new LinkedList<StateMachineInstance>();
+		LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
+		LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
 
 		// Auswerten der Transition:
-		for (Iterator<StateMachineInstance> i = this.instances.iterator(); i
-				.hasNext();) {
-
-			StateMachineInstance instance = i.next();
-
-			this.debug(instance.getStats());
-
-			Stack<Transition> takeTransition = new Stack<Transition>();
-
-			for (int k = 0; k < instance.getCurrentState().getTransitions()
-					.size(); k++) {
-				Transition transition = instance.getCurrentState()
-						.getTransitions().get(k);
-				/*
-				 * Über Variablen iterieren und neu belegen.
-				 */
-				@SuppressWarnings("unchecked")
-				Set<String> varNames = transition.getCondition()
-						.getExpression().getSymbolTable().keySet();
-				Iterator<String> varIt = varNames.iterator();
-				while (varIt.hasNext()) {
-					Variable var = transition.getCondition().getExpression()
-							.getVar(varIt.next());
-					this.debug("Setze Variable " + var.getName());
-					if (Agent.isActEventName(var.getName())) {
-						// Variable bezieht sich auf aktuelles Event
-						var.setValue(this.eventReader.getValue(CepVariable
-								.getAttributeName(var.getName()), object));
-						this.debug("Neuer Wert: "
-								+ this.eventReader.getValue(CepVariable
-										.getAttributeName(var.getName()),
-										object));
-					} else {
-						// Variable bezieht sich auf historisches (bereits
-						// konsumiertes Event)
-						var.setValue(instance.getSymTab().getValue(
-								var.getName()));
-						this.debug("Neuer Wert: "
-								+ instance.getSymTab().getValue(var.getName()));
-					}
-				}
-				try {
-					/*
-					 * C-Semantik: Alles ungleich 0 oder null ist true! JEP tut
-					 * komische Dinge: - Vergleichsoperatoren liefern
-					 * Boolean-Objekte und NaN getValue() - alle anderen
-					 * Operatoren liefern Double-Objekte (auch für boolesche
-					 * Operatoren, immer 0.0 oder 1.0)
-					 */
-					double conditionValue = transition.getCondition()
-							.getExpression().getValue();
-					if (Double.isNaN(conditionValue)) {
-						Boolean boolVal = (Boolean) transition.getCondition()
-								.getExpression().getValueAsObject();
-						conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
-					}
-					if (conditionValue != 0.0) {
-						takeTransition.push(transition);
-						this.debug("Transitionsbedingung ist true: "
-								+ transition.getCondition().getLabel()
-								+ " (Wert: "
-								+ transition.getCondition().getExpression()
-										.getValue()
-								+ ", "
-								+ transition.getCondition().getExpression()
-										.getErrorInfo() + ")");
-					}
-				} catch (Exception e) {
-					// System.out.println(transition.getCondition().getLabel());
-					// System.out.println(transition.getCondition().getExpression().getErrorInfo());
-					// e.printStackTrace();
-					throw new ConditionEvaluationException(
-							"Cannot evaluate condition "
-									+ transition.getCondition());
-				}
-			}
-			if (takeTransition.isEmpty()) {
-				/*
-				 * Kein Zustandswechsel möglich: Automateninstanz als entfernbar
-				 * makieren. Die Instanz muss auch aus dem Verzweigungsspeicher
-				 * entfernt werden um Speicherleichen zu verhindern.
-				 */
-				this
-						.debug("Keine Transition kann genommen werden. Verwerfe Instanz "
-								+ instance);
-				outdatedInstances.add(instance);
-				this.branchingBuffer.removeBranch(instance);
-			} else if (takeTransition.size() == 1) {
-				// genau 1 Folgezustand: Zustand wechseln und Aktion ausführen.
-				this.debug("Eine gehbare Transition gefunden: "
-						+ takeTransition.peek());
-				this.takeTransition(instance, takeTransition.pop(), object);
-			} else if (takeTransition.size() > 1) {
-				// mehr als 1 Folgezustand: nichtdeterministische Verzweigung!
-				this
-						.debug(""
-								+ takeTransition.size()
-								+ " Transitionen können genommen werden (Nichtdeterministische Verzweigung).");
-				while (takeTransition.size() > 1) {
-					StateMachineInstance newInstance = instance.clone();
-					this.takeTransition(newInstance, takeTransition.pop(),
-							object);
-					this.branchingBuffer.addBranch(instance, newInstance);
-					branchedInstances.add(newInstance);
-				}
-				this.takeTransition(instance, takeTransition.pop(), object);
-			}
-		}
+		validateTransitions(object, outdatedInstances, branchedInstances);
 
 		this.instances.addAll(branchedInstances);
 
 		// Überprüfen auf Endzustände und erzeugen komplexer Events
-		LinkedList<Object> complexEvents = new LinkedList<Object>();
-		for (Iterator<StateMachineInstance> i = this.instances.iterator(); i
+		LinkedList<W> complexEvents = validateFinalStates(outdatedInstances);
+
+		// Aufräumen: Alle als veraltet markierten Automateninstanzen entfernen.
+		this.instances.removeAll(outdatedInstances);
+
+		if (logger.isDebugEnabled()) logger.debug("Erzeugte Events: " + complexEvents);
+
+		this.transfer(complexEvents);
+
+		if (logger.isDebugEnabled()) logger.debug("Verarbeitung abgeschlossen\n");
+	}
+
+	private LinkedList<W> validateFinalStates(
+			LinkedList<StateMachineInstance<R>> outdatedInstances) {
+		LinkedList<W> complexEvents = new LinkedList<W>();
+		for (Iterator<StateMachineInstance<R>> i = this.instances.iterator(); i
 				.hasNext();) {
-			StateMachineInstance instance = i.next();
+			StateMachineInstance<R> instance = i.next();
 
 			/*
 			 * Durch das Markieren der veralteten Automateninstanzen und das
@@ -305,11 +187,11 @@ public class Agent extends AbstractPipe<Object, Object> {
 							// -> wert im MatchingTrace suchen (teuer?!)
 							String[] split = var.getName().split(
 									CepVariable.getSeperator());
-							StateBuffer buffer = instance.getMatchingTrace()
+							StateBuffer<R> buffer = instance.getMatchingTrace()
 									.getStateBuffer(split[1]);
 							if (buffer != null) {
 								try {
-									Object event = null;
+									R event = null;
 									if (split[2].isEmpty()) {
 										/*
 										 * leerer String an Index-Position heißt
@@ -358,15 +240,113 @@ public class Agent extends AbstractPipe<Object, Object> {
 						.getRemovableInstancesByConsumptionMode(instance));
 			}
 		}
+		return complexEvents;
+	}
 
-		// Aufräumen: Alle als veraltet markierten Automateninstanzen entfernen.
-		this.instances.removeAll(outdatedInstances);
+	private void validateTransitions(R object,
+			LinkedList<StateMachineInstance<R>> outdatedInstances,
+			LinkedList<StateMachineInstance<R>> branchedInstances) {
+	
+		for (StateMachineInstance<R> instance: this.instances) {
+			if (logger.isDebugEnabled()) logger.debug(instance.getStats());
+			Stack<Transition> takeTransition = new Stack<Transition>();
 
-		this.debug("Erzeugte Events: " + complexEvents);
-
-		this.transfer(complexEvents);
-
-		this.debug("Verarbeitung abgeschlossen\n");
+			for (Transition transition: instance.getCurrentState().getTransitions()) {
+				/*
+				 * Über Variablen iterieren und neu belegen.
+				 */
+				@SuppressWarnings("unchecked")
+				Set<String> varNames = transition.getCondition()
+						.getExpression().getSymbolTable().keySet();
+				Iterator<String> varIt = varNames.iterator();
+				
+				while (varIt.hasNext()) {
+					Variable var = transition.getCondition().getExpression()
+							.getVar(varIt.next());
+					if (logger.isDebugEnabled()) logger.debug("Setze Variable " + var.getName());
+					if (Agent.isActEventName(var.getName())) {
+						// Variable bezieht sich auf aktuelles Event
+						var.setValue(this.eventReader.getValue(CepVariable
+								.getAttributeName(var.getName()), object));
+						if (logger.isDebugEnabled()) logger.debug("Neuer Wert: "
+								+ this.eventReader.getValue(CepVariable
+										.getAttributeName(var.getName()),
+										object));
+					} else {
+						// Variable bezieht sich auf historisches (bereits
+						// konsumiertes Event)
+						var.setValue(instance.getSymTab().getValue(
+								var.getName()));
+						if (logger.isDebugEnabled()) logger.debug("Neuer Wert: "
+								+ instance.getSymTab().getValue(var.getName()));
+					}
+				}
+				try {
+					/*
+					 * C-Semantik: Alles ungleich 0 oder null ist true! JEP tut
+					 * komische Dinge: - Vergleichsoperatoren liefern
+					 * Boolean-Objekte und NaN getValue() - alle anderen
+					 * Operatoren liefern Double-Objekte (auch für boolesche
+					 * Operatoren, immer 0.0 oder 1.0)
+					 */
+					double conditionValue = transition.getCondition()
+							.getExpression().getValue();
+					if (Double.isNaN(conditionValue)) {
+						Boolean boolVal = (Boolean) transition.getCondition()
+								.getExpression().getValueAsObject();
+						conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
+					}
+					if (conditionValue != 0.0) {
+						takeTransition.push(transition);
+						if (logger.isDebugEnabled()) logger.debug("Transitionsbedingung ist true: "
+								+ transition.getCondition().getLabel()
+								+ " (Wert: "
+								+ transition.getCondition().getExpression()
+										.getValue()
+								+ ", "
+								+ transition.getCondition().getExpression()
+										.getErrorInfo() + ")");
+					}
+				} catch (Exception e) {
+					// System.out.println(transition.getCondition().getLabel());
+					// System.out.println(transition.getCondition().getExpression().getErrorInfo());
+					// e.printStackTrace();
+					throw new ConditionEvaluationException(
+							"Cannot evaluate condition "
+									+ transition.getCondition());
+				}
+			}
+			if (takeTransition.isEmpty()) {
+				/*
+				 * Kein Zustandswechsel möglich: Automateninstanz als entfernbar
+				 * makieren. Die Instanz muss auch aus dem Verzweigungsspeicher
+				 * entfernt werden um Speicherleichen zu verhindern.
+				 */
+				if (logger.isDebugEnabled()) logger.debug("Keine Transition kann genommen werden. Verwerfe Instanz "
+								+ instance);
+				outdatedInstances.add(instance);
+				this.branchingBuffer.removeBranch(instance);
+			} else if (takeTransition.size() == 1) {
+				// genau 1 Folgezustand: Zustand wechseln und Aktion ausführen.
+				if (logger.isDebugEnabled()) logger.debug("Eine gehbare Transition gefunden: "
+						+ takeTransition.peek());
+				this.takeTransition(instance, takeTransition.pop(), object);
+			} else if (takeTransition.size() > 1) {
+				// mehr als 1 Folgezustand: nichtdeterministische Verzweigung!
+				if (logger.isDebugEnabled()) logger
+						.debug(""
+								+ takeTransition.size()
+								+ " Transitionen können genommen werden (Nichtdeterministische Verzweigung).");
+				while (takeTransition.size() > 1) {
+					StateMachineInstance<R> newInstance = instance.clone();
+					this.takeTransition(newInstance, takeTransition.pop(),
+							object);
+					this.branchingBuffer.addBranch(instance, newInstance);
+					branchedInstances.add(newInstance);
+				}
+				this.takeTransition(instance, takeTransition.pop(), object);
+			}
+		}
 	}
 
 	/**
@@ -374,7 +354,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 * 
 	 * @return Das Factory-Objekt für komplexe Events.
 	 */
-	public ComplexEventFactory getComplexEventFactory() {
+	public ComplexEventFactory<R,W> getComplexEventFactory() {
 		return complexEventFactory;
 	}
 
@@ -385,7 +365,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 * @param complexEventFactory
 	 *            Das neue Factory-Objekt für komplexe Events, nicht null.
 	 */
-	public void setComplexEventFactory(ComplexEventFactory complexEventFactory) {
+	public void setComplexEventFactory(ComplexEventFactory<R,W> complexEventFactory) {
 		this.complexEventFactory = complexEventFactory;
 	}
 
@@ -394,7 +374,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 * 
 	 * @return Das Event-Reader-Objekt.
 	 */
-	public AbstractEventReader getEventReader() {
+	public AbstractEventReader<R,?> getEventReader() {
 		return eventReader;
 	}
 
@@ -405,7 +385,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 * @param eventReader
 	 *            Das neue Event-Reader-Objekt, nicht null.
 	 */
-	public void setEventReader(AbstractEventReader eventReader) {
+	public void setEventReader(AbstractEventReader<R,?> eventReader) {
 		this.eventReader = eventReader;
 	}
 
@@ -423,7 +403,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 * 
 	 * @return Der aktuelle Verzweigungsspeicher.
 	 */
-	public BranchingBuffer getBranchingBuffer() {
+	public BranchingBuffer<R> getBranchingBuffer() {
 		return branchingBuffer;
 	}
 
@@ -432,7 +412,7 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 * 
 	 * @return Liste der Automateninstanzen.
 	 */
-	public LinkedList<StateMachineInstance> getInstances() {
+	public LinkedList<StateMachineInstance<R>> getInstances() {
 		return instances;
 	}
 
@@ -454,15 +434,15 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 *         Abhängigkeit vom Consumption Mode enthält. Die übergebene Instanz
 	 *         instance ist immer in der Liste enthalten.
 	 */
-	private LinkedList<StateMachineInstance> getRemovableInstancesByConsumptionMode(
-			StateMachineInstance instance) {
-		LinkedList<StateMachineInstance> outdated = null;
+	private LinkedList<StateMachineInstance<R>> getRemovableInstancesByConsumptionMode(
+			StateMachineInstance<R> instance) {
+		LinkedList<StateMachineInstance<R>> outdated = null;
 		if (this.stateMachine.getConsumptionMode() == ConsumptionMode.onlyOneMatch) {
 			outdated = this.branchingBuffer
 					.getAllNestedStateMachineInstances(instance);
 			this.branchingBuffer.removeAllNestedBranches(instance);
 		} else if (this.stateMachine.getConsumptionMode() == ConsumptionMode.allMatches) {
-			outdated = new LinkedList<StateMachineInstance>();
+			outdated = new LinkedList<StateMachineInstance<R>>();
 			outdated.add(instance);
 			this.branchingBuffer.removeBranch(instance);
 		} else {
@@ -484,12 +464,12 @@ public class Agent extends AbstractPipe<Object, Object> {
 	 *            Referenz auf das sich aktuell in der Verarbeitung befindliche
 	 *            Event.
 	 */
-	private void takeTransition(StateMachineInstance instance,
-			Transition transition, Object event) {
-		this.debug("Zustandswechsel: " + instance.getCurrentState().getId()
+	private void takeTransition(StateMachineInstance<R> instance,
+			Transition transition, R event) {
+		if (logger.isDebugEnabled()) logger.debug("Zustandswechsel: " + instance.getCurrentState().getId()
 				+ "-->" + transition.getNextState().getId());
 		instance.setCurrentState(transition.getNextState());
-		this.debug("Führe Aktion aus: " + transition.getAction());
+		if (logger.isDebugEnabled()) logger.debug("Führe Aktion aus: " + transition.getAction());
 		instance.executeAction(transition.getAction(), event, this.eventReader);
 		/*
 		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
@@ -504,35 +484,6 @@ public class Agent extends AbstractPipe<Object, Object> {
 		 */
 	}
 
-	/**
-	 * liefert true, wenn sich der Agent im Debug-Modus befindet, ansonsten
-	 * false. Standardwert ist false.
-	 */
-	public boolean isDebug() {
-		return debug;
-	}
-
-	/**
-	 * setzt den Debug-Modus
-	 * 
-	 * @param debug
-	 *            true, wenn der debugging aktiviert werden soll, false sonst
-	 */
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
-
-	/**
-	 * Schreibt eine Debug-Nachricht in das Log-File. Das Log-File wird im
-	 * Home-Verzeichnis als "cep.log" gespeichert.
-	 * 
-	 * @param message
-	 *            Die Nachricht, die in das Log-File geschrieben werden soll
-	 */
-	private void debug(String message) {
-		if (this.debug)
-			this.defLog.log(Level.ALL, message);
-	}
 
 	/**
 	 * Liefert Statistiken zum aktuellen Zustand des EPA.

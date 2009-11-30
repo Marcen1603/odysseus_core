@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-
+@SuppressWarnings("unchecked")
 public class SMF1 extends StateMachineFactory {
 
 	public SMF1() {

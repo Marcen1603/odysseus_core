@@ -6,7 +6,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
  * @author Thomas Vogelgesang
  * 
  */
-public abstract class SymbolTableOperation {
+public abstract class SymbolTableOperation<T> {
 
 	public SymbolTableOperation() {
 
@@ -31,7 +31,7 @@ public abstract class SymbolTableOperation {
 	 *         Umständen kann auch eine Referenz auf das unveränderte Objekt
 	 *         oldValue zurückgegeben werden.
 	 */
-	public abstract Object execute(Object oldValue, Object eventValue);
+	public abstract T execute(T oldValue, T eventValue);
 
 	public abstract String toString(String indent);
 	

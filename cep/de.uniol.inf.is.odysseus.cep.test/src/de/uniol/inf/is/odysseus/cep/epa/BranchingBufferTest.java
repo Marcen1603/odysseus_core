@@ -7,9 +7,10 @@ import org.junit.*;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import static org.junit.Assert.*;
-
+@SuppressWarnings("unchecked")
 public class BranchingBufferTest {
 
+	
 	Stack<StateMachineInstance> instSet1;
 	Stack<StateMachineInstance> instSet2;
 	Stack<StateMachineInstance> instSet3;
@@ -163,7 +164,7 @@ public class BranchingBufferTest {
 		}
 
 		assertTrue(this.testBuffer.getBranches().size() == 3);
-		System.out.println(this.testBuffer.getBranches().get(0).toString("  "));
+		System.out.println(this.testBuffer.getBranches().get(0)+"  ");
 		
 		this.tmpInst1 = null;
 		this.testBuffer.addBranch(this.tmpInst1, this.tmpInst2);

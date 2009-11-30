@@ -4,8 +4,8 @@ import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
 import de.uniol.inf.is.odysseus.cep.epa.SymbolTable;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 
-public abstract class ComplexEventFactory {
+public abstract class ComplexEventFactory<R,W> {
 
-	abstract public Object createComplexEvent(OutputScheme outputscheme, MatchingTrace matchingTrace, SymbolTable symTab);
+	abstract public W createComplexEvent(OutputScheme outputscheme, MatchingTrace<R> matchingTrace, SymbolTable symTab);
 	
 }

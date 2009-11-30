@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
  * @author Thomas Vogelgesang
  * 
  */
-public class StateBuffer {
+public class StateBuffer<R> {
 
 	/**
 	 * Zustand des Automaten, auf den sich der StateBuffer bezieht.
@@ -20,7 +20,7 @@ public class StateBuffer {
 	/**
 	 * Liste mit allen in diesem Buffer gematchten Events
 	 */
-	private LinkedList<MatchedEvent> events;
+	private LinkedList<MatchedEvent<R>> events;
 
 	/**
 	 * Erzeugt einen neuen StateBuffer aus einem Automatenzustand.
@@ -31,7 +31,7 @@ public class StateBuffer {
 	 */
 	public StateBuffer(State state) {
 		this.state = state;
-		this.events = new LinkedList<MatchedEvent>();
+		this.events = new LinkedList<MatchedEvent<R>>();
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class StateBuffer {
 	 *            soll.
 	 * @param events Liste von Events, die bisher konsumiert wurden.
 	 */
-	private StateBuffer(State state, LinkedList<MatchedEvent> events) {
+	private StateBuffer(State state, LinkedList<MatchedEvent<R>> events) {
 		this.state = state;
 		this.events = events;
 	}
@@ -64,7 +64,7 @@ public class StateBuffer {
 	 * 
 	 * @return Liste aller in diesem StateBuffer gespeicherten Elemente.
 	 */
-	public LinkedList<MatchedEvent> getEvents() {
+	public LinkedList<MatchedEvent<R>> getEvents() {
 		return events;
 	}
 
@@ -72,12 +72,12 @@ public class StateBuffer {
 	 * gibt eine tiefe Kopie des StateBuffers zurück.
 	 */
 	@Override
-	public StateBuffer clone() {
-		LinkedList<MatchedEvent> newEventList = new LinkedList<MatchedEvent>();
-		for (MatchedEvent me : this.events) {
+	public StateBuffer<R> clone() {
+		LinkedList<MatchedEvent<R>> newEventList = new LinkedList<MatchedEvent<R>>();
+		for (MatchedEvent<R> me : this.events) {
 			newEventList.add(me.clone());
 		}
-		return new StateBuffer(this.state, newEventList);
+		return new StateBuffer<R>(this.state, newEventList);
 	}
 
 }

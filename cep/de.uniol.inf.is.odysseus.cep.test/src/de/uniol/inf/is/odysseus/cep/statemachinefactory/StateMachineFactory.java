@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
  * @author Thomas Vogelgesang
  * 
  */
+@SuppressWarnings("unchecked")
 public abstract class StateMachineFactory {
 
 	protected LinkedList<State> states;

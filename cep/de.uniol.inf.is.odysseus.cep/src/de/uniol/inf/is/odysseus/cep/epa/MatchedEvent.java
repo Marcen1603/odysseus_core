@@ -7,17 +7,17 @@ package de.uniol.inf.is.odysseus.cep.epa;
  * @author Thomas Vogelgesang
  * 
  */
-public class MatchedEvent {
+public class MatchedEvent<R> {
 
 	/**
 	 * Referenz auf das zuvor konsumierte Event. Ist null für das erste
 	 * konsumierte Event und nicht null für alle anderen.
 	 */
-	private MatchedEvent previous;
+	private MatchedEvent<R> previous;
 	/**
 	 * Das eigentliche Event, das zwischengespeichert werden soll
 	 */
-	private Object event;
+	private R event;
 
 	/**
 	 * Erzegt ein neues Listenelement.
@@ -28,7 +28,7 @@ public class MatchedEvent {
 	 * @param event
 	 *            Das Event, das konsumiert und in die Liste eingehängt wird.
 	 */
-	public MatchedEvent(MatchedEvent previous, Object event) {
+	public MatchedEvent(MatchedEvent<R> previous, R event) {
 		this.event = event;
 		this.previous = previous;
 	}
@@ -39,7 +39,7 @@ public class MatchedEvent {
 	 * @return Das vorherige Lsitenelement oder null, wenn es sich um das erste
 	 *         Element der Liste handelt.
 	 */
-	public MatchedEvent getPrevious() {
+	public MatchedEvent<R> getPrevious() {
 		return previous;
 	}
 
@@ -48,7 +48,7 @@ public class MatchedEvent {
 	 * 
 	 * @return Das im Listenelement gespeicherte Event.
 	 */
-	public Object getEvent() {
+	public R getEvent() {
 		return event;
 	}
 	
@@ -56,12 +56,12 @@ public class MatchedEvent {
 	 * Gibt eine tiefe Kopie des MatchedEvent-Objekts zurück.
 	 */
 	@Override
-	public MatchedEvent clone() {
-		MatchedEvent newPrevious = null;
+	public MatchedEvent<R> clone() {
+		MatchedEvent<R> newPrevious = null;
 		if (this.previous != null) {
 			newPrevious = this.previous.clone();
 		}
-		return new MatchedEvent(newPrevious, this.event);
+		return new MatchedEvent<R>(newPrevious, this.event);
 	}
 
 }

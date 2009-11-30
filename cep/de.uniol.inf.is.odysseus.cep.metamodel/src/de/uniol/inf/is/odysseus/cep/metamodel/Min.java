@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author Thomas Vogelgesang
  * 
  */
-public class Min extends SymbolTableOperation {
+public class Min extends SymbolTableOperation<Number> {
 
 	public Min() {
 		super();
@@ -31,8 +31,7 @@ public class Min extends SymbolTableOperation {
 	 *             {@link java.lang.Integer} sind.
 	 */
 	@Override
-	public Object execute(Object oldValue, Object eventValue)
-			throws InvalidDataTypeForSymTabOperationException {
+	public Number execute(Number oldValue, Number eventValue){
 		if (oldValue == null) {
 			return eventValue;
 		}

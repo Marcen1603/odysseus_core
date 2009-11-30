@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author tommy
  * 
  */
-public class Sum extends SymbolTableOperation {
+public class Sum extends SymbolTableOperation<Number> {
 
 	public Sum() {
 		super();
@@ -31,7 +31,7 @@ public class Sum extends SymbolTableOperation {
 	 *             {@link java.lang.Integer} sind.
 	 */
 	@Override
-	public Object execute(Object oldValue, Object eventValue)
+	public Number execute(Number oldValue, Number eventValue)
 			throws InvalidDataTypeForSymTabOperationException {
 		if (oldValue == null) {
 			return eventValue;

@@ -74,14 +74,14 @@ public class ImportExportTest {
 					stm2.getOutputScheme().getEntries().get(i).getLabel());
 		}
 
-		for (int i = 0; i < stm1.getSymTabScheme().getEntries().size(); i++) {
-			assertEquals(stm1.getSymTabScheme().getEntries().get(i)
-					.getVariableName(), stm2.getSymTabScheme().getEntries()
-					.get(i).getVariableName());
-			assertEquals(stm1.getSymTabScheme().getEntries().get(i)
-					.getOperation().getClass(), stm2.getSymTabScheme()
-					.getEntries().get(i).getOperation().getClass());
-		}
+//		for (int i = 0; i < stm1.getSymTabScheme().getEntries().size(); i++) {
+//			assertEquals(stm1.getSymTabScheme().getEntries().get(i)
+//					.getVariableName(), stm2.getSymTabScheme().getEntries()
+//					.get(i).getVariableName());
+//			assertEquals(stm1.getSymTabScheme().getEntries().get(i)
+//					.getOperation().getClass(), stm2.getSymTabScheme()
+//					.getEntries().get(i).getOperation().getClass());
+//		}
 		
 		assertEquals(stm1.getConsumptionMode(), stm2.getConsumptionMode());
 	}

@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author Thomas Vogelgesang
  * 
  */
-public class Count extends SymbolTableOperation {
+public class Count extends SymbolTableOperation<Integer> {
 
 	public Count() {
 		super();
@@ -31,16 +31,14 @@ public class Count extends SymbolTableOperation {
 	 *             Falls oldValue nicht vom Typ {@link java.lang.Integer} ist
 	 */
 	@Override
-	public Object execute(Object oldValue, Object eventValue)
+	public Integer execute(Integer oldValue, Integer eventValue)
 			throws InvalidDataTypeForSymTabOperationException {
 		if (oldValue == null) {
 			return new Integer(1);
-		} else if (oldValue instanceof Integer) {
-			return new Integer(((Integer) oldValue).intValue() + 1);
 		} else {
-			throw new InvalidDataTypeForSymTabOperationException(
-					"Expected object of type java.lang.Integer");
+			return new Integer(((Integer) oldValue).intValue() + 1);
 		}
+		
 	}
 
 	@Override

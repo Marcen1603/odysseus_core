@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedActionException;
 import de.uniol.inf.is.odysseus.cep.metamodel.Action;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.statemachinefactory.SMF1;
-
+@SuppressWarnings("unchecked")
 public class StateMachineInstanceTest {
 
 	@Before

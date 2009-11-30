@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.cep.epa.SymbolTable;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class RelationalCreator extends ComplexEventFactory {
+public class RelationalCreator<R> extends ComplexEventFactory<R,RelationalTuple<?>> {
 
 	/**
 	 * Erzeugt einen neuen Creator für relationale Tupel vom Typ
@@ -17,7 +17,7 @@ public class RelationalCreator extends ComplexEventFactory {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object createComplexEvent(OutputScheme outputscheme,
+	public RelationalTuple<?> createComplexEvent(OutputScheme outputscheme,
 			MatchingTrace matchingTrace, SymbolTable symTab) {
 		Object[] attributes = new Object[outputscheme.getEntries().size()];
 		for (int i = 0; i < outputscheme.getEntries().size(); i++) {
@@ -29,6 +29,7 @@ public class RelationalCreator extends ComplexEventFactory {
 			attributes[i] = outputscheme.getEntries().get(i).getExpression()
 					.getValueAsObject();
 		}
+		// TODO: Metadaten setzen!!
 		return new RelationalTuple(attributes);
 	}
 

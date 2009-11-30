@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.cep.epa;
 
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.VarNotFoundInSymTabException;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 
 /**
@@ -18,13 +17,13 @@ public class SymbolTable {
 	/**
 	 * Liste mit allen Einträgen der Symboltabelle
 	 */
-	private LinkedList<SymbolTableEntry> entries;
+	private LinkedList<SymbolTableEntry<Object>> entries;
 
 	/**
 	 * Standardkonstruktor. Erzeugt eine leere Symboltabelle
 	 */
 	public SymbolTable() {
-		this.entries = new LinkedList<SymbolTableEntry>();
+		this.entries = new LinkedList<SymbolTableEntry<Object>>();
 	}
 
 	/**
@@ -34,11 +33,11 @@ public class SymbolTable {
 	 *            Symboltabellenschema, aus dem die Symboltabelle generiert
 	 *            werden soll
 	 */
-	public SymbolTable(SymbolTableScheme symTabScheme) {
-		this.entries = new LinkedList<SymbolTableEntry>();
+	public SymbolTable(SymbolTableScheme<Object> symTabScheme) {
+		this.entries = new LinkedList<SymbolTableEntry<Object>>();
 		for (int i = 0; i < symTabScheme.getEntries().size(); i++) {
 			if (symTabScheme.getEntries().get(i) != null) {
-				this.entries.add(new SymbolTableEntry(symTabScheme.getEntries()
+				this.entries.add(new SymbolTableEntry<Object>(symTabScheme.getEntries()
 						.get(i)));
 			}
 		}
@@ -51,14 +50,14 @@ public class SymbolTable {
 	 * @param entries
 	 *            Liste aller Einträge in der Symboltabelle, nicht null
 	 */
-	private SymbolTable(LinkedList<SymbolTableEntry> entries) {
+	private SymbolTable(LinkedList<SymbolTableEntry<Object>> entries) {
 		this.entries = entries;
 	}
 
 	/**
 	 * @return Liste mit allen Einträgen der Symboltabelle
 	 */
-	public LinkedList<SymbolTableEntry> getEntries() {
+	public LinkedList<SymbolTableEntry<Object>> getEntries() {
 		return this.entries;
 	}
 
@@ -74,7 +73,7 @@ public class SymbolTable {
 	 *         auftritt.
 	 */
 	public Object getValue(String name) {
-		for (SymbolTableEntry entry : this.entries) {
+		for (SymbolTableEntry<Object> entry : this.entries) {
 			if (name.equals(entry.getScheme().getVariableName())) {
 				return entry.getValue();
 			}
@@ -87,8 +86,8 @@ public class SymbolTable {
 	 */
 	@Override
 	public SymbolTable clone() {
-		LinkedList<SymbolTableEntry> newEntries = new LinkedList<SymbolTableEntry>();
-		for (SymbolTableEntry entries : this.entries) {
+		LinkedList<SymbolTableEntry<Object>> newEntries = new LinkedList<SymbolTableEntry<Object>>();
+		for (SymbolTableEntry<Object> entries : this.entries) {
 			newEntries.add(entries.clone());
 		}
 		return new SymbolTable(newEntries);
@@ -97,7 +96,7 @@ public class SymbolTable {
 	@Override
 	public String toString() {
 		String str = "Symbol table (entries: " + this.entries.size() + "):";
-		for (SymbolTableEntry entry : this.entries) {
+		for (SymbolTableEntry<Object> entry : this.entries) {
 			str += "\n" + entry.toString();
 		}
 		return str;

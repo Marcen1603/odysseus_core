@@ -8,13 +8,13 @@ import java.util.LinkedList;
  * @author Thomas Vogelgesang
  * 
  */
-public class Branch {
+public class Branch<R> {
 
-	private StateMachineInstance instance;
+	private StateMachineInstance<R> instance;
 
-	private Branch parent;
+	private Branch<R> parent;
 
-	private LinkedList<Branch> children;
+	private LinkedList<Branch<R>> children;
 
 	/**
 	 * Erzeugt ein neues Verzweigungsobjekt.
@@ -26,10 +26,10 @@ public class Branch {
 	 *            Elternknoten im Verzweigungsbaum, oder null wenn es sich um
 	 *            die Wurzel des Verzweigunsgbaumes handelt.
 	 */
-	public Branch(StateMachineInstance instance, Branch parent) {
+	public Branch(StateMachineInstance<R> instance, Branch<R> parent) {
 		this.instance = instance;
 		this.parent = parent;
-		this.children = new LinkedList<Branch>();
+		this.children = new LinkedList<Branch<R>>();
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class Branch {
 	 * 
 	 * @return Die an der Verzweigung beteiligte Automateninstanz.
 	 */
-	public StateMachineInstance getInstance() {
+	public StateMachineInstance<R> getInstance() {
 		return instance;
 	}
 
@@ -47,7 +47,7 @@ public class Branch {
 	 * @return Elternknoten oder null wenn es sich um die Wurzel des
 	 *         Verzweigungsbaumes handelt
 	 */
-	public Branch getParent() {
+	public Branch<R> getParent() {
 		return parent;
 	}
 
@@ -58,7 +58,7 @@ public class Branch {
 	 *            Der neue Elternknoten im Verzweigungsbaum oder null wenn es
 	 *            sich um die Wurzel handelt.
 	 */
-	public void setParent(Branch parent) {
+	public void setParent(Branch<R> parent) {
 		this.parent = parent;
 	}
 
@@ -66,7 +66,7 @@ public class Branch {
 	 * Liefert eine Liste mit allen Kindknoten der Verzweigung.
 	 * @return Liste mit allen Kindknoten.
 	 */
-	public LinkedList<Branch> getChildren() {
+	public LinkedList<Branch<R>> getChildren() {
 		return children;
 	}
 	
@@ -74,7 +74,7 @@ public class Branch {
 		String str = "";
 		str += indent + "Branch: " + this.hashCode() + "\n";
 		indent += "  ";
-		for (Branch child : this.children) {
+		for (Branch<R> child : this.children) {
 			str += child.toString(indent);
 		}
 		return str;

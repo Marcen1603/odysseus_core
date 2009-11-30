@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.junit.*;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.Count;
-import de.uniol.inf.is.odysseus.cep.metamodel.Set;
+import de.uniol.inf.is.odysseus.cep.metamodel.Write;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.SymbolTableSchemeEntry;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -23,7 +23,7 @@ public class SymbolTableTest {
 		this.scheme = new SymbolTableScheme();
 		this.scheme.getEntries().add(
 				new SymbolTableSchemeEntry(1, "state1", 1, "attribute1",
-						new Set()));
+						new Write()));
 		this.scheme.getEntries().add(
 				new SymbolTableSchemeEntry(2, "state2", -1, "attribute1",
 						new Count()));

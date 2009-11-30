@@ -30,7 +30,7 @@ public class StateMachine {
 	 * Automaten durch den EPA erfroderlich ist. Darf zur Verarbeitungszeit null
 	 * sein und muss ein für die Verarbeitung korrektes Schema enthalten.
 	 */
-	private SymbolTableScheme symTabScheme;
+	private SymbolTableScheme<Object> symTabScheme;
 	/**
 	 * Definiert das Ausgabeschema der CEP-Anfrage. Darf nicht null sein.
 	 */
@@ -56,7 +56,7 @@ public class StateMachine {
 	 *            AusgabeSchema
 	 */
 	public StateMachine(LinkedList<State> states, State initialState,
-			SymbolTableScheme symTabScheme, OutputScheme outputScheme) {
+			SymbolTableScheme<Object> symTabScheme, OutputScheme outputScheme) {
 		this.states = states;
 		this.initialState = initialState;
 		this.symTabScheme = symTabScheme;
@@ -69,7 +69,7 @@ public class StateMachine {
 	 */
 	public StateMachine() {
 		this.states = new LinkedList<State>();
-		this.symTabScheme = new SymbolTableScheme();
+		this.symTabScheme = new SymbolTableScheme<Object>();
 		this.outputScheme = new OutputScheme();
 	}
 
@@ -119,7 +119,7 @@ public class StateMachine {
 	 * 
 	 * @return Das Symboltabellen-Schema des Automaten.
 	 */
-	public SymbolTableScheme getSymTabScheme() {
+	public SymbolTableScheme<Object> getSymTabScheme() {
 		return symTabScheme;
 	}
 
@@ -129,7 +129,7 @@ public class StateMachine {
 	 * @param symTabScheme
 	 *            Das neue Symboltabellen-Schema des Automaten, nicht null.
 	 */
-	public void setSymTabScheme(SymbolTableScheme symTabScheme) {
+	public void setSymTabScheme(SymbolTableScheme<Object> symTabScheme) {
 		this.symTabScheme = symTabScheme;
 	}
 

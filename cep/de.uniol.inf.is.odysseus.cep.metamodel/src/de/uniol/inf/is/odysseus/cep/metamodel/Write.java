@@ -7,9 +7,9 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
  * @author Thomas Vogelgesang
  * 
  */
-public class Set extends SymbolTableOperation {
+public class Write<T> extends SymbolTableOperation<T> {
 
-	public Set() {
+	public Write() {
 		super();
 	}
 
@@ -24,7 +24,7 @@ public class Set extends SymbolTableOperation {
 	 * @return Gibt den Wert von eventValue zurück.
 	 */
 	@Override
-	public Object execute(Object oldValue, Object eventValue) {
+	public T execute(T oldValue, T eventValue) {
 		return eventValue;
 	}
 	
