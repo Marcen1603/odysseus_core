@@ -52,4 +52,16 @@ public class JEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 		return expression.getValueAsObject();
 	}
 
+	@Override
+	public String getErrorInfo() {
+		return expression.getErrorInfo();
+	}
+
+	@Override
+	public double getValue() {
+		return expression.getValue();
+	}
+	
+	
+
 }
