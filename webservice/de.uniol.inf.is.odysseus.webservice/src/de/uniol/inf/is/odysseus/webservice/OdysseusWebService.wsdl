@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.example.org/NewWSDLFile/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NewWSDLFile" targetNamespace="http://www.example.org/NewWSDLFile/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.example.org/NewWSDLFile/">
+    	<xsd:element name="CreateSource">
+    		<xsd:complexType>
+    			<xsd:sequence>
+    				<xsd:element name="in" type="xsd:string" />
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    	<xsd:element name="CreateSourceResponse">
+    		<xsd:complexType>
+    			<xsd:sequence>
+    				<xsd:element name="out" type="xsd:string" />
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    	<xsd:element name="NewOperationResponse1">
+    		<xsd:complexType>
+    			<xsd:sequence>
+
+    				<xsd:element name="out" type="xsd:string"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    	<xsd:element name="CreateSelectStatement">
+    		<xsd:complexType>
+    			<xsd:sequence>
+
+    				<xsd:element name="in" type="xsd:string"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    	<xsd:element name="CreateSelectStatementResponse">
+    		<xsd:complexType>
+    			<xsd:sequence>
+
+    				<xsd:element name="out" type="xsd:string"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    	<xsd:element name="idGetSchema">
+    		<xsd:complexType>
+    			<xsd:sequence>
+
+    				<xsd:element name="in" type="xsd:string"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    	<xsd:element name="GetSchemaResponse">
+    		<xsd:complexType>
+    			<xsd:sequence>
+
+    				<xsd:element name="out" type="xsd:string"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    	<xsd:complexType name="Array">
+    		<xsd:complexContent>
+    			<xsd:restriction base="soapenc:Array">
+    				<xsd:attribute ref="soapenc:arrayType"
+    					wsdl:arrayType="string[]" />
+    			</xsd:restriction>
+    		</xsd:complexContent>
+    	</xsd:complexType>
+
+    	<xsd:attribute name="NewAttribute" type="xsd:string"></xsd:attribute>
+
+    	<xsd:element name="GetSchema">
+    		<xsd:complexType>
+    			<xsd:sequence>
+    				<xsd:element name="in" type="xsd:string"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:complexType>
+    	</xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="CreateSourceRequest">
+  	<wsdl:part element="tns:CreateSource" name="query" />
+  </wsdl:message>
+  <wsdl:message name="CreateSourceResponse">
+    <wsdl:part element="tns:CreateSourceResponse" name="status"/>
+  </wsdl:message>
+  <wsdl:message name="NewOperationResponse1">
+  	<wsdl:part name="parameters" element="tns:NewOperationResponse1"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CreateSelectStatementRequest">
+  	<wsdl:part name="query" element="tns:CreateSelectStatement"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CreateSelectStatementResponse">
+  	<wsdl:part name="status" element="tns:CreateSelectStatementResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetSchemaRequest">
+  	<wsdl:part name="GetSchema" element="tns:GetSchema"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetSchemaResponse">
+  	<wsdl:part name="parameters" type="tns:Array"></wsdl:part>
+  	
+  </wsdl:message>
+  <wsdl:message name="GetSchemaRequest1">
+  	<wsdl:part name="id" element="tns:GetSchema"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="OdysseusWebService">
+    <wsdl:operation name="CreateSource">
+      <wsdl:input message="tns:CreateSourceRequest"/>
+      <wsdl:output message="tns:CreateSourceResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="CreateSelectStatement">
+    	<wsdl:input message="tns:CreateSelectStatementRequest"></wsdl:input>
+    	<wsdl:output message="tns:CreateSelectStatementResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSchema">
+            <wsdl:input message="tns:GetSchemaRequest1"></wsdl:input>
+            <wsdl:output message="tns:GetSchemaResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NewWSDLFileSOAP" type="tns:OdysseusWebService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="CreateSource">
+      <soap:operation soapAction="http://www.example.org/NewWSDLFile/CreateSource"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OdysseusWebService">
+    <wsdl:port binding="tns:NewWSDLFileSOAP" name="OdysseusWebServiceSOAP">
+      <soap:address location="http://de.uniol.inf.is.odysseus"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
