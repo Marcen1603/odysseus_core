@@ -131,7 +131,25 @@ public class SWTParameterArea {
 						}
 					});
 					cButton.setEnabled(true);
-				} else if(EditorChecker.getInstance().hasAggregateEditor(cParam.getEditor())) {
+				} else if(EditorChecker.getInstance().hasGroupingEditor(cParam.getEditor())) {
+					cButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+							for (LogicalSubscription subscription : nodeView
+									.getModelNode().getContent().getOperator()
+									.getSubscribedTo()) {
+								inputs.add(subscription.getTarget()
+										.getOutputSchema());
+							}
+							SWTGroupingEditor paramEditor = new SWTGroupingEditor(
+									SWTMainWindow.getShell(), inputs);
+							paramEditor.addSWTParameterListener(cComp);
+						}
+					});
+					cButton.setEnabled(true);
+				}else if(EditorChecker.getInstance().hasAggregateEditor(cParam.getEditor())) {
 					cButton.addSelectionListener(new SelectionAdapter() {
 
 						@Override
@@ -148,6 +166,7 @@ public class SWTParameterArea {
 							paramEditor.addSWTParameterListener(cComp);
 						}
 					});
+					cButton.setEnabled(true);
 				}
 				String value = "";
 				if (cParam.getValue() != null) {
@@ -222,7 +241,25 @@ public class SWTParameterArea {
 					t.setEditable(false);
 					Color c = new Color(Display.getCurrent(), 255, 255, 255);
 					t.setBackground(c);
-				} else if(EditorChecker.getInstance().hasAggregateEditor(sParam.getEditor())) {
+				} else if(EditorChecker.getInstance().hasGroupingEditor(sParam.getEditor())) {
+					sButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+							for (LogicalSubscription subscription : nodeView
+									.getModelNode().getContent().getOperator()
+									.getSubscribedTo()) {
+								inputs.add(subscription.getTarget()
+										.getOutputSchema());
+							}
+							SWTGroupingEditor paramEditor = new SWTGroupingEditor(
+									SWTMainWindow.getShell(), inputs);
+							paramEditor.addSWTParameterListener(sComp);
+						}
+					});
+					sButton.setEnabled(true);
+				}else if(EditorChecker.getInstance().hasAggregateEditor(sParam.getEditor())) {
 					sButton.addSelectionListener(new SelectionAdapter() {
 
 						@Override
@@ -240,9 +277,6 @@ public class SWTParameterArea {
 						}
 					});
 					sButton.setEnabled(true);
-					t.setEditable(false);
-					Color c = new Color(Display.getCurrent(), 255, 255, 255);
-					t.setBackground(c);
 				} else {
 					t.addModifyListener(new ModifyListener() {
 

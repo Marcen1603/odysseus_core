@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.visualquerylanguage.swt;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -11,11 +13,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -23,14 +27,14 @@ public class SWTAggregateEditor {
 
 	private Shell shell;
 
-	private SDFAttributeList outputList = new SDFAttributeList();
-	private SDFAttributeList inputList = new SDFAttributeList();
+	private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations = new HashMap<SDFAttribute, Map<AggregateFunction, SDFAttribute>>();
 
-	private Collection<Text> textList = new ArrayList<Text>();
+	private SDFAttributeList inputList = new SDFAttributeList();
 
 	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
 
-	public SWTAggregateEditor(Shell baseWindow, Collection<SDFAttributeList> inputs) {
+	public SWTAggregateEditor(Shell baseWindow,
+			Collection<SDFAttributeList> inputs) {
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE
 				| SWT.APPLICATION_MODAL);
 		shell.setText("Parametereditor");
@@ -53,43 +57,82 @@ public class SWTAggregateEditor {
 			}
 		}
 
-		for (SDFAttribute sdfAttribute : inputList) {
-			final Button button = new Button(comp, SWT.PUSH);
-			button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			button.setText(sdfAttribute.toString());
-			button.setData(sdfAttribute);
-			final Text text = new Text(comp, SWT.SINGLE);
-			textList.add(text);
-			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			button.setText(sdfAttribute.toString());
-			button.setData(sdfAttribute);
-			text.setEditable(false);
+		for (final SDFAttribute sdfAttribute : inputList) {
+			final Map<AggregateFunction, SDFAttribute> outputs = new HashMap<AggregateFunction, SDFAttribute>();
+			final Text inputText = new Text(comp, SWT.SINGLE);
+			inputText.setText(sdfAttribute.toString());
+			inputText.setData(sdfAttribute);
+			inputText.setEnabled(false);
 			Color c = new Color(Display.getCurrent(), 255, 255, 255);
-			text.setBackground(c);
-			button.addSelectionListener(new SelectionAdapter() {
+			inputText.setBackground(c);
+			final Button functionButton = new Button(comp, SWT.PUSH);
+			functionButton.setText("Aggregation hinzufügen");
+			final Combo functionCombo = new Combo(comp, SWT.DROP_DOWN
+					| SWT.READ_ONLY);
+			for (AggregateFunction function : AggregateFunction.values()) {
+				functionCombo.add(function.toString());
+			}
+			if (functionCombo.getItemCount() > 0) {
+				functionCombo.select(0);
+			}
+			final Text functionText = new Text(comp, SWT.SINGLE);
+			functionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			functionText.setEditable(false);
+			functionText.setBackground(c);
+			functionButton.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if (text.getText().isEmpty()) {
-						text.setText(button.getText());
-						outputList.add((SDFAttribute) button.getData());
-					} else {
-						text.setText("");
-						outputList.remove(((SDFAttribute) button.getData()));
+					AggregateFunction func = null;
+					for (AggregateFunction function : AggregateFunction
+							.values()) {
+						if (function.toString().equals(
+								functionCombo.getItem(functionCombo
+										.getSelectionIndex()))) {
+							func = function;
+						}
 					}
+					if (functionText.getText().isEmpty()) {
+						functionText.setText(functionCombo
+								.getItem(functionCombo.getSelectionIndex()));
+					} else {
+						functionText.setText(functionText.getText()
+								+ ", "
+								+ functionCombo.getItem(functionCombo
+										.getSelectionIndex()));
+					}
+					SDFAttribute att = new SDFAttribute(functionCombo
+							.getItem(functionCombo.getSelectionIndex())
+							+ "(" + inputText.getText() + ")");
+					functionText.setData(att);
+					if (func != null) {
+						outputs.put(func, att);
+					}
+				}
+
+			});
+
+			Button saveButton = new Button(comp, SWT.PUSH);
+			saveButton.setText("Aggregation speichern");
+			saveButton.addSelectionListener(new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					functionButton.setEnabled(false);
+					aggregations.put(sdfAttribute, outputs);
 				}
 
 			});
 		}
 
 		Button applyButton = new Button(shell, SWT.PUSH);
-		applyButton.setText("GoupBy Schema setzen");
+		applyButton.setText("Aggregationen setzen");
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (!outputList.isEmpty()) {
+				if (!aggregations.isEmpty()) {
 					for (ISWTParameterListener listener : listeners) {
-						listener.setValue(outputList);
+						listener.setValue(aggregations);
 					}
 					shell.dispose();
 				}

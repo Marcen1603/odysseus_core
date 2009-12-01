@@ -47,5 +47,12 @@ public class EditorChecker {
 		}
 		return false;
 	}
+	
+	public boolean hasGroupingEditor(String editor) {
+		if(editor != null && editor.equals("GroupingEditor")) {
+			return true;
+		}
+		return false;
+	}
 
 }

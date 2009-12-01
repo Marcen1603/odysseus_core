@@ -16,25 +16,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 
-public class SWTOutputEditor {
+public class SWTGroupingEditor {
 
 	private Shell shell;
 
 	private SDFAttributeList outputList = new SDFAttributeList();
 	private SDFAttributeList inputList = new SDFAttributeList();
-	
-	private Collection<Text> textList = new ArrayList<Text>();
 
 	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
 
-	public SWTOutputEditor(Shell baseWindow,
-			Collection<ILogicalOperator> opList, ILogicalOperator endOp,
-			final INodeContent content) {
+	public SWTGroupingEditor(Shell baseWindow, Collection<SDFAttributeList> inputs) {
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE
 				| SWT.APPLICATION_MODAL);
 		shell.setText("Parametereditor");
@@ -45,14 +39,14 @@ public class SWTOutputEditor {
 		Composite comp = new org.eclipse.swt.widgets.Composite(shell,
 				SWT.BORDER);
 		GridLayout compLayout = new GridLayout();
-		compLayout.numColumns = 4;
+		compLayout.numColumns = 5;
 		compLayout.makeColumnsEqualWidth = true;
 		comp.setLayout(compLayout);
 		GridData compData = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(compData);
 
-		for (ILogicalOperator iLogicalOperator : opList) {
-			for (SDFAttribute att : iLogicalOperator.getOutputSchema()) {
+		for (SDFAttributeList list : inputs) {
+			for (SDFAttribute att : list) {
 				inputList.add(att);
 			}
 		}
@@ -63,64 +57,38 @@ public class SWTOutputEditor {
 			button.setText(sdfAttribute.toString());
 			button.setData(sdfAttribute);
 			final Text text = new Text(comp, SWT.SINGLE);
-			textList.add(text);
 			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			if (EditorChecker.getInstance().hasProjectEditor(
-					content.getEditor())) {
-				button.setText(sdfAttribute.toString());
-				button.setData(sdfAttribute);
-				text.setEditable(false);
-				Color c = new Color(Display.getCurrent(), 255, 255, 255);
-				text.setBackground(c);
-				button.addSelectionListener(new SelectionAdapter() {
+			button.setText(sdfAttribute.toString());
+			button.setData(sdfAttribute);
+			text.setEditable(false);
+			Color c = new Color(Display.getCurrent(), 255, 255, 255);
+			text.setBackground(c);
+			button.addSelectionListener(new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						if (text.getText().isEmpty()) {
-							text.setText(button.getText());
-							outputList.add((SDFAttribute) button.getData());
-						} else {
-							text.setText("");
-							outputList
-									.remove(((SDFAttribute) button.getData()));
-						}
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (text.getText().isEmpty()) {
+						text.setText(button.getText());
+						outputList.add((SDFAttribute) button.getData());
+					} else {
+						text.setText("");
+						outputList.remove(((SDFAttribute) button.getData()));
 					}
+				}
 
-				});
-			}else if (EditorChecker.getInstance().hasRenameEditor(content.getEditor())) {
-				button.setEnabled(false);
-				text.setEditable(true);
-				//TODO Hier muss noch eine entsprechende Funktionalität für den Rename-Operator implementiert werden
-			}
+			});
 		}
 
 		Button applyButton = new Button(shell, SWT.PUSH);
-		applyButton.setText("Neues Outputschema setzen");
+		applyButton.setText("GoupBy Schema setzen");
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (EditorChecker.getInstance().hasProjectEditor(
-						content.getEditor())
-						&& !outputList.isEmpty()) {
+				if (!outputList.isEmpty()) {
 					for (ISWTParameterListener listener : listeners) {
 						listener.setValue(outputList);
 					}
 					shell.dispose();
-				} else if (EditorChecker.getInstance().hasRenameEditor(
-						content.getEditor())) {
-					for (Text text : textList) {
-						if(!text.getText().isEmpty()) {
-							outputList.add(new SDFAttribute(text.getText()));
-						}
-					}
-					if (outputList.size() == inputList.size()) {
-						for (ISWTParameterListener listener : listeners) {
-							listener.setValue(outputList);
-						}
-						shell.dispose();
-					}else {
-						outputList.clear();
-					}
 				}
 			}
 		});
@@ -145,8 +113,8 @@ public class SWTOutputEditor {
 		shell.open();
 
 	}
-	
-	public void addParameterListener(ISWTParameterListener listener) {
+
+	public void addSWTParameterListener(ISWTParameterListener listener) {
 		this.listeners.add(listener);
 	}
 
