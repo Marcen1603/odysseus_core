@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -83,6 +84,15 @@ public class AggregateAO extends UnaryLogicalOp {
 			aggregations.put(attribute, af);
 		}
 		af.put(function, outAttribute);
+	}
+	
+	public void addAggregations(Map<SDFAttribute, Map<AggregateFunction,SDFAttribute>> aggregations){
+		for (SDFAttribute attr:aggregations.keySet()){
+			Map<AggregateFunction,SDFAttribute> aggs = aggregations.get(attr);
+			for (Entry<AggregateFunction,SDFAttribute> e:aggs.entrySet()){
+				addAggregation(attr, e.getKey(), e.getValue());
+			}
+		}
 	}
 
 	public Map<AggregateFunction, SDFAttribute> getAggregationFunctions(
