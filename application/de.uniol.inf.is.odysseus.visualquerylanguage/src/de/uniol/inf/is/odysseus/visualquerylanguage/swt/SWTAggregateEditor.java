@@ -66,7 +66,9 @@ public class SWTAggregateEditor {
 			Color c = new Color(Display.getCurrent(), 255, 255, 255);
 			inputText.setBackground(c);
 			final Button functionButton = new Button(comp, SWT.PUSH);
-			functionButton.setText("Aggregation hinzufügen");
+			functionButton.setText("+");
+			final Button removeFunctionButton = new Button(comp, SWT.PUSH);
+			removeFunctionButton.setText("-");
 			final Combo functionCombo = new Combo(comp, SWT.DROP_DOWN
 					| SWT.READ_ONLY);
 			for (AggregateFunction function : AggregateFunction.values()) {
@@ -111,18 +113,32 @@ public class SWTAggregateEditor {
 				}
 
 			});
-
-			Button saveButton = new Button(comp, SWT.PUSH);
-			saveButton.setText("Aggregation speichern");
-			saveButton.addSelectionListener(new SelectionAdapter() {
-
+			removeFunctionButton.addSelectionListener(new SelectionAdapter() {
+				
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					functionButton.setEnabled(false);
-					aggregations.put(sdfAttribute, outputs);
+					AggregateFunction func = null;
+					for (AggregateFunction function : AggregateFunction
+							.values()) {
+						if (function.toString().equals(
+								functionCombo.getItem(functionCombo
+										.getSelectionIndex()))) {
+							func = function;
+						}
+					}
+					if(func != null) {
+						if(functionText.getText().contains(", " + func.toString())) {
+							functionText.setText(functionText.getText().replace(", " + func.toString(), ""));
+						}
+						if(functionText.getText().contains(func.toString())) {
+							functionText.setText(functionText.getText().replace(func.toString(), ""));
+						}
+						outputs.remove(func);
+					}
 				}
-
 			});
+
+			aggregations.put(sdfAttribute, outputs);
 		}
 
 		Button applyButton = new Button(shell, SWT.PUSH);
@@ -130,12 +146,10 @@ public class SWTAggregateEditor {
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (!aggregations.isEmpty()) {
-					for (ISWTParameterListener listener : listeners) {
-						listener.setValue(aggregations);
-					}
-					shell.dispose();
+				for (ISWTParameterListener listener : listeners) {
+					listener.setValue(aggregations);
 				}
+				shell.dispose();
 			}
 		});
 
