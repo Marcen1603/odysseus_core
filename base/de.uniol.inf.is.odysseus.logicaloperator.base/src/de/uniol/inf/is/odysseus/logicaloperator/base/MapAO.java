@@ -14,7 +14,7 @@ public class MapAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<SDFExpression> expressions;
 	private SDFAttributeList outputSchema = null;
-	
+
 	public MapAO() {
 		super();
 	}
@@ -28,28 +28,30 @@ public class MapAO extends UnaryLogicalOp {
 		return expressions;
 	}
 
-	private void calcOutputSchema(){
-		SDFAttributeList inputSchema = getInputSchema();
-		if (inputSchema!=null){
-			this.outputSchema = new SDFAttributeList();
-			for (SDFExpression expr: expressions){
-				SDFAttribute attr = new SDFAttribute(expr.getExpression());
-				outputSchema.add(attr);
+	private void calcOutputSchema() {
+		if (expressions != null) {
+			SDFAttributeList inputSchema = getInputSchema();
+			if (inputSchema != null) {
+				this.outputSchema = new SDFAttributeList();
+				for (SDFExpression expr : expressions) {
+					SDFAttribute attr = new SDFAttribute(expr.getExpression());
+					outputSchema.add(attr);
 
-				// Alles Quatsch :-)
-				//				
-//				if (expr.isSingleAttribute()){
-//					outputSchema.add(expr.getSingleAttribute());
-//				}else if (inputSchema.contains(attr)){
-//					outputSchema.add(attr);
-//				} else{
-//					outputSchema.add(new SDFAttribute(expr.toString()));
-//				}
-				
+					// Alles Quatsch :-)
+					//				
+					// if (expr.isSingleAttribute()){
+					// outputSchema.add(expr.getSingleAttribute());
+					// }else if (inputSchema.contains(attr)){
+					// outputSchema.add(attr);
+					// } else{
+					// outputSchema.add(new SDFAttribute(expr.toString()));
+					// }
+
+				}
 			}
 		}
 	}
-	
+
 	public void setExpressions(List<SDFExpression> expressions) {
 		this.expressions = expressions;
 		calcOutputSchema();
@@ -57,7 +59,8 @@ public class MapAO extends UnaryLogicalOp {
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		if (outputSchema == null) calcOutputSchema();
+		if (outputSchema == null)
+			calcOutputSchema();
 		return outputSchema;
 	}
 
