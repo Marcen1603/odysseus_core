@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" 
+		name="de.uniol.inf.is.odysseus.dbIntegration.dataAccess.Connection">
+   <implementation class="de.uniol.inf.is.odysseus.dbIntegration.dataAccess.ConnectionData"/>
+	<reference name="preferencesService"
+		interface="org.osgi.service.prefs.PreferencesService"
+		bind="setPreferencesService"
+		unbind="unsetPreferencesService"
+	/>
+ <service>
+    <provide interface="de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData"/>
+ </service>
+	
+</scr:component>
