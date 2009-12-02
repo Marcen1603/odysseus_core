@@ -4,6 +4,7 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -48,7 +49,17 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable{
 		int[] ret = new int[out.size()];
 		int i=0;
 		for (SDFAttribute a:out){
-			ret[i++] = in.indexOf(a);
+			int j = 0;
+			int k = i;
+			for(SDFAttribute b:in){
+				if (((CQLAttribute)b).equalsCQL((CQLAttribute)a)){
+					ret[i++] = j;
+				}
+				++j;
+			}
+			if (k ==i) {
+				throw new IllegalArgumentException("no such attribute: " + a);
+			}
 		}
 		return ret;
 	}
