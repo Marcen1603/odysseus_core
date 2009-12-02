@@ -86,8 +86,8 @@ public class CQLAttribute extends SDFAttribute {
 		}
 		// TODO typen ueberpruefen
 		if (obj instanceof CQLAttribute) {
-			return this.attributeName == ((CQLAttribute) obj)
-					.getAttributeName();
+			return this.attributeName.equals( ((CQLAttribute) obj)
+					.getAttributeName());
 		}
 
 		return this.getURI(false).equals(obj);
