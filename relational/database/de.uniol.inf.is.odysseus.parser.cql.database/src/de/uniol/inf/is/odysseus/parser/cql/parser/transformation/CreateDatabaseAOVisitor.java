@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSQL;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class CreateDatabaseAOVisitor extends AbstractDefaultVisitor {
+public class CreateDatabaseAOVisitor extends AbstractDefaultVisitor implements IDatabaseAOVisitor{
 
 	ILogicalOperator logicalOp;
 	String sql;
@@ -96,6 +96,12 @@ public class CreateDatabaseAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTAS node, Object data) {
 		alias = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		return null;
+	}
+
+	@Override
+	public String getAlias() {
+		// TODO Auto-generated method stub
+		return alias;
 	}
 
 }
