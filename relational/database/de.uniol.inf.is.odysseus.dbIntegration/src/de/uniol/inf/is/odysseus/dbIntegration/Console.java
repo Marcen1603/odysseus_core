@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 
 public class Console implements CommandProvider {
 
@@ -97,13 +96,13 @@ public class Console implements CommandProvider {
 		
 		//Testdaten liste
 		List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
-		attrList.add((SDFAttribute) new CQLAttribute("buyer", "name"));
-		attrList.add((SDFAttribute) new CQLAttribute("buyer", "address"));
-		attrList.add((SDFAttribute) new CQLAttribute("bid", "price"));
-		attrList.add((SDFAttribute) new CQLAttribute("bid", "item"));
-		attrList.add((SDFAttribute) new CQLAttribute("item", "id"));
-		attrList.add((SDFAttribute) new CQLAttribute("item", "name"));
-		attrList.add((SDFAttribute) new CQLAttribute("seller", "name"));
+		attrList.add(new SDFAttribute("buyer", "name"));
+		attrList.add(new SDFAttribute("buyer", "address"));
+		attrList.add(new SDFAttribute("bid", "price"));
+		attrList.add(new SDFAttribute("bid", "item"));
+		attrList.add(new SDFAttribute("item", "id"));
+		attrList.add(new SDFAttribute("item", "name"));
+		attrList.add(new SDFAttribute("seller", "name"));
 		SDFAttributeList sdfList = new SDFAttributeList(attrList);
 		
 		controller = new Controller(dbQuery, sdfList);
@@ -138,13 +137,13 @@ public class Console implements CommandProvider {
 		
 		//Testdaten liste
 		List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
-		attrList.add((SDFAttribute) new CQLAttribute("buyer", "name"));
-		attrList.add((SDFAttribute) new CQLAttribute("buyer", "address"));
-		attrList.add((SDFAttribute) new CQLAttribute("bid", "price"));
-		attrList.add((SDFAttribute) new CQLAttribute("bid", "item"));
-		attrList.add((SDFAttribute) new CQLAttribute("item", "id"));
-		attrList.add((SDFAttribute) new CQLAttribute("item", "name"));
-		attrList.add((SDFAttribute) new CQLAttribute("seller", "name"));
+		attrList.add((SDFAttribute) new SDFAttribute("buyer", "name"));
+		attrList.add((SDFAttribute) new SDFAttribute("buyer", "address"));
+		attrList.add((SDFAttribute) new SDFAttribute("bid", "price"));
+		attrList.add((SDFAttribute) new SDFAttribute("bid", "item"));
+		attrList.add((SDFAttribute) new SDFAttribute("item", "id"));
+		attrList.add((SDFAttribute) new SDFAttribute("item", "name"));
+		attrList.add((SDFAttribute) new SDFAttribute("seller", "name"));
 		SDFAttributeList sdfList = new SDFAttributeList(attrList);
 		
 		

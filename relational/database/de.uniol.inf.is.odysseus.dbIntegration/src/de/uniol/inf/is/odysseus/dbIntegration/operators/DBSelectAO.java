@@ -6,7 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.dbIntegration.control.Controller;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -109,7 +109,7 @@ public class DBSelectAO extends UnaryLogicalOp {
 		List<SDFAttribute> outAttrs = new ArrayList<SDFAttribute>();
 		
 		for (String string : out) {
-			outAttrs.add((SDFAttribute)new CQLAttribute(alias, string));
+			outAttrs.add((SDFAttribute)new SDFAttribute(alias, string));
 		}
 		SDFAttributeList outputSchema;
 		if (getInputSchema() != null) {

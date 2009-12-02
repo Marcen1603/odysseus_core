@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.dbIntegration.model.DBResult;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IDataAccess;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -240,7 +240,7 @@ public class DataAccess implements IDataAccess {
 		Object[] objects = new Object[refAttributes.size()];
 //		for (String string : refAttributes) {
 //			for (int i = 0; i < list.size(); i++) {
-//				if (string.equals(((CQLAttribute) list.getAttribute(i)).getURI())) {
+//				if (string.equals(((SDFAttribute) list.getAttribute(i)).getURI())) {
 //					objects[i] = oldTuple.getAttribute(i).toString();
 //				}
 //			}
@@ -250,7 +250,7 @@ public class DataAccess implements IDataAccess {
 			String refAttr = refAttributes.get(i);
 			for (int j = 0; j < list.size(); j++) {
 				
-				String inputSchemaAttr = ((CQLAttribute) list.getAttribute(j)).getURI();
+				String inputSchemaAttr = ((SDFAttribute) list.getAttribute(j)).getURI();
 				
 				if (refAttr.equals(inputSchemaAttr)) {
 					objects[i] = oldTuple.getAttribute(j).toString();

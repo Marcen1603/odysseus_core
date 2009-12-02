@@ -4,7 +4,6 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -52,7 +51,7 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable{
 			int j = 0;
 			int k = i;
 			for(SDFAttribute b:in){
-				if (((CQLAttribute)b).equalsCQL((CQLAttribute)a)){
+				if (b.equals(a)){
 					ret[i++] = j;
 				}
 				++j;
