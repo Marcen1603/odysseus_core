@@ -17,6 +17,10 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCovarianceRow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabase;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseOptions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDateFormat;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDistinctExpression;
@@ -49,6 +53,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionVector;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRenamedExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSQL;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
@@ -496,6 +501,36 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTSilab node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDBExecuteStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabase node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSQL node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDBSelectStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseOptions node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

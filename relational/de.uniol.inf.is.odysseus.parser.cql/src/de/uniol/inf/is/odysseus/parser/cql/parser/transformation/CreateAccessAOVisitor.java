@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.dbIntegration.operators.DBSelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPartition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
@@ -227,5 +229,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		return attributes;
 	}
-
+	
+	@Override
+	public Object visit(ASTDBSelectStatement node, Object data) {
+		CreateDatabaseAOVisitor dbVisitor = new CreateDatabaseAOVisitor();
+		AbstractLogicalOperator dbOp = (AbstractLogicalOperator) dbVisitor.visit(node, data);
+		this.attributeResolver.addSource(((DBSelectAO)dbOp).getAlias(), dbOp);
+		return null;
+	}
 }

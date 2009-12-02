@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
@@ -372,6 +373,13 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node
 				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);
+	}
+	
+	@Override
+	public Object visit(ASTDBSelectStatement node, Object data) {
+		CreateDatabaseAOVisitor dbVisitor = new CreateDatabaseAOVisitor();
+		
+		return dbVisitor.visit(node, data);
 	}
 
 }

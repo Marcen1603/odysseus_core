@@ -375,4 +375,30 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTDBExecuteStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabase node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSQL node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTDBSelectStatement node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTDatabaseOptions node, Object data) {
+		return pvisit(node);
+	}
+
 }

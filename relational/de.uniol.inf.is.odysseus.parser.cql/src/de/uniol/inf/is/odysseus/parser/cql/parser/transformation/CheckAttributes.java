@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHavingClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
@@ -61,6 +62,13 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 				&& !isAttributeValid(childNode.jjtGetChild(1))) {
 			throw new RuntimeException("invalid Attribute: " + childNode);
 		}
+		return data;
+	}
+	
+	@Override
+	public Object visit(ASTDBSelectStatement node, Object data) {
+		
+		//wie Subselect ignorieren
 		return data;
 	}
 

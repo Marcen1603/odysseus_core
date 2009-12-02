@@ -33,6 +33,10 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCovarianceRow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabase;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseOptions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDateFormat;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDistinctExpression;
@@ -65,6 +69,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionVector;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRenamedExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSQL;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSQLStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
@@ -98,6 +103,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckGroupBy;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckHaving;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAccessAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAggregationVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateJoinAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePriorityAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
@@ -159,15 +165,29 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	public Object visit(ASTPriorizedStatement node, Object data) {
-		AbstractLogicalOperator op = (AbstractLogicalOperator) node
-				.jjtGetChild(0).jjtAccept(this, data);
+		AbstractLogicalOperator op;
 		Integer priority = 0;
-		if (node.jjtGetNumChildren() == 2) {
-			priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
+		if (node.jjtGetChild(0) instanceof ASTDBExecuteStatement) {
+			CreateDatabaseAOVisitor dbVisitor = new CreateDatabaseAOVisitor();
+			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(dbVisitor, data);
+			AbstractLogicalOperator dsOp = (AbstractLogicalOperator) node.jjtGetChild(1).jjtAccept(this, data);
+//			op.setInputAO(0, dsOp);
+			op.subscribeTo(dsOp, 0, 0);
+			//hat nun 3 statt 2 kinder
+			if (node.jjtGetNumChildren() == 3) {
+				priority = (Integer) node.jjtGetChild(2).jjtAccept(this, data);
+			}
+			
+			
+		} else {
+			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
+			if (node.jjtGetNumChildren() == 2) {
+				priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
+			}
 		}
 		this.priorities.add(priority);
 		// TODO: Warum dies? MG erstmal auskommentiert, da sonst doppelte
-		// Wurzeln für eine Anfrage
+		// Wurzeln fï¿½r eine Anfrage
 		// TopAO dummy = new TopAO();
 		// dummy.subscribeTo(op,0,0);
 		plans.add(op);
@@ -595,6 +615,36 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTSilab node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDBExecuteStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabase node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSQL node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDBSelectStatement node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDatabaseOptions node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}
