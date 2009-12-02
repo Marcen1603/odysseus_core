@@ -6,80 +6,36 @@ options {
 }
 
 tokens{
-	NOTSTATE;
 	STATE;
-	KSTATE;
-	NOTKSTATE;
+	KTYPE;
+	TYPE;
+	WHERESTRAT;
+	WHEREEXPRESSION;
+	EXPRESSION;
+	ATTRIBUTE;
+	KATTRIBUTE;
+	PARAMLIST;
+	MEMBERACCESS;
 }
 
 	
 @header { 
 	package de.uniol.inf.is.odysseus.cep.sase; 
-	import java.util.Map;
-	import java.util.TreeMap;
-	import java.util.List;
-	import java.util.ArrayList;
 }
 
-@members{
-	private Map<String, String> variableMap = new TreeMap<String, String>();
-	private List<String> kleeneAttributes = new ArrayList<String>();
-	private List<String> states = new ArrayList<String>();
-	private Map<String, String> stateVariables = new TreeMap<String, String>();
+query	:  (fromPart)? patternPart (wherePart)? (withinPart)?
+	;
 	
-	private String getVariableType(CommonTree nameNode){
-		String name = nameNode.getText();
-		String type = variableMap.get(name);
-		if (type == null){
-			String msg = "The variable \""+name+"\" is not declared.";
-			throw new RuntimeException(msg);
-		}
-		return type;
-	}
-	
-	private void addState(String name, String type, boolean isKleeneAttribute){
-		if (variableMap.get(name) != null){
-			String msg = "The variable \""+name+"\" is already declared.";
-			throw new RuntimeException(msg);	
-		}
-		variableMap.put(name, type);
-		if (isKleeneAttribute){
-			states.add(name+"[1]");
-			stateVariables.put(name+"[1]", name);
-			states.add(name+"[i]");
-			stateVariables.put(name+"[i]", name);
-			kleeneAttributes.add(name);
-		}else{
-			states.add(name);
-			stateVariables.put(name, name);			
-		}
-	}
-	
-	public Map<String, String> getVariables(){
-		return variableMap;
-	}
-	public List<String> getKleeneAttributes(){
-		return kleeneAttributes;
-	}
-	public List<String> getStates(){
-		return states;
-	}
-	public Map<String, String> getStateVariables(){
-		return stateVariables;
-	}
-
-}
-
-query
-	:  patternPart (wherePart)? (withinPart)?
+fromPart: FROM NAME (COMMA NAME)* 
 	;
 	
 withinPart
-	: WITHIN INTEGER TIMEUNIT
+	: WITHIN NUMBER TIMEUNIT -> ^(WITHIN NUMBER TIMEUNIT)
 	;
 	
 wherePart
-	: WHERE whereDecl -> ^(WHERE whereDecl)
+	: WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY -> ^(WHERE wherePart1 whereExpressions) |
+	  WHERE	whereExpressions -> ^(WHERE whereExpressions)
 	;
 	
 patternPart 
@@ -92,25 +48,48 @@ patternDecl
 	;
 		
 	
-pItem 	:	 (singlePItem | kleenePITem | notSinglePItem | notKleenePITem)
-	;
-
-notSinglePItem
-	:	NOT LBRACKET TYPE NAME RBRACKET {addState($NAME.text,$TYPE.text, false);} -> ^(NOTSTATE TYPE NAME) 
-	;
-
-	
-singlePItem
-	:	TYPE NAME {addState($NAME.text,$TYPE.text, false);} -> ^(STATE TYPE NAME) 
-	;
-
-kleenePITem
-	:	TYPE PLUS NAME KLEENEBRACKET {addState($NAME.text,$TYPE.text, true);} -> ^(KSTATE TYPE NAME) 
+pItem 	:	(NOT)? LBRACKET?  type=typeName variable=attributeName RBRACKET? -> ^(STATE $type $variable NOT?) 
 	;
 	
-notKleenePITem
-	:	NOT LBRACKET TYPE PLUS NAME KLEENEBRACKET  RBRACKET {addState($NAME.text,$TYPE.text, true);} -> ^(NOTKSTATE TYPE NAME) 
+typeName:	NAME op=PLUS -> ^(KTYPE NAME $op) | NAME -> ^(TYPE NAME)
 	;
 	
-whereDecl
-	:	SKIP_METHOD LBRACKET (NAME KLEENEBRACKET?(COMMA NAME KLEENEBRACKET?)*) RBRACKET ;
+wherePart1
+	:	SKIP_METHOD LBRACKET parameterList RBRACKET -> ^(WHERESTRAT SKIP_METHOD parameterList)
+	;
+	
+parameterList 
+	:	attributeName(COMMA attributeName)* -> ^(PARAMLIST attributeName*)
+	;
+	
+attributeName
+	:	 kAttributeName|sAttributeName
+	;
+	
+kAttributeName
+	:	NAME  BBRACKETLEFT BBRACKETRIGHT  -> ^(KATTRIBUTE NAME) 
+	;
+	
+kAttributeUsage
+	: 	NAME BBRACKETLEFT BBRACKETRIGHT|
+		NAME CURRENT|
+		NAME PREVIOUS
+	;
+sAttributeName
+	:	NAME -> ^(ATTRIBUTE NAME)
+	;
+	
+whereExpressions
+	:	expression (AND expression)* -> ^(WHEREEXPRESSION AND expression*)
+	;
+	
+expression
+	:	term COMPAREOP term -> ^(EXPRESSION term COMPAREOP term) | term COMPAREOP value -> ^(EXPRESSION term COMPAREOP value)
+	;
+
+term	:	sAttributeName POINT NAME -> ^(MEMBERACCESS sAttributeName NAME)|
+		kAttributeName POINT NAME-> ^(MEMBERACCESS kAttributeName NAME)
+	;
+	
+value 	:	 NUMBER | STRING_LITERAL;
+	

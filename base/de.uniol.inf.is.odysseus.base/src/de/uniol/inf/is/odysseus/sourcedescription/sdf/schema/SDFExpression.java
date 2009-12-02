@@ -228,7 +228,7 @@ public class SDFExpression implements Serializable {
 			throw new SDFExpressionParseException("No such attribute: " + token);
 		} else if (token.equals("t")) {
 			aliasName = "t";
-			attribute = new CQLAttribute(null, "t");
+			attribute = new SDFAttribute(null, "t");
 		} else {
 			aliasName = attribute.getURI(false);
 		}

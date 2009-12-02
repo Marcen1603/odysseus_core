@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -67,7 +67,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		SDFAttribute attribute = this.attributeResolver
 				.getAttribute(attributeName);
 
-		CQLAttribute outAttribute = outAttribute(attribute.toString(),
+		SDFAttribute outAttribute = outAttribute(attribute.toString(),
 				function, aggrNode);
 		if (!ao.getOutputSchema().contains(outAttribute)) {
 			ao.addAggregation(attribute, function, outAttribute);
@@ -98,10 +98,10 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		return ao;
 	}
 
-	private CQLAttribute outAttribute(String attributeName,
+	private SDFAttribute outAttribute(String attributeName,
 			AggregateFunction function, ASTAggregateExpression node) {
 		String funcName = function.toString() + "(" + attributeName + ")";
-		CQLAttribute attribute = this.attributeResolver.getAttribute(funcName);
+		SDFAttribute attribute = this.attributeResolver.getAttribute(funcName);
 		if (attribute == null) {
 			SDFDatatype datatype = this.attributeResolver.getAttribute(
 					attributeName).getDatatype();
@@ -110,7 +110,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 						+ function.toString()
 						+ "' can't be used on non scalar types");
 			}
-			attribute = new CQLAttribute(null, funcName);
+			attribute = new SDFAttribute(null, funcName);
 			switch (function) {
 			case AVG:
 				attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));

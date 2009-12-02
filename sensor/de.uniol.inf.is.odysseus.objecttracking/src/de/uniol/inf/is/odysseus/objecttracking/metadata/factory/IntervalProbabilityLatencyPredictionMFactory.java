@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
@@ -35,7 +35,7 @@ public class IntervalProbabilityLatencyPredictionMFactory implements IMetadataUp
 		int counter = 0;
 		for(SDFAttribute attr: this.schema){
 			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
-				ArrayList covariance = ((CQLAttribute)attr).getCovariance();
+				ArrayList covariance = ((SDFAttribute)attr).getCovariance();
 				if(cov == null){
 					cov = new double[covariance.size()][covariance.size()];
 				}

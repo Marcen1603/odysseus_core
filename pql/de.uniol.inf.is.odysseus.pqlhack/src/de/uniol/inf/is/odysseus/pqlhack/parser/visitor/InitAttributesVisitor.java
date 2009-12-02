@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.Node;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -73,7 +73,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	private SDFAttributeList createAliasSchema(String alias, AbstractLogicalOperator access) {
 		SDFAttributeList attributes = new SDFAttributeList();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
-			CQLAttribute newAttribute = (CQLAttribute) attribute.clone();
+			SDFAttribute newAttribute = (SDFAttribute) attribute.clone();
 			newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}

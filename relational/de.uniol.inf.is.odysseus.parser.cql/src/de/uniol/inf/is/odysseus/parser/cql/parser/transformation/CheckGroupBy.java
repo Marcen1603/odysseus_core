@@ -11,12 +11,12 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 public class CheckGroupBy extends AbstractDefaultVisitor {
 	private boolean hasAggregates;
 
-	private Set<CQLAttribute> checkGroupingAttributes;
+	private Set<SDFAttribute> checkGroupingAttributes;
 
 	private AttributeResolver attributeResolver;
 
@@ -26,7 +26,7 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	public Object visit(ASTSelectClause node, Object data) {
 		hasAggregates = false;
 		hasGrouping = false;
-		this.checkGroupingAttributes = new HashSet<CQLAttribute>();
+		this.checkGroupingAttributes = new HashSet<SDFAttribute>();
 		for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
 		}
@@ -58,7 +58,7 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 		for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
 			String curIdentifier = ((ASTIdentifier) node.jjtGetChild(i))
 					.getName();
-			CQLAttribute attribute = this.attributeResolver
+			SDFAttribute attribute = this.attributeResolver
 					.getAttribute(curIdentifier);
 
 			checkGroupingAttributes.remove(attribute);

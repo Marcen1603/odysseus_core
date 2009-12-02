@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -343,7 +343,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		RealMatrix projectedRight = null;
 		RealMatrix projectedRightCov = null;
 
-		if (((CQLAttribute) this.leftSchema.get(0)).getSourceName().equals(
+		if (((SDFAttribute) this.leftSchema.get(0)).getSourceName().equals(
 				this.leftSource)) {
 			projectedLeft = this.leftMatrix.multiply(leftMV);
 			if (this.leftVector != null) {

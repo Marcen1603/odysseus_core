@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredict
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
@@ -21,9 +21,9 @@ public class LinearProbabilityPredictionFunctionTest {
 		try{
 			SDFAttributeList schema = new SDFAttributeList();
 			
-			CQLAttribute a = new CQLAttribute(null, "a");
-			CQLAttribute b = new CQLAttribute(null, "b");
-			CQLAttribute c = new CQLAttribute(null, "c");
+			SDFAttribute a = new SDFAttribute(null, "a");
+			SDFAttribute b = new SDFAttribute(null, "b");
+			SDFAttribute c = new SDFAttribute(null, "c");
 			
 			schema.add(a);
 			schema.add(b);

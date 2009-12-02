@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -38,7 +38,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 
 		int i = 0;
 		for (SDFAttribute curAttribute : neededAttributes) {
-			CQLAttribute cqlAttr = (CQLAttribute) curAttribute;
+			SDFAttribute cqlAttr = (SDFAttribute) curAttribute;
 			int pos = indexOf(leftSchema, cqlAttr);
 			if (pos == -1) {
 				// if you get here, there is an attribute
@@ -52,10 +52,10 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		}
 	}
 
-	private int indexOf(SDFAttributeList schema, CQLAttribute cqlAttr) {
+	private int indexOf(SDFAttributeList schema, SDFAttribute cqlAttr) {
 		Iterator<SDFAttribute> it = schema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {
-			if (cqlAttr.equalsCQL((CQLAttribute) it.next())) {
+			if (cqlAttr.equalsCQL((SDFAttribute) it.next())) {
 				return i;
 			}
 		}

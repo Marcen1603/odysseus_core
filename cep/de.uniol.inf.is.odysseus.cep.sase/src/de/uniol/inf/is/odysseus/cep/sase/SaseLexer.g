@@ -2,21 +2,34 @@ lexer grammar SaseLexer;
 
 @lexer::header { package de.uniol.inf.is.odysseus.cep.sase; } 
   
-PATTERN : 'PATTERN' | 'Pattern';
-WHERE : 'WHERE' | 'Where';
-WITHIN	: 'WITHIN' | 'Within';
-SEQ : 'SEQ' | 'Seq';
-EGAL : 'EGAL' | 'egal';
+FROM	: 'FROM' | 'from';
+HAVING	: 'HAVING' | 'having';
+PATTERN : 'PATTERN' | 'pattern';
+WHERE : 'WHERE' | 'where';
+WITHIN	: 'WITHIN' | 'within';
+SEQ : 'SEQ' | 'seq';
+LEFTCURLY : '{';
+RIGHTCURLY : '}';	
+AND :'AND'|'and';
+FIRST :'1';
+CURRENT :'[i]';	
+PREVIOUS :  '[i-1]' ;	
+ALLTOPREVIOUS :	 '[..i-1]' ;
 
 TIMEUNIT: 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds';
 
 SKIP_METHOD
 	: 'skip_till_next_match'|'skip_till_any_match';
 
-KLEENEBRACKET
-	:  '[]';
-	
+BBRACKETLEFT :  '[';
+BBRACKETRIGHT :  ']';
+
 PLUS	: '+';
+MINUS	: '-';
+POINT	: '.';
+MULT	: '*'; 	
+COMPAREOP : '='|'<='|'>='|'!='|'<'|'>';
+AGGREGATEOP : 'AVG'|'MIN'|'MAX'|'SUM'|'COUNT';
 
 NOT	: '~';
 	
@@ -30,10 +43,9 @@ RBRACKET
 
 NUMBER	:	 INTEGER | FLOAT;
 fragment FLOAT	: INTEGER '.' DIGIT+;
-fragment INTEGER : '0' | '1'..'9' DIGIT*;
+fragment INTEGER : '0' | '1'..'9' ('0'..'9')*;
 
-TYPE	: UPPER (LETTER|DIGIT|'_')*;
-NAME	: LOWER (LETTER|DIGIT|'_')*;
+NAME	: LETTER (LETTER|DIGIT|'_'|':')*;
 STRING_LITERAL : '"' NONCONTROL_CHAR* '"';
 
 fragment NONCONTROL_CHAR : LETTER | DIGIT | SPACE;

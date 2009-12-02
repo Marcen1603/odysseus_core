@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -165,9 +165,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (onId != null) {
 			AttributeResolver tmpResolver = new AttributeResolver();
 			for (SDFAttribute attribute : inputOp.getOutputSchema()) {
-				tmpResolver.addAttribute((CQLAttribute) attribute);
+				tmpResolver.addAttribute((SDFAttribute) attribute);
 			}
-			CQLAttribute onAttribute = tmpResolver.getAttribute(onId.getName());
+			SDFAttribute onAttribute = tmpResolver.getAttribute(onId.getName());
 			if (onAttribute == null) {
 				throw new RuntimeException("invalid attribute in ON: "
 						+ onId.getName());
@@ -223,7 +223,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	private SDFAttributeList createAliasSchema(String alias, ILogicalOperator access) {
 		SDFAttributeList attributes = new SDFAttributeList();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
-			CQLAttribute newAttribute = (CQLAttribute) attribute.clone();
+			SDFAttribute newAttribute = (SDFAttribute) attribute.clone();
 			newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}

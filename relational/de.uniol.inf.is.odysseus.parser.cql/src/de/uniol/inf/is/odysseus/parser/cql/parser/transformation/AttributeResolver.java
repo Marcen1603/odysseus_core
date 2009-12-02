@@ -9,7 +9,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
@@ -21,16 +21,16 @@ public class AttributeResolver implements IAttributeResolver {
 
 	private Map<String, AbstractLogicalOperator> sources;
 
-	private Set<CQLAttribute> attributes;
+	private Set<SDFAttribute> attributes;
 
 	public AttributeResolver() {
 		this.sources = new HashMap<String, AbstractLogicalOperator>();
-		this.attributes = new HashSet<CQLAttribute>();
+		this.attributes = new HashSet<SDFAttribute>();
 	}
 
 	public AttributeResolver(AttributeResolver attributeResolver) {
 		this.sources = new HashMap<String, AbstractLogicalOperator>(attributeResolver.sources);
-		this.attributes = new HashSet<CQLAttribute>(
+		this.attributes = new HashSet<SDFAttribute>(
 				attributeResolver.attributes);
 	}
 
@@ -45,7 +45,7 @@ public class AttributeResolver implements IAttributeResolver {
 		this.sources.put(name, op);
 	}
 
-	public void addAttribute(CQLAttribute attribute) {
+	public void addAttribute(SDFAttribute attribute) {
 		if (this.attributes.contains(attribute)) {
 			throw new IllegalArgumentException("ambigiuous identifier: "
 					+ attribute);
@@ -53,8 +53,8 @@ public class AttributeResolver implements IAttributeResolver {
 		this.attributes.add(attribute);
 	}
 	
-	public void addAttributes(Collection<CQLAttribute> attributes) {
-		for(CQLAttribute attribute : attributes) {
+	public void addAttributes(Collection<SDFAttribute> attributes) {
+		for(SDFAttribute attribute : attributes) {
 			addAttribute(attribute);
 		}
 	}
@@ -64,30 +64,30 @@ public class AttributeResolver implements IAttributeResolver {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.transformation.IAttributeResolver#getAttribute(java.lang.String)
 	 */
-	public CQLAttribute getAttribute(String name) {
+	public SDFAttribute getAttribute(String name) {
 		String[] parts = name.split("\\.", 2);
-		CQLAttribute result = null;
+		SDFAttribute result = null;
 		if (parts.length == 1 || name.contains("(")) {
 			for (ILogicalOperator source : this.sources.values()) {
 				for (SDFAttribute curAttribute : source.getOutputSchema()) {
-					CQLAttribute cqlAttribute = (CQLAttribute) curAttribute;
-					if (cqlAttribute.getAttributeName().equals(name)) {
+					SDFAttribute SDFAttribute = (SDFAttribute) curAttribute;
+					if (SDFAttribute.getAttributeName().equals(name)) {
 						if (result != null) {
 							throw new IllegalArgumentException(
 									"ambigiuous identifier: " + name);
 						} else {
-							result = cqlAttribute;
+							result = SDFAttribute;
 						}
 					}
 				}
 			}
-			for (CQLAttribute cqlAttribute : this.attributes) {
-				if (cqlAttribute.getAttributeName().equals(name)) {
+			for (SDFAttribute SDFAttribute : this.attributes) {
+				if (SDFAttribute.getAttributeName().equals(name)) {
 					if (result != null) {
 						throw new IllegalArgumentException(
 								"ambigiuous identifier: " + name);
 					} else {
-						result = cqlAttribute;
+						result = SDFAttribute;
 					}
 				}
 			}
@@ -98,27 +98,27 @@ public class AttributeResolver implements IAttributeResolver {
 		return result;
 	}
 
-	private CQLAttribute getAttribute(String sourceName, String attributeName) {
+	private SDFAttribute getAttribute(String sourceName, String attributeName) {
 		ILogicalOperator source = this.sources.get(sourceName);
 		if (source == null) {
 			throw new IllegalArgumentException("no such source: " + sourceName);
 		}
 		for (SDFAttribute attribute : source.getOutputSchema()) {
-			CQLAttribute cqlAttribute = (CQLAttribute) attribute;
-			if (cqlAttribute.getAttributeName().equals(attributeName)) {
-				return cqlAttribute;
+			SDFAttribute SDFAttribute = (SDFAttribute) attribute;
+			if (SDFAttribute.getAttributeName().equals(attributeName)) {
+				return SDFAttribute;
 			}
 		}
 		throw new IllegalArgumentException("no such attribute: " + sourceName
 				+ "." + attributeName);
 	}
 
-	public CQLAttribute getAggregateAttribute(ASTAggregateExpression expression) {
+	public SDFAttribute getAggregateAttribute(ASTAggregateExpression expression) {
 		String name = expression.jjtGetChild(1).toString();
-		CQLAttribute attribute = getAttribute(name);
+		SDFAttribute attribute = getAttribute(name);
 		String aggregateName = expression.jjtGetChild(0).toString() + "("
 				+ attribute.getURI(false) + ")";
-		for (CQLAttribute curAttribute : this.attributes) {
+		for (SDFAttribute curAttribute : this.attributes) {
 			if (curAttribute.getAttributeName().equals(aggregateName)) {
 				return curAttribute;
 			}

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -58,7 +58,7 @@ public class RelationalRestructHelper {
 				//there are strange compilation errors when sourcesOfAttributes
 				//get called from here
 				for (SDFAttribute attribute : attributes) {
-					sources.add(((CQLAttribute) attribute).getSourceName());
+					sources.add(((SDFAttribute) attribute).getSourceName());
 				}
 			}
 		});
@@ -68,7 +68,7 @@ public class RelationalRestructHelper {
 	public static Set sourcesOfAttributes(List attributes) {
 		HashSet<String> sources = new HashSet<String>();
 		for (Object attribute : attributes) {
-			sources.add(((CQLAttribute) attribute).getSourceName());
+			sources.add(((SDFAttribute) attribute).getSourceName());
 		}
 		return sources;
 	}

@@ -18,7 +18,7 @@ public class DirectAttributeResolver implements IAttributeResolver {
 		SDFAttribute found = null;
 		for (SDFAttribute attr : schema) {
 			if (parts.length == 1) {
-				if(((CQLAttribute)attr).getAttributeName().equals(name)){
+				if(((SDFAttribute)attr).getAttributeName().equals(name)){
 					if (found != null) {
 						throw new IllegalArgumentException("amgigious attribute: " + name);
 					}

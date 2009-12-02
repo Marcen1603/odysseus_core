@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -105,8 +105,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		ListIterator<SDFAttribute> li = otherAttributes.listIterator();
 		for (SDFAttribute attr : this.attributes) {
-			if (!((CQLAttribute) li.next()).getAttributeName().equals(
-					((CQLAttribute) attr).getAttributeName())) {
+			if (!((SDFAttribute) li.next()).getAttributeName().equals(
+					((SDFAttribute) attr).getAttributeName())) {
 				throw new RuntimeException(
 						"Query output does not match specified schema for: "
 								+ name);
@@ -125,7 +125,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTAttributeDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		CQLAttribute attribute = new CQLAttribute(this.name, attrName);
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
 		attribute.setDatatype(astAttrType.getType());
 		if (SDFDatatypes.isDate(attribute.getDatatype())) {

@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -129,13 +129,13 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSelectAll node, Object data) {
 		outputSchema = top.getOutputSchema();
 		for (SDFAttribute attribute : top.getOutputSchema()) {
-			CQLAttribute cqlAttribute = (CQLAttribute) attribute;
-			if (cqlAttribute.getSourceName() != null) {
-				CQLAttribute newAttribute = cqlAttribute.clone();
+			SDFAttribute SDFAttribute = (SDFAttribute) attribute;
+			if (SDFAttribute.getSourceName() != null) {
+				SDFAttribute newAttribute = SDFAttribute.clone();
 				newAttribute.setSourceName(null);
 				aliasSchema.add(newAttribute);
 			} else {
-				aliasSchema.add(cqlAttribute);
+				aliasSchema.add(SDFAttribute);
 			}
 		}
 		return null;
@@ -166,15 +166,15 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			}
 			expressions.add(new SDFExpression(null, expression.toString(),
 					this.attributeResolver));
-			CQLAttribute attribute = new CQLAttribute(null, aliasExpression
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression
 					.getAlias());
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			outputSchema.add(attribute);
 			aliasSchema.add(attribute);
 		} else {
-			CQLAttribute attribute = (CQLAttribute) node.jjtAccept(this, null);
+			SDFAttribute attribute = (SDFAttribute) node.jjtAccept(this, null);
 			outputSchema.add(attribute);
-			CQLAttribute aliasAttribute;
+			SDFAttribute aliasAttribute;
 			if (aliasExpression.hasAlias()) {
 				// copy other attributes like datatypes
 				aliasAttribute = attribute.clone();

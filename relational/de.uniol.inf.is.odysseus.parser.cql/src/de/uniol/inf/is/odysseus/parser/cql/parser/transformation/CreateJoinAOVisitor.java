@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicat
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.CQLAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -306,7 +306,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (i > 0) {
 				buffer.append(',');
 			}
-			CQLAttribute attribute = (CQLAttribute) outputSchema
+			SDFAttribute attribute = (SDFAttribute) outputSchema
 					.getAttribute(i);
 			buffer.append(attribute.toString());
 			tmpResolver.addAttribute(attribute);
@@ -347,7 +347,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		AttributeResolver tmpResolver = new AttributeResolver(
 				this.attributeResolver);
 		for (SDFAttribute attr : subquery.getOutputSchema()) {
-			tmpResolver.addAttribute((CQLAttribute) attr);
+			tmpResolver.addAttribute((SDFAttribute) attr);
 		}
 		RelationalPredicate predicate = new RelationalPredicate(
 				new SDFExpression("", expression, tmpResolver));

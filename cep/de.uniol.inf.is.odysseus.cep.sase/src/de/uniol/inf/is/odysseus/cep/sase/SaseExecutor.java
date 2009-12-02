@@ -29,14 +29,6 @@ public class SaseExecutor {
 		SaseParser.query_return ret = grammar.query();
 		CommonTree tree = (CommonTree) ret.getTree();
 		printTree(tree, 2);
-		Map<String, String> v = grammar.getVariables();
-		System.out.println(v);
-		List<String> k = grammar.getKleeneAttributes();
-		System.out.println(k);
-		List<String> s = grammar.getStates();
-		System.out.println(s+" F ");
-		Map<String, String> m = grammar.getStateVariables();
-		System.out.println(m);
 	}
 	
 	public void printTree(CommonTree t, int indent) {
@@ -54,9 +46,24 @@ public class SaseExecutor {
 	
 	public static void main(String[] args) {
 		SaseExecutor exec = new SaseExecutor();
+		String[] toParse = new String[]{
+		"PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "+
+		"WHERE skip_till_next_match(a,b,c){ " +
+		"a.tag_id = b.tag_id AND " +
+		"a.tag_id = c.tag_id }" +
+		"WITHIN 12 hours",
+		"PATTERN SEQ(Alert a, Shipment+ b[]) " +
+		"WHERE skip_till_any_match(a,b[]){" +
+		"a.type = \"contaminated\" AND " +
+		"b[1].from = a.site AND " +
+		"b[i].from = b[i-1].to} " +
+		"WITHIN 3 hours"};
+
 		try {
-			exec.parse("PATTERN SEQ(Stock+ a[], Stock b) WHERE EGAL");
-			exec.parse("PATTERN SEQ(Shelf a, ~(Register b), Exit c");
+			for(String q: toParse){
+				System.out.println(q);
+				exec.parse(q);
+			}
 		} catch (RecognitionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
