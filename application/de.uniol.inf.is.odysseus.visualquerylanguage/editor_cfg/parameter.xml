@@ -63,19 +63,7 @@
 			<pipe-name>Berechnungs-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.MapAO</pipe-type>
 			<pipe-image>calculate</pipe-image>
-			<pipe-editor>ProjectEditor</pipe-editor>
-			<sparams>
-				
-				<setterParameter>
-					<name>Predicate</name>
-					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
-					<typelist>
-					</typelist>
-					<setter>setPredicate</setter>
-					<editor>PredicateEditor</editor>
-				</setterParameter>
-				
-			</sparams>
+			<pipe-editor>ExpressionEditor</pipe-editor>
 		</pipe>
 		
 		<pipe>

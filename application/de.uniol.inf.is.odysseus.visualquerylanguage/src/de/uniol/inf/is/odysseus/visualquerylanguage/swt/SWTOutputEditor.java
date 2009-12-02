@@ -33,8 +33,7 @@ public class SWTOutputEditor {
 	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
 
 	public SWTOutputEditor(Shell baseWindow,
-			Collection<ILogicalOperator> opList, ILogicalOperator endOp,
-			final INodeContent content) {
+			Collection<ILogicalOperator> opList, final INodeContent content) {
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE
 				| SWT.APPLICATION_MODAL);
 		shell.setText("Parametereditor");
@@ -42,7 +41,7 @@ public class SWTOutputEditor {
 		gl.numColumns = 1;
 		shell.setLayout(gl);
 
-		Composite comp = new org.eclipse.swt.widgets.Composite(shell,
+		Composite comp = new Composite(shell,
 				SWT.BORDER);
 		GridLayout compLayout = new GridLayout();
 		compLayout.numColumns = 4;

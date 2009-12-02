@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -80,9 +81,11 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTParameterListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTTreeChangedListener;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTExpressionEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTOutputEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTPredicateEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor.CursorManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositioner;
 
@@ -439,8 +442,10 @@ public class DefaultGraphArea extends Composite implements
 									.getModelNode())).getContent()
 									.isOnlySource()) {
 								if(endOp instanceof OutputSchemaSettable) {
-									SWTOutputEditor editor = new SWTOutputEditor(SWTMainWindow.getShell(), opList, endOp, selectedNode.getModelNode().getContent());
+									SWTOutputEditor editor = new SWTOutputEditor(SWTMainWindow.getShell(), opList, selectedNode.getModelNode().getContent());
 									editor.addParameterListener(this);
+								} else if(endOp instanceof MapAO) {
+									SWTExpressionEditor editor = new SWTExpressionEditor((MapAO)endOp, opList); 
 								}
 								
 								if (endOp instanceof UnaryLogicalOp) {

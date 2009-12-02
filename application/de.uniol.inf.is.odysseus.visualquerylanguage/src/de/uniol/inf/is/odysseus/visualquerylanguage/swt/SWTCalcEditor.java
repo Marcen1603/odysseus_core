@@ -13,35 +13,27 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.INodeContent;
 
-public class SWTPredicateEditor {
-
-	@SuppressWarnings("unused")
-	private final Logger log = LoggerFactory.getLogger(SWTPredicateEditor.class);
+public class SWTCalcEditor {
 
 	private Shell shell;
-	private SDFAttributeList schema = new SDFAttributeList();
 
 	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
+	
+	private SDFAttributeList schema = new SDFAttributeList();
 
-	public SWTPredicateEditor(Shell baseWindow, final INodeContent content,
-			Collection<SDFAttributeList> inputSchemas, Composite actualComp) {
-
+	public SWTCalcEditor(Shell baseWindow, Collection<ILogicalOperator> opList) {
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE
 				| SWT.APPLICATION_MODAL);
-		shell.setText("Parametereditor");
+		shell.setText("Berechnungseditor");
 		GridLayout gl = new GridLayout();
 		gl.numColumns = 1;
 		shell.setLayout(gl);
@@ -50,14 +42,16 @@ public class SWTPredicateEditor {
 				| SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		textArea.setLayoutData(gd);
-		for (Control c : actualComp.getChildren()) {
-			if(c instanceof Text) {
-				textArea.setText(((Text)c).getText());
+
+		Collection<SDFAttribute> inputSchemas = new ArrayList<SDFAttribute>();
+
+		for (ILogicalOperator op : opList) {
+			for (SDFAttribute att : op.getOutputSchema()) {
+				inputSchemas.add(att);
 			}
 		}
 
-		Composite comp = new Composite(shell,
-				SWT.BORDER);
+		Composite comp = new Composite(shell, SWT.BORDER);
 		GridLayout compLayout = new GridLayout();
 		compLayout.numColumns = 5;
 		compLayout.makeColumnsEqualWidth = true;
@@ -66,31 +60,25 @@ public class SWTPredicateEditor {
 		comp.setLayoutData(compData);
 
 		Button button;
-		
-		for (SDFAttributeList sdfAttributeList : inputSchemas) {
-			if (sdfAttributeList != null) {
-				for (SDFAttribute sdfAttribute : sdfAttributeList) {
-					schema.add(sdfAttribute);
-					if (sdfAttribute != null) {
-						button = new Button(comp, SWT.PUSH);
-						button.setLayoutData(new GridData(
-								GridData.FILL_HORIZONTAL));
-						button.setText(sdfAttribute.toString());
-						button.setData(sdfAttribute);
-						button.addSelectionListener(new SelectionAdapter() {
 
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								if (e.getSource() instanceof Button) {
-									textArea.setText(textArea.getText()
-											+ ((Button) e.getSource())
-													.getText());
-								}
-							}
+		for (SDFAttribute sdfAttribute : inputSchemas) {
+			schema.add(sdfAttribute);
+			if (sdfAttribute != null) {
+				button = new Button(comp, SWT.PUSH);
+				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				button.setText(sdfAttribute.toString());
+				button.setData(sdfAttribute);
+				button.addSelectionListener(new SelectionAdapter() {
 
-						});
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						if (e.getSource() instanceof Button) {
+							textArea.setText(textArea.getText()
+									+ ((Button) e.getSource()).getText());
+						}
 					}
-				}
+
+				});
 			}
 		}
 
@@ -133,14 +121,15 @@ public class SWTPredicateEditor {
 		}
 
 		Button applyButton = new Button(shell, SWT.PUSH);
-		applyButton.setText("Parameter hinzufügen");
+		applyButton.setText("Berechnung hinzufügen");
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectAttributeResolver resolver = new DirectAttributeResolver(schema);
-				RelationalPredicate pred = new RelationalPredicate(new SDFExpression("", textArea.getText(), resolver));
+				DirectAttributeResolver resolver = new DirectAttributeResolver(
+						schema);
+				SDFExpression exp = new SDFExpression("", textArea.getText(), resolver);
 				for (ISWTParameterListener listener : listeners) {
-					listener.setValue(pred);
+					listener.setValue(exp);
 				}
 				shell.dispose();
 			}
@@ -169,5 +158,4 @@ public class SWTPredicateEditor {
 	public void addSWTParameterListener(ISWTParameterListener listener) {
 		this.listeners.add(listener);
 	}
-
 }
