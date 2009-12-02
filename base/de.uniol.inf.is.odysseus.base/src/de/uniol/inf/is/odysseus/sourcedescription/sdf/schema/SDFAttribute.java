@@ -114,6 +114,10 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 				return false;
 		} else if (!covariance.equals(other.covariance))
 			return false;
+		// TODO: Kurzfristiger Hack
+		if (sourceName == null || other.sourceName == null){
+			return true;
+		}
 		if (sourceName == null) {
 			if (other.sourceName != null)
 				return false;
