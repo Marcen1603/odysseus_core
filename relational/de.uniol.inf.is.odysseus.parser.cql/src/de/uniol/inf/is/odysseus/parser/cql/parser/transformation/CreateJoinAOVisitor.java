@@ -377,9 +377,18 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	
 	@Override
 	public Object visit(ASTDBSelectStatement node, Object data) {
-		CreateDatabaseAOVisitor dbVisitor = new CreateDatabaseAOVisitor();
-		
-		return dbVisitor.visit(node, data);
+		try {
+			Class<?> dbClass = Class
+					.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
+			IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
+					.newInstance();
+			return dbVisitor.visit(node, data);
+
+		} catch (Exception e) {
+			throw new RuntimeException("missing database plugin for cql parser");
+		}
+
+
 	}
 
 }

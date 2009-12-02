@@ -6,7 +6,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.dbIntegration.operators.DBSelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
@@ -22,6 +21,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -53,37 +53,38 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		SDFSource source = DataDictionary.getInstance().getSource(sourceString);
-		if (source.getSourceType().equals("RelationalStreaming")){
+		if (source.getSourceType().equals("RelationalStreaming")) {
 			relationalStreamingSource(node, source, sourceString);
 			return null;
 		} else {
 			throw new RuntimeException("unknown type of source '"
 					+ source.getSourceType() + "' for source: " + sourceString);
 		}
-		
-//		case Relational:
-//			relationalSource(node, source, sourceString);
-//			return null;
-//		case OSGI:
-//			WrapperArchitectureAO access = (WrapperArchitectureAO) sources.get(source);
-//			this.attributeResolver.addSource(node.getAlias(), access);
-//			return null;
-//		default:
-		
+
+		// case Relational:
+		// relationalSource(node, source, sourceString);
+		// return null;
+		// case OSGI:
+		// WrapperArchitectureAO access = (WrapperArchitectureAO)
+		// sources.get(source);
+		// this.attributeResolver.addSource(node.getAlias(), access);
+		// return null;
+		// default:
 
 	}
 
-	//FIXME funktioniert nicht mehr, da datadictionary nicht mehr auf db basis arbeitet
-	//und noch keine neue repraesentation von relationsinfos da ist
+	// FIXME funktioniert nicht mehr, da datadictionary nicht mehr auf db basis
+	// arbeitet
+	// und noch keine neue repraesentation von relationsinfos da ist
 	@SuppressWarnings("unused")
 	private void relationalSource(ASTSimpleSource node, SDFSource source,
 			String sourceString) {
 		QueryAccessAO access = (QueryAccessAO) this.sources.get(source);
 		if (access == null) {
 			access = new QueryAccessAO(source);
-//			SDFAttributeList attributes = DataDictionary.getInstance()
-//					.attributesOfRelation(sourceString);
-//			access.setOutputSchema(attributes);
+			// SDFAttributeList attributes = DataDictionary.getInstance()
+			// .attributesOfRelation(sourceString);
+			// access.setOutputSchema(attributes);
 			this.sources.put(source, access);
 		}
 
@@ -93,7 +94,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			operator = new RenameAO();
 			SDFAttributeList newSchema = createAliasSchema(node.getAlias(),
 					access);
-			operator.subscribeTo(access,0,0, newSchema);
+			operator.subscribeTo(access, 0, 0, newSchema);
 		}
 
 		this.attributeResolver.addSource(sourceString, operator);
@@ -119,8 +120,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator inputOp = access;
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
-			inputOp.subscribeTo(access,0,0, access.getOutputSchema());
-			((RenameAO)inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
+			inputOp.subscribeTo(access, 0, 0, access.getOutputSchema());
+			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node
+					.getAlias(), access));
 			sourceName = node.getAlias();
 		}
 
@@ -131,9 +133,10 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 
-	private WindowAO createWindow(ASTWindow windowNode, AbstractLogicalOperator inputOp) {
+	private WindowAO createWindow(ASTWindow windowNode,
+			AbstractLogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
-		window.subscribeTo(inputOp,0,0, inputOp.getOutputSchema());
+		window.subscribeTo(inputOp, 0, 0, inputOp.getOutputSchema());
 
 		if (windowNode.isPartitioned()) {
 			if (containsWindow(inputOp)) {
@@ -204,7 +207,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
 				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
-		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
+		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
+				childNode, null);
 
 		Node asNode = node.jjtGetChild(1);
 		if (asNode instanceof ASTWindow) {
@@ -214,13 +218,16 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		ASTIdentifier asIdentifier = (ASTIdentifier) asNode.jjtGetChild(0);
 		RenameAO rename = new RenameAO();
-		rename.subscribeTo(result,0,0, result.getOutputSchema());
-		rename.setOutputSchema(createAliasSchema(asIdentifier.getName(), result));
+		rename.subscribeTo(result, 0, 0, result.getOutputSchema());
+		rename
+				.setOutputSchema(createAliasSchema(asIdentifier.getName(),
+						result));
 		this.attributeResolver.addSource(asIdentifier.getName(), rename);
 		return null;
 	}
 
-	private SDFAttributeList createAliasSchema(String alias, ILogicalOperator access) {
+	private SDFAttributeList createAliasSchema(String alias,
+			ILogicalOperator access) {
 		SDFAttributeList attributes = new SDFAttributeList();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
 			SDFAttribute newAttribute = (SDFAttribute) attribute.clone();
@@ -229,12 +236,22 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		return attributes;
 	}
-	
+
 	@Override
 	public Object visit(ASTDBSelectStatement node, Object data) {
-		CreateDatabaseAOVisitor dbVisitor = new CreateDatabaseAOVisitor();
-		AbstractLogicalOperator dbOp = (AbstractLogicalOperator) dbVisitor.visit(node, data);
-		this.attributeResolver.addSource(((DBSelectAO)dbOp).getAlias(), dbOp);
+		Class<?> dbClass;
+		try {
+			dbClass = Class
+					.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
+			IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
+					.newInstance();
+			AbstractLogicalOperator dbOp = (AbstractLogicalOperator) dbVisitor
+					.visit(node, data);
+			this.attributeResolver.addSource(dbVisitor.getAlias(), dbOp);
+
+		} catch (Exception e) {
+			throw new RuntimeException("missing database plugin for cql parser");
+		}
 		return null;
 	}
 }

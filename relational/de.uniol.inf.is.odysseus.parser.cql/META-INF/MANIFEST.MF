@@ -6,8 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.cql.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.predicate,
- de.uniol.inf.is.odysseus.dbIntegration.control,
- de.uniol.inf.is.odysseus.dbIntegration.model,
  de.uniol.inf.is.odysseus.intervalapproach;resolution:=optional,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
@@ -28,4 +26,3 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql,
  de.uniol.inf.is.odysseus.parser.cql.parser,
  de.uniol.inf.is.odysseus.parser.cql.parser.transformation
 Service-Component: OSGI-INF/component.xml
-Require-Bundle: de.uniol.inf.is.odysseus.dbIntegration

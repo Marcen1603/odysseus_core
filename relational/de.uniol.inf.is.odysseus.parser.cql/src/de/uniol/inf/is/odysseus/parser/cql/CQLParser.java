@@ -103,11 +103,11 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckGroupBy;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckHaving;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAccessAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAggregationVisitor;
-import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateJoinAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePriorityAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.IDatabaseAOVisitor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -168,19 +168,31 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		AbstractLogicalOperator op;
 		Integer priority = 0;
 		if (node.jjtGetChild(0) instanceof ASTDBExecuteStatement) {
-			CreateDatabaseAOVisitor dbVisitor = new CreateDatabaseAOVisitor();
-			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(dbVisitor, data);
-			AbstractLogicalOperator dsOp = (AbstractLogicalOperator) node.jjtGetChild(1).jjtAccept(this, data);
-//			op.setInputAO(0, dsOp);
-			op.subscribeTo(dsOp, 0, 0);
-			//hat nun 3 statt 2 kinder
-			if (node.jjtGetNumChildren() == 3) {
-				priority = (Integer) node.jjtGetChild(2).jjtAccept(this, data);
+			try {
+				Class<?> dbClass = Class
+						.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
+				IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
+						.newInstance();
+
+				op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(
+						dbVisitor, data);
+				AbstractLogicalOperator dsOp = (AbstractLogicalOperator) node
+						.jjtGetChild(1).jjtAccept(this, data);
+				// op.setInputAO(0, dsOp);
+				op.subscribeTo(dsOp, 0, 0);
+				// hat nun 3 statt 2 kinder
+				if (node.jjtGetNumChildren() == 3) {
+					priority = (Integer) node.jjtGetChild(2).jjtAccept(this,
+							data);
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(
+						"missing database plugin for cql parser");
 			}
-			
-			
+
 		} else {
-			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
+			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this,
+					data);
 			if (node.jjtGetNumChildren() == 2) {
 				priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
 			}
