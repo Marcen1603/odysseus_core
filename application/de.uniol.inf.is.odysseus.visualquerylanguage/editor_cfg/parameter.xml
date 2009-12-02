@@ -209,22 +209,10 @@
 		</pipe>
 		
 		<pipe>
-			<pipe-name>Umbennenungs-Operator</pipe-name>
+			<pipe-name>Rename-Operator</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO</pipe-type>
 			<pipe-image>rename</pipe-image>
 			<pipe-editor>RenameEditor</pipe-editor>
-			<sparams>
-				
-				<setterParameter>
-					<name>Predicate</name>
-					<ptype>de.uniol.inf.is.odysseus.base.predicate.IPredicate</ptype>
-					<typelist>
-					</typelist>
-					<setter>setPredicate</setter>
-					<editor>true</editor>
-				</setterParameter>
-				
-			</sparams>
 		</pipe>
 		
 	</pipes>
