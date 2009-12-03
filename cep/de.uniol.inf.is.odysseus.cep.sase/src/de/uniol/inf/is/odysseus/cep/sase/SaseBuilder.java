@@ -10,7 +10,7 @@ import org.antlr.runtime.tree.TreeAdaptor;
 
 
 
-public class SaseExecutor {
+public class SaseBuilder {
 
 	static final TreeAdaptor adaptor = new CommonTreeAdaptor() {
 		public Object create(Token payload) {
@@ -42,7 +42,7 @@ public class SaseExecutor {
 
 	
 	public static void main(String[] args) {
-		SaseExecutor exec = new SaseExecutor();
+		SaseBuilder exec = new SaseBuilder();
 		String[] toParse = new String[]{
 				"PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "+
 				"WHERE skip_till_next_match(a,b,c){ " +
