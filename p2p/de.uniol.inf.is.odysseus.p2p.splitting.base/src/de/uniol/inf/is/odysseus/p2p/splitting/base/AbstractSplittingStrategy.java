@@ -2,26 +2,21 @@ package de.uniol.inf.is.odysseus.p2p.splitting.base;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.splitting.refinement.base.IRefinementStrategy;
 
 public abstract class AbstractSplittingStrategy implements ISplittingStrategy {
 
 	private IRefinementStrategy refinement = null;
-
-	public AbstractSplittingStrategy() {
-		
-	}
 	
 	@Override
-	public abstract ArrayList<AbstractLogicalOperator> splitPlan(
-			AbstractLogicalOperator ao);
+	public abstract ArrayList<ILogicalOperator> splitPlan(
+			ILogicalOperator ao);
 
 	@Override
 	public abstract String getName();
 
 	public void bindRefinement(IRefinementStrategy rs) {
-		System.out.println("Refinement eingebunden");
 		this.refinement = rs;
 	}
 
