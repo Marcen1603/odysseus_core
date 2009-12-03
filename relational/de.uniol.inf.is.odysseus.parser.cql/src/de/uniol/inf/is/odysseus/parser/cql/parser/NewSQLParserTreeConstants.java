@@ -6,10 +6,10 @@ public interface NewSQLParserTreeConstants
   public int JJTSTATEMENT = 0;
   public int JJTDBEXECUTESTATEMENT = 1;
   public int JJTDATABASE = 2;
-  public int JJTSQL = 3;
-  public int JJTDBSELECTSTATEMENT = 4;
-  public int JJTDATABASEOPTIONS = 5;
-  public int JJTAS = 6;
+  public int JJTDBSELECTSTATEMENT = 3;
+  public int JJTDATABASEOPTIONS = 4;
+  public int JJTAS = 5;
+  public int JJTSQL = 6;
   public int JJTPRIORIZEDSTATEMENT = 7;
   public int JJTCOMPLEXSELECTSTATEMENT = 8;
   public int JJTSELECTSTATEMENT = 9;
@@ -87,10 +87,10 @@ public interface NewSQLParserTreeConstants
     "Statement",
     "DBExecuteStatement",
     "Database",
-    "SQL",
     "DBSelectStatement",
     "DatabaseOptions",
     "AS",
+    "SQL",
     "PriorizedStatement",
     "ComplexSelectStatement",
     "SelectStatement",
@@ -164,4 +164,4 @@ public interface NewSQLParserTreeConstants
     "OSGI",
   };
 }
-/* JavaCC - OriginalChecksum=9d3e3590a31f62b1746e4aad8a3338d6 (do not edit this line) */
+/* JavaCC - OriginalChecksum=af657dc8257bdbe3a188cfec7cf0d557 (do not edit this line) */

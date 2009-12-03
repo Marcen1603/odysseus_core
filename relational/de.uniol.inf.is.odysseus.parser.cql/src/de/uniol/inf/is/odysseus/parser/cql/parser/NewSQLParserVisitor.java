@@ -7,10 +7,10 @@ public interface NewSQLParserVisitor
   public Object visit(ASTStatement node, Object data);
   public Object visit(ASTDBExecuteStatement node, Object data);
   public Object visit(ASTDatabase node, Object data);
-  public Object visit(ASTSQL node, Object data);
   public Object visit(ASTDBSelectStatement node, Object data);
   public Object visit(ASTDatabaseOptions node, Object data);
   public Object visit(ASTAS node, Object data);
+  public Object visit(ASTSQL node, Object data);
   public Object visit(ASTPriorizedStatement node, Object data);
   public Object visit(ASTComplexSelectStatement node, Object data);
   public Object visit(ASTSelectStatement node, Object data);
@@ -82,4 +82,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTSpatialCompareOperator node, Object data);
   public Object visit(ASTOSGI node, Object data);
 }
-/* JavaCC - OriginalChecksum=7775de230107a62613d6f62eba1dc54c (do not edit this line) */
+/* JavaCC - OriginalChecksum=8be145977e7b2eff0148155c8ec19d04 (do not edit this line) */

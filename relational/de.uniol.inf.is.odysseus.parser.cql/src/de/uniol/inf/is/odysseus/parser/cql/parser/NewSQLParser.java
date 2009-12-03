@@ -112,33 +112,8 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
                           }
       }
       jj_consume_token(104);
+      SQL();
       jj_consume_token(105);
-                                                           ASTSQL jjtn002 = new ASTSQL(JJTSQL);
-                                                           boolean jjtc002 = true;
-                                                           jjtree.openNodeScope(jjtn002);
-      try {
-        String();
-      } catch (Throwable jjte002) {
-                                                           if (jjtc002) {
-                                                             jjtree.clearNodeScope(jjtn002);
-                                                             jjtc002 = false;
-                                                           } else {
-                                                             jjtree.popNode();
-                                                           }
-                                                           if (jjte002 instanceof RuntimeException) {
-                                                             {if (true) throw (RuntimeException)jjte002;}
-                                                           }
-                                                           if (jjte002 instanceof ParseException) {
-                                                             {if (true) throw (ParseException)jjte002;}
-                                                           }
-                                                           {if (true) throw (Error)jjte002;}
-      } finally {
-                                                           if (jjtc002) {
-                                                             jjtree.closeNodeScope(jjtn002, true);
-                                                           }
-      }
-      jj_consume_token(106);
-      jj_consume_token(107);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -230,7 +205,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         jj_consume_token(104);
       }
       SQL();
-      jj_consume_token(107);
+      jj_consume_token(105);
       jj_consume_token(K_AS);
                                  ASTAS jjtn003 = new ASTAS(JJTAS);
                                  boolean jjtc003 = true;
@@ -362,7 +337,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       case 103:
         jj_consume_token(103);
         ComplexSelectStatement();
-        jj_consume_token(107);
+        jj_consume_token(105);
         break;
       default:
         jj_la1[7] = jj_gen;
@@ -464,7 +439,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         Identifier();
         jj_consume_token(103);
         AttributeDefinitions();
-        jj_consume_token(107);
+        jj_consume_token(105);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_CHANNEL:
         case K_CSV:
@@ -503,7 +478,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
                 throw new ParseException();
               }
             }
-            jj_consume_token(107);
+            jj_consume_token(105);
             break;
           case K_SOCKET:
             Socket();
@@ -678,7 +653,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       TimeInterval();
       jj_consume_token(104);
       SimpleTuple();
-      jj_consume_token(107);
+      jj_consume_token(105);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -707,7 +682,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   jjtree.openNodeScope(jjtn000);Token t;
   Token t2 = null;
     try {
-      jj_consume_token(108);
+      jj_consume_token(106);
       t = jj_consume_token(INTEGER);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case 104:
@@ -716,8 +691,8 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         case INTEGER:
           t2 = jj_consume_token(INTEGER);
           break;
-        case 109:
-          jj_consume_token(109);
+        case 107:
+          jj_consume_token(107);
           break;
         default:
           jj_la1[19] = jj_gen;
@@ -729,7 +704,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         jj_la1[20] = jj_gen;
         ;
       }
-      jj_consume_token(107);
+      jj_consume_token(105);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     if (t2 == null)
@@ -777,7 +752,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         ;
       }
       Host();
-      jj_consume_token(110);
+      jj_consume_token(108);
       Integer();
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -830,7 +805,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         ;
       }
       Host();
-      jj_consume_token(110);
+      jj_consume_token(108);
       Integer();
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -861,7 +836,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     try {
       jj_consume_token(K_CHANNEL);
       Host();
-      jj_consume_token(110);
+      jj_consume_token(108);
       Integer();
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -1207,7 +1182,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     try {
       jj_consume_token(K_SELECT);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 111:
+      case 109:
         SelectAll();
         break;
       case K_AVG:
@@ -1472,7 +1447,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(111);
+      jj_consume_token(109);
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -1548,7 +1523,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   ArrayList curRow;
     try {
       jj_consume_token(K_MATRIX);
-      jj_consume_token(108);
+      jj_consume_token(106);
       curRow = CovarianceRow();
     rows.add(curRow);
       label_10:
@@ -1565,7 +1540,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         curRow = CovarianceRow();
       rows.add(curRow);
       }
-      jj_consume_token(112);
+      jj_consume_token(110);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtn000.setMatrix(rows);
@@ -1617,7 +1592,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         case IDENTIFIER:
         case CHAR_LITERAL:
         case 103:
-        case 108:
+        case 106:
           SimplePredicate();
           break;
         default:
@@ -1656,7 +1631,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       if (jj_2_4(2147483647)) {
         jj_consume_token(103);
         Predicate();
-        jj_consume_token(107);
+        jj_consume_token(105);
       } else if (jj_2_5(2147483647)) {
         QuantificationPredicate();
       } else if (jj_2_6(2147483647)) {
@@ -1772,18 +1747,18 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       case 103:
         jj_consume_token(103);
         MatrixExpression();
-        jj_consume_token(111);
+        jj_consume_token(109);
         Identifier();
-        jj_consume_token(113);
+        jj_consume_token(111);
         MatrixExpression();
-        jj_consume_token(107);
+        jj_consume_token(105);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 109:
-          jj_consume_token(109);
+        case 107:
+          jj_consume_token(107);
           jjtn000.setCovOperandType(ASTProbabilityPredicate.OperandTypes.MINUS);
           break;
-        case 113:
-          jj_consume_token(113);
+        case 111:
+          jj_consume_token(111);
           jjtn000.setCovOperandType(ASTProbabilityPredicate.OperandTypes.PLUS);
           break;
         default:
@@ -1793,18 +1768,18 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         }
         jj_consume_token(103);
         MatrixExpression();
-        jj_consume_token(111);
+        jj_consume_token(109);
         Identifier();
-        jj_consume_token(113);
+        jj_consume_token(111);
         MatrixExpression();
-        jj_consume_token(107);
+        jj_consume_token(105);
         jjtn000.setJoinPredicate(true);
         break;
       case K_MATRIX:
         MatrixExpression();
-        jj_consume_token(111);
+        jj_consume_token(109);
         Identifier();
-        jj_consume_token(113);
+        jj_consume_token(111);
         MatrixExpression();
       jjtn000.setJoinPredicate(false);
         break;
@@ -1814,14 +1789,14 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         throw new ParseException();
       }
       jj_consume_token(104);
-      jj_consume_token(108);
+      jj_consume_token(106);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FLOAT:
         intervalStart = jj_consume_token(FLOAT);
       xLow.add(Double.parseDouble(intervalStart.image));
         break;
-      case 109:
-        intervalStart = jj_consume_token(109);
+      case 107:
+        intervalStart = jj_consume_token(107);
         jj_consume_token(K_INFTY);
       xLow.add(Double.MIN_VALUE);
         break;
@@ -1845,7 +1820,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(112);
+      jj_consume_token(110);
       label_11:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1857,14 +1832,14 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
           break label_11;
         }
         jj_consume_token(104);
-        jj_consume_token(108);
+        jj_consume_token(106);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case FLOAT:
           intervalStart = jj_consume_token(FLOAT);
         xLow.add(Double.parseDouble(intervalStart.image));
           break;
-        case 109:
-          intervalStart = jj_consume_token(109);
+        case 107:
+          intervalStart = jj_consume_token(107);
           jj_consume_token(K_INFTY);
         xLow.add(Double.MIN_VALUE);
           break;
@@ -1888,12 +1863,12 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
           jj_consume_token(-1);
           throw new ParseException();
         }
-        jj_consume_token(112);
+        jj_consume_token(110);
       }
       jj_consume_token(102);
       compOp = jj_consume_token(COMPARE_OPERATOR);
       prob = jj_consume_token(FLOAT);
-      jj_consume_token(107);
+      jj_consume_token(105);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     jjtn000.setXLow(xLow);
@@ -2050,7 +2025,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
           case INTEGER:
           case IDENTIFIER:
           case CHAR_LITERAL:
-          case 108:
+          case 106:
             InPredicate();
             break;
           default:
@@ -2097,7 +2072,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         case 103:
           jj_consume_token(103);
           ComplexSelectStatement();
-          jj_consume_token(107);
+          jj_consume_token(105);
           break;
         default:
           jj_la1[51] = jj_gen;
@@ -2142,7 +2117,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         case 103:
           jj_consume_token(103);
           ComplexSelectStatement();
-          jj_consume_token(107);
+          jj_consume_token(105);
           break;
         default:
           jj_la1[52] = jj_gen;
@@ -2186,7 +2161,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         case 103:
           jj_consume_token(103);
           ComplexSelectStatement();
-          jj_consume_token(107);
+          jj_consume_token(105);
           break;
         default:
           jj_la1[53] = jj_gen;
@@ -2224,7 +2199,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       jj_consume_token(K_EXISTS);
       jj_consume_token(103);
       ComplexSelectStatement();
-      jj_consume_token(107);
+      jj_consume_token(105);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2369,8 +2344,8 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       case IDENTIFIER:
         Identifier();
         break;
-      case 108:
-        jj_consume_token(108);
+      case 106:
+        jj_consume_token(106);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case FLOAT:
         case INTEGER:
@@ -2411,7 +2386,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
             throw new ParseException();
           }
         }
-        jj_consume_token(112);
+        jj_consume_token(110);
         break;
       default:
         jj_la1[58] = jj_gen;
@@ -2504,7 +2479,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         jj_consume_token(104);
         Tuple();
       }
-      jj_consume_token(107);
+      jj_consume_token(105);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2628,7 +2603,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
           case 103:
             jj_consume_token(103);
             Expression();
-            jj_consume_token(107);
+            jj_consume_token(105);
             break;
           case IDENTIFIER:
             Identifier();
@@ -2706,7 +2681,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       case IDENTIFIER:
       case CHAR_LITERAL:
       case 103:
-      case 108:
+      case 106:
         if (jj_2_17(2147483647)) {
           Predicate();
         } else {
@@ -2768,7 +2743,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         jj_la1[69] = jj_gen;
         ;
       }
-      jj_consume_token(107);
+      jj_consume_token(105);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2799,7 +2774,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       AggregateFunction();
       jj_consume_token(103);
       Identifier();
-      jj_consume_token(107);
+      jj_consume_token(105);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2860,24 +2835,24 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
 
   static final public String MathOperator() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case 109:
+      jj_consume_token(109);
+    {if (true) return "*";}
+      break;
     case 111:
       jj_consume_token(111);
-    {if (true) return "*";}
+    {if (true) return "+";}
+      break;
+    case 107:
+      jj_consume_token(107);
+    {if (true) return "-";}
+      break;
+    case 112:
+      jj_consume_token(112);
+    {if (true) return "/";}
       break;
     case 113:
       jj_consume_token(113);
-    {if (true) return "+";}
-      break;
-    case 109:
-      jj_consume_token(109);
-    {if (true) return "-";}
-      break;
-    case 114:
-      jj_consume_token(114);
-    {if (true) return "/";}
-      break;
-    case 115:
-      jj_consume_token(115);
     {if (true) return "^";}
       break;
     default:
@@ -2897,7 +2872,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       jj_consume_token(K_DISTINCT);
       jj_consume_token(103);
       Identifier();
-      jj_consume_token(107);
+      jj_consume_token(105);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2949,7 +2924,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       case K_RANGE:
       case K_ROWS:
       case K_UNBOUNDED:
-      case 108:
+      case 106:
         Window();
         break;
       default:
@@ -3017,13 +2992,13 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     try {
       jj_consume_token(103);
       ComplexSelectStatement();
-      jj_consume_token(107);
+      jj_consume_token(105);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_PARTITION:
       case K_RANGE:
       case K_ROWS:
       case K_UNBOUNDED:
-      case 108:
+      case 106:
         Window();
         break;
       default:
@@ -3084,10 +3059,10 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     case K_UNBOUNDED:
       OldWindow();
       break;
-    case 108:
-      jj_consume_token(108);
+    case 106:
+      jj_consume_token(106);
       StreamSQLWindow();
-      jj_consume_token(112);
+      jj_consume_token(110);
       break;
     default:
       jj_la1[76] = jj_gen;
@@ -3667,7 +3642,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_114() {
-    if (jj_scan_token(109)) return true;
+    if (jj_scan_token(107)) return true;
     if (jj_scan_token(K_INFTY)) return true;
     return false;
   }
@@ -3690,7 +3665,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
 
   static private boolean jj_3R_103() {
     if (jj_scan_token(104)) return true;
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(106)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_113()) {
@@ -3703,7 +3678,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     jj_scanpos = xsp;
     if (jj_3R_116()) return true;
     }
-    if (jj_scan_token(112)) return true;
+    if (jj_scan_token(110)) return true;
     return false;
   }
 
@@ -3753,13 +3728,13 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_100() {
-    if (jj_scan_token(109)) return true;
+    if (jj_scan_token(107)) return true;
     if (jj_scan_token(K_INFTY)) return true;
     return false;
   }
 
   static private boolean jj_3R_66() {
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(106)) return true;
     return false;
   }
 
@@ -3801,9 +3776,9 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
 
   static private boolean jj_3R_98() {
     if (jj_3R_110()) return true;
-    if (jj_scan_token(111)) return true;
+    if (jj_scan_token(109)) return true;
     if (jj_3R_44()) return true;
-    if (jj_scan_token(113)) return true;
+    if (jj_scan_token(111)) return true;
     if (jj_3R_110()) return true;
     return false;
   }
@@ -3834,7 +3809,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_112() {
-    if (jj_scan_token(113)) return true;
+    if (jj_scan_token(111)) return true;
     return false;
   }
 
@@ -3852,7 +3827,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_111() {
-    if (jj_scan_token(109)) return true;
+    if (jj_scan_token(107)) return true;
     return false;
   }
 
@@ -3874,11 +3849,11 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   static private boolean jj_3R_97() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_110()) return true;
-    if (jj_scan_token(111)) return true;
+    if (jj_scan_token(109)) return true;
     if (jj_3R_44()) return true;
-    if (jj_scan_token(113)) return true;
+    if (jj_scan_token(111)) return true;
     if (jj_3R_110()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_111()) {
@@ -3887,11 +3862,11 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     }
     if (jj_scan_token(103)) return true;
     if (jj_3R_110()) return true;
-    if (jj_scan_token(111)) return true;
+    if (jj_scan_token(109)) return true;
     if (jj_3R_44()) return true;
-    if (jj_scan_token(113)) return true;
+    if (jj_scan_token(111)) return true;
     if (jj_3R_110()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -3901,9 +3876,9 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_158() {
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(106)) return true;
     if (jj_3R_160()) return true;
-    if (jj_scan_token(112)) return true;
+    if (jj_scan_token(110)) return true;
     return false;
   }
 
@@ -3937,7 +3912,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     if (jj_3R_98()) return true;
     }
     if (jj_scan_token(104)) return true;
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(106)) return true;
     xsp = jj_scanpos;
     if (jj_3R_99()) {
     jj_scanpos = xsp;
@@ -3949,7 +3924,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     jj_scanpos = xsp;
     if (jj_3R_102()) return true;
     }
-    if (jj_scan_token(112)) return true;
+    if (jj_scan_token(110)) return true;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_103()) { jj_scanpos = xsp; break; }
@@ -3957,14 +3932,14 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     if (jj_scan_token(102)) return true;
     if (jj_scan_token(COMPARE_OPERATOR)) return true;
     if (jj_scan_token(FLOAT)) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
   static private boolean jj_3R_148() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_80()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_153()) jj_scanpos = xsp;
@@ -4100,7 +4075,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   static private boolean jj_3R_67() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_20()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4129,14 +4104,14 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_63() {
-    if (jj_scan_token(115)) return true;
+    if (jj_scan_token(113)) return true;
     return false;
   }
 
   static private boolean jj_3R_94() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_80()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4159,7 +4134,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_62() {
-    if (jj_scan_token(114)) return true;
+    if (jj_scan_token(112)) return true;
     return false;
   }
 
@@ -4179,7 +4154,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_61() {
-    if (jj_scan_token(109)) return true;
+    if (jj_scan_token(107)) return true;
     return false;
   }
 
@@ -4205,12 +4180,12 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_60() {
-    if (jj_scan_token(113)) return true;
+    if (jj_scan_token(111)) return true;
     return false;
   }
 
   static private boolean jj_3R_59() {
-    if (jj_scan_token(111)) return true;
+    if (jj_scan_token(109)) return true;
     return false;
   }
 
@@ -4258,14 +4233,14 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
 
   static private boolean jj_3R_110() {
     if (jj_scan_token(K_MATRIX)) return true;
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(106)) return true;
     if (jj_3R_124()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_125()) { jj_scanpos = xsp; break; }
     }
-    if (jj_scan_token(112)) return true;
+    if (jj_scan_token(110)) return true;
     return false;
   }
 
@@ -4280,7 +4255,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       if (jj_3R_154()) { jj_scanpos = xsp; break; }
     }
     if (jj_3R_155()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     if (jj_scan_token(K_AS)) return true;
     if (jj_3R_44()) return true;
     return false;
@@ -4322,7 +4297,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     if (jj_3R_64()) return true;
     if (jj_scan_token(103)) return true;
     if (jj_3R_44()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4332,7 +4307,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_135() {
-    if (jj_scan_token(111)) return true;
+    if (jj_scan_token(109)) return true;
     return false;
   }
 
@@ -4416,7 +4391,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_65()) jj_scanpos = xsp;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4439,7 +4414,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   static private boolean jj_3R_57() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_42()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4591,7 +4566,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       xsp = jj_scanpos;
       if (jj_3R_51()) { jj_scanpos = xsp; break; }
     }
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4707,7 +4682,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   }
 
   static private boolean jj_3R_79() {
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(106)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_90()) {
@@ -4718,7 +4693,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       xsp = jj_scanpos;
       if (jj_3R_92()) { jj_scanpos = xsp; break; }
     }
-    if (jj_scan_token(112)) return true;
+    if (jj_scan_token(110)) return true;
     return false;
   }
 
@@ -4804,7 +4779,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
     if (jj_scan_token(K_EXISTS)) return true;
     if (jj_scan_token(103)) return true;
     if (jj_3R_80()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4816,7 +4791,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   static private boolean jj_3R_88() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_80()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4850,7 +4825,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   static private boolean jj_3R_50() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_80()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -4900,7 +4875,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   static private boolean jj_3R_48() {
     if (jj_scan_token(103)) return true;
     if (jj_3R_80()) return true;
-    if (jj_scan_token(107)) return true;
+    if (jj_scan_token(105)) return true;
     return false;
   }
 
@@ -5075,7 +5050,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
       jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x1000,0x0,0x8000,0x0,0x0,0x1,0x10000,0x0,0x10012,0x10012,0x0,0x0,0x0,0x2000000,0x0,0x400,0x400,0x400,0x400,0x48000000,0x0,0x3000000,0xf80040,0x1000000,0x40000000,0x1000,0x0,0x0,0x0,0x43000080,0x0,0x0,0x0,0x0,0x43000080,0x0,0x0,0x0,0x1000000,0x1000000,0x0,0x1000000,0x1000000,0x0,0x43000000,0x0,0x0,0x0,0x0,0x43000000,0x0,0x43000000,0x43000000,0x4000,0x4000,0x0,0x0,0x43000080,0x3000000,0x40000000,0x43000080,0x0,0x43000080,0x43000080,0x80,0x0,0x40000000,0x800,0x0,0x800,0x800,0x0,0x8,0x8,0x800,0x500,0x0,0x2000,0x0,0x200,0x0,0x3000000,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x80,0x40,0x80,0x2,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x100,0x100,0x2000,0x100,0x0,0x0,0x0,0x0,0x0,0x100,0x2,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x8082,0x100,0x100,0x0,0x40,0x1082,0x0,0x22000,0x80,0x2000,0x0,0x100,0x2000,0x0,0x0,0x1002,0x80,0x80,0x80,0x100,0x2,0x100,0x2,0x1002,0x0,0x0,0x100,0x0,0x82,0x2,0x80,0x82,0x100,0x82,0x1082,0x0,0xea000,0x80,0x1000,0x0,0x1000,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100,0x0,};
+      jj_la1_3 = new int[] {0x80,0x40,0x80,0x2,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x100,0x100,0x800,0x100,0x0,0x0,0x0,0x0,0x0,0x100,0x2,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x2082,0x100,0x100,0x0,0x40,0x482,0x0,0x8800,0x80,0x800,0x0,0x100,0x800,0x0,0x0,0x402,0x80,0x80,0x80,0x100,0x2,0x100,0x2,0x402,0x0,0x0,0x100,0x0,0x82,0x2,0x80,0x82,0x100,0x82,0x482,0x0,0x3a800,0x80,0x400,0x0,0x400,0x400,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100,0x0,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[18];
   static private boolean jj_rescan = false;
@@ -5285,7 +5260,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[116];
+    boolean[] la1tokens = new boolean[114];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -5308,7 +5283,7 @@ public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, 
         }
       }
     }
-    for (int i = 0; i < 116; i++) {
+    for (int i = 0; i < 114; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
