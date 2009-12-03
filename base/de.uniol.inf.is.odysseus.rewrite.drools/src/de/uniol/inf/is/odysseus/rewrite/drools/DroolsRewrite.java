@@ -11,6 +11,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
+import org.drools.audit.WorkingMemoryConsoleLogger;
+import org.drools.event.DebugAgendaEventListener;
+import org.drools.event.DebugRuleFlowEventListener;
+import org.drools.event.DebugWorkingMemoryEventListener;
 import org.drools.rule.Package;
 import org.drools.rule.Rule;
 import org.osgi.framework.BundleContext;
@@ -51,21 +55,33 @@ public class DroolsRewrite implements IRewrite {
 	}
 
 	public ILogicalOperator rewritePlanInternal(ILogicalOperator plan) {
-		
-		logger.info("Current Top subscriptions  "+plan.getSubscriptions().toString());
-		
+
+		logger.info("Current Top subscriptions  "
+				+ plan.getSubscriptions().toString());
+
+		System.out.println("RULES: ");
+		for(Package pkg : rulebase.getPackages()){
+			System.out.println("PACKAGE: " + pkg.getName());
+			for(Rule r : pkg.getRules()){
+				System.out.println(r.getName()+ " : " + r.getRuleFlowGroup());
+			}
+		}
 		StatefulSession session = rulebase.newStatefulSession();
 		TopAO top = new TopAO();
 		plan.subscribe(top, 0, 0, plan.getOutputSchema());
-		
+
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
 		if (logger.isInfoEnabled()) {
 			logger.info("pre rewrite: "
-						+ AbstractTreeWalker.prefixWalk(top,
-								new AlgebraPlanToStringVisitor()));
+					+ AbstractTreeWalker.prefixWalk(top,
+							new AlgebraPlanToStringVisitor()));
 		}
 
+//		WorkingMemoryConsoleLogger lg = new WorkingMemoryConsoleLogger(session);
+//		lg.clearFilters();
+//		session.addEventListener(new DebugAgendaEventListener());
+//		session.addEventListener(new DebugWorkingMemoryEventListener());
 		session.startProcess("RuleFlow");
 
 		session.fireAllRules();
@@ -78,7 +94,8 @@ public class DroolsRewrite implements IRewrite {
 		}
 		LogicalSubscription sub = top.getSubscribedTo(0);
 		ILogicalOperator ret = sub.getTarget();
-		top.unsubscribeSubscriptionTo(ret, sub.getSinkPort(), sub.getSourcePort());
+		top.unsubscribeSubscriptionTo(ret, sub.getSinkPort(), sub
+				.getSourcePort());
 		if (logger.isInfoEnabled()) {
 			logger.info("post rewrite:"
 					+ AbstractTreeWalker.prefixWalk(ret,
@@ -124,18 +141,18 @@ public class DroolsRewrite implements IRewrite {
 			return;
 		}
 
-		if (!inserted.contains(op)){
-			logger.info("insert into wm: "+op);
+		if (!inserted.contains(op)) {
+			logger.info("insert into wm: " + op);
 			session.insert(op);
 			inserted.add(op);
-		
-			for (LogicalSubscription sub: op.getSubscribedTo()){
+
+			for (LogicalSubscription sub : op.getSubscribedTo()) {
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
-			for (LogicalSubscription sub: op.getSubscriptions()){
+			for (LogicalSubscription sub : op.getSubscriptions()) {
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
-		}		
+		}
 	}
 
 	public void activate(ComponentContext context) {

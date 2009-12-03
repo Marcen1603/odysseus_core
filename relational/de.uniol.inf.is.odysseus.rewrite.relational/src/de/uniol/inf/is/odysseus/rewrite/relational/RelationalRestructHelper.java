@@ -3,9 +3,13 @@ package de.uniol.inf.is.odysseus.rewrite.relational;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
@@ -24,10 +28,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-
-
 
 /**
  * This class provides functions to support Restructuring Aspects
@@ -38,30 +39,37 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 @SuppressWarnings("unchecked")
 public class RelationalRestructHelper {
 
+	static Logger logger = LoggerFactory
+			.getLogger(RelationalRestructHelper.class);
+
 	public static boolean containsAllSources(ILogicalOperator op, Set sources) {
 		List<SDFAttribute> schema = op.getOutputSchema();
 		Set schemaSources = sourcesOfAttributes(schema);
-		for(Object source : sources) {
+		for (Object source : sources) {
 			if (!schemaSources.contains(source)) {
 				return false;
 			}
-		} 
+		}
 		return true;
 	}
 
 	public static Set sourcesOfPredicate(IPredicate predicate) {
 		final HashSet<String> sources = new HashSet<String>();
-		visitPredicates((IPredicate<?>)predicate, new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
-			public void call(IPredicate<?> pred) {
-				List<SDFAttribute> attributes = ((IRelationalPredicate)pred).getAttributes();
-				//this should be a call to sourcesOfAttributes, but
-				//there are strange compilation errors when sourcesOfAttributes
-				//get called from here
-				for (SDFAttribute attribute : attributes) {
-					sources.add(((SDFAttribute) attribute).getSourceName());
-				}
-			}
-		});
+		visitPredicates((IPredicate<?>) predicate,
+				new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
+					public void call(IPredicate<?> pred) {
+						List<SDFAttribute> attributes = ((IRelationalPredicate) pred)
+								.getAttributes();
+						// this should be a call to sourcesOfAttributes, but
+						// there are strange compilation errors when
+						// sourcesOfAttributes
+						// get called from here
+						for (SDFAttribute attribute : attributes) {
+							sources.add(((SDFAttribute) attribute)
+									.getSourceName());
+						}
+					}
+				});
 		return sources;
 	}
 
@@ -74,43 +82,46 @@ public class RelationalRestructHelper {
 	}
 
 	public static boolean subsetPredicate(
-			IPredicate<RelationalTuple<?>> predicate,
-			ILogicalOperator op) {
-		for(LogicalSubscription l:op.getSubscribedTo()){
-			if (!subsetPredicate(predicate, l.getTarget().getOutputSchema() )){
+			IPredicate<RelationalTuple<?>> predicate, ILogicalOperator op) {
+		for (LogicalSubscription l : op.getSubscribedTo()) {
+			if (!subsetPredicate(predicate, l.getTarget().getOutputSchema())) {
 				return false;
-			}	
+			}
 		}
 		return true;
 	}
-	
+
 	public static boolean subsetPredicate(
 			IPredicate<RelationalTuple<?>> predicate,
 			SDFAttributeList attributes) {
-		
-		final List<String> uris = new ArrayList<String>(attributes.getAttributeCount());
-		for(SDFAttribute curAttr : attributes) {
+
+		final List<String> uris = new ArrayList<String>(attributes
+				.getAttributeCount());
+		for (SDFAttribute curAttr : attributes) {
 			uris.add(curAttr.getURI());
 		}
-		final boolean[] retValue = new boolean[]{true};
-		RelationalRestructHelper.visitPredicates(predicate, new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
-			public void call(IPredicate<?> predicate) {
-				if (predicate instanceof IRelationalPredicate) {
-					IRelationalPredicate relPred = (IRelationalPredicate)predicate;
-					List<SDFAttribute> tmpAttrs = relPred.getAttributes();
-					List<String> tmpUris = new ArrayList<String>(tmpAttrs.size());
-					for(SDFAttribute curAttr : tmpAttrs) {
-						tmpUris.add(curAttr.getURI());
+		final boolean[] retValue = new boolean[] { true };
+		RelationalRestructHelper.visitPredicates(predicate,
+				new RelationalRestructHelper.IUnaryFunctor<IPredicate<?>>() {
+					public void call(IPredicate<?> predicate) {
+						if (predicate instanceof IRelationalPredicate) {
+							IRelationalPredicate relPred = (IRelationalPredicate) predicate;
+							List<SDFAttribute> tmpAttrs = relPred
+									.getAttributes();
+							List<String> tmpUris = new ArrayList<String>(
+									tmpAttrs.size());
+							for (SDFAttribute curAttr : tmpAttrs) {
+								tmpUris.add(curAttr.getURI());
+							}
+							if (!uris.containsAll(tmpUris)) {
+								retValue[0] = false;
+							}
+						}
 					}
-					if (!uris.containsAll(tmpUris)) {
-						retValue[0] = false;
-					}
-				}
-			}
-		});
+				});
 		return retValue[0];
 	}
-	
+
 	public static interface IUnaryFunctor<T> {
 		public void call(T parameter);
 	}
@@ -130,58 +141,110 @@ public class RelationalRestructHelper {
 		}
 	}
 
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, WindowAO son){
-		return RestructHelper.switchOperatorInternal(father,son);
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father,
+			WindowAO son) {
+		return RestructHelper.simpleOperatorSwitch(father, son);
 	}
-	
-	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, RenameAO son){
-		return RestructHelper.switchOperatorInternal(father, son);
+
+	public static Collection<ILogicalOperator> switchOperator(ProjectAO father,
+			RenameAO son) {
+		SDFAttributeList inputSchema = son.getInputSchema();
+		SDFAttributeList renameOutputSchema = son.getOutputSchema();
+		SDFAttributeList oldOutputSchema = father.getOutputSchema();
+		LogicalSubscription toDown = son.getSubscribedTo(0);
+		LogicalSubscription toUp = father.getSubscription();
+
+		son.unsubscribeTo(toDown);
+		father.unsubscribeSubscriptionTo(son, 0, 0);
+		father.unsubscribe(toUp);
+
+		father.subscribeTo(toDown.getTarget(), toDown.getInputSchema());
+
+		// change attribute names for projection
+		SDFAttributeList newOutputSchema = new SDFAttributeList();
+		for (SDFAttribute a : oldOutputSchema) {
+			int pos = son.getOutputSchema().indexOf(a);
+			newOutputSchema.add(inputSchema.get(pos));
+		}
+		father.setOutputSchema(newOutputSchema);
+
+		father.subscribe(son, 0, 0, father.getOutputSchema());
+
+		// remove attributes from rename operator that get projected away
+		SDFAttributeList newRenameSchema = new SDFAttributeList();
+		Iterator<SDFAttribute> inIt = inputSchema.iterator();
+		Iterator<SDFAttribute> outIt = renameOutputSchema.iterator();
+		while (inIt.hasNext()) {
+			SDFAttribute nextIn = inIt.next();
+			SDFAttribute nextOut = outIt.next();
+			if (newOutputSchema.contains(nextIn)) {
+				newRenameSchema.add(nextOut);
+			}
+		}
+		son.setOutputSchema(newRenameSchema);
+
+		son.subscribe(toUp.getTarget(), toUp.getSinkPort(), 0, son
+				.getOutputSchema());
+
+		Collection<ILogicalOperator> toUpdate = new ArrayList(2);
+		toUpdate.add(toDown.getTarget());
+		toUpdate.add(toUp.getTarget());
+		return toUpdate;
 	}
-	
-	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, WindowAO son){
-		return RestructHelper.switchOperatorInternal(father, son);
+
+	public static Collection<ILogicalOperator> switchOperator(ProjectAO father,
+			WindowAO son) {
+		return RestructHelper.simpleOperatorSwitch(father, son);
 	}
-	
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, ProjectAO son){
-		return RestructHelper.switchOperatorInternal(father, son);
+
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father,
+			ProjectAO son) {
+		return RestructHelper.simpleOperatorSwitch(father, son);
 	}
-	
-	private static Collection<ILogicalOperator> switchOperatorInternal(SelectAO father, BinaryLogicalOp son, Collection<ILogicalOperator> toInsert){
+
+	private static Collection<ILogicalOperator> switchOperatorInternal(
+			SelectAO father, BinaryLogicalOp son,
+			Collection<ILogicalOperator> toInsert) {
 		SelectAO selLeft = father;
 		SelectAO selRight = new SelectAO(father.getPredicate());
 		toInsert.add(selRight);
-		
+
 		Collection<ILogicalOperator> ret = removeOperator(father);
 		ret.add(selLeft);
-		
+
 		ret.addAll(RestructHelper.insertOperator(selLeft, son, 0, 0, 0));
-		ret.addAll(RestructHelper.insertOperator(selRight, son, 1, 0,  0));
-		return ret;		
+		ret.addAll(RestructHelper.insertOperator(selRight, son, 1, 0, 0));
+		return ret;
 	}
-	
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, UnionAO son, Collection<ILogicalOperator> toInsert){	
-		return switchOperatorInternal(father, son, toInsert);
-	}	
 
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, DifferenceAO son, Collection<ILogicalOperator> toInsert){	
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father,
+			UnionAO son, Collection<ILogicalOperator> toInsert) {
 		return switchOperatorInternal(father, son, toInsert);
-	}	
+	}
 
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, JoinAO son, Collection<ILogicalOperator> toInsert,
-			Collection<ILogicalOperator> toRemove){
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father,
+			DifferenceAO son, Collection<ILogicalOperator> toInsert) {
+		return switchOperatorInternal(father, son, toInsert);
+	}
+
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father,
+			JoinAO son, Collection<ILogicalOperator> toInsert,
+			Collection<ILogicalOperator> toRemove) {
 		final JoinAO join = son;
 		final SelectAO sel = father;
 		toRemove.add(sel);
 		Collection<ILogicalOperator> ret = removeOperator(sel);
-	
+
 		boolean hasSameInput = (join.getLeftInput() == join.getRightInput());
 		SelectAO newSel = createSelection(sel, join, 0, ret);
 		if (newSel != null) {
 			toInsert.add(newSel);
 		}
-		//if the join is a self join and has the same input operator on both sides,
-		//we don't want to create two separate selections as new inputs, but set
-		//one selection as input on both ports
+		// if the join is a self join and has the same input operator on both
+		// sides,
+		// we don't want to create two separate selections as new inputs, but
+		// set
+		// one selection as input on both ports
 		if (hasSameInput) {
 			ret.addAll(RestructHelper.insertOperator(newSel, join, 1, 0, 0));
 		} else {
@@ -189,11 +252,12 @@ public class RelationalRestructHelper {
 			if (newSel != null) {
 				toInsert.add(newSel);
 			}
-		}			
+		}
 		return ret;
 	}
-	
-	static private SelectAO createSelection(SelectAO select, JoinAO join, int port, Collection<ILogicalOperator> ret) {
+
+	static private SelectAO createSelection(SelectAO select, JoinAO join,
+			int port, Collection<ILogicalOperator> ret) {
 		if (!subsetPredicate(select.getPredicate(), join.getInputSchema(port))) {
 			return null;
 		}
@@ -203,34 +267,38 @@ public class RelationalRestructHelper {
 		return newSel;
 	}
 
-
-	
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, RenameAO son){
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father,
+			RenameAO son) {
 		final RenameAO ren = son;
-		final SelectAO select = father; 
-		Collection<ILogicalOperator> ret = RestructHelper.switchOperatorInternal(father, son);
-		visitPredicates(select.getPredicate(), new IUnaryFunctor<IPredicate<?>>() {
-			public void call(IPredicate<?> curPred){
-				List<SDFAttribute> attributes = ((IRelationalPredicate)curPred).getAttributes();
-				List<SDFAttribute> tmp = new ArrayList<SDFAttribute>(attributes);
-				attributes.clear();
-				for(SDFAttribute curAttr : tmp) {
-					int index = ren.getOutputSchema().indexOf(curAttr);
-					SDFAttribute newAttr = select.getInputSchema().get(index);
-					attributes.add(newAttr);
-				}
-			}
-		});
+		final SelectAO select = father;
+		Collection<ILogicalOperator> ret = RestructHelper.simpleOperatorSwitch(father, son);
+		visitPredicates(select.getPredicate(),
+				new IUnaryFunctor<IPredicate<?>>() {
+					public void call(IPredicate<?> curPred) {
+						List<SDFAttribute> attributes = ((IRelationalPredicate) curPred)
+								.getAttributes();
+						List<SDFAttribute> tmp = new ArrayList<SDFAttribute>(
+								attributes);
+						attributes.clear();
+						for (SDFAttribute curAttr : tmp) {
+							int index = ren.getOutputSchema().indexOf(curAttr);
+							SDFAttribute newAttr = select.getInputSchema().get(
+									index);
+							attributes.add(newAttr);
+						}
+					}
+				});
 		return ret;
-	}	
-	
-	public static Collection<ILogicalOperator> removeOperator(RenameAO op){
+	}
+
+	public static Collection<ILogicalOperator> removeOperator(RenameAO op) {
+		logger.info("removing rename:" + op);
 		return RestructHelper.removeOperator(op, true);
 	}
 
-	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op){
+	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op) {
+		logger.info("removing operator:" + op);
 		return RestructHelper.removeOperator(op, false);
 	}
-	
-	
+
 }
