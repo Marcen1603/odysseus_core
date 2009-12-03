@@ -89,7 +89,6 @@ public class SWTOutputEditor {
 			}else if (EditorChecker.getInstance().hasRenameEditor(content.getEditor())) {
 				button.setEnabled(false);
 				text.setEditable(true);
-				//TODO Hier muss noch eine entsprechende Funktionalität für den Rename-Operator implementiert werden
 			}
 		}
 
