@@ -11,20 +11,15 @@ import javax.xml.ws.Endpoint;
  */
  
 public class OdysseusWSPort_OdysseusWSSOAP_Server{
+    private Endpoint endPoint;
+    private static String address = "http://localhost:8080/OdysseusWSSOAP"; 
 
-    protected OdysseusWSPort_OdysseusWSSOAP_Server() throws Exception {
-        System.out.println("Starting Server");
+	public OdysseusWSPort_OdysseusWSSOAP_Server() throws Exception {
         Object implementor = new OdysseusWSPortImpl();
-        String address = "http://localhost:8080/OdysseusWSSOAP";
-        Endpoint.publish(address, implementor);
+        this.endPoint = Endpoint.publish(address, implementor);
     }
-    
-    public static void main(String args[]) throws Exception { 
-        new OdysseusWSPort_OdysseusWSSOAP_Server();
-        System.out.println("Server ready..."); 
-        
-        Thread.sleep(5 * 60 * 1000); 
-        System.out.println("Server exiting");
-        System.exit(0);
-    }
+	
+	public void stop (){
+		this.endPoint.stop();
+	}
 }
