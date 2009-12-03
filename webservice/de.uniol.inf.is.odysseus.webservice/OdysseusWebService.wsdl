@@ -28,7 +28,7 @@
   <wsdl:message name="GetSchemaResponse">
   	<wsdl:part name="schema" element="tns:Schema"></wsdl:part>
   </wsdl:message>
-  <wsdl:portType name="OdysseusWS">
+  <wsdl:portType name="OdysseusWSPort">
     <wsdl:operation name="CreateSource">
       <wsdl:input message="tns:CreateSourceRequest"/>
       <wsdl:output message="tns:CreateSourceResponse"/>
@@ -42,7 +42,7 @@
     	<wsdl:output message="tns:GetSchemaResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-  <wsdl:binding name="OdysseusWSSOAP" type="tns:OdysseusWS">
+  <wsdl:binding name="OdysseusWSSOAP" type="tns:OdysseusWSPort">
 
   	<soap:binding style="document"
   		transport="http://schemas.xmlsoap.org/soap/http" />
