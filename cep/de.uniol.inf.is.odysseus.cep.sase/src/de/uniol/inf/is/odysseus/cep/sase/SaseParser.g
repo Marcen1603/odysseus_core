@@ -16,6 +16,9 @@ tokens{
 	KATTRIBUTE;
 	PARAMLIST;
 	MEMBERACCESS;
+	COMPAREEXPRESSION;
+	IDEXPRESSION;
+	AGGREGATION;
 }
 
 	
@@ -23,12 +26,9 @@ tokens{
 	package de.uniol.inf.is.odysseus.cep.sase; 
 }
 
-query	:  (fromPart)? patternPart (wherePart)? (withinPart)?
+query	:  patternPart (wherePart)? (withinPart)?
 	;
-	
-fromPart: FROM NAME (COMMA NAME)* 
-	;
-	
+		
 withinPart
 	: WITHIN NUMBER TIMEUNIT -> ^(WITHIN NUMBER TIMEUNIT)
 	;
@@ -70,25 +70,32 @@ kAttributeName
 	:	NAME  BBRACKETLEFT BBRACKETRIGHT  -> ^(KATTRIBUTE NAME) 
 	;
 	
-kAttributeUsage
-	: 	NAME BBRACKETLEFT BBRACKETRIGHT|
-		NAME CURRENT|
-		NAME PREVIOUS
-	;
+
 sAttributeName
 	:	NAME -> ^(ATTRIBUTE NAME)
 	;
+kAttributeUsage
+	: 	NAME CURRENT -> ^(KATTRIBUTE NAME CURRENT)|
+		NAME FIRST -> ^(KATTRIBUTE NAME FIRST)|
+		NAME PREVIOUS -> ^(KATTRIBUTE NAME PREVIOUS)
+	;
 	
 whereExpressions
-	:	expression (AND expression)* -> ^(WHEREEXPRESSION AND expression*)
+	:	expression (AND expression)* -> ^(WHEREEXPRESSION AND? expression*)
 	;
 	
 expression
-	:	term COMPAREOP term -> ^(EXPRESSION term COMPAREOP term) | term COMPAREOP value -> ^(EXPRESSION term COMPAREOP value)
+	:	 BBRACKETLEFT NAME BBRACKETRIGHT -> ^(IDEXPRESSION NAME) | f1=term COMPAREOP f2=term -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
 	;
 
-term	:	sAttributeName POINT NAME -> ^(MEMBERACCESS sAttributeName NAME)|
-		kAttributeName POINT NAME-> ^(MEMBERACCESS kAttributeName NAME)
+term	:	aggregation |
+		kAttributeUsage POINT NAME-> ^(MEMBERACCESS kAttributeUsage NAME)|
+		sAttributeName POINT NAME -> ^(MEMBERACCESS sAttributeName NAME)|
+		value		
+	;
+	
+aggregation
+	:	AGGREGATEOP LBRACKET var=NAME ALLTOPREVIOUS POINT attr=NAME RBRACKET -> ^(AGGREGATION AGGREGATEOP $var $attr)
 	;
 	
 value 	:	 NUMBER | STRING_LITERAL;

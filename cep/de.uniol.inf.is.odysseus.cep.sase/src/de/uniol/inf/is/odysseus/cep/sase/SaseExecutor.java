@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.cep.sase;
 
-import java.util.List;
-import java.util.Map;
-
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.Token;
@@ -47,6 +44,11 @@ public class SaseExecutor {
 	public static void main(String[] args) {
 		SaseExecutor exec = new SaseExecutor();
 		String[] toParse = new String[]{
+				"PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "+
+				"WHERE skip_till_next_match(a,b,c){ " +
+				"[tag_id]" +
+				"}" +
+				"WITHIN 12 hours",
 		"PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "+
 		"WHERE skip_till_next_match(a,b,c){ " +
 		"a.tag_id = b.tag_id AND " +
@@ -57,7 +59,14 @@ public class SaseExecutor {
 		"a.type = \"contaminated\" AND " +
 		"b[1].from = a.site AND " +
 		"b[i].from = b[i-1].to} " +
-		"WITHIN 3 hours"};
+		"WITHIN 3 hours",
+		"PATTERN SEQ(Stock+ a[], Stock b) " +
+		"WHERE skip_till_next_match(a[],b){ " +
+		"[symbol] " +
+		"and a[1].volume > 1000 " +
+		"and a[i].price > avg(a[..i-1].price) " +
+		"and b.volume < 80% * a[a.LEN].volume} " +
+		"WITHN 1 hour"};
 
 		try {
 			for(String q: toParse){

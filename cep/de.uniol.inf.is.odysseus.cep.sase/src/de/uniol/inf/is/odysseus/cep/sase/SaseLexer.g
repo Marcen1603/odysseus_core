@@ -2,16 +2,15 @@ lexer grammar SaseLexer;
 
 @lexer::header { package de.uniol.inf.is.odysseus.cep.sase; } 
   
-FROM	: 'FROM' | 'from';
-HAVING	: 'HAVING' | 'having';
-PATTERN : 'PATTERN' | 'pattern';
-WHERE : 'WHERE' | 'where';
-WITHIN	: 'WITHIN' | 'within';
-SEQ : 'SEQ' | 'seq';
+HAVING	: 'HAVING' ;
+PATTERN : 'PATTERN';
+WHERE : 'WHERE' ;
+WITHIN	: 'WITHIN';
+SEQ : 'SEQ';
 LEFTCURLY : '{';
 RIGHTCURLY : '}';	
 AND :'AND'|'and';
-FIRST :'1';
+FIRST :'[1]';
 CURRENT :'[i]';	
 PREVIOUS :  '[i-1]' ;	
 ALLTOPREVIOUS :	 '[..i-1]' ;
@@ -21,6 +20,9 @@ TIMEUNIT: 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds';
 SKIP_METHOD
 	: 'skip_till_next_match'|'skip_till_any_match';
 
+AGGREGATEOP : 'avg' | 'min' | 'max' | 'sum' | 'count'| 'AVG'|'MIN'|'MAX'|'SUM'|'COUNT' 
+		;
+
 BBRACKETLEFT :  '[';
 BBRACKETRIGHT :  ']';
 
@@ -29,7 +31,6 @@ MINUS	: '-';
 POINT	: '.';
 MULT	: '*'; 	
 COMPAREOP : '='|'<='|'>='|'!='|'<'|'>';
-AGGREGATEOP : 'AVG'|'MIN'|'MAX'|'SUM'|'COUNT';
 
 NOT	: '~';
 	
