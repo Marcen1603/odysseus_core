@@ -3,14 +3,10 @@
   <wsdl:types>
     <xsd:schema targetNamespace="http://de.uni.ol.inf.is.odysseus/OdysseusWS/">
     	<xsd:element name="Schema" type="tns:Array"></xsd:element>
-        <xsd:complexType name="Array">
-        	<xsd:complexContent>
-				<xsd:restriction base="soapenc:Array">
-					<xsd:attribute ref="soapenc:arrayType"
-						wsdl:arrayType="string[]" />
-				</xsd:restriction>
-			</xsd:complexContent>
-        </xsd:complexType>
+
+    	<xsd:simpleType name="Array">
+    		<xsd:list itemType="xsd:string"></xsd:list>
+    	</xsd:simpleType>
     </xsd:schema>
   </wsdl:types>
   
