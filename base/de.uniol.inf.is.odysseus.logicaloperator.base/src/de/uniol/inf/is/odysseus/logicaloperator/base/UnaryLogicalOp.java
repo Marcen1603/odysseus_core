@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.Subscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -42,4 +43,43 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		subscribeTo(source, 0, 0, inputSchema);
 	}
 	
+	@Override
+	public void subscribeTo(ILogicalOperator source, int sinkPort,
+			int sourcePort) {
+		if (sinkPort != 0) {
+			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkPort);
+		}
+		super.subscribeTo(source, sinkPort, sourcePort);
+	}
+	
+	@Override
+	public void subscribeTo(ILogicalOperator source, int sinkPort,
+			int sourcePort, SDFAttributeList inputSchema) {
+		if (sinkPort != 0) {
+			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkPort);
+		}
+		super.subscribeTo(source, sinkPort, sourcePort, inputSchema);
+	}
+	
+	
+	@Override
+	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
+		if (sourcePort != 0) {
+			throw new IllegalArgumentException("illegal source port for subscription in unary operatore: " + sinkPort);
+		}
+		super.subscribe(sink, sinkPort, sourcePort);
+	}
+	
+	@Override
+	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort,
+			SDFAttributeList inputSchema) {
+		if (sourcePort != 0) {
+			throw new IllegalArgumentException("illegal source port for subscription in unary operatore: " + sinkPort);
+		}
+		super.subscribe(sink, sinkPort, sourcePort, inputSchema);
+	}
+	
+	public LogicalSubscription getSubscription() {
+		return getSubscriptions().iterator().next();
+	}
 }

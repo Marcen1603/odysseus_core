@@ -298,7 +298,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	final public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
+	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
 		if (this.getOutputSchema() == null){
 			throw new IllegalArgumentException("No schema set at source "+this);
 		}else{
@@ -307,7 +307,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 	
 	@Override
-	final public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema) {
+	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema) {
 		LogicalSubscription sub = new LogicalSubscription(
 				sink, sinkPort, sourcePort, inputSchema);
 				if (!this.subscriptions.contains(sub)){
