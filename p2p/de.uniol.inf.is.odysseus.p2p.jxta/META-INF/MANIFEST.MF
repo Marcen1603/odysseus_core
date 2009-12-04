@@ -39,7 +39,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  net.jxta.util.documentSerializable
 Export-Package: de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
- de.uniol.inf.is.odysseus.p2p.jxta.peer,
  de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
  de.uniol.inf.is.odysseus.p2p.jxta.utils
 Require-Bundle: Jxta_Metering_Plugin;bundle-version="1.0.0"
