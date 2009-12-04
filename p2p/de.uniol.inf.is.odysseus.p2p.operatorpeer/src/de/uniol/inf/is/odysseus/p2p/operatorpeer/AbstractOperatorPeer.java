@@ -4,23 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IQuerySpezificationListener;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
-import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 
-public abstract class AbstractOperatorPeer implements IPeer {
+public abstract class AbstractOperatorPeer extends AbstractPeer {
 
 	private IAdvancedExecutor executor;
 
@@ -46,24 +44,6 @@ public abstract class AbstractOperatorPeer implements IPeer {
 	
 	protected HashMap<String, String> sources = new HashMap<String, String>();
 	
-	private Map<String, IMessageHandler> messageHandler = new HashMap<String, IMessageHandler>();
-	
-	public  HashMap<String, Query> queries = new HashMap<String, Query>();
-	
-	public HashMap<String, Query> getQueries() {
-		return queries;
-	}
-	
-//	public void bindMessageHandler(IMessageHandler messageHandler) {
-//		this.messageHandler.put(messageHandler.getInterestedNamespace(), messageHandler);
-//	}
-//	
-//	public void unbindMessageHandler(IMessageHandler messageHandler) {
-//		if(this.messageHandler.containsKey(messageHandler.getInterestedNamespace())) {
-//			this.messageHandler.remove(messageHandler.getInterestedNamespace());
-//		}
-//	}
-	
 	private IDistributionClient distributionClient;
 
 
@@ -73,7 +53,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		this.distributionClient.setManagedQueries(getQueries());
 		this.distributionClient.initializeService();
 		try {
-			getMessageHandler().put(this.distributionClient.getMessageHandler().getInterestedNamespace(), this.distributionClient.getMessageHandler());
+			registerMessageHandler(this.distributionClient.getMessageHandler());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -130,17 +110,7 @@ public abstract class AbstractOperatorPeer implements IPeer {
 		initSocketServerListener(this);
 		initExecutor();
 		initDistributor();
-		initPartitioner();
-		initMonitoring();
 		initQuerySpezificationFinder();
-	}
-
-	private void initMonitoring() {
-		
-	}
-
-	private void initPartitioner() {
-		
 	}
 
 	private void initDistributor() {
@@ -167,7 +137,6 @@ public abstract class AbstractOperatorPeer implements IPeer {
 			this.executor = null;
 		}
 	}
-	
 	
 	
 	protected abstract void initAliveHandler();
@@ -255,17 +224,5 @@ public abstract class AbstractOperatorPeer implements IPeer {
 
 	public void stopPeer() {
 		stopNetwork();
-	}
-
-
-
-	public void setMessageHandler(Map<String, IMessageHandler> messageHandler) {
-		this.messageHandler = messageHandler;
-	}
-
-
-
-	public Map<String, IMessageHandler> getMessageHandler() {
-		return messageHandler;
 	}
 }
