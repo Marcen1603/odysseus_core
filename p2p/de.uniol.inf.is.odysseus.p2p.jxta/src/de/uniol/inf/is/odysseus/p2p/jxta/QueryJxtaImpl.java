@@ -8,8 +8,10 @@ import java.util.Map;
 
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class QueryJxtaImpl extends Query implements Serializable {
 	
@@ -38,23 +40,23 @@ public class QueryJxtaImpl extends Query implements Serializable {
 		this.responseSocketThinPeer = responseSocketThinPeer;
 	}
 
-	@Override
 	public void setSubplans(ArrayList<AbstractLogicalOperator> list) {
-		int i=0;
-		for (AbstractLogicalOperator abstractLogicalOperator : list) {
-			i++;
-			this.subPlans.put(""+i,new SubplanJxtaImpl(""+i,abstractLogicalOperator));
+		int planCounter = 1;
+		for(ILogicalOperator op : list) {
+			addSubPlan(""+planCounter, new Subplan(""+planCounter, op));
+			planCounter++;
 		}
 		
 	}
-	public void addBidding(PipeAdvertisement socket, String peerId, String subPlanId){
+	public void addBidding(PipeAdvertisement socket, String peerId, String subPlanId, String bid){
 		
 		synchronized(getSubPlans().get(subPlanId).getBiddings()){
-			BidJxtaImpl bid = new BidJxtaImpl();
-			bid.setResponseSocket(socket);
-			bid.setDate(new Date());
-			bid.setPeerId(peerId);
-			getSubPlans().get(subPlanId).getBiddings().add(bid);
+			BidJxtaImpl bidElem = new BidJxtaImpl();
+			bidElem.setResponseSocket(socket);
+			bidElem.setDate(new Date());
+			bidElem.setPeerId(peerId);
+			bidElem.setBid(bid);
+			getSubPlans().get(subPlanId).getBiddings().add(bidElem);
 		}
 	}
 	
