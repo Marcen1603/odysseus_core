@@ -3,14 +3,15 @@ package de.uniol.inf.is.odysseus.p2p.distribution.provider;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
 public abstract class AbstractDistributionProvider implements IDistributionProvider {
 
-	protected HashMap<String, Query> managedQueries = null;
+	protected HashMap<Query, IExecutionListener> managedQueries = null;
 	
 	public AbstractDistributionProvider() {
-		this.managedQueries = new HashMap<String, Query>();
+		this.managedQueries = new HashMap<Query, IExecutionListener>();
 	}
 	
 	@Override
@@ -20,8 +21,13 @@ public abstract class AbstractDistributionProvider implements IDistributionProvi
 	public abstract String getDistributionStrategy();
 
 	@Override
-	public HashMap<String, Query> getManagedQueries() {
+	public HashMap<Query, IExecutionListener> getManagedQueries() {
 		return this.managedQueries;
+	}
+
+	@Override
+	public void setManagedQueries(HashMap<Query, IExecutionListener> queries) {
+		this.managedQueries = queries;
 	}
 
 	@Override
@@ -33,8 +39,5 @@ public abstract class AbstractDistributionProvider implements IDistributionProvi
 
 	@Override
 	public abstract void startService();
-
-	@Override
-	public abstract void setManagedQueries(HashMap<String, Query> queries);
 
 }
