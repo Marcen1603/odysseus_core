@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 
@@ -16,7 +17,7 @@ public class MatchingTrace<R> {
 	/**
 	 * Liste mit allen StateBuffern einer Instanz
 	 */
-	private LinkedList<StateBuffer<R>> stateBuffer;
+	private List<StateBuffer<R>> stateBuffer;
 	/**
 	 * Referenz auf das zuletzt konsumierte Event
 	 */
@@ -28,7 +29,7 @@ public class MatchingTrace<R> {
 	 * @param states
 	 *            Liste mit allen Zuständen des Automaten
 	 */
-	public MatchingTrace(LinkedList<State> states) {
+	public MatchingTrace(List<State> states) {
 		this.lastEvent = null;
 		this.stateBuffer = new LinkedList<StateBuffer<R>>();
 		for (int i = 0; i < states.size(); i++) {
@@ -71,7 +72,7 @@ public class MatchingTrace<R> {
 	 * 
 	 * @return Liste mit allen StateBuffern.
 	 */
-	public LinkedList<StateBuffer<R>> getStateBuffer() {
+	public List<StateBuffer<R>> getStateBuffer() {
 		return stateBuffer;
 	}
 

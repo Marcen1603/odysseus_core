@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedList;
 
 import javax.xml.bind.annotation.*;
@@ -10,7 +12,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
  * Objekte dieser Klasse kapseln den für das CEP erforderlichen Automaten sowie
  * sämtliche Schemata für Symboltabelle und Event-Aggregation
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 @XmlRootElement
@@ -20,7 +22,7 @@ public class StateMachine {
 	 * Liste aller Zustände des Automaten. Bei der Verarbeitung durch den EPA
 	 * darf diese Liste nicht leer sein.
 	 */
-	private LinkedList<State> states;
+	private List<State> states;
 	/**
 	 * Referenz auf den Startzustand des Automaten. Das referenzierte Objekt
 	 * muss bei der Verarbeitung durch den EPA in states enthalten sein.
@@ -44,6 +46,17 @@ public class StateMachine {
 	 */
 	private EConsumptionMode consumptionMode;
 
+	private EEventSelectionStrategy eventSelectionStrategy; 
+	
+	public EEventSelectionStrategy getEventSelectionStrategy() {
+		return eventSelectionStrategy;
+	}
+
+	public void setEventSelectionStrategy(
+			EEventSelectionStrategy eventSelectionStrategy) {
+		this.eventSelectionStrategy = eventSelectionStrategy;
+	}
+
 	/**
 	 * Erzeugt einen neuen Automaten aus seinen Bestandteilen. Die
 	 * Matching-Startegie ist standardmäßig auf allMatches gesetzt.
@@ -57,7 +70,7 @@ public class StateMachine {
 	 * @param outputScheme
 	 *            AusgabeSchema
 	 */
-	public StateMachine(LinkedList<State> states, State initialState,
+	public StateMachine(List<State> states, State initialState,
 			SymbolTableScheme<Object> symTabScheme, OutputScheme outputScheme) {
 		this.states = states;
 		this.initialState = initialState;
@@ -82,7 +95,7 @@ public class StateMachine {
 	 */
 	@XmlElementWrapper(name = "states") 
 	@XmlElement(name = "state")
-	public LinkedList<State> getStates() {
+	public List<State> getStates() {
 		return states;
 	}
 
@@ -92,7 +105,7 @@ public class StateMachine {
 	 * @param states
 	 *            Eine nicht leere Liste von Zuständen. Nicht null.
 	 */
-	public void setStates(LinkedList<State> states) {
+	public void setStates(List<State> states) {
 		this.states = states;
 	}
 
@@ -104,6 +117,13 @@ public class StateMachine {
 	@XmlIDREF
 	public State getInitialState() {
 		return initialState;
+	}
+	
+	public State getState(String id){
+		for (State s:states){
+			if (s.getId().equals(id)) return s;
+		}
+		return null;
 	}
 
 	/**
@@ -173,17 +193,87 @@ public class StateMachine {
 		this.consumptionMode = strategy;
 	}
 	
-	public String toString(String indent) {
-		String str = "StateMachine: " + this.hashCode();
-		indent += "  ";
-		for (State state : this.states) {
-			str += state.toString(indent);
+	public String toString() {
+		String str = "StateMachine: " + this.hashCode()+ " ";
+		str += states;
+		str += " Initial State: ";
+		if (initialState != null){
+			str += this.initialState.getId() + "(" + this.initialState.hashCode() + ")";
 		}
-		str += indent + "Initial State: ";
-		str += this.initialState.getId() + "(" + this.initialState.hashCode() + ")";
-		str += this.symTabScheme.toString(indent);
-		str += this.outputScheme.toString(indent);
-		str += indent + "Matching Strategy: " + this.consumptionMode;
+		str += this.symTabScheme;
+		
+		str += this.outputScheme;
+		str += "Matching Strategy: " + this.consumptionMode;
 		return str;
 	}
+	
+	public String prettyPrint(){
+		String str = "StateMachine:(" + this.hashCode()+ ")\n";
+		for (State s:states){
+			str += s.prettyPrint();
+		}
+		str+="\n";
+		str += " Initial State: ";
+		if (initialState != null){
+			str += this.initialState.getId() + "(" + this.initialState.hashCode() + ")";
+		}
+		str += this.symTabScheme+"\n";
+		
+		str += this.outputScheme+"\n";
+		str += "Matching Strategy: " + this.consumptionMode+"\n";
+		return str;	
+	}
+
+	public State getLastState() {
+		return states.get(states.size());
+	}
+
+	public List<State> getFinalStates() {
+		List<State> fStates = new ArrayList<State>();
+		for (State s:states){
+			if (s.isAccepting()){
+				fStates.add(s);
+			}
+		}
+		return fStates;
+	}
+	
+	/**
+	 * Returns list of other (!) States that have outgoing transitions to state
+	 * @param state
+	 * @return
+	 */
+	public List<State> getSourceStates(State state){
+		List<State> sStates = new ArrayList<State>();
+		for (State so:states){
+			if (so.hasTarget(state) && so.getId() != state.getId()){
+				sStates.add(so);
+			}
+		}
+		return sStates;
+	}
+
+	public List<State> getAllPathesToStart(State finalState) {
+		List<State> states = new ArrayList<State>();
+		states.add(finalState);
+		getAllStatesBefore(finalState, states);		
+		return states;
+	}
+
+	private void getAllStatesBefore(State state, List<State> states) {
+		if (initialState.getId() != state.getId()){
+			List<State> s = getSourceStates(state);
+			// Endlosschleife vermeiden (alle Elemente aus s entfernen, die bereits verarbeitet wurden
+			s.removeAll(states);
+			states.addAll(s);
+			for (State st: s){
+				getAllStatesBefore(st, states);
+			
+			}
+		}		
+	}
+	
+	
+	
+	
 }

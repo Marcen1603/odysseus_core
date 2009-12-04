@@ -5,8 +5,12 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.metamodel
 Bundle-Version: 1.0.0
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.uniol.inf.is.odysseus.cep.metamodel,
+Export-Package: de.uniol.inf.is.odysseus.cep,
+ de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.cep.metamodel.exception,
  de.uniol.inf.is.odysseus.cep.metamodel.symboltable,
  de.uniol.inf.is.odysseus.cep.metamodel.validator,
  de.uniol.inf.is.odysseus.cep.metamodel.xml
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema

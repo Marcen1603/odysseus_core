@@ -31,8 +31,8 @@ public class StateMachineInstanceTest {
 		assertTrue(instance.getMatchingTrace() != null);
 		assertTrue(instance.getSymTab() != null);
 
-		instance.setCurrentState(stm.getStates().getLast());
-		assertEquals(stm.getStates().getLast(), instance.getCurrentState());
+		instance.setCurrentState(stm.getLastState());
+		assertEquals(stm.getLastState(),instance.getCurrentState());
 
 		StateMachineInstance cloned = instance.clone();
 

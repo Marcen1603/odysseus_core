@@ -14,11 +14,12 @@ FIRST :'[1]';
 CURRENT :'[i]';	
 PREVIOUS :  '[i-1]' ;	
 ALLTOPREVIOUS :	 '[..i-1]' ;
+LAST 	:	 '['NAME'.LEN]';
 
-TIMEUNIT: 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds';
+TIMEUNIT: 'hour'| 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds';
 
 SKIP_METHOD
-	: 'skip_till_next_match'|'skip_till_any_match';
+	: 'skip_till_next_match'|'skip_till_any_match'|'strict_contiguity'|'partition_contiguity';
 
 AGGREGATEOP : 'avg' | 'min' | 'max' | 'sum' | 'count'| 'AVG'|'MIN'|'MAX'|'SUM'|'COUNT' 
 		;
@@ -29,8 +30,10 @@ BBRACKETRIGHT :  ']';
 PLUS	: '+';
 MINUS	: '-';
 POINT	: '.';
-MULT	: '*'; 	
-COMPAREOP : '='|'<='|'>='|'!='|'<'|'>';
+MULT	: '*'; 
+COMPAREOP : '<='|'>='|'!='|'<'|'>';
+SINGLEEQUALS : '=';
+EQUALS 	: '==';
 
 NOT	: '~';
 	

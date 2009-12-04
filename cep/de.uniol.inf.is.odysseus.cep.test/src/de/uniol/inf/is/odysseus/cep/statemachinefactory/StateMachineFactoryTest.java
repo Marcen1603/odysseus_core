@@ -22,7 +22,7 @@ public class StateMachineFactoryTest {
 		SMF1 creator = new SMF1();
 		StateMachine stm = creator.create(null);
 		
-		System.out.println(stm.toString("\n"));
+		System.out.println(stm.toString());
 	}
 
 }

@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2009-12-03 10:25:47
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2009-12-04 15:11:56
  
 	package de.uniol.inf.is.odysseus.cep.sase; 
 
@@ -13,60 +13,64 @@ import org.antlr.runtime.tree.*;
 
 public class SaseParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "HAVING", "PATTERN", "WHERE", "WITHIN", "SEQ", "LEFTCURLY", "RIGHTCURLY", "AND", "FIRST", "CURRENT", "PREVIOUS", "ALLTOPREVIOUS", "TIMEUNIT", "SKIP_METHOD", "AGGREGATEOP", "BBRACKETLEFT", "BBRACKETRIGHT", "PLUS", "MINUS", "POINT", "MULT", "COMPAREOP", "NOT", "COMMA", "LBRACKET", "RBRACKET", "INTEGER", "FLOAT", "NUMBER", "DIGIT", "LETTER", "NAME", "NONCONTROL_CHAR", "STRING_LITERAL", "SPACE", "LOWER", "UPPER", "NEWLINE", "WHITESPACE", "STATE", "KTYPE", "TYPE", "WHERESTRAT", "WHEREEXPRESSION", "EXPRESSION", "ATTRIBUTE", "KATTRIBUTE", "PARAMLIST", "MEMBERACCESS", "COMPAREEXPRESSION", "IDEXPRESSION", "AGGREGATION"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "HAVING", "PATTERN", "WHERE", "WITHIN", "SEQ", "LEFTCURLY", "RIGHTCURLY", "AND", "FIRST", "CURRENT", "PREVIOUS", "ALLTOPREVIOUS", "NAME", "LAST", "TIMEUNIT", "SKIP_METHOD", "AGGREGATEOP", "BBRACKETLEFT", "BBRACKETRIGHT", "PLUS", "MINUS", "POINT", "MULT", "COMPAREOP", "SINGLEEQUALS", "EQUALS", "NOT", "COMMA", "LBRACKET", "RBRACKET", "INTEGER", "FLOAT", "NUMBER", "DIGIT", "LETTER", "NONCONTROL_CHAR", "STRING_LITERAL", "SPACE", "LOWER", "UPPER", "NEWLINE", "WHITESPACE", "STATE", "KTYPE", "TYPE", "WHERESTRAT", "WHEREEXPRESSION", "EXPRESSION", "ATTRIBUTE", "KATTRIBUTE", "PARAMLIST", "KMEMBER", "MEMBER", "COMPAREEXPRESSION", "IDEXPRESSION", "AGGREGATION"
     };
     public static final int WHERE=6;
-    public static final int POINT=23;
-    public static final int LETTER=34;
-    public static final int ATTRIBUTE=49;
-    public static final int FLOAT=31;
-    public static final int NOT=26;
+    public static final int MEMBER=56;
+    public static final int POINT=25;
+    public static final int LETTER=38;
+    public static final int ATTRIBUTE=52;
+    public static final int FLOAT=35;
+    public static final int EQUALS=29;
+    public static final int NOT=30;
     public static final int AND=11;
-    public static final int SPACE=38;
+    public static final int SPACE=41;
     public static final int EOF=-1;
-    public static final int TYPE=45;
-    public static final int LBRACKET=28;
+    public static final int TYPE=48;
+    public static final int LBRACKET=32;
     public static final int PATTERN=5;
-    public static final int COMPAREEXPRESSION=53;
-    public static final int NAME=35;
-    public static final int STRING_LITERAL=37;
+    public static final int SINGLEEQUALS=28;
+    public static final int COMPAREEXPRESSION=57;
+    public static final int NAME=16;
+    public static final int STRING_LITERAL=40;
     public static final int LEFTCURLY=9;
-    public static final int COMMA=27;
+    public static final int COMMA=31;
     public static final int SEQ=8;
     public static final int PREVIOUS=14;
-    public static final int KATTRIBUTE=50;
+    public static final int KATTRIBUTE=53;
     public static final int RIGHTCURLY=10;
-    public static final int PLUS=21;
-    public static final int DIGIT=33;
-    public static final int RBRACKET=29;
-    public static final int EXPRESSION=48;
-    public static final int BBRACKETRIGHT=20;
-    public static final int INTEGER=30;
-    public static final int STATE=43;
-    public static final int IDEXPRESSION=54;
-    public static final int TIMEUNIT=16;
+    public static final int PLUS=23;
+    public static final int DIGIT=37;
+    public static final int LAST=17;
+    public static final int RBRACKET=33;
+    public static final int EXPRESSION=51;
+    public static final int BBRACKETRIGHT=22;
+    public static final int INTEGER=34;
+    public static final int STATE=46;
+    public static final int IDEXPRESSION=58;
+    public static final int KMEMBER=55;
+    public static final int TIMEUNIT=18;
     public static final int ALLTOPREVIOUS=15;
-    public static final int SKIP_METHOD=17;
-    public static final int NUMBER=32;
-    public static final int PARAMLIST=51;
-    public static final int WHITESPACE=42;
+    public static final int SKIP_METHOD=19;
+    public static final int NUMBER=36;
+    public static final int PARAMLIST=54;
+    public static final int WHITESPACE=45;
     public static final int HAVING=4;
-    public static final int MINUS=22;
-    public static final int MULT=24;
-    public static final int AGGREGATEOP=18;
+    public static final int MINUS=24;
+    public static final int MULT=26;
+    public static final int AGGREGATEOP=20;
     public static final int CURRENT=13;
-    public static final int WHEREEXPRESSION=47;
-    public static final int NEWLINE=41;
-    public static final int NONCONTROL_CHAR=36;
-    public static final int AGGREGATION=55;
-    public static final int BBRACKETLEFT=19;
-    public static final int WHERESTRAT=46;
+    public static final int WHEREEXPRESSION=50;
+    public static final int NEWLINE=44;
+    public static final int NONCONTROL_CHAR=39;
+    public static final int AGGREGATION=59;
+    public static final int BBRACKETLEFT=21;
+    public static final int WHERESTRAT=49;
     public static final int WITHIN=7;
-    public static final int MEMBERACCESS=52;
-    public static final int KTYPE=44;
-    public static final int LOWER=39;
-    public static final int COMPAREOP=25;
-    public static final int UPPER=40;
+    public static final int KTYPE=47;
+    public static final int LOWER=42;
+    public static final int COMPAREOP=27;
+    public static final int UPPER=43;
     public static final int FIRST=12;
 
     // delegates
@@ -100,7 +104,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "query"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:29:1: query : patternPart ( wherePart )? ( withinPart )? ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:30:1: query : patternPart ( wherePart )? ( withinPart )? ;
     public final SaseParser.query_return query() throws RecognitionException {
         SaseParser.query_return retval = new SaseParser.query_return();
         retval.start = input.LT(1);
@@ -116,18 +120,18 @@ public class SaseParser extends Parser {
 
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:29:7: ( patternPart ( wherePart )? ( withinPart )? )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:29:10: patternPart ( wherePart )? ( withinPart )?
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:30:7: ( patternPart ( wherePart )? ( withinPart )? )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:30:10: patternPart ( wherePart )? ( withinPart )?
             {
             root_0 = (Object)adaptor.nil();
 
-            pushFollow(FOLLOW_patternPart_in_query100);
+            pushFollow(FOLLOW_patternPart_in_query104);
             patternPart1=patternPart();
 
             state._fsp--;
 
             adaptor.addChild(root_0, patternPart1.getTree());
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:29:22: ( wherePart )?
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:30:22: ( wherePart )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -136,9 +140,9 @@ public class SaseParser extends Parser {
             }
             switch (alt1) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:29:23: wherePart
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:30:23: wherePart
                     {
-                    pushFollow(FOLLOW_wherePart_in_query103);
+                    pushFollow(FOLLOW_wherePart_in_query107);
                     wherePart2=wherePart();
 
                     state._fsp--;
@@ -150,7 +154,7 @@ public class SaseParser extends Parser {
 
             }
 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:29:35: ( withinPart )?
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:30:35: ( withinPart )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -159,9 +163,9 @@ public class SaseParser extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:29:36: withinPart
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:30:36: withinPart
                     {
-                    pushFollow(FOLLOW_withinPart_in_query108);
+                    pushFollow(FOLLOW_withinPart_in_query112);
                     withinPart3=withinPart();
 
                     state._fsp--;
@@ -200,7 +204,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "withinPart"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:32:1: withinPart : WITHIN NUMBER TIMEUNIT -> ^( WITHIN NUMBER TIMEUNIT ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:33:1: withinPart : WITHIN NUMBER TIMEUNIT -> ^( WITHIN NUMBER TIMEUNIT ) ;
     public final SaseParser.withinPart_return withinPart() throws RecognitionException {
         SaseParser.withinPart_return retval = new SaseParser.withinPart_return();
         retval.start = input.LT(1);
@@ -219,22 +223,22 @@ public class SaseParser extends Parser {
         RewriteRuleTokenStream stream_NUMBER=new RewriteRuleTokenStream(adaptor,"token NUMBER");
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:33:2: ( WITHIN NUMBER TIMEUNIT -> ^( WITHIN NUMBER TIMEUNIT ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:33:4: WITHIN NUMBER TIMEUNIT
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:34:2: ( WITHIN NUMBER TIMEUNIT -> ^( WITHIN NUMBER TIMEUNIT ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:34:4: WITHIN NUMBER TIMEUNIT
             {
-            WITHIN4=(Token)match(input,WITHIN,FOLLOW_WITHIN_in_withinPart123);  
+            WITHIN4=(Token)match(input,WITHIN,FOLLOW_WITHIN_in_withinPart127);  
             stream_WITHIN.add(WITHIN4);
 
-            NUMBER5=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_withinPart125);  
+            NUMBER5=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_withinPart129);  
             stream_NUMBER.add(NUMBER5);
 
-            TIMEUNIT6=(Token)match(input,TIMEUNIT,FOLLOW_TIMEUNIT_in_withinPart127);  
+            TIMEUNIT6=(Token)match(input,TIMEUNIT,FOLLOW_TIMEUNIT_in_withinPart131);  
             stream_TIMEUNIT.add(TIMEUNIT6);
 
 
 
             // AST REWRITE
-            // elements: WITHIN, NUMBER, TIMEUNIT
+            // elements: TIMEUNIT, NUMBER, WITHIN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -244,9 +248,9 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 33:27: -> ^( WITHIN NUMBER TIMEUNIT )
+            // 34:27: -> ^( WITHIN NUMBER TIMEUNIT )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:33:30: ^( WITHIN NUMBER TIMEUNIT )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:34:30: ^( WITHIN NUMBER TIMEUNIT )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_WITHIN.nextNode(), root_1);
@@ -286,7 +290,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "wherePart"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:36:1: wherePart : ( WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE wherePart1 whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:37:1: wherePart : ( WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE wherePart1 whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) );
     public final SaseParser.wherePart_return wherePart() throws RecognitionException {
         SaseParser.wherePart_return retval = new SaseParser.wherePart_return();
         retval.start = input.LT(1);
@@ -314,14 +318,14 @@ public class SaseParser extends Parser {
         RewriteRuleSubtreeStream stream_wherePart1=new RewriteRuleSubtreeStream(adaptor,"rule wherePart1");
         RewriteRuleSubtreeStream stream_whereExpressions=new RewriteRuleSubtreeStream(adaptor,"rule whereExpressions");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:37:2: ( WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE wherePart1 whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:38:2: ( WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE wherePart1 whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
             if ( (LA3_0==WHERE) ) {
                 int LA3_1 = input.LA(2);
 
-                if ( ((LA3_1>=AGGREGATEOP && LA3_1<=BBRACKETLEFT)||LA3_1==NUMBER||LA3_1==NAME||LA3_1==STRING_LITERAL) ) {
+                if ( (LA3_1==NAME||(LA3_1>=AGGREGATEOP && LA3_1<=BBRACKETLEFT)||LA3_1==NUMBER||LA3_1==STRING_LITERAL) ) {
                     alt3=2;
                 }
                 else if ( (LA3_1==SKIP_METHOD) ) {
@@ -342,33 +346,33 @@ public class SaseParser extends Parser {
             }
             switch (alt3) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:37:4: WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:38:4: WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY
                     {
-                    WHERE7=(Token)match(input,WHERE,FOLLOW_WHERE_in_wherePart149);  
+                    WHERE7=(Token)match(input,WHERE,FOLLOW_WHERE_in_wherePart153);  
                     stream_WHERE.add(WHERE7);
 
-                    pushFollow(FOLLOW_wherePart1_in_wherePart151);
+                    pushFollow(FOLLOW_wherePart1_in_wherePart155);
                     wherePart18=wherePart1();
 
                     state._fsp--;
 
                     stream_wherePart1.add(wherePart18.getTree());
-                    LEFTCURLY9=(Token)match(input,LEFTCURLY,FOLLOW_LEFTCURLY_in_wherePart153);  
+                    LEFTCURLY9=(Token)match(input,LEFTCURLY,FOLLOW_LEFTCURLY_in_wherePart157);  
                     stream_LEFTCURLY.add(LEFTCURLY9);
 
-                    pushFollow(FOLLOW_whereExpressions_in_wherePart155);
+                    pushFollow(FOLLOW_whereExpressions_in_wherePart159);
                     whereExpressions10=whereExpressions();
 
                     state._fsp--;
 
                     stream_whereExpressions.add(whereExpressions10.getTree());
-                    RIGHTCURLY11=(Token)match(input,RIGHTCURLY,FOLLOW_RIGHTCURLY_in_wherePart157);  
+                    RIGHTCURLY11=(Token)match(input,RIGHTCURLY,FOLLOW_RIGHTCURLY_in_wherePart161);  
                     stream_RIGHTCURLY.add(RIGHTCURLY11);
 
 
 
                     // AST REWRITE
-                    // elements: whereExpressions, WHERE, wherePart1
+                    // elements: whereExpressions, wherePart1, WHERE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -378,9 +382,9 @@ public class SaseParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 37:59: -> ^( WHERE wherePart1 whereExpressions )
+                    // 38:59: -> ^( WHERE wherePart1 whereExpressions )
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:37:62: ^( WHERE wherePart1 whereExpressions )
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:38:62: ^( WHERE wherePart1 whereExpressions )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot(stream_WHERE.nextNode(), root_1);
@@ -397,12 +401,12 @@ public class SaseParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:38:4: WHERE whereExpressions
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:39:4: WHERE whereExpressions
                     {
-                    WHERE12=(Token)match(input,WHERE,FOLLOW_WHERE_in_wherePart174);  
+                    WHERE12=(Token)match(input,WHERE,FOLLOW_WHERE_in_wherePart178);  
                     stream_WHERE.add(WHERE12);
 
-                    pushFollow(FOLLOW_whereExpressions_in_wherePart176);
+                    pushFollow(FOLLOW_whereExpressions_in_wherePart180);
                     whereExpressions13=whereExpressions();
 
                     state._fsp--;
@@ -421,9 +425,9 @@ public class SaseParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 38:27: -> ^( WHERE whereExpressions )
+                    // 39:27: -> ^( WHERE whereExpressions )
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:38:30: ^( WHERE whereExpressions )
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:39:30: ^( WHERE whereExpressions )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot(stream_WHERE.nextNode(), root_1);
@@ -464,7 +468,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "patternPart"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:41:1: patternPart : PATTERN patternDecl -> ^( PATTERN patternDecl ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:42:1: patternPart : PATTERN patternDecl -> ^( PATTERN patternDecl ) ;
     public final SaseParser.patternPart_return patternPart() throws RecognitionException {
         SaseParser.patternPart_return retval = new SaseParser.patternPart_return();
         retval.start = input.LT(1);
@@ -479,13 +483,13 @@ public class SaseParser extends Parser {
         RewriteRuleTokenStream stream_PATTERN=new RewriteRuleTokenStream(adaptor,"token PATTERN");
         RewriteRuleSubtreeStream stream_patternDecl=new RewriteRuleSubtreeStream(adaptor,"rule patternDecl");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:42:2: ( PATTERN patternDecl -> ^( PATTERN patternDecl ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:42:4: PATTERN patternDecl
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:43:2: ( PATTERN patternDecl -> ^( PATTERN patternDecl ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:43:4: PATTERN patternDecl
             {
-            PATTERN14=(Token)match(input,PATTERN,FOLLOW_PATTERN_in_patternPart197);  
+            PATTERN14=(Token)match(input,PATTERN,FOLLOW_PATTERN_in_patternPart201);  
             stream_PATTERN.add(PATTERN14);
 
-            pushFollow(FOLLOW_patternDecl_in_patternPart199);
+            pushFollow(FOLLOW_patternDecl_in_patternPart203);
             patternDecl15=patternDecl();
 
             state._fsp--;
@@ -494,7 +498,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: patternDecl, PATTERN
+            // elements: PATTERN, patternDecl
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -504,9 +508,9 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 42:24: -> ^( PATTERN patternDecl )
+            // 43:24: -> ^( PATTERN patternDecl )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:42:27: ^( PATTERN patternDecl )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:43:27: ^( PATTERN patternDecl )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_PATTERN.nextNode(), root_1);
@@ -545,7 +549,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "patternDecl"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:46:1: patternDecl : SEQ LBRACKET pItem ( COMMA pItem )* RBRACKET -> ^( SEQ ( pItem )* ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:47:1: patternDecl : SEQ LBRACKET pItem ( COMMA pItem )* RBRACKET -> ^( SEQ ( pItem )* ) ;
     public final SaseParser.patternDecl_return patternDecl() throws RecognitionException {
         SaseParser.patternDecl_return retval = new SaseParser.patternDecl_return();
         retval.start = input.LT(1);
@@ -571,22 +575,22 @@ public class SaseParser extends Parser {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_pItem=new RewriteRuleSubtreeStream(adaptor,"rule pItem");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:47:2: ( SEQ LBRACKET pItem ( COMMA pItem )* RBRACKET -> ^( SEQ ( pItem )* ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:47:4: SEQ LBRACKET pItem ( COMMA pItem )* RBRACKET
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:48:2: ( SEQ LBRACKET pItem ( COMMA pItem )* RBRACKET -> ^( SEQ ( pItem )* ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:48:4: SEQ LBRACKET pItem ( COMMA pItem )* RBRACKET
             {
-            SEQ16=(Token)match(input,SEQ,FOLLOW_SEQ_in_patternDecl221);  
+            SEQ16=(Token)match(input,SEQ,FOLLOW_SEQ_in_patternDecl225);  
             stream_SEQ.add(SEQ16);
 
-            LBRACKET17=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_patternDecl223);  
+            LBRACKET17=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_patternDecl227);  
             stream_LBRACKET.add(LBRACKET17);
 
-            pushFollow(FOLLOW_pItem_in_patternDecl225);
+            pushFollow(FOLLOW_pItem_in_patternDecl229);
             pItem18=pItem();
 
             state._fsp--;
 
             stream_pItem.add(pItem18.getTree());
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:47:23: ( COMMA pItem )*
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:48:23: ( COMMA pItem )*
             loop4:
             do {
                 int alt4=2;
@@ -599,12 +603,12 @@ public class SaseParser extends Parser {
 
                 switch (alt4) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:47:24: COMMA pItem
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:48:24: COMMA pItem
             	    {
-            	    COMMA19=(Token)match(input,COMMA,FOLLOW_COMMA_in_patternDecl228);  
+            	    COMMA19=(Token)match(input,COMMA,FOLLOW_COMMA_in_patternDecl232);  
             	    stream_COMMA.add(COMMA19);
 
-            	    pushFollow(FOLLOW_pItem_in_patternDecl230);
+            	    pushFollow(FOLLOW_pItem_in_patternDecl234);
             	    pItem20=pItem();
 
             	    state._fsp--;
@@ -619,13 +623,13 @@ public class SaseParser extends Parser {
                 }
             } while (true);
 
-            RBRACKET21=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_patternDecl234);  
+            RBRACKET21=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_patternDecl238);  
             stream_RBRACKET.add(RBRACKET21);
 
 
 
             // AST REWRITE
-            // elements: pItem, SEQ
+            // elements: SEQ, pItem
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -635,14 +639,14 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 47:47: -> ^( SEQ ( pItem )* )
+            // 48:47: -> ^( SEQ ( pItem )* )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:47:50: ^( SEQ ( pItem )* )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:48:50: ^( SEQ ( pItem )* )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot(stream_SEQ.nextNode(), root_1);
 
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:47:56: ( pItem )*
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:48:56: ( pItem )*
                 while ( stream_pItem.hasNext() ) {
                     adaptor.addChild(root_1, stream_pItem.nextTree());
 
@@ -681,7 +685,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "pItem"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:1: pItem : ( NOT )? ( LBRACKET )? type= typeName variable= attributeName ( RBRACKET )? -> ^( STATE $type $variable ( NOT )? ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:1: pItem : ( NOT )? ( LBRACKET )? type= typeName variable= attributeName ( RBRACKET )? -> ^( STATE $type $variable ( NOT )? ) ;
     public final SaseParser.pItem_return pItem() throws RecognitionException {
         SaseParser.pItem_return retval = new SaseParser.pItem_return();
         retval.start = input.LT(1);
@@ -705,10 +709,10 @@ public class SaseParser extends Parser {
         RewriteRuleSubtreeStream stream_typeName=new RewriteRuleSubtreeStream(adaptor,"rule typeName");
         RewriteRuleSubtreeStream stream_attributeName=new RewriteRuleSubtreeStream(adaptor,"rule attributeName");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:8: ( ( NOT )? ( LBRACKET )? type= typeName variable= attributeName ( RBRACKET )? -> ^( STATE $type $variable ( NOT )? ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:10: ( NOT )? ( LBRACKET )? type= typeName variable= attributeName ( RBRACKET )?
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:8: ( ( NOT )? ( LBRACKET )? type= typeName variable= attributeName ( RBRACKET )? -> ^( STATE $type $variable ( NOT )? ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:10: ( NOT )? ( LBRACKET )? type= typeName variable= attributeName ( RBRACKET )?
             {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:10: ( NOT )?
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:10: ( NOT )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -717,9 +721,9 @@ public class SaseParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:11: NOT
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:11: NOT
                     {
-                    NOT22=(Token)match(input,NOT,FOLLOW_NOT_in_pItem259);  
+                    NOT22=(Token)match(input,NOT,FOLLOW_NOT_in_pItem263);  
                     stream_NOT.add(NOT22);
 
 
@@ -728,7 +732,7 @@ public class SaseParser extends Parser {
 
             }
 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:17: ( LBRACKET )?
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:17: ( LBRACKET )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -737,9 +741,9 @@ public class SaseParser extends Parser {
             }
             switch (alt6) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:17: LBRACKET
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:17: LBRACKET
                     {
-                    LBRACKET23=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_pItem263);  
+                    LBRACKET23=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_pItem267);  
                     stream_LBRACKET.add(LBRACKET23);
 
 
@@ -748,19 +752,19 @@ public class SaseParser extends Parser {
 
             }
 
-            pushFollow(FOLLOW_typeName_in_pItem269);
+            pushFollow(FOLLOW_typeName_in_pItem273);
             type=typeName();
 
             state._fsp--;
 
             stream_typeName.add(type.getTree());
-            pushFollow(FOLLOW_attributeName_in_pItem273);
+            pushFollow(FOLLOW_attributeName_in_pItem277);
             variable=attributeName();
 
             state._fsp--;
 
             stream_attributeName.add(variable.getTree());
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:65: ( RBRACKET )?
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:65: ( RBRACKET )?
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -773,9 +777,9 @@ public class SaseParser extends Parser {
             }
             switch (alt7) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:65: RBRACKET
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:65: RBRACKET
                     {
-                    RBRACKET24=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_pItem275);  
+                    RBRACKET24=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_pItem279);  
                     stream_RBRACKET.add(RBRACKET24);
 
 
@@ -787,7 +791,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: variable, NOT, type
+            // elements: type, NOT, variable
             // token labels: 
             // rule labels: retval, type, variable
             // token list labels: 
@@ -799,16 +803,16 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_variable=new RewriteRuleSubtreeStream(adaptor,"rule variable",variable!=null?variable.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 51:75: -> ^( STATE $type $variable ( NOT )? )
+            // 52:75: -> ^( STATE $type $variable ( NOT )? )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:78: ^( STATE $type $variable ( NOT )? )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:78: ^( STATE $type $variable ( NOT )? )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(STATE, "STATE"), root_1);
 
                 adaptor.addChild(root_1, stream_type.nextTree());
                 adaptor.addChild(root_1, stream_variable.nextTree());
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:51:102: ( NOT )?
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:52:102: ( NOT )?
                 if ( stream_NOT.hasNext() ) {
                     adaptor.addChild(root_1, stream_NOT.nextNode());
 
@@ -847,7 +851,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "typeName"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:54:1: typeName : ( NAME op= PLUS -> ^( KTYPE NAME $op) | NAME -> ^( TYPE NAME ) );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:55:1: typeName : NAME (op= PLUS )? -> {$op != null}? ^( KTYPE NAME $op) -> ^( TYPE NAME ) ;
     public final SaseParser.typeName_return typeName() throws RecognitionException {
         SaseParser.typeName_return retval = new SaseParser.typeName_return();
         retval.start = input.LT(1);
@@ -856,121 +860,84 @@ public class SaseParser extends Parser {
 
         Token op=null;
         Token NAME25=null;
-        Token NAME26=null;
 
         Object op_tree=null;
         Object NAME25_tree=null;
-        Object NAME26_tree=null;
         RewriteRuleTokenStream stream_NAME=new RewriteRuleTokenStream(adaptor,"token NAME");
         RewriteRuleTokenStream stream_PLUS=new RewriteRuleTokenStream(adaptor,"token PLUS");
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:54:9: ( NAME op= PLUS -> ^( KTYPE NAME $op) | NAME -> ^( TYPE NAME ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:55:9: ( NAME (op= PLUS )? -> {$op != null}? ^( KTYPE NAME $op) -> ^( TYPE NAME ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:55:11: NAME (op= PLUS )?
+            {
+            NAME25=(Token)match(input,NAME,FOLLOW_NAME_in_typeName306);  
+            stream_NAME.add(NAME25);
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:55:18: (op= PLUS )?
             int alt8=2;
             int LA8_0 = input.LA(1);
 
-            if ( (LA8_0==NAME) ) {
-                int LA8_1 = input.LA(2);
-
-                if ( (LA8_1==PLUS) ) {
-                    alt8=1;
-                }
-                else if ( (LA8_1==NAME) ) {
-                    alt8=2;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 8, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 8, 0, input);
-
-                throw nvae;
+            if ( (LA8_0==PLUS) ) {
+                alt8=1;
             }
             switch (alt8) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:54:11: NAME op= PLUS
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:55:18: op= PLUS
                     {
-                    NAME25=(Token)match(input,NAME,FOLLOW_NAME_in_typeName302);  
-                    stream_NAME.add(NAME25);
-
-                    op=(Token)match(input,PLUS,FOLLOW_PLUS_in_typeName306);  
+                    op=(Token)match(input,PLUS,FOLLOW_PLUS_in_typeName310);  
                     stream_PLUS.add(op);
 
 
-
-                    // AST REWRITE
-                    // elements: NAME, op
-                    // token labels: op
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    retval.tree = root_0;
-                    RewriteRuleTokenStream stream_op=new RewriteRuleTokenStream(adaptor,"token op",op);
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
-                    root_0 = (Object)adaptor.nil();
-                    // 54:24: -> ^( KTYPE NAME $op)
-                    {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:54:27: ^( KTYPE NAME $op)
-                        {
-                        Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(KTYPE, "KTYPE"), root_1);
-
-                        adaptor.addChild(root_1, stream_NAME.nextNode());
-                        adaptor.addChild(root_1, stream_op.nextNode());
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:54:47: NAME
-                    {
-                    NAME26=(Token)match(input,NAME,FOLLOW_NAME_in_typeName321);  
-                    stream_NAME.add(NAME26);
-
-
-
-                    // AST REWRITE
-                    // elements: NAME
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
-                    root_0 = (Object)adaptor.nil();
-                    // 54:52: -> ^( TYPE NAME )
-                    {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:54:55: ^( TYPE NAME )
-                        {
-                        Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
-
-                        adaptor.addChild(root_1, stream_NAME.nextNode());
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;
                     }
                     break;
 
             }
+
+
+
+            // AST REWRITE
+            // elements: op, NAME, NAME
+            // token labels: op
+            // rule labels: retval
+            // token list labels: 
+            // rule list labels: 
+            // wildcard labels: 
+            retval.tree = root_0;
+            RewriteRuleTokenStream stream_op=new RewriteRuleTokenStream(adaptor,"token op",op);
+            RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+
+            root_0 = (Object)adaptor.nil();
+            // 55:25: -> {$op != null}? ^( KTYPE NAME $op)
+            if (op != null) {
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:55:43: ^( KTYPE NAME $op)
+                {
+                Object root_1 = (Object)adaptor.nil();
+                root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(KTYPE, "KTYPE"), root_1);
+
+                adaptor.addChild(root_1, stream_NAME.nextNode());
+                adaptor.addChild(root_1, stream_op.nextNode());
+
+                adaptor.addChild(root_0, root_1);
+                }
+
+            }
+            else // 56:9: -> ^( TYPE NAME )
+            {
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:56:12: ^( TYPE NAME )
+                {
+                Object root_1 = (Object)adaptor.nil();
+                root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(TYPE, "TYPE"), root_1);
+
+                adaptor.addChild(root_1, stream_NAME.nextNode());
+
+                adaptor.addChild(root_0, root_1);
+                }
+
+            }
+
+            retval.tree = root_0;
+            }
+
             retval.stop = input.LT(-1);
 
             retval.tree = (Object)adaptor.rulePostProcessing(root_0);
@@ -995,49 +962,49 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "wherePart1"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:57:1: wherePart1 : SKIP_METHOD LBRACKET parameterList RBRACKET -> ^( WHERESTRAT SKIP_METHOD parameterList ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:59:1: wherePart1 : SKIP_METHOD LBRACKET parameterList RBRACKET -> ^( WHERESTRAT SKIP_METHOD parameterList ) ;
     public final SaseParser.wherePart1_return wherePart1() throws RecognitionException {
         SaseParser.wherePart1_return retval = new SaseParser.wherePart1_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token SKIP_METHOD27=null;
-        Token LBRACKET28=null;
-        Token RBRACKET30=null;
-        SaseParser.parameterList_return parameterList29 = null;
+        Token SKIP_METHOD26=null;
+        Token LBRACKET27=null;
+        Token RBRACKET29=null;
+        SaseParser.parameterList_return parameterList28 = null;
 
 
-        Object SKIP_METHOD27_tree=null;
-        Object LBRACKET28_tree=null;
-        Object RBRACKET30_tree=null;
+        Object SKIP_METHOD26_tree=null;
+        Object LBRACKET27_tree=null;
+        Object RBRACKET29_tree=null;
         RewriteRuleTokenStream stream_LBRACKET=new RewriteRuleTokenStream(adaptor,"token LBRACKET");
         RewriteRuleTokenStream stream_RBRACKET=new RewriteRuleTokenStream(adaptor,"token RBRACKET");
         RewriteRuleTokenStream stream_SKIP_METHOD=new RewriteRuleTokenStream(adaptor,"token SKIP_METHOD");
         RewriteRuleSubtreeStream stream_parameterList=new RewriteRuleSubtreeStream(adaptor,"rule parameterList");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:58:2: ( SKIP_METHOD LBRACKET parameterList RBRACKET -> ^( WHERESTRAT SKIP_METHOD parameterList ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:58:4: SKIP_METHOD LBRACKET parameterList RBRACKET
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:60:2: ( SKIP_METHOD LBRACKET parameterList RBRACKET -> ^( WHERESTRAT SKIP_METHOD parameterList ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:60:4: SKIP_METHOD LBRACKET parameterList RBRACKET
             {
-            SKIP_METHOD27=(Token)match(input,SKIP_METHOD,FOLLOW_SKIP_METHOD_in_wherePart1341);  
-            stream_SKIP_METHOD.add(SKIP_METHOD27);
+            SKIP_METHOD26=(Token)match(input,SKIP_METHOD,FOLLOW_SKIP_METHOD_in_wherePart1353);  
+            stream_SKIP_METHOD.add(SKIP_METHOD26);
 
-            LBRACKET28=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_wherePart1343);  
-            stream_LBRACKET.add(LBRACKET28);
+            LBRACKET27=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_wherePart1355);  
+            stream_LBRACKET.add(LBRACKET27);
 
-            pushFollow(FOLLOW_parameterList_in_wherePart1345);
-            parameterList29=parameterList();
+            pushFollow(FOLLOW_parameterList_in_wherePart1357);
+            parameterList28=parameterList();
 
             state._fsp--;
 
-            stream_parameterList.add(parameterList29.getTree());
-            RBRACKET30=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_wherePart1347);  
-            stream_RBRACKET.add(RBRACKET30);
+            stream_parameterList.add(parameterList28.getTree());
+            RBRACKET29=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_wherePart1359);  
+            stream_RBRACKET.add(RBRACKET29);
 
 
 
             // AST REWRITE
-            // elements: parameterList, SKIP_METHOD
+            // elements: SKIP_METHOD, parameterList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1047,9 +1014,9 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 58:48: -> ^( WHERESTRAT SKIP_METHOD parameterList )
+            // 60:48: -> ^( WHERESTRAT SKIP_METHOD parameterList )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:58:51: ^( WHERESTRAT SKIP_METHOD parameterList )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:60:51: ^( WHERESTRAT SKIP_METHOD parameterList )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(WHERESTRAT, "WHERESTRAT"), root_1);
@@ -1089,33 +1056,33 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "parameterList"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:61:1: parameterList : attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:63:1: parameterList : attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) ;
     public final SaseParser.parameterList_return parameterList() throws RecognitionException {
         SaseParser.parameterList_return retval = new SaseParser.parameterList_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token COMMA32=null;
-        SaseParser.attributeName_return attributeName31 = null;
+        Token COMMA31=null;
+        SaseParser.attributeName_return attributeName30 = null;
 
-        SaseParser.attributeName_return attributeName33 = null;
+        SaseParser.attributeName_return attributeName32 = null;
 
 
-        Object COMMA32_tree=null;
+        Object COMMA31_tree=null;
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_attributeName=new RewriteRuleSubtreeStream(adaptor,"rule attributeName");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:2: ( attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:4: attributeName ( COMMA attributeName )*
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:64:2: ( attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:64:4: attributeName ( COMMA attributeName )*
             {
-            pushFollow(FOLLOW_attributeName_in_parameterList370);
-            attributeName31=attributeName();
+            pushFollow(FOLLOW_attributeName_in_parameterList382);
+            attributeName30=attributeName();
 
             state._fsp--;
 
-            stream_attributeName.add(attributeName31.getTree());
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:17: ( COMMA attributeName )*
+            stream_attributeName.add(attributeName30.getTree());
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:64:17: ( COMMA attributeName )*
             loop9:
             do {
                 int alt9=2;
@@ -1128,17 +1095,17 @@ public class SaseParser extends Parser {
 
                 switch (alt9) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:18: COMMA attributeName
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:64:18: COMMA attributeName
             	    {
-            	    COMMA32=(Token)match(input,COMMA,FOLLOW_COMMA_in_parameterList372);  
-            	    stream_COMMA.add(COMMA32);
+            	    COMMA31=(Token)match(input,COMMA,FOLLOW_COMMA_in_parameterList384);  
+            	    stream_COMMA.add(COMMA31);
 
-            	    pushFollow(FOLLOW_attributeName_in_parameterList374);
-            	    attributeName33=attributeName();
+            	    pushFollow(FOLLOW_attributeName_in_parameterList386);
+            	    attributeName32=attributeName();
 
             	    state._fsp--;
 
-            	    stream_attributeName.add(attributeName33.getTree());
+            	    stream_attributeName.add(attributeName32.getTree());
 
             	    }
             	    break;
@@ -1161,14 +1128,14 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 62:40: -> ^( PARAMLIST ( attributeName )* )
+            // 64:40: -> ^( PARAMLIST ( attributeName )* )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:43: ^( PARAMLIST ( attributeName )* )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:64:43: ^( PARAMLIST ( attributeName )* )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(PARAMLIST, "PARAMLIST"), root_1);
 
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:55: ( attributeName )*
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:64:55: ( attributeName )*
                 while ( stream_attributeName.hasNext() ) {
                     adaptor.addChild(root_1, stream_attributeName.nextTree());
 
@@ -1207,21 +1174,21 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "attributeName"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:65:1: attributeName : ( kAttributeName | sAttributeName );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:67:1: attributeName : ( kAttributeName | sAttributeName );
     public final SaseParser.attributeName_return attributeName() throws RecognitionException {
         SaseParser.attributeName_return retval = new SaseParser.attributeName_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        SaseParser.kAttributeName_return kAttributeName34 = null;
+        SaseParser.kAttributeName_return kAttributeName33 = null;
 
-        SaseParser.sAttributeName_return sAttributeName35 = null;
+        SaseParser.sAttributeName_return sAttributeName34 = null;
 
 
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:2: ( kAttributeName | sAttributeName )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:68:2: ( kAttributeName | sAttributeName )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1249,30 +1216,30 @@ public class SaseParser extends Parser {
             }
             switch (alt10) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:5: kAttributeName
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:68:5: kAttributeName
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_kAttributeName_in_attributeName398);
-                    kAttributeName34=kAttributeName();
+                    pushFollow(FOLLOW_kAttributeName_in_attributeName410);
+                    kAttributeName33=kAttributeName();
 
                     state._fsp--;
 
-                    adaptor.addChild(root_0, kAttributeName34.getTree());
+                    adaptor.addChild(root_0, kAttributeName33.getTree());
 
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:20: sAttributeName
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:68:20: sAttributeName
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_sAttributeName_in_attributeName400);
-                    sAttributeName35=sAttributeName();
+                    pushFollow(FOLLOW_sAttributeName_in_attributeName412);
+                    sAttributeName34=sAttributeName();
 
                     state._fsp--;
 
-                    adaptor.addChild(root_0, sAttributeName35.getTree());
+                    adaptor.addChild(root_0, sAttributeName34.getTree());
 
                     }
                     break;
@@ -1302,36 +1269,36 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "kAttributeName"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:1: kAttributeName : NAME BBRACKETLEFT BBRACKETRIGHT -> ^( KATTRIBUTE NAME ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:71:1: kAttributeName : NAME BBRACKETLEFT BBRACKETRIGHT -> ^( KATTRIBUTE NAME ) ;
     public final SaseParser.kAttributeName_return kAttributeName() throws RecognitionException {
         SaseParser.kAttributeName_return retval = new SaseParser.kAttributeName_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token NAME36=null;
-        Token BBRACKETLEFT37=null;
-        Token BBRACKETRIGHT38=null;
+        Token NAME35=null;
+        Token BBRACKETLEFT36=null;
+        Token BBRACKETRIGHT37=null;
 
-        Object NAME36_tree=null;
-        Object BBRACKETLEFT37_tree=null;
-        Object BBRACKETRIGHT38_tree=null;
+        Object NAME35_tree=null;
+        Object BBRACKETLEFT36_tree=null;
+        Object BBRACKETRIGHT37_tree=null;
         RewriteRuleTokenStream stream_NAME=new RewriteRuleTokenStream(adaptor,"token NAME");
         RewriteRuleTokenStream stream_BBRACKETLEFT=new RewriteRuleTokenStream(adaptor,"token BBRACKETLEFT");
         RewriteRuleTokenStream stream_BBRACKETRIGHT=new RewriteRuleTokenStream(adaptor,"token BBRACKETRIGHT");
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:70:2: ( NAME BBRACKETLEFT BBRACKETRIGHT -> ^( KATTRIBUTE NAME ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:70:4: NAME BBRACKETLEFT BBRACKETRIGHT
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:72:2: ( NAME BBRACKETLEFT BBRACKETRIGHT -> ^( KATTRIBUTE NAME ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:72:4: NAME BBRACKETLEFT BBRACKETRIGHT
             {
-            NAME36=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeName412);  
-            stream_NAME.add(NAME36);
+            NAME35=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeName424);  
+            stream_NAME.add(NAME35);
 
-            BBRACKETLEFT37=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_kAttributeName415);  
-            stream_BBRACKETLEFT.add(BBRACKETLEFT37);
+            BBRACKETLEFT36=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_kAttributeName427);  
+            stream_BBRACKETLEFT.add(BBRACKETLEFT36);
 
-            BBRACKETRIGHT38=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_kAttributeName417);  
-            stream_BBRACKETRIGHT.add(BBRACKETRIGHT38);
+            BBRACKETRIGHT37=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_kAttributeName429);  
+            stream_BBRACKETRIGHT.add(BBRACKETRIGHT37);
 
 
 
@@ -1346,9 +1313,9 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 70:38: -> ^( KATTRIBUTE NAME )
+            // 72:38: -> ^( KATTRIBUTE NAME )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:70:41: ^( KATTRIBUTE NAME )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:72:41: ^( KATTRIBUTE NAME )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(KATTRIBUTE, "KATTRIBUTE"), root_1);
@@ -1387,24 +1354,24 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "sAttributeName"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:1: sAttributeName : NAME -> ^( ATTRIBUTE NAME ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:76:1: sAttributeName : NAME -> ^( ATTRIBUTE NAME ) ;
     public final SaseParser.sAttributeName_return sAttributeName() throws RecognitionException {
         SaseParser.sAttributeName_return retval = new SaseParser.sAttributeName_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token NAME39=null;
+        Token NAME38=null;
 
-        Object NAME39_tree=null;
+        Object NAME38_tree=null;
         RewriteRuleTokenStream stream_NAME=new RewriteRuleTokenStream(adaptor,"token NAME");
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:75:2: ( NAME -> ^( ATTRIBUTE NAME ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:75:4: NAME
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:77:2: ( NAME -> ^( ATTRIBUTE NAME ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:77:4: NAME
             {
-            NAME39=(Token)match(input,NAME,FOLLOW_NAME_in_sAttributeName440);  
-            stream_NAME.add(NAME39);
+            NAME38=(Token)match(input,NAME,FOLLOW_NAME_in_sAttributeName452);  
+            stream_NAME.add(NAME38);
 
 
 
@@ -1419,9 +1386,9 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 75:9: -> ^( ATTRIBUTE NAME )
+            // 77:9: -> ^( ATTRIBUTE NAME )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:75:12: ^( ATTRIBUTE NAME )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:77:12: ^( ATTRIBUTE NAME )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(ATTRIBUTE, "ATTRIBUTE"), root_1);
@@ -1460,34 +1427,34 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "kAttributeUsage"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:77:1: kAttributeUsage : ( NAME CURRENT -> ^( KATTRIBUTE NAME CURRENT ) | NAME FIRST -> ^( KATTRIBUTE NAME FIRST ) | NAME PREVIOUS -> ^( KATTRIBUTE NAME PREVIOUS ) );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:79:1: kAttributeUsage : ( NAME CURRENT | NAME FIRST | NAME PREVIOUS | NAME LAST );
     public final SaseParser.kAttributeUsage_return kAttributeUsage() throws RecognitionException {
         SaseParser.kAttributeUsage_return retval = new SaseParser.kAttributeUsage_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token NAME40=null;
-        Token CURRENT41=null;
-        Token NAME42=null;
-        Token FIRST43=null;
-        Token NAME44=null;
-        Token PREVIOUS45=null;
+        Token NAME39=null;
+        Token CURRENT40=null;
+        Token NAME41=null;
+        Token FIRST42=null;
+        Token NAME43=null;
+        Token PREVIOUS44=null;
+        Token NAME45=null;
+        Token LAST46=null;
 
-        Object NAME40_tree=null;
-        Object CURRENT41_tree=null;
-        Object NAME42_tree=null;
-        Object FIRST43_tree=null;
-        Object NAME44_tree=null;
-        Object PREVIOUS45_tree=null;
-        RewriteRuleTokenStream stream_NAME=new RewriteRuleTokenStream(adaptor,"token NAME");
-        RewriteRuleTokenStream stream_PREVIOUS=new RewriteRuleTokenStream(adaptor,"token PREVIOUS");
-        RewriteRuleTokenStream stream_CURRENT=new RewriteRuleTokenStream(adaptor,"token CURRENT");
-        RewriteRuleTokenStream stream_FIRST=new RewriteRuleTokenStream(adaptor,"token FIRST");
+        Object NAME39_tree=null;
+        Object CURRENT40_tree=null;
+        Object NAME41_tree=null;
+        Object FIRST42_tree=null;
+        Object NAME43_tree=null;
+        Object PREVIOUS44_tree=null;
+        Object NAME45_tree=null;
+        Object LAST46_tree=null;
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:2: ( NAME CURRENT -> ^( KATTRIBUTE NAME CURRENT ) | NAME FIRST -> ^( KATTRIBUTE NAME FIRST ) | NAME PREVIOUS -> ^( KATTRIBUTE NAME PREVIOUS ) )
-            int alt11=3;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:80:2: ( NAME CURRENT | NAME FIRST | NAME PREVIOUS | NAME LAST )
+            int alt11=4;
             int LA11_0 = input.LA(1);
 
             if ( (LA11_0==NAME) ) {
@@ -1507,6 +1474,11 @@ public class SaseParser extends Parser {
                     alt11=3;
                     }
                     break;
+                case LAST:
+                    {
+                    alt11=4;
+                    }
+                    break;
                 default:
                     NoViableAltException nvae =
                         new NoViableAltException("", 11, 1, input);
@@ -1523,123 +1495,67 @@ public class SaseParser extends Parser {
             }
             switch (alt11) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:5: NAME CURRENT
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:80:5: NAME CURRENT
                     {
-                    NAME40=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage459);  
-                    stream_NAME.add(NAME40);
-
-                    CURRENT41=(Token)match(input,CURRENT,FOLLOW_CURRENT_in_kAttributeUsage461);  
-                    stream_CURRENT.add(CURRENT41);
-
-
-
-                    // AST REWRITE
-                    // elements: NAME, CURRENT
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
                     root_0 = (Object)adaptor.nil();
-                    // 78:18: -> ^( KATTRIBUTE NAME CURRENT )
-                    {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:21: ^( KATTRIBUTE NAME CURRENT )
-                        {
-                        Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(KATTRIBUTE, "KATTRIBUTE"), root_1);
 
-                        adaptor.addChild(root_1, stream_NAME.nextNode());
-                        adaptor.addChild(root_1, stream_CURRENT.nextNode());
+                    NAME39=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage471); 
+                    NAME39_tree = (Object)adaptor.create(NAME39);
+                    adaptor.addChild(root_0, NAME39_tree);
 
-                        adaptor.addChild(root_0, root_1);
-                        }
+                    CURRENT40=(Token)match(input,CURRENT,FOLLOW_CURRENT_in_kAttributeUsage473); 
+                    CURRENT40_tree = (Object)adaptor.create(CURRENT40);
+                    adaptor.addChild(root_0, CURRENT40_tree);
 
-                    }
 
-                    retval.tree = root_0;
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:79:3: NAME FIRST
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:81:3: NAME FIRST
                     {
-                    NAME42=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage476);  
-                    stream_NAME.add(NAME42);
-
-                    FIRST43=(Token)match(input,FIRST,FOLLOW_FIRST_in_kAttributeUsage478);  
-                    stream_FIRST.add(FIRST43);
-
-
-
-                    // AST REWRITE
-                    // elements: NAME, FIRST
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
                     root_0 = (Object)adaptor.nil();
-                    // 79:14: -> ^( KATTRIBUTE NAME FIRST )
-                    {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:79:17: ^( KATTRIBUTE NAME FIRST )
-                        {
-                        Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(KATTRIBUTE, "KATTRIBUTE"), root_1);
 
-                        adaptor.addChild(root_1, stream_NAME.nextNode());
-                        adaptor.addChild(root_1, stream_FIRST.nextNode());
+                    NAME41=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage479); 
+                    NAME41_tree = (Object)adaptor.create(NAME41);
+                    adaptor.addChild(root_0, NAME41_tree);
 
-                        adaptor.addChild(root_0, root_1);
-                        }
+                    FIRST42=(Token)match(input,FIRST,FOLLOW_FIRST_in_kAttributeUsage481); 
+                    FIRST42_tree = (Object)adaptor.create(FIRST42);
+                    adaptor.addChild(root_0, FIRST42_tree);
 
-                    }
 
-                    retval.tree = root_0;
                     }
                     break;
                 case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:80:3: NAME PREVIOUS
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:82:3: NAME PREVIOUS
                     {
-                    NAME44=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage493);  
-                    stream_NAME.add(NAME44);
-
-                    PREVIOUS45=(Token)match(input,PREVIOUS,FOLLOW_PREVIOUS_in_kAttributeUsage495);  
-                    stream_PREVIOUS.add(PREVIOUS45);
-
-
-
-                    // AST REWRITE
-                    // elements: NAME, PREVIOUS
-                    // token labels: 
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    retval.tree = root_0;
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
                     root_0 = (Object)adaptor.nil();
-                    // 80:17: -> ^( KATTRIBUTE NAME PREVIOUS )
-                    {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:80:20: ^( KATTRIBUTE NAME PREVIOUS )
-                        {
-                        Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(KATTRIBUTE, "KATTRIBUTE"), root_1);
 
-                        adaptor.addChild(root_1, stream_NAME.nextNode());
-                        adaptor.addChild(root_1, stream_PREVIOUS.nextNode());
+                    NAME43=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage486); 
+                    NAME43_tree = (Object)adaptor.create(NAME43);
+                    adaptor.addChild(root_0, NAME43_tree);
 
-                        adaptor.addChild(root_0, root_1);
-                        }
+                    PREVIOUS44=(Token)match(input,PREVIOUS,FOLLOW_PREVIOUS_in_kAttributeUsage488); 
+                    PREVIOUS44_tree = (Object)adaptor.create(PREVIOUS44);
+                    adaptor.addChild(root_0, PREVIOUS44_tree);
+
 
                     }
+                    break;
+                case 4 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:83:3: NAME LAST
+                    {
+                    root_0 = (Object)adaptor.nil();
 
-                    retval.tree = root_0;
+                    NAME45=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage493); 
+                    NAME45_tree = (Object)adaptor.create(NAME45);
+                    adaptor.addChild(root_0, NAME45_tree);
+
+                    LAST46=(Token)match(input,LAST,FOLLOW_LAST_in_kAttributeUsage495); 
+                    LAST46_tree = (Object)adaptor.create(LAST46);
+                    adaptor.addChild(root_0, LAST46_tree);
+
+
                     }
                     break;
 
@@ -1668,33 +1584,33 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "whereExpressions"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:83:1: whereExpressions : expression ( AND expression )* -> ^( WHEREEXPRESSION ( AND )? ( expression )* ) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:86:1: whereExpressions : expression ( AND expression )* -> ^( WHEREEXPRESSION ( AND )? ( expression )* ) ;
     public final SaseParser.whereExpressions_return whereExpressions() throws RecognitionException {
         SaseParser.whereExpressions_return retval = new SaseParser.whereExpressions_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token AND47=null;
-        SaseParser.expression_return expression46 = null;
+        Token AND48=null;
+        SaseParser.expression_return expression47 = null;
 
-        SaseParser.expression_return expression48 = null;
+        SaseParser.expression_return expression49 = null;
 
 
-        Object AND47_tree=null;
+        Object AND48_tree=null;
         RewriteRuleTokenStream stream_AND=new RewriteRuleTokenStream(adaptor,"token AND");
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:2: ( expression ( AND expression )* -> ^( WHEREEXPRESSION ( AND )? ( expression )* ) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:4: expression ( AND expression )*
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:2: ( expression ( AND expression )* -> ^( WHEREEXPRESSION ( AND )? ( expression )* ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:4: expression ( AND expression )*
             {
-            pushFollow(FOLLOW_expression_in_whereExpressions517);
-            expression46=expression();
+            pushFollow(FOLLOW_expression_in_whereExpressions507);
+            expression47=expression();
 
             state._fsp--;
 
-            stream_expression.add(expression46.getTree());
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:15: ( AND expression )*
+            stream_expression.add(expression47.getTree());
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:15: ( AND expression )*
             loop12:
             do {
                 int alt12=2;
@@ -1707,17 +1623,17 @@ public class SaseParser extends Parser {
 
                 switch (alt12) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:16: AND expression
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:16: AND expression
             	    {
-            	    AND47=(Token)match(input,AND,FOLLOW_AND_in_whereExpressions520);  
-            	    stream_AND.add(AND47);
+            	    AND48=(Token)match(input,AND,FOLLOW_AND_in_whereExpressions510);  
+            	    stream_AND.add(AND48);
 
-            	    pushFollow(FOLLOW_expression_in_whereExpressions522);
-            	    expression48=expression();
+            	    pushFollow(FOLLOW_expression_in_whereExpressions512);
+            	    expression49=expression();
 
             	    state._fsp--;
 
-            	    stream_expression.add(expression48.getTree());
+            	    stream_expression.add(expression49.getTree());
 
             	    }
             	    break;
@@ -1730,7 +1646,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: AND, expression
+            // elements: expression, AND
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1740,20 +1656,20 @@ public class SaseParser extends Parser {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 84:33: -> ^( WHEREEXPRESSION ( AND )? ( expression )* )
+            // 87:33: -> ^( WHEREEXPRESSION ( AND )? ( expression )* )
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:36: ^( WHEREEXPRESSION ( AND )? ( expression )* )
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:36: ^( WHEREEXPRESSION ( AND )? ( expression )* )
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(WHEREEXPRESSION, "WHEREEXPRESSION"), root_1);
 
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:54: ( AND )?
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:54: ( AND )?
                 if ( stream_AND.hasNext() ) {
                     adaptor.addChild(root_1, stream_AND.nextNode());
 
                 }
                 stream_AND.reset();
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:59: ( expression )*
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:59: ( expression )*
                 while ( stream_expression.hasNext() ) {
                     adaptor.addChild(root_1, stream_expression.nextTree());
 
@@ -1792,60 +1708,50 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "expression"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:87:1: expression : ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) | f1= term COMPAREOP f2= term -> ^( COMPAREEXPRESSION $f1 COMPAREOP $f2) );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:90:1: expression : ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) | f1= term SINGLEEQUALS f2= term -> ^( COMPAREEXPRESSION $f1 EQUALS $f2) | f1= term COMPAREOP f2= term -> ^( COMPAREEXPRESSION $f1 COMPAREOP $f2) );
     public final SaseParser.expression_return expression() throws RecognitionException {
         SaseParser.expression_return retval = new SaseParser.expression_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token BBRACKETLEFT49=null;
-        Token NAME50=null;
-        Token BBRACKETRIGHT51=null;
-        Token COMPAREOP52=null;
+        Token BBRACKETLEFT50=null;
+        Token NAME51=null;
+        Token BBRACKETRIGHT52=null;
+        Token SINGLEEQUALS53=null;
+        Token COMPAREOP54=null;
         SaseParser.term_return f1 = null;
 
         SaseParser.term_return f2 = null;
 
 
-        Object BBRACKETLEFT49_tree=null;
-        Object NAME50_tree=null;
-        Object BBRACKETRIGHT51_tree=null;
-        Object COMPAREOP52_tree=null;
+        Object BBRACKETLEFT50_tree=null;
+        Object NAME51_tree=null;
+        Object BBRACKETRIGHT52_tree=null;
+        Object SINGLEEQUALS53_tree=null;
+        Object COMPAREOP54_tree=null;
+        RewriteRuleTokenStream stream_SINGLEEQUALS=new RewriteRuleTokenStream(adaptor,"token SINGLEEQUALS");
         RewriteRuleTokenStream stream_NAME=new RewriteRuleTokenStream(adaptor,"token NAME");
         RewriteRuleTokenStream stream_BBRACKETLEFT=new RewriteRuleTokenStream(adaptor,"token BBRACKETLEFT");
         RewriteRuleTokenStream stream_COMPAREOP=new RewriteRuleTokenStream(adaptor,"token COMPAREOP");
         RewriteRuleTokenStream stream_BBRACKETRIGHT=new RewriteRuleTokenStream(adaptor,"token BBRACKETRIGHT");
         RewriteRuleSubtreeStream stream_term=new RewriteRuleSubtreeStream(adaptor,"rule term");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:88:2: ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) | f1= term COMPAREOP f2= term -> ^( COMPAREEXPRESSION $f1 COMPAREOP $f2) )
-            int alt13=2;
-            int LA13_0 = input.LA(1);
-
-            if ( (LA13_0==BBRACKETLEFT) ) {
-                alt13=1;
-            }
-            else if ( (LA13_0==AGGREGATEOP||LA13_0==NUMBER||LA13_0==NAME||LA13_0==STRING_LITERAL) ) {
-                alt13=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 13, 0, input);
-
-                throw nvae;
-            }
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:2: ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) | f1= term SINGLEEQUALS f2= term -> ^( COMPAREEXPRESSION $f1 EQUALS $f2) | f1= term COMPAREOP f2= term -> ^( COMPAREEXPRESSION $f1 COMPAREOP $f2) )
+            int alt13=3;
+            alt13 = dfa13.predict(input);
             switch (alt13) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:88:5: BBRACKETLEFT NAME BBRACKETRIGHT
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:5: BBRACKETLEFT NAME BBRACKETRIGHT
                     {
-                    BBRACKETLEFT49=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_expression549);  
-                    stream_BBRACKETLEFT.add(BBRACKETLEFT49);
+                    BBRACKETLEFT50=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_expression539);  
+                    stream_BBRACKETLEFT.add(BBRACKETLEFT50);
 
-                    NAME50=(Token)match(input,NAME,FOLLOW_NAME_in_expression551);  
-                    stream_NAME.add(NAME50);
+                    NAME51=(Token)match(input,NAME,FOLLOW_NAME_in_expression541);  
+                    stream_NAME.add(NAME51);
 
-                    BBRACKETRIGHT51=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_expression553);  
-                    stream_BBRACKETRIGHT.add(BBRACKETRIGHT51);
+                    BBRACKETRIGHT52=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_expression543);  
+                    stream_BBRACKETRIGHT.add(BBRACKETRIGHT52);
 
 
 
@@ -1860,9 +1766,9 @@ public class SaseParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 88:37: -> ^( IDEXPRESSION NAME )
+                    // 91:37: -> ^( IDEXPRESSION NAME )
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:88:40: ^( IDEXPRESSION NAME )
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:40: ^( IDEXPRESSION NAME )
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(IDEXPRESSION, "IDEXPRESSION"), root_1);
@@ -1878,18 +1784,18 @@ public class SaseParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:88:63: f1= term COMPAREOP f2= term
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:63: f1= term SINGLEEQUALS f2= term
                     {
-                    pushFollow(FOLLOW_term_in_expression567);
+                    pushFollow(FOLLOW_term_in_expression557);
                     f1=term();
 
                     state._fsp--;
 
                     stream_term.add(f1.getTree());
-                    COMPAREOP52=(Token)match(input,COMPAREOP,FOLLOW_COMPAREOP_in_expression569);  
-                    stream_COMPAREOP.add(COMPAREOP52);
+                    SINGLEEQUALS53=(Token)match(input,SINGLEEQUALS,FOLLOW_SINGLEEQUALS_in_expression559);  
+                    stream_SINGLEEQUALS.add(SINGLEEQUALS53);
 
-                    pushFollow(FOLLOW_term_in_expression573);
+                    pushFollow(FOLLOW_term_in_expression563);
                     f2=term();
 
                     state._fsp--;
@@ -1898,7 +1804,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: f2, COMPAREOP, f1
+                    // elements: f1, f2
                     // token labels: 
                     // rule labels: retval, f1, f2
                     // token list labels: 
@@ -1910,9 +1816,61 @@ public class SaseParser extends Parser {
                     RewriteRuleSubtreeStream stream_f2=new RewriteRuleSubtreeStream(adaptor,"rule f2",f2!=null?f2.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 88:89: -> ^( COMPAREEXPRESSION $f1 COMPAREOP $f2)
+                    // 91:92: -> ^( COMPAREEXPRESSION $f1 EQUALS $f2)
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:88:92: ^( COMPAREEXPRESSION $f1 COMPAREOP $f2)
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:96: ^( COMPAREEXPRESSION $f1 EQUALS $f2)
+                        {
+                        Object root_1 = (Object)adaptor.nil();
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(COMPAREEXPRESSION, "COMPAREEXPRESSION"), root_1);
+
+                        adaptor.addChild(root_1, stream_f1.nextTree());
+                        adaptor.addChild(root_1, (Object)adaptor.create(EQUALS, "EQUALS"));
+                        adaptor.addChild(root_1, stream_f2.nextTree());
+
+                        adaptor.addChild(root_0, root_1);
+                        }
+
+                    }
+
+                    retval.tree = root_0;
+                    }
+                    break;
+                case 3 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:134: f1= term COMPAREOP f2= term
+                    {
+                    pushFollow(FOLLOW_term_in_expression584);
+                    f1=term();
+
+                    state._fsp--;
+
+                    stream_term.add(f1.getTree());
+                    COMPAREOP54=(Token)match(input,COMPAREOP,FOLLOW_COMPAREOP_in_expression586);  
+                    stream_COMPAREOP.add(COMPAREOP54);
+
+                    pushFollow(FOLLOW_term_in_expression590);
+                    f2=term();
+
+                    state._fsp--;
+
+                    stream_term.add(f2.getTree());
+
+
+                    // AST REWRITE
+                    // elements: COMPAREOP, f1, f2
+                    // token labels: 
+                    // rule labels: retval, f1, f2
+                    // token list labels: 
+                    // rule list labels: 
+                    // wildcard labels: 
+                    retval.tree = root_0;
+                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+                    RewriteRuleSubtreeStream stream_f1=new RewriteRuleSubtreeStream(adaptor,"rule f1",f1!=null?f1.tree:null);
+                    RewriteRuleSubtreeStream stream_f2=new RewriteRuleSubtreeStream(adaptor,"rule f2",f2!=null?f2.tree:null);
+
+                    root_0 = (Object)adaptor.nil();
+                    // 91:160: -> ^( COMPAREEXPRESSION $f1 COMPAREOP $f2)
+                    {
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:163: ^( COMPAREEXPRESSION $f1 COMPAREOP $f2)
                         {
                         Object root_1 = (Object)adaptor.nil();
                         root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(COMPAREEXPRESSION, "COMPAREEXPRESSION"), root_1);
@@ -1955,36 +1913,35 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "term"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:1: term : ( aggregation | kAttributeUsage POINT NAME -> ^( MEMBERACCESS kAttributeUsage NAME ) | sAttributeName POINT NAME -> ^( MEMBERACCESS sAttributeName NAME ) | value );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:94:1: term : ( aggregation | kAttributeUsage POINT NAME -> ^( KMEMBER kAttributeUsage NAME ) | aName= NAME POINT member= NAME -> ^( MEMBER $aName $member) | value );
     public final SaseParser.term_return term() throws RecognitionException {
         SaseParser.term_return retval = new SaseParser.term_return();
         retval.start = input.LT(1);
 
         Object root_0 = null;
 
-        Token POINT55=null;
-        Token NAME56=null;
-        Token POINT58=null;
-        Token NAME59=null;
-        SaseParser.aggregation_return aggregation53 = null;
+        Token aName=null;
+        Token member=null;
+        Token POINT57=null;
+        Token NAME58=null;
+        Token POINT59=null;
+        SaseParser.aggregation_return aggregation55 = null;
 
-        SaseParser.kAttributeUsage_return kAttributeUsage54 = null;
-
-        SaseParser.sAttributeName_return sAttributeName57 = null;
+        SaseParser.kAttributeUsage_return kAttributeUsage56 = null;
 
         SaseParser.value_return value60 = null;
 
 
-        Object POINT55_tree=null;
-        Object NAME56_tree=null;
-        Object POINT58_tree=null;
-        Object NAME59_tree=null;
+        Object aName_tree=null;
+        Object member_tree=null;
+        Object POINT57_tree=null;
+        Object NAME58_tree=null;
+        Object POINT59_tree=null;
         RewriteRuleTokenStream stream_NAME=new RewriteRuleTokenStream(adaptor,"token NAME");
         RewriteRuleTokenStream stream_POINT=new RewriteRuleTokenStream(adaptor,"token POINT");
-        RewriteRuleSubtreeStream stream_sAttributeName=new RewriteRuleSubtreeStream(adaptor,"rule sAttributeName");
         RewriteRuleSubtreeStream stream_kAttributeUsage=new RewriteRuleSubtreeStream(adaptor,"rule kAttributeUsage");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:6: ( aggregation | kAttributeUsage POINT NAME -> ^( MEMBERACCESS kAttributeUsage NAME ) | sAttributeName POINT NAME -> ^( MEMBERACCESS sAttributeName NAME ) | value )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:94:6: ( aggregation | kAttributeUsage POINT NAME -> ^( KMEMBER kAttributeUsage NAME ) | aName= NAME POINT member= NAME -> ^( MEMBER $aName $member) | value )
             int alt14=4;
             switch ( input.LA(1) ) {
             case AGGREGATEOP:
@@ -1996,7 +1953,7 @@ public class SaseParser extends Parser {
                 {
                 int LA14_2 = input.LA(2);
 
-                if ( ((LA14_2>=FIRST && LA14_2<=PREVIOUS)) ) {
+                if ( ((LA14_2>=FIRST && LA14_2<=PREVIOUS)||LA14_2==LAST) ) {
                     alt14=2;
                 }
                 else if ( (LA14_2==POINT) ) {
@@ -2025,33 +1982,33 @@ public class SaseParser extends Parser {
 
             switch (alt14) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:91:8: aggregation
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:94:8: aggregation
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_aggregation_in_term597);
-                    aggregation53=aggregation();
+                    pushFollow(FOLLOW_aggregation_in_term614);
+                    aggregation55=aggregation();
 
                     state._fsp--;
 
-                    adaptor.addChild(root_0, aggregation53.getTree());
+                    adaptor.addChild(root_0, aggregation55.getTree());
 
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:92:3: kAttributeUsage POINT NAME
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:95:3: kAttributeUsage POINT NAME
                     {
-                    pushFollow(FOLLOW_kAttributeUsage_in_term603);
-                    kAttributeUsage54=kAttributeUsage();
+                    pushFollow(FOLLOW_kAttributeUsage_in_term620);
+                    kAttributeUsage56=kAttributeUsage();
 
                     state._fsp--;
 
-                    stream_kAttributeUsage.add(kAttributeUsage54.getTree());
-                    POINT55=(Token)match(input,POINT,FOLLOW_POINT_in_term605);  
-                    stream_POINT.add(POINT55);
+                    stream_kAttributeUsage.add(kAttributeUsage56.getTree());
+                    POINT57=(Token)match(input,POINT,FOLLOW_POINT_in_term622);  
+                    stream_POINT.add(POINT57);
 
-                    NAME56=(Token)match(input,NAME,FOLLOW_NAME_in_term607);  
-                    stream_NAME.add(NAME56);
+                    NAME58=(Token)match(input,NAME,FOLLOW_NAME_in_term624);  
+                    stream_NAME.add(NAME58);
 
 
 
@@ -2066,12 +2023,12 @@ public class SaseParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 92:29: -> ^( MEMBERACCESS kAttributeUsage NAME )
+                    // 95:30: -> ^( KMEMBER kAttributeUsage NAME )
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:92:32: ^( MEMBERACCESS kAttributeUsage NAME )
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:95:33: ^( KMEMBER kAttributeUsage NAME )
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(MEMBERACCESS, "MEMBERACCESS"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(KMEMBER, "KMEMBER"), root_1);
 
                         adaptor.addChild(root_1, stream_kAttributeUsage.nextTree());
                         adaptor.addChild(root_1, stream_NAME.nextNode());
@@ -2085,42 +2042,41 @@ public class SaseParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:93:3: sAttributeName POINT NAME
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:96:3: aName= NAME POINT member= NAME
                     {
-                    pushFollow(FOLLOW_sAttributeName_in_term621);
-                    sAttributeName57=sAttributeName();
+                    aName=(Token)match(input,NAME,FOLLOW_NAME_in_term641);  
+                    stream_NAME.add(aName);
 
-                    state._fsp--;
+                    POINT59=(Token)match(input,POINT,FOLLOW_POINT_in_term643);  
+                    stream_POINT.add(POINT59);
 
-                    stream_sAttributeName.add(sAttributeName57.getTree());
-                    POINT58=(Token)match(input,POINT,FOLLOW_POINT_in_term623);  
-                    stream_POINT.add(POINT58);
-
-                    NAME59=(Token)match(input,NAME,FOLLOW_NAME_in_term625);  
-                    stream_NAME.add(NAME59);
+                    member=(Token)match(input,NAME,FOLLOW_NAME_in_term647);  
+                    stream_NAME.add(member);
 
 
 
                     // AST REWRITE
-                    // elements: NAME, sAttributeName
-                    // token labels: 
+                    // elements: member, aName
+                    // token labels: member, aName
                     // rule labels: retval
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
                     retval.tree = root_0;
+                    RewriteRuleTokenStream stream_member=new RewriteRuleTokenStream(adaptor,"token member",member);
+                    RewriteRuleTokenStream stream_aName=new RewriteRuleTokenStream(adaptor,"token aName",aName);
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (Object)adaptor.nil();
-                    // 93:29: -> ^( MEMBERACCESS sAttributeName NAME )
+                    // 96:32: -> ^( MEMBER $aName $member)
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:93:32: ^( MEMBERACCESS sAttributeName NAME )
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:96:35: ^( MEMBER $aName $member)
                         {
                         Object root_1 = (Object)adaptor.nil();
-                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(MEMBERACCESS, "MEMBERACCESS"), root_1);
+                        root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(MEMBER, "MEMBER"), root_1);
 
-                        adaptor.addChild(root_1, stream_sAttributeName.nextTree());
-                        adaptor.addChild(root_1, stream_NAME.nextNode());
+                        adaptor.addChild(root_1, stream_aName.nextNode());
+                        adaptor.addChild(root_1, stream_member.nextNode());
 
                         adaptor.addChild(root_0, root_1);
                         }
@@ -2131,11 +2087,11 @@ public class SaseParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:94:3: value
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:97:3: value
                     {
                     root_0 = (Object)adaptor.nil();
 
-                    pushFollow(FOLLOW_value_in_term640);
+                    pushFollow(FOLLOW_value_in_term664);
                     value60=value();
 
                     state._fsp--;
@@ -2170,7 +2126,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "aggregation"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:97:1: aggregation : AGGREGATEOP LBRACKET var= NAME ALLTOPREVIOUS POINT attr= NAME RBRACKET -> ^( AGGREGATION AGGREGATEOP $var $attr) ;
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:1: aggregation : AGGREGATEOP LBRACKET var= NAME ALLTOPREVIOUS POINT member= NAME RBRACKET -> ^( AGGREGATION AGGREGATEOP $var ALLTOPREVIOUS $member) ;
     public final SaseParser.aggregation_return aggregation() throws RecognitionException {
         SaseParser.aggregation_return retval = new SaseParser.aggregation_return();
         retval.start = input.LT(1);
@@ -2178,7 +2134,7 @@ public class SaseParser extends Parser {
         Object root_0 = null;
 
         Token var=null;
-        Token attr=null;
+        Token member=null;
         Token AGGREGATEOP61=null;
         Token LBRACKET62=null;
         Token ALLTOPREVIOUS63=null;
@@ -2186,7 +2142,7 @@ public class SaseParser extends Parser {
         Token RBRACKET65=null;
 
         Object var_tree=null;
-        Object attr_tree=null;
+        Object member_tree=null;
         Object AGGREGATEOP61_tree=null;
         Object LBRACKET62_tree=null;
         Object ALLTOPREVIOUS63_tree=null;
@@ -2200,55 +2156,56 @@ public class SaseParser extends Parser {
         RewriteRuleTokenStream stream_ALLTOPREVIOUS=new RewriteRuleTokenStream(adaptor,"token ALLTOPREVIOUS");
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:98:2: ( AGGREGATEOP LBRACKET var= NAME ALLTOPREVIOUS POINT attr= NAME RBRACKET -> ^( AGGREGATION AGGREGATEOP $var $attr) )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:98:4: AGGREGATEOP LBRACKET var= NAME ALLTOPREVIOUS POINT attr= NAME RBRACKET
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:101:2: ( AGGREGATEOP LBRACKET var= NAME ALLTOPREVIOUS POINT member= NAME RBRACKET -> ^( AGGREGATION AGGREGATEOP $var ALLTOPREVIOUS $member) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:101:4: AGGREGATEOP LBRACKET var= NAME ALLTOPREVIOUS POINT member= NAME RBRACKET
             {
-            AGGREGATEOP61=(Token)match(input,AGGREGATEOP,FOLLOW_AGGREGATEOP_in_aggregation654);  
+            AGGREGATEOP61=(Token)match(input,AGGREGATEOP,FOLLOW_AGGREGATEOP_in_aggregation678);  
             stream_AGGREGATEOP.add(AGGREGATEOP61);
 
-            LBRACKET62=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation656);  
+            LBRACKET62=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation680);  
             stream_LBRACKET.add(LBRACKET62);
 
-            var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation660);  
+            var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation684);  
             stream_NAME.add(var);
 
-            ALLTOPREVIOUS63=(Token)match(input,ALLTOPREVIOUS,FOLLOW_ALLTOPREVIOUS_in_aggregation662);  
+            ALLTOPREVIOUS63=(Token)match(input,ALLTOPREVIOUS,FOLLOW_ALLTOPREVIOUS_in_aggregation686);  
             stream_ALLTOPREVIOUS.add(ALLTOPREVIOUS63);
 
-            POINT64=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation664);  
+            POINT64=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation688);  
             stream_POINT.add(POINT64);
 
-            attr=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation668);  
-            stream_NAME.add(attr);
+            member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation692);  
+            stream_NAME.add(member);
 
-            RBRACKET65=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation670);  
+            RBRACKET65=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation694);  
             stream_RBRACKET.add(RBRACKET65);
 
 
 
             // AST REWRITE
-            // elements: attr, AGGREGATEOP, var
-            // token labels: var, attr
+            // elements: member, AGGREGATEOP, ALLTOPREVIOUS, var
+            // token labels: member, var
             // rule labels: retval
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
             retval.tree = root_0;
+            RewriteRuleTokenStream stream_member=new RewriteRuleTokenStream(adaptor,"token member",member);
             RewriteRuleTokenStream stream_var=new RewriteRuleTokenStream(adaptor,"token var",var);
-            RewriteRuleTokenStream stream_attr=new RewriteRuleTokenStream(adaptor,"token attr",attr);
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (Object)adaptor.nil();
-            // 98:73: -> ^( AGGREGATION AGGREGATEOP $var $attr)
+            // 101:75: -> ^( AGGREGATION AGGREGATEOP $var ALLTOPREVIOUS $member)
             {
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:98:76: ^( AGGREGATION AGGREGATEOP $var $attr)
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:101:78: ^( AGGREGATION AGGREGATEOP $var ALLTOPREVIOUS $member)
                 {
                 Object root_1 = (Object)adaptor.nil();
                 root_1 = (Object)adaptor.becomeRoot((Object)adaptor.create(AGGREGATION, "AGGREGATION"), root_1);
 
                 adaptor.addChild(root_1, stream_AGGREGATEOP.nextNode());
                 adaptor.addChild(root_1, stream_var.nextNode());
-                adaptor.addChild(root_1, stream_attr.nextNode());
+                adaptor.addChild(root_1, stream_ALLTOPREVIOUS.nextNode());
+                adaptor.addChild(root_1, stream_member.nextNode());
 
                 adaptor.addChild(root_0, root_1);
                 }
@@ -2282,7 +2239,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "value"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:101:1: value : ( NUMBER | STRING_LITERAL );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:1: value : ( NUMBER | STRING_LITERAL );
     public final SaseParser.value_return value() throws RecognitionException {
         SaseParser.value_return retval = new SaseParser.value_return();
         retval.start = input.LT(1);
@@ -2294,7 +2251,7 @@ public class SaseParser extends Parser {
         Object set66_tree=null;
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:101:8: ( NUMBER | STRING_LITERAL )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:8: ( NUMBER | STRING_LITERAL )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (Object)adaptor.nil();
@@ -2334,80 +2291,156 @@ public class SaseParser extends Parser {
     // Delegated rules
 
 
+    protected DFA13 dfa13 = new DFA13(this);
+    static final String DFA13_eotS =
+        "\25\uffff";
+    static final String DFA13_eofS =
+        "\25\uffff";
+    static final String DFA13_minS =
+        "\1\20\1\uffff\1\40\1\14\1\33\1\20\4\31\1\20\2\uffff\1\17\1\20\1"+
+        "\33\1\31\1\33\1\20\1\41\1\33";
+    static final String DFA13_maxS =
+        "\1\50\1\uffff\1\40\1\31\1\34\1\20\4\31\1\20\2\uffff\1\17\1\20\1"+
+        "\34\1\31\1\34\1\20\1\41\1\34";
+    static final String DFA13_acceptS =
+        "\1\uffff\1\1\11\uffff\1\2\1\3\10\uffff";
+    static final String DFA13_specialS =
+        "\25\uffff}>";
+    static final String[] DFA13_transitionS = {
+            "\1\3\3\uffff\1\2\1\1\16\uffff\1\4\3\uffff\1\4",
+            "",
+            "\1\5",
+            "\1\7\1\6\1\10\2\uffff\1\11\7\uffff\1\12",
+            "\1\14\1\13",
+            "\1\15",
+            "\1\16",
+            "\1\16",
+            "\1\16",
+            "\1\16",
+            "\1\17",
+            "",
+            "",
+            "\1\20",
+            "\1\21",
+            "\1\14\1\13",
+            "\1\22",
+            "\1\14\1\13",
+            "\1\23",
+            "\1\24",
+            "\1\14\1\13"
+    };
+
+    static final short[] DFA13_eot = DFA.unpackEncodedString(DFA13_eotS);
+    static final short[] DFA13_eof = DFA.unpackEncodedString(DFA13_eofS);
+    static final char[] DFA13_min = DFA.unpackEncodedStringToUnsignedChars(DFA13_minS);
+    static final char[] DFA13_max = DFA.unpackEncodedStringToUnsignedChars(DFA13_maxS);
+    static final short[] DFA13_accept = DFA.unpackEncodedString(DFA13_acceptS);
+    static final short[] DFA13_special = DFA.unpackEncodedString(DFA13_specialS);
+    static final short[][] DFA13_transition;
+
+    static {
+        int numStates = DFA13_transitionS.length;
+        DFA13_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA13_transition[i] = DFA.unpackEncodedString(DFA13_transitionS[i]);
+        }
+    }
+
+    class DFA13 extends DFA {
+
+        public DFA13(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 13;
+            this.eot = DFA13_eot;
+            this.eof = DFA13_eof;
+            this.min = DFA13_min;
+            this.max = DFA13_max;
+            this.accept = DFA13_accept;
+            this.special = DFA13_special;
+            this.transition = DFA13_transition;
+        }
+        public String getDescription() {
+            return "90:1: expression : ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) | f1= term SINGLEEQUALS f2= term -> ^( COMPAREEXPRESSION $f1 EQUALS $f2) | f1= term COMPAREOP f2= term -> ^( COMPAREEXPRESSION $f1 COMPAREOP $f2) );";
+        }
+    }
  
 
-    public static final BitSet FOLLOW_patternPart_in_query100 = new BitSet(new long[]{0x00000000000000C2L});
-    public static final BitSet FOLLOW_wherePart_in_query103 = new BitSet(new long[]{0x0000000000000082L});
-    public static final BitSet FOLLOW_withinPart_in_query108 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WITHIN_in_withinPart123 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_NUMBER_in_withinPart125 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_TIMEUNIT_in_withinPart127 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WHERE_in_wherePart149 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_wherePart1_in_wherePart151 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_LEFTCURLY_in_wherePart153 = new BitSet(new long[]{0x00000029000C0000L});
-    public static final BitSet FOLLOW_whereExpressions_in_wherePart155 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_RIGHTCURLY_in_wherePart157 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WHERE_in_wherePart174 = new BitSet(new long[]{0x00000029000C0000L});
-    public static final BitSet FOLLOW_whereExpressions_in_wherePart176 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_PATTERN_in_patternPart197 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_patternDecl_in_patternPart199 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_SEQ_in_patternDecl221 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_patternDecl223 = new BitSet(new long[]{0x0000000814000000L});
-    public static final BitSet FOLLOW_pItem_in_patternDecl225 = new BitSet(new long[]{0x0000000028000000L});
-    public static final BitSet FOLLOW_COMMA_in_patternDecl228 = new BitSet(new long[]{0x0000000814000000L});
-    public static final BitSet FOLLOW_pItem_in_patternDecl230 = new BitSet(new long[]{0x0000000028000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_patternDecl234 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NOT_in_pItem259 = new BitSet(new long[]{0x0000000814000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_pItem263 = new BitSet(new long[]{0x0000000814000000L});
-    public static final BitSet FOLLOW_typeName_in_pItem269 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_attributeName_in_pItem273 = new BitSet(new long[]{0x0000000020000002L});
-    public static final BitSet FOLLOW_RBRACKET_in_pItem275 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_typeName302 = new BitSet(new long[]{0x0000000000200000L});
-    public static final BitSet FOLLOW_PLUS_in_typeName306 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_typeName321 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_SKIP_METHOD_in_wherePart1341 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_wherePart1343 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_parameterList_in_wherePart1345 = new BitSet(new long[]{0x0000000020000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_wherePart1347 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_attributeName_in_parameterList370 = new BitSet(new long[]{0x0000000008000002L});
-    public static final BitSet FOLLOW_COMMA_in_parameterList372 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_attributeName_in_parameterList374 = new BitSet(new long[]{0x0000000008000002L});
-    public static final BitSet FOLLOW_kAttributeName_in_attributeName398 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_sAttributeName_in_attributeName400 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeName412 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_kAttributeName415 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_kAttributeName417 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_sAttributeName440 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeUsage459 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_CURRENT_in_kAttributeUsage461 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeUsage476 = new BitSet(new long[]{0x0000000000001000L});
-    public static final BitSet FOLLOW_FIRST_in_kAttributeUsage478 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeUsage493 = new BitSet(new long[]{0x0000000000004000L});
-    public static final BitSet FOLLOW_PREVIOUS_in_kAttributeUsage495 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_whereExpressions517 = new BitSet(new long[]{0x0000000000000802L});
-    public static final BitSet FOLLOW_AND_in_whereExpressions520 = new BitSet(new long[]{0x00000029000C0000L});
-    public static final BitSet FOLLOW_expression_in_whereExpressions522 = new BitSet(new long[]{0x0000000000000802L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_expression549 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_expression551 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_expression553 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_term_in_expression567 = new BitSet(new long[]{0x0000000002000000L});
-    public static final BitSet FOLLOW_COMPAREOP_in_expression569 = new BitSet(new long[]{0x00000029000C0000L});
-    public static final BitSet FOLLOW_term_in_expression573 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_aggregation_in_term597 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_kAttributeUsage_in_term603 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_POINT_in_term605 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_term607 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_sAttributeName_in_term621 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_POINT_in_term623 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_term625 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_value_in_term640 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_AGGREGATEOP_in_aggregation654 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation656 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation660 = new BitSet(new long[]{0x0000000000008000L});
-    public static final BitSet FOLLOW_ALLTOPREVIOUS_in_aggregation662 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation664 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation668 = new BitSet(new long[]{0x0000000020000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_aggregation670 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_patternPart_in_query104 = new BitSet(new long[]{0x00000000000000C2L});
+    public static final BitSet FOLLOW_wherePart_in_query107 = new BitSet(new long[]{0x0000000000000082L});
+    public static final BitSet FOLLOW_withinPart_in_query112 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_WITHIN_in_withinPart127 = new BitSet(new long[]{0x0000001000000000L});
+    public static final BitSet FOLLOW_NUMBER_in_withinPart129 = new BitSet(new long[]{0x0000000000040000L});
+    public static final BitSet FOLLOW_TIMEUNIT_in_withinPart131 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_WHERE_in_wherePart153 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_wherePart1_in_wherePart155 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_LEFTCURLY_in_wherePart157 = new BitSet(new long[]{0x0000011000310000L});
+    public static final BitSet FOLLOW_whereExpressions_in_wherePart159 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_RIGHTCURLY_in_wherePart161 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_WHERE_in_wherePart178 = new BitSet(new long[]{0x0000011000310000L});
+    public static final BitSet FOLLOW_whereExpressions_in_wherePart180 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_PATTERN_in_patternPart201 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_patternDecl_in_patternPart203 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SEQ_in_patternDecl225 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_patternDecl227 = new BitSet(new long[]{0x0000000140010000L});
+    public static final BitSet FOLLOW_pItem_in_patternDecl229 = new BitSet(new long[]{0x0000000280000000L});
+    public static final BitSet FOLLOW_COMMA_in_patternDecl232 = new BitSet(new long[]{0x0000000140010000L});
+    public static final BitSet FOLLOW_pItem_in_patternDecl234 = new BitSet(new long[]{0x0000000280000000L});
+    public static final BitSet FOLLOW_RBRACKET_in_patternDecl238 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NOT_in_pItem263 = new BitSet(new long[]{0x0000000140010000L});
+    public static final BitSet FOLLOW_LBRACKET_in_pItem267 = new BitSet(new long[]{0x0000000140010000L});
+    public static final BitSet FOLLOW_typeName_in_pItem273 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_attributeName_in_pItem277 = new BitSet(new long[]{0x0000000200000002L});
+    public static final BitSet FOLLOW_RBRACKET_in_pItem279 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_typeName306 = new BitSet(new long[]{0x0000000000800002L});
+    public static final BitSet FOLLOW_PLUS_in_typeName310 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SKIP_METHOD_in_wherePart1353 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_wherePart1355 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_parameterList_in_wherePart1357 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_RBRACKET_in_wherePart1359 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_attributeName_in_parameterList382 = new BitSet(new long[]{0x0000000080000002L});
+    public static final BitSet FOLLOW_COMMA_in_parameterList384 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_attributeName_in_parameterList386 = new BitSet(new long[]{0x0000000080000002L});
+    public static final BitSet FOLLOW_kAttributeName_in_attributeName410 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_sAttributeName_in_attributeName412 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeName424 = new BitSet(new long[]{0x0000000000200000L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_kAttributeName427 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_kAttributeName429 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_sAttributeName452 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage471 = new BitSet(new long[]{0x0000000000002000L});
+    public static final BitSet FOLLOW_CURRENT_in_kAttributeUsage473 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage479 = new BitSet(new long[]{0x0000000000001000L});
+    public static final BitSet FOLLOW_FIRST_in_kAttributeUsage481 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage486 = new BitSet(new long[]{0x0000000000004000L});
+    public static final BitSet FOLLOW_PREVIOUS_in_kAttributeUsage488 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage493 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_LAST_in_kAttributeUsage495 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_whereExpressions507 = new BitSet(new long[]{0x0000000000000802L});
+    public static final BitSet FOLLOW_AND_in_whereExpressions510 = new BitSet(new long[]{0x0000011000310000L});
+    public static final BitSet FOLLOW_expression_in_whereExpressions512 = new BitSet(new long[]{0x0000000000000802L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_expression539 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_NAME_in_expression541 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_expression543 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_term_in_expression557 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_SINGLEEQUALS_in_expression559 = new BitSet(new long[]{0x0000011000110000L});
+    public static final BitSet FOLLOW_term_in_expression563 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_term_in_expression584 = new BitSet(new long[]{0x0000000008000000L});
+    public static final BitSet FOLLOW_COMPAREOP_in_expression586 = new BitSet(new long[]{0x0000011000110000L});
+    public static final BitSet FOLLOW_term_in_expression590 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_aggregation_in_term614 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_kAttributeUsage_in_term620 = new BitSet(new long[]{0x0000000002000000L});
+    public static final BitSet FOLLOW_POINT_in_term622 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_NAME_in_term624 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_term641 = new BitSet(new long[]{0x0000000002000000L});
+    public static final BitSet FOLLOW_POINT_in_term643 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_NAME_in_term647 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_value_in_term664 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_AGGREGATEOP_in_aggregation678 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_aggregation680 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation684 = new BitSet(new long[]{0x0000000000008000L});
+    public static final BitSet FOLLOW_ALLTOPREVIOUS_in_aggregation686 = new BitSet(new long[]{0x0000000002000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation688 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation692 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_RBRACKET_in_aggregation694 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_value0 = new BitSet(new long[]{0x0000000000000002L});
 
 }

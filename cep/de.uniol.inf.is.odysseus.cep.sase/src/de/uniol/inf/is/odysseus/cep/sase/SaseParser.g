@@ -15,7 +15,8 @@ tokens{
 	ATTRIBUTE;
 	KATTRIBUTE;
 	PARAMLIST;
-	MEMBERACCESS;
+	KMEMBER;
+	MEMBER;
 	COMPAREEXPRESSION;
 	IDEXPRESSION;
 	AGGREGATION;
@@ -51,7 +52,8 @@ patternDecl
 pItem 	:	(NOT)? LBRACKET?  type=typeName variable=attributeName RBRACKET? -> ^(STATE $type $variable NOT?) 
 	;
 	
-typeName:	NAME op=PLUS -> ^(KTYPE NAME $op) | NAME -> ^(TYPE NAME)
+typeName:	NAME op=PLUS? -> {$op != null}? ^(KTYPE NAME $op) 
+			     -> ^(TYPE NAME)
 	;
 	
 wherePart1
@@ -75,9 +77,10 @@ sAttributeName
 	:	NAME -> ^(ATTRIBUTE NAME)
 	;
 kAttributeUsage
-	: 	NAME CURRENT -> ^(KATTRIBUTE NAME CURRENT)|
-		NAME FIRST -> ^(KATTRIBUTE NAME FIRST)|
-		NAME PREVIOUS -> ^(KATTRIBUTE NAME PREVIOUS)
+	: 	NAME CURRENT |
+		NAME FIRST|
+		NAME PREVIOUS|
+		NAME LAST
 	;
 	
 whereExpressions
@@ -85,17 +88,17 @@ whereExpressions
 	;
 	
 expression
-	:	 BBRACKETLEFT NAME BBRACKETRIGHT -> ^(IDEXPRESSION NAME) | f1=term COMPAREOP f2=term -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
+	:	 BBRACKETLEFT NAME BBRACKETRIGHT -> ^(IDEXPRESSION NAME) | f1=term SINGLEEQUALS f2=term ->  ^(COMPAREEXPRESSION $f1 EQUALS $f2) | f1=term COMPAREOP f2=term -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
 	;
 
 term	:	aggregation |
-		kAttributeUsage POINT NAME-> ^(MEMBERACCESS kAttributeUsage NAME)|
-		sAttributeName POINT NAME -> ^(MEMBERACCESS sAttributeName NAME)|
+		kAttributeUsage POINT NAME -> ^(KMEMBER kAttributeUsage NAME)|
+		aName=NAME POINT member=NAME -> ^(MEMBER $aName $member)|
 		value		
 	;
 	
 aggregation
-	:	AGGREGATEOP LBRACKET var=NAME ALLTOPREVIOUS POINT attr=NAME RBRACKET -> ^(AGGREGATION AGGREGATEOP $var $attr)
+	:	AGGREGATEOP LBRACKET var=NAME ALLTOPREVIOUS POINT member=NAME RBRACKET -> ^(AGGREGATION AGGREGATEOP $var ALLTOPREVIOUS $member )
 	;
 	
 value 	:	 NUMBER | STRING_LITERAL;

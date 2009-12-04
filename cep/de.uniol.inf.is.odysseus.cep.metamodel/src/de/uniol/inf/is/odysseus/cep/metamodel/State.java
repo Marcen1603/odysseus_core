@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -9,7 +10,7 @@ import javax.xml.bind.annotation.XmlID;
 /**
  * Objekte dieser Klasse repräsentieren einen Zustand des Automaten.
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 public class State {
@@ -28,7 +29,7 @@ public class State {
 	 * Liste aller von einem Zustand ausgehenden Transitionen. Sollte nicht null
 	 * sein.
 	 */
-	private LinkedList<Transition> transitions;
+	private List<Transition> transitions = new LinkedList<Transition>();
 
 	/**
 	 * Erzeugt einen neuen Automatenzustand
@@ -41,15 +42,25 @@ public class State {
 	 *            Liste der vom Zustand ausgehenden Transitionen. Nicht null.
 	 */
 	public State(String id, boolean accepting,
-			LinkedList<Transition> outgoingTransitions) {
-		this.id = id;
-		this.accepting = accepting;
-		this.transitions = outgoingTransitions;
+			List<Transition> outgoingTransitions) {
+		setId(id);
+		setAccepting(accepting);
+		setTransitions(outgoingTransitions);
+	}
+
+	public State(String id, boolean accepting) {
+		setId(id);
+		setAccepting(accepting);
 	}
 
 	public State() {
 	}
 	
+	public State(String id){
+		setId(id);
+	}
+	
+
 	/**
 	 * Gibt die automatenweit eindeutige ID des Zustands zurück.
 	 * 
@@ -96,8 +107,17 @@ public class State {
 	 * 
 	 * @return Liste der von einem Zustand ausgehenden Transitionen.
 	 */
-	public LinkedList<Transition> getTransitions() {
+	public List<Transition> getTransitions() {
 		return transitions;
+	}
+	
+	public Transition getTransition(String id){
+		for (Transition t: transitions){
+			if (t.getId().equals(id)){
+				return t;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -109,18 +129,35 @@ public class State {
 	 */
 	@XmlElementWrapper(name = "transitions") 
 	@XmlElement(name = "transition")
-	public void setTransitions(LinkedList<Transition> outgoingTransitions) {
+	public void setTransitions(List<Transition> outgoingTransitions) {
 		this.transitions = outgoingTransitions;
 	}
-
-	public String toString(String indent) {
-		String str = indent + "State: " + this.hashCode();
-		indent += "  ";
-		str += indent + "id: " + this.id;
-		str += indent + "accepting: " + this.accepting;
-		for (Transition transition : this.transitions) {
-			str += transition.toString(indent);
-		}
-		return str;
+	
+	public void addTransition(Transition t){
+		transitions.add(t);
 	}
+	
+	@Override
+	public String toString() {
+		return id+(accepting?"<F>":"")+" "+(transitions==null?"null":transitions+" ");
+	}
+
+	public String prettyPrint() {
+		String ret = "State:" +id+(accepting?"<F>":"")+"\n";
+		for (Transition t: transitions){
+			ret +=t.toString()+"\n";
+		}
+		return ret;
+	}
+	
+	public boolean hasTarget(State state) {
+		for (Transition t: transitions){
+			if (t.getNextState().getId() == state.getId()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 }

@@ -214,7 +214,7 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 			if (logger.isDebugEnabled()) logger.debug("Setze Variable " + varName);
 			
 			Object newValue = null;
-			if (CepOperator.isActEventName(varName)) {
+			if (CepVariable.isActEventName(varName)) {
 				// Variable bezieht sich auf aktuelles Event
 				newValue = this.eventReader.getValue(CepVariable.getAttributeName(varName), object);	
 			} else {
@@ -474,48 +474,7 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 		return str;
 	}
 
-	/*
-	 * **************************************************************************
-	 * Hilfsmethoden fürs Namensschema der Variablen *
-	 * ***************************
-	 * ***********************************************
-	 */
 
-	/*
-	 * Die internen Variablennamen sind nach folgendem Muster aufgebaut:
-	 * <OperationName>_<StateID>_<Index>_<AttributName>
-	 * 
-	 * OperationName: Name der Symboltabellenoperation. Bezieht sich der
-	 * Variablenname auf das aktuelle Event, so ist OperationName leer.
-	 * 
-	 * StateID: Name des Zustands, in dem das Event konsumiert wurde. Bezieht
-	 * sich der Variablenname auf das aktuelle Event, so ist StateID leer
-	 * 
-	 * Index: Der Index des Events im StateBuffer. Bezieht sich der
-	 * Variablenname auf das aktuelle Event, so ist Index leer
-	 * 
-	 * AttributName: Der Name des Attributs, auf das sich die Variable bezieht.
-	 * Ist leer, wenn sich die Variable nicht auf ein Attribut, sondern direkt
-	 * auf ein Event bezieht (nur für Operation Count)
-	 */
-
-	/**
-	 * Überprüft, ob sich der übergebene Variablenname auf ein aktuelles Event
-	 * bezieht.
-	 * 
-	 * @param name
-	 *            Der zu prüfende Variablenname
-	 * @return true, wenn sich der Variablenname auf ein aktuelles Event
-	 *         bezieht, ansonsten false.
-	 */
-	public static boolean isActEventName(String name) {
-		String[] split = name.split(CepVariable.getSeperator());
-		if (split[0].isEmpty() && split[1].isEmpty() && split[2].isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 
 

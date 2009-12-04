@@ -31,6 +31,10 @@ public class JEPCondition extends AbstractCondition {
 	
 	public void setLabel(String label) {
 		super.setLabel((label==null) ? "1" : label);
+		initJEPExpressionFromLabel();
+	}
+
+	private void initJEPExpressionFromLabel() {
 		this.expression = new JEP();
 		this.expression.setAllowUndeclared(true);
 		this.expression.parseExpression(getLabel());
@@ -65,5 +69,38 @@ public class JEPCondition extends AbstractCondition {
 
 	public void setValue(String varName, Object newValue) {
 		expression.getVar(varName).setValue(newValue);
+	}
+	
+	@Override
+	public boolean evaluate() {
+		/*
+		 * C-Semantik: Alles ungleich 0 oder null ist true! JEP tut
+		 * komische Dinge: - Vergleichsoperatoren liefern
+		 * Boolean-Objekte und NaN getValue() - alle anderen
+		 * Operatoren liefern Double-Objekte (auch für boolesche
+		 * Operatoren, immer 0.0 oder 1.0)
+		 */
+		double conditionValue = expression.getValue();
+		if (Double.isNaN(conditionValue)) {
+			Boolean boolVal = (Boolean) expression.getValueAsObject();
+			conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
+		}
+		return (conditionValue != 0.0);
+	}
+	
+	@Override
+	public void append(String fullExpression) {
+		String curLabel = getLabel();
+		if (curLabel == null || curLabel.length()==0){
+			setLabel(fullExpression);
+		}else{
+			setLabel(curLabel+" && "+fullExpression);
+		}	
+	}
+	
+	@Override
+	public void negate() {
+		String curLabel = getLabel();
+		setLabel("!("+curLabel+")");
 	}
 }

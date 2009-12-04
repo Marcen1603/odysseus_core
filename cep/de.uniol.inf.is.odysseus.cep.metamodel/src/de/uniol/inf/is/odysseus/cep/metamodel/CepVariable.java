@@ -9,6 +9,26 @@ import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAd
 /**
  * Cep-Varible mit Moeglichkeiten zur Konvertierung in einem String.
  * 
+ * 
+ * Die internen Variablennamen sind nach folgendem Muster aufgebaut:
+ * <OperationName>#<StateID>#<Index>#<AttributName>
+ * 
+ * wobei das hier dargestellte Trennzeichen # hier definiert wird
+ * 
+ * OperationName: Name der Symboltabellenoperation. Bezieht sich der
+ * Variablenname auf das aktuelle Event, so ist OperationName leer.
+ * 
+ * StateID: Name des Zustands, in dem das Event konsumiert wurde. Bezieht sich
+ * der Variablenname auf das aktuelle Event, so ist StateID leer
+ * 
+ * Index: Der Index des Events im StateBuffer. Bezieht sich der Variablenname
+ * auf das aktuelle Event, so ist Index leer
+ * 
+ * AttributName: Der Name des Attributs, auf das sich die Variable bezieht. Ist
+ * leer, wenn sich die Variable nicht auf ein Attribut, sondern direkt auf ein
+ * Event bezieht (nur für Operation Count)
+ * 
+ * 
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
@@ -51,23 +71,23 @@ public class CepVariable<T> {
 	 *            Operation, die bei der Aktualisierung des Eintrags ausgeführt
 	 *            werden soll
 	 */
-	public CepVariable(int entryID, String stateIdentifier,
-			int index, String attribute, ISymbolTableOperation<T> operation) {
+	public CepVariable(int entryID, String stateIdentifier, int index,
+			String attribute, ISymbolTableOperation<T> operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
 		this.attributename = attribute;
 		this.setOperation(operation);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public CepVariable(String varName){
+	public CepVariable(String varName) {
 		String[] split = varName.split(getSeperator());
-		this.operation =  SymbolTableOperationFactory.getOperation(split[0]);
+		this.operation = SymbolTableOperationFactory.getOperation(split[0]);
 		this.stateIdentifier = split[1];
 		this.index = Integer.parseInt(split[2]);
 		this.attributename = split[3];
-	} 
-	
+	}
+
 	/**
 	 * leerer Standardkonstruktor
 	 */
@@ -84,7 +104,7 @@ public class CepVariable<T> {
 	 */
 	public String getVariableName() {
 		StringBuffer ret = new StringBuffer();
-		ret.append(this.operation.getName()).append(getSeperator());  
+		ret.append(this.operation.getName()).append(getSeperator());
 		ret.append(this.stateIdentifier).append(getSeperator());
 		if (this.index >= 0) {
 			ret.append(this.index);
@@ -141,8 +161,8 @@ public class CepVariable<T> {
 	}
 
 	/**
-	 * Gibt den Index des Events im {@link StateBuffer} zurück, auf das sich der
-	 * Eintrag bezieht.
+	 * Gibt den Index des Events im {@link StateBuffer} zurück, auf das sich
+	 * der Eintrag bezieht.
 	 * 
 	 * @return Index des Events im {@link StateBuffer}. Ist negativ, wenn das
 	 *         oberste Element des {@link StateBuffer} gemeint ist, ansonsten
@@ -195,13 +215,38 @@ public class CepVariable<T> {
 		return str;
 	}
 
-	public static String getSeperator(){
-		return "_";
+	public static String getSeperator() {
+		return "#";
 	}
-	
+
 	public static String getAttributeName(String varName) {
 		String[] split = varName.split(getSeperator());
 		return split[3];
 	}
-	
+
+	/*
+	 * **************************************************************************
+	 * Hilfsmethode fuers Namensschema der Variablen *
+	 * ***************************
+	 * ***********************************************
+	 */
+
+	/**
+	 * Überprüft, ob sich der übergebene Variablenname auf ein aktuelles
+	 * Event bezieht.
+	 * 
+	 * @param name
+	 *            Der zu prüfende Variablenname
+	 * @return true, wenn sich der Variablenname auf ein aktuelles Event
+	 *         bezieht, ansonsten false.
+	 */
+	public static boolean isActEventName(String name) {
+		String[] split = name.split(CepVariable.getSeperator());
+		if (split[0].isEmpty() && split[1].isEmpty() && split[2].isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

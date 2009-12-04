@@ -15,7 +15,7 @@ public class Transition {
 	/**
 	 * Die im gesamten Automaten eindeutige ID der Transition.
 	 */
-	private int id;
+	private String id;
 	/**
 	 * Referenz auf den Folgezustand. Darf während der Verarbeitung durch den
 	 * EPA nicht null sein. Muss zudem ein Zustandsobjekt aus der Menge der
@@ -50,7 +50,7 @@ public class Transition {
 	 *            Die Aktion, die für eine erfüllte Transitionsbedingung
 	 *            ausgeführt wird.
 	 */
-	public Transition(int id, State nextState, ICondition condition,
+	public Transition(String id, State nextState, ICondition condition,
 			EAction action) {
 		this.id = id;
 		this.nextState = nextState;
@@ -58,13 +58,14 @@ public class Transition {
 		this.action = action;
 	}
 
+	
 	/**
 	 * Liefert die ID der Transition, welche im gesamten Automaten eindeutig
 	 * ist.
 	 * 
 	 * @return Die ID der Transition.
 	 */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -75,7 +76,7 @@ public class Transition {
 	 *            Die neue ID der Transition, die im gesamten Automaten
 	 *            eindeutig sein muss.
 	 */
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -90,6 +91,7 @@ public class Transition {
 		return nextState;
 	}
 
+	
 	/**
 	 * Setzt den Folgezustand der Transition.
 	 * 
@@ -140,32 +142,31 @@ public class Transition {
 		this.action = action;
 	}
 
-	public String toString(String indent) {
-		String str = indent + "Transition: " + this.hashCode();
-		indent += "  ";
-		str += indent + "id: " + this.id;
-		str += indent + "nextState: " + this.nextState.getId() + " ("
-				+ this.nextState.hashCode() + ")";
-		str += this.condition.toString(indent);
-		str += indent + "Action: " + this.action;
+	public String toString() {
+		String str =   "T: " + this.id;
+		str +=  " -> " + this.nextState.getId();
+		str += " when: " + this.condition;
+		str += " A: " + this.action;
 		return str;
 	}
-
-	public boolean evaluate() {
-
-		/*
-		 * C-Semantik: Alles ungleich 0 oder null ist true! JEP tut
-		 * komische Dinge: - Vergleichsoperatoren liefern
-		 * Boolean-Objekte und NaN getValue() - alle anderen
-		 * Operatoren liefern Double-Objekte (auch für boolesche
-		 * Operatoren, immer 0.0 oder 1.0)
-		 */
-		double conditionValue = getCondition().getValue();
-		if (Double.isNaN(conditionValue)) {
-			Boolean boolVal = (Boolean) getCondition().getValueAsObject();
-			conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
-		}
-		return (conditionValue != 0.0);
+	
+	public boolean evaluate() {		
+		return getCondition().evaluate();
 	}
+
+	public void append(String fullExpression) {
+		getCondition().append(fullExpression);		
+	}
+	
+	public void negateExpression() {
+		getCondition().negate();
+	}
+
+
+	public String prettyPrint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

@@ -6,3 +6,9 @@ Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: antlr-runtime-3.2.jar,
  .
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.cep,
+ de.uniol.inf.is.odysseus.cep.metamodel,
+ de.uniol.inf.is.odysseus.cep.metamodel.jep,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema

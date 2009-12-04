@@ -30,9 +30,10 @@ public class SMF2 extends StateMachineFactory {
 	@Override
 	protected void initComponents(Object[] args) {
 		LinkedList<Transition> transistions1 = new LinkedList<Transition>();
-		transistions1.add(new Transition(0, null, new JEPCondition("1"),
+		
+		transistions1.add(new Transition("0", null, new JEPCondition("1"),
 				EAction.discard));
-		transistions1.add(new Transition(1, null, new JEPCondition("1"),
+		transistions1.add(new Transition("1", null, new JEPCondition("1"),
 				EAction.discard));
 		State state1 = new State("state1", false, transistions1);
 		transistions1 = new LinkedList<Transition>();

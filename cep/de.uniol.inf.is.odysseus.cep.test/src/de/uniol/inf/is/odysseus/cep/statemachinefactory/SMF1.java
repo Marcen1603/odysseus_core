@@ -45,9 +45,10 @@ public class SMF1 extends StateMachineFactory {
 		for (int i = 0; i < numberOfStates; i++) {
 			boolean acc = (i == 0) ? true : false;
 			outTransitions = new LinkedList<Transition>();
+			
 			if (dest != null) {
 				ICondition cond = new JEPCondition("x + 1");
-				outTransitions.add(new Transition(i, dest, cond, EAction.discard));
+				outTransitions.add(new Transition(i+"",dest, cond, EAction.discard));
 			}
 			State s = new State("state" + i, acc, outTransitions);
 			dest = s;
