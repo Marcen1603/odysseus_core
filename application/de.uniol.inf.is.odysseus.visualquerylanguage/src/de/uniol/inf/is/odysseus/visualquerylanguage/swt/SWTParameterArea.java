@@ -112,7 +112,7 @@ public class SWTParameterArea {
 								inputs.add(subscription.getTarget()
 										.getOutputSchema());
 							}
-							SWTPredicateEditor paramEditor = new SWTPredicateEditor(
+							SWTRelationalPredicateEditor paramEditor = new SWTRelationalPredicateEditor(
 									SWTMainWindow.getShell(), nodeView
 											.getModelNode().getContent(),
 									inputs, cComp);
@@ -216,7 +216,7 @@ public class SWTParameterArea {
 								inputs.add(subscription.getTarget()
 										.getOutputSchema());
 							}
-							SWTPredicateEditor paramEditor = new SWTPredicateEditor(
+							SWTRelationalPredicateEditor paramEditor = new SWTRelationalPredicateEditor(
 									SWTMainWindow.getShell(), nodeView
 											.getModelNode().getContent(), inputs,
 									sComp);

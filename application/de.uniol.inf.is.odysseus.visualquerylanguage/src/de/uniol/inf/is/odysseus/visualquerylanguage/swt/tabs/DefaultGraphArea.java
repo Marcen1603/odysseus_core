@@ -85,7 +85,7 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTExpressionEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTOutputEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
-import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTPredicateEditor;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTRelationalPredicateEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor.CursorManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositioner;
 
