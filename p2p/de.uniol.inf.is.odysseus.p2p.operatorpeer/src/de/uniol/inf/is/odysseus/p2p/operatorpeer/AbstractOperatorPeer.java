@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IQuerySpezificationListener;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -30,9 +29,9 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	
 	protected IPriority priority;
 
-	protected IQuerySpezificationListener querySpezificationFinder;
+//	protected IQuerySpezificationListener querySpezificationFinder;
 
-	private Thread querySpezificationFinderThread;
+//	private Thread querySpezificationFinderThread;
 
 	private Thread socketListenerThread;
 
@@ -110,7 +109,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		initSocketServerListener(this);
 		initExecutor();
 		initDistributor();
-		initQuerySpezificationFinder();
+//		initQuerySpezificationFinder();
 	}
 
 	private void initDistributor() {
@@ -145,7 +144,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		this.priority = new Priority();
 	}
 
-	protected abstract void initQuerySpezificationFinder();
+//	protected abstract void initQuerySpezificationFinder();
 
 	protected abstract void initSocketServerListener(AbstractOperatorPeer aPeer);
 
@@ -191,18 +190,18 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		startSourceHandler();
 		startServerSocketListener();
 		startAliveHandler();
-		startQuerySpezificationFinder();
+//		startQuerySpezificationFinder();
 	}
 	
-	protected void startQuerySpezificationFinder() {
-		if (querySpezificationFinderThread != null
-				&& querySpezificationFinderThread.isAlive()) {
-			querySpezificationFinderThread.interrupt();
-		}
-		this.querySpezificationFinderThread = new Thread(
-				querySpezificationFinder);
-		querySpezificationFinderThread.start();
-	}
+//	protected void startQuerySpezificationFinder() {
+//		if (querySpezificationFinderThread != null
+//				&& querySpezificationFinderThread.isAlive()) {
+//			querySpezificationFinderThread.interrupt();
+//		}
+//		this.querySpezificationFinderThread = new Thread(
+//				querySpezificationFinder);
+//		querySpezificationFinderThread.start();
+//	}
 
 	protected void startServerSocketListener() {
 		if (socketListenerThread != null && socketListenerThread.isAlive()) {

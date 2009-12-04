@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -18,9 +17,8 @@ import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.QuerySpezificationListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
@@ -28,7 +26,6 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezificat
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
@@ -87,11 +84,9 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	public  PipeService pipeService;
 
-	public  HashMap<String, ILogicalOperator> plans = new HashMap<String, ILogicalOperator>();
 
 
-
-	private PipeAdvertisement serverPipeAdvertisement;
+	private PipeAdvertisement serverResponseAddress;
 	
 	
 	public void activate() {
@@ -133,19 +128,15 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		return pipeService;
 	}
 
-	public HashMap<String, ILogicalOperator> getPlans() {
-		return plans;
-	}
 
-
-	@Override
-	protected void initQuerySpezificationFinder() {
-		this.querySpezificationFinder = new QuerySpezificationListenerJxtaImpl();
-	}
+//	@Override
+//	protected void initQuerySpezificationFinder() {
+//		this.querySpezificationFinder = new QuerySpezificationListenerJxtaImpl();
+//	}
 
 	@Override
 	protected void initSocketServerListener(AbstractOperatorPeer aPeer) {
-		this.socketServerListener = new SocketServerListenerJxtaImpl(aPeer);
+		this.socketServerListener = new SocketServerListener(aPeer);
 	}
 
 	public void setDiscoveryService(DiscoveryService discoveryService) {
@@ -168,13 +159,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		this.pipeService = pipeService;
 	}
 
-	public void setPlans(HashMap<String, ILogicalOperator> plans) {
-		this.plans = plans;
-	}
-
-	public void setQueries(HashMap<String, Query> queries) {
-		this.queries = queries;
-	}
 
 	@Override
 	public void startNetwork() {
@@ -188,7 +172,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			CacheTool.checkForExistingConfigurationDeletion("OperatorPeer_" + name,
 					new File(new File(".cache"), "OperatorPeer_" + name));
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		
@@ -332,15 +315,27 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		
 	}
 
+	
 	private void setServerPipeAdvertisement(
 			PipeAdvertisement serverPipeAdvertisement) {
-		this.serverPipeAdvertisement = serverPipeAdvertisement;
+		this.serverResponseAddress = serverPipeAdvertisement;
+	}
+
+	@Override
+	public Object getServerResponseAddress() {
+		return this.serverResponseAddress;
+	}
+
+	@Override
+	public void addQuery(Query query) {
+		// TODO Auto-generated method stub
 		
 	}
 
-	public PipeAdvertisement getServerPipeAdvertisement() {
-		return this.serverPipeAdvertisement;
-
+	@Override
+	public void removeQuery(Query query) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

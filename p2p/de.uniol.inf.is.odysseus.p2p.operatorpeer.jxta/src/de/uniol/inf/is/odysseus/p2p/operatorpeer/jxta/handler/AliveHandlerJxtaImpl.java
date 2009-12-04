@@ -16,7 +16,7 @@ public class AliveHandlerJxtaImpl implements IAliveHandler {
 		adv.setPeerName(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
 				.getPeerName());
 		adv.setPipe( OperatorPeerJxtaImpl
-				.getInstance().getServerPipeAdvertisement().toString());
+				.getInstance().getServerResponseAddress().toString());
 		adv.setType("OperatorPeer");
 		adv.setPeerId(OperatorPeerJxtaImpl.getInstance().getNetPeerGroup()
 				.getPeerID().toString());

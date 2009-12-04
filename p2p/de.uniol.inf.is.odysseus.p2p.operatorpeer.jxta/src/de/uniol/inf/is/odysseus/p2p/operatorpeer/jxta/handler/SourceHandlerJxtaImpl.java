@@ -34,7 +34,6 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		this.setoPeer(aPeer);
 	}
 
-
 	@Override
 	public void run() {
 
