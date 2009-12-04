@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IBiddingHandlerStrategy;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 
-public abstract class AbstractThinPeer implements IPeer {
+public abstract class AbstractThinPeer extends AbstractPeer {
 
 	protected ISocketServerListener socketServerListener;
 
@@ -44,11 +44,15 @@ public abstract class AbstractThinPeer implements IPeer {
 
 	protected IBiddingHandlerStrategy biddingHandlerStrategy;
 	
-	public static HashMap<String,Object> adminPeers;
+	public HashMap<String,Object> adminPeers;
 	
 	
 	public HashMap<String,Object> getAdminPeers() {
 		return adminPeers;
+	}
+	
+	protected void setAdminPeers(HashMap<String,Object> adminPeers) {
+		this.adminPeers = adminPeers;
 	}
 
 	public MainWindow getGui() {
