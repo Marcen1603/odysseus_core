@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
@@ -29,6 +26,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 /**
  * This class provides functions to support Restructuring Aspects
@@ -38,9 +36,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 @SuppressWarnings("unchecked")
 public class RelationalRestructHelper {
-
-	static Logger logger = LoggerFactory
-			.getLogger(RelationalRestructHelper.class);
+	
+	static String LOGGER_NAME = RelationalRestructHelper.class.toString();
 
 	public static boolean containsAllSources(ILogicalOperator op, Set sources) {
 		List<SDFAttribute> schema = op.getOutputSchema();
@@ -292,12 +289,12 @@ public class RelationalRestructHelper {
 	}
 
 	public static Collection<ILogicalOperator> removeOperator(RenameAO op) {
-		logger.info("removing rename:" + op);
+		LoggerHelper.getInstance(LOGGER_NAME).info("removing rename:" + op);
 		return RestructHelper.removeOperator(op, true);
 	}
 
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op) {
-		logger.info("removing operator:" + op);
+		LoggerHelper.getInstance(LOGGER_NAME).info("removing operator:" + op);
 		return RestructHelper.removeOperator(op, false);
 	}
 
