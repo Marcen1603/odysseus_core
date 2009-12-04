@@ -1,16 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
-import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IAliveHandler;
@@ -23,15 +19,12 @@ import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.ISplittingStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
-
-public abstract class AbstractAdministrationPeer implements IPeer {
+public abstract class AbstractAdministrationPeer extends AbstractPeer {
 
 	protected IQuerySpezificationListener querySpezificationListener;
 
 	private Thread querySpezificationListenerThread;
 
-	private Thread socketListenerThread;
-	
 	private Thread operatorPeerListenerThread;
 	
 	private Thread aliveHandlerThread;
@@ -62,38 +55,33 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	private IAdvancedExecutor executor;
 	
-	private HashMap<String, Query> queries = new HashMap<String, Query>();
-	
-	private Map<String, IMessageHandler> messageHandler = new HashMap<String, IMessageHandler>();
-//	
-//	public void bindMessageHandler(IMessageHandler messageHandler) {
-//		System.out.println("binde Namespace "+messageHandler.getInterestedNamespace());
-//		this.messageHandler.put(messageHandler.getInterestedNamespace(), messageHandler);
-//	}
-//	
-//	public void unbindMessageHandler(IMessageHandler messageHandler) {
-//		if(this.messageHandler.containsKey(messageHandler.getInterestedNamespace())) {
-//			this.messageHandler.remove(messageHandler.getInterestedNamespace());
-//		}
-//	}
+	public AbstractAdministrationPeer() {
+		super();
+	}
 	
 	public IDistributionProvider getDistributionProvider() {
 		return distributionProvider;
 	}
 
 	public void bindDistributionProvider(IDistributionProvider dp) {
-		System.out.println("Binde Distribution Provider");
+		getLogger().info("Binding Distribution Provider" , dp);
 		this.distributionProvider = dp;
 		this.distributionProvider.setManagedQueries(getQueries());
 		this.distributionProvider.initializeService();
 		//Handler des Distribution Providers registrieren
-		getMessageHandler().put(this.distributionProvider.getMessageHandler().getInterestedNamespace(), this.distributionProvider.getMessageHandler());
-		
+		boolean registered = registerMessageHandler(this.distributionProvider.getMessageHandler());
+		if(registered) {
+			getLogger().info("Distribution Provider Message Handler registered");
+		}
+		else {
+			getLogger().info("Distribution Provider Message Handler not registered");
+		}
 	}
 	
 	public void unbindDistributionProvider(IDistributionProvider dp) {
 		System.out.println("unbind distribution");
 		if(this.distributionProvider == dp) {
+			getLogger().info("Unbinding Distribution Provider" , dp);
 			this.distributionProvider = null;
 		}
 	}
@@ -113,41 +101,37 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	
 	
 	public void bindCompiler(ICompiler compiler) {
-		System.out.println("Binde Compiler");
+		getLogger().info("Binding Compiler" , compiler);
 		this.compiler = compiler;
 
 	}
 	
 	public void unbindCompiler(ICompiler compiler) {
-		System.out.println("unbind compiler");
+		getLogger().info("Unbinding Compiler" , compiler);
 		if(this.compiler == compiler){
 			this.compiler = null;
 		}
 	}
 
 	public void bindExecutor(IAdvancedExecutor executor) {
-		System.out.println("Binde Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
+		getLogger().info("Binding Executor" , executor);
 		this.executor = executor;
 	}
 	
 	public void unbindExecutor(IAdvancedExecutor executor) {
-		System.out.println("unbind executor");
+		getLogger().info("Unbinding Executor" , executor);
 		if(this.executor == executor) {
 			this.executor = null;
 		}
 	}
 	
 	public void bindSplitting(ISplittingStrategy splitting) {
-		try {
-			System.out.println("Binde Splitting");
+		getLogger().info("Binding Splitting Service" , splitting);
 			this.splitting = splitting;
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public void unbindSplitting(ISplittingStrategy splitting) {
-		System.out.println("unbind splitting");
+		getLogger().info("Unbinding Splitting Service" , splitting);
 		if(this.splitting == splitting) {
 			this.splitting = null;
 		}
@@ -169,7 +153,6 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	private void init() {
 		initServerResponseConnection();
 		initWrapperPlanFactory();
-		initSocketServerListener(this);
 		initOperatorPeerListener();
 		initQuerySpezificationListener();
 		initSourceListener();
@@ -177,6 +160,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		initHotPeerFinder();
 		initQueryResultHandler();
 		initHotPeerStrategy();
+		initSocketServerListener();
 	}
 	
 	protected abstract void initServerResponseConnection();
@@ -185,15 +169,15 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 
 	protected abstract void initQuerySpezificationListener();
 
-	protected abstract void initSocketServerListener(AbstractAdministrationPeer aPeer);
-	
 	protected abstract void initOperatorPeerListener();
 	
 	protected abstract void initAliveHandler();
 	
-	
+	protected abstract void initSocketServerListener();
 	
 	protected MainWindow gui;
+
+	private Thread socketListenerThread;
 	
 	public MainWindow getGui() {
 		return gui;
@@ -219,31 +203,33 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		this.socketServerListener = socketServerListener;
 	}
 
-	final public ArrayList<AbstractLogicalOperator> splitPlan(AbstractLogicalOperator plan){
-		return this.splitting.splitPlan(plan);
-	}
-
 	protected abstract void startNetwork();
 
 	public void startPeer() {
-		System.out.println("startPeer()");
 		startNetwork();
-
 		init();
 		getDistributionProvider().startService();
 		startGui();
 		startQuerySpezificationListener();
-		startServerSocketListener();
 		startSourceListener();
 		startOperatorPeerListener();
 		startAliveHandler();
 		startHotPeerFinder();
+		startSocketServerListener();
 		Log.setWindow(getGui());
-
-		System.out.println("Alle Dienste gestartet");
+		getLogger().info("Peer Services started");
 	}
 
 	
+
+	private void startSocketServerListener() {
+		if (socketListenerThread != null && socketListenerThread.isAlive()) {
+			socketListenerThread.interrupt();
+		}
+		
+		this.socketListenerThread = new Thread(socketServerListener);
+		socketListenerThread.start();		
+	}
 
 	protected void startQuerySpezificationListener() {
 		if (querySpezificationListenerThread != null
@@ -287,14 +273,7 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 		return queryResultHandler;
 	}
 
-	protected void startServerSocketListener() {
-		if (socketListenerThread != null && socketListenerThread.isAlive()) {
-			socketListenerThread.interrupt();
-		}
-		
-		this.socketListenerThread = new Thread(socketServerListener);
-		socketListenerThread.start();
-	}
+
 	
 	protected void startSourceListener(){
 		if (sourceListenerThread!=null && sourceListenerThread.isAlive()){
@@ -315,29 +294,4 @@ public abstract class AbstractAdministrationPeer implements IPeer {
 	public void stopPeer() {
 		stopNetwork();
 	}
-
-	public void setQueries(HashMap<String, Query> queries) {
-		this.queries = queries;
-	}
-
-	public HashMap<String, Query> getQueries() {
-		return queries;
-	}
-
-	public void setMessageHandler(Map<String, IMessageHandler> messageHandler) {
-		this.messageHandler = messageHandler;
-	}
-
-	public Map<String, IMessageHandler> getMessageHandler() {
-		return messageHandler;
-	}
-
-	protected void initSocketServerListener() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-//	protected void stopServerSocketListener() {
-//		this.socketListenerThread.interrupt();
-//	}
 }
