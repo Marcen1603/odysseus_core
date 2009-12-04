@@ -4,13 +4,14 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.IExecutionListener;
 
 public interface IDistributionClient {
 	public void initializeService();
 	public void startService();
 	public String getDistributionStrategy();
-	HashMap<String, Query> getManagedQueries();
-	void setManagedQueries(HashMap<String, Query> managedQueries);
+	HashMap<Query, IExecutionListener> getManagedQueries();
+	void setManagedQueries(HashMap<Query, IExecutionListener> hashMap);
 	public IMessageHandler getMessageHandler();
 	
 }
