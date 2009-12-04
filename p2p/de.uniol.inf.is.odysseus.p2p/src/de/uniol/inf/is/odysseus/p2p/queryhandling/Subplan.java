@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.queryhandling;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 
 /**
  * 
@@ -20,16 +20,10 @@ public class Subplan implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 794620650300093805L;
-	private AbstractLogicalOperator ao;
-	private SubplanStatus status;
+	private ILogicalOperator ao;
+	private Lifecycle status;
 	private String id;
 	
-	//OPEN = Subplan wurde noch keinem Peer zugeteilt.
-	//CLOSED = Subplan wurde breits einem Peer zugeteilt.
-	//FAILED = Verteilung ist fehlgeschlagen
-	public enum SubplanStatus{
-		OPEN, CLOSED, FAILED
-	}
 	
 	protected ArrayList<Bid> biddings = new ArrayList<Bid>();
 	
@@ -64,28 +58,28 @@ public class Subplan implements Serializable{
 	}
 	
 	
-	public SubplanStatus getStatus() {
+	public Lifecycle getStatus() {
 		return status;
 	}
 
-	public void setStatus(SubplanStatus status) {
+	public void setStatus(Lifecycle status) {
 		this.status = status;
 	}
 	
 
 
-	public AbstractLogicalOperator getAo() {
+	public ILogicalOperator getAo() {
 		return ao;
 	}
 
-	public void setAo(AbstractLogicalOperator ao) {
+	public void setAo(ILogicalOperator ao) {
 		this.ao = ao;
 	}
 
-	public Subplan(String id, AbstractLogicalOperator ao) {
+	public Subplan(String id, ILogicalOperator ao) {
 		super();
 		this.ao = ao;
-		this.status = SubplanStatus.OPEN;
+		this.status = Lifecycle.OPEN;
 		this.id=id;
 	}
 

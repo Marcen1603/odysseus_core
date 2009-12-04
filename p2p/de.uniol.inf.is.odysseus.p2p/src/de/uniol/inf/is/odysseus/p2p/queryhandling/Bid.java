@@ -6,6 +6,16 @@ public class Bid {
 	private Date date;
 	private String peerId;
 	private String subplanId;
+	private String queryId;
+	private String bid;
+	
+	public String getBid() {
+		return bid;
+	}
+
+	public void setBid(String bid) {
+		this.bid = bid;
+	}
 
 	public String getSubplanId() {
 		return subplanId;
@@ -31,6 +41,14 @@ public class Bid {
 
 	public void setPeerId(String peerId) {
 		this.peerId = peerId;
+	}
+
+	public void setQueryId(String queryId) {
+		this.queryId = queryId;
+	}
+
+	public String getQueryId() {
+		return queryId;
 	}
 	
 	

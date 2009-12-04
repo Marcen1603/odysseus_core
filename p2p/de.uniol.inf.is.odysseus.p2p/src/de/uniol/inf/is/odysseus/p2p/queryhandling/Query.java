@@ -5,26 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 
 public abstract class Query {
 	
 	
-	//Denied = ThinPeer hat die Anfrage abgelehnt
-	//Bidding = OperatorPeers können sich auf die Anfrage bewerben
-	//NoBidding = Keine Bewerbungen werden mehr angenommen
-	//Failed = Anfragedurchführung ist gescheitert
-	//Run = Die Anfrage wird zur Zeit ausgeführt
-	//Open = Die Anfrageausschreibung zu dieser Anfrage wurde im Netzwerk gefunden
-	//Granted = Zusage
-	//Direct = kommt vom Thin-Peer, um zu signalisieren, dass er einem Admin-Peer eine Anfrage direkt zugewiese hat.
-	//Canceled = Abbruch durch Thin-Peer
-	public enum Status 
-	{ 
-	  DENIED, BIDDING, NOBIDDING, FAILED, RUN, OPEN, APPLY, GRANTED, DIRECT, CANCELED, HOTQUERY
-	}
-	
-	private Status status;
+	private Lifecycle status;
 	
 	public String getId() {
 		return id;
@@ -34,26 +19,21 @@ public abstract class Query {
 		this.id = id;
 	}
 
-	private int retries=0;
-	
 	private String id;
 
-	private String query;
+	private String declarativeQuery;
 	
 	private String language;
 	
-	private ILogicalOperator plan;
+	private ILogicalOperator logicalOperatorPlan;
 	
 	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
-
-	public int getRetries() {
-		return retries;
-	}
 	
-	public void addRetry(){
-		retries++;
-	}
+	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
 
+	public ArrayList<Lifecycle> getHistory() {
+		return history;
+	}
 
 	public Map<String,Subplan> getSubPlans() {
 		return subPlans;
@@ -61,7 +41,7 @@ public abstract class Query {
 	
 	/**
 	 * Prüft, ob alle Subpläne mindestens ein Gebot besitzen
-	 * @return
+	 * @return 
 	 */
 	public boolean containsAllBidding() {
 		
@@ -73,34 +53,33 @@ public abstract class Query {
 		
 	}
 
-	public boolean addSubPlan(String id, AbstractLogicalOperator ao) {
+	public boolean addSubPlan(String id, Subplan subplan) {
 		if(this.subPlans.get(id)==null) {
-			this.subPlans.put(id, new Subplan(id, ao));
+			this.subPlans.put(id, subplan);
 			return true;
 		}
 		return false;
 	}
 	
-	public abstract void setSubplans(ArrayList<AbstractLogicalOperator> list);
 
 	public Query(){
-		this.status = Status.OPEN;
 	}
 
-	public Status getStatus() {
+	public Lifecycle getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(Lifecycle status) {
 		this.status = status;
+		getHistory().add(status);
+	}
+	
+	public String getDeclarativeQuery() {
+		return declarativeQuery;
 	}
 
-	public String getQuery() {
-		return query;
-	}
-
-	public void setQuery(String query) {
-		this.query = query;
+	public void setDeclarativeQuery(String query) {
+		this.declarativeQuery = query;
 	}
 
 	public String getLanguage() {
@@ -136,22 +115,19 @@ public abstract class Query {
 		return true;
 	}
 	
-	/**
-	 * Relikt aus der alten Implementierung, damit der Thin-Peer mit Query arbeiten kann
-	 * 
-	 * @param query
-	 * @param queryID
-	 */
 	public Query(String query, String queryID) {
-
-		setQuery(queryID);
+		setDeclarativeQuery(queryID);
 		setId(queryID);
 	}
+	
 	public ILogicalOperator getLogicalOperatorplan() {
-		return this.plan;
+		return this.logicalOperatorPlan;
 	}
 	
 	public void setLogicalOperatorplan (ILogicalOperator plan) {
-		this.plan = plan;
+		if(this.declarativeQuery!=null) {
+			this.logicalOperatorPlan = plan;
+		}
 	}
+
 }

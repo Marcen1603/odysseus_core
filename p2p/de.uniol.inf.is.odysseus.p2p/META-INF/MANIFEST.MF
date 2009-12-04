@@ -19,4 +19,5 @@ Export-Package: de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.logicaloperator,
  de.uniol.inf.is.odysseus.p2p.peer,
  de.uniol.inf.is.odysseus.p2p.peer.communication,
+ de.uniol.inf.is.odysseus.p2p.peer.execution,
  de.uniol.inf.is.odysseus.p2p.queryhandling
