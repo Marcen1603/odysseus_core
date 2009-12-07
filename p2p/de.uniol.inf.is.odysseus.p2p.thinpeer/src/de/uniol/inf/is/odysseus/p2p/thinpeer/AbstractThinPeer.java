@@ -132,6 +132,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 	}
 
 	private void init() {
+		initServerResponseConnection();
 		initSocketServerListener();
 		initQueryPublisher();
 		initGuiUpdater();
@@ -141,6 +142,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		initIdGenerator();
 		initBiddingHandlerStrategy();
 		initAdminPeerList();
+
 	}
 
 	public ISocketServerListener getSocketServerListener() {
@@ -152,7 +154,8 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		this.socketServerListener = socketServerListener;
 	}
 
-
+	protected abstract void initServerResponseConnection();
+	
 	protected abstract void initAdminPeerList();
 	
 	protected abstract void initIdGenerator();
