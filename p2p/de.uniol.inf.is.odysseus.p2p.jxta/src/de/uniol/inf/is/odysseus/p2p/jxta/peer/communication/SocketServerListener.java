@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.jxta.peer.communication;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.protocol.PipeAdvertisement;
@@ -87,6 +88,28 @@ public class SocketServerListener implements ISocketServerListener {
 	
 	private synchronized Map<String, IMessageHandler> getMessageHandler() {
 		return messageHandler;
+	}
+
+	@Override
+	public synchronized boolean deregisterMessageHandler(List<IMessageHandler> messageHandler) {
+		boolean success = true;
+		for (IMessageHandler iMessageHandler : messageHandler) {
+			if(!deregisterMessageHandler(iMessageHandler)) {
+				success = false;
+			}
+		}
+		return success;
+	}
+
+	@Override
+	public synchronized boolean registerMessageHandler(List<IMessageHandler> messageHandler) {
+		boolean success = true;
+		for (IMessageHandler iMessageHandler : messageHandler) {
+			if(!registerMessageHandler(iMessageHandler)) {
+				success = false;
+			}
+		}
+		return success;
 	}
 
 
