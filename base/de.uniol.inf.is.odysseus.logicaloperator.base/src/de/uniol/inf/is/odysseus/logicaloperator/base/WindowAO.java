@@ -36,14 +36,24 @@ public class WindowAO extends UnaryLogicalOp {
 		return windowAdvance;
 	}
 
-	public void setWindowSlide(long slide) {
+	public void setWindowSlide(Long slide) {
 		this.windowAdvance = slide;
 	}
 
-	public void setWindowAdvance( long windowAdvance) {
+	public void setWindowSlide(String size){
+		this.windowAdvance = Long.parseLong(size);
+	}
+
+	
+	public void setWindowAdvance(Long windowAdvance) {
 		this.windowAdvance = windowAdvance;
 	}
 
+	public void setWindowAdvance(String size){
+		this.windowAdvance = Long.parseLong(size);
+	}
+
+	
 	public WindowAO(WindowType windowType) {
 		super();
 		this.windowType = windowType;
@@ -71,15 +81,20 @@ public class WindowAO extends UnaryLogicalOp {
 		return windowSize;
 	}
 
-	public void setWindowSize( long windowSize) {
+	public void setWindowSize(Long windowSize) {
 		this.windowSize = windowSize;
 	}
+	
+	public void setWindowSize(String size){
+		this.windowSize = Long.parseLong(size);
+	}
 
+	
 	public WindowType getWindowType() {
 		return windowType;
 	}
 
-	public void setWindowType( WindowType windowType) {
+	public void setWindowType(WindowType windowType) {
 		this.windowType = windowType;
 	}
 

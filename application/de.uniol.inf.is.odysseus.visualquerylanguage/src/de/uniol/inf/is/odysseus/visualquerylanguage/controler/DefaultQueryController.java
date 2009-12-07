@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
@@ -68,6 +69,7 @@ public class DefaultQueryController implements IQueryController {
 						Class[] pClass = new Class[1];
 						pClass[0] = paramClass;
 						Method m = opClass.getMethod(param.getSetter(), pClass);
+						System.out.println(value+"\n");
 						m.invoke(nodeModel.getContent().getOperator(), value);
 					}
 				} catch (Exception e) {

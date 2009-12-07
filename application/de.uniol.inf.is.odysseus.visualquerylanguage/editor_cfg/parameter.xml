@@ -75,7 +75,7 @@
 				
 				<setterParameter>
 					<name>WindowSize</name>
-					<ptype>java.lang.Long</ptype>
+					<ptype>java.lang.String</ptype>
 					<typelist>
 					</typelist>
 					<setter>setWindowSize</setter>
@@ -84,7 +84,7 @@
 				
 				<setterParameter>
 					<name>WindowAdvance</name>
-					<ptype>java.lang.Long</ptype>
+					<ptype>java.lang.String</ptype>
 					<typelist>
 					</typelist>
 					<setter>setWindowAdvance</setter>

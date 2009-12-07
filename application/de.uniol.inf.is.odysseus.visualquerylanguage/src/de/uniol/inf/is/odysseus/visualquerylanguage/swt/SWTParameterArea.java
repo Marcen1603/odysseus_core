@@ -193,7 +193,7 @@ public class SWTParameterArea {
 				sButton.setText("Editor");
 				GridData buttonGridData = new GridData();
 				sButton.setLayoutData(buttonGridData);
-				sButton.setEnabled(false);
+				sButton.setVisible(false);
 				Text t = new Text(sComp, SWT.SINGLE);
 				GridData textGridData = new GridData(GridData.FILL_HORIZONTAL);
 				t.setLayoutData(textGridData);
@@ -223,6 +223,7 @@ public class SWTParameterArea {
 							paramEditor.addSWTParameterListener(sComp);
 						}
 					});
+					sButton.setVisible(true);
 					sButton.setEnabled(true);
 					t.setEditable(false);
 					Color c = new Color(Display.getCurrent(), 255, 255, 255);
@@ -237,6 +238,7 @@ public class SWTParameterArea {
 							paramEditor.addSWTParameterListener(sComp);
 						}
 					});
+					sButton.setVisible(true);
 					sButton.setEnabled(true);
 					t.setEditable(false);
 					Color c = new Color(Display.getCurrent(), 255, 255, 255);
@@ -258,6 +260,7 @@ public class SWTParameterArea {
 							paramEditor.addSWTParameterListener(sComp);
 						}
 					});
+					sButton.setVisible(true);
 					sButton.setEnabled(true);
 				}else if(EditorChecker.getInstance().hasAggregateEditor(sParam.getEditor())) {
 					sButton.addSelectionListener(new SelectionAdapter() {
@@ -276,6 +279,7 @@ public class SWTParameterArea {
 							paramEditor.addSWTParameterListener(sComp);
 						}
 					});
+					sButton.setVisible(true);
 					sButton.setEnabled(true);
 				} else {
 					t.addModifyListener(new ModifyListener() {
