@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.peer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,8 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
-import de.uniol.inf.is.odysseus.p2p.peer.execution.IExecutionHandlerFactory;
-import de.uniol.inf.is.odysseus.p2p.peer.execution.IExecutionListener;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandlerFactory;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
@@ -23,14 +26,43 @@ public abstract class AbstractPeer implements IPeer {
 
 	private Logger logger;
 	private HashMap<Query, IExecutionListener > queries;
-	private HashMap<Lifecycle, IExecutionHandlerFactory> executionHandlerFactory;
-	
+	private HashMap<Lifecycle, List<IExecutionHandlerFactory>> executionHandlerFactory;
+	private List<IMessageHandler> messageHandlerList;
 	private ISocketServerListener socketServerListener;
+	private IExecutionListenerFactory executionListenerFactory;
 
 
+	public void bindExecutionHandlerFactory(IExecutionHandlerFactory factory) {
+		if(this.executionHandlerFactory.containsKey(factory.getProvidedLifecycle())) {
+			this.executionHandlerFactory.get(factory.getProvidedLifecycle()).add(factory);
+		}
+		else {
+			List<IExecutionHandlerFactory> tempFactory = new ArrayList<IExecutionHandlerFactory>();
+			tempFactory.add(factory);
+			this.executionHandlerFactory.put(factory.getProvidedLifecycle(), tempFactory);
+		}
+	}
+	
+	public void unbindExecutionHandlerFactory(IExecutionHandlerFactory factory) {
+		if(this.executionHandlerFactory.containsKey(factory.getProvidedLifecycle())) {
+			this.executionHandlerFactory.get(factory.getProvidedLifecycle()).remove(factory);
+		}
+	}
+	
+	public void bindExecutionListenerFactory(IExecutionListenerFactory factory) {
+		this.executionListenerFactory = factory;
+	}
+	
+	public void unbindExecutionListenerFactory(IExecutionListenerFactory factory) {
+		if(this.executionListenerFactory == factory) {
+			this.executionListenerFactory = null;
+		}
+	}
+	
 	public AbstractPeer() {
 		this.logger = LoggerFactory.getLogger(AbstractPeer.class);
 		this.setQueries(new HashMap<Query, IExecutionListener>());
+		this.messageHandlerList = new ArrayList<IMessageHandler>();
 	
 	}
 	
@@ -42,21 +74,16 @@ public abstract class AbstractPeer implements IPeer {
 	
 	public abstract Object getServerResponseAddress();
 	
-	public boolean registerMessageHandler(
+	public void registerMessageHandler(
 			IMessageHandler messageHandler) {
-		return getSocketServerListener().registerMessageHandler(messageHandler);
-		
+		this.messageHandlerList.add(messageHandler);
 	}
 
-	public boolean registerMessageHandler(
+	public void registerMessageHandler(
 			List<IMessageHandler> messageHandler) {
-		boolean success = true;
-		for(IMessageHandler mHandler : messageHandler) {
-			if(registerMessageHandler(mHandler)==false) {
-				success = false;
-			}
+		for (IMessageHandler iMessageHandler : messageHandler) {
+			registerMessageHandler(iMessageHandler);
 		}
-		return success;
 	}
 
 	public Logger getLogger() {
@@ -79,10 +106,52 @@ public abstract class AbstractPeer implements IPeer {
 		return queries;
 	}
 	
-	public HashMap<Lifecycle, IExecutionHandlerFactory> getExecutionHandlerFactory() {
-		return executionHandlerFactory;
+	
+	
+	public HashMap<Lifecycle, List<IExecutionHandlerFactory>> getExecutionHandlerFactory() {
+		return this.executionHandlerFactory;
 	}
 	
-	public abstract void addQuery(Query query);
-	public abstract void removeQuery(Query query);
+	public void addQuery(Query query) {
+		List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
+		for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactory().values()) {
+			for(IExecutionHandlerFactory factory : factoryList) {
+				execHandlerList.add(factory.getNewInstance());
+			}
+		}
+		IExecutionListener listener = getExecutionListenerFactory().getNewInstance(query, execHandlerList);
+		getQueries().put(query, listener);
+		listener.startListener();
+		
+	}
+
+	public IExecutionListenerFactory getExecutionListenerFactory() {
+		return this.executionListenerFactory;
+	}
+
+	public void removeQuery(Query query) {
+		@SuppressWarnings("unused")
+		IExecutionListener listener = getQueries().remove(query);
+		listener = null;
+	}
+	
+	public void deregisterMessageHandler(IMessageHandler messageHandler) {
+		getMessageHandlerList().remove(messageHandler);
+	}
+	
+	public List<IMessageHandler> getMessageHandlerList() {
+		return messageHandlerList;
+	}
+	
+	public List<IExecutionHandler> getExecutionHandler() {
+		List<IExecutionHandler> handlerList = new ArrayList<IExecutionHandler>();
+		for(List<IExecutionHandlerFactory> factoryList : getExecutionHandlerFactory().values()) {
+			for (IExecutionHandlerFactory factory : factoryList) {
+				handlerList.add(factory.getNewInstance());
+			}
+		}
+		return handlerList;
+	}
+
+	
 }
