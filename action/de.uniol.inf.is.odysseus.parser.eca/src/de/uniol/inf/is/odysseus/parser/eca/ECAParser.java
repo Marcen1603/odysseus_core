@@ -4,7 +4,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -19,12 +18,12 @@ public class ECAParser implements IQueryParser{
 	private Pattern ecaPatternEnd;
 
 	public ECAParser () {
-		this.ecaPatternStart = Pattern.compile("WHEN[\\s]+EVENT[\\s]*\\(");
+		this.ecaPatternStart = Pattern.compile("WHEN(\\s)+EVENT(\\s)*\\(");
 		
-		String param = "[\\w]+[\\s]*";
-		String method = "[\\w]+[\\s]*\\(["+param+"[,"+param+"]*]?\\)";
-		String actuator = "[\\w]+\\."+method;	
-		this.ecaPatternEnd = Pattern.compile("\\)[\\s]*THEN[\\s]+EXECUTE[\\s]+"+actuator+"[[\\s]+"+actuator+"]*");
+		String param = "(\\w)+(\\s)*";
+		String method = "(\\w)+(\\s)*\\(("+param+"(,"+param+")*)?\\)";
+		String actuator = "(\\w)+\\."+method;	
+		this.ecaPatternEnd = Pattern.compile("\\)(\\s)*THEN(\\s)+EXECUTE(\\s)+"+actuator+"((\\s)+"+actuator+")*");
 		
 	}
 	
