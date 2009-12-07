@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
@@ -16,27 +15,22 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.QueryResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.HotPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.OperatorPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.QuerySpezificationListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SocketServerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.HotPeerStrategyRandom;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
@@ -44,16 +38,17 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		return operatorPeers;
 	}
 
-	public void setOperatorPeers(HashMap<String,ExtendedPeerAdvertisement> operatorPeers) {
+	public void setOperatorPeers(
+			HashMap<String, ExtendedPeerAdvertisement> operatorPeers) {
 		this.operatorPeers = operatorPeers;
 	}
 
 	private static final String name = "adminPeer";
-	
-	private static final int tcpPort= 8900;
-	
+
+	private static final int tcpPort = 8900;
+
 	private static final int httpPort = 8901;
-	
+
 	// Logging an oder aus
 	private static final String LOGGING = "OFF";
 
@@ -86,9 +81,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	private static final String TCP_RELAY_URI = "tcp://hurrikan.informatik.uni-oldenburg.de:10801";
 
 	private static final String HTTP_RELAY_URI = "http://hurrikan.informatik.uni-oldenburg.de:10802";
-	
+
 	private static final String TCP_INTERFACE_ADDRESS = "";
-	
+
 	private static final String HTTP_INTERFACE_ADDRESS = "";
 
 	public PeerGroup netPeerGroup;
@@ -104,90 +99,127 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	public PipeService pipeService;
 
 	private PipeAdvertisement serverPipeAdvertisement;
-	
-	
-	
-	public void setServerPipeAdvertisement(PipeAdvertisement serverPipeAdvertisement) {
+
+	public void setServerPipeAdvertisement(
+			PipeAdvertisement serverPipeAdvertisement) {
 		this.serverPipeAdvertisement = serverPipeAdvertisement;
 	}
-	
+
 	public PipeAdvertisement getServerPipeAdvertisement() {
 		return serverPipeAdvertisement;
 	}
-	
+
 	public HashMap<String, ExtendedPeerAdvertisement> operatorPeers = new HashMap<String, ExtendedPeerAdvertisement>();
-	
+
 	private static AdministrationPeerJxtaImpl instance = null;
-	
 
 	public void activate() {
-		System.out.println("Starte Admin-Peer");
-		
-
 		startPeer();
+		getLogger().info("Administration Peer started");
 
-		
-		
-		try {
-			System.out.println("Adde Queries");
-			getExecutor().addQuery("CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440", "CQL", new ParameterPriority(2) );
-			getExecutor().addQuery("CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441", "CQL", new ParameterPriority(2));
-			getExecutor().addQuery("CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442", "CQL",  new ParameterPriority(2));
-//			getExecutor().addQuery("CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430", "CQL", new ParameterPriority(2) );
-//			getExecutor().addQuery("CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65431", "CQL", new ParameterPriority(2));
-//			getExecutor().addQuery("CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432", "CQL",  new ParameterPriority(2));
-		System.out.println("Adde Queries fertig");
-		} catch (PlanManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ArrayList<ILogicalOperator> lo = null;
-		try {
-			System.out.println("translate query");
-//			 lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87", "CQL");
-//			lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT * FROM nexmark:person2 WHERE id<1000", "CQL");
-			lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery("SELECT id FROM nexmark:person2", "CQL");
-		} catch (QueryParseException e) {
-			e.printStackTrace();
-		}
-//		getCompiler().restructPlan((ILogicalOperator) lo);
-		System.out.println("split");
-		ArrayList<AbstractLogicalOperator> alo = getSplitting().splitPlan((AbstractLogicalOperator) lo.get(0));
-		for(AbstractLogicalOperator elem : alo) {
-			try {
-				getExecutor().addQuery(elem, new ParameterPriority(2));
-				
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			getExecutor().startExecution();
-		} catch (PlanManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			System.out.println("Adde Queries");
+//			getExecutor()
+//					.addQuery(
+//							"CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440",
+//							"CQL", new ParameterPriority(2));
+//			getExecutor()
+//					.addQuery(
+//							"CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441",
+//							"CQL", new ParameterPriority(2));
+//			getExecutor()
+//					.addQuery(
+//							"CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442",
+//							"CQL", new ParameterPriority(2));
+//			// getExecutor().addQuery("CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65430",
+//			// "CQL", new ParameterPriority(2) );
+//			// getExecutor().addQuery("CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65431",
+//			// "CQL", new ParameterPriority(2));
+//			// getExecutor().addQuery("CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65432",
+//			// "CQL", new ParameterPriority(2));
+//			System.out.println("Adde Queries fertig");
+//		} catch (PlanManagementException e) {
+//			e.printStackTrace();
+//		}
+//		ArrayList<ILogicalOperator> lo = null;
+//		try {
+//			System.out.println("translate query");
+//			lo = (ArrayList<ILogicalOperator>) getCompiler().translateQuery(
+//					"SELECT id FROM nexmark:person2 WHERE id>0", "CQL");
+////			 lo.addAll(getCompiler().translateQuery("SELECT * FROM nexmark:person2 WHERE id<500",
+////			 "CQL"));
+//			// lo = (ArrayList<ILogicalOperator>)
+//			// getCompiler().translateQuery("SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 UNBOUNDED AS b",
+//			// "CQL");
+//
+//			// lo = (ArrayList<ILogicalOperator>)
+//			// getCompiler().translateQuery("SELECT * FROM nexmark:person2 WHERE id<1000",
+//			// "CQL");
+//			// lo = (ArrayList<ILogicalOperator>)
+//			// getCompiler().translateQuery("SELECT * FROM nexmark:person2",
+//			// "CQL");
+//		} catch (QueryParseException e) {
+//			e.printStackTrace();
+//		}
+//		ArrayList<ILogicalOperator> restructList = new ArrayList<ILogicalOperator>();
+//		try {
+//			for (ILogicalOperator op : lo) {
+//				restructList.add(getCompiler().restructPlan(
+//						(ILogicalOperator) op));
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		System.out.println("split");
+//		ArrayList<AbstractLogicalOperator> alo = null;
+//		try {
+//			alo = getSplitting().splitPlan(
+//					(AbstractLogicalOperator) restructList.get(0));
+//
+////			alo.addAll(getSplitting().splitPlan(
+////					(AbstractLogicalOperator) restructList.get(1)));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		for (AbstractLogicalOperator elem : alo) {
+//			try {
+//				getExecutor().addQuery(elem, new ParameterPriority(2));
+//
+//			} catch (PlanManagementException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		// try {
+//		// getExecutor().startExecution();
+//		// } catch (PlanManagementException e) {
+//		// e.printStackTrace();
+//		// }
 
 	}
-	
-	
-	//für die korrekte Nutzung in OSGi muss der Konstruktor public sein. Damit der "Singleton" in weiteren Programmaufrufen unberührt bleibt, wurde noch die Instanz der Static Variablen zugewiesen. 
-	public AdministrationPeerJxtaImpl(){
-		System.out.println("instanz");
+
+	// für die korrekte Nutzung in OSGi muss der Konstruktor public sein. Damit
+	// der "Singleton" in weiteren Programmaufrufen unberührt bleibt, wurde noch
+	// die Instanz der Static Variablen zugewiesen.
+	public AdministrationPeerJxtaImpl() {
+
+		super();
 		instance = this;
 	}
-	
+
 	/**
-	 * Entspricht nicht mehr dem Singleton, wird allerdings in vielen Teilen gebraucht, so dass der Workaround über den public Konstruktor gewählt wurde.
+	 * Entspricht nicht mehr dem Singleton, wird allerdings in vielen Teilen
+	 * gebraucht, so dass der Workaround über den public Konstruktor gewählt
+	 * wurde.
+	 * 
 	 * @return
 	 */
-	public synchronized static AdministrationPeerJxtaImpl getInstance(){
-		if (instance==null) {
+	public synchronized static AdministrationPeerJxtaImpl getInstance() {
+		if (instance == null) {
 			instance = new AdministrationPeerJxtaImpl();
 		}
 		return instance;
 	}
-	
+
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
@@ -208,12 +240,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		return pipeService;
 	}
 
-
 	public HashMap<String, SourceAdvertisement> getSources() {
 		return sources;
 	}
-	
-	
 
 	@Override
 	protected void initQuerySpezificationListener() {
@@ -222,17 +251,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	}
 
 	@Override
-	protected void initSocketServerListener(AbstractAdministrationPeer aPeer) {
-		this.socketServerListener = new SocketServerListenerJxtaImpl(aPeer);
-
-	}
-
-	@Override
 	protected void initSourceListener() {
 		this.sourceListener = new SourceListenerJxtaImpl(getExecutor());
 
 	}
-
 
 	public void setDiscoveryService(DiscoveryService discoveryService) {
 		this.discoveryService = discoveryService;
@@ -260,32 +282,30 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void startNetwork() {
-		
+		getLogger().info("Starting Peer Network");
 		System.setProperty("net.jxta.logging.Logging", LOGGING);
 		String name = "";
 		if (RANDOM_NAME) {
-			name = "" + AdministrationPeerJxtaImpl.name + "" + System.currentTimeMillis();
+			name = "" + AdministrationPeerJxtaImpl.name + ""
+					+ System.currentTimeMillis();
 		}
 
 		try {
-			CacheTool.checkForExistingConfigurationDeletion("AdministrationPeer_" + name,
-					new File(new File(".cache"), "AdministrationPeer_" + name));
+			CacheTool.checkForExistingConfigurationDeletion(
+					"AdministrationPeer_" + name, new File(new File(".cache"),
+							"AdministrationPeer_" + name));
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		
+
 		ConfigMode peerMode = null;
-		
-		if (USE_SUPER_PEER){
+
+		if (USE_SUPER_PEER) {
 			peerMode = NetworkManager.ConfigMode.EDGE;
-		}
-		else{
+		} else {
 			peerMode = NetworkManager.ConfigMode.ADHOC;
 		}
-		
-		
-		
+
 		try {
 			manager = new NetworkManager(peerMode,
 					"AdministrationPeer_" + name, new File(new File(".cache"),
@@ -305,7 +325,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 					manager.getConfigurator().addSeedRelay(
 							new URI(TCP_RELAY_URI));
 				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -318,35 +337,33 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 			manager.getConfigurator().setTcpOutgoing(TCP);
 			manager.getConfigurator().setTcpIncoming(TCP);
 			manager.getConfigurator().setUseMulticast(MULTICAST);
-			
-			if (!TCP_INTERFACE_ADDRESS.equals("")){
-				manager.getConfigurator().setTcpInterfaceAddress(TCP_INTERFACE_ADDRESS);
+
+			if (!TCP_INTERFACE_ADDRESS.equals("")) {
+				manager.getConfigurator().setTcpInterfaceAddress(
+						TCP_INTERFACE_ADDRESS);
 			}
-			if (!HTTP_INTERFACE_ADDRESS.equals("")){
-				manager.getConfigurator().setTcpInterfaceAddress(HTTP_INTERFACE_ADDRESS);
+			if (!HTTP_INTERFACE_ADDRESS.equals("")) {
+				manager.getConfigurator().setTcpInterfaceAddress(
+						HTTP_INTERFACE_ADDRESS);
 			}
-			
+
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		
+
 		if (manager.getNetPeerGroup() == null) {
 			try {
-				manager.startNetwork();
+				if (!manager.isStarted()) {
+					manager.startNetwork();
+				}
 			} catch (PeerGroupException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
 		manager.waitForRendezvousConnection(CONNECTION_TIME);
 		netPeerGroup = manager.getNetPeerGroup();
-		System.out.println("Setze peergroup auf "+netPeerGroup);
 		PeerGroupTool.setPeerGroup(netPeerGroup);
 		discoveryService = netPeerGroup.getDiscoveryService();
 		pipeService = netPeerGroup.getPipeService();
@@ -362,13 +379,15 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		AdvertisementFactory.registerAdvertisementInstance(
 				QueryExecutionSpezification.getAdvertisementType(),
 				new QueryExecutionSpezification.Instantiator());
-		
+
 		AdvertisementFactory.registerAdvertisementInstance(
 				ExtendedPeerAdvertisement.getAdvertisementType(),
 				new ExtendedPeerAdvertisement.Instantiator());
 		try {
-			discoveryService.publish(netPeerGroup.getPeerAdvertisement(),13000,13000);
-			discoveryService.remotePublish(netPeerGroup.getPeerAdvertisement(),13000);
+			discoveryService.publish(netPeerGroup.getPeerAdvertisement(),
+					13000, 13000);
+			discoveryService.remotePublish(netPeerGroup.getPeerAdvertisement(),
+					13000);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -384,39 +403,49 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	@Override
 	protected void initOperatorPeerListener() {
 		operatorPeerListener = new OperatorPeerListenerJxtaImpl();
-		
+
 	}
 
 	@Override
 	protected void initAliveHandler() {
 		aliveHandler = new AliveHandlerJxtaImpl();
-		
+
 	}
 
 	@Override
 	protected void initHotPeerFinder() {
 		this.hotPeerFinder = new HotPeerListenerJxtaImpl();
-		
+
 	}
 
 	@Override
 	protected void initQueryResultHandler() {
-		this.queryResultHandler = new QueryResultHandlerJxtaImpl();
-		getMessageHandler().put(this.queryResultHandler.getInterestedNamespace(), this.queryResultHandler);
-		
+		registerMessageHandler(new QueryResultHandlerJxtaImpl());
 	}
 
 	@Override
 	protected void initHotPeerStrategy() {
 		this.hotPeerStrategy = new HotPeerStrategyRandom();
-		
+
 	}
 
 	@Override
 	protected void initServerResponseConnection() {
-		setServerPipeAdvertisement(AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
+		setServerPipeAdvertisement(AdvertisementTools
+				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
 	}
 
+	@Override
+	public Object getServerResponseAddress() {
+		return this.serverPipeAdvertisement;
+	}
 
+	@Override
+	protected void initSocketServerListener() {
+		setSocketServerListener(new SocketServerListener(this));
+		if(getMessageHandlerList()!=null) {
+			getSocketServerListener().registerMessageHandler(getMessageHandlerList());
+		}
+	}
 
 }

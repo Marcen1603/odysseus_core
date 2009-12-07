@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener;
 
 import java.util.Enumeration;
-
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
@@ -37,7 +36,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 	public QuerySpezificationListenerJxtaImpl() {
 		AdministrationPeerJxtaImpl.getInstance().getDiscoveryService().addDiscoveryListener(this);
 		//TODO: In Abhängigkeit der bereits laufenden Gebote und der laufenden Anfragen eine eigene Strategie?
-		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries());
+		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(AdministrationPeerJxtaImpl.getInstance().getQueries());
 		
 	}
 
@@ -70,7 +69,7 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 						return;
 					}
 
-					if (AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().keySet().contains(adv.getQueryId()) ) {
+					if (AdministrationPeerJxtaImpl.getInstance().getQueries().keySet().contains(adv.getQueryId()) ) {
 						//Diese Ausschreibung wurde schon gefunden und kann ignoriert werden
 						continue;
 					}
@@ -79,13 +78,12 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					QueryJxtaImpl q = new QueryJxtaImpl();
 					q.setId(adv.getQueryId());
 					q.setLanguage(adv.getLanguage());
-					q.setQuery(adv.getQuery());
+					q.setDeclarativeQuery(adv.getQuery());
 					q.setResponseSocketThinPeer(pipeAdv);
 					PeerAdvertisement peerAdv = AdministrationPeerJxtaImpl.getInstance().getNetPeerGroup().getPeerAdvertisement();
 					
-					synchronized(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries()){
-						AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().put(adv
-							.getQueryId().toString(),q);
+					synchronized(AdministrationPeerJxtaImpl.getInstance().getQueries()){
+						AdministrationPeerJxtaImpl.getInstance().getQueries().put(q, AdministrationPeerJxtaImpl.getInstance().getExecutionListenerFactory().getNewInstance(q, AdministrationPeerJxtaImpl.getInstance().getExecutionHandler()));
 						Log.addQuery(adv.getQueryId());
 						Log.logAction(adv.getQueryId(), "Anfrage gefunden !");
 					}
@@ -99,7 +97,6 @@ public class QuerySpezificationListenerJxtaImpl implements IQuerySpezificationLi
 					
 				} catch (Exception e) {
 					e.printStackTrace();
-					// TODO: handle exception
 				}
 
 			}

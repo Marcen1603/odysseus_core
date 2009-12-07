@@ -49,48 +49,10 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	
 	protected boolean peerStarted = false;
 	
-	protected ISplittingStrategy splitting;
-	
-	protected IDistributionProvider distributionProvider;
-	
 	private IAdvancedExecutor executor;
+	protected ISplittingStrategy splitting;
+	protected IDistributionProvider<AbstractPeer> distributionProvider;
 	
-	public AbstractAdministrationPeer() {
-		super();
-	}
-	
-	public IDistributionProvider getDistributionProvider() {
-		return distributionProvider;
-	}
-
-	public void bindDistributionProvider(IDistributionProvider dp) {
-		getLogger().info("Binding Distribution Provider" , dp);
-		this.distributionProvider = dp;
-		this.distributionProvider.setManagedQueries(getQueries());
-		this.distributionProvider.initializeService();
-		//Handler des Distribution Providers registrieren
-		boolean registered = registerMessageHandler(this.distributionProvider.getMessageHandler());
-		if(registered) {
-			getLogger().info("Distribution Provider Message Handler registered");
-		}
-		else {
-			getLogger().info("Distribution Provider Message Handler not registered");
-		}
-	}
-	
-	public void unbindDistributionProvider(IDistributionProvider dp) {
-		System.out.println("unbind distribution");
-		if(this.distributionProvider == dp) {
-			getLogger().info("Unbinding Distribution Provider" , dp);
-			this.distributionProvider = null;
-		}
-	}
-	
-	
-	public IAdvancedExecutor getExecutor() {
-		return executor;
-	}
-
 	private ICompiler compiler;
 
 	
@@ -112,6 +74,9 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 			this.compiler = null;
 		}
 	}
+	public IAdvancedExecutor getExecutor() {
+		return executor;
+	}
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		getLogger().info("Binding Executor" , executor);
@@ -124,6 +89,44 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 			this.executor = null;
 		}
 	}
+	
+	public IDistributionProvider<AbstractPeer> getDistributionProvider() {
+		return distributionProvider;
+	}
+
+	public void bindDistributionProvider(IDistributionProvider<AbstractPeer> dp) {
+		getLogger().info("Binding Distribution Provider" , dp);
+		this.distributionProvider = dp;
+//		this.distributionProvider.setManagedQueries(getQueries());
+		this.distributionProvider.setPeer(this);
+		this.distributionProvider.initializeService();
+		//Handler des Distribution Providers registrieren
+//		try {
+//			registerMessageHandler(this.distributionProvider
+//					.getMessageHandler());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+	}
+	
+	public void unbindDistributionProvider(IDistributionProvider<AbstractPeer> dp) {
+		System.out.println("unbind distribution");
+		if(this.distributionProvider == dp) {
+			getLogger().info("Unbinding Distribution Provider" , dp);
+			this.distributionProvider = null;
+//			deregisterMessageHandler(this.distributionProvider.getMessageHandler());
+		}
+	}
+	
+	
+	public AbstractAdministrationPeer() {
+		super();
+	}
+	
+	
+	
+	
+
 	
 	public void bindSplitting(ISplittingStrategy splitting) {
 		getLogger().info("Binding Splitting Service" , splitting);

@@ -1,16 +1,11 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import net.jxta.endpoint.Message;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query.Status;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
@@ -42,42 +37,49 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 		
 		if (queryResult.equals("granted")) {
 			Log.logAction(queryId, "Zusage für die Verwaltung der Anfrage bekommen.");
-			
+			for(Query q : AdministrationPeerJxtaImpl.getInstance().getQueries().keySet()) {
+				if(q.getId() == queryId) {
+					AdministrationPeerJxtaImpl.getInstance().getQueries().get(q).startListener();
+				}
+			}
 			
 			
 			//Nach der Zusage für die Verwaltung einer Anfrage wird folgend die Anfrage übersetzt und optimiert
 			
-			List<ILogicalOperator> plan = null;
-			try {
-				//Anfrage Übersetzen und in Query kapseln
-				plan = AdministrationPeerJxtaImpl.getInstance().getCompiler().translateQuery(AdministrationPeerJxtaImpl.getInstance().
-						getDistributionProvider().getManagedQueries().get(queryId).getQuery(), language);
-			} catch (QueryParseException e3) {
-				e3.printStackTrace();
-				Log.logAction(queryId, "Fehler bei der Übersetzung der Anfrage");
-				sendSourceFailure(queryId);
-				return;
-			} catch (Throwable e2) {
-				e2.printStackTrace();
-				sendSourceFailure(queryId);
-				return;
-			}			
+			
+			//TODO Ersetzen durch StatusMessage für OPEN
+			
+//			List<ILogicalOperator> plan = null;
+//			try {
+//				//Anfrage Übersetzen und in Query kapseln
+//				plan = AdministrationPeerJxtaImpl.getInstance().getCompiler().translateQuery(AdministrationPeerJxtaImpl.getInstance().
+//						getDistributionProvider().getManagedQueries().get(queryId).getQuery(), language);
+//			} catch (QueryParseException e3) {
+//				e3.printStackTrace();
+//				Log.logAction(queryId, "Fehler bei der Übersetzung der Anfrage");
+//				sendSourceFailure(queryId);
+//				return;
+//			} catch (Throwable e2) {
+//				e2.printStackTrace();
+//				sendSourceFailure(queryId);
+//				return;
+//			}			
 
-			
-			
-			
-			
 			//Restrukturierung des Operatorplans
-			AbstractLogicalOperator restructPlan = (AbstractLogicalOperator) AdministrationPeerJxtaImpl.getInstance().getCompiler().restructPlan(plan.get(0));
+//			AbstractLogicalOperator restructPlan = (AbstractLogicalOperator) AdministrationPeerJxtaImpl.getInstance().getCompiler().restructPlan(plan.get(0));
 
+			
+			
+			//TODO Ersetzen durch StatusMessage Split 
+			
 			//Aufteilungsphase
-			Log.logAction(queryId, "Operatorplan aufteilen mit Strategie: "+AdministrationPeerJxtaImpl.getInstance().getSplitting().getName());
-			ArrayList<AbstractLogicalOperator> splitPlan = AdministrationPeerJxtaImpl.getInstance().splitPlan(restructPlan);
-			AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().get(queryId).setSubplans(splitPlan);
-			Log.setSubplans(queryId, splitPlan.size());
-			Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl.getInstance().getSplitting().getName());
-			Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
-					.getDistributionProvider().getManagedQueries().get(queryId).getStatus().toString());
+//			Log.logAction(queryId, "Operatorplan aufteilen mit Strategie: "+AdministrationPeerJxtaImpl.getInstance().getSplitting().getName());
+//			ArrayList<AbstractLogicalOperator> splitPlan = AdministrationPeerJxtaImpl.getInstance().getSplitting().splitPlan(restructPlan);
+//			AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().get(queryId).setSubplans(splitPlan);
+//			Log.setSubplans(queryId, splitPlan.size());
+//			Log.setSplittingStrategy(queryId, AdministrationPeerJxtaImpl.getInstance().getSplitting().getName());
+//			Log.setStatus(queryId, AdministrationPeerJxtaImpl.getInstance()
+//					.getDistributionProvider().getManagedQueries().get(queryId).getStatus().toString());
 
 				
 			
@@ -92,19 +94,19 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 			
 			//--------------------------------------Verteilungsphase---------------------------------------------------//
 			
-			AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().distributePlan(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().get(queryId),AdministrationPeerJxtaImpl.getInstance().getServerPipeAdvertisement());
+			//TODO Ersetzen durch StatusMessage Distribution
+			
+//			AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().distributePlan(AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().get(queryId),AdministrationPeerJxtaImpl.getInstance().getServerPipeAdvertisement());
 			
 			
 
 
 		} else if (queryResult.equals("denied")) {
-			// Status erstmal auf Denied ist im Moment unnötig, da die Anfrage
-			// zurzeit sowieso verworfen wird.
-			AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().get(queryId)
-					.setStatus(Status.DENIED);
-			// Keine Zusage bekommen also weg damit
-			AdministrationPeerJxtaImpl.getInstance().getDistributionProvider().getManagedQueries().remove(
-					queryId);
+			for(Query q : AdministrationPeerJxtaImpl.getInstance().getQueries().keySet()) {
+				if(q.getId() == queryId) {
+					AdministrationPeerJxtaImpl.getInstance().getQueries().remove(q);
+				}
+			}
 		}
 
 	}
@@ -114,7 +116,7 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 		messageElements.put("queryId", queryId);
 		MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance()
 				.getNetPeerGroup(), ((QueryJxtaImpl)AdministrationPeerJxtaImpl.getInstance()
-				.getDistributionProvider().getManagedQueries().get(queryId)).getResponseSocketThinPeer(),
+				.getQueries().get(queryId)).getResponseSocketThinPeer(),
 				
 				MessageTool.createSimpleMessage("UnknownSource", messageElements));
 		Log.logAction(queryId, "Absage für die Verwaltung der Anfrage bekommen.");
