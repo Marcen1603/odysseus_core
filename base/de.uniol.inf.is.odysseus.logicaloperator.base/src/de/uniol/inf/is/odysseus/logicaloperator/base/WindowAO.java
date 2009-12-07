@@ -40,7 +40,7 @@ public class WindowAO extends UnaryLogicalOp {
 		this.windowAdvance = slide;
 	}
 
-	public void setWindowAdvance(final long windowAdvance) {
+	public void setWindowAdvance( long windowAdvance) {
 		this.windowAdvance = windowAdvance;
 	}
 
@@ -71,7 +71,7 @@ public class WindowAO extends UnaryLogicalOp {
 		return windowSize;
 	}
 
-	public void setWindowSize(final long windowSize) {
+	public void setWindowSize( long windowSize) {
 		this.windowSize = windowSize;
 	}
 
@@ -79,7 +79,7 @@ public class WindowAO extends UnaryLogicalOp {
 		return windowType;
 	}
 
-	public void setWindowType(final WindowType windowType) {
+	public void setWindowType( WindowType windowType) {
 		this.windowType = windowType;
 	}
 
