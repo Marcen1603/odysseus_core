@@ -1,17 +1,33 @@
-package de.uniol.inf.is.odysseus.p2p.peer.execution;
+package de.uniol.inf.is.odysseus.p2p.peer.execution.listener;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
 public abstract class AbstractExecutionListener implements IExecutionListener {
 	
-
-
 	private Query query;
+	private IExecutionListenerCallback callback;
+	
+	public void bindCallback(IExecutionListenerCallback callback) {
+		this.callback = callback;
+		this.callback.setExecutionListener(this);
+	}
+	
+	public void unbindCallback(IExecutionListenerCallback callback) {
+		if(this.callback == callback) {
+			this.callback = null;
+		}
+	}
+	
+	public IExecutionListenerCallback getCallback() {
+		return callback;
+	}
+	
 	
 	private Map<Lifecycle, IExecutionHandler> handler = null;
 
@@ -47,7 +63,7 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	public synchronized void registerHandler(IExecutionHandler handler) {
 		if(!getHandler().containsKey(handler.getProvidedLifecycle())) {
 			getHandler().put(handler.getProvidedLifecycle(), handler);
-			handler.setCallbackExecutionListener(new ExecutionListenerCallback(this));
+			handler.setCallbackExecutionListener(getCallback());
 		}
 	}
 	
