@@ -8,18 +8,18 @@ public abstract class AbstractExecutionHandler<T extends AbstractPeer> implement
 {
 	
 	private Lifecycle providedLifecycle;
-	private IExecutionListenerCallback callbackExecutionListener = null;
-	private T peer;
+	private IExecutionListenerCallback executionListenerCallback = null;
+	protected T peer;
 
 	@Override
-	public IExecutionListenerCallback getCallbackExecutionListener() {
-		return callbackExecutionListener;
+	public IExecutionListenerCallback getExecutionListenerCallback() {
+		return executionListenerCallback;
 	}
 
 	@Override
-	public void setCallbackExecutionListener(
+	public void setExecutionListenerCallback(
 			IExecutionListenerCallback callbackExecutionListener) {
-		this.callbackExecutionListener = callbackExecutionListener;
+		this.executionListenerCallback = callbackExecutionListener;
 	}
 
 
@@ -45,5 +45,9 @@ public abstract class AbstractExecutionHandler<T extends AbstractPeer> implement
 
 	protected T getPeer() {
 		return this.peer;
+	}
+	
+	public void setPeer(T peer) {
+		this.peer = peer;
 	}
 }

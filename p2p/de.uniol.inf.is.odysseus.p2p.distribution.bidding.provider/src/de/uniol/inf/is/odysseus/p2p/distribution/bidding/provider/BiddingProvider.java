@@ -11,15 +11,17 @@ import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import org.apache.commons.codec.binary.Base64OutputStream;
-
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.BiddingHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.BiddingMessageResultHandler;
+import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.EventMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
@@ -48,11 +50,21 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 	
 	@Override
 	public void initializeService() {
-		System.out.println("Initialisiere Bidding Provider Dienste");
-			getPeer().registerMessageHandler(new BiddingMessageResultHandler(getPeer().getQueries()));
-			initBiddingHandler();
+		getPeer().getLogger().info("Initializing message handler");
+		getPeer().registerMessageHandler(new BiddingMessageResultHandler(getPeer().getQueries()));
+		getPeer().registerMessageHandler(new EventMessageHandler());
+		getPeer().getLogger().info("Initializing execution handler factories");
+		IExecutionHandler<AbstractPeer> executionHandler = new BiddingProviderExecutionHandler<AbstractPeer>(Lifecycle.DISTRIBUTION, this, getPeer());
+		getExecutionHandlerFactory().setExecutionHandler(executionHandler);
+		getPeer().addExecutionHandlerFactory(getExecutionHandlerFactory());
+		initBiddingHandler();
 			
 	}
+	
+	@Override
+	public void finalizeService() {
+		getPeer().removeExecutionHandlerFactory(getExecutionHandlerFactory());
+	};
 	
 	private void startDiscoveryService() {
 		this.discoveryService = PeerGroupTool.getPeerGroup().getDiscoveryService();

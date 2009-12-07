@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 
-public class EventHandler implements IMessageHandler {
+public class EventMessageHandler implements IMessageHandler {
 
 	@Override
 	public String getInterestedNamespace() {

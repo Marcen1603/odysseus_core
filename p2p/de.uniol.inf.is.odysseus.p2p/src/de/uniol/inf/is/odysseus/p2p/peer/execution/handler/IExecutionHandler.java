@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
 public interface IExecutionHandler<T extends IPeer> extends Runnable {
 	public Lifecycle getProvidedLifecycle();
-	public void setCallbackExecutionListener(IExecutionListenerCallback executionListener);
-	public IExecutionListenerCallback getCallbackExecutionListener();
+	public void setExecutionListenerCallback(IExecutionListenerCallback executionListenerCallback);
+	public IExecutionListenerCallback getExecutionListenerCallback();
 	public Thread startHandler();
 	public void setPeer(T peer);
 	

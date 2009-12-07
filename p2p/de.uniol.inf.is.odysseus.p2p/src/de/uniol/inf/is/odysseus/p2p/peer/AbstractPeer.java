@@ -26,30 +26,30 @@ public abstract class AbstractPeer implements IPeer {
 
 	private Logger logger;
 	private HashMap<Query, IExecutionListener > queries;
-	private HashMap<Lifecycle, List<IExecutionHandlerFactory>> executionHandlerFactory;
+	private HashMap<Lifecycle, List<IExecutionHandlerFactory>> executionHandlerFactoryList;
 	private List<IMessageHandler> messageHandlerList;
 	private ISocketServerListener socketServerListener;
 	private IExecutionListenerFactory executionListenerFactory;
 
-
-	public void bindExecutionHandlerFactory(IExecutionHandlerFactory factory) {
-		if(this.executionHandlerFactory.containsKey(factory.getProvidedLifecycle())) {
-			this.executionHandlerFactory.get(factory.getProvidedLifecycle()).add(factory);
+	public void addExecutionHandlerFactory(IExecutionHandlerFactory factory) {
+		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
+			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).add(factory);
 		}
 		else {
 			List<IExecutionHandlerFactory> tempFactory = new ArrayList<IExecutionHandlerFactory>();
 			tempFactory.add(factory);
-			this.executionHandlerFactory.put(factory.getProvidedLifecycle(), tempFactory);
+			this.executionHandlerFactoryList.put(factory.getProvidedLifecycle(), tempFactory);
 		}
 	}
 	
-	public void unbindExecutionHandlerFactory(IExecutionHandlerFactory factory) {
-		if(this.executionHandlerFactory.containsKey(factory.getProvidedLifecycle())) {
-			this.executionHandlerFactory.get(factory.getProvidedLifecycle()).remove(factory);
+	public void removeExecutionHandlerFactory(IExecutionHandlerFactory factory) {
+		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
+			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).remove(factory);
 		}
 	}
 	
 	public void bindExecutionListenerFactory(IExecutionListenerFactory factory) {
+		getLogger().info("Binding ExecutionListenerFactory");
 		this.executionListenerFactory = factory;
 	}
 	
@@ -63,6 +63,7 @@ public abstract class AbstractPeer implements IPeer {
 		this.logger = LoggerFactory.getLogger(AbstractPeer.class);
 		this.setQueries(new HashMap<Query, IExecutionListener>());
 		this.messageHandlerList = new ArrayList<IMessageHandler>();
+		this.executionHandlerFactoryList = new HashMap<Lifecycle, List<IExecutionHandlerFactory>>();
 	
 	}
 	
@@ -107,14 +108,9 @@ public abstract class AbstractPeer implements IPeer {
 	}
 	
 	
-	
-	public HashMap<Lifecycle, List<IExecutionHandlerFactory>> getExecutionHandlerFactory() {
-		return this.executionHandlerFactory;
-	}
-	
 	public void addQuery(Query query) {
-		List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
-		for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactory().values()) {
+		List<IExecutionHandler<? extends IPeer>> execHandlerList = new ArrayList<IExecutionHandler<? extends IPeer>>();
+		for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactoryList().values()) {
 			for(IExecutionHandlerFactory factory : factoryList) {
 				execHandlerList.add(factory.getNewInstance());
 			}
@@ -143,15 +139,18 @@ public abstract class AbstractPeer implements IPeer {
 		return messageHandlerList;
 	}
 	
-	public List<IExecutionHandler> getExecutionHandler() {
-		List<IExecutionHandler> handlerList = new ArrayList<IExecutionHandler>();
-		for(List<IExecutionHandlerFactory> factoryList : getExecutionHandlerFactory().values()) {
+	public List<IExecutionHandler<? extends IPeer>> getExecutionHandler() {
+		List<IExecutionHandler<? extends IPeer>> handlerList = new ArrayList<IExecutionHandler<? extends IPeer>>();
+		for(List<IExecutionHandlerFactory> factoryList : getExecutionHandlerFactoryList().values()) {
 			for (IExecutionHandlerFactory factory : factoryList) {
 				handlerList.add(factory.getNewInstance());
 			}
 		}
 		return handlerList;
 	}
-
+	
+	protected HashMap<Lifecycle, List<IExecutionHandlerFactory>> getExecutionHandlerFactoryList() {
+		return executionHandlerFactoryList;
+	}
 	
 }

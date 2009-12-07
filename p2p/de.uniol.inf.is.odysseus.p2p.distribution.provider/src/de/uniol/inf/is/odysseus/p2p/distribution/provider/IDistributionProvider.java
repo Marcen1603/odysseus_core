@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
 public interface IDistributionProvider<T extends IPeer> {
 	public void initializeService();
+	public void finalizeService();
 	public void startService();
 	public String getDistributionStrategy();
 	public void setPeer(T peer);
