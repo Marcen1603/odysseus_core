@@ -9,6 +9,7 @@ public class ExecutionListener extends AbstractExecutionListener{
 
 	public ExecutionListener(Query query) {
 		super(query);
+		setCallback(new ExecutionListenerCallback());
 	}
 	
 	private boolean execute(Lifecycle lifecycle) {

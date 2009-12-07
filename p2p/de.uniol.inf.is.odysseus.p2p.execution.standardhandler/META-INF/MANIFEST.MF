@@ -6,6 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.execution.standardhandler.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
+Import-Package: de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
  de.uniol.inf.is.odysseus.p2p.queryhandling,
  org.osgi.framework;version="1.3.0"
+Service-Component: OSGI-INF/ExecutionHandlerFactory.xml
