@@ -195,8 +195,8 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		AbstractLogicalOperator inputForWindow = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
 		win.subscribeTo(inputForWindow, inputForWindow.getOutputSchema());
 		
-		win.setWindowSize(Integer.parseInt(((ASTNumber)node.jjtGetChild(1)).getValue()));
-		win.setWindowAdvance(Integer.parseInt(((ASTNumber)node.jjtGetChild(2)).getValue()));
+		win.setWindowSize(((ASTNumber)node.jjtGetChild(1)).getValue());
+		win.setWindowAdvance(((ASTNumber)node.jjtGetChild(2)).getValue());
 		
 		// there exists a timestamp attribute
 		if(node.jjtGetNumChildren() == 4){
