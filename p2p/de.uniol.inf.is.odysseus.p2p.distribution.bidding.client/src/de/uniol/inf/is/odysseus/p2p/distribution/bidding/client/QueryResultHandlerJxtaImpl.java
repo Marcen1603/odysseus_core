@@ -3,25 +3,26 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 import java.util.HashMap;
 
 import net.jxta.endpoint.Message;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query.Status;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
- 
+import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
+
 public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 	
 	
-	private HashMap<String, Query> queries;
+	private HashMap<Query, IExecutionListener> queries;
 	
 	
-	public HashMap<String, Query> getQueries() {
+	public HashMap<Query, IExecutionListener> getQueries() {
 		return queries;
 	}
 
-	public QueryResultHandlerJxtaImpl(HashMap<String, Query> queries) {
-		this.queries = queries;
+	public QueryResultHandlerJxtaImpl(HashMap<Query, IExecutionListener> hashMap) {
+		this.queries = hashMap;
 	}
 	
 	public void handleMessage(Object _msg, String _namespace) {
@@ -39,8 +40,17 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 				"events", msg);
 
 		if (result.equals("granted")) {
-			AbstractLogicalOperator ao = getQueries().get(queryId).getSubPlans().get(subPlanId).getAo();
-			getQueries().get(queryId).setStatus(Status.GRANTED);
+//			AbstractLogicalOperator ao = getQueries().get(queryId).getSubPlans().get(subPlanId).getAo();
+			for(Query q : getQueries().keySet()) {
+				if(q.getId() == queryId) {
+					IExecutionListener listener = getQueries().get(q);
+					for(Subplan sp : q.getSubPlans().values()) {
+						sp.setStatus(Lifecycle.GRANTED);
+					}
+					listener.startListener();
+				}
+			}
+//			getQueries().get(queryId).setStatus(Status.GRANTED);
 			
 			
 //			try {
@@ -72,21 +82,24 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 //			}
 			
 			Log.addEvent(queryId, "Muss nur noch ausgeführt werden können");
-			getQueries().get(queryId)
-					.setStatus(Status.RUN);
+//			getQueries().get(queryId)
+//					.setStatus(Status.RUN);
 
 		} else {
-			getQueries().get(queryId)
-					.setStatus(Status.DENIED);
+//			getQueries().get(queryId)
+//					.setStatus(Status.DENIED);
 			Log
 					.logAction(queryId,
 							"Habe keine Zusage für die Anfrage bekommen");
-			Log.setStatus(queryId, getQueries().get(queryId).getStatus().toString());
-			if(getQueries().get(queryId).getSubPlans().size() == 1) {
-				getQueries().remove(queryId);
-			}
-			else {
-				getQueries().get(queryId).getSubPlans().remove(subPlanId);
+//			Log.setStatus(queryId, getQueries().get(queryId).getStatus().toString());
+			for(Query q : getQueries().keySet()) {
+				if(q.getId() == queryId && q.getSubPlans().size() == 1) {
+					getQueries().remove(q);
+				}
+				else if(q.getId() == queryId){
+					q.getSubPlans().remove(subPlanId);
+				}
+				
 			}
 
 		}

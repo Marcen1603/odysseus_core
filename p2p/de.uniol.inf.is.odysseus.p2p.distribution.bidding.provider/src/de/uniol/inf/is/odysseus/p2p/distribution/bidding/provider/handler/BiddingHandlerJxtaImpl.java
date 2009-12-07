@@ -1,27 +1,28 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler;
-
+//TODO Interface DistributionStrategy siehe Unterlagen
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Bid;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan.SubplanStatus;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.SubplanJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 
 public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 
 	int WAIT_TIME = 10000;
-	private HashMap<String, Query> queries;
+	private HashMap<Query, IExecutionListener> queries;
 	private String events;
 
-	public BiddingHandlerJxtaImpl(HashMap<String, Query> queries, String events) {
+	public BiddingHandlerJxtaImpl(HashMap<Query, IExecutionListener> queries, String events) {
 		this.queries = queries;
 		this.events = events;
 	}
@@ -46,17 +47,16 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 	
 	public void handleBidding() {
 		
-		for (Query q : getQueries()
-				.values()) {
+		for (Query q : getQueries().keySet()) {
 			// Ist mindestens ein Gebot je Subplan vorhanden
-			if(q.containsAllBidding() && q.getSubPlans().size()>0 && q.getStatus() != Query.Status.RUN) {
+			if(q.containsAllBidding() && q.getSubPlans().size()>0 && q.getStatus() != Lifecycle.RUNNING) {
 				
-				int subplannumber = 0;
 
 				for (Subplan subplan : q.getSubPlans().values()) {
-					if (subplan.getStatus() == Subplan.SubplanStatus.CLOSED) {
-						continue;
-					}
+					//TODO Subplan Behandlung
+//					if (subplan.getStatus() == Subplan.SubplanStatus.CLOSED) {
+//						continue;
+//					}
 					//TODO: Zuweisung zu den Bewerbern durch Kriterien
 					//Strategie, welche über die Zusage entscheidet. Gib Eine Liste von Gebote rein und erhalte einen passenden Peer für meine zu erledigende Aufgabe
 					BidJxtaImpl optimalBid = (BidJxtaImpl) selectSuitableBid(subplan.getBiddings());
@@ -70,7 +70,6 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 //									+ subplan.getId());
 					
 					//Baue Nachricht zusammen, dass dem Operator-Peer die Ausführung zugesagt wird
-					//TODO: An dieser Stelle sollte der Subplan verschickt werden. Das muss vorher bei der Ausschreibung bereits geschehen
 					HashMap<String, Object> messageElements = new HashMap<String, Object>();
 					messageElements.put("queryId", q.getId());
 					messageElements.put("subplanId", subplan.getId());
@@ -95,17 +94,17 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 					// Socket von dem Peer setzen der gerade den
 					// Teilplan ausführt. Für den Verwaltungs-Peer interessant, damit er weiß wen er kontaktieren muss.
 					
-					((SubplanJxtaImpl)subplan).setResponseSocket(optimalBid.getResponseSocket().toString());
+					((SubplanJxtaImpl)subplan).setResponseSocket(opPeer.toString());
 //					((SubplanJxtaImpl) getQueries().get(s).getSubPlans().get(
 //									subplannumber))
 //							.setResponseSocket(((BidJxtaImpl) getQueries().get(s)
 //									.getBiddings().get(subplannumber))
 //									.getResponseSocket().toString());
-					subplan.setStatus(SubplanStatus.CLOSED);
+//					subplan.setStatus(SubplanStatus.CLOSED);
 //					q.getSubPlans().get(subplannumber).setStatus(
 //									SubplanStatus.CLOSED);
 //					subplannumber++;
-					subplan.setStatus(Subplan.SubplanStatus.CLOSED);
+//					subplan.setStatus(Subplan.SubplanStatus.CLOSED);
 //					Log.setStatus(getQueries().get(s).getId(), "Running");
 				}
 
@@ -155,7 +154,7 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 		return events;
 	}
 
-	public HashMap<String, Query> getQueries() {
+	public HashMap<Query, IExecutionListener> getQueries() {
 		return queries;
 	}
 

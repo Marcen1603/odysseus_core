@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -13,13 +12,11 @@ import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import org.apache.commons.codec.binary.Base64OutputStream;
 
-
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query.Status;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.BiddingHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.BiddingMessageResultHandler;
@@ -29,15 +26,12 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 
-public class BiddingProvider extends AbstractDistributionProvider {
+public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> {
 
 	private Thread biddingHandlerThread;
-	private Thread eventListenerThread;
 	private IBiddingHandler biddingHandler;
 	private String events =  "OpenInit,OpenDone,ProcessInit,ProcessDone,ProcessInitNeg,ProcessDoneNeg,PushInit,PushDone,PushInitNeg,PushDoneNeg,Done" ;
 	private DiscoveryService discoveryService;
-	private IMessageHandler messageHandler;
-	public HashMap<String, Query> managedQueries = null;
 
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
@@ -50,40 +44,22 @@ public class BiddingProvider extends AbstractDistributionProvider {
 
 	public BiddingProvider() {
 		super();
-
-		this.setMessageHandler(new BiddingMessageResultHandler(getManagedQueries()));
 	}
 	
 	@Override
 	public void initializeService() {
 		System.out.println("Initialisiere Bidding Provider Dienste");
-//			initEventListener();
+			getPeer().registerMessageHandler(new BiddingMessageResultHandler(getPeer().getQueries()));
 			initBiddingHandler();
-			initMessageHandler();
 			
 	}
 	
-	@Override
-	public HashMap<String, Query> getManagedQueries() {
-		return managedQueries;
-	}
-
-	public void setManagedQueries(HashMap<String, Query> managedQueries) {
-		this.managedQueries = managedQueries;
-	}
-
 	private void startDiscoveryService() {
 		this.discoveryService = PeerGroupTool.getPeerGroup().getDiscoveryService();
 	}
 
-	public void initMessageHandler() {
-		this.setMessageHandler(new BiddingMessageResultHandler(getManagedQueries()));
-		
-	}
-
 	@Override
 	public void startService() {
-//		startEventListener();
 		startBiddingHandler();
 		startDiscoveryService();
 	}
@@ -111,7 +87,7 @@ public class BiddingProvider extends AbstractDistributionProvider {
 		
 			Log.logAction(query.getId(), "Anfrage ausschreiben");
 			// Anfragen ausschreiben
-			query.setStatus(Status.BIDDING);
+			//query.setStatus(Status.BIDDING);
 			// Hier wird dann die Ausführung der Subpläne ausgeschrieben
 			for(Subplan subplan : query.getSubPlans().values()) {
 				
@@ -174,34 +150,8 @@ public class BiddingProvider extends AbstractDistributionProvider {
 	 * In Intervallen werden die Gebote zu den Queries überprüft und Teilpläne den entsprechenden Operator-Peers zugewiesen.
 	 */
 	private void initBiddingHandler() {
-		this.biddingHandler = new BiddingHandlerJxtaImpl(getManagedQueries(), getEvents());
+		this.biddingHandler = new BiddingHandlerJxtaImpl(getPeer().getQueries(), getEvents());
 	}
-	
-
-//	private void initEventListener() {
-//
-//		eventListener = new EventListenerJxtaImpl();
-//	}	
-//	
-//	private void startEventListener() {
-//		if (eventListenerThread != null
-//				&& eventListenerThread.isAlive()) {
-//			eventListenerThread.interrupt();
-//		}
-//		//PipeAdvertisement muss noch gesetzt werden. Erst dann, wenn alle Dienste initialisiert wurden. PeerGroupTool wird erst nach der Service Einbindung initialisiert
-//		try {
-//			PipeAdvertisement pa = AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup());
-//		((EventListenerJxtaImpl)eventListener).setPipeAdv(pa);
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		eventListenerThread = new Thread(eventListener);
-//		eventListenerThread.start();
-//		
-//	}
-//	public IEventListener getEventListener() {
-//		return eventListener;
-//	}
 
 	public String getEvents() {
 		return events;
@@ -210,14 +160,4 @@ public class BiddingProvider extends AbstractDistributionProvider {
 	public void setEvents(String events) {
 		this.events = events;
 	}
-
-
-	public void setMessageHandler(IMessageHandler messageHandler) {
-		this.messageHandler = messageHandler;
-	}
-
-	public IMessageHandler getMessageHandler() {
-		return messageHandler;
-	}
-
 }
