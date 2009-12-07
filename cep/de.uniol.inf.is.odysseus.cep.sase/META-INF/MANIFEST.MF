@@ -12,3 +12,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.cep.metamodel.jep,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
+Require-Bundle: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.cep.metamodel

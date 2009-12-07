@@ -62,4 +62,9 @@ public class SymbolTableScheme<T> {
 		}
 		return str;
 	}
+	
+	@Override
+	public String toString() {
+		return toString("");
+	}
 }

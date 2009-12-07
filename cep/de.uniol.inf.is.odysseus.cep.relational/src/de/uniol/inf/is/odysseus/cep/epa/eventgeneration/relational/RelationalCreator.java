@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.epa.eventgeneration;
+package de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational;
 
 import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;

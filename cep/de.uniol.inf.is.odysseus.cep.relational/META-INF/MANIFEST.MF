@@ -12,5 +12,6 @@ Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.metamodel.symboltable,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
-Export-Package: de.uniol.inf.is.odysseus.cep.epa.eventreading
+Export-Package: de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
+ de.uniol.inf.is.odysseus.cep.epa.eventreading.relational
 Require-Bundle: de.uniol.inf.is.odysseus.cep

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.epa.eventreading;
+package de.uniol.inf.is.odysseus.cep.epa.eventreading.relational;
 
 
 import java.util.HashMap;
@@ -35,12 +35,21 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 	 *            vom Typ {@link RelationalTuple} sein!
 	 */
 	@Override
-	public Object getValue(String identifier, RelationalTuple<?> event) {
-		if (identifier.isEmpty())
+	public Object getValue(String id, RelationalTuple<?> event) {
+		if (id.isEmpty())
 			return null;//Leere Attribut id bei bstimmten Aggregationen (z.B. Count)
 		
+		Integer pos = this.scheme.get(id);
+		if (pos == null){
+			// Variable ist alles nach dem letzten "."
+			String identifier = id.substring(id.lastIndexOf(".")+1);
+			pos = this.scheme.get(identifier);
+			// Beim nächsten mal sofort finden :-)
+			scheme.put(identifier, pos);
+		}
+		
 		RelationalTuple<?> tuple = (RelationalTuple<?>) event;
-		return tuple.getAttribute(this.scheme.get(identifier));
+		return tuple.getAttribute(pos);
 	}
 
 }

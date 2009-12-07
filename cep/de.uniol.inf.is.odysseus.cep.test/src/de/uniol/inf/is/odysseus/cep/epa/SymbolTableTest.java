@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.RelationalReader;
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Count;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
@@ -105,10 +105,10 @@ public class SymbolTableTest {
 		int i = 0;
 		for (RelationalTuple event : events) {
 			for (SymbolTableEntry entry : this.symTab.getEntries()) {				
-				entry.executeOperation(reader.getValue(entry.getScheme().getAttribute(), event));
-				if (entry.getScheme().getStateIdentifier().equals("state1"))
+				entry.executeOperation(reader.getValue(entry.getVariable().getAttribute(), event));
+				if (entry.getVariable().getStateIdentifier().equals("state1"))
 					assertEquals(new Integer(i), entry.getValue());
-				if (entry.getScheme().getStateIdentifier().equals("state2"))
+				if (entry.getVariable().getStateIdentifier().equals("state2"))
 					assertEquals(new Integer(i+1), entry.getValue());
 			}
 			i++;

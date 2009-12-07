@@ -88,7 +88,7 @@ whereExpressions
 	;
 	
 expression
-	:	 BBRACKETLEFT NAME BBRACKETRIGHT -> ^(IDEXPRESSION NAME) | f1=term SINGLEEQUALS f2=term ->  ^(COMPAREEXPRESSION $f1 EQUALS $f2) | f1=term COMPAREOP f2=term -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
+	:	NAME -> ^(IDEXPRESSION NAME) | f1=term SINGLEEQUALS f2=term ->  ^(COMPAREEXPRESSION $f1 EQUALS $f2) | f1=term COMPAREOP f2=term -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
 	;
 
 term	:	aggregation |

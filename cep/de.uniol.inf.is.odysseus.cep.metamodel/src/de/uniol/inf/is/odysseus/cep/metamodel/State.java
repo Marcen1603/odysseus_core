@@ -143,9 +143,9 @@ public class State {
 	}
 
 	public String prettyPrint() {
-		String ret = "State:" +id+(accepting?"<F>":"")+"\n";
+		String ret = "State: " +id+(accepting?" <F>":"")+"\n";
 		for (Transition t: transitions){
-			ret +=t.toString()+"\n";
+			ret +="\t"+t.toString()+"\n";
 		}
 		return ret;
 	}

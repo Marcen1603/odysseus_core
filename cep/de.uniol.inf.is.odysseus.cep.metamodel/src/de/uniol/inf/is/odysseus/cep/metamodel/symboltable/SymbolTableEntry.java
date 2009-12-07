@@ -13,7 +13,7 @@ public class SymbolTableEntry<T> {
 	/**
 	 * Referenz auf das Schema des Symboltabelleneintrags
 	 */
-	private CepVariable<T> scheme;
+	private CepVariable<T> variable;
 	/**
 	 * Der Wert einer Variablen
 	 */
@@ -22,8 +22,8 @@ public class SymbolTableEntry<T> {
 	/**
 	 * Erzeugt leeren Eintrag. Der Wert des Eintrags bleibt uninitialisiert!
 	 */
-	public SymbolTableEntry(CepVariable<T> entryScheme) {
-		this.scheme = entryScheme;
+	public SymbolTableEntry(CepVariable<T> variable) {
+		this.variable = variable;
 	}
 
 	/**
@@ -50,8 +50,8 @@ public class SymbolTableEntry<T> {
 	 * 
 	 * @return Das zum Eintrag gehÃ¶rende Schema.
 	 */
-	public CepVariable<T> getScheme() {
-		return scheme;
+	public CepVariable<T> getVariable() {
+		return variable;
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class SymbolTableEntry<T> {
 	@SuppressWarnings("unchecked")
 	public void executeOperation(Object value) {
 		// TODO: ist der Cast das hinten schlau? Geht das überhaupt anders?
-		this.value = this.scheme.getOperation().execute(this.value, (T)value);
+		this.value = this.variable.getOperation().execute(this.value, (T)value);
 	}
 
 	/**
@@ -71,13 +71,13 @@ public class SymbolTableEntry<T> {
 	 */
 	@Override
 	public SymbolTableEntry<T> clone() {
-		SymbolTableEntry<T> newEntry = new SymbolTableEntry<T>(this.getScheme());
+		SymbolTableEntry<T> newEntry = new SymbolTableEntry<T>(this.getVariable());
 		newEntry.setValue(this.value);
 		return newEntry;
 	}
 
 	@Override
 	public String toString() {
-		return this.getScheme().getVariableName() + ": " + this.value; 
+		return this.getVariable().getVariableName() + ": " + this.value; 
 	}
 }

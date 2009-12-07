@@ -16,6 +16,9 @@ PREVIOUS :  '[i-1]' ;
 ALLTOPREVIOUS :	 '[..i-1]' ;
 LAST 	:	 '['NAME'.LEN]';
 
+BBRACKETLEFT :  '[';
+BBRACKETRIGHT :  ']';
+
 TIMEUNIT: 'hour'| 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds';
 
 SKIP_METHOD
@@ -24,8 +27,6 @@ SKIP_METHOD
 AGGREGATEOP : 'avg' | 'min' | 'max' | 'sum' | 'count'| 'AVG'|'MIN'|'MAX'|'SUM'|'COUNT' 
 		;
 
-BBRACKETLEFT :  '[';
-BBRACKETRIGHT :  ']';
 
 PLUS	: '+';
 MINUS	: '-';

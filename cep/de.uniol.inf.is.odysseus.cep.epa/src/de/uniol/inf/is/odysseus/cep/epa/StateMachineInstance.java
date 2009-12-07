@@ -116,14 +116,14 @@ public class StateMachineInstance<R> {
 			this.matchingTrace.addEvent(event, this.currentState);
 			// Symboltabelle aktualisieren
 			for (SymbolTableEntry<?> entry : this.symTab.getEntries()) {
-				if (entry.getScheme().getStateIdentifier().equals(
+				if (entry.getVariable().getStateIdentifier().equals(
 						this.currentState.getId())) {
-					if (entry.getScheme().getIndex() == this.matchingTrace
+					if (entry.getVariable().getIndex() == this.matchingTrace
 							.getStateBuffer(this.currentState).getEvents()
 							.size()-1) {
-						entry.executeOperation(eventReader.getValue(entry.getScheme().getAttribute(), event));
-					} else if (entry.getScheme().getIndex() < 0) {
-						entry.executeOperation(eventReader.getValue(entry.getScheme().getAttribute(), event));
+						entry.executeOperation(eventReader.getValue(entry.getVariable().getAttribute(), event));
+					} else if (entry.getVariable().getIndex() < 0) {
+						entry.executeOperation(eventReader.getValue(entry.getVariable().getAttribute(), event));
 					}
 				}
 			}

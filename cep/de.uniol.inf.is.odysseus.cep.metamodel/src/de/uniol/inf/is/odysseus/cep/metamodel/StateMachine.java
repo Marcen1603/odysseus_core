@@ -25,8 +25,8 @@ public class StateMachine {
 	private List<State> states;
 	/**
 	 * Referenz auf den Startzustand des Automaten. Das referenzierte Objekt
-	 * muss bei der Verarbeitung durch den EPA in states enthalten sein.
-	 * Darf bei der Verarbeitung durch den EPA nicht null sein.
+	 * muss bei der Verarbeitung durch den EPA in states enthalten sein. Darf
+	 * bei der Verarbeitung durch den EPA nicht null sein.
 	 */
 	private State initialState;
 	/**
@@ -46,8 +46,8 @@ public class StateMachine {
 	 */
 	private EConsumptionMode consumptionMode;
 
-	private EEventSelectionStrategy eventSelectionStrategy; 
-	
+	private EEventSelectionStrategy eventSelectionStrategy;
+
 	public EEventSelectionStrategy getEventSelectionStrategy() {
 		return eventSelectionStrategy;
 	}
@@ -93,7 +93,7 @@ public class StateMachine {
 	 * 
 	 * @return Liste aller Zustände des Automaten.
 	 */
-	@XmlElementWrapper(name = "states") 
+	@XmlElementWrapper(name = "states")
 	@XmlElement(name = "state")
 	public List<State> getStates() {
 		return states;
@@ -118,10 +118,11 @@ public class StateMachine {
 	public State getInitialState() {
 		return initialState;
 	}
-	
-	public State getState(String id){
-		for (State s:states){
-			if (s.getId().equals(id)) return s;
+
+	public State getState(String id) {
+		for (State s : states) {
+			if (s.getId().equals(id))
+				return s;
 		}
 		return null;
 	}
@@ -192,36 +193,35 @@ public class StateMachine {
 	public void setConsumptionMode(EConsumptionMode strategy) {
 		this.consumptionMode = strategy;
 	}
-	
+
 	public String toString() {
-		String str = "StateMachine: " + this.hashCode()+ " ";
+		String str = "StateMachine: " + this.hashCode() + " ";
 		str += states;
 		str += " Initial State: ";
-		if (initialState != null){
-			str += this.initialState.getId() + "(" + this.initialState.hashCode() + ")";
+		if (initialState != null) {
+			str += this.initialState.getId() + "("
+					+ this.initialState.hashCode() + ")";
 		}
 		str += this.symTabScheme;
-		
+
 		str += this.outputScheme;
 		str += "Matching Strategy: " + this.consumptionMode;
 		return str;
 	}
-	
-	public String prettyPrint(){
-		String str = "StateMachine:(" + this.hashCode()+ ")\n";
-		for (State s:states){
+
+	public String prettyPrint() {
+		String str = "StateMachine:(" + this.hashCode() + ")\n";
+		for (State s : states) {
+			if (initialState != null && s.getId() == initialState.getId()) {
+				str += "Initial-";
+			}
 			str += s.prettyPrint();
 		}
-		str+="\n";
-		str += " Initial State: ";
-		if (initialState != null){
-			str += this.initialState.getId() + "(" + this.initialState.hashCode() + ")";
-		}
-		str += this.symTabScheme+"\n";
-		
-		str += this.outputScheme+"\n";
-		str += "Matching Strategy: " + this.consumptionMode+"\n";
-		return str;	
+		str += "\n";
+		str += this.symTabScheme + "\n";
+		str += this.outputScheme + "\n";
+		str += "Matching Strategy: " + this.consumptionMode + "\n";
+		return str;
 	}
 
 	public State getLastState() {
@@ -230,23 +230,24 @@ public class StateMachine {
 
 	public List<State> getFinalStates() {
 		List<State> fStates = new ArrayList<State>();
-		for (State s:states){
-			if (s.isAccepting()){
+		for (State s : states) {
+			if (s.isAccepting()) {
 				fStates.add(s);
 			}
 		}
 		return fStates;
 	}
-	
+
 	/**
 	 * Returns list of other (!) States that have outgoing transitions to state
+	 * 
 	 * @param state
 	 * @return
 	 */
-	public List<State> getSourceStates(State state){
+	public List<State> getSourceStates(State state) {
 		List<State> sStates = new ArrayList<State>();
-		for (State so:states){
-			if (so.hasTarget(state) && so.getId() != state.getId()){
+		for (State so : states) {
+			if (so.hasTarget(state) && so.getId() != state.getId()) {
 				sStates.add(so);
 			}
 		}
@@ -256,24 +257,22 @@ public class StateMachine {
 	public List<State> getAllPathesToStart(State finalState) {
 		List<State> states = new ArrayList<State>();
 		states.add(finalState);
-		getAllStatesBefore(finalState, states);		
+		getAllStatesBefore(finalState, states);
 		return states;
 	}
 
 	private void getAllStatesBefore(State state, List<State> states) {
-		if (initialState.getId() != state.getId()){
+		if (initialState.getId() != state.getId()) {
 			List<State> s = getSourceStates(state);
-			// Endlosschleife vermeiden (alle Elemente aus s entfernen, die bereits verarbeitet wurden
+			// Endlosschleife vermeiden (alle Elemente aus s entfernen, die
+			// bereits verarbeitet wurden
 			s.removeAll(states);
 			states.addAll(s);
-			for (State st: s){
+			for (State st : s) {
 				getAllStatesBefore(st, states);
-			
+
 			}
-		}		
+		}
 	}
-	
-	
-	
-	
+
 }

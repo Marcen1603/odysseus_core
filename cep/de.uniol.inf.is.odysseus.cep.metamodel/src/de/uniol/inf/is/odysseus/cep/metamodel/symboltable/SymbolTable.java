@@ -73,7 +73,7 @@ public class SymbolTable {
 	 */
 	public Object getValue(String name) {
 		for (SymbolTableEntry<Object> entry : this.entries) {
-			if (name.equals(entry.getScheme().getVariableName())) {
+			if (name.equals(entry.getVariable().getVariableName())) {
 				return entry.getValue();
 			}
 		}
