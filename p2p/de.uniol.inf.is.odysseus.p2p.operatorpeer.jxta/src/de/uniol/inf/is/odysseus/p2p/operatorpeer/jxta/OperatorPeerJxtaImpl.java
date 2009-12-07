@@ -17,7 +17,6 @@ import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
@@ -84,8 +83,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	public  PipeService pipeService;
 
-
-
 	private PipeAdvertisement serverResponseAddress;
 	
 	
@@ -137,6 +134,9 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	protected void initSocketServerListener(AbstractOperatorPeer aPeer) {
 		this.socketServerListener = new SocketServerListener(aPeer);
+		if(getMessageHandlerList()!=null) {
+			getSocketServerListener().registerMessageHandler(getMessageHandlerList());
+		}
 	}
 
 	public void setDiscoveryService(DiscoveryService discoveryService) {
@@ -324,18 +324,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	public Object getServerResponseAddress() {
 		return this.serverResponseAddress;
-	}
-
-	@Override
-	public void addQuery(Query query) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeQuery(Query query) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

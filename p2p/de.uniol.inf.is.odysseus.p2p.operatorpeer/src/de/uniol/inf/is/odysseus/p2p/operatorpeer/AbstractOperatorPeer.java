@@ -29,10 +29,6 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	
 	protected IPriority priority;
 
-//	protected IQuerySpezificationListener querySpezificationFinder;
-
-//	private Thread querySpezificationFinderThread;
-
 	private Thread socketListenerThread;
 
 	protected ISocketServerListener socketServerListener;
@@ -43,13 +39,13 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	
 	protected HashMap<String, String> sources = new HashMap<String, String>();
 	
-	private IDistributionClient distributionClient;
+	private IDistributionClient<AbstractPeer> distributionClient;
 
 
-	public void bindDistributionClient(IDistributionClient dc) {
+	public void bindDistributionClient(IDistributionClient<AbstractPeer> dc) {
 		System.out.println("binde DistributionClient");
 		this.distributionClient = dc;
-		this.distributionClient.setManagedQueries(getQueries());
+		this.distributionClient.setPeer(this);
 		this.distributionClient.initializeService();
 		try {
 			registerMessageHandler(this.distributionClient.getMessageHandler());
@@ -59,14 +55,14 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		}
 	}
 	
-	public void unbindDistributionClient(IDistributionClient dc) {
+	public void unbindDistributionClient(IDistributionClient<AbstractPeer> dc) {
 		if(this.distributionClient == dc) {
 			this.distributionClient = null;			
 		}
 
 	}
 	
-	public IDistributionClient getDistributionClient() {
+	public IDistributionClient<AbstractPeer> getDistributionClient() {
 		return distributionClient;
 	}
 
