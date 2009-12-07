@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.cep.sase;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.Token;
@@ -17,6 +20,8 @@ import org.antlr.runtime.tree.TreeAdaptor;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.IQueryParser;
+import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
@@ -31,7 +36,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-public class SaseBuilder {
+public class SaseBuilder implements IQueryParser {
 
 	class CompareExpression {
 		public List<PathAttribute> attributes = new LinkedList<PathAttribute>();
@@ -146,15 +151,44 @@ public class SaseBuilder {
 		}
 	};
 
-	public ILogicalOperator parse(String text) throws RecognitionException {
+	@Override
+	public String getLanguage() {
+		return "SASE+";
+	}
+
+	@Override
+	public List<ILogicalOperator> parse(Reader reader)
+			throws QueryParseException {
+		SaseLexer lex=null;
+		try {
+			lex = new SaseLexer(new ANTLRReaderStream(reader));
+		} catch (IOException e) {
+			throw new QueryParseException(e);
+		}
+		return processParse(lex);
+	}
+	
+	public List<ILogicalOperator> parse(String text) 
+		throws QueryParseException {
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
+		return processParse(lex);
+	}
+
+	private List<ILogicalOperator> processParse(SaseLexer lex) throws QueryParseException {
+		List<ILogicalOperator> retList = new ArrayList<ILogicalOperator>();
 		TokenRewriteStream tokens = new TokenRewriteStream(lex);
 		SaseParser grammar = new SaseParser(tokens);
 		grammar.setTreeAdaptor(adaptor);
-		SaseParser.query_return ret = grammar.query();
+		SaseParser.query_return ret;
+		try {
+			ret = grammar.query();
+		} catch (RecognitionException e) {
+			throw new QueryParseException(e);			
+		}
 		CommonTree tree = (CommonTree) ret.getTree();
 		// printTree(tree, 2);
-		return createLogicalPlan(tree);
+		retList.add(createLogicalPlan(tree));
+		return retList;
 	}
 
 	private ILogicalOperator createLogicalPlan(CommonTree tree) {
@@ -562,15 +596,17 @@ public class SaseBuilder {
 		try {
 			for (String q : toParse) {
 				System.out.println(q);
-				ILogicalOperator top = exec.parse(q);
-				System.out.println(AbstractTreeWalker.prefixWalk(top,
+				List<ILogicalOperator> top = exec.parse(q);
+				System.out.println(AbstractTreeWalker.prefixWalk(top.get(0),
 						new AlgebraPlanToStringVisitor()));
 
 			}
-		} catch (RecognitionException e) {
+		} catch (QueryParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
+
 
 }
