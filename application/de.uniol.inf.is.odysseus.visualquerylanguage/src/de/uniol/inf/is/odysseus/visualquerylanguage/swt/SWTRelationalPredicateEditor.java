@@ -155,11 +155,13 @@ public class SWTRelationalPredicateEditor {
 				if (textArea.getText().contains(" or ")) {
 					orValues = textArea.getText().split(" or ");
 				}
-				for (String string : orValues) {
-					if (ors.contains("=")) {
-						string = string.replace("=", "==");
+				if(orValues != null) {
+					for (String string : orValues) {
+						if (ors.contains("=")) {
+							string = string.replace("=", "==");
+						}
+						ors.add(string);
 					}
-					ors.add(string);
 				}
 				ArrayList<String[]> andValues = new ArrayList<String[]>();
 				ArrayList<String> orsToRemove = new ArrayList<String>();

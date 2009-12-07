@@ -86,14 +86,13 @@
 					<name>WindowAdvance</name>
 					<ptype>java.lang.Long</ptype>
 					<typelist>
-						<type>java.lang.Long</type>
 					</typelist>
 					<setter>setWindowAdvance</setter>
 					<editor>false</editor>
 				</setterParameter>
 				
 				<setterParameter>
-					<name>WindowTyoe</name>
+					<name>WindowType</name>
 					<ptype>de.uniol.inf.is.odysseus.logicaloperator.base.WindowType</ptype>
 					<typelist>
 					</typelist>
