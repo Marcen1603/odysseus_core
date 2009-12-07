@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Action
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.action
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.action.Activator
 Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
  org.apache.cxf.endpoint,
