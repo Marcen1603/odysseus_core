@@ -39,7 +39,7 @@ public class SWTGroupingEditor {
 		Composite comp = new org.eclipse.swt.widgets.Composite(shell,
 				SWT.BORDER);
 		GridLayout compLayout = new GridLayout();
-		compLayout.numColumns = 5;
+		compLayout.numColumns = 4;
 		compLayout.makeColumnsEqualWidth = true;
 		comp.setLayout(compLayout);
 		GridData compData = new GridData(GridData.FILL_BOTH);

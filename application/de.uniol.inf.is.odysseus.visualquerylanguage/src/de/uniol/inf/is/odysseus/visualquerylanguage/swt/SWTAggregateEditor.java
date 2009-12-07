@@ -4,7 +4,9 @@ import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -137,8 +139,7 @@ public class SWTAggregateEditor {
 					}
 				}
 			});
-
-			aggregations.put(sdfAttribute, outputs);
+				aggregations.put(sdfAttribute, outputs);
 		}
 
 		Button applyButton = new Button(shell, SWT.PUSH);
@@ -146,6 +147,15 @@ public class SWTAggregateEditor {
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				Collection<SDFAttribute> mapList = new ArrayList<SDFAttribute>();
+				for ( SDFAttribute key: aggregations.keySet()) {
+					if(aggregations.get(key).isEmpty()) {
+						mapList.add(key);
+					}
+				}
+				for (SDFAttribute att : mapList) {
+					aggregations.remove(att);
+				}
 				for (ISWTParameterListener listener : listeners) {
 					listener.setValue(aggregations);
 				}
