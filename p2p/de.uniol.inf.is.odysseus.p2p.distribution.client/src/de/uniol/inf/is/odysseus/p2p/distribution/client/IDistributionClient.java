@@ -1,17 +1,14 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.client;
 
-import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.peer.execution.IExecutionListener;
 
-public interface IDistributionClient {
+public interface IDistributionClient<T extends IPeer> {
 	public void initializeService();
 	public void startService();
+	public void setPeer(T peer);
 	public String getDistributionStrategy();
-	HashMap<Query, IExecutionListener> getManagedQueries();
-	void setManagedQueries(HashMap<Query, IExecutionListener> hashMap);
 	public IMessageHandler getMessageHandler();
 	
 }

@@ -1,25 +1,23 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.client;
 
-import java.util.HashMap;
-import de.uniol.inf.is.odysseus.p2p.peer.execution.IExecutionListener;
+
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
-public abstract class AbstractDistributionClient implements IDistributionClient {
+public abstract class AbstractDistributionClient<T extends AbstractPeer> implements IDistributionClient<T> {
 
-	protected HashMap<Query, IExecutionListener> managedQueries = new HashMap<Query, IExecutionListener>();
+	private AbstractPeer peer;
+	
+	public AbstractPeer getPeer() {
+		return peer;
+	}
 	
 	@Override
 	public abstract String getDistributionStrategy();
 
 	@Override
-	public HashMap<Query, IExecutionListener> getManagedQueries() {
-		return this.managedQueries;
-	}
-
-	@Override
-	public void setManagedQueries(HashMap<Query, IExecutionListener> managedQueries) {
-		this.managedQueries = managedQueries;
+	public void setPeer(T peer) {
+		this.peer = peer;
 	}
 	
 	@Override
