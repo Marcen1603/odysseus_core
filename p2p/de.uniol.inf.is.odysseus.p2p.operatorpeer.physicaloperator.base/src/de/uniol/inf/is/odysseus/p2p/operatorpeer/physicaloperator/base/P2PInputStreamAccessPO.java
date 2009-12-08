@@ -72,25 +72,6 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	protected void process_open() throws OpenFailedException {
 
 		done = false;
-//		while (socket == null) {
-//			System.out.println("Process open p2pInput--------------------------------------------------------------");
-//			try {
-//				socket = new JxtaSocket(getPeerGroup(), null, adv, 8000,
-//						true);
-//				System.out.println("JxtaSocket erzeugt " + adv.toString());
-//				break;
-//			} catch (IOException e2) {
-//				// Timeout passiert weil ein anderer Peer seinen
-//				// P2PPipePOfalse
-//				// noch nicht geöffnet hat, daher wird es solange probiert
-//				// bis der P2PPipePO
-//				// geöffnet ist. Hier noch sinnvolles Abruchskriterium
-//				// nötig.
-//				socket = null;
-//				e2.printStackTrace();
-//			}
-//		}
-//		System.out.println("Geht doch noch was=");
 		con = new ConnectionHandler();
 		con.start();
 	}
@@ -99,10 +80,6 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	@Override
 	public synchronized boolean hasNext() {
 		if (socket == null) {
-			// if (con == null || !con.isAlive()) {
-			// con = new ConnectionHandler();
-			// con.start();
-			// }
 			if (buffer != null) {
 				return true;
 			}
@@ -121,7 +98,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 				propagateDone();
 				return false;
 			} else if (o instanceof RelationalTuple) {
-				System.out.println("tuple received "+adv.getID().toString());
+				System.out.println("tuple received "+adv.getID().toString() +" "+o);
 			}
 
 			In inElem = (In) o;

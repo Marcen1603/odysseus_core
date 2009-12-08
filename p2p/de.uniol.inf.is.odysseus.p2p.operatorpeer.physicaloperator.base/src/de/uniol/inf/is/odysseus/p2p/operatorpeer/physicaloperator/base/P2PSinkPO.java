@@ -13,9 +13,6 @@ import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 public class P2PSinkPO<T> extends AbstractSink<T> {
 	
@@ -28,34 +25,26 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 
 		@Override
 		public void run() {
-			System.out.println("Starte Pipe Thread");
 			JxtaServerSocket server = null;
-			//JxtaServerPipe serverPipe = null;
 			try {
-//				serverPipe = new JxtaServerPipe(getPeerGroup(), adv, 1000);
-//				serverPipe.setPipeTimeout(0);
 				server = new JxtaServerSocket(getPeerGroup(), adv, 1000);
 				server.setSoTimeout(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			while (true) {
-//				JxtaBiDiPipe biPipe = null;
 				Socket socket = null;
 				try {
-//					biPipe = serverPipe.accept();
 					socket = server.accept();
 
 					if (socket != null) {
 						synchronized (subscribe) {
-							System.out.println("Subscriber gefunden für P2PSink: "+getAdv().toString());
 							StreamHandler temp = new StreamHandler(socket);
 							subscribe.add(temp);
 						}
 
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -82,16 +71,9 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-//			for(PhysicalSubscription<?> subscription : getSubscribedTo()) {
-//				System.out.println("Setze alle Subscriber auf connected: "+getSubscribedTo().get(0).getTarget().toString());
-//				setConnectedToPipe((ISource<?>)subscription.getTarget(), 0);
-//			}
-			
-//			setConnectedToPipe(getSubscribedTo().get(0).getTarget(), 0);
 		}
 
 		public void transfer(Object o) {
@@ -121,10 +103,8 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 				oout.close();
 				socket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -152,24 +132,6 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 	}
 
 
-	private static void setConnectedToPipe(ISink<?> mySink, int depth) {
-		for (PhysicalSubscription<? extends ISource<?>> source : mySink
-				.getSubscribedTo()) {
-			setConnectedToPipe(source.getTarget(), depth + 1);
-		}
-	}
-
-	private static void setConnectedToPipe(ISource<?> source, int depth) {
-		if (source instanceof ISink<?>) {
-			setConnectedToPipe((ISink<?>) source, depth);
-		} else {
-			if (IP2PInputPO.class.isAssignableFrom(source.getClass())){
-				((IP2PInputPO) source).setConnectedToPipe(true);
-				
-			}
-			
-		}
-	}
 	
 	protected void process_done() {
 		synchronized (subscribe) {

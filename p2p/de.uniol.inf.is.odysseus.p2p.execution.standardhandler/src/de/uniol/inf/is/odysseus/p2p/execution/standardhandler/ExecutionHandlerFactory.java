@@ -1,17 +1,15 @@
 package de.uniol.inf.is.odysseus.p2p.execution.standardhandler;
 
-import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandlerFactory;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
 public class ExecutionHandlerFactory implements IExecutionHandlerFactory {
 
-	private IExecutionHandler<? extends IPeer> handler;
+	private IExecutionHandler handler;
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public IExecutionHandler<? extends IPeer> getNewInstance() {
+	public IExecutionHandler getNewInstance() {
 		try {
 			return this.handler.getClass().newInstance();
 		} catch (InstantiationException e) {
@@ -29,9 +27,17 @@ public class ExecutionHandlerFactory implements IExecutionHandlerFactory {
 	}
 
 	@Override
-	public void setExecutionHandler(IExecutionHandler<? extends IPeer> handler) {
+	public void setExecutionHandler(IExecutionHandler handler) {
 		this.handler = handler;
 		
+	}
+
+	@Override
+	public String getName() {
+		if(this.handler == null) {
+			return "not yet fully initialized";
+		}
+		return this.handler.getName();
 	}
 
 }

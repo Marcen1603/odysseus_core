@@ -7,6 +7,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
  de.uniol.inf.is.odysseus.p2p.queryhandling,
  de.uniol.inf.is.odysseus.p2p.splitting.refinement.base,
  org.osgi.framework;version="1.3.0"
