@@ -225,7 +225,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 
 			for (IIterableSource<?> source : sourcesToSchedule) {
 				final IIterableSource<?> s = source;
-				new SingleSourceExecutor(s);
+				sourceThreads.add(new SingleSourceExecutor(s));
 			}
 
 		}
