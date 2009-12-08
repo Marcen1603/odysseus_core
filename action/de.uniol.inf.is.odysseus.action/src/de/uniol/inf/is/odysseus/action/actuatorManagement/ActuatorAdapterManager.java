@@ -2,23 +2,34 @@ package de.uniol.inf.is.odysseus.action.actuatorManagement;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
+import de.uniol.inf.is.odysseus.action.output.AbstractActuator;
 import de.uniol.inf.is.odysseus.action.output.ActuatorAdapter;
 
 
-public class ActuatorAdapterManager {
-	private static ActuatorAdapterManager instance = new ActuatorAdapterManager();
-	
+public class ActuatorAdapterManager implements IActuatorManager{
+	private HashMap<String, ActuatorAdapter> adapter;
 	
 	private ActuatorAdapterManager () {
-		
+		this.adapter = new HashMap<String, ActuatorAdapter>();
 	}
 	
-	
-	public ActuatorAdapter createActuatorAdapter (String className, Object[] constructorParams) throws ActuatorCreationException{
+
+	public AbstractActuator getActuator(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void createActuator(String description) throws ActuatorCreationException{
+		//TODO classenName und parameter parsen
+		String className = "";
+		Object[] constructorParams = new Object[6];
 		try {
-			Object adapter = null;
 			Class<?> adapterClass = Class.forName(className);
 			for (Constructor<?> constructor : adapterClass.getConstructors()){
 				Class<?>[] parameters = constructor.getParameterTypes();
@@ -35,8 +46,7 @@ public class ActuatorAdapterManager {
 					}
 					//create object
 					if (compatible){
-						adapter = constructor.newInstance(constructorParams);
-						return (ActuatorAdapter)adapter;
+						this.adapter.put(className, (ActuatorAdapter)constructor.newInstance(constructorParams));
 					}
 				}
 			}
@@ -56,9 +66,16 @@ public class ActuatorAdapterManager {
 		
 		throw new ActuatorCreationException("Constructor undefined");
 	}
-	
-	
-	public static ActuatorAdapterManager getInstance() {
-		return instance;
+
+	@Override
+	public Map<String, List<Class<?>>> getSchema(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String getName() {
+		return "ActuatorAdapterManager";
 	}
 }
