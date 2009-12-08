@@ -1,12 +1,14 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
+import java.util.Map.Entry;
+
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedActionException;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
-import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableEntry;
 
 /**
  * Die StateMachineInstance repräsentiert eine Instanz des an den EPA
@@ -38,29 +40,14 @@ public class StateMachineInstance<R> {
 	 *            Referenz auf den Automaten, von dem eine neue Instanz erstellt
 	 *            werden soll
 	 */
-	public StateMachineInstance(StateMachine stateMachine) {
+	public StateMachineInstance(StateMachine<R> stateMachine) {
 		this.currentState = stateMachine.getInitialState();
 		this.matchingTrace = new MatchingTrace<R>(stateMachine.getStates());
-		//this.symTab = new SymbolTable(stateMachine.getSymTabScheme());
-		this.symTab = new SymbolTable();
+		this.symTab = new SymbolTable(stateMachine.getSymTabScheme(true));
 	}
 
-	/**
-	 * Vertseckter Konstruktor der nur für die clone()-Methode benötigt wird und
-	 * daher ansonsten nicht benutzt werden sollte
-	 * 
-	 * @param currentState
-	 *            Referenz auf den aktuellen Zustand
-	 * @param matchingTrace
-	 *            (Tiefe) Kopie des MatchingTrace
-	 * @param symTab
-	 *            (Tiefe) Kopie der Symboltabelle
-	 */
-	private StateMachineInstance(State currentState,
-			MatchingTrace<R> matchingTrace, SymbolTable symTab) {
-		this.currentState = currentState;
-		this.matchingTrace = matchingTrace;
-		this.symTab = symTab;
+	public StateMachineInstance(StateMachineInstance<R> stateMachineInstance) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -114,16 +101,17 @@ public class StateMachineInstance<R> {
 	public void executeAction(EAction action, R event,
 			IEventReader<R,?> eventReader) throws UndefinedActionException {
 		if (action == EAction.consume) {
-			this.matchingTrace.addEvent(event, this.currentState);			
+			this.matchingTrace.addEvent(event, this.currentState);	
 			// Symboltabelle aktualisieren
-			for (SymbolTableEntry<?> entry : this.symTab.getEntries()) {
-				if (entry.getVariable().getStateIdentifier().equals(
+			for (CepVariable entry : this.symTab.getKeys()) {
+				
+				if (entry.getStateIdentifier().equals(
 						this.currentState.getId())) {
-					if (entry.getVariable().getIndex() == this.matchingTrace
+					if (entry.getIndex() == this.matchingTrace
 							.getStateBufferSize(this.currentState)-1) {
-						entry.executeOperation(eventReader.getValue(entry.getVariable().getAttribute(), event));
-					} else if (entry.getVariable().getIndex() < 0) {
-						entry.executeOperation(eventReader.getValue(entry.getVariable().getAttribute(), event));
+						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));
+					} else if (entry.getIndex() < 0) {
+						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));
 					}
 				}
 			}
@@ -140,8 +128,7 @@ public class StateMachineInstance<R> {
 	 */
 	@Override
 	public StateMachineInstance<R> clone() {
-		return new StateMachineInstance<R>(this.currentState, this.matchingTrace
-				.clone(), this.symTab.clone());
+		return new StateMachineInstance<R>(this);
 	}
 	
 	public String getStats() {

@@ -22,7 +22,7 @@ public interface ISymbolTableOperation<T> {
 	 *         Umständen kann auch eine Referenz auf das unveränderte Objekt
 	 *         oldValue zurückgegeben werden.
 	 */
-	public T execute(T oldValue, T eventValue);
+	public Object execute(T oldValue, T eventValue);
 	public String toString(String indent);
 	public String getName();
 }

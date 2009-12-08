@@ -6,6 +6,8 @@ import java.util.LinkedList;
 
 import javax.xml.bind.annotation.*;
 
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
+
 //import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
 
 /**
@@ -16,7 +18,7 @@ import javax.xml.bind.annotation.*;
  * 
  */
 @XmlRootElement
-public class StateMachine {
+public class StateMachine<E> {
 
 	/**
 	 * Liste aller Zustände des Automaten. Bei der Verarbeitung durch den EPA
@@ -34,7 +36,7 @@ public class StateMachine {
 	 * Automaten durch den EPA erfroderlich ist. Darf zur Verarbeitungszeit null
 	 * sein und muss ein für die Verarbeitung korrektes Schema enthalten.
 	 */
-//	private SymbolTableScheme<Object> symTabScheme;
+	private List<CepVariable> symTabScheme;
 	/**
 	 * Definiert das Ausgabeschema der CEP-Anfrage. Darf nicht null sein.
 	 */
@@ -70,11 +72,9 @@ public class StateMachine {
 	 * @param outputScheme
 	 *            AusgabeSchema
 	 */
-	public StateMachine(List<State> states, State initialState,
-			/*SymbolTableScheme<Object> symTabScheme,*/ OutputScheme outputScheme) {
+	public StateMachine(List<State> states, State initialState, OutputScheme outputScheme) {
 		this.states = states;
 		this.initialState = initialState;
-		//this.symTabScheme = symTabScheme;
 		this.outputScheme = outputScheme;
 		this.consumptionMode = EConsumptionMode.allMatches;
 	}
@@ -84,7 +84,6 @@ public class StateMachine {
 	 */
 	public StateMachine() {
 		this.states = new LinkedList<State>();
-		//this.symTabScheme = new SymbolTableScheme<Object>();
 		this.outputScheme = new OutputScheme();
 	}
 
@@ -142,19 +141,35 @@ public class StateMachine {
 	 * 
 	 * @return Das Symboltabellen-Schema des Automaten.
 	 */
-//	public SymbolTableScheme<Object> getSymTabScheme() {
-//		return symTabScheme;
-//	}
-
-	/**
-	 * Setzt eine neues Symboltabellen-Schema für den Automaten.
-	 * 
-	 * @param symTabScheme
-	 *            Das neue Symboltabellen-Schema des Automaten, nicht null.
-	 */
-//	public void setSymTabScheme(SymbolTableScheme<Object> symTabScheme) {
-//		this.symTabScheme = symTabScheme;
-//	}
+	public List<CepVariable> getSymTabScheme(boolean recalc) {
+		if (symTabScheme == null || recalc){
+			initSymTabScheme();
+		}
+		return symTabScheme;
+	}
+	
+	private void initSymTabScheme(){
+		symTabScheme = new ArrayList<CepVariable>();
+		System.out.println("INIT SYM TAB SCHEME");
+		for (State s: states){
+			System.out.println("State "+s.getId());
+			for (Transition t: s.getTransitions()){
+				System.out.println("Transition "+t.getId());
+				for (String v: t.getCondition().getVarNames()){
+					System.out.println("Variable "+v);
+					CepVariable var = new CepVariable(v);
+					if (var.getStateIdentifier() == null){
+						var.setStateIdentifier(s.getId());
+					}
+					if (var.getOperation() == null){
+						var.setOperation(SymbolTableOperationFactory.getOperation("Write"));
+					}
+					System.out.println("add "+var);
+					symTabScheme.add(var);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Liefert das Ausgabeschema für die zu erzeugenden komplexen Events.
@@ -202,7 +217,7 @@ public class StateMachine {
 			str += this.initialState.getId() + "("
 					+ this.initialState.hashCode() + ")";
 		}
-	//	str += this.symTabScheme;
+		str += this.symTabScheme;
 
 		str += this.outputScheme;
 		str += "Matching Strategy: " + this.consumptionMode;
@@ -218,7 +233,7 @@ public class StateMachine {
 			str += s.prettyPrint();
 		}
 		str += "\n";
-	//	str += this.symTabScheme + "\n";
+		str += this.symTabScheme + "\n";
 		str += this.outputScheme + "\n";
 		str += "Matching Strategy: " + this.consumptionMode + "\n";
 		return str;

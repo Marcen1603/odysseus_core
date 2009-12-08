@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.validator.warning.UnreachableState
  * @author Thomas Vogelgesang
  * 
  */
-public class Validator {
+public class Validator<R> {
 
 	/**
 	 * Überprüft einen im Metamodell spezifizierten Automaten auf Fehler.
@@ -45,17 +45,15 @@ public class Validator {
 	 *            Der Automat der überprüft werden soll.
 	 * @return Das Validierungsergebnis.
 	 */
-	public ValidationResult validate(StateMachine stateMachine) {
+	public ValidationResult validate(StateMachine<R> stateMachine) {
 		ValidationResult result = new ValidationResult();
 		result.addValidationError(this.checkStateSet(stateMachine));
 		result.addValidationError(this.checkInitialState(stateMachine));
 
 		LinkedList<ValidationException> exceptions = new LinkedList<ValidationException>();
 		Hashtable<State, Boolean> visited = new Hashtable<State, Boolean>();
-		if (stateMachine.getStates() != null) {
-			for (State state : stateMachine.getStates()) {
-				visited.put(state, new Boolean(false));
-			}
+		for (State state : stateMachine.getStates()) {
+			visited.put(state, new Boolean(false));
 		}
 		this
 				.visitEachState(stateMachine.getInitialState(), exceptions,
@@ -93,7 +91,7 @@ public class Validator {
 	 * 
 	 * @return Fehlerobjekt oder null, falls kein Fehler gefunden wurde.
 	 */
-	private ValidationError checkInitialState(StateMachine stateMachine) {
+	private ValidationError checkInitialState(StateMachine<R> stateMachine) {
 		if (stateMachine.getInitialState() == null) {
 			return new NoInitialStateError();
 		}

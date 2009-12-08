@@ -8,7 +8,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
  * @author Thomas Vogelgesang
  * 
  */
-public class Write<T> extends AbstractSymbolTableOperation<T> {
+public class Write extends AbstractSymbolTableOperation {
 
 	public Write() {
 		super();
@@ -25,7 +25,7 @@ public class Write<T> extends AbstractSymbolTableOperation<T> {
 	 * @return Gibt den Wert von eventValue zurück.
 	 */
 	@Override
-	public T execute(T oldValue, T eventValue) {
+	public Object execute(Object oldValue, Object eventValue) {
 		return eventValue;
 	}
 	

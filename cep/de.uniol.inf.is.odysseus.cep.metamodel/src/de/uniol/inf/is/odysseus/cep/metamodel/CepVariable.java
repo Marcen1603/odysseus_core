@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAd
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
-public class CepVariable<T> {
+public class CepVariable {
 
 	/**
 	 * ID eines Events / Zustands. Darf nur aus Buchstaben und Ziffern bestehen,
@@ -54,7 +54,7 @@ public class CepVariable<T> {
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
 	 */
-	private ISymbolTableOperation<T> operation;
+	private ISymbolTableOperation operation;
 
 	/**
 	 * Erzeugt einen Eintrag-Objekt für das Symboltabellenschema
@@ -72,19 +72,20 @@ public class CepVariable<T> {
 	 *            werden soll
 	 */
 	public CepVariable(int entryID, String stateIdentifier, int index,
-			String attribute, ISymbolTableOperation<T> operation) {
+			String attribute, ISymbolTableOperation operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
 		this.attributename = attribute;
 		this.setOperation(operation);
 	}
 
-	@SuppressWarnings("unchecked")
 	public CepVariable(String varName) {
 		String[] split = varName.split(getSeperator());
 		this.operation = SymbolTableOperationFactory.getOperation(split[0]);
 		this.stateIdentifier = split[1];
-		this.index = Integer.parseInt(split[2]);
+		if (split[2].length() > 0){
+			this.index = Integer.parseInt(split[2]);
+		}
 		this.attributename = split[3];
 	}
 
@@ -104,7 +105,8 @@ public class CepVariable<T> {
 	 */
 	public String getVariableName() {
 		StringBuffer ret = new StringBuffer();
-		ret.append(this.operation.getName()).append(getSeperator());
+		if (this.operation != null) ret.append(this.operation.getName());
+		ret.append(getSeperator());
 		ret.append(this.stateIdentifier).append(getSeperator());
 		if (this.index >= 0) {
 			ret.append(this.index);
@@ -120,7 +122,7 @@ public class CepVariable<T> {
 	 *            Eine konkrete Implementierung der Symboltabellenoperation,
 	 *            nicht null.
 	 */
-	public void setOperation(ISymbolTableOperation<T> operation) {
+	public void setOperation(ISymbolTableOperation operation) {
 		this.operation = operation;
 	}
 
@@ -130,7 +132,7 @@ public class CepVariable<T> {
 	 * @return Die Symboltabellenoperation des Eintrags.
 	 */
 	@XmlJavaTypeAdapter(SymbolTableOperationAdapter.class)
-	public ISymbolTableOperation<T> getOperation() {
+	public ISymbolTableOperation getOperation() {
 		return operation;
 	}
 
@@ -211,10 +213,14 @@ public class CepVariable<T> {
 		String str = indent + "SymTabSchemeEntry: " + this.hashCode();
 		indent += "  ";
 		str += indent + "Variable name: " + this.getVariableName();
-		str += this.operation.toString(indent);
 		return str;
 	}
 
+	@Override
+	public String toString() {
+		return toString("");
+	}
+	
 	public static String getSeperator() {
 		return "_";
 	}

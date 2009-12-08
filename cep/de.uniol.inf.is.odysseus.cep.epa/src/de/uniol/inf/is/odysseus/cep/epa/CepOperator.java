@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedConsumptionModeException;
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndeterminableVariableValueException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.EConsumptionMode;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
@@ -58,7 +57,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 * Der Automat, der das zu suchende Event-Muster sowie die Event-Aggregation
 	 * und die Struktur des Zwischenspeichers enthält
 	 */
-	private StateMachine stateMachine;
+	private StateMachine<R> stateMachine;
 
 	/**
 	 * leerer Standardkonstruktor
@@ -86,7 +85,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 *             Falls der übergebene Automat nicht die erforderlichen
 	 *             Invarianten einhält.
 	 */
-	public CepOperator(StateMachine stateMachine,
+	public CepOperator(StateMachine<R> stateMachine,
 			Map<Integer, IEventReader<R, ?>> eventReader,
 			IComplexEventFactory<R, W> complexEventFactory, boolean validate)
 			throws Exception {
@@ -97,7 +96,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		this.instances = new LinkedList<StateMachineInstance<R>>();
 		this.branchingBuffer = new BranchingBuffer<R>();
 		if (validate) {
-			Validator validator = new Validator();
+			Validator<R> validator = new Validator<R>();
 			ValidationResult result = validator.validate(stateMachine);
 			if (!result.isValid()) {
 				throw new InvalidStateMachineException(result);
@@ -306,7 +305,9 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			String[] split = varName.split(CepVariable.getSeperator());
 			int index = split[2].isEmpty()?-1:Integer.parseInt(split[2]);
 			R event = instance.getMatchingTrace().getEvent(split[1], index);
-			value = this.eventReader.get(port).getValue(split[3], event);						
+			if (event != null){
+				value = this.eventReader.get(port).getValue(split[3], event);
+			}
 		}
 		return value;
 	}
@@ -357,7 +358,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 * 
 	 * @return Den Automaten, der das zu suchende Event-Muster definiert.
 	 */
-	protected StateMachine getStateMachine() {
+	protected StateMachine<R> getStateMachine() {
 		return stateMachine;
 	}
 

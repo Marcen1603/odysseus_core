@@ -53,7 +53,11 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 		}
 		
 		RelationalTuple<?> tuple = (RelationalTuple<?>) event;
-		return tuple.getAttribute(pos);
+		if (pos != null){
+			return tuple.getAttribute(pos);
+		}else{
+			return null;
+		}
 	}
 
 }

@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFa
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
@@ -198,7 +199,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	private ILogicalOperator createLogicalPlan(CommonTree tree) {
-		CepAO cepAo = new CepAO();
+		CepAO<RelationalTuple<?>> cepAo = new CepAO<RelationalTuple<?>>();
 		Set<String> sourceNames = new TreeSet<String>();
 		List<State> states = null;
 		if (tree != null) {
@@ -216,8 +217,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				}
 
 			}
-			System.out.println("Final SM "
-					+ cepAo.getStateMachine().prettyPrint());
+			cepAo.getStateMachine().getSymTabScheme(true);
 		}
 		// Set Inputs for cepAO;
 		int i = 0;
@@ -232,7 +232,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return cepAo;
 	}
 
-	private List<State> processPattern(CommonTree patternTree, CepAO cepAo,
+	private List<State> processPattern(CommonTree patternTree, CepAO<RelationalTuple<?>> cepAo,
 			Set<String> sourceNames) {
 		List<State> states = null;
 		for (Object child : patternTree.getChildren()) {
@@ -242,7 +242,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				// Append Accepting State
 				if (states != null && states.size() > 0) {
 					states.add(new State("<ACCEPTING>", true));
-					StateMachine sm = cepAo.getStateMachine();
+					StateMachine<RelationalTuple<?>> sm = cepAo.getStateMachine();
 					sm.setStates(states);
 					sm.setInitialState(states.get(0));
 					// Calculate transistions
@@ -299,7 +299,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return recStates;
 	}
 
-	private void processWhere(CommonTree whereTree, CepAO cepAo,
+	private void processWhere(CommonTree whereTree, CepAO<RelationalTuple<?>> cepAo,
 			List<State> states) {
 		for (Object child : whereTree.getChildren()) {
 			String cStr = child.toString();
@@ -311,7 +311,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		}
 	}
 
-	private void processWhereStrat(List<CommonTree> children, CepAO cepAo) {
+	private void processWhereStrat(List<CommonTree> children, CepAO<RelationalTuple<?>> cepAo) {
 		for (CommonTree t : children) {
 			if ("skip_till_next_match".equals(t.toString())) {
 				cepAo.getStateMachine().setEventSelectionStrategy(
@@ -332,7 +332,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		}
 	}
 
-	private void processWhereExpression(List<CommonTree> children, CepAO cepAo,
+	private void processWhereExpression(List<CommonTree> children, CepAO<RelationalTuple<?>> cepAo,
 			List<State> states) {
 		List<CompareExpression> compareExpressions = new ArrayList<CompareExpression>();
 
@@ -361,7 +361,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						.add(processCompareExpression(getChildren(elem)));
 			}
 		}
-		StateMachine stmachine = cepAo.getStateMachine();
+		StateMachine<RelationalTuple<?>> stmachine = cepAo.getStateMachine();
 		List<State> finalStates = stmachine.getFinalStates();
 		for (State finalState : finalStates) {
 			List<State> pathes = stmachine.getAllPathesToStart(finalState);
@@ -449,7 +449,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			}
 
 		}
-
+		
 		return ret;
 	}
 
@@ -508,7 +508,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return ret.toString();
 	}
 
-	private void processWithin(CommonTree child, CepAO cepAo) {
+	private void processWithin(CommonTree child, CepAO<RelationalTuple<?>> cepAo) {
 		// TODO Auto-generated method stub
 
 	}
@@ -595,6 +595,9 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			for (String q : toParse) {
 				System.out.println(q);
 				List<ILogicalOperator> top = exec.parse(q);
+				CepAO<RelationalTuple<?>> cepAo = (CepAO<RelationalTuple<?>>) top.get(0);
+				System.out.println("Final SM "
+						+ cepAo.getStateMachine().prettyPrint());
 				System.out.println(AbstractTreeWalker.prefixWalk(top.get(0),
 						new AlgebraPlanToStringVisitor()));
 

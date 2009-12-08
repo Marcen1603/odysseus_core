@@ -3,13 +3,12 @@ package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 public class SymbolTableOperationFactory {
 
-	@SuppressWarnings("unchecked")
-	public static <T> AbstractSymbolTableOperation getOperation(String name) {
+	public static AbstractSymbolTableOperation getOperation(String name) {
 		if (name == null || name.length() == 0){
 			return null;
 		}
 		if (Write.class.getSimpleName().equalsIgnoreCase(name)){
-			return new Write<T>();
+			return new Write();
 		}
 		if (Count.class.getSimpleName().equalsIgnoreCase(name)){
 			return new Count();

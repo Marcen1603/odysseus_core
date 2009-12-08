@@ -120,7 +120,7 @@ public class MatchingTrace<R> {
 	
 	public R getEvent(String stateId, int pos){
 		List<R> l = stateBuffer.get(stateId);
-		if (l!=null){
+		if (l!=null && l.size()>0){
 			if (pos > 0 ){ // && pos < l.size()
 				return l.get(pos);
 			}else{
