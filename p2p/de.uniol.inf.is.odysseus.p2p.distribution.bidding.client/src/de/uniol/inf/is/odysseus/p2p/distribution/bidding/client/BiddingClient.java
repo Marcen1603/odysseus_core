@@ -22,10 +22,10 @@ public class BiddingClient<T extends AbstractPeer> extends AbstractDistributionC
 	@Override
 	public void initializeService() {
 		initQueryResultHandler();
-		initQuerySpezificationListener();
+		
 	}
 
-	private void initQuerySpezificationListener(){
+	private void startQuerySpezificationListener(){
 		this.listener = new QuerySpecificationListenerJxtaImpl(getPeer(), getReceiverStrategy());
 	}
 
@@ -36,6 +36,7 @@ public class BiddingClient<T extends AbstractPeer> extends AbstractDistributionC
 
 	@Override
 	public void startService() {
+		startQuerySpezificationListener();
 		Thread t = new Thread(getListener());
 		t.start();
 	}
