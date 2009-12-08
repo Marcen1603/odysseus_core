@@ -36,7 +36,11 @@ public class MatchingTrace<R> {
 	}
 
 	public MatchingTrace(MatchingTrace<R> matchingTrace) {
-		throw new UnsupportedOperationException();
+		this.stateBuffer = new HashMap<String, List<R>>();
+		for (String s:matchingTrace.stateBuffer.keySet()){
+			this.stateBuffer.put(s, new ArrayList<R>(matchingTrace.stateBuffer.get(s)));
+		}
+		this.lastEvent = matchingTrace.lastEvent;
 	}
 
 	/**

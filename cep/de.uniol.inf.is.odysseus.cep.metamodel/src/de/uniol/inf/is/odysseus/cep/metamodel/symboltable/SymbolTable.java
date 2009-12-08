@@ -46,6 +46,11 @@ public class SymbolTable {
 		}		
 	}
 
+	public SymbolTable(SymbolTable symbolTable) {
+		this.entries = new HashMap<String, Object>(symbolTable.entries);
+		this.vars = new HashMap<String, CepVariable>(symbolTable.vars);
+	}
+
 	public Map<String, Object> getEntries() {
 		return entries;
 	}
@@ -90,5 +95,9 @@ public class SymbolTable {
 		setValue(variable,variable.getOperation().execute(getValue(variable), value));
 	}
 
+	@Override
+	public SymbolTable clone() {
+		return new SymbolTable(this);
+	}
 
 }

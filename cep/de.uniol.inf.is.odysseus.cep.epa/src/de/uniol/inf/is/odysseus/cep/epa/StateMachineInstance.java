@@ -47,7 +47,9 @@ public class StateMachineInstance<R> {
 	}
 
 	public StateMachineInstance(StateMachineInstance<R> stateMachineInstance) {
-		throw new UnsupportedOperationException();
+		this.currentState = stateMachineInstance.currentState; // Hier reicht Referenz
+		this.symTab = stateMachineInstance.symTab.clone();
+		this.matchingTrace =  stateMachineInstance.matchingTrace.clone();
 	}
 
 	/**
