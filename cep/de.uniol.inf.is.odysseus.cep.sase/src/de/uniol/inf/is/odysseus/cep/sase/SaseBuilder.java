@@ -17,6 +17,8 @@ import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.TreeAdaptor;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -36,7 +38,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-public class SaseBuilder implements IQueryParser {
+public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	class CompareExpression {
 		public List<PathAttribute> attributes = new LinkedList<PathAttribute>();
@@ -153,7 +155,7 @@ public class SaseBuilder implements IQueryParser {
 
 	@Override
 	public String getLanguage() {
-		return "SASE+";
+		return "SASE";
 	}
 
 	@Override
@@ -549,6 +551,17 @@ public class SaseBuilder implements IQueryParser {
 		}
 	}
 
+	@Override
+	public void start(BundleContext arg0) throws Exception {
+		System.out.println("--> SASE started");
+	}
+
+	@Override
+	public void stop(BundleContext arg0) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public static void main(String[] args) {
 		SaseBuilder exec = new SaseBuilder();
 		// Zum Testen
@@ -606,6 +619,8 @@ public class SaseBuilder implements IQueryParser {
 			e.printStackTrace();
 		}
 	}
+
+
 
 
 
