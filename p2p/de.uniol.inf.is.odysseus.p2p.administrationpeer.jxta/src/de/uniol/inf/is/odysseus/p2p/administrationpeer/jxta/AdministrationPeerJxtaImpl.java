@@ -433,6 +433,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	protected void initServerResponseConnection() {
 		setServerPipeAdvertisement(AdvertisementTools
 				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
+		
 	}
 
 	@Override

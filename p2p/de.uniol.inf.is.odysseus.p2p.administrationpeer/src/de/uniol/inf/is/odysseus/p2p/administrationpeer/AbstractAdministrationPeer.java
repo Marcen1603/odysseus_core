@@ -49,6 +49,7 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	
 	protected boolean peerStarted = false;
 	
+	
 	private IAdvancedExecutor executor;
 	protected ISplittingStrategy splitting;
 	protected IDistributionProvider<AbstractPeer> distributionProvider;
