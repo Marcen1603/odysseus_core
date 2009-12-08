@@ -42,15 +42,23 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	private IDistributionClient<AbstractPeer> distributionClient;
 
 
+	public AbstractOperatorPeer() {
+		super();
+	}
+	
 	public void bindDistributionClient(IDistributionClient<AbstractPeer> dc) {
-		System.out.println("binde DistributionClient");
-		this.distributionClient = dc;
-		this.distributionClient.setPeer(this);
-		this.distributionClient.initializeService();
+		getLogger().info("Binding Distribution Client", dc);
 		try {
-			registerMessageHandler(this.distributionClient.getMessageHandler());
-		}
-		catch (Exception e) {
+			this.distributionClient = dc;
+			this.distributionClient.setPeer(this);
+			this.distributionClient.initializeService();
+			try {
+				registerMessageHandler(this.distributionClient
+						.getMessageHandler());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -97,20 +105,19 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 
 
 	private void init() {
-		initServerResponseConnection();
-		Log.setWindow(getGui());
-		initSources(this);
-		initPriorityMode();
-		initSourceHandler(this);
-		initSocketServerListener(this);
-		initExecutor();
-		initDistributor();
-//		initQuerySpezificationFinder();
+		try {
+			initServerResponseConnection();
+			Log.setWindow(getGui());
+			initSources(this);
+			initPriorityMode();
+			initSourceHandler(this);
+			initSocketServerListener(this);
+			initExecutor();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	private void initDistributor() {
-		
-	}
 
 	private void initExecutor() {
 		if(this.executor!=null) {
@@ -186,6 +193,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		startSourceHandler();
 		startServerSocketListener();
 		startAliveHandler();
+		getDistributionClient().startService();
 //		startQuerySpezificationFinder();
 	}
 	
