@@ -1,21 +1,21 @@
 package de.uniol.inf.is.odysseus.p2p.peer.execution.handler;
 
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
-public abstract class AbstractExecutionHandler<T extends AbstractPeer> implements IExecutionHandler<T>
+public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandler
 {
 	
 	private Lifecycle providedLifecycle;
 	private IExecutionListenerCallback executionListenerCallback = null;
-	protected T peer;
+	protected P peer;
+	private F function;
 
 	@Override
 	public IExecutionListenerCallback getExecutionListenerCallback() {
-		return executionListenerCallback;
+		return this.executionListenerCallback;
 	}
-
+	
 	@Override
 	public void setExecutionListenerCallback(
 			IExecutionListenerCallback callbackExecutionListener) {
@@ -29,8 +29,10 @@ public abstract class AbstractExecutionHandler<T extends AbstractPeer> implement
 		return this.providedLifecycle;
 	}
 
-	public AbstractExecutionHandler(Lifecycle lifecycle) {
+	public AbstractExecutionHandler(Lifecycle lifecycle, F function, P peer) {
 		this.providedLifecycle = lifecycle;
+		this.function = function;
+		this.peer = peer;
 	}
 	
 	@Override
@@ -43,11 +45,12 @@ public abstract class AbstractExecutionHandler<T extends AbstractPeer> implement
 		return t;
 	}
 
-	protected T getPeer() {
+	protected P getPeer() {
 		return this.peer;
 	}
 	
-	public void setPeer(T peer) {
-		this.peer = peer;
+	public F getFunction() {
+		return function;
 	}
+	
 }

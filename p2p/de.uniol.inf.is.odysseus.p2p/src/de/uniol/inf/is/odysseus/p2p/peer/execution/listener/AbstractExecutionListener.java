@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
@@ -24,11 +23,11 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	}
 	
 	
-	private Map<Lifecycle, IExecutionHandler<? extends IPeer>> handler = null;
+	private Map<Lifecycle, IExecutionHandler> handler = null;
 
 	public AbstractExecutionListener(Query query) {
 		this.query = query;
-		this.handler = new HashMap<Lifecycle, IExecutionHandler<? extends IPeer>>();
+		this.handler = new HashMap<Lifecycle, IExecutionHandler>();
 	}
 	
 	@Override
@@ -55,7 +54,7 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	}
 	
 	@Override
-	public synchronized void registerHandler(IExecutionHandler<? extends IPeer> handler) {
+	public synchronized void registerHandler(IExecutionHandler handler) {
 		if(!getHandler().containsKey(handler.getProvidedLifecycle())) {
 			getHandler().put(handler.getProvidedLifecycle(), handler);
 			handler.setExecutionListenerCallback(getCallback());
@@ -64,21 +63,21 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	
 	@Override
 	public void registerHandler(
-			List<IExecutionHandler<? extends IPeer>> handler) {
-		for(IExecutionHandler<? extends IPeer> execHandler : handler) {
+			List<IExecutionHandler> handler) {
+		for(IExecutionHandler execHandler : handler) {
 			registerHandler(execHandler);
 		}
 	}
 
 	@Override
-	public synchronized void deregisterHandler(Lifecycle lifecycle, IExecutionHandler<? extends IPeer> handler) {
+	public synchronized void deregisterHandler(Lifecycle lifecycle, IExecutionHandler handler) {
 		if(getHandler().containsKey(lifecycle)) {
 			getHandler().remove(lifecycle);
 		}
 	}
 
 	@Override
-	public Map<Lifecycle, IExecutionHandler<? extends IPeer>> getHandler() {
+	public Map<Lifecycle, IExecutionHandler> getHandler() {
 		return handler;
 	}
 }

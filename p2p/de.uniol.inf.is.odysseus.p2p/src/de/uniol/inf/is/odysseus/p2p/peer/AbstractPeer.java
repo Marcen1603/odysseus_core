@@ -33,23 +33,26 @@ public abstract class AbstractPeer implements IPeer {
 
 	public void addExecutionHandlerFactory(IExecutionHandlerFactory factory) {
 		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
+			getLogger().info("Adding ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
 			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).add(factory);
 		}
 		else {
 			List<IExecutionHandlerFactory> tempFactory = new ArrayList<IExecutionHandlerFactory>();
 			tempFactory.add(factory);
+			getLogger().info("Adding ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
 			this.executionHandlerFactoryList.put(factory.getProvidedLifecycle(), tempFactory);
 		}
 	}
 	
 	public void removeExecutionHandlerFactory(IExecutionHandlerFactory factory) {
 		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
+			getLogger().info("Removing ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
 			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).remove(factory);
 		}
 	}
 	
 	public void bindExecutionListenerFactory(IExecutionListenerFactory factory) {
-		getLogger().info("Binding ExecutionListenerFactory");
+		getLogger().info("Binding ExecutionListenerFactory:");
 		this.executionListenerFactory = factory;
 	}
 	
@@ -109,7 +112,7 @@ public abstract class AbstractPeer implements IPeer {
 	
 	
 	public void addQuery(Query query) {
-		List<IExecutionHandler<? extends IPeer>> execHandlerList = new ArrayList<IExecutionHandler<? extends IPeer>>();
+		List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
 		for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactoryList().values()) {
 			for(IExecutionHandlerFactory factory : factoryList) {
 				execHandlerList.add(factory.getNewInstance());
@@ -139,8 +142,8 @@ public abstract class AbstractPeer implements IPeer {
 		return messageHandlerList;
 	}
 	
-	public List<IExecutionHandler<? extends IPeer>> getExecutionHandler() {
-		List<IExecutionHandler<? extends IPeer>> handlerList = new ArrayList<IExecutionHandler<? extends IPeer>>();
+	public List<IExecutionHandler> getExecutionHandler() {
+		List<IExecutionHandler> handlerList = new ArrayList<IExecutionHandler>();
 		for(List<IExecutionHandlerFactory> factoryList : getExecutionHandlerFactoryList().values()) {
 			for (IExecutionHandlerFactory factory : factoryList) {
 				handlerList.add(factory.getNewInstance());
