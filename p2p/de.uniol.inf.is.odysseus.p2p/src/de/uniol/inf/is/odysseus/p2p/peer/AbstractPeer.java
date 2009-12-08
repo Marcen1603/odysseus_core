@@ -78,12 +78,12 @@ public abstract class AbstractPeer implements IPeer {
 	
 	public abstract Object getServerResponseAddress();
 	
-	public void registerMessageHandler(
+	public synchronized void registerMessageHandler(
 			IMessageHandler messageHandler) {
 		this.messageHandlerList.add(messageHandler);
 	}
 
-	public void registerMessageHandler(
+	public synchronized void registerMessageHandler(
 			List<IMessageHandler> messageHandler) {
 		for (IMessageHandler iMessageHandler : messageHandler) {
 			registerMessageHandler(iMessageHandler);
@@ -112,15 +112,25 @@ public abstract class AbstractPeer implements IPeer {
 	
 	
 	public void addQuery(Query query) {
-		List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
-		for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactoryList().values()) {
-			for(IExecutionHandlerFactory factory : factoryList) {
-				execHandlerList.add(factory.getNewInstance());
+		//Für alle Peers, welche die Ausführungsumgebung nutzen
+		if(getExecutionListenerFactory()!=null) {
+			List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
+			for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactoryList().values()) {
+				for(IExecutionHandlerFactory factory : factoryList) {
+					execHandlerList.add(factory.getNewInstance());
+				}
+			}
+			IExecutionListener listener = getExecutionListenerFactory().getNewInstance(query, execHandlerList);
+			getQueries().put(query, listener);
+			listener.startListener();
+		}
+		//Für alle Peers bspw. Thin-Peer, welche nicht aktiv an der Anfrageausführung mitwirken und daher nur die Anfrage intern in einer Liste verwalten möchten
+		//Kann zu Fehlern führen, wenn man nicht beachtet, dass value null ist.
+		else {
+			if(!getQueries().containsKey(query)) {
+				getQueries().put(query, null);
 			}
 		}
-		IExecutionListener listener = getExecutionListenerFactory().getNewInstance(query, execHandlerList);
-		getQueries().put(query, listener);
-		listener.startListener();
 		
 	}
 
