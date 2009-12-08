@@ -25,12 +25,14 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.cep.CepAO;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPCondition;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
@@ -94,19 +96,21 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				this.statename += (kleenePart.equals("[1]") ? "[1]" : "[i]");
 			}
 		}
-		
+
 		/**
 		 * Constructor used for Creation of Id-Expressions
+		 * 
 		 * @param statename
 		 * @param path
 		 */
-		public PathAttribute(String statename, String path){
+		public PathAttribute(String statename, String path) {
 			int kIndex = statename.indexOf("[");
-			if (kIndex > 0){
-				init(statename.substring(0,kIndex),statename.substring(kIndex), path, Write.class.getSimpleName());
-			}else{
-				init(statename,null, path, Write.class.getSimpleName());
-			}	
+			if (kIndex > 0) {
+				init(statename.substring(0, kIndex), statename
+						.substring(kIndex), path, Write.class.getSimpleName());
+			} else {
+				init(statename, null, path, Write.class.getSimpleName());
+			}
 		}
 
 		public String getFullAttributeName() {
@@ -161,7 +165,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	@Override
 	public List<ILogicalOperator> parse(Reader reader)
 			throws QueryParseException {
-		SaseLexer lex=null;
+		SaseLexer lex = null;
 		try {
 			lex = new SaseLexer(new ANTLRReaderStream(reader));
 		} catch (IOException e) {
@@ -169,14 +173,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		}
 		return processParse(lex);
 	}
-	
-	public List<ILogicalOperator> parse(String text) 
-		throws QueryParseException {
+
+	public List<ILogicalOperator> parse(String text) throws QueryParseException {
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
 		return processParse(lex);
 	}
 
-	private List<ILogicalOperator> processParse(SaseLexer lex) throws QueryParseException {
+	private List<ILogicalOperator> processParse(SaseLexer lex)
+			throws QueryParseException {
 		List<ILogicalOperator> retList = new ArrayList<ILogicalOperator>();
 		TokenRewriteStream tokens = new TokenRewriteStream(lex);
 		SaseParser grammar = new SaseParser(tokens);
@@ -185,7 +189,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		try {
 			ret = grammar.query();
 		} catch (RecognitionException e) {
-			throw new QueryParseException(e);			
+			throw new QueryParseException(e);
 		}
 		CommonTree tree = (CommonTree) ret.getTree();
 		// printTree(tree, 2);
@@ -201,7 +205,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			for (Object child : tree.getChildren()) {
 				String cStr = child.toString();
 				if (cStr.equalsIgnoreCase("PATTERN")) {
-					states = processPattern((CommonTree) child, cepAo, sourceNames);
+					states = processPattern((CommonTree) child, cepAo,
+							sourceNames);
 				} else if (cStr.equalsIgnoreCase("WHERE")) {
 					processWhere((CommonTree) child, cepAo, states);
 				} else if (cStr.equalsIgnoreCase("WITHIN")) {
@@ -277,7 +282,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			Set<String> sourceNames) {
 		List<State> recStates = new LinkedList<State>();
 		for (CommonTree state : states) {
-			if (state.getChildCount() > 2){
+			if (state.getChildCount() > 2) {
 				throw new RuntimeException("Negative States not supported yet!");
 			}
 			String str = state.getChild(0).toString();
@@ -294,7 +299,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return recStates;
 	}
 
-	private void processWhere(CommonTree whereTree, CepAO cepAo, List<State> states) {
+	private void processWhere(CommonTree whereTree, CepAO cepAo,
+			List<State> states) {
 		for (Object child : whereTree.getChildren()) {
 			String cStr = child.toString();
 			if (cStr.equalsIgnoreCase("WHERESTRAT")) {
@@ -326,27 +332,33 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		}
 	}
 
-	private void processWhereExpression(List<CommonTree> children, CepAO cepAo, List<State> states) {
+	private void processWhereExpression(List<CommonTree> children, CepAO cepAo,
+			List<State> states) {
 		List<CompareExpression> compareExpressions = new ArrayList<CompareExpression>();
 
 		for (CommonTree elem : children) {
 			if (elem.toString().equalsIgnoreCase("and")) {
 				// Zunächst (?) übergehen
 			} else if (elem.toString().equalsIgnoreCase("IDEXPRESSION")) {
-				// Achtung. Letzer Zustand ist der Final-Zustand 
-				// TODO: Sicherstellen, dass die Reihenfolge der Zustände im Automaten auch der 
+				// Achtung. Letzer Zustand ist der Final-Zustand
+				// TODO: Sicherstellen, dass die Reihenfolge der Zustände im
+				// Automaten auch der
 				// Reihenfolge im Ausdruck entspricht
-				for (int i=0;i<states.size()-2;i++){
+				for (int i = 0; i < states.size() - 2; i++) {
 					CompareExpression ce = new CompareExpression();
-					PathAttribute a = new PathAttribute(states.get(i).getId(), elem.getChild(0).toString());
+					PathAttribute a = new PathAttribute(states.get(i).getId(),
+							elem.getChild(0).toString());
 					ce.attributes.add(a);
-					PathAttribute b = new PathAttribute(states.get(i+1).getId(), elem.getChild(0).toString());
+					PathAttribute b = new PathAttribute(states.get(i + 1)
+							.getId(), elem.getChild(0).toString());
 					ce.attributes.add(b);
-					ce.fullExpression=a.getFullAttributeName()+" == "+b.getFullAttributeName();
+					ce.fullExpression = a.getFullAttributeName() + " == "
+							+ b.getFullAttributeName();
 					compareExpressions.add(ce);
 				}
 			} else if (elem.toString().equalsIgnoreCase("COMPAREEXPRESSION")) {
-				compareExpressions.add(processCompareExpression(getChildren(elem)));
+				compareExpressions
+						.add(processCompareExpression(getChildren(elem)));
 			}
 		}
 		StateMachine stmachine = cepAo.getStateMachine();
@@ -408,61 +420,34 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	private String tranformAttributesToMetamodell(CompareExpression ce, State s) {
-		// Abhängig vom aktuellen Zustand müssen die Variablen entweder
-		// aus der Symboltabelle des ensprechenden Zustand gelesen werden oder
-		// sind aktuelle Belegungen
+		// In die Syntax des Metamodells umwandeln
 		String ret = new String(ce.getFullExpression());
 		for (PathAttribute attrib : ce.attributes) {
-
-			// Attribute des aktuellen Zustands
-			if (attrib.getStatename().equals(s.getId())) {
-				// Unterscheiden ob aktuell oder historisch
-				if (attrib.isKleeneAttribute()) {
-					if (attrib.getKleenePart().equals("[1]")) {
-						// aktueller Zustand ist z.B. a[1]
-						// --> Attribut ist das aktuell gelesene
-						ret = replaceStrings(ret,
-								attrib.getFullAttributeName(), "###"
-										+ attrib.getRealAttributeName());
-					} else { // Historisch
-						String index = "-1"; // getKleenePart.equals("[i]")
-						// a[..i-1] ?
-						// a[a.LEN] ?
-						if (attrib.getKleenePart().equals("[1]")) {
-							index = "0";
-						}
-						ret = replaceStrings(ret,
-								attrib.getFullAttributeName(), attrib
-										.getAggregation()
-										+ "#"
-										+ attrib.getStatename()
-										+ "#"
-										+ index
-										+ "#"
-										+ attrib.getRealAttributeName());
-					}
-				} else {// Kein KleeneAttribute, aber aktuelle Zustand -->
-						// aktuelles Event
-					ret = replaceStrings(ret, attrib.getFullAttributeName(),
-							"###" + attrib.getRealAttributeName());
-				}
-
-			} else { // Attribute eines anderen (bereits durchlaufenen) Zustands
+			if (!attrib.getStatename().equals(s.getId())){
 				String index = "-1"; // getKleenePart.equals("[i]")
-				// a[..i-1] ?
-				// a[a.LEN] ?
-				if (attrib.isKleeneAttribute() && attrib.getKleenePart().equals("[1]")) {
-					index = "0";
+				if (attrib.isKleeneAttribute()) {
+					// a[..i-1] ?
+					// a[a.LEN] ?
+					if (attrib.getKleenePart().equals("[1]")) {
+						index = "0";
+					}
 				}
 				ret = replaceStrings(ret, attrib.getFullAttributeName(), attrib
 						.getAggregation()
-						+ "#"
+						+ CepVariable.getSeperator()
 						+ attrib.getStatename()
-						+ "#"
+						+ CepVariable.getSeperator()
 						+ index
-						+ "#"
+						+ CepVariable.getSeperator()
 						+ attrib.getRealAttributeName());
+			}else{
+				ret = replaceStrings(ret, attrib.getFullAttributeName(), 
+						CepVariable.getSeperator()
+						+ CepVariable.getSeperator()
+						+ CepVariable.getSeperator()
+						+ attrib.getRealAttributeName());				
 			}
+
 		}
 
 		return ret;
@@ -475,8 +460,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return ret;
 	}
 
-	private CompareExpression processCompareExpression(
-			List<CommonTree> children) {
+	private CompareExpression processCompareExpression(List<CommonTree> children) {
 		CompareExpression expr = new CompareExpression();
 		expr.setFullExpression(buildStringForExpression(children));
 		for (CommonTree elem : children) {
@@ -487,12 +471,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				expr.attributes.add(attr);
 			} else if (elem.toString().equalsIgnoreCase("MEMBER")) {
 				PathAttribute attr = new PathAttribute(elem.getChild(0)
-						.toString(), null, elem.getChild(1).toString(), Write.class.getSimpleName());
+						.toString(), null, elem.getChild(1).toString(),
+						Write.class.getSimpleName());
 				expr.attributes.add(attr);
 			} else if (elem.toString().equalsIgnoreCase("AGGREGATION")) {
 				PathAttribute attr = new PathAttribute(elem.getChild(1)
 						.toString(), elem.getChild(2).toString(), elem
-						.getChild(3).toString(), elem.getChild(0).toString());
+						.getChild(3).toString(), SymbolTableOperationFactory
+						.getOperation(elem.getChild(0).toString()).toString());
 				expr.attributes.add(attr);
 			}
 		}
@@ -553,15 +539,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public void start(BundleContext arg0) throws Exception {
-		System.out.println("--> SASE started");
+
 	}
 
 	@Override
 	public void stop(BundleContext arg0) throws Exception {
-		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public static void main(String[] args) {
 		SaseBuilder exec = new SaseBuilder();
 		// Zum Testen
@@ -591,15 +576,15 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		DataDictionary.getInstance().setView("Shipment", source);
 
 		String[] toParse = new String[] {
-				"PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ a[1].symbol = a[i].symbol and a[1].symbol=b.symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
-				"PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
-//				"PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "
-//						+ "WHERE skip_till_next_match(a,b,c){ " + "tag_id"
-//						+ "}" + "WITHIN 12 hours",
-//				"PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "
-//						+ "WHERE skip_till_next_match(a,b,c){ "
-//						+ "a.tag_id = b.tag_id AND " + "a.tag_id = c.tag_id }"
-//						+ "WITHIN 12 hours",
+			//	"PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ a[1].symbol = a[i].symbol and a[1].symbol=b.symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
+			//	"PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
+				// "PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "
+				// + "WHERE skip_till_next_match(a,b,c){ " + "tag_id"
+				// + "}" + "WITHIN 12 hours",
+				// "PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "
+				// + "WHERE skip_till_next_match(a,b,c){ "
+				// + "a.tag_id = b.tag_id AND " + "a.tag_id = c.tag_id }"
+				// + "WITHIN 12 hours",
 				"PATTERN SEQ(Alert a, Shipment+ b[]) "
 						+ "WHERE skip_till_any_match(a,b[]){"
 						+ "a.type = \"contaminated\" AND "
@@ -619,9 +604,5 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			e.printStackTrace();
 		}
 	}
-
-
-
-
 
 }

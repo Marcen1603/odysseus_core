@@ -10,7 +10,8 @@ import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
  * @author Thomas Vogelgesang
  * 
  */
-public class SymbolTableScheme<T> {
+@Deprecated
+class SymbolTableScheme<T> {
 
 	/**
 	 * Liste aller Einträge in der Symboltabelle

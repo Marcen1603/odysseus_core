@@ -21,7 +21,11 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 	public RelationalReader(SDFAttributeList scheme) {
 		this.scheme = new HashMap<String, Integer>();
 		for (int i = 0; i < scheme.getAttributeCount(); i++) {
-			this.scheme.put(scheme.get(i).toString(), new Integer(i));
+			String id = scheme.get(i).toString();
+			this.scheme.put(id, new Integer(i));
+			// Im Prinzip interessiert nur der Teil nach dem letzten Punkt
+			String identifier = id.substring(id.lastIndexOf(".")+1);
+			this.scheme.put(identifier, new Integer(i));			
 		}
 	}
 
@@ -45,7 +49,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 			String identifier = id.substring(id.lastIndexOf(".")+1);
 			pos = this.scheme.get(identifier);
 			// Beim nächsten mal sofort finden :-)
-			scheme.put(identifier, pos);
+			scheme.put(id, pos);
 		}
 		
 		RelationalTuple<?> tuple = (RelationalTuple<?>) event;

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.cep.epa;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -27,26 +26,26 @@ import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
 /**
- * Objekte dieser Klasse stellen die Grundkomponente für das Complex Event
+ * Objekte dieser Klasse stellen die Grundkomponente fuer das Complex Event
  * Processing dar. Sie sind als Operator in den physischen Ablaufplan
  * integrierbar und steuern die gesamte Verarbeitung von komplexen Events
  * 
  * @author Thomas Vogelgesang
  * 
  */
-public class CepOperator<R,W> extends AbstractPipe<R, W> {
+public class CepOperator<R, W> extends AbstractPipe<R, W> {
 
-	Logger logger = LoggerFactory.getLogger(CepOperator.class); 
-	
+	Logger logger = LoggerFactory.getLogger(CepOperator.class);
+
 	/**
 	 * Factory zum erzeugen komplexer Events
 	 */
-	private IComplexEventFactory<R,W> complexEventFactory;
+	private IComplexEventFactory<R, W> complexEventFactory;
 	/**
-	 * Referenz auf eine eventReader Implementierung zum datenmodellunabhängigen
-	 * Auslesen von Events.
+	 * Referenz auf eine eventReader Implementierung zum
+	 * datenmodellunabhaengigen Auslesen von Events.
 	 */
-	private Map<Integer, IEventReader<R,?>> eventReader = new HashMap<Integer, IEventReader<R,?>>(); 
+	private Map<Integer, IEventReader<R, ?>> eventReader = new HashMap<Integer, IEventReader<R, ?>>();
 	/**
 	 * Referenz auf den Verzweigungsspeicher
 	 */
@@ -80,15 +79,16 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 	 *            Eine Fabrikklasse, die dem Datenmodell des Ausgabestroms
 	 *            entspricht
 	 * @param validate
-	 *            Gibt an, ob der übergebene Automat auf Fehler überprüft werden
-	 *            soll. True, wenn nach Fehlern gesucht werden soll, ansonsten
-	 *            false.
+	 *            Gibt an, ob der übergebene Automat auf Fehler überprüft
+	 *            werden soll. True, wenn nach Fehlern gesucht werden soll,
+	 *            ansonsten false.
 	 * @throws InvalidStateMachineException
 	 *             Falls der übergebene Automat nicht die erforderlichen
 	 *             Invarianten einhält.
 	 */
-	public CepOperator(StateMachine stateMachine, Map<Integer, IEventReader<R,?>> eventReader,
-			IComplexEventFactory<R,W> complexEventFactory, boolean validate)
+	public CepOperator(StateMachine stateMachine,
+			Map<Integer, IEventReader<R, ?>> eventReader,
+			IComplexEventFactory<R, W> complexEventFactory, boolean validate)
 			throws Exception {
 		super();
 		this.stateMachine = stateMachine;
@@ -109,14 +109,16 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
+
 	/**
 	 * Verarbeitet ein übergebenes Event.
 	 */
 	@Override
 	protected void process_next(R object, int port) {
-		if (logger.isDebugEnabled()) logger.debug("Beginne Verarbeitung von Event " + object);
-		if (logger.isDebugEnabled()) logger.debug(this.getStats());
+		if (logger.isDebugEnabled())
+			logger.debug("Beginne Verarbeitung von Event " + object);
+		if (logger.isDebugEnabled())
+			logger.debug(this.getStats());
 
 		this.instances.add(new StateMachineInstance<R>(this.stateMachine));
 		if (object == null)
@@ -132,40 +134,48 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 		this.instances.addAll(branchedInstances);
 
 		// Überprüfen auf Endzustände und erzeugen komplexer Events
-		LinkedList<W> complexEvents = validateFinalStates(outdatedInstances, port);
+		LinkedList<W> complexEvents = validateFinalStates(outdatedInstances,
+				port);
 
-		// Aufräumen: Alle als veraltet markierten Automateninstanzen entfernen.
+		// Aufräumen: Alle als veraltet markierten Automateninstanzen
+		// entfernen.
 		this.instances.removeAll(outdatedInstances);
 
-		if (logger.isDebugEnabled()) logger.debug("Erzeugte Events: " + complexEvents);
+		if (logger.isDebugEnabled())
+			logger.debug("Erzeugte Events: " + complexEvents);
 
 		this.transfer(complexEvents);
 
-		if (logger.isDebugEnabled()) logger.debug("Verarbeitung abgeschlossen\n");
+		if (logger.isDebugEnabled())
+			logger.debug("Verarbeitung abgeschlossen\n");
 	}
 
 	private void validateTransitions(R object,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
-	
-		for (StateMachineInstance<R> instance: this.instances) {
-			if (logger.isDebugEnabled()) logger.debug(instance.getStats());
+
+		for (StateMachineInstance<R> instance : this.instances) {
+			if (logger.isDebugEnabled())
+				logger.debug(instance.getStats());
 			Stack<Transition> takeTransition = new Stack<Transition>();
 
-			for (Transition transition: instance.getCurrentState().getTransitions()) {
+			for (Transition transition : instance.getCurrentState()
+					.getTransitions()) {
 				/*
 				 * Über Variablen iterieren und neu belegen.
 				 */
 				updateVariables(object, instance, transition, port);
 				try {
-					if (transition.evaluate()){
+					if (transition.evaluate()) {
 						takeTransition.push(transition);
-						if (logger.isDebugEnabled()) logger.debug("Transitionsbedingung ist true: "
-								+ transition.getCondition().getLabel()
-								+ " (Wert: "
-								+ transition.getCondition().getValue()
-								+ ", "
-								+ transition.getCondition().getErrorInfo() + ")");
+						if (logger.isDebugEnabled())
+							logger.debug("Transitionsbedingung ist true: "
+									+ transition.getCondition().getLabel()
+									+ " (Wert: "
+									+ transition.getCondition().getValue()
+									+ ", "
+									+ transition.getCondition().getErrorInfo()
+									+ ")");
 
 					}
 				} catch (Exception e) {
@@ -174,30 +184,36 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 					// e.printStackTrace();
 					throw new ConditionEvaluationException(
 							"Cannot evaluate condition "
-									+ transition.getCondition());
+									+ transition.getCondition(),e);
 				}
 			}
 			if (takeTransition.isEmpty()) {
 				/*
-				 * Kein Zustandswechsel möglich: Automateninstanz als entfernbar
-				 * makieren. Die Instanz muss auch aus dem Verzweigungsspeicher
-				 * entfernt werden um Speicherleichen zu verhindern.
+				 * Kein Zustandswechsel möglich: Automateninstanz als
+				 * entfernbar makieren. Die Instanz muss auch aus dem
+				 * Verzweigungsspeicher entfernt werden um Speicherleichen zu
+				 * verhindern.
 				 */
-				if (logger.isDebugEnabled()) logger.debug("Keine Transition kann genommen werden. Verwerfe Instanz "
-								+ instance);
+				if (logger.isDebugEnabled())
+					logger
+							.debug("Keine Transition kann genommen werden. Verwerfe Instanz "
+									+ instance);
 				outdatedInstances.add(instance);
 				this.branchingBuffer.removeBranch(instance);
 			} else if (takeTransition.size() == 1) {
 				// genau 1 Folgezustand: Zustand wechseln und Aktion ausführen.
-				if (logger.isDebugEnabled()) logger.debug("Eine gehbare Transition gefunden: "
-						+ takeTransition.peek());
-				this.takeTransition(instance, takeTransition.pop(), object, port);
+				if (logger.isDebugEnabled())
+					logger.debug("Eine gehbare Transition gefunden: "
+							+ takeTransition.peek());
+				this.takeTransition(instance, takeTransition.pop(), object,
+						port);
 			} else if (takeTransition.size() > 1) {
 				// mehr als 1 Folgezustand: nichtdeterministische Verzweigung!
-				if (logger.isDebugEnabled()) logger
-						.debug(""
-								+ takeTransition.size()
-								+ " Transitionen können genommen werden (Nichtdeterministische Verzweigung).");
+				if (logger.isDebugEnabled())
+					logger
+							.debug(""
+									+ takeTransition.size()
+									+ " Transitionen koennen genommen werden (Nichtdeterministische Verzweigung).");
 				while (takeTransition.size() > 1) {
 					StateMachineInstance<R> newInstance = instance.clone();
 					this.takeTransition(newInstance, takeTransition.pop(),
@@ -205,29 +221,28 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 					this.branchingBuffer.addBranch(instance, newInstance);
 					branchedInstances.add(newInstance);
 				}
-				this.takeTransition(instance, takeTransition.pop(), object, port);
+				this.takeTransition(instance, takeTransition.pop(), object,
+						port);
 			}
 		}
 	}
 
-	private void updateVariables(R object, 
-								 StateMachineInstance<R> instance,
-								 Transition transition, int port) {
-		for (String varName: transition.getCondition().getVarNames()){				
-			if (logger.isDebugEnabled()) logger.debug("Setze Variable " + varName);
-			
+	private void updateVariables(R object, StateMachineInstance<R> instance,
+			Transition transition, int port) {
+		for (String varName : transition.getCondition().getVarNames()) {
+			if (logger.isDebugEnabled())
+				logger.debug("Setze Variable " + varName);
+
 			Object newValue = null;
 			if (CepVariable.isActEventName(varName)) {
-				// Variable bezieht sich auf aktuelles Event
-				newValue = this.eventReader.get(port).getValue(CepVariable.getAttributeName(varName), object);	
-			} else {
-				// Variable bezieht sich auf historisches (bereits
-				// konsumiertes Event)
-				newValue = instance.getSymTab().getValue(varName);
+				newValue = this.eventReader.get(port).getValue(
+						CepVariable.getAttributeName(varName), object);
+			} else { // historic
+				newValue = getValue(port, instance, varName);				
 			}
 			transition.getCondition().setValue(varName, newValue);
-			if (logger.isDebugEnabled()){
-				logger.debug("Neuer Wert: "+newValue);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Neuer Wert: " + newValue);
 			}
 		}
 	}
@@ -244,8 +259,8 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 			 * nachträgliche entfernen, kann instance bereits veraltet sein.
 			 * Diese muss damit als gelöscht gelten, obwohl sie noch in der
 			 * Instanzen-Liste enthalten ist. Eine Verarbeitung solcher
-			 * Instanzen kann eventuell zu fehlerhaftem Verhalten führen. Um das
-			 * zu verhindern, müssen diese Instanzen bei der Verarbeitung
+			 * Instanzen kann eventuell zu fehlerhaftem Verhalten führen. Um
+			 * das zu verhindern, müssen diese Instanzen bei der Verarbeitung
 			 * übersprungen werden.
 			 */
 			if (outdatedInstances.contains(instance))
@@ -256,59 +271,10 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 				// Ausgabeschema setzen:
 				for (IOutputSchemeEntry entry : this.stateMachine
 						.getOutputScheme().getEntries()) {
-	
-					
-					for (String varName:entry.getVarNames()){
 
-						//Variable var = expr.getVar(varIt.next());
-						/*
-						 * 2 mögliche Fälle: 1. variablenwert steht in der
-						 * symboltabelle 2. variablenwert steht in einem
-						 * konsumierten Event
-						 */
-						Object value = instance.getSymTab().getValue(varName);
-						if (value == null) {
-							// variablenwert steht nicht in der symboltabelle
-							// -> wert im MatchingTrace suchen (teuer?!)
-							String[] split = varName.split(CepVariable.getSeperator());
-							StateBuffer<R> buffer = instance.getMatchingTrace()
-									.getStateBuffer(split[1]);
-							if (buffer != null) {
-								try {
-									R event = null;
-									if (split[2].isEmpty()) {
-										/*
-										 * leerer String an Index-Position heißt
-										 * oberstes Buffer Element (Das Element,
-										 * welches zuletzt vom Buffer konsumiert
-										 * wurde).
-										 */
-										event = buffer.getEvents().getLast()
-												.getEvent();
-									} else {
-										int index = Integer.parseInt(split[2]);
-										event = buffer.getEvents().get(index)
-												.getEvent();
-									}
-									value = this.eventReader.get(port).getValue(split[3],
-											event);
-								} catch (Exception e) {
-									throw new UndeterminableVariableValueException(
-											"'"
-													+ varName
-													+ "' not found in symbol table. Cannot find related event in state buffer."
-													+ "");
-								}
-							} else {
-								throw new UndeterminableVariableValueException(
-										"'"
-												+ varName
-												+ "' not found in symbol table. Cannot find related state buffer '"
-												+ split[0]
-												+ "' in matching trace.");
-							}
-						}
-						entry.setValue(varName,value);
+					for (String varName : entry.getVarNames()) {
+						Object value = getValue(port, instance, varName);
+						entry.setValue(varName, value);
 					}
 				}
 				complexEvents.add(this.complexEventFactory.createComplexEvent(
@@ -326,13 +292,31 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 		}
 		return complexEvents;
 	}
-	
+
+	private Object getValue(int port, StateMachineInstance<R> instance,
+			String varName) {
+		/*
+		 * Two Cases: 
+		 * Var is in symbol table 
+		 * Var is from consumed event 
+		 */
+
+		Object value = instance.getSymTab().getValue(varName);
+		if (value == null) {
+			String[] split = varName.split(CepVariable.getSeperator());
+			int index = split[2].isEmpty()?-1:Integer.parseInt(split[2]);
+			R event = instance.getMatchingTrace().getEvent(split[1], index);
+			value = this.eventReader.get(port).getValue(split[3], event);						
+		}
+		return value;
+	}
+
 	/**
 	 * Liefert das Factory-Objekt für komplexe Events.
 	 * 
 	 * @return Das Factory-Objekt für komplexe Events.
 	 */
-	public IComplexEventFactory<R,W> getComplexEventFactory() {
+	public IComplexEventFactory<R, W> getComplexEventFactory() {
 		return complexEventFactory;
 	}
 
@@ -343,7 +327,8 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 	 * @param complexEventFactory
 	 *            Das neue Factory-Objekt für komplexe Events, nicht null.
 	 */
-	public void setComplexEventFactory(IComplexEventFactory<R,W> complexEventFactory) {
+	public void setComplexEventFactory(
+			IComplexEventFactory<R, W> complexEventFactory) {
 		this.complexEventFactory = complexEventFactory;
 	}
 
@@ -352,7 +337,7 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 	 * 
 	 * @return Das Event-Reader-Objekt.
 	 */
-	public Map<Integer, IEventReader<R,?>> getEventReader() {
+	public Map<Integer, IEventReader<R, ?>> getEventReader() {
 		return eventReader;
 	}
 
@@ -363,7 +348,7 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 	 * @param eventReader
 	 *            Das neue Event-Reader-Objekt, nicht null.
 	 */
-	public void setEventReader(IEventReader<R,?> eventReader, int port) {
+	public void setEventReader(IEventReader<R, ?> eventReader, int port) {
 		this.eventReader.put(port, eventReader);
 	}
 
@@ -396,8 +381,8 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 
 	/**
 	 * ACHTUNG: Diese Methode ist fehlerhaft und wird deshalb bald entfernt!
-	 * Entfernt die übergebene Automateninstanz aus dem {@link BranchingBuffer}.
-	 * Ist der Consumption-Mode onlyOneMatch, so werden zusätzlich alle
+	 * Entfernt die übergebene Automateninstanz aus dem {@link BranchingBuffer}
+	 * . Ist der Consumption-Mode onlyOneMatch, so werden zusätzlich alle
 	 * verwandten Automateninstanzen aus dem {@link BranchingBuffer} entfernt.
 	 * In einer Liste werden alle aus dem {@link BranchingBuffer} entfernten
 	 * Instanzen zurückgegeben, welche nach der Iteration über die Liste der
@@ -409,8 +394,8 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 	 * @param instance
 	 *            Die zu entfernende Automateninstanz
 	 * @return Eine Liste, die alle zu entfernenden Automateninstanzen in
-	 *         Abhängigkeit vom Consumption Mode enthält. Die übergebene Instanz
-	 *         instance ist immer in der Liste enthalten.
+	 *         Abhängigkeit vom Consumption Mode enthält. Die übergebene
+	 *         Instanz instance ist immer in der Liste enthalten.
 	 */
 	private LinkedList<StateMachineInstance<R>> getRemovableInstancesByConsumptionMode(
 			StateMachineInstance<R> instance) {
@@ -441,15 +426,19 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 	 * @param event
 	 *            Referenz auf das sich aktuell in der Verarbeitung befindliche
 	 *            Event.
-	 * @param port 
+	 * @param port
 	 */
 	private void takeTransition(StateMachineInstance<R> instance,
 			Transition transition, R event, int port) {
-		if (logger.isDebugEnabled()) logger.debug("Zustandswechsel: " + instance.getCurrentState().getId()
-				+ "-->" + transition.getNextState().getId());
+		if (logger.isDebugEnabled())
+			logger.debug("Zustandswechsel: "
+					+ instance.getCurrentState().getId() + "-->"
+					+ transition.getNextState().getId());
 		instance.setCurrentState(transition.getNextState());
-		if (logger.isDebugEnabled()) logger.debug("Führe Aktion aus: " + transition.getAction());
-		instance.executeAction(transition.getAction(), event, this.eventReader.get(port));
+		if (logger.isDebugEnabled())
+			logger.debug("Fuehre Aktion aus: " + transition.getAction());
+		instance.executeAction(transition.getAction(), event, this.eventReader
+				.get(port));
 		/*
 		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
 		 * das Event gespeichert wird. Wird der Zustand zuerst gewechselt, wird
@@ -462,7 +451,6 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 		 * Namenskonvention für Events führen.
 		 */
 	}
-
 
 	/**
 	 * Liefert Statistiken zum aktuellen Zustand des EPA.
@@ -477,9 +465,5 @@ public class CepOperator<R,W> extends AbstractPipe<R, W> {
 				+ this.branchingBuffer.getBranches().size();
 		return str;
 	}
-
-
-
-
 
 }

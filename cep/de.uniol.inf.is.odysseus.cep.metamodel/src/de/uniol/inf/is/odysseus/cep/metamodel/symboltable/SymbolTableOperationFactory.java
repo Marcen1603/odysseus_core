@@ -8,19 +8,19 @@ public class SymbolTableOperationFactory {
 		if (name == null || name.length() == 0){
 			return null;
 		}
-		if (Write.class.getSimpleName().equals(name)){
+		if (Write.class.getSimpleName().equalsIgnoreCase(name)){
 			return new Write<T>();
 		}
-		if (Count.class.getSimpleName().equals(name)){
+		if (Count.class.getSimpleName().equalsIgnoreCase(name)){
 			return new Count();
 		}
-		if (Max.class.getSimpleName().equals(name)){
+		if (Max.class.getSimpleName().equalsIgnoreCase(name)){
 			return new Max();
 		}
-		if (Min.class.getSimpleName().equals(name)){
+		if (Min.class.getSimpleName().equalsIgnoreCase(name)){
 			return new Min();
 		}
-		if (Sum.class.getSimpleName().equals(name)){
+		if (Sum.class.getSimpleName().equalsIgnoreCase(name)){
 			return new Sum();
 		}
 

@@ -216,7 +216,7 @@ public class CepVariable<T> {
 	}
 
 	public static String getSeperator() {
-		return "#";
+		return "_";
 	}
 
 	public static String getAttributeName(String varName) {

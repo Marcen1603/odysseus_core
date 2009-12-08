@@ -255,7 +255,7 @@ public class Validator {
 
 	/**
 	 * Überprüft, ob das Symboltabellenschema eines Automaten korrekt ist
-	 * (Invarianten 11 und 12)
+	 * (Invarianten 11 und 12) --> Nicht mehr notwendig!
 	 * 
 	 * @param stateMachine
 	 *            Der zu überprüfende Automat
@@ -264,39 +264,39 @@ public class Validator {
 	private LinkedList<ValidationException> checkSymbolTableScheme(
 			StateMachine stateMachine) {
 		LinkedList<ValidationException> exceptions = new LinkedList<ValidationException>();
-		if (stateMachine.getSymTabScheme() == null) {
-			NoSymbolTableSchemeError e = new NoSymbolTableSchemeError();
-			exceptions.add(e);
-		} else {
-			for (CepVariable entry : stateMachine.getSymTabScheme()
-					.getEntries()) {
-				if (entry.getStateIdentifier() == null
-						|| entry.getStateIdentifier().isEmpty()) {
-					MissingStateIdentifierError e = new MissingStateIdentifierError();
-					e.setRelated(entry);
-					exceptions.add(e);
-				} else if (!this.checkName(entry.getStateIdentifier())
-						&& entry.getStateIdentifier().isEmpty()) {
-					InvalidCharactersInNameError e = new InvalidCharactersInNameError();
-					e.setRelated(entry.getStateIdentifier());
-					exceptions.add(e);
-				}
-				if (entry.getAttribute() == null) {
-					MissingAttributeIdentifierError e = new MissingAttributeIdentifierError();
-					e.setRelated(entry);
-					exceptions.add(e);
-				} else if (!this.checkName(entry.getAttribute())) {
-					InvalidCharactersInNameError e = new InvalidCharactersInNameError();
-					e.setRelated(entry.getAttribute());
-					exceptions.add(e);
-				}
-				if (entry.getOperation() == null) {
-					MissingSymbolTableOperationError e = new MissingSymbolTableOperationError();
-					e.setRelated(entry);
-					exceptions.add(e);
-				}
-			}
-		}
+//		if (stateMachine.getSymTabScheme() == null) {
+//			NoSymbolTableSchemeError e = new NoSymbolTableSchemeError();
+//			exceptions.add(e);
+//		} else {
+//			for (CepVariable entry : stateMachine.getSymTabScheme()
+//					.getEntries()) {
+//				if (entry.getStateIdentifier() == null
+//						|| entry.getStateIdentifier().isEmpty()) {
+//					MissingStateIdentifierError e = new MissingStateIdentifierError();
+//					e.setRelated(entry);
+//					exceptions.add(e);
+//				} else if (!this.checkName(entry.getStateIdentifier())
+//						&& entry.getStateIdentifier().isEmpty()) {
+//					InvalidCharactersInNameError e = new InvalidCharactersInNameError();
+//					e.setRelated(entry.getStateIdentifier());
+//					exceptions.add(e);
+//				}
+//				if (entry.getAttribute() == null) {
+//					MissingAttributeIdentifierError e = new MissingAttributeIdentifierError();
+//					e.setRelated(entry);
+//					exceptions.add(e);
+//				} else if (!this.checkName(entry.getAttribute())) {
+//					InvalidCharactersInNameError e = new InvalidCharactersInNameError();
+//					e.setRelated(entry.getAttribute());
+//					exceptions.add(e);
+//				}
+//				if (entry.getOperation() == null) {
+//					MissingSymbolTableOperationError e = new MissingSymbolTableOperationError();
+//					e.setRelated(entry);
+//					exceptions.add(e);
+//				}
+//			}
+//		}
 		return exceptions;
 	}
 

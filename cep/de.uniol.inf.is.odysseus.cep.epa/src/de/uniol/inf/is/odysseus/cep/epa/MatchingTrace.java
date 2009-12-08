@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 
@@ -9,19 +11,16 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
  * Der MatchingTrace ist eine Verwaltungsstruktur, in dem die konsumierten
  * Events einer Automateninstanz zwischengespeichert werden.
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 public class MatchingTrace<R> {
 
-	/**
-	 * Liste mit allen StateBuffern einer Instanz
-	 */
-	private List<StateBuffer<R>> stateBuffer;
+	private Map<String, List<R>> stateBuffer = new HashMap<String, List<R>>();
 	/**
 	 * Referenz auf das zuletzt konsumierte Event
 	 */
-	private MatchedEvent<R> lastEvent;
+	private R lastEvent;
 
 	/**
 	 * Erzeugt einen neuen MatchingTrace.
@@ -31,30 +30,20 @@ public class MatchingTrace<R> {
 	 */
 	public MatchingTrace(List<State> states) {
 		this.lastEvent = null;
-		this.stateBuffer = new LinkedList<StateBuffer<R>>();
 		for (int i = 0; i < states.size(); i++) {
-			this.stateBuffer.add(new StateBuffer<R>(states.get(i)));
+			this.stateBuffer.put(states.get(i).getId(), new ArrayList<R>());
 		}
 	}
 
-	/**
-	 * Konstruktor, der für die clone()-Methode benötigt wird, aber ansonsten
-	 * nicht verwendet werden sollte
-	 * 
-	 * @param stateBuffer
-	 * @param lastEvent
-	 */
-	private MatchingTrace(LinkedList<StateBuffer<R>> stateBuffer,
-			MatchedEvent<R> lastEvent) {
-		this.stateBuffer = stateBuffer;
-		this.lastEvent = lastEvent;
+	public MatchingTrace(MatchingTrace<R> matchingTrace) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * 
 	 * @return Das zuletzt konsumierte Event.
 	 */
-	public MatchedEvent<R> getLastEvent() {
+	public R getLastEvent() {
 		return lastEvent;
 	}
 
@@ -64,17 +53,17 @@ public class MatchingTrace<R> {
 	 * @param lastEvent
 	 *            Das zuletzt konsumierte Event.
 	 */
-	public void setLastEvent(MatchedEvent<R> lastEvent) {
-		this.lastEvent = lastEvent;
-	}
+//	public void setLastEvent(MatchedEvent<R> lastEvent) {
+//		this.lastEvent = lastEvent;
+//	}
 
 	/**
 	 * 
 	 * @return Liste mit allen StateBuffern.
 	 */
-	public List<StateBuffer<R>> getStateBuffer() {
-		return stateBuffer;
-	}
+//	public List<StateBuffer<R>> getStateBuffer() {
+//		return stateBuffer;
+//	}
 
 	/**
 	 * Liefert den zu einem Automatenzustand gehörenden Event-Speicher.
@@ -84,15 +73,15 @@ public class MatchingTrace<R> {
 	 * @return Der gesuchte StateBuffer oder null, falls kein zum Zustand
 	 *         gehöriger StateBuffer gefunden werden konnte.
 	 */
-	public StateBuffer<R> getStateBuffer(State state) {
-		for (int i = 0; i < this.stateBuffer.size(); i++) {
-			if (state == this.stateBuffer.get(i).getState()) {
-				return this.stateBuffer.get(i);
-			}
-		}
-		return null;
-	}
-	
+//	public StateBuffer<R> getStateBuffer(State state) {
+//		for (int i = 0; i < this.stateBuffer.size(); i++) {
+//			if (state == this.stateBuffer.get(i).getState()) {
+//				return this.stateBuffer.get(i);
+//			}
+//		}
+//		return null;
+//	}
+//	
 	/**
 	 * Liefert den zu einem Zustandsnamen gehörenden Event-Speicher.
 	 * 
@@ -101,16 +90,16 @@ public class MatchingTrace<R> {
 	 * @return Der gesuchte StateBuffer oder null, falls kein zum Namen
 	 *         gehöriger StateBuffer gefunden werden konnte.
 	 */
-	public StateBuffer<R> getStateBuffer(String stateName) {
-		for (StateBuffer<R> buffer : this.stateBuffer) {
-			if (buffer.getState().getId().equals(stateName))
-				return buffer;
-		}
-		return null;
-	}
+//	public StateBuffer<R> getStateBuffer(String stateName) {
+//		for (StateBuffer<R> buffer : this.stateBuffer) {
+//			if (buffer.getState().getId().equals(stateName))
+//				return buffer;
+//		}
+//		return null;
+//	}
 
 	/**
-	 * Fügt ein konsumiertes Event in den MatchingTrace ein.
+	 * F�gt ein konsumiertes Event in den MatchingTrace ein.
 	 * 
 	 * @param event
 	 *            Das konsumierte Event. Nicht null.
@@ -120,23 +109,41 @@ public class MatchingTrace<R> {
 	 *            sein. Nicht null.
 	 */
 	public void addEvent(R event, State state) {
-		MatchedEvent<R> matchedEvent = new MatchedEvent<R>(this.lastEvent, event);
-		this.lastEvent = matchedEvent;
-		StateBuffer<R> stateBuffer = this.getStateBuffer(state); 
-		if (stateBuffer != null) 
-			stateBuffer.getEvents().add(matchedEvent);
+		this.lastEvent = event;
+		List<R> l = stateBuffer.get(state.getId()); 
+		if (l == null){
+			l = new ArrayList<R>();
+			stateBuffer.put(state.getId(), l);
+		}
+		l.add(event);
 	}
+	
+	public R getEvent(String stateId, int pos){
+		List<R> l = stateBuffer.get(stateId);
+		if (l!=null){
+			if (pos > 0 ){ // && pos < l.size()
+				return l.get(pos);
+			}else{
+				return l.get(l.size()-1);
+			}
+		}
+		return null;
+		
+	}
+	
+	
 
 	/**
 	 * Gibte eine tiefe Kopie des Matchingtrace zurück
 	 */
 	@Override
 	public MatchingTrace<R> clone() {
-		LinkedList<StateBuffer<R>> stateBuffer = new LinkedList<StateBuffer<R>>();
-		for (StateBuffer<R> tmpBuffer : this.stateBuffer) {
-			stateBuffer.add(tmpBuffer.clone());
-		}
-		return new MatchingTrace<R>(stateBuffer, (this.lastEvent==null) ? null : this.lastEvent.clone());
+		return new MatchingTrace<R>(this);
+	}
+
+	public int getStateBufferSize(State currentState) {
+		List<R> l = stateBuffer.get(currentState.getId());
+		return l.size();
 	}
 	
 }

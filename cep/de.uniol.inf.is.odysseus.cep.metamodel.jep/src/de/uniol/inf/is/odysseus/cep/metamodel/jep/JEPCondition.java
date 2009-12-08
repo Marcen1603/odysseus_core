@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.cep.metamodel.jep;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.cep.metamodel.AbstractCondition;
-
 import org.nfunk.jep.JEP;
+
+import de.uniol.inf.is.odysseus.cep.metamodel.AbstractCondition;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 
 public class JEPCondition extends AbstractCondition {
 
@@ -12,6 +15,7 @@ public class JEPCondition extends AbstractCondition {
 	 * Referenz auf den Ausdruck der Transitionsbedingung
 	 */
 	private JEP expression;
+	private Map<String, String> symbolTable = new HashMap<String, String>();
 	
 	/**
 	 * Erzeugt eine neue Transitionsbedingung aus einer textuellen Beschreibung
@@ -30,14 +34,34 @@ public class JEPCondition extends AbstractCondition {
 	}
 	
 	public void setLabel(String label) {
-		super.setLabel((label==null) ? "1" : label);
+		super.setLabel((label==null || label.length() == 0) ? "1" : label);
 		initJEPExpressionFromLabel();
 	}
 
 	private void initJEPExpressionFromLabel() {
 		this.expression = new JEP();
 		this.expression.setAllowUndeclared(true);
-		this.expression.parseExpression(getLabel());
+		String str = transformToJepVar(getLabel()); 
+		this.expression.parseExpression(str);
+		Set<String> v = (Set<String>)this.expression.getSymbolTable().keySet();
+		for (String s: v){
+			this.symbolTable.put(transformToOutVar(s),s);
+		}
+		
+	}
+	
+	private String transformToJepVar(String in){
+		String str = in.replace(CepVariable.getSeperator(), "ä");
+		str = str.replace("-", "ß");
+		str = str.replace("[", "ö");
+		return str.replace("]", "ü");
+	}
+	
+	private String transformToOutVar(String out){
+		String str = out.replace("ä",CepVariable.getSeperator());
+		str = str.replace("ß", "-");
+		str = str.replace("ö","[");
+		return str.replace("ü","]");	
 	}
 
 	public String toString(String indent) {
@@ -50,9 +74,8 @@ public class JEPCondition extends AbstractCondition {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	public Set<String> getVarNames() {
-		return expression.getSymbolTable().keySet();
+		return symbolTable.keySet();
 	}
 
 	public double getValue() {
@@ -68,7 +91,7 @@ public class JEPCondition extends AbstractCondition {
 	}
 
 	public void setValue(String varName, Object newValue) {
-		expression.getVar(varName).setValue(newValue);
+		expression.getVar(symbolTable.get(varName)).setValue(newValue);
 	}
 	
 	@Override
@@ -91,7 +114,7 @@ public class JEPCondition extends AbstractCondition {
 	@Override
 	public void append(String fullExpression) {
 		String curLabel = getLabel();
-		if (curLabel == null || curLabel.length()==0){
+		if (curLabel == null || curLabel.length()==0 || "1".equals(curLabel)){
 			setLabel(fullExpression);
 		}else{
 			setLabel(curLabel+" && "+fullExpression);

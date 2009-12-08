@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 import javax.xml.bind.annotation.*;
 
-import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
+//import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
 
 /**
  * Objekte dieser Klasse kapseln den für das CEP erforderlichen Automaten sowie
@@ -34,7 +34,7 @@ public class StateMachine {
 	 * Automaten durch den EPA erfroderlich ist. Darf zur Verarbeitungszeit null
 	 * sein und muss ein für die Verarbeitung korrektes Schema enthalten.
 	 */
-	private SymbolTableScheme<Object> symTabScheme;
+//	private SymbolTableScheme<Object> symTabScheme;
 	/**
 	 * Definiert das Ausgabeschema der CEP-Anfrage. Darf nicht null sein.
 	 */
@@ -71,10 +71,10 @@ public class StateMachine {
 	 *            AusgabeSchema
 	 */
 	public StateMachine(List<State> states, State initialState,
-			SymbolTableScheme<Object> symTabScheme, OutputScheme outputScheme) {
+			/*SymbolTableScheme<Object> symTabScheme,*/ OutputScheme outputScheme) {
 		this.states = states;
 		this.initialState = initialState;
-		this.symTabScheme = symTabScheme;
+		//this.symTabScheme = symTabScheme;
 		this.outputScheme = outputScheme;
 		this.consumptionMode = EConsumptionMode.allMatches;
 	}
@@ -84,7 +84,7 @@ public class StateMachine {
 	 */
 	public StateMachine() {
 		this.states = new LinkedList<State>();
-		this.symTabScheme = new SymbolTableScheme<Object>();
+		//this.symTabScheme = new SymbolTableScheme<Object>();
 		this.outputScheme = new OutputScheme();
 	}
 
@@ -142,9 +142,9 @@ public class StateMachine {
 	 * 
 	 * @return Das Symboltabellen-Schema des Automaten.
 	 */
-	public SymbolTableScheme<Object> getSymTabScheme() {
-		return symTabScheme;
-	}
+//	public SymbolTableScheme<Object> getSymTabScheme() {
+//		return symTabScheme;
+//	}
 
 	/**
 	 * Setzt eine neues Symboltabellen-Schema für den Automaten.
@@ -152,9 +152,9 @@ public class StateMachine {
 	 * @param symTabScheme
 	 *            Das neue Symboltabellen-Schema des Automaten, nicht null.
 	 */
-	public void setSymTabScheme(SymbolTableScheme<Object> symTabScheme) {
-		this.symTabScheme = symTabScheme;
-	}
+//	public void setSymTabScheme(SymbolTableScheme<Object> symTabScheme) {
+//		this.symTabScheme = symTabScheme;
+//	}
 
 	/**
 	 * Liefert das Ausgabeschema für die zu erzeugenden komplexen Events.
@@ -202,7 +202,7 @@ public class StateMachine {
 			str += this.initialState.getId() + "("
 					+ this.initialState.hashCode() + ")";
 		}
-		str += this.symTabScheme;
+	//	str += this.symTabScheme;
 
 		str += this.outputScheme;
 		str += "Matching Strategy: " + this.consumptionMode;
@@ -218,7 +218,7 @@ public class StateMachine {
 			str += s.prettyPrint();
 		}
 		str += "\n";
-		str += this.symTabScheme + "\n";
+	//	str += this.symTabScheme + "\n";
 		str += this.outputScheme + "\n";
 		str += "Matching Strategy: " + this.consumptionMode + "\n";
 		return str;

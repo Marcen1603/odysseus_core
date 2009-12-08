@@ -41,7 +41,8 @@ public class StateMachineInstance<R> {
 	public StateMachineInstance(StateMachine stateMachine) {
 		this.currentState = stateMachine.getInitialState();
 		this.matchingTrace = new MatchingTrace<R>(stateMachine.getStates());
-		this.symTab = new SymbolTable(stateMachine.getSymTabScheme());
+		//this.symTab = new SymbolTable(stateMachine.getSymTabScheme());
+		this.symTab = new SymbolTable();
 	}
 
 	/**
@@ -113,14 +114,13 @@ public class StateMachineInstance<R> {
 	public void executeAction(EAction action, R event,
 			IEventReader<R,?> eventReader) throws UndefinedActionException {
 		if (action == EAction.consume) {
-			this.matchingTrace.addEvent(event, this.currentState);
+			this.matchingTrace.addEvent(event, this.currentState);			
 			// Symboltabelle aktualisieren
 			for (SymbolTableEntry<?> entry : this.symTab.getEntries()) {
 				if (entry.getVariable().getStateIdentifier().equals(
 						this.currentState.getId())) {
 					if (entry.getVariable().getIndex() == this.matchingTrace
-							.getStateBuffer(this.currentState).getEvents()
-							.size()-1) {
+							.getStateBufferSize(this.currentState)-1) {
 						entry.executeOperation(eventReader.getValue(entry.getVariable().getAttribute(), event));
 					} else if (entry.getVariable().getIndex() < 0) {
 						entry.executeOperation(eventReader.getValue(entry.getVariable().getAttribute(), event));

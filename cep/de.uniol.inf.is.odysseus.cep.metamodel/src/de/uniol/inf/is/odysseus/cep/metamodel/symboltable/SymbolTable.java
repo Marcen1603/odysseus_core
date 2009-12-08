@@ -32,15 +32,15 @@ public class SymbolTable {
 	 *            Symboltabellenschema, aus dem die Symboltabelle generiert
 	 *            werden soll
 	 */
-	public SymbolTable(SymbolTableScheme<Object> symTabScheme) {
-		this.entries = new LinkedList<SymbolTableEntry<Object>>();
-		for (int i = 0; i < symTabScheme.getEntries().size(); i++) {
-			if (symTabScheme.getEntries().get(i) != null) {
-				this.entries.add(new SymbolTableEntry<Object>(symTabScheme.getEntries()
-						.get(i)));
-			}
-		}
-	}
+//	public SymbolTable(SymbolTableScheme<Object> symTabScheme) {
+//		this.entries = new LinkedList<SymbolTableEntry<Object>>();
+//		for (int i = 0; i < symTabScheme.getEntries().size(); i++) {
+//			if (symTabScheme.getEntries().get(i) != null) {
+//				this.entries.add(new SymbolTableEntry<Object>(symTabScheme.getEntries()
+//						.get(i)));
+//			}
+//		}
+//	}
 
 	/**
 	 * Konstruktor, der nur für die clone()-Methode benötigt wird und daher
