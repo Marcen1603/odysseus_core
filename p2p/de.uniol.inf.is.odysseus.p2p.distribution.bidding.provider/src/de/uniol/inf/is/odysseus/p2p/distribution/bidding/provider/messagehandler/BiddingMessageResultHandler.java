@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 public class BiddingMessageResultHandler implements IMessageHandler {
 	
 	private HashMap<Query, IExecutionListener> managedQueries;
-
+	//Soll hier nicht den gesamten ExecutionListener kennen, sondern nur das ihm zugehörige CallbackObjekt
 	public BiddingMessageResultHandler(HashMap<Query, IExecutionListener> managedQueries) {
 		this.setManagedQueries(managedQueries);
 	}
@@ -25,7 +25,6 @@ public class BiddingMessageResultHandler implements IMessageHandler {
 		return "BiddingProvider";
 	}
 
-	//TODO BiddingStrategy hier einbauen, wenn Nachrichten ausgewertet werden
 	@Override
 	public void handleMessage(Object msg, String namespace) {
 		String queryId = MessageTool.getMessageElementAsString(

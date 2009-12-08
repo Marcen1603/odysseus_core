@@ -10,19 +10,21 @@ import net.jxta.document.AdvertisementFactory;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
+
 import org.apache.commons.codec.binary.Base64OutputStream;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
-import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.BiddingHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
+import de.uniol.inf.is.odysseus.p2p.distribution.provider.selector.IClientSelector;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.BiddingMessageResultHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.EventMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
@@ -30,8 +32,6 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezificat
 
 public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> {
 
-	private Thread biddingHandlerThread;
-	private IBiddingHandler biddingHandler;
 	private String events =  "OpenInit,OpenDone,ProcessInit,ProcessDone,ProcessInitNeg,ProcessDoneNeg,PushInit,PushDone,PushInitNeg,PushDoneNeg,Done" ;
 	private DiscoveryService discoveryService;
 
@@ -48,16 +48,16 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 		super();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initializeService() {
 		getPeer().getLogger().info("Initializing message handler");
-		getPeer().registerMessageHandler(new BiddingMessageResultHandler(getPeer().getQueries()));
 		getPeer().registerMessageHandler(new EventMessageHandler());
+		getPeer().registerMessageHandler(new BiddingMessageResultHandler(getPeer().getQueries()));
 		getPeer().getLogger().info("Initializing execution handler factories");
-		IExecutionHandler<AbstractPeer> executionHandler = new BiddingProviderExecutionHandler<AbstractPeer>(Lifecycle.DISTRIBUTION, this, getPeer());
+		IExecutionHandler executionHandler = new BiddingProviderExecutionHandler<AbstractPeer, IDistributionProvider>(Lifecycle.DISTRIBUTION, this, getPeer());
 		getExecutionHandlerFactory().setExecutionHandler(executionHandler);
 		getPeer().addExecutionHandlerFactory(getExecutionHandlerFactory());
-		initBiddingHandler();
 			
 	}
 	
@@ -72,12 +72,14 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 
 	@Override
 	public void startService() {
-		startBiddingHandler();
+//		startBiddingHandler();
 		startDiscoveryService();
 	}
 
+	
 	@Override
-	public void distributePlan(Query query, Object serverResponse) {
+	public synchronized void distributePlan(IExecutionListenerCallback callback, Object serverResponse) {
+		Query query = callback.getQuery();
 		// get("1"), weil die subpläne von den senken zu den quellen gehen und wir die p2psink für den thin-peer wollen
 		Subplan topSink = query.getSubPlans().get("1");
 		String pipeAdv = ((P2PSinkAO) topSink.getAo()).getAdv();
@@ -147,23 +149,11 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 					e.printStackTrace();
 				}
 			}
-		
-	}
-	
-	private void startBiddingHandler() {
-	if (biddingHandlerThread != null && biddingHandlerThread.isAlive()) {
-		biddingHandlerThread.interrupt();
-	}
-	this.biddingHandlerThread = new Thread(biddingHandler);
-	biddingHandlerThread.start();
+			IClientSelector selector = getClientSelectorFactory().getNewInstance(15000, callback);
+			Thread t = new Thread(selector);
+			t.start();
 	}
 
-	/**
-	 * In Intervallen werden die Gebote zu den Queries überprüft und Teilpläne den entsprechenden Operator-Peers zugewiesen.
-	 */
-	private void initBiddingHandler() {
-		this.biddingHandler = new BiddingHandlerJxtaImpl(getPeer().getQueries(), getEvents());
-	}
 
 	public String getEvents() {
 		return events;
@@ -172,4 +162,6 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 	public void setEvents(String events) {
 		this.events = events;
 	}
+
+
 }

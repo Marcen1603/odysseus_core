@@ -1,29 +1,32 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider;
 
-import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
+import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
-public class BiddingProviderExecutionHandler<T extends AbstractPeer> extends AbstractExecutionHandler<T>{
+@SuppressWarnings("unchecked")
+public class BiddingProviderExecutionHandler<P extends AbstractPeer,F extends IDistributionProvider> extends AbstractExecutionHandler<P, F> {
 
-	private AbstractDistributionProvider<AbstractPeer> provider;
+	
+	public BiddingProviderExecutionHandler(Lifecycle lifecycle,
+			F function, P peer) {
+		super(lifecycle, function, peer);
+	}
 
-	public BiddingProviderExecutionHandler(Lifecycle lifecycle, AbstractDistributionProvider<AbstractPeer> provider, T peer) {
-		super(lifecycle);
-		this.provider = provider;
-		setPeer(peer);
+
+	@Override
+	public String getName() {
+		return "BiddingProvider";
 	}
 
 	@Override
 	public void run() {
 		if(getExecutionListenerCallback() != null) {
-			getProvider().distributePlan(getExecutionListenerCallback().getQuery(), getPeer().getServerResponseAddress());
+			getFunction().distributePlan(getExecutionListenerCallback(), getPeer().getServerResponseAddress());
 		}
 	}
+
 	
-	public AbstractDistributionProvider<AbstractPeer> getProvider() {
-		return provider;
-	}
 	
 }
