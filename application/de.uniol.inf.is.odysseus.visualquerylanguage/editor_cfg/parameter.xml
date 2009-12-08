@@ -108,27 +108,6 @@
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO</pipe-type>
 			<pipe-image>aggregate</pipe-image>
 			<pipe-editor>NoEditor</pipe-editor>
-			<sparams>
-				
-				<setterParameter>
-					<name>Grouping</name>
-					<ptype>de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList</ptype>
-					<typelist>
-					</typelist>
-					<setter>addGroupingAttributes</setter>
-					<editor>GroupingEditor</editor>
-				</setterParameter>
-				
-				<setterParameter>
-					<name>Aggregationen</name>
-					<ptype>java.util.Map</ptype>
-					<typelist>
-					</typelist>
-					<setter>addAggregations</setter>
-					<editor>AggregateEditor</editor>
-				</setterParameter>
-				
-			</sparams>
 		</pipe>
 		
 		<pipe>

@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
@@ -81,7 +82,9 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.model.operators.IParamSetter
 import de.uniol.inf.is.odysseus.visualquerylanguage.model.resource.XMLParameterParser;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTParameterListener;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.ISWTTreeChangedListener;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTAggregateEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTExpressionEditor;
+import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTGroupingEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTOutputEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
@@ -446,6 +449,9 @@ public class DefaultGraphArea extends Composite implements
 									editor.addParameterListener(this);
 								} else if(endOp instanceof MapAO) {
 									SWTExpressionEditor editor = new SWTExpressionEditor((MapAO)endOp, opList); 
+								} else if (endOp instanceof AggregateAO) {
+									SWTAggregateEditor editor = new SWTAggregateEditor(SWTMainWindow.getShell(), opList, (AggregateAO)endOp);
+									SWTGroupingEditor editor1 = new SWTGroupingEditor(SWTMainWindow.getShell(), opList, (AggregateAO)endOp);
 								}
 								
 								if (endOp instanceof UnaryLogicalOp) {

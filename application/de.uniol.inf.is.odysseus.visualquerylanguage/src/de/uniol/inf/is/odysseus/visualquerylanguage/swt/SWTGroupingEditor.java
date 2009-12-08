@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -26,9 +28,12 @@ public class SWTGroupingEditor {
 	private SDFAttributeList outputList = new SDFAttributeList();
 	private SDFAttributeList inputList = new SDFAttributeList();
 
-	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
-
-	public SWTGroupingEditor(Shell baseWindow, Collection<SDFAttributeList> inputs) {
+	public SWTGroupingEditor(Shell baseWindow, Collection<ILogicalOperator> opList, final AggregateAO op) {
+		Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+		for (ILogicalOperator operator : opList) {
+				inputs.add(operator.getOutputSchema());
+		}
+		
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE
 				| SWT.APPLICATION_MODAL);
 		shell.setText("Parametereditor");
@@ -85,9 +90,7 @@ public class SWTGroupingEditor {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!outputList.isEmpty()) {
-					for (ISWTParameterListener listener : listeners) {
-						listener.setValue(outputList);
-					}
+					op.addGroupingAttributes(outputList);
 					shell.dispose();
 				}
 			}
@@ -113,9 +116,4 @@ public class SWTGroupingEditor {
 		shell.open();
 
 	}
-
-	public void addSWTParameterListener(ISWTParameterListener listener) {
-		this.listeners.add(listener);
-	}
-
 }

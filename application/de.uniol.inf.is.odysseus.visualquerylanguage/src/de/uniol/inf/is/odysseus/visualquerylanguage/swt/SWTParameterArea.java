@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.viewer.view.graph.INodeView;
@@ -131,42 +132,6 @@ public class SWTParameterArea {
 						}
 					});
 					cButton.setEnabled(true);
-				} else if(EditorChecker.getInstance().hasGroupingEditor(cParam.getEditor())) {
-					cButton.addSelectionListener(new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
-							for (LogicalSubscription subscription : nodeView
-									.getModelNode().getContent().getOperator()
-									.getSubscribedTo()) {
-								inputs.add(subscription.getTarget()
-										.getOutputSchema());
-							}
-							SWTGroupingEditor paramEditor = new SWTGroupingEditor(
-									SWTMainWindow.getShell(), inputs);
-							paramEditor.addSWTParameterListener(cComp);
-						}
-					});
-					cButton.setEnabled(true);
-				}else if(EditorChecker.getInstance().hasAggregateEditor(cParam.getEditor())) {
-					cButton.addSelectionListener(new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
-							for (LogicalSubscription subscription : nodeView
-									.getModelNode().getContent().getOperator()
-									.getSubscribedTo()) {
-								inputs.add(subscription.getTarget()
-										.getOutputSchema());
-							}
-							SWTAggregateEditor paramEditor = new SWTAggregateEditor(
-									SWTMainWindow.getShell(), inputs);
-							paramEditor.addSWTParameterListener(cComp);
-						}
-					});
-					cButton.setEnabled(true);
 				}
 				String value = "";
 				if (cParam.getValue() != null) {
@@ -243,44 +208,6 @@ public class SWTParameterArea {
 					t.setEditable(false);
 					Color c = new Color(Display.getCurrent(), 255, 255, 255);
 					t.setBackground(c);
-				} else if(EditorChecker.getInstance().hasGroupingEditor(sParam.getEditor())) {
-					sButton.addSelectionListener(new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
-							for (LogicalSubscription subscription : nodeView
-									.getModelNode().getContent().getOperator()
-									.getSubscribedTo()) {
-								inputs.add(subscription.getTarget()
-										.getOutputSchema());
-							}
-							SWTGroupingEditor paramEditor = new SWTGroupingEditor(
-									SWTMainWindow.getShell(), inputs);
-							paramEditor.addSWTParameterListener(sComp);
-						}
-					});
-					sButton.setVisible(true);
-					sButton.setEnabled(true);
-				}else if(EditorChecker.getInstance().hasAggregateEditor(sParam.getEditor())) {
-					sButton.addSelectionListener(new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
-							for (LogicalSubscription subscription : nodeView
-									.getModelNode().getContent().getOperator()
-									.getSubscribedTo()) {
-								inputs.add(subscription.getTarget()
-										.getOutputSchema());
-							}
-							SWTAggregateEditor paramEditor = new SWTAggregateEditor(
-									SWTMainWindow.getShell(), inputs);
-							paramEditor.addSWTParameterListener(sComp);
-						}
-					});
-					sButton.setVisible(true);
-					sButton.setEnabled(true);
 				} else {
 					t.addModifyListener(new ModifyListener() {
 

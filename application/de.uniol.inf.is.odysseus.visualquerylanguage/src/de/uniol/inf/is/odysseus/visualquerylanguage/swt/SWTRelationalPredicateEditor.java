@@ -42,6 +42,8 @@ public class SWTRelationalPredicateEditor {
 
 	private String left = "";
 	private String right = "";
+	
+	private boolean doNothing = false;
 
 	private ComplexPredicate<RelationalTuple<ITimeInterval>> leftPred = null;
 	private ComplexPredicate<RelationalTuple<ITimeInterval>> rightPred = null;
@@ -157,9 +159,6 @@ public class SWTRelationalPredicateEditor {
 				}
 				if(orValues != null) {
 					for (String string : orValues) {
-						if (ors.contains("=")) {
-							string = string.replace("=", "==");
-						}
 						ors.add(string);
 					}
 				}
@@ -173,11 +172,84 @@ public class SWTRelationalPredicateEditor {
 						}
 					}
 				}
+				String[] onlyAnds = null;
+				ArrayList<String> ands = new ArrayList<String>();
+				if(!textArea.getText().contains(" or ") && textArea.getText().contains(" and ")) {
+					onlyAnds = textArea.getText().split(" and ");
+				}
+				if(onlyAnds != null) {
+					for (String string : onlyAnds) {
+						ands.add(string);
+					}
+				}
+				
+				AndPredicate<RelationalTuple<ITimeInterval>> complexPredicate = null;
+				ArrayList<ComplexPredicate<RelationalTuple<ITimeInterval>>> complexPreds = new ArrayList<ComplexPredicate<RelationalTuple<ITimeInterval>>>();
+				for (String string : ands) {
+						if (left.isEmpty()) {
+							left = string.replace("=", "==");
+						} else if (right.isEmpty()) {
+							right = string.replace("=", "==");
+						}
+						if (!left.isEmpty() && !right.isEmpty()) {
+							complexPredicate = new AndPredicate<RelationalTuple<ITimeInterval>>(
+									new RelationalPredicate(new SDFExpression(
+											"", left, resolver)),
+									new RelationalPredicate(new SDFExpression(
+											"", right, resolver)));
+							left = "";
+							right = "";
+						} else if (!left.isEmpty() && right.isEmpty()
+								&& complexPredicate != null) {
+							complexPredicate = new AndPredicate<RelationalTuple<ITimeInterval>>(
+									new RelationalPredicate(new SDFExpression(
+											"", left, resolver)),
+									complexPredicate);
+							left = "";
+						}
+					if (complexPredicate != null) {
+						complexPreds.add(complexPredicate);
+						complexPredicate = null;
+					}
+				}
+				AndPredicate<RelationalTuple<ITimeInterval>> andPred = null;
+				if(!complexPreds.isEmpty()) {
+					for (ComplexPredicate<RelationalTuple<ITimeInterval>> pred : complexPreds) {
+						if (leftPred == null) {
+							leftPred = pred;
+						} else if (rightPred == null) {
+							rightPred = pred;
+						}
+						
+						if(!left.isEmpty() && leftPred != null) {
+							andPred = new AndPredicate<RelationalTuple<ITimeInterval>>(
+									new RelationalPredicate(new SDFExpression("",
+											left, resolver)), leftPred);
+							left = "";
+							leftPred = null;
+						}else if (leftPred != null && rightPred != null) {
+							andPred = new AndPredicate<RelationalTuple<ITimeInterval>>(
+									leftPred, rightPred);
+							leftPred = null;
+							rightPred = null;
+						} else if (leftPred != null && rightPred == null
+								&& andPred != null) {
+							andPred = new AndPredicate<RelationalTuple<ITimeInterval>>(
+									leftPred, andPred);
+							leftPred = null;
+						}
+					}
+					if (andPred != null) {
+						for (ISWTParameterListener listener : listeners) {
+							listener.setValue(andPred);
+						}
+					}
+					complexPreds = new ArrayList<ComplexPredicate<RelationalTuple<ITimeInterval>>>();
+					doNothing = true;
+				}
 				for (String string : orsToRemove) {
 					ors.remove(string);
 				}
-				AndPredicate<RelationalTuple<ITimeInterval>> complexPredicate = null;
-				ArrayList<ComplexPredicate<RelationalTuple<ITimeInterval>>> complexPreds = new ArrayList<ComplexPredicate<RelationalTuple<ITimeInterval>>>();
 				for (String[] strings : andValues) {
 					for (int i = 0; i < strings.length; i++) {
 						if (left.isEmpty()) {
@@ -259,7 +331,7 @@ public class SWTRelationalPredicateEditor {
 					for (ISWTParameterListener listener : listeners) {
 						listener.setValue(orPred);
 					}
-				} else {
+				} else if(!doNothing){
 					RelationalPredicate pred = new RelationalPredicate(
 							new SDFExpression("", textArea.getText().replace("=", "=="), resolver));
 					for (ISWTParameterListener listener : listeners) {

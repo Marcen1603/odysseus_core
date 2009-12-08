@@ -22,6 +22,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.base.AggregateFunction;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -33,10 +36,14 @@ public class SWTAggregateEditor {
 
 	private SDFAttributeList inputList = new SDFAttributeList();
 
-	private Collection<ISWTParameterListener> listeners = new ArrayList<ISWTParameterListener>();
-
 	public SWTAggregateEditor(Shell baseWindow,
-			Collection<SDFAttributeList> inputs) {
+			Collection<ILogicalOperator> opList, final AggregateAO op) {
+		
+		Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
+		for (ILogicalOperator operator : opList) {
+				inputs.add(operator.getOutputSchema());
+		}
+		
 		shell = new Shell(baseWindow, SWT.RESIZE | SWT.CLOSE
 				| SWT.APPLICATION_MODAL);
 		shell.setText("Parametereditor");
@@ -156,9 +163,7 @@ public class SWTAggregateEditor {
 				for (SDFAttribute att : mapList) {
 					aggregations.remove(att);
 				}
-				for (ISWTParameterListener listener : listeners) {
-					listener.setValue(aggregations);
-				}
+				op.addAggregations(aggregations);
 				shell.dispose();
 			}
 		});
@@ -182,10 +187,6 @@ public class SWTAggregateEditor {
 				/ 2 - shell.getSize().y / 2);
 		shell.open();
 
-	}
-
-	public void addSWTParameterListener(ISWTParameterListener listener) {
-		this.listeners.add(listener);
 	}
 
 }
