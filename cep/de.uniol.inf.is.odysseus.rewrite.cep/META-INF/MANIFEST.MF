@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Cep Rewrite
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.cep
+Bundle-Version: 1.0.0
+Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.cep
