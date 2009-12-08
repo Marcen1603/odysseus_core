@@ -111,7 +111,6 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	}
 	
 	public void unbindDistributionProvider(IDistributionProvider<AbstractPeer> dp) {
-		System.out.println("unbind distribution");
 		if(this.distributionProvider == dp) {
 			getLogger().info("Unbinding Distribution Provider" , dp);
 			this.distributionProvider = null;
