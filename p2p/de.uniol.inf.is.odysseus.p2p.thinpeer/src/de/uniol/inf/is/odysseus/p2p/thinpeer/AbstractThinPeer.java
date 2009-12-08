@@ -46,6 +46,9 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 	
 	public HashMap<String,Object> adminPeers;
 	
+	public AbstractThinPeer() {
+		super();
+	}
 	
 	public HashMap<String,Object> getAdminPeers() {
 		return adminPeers;
