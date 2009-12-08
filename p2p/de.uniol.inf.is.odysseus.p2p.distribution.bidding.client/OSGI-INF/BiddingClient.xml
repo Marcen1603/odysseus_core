@@ -4,4 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient"/>
    </service>
+   <reference bind="bindReceiverStrategy" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.distribution.client.receiver.IReceiverStrategy" name="IReceiverStrategy" policy="static" unbind="unbindReceiverStrategy"/>
 </scr:component>

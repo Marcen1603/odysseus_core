@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
+package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler;
 
 import java.util.HashMap;
 

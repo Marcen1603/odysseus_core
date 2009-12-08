@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 
 
 
+import de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler.QueryResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.AbstractDistributionClient;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 
-public class BiddingClient extends AbstractDistributionClient {
+public class BiddingClient<T extends AbstractPeer> extends AbstractDistributionClient<T> {
 	private IMessageHandler queryResultHandler;
 	private IQuerySpecificationListener listener;
 
@@ -24,7 +26,7 @@ public class BiddingClient extends AbstractDistributionClient {
 	}
 
 	private void initQuerySpezificationListener(){
-		this.listener = new QuerySpecificationListenerJxtaImpl(getPeer());
+		this.listener = new QuerySpecificationListenerJxtaImpl(getPeer(), getReceiverStrategy());
 	}
 
 	private void initQueryResultHandler() {
@@ -34,7 +36,8 @@ public class BiddingClient extends AbstractDistributionClient {
 
 	@Override
 	public void startService() {
-		
+		Thread t = new Thread(getListener());
+		t.start();
 	}
 
 	@Override
@@ -42,11 +45,8 @@ public class BiddingClient extends AbstractDistributionClient {
 		return this.queryResultHandler;
 	}
 
-
-
-	
-	
-
-
+	public IQuerySpecificationListener getListener() {
+		return listener;
+	}
 
 }

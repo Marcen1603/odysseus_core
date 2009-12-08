@@ -7,6 +7,7 @@ import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 //import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.distribution.client.receiver.IReceiverStrategy;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
@@ -15,10 +16,12 @@ public class QuerySpecificationListenerJxtaImpl implements
 		IQuerySpecificationListener, DiscoveryListener {
 
 	private AbstractPeer aPeer;
+	private IReceiverStrategy receiver;
 	
-	public QuerySpecificationListenerJxtaImpl(AbstractPeer aPeer) {
+	public QuerySpecificationListenerJxtaImpl(AbstractPeer aPeer, IReceiverStrategy receiver) {
 		PeerGroupTool.getPeerGroup().getDiscoveryService().addDiscoveryListener(this);
 		this.aPeer = aPeer;
+		this.receiver = receiver;
 	}
 
 	public void run() {
@@ -47,7 +50,7 @@ public class QuerySpecificationListenerJxtaImpl implements
 
 //					if(!this.qes.containsKey(((QueryExecutionSpezification)temp2).getID().toString())) {
 //						this.qes.put(((QueryExecutionSpezification)temp2).getID().toString(), ((QueryExecutionSpezification)temp2));
-					new QuerySpecificationHandlerJxtaImpl((QueryExecutionSpezification) temp2, aPeer) ;
+					new QuerySpecificationHandlerJxtaImpl((QueryExecutionSpezification) temp2, getaPeer(), getReceiver()) ;
 //					}
 				} else {
 					return;
@@ -60,5 +63,9 @@ public class QuerySpecificationListenerJxtaImpl implements
 	
 	public AbstractPeer getaPeer() {
 		return aPeer;
+	}
+	
+	public IReceiverStrategy getReceiver() {
+		return receiver;
 	}
 }
