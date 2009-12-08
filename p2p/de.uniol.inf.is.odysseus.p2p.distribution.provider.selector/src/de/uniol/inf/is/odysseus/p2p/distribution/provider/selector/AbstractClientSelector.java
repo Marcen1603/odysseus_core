@@ -1,18 +1,22 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.provider.selector;
 
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
+
+
 
 public abstract class AbstractClientSelector implements IClientSelector {
 
-	private Query query;
+	private IExecutionListenerCallback callback;
+	private int time;
 
-	public AbstractClientSelector(Query query) {
-		this.query = query;
+	public AbstractClientSelector(int time, IExecutionListenerCallback callback) {
+		this.callback = callback;
+		this.time = time;
 	}
 	
 	@Override
 	public void setTimetoWait(int time) {
-		
+		this.time = time;
 	}
 
 	@Override
@@ -20,7 +24,11 @@ public abstract class AbstractClientSelector implements IClientSelector {
 
 	
 	@Override
-	public Query getQuery() {
-		return this.query;
+	public IExecutionListenerCallback getCallback() {
+		return this.callback;
+	}
+	
+	public int getTime() {
+		return time;
 	}
 }
