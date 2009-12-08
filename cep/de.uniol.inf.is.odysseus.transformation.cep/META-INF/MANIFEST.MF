@@ -10,4 +10,6 @@ Import-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
- de.uniol.inf.is.odysseus.cep.epa.eventreading.relational
+ de.uniol.inf.is.odysseus.cep.epa.eventreading,
+ de.uniol.inf.is.odysseus.cep.epa.eventreading.relational,
+ de.uniol.inf.is.odysseus.cep.metamodel
