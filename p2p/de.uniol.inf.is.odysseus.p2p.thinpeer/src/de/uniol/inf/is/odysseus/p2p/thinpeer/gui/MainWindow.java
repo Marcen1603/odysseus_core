@@ -79,26 +79,32 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if ("stopPeer".equals(e.getActionCommand())) {
 			this.thinPeer.stopPeer();
-		} else if ("translateButton".equals(e.getActionCommand())
-				&& !adminPeers.isSelectionEmpty()) {
-			String adminPeer = "";
-			ExtendedPeerAdvertisement adv = null;
-			for (String s : thinPeer.getAdminPeers()
-					.keySet()) {
-				adv = (ExtendedPeerAdvertisement) thinPeer.getAdminPeers().get(s);
-				if (adv.getPeerName().equals(
-						"AdministrationPeer_"
-								+ adminPeers.getSelectedValue().toString())) {
-					adminPeer = adv.getPeerId();
-					break;
-				}
-
-			}
-
-			thinPeer.sendQuerySpezificationToAdminPeer(query.getText(), "CQL",
-					adminPeer, adv.getPeerName());
-		} else if ("translateButton".equals(e.getActionCommand())) {
+		} 
+		
+		//Nicht mehr zu verwenden, da Anfragen über Ausschreibungen verteilt werden
+		
+//		else if ("translateButton".equals(e.getActionCommand())
+//				&& !adminPeers.isSelectionEmpty()) {
+//			String adminPeer = "";
+//			ExtendedPeerAdvertisement adv = null;
+//			for (String s : thinPeer.getAdminPeers()
+//					.keySet()) {
+//				adv = (ExtendedPeerAdvertisement) thinPeer.getAdminPeers().get(s);
+//				if (adv.getPeerName().equals(
+//						"AdministrationPeer_"
+//								+ adminPeers.getSelectedValue().toString())) {
+//					adminPeer = adv.getPeerId();
+//					break;
+//				}
+//
+//			}
+//
+//			thinPeer.sendQuerySpezificationToAdminPeer(query.getText(), "CQL",
+//					adminPeer, adv.getPeerName());
+//		} 
+	else if ("translateButton".equals(e.getActionCommand())) {
 			thinPeer.publishQuerySpezification(query.getText(), "CQL");
+			
 		}
 
 	}

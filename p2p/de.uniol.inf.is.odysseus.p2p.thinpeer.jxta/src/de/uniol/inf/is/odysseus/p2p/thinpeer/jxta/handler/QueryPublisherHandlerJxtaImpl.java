@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
@@ -47,6 +48,11 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 				VALID);
 
 		Log.addTab(q.getId(), query);
+		
+		//Hier den "Timer" starten für die Behandlung der Gebote
+		IBiddingHandler handler = new BiddingHandlerJxtaImpl(q);
+		Thread t = new Thread(handler);
+		t.start();
 	}
 
 	@Override

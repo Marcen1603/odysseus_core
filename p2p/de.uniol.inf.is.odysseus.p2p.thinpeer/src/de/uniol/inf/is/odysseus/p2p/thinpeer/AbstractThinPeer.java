@@ -6,11 +6,9 @@ import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceListener;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IBiddingHandlerStrategy;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 
@@ -26,9 +24,9 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 
 	private Thread guiUpdaterThread;
 
-	protected IBiddingHandler queryBiddingHandler;
+//	protected IBiddingHandler queryBiddingHandler;
 
-	private Thread queryBiddingHandlerThread;
+//	private Thread queryBiddingHandlerThread;
 
 	protected IAdministrationPeerListener administrationPeerListener;
 
@@ -42,7 +40,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 
 	protected IQueryPublisher queryPublisher;
 
-	protected IBiddingHandlerStrategy biddingHandlerStrategy;
+//	protected IBiddingHandlerStrategy biddingHandlerStrategy;
 	
 	public HashMap<String,Object> adminPeers;
 	
@@ -62,9 +60,9 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		return gui;
 	}
 
-	public IBiddingHandlerStrategy getBiddingHandlerStrategy() {
-		return biddingHandlerStrategy;
-	}
+//	public IBiddingHandlerStrategy getBiddingHandlerStrategy() {
+//		return biddingHandlerStrategy;
+//	}
 
 	private void startGui() {
 		gui = new MainWindow(this);
@@ -83,14 +81,14 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		socketListenerThread.start();
 	}
 
-	protected void startQueryBiddingHandler() {
-		if (queryBiddingHandlerThread != null
-				&& queryBiddingHandlerThread.isAlive()) {
-			queryBiddingHandlerThread.interrupt();
-		}
-		this.queryBiddingHandlerThread = new Thread(queryBiddingHandler);
-		queryBiddingHandlerThread.start();
-	}
+//	protected void startQueryBiddingHandler() {
+//		if (queryBiddingHandlerThread != null
+//				&& queryBiddingHandlerThread.isAlive()) {
+//			queryBiddingHandlerThread.interrupt();
+//		}
+//		this.queryBiddingHandlerThread = new Thread(queryBiddingHandler);
+//		queryBiddingHandlerThread.start();
+//	}
 
 	protected void startAdministrationPeerListener() {
 		if (administrationPeerListenerThread != null
@@ -115,7 +113,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		init();
 		startServerSocketListener();
 		startGui();
-		startQueryBiddingHandler();
+//		startQueryBiddingHandler();
 		startAdministrationPeerListener();
 		startSourceListener();
 	}
@@ -139,11 +137,11 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		initSocketServerListener();
 		initQueryPublisher();
 		initGuiUpdater();
-		initQueryBiddingHandler();
+//		initQueryBiddingHandler();
 		initAdministrationPeerListener();
 		initSourceListener();
 		initIdGenerator();
-		initBiddingHandlerStrategy();
+//		initBiddingHandlerStrategy();
 		initAdminPeerList();
 
 	}
@@ -165,7 +163,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 	
 	protected abstract void initAdministrationPeerListener();
 
-	protected abstract void initQueryBiddingHandler();
+//	protected abstract void initQueryBiddingHandler();
 
 	protected abstract void initGuiUpdater();
 
@@ -179,7 +177,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 
 	protected abstract void stopNetwork();
 
-	protected abstract void initBiddingHandlerStrategy();
+//	protected abstract void initBiddingHandlerStrategy();
 
 	public abstract void publishQuerySpezification(String query, String language);
 

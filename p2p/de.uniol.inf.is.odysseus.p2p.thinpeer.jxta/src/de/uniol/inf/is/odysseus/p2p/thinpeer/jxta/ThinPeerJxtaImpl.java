@@ -25,12 +25,10 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.BiddingHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.GuiUpdaterJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryPublisherHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.AdministrationPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.BiddingHandlerStrategyStandard;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.RandomIdGenerator;
 
 public class ThinPeerJxtaImpl extends AbstractThinPeer {
@@ -266,10 +264,10 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		this.guiUpdater = new GuiUpdaterJxtaImpl();
 	}
 
-	@Override
-	protected void initQueryBiddingHandler() {
-		this.queryBiddingHandler = new BiddingHandlerJxtaImpl();
-	}
+//	@Override
+//	protected void initQueryBiddingHandler() {
+//		this.queryBiddingHandler = new BiddingHandlerJxtaImpl();
+//	}
 
 	@Override
 	protected void initAdministrationPeerListener() {
@@ -303,11 +301,11 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	}
 
-	@Override
-	protected void initBiddingHandlerStrategy() {
-		this.biddingHandlerStrategy = new BiddingHandlerStrategyStandard();
-
-	}
+//	@Override
+//	protected void initBiddingHandlerStrategy() {
+//		this.biddingHandlerStrategy = new BiddingHandlerStrategyStandard();
+//
+//	}
 	
 	@Override
 	protected void initIdGenerator() {
@@ -335,4 +333,9 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		setServerPipeAdvertisement(AdvertisementTools
 				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
 	}
+
+
+
+
+
 }
