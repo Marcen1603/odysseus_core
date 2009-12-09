@@ -73,7 +73,7 @@ public class MatchedEvent<R> {
 	
 	@Override
 	public String toString() {
-		return ""+event+" from Stmi ("+stmi.hashCode()+")";
+		return ""+event+" in ("+stmi.hashCode()+")";
 	}
 
 }

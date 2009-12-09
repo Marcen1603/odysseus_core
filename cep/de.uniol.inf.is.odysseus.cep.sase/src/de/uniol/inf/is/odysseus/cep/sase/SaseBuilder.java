@@ -254,7 +254,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						if (source.getId().endsWith("[i]")) {
 							source.addTransition(new Transition(source.getId()
 									+ "_proceed", dest, new JEPCondition(""),
-									EAction.consume));
+									EAction.discard));
 							source.addTransition(new Transition(source.getId()
 									+ "_take", source, new JEPCondition(""),
 									EAction.consume));
