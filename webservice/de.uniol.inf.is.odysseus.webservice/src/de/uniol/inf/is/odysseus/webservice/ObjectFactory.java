@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
     private final static QName _Schema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "Schema");
 
     /**
@@ -32,6 +33,23 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link QueryType }
+     * 
+     */
+    public QueryType createQueryType() {
+        return new QueryType();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "query")
+    public JAXBElement<QueryType> createQuery(QueryType value) {
+        return new JAXBElement<QueryType>(_Query_QNAME, QueryType.class, null, value);
     }
 
     /**

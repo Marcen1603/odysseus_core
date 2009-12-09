@@ -5,8 +5,17 @@
     	<xsd:element name="Schema" type="tns:Array"></xsd:element>
 
     	<xsd:simpleType name="Array">
-    		<xsd:list itemType="xsd:string"></xsd:list>
+    		<xsd:list itemType="tns:ArrayElement"></xsd:list>
     	</xsd:simpleType>
+    
+    	<xsd:simpleType name="ArrayElement">
+    		<xsd:list itemType="xsd:string"></xsd:list></xsd:simpleType>
+            <xsd:element name="query" type="tns:queryType"></xsd:element>
+        
+            <xsd:complexType name="queryType">
+            	<xsd:attribute name="query" type="xsd:string"></xsd:attribute>
+            	<xsd:attribute name="language" type="xsd:string"></xsd:attribute>
+            </xsd:complexType>
     </xsd:schema>
   </wsdl:types>
   
@@ -17,7 +26,7 @@
     <wsdl:part name="status" type="xsd:string"/>
   </wsdl:message>
   <wsdl:message name="CreateStatementRequest">
-  	<wsdl:part name="query" type="xsd:string"></wsdl:part>
+  	<wsdl:part name="query" element="tns:query"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="CreateStatementResponse">
   	<wsdl:part name="status" type="xsd:string"></wsdl:part>
