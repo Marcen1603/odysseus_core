@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
@@ -46,8 +45,11 @@ public class WorkflowClientManager implements IActuatorManager {
 	}
 
 	@Override
-	public Map<String, List<Class<?>>> getSchema(String name) {
-		// TODO Auto-generated method stub
+	public List<ActuatorMethod> getSchema(String name) {
+		WorkflowClient client = this.clients.get(name);
+		if (client != null){
+			return client.getSchema();
+		}
 		return null;
 	}
 

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.action.actuatorManagement;
 
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
 
@@ -18,6 +17,6 @@ public interface IActuatorManager {
 	
 	public String getName();
 	
-	public Map<String, List<Class<?>>> getSchema(String name);
+	public List<ActuatorMethod> getSchema(String name);
 	
 }

@@ -8,19 +8,19 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
 import de.uniol.inf.is.odysseus.action.output.ActuatorAdapter;
+import de.uniol.inf.is.odysseus.action.output.WorkflowClient;
 
 
 public class ActuatorAdapterManager implements IActuatorManager{
-	private HashMap<String, ActuatorAdapter> adapter;
+	private HashMap<String, ActuatorAdapter> adapters;
 	
 	private ActuatorAdapterManager () {
-		this.adapter = new HashMap<String, ActuatorAdapter>();
+		this.adapters = new HashMap<String, ActuatorAdapter>();
 	}
 	
 
 	public IActuator getActuator(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.adapters.get(name);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class ActuatorAdapterManager implements IActuatorManager{
 					}
 					//create object
 					if (compatible){
-						this.adapter.put(className, (ActuatorAdapter)constructor.newInstance(constructorParams));
+						this.adapters.put(className, (ActuatorAdapter)constructor.newInstance(constructorParams));
 					}
 				}
 			}
@@ -67,8 +67,11 @@ public class ActuatorAdapterManager implements IActuatorManager{
 	}
 
 	@Override
-	public Map<String, List<Class<?>>> getSchema(String name) {
-		// TODO Auto-generated method stub
+	public List<ActuatorMethod> getSchema(String name) {
+		ActuatorAdapter adapter = this.adapters.get(name);
+		if (adapter != null){
+			return adapter.getSchema();
+		}
 		return null;
 	}
 
