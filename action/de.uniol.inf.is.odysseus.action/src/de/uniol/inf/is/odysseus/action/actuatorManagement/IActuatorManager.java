@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
-import de.uniol.inf.is.odysseus.action.output.AbstractActuator;
 
 /**
  * OSGI Service Interface for ActuatorManagers
@@ -15,7 +14,7 @@ public interface IActuatorManager {
 	
 	public void createActuator(String description) throws ActuatorCreationException;
 	
-	public AbstractActuator getActuator(String name);
+	public IActuator getActuator(String name);
 	
 	public String getName();
 	

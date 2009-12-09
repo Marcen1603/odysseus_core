@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
-import de.uniol.inf.is.odysseus.action.output.AbstractActuator;
 import de.uniol.inf.is.odysseus.action.output.WorkflowClient;
 
 /**
@@ -27,7 +26,7 @@ public class WorkflowClientManager implements IActuatorManager {
 		this.clients = new HashMap<String, WorkflowClient>();
 	}
 
-	public AbstractActuator getActuator(String name) {
+	public IActuator getActuator(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
-import de.uniol.inf.is.odysseus.action.output.AbstractActuator;
 
 /**
  * Factory for Creation, Acess to all kind of {@link AbstractActuator}s
@@ -36,7 +35,7 @@ public class ActuatorFactory {
 	}
 	
 	
-	public AbstractActuator getActuator (String actuatorName, String managerName){
+	public IActuator getActuator (String actuatorName, String managerName){
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
 			return manager.getActuator(actuatorName);
