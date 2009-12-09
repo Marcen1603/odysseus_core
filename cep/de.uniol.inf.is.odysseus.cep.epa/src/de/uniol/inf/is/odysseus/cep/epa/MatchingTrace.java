@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.cep.metamodel.State;
  */
 public class MatchingTrace<R> {
 
-	private Map<String, List<R>> stateBuffer = new HashMap<String, List<R>>();
+	private Map<String, List<MatchedEvent<R>>> stateBuffer = new HashMap<String, List<MatchedEvent<R>>>();
 	/**
 	 * Referenz auf das zuletzt konsumierte Event
 	 */
-	private R lastEvent;
+	private MatchedEvent<R> lastEvent;
 
 	/**
 	 * Erzeugt einen neuen MatchingTrace.
@@ -31,14 +31,14 @@ public class MatchingTrace<R> {
 	public MatchingTrace(List<State> states) {
 		this.lastEvent = null;
 		for (int i = 0; i < states.size(); i++) {
-			this.stateBuffer.put(states.get(i).getId(), new ArrayList<R>());
+			this.stateBuffer.put(states.get(i).getId(), new ArrayList<MatchedEvent<R>>());
 		}
 	}
 
 	public MatchingTrace(MatchingTrace<R> matchingTrace) {
-		this.stateBuffer = new HashMap<String, List<R>>();
+		this.stateBuffer = new HashMap<String, List<MatchedEvent<R>>>();
 		for (String s:matchingTrace.stateBuffer.keySet()){
-			this.stateBuffer.put(s, new ArrayList<R>(matchingTrace.stateBuffer.get(s)));
+			this.stateBuffer.put(s, new ArrayList<MatchedEvent<R>>(matchingTrace.stateBuffer.get(s)));
 		}
 		this.lastEvent = matchingTrace.lastEvent;
 	}
@@ -47,7 +47,7 @@ public class MatchingTrace<R> {
 	 * 
 	 * @return Das zuletzt konsumierte Event.
 	 */
-	public R getLastEvent() {
+	public MatchedEvent<R> getLastEvent() {
 		return lastEvent;
 	}
 
@@ -112,18 +112,20 @@ public class MatchingTrace<R> {
 	 *            übergegangen ist. Muss in der Liste der Zustände enthalten
 	 *            sein. Nicht null.
 	 */
-	public void addEvent(R event, State state) {
-		this.lastEvent = event;
-		List<R> l = stateBuffer.get(state.getId()); 
+	public void addEvent(R event, State state, StateMachineInstance<R> stmt) {
+		
+		List<MatchedEvent<R>> l = stateBuffer.get(state.getId()); 
 		if (l == null){
-			l = new ArrayList<R>();
+			l = new ArrayList<MatchedEvent<R>>();
 			stateBuffer.put(state.getId(), l);
 		}
-		l.add(event);
+		MatchedEvent<R> matchedevent = new MatchedEvent<R>(lastEvent, event, stmt);
+		l.add(matchedevent);
+		this.lastEvent = matchedevent;
 	}
 	
-	public R getEvent(String stateId, int pos){
-		List<R> l = stateBuffer.get(stateId);
+	public MatchedEvent<R> getEvent(String stateId, int pos){
+		List<MatchedEvent<R>> l = stateBuffer.get(stateId);
 		if (l!=null && l.size()>0){
 			if (pos > 0 ){ // && pos < l.size()
 				return l.get(pos);
@@ -146,7 +148,7 @@ public class MatchingTrace<R> {
 	}
 
 	public int getStateBufferSize(State currentState) {
-		List<R> l = stateBuffer.get(currentState.getId());
+		List<MatchedEvent<R>> l = stateBuffer.get(currentState.getId());
 		return l.size();
 	}
 	

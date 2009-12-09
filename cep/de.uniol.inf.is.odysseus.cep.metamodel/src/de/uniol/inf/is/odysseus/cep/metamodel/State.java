@@ -21,6 +21,7 @@ public class State {
 	 * erste Zeichen ein Buchstabe sein muss. Darf kein leerer String sein.
 	 */
 	private String id;
+	private String var;
 	/**
 	 * Gibt an, ob ein Zustand ein Endzustand ist oder nicht.
 	 */
@@ -36,30 +37,34 @@ public class State {
 	 * 
 	 * @param id
 	 *            Die ID des Zustands (eindeutig innerhalb des Automaten)
+	 * @param var Eine Variable, die diesen Zustand betrifft
 	 * @param accepting
 	 *            true, wenn der Zustand ein Endzustand ist, ansonsten false
 	 * @param outgoingTransitions
 	 *            Liste der vom Zustand ausgehenden Transitionen. Nicht null.
 	 */
-	public State(String id, boolean accepting,
+	public State(String id, String var, boolean accepting,
 			List<Transition> outgoingTransitions) {
 		setId(id);
 		setAccepting(accepting);
 		setTransitions(outgoingTransitions);
+		setVar(var);
 	}
 
-	public State(String id, boolean accepting) {
+	public State(String id, String var, boolean accepting) {
 		setId(id);
 		setAccepting(accepting);
+		setVar(var);
 	}
 
 	public State() {
 	}
 	
-	public State(String id){
+
+	public State(String id, String var) {
+		setVar(var);
 		setId(id);
 	}
-	
 
 	/**
 	 * Gibt die automatenweit eindeutige ID des Zustands zurück.
@@ -143,7 +148,7 @@ public class State {
 	}
 
 	public String prettyPrint() {
-		String ret = "State: " +id+(accepting?" <F>":"")+"\n";
+		String ret = "State: " +id+(accepting?" <F>":"")+getVar()+"\n";
 		for (Transition t: transitions){
 			ret +="\t"+t.toString()+"\n";
 		}
@@ -157,6 +162,14 @@ public class State {
 			}
 		}
 		return false;
+	}
+
+	public String getVar() {
+		return var;
+	}
+
+	public void setVar(String var) {
+		this.var = var;
 	}
 
 

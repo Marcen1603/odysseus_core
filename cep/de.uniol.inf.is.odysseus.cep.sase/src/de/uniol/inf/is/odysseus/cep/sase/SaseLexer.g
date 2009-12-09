@@ -24,14 +24,15 @@ TIMEUNIT: 'hour'| 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minut
 SKIP_METHOD
 	: 'skip_till_next_match'|'skip_till_any_match'|'strict_contiguity'|'partition_contiguity';
 
-AGGREGATEOP : 'avg' | 'min' | 'max' | 'sum' | 'count'| 'AVG'|'MIN'|'MAX'|'SUM'|'COUNT' 
+AGGREGATEOP : 'Avg' | 'Min' | 'Max' | 'Sum' | 'Count'
 		;
-
 
 PLUS	: '+';
 MINUS	: '-';
 POINT	: '.';
-MULT	: '*'; 
+DIVISION: '/';
+MULT	: '*';
+
 COMPAREOP : '<='|'>='|'!='|'<'|'>';
 SINGLEEQUALS : '=';
 EQUALS 	: '==';

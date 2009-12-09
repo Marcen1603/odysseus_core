@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,7 +40,7 @@ public class SymbolTable {
 	 */
 	public SymbolTable(List<CepVariable> symTabScheme) {
 		for (CepVariable v: symTabScheme){
-			this.entries.put(v.getVariableName(), new LinkedList<Object>());
+			this.entries.put(v.getVariableName(), null);
 			this.vars.put(v.getVariableName(), v);
 		}		
 	}
@@ -92,7 +91,8 @@ public class SymbolTable {
 	}
 	
 	public void executeOperation(CepVariable variable, Object value) {
-		setValue(variable,variable.getOperation().execute(getValue(variable), value));
+		Object newValue = variable.getOperation().execute(getValue(variable), value);
+		setValue(variable, newValue);
 	}
 
 	@Override

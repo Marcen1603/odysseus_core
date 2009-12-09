@@ -19,6 +19,11 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 	@Override
 	public RelationalTuple<?> createComplexEvent(OutputScheme outputscheme,
 			MatchingTrace<R> matchingTrace, SymbolTable symTab) {
+		
+		System.out.println("RelationalCreator ");
+		System.out.println("MatchingTrace "+ matchingTrace);
+		System.out.println("SymbolTable "+ symTab);
+		
 		Object[] attributes = new Object[outputscheme.getEntries().size()];
 		for (int i = 0; i < outputscheme.getEntries().size(); i++) {
 			/*

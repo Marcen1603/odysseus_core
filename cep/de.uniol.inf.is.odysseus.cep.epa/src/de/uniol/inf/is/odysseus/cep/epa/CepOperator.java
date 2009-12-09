@@ -113,14 +113,14 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 * Verarbeitet ein übergebenes Event.
 	 */
 	@Override
-	protected void process_next(R object, int port) {
+	protected void process_next(R event, int port) {
 		if (logger.isDebugEnabled())
-			logger.debug("Beginne Verarbeitung von Event " + object);
+			logger.debug("Beginne Verarbeitung von Event " + event);
 		if (logger.isDebugEnabled())
 			logger.debug(this.getStats());
 
 		this.instances.add(new StateMachineInstance<R>(this.stateMachine));
-		if (object == null)
+		if (event == null)
 			throw new InvalidEventException(
 					"The event to be processed is null.");
 
@@ -128,7 +128,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
 
 		// Auswerten der Transition:
-		validateTransitions(object, outdatedInstances, branchedInstances, port);
+		validateTransitions(event, outdatedInstances, branchedInstances, port);
 
 		this.instances.addAll(branchedInstances);
 
@@ -149,7 +149,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			logger.debug("Verarbeitung abgeschlossen\n");
 	}
 
-	private void validateTransitions(R object,
+	private void validateTransitions(R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
@@ -163,7 +163,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				/*
 				 * Über Variablen iterieren und neu belegen.
 				 */
-				updateVariables(object, instance, transition, port);
+				updateVariables(event, instance, transition, port);
 				try {
 					if (transition.evaluate()) {
 						takeTransition.push(transition);
@@ -204,7 +204,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				if (logger.isDebugEnabled())
 					logger.debug("Eine gehbare Transition gefunden: "
 							+ takeTransition.peek());
-				this.takeTransition(instance, takeTransition.pop(), object,
+				this.takeTransition(instance, takeTransition.pop(), event,
 						port);
 			} else if (takeTransition.size() > 1) {
 				// mehr als 1 Folgezustand: nichtdeterministische Verzweigung!
@@ -216,11 +216,11 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				while (takeTransition.size() > 1) {
 					StateMachineInstance<R> newInstance = instance.clone();
 					this.takeTransition(newInstance, takeTransition.pop(),
-							object, port);
+							event, port);
 					this.branchingBuffer.addBranch(instance, newInstance);
 					branchedInstances.add(newInstance);
 				}
-				this.takeTransition(instance, takeTransition.pop(), object,
+				this.takeTransition(instance, takeTransition.pop(), event,
 						port);
 			}
 		}
@@ -304,9 +304,9 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		if (value == null) {
 			String[] split = varName.split(CepVariable.getSeperator());
 			int index = split[2].isEmpty()?-1:Integer.parseInt(split[2]);
-			R event = instance.getMatchingTrace().getEvent(split[1], index);
+			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(split[1], index);
 			if (event != null){
-				value = this.eventReader.get(port).getValue(split[3], event);
+				value = this.eventReader.get(port).getValue(split[3], event.getEvent());
 			}
 		}
 		return value;
@@ -381,7 +381,8 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	}
 
 	/**
-	 * ACHTUNG: Diese Methode ist fehlerhaft und wird deshalb bald entfernt!
+	 * ACHTUNG: Diese Methode ist fehlerhaft und wird deshalb bald entfernt! ????
+	 * 
 	 * Entfernt die übergebene Automateninstanz aus dem {@link BranchingBuffer}
 	 * . Ist der Consumption-Mode onlyOneMatch, so werden zusätzlich alle
 	 * verwandten Automateninstanzen aus dem {@link BranchingBuffer} entfernt.
@@ -435,11 +436,14 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			logger.debug("Zustandswechsel: "
 					+ instance.getCurrentState().getId() + "-->"
 					+ transition.getNextState().getId());
-		instance.setCurrentState(transition.getNextState());
+
 		if (logger.isDebugEnabled())
 			logger.debug("Fuehre Aktion aus: " + transition.getAction());
 		instance.executeAction(transition.getAction(), event, this.eventReader
 				.get(port));
+		
+		// TODO: Reihenfolge getauscht ....
+		instance.setCurrentState(transition.getNextState());
 		/*
 		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
 		 * das Event gespeichert wird. Wird der Zustand zuerst gewechselt, wird

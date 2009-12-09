@@ -8,6 +8,8 @@ import org.nfunk.jep.JEP;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.AbstractCondition;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
+import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
+
 
 public class JEPCondition extends AbstractCondition {
 
@@ -106,7 +108,13 @@ public class JEPCondition extends AbstractCondition {
 		double conditionValue = expression.getValue();
 		if (Double.isNaN(conditionValue)) {
 			Boolean boolVal = (Boolean) expression.getValueAsObject();
-			conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
+			if (boolVal != null){
+				conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
+			}else{
+				ConditionEvaluationException e = new ConditionEvaluationException();
+				e.fillInStackTrace();
+				throw e;
+			}
 		}
 		return (conditionValue != 0.0);
 	}

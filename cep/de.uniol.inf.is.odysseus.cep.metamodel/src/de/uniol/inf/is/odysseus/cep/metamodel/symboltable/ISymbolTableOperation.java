@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
-public interface ISymbolTableOperation<T> {
+public interface ISymbolTableOperation<T, E> {
 	/**
 	 * Definiert die Schnittstelle zum Ausführen der Operation auf der
 	 * Symboltabelle. Da eine Deep-Copy der Symboltabellenwerte beim ertsellen
@@ -22,7 +22,7 @@ public interface ISymbolTableOperation<T> {
 	 *         Umständen kann auch eine Referenz auf das unveränderte Objekt
 	 *         oldValue zurückgegeben werden.
 	 */
-	public Object execute(T oldValue, T eventValue);
+	public Object execute(T oldValue, E eventValue);
 	public String toString(String indent);
 	public String getName();
 }

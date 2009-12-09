@@ -22,7 +22,7 @@ public class SymbolTableOperationFactory {
 		if (Sum.class.getSimpleName().equalsIgnoreCase(name)){
 			return new Sum();
 		}
-
+		
 		throw new IllegalArgumentException("No such operation "+ name +" defined!");
 	}
 	

@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
-import java.util.Map.Entry;
-
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedActionException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
@@ -102,13 +100,15 @@ public class StateMachineInstance<R> {
 	 */
 	public void executeAction(EAction action, R event,
 			IEventReader<R,?> eventReader) throws UndefinedActionException {
+		System.out.println("ExecuteAction "+event+" in "+this.currentState.getId());
 		if (action == EAction.consume) {
-			this.matchingTrace.addEvent(event, this.currentState);	
+			this.matchingTrace.addEvent(event, this.currentState, this);	
 			// Symboltabelle aktualisieren
-			for (CepVariable entry : this.symTab.getKeys()) {
+			for (CepVariable entry : this.symTab.getKeys()) {			
 				
 				if (entry.getStateIdentifier().equals(
-						this.currentState.getId())) {
+						this.currentState.getVar())) {
+					// TODO: Warum die Unterscheidung??
 					if (entry.getIndex() == this.matchingTrace
 							.getStateBufferSize(this.currentState)-1) {
 						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));

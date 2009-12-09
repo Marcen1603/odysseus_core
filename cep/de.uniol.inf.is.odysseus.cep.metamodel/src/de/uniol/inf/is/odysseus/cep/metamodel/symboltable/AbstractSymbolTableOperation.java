@@ -7,7 +7,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
  * @author Thomas Vogelgesang
  * 
  */
-public abstract class AbstractSymbolTableOperation<T> implements ISymbolTableOperation<T> {
+public abstract class AbstractSymbolTableOperation<T, E> implements ISymbolTableOperation<T, E> {
 	
 	/**
 	 * Liefert den Namen der Operation

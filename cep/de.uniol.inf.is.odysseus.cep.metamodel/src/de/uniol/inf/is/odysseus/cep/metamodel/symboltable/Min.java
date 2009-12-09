@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author Thomas Vogelgesang
  * 
  */
-public class Min extends AbstractSymbolTableOperation<Number> {
+public class Min extends AbstractSymbolTableOperation<Number, Number> {
 
 	public Min() {
 		super();

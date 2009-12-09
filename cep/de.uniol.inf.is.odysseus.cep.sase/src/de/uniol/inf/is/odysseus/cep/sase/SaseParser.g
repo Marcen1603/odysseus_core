@@ -3,6 +3,7 @@ parser grammar SaseParser;
 options { 
 	output = AST;
 	tokenVocab = SaseLexer;
+	backtrack = true;
 }
 
 tokens{
@@ -11,7 +12,8 @@ tokens{
 	TYPE;
 	WHERESTRAT;
 	WHEREEXPRESSION;
-	EXPRESSION;
+	MATHEXPRESSION;
+	TERM;
 	ATTRIBUTE;
 	KATTRIBUTE;
 	PARAMLIST;
@@ -88,14 +90,19 @@ whereExpressions
 	;
 	
 expression
-	:	NAME -> ^(IDEXPRESSION NAME) | f1=term SINGLEEQUALS f2=term ->  ^(COMPAREEXPRESSION $f1 EQUALS $f2) | f1=term COMPAREOP f2=term -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
+	:	NAME -> ^(IDEXPRESSION NAME) | f1=mathExpression SINGLEEQUALS f2=mathExpression ->  ^(COMPAREEXPRESSION $f1 EQUALS $f2) | f1=mathExpression COMPAREOP f2=mathExpression -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
+	;
+	
+mathExpression:	left=term (op=(MULT|DIVISION) right=term)*
+							  
 	;
 
 term	:	aggregation |
 		kAttributeUsage POINT NAME -> ^(KMEMBER kAttributeUsage NAME)|
 		aName=NAME POINT member=NAME -> ^(MEMBER $aName $member)|
-		value		
+		value
 	;
+	
 	
 aggregation
 	:	AGGREGATEOP LBRACKET var=NAME ALLTOPREVIOUS POINT member=NAME RBRACKET -> ^(AGGREGATION AGGREGATEOP $var ALLTOPREVIOUS $member )

@@ -46,7 +46,7 @@ public class StateMachine<E> {
 	 * die abgeschlossene Automateninstanz oder alle damit verbundenen
 	 * Automateninstanzen aus dem Instanzspeicher entfernt werden.
 	 */
-	private EConsumptionMode consumptionMode;
+	private EConsumptionMode consumptionMode = EConsumptionMode.allMatches;
 
 	private EEventSelectionStrategy eventSelectionStrategy;
 
@@ -76,7 +76,6 @@ public class StateMachine<E> {
 		this.states = states;
 		this.initialState = initialState;
 		this.outputScheme = outputScheme;
-		this.consumptionMode = EConsumptionMode.allMatches;
 	}
 
 	/**
@@ -158,14 +157,17 @@ public class StateMachine<E> {
 				for (String v: t.getCondition().getVarNames()){
 					System.out.println("Variable "+v);
 					CepVariable var = new CepVariable(v);
-					if (var.getStateIdentifier() == null){
-						var.setStateIdentifier(s.getId());
+//					if (var.getStateIdentifier() == null){
+//						var.setStateIdentifier(s.getId());
+//					}
+//					if (var.getOperation() == null){
+//						var.setOperation(SymbolTableOperationFactory.getOperation("Write"));
+//					}
+					
+					if (var.getOperation() != null){
+						System.out.println("add "+var);
+						symTabScheme.add(var);
 					}
-					if (var.getOperation() == null){
-						var.setOperation(SymbolTableOperationFactory.getOperation("Write"));
-					}
-					System.out.println("add "+var);
-					symTabScheme.add(var);
 				}
 			}
 		}

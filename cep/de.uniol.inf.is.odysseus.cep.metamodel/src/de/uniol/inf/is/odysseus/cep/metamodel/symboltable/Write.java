@@ -8,7 +8,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
  * @author Thomas Vogelgesang
  * 
  */
-public class Write extends AbstractSymbolTableOperation {
+public class Write extends AbstractSymbolTableOperation<Object, Object> {
 
 	public Write() {
 		super();

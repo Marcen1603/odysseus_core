@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author tommy
  * 
  */
-public class Sum extends AbstractSymbolTableOperation<Number> {
+public class Sum extends AbstractSymbolTableOperation<Number, Number> {
 
 	public Sum() {
 		super();

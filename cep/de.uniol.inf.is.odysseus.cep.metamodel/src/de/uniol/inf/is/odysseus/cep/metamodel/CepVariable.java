@@ -85,6 +85,8 @@ public class CepVariable {
 		this.stateIdentifier = split[1];
 		if (split[2].length() > 0){
 			this.index = Integer.parseInt(split[2]);
+		}else{
+			this.index = -1;
 		}
 		this.attributename = split[3];
 	}

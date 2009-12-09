@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidDataTypeForSymTab
  * @author Thomas Vogelgesang
  * 
  */
-public class Max extends AbstractSymbolTableOperation<Number> {
+public class Max extends AbstractSymbolTableOperation<Number, Number> {
 
 	public Max() {
 		super();
