@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.cep.epa.MatchedEvent;
 import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
@@ -19,12 +24,19 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 	@Override
 	public RelationalTuple<?> createComplexEvent(OutputScheme outputscheme,
 			MatchingTrace<R> matchingTrace, SymbolTable symTab) {
-		
+		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
 		System.out.println("--------------------------------------------------------------------------");
 		System.out.println("RelationalCreator ");
-		System.out.println("MatchingTrace "+ matchingTrace);
-		System.out.println("SymbolTable "+ symTab);
-		
+	
+		List<MatchedEvent<R>> eList = new LinkedList<MatchedEvent<R>>();
+		MatchedEvent<R> event = lastEvent;
+		eList.add(event);
+		while ((event = event.getPrevious()) != null){
+			eList.add(event);
+		}
+		Collections.reverse(eList);
+		System.out.println("Matched Events "+eList);		
+		System.out.println("--------------------------------------------------------------------------");
 		Object[] attributes = new Object[outputscheme.getEntries().size()];
 		for (int i = 0; i < outputscheme.getEntries().size(); i++) {
 			/*
