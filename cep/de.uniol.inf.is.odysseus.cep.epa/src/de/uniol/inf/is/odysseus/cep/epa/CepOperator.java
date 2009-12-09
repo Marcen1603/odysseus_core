@@ -158,32 +158,34 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				logger.debug(instance.getStats());
 			Stack<Transition> takeTransition = new Stack<Transition>();
 
-			for (Transition transition : instance.getCurrentState()
-					.getTransitions()) {
-				/*
-				 * Über Variablen iterieren und neu belegen.
-				 */
-				updateVariables(event, instance, transition, port);
-				try {
-					if (transition.evaluate()) {
-						takeTransition.push(transition);
-						if (logger.isDebugEnabled())
-							logger.debug("Transitionsbedingung ist true: "
-									+ transition.getCondition().getLabel()
-									+ " (Wert: "
-									+ transition.getCondition().getValue()
-									+ ", "
-									+ transition.getCondition().getErrorInfo()
-									+ ")");
-
+			if (checkType(port,instance)){
+				for (Transition transition : instance.getCurrentState()
+						.getTransitions()) {
+					/*
+					 * Über Variablen iterieren und neu belegen.
+					 */
+					updateVariables(event, instance, transition, port);
+					try {
+						if (transition.evaluate()) {
+							takeTransition.push(transition);
+							if (logger.isDebugEnabled())
+								logger.debug("Transitionsbedingung ist true: "
+										+ transition.getCondition().getLabel()
+										+ " (Wert: "
+										+ transition.getCondition().getValue()
+										+ ", "
+										+ transition.getCondition().getErrorInfo()
+										+ ")");
+	
+						}
+					} catch (Exception e) {
+						// System.out.println(transition.getCondition().getLabel());
+						// System.out.println(transition.getCondition().getExpression().getErrorInfo());
+						// e.printStackTrace();
+						throw new ConditionEvaluationException(
+								"Cannot evaluate condition "
+										+ transition.getCondition(),e);			
 					}
-				} catch (Exception e) {
-					// System.out.println(transition.getCondition().getLabel());
-					// System.out.println(transition.getCondition().getExpression().getErrorInfo());
-					// e.printStackTrace();
-					throw new ConditionEvaluationException(
-							"Cannot evaluate condition "
-									+ transition.getCondition(),e);
 				}
 			}
 			if (takeTransition.isEmpty()) {
@@ -224,6 +226,16 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 						port);
 			}
 		}
+	}
+	
+	
+
+	/*
+	 * Determine if Event can be processed in current State 
+	 */
+	private boolean checkType(int port, StateMachineInstance<R> instance) {
+		String stateId = instance.getCurrentState().getId();		
+		return eventReader.get(port).getType().equals(stateId);
 	}
 
 	private void updateVariables(R object, StateMachineInstance<R> instance,

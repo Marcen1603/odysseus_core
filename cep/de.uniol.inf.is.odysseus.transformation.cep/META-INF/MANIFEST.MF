@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cep Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.cep
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Vendor: University of Oldenburg
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

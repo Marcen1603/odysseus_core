@@ -4,31 +4,41 @@ package de.uniol.inf.is.odysseus.cep.epa.eventreading.relational;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 
 public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Object> {
 
 	HashMap<String, Integer> scheme;
-
+	private String type;
+	
 	/**
 	 * Erzeugt einen neuen Eventreader für Events vom Typ
 	 * {@link RelationalTuple}.
 	 * 
+	 * TODO: ACHTUNG! Der Name der ersten Quelle ist der Name des Typs ... 
 	 * @param scheme
 	 *            Das relationale Schema der Tupel, die gelesen werden sollen.
+	 *            
 	 */
 	public RelationalReader(SDFAttributeList scheme) {
 		this.scheme = new HashMap<String, Integer>();
-		for (int i = 0; i < scheme.getAttributeCount(); i++) {
-			String id = scheme.get(i).toString();
-			this.scheme.put(id, new Integer(i));
-			// Im Prinzip interessiert nur der Teil nach dem letzten Punkt
-			String identifier = id.substring(id.lastIndexOf(".")+1);
-			this.scheme.put(identifier, new Integer(i));			
+		int i=0;
+		for (SDFAttribute a:scheme) {
+			Integer pos = new Integer(i);
+			this.scheme.put(a.toString(), pos);
+			this.scheme.put(a.getAttributeName(), pos);
+			i++;
 		}
+		this.type = scheme.get(0).getSourceName(); 
 	}
 
+	@Override
+	public String getType() {
+		return type;
+	}
+	
 	/**
 	 * Liest den Wert eines Eventattributs aus einem relationalen Tupel aus.
 	 * 
