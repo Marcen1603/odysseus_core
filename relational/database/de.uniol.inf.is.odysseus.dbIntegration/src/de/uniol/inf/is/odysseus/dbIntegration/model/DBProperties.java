@@ -3,12 +3,6 @@ package de.uniol.inf.is.odysseus.dbIntegration.model;
 
 public class DBProperties {
 
-	
-	private static String dbDriverClass = "com.mysql.jdbc.Driver";
-	private static String dbSchema = "jdbc:mysql:";
-	private static String dbServer = "134.76.20.169:3306";
-	
-	
 	private String database;
 	private String url;
 	private String driverClass;

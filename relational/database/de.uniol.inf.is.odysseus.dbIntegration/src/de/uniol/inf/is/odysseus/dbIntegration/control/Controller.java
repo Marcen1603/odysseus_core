@@ -2,14 +2,13 @@ package de.uniol.inf.is.odysseus.dbIntegration.control;
 
 import java.util.List;
 
-import org.osgi.framework.ServiceReference;
+
 
 import de.uniol.inf.is.odysseus.dbIntegration.Activator;
 import de.uniol.inf.is.odysseus.dbIntegration.dataAccess.DataAccess;
 import de.uniol.inf.is.odysseus.dbIntegration.exceptions.CacheMissException;
 import de.uniol.inf.is.odysseus.dbIntegration.exceptions.PrefetchException;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
-import de.uniol.inf.is.odysseus.dbIntegration.model.DBResult;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.ICache;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IPrefetch;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -36,29 +35,23 @@ public class Controller {
 	final static String NONE = "none";
 	
 	private void init() {
+		dal = new DataAccess(query, inputSchema);
 		if (!query.isUpdate()) {
 			setPreferences();
-			//TODO: funktioniert so nicht, doch ueber service tracker
-//			if (caching) {
-//				if (!setCacheService()) {
-//					caching = false;
-//					prefetching = false;
-//				} else {
-//					cache.addQuery(query, cachePrefs, dal);
-//				}
-//				if (prefetching) {
-//					if (!setPrefetchService()) {
-//						prefetching = false;
-//					} else {
-//						prefetch.addQuery(query, prefetchPrefs, dal);
-//					}
-//				}
-//			}
-		}
-		dal = new DataAccess(query, inputSchema);
+			
+			if (caching) {
+				cache = Activator.getCacheService();
+				cache.addQuery(query, queryPrefs, dal);
+			} 
+			if (prefetching) {
+				prefetch = Activator.getPrefetchService();
+				prefetch.addQuery(query, queryPrefs, dal);
+			}
+		}		
 	}
 	
 	private void setPreferences() {
+		
 		for (String string : queryPrefs) {
 			if (string.startsWith("ctrl"))  {
 				string = string.replaceFirst("ctrl", "").trim();
@@ -82,15 +75,16 @@ public class Controller {
 	
 	
 	
-	public DBResult getData(Object object) {
+	public List<RelationalTuple<?>> getData(Object object) {
 		RelationalTuple<?> tuple = (RelationalTuple<?>) object; 
-		if (caching) {
+		
+		if (caching && Activator.getCacheService() != null) {
 			try {
 				return cache.getCachedData(tuple, query);
 			} catch (CacheMissException e) {
-				if (prefetching) {
+				if (prefetching && Activator.getPrefetchService() != null) {
 					try {
-						DBResult result = prefetch.getCachedData(tuple, query);
+						List<RelationalTuple<?>> result = prefetch.getCachedData(tuple, query);
 						cache.addData(result, query);
 						return result;
 					} catch (PrefetchException e1) {
@@ -98,6 +92,8 @@ public class Controller {
 				}
 			}
 		}
+		System.out.println("out: " + tuple);
+		System.out.println("outhash: " + tuple.hashCode());
 		return dal.executeBaseQuery(tuple);
 	}
 	
@@ -114,24 +110,7 @@ public class Controller {
 	}
 
 	
-	private boolean setCacheService() {		
-		ServiceReference reference = Activator.getContext().getServiceReference(ICache.class.getName());
-		cache = (ICache) Activator.getContext().getService(reference);
-		if (cache != null) {
-			return true;
-		}
-		return false;
-	}
-	
-	
-	private boolean setPrefetchService() {
-		ServiceReference reference = Activator.getContext().getServiceReference(IPrefetch.class.getName());
-		prefetch = (IPrefetch) Activator.getContext().getService(reference);
-		if (prefetch != null) {
-			return true;
-		}
-		return false;
-	}
+
 	
 	
 	public List<String> getOutAttributeSchema() {

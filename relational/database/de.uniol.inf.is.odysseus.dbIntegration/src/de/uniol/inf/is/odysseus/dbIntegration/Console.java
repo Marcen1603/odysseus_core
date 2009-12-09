@@ -1,21 +1,15 @@
 package de.uniol.inf.is.odysseus.dbIntegration;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.service.prefs.BackingStoreException;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.dbIntegration.control.Controller;
 import de.uniol.inf.is.odysseus.dbIntegration.dataAccess.DataAccess;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBProperties;
-import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class Console implements CommandProvider {
 
@@ -23,6 +17,55 @@ public class Console implements CommandProvider {
 	IConnectionData connectionData;
 	DataAccess dal;
 	Controller controller;
+	
+	/*
+	 * ***********************
+			CREATE TABLE  `auction`.`person` (
+			  `id` int(11) NOT NULL,
+			  `name` varchar(50) NOT NULL,
+			  `email` varchar(50) NOT NULL,
+			  `creditcard` varchar(50) NOT NULL,
+			  `city` varchar(50) NOT NULL,
+			  `state` varchar(50) NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=latin1
+			
+			
+			public void _test1(CommandInterpreter ci) {
+				String db = "SELECT * " +
+					"FROM person " +
+					"WHERE $auction.seller = person.id AND " +
+							"person.id < 400";
+				
+				String ds;
+				ds = "SELECT db.name, db.city, db.state, db.id, auction.seller " +
+						"FROM nexmark:auction2 UNBOUNDED AS auction, DATABASE(auction, [[" + db + "]]) AS db ";
+				
+				
+				addQuery(ds);
+			}
+			
+			public void _test2(CommandInterpreter ci) {
+				String db = "SELECT * " +
+					"FROM person " +
+					"WHERE $ds.seller = person.id AND " +
+							"person.id < 400";
+				
+				String ds;
+				ds = "SELECT db.id, ds.seller " +
+						"FROM nexmark:auction2 UNBOUNDED AS ds, DATABASE(auction, 'ctrl cache', [[" + db + "]]) AS db ";
+				
+				
+				addQuery(ds);
+			}
+			
+			
+			
+			
+			
+	 ***********************
+	 **/
+	
 	
 	
 	public void _setConn(CommandInterpreter commandInterpreter) {
@@ -33,9 +76,6 @@ public class Console implements CommandProvider {
 		String url = "jdbc:mysql://localhost:3306/auction";
 		String driver = "com.mysql.jdbc.Driver";
 		DBProperties prop = new DBProperties(database, url, driver, user, password, schema);
-		
-		
-		
 		
 		try {
 			connectionData.addConnection(prop);
@@ -79,95 +119,6 @@ public class Console implements CommandProvider {
 			e.printStackTrace();
 		}
 	}
-	
-	public void _setInsertQuery(CommandInterpreter commandInterpreter) {
-		
-		
-		boolean isUpdate = true;
-		
-		String database = "auction";
-		String sql = "INSERT INTO auctionEnd " +
-				"(buyer, price, itemId, time) " +
-				"VALUES " +
-				"($buyer.name, $bid.price, $item.id, now())";
-		
-		
-		DBQuery dbQuery = new DBQuery(database, sql, isUpdate);
-		
-		//Testdaten liste
-		List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
-		attrList.add(new SDFAttribute("buyer", "name"));
-		attrList.add(new SDFAttribute("buyer", "address"));
-		attrList.add(new SDFAttribute("bid", "price"));
-		attrList.add(new SDFAttribute("bid", "item"));
-		attrList.add(new SDFAttribute("item", "id"));
-		attrList.add(new SDFAttribute("item", "name"));
-		attrList.add(new SDFAttribute("seller", "name"));
-		SDFAttributeList sdfList = new SDFAttributeList(attrList);
-		
-		controller = new Controller(dbQuery, sdfList);
-//		dal = new DataAccess(dbQuery, sdfList);
-	}
-	
-	public void _testInsertExecute(CommandInterpreter commandInterpreter) {
-		Object[] tupleObjs = new Object [7];
-		
-		tupleObjs[0] = "Hugo";
-		tupleObjs[1] = "Oldenburg";
-		tupleObjs[2] = 15;
-		tupleObjs[3] = 2222;
-		tupleObjs[4] = 2222;
-		tupleObjs[5] = "Fernseher";
-		tupleObjs[6] = "Egon";
-		
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(tupleObjs);
-		dal.executeBaseQuery(tuple);
-		
-	}
-	
-	
-	public void _setSelectQuery(CommandInterpreter commandInterpreter) {
-		String database = "auction";
-		String sql = "SELECT itemId, time " +
-				"FROM auctionEnd " +
-				"WHERE itemId = $item.id";
-		boolean isUpdate = false;
-		
-		DBQuery dbQuery = new DBQuery(database, sql, isUpdate);
-		
-		//Testdaten liste
-		List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
-		attrList.add((SDFAttribute) new SDFAttribute("buyer", "name"));
-		attrList.add((SDFAttribute) new SDFAttribute("buyer", "address"));
-		attrList.add((SDFAttribute) new SDFAttribute("bid", "price"));
-		attrList.add((SDFAttribute) new SDFAttribute("bid", "item"));
-		attrList.add((SDFAttribute) new SDFAttribute("item", "id"));
-		attrList.add((SDFAttribute) new SDFAttribute("item", "name"));
-		attrList.add((SDFAttribute) new SDFAttribute("seller", "name"));
-		SDFAttributeList sdfList = new SDFAttributeList(attrList);
-		
-		
-		dal = new DataAccess(dbQuery, sdfList);
-	}
-
-	public void _testSelectExecute(CommandInterpreter commandInterpreter) {
-		Object[] tupleObjs = new Object [7];
-		
-		tupleObjs[0] = "Hugo";
-		tupleObjs[1] = "Oldenburg";
-		tupleObjs[2] = 15;
-		tupleObjs[3] = 2222;
-		tupleObjs[4] = 2222;
-		tupleObjs[5] = "Fernseher";
-		tupleObjs[6] = "Egon";
-		
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(tupleObjs);
-		dal.executeBaseQuery(tuple);
-		
-	}
-	
-	
-	
 	
 	@Override
 	public String getHelp() {

@@ -16,11 +16,9 @@ import org.osgi.service.prefs.BackingStoreException;
 import de.uniol.inf.is.odysseus.dbIntegration.Activator;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBProperties;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
-import de.uniol.inf.is.odysseus.dbIntegration.model.DBResult;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IDataAccess;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -32,18 +30,11 @@ public class DataAccess implements IDataAccess {
 	private PreparedStatement prefetchQuery;
 	private DBQuery dbQuery;
 	private Connection connection;
-	private ArrayList<String> dsAttributes;
+	private LinkedList<String> dsAttributes;
 	private IConnectionData connectionData;
 	private SDFAttributeList sdfList;
 	
-	private String alias;
 	
-//	public DataAccess(DBQuery dbQuery) {
-//		this.dbQuery = dbQuery;
-//		baseQuery = prepareStatement(escape(dbQuery.getQuery()));
-//		dsAttributes = findDataStreamAttr(dbQuery.getQuery());
-//		
-//	}
 	public DataAccess(DBQuery dbQuery, SDFAttributeList sdfList) {
 		this.connectionData = getConnectionData(Activator.getContext());
 		this.dbQuery = dbQuery;
@@ -55,11 +46,6 @@ public class DataAccess implements IDataAccess {
 	}
 	
 	
-//	public void init(DBQuery dbQuery) {
-//		this.dbQuery = dbQuery;
-//		baseQuery = prepareStatement(escape(dbQuery.getQuery()));
-//		dsAttributes = findDataStreamAttr(dbQuery.getQuery());
-//	}
 
 	public DataAccess(DBQuery query) {
 		this.dbQuery = query;
@@ -68,15 +54,18 @@ public class DataAccess implements IDataAccess {
 	}
 
 
-	public DBResult executeBaseQuery (RelationalTuple<?> tuple) {
+	@Override
+	public List<RelationalTuple<?>> executeBaseQuery (RelationalTuple<?> tuple) {
 		return executeQuery(sortInput(tuple, sdfList, dsAttributes), baseQuery);
 	}
 	
-	public DBResult executeCacheQuery(RelationalTuple tuple) {
+	@Override
+	public List<RelationalTuple<?>> executeCacheQuery(RelationalTuple<?> tuple) {
 		return executeQuery(tuple, cacheQuery);
 	}
 
-	public DBResult executePrefetchQuery(RelationalTuple tuple) {
+	@Override
+	public List<RelationalTuple<?>> executePrefetchQuery(RelationalTuple<?> tuple) {
 		return executeQuery(tuple, prefetchQuery);
 	}
 
@@ -93,7 +82,7 @@ public class DataAccess implements IDataAccess {
 	
 	
 	
-	private DBResult executeQuery(RelationalTuple<?> tuple, PreparedStatement prst) {
+	private List<RelationalTuple<?>> executeQuery(RelationalTuple<?> tuple, PreparedStatement prst) {
 		
 		List<RelationalTuple<?>> list = new LinkedList<RelationalTuple<?>>() ;
 		ResultSet rs = null;
@@ -137,7 +126,7 @@ public class DataAccess implements IDataAccess {
 //			}
 		}
 		
-		return new DBResult(list);
+		return list;
 	}
 	
 	
@@ -145,23 +134,26 @@ public class DataAccess implements IDataAccess {
 		DBProperties properties;
 		try {
 			properties = connectionData.getConnection(dbQuery.getDatabase());
-			connection = null;
-			try {
-				Class.forName(properties.getDriverClass()).newInstance();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
-			connection = DriverManager.getConnection(
-					properties.getUrl(), 
-					properties.getUser(), 
-					properties.getPassword());
+			if (properties != null && !properties.getDriverClass().isEmpty()) {
+				connection = null;
+				try {
+					Class.forName(properties.getDriverClass()).newInstance();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				connection = DriverManager.getConnection(
+						properties.getUrl(), 
+						properties.getUser(), 
+						properties.getPassword());
+			}
 		} catch (BackingStoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -181,17 +173,32 @@ public class DataAccess implements IDataAccess {
 		try {
 			openConnection();
 			
+			String prepSql = sql;
+			sql = sql.replace("(", " ");
+			sql = sql.replace(")", " ");
+			sql = sql.replace(",", " ");
+			sql = sql.replace("=", " ");
+			String [] list = sql.split(" ");
+			LinkedList<String> prefList = new LinkedList<String>();
+			for (String string : list) {
+				if (string.startsWith("$")) {
+					prefList.add(string);
+				}
+			}
+			for (String string : prefList) {
+				prepSql = prepSql.replace(string, "?");
 			
-			//Elemente der Form "$source.attribute durch ? ersetzen
-			sql = sql.replaceAll("\\$\\w+\\.\\w+", "?");
-			prst = connection.prepareStatement(sql);
+			}
+//			System.out.println(prepSql);
+//			
+//			//Elemente der Form "$source.attribute durch ? ersetzen
+//			sql = sql.replaceAll("\\$\\w+\\.\\w+", "?");
+			prst = connection.prepareStatement(prepSql);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
 		return prst;
-		
-		
 	}
 	
 	public List<String> getOutAttributeSchema() {
@@ -268,21 +275,31 @@ public class DataAccess implements IDataAccess {
 	 * @param sql
 	 * @return eine Liste der Referenzen
 	 */
-	private ArrayList<String> findDataStreamAttr(String sql) {
-		String [] list = new String [0];
-		list = sql.split("[^\\$\\w*\\.]");
-		ArrayList<String> result = new ArrayList<String>();
-		
-		for (String string : list) {
-			if(string.startsWith("$")) {
-				result.add(string.replaceFirst("\\$", "").trim());
-			}
-		}
-//		for (String string : result) {
-//			System.out.println(string);
+	private LinkedList<String> findDataStreamAttr(String sql) {
+//		String [] list = new String [0];
+//		list = sql.split("[^\\$\\w*\\.]");
+//		ArrayList<String> result = new ArrayList<String>();
+//		
+//		for (String string : list) {
+//			if(string.startsWith("$")) {
+//				result.add(string.replaceFirst("\\$", "").trim());
+//			}
 //		}
 		
-		return result;
+		sql = sql.replace("(", " ");
+		sql = sql.replace(")", " ");
+		sql = sql.replace(",", " ");
+		sql = sql.replace("=", " ");
+		String [] list = sql.split(" ");
+		LinkedList<String> prefList = new LinkedList<String>();
+		for (String string : list) {
+			if (string.startsWith("$")) {
+				prefList.add(string.replace("$", ""));
+			}
+		}
+
+		
+		return prefList;
 	}
 	
 	private void filterSQLCommands(String sql) {
@@ -300,6 +317,12 @@ public class DataAccess implements IDataAccess {
 		}
 		return null;
 		
+	}
+	
+	@Override
+	public RelationalTuple<?> getRelevantParams(RelationalTuple<?> tuple) {
+		RelationalTuple<?> param = sortInput(tuple, sdfList, dsAttributes);
+		return param;
 	}
 	
 

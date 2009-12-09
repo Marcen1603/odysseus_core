@@ -72,26 +72,27 @@ public class CreateDatabaseAOVisitor extends AbstractDefaultVisitor implements I
 
 	@Override
 	public Object visit(ASTDatabaseOptions node, Object data) {
-		dbOptions.add(node.jjtGetChild(0).toString());
+		String option = node.jjtGetChild(0).toString().replace("\"", "");
+		dbOptions.add(option);
 		return null;
 	}
 
-	private ArrayList<String> findDataStreamAttr(String sql) {
-		String[] list = new String[0];
-		list = sql.split("[^\\$\\w*\\.]");
-		ArrayList<String> result = new ArrayList<String>();
-
-		for (String string : list) {
-			if (string.startsWith("$")) {
-				result.add(string.replaceFirst("\\$", "").trim());
-			}
-		}
-		// for (String string : result) {
-		// System.out.println(string);
-		// }
-
-		return result;
-	}
+//	private ArrayList<String> findDataStreamAttr(String sql) {
+//		String[] list = new String[0];
+//		list = sql.split("[^\\$\\w*\\.]");
+//		ArrayList<String> result = new ArrayList<String>();
+//
+//		for (String string : list) {
+//			if (string.startsWith("$")) {
+//				result.add(string.replaceFirst("\\$", "").trim());
+//			}
+//		}
+//		// for (String string : result) {
+//		// System.out.println(string);
+//		// }
+//
+//		return result;
+//	}
 
 	public Object visit(ASTAS node, Object data) {
 		alias = ((ASTIdentifier) node.jjtGetChild(0)).getName();
