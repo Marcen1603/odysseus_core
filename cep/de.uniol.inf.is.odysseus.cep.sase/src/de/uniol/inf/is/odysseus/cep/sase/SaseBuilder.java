@@ -256,7 +256,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 									+ "_proceed", dest, new JEPCondition(""),
 									EAction.consume));
 							source.addTransition(new Transition(source.getId()
-									+ "_take", dest, new JEPCondition(""),
+									+ "_take", source, new JEPCondition(""),
 									EAction.consume));
 						} else {
 							source.addTransition(new Transition(source.getId()
@@ -295,7 +295,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				recStates.add(new State(id + "[i]", id));
 			} else if (str.equals("TYPE")) {
 				String id = getChild(state, 1).getChild(0).getText();
-				recStates.add(new State(id,id));
+				recStates.add(new State(id, id));
 			}
 		}
 		return recStates;
@@ -450,15 +450,15 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						aggregation = "";
 						stateIdentifier = "";
 						index = "";
-					} 
+					}
 				}
-			}else{
-				if (attrib.isKleeneAttribute()){
+			} else {
+				if (attrib.isKleeneAttribute()) {
 					if (attrib.getKleenePart().equals("[1]")) {
 						index = "0";
-					}else if (attrib.getKleenePart().equals("[i-1]")) {
+					} else if (attrib.getKleenePart().equals("[i-1]")) {
 						index = "-1";
-					}else if (attrib.getKleenePart().equals("[i]")) {
+					} else if (attrib.getKleenePart().equals("[i]")) {
 						index = "";
 					}
 				}
@@ -474,10 +474,10 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	private String replaceStrings(String ret, String oldString, String newString) {
-		System.out.println("replace " + oldString + " in " + ret + " with "
-				+ newString);
+		// System.out.println("replace " + oldString + " in " + ret + " with "
+		// + newString);
 		ret = ret.replace(oldString, newString);
-		System.out.println("--> " + ret);
+		// System.out.println("--> " + ret);
 		return ret;
 	}
 

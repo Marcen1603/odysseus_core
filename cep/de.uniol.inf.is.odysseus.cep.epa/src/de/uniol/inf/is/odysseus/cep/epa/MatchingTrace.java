@@ -152,4 +152,9 @@ public class MatchingTrace<R> {
 		return l.size();
 	}
 	
+	@Override
+	public String toString() {
+		return stateBuffer.toString();
+	}
+	
 }

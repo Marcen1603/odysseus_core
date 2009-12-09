@@ -100,7 +100,6 @@ public class StateMachineInstance<R> {
 	 */
 	public void executeAction(EAction action, R event,
 			IEventReader<R,?> eventReader) throws UndefinedActionException {
-		System.out.println("ExecuteAction "+event+" in "+this.currentState.getId());
 		if (action == EAction.consume) {
 			this.matchingTrace.addEvent(event, this.currentState, this);	
 			// Symboltabelle aktualisieren
@@ -109,12 +108,12 @@ public class StateMachineInstance<R> {
 				if (entry.getStateIdentifier().equals(
 						this.currentState.getVar())) {
 					// TODO: Warum die Unterscheidung??
-					if (entry.getIndex() == this.matchingTrace
-							.getStateBufferSize(this.currentState)-1) {
+//					if (entry.getIndex() == this.matchingTrace
+//							.getStateBufferSize(this.currentState)-1) {
 						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));
-					} else if (entry.getIndex() < 0) {
-						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));
-					}
+//					} else if (entry.getIndex() < 0) {
+//						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));
+//					}
 				}
 			}
 		} else if (action == EAction.discard) {

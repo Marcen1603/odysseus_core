@@ -141,7 +141,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		this.instances.removeAll(outdatedInstances);
 
 		if (logger.isDebugEnabled())
-			logger.debug("Erzeugte Events: " + complexEvents);
+			if (complexEvents.size() > 0) logger.debug("Erzeugte Events: " + complexEvents);
 
 		this.transfer(complexEvents);
 
@@ -229,8 +229,8 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	private void updateVariables(R object, StateMachineInstance<R> instance,
 			Transition transition, int port) {
 		for (String varName : transition.getCondition().getVarNames()) {
-			if (logger.isDebugEnabled())
-				logger.debug("Setze Variable " + varName);
+//			if (logger.isDebugEnabled())
+//				logger.debug("Setze Variable " + varName);
 
 			Object newValue = null;
 			if (CepVariable.isActEventName(varName)) {
@@ -240,9 +240,9 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				newValue = getValue(port, instance, varName);				
 			}
 			transition.getCondition().setValue(varName, newValue);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Neuer Wert: " + newValue);
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Neuer Wert: " + newValue);
+//			}
 		}
 	}
 
@@ -441,9 +441,12 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			logger.debug("Fuehre Aktion aus: " + transition.getAction());
 		instance.executeAction(transition.getAction(), event, this.eventReader
 				.get(port));
-		
-		// TODO: Reihenfolge getauscht ....
+		if (logger.isDebugEnabled())
+			logger.debug(instance.getMatchingTrace()+"");
+
+		// TODO: getauscht ... Auswirkungen??
 		instance.setCurrentState(transition.getNextState());
+		
 		/*
 		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
 		 * das Event gespeichert wird. Wird der Zustand zuerst gewechselt, wird

@@ -70,5 +70,10 @@ public class MatchedEvent<R> {
 		}
 		return new MatchedEvent<R>(newPrevious, this.event, this.stmi);
 	}
+	
+	@Override
+	public String toString() {
+		return ""+event+" from Stmi ("+stmi.hashCode()+")";
+	}
 
 }
