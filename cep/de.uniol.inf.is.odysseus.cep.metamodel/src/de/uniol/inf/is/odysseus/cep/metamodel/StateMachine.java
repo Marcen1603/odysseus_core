@@ -149,13 +149,13 @@ public class StateMachine<E> {
 	
 	private void initSymTabScheme(){
 		symTabScheme = new ArrayList<CepVariable>();
-		System.out.println("INIT SYM TAB SCHEME");
+		//System.out.println("INIT SYM TAB SCHEME");
 		for (State s: states){
-			System.out.println("State "+s.getId());
+			//System.out.println("State "+s.getId());
 			for (Transition t: s.getTransitions()){
-				System.out.println("Transition "+t.getId());
+				//System.out.println("Transition "+t.getId());
 				for (String v: t.getCondition().getVarNames()){
-					System.out.println("Variable "+v);
+			//		System.out.println("Variable "+v);
 					CepVariable var = new CepVariable(v);
 //					if (var.getStateIdentifier() == null){
 //						var.setStateIdentifier(s.getId());
@@ -165,7 +165,7 @@ public class StateMachine<E> {
 //					}
 					
 					if (var.getOperation() != null){
-						System.out.println("add "+var);
+					//	System.out.println("add "+var);
 						symTabScheme.add(var);
 					}
 				}

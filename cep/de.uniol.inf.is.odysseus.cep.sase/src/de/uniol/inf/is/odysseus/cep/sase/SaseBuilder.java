@@ -450,12 +450,16 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						aggregation = "";
 						stateIdentifier = "";
 						index = "";
-					} else {
-						if (attrib.getKleenePart().equals("[1]")) {
-							index = "0";
-						}else if (attrib.getKleenePart().equals("[i-1]")) {
-							index = "-1";
-						}
+					} 
+				}
+			}else{
+				if (attrib.isKleeneAttribute()){
+					if (attrib.getKleenePart().equals("[1]")) {
+						index = "0";
+					}else if (attrib.getKleenePart().equals("[i-1]")) {
+						index = "-1";
+					}else if (attrib.getKleenePart().equals("[i]")) {
+						index = "";
 					}
 				}
 			}
@@ -611,7 +615,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		// + "WHERE skip_till_any_match(a,b[]){"
 		// + "a.type = \"contaminated\" AND " + "b[1].from = a.site AND "
 		// + "b[i].from = b[i-1].to} " + "WITHIN 3 hours",
-		"PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[1].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour" };
+		"PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour" };
 
 		try {
 			for (String q : toParse) {
