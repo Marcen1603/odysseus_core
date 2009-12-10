@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListe
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
 
 /**
- * Base class for scheduler. Contains Mthodes for setting the scheduling state
+ * Base class for scheduler. Contains Methodes for setting the scheduling state
  * and error handling.
  * 
  * @author Wolf Bauer
@@ -20,7 +20,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	private boolean isRunning;
 
 	/**
-	 * TODO: sollte jemand anderes dokumentieren (Wolf).
+	 * Maximum time each strategy can use (no garantee if strategy)
 	 */
 	protected volatile long timeSlicePerStrategy = 10;
 
