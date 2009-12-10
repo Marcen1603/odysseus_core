@@ -46,21 +46,26 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	class CompareExpression {
 		public List<PathAttribute> attributes = new LinkedList<PathAttribute>();
 		String fullExpression = null;
-		
+
 		@Override
 		public String toString() {
-			
+
 			return attributes + " " + fullExpression;
 		}
 
 		boolean contains(String attrib) {
+			return get(attrib) != null;
+		}
+		
+		PathAttribute get(String attrib){
 			for (PathAttribute a : attributes) {
 				if (attrib.startsWith(a.getStatename())) {
-					return true;
+					return a;
 				}
 			}
-			return false;
+			return null;			
 		}
+		
 
 		public String getFullExpression() {
 			return fullExpression;
@@ -243,7 +248,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				states = processStates(getChildren(child), sourceNames);
 				// Append Accepting State
 				if (states != null && states.size() > 0) {
-					states.add(new State("<ACCEPTING>", "", null ,true));
+					states.add(new State("<ACCEPTING>", "", null, true));
 					StateMachine<RelationalTuple<?>> sm = cepAo
 							.getStateMachine();
 					sm.setStates(states);
@@ -376,13 +381,17 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						.iterator();
 				while (compareIter.hasNext()) {
 					CompareExpression ce = compareIter.next();
-					if (ce.contains(s.getId())) {
+					//System.out.println(ce);
+					PathAttribute attr = ce.get(s.getId());
+					if (attr != null) {
 						Transition t = s.getTransition(s.getId() + "_begin");
-						if (t == null) {
-							t = s.getTransition(s.getId() + "_take");
-						}
-						if (t == null) {
-							t = s.getTransition(s.getId() + "_proceed");
+						
+						if (t == null && attr.isKleeneAttribute()){
+							if (attr.getKleenePart().equals("[i]")) {
+								t = s.getTransition(s.getId() + "_take");
+							}else{
+								t = s.getTransition(s.getId() + "_proceed");
+							}
 						}
 						// Anpassen der Variablennamen für das Metamodell:
 						String fullExpression = tranformAttributesToMetamodell(
@@ -503,8 +512,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						.toString(), elem.getChild(2).toString(), elem
 						.getChild(3).toString(), SymbolTableOperationFactory
 						.getOperation(elem.getChild(0).toString()).getName());
-				System.out.println("found aggregation " + attr + " "
-						+ attr.getAggregation());
+				//System.out.println("found aggregation " + attr + " "
+				//		+ attr.getAggregation());
 				expr.attributes.add(attr);
 			}
 		}
@@ -593,8 +602,6 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		createDummySource("nexmark:person");
 		createDummySource("nexmark:auction");
 		createDummySource("nexmark:category");
-		
-		
 
 		String[] toParse = new String[] {
 		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ a[1].symbol = a[i].symbol and a[1].symbol=b.symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
@@ -610,9 +617,10 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		// + "WHERE skip_till_any_match(a,b[]){"
 		// + "a.type = \"contaminated\" AND " + "b[1].from = a.site AND "
 		// + "b[i].from = b[i-1].to} " + "WITHIN 3 hours",
-		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour", 
-		//"PATTERN SEQ(nexmark:person2 person, nexmark:auction2+ auction[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"
-				"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"};
+		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour",
+		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2+ auction[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"
+		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction) WHERE skip_till_any_match(person, auction){person.id = auction.seller}",
+		"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2}" };
 		try {
 			for (String q : toParse) {
 				System.out.println(q);
