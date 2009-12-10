@@ -59,8 +59,6 @@ public class CepVariable {
 	/**
 	 * Erzeugt einen Eintrag-Objekt für das Symboltabellenschema
 	 * 
-	 * @param entryID
-	 *            Die ID des Eintrags
 	 * @param stateIdentifier
 	 *            die ID des Events / Zustands
 	 * @param index
@@ -71,8 +69,7 @@ public class CepVariable {
 	 *            Operation, die bei der Aktualisierung des Eintrags ausgeführt
 	 *            werden soll
 	 */
-	public CepVariable(int entryID, String stateIdentifier, int index,
-			String attribute, ISymbolTableOperation operation) {
+	public CepVariable(String stateIdentifier, int index, String attribute, ISymbolTableOperation operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
 		this.attributename = attribute;
@@ -117,6 +114,8 @@ public class CepVariable {
 		return ret.toString();
 	}
 
+	
+	
 	/**
 	 * Setzt den Operator für den Symboltabellenschema-Eintrag.
 	 * 
@@ -227,6 +226,10 @@ public class CepVariable {
 		return "_";
 	}
 
+	public static String createAttribute(String name){
+		return getSeperator()+getSeperator()+getSeperator()+name;
+	}
+	
 	public static String getAttributeName(String varName) {
 		String[] split = varName.split(getSeperator());
 		return split[3];

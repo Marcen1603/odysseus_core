@@ -259,15 +259,15 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						State dest = states.get(i + 1);
 						if (source.getId().endsWith("[i]")) {
 							source.addTransition(new Transition(source.getId()
-									+ "_proceed", dest, new JEPCondition(""),
-									EAction.discard));
+									+ "_proceed", dest, new JEPCondition(CepVariable.createAttribute(source.getId())+".type==\""+source.getType()+"\""),
+									EAction.consumeNoBufferWrite));
 							source.addTransition(new Transition(source.getId()
-									+ "_take", source, new JEPCondition(""),
-									EAction.consume));
+									+ "_take", source, new JEPCondition(CepVariable.createAttribute(source.getId())+".type==\""+source.getType()+"\""),
+									EAction.consumeBufferWrite));
 						} else {
 							source.addTransition(new Transition(source.getId()
-									+ "_begin", dest, new JEPCondition(""),
-									EAction.consume));
+									+ "_begin", dest, new JEPCondition(CepVariable.createAttribute(source.getId())+".type==\""+source.getType()+"\""),
+									EAction.consumeBufferWrite));
 						}
 						if (i > 0 && i < states.size() - 1) {
 							// Ignore auf sich selbst!
@@ -620,7 +620,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour",
 		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2+ auction[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"
 		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction) WHERE skip_till_any_match(person, auction){person.id = auction.seller}",
-		"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2}" };
+		"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2}" };
 		try {
 			for (String q : toParse) {
 				System.out.println(q);

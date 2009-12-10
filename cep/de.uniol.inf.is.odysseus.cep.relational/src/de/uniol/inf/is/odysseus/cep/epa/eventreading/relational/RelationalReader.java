@@ -8,10 +8,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 
-public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Object> {
+public class RelationalReader extends AbstractEventReader<RelationalTuple<?>> {
 
 	HashMap<String, Integer> scheme;
-	private String name;
+	
 	
 	/**
 	 * Erzeugt einen neuen Eventreader f√ºr Events vom Typ
@@ -21,7 +21,8 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 	 *            Das relationale Schema der Tupel, die gelesen werden sollen.
 	 *            
 	 */
-	public RelationalReader(SDFAttributeList scheme, String name) {
+	public RelationalReader(SDFAttributeList scheme, String type) {
+		super(type);
 		this.scheme = new HashMap<String, Integer>();
 		int i=0;
 		for (SDFAttribute a:scheme) {
@@ -30,12 +31,6 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 			this.scheme.put(a.getAttributeName(), pos);
 			i++;
 		}
-		this.name =name;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 	
 	/**
@@ -48,7 +43,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 	 *            vom Typ {@link RelationalTuple} sein!
 	 */
 	@Override
-	public Object getValue(String id, RelationalTuple<?> event) {
+	protected Object getValue_internal(String id, RelationalTuple<?> event) {
 		if (id.isEmpty())
 			return null;//Leere Attribut id bei bstimmten Aggregationen (z.B. Count)
 		
@@ -60,10 +55,10 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 			// Beim n‰chsten mal sofort finden :-)
 			scheme.put(id, pos);
 		}
-		
-		RelationalTuple<?> tuple = (RelationalTuple<?>) event;
 		if (pos != null){
-			return tuple.getAttribute(pos);
+			RelationalTuple<?> tuple = (RelationalTuple<?>) event;
+			Object ret = tuple.getAttribute(pos);
+			return ret;
 		}else{
 			return null;
 		}

@@ -100,8 +100,10 @@ public class StateMachineInstance<R> {
 	 */
 	public void executeAction(EAction action, R event,
 			IEventReader<R,?> eventReader) throws UndefinedActionException {
-		if (action == EAction.consume) {
-			this.matchingTrace.addEvent(event, this.currentState, this);	
+		if (action == EAction.consumeBufferWrite || action == EAction.consumeNoBufferWrite) {
+			if (action == EAction.consumeBufferWrite){
+				this.matchingTrace.addEvent(event, this.currentState, this);
+			}
 			// Symboltabelle aktualisieren
 			for (CepVariable entry : this.symTab.getKeys()) {			
 				
