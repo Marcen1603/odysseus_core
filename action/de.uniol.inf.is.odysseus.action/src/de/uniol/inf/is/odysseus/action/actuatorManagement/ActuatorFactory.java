@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.action.actuatorManagement;
 import java.util.HashMap;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
+import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 
 /**
  * Factory for Creation, Acess to all kind of {@link AbstractActuator}s
@@ -21,12 +21,13 @@ public class ActuatorFactory {
 		this.actuatorManager.put(manager.getName(), manager);
 	}
 	
-	public void createActuator (String actuatorDescription, String managerName) throws ActuatorCreationException{
+	public void createActuator (String name, String actuatorDescription, String managerName) 
+		throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
-			manager.createActuator(actuatorDescription);
+			manager.createActuator(name, actuatorDescription);
 		}
-		throw new ActuatorCreationException("Actuator manager not bound yet");
+		throw new ActuatorException("Actuator manager not bound yet");
 	}
 	
 	public void unbindActuatorManager(IActuatorManager manager){

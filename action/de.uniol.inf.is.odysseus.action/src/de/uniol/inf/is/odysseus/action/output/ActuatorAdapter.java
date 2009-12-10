@@ -7,7 +7,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorMethod;
 import de.uniol.inf.is.odysseus.action.actuatorManagement.IActuator;
-import de.uniol.inf.is.odysseus.action.exception.ActuatorExecutionException;
+import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 
 public abstract class ActuatorAdapter implements IActuator {
 	private ArrayList<ActuatorMethod> methods;
@@ -27,7 +27,7 @@ public abstract class ActuatorAdapter implements IActuator {
 	
 	
 	@Override
-	public void executeMethod(String method, Object[] params) throws ActuatorExecutionException {
+	public void executeMethod(String method, Object[] params) throws ActuatorException {
 		//check if method is defined in this class
 		ActuatorMethod existingMethod = null;
 		for (ActuatorMethod m : this.methods){
@@ -37,7 +37,7 @@ public abstract class ActuatorAdapter implements IActuator {
 			}
 		}
 		if (existingMethod == null){
-			throw new ActuatorExecutionException("Method undefined");
+			throw new ActuatorException("Method undefined for actuator: "+this.getClass().getName());
 		}
 		//execute method
 		try {

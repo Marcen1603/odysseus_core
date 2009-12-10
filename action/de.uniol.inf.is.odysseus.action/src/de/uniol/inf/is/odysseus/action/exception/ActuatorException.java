@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.action.exception;
 
-public class ActuatorCreationException extends Exception {
+public class ActuatorException extends Exception {
 	private static final long serialVersionUID = -8804550131376391625L;
 	
-	public ActuatorCreationException(String message) {
+	public ActuatorException(String message) {
 		super(message);
 	}
 

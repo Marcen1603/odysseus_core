@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.eca;
 
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +12,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
 public class ECAParser implements IQueryParser{
-	private HashMap<Pattern, String> languagePatterns = new HashMap<Pattern, String>();
 	private Pattern ecaPattern;
 	
 	private ICompiler compiler;
@@ -25,13 +22,6 @@ public class ECAParser implements IQueryParser{
 		String method = "\\w+\\s*\\(["+param+"[,\\s*"+param+"]*]?\\)";
 		String actuator = "\\w+\\."+method;	
 		this.ecaPattern = Pattern.compile("(ON\\s*\\().*(\\)\\s*DO\\s+"+actuator+"[\\s+"+actuator+"]*)", Pattern.CASE_INSENSITIVE);
-		
-		//fill with patterns TODO schöner wäre, wenn parser dies als service bereitstellen
-		String cqlAttributes = "[a-zA-Z*\\(\\)\\*\\.\\s]+[,\\s*[a-zA-Z*\\(\\)\\*\\.\\s]+]*";
-		String cqlSources = "[a-zA-Z*\\(\\)\\.\\s]+[,\\s*[a-zA-Z*\\(\\)\\.\\s]+]*";
-		this.languagePatterns.put(
-				Pattern.compile("SELECT\\s+"+cqlAttributes+"\\s+FROM\\s+"+ cqlSources+"[\\s+WHERE\\s+]?.*", Pattern.CASE_INSENSITIVE)
-				, "CQL");
 	}
 	
 	@Override
@@ -52,12 +42,12 @@ public class ECAParser implements IQueryParser{
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
 		//extract internal query
+		String lang = ""; // in query
 		Matcher matcher = this.ecaPattern.matcher(query);
 		if (matcher.matches()){
 			matcher.reset();
 			if (matcher.find()){
 				String interalQuery = query.substring(matcher.end(1), matcher.start(2));
-				String lang = this.determineQueryLanguage(interalQuery);
 				
 				String actuatorString = query.substring(matcher.start(2)+1, query.length());
 				//remove do-key phrase
@@ -81,15 +71,6 @@ public class ECAParser implements IQueryParser{
 			
 		}
 		throw new QueryParseException("No output schema defined");
-	}
-
-	private String determineQueryLanguage(String query) throws QueryParseException {
-		for (Entry<Pattern, String> entry : this.languagePatterns.entrySet()){
-			if (entry.getKey().matcher(query).matches()){
-				return entry.getValue();
-			}
-		}
-		throw new QueryParseException("Unknown Eventlanguage");
 	}
 
 	@Override

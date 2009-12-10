@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
-import de.uniol.inf.is.odysseus.action.exception.ActuatorCreationException;
+import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.output.WorkflowClient;
 
 /**
@@ -31,15 +31,15 @@ public class WorkflowClientManager implements IActuatorManager {
 	}
 
 	@Override
-	public void createActuator(String description) throws ActuatorCreationException{
+	public void createActuator(String name, String description) throws ActuatorException{
 		WorkflowClient client = this.clients.get(description);
 		if (client == null){
 			try {
 				URL url = new URL(description);
 				client = new WorkflowClient(factory.createClient(url));
-				this.clients.put(description, client);			
+				this.clients.put(name, client);			
 			} catch (MalformedURLException e) {
-				throw new ActuatorCreationException(e.getMessage());
+				throw new ActuatorException(e.getMessage());
 			} 
 		}
 	}
