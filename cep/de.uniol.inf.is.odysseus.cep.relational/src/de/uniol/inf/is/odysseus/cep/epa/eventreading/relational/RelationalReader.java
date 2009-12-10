@@ -11,18 +11,17 @@ import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Object> {
 
 	HashMap<String, Integer> scheme;
-	private String type;
+	private String name;
 	
 	/**
 	 * Erzeugt einen neuen Eventreader für Events vom Typ
 	 * {@link RelationalTuple}.
-	 * 
-	 * TODO: ACHTUNG! Der Name der ersten Quelle ist der Name des Typs ... 
+	 *  
 	 * @param scheme
 	 *            Das relationale Schema der Tupel, die gelesen werden sollen.
 	 *            
 	 */
-	public RelationalReader(SDFAttributeList scheme) {
+	public RelationalReader(SDFAttributeList scheme, String name) {
 		this.scheme = new HashMap<String, Integer>();
 		int i=0;
 		for (SDFAttribute a:scheme) {
@@ -31,12 +30,12 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>,Obj
 			this.scheme.put(a.getAttributeName(), pos);
 			i++;
 		}
-		this.type = scheme.get(0).getSourceName(); 
+		this.name =name;
 	}
 
 	@Override
-	public String getType() {
-		return type;
+	public String getName() {
+		return name;
 	}
 	
 	/**

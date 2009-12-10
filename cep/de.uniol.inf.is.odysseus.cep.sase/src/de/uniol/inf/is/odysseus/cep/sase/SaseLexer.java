@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2009-12-09 11:45:16
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2009-12-10 09:23:22
  package de.uniol.inf.is.odysseus.cep.sase; 
 
 import org.antlr.runtime.*;
@@ -70,14 +70,62 @@ public class SaseLexer extends Lexer {
         try {
             int _type = HAVING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:8: ( 'HAVING' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:10: 'HAVING'
-            {
-            match("HAVING"); 
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:8: ( 'HAVING' | 'having' | 'Having' )
+            int alt1=3;
+            int LA1_0 = input.LA(1);
 
+            if ( (LA1_0=='H') ) {
+                int LA1_1 = input.LA(2);
+
+                if ( (LA1_1=='A') ) {
+                    alt1=1;
+                }
+                else if ( (LA1_1=='a') ) {
+                    alt1=3;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 1, 1, input);
+
+                    throw nvae;
+                }
+            }
+            else if ( (LA1_0=='h') ) {
+                alt1=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 1, 0, input);
+
+                throw nvae;
+            }
+            switch (alt1) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:10: 'HAVING'
+                    {
+                    match("HAVING"); 
+
+
+                    }
+                    break;
+                case 2 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:19: 'having'
+                    {
+                    match("having"); 
+
+
+                    }
+                    break;
+                case 3 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:28: 'Having'
+                    {
+                    match("Having"); 
+
+
+                    }
+                    break;
 
             }
-
             state.type = _type;
             state.channel = _channel;
         }
@@ -91,14 +139,62 @@ public class SaseLexer extends Lexer {
         try {
             int _type = PATTERN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:9: ( 'PATTERN' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:11: 'PATTERN'
-            {
-            match("PATTERN"); 
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:9: ( 'PATTERN' | 'pattern' | 'Pattern' )
+            int alt2=3;
+            int LA2_0 = input.LA(1);
 
+            if ( (LA2_0=='P') ) {
+                int LA2_1 = input.LA(2);
+
+                if ( (LA2_1=='A') ) {
+                    alt2=1;
+                }
+                else if ( (LA2_1=='a') ) {
+                    alt2=3;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 2, 1, input);
+
+                    throw nvae;
+                }
+            }
+            else if ( (LA2_0=='p') ) {
+                alt2=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 2, 0, input);
+
+                throw nvae;
+            }
+            switch (alt2) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:11: 'PATTERN'
+                    {
+                    match("PATTERN"); 
+
+
+                    }
+                    break;
+                case 2 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:21: 'pattern'
+                    {
+                    match("pattern"); 
+
+
+                    }
+                    break;
+                case 3 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:31: 'Pattern'
+                    {
+                    match("Pattern"); 
+
+
+                    }
+                    break;
 
             }
-
             state.type = _type;
             state.channel = _channel;
         }
@@ -112,14 +208,62 @@ public class SaseLexer extends Lexer {
         try {
             int _type = WHERE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:7: ( 'WHERE' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:9: 'WHERE'
-            {
-            match("WHERE"); 
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:7: ( 'where' | 'WHERE' | 'Where' )
+            int alt3=3;
+            int LA3_0 = input.LA(1);
 
+            if ( (LA3_0=='w') ) {
+                alt3=1;
+            }
+            else if ( (LA3_0=='W') ) {
+                int LA3_2 = input.LA(2);
+
+                if ( (LA3_2=='H') ) {
+                    alt3=2;
+                }
+                else if ( (LA3_2=='h') ) {
+                    alt3=3;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 3, 2, input);
+
+                    throw nvae;
+                }
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 3, 0, input);
+
+                throw nvae;
+            }
+            switch (alt3) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:9: 'where'
+                    {
+                    match("where"); 
+
+
+                    }
+                    break;
+                case 2 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:17: 'WHERE'
+                    {
+                    match("WHERE"); 
+
+
+                    }
+                    break;
+                case 3 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:25: 'Where'
+                    {
+                    match("Where"); 
+
+
+                    }
+                    break;
 
             }
-
             state.type = _type;
             state.channel = _channel;
         }
@@ -133,14 +277,62 @@ public class SaseLexer extends Lexer {
         try {
             int _type = WITHIN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:8: ( 'WITHIN' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:10: 'WITHIN'
-            {
-            match("WITHIN"); 
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:8: ( 'WITHIN' | 'within' | 'Within' )
+            int alt4=3;
+            int LA4_0 = input.LA(1);
 
+            if ( (LA4_0=='W') ) {
+                int LA4_1 = input.LA(2);
+
+                if ( (LA4_1=='I') ) {
+                    alt4=1;
+                }
+                else if ( (LA4_1=='i') ) {
+                    alt4=3;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 4, 1, input);
+
+                    throw nvae;
+                }
+            }
+            else if ( (LA4_0=='w') ) {
+                alt4=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 4, 0, input);
+
+                throw nvae;
+            }
+            switch (alt4) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:10: 'WITHIN'
+                    {
+                    match("WITHIN"); 
+
+
+                    }
+                    break;
+                case 2 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:19: 'within'
+                    {
+                    match("within"); 
+
+
+                    }
+                    break;
+                case 3 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:28: 'Within'
+                    {
+                    match("Within"); 
+
+
+                    }
+                    break;
 
             }
-
             state.type = _type;
             state.channel = _channel;
         }
@@ -154,14 +346,62 @@ public class SaseLexer extends Lexer {
         try {
             int _type = SEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:5: ( 'SEQ' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:7: 'SEQ'
-            {
-            match("SEQ"); 
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:5: ( 'SEQ' | 'seq' | 'Seq' )
+            int alt5=3;
+            int LA5_0 = input.LA(1);
 
+            if ( (LA5_0=='S') ) {
+                int LA5_1 = input.LA(2);
+
+                if ( (LA5_1=='E') ) {
+                    alt5=1;
+                }
+                else if ( (LA5_1=='e') ) {
+                    alt5=3;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 5, 1, input);
+
+                    throw nvae;
+                }
+            }
+            else if ( (LA5_0=='s') ) {
+                alt5=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 5, 0, input);
+
+                throw nvae;
+            }
+            switch (alt5) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:7: 'SEQ'
+                    {
+                    match("SEQ"); 
+
+
+                    }
+                    break;
+                case 2 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:13: 'seq'
+                    {
+                    match("seq"); 
+
+
+                    }
+                    break;
+                case 3 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:19: 'Seq'
+                    {
+                    match("Seq"); 
+
+
+                    }
+                    break;
 
             }
-
             state.type = _type;
             state.channel = _channel;
         }
@@ -215,23 +455,36 @@ public class SaseLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:12:5: ( 'AND' | 'and' )
-            int alt1=2;
-            int LA1_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:12:5: ( 'AND' | 'and' | 'And' )
+            int alt6=3;
+            int LA6_0 = input.LA(1);
 
-            if ( (LA1_0=='A') ) {
-                alt1=1;
+            if ( (LA6_0=='A') ) {
+                int LA6_1 = input.LA(2);
+
+                if ( (LA6_1=='N') ) {
+                    alt6=1;
+                }
+                else if ( (LA6_1=='n') ) {
+                    alt6=3;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 6, 1, input);
+
+                    throw nvae;
+                }
             }
-            else if ( (LA1_0=='a') ) {
-                alt1=2;
+            else if ( (LA6_0=='a') ) {
+                alt6=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 1, 0, input);
+                    new NoViableAltException("", 6, 0, input);
 
                 throw nvae;
             }
-            switch (alt1) {
+            switch (alt6) {
                 case 1 :
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:12:6: 'AND'
                     {
@@ -244,6 +497,14 @@ public class SaseLexer extends Lexer {
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:12:12: 'and'
                     {
                     match("and"); 
+
+
+                    }
+                    break;
+                case 3 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:12:18: 'And'
+                    {
+                    match("And"); 
 
 
                     }
@@ -411,9 +672,9 @@ public class SaseLexer extends Lexer {
             int _type = TIMEUNIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:22:9: ( 'hour' | 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds' )
-            int alt2=10;
-            alt2 = dfa2.predict(input);
-            switch (alt2) {
+            int alt7=10;
+            alt7 = dfa7.predict(input);
+            switch (alt7) {
                 case 1 :
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:22:11: 'hour'
                     {
@@ -510,9 +771,9 @@ public class SaseLexer extends Lexer {
             int _type = SKIP_METHOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:25:2: ( 'skip_till_next_match' | 'skip_till_any_match' | 'strict_contiguity' | 'partition_contiguity' )
-            int alt3=4;
-            alt3 = dfa3.predict(input);
-            switch (alt3) {
+            int alt8=4;
+            alt8 = dfa8.predict(input);
+            switch (alt8) {
                 case 1 :
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:25:4: 'skip_till_next_match'
                     {
@@ -561,26 +822,26 @@ public class SaseLexer extends Lexer {
             int _type = AGGREGATEOP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:27:13: ( 'Avg' | 'Min' | 'Max' | 'Sum' | 'Count' )
-            int alt4=5;
+            int alt9=5;
             switch ( input.LA(1) ) {
             case 'A':
                 {
-                alt4=1;
+                alt9=1;
                 }
                 break;
             case 'M':
                 {
-                int LA4_2 = input.LA(2);
+                int LA9_2 = input.LA(2);
 
-                if ( (LA4_2=='i') ) {
-                    alt4=2;
+                if ( (LA9_2=='i') ) {
+                    alt9=2;
                 }
-                else if ( (LA4_2=='a') ) {
-                    alt4=3;
+                else if ( (LA9_2=='a') ) {
+                    alt9=3;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 4, 2, input);
+                        new NoViableAltException("", 9, 2, input);
 
                     throw nvae;
                 }
@@ -588,22 +849,22 @@ public class SaseLexer extends Lexer {
                 break;
             case 'S':
                 {
-                alt4=4;
+                alt9=4;
                 }
                 break;
             case 'C':
                 {
-                alt4=5;
+                alt9=5;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 4, 0, input);
+                    new NoViableAltException("", 9, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt4) {
+            switch (alt9) {
                 case 1 :
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:27:15: 'Avg'
                     {
@@ -760,43 +1021,43 @@ public class SaseLexer extends Lexer {
             int _type = COMPAREOP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:36:11: ( '<=' | '>=' | '!=' | '<' | '>' )
-            int alt5=5;
+            int alt10=5;
             switch ( input.LA(1) ) {
             case '<':
                 {
-                int LA5_1 = input.LA(2);
+                int LA10_1 = input.LA(2);
 
-                if ( (LA5_1=='=') ) {
-                    alt5=1;
+                if ( (LA10_1=='=') ) {
+                    alt10=1;
                 }
                 else {
-                    alt5=4;}
+                    alt10=4;}
                 }
                 break;
             case '>':
                 {
-                int LA5_2 = input.LA(2);
+                int LA10_2 = input.LA(2);
 
-                if ( (LA5_2=='=') ) {
-                    alt5=2;
+                if ( (LA10_2=='=') ) {
+                    alt10=2;
                 }
                 else {
-                    alt5=5;}
+                    alt10=5;}
                 }
                 break;
             case '!':
                 {
-                alt5=3;
+                alt10=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 5, 0, input);
+                    new NoViableAltException("", 10, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt5) {
+            switch (alt10) {
                 case 1 :
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:36:13: '<='
                     {
@@ -972,9 +1233,9 @@ public class SaseLexer extends Lexer {
             int _type = NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:50:8: ( INTEGER | FLOAT )
-            int alt6=2;
-            alt6 = dfa6.predict(input);
-            switch (alt6) {
+            int alt11=2;
+            alt11 = dfa11.predict(input);
+            switch (alt11) {
                 case 1 :
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:50:11: INTEGER
                     {
@@ -1008,18 +1269,18 @@ public class SaseLexer extends Lexer {
             mINTEGER(); 
             match('.'); 
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:51:30: ( DIGIT )+
-            int cnt7=0;
-            loop7:
+            int cnt12=0;
+            loop12:
             do {
-                int alt7=2;
-                int LA7_0 = input.LA(1);
+                int alt12=2;
+                int LA12_0 = input.LA(1);
 
-                if ( ((LA7_0>='0' && LA7_0<='9')) ) {
-                    alt7=1;
+                if ( ((LA12_0>='0' && LA12_0<='9')) ) {
+                    alt12=1;
                 }
 
 
-                switch (alt7) {
+                switch (alt12) {
             	case 1 :
             	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:51:30: DIGIT
             	    {
@@ -1029,12 +1290,12 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt7 >= 1 ) break loop7;
+            	    if ( cnt12 >= 1 ) break loop12;
                         EarlyExitException eee =
-                            new EarlyExitException(7, input);
+                            new EarlyExitException(12, input);
                         throw eee;
                 }
-                cnt7++;
+                cnt12++;
             } while (true);
 
 
@@ -1050,22 +1311,22 @@ public class SaseLexer extends Lexer {
     public final void mINTEGER() throws RecognitionException {
         try {
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:18: ( '0' | '1' .. '9' ( '0' .. '9' )* )
-            int alt9=2;
-            int LA9_0 = input.LA(1);
+            int alt14=2;
+            int LA14_0 = input.LA(1);
 
-            if ( (LA9_0=='0') ) {
-                alt9=1;
+            if ( (LA14_0=='0') ) {
+                alt14=1;
             }
-            else if ( ((LA9_0>='1' && LA9_0<='9')) ) {
-                alt9=2;
+            else if ( ((LA14_0>='1' && LA14_0<='9')) ) {
+                alt14=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 9, 0, input);
+                    new NoViableAltException("", 14, 0, input);
 
                 throw nvae;
             }
-            switch (alt9) {
+            switch (alt14) {
                 case 1 :
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:20: '0'
                     {
@@ -1078,17 +1339,17 @@ public class SaseLexer extends Lexer {
                     {
                     matchRange('1','9'); 
                     // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:35: ( '0' .. '9' )*
-                    loop8:
+                    loop13:
                     do {
-                        int alt8=2;
-                        int LA8_0 = input.LA(1);
+                        int alt13=2;
+                        int LA13_0 = input.LA(1);
 
-                        if ( ((LA8_0>='0' && LA8_0<='9')) ) {
-                            alt8=1;
+                        if ( ((LA13_0>='0' && LA13_0<='9')) ) {
+                            alt13=1;
                         }
 
 
-                        switch (alt8) {
+                        switch (alt13) {
                     	case 1 :
                     	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:36: '0' .. '9'
                     	    {
@@ -1098,7 +1359,7 @@ public class SaseLexer extends Lexer {
                     	    break;
 
                     	default :
-                    	    break loop8;
+                    	    break loop13;
                         }
                     } while (true);
 
@@ -1123,17 +1384,17 @@ public class SaseLexer extends Lexer {
             {
             mLETTER(); 
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:15: ( LETTER | DIGIT | '_' | ':' )*
-            loop10:
+            loop15:
             do {
-                int alt10=2;
-                int LA10_0 = input.LA(1);
+                int alt15=2;
+                int LA15_0 = input.LA(1);
 
-                if ( ((LA10_0>='0' && LA10_0<=':')||(LA10_0>='A' && LA10_0<='Z')||LA10_0=='_'||(LA10_0>='a' && LA10_0<='z')) ) {
-                    alt10=1;
+                if ( ((LA15_0>='0' && LA15_0<=':')||(LA15_0>='A' && LA15_0<='Z')||LA15_0=='_'||(LA15_0>='a' && LA15_0<='z')) ) {
+                    alt15=1;
                 }
 
 
-                switch (alt10) {
+                switch (alt15) {
             	case 1 :
             	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             	    {
@@ -1151,7 +1412,7 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop10;
+            	    break loop15;
                 }
             } while (true);
 
@@ -1176,17 +1437,17 @@ public class SaseLexer extends Lexer {
             {
             match('\"'); 
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:55:22: ( NONCONTROL_CHAR )*
-            loop11:
+            loop16:
             do {
-                int alt11=2;
-                int LA11_0 = input.LA(1);
+                int alt16=2;
+                int LA16_0 = input.LA(1);
 
-                if ( (LA11_0=='\t'||LA11_0==' '||(LA11_0>='0' && LA11_0<='9')||(LA11_0>='A' && LA11_0<='Z')||(LA11_0>='a' && LA11_0<='z')) ) {
-                    alt11=1;
+                if ( (LA16_0=='\t'||LA16_0==' '||(LA16_0>='0' && LA16_0<='9')||(LA16_0>='A' && LA16_0<='Z')||(LA16_0>='a' && LA16_0<='z')) ) {
+                    alt16=1;
                 }
 
 
-                switch (alt11) {
+                switch (alt16) {
             	case 1 :
             	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:55:22: NONCONTROL_CHAR
             	    {
@@ -1196,7 +1457,7 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop11;
+            	    break loop16;
                 }
             } while (true);
 
@@ -1341,29 +1602,29 @@ public class SaseLexer extends Lexer {
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:11: ( ( '\\r' )? '\\n' )+
             {
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:11: ( ( '\\r' )? '\\n' )+
-            int cnt13=0;
-            loop13:
+            int cnt18=0;
+            loop18:
             do {
-                int alt13=2;
-                int LA13_0 = input.LA(1);
+                int alt18=2;
+                int LA18_0 = input.LA(1);
 
-                if ( (LA13_0=='\n'||LA13_0=='\r') ) {
-                    alt13=1;
+                if ( (LA18_0=='\n'||LA18_0=='\r') ) {
+                    alt18=1;
                 }
 
 
-                switch (alt13) {
+                switch (alt18) {
             	case 1 :
             	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:12: ( '\\r' )? '\\n'
             	    {
             	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:12: ( '\\r' )?
-            	    int alt12=2;
-            	    int LA12_0 = input.LA(1);
+            	    int alt17=2;
+            	    int LA17_0 = input.LA(1);
 
-            	    if ( (LA12_0=='\r') ) {
-            	        alt12=1;
+            	    if ( (LA17_0=='\r') ) {
+            	        alt17=1;
             	    }
-            	    switch (alt12) {
+            	    switch (alt17) {
             	        case 1 :
             	            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:12: '\\r'
             	            {
@@ -1380,12 +1641,12 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt13 >= 1 ) break loop13;
+            	    if ( cnt18 >= 1 ) break loop18;
                         EarlyExitException eee =
-                            new EarlyExitException(13, input);
+                            new EarlyExitException(18, input);
                         throw eee;
                 }
-                cnt13++;
+                cnt18++;
             } while (true);
 
             _channel = HIDDEN;
@@ -1409,18 +1670,18 @@ public class SaseLexer extends Lexer {
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:14: ( SPACE )+
             {
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:14: ( SPACE )+
-            int cnt14=0;
-            loop14:
+            int cnt19=0;
+            loop19:
             do {
-                int alt14=2;
-                int LA14_0 = input.LA(1);
+                int alt19=2;
+                int LA19_0 = input.LA(1);
 
-                if ( (LA14_0=='\t'||LA14_0==' ') ) {
-                    alt14=1;
+                if ( (LA19_0=='\t'||LA19_0==' ') ) {
+                    alt19=1;
                 }
 
 
-                switch (alt14) {
+                switch (alt19) {
             	case 1 :
             	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:14: SPACE
             	    {
@@ -1430,12 +1691,12 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt14 >= 1 ) break loop14;
+            	    if ( cnt19 >= 1 ) break loop19;
                         EarlyExitException eee =
-                            new EarlyExitException(14, input);
+                            new EarlyExitException(19, input);
                         throw eee;
                 }
-                cnt14++;
+                cnt19++;
             } while (true);
 
             _channel = HIDDEN;
@@ -1452,9 +1713,9 @@ public class SaseLexer extends Lexer {
 
     public void mTokens() throws RecognitionException {
         // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:8: ( HAVING | PATTERN | WHERE | WITHIN | SEQ | LEFTCURLY | RIGHTCURLY | AND | FIRST | CURRENT | PREVIOUS | ALLTOPREVIOUS | LAST | BBRACKETLEFT | BBRACKETRIGHT | TIMEUNIT | SKIP_METHOD | AGGREGATEOP | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOT | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE )
-        int alt15=35;
-        alt15 = dfa15.predict(input);
-        switch (alt15) {
+        int alt20=35;
+        alt20 = dfa20.predict(input);
+        switch (alt20) {
             case 1 :
                 // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:10: HAVING
                 {
@@ -1706,31 +1967,31 @@ public class SaseLexer extends Lexer {
     }
 
 
-    protected DFA2 dfa2 = new DFA2(this);
-    protected DFA3 dfa3 = new DFA3(this);
-    protected DFA6 dfa6 = new DFA6(this);
-    protected DFA15 dfa15 = new DFA15(this);
-    static final String DFA2_eotS =
+    protected DFA7 dfa7 = new DFA7(this);
+    protected DFA8 dfa8 = new DFA8(this);
+    protected DFA11 dfa11 = new DFA11(this);
+    protected DFA20 dfa20 = new DFA20(this);
+    static final String DFA7_eotS =
         "\15\uffff\1\23\1\25\12\uffff\1\35\1\uffff\1\40\10\uffff\1\46\2"+
         "\uffff";
-    static final String DFA2_eofS =
+    static final String DFA7_eofS =
         "\47\uffff";
-    static final String DFA2_minS =
+    static final String DFA7_minS =
         "\1\144\1\157\1\151\1\145\1\141\1\165\1\154\1\143\1\171\1\162\1"+
         "\165\1\154\1\157\2\163\1\164\1\151\1\156\4\uffff\1\145\1\163\1\144"+
         "\1\163\1\145\1\163\2\uffff\1\143\2\uffff\1\157\1\156\1\144\1\163"+
         "\2\uffff";
-    static final String DFA2_maxS =
+    static final String DFA7_maxS =
         "\1\163\1\157\1\151\1\145\1\141\1\165\1\156\1\143\1\171\1\162\1"+
         "\165\1\154\1\157\2\163\1\164\1\151\1\156\4\uffff\1\145\1\163\1\144"+
         "\1\163\1\145\1\163\2\uffff\1\143\2\uffff\1\157\1\156\1\144\1\163"+
         "\2\uffff";
-    static final String DFA2_acceptS =
+    static final String DFA7_acceptS =
         "\22\uffff\1\11\1\4\1\6\1\1\6\uffff\1\7\1\2\1\uffff\1\10\1\3\4\uffff"+
         "\1\12\1\5";
-    static final String DFA2_specialS =
+    static final String DFA7_specialS =
         "\47\uffff}>";
-    static final String[] DFA2_transitionS = {
+    static final String[] DFA7_transitionS = {
             "\1\4\3\uffff\1\1\4\uffff\1\2\5\uffff\1\3",
             "\1\5",
             "\1\6",
@@ -1772,54 +2033,54 @@ public class SaseLexer extends Lexer {
             ""
     };
 
-    static final short[] DFA2_eot = DFA.unpackEncodedString(DFA2_eotS);
-    static final short[] DFA2_eof = DFA.unpackEncodedString(DFA2_eofS);
-    static final char[] DFA2_min = DFA.unpackEncodedStringToUnsignedChars(DFA2_minS);
-    static final char[] DFA2_max = DFA.unpackEncodedStringToUnsignedChars(DFA2_maxS);
-    static final short[] DFA2_accept = DFA.unpackEncodedString(DFA2_acceptS);
-    static final short[] DFA2_special = DFA.unpackEncodedString(DFA2_specialS);
-    static final short[][] DFA2_transition;
+    static final short[] DFA7_eot = DFA.unpackEncodedString(DFA7_eotS);
+    static final short[] DFA7_eof = DFA.unpackEncodedString(DFA7_eofS);
+    static final char[] DFA7_min = DFA.unpackEncodedStringToUnsignedChars(DFA7_minS);
+    static final char[] DFA7_max = DFA.unpackEncodedStringToUnsignedChars(DFA7_maxS);
+    static final short[] DFA7_accept = DFA.unpackEncodedString(DFA7_acceptS);
+    static final short[] DFA7_special = DFA.unpackEncodedString(DFA7_specialS);
+    static final short[][] DFA7_transition;
 
     static {
-        int numStates = DFA2_transitionS.length;
-        DFA2_transition = new short[numStates][];
+        int numStates = DFA7_transitionS.length;
+        DFA7_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA2_transition[i] = DFA.unpackEncodedString(DFA2_transitionS[i]);
+            DFA7_transition[i] = DFA.unpackEncodedString(DFA7_transitionS[i]);
         }
     }
 
-    class DFA2 extends DFA {
+    class DFA7 extends DFA {
 
-        public DFA2(BaseRecognizer recognizer) {
+        public DFA7(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 2;
-            this.eot = DFA2_eot;
-            this.eof = DFA2_eof;
-            this.min = DFA2_min;
-            this.max = DFA2_max;
-            this.accept = DFA2_accept;
-            this.special = DFA2_special;
-            this.transition = DFA2_transition;
+            this.decisionNumber = 7;
+            this.eot = DFA7_eot;
+            this.eof = DFA7_eof;
+            this.min = DFA7_min;
+            this.max = DFA7_max;
+            this.accept = DFA7_accept;
+            this.special = DFA7_special;
+            this.transition = DFA7_transition;
         }
         public String getDescription() {
             return "22:1: TIMEUNIT : ( 'hour' | 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds' );";
         }
     }
-    static final String DFA3_eotS =
+    static final String DFA8_eotS =
         "\17\uffff";
-    static final String DFA3_eofS =
+    static final String DFA8_eofS =
         "\17\uffff";
-    static final String DFA3_minS =
+    static final String DFA8_minS =
         "\1\160\1\153\1\uffff\1\151\1\uffff\1\160\1\137\1\164\1\151\2\154"+
         "\1\137\1\141\2\uffff";
-    static final String DFA3_maxS =
+    static final String DFA8_maxS =
         "\1\163\1\164\1\uffff\1\151\1\uffff\1\160\1\137\1\164\1\151\2\154"+
         "\1\137\1\156\2\uffff";
-    static final String DFA3_acceptS =
+    static final String DFA8_acceptS =
         "\2\uffff\1\4\1\uffff\1\3\10\uffff\1\1\1\2";
-    static final String DFA3_specialS =
+    static final String DFA8_specialS =
         "\17\uffff}>";
-    static final String[] DFA3_transitionS = {
+    static final String[] DFA8_transitionS = {
             "\1\2\2\uffff\1\1",
             "\1\3\10\uffff\1\4",
             "",
@@ -1837,52 +2098,52 @@ public class SaseLexer extends Lexer {
             ""
     };
 
-    static final short[] DFA3_eot = DFA.unpackEncodedString(DFA3_eotS);
-    static final short[] DFA3_eof = DFA.unpackEncodedString(DFA3_eofS);
-    static final char[] DFA3_min = DFA.unpackEncodedStringToUnsignedChars(DFA3_minS);
-    static final char[] DFA3_max = DFA.unpackEncodedStringToUnsignedChars(DFA3_maxS);
-    static final short[] DFA3_accept = DFA.unpackEncodedString(DFA3_acceptS);
-    static final short[] DFA3_special = DFA.unpackEncodedString(DFA3_specialS);
-    static final short[][] DFA3_transition;
+    static final short[] DFA8_eot = DFA.unpackEncodedString(DFA8_eotS);
+    static final short[] DFA8_eof = DFA.unpackEncodedString(DFA8_eofS);
+    static final char[] DFA8_min = DFA.unpackEncodedStringToUnsignedChars(DFA8_minS);
+    static final char[] DFA8_max = DFA.unpackEncodedStringToUnsignedChars(DFA8_maxS);
+    static final short[] DFA8_accept = DFA.unpackEncodedString(DFA8_acceptS);
+    static final short[] DFA8_special = DFA.unpackEncodedString(DFA8_specialS);
+    static final short[][] DFA8_transition;
 
     static {
-        int numStates = DFA3_transitionS.length;
-        DFA3_transition = new short[numStates][];
+        int numStates = DFA8_transitionS.length;
+        DFA8_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA3_transition[i] = DFA.unpackEncodedString(DFA3_transitionS[i]);
+            DFA8_transition[i] = DFA.unpackEncodedString(DFA8_transitionS[i]);
         }
     }
 
-    class DFA3 extends DFA {
+    class DFA8 extends DFA {
 
-        public DFA3(BaseRecognizer recognizer) {
+        public DFA8(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 3;
-            this.eot = DFA3_eot;
-            this.eof = DFA3_eof;
-            this.min = DFA3_min;
-            this.max = DFA3_max;
-            this.accept = DFA3_accept;
-            this.special = DFA3_special;
-            this.transition = DFA3_transition;
+            this.decisionNumber = 8;
+            this.eot = DFA8_eot;
+            this.eof = DFA8_eof;
+            this.min = DFA8_min;
+            this.max = DFA8_max;
+            this.accept = DFA8_accept;
+            this.special = DFA8_special;
+            this.transition = DFA8_transition;
         }
         public String getDescription() {
             return "24:1: SKIP_METHOD : ( 'skip_till_next_match' | 'skip_till_any_match' | 'strict_contiguity' | 'partition_contiguity' );";
         }
     }
-    static final String DFA6_eotS =
+    static final String DFA11_eotS =
         "\1\uffff\2\3\2\uffff\1\3";
-    static final String DFA6_eofS =
+    static final String DFA11_eofS =
         "\6\uffff";
-    static final String DFA6_minS =
+    static final String DFA11_minS =
         "\1\60\2\56\2\uffff\1\56";
-    static final String DFA6_maxS =
+    static final String DFA11_maxS =
         "\1\71\1\56\1\71\2\uffff\1\71";
-    static final String DFA6_acceptS =
+    static final String DFA11_acceptS =
         "\3\uffff\1\1\1\2\1\uffff";
-    static final String DFA6_specialS =
+    static final String DFA11_specialS =
         "\6\uffff}>";
-    static final String[] DFA6_transitionS = {
+    static final String[] DFA11_transitionS = {
             "\1\1\11\2",
             "\1\4",
             "\1\4\1\uffff\12\5",
@@ -1891,226 +2152,211 @@ public class SaseLexer extends Lexer {
             "\1\4\1\uffff\12\5"
     };
 
-    static final short[] DFA6_eot = DFA.unpackEncodedString(DFA6_eotS);
-    static final short[] DFA6_eof = DFA.unpackEncodedString(DFA6_eofS);
-    static final char[] DFA6_min = DFA.unpackEncodedStringToUnsignedChars(DFA6_minS);
-    static final char[] DFA6_max = DFA.unpackEncodedStringToUnsignedChars(DFA6_maxS);
-    static final short[] DFA6_accept = DFA.unpackEncodedString(DFA6_acceptS);
-    static final short[] DFA6_special = DFA.unpackEncodedString(DFA6_specialS);
-    static final short[][] DFA6_transition;
+    static final short[] DFA11_eot = DFA.unpackEncodedString(DFA11_eotS);
+    static final short[] DFA11_eof = DFA.unpackEncodedString(DFA11_eofS);
+    static final char[] DFA11_min = DFA.unpackEncodedStringToUnsignedChars(DFA11_minS);
+    static final char[] DFA11_max = DFA.unpackEncodedStringToUnsignedChars(DFA11_maxS);
+    static final short[] DFA11_accept = DFA.unpackEncodedString(DFA11_acceptS);
+    static final short[] DFA11_special = DFA.unpackEncodedString(DFA11_specialS);
+    static final short[][] DFA11_transition;
 
     static {
-        int numStates = DFA6_transitionS.length;
-        DFA6_transition = new short[numStates][];
+        int numStates = DFA11_transitionS.length;
+        DFA11_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA6_transition[i] = DFA.unpackEncodedString(DFA6_transitionS[i]);
+            DFA11_transition[i] = DFA.unpackEncodedString(DFA11_transitionS[i]);
         }
     }
 
-    class DFA6 extends DFA {
+    class DFA11 extends DFA {
 
-        public DFA6(BaseRecognizer recognizer) {
+        public DFA11(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 6;
-            this.eot = DFA6_eot;
-            this.eof = DFA6_eof;
-            this.min = DFA6_min;
-            this.max = DFA6_max;
-            this.accept = DFA6_accept;
-            this.special = DFA6_special;
-            this.transition = DFA6_transition;
+            this.decisionNumber = 11;
+            this.eot = DFA11_eot;
+            this.eof = DFA11_eof;
+            this.min = DFA11_min;
+            this.max = DFA11_max;
+            this.accept = DFA11_accept;
+            this.special = DFA11_special;
+            this.transition = DFA11_transition;
         }
         public String getDescription() {
             return "50:1: NUMBER : ( INTEGER | FLOAT );";
         }
     }
-    static final String DFA15_eotS =
-        "\1\uffff\4\36\2\uffff\2\36\1\56\1\uffff\7\36\6\uffff\1\73\11\uffff"+
-        "\11\36\5\uffff\12\36\2\uffff\4\36\1\126\1\127\1\130\1\127\1\130"+
-        "\2\uffff\6\36\1\140\1\36\2\127\5\36\3\uffff\1\140\5\36\1\140\1\uffff"+
-        "\4\36\1\161\1\36\1\140\6\36\1\127\1\171\1\36\1\uffff\1\173\1\140"+
-        "\1\36\1\140\3\36\1\uffff\1\u0082\1\uffff\1\140\1\36\1\140\3\36\1"+
-        "\uffff\14\36\1\140\4\36\1\140\26\36\1\u00af\3\36\1\uffff\2\36\1"+
-        "\u00af\1\36\2\u00af";
-    static final String DFA15_eofS =
-        "\u00b6\uffff";
-    static final String DFA15_minS =
-        "\1\11\2\101\1\110\1\105\2\uffff\1\116\1\156\1\56\1\uffff\1\157"+
-        "\1\151\1\145\3\141\1\157\6\uffff\1\75\11\uffff\1\126\1\124\1\105"+
-        "\1\124\1\121\1\155\1\104\1\147\1\144\1\uffff\1\55\3\uffff\1\165"+
-        "\1\154\1\143\1\151\1\162\1\171\1\162\1\156\1\170\1\165\2\uffff\1"+
-        "\111\1\124\1\122\1\110\5\60\2\uffff\1\162\1\165\1\154\1\157\1\160"+
-        "\1\151\1\60\1\164\2\60\1\156\1\116\2\105\1\111\3\uffff\1\60\1\164"+
-        "\1\151\1\156\1\137\1\143\1\60\1\uffff\1\151\1\164\1\107\1\122\1"+
-        "\60\1\116\1\60\1\145\1\163\1\144\3\164\2\60\1\116\1\uffff\2\60\1"+
-        "\145\1\60\1\151\1\137\1\151\1\uffff\1\60\1\uffff\1\60\1\143\1\60"+
-        "\1\154\1\143\1\157\1\uffff\1\157\1\154\1\157\2\156\1\137\1\156\1"+
-        "\137\1\144\1\141\1\164\1\143\1\60\1\145\1\156\1\151\1\157\1\60\1"+
-        "\170\1\171\1\147\1\156\1\164\1\137\1\165\1\164\1\137\1\155\2\151"+
-        "\1\155\1\141\1\164\1\147\1\141\1\164\1\171\1\165\1\164\1\143\1\60"+
-        "\1\151\1\143\1\150\1\uffff\1\164\1\150\1\60\1\171\2\60";
-    static final String DFA15_maxS =
-        "\1\176\2\101\1\111\1\165\2\uffff\1\166\1\156\1\172\1\uffff\1\157"+
-        "\1\151\1\164\2\141\1\151\1\157\6\uffff\1\75\11\uffff\1\126\1\124"+
-        "\1\105\1\124\1\121\1\155\1\104\1\147\1\144\1\uffff\1\172\3\uffff"+
-        "\1\165\1\156\1\143\1\151\1\162\1\171\1\162\1\156\1\170\1\165\2\uffff"+
-        "\1\111\1\124\1\122\1\110\5\172\2\uffff\1\162\1\165\1\154\1\157\1"+
-        "\160\1\151\1\172\1\164\2\172\1\156\1\116\2\105\1\111\3\uffff\1\172"+
-        "\1\164\1\151\1\156\1\137\1\143\1\172\1\uffff\1\151\1\164\1\107\1"+
-        "\122\1\172\1\116\1\172\1\145\1\163\1\144\3\164\2\172\1\116\1\uffff"+
-        "\2\172\1\145\1\172\1\151\1\137\1\151\1\uffff\1\172\1\uffff\1\172"+
-        "\1\143\1\172\1\154\1\143\1\157\1\uffff\1\157\1\154\1\157\2\156\1"+
-        "\137\1\156\1\137\1\144\1\156\1\164\1\143\1\172\1\145\1\156\1\151"+
-        "\1\157\1\172\1\170\1\171\1\147\1\156\1\164\1\137\1\165\1\164\1\137"+
-        "\1\155\2\151\1\155\1\141\1\164\1\147\1\141\1\164\1\171\1\165\1\164"+
-        "\1\143\1\172\1\151\1\143\1\150\1\uffff\1\164\1\150\1\172\1\171\2"+
-        "\172";
-    static final String DFA15_acceptS =
-        "\5\uffff\1\6\1\7\3\uffff\1\17\7\uffff\1\23\1\24\1\25\1\26\1\27"+
-        "\1\30\1\uffff\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\11\uffff"+
-        "\1\11\1\uffff\1\14\1\16\1\15\12\uffff\1\32\1\31\11\uffff\1\12\1"+
-        "\13\17\uffff\1\5\1\22\1\10\7\uffff\1\20\20\uffff\1\3\7\uffff\1\1"+
-        "\1\uffff\1\4\6\uffff\1\2\54\uffff\1\21\6\uffff";
-    static final String DFA15_specialS =
-        "\u00b6\uffff}>";
-    static final String[] DFA15_transitionS = {
-            "\1\41\1\40\2\uffff\1\40\22\uffff\1\41\1\27\1\37\5\uffff\1\33"+
-            "\1\34\1\26\1\22\1\32\1\23\1\24\1\25\12\35\2\uffff\1\27\1\30"+
-            "\1\27\2\uffff\1\7\1\36\1\21\4\36\1\1\4\36\1\20\2\36\1\2\2\36"+
-            "\1\4\3\36\1\3\3\36\1\11\1\uffff\1\12\3\uffff\1\10\2\36\1\16"+
-            "\3\36\1\13\4\36\1\14\2\36\1\17\2\36\1\15\7\36\1\5\1\uffff\1"+
-            "\6\1\31",
-            "\1\42",
-            "\1\43",
-            "\1\44\1\45",
-            "\1\46\57\uffff\1\47",
+    static final String DFA20_eotS =
+        "\1\uffff\10\37\2\uffff\2\37\1\76\1\uffff\4\37\6\uffff\1\105\11"+
+        "\uffff\27\37\5\uffff\5\37\2\uffff\16\37\2\165\1\166\1\165\3\37\2"+
+        "\172\1\166\1\172\2\uffff\2\37\1\176\2\166\4\37\1\176\12\37\2\uffff"+
+        "\3\37\1\uffff\2\37\1\176\1\uffff\4\37\1\176\4\37\1\u009b\1\37\2"+
+        "\u009b\7\37\1\166\3\u00a4\4\37\1\uffff\3\u00a9\1\176\2\37\1\176"+
+        "\1\37\1\uffff\3\u00af\1\37\1\uffff\1\176\2\37\1\176\1\37\1\uffff"+
+        "\20\37\1\176\4\37\1\176\23\37\1\u00dd\3\37\1\uffff\2\37\3\u00dd";
+    static final String DFA20_eofS =
+        "\u00e3\uffff";
+    static final String DFA20_minS =
+        "\1\11\1\101\1\141\1\101\1\141\1\150\1\110\1\105\1\145\2\uffff\1"+
+        "\116\1\156\1\56\1\uffff\1\151\2\141\1\157\6\uffff\1\75\11\uffff"+
+        "\1\126\2\166\1\165\1\124\1\164\1\162\1\145\1\164\1\105\1\145\1\124"+
+        "\1\164\1\121\1\161\1\155\1\143\1\151\1\162\1\104\1\144\1\147\1\144"+
+        "\1\uffff\1\55\3\uffff\1\154\1\171\1\156\1\170\1\165\2\uffff\1\111"+
+        "\2\151\1\162\1\124\3\164\1\162\1\150\1\122\1\162\1\110\1\150\4\60"+
+        "\1\157\1\160\1\151\4\60\2\uffff\1\165\1\154\3\60\1\156\1\116\2\156"+
+        "\1\60\1\105\2\145\1\151\1\145\1\151\1\105\1\145\1\111\1\151\2\uffff"+
+        "\1\156\1\137\1\143\1\uffff\1\164\1\151\1\60\1\uffff\1\164\1\107"+
+        "\2\147\1\60\1\122\2\162\1\164\1\60\1\156\2\60\1\116\1\156\1\144"+
+        "\2\164\1\145\1\163\4\60\1\116\2\156\1\151\1\uffff\4\60\1\151\1\137"+
+        "\1\60\1\145\1\uffff\3\60\1\157\1\uffff\1\60\1\154\1\143\1\60\1\143"+
+        "\1\uffff\1\156\1\154\2\157\2\137\2\156\1\143\1\141\1\164\1\144\1"+
+        "\157\1\145\1\156\1\151\1\60\1\156\1\170\1\171\1\147\1\60\2\164\1"+
+        "\137\1\165\1\151\1\137\1\155\1\151\1\147\1\155\1\141\1\164\1\165"+
+        "\1\141\1\164\1\171\1\151\1\164\1\143\1\60\1\164\1\143\1\150\1\uffff"+
+        "\1\171\1\150\3\60";
+    static final String DFA20_maxS =
+        "\1\176\1\141\1\157\2\141\2\151\1\165\1\164\2\uffff\1\166\1\156"+
+        "\1\172\1\uffff\1\151\1\141\1\151\1\157\6\uffff\1\75\11\uffff\1\126"+
+        "\2\166\1\165\1\124\2\164\1\145\1\164\1\105\1\145\1\124\1\164\1\121"+
+        "\1\161\1\155\1\161\1\151\1\162\1\104\1\144\1\147\1\144\1\uffff\1"+
+        "\172\3\uffff\1\156\1\171\1\156\1\170\1\165\2\uffff\1\111\2\151\1"+
+        "\162\1\124\3\164\1\162\1\150\1\122\1\162\1\110\1\150\4\172\1\157"+
+        "\1\160\1\151\4\172\2\uffff\1\165\1\154\3\172\1\156\1\116\2\156\1"+
+        "\172\1\105\2\145\1\151\1\145\1\151\1\105\1\145\1\111\1\151\2\uffff"+
+        "\1\156\1\137\1\143\1\uffff\1\164\1\151\1\172\1\uffff\1\164\1\107"+
+        "\2\147\1\172\1\122\2\162\1\164\1\172\1\156\2\172\1\116\1\156\1\144"+
+        "\2\164\1\145\1\163\4\172\1\116\2\156\1\151\1\uffff\4\172\1\151\1"+
+        "\137\1\172\1\145\1\uffff\3\172\1\157\1\uffff\1\172\1\154\1\143\1"+
+        "\172\1\143\1\uffff\1\156\1\154\2\157\2\137\2\156\1\143\1\156\1\164"+
+        "\1\144\1\157\1\145\1\156\1\151\1\172\1\156\1\170\1\171\1\147\1\172"+
+        "\2\164\1\137\1\165\1\151\1\137\1\155\1\151\1\147\1\155\1\141\1\164"+
+        "\1\165\1\141\1\164\1\171\1\151\1\164\1\143\1\172\1\164\1\143\1\150"+
+        "\1\uffff\1\171\1\150\3\172";
+    static final String DFA20_acceptS =
+        "\11\uffff\1\6\1\7\3\uffff\1\17\4\uffff\1\23\1\24\1\25\1\26\1\27"+
+        "\1\30\1\uffff\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\27\uffff"+
+        "\1\11\1\uffff\1\14\1\15\1\16\5\uffff\1\32\1\31\31\uffff\1\12\1\13"+
+        "\24\uffff\1\5\1\22\3\uffff\1\10\3\uffff\1\20\34\uffff\1\3\10\uffff"+
+        "\1\1\4\uffff\1\4\5\uffff\1\2\55\uffff\1\21\5\uffff";
+    static final String DFA20_specialS =
+        "\u00e3\uffff}>";
+    static final String[] DFA20_transitionS = {
+            "\1\42\1\41\2\uffff\1\41\22\uffff\1\42\1\30\1\40\5\uffff\1\34"+
+            "\1\35\1\27\1\23\1\33\1\24\1\25\1\26\12\36\2\uffff\1\30\1\31"+
+            "\1\30\2\uffff\1\13\1\37\1\22\4\37\1\1\4\37\1\21\2\37\1\3\2\37"+
+            "\1\7\3\37\1\6\3\37\1\15\1\uffff\1\16\3\uffff\1\14\2\37\1\20"+
+            "\3\37\1\2\4\37\1\17\2\37\1\4\2\37\1\10\3\37\1\5\3\37\1\11\1"+
+            "\uffff\1\12\1\32",
+            "\1\43\37\uffff\1\44",
+            "\1\45\15\uffff\1\46",
+            "\1\47\37\uffff\1\50",
+            "\1\51",
+            "\1\52\1\53",
+            "\1\54\1\56\36\uffff\1\55\1\57",
+            "\1\60\37\uffff\1\61\17\uffff\1\62",
+            "\1\63\5\uffff\1\64\10\uffff\1\65",
             "",
             "",
-            "\1\50\47\uffff\1\51",
-            "\1\52",
-            "\1\55\2\uffff\1\53\17\uffff\32\57\6\uffff\10\57\1\54\21\57",
-            "",
-            "\1\60",
-            "\1\61",
-            "\1\62\5\uffff\1\63\10\uffff\1\64",
-            "\1\65",
-            "\1\66",
-            "\1\70\7\uffff\1\67",
+            "\1\66\37\uffff\1\67\7\uffff\1\70",
             "\1\71",
+            "\1\74\2\uffff\1\72\17\uffff\32\75\6\uffff\10\75\1\73\21\75",
             "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "\1\72",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "\1\74",
-            "\1\75",
-            "\1\76",
             "\1\77",
             "\1\100",
-            "\1\101",
-            "\1\102",
+            "\1\102\7\uffff\1\101",
             "\1\103",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\104",
             "",
-            "\1\106\1\57\1\uffff\13\57\6\uffff\32\57\2\uffff\1\105\1\uffff"+
-            "\1\57\1\uffff\32\57",
             "",
             "",
             "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\106",
             "\1\107",
-            "\1\111\1\uffff\1\110",
+            "\1\110",
+            "\1\111",
             "\1\112",
             "\1\113",
-            "\1\114",
-            "\1\115",
+            "\1\115\1\uffff\1\114",
             "\1\116",
             "\1\117",
             "\1\120",
             "\1\121",
-            "",
-            "",
             "\1\122",
             "\1\123",
             "\1\124",
             "\1\125",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "",
-            "",
+            "\1\126",
+            "\1\130\15\uffff\1\127",
             "\1\131",
             "\1\132",
             "\1\133",
             "\1\134",
             "\1\135",
             "\1\136",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\22\36\1\137\7\36",
-            "\1\141",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\1\142",
+            "",
+            "\1\140\1\75\1\uffff\13\75\6\uffff\32\75\2\uffff\1\137\1\uffff"+
+            "\1\75\1\uffff\32\75",
+            "",
+            "",
+            "",
+            "\1\142\1\uffff\1\141",
             "\1\143",
             "\1\144",
             "\1\145",
             "\1\146",
             "",
             "",
-            "",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\22\36\1\147\7\36",
+            "\1\147",
             "\1\150",
             "\1\151",
             "\1\152",
             "\1\153",
             "\1\154",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "",
             "\1\155",
             "\1\156",
             "\1\157",
             "\1\160",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\161",
             "\1\162",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
             "\1\163",
             "\1\164",
-            "\1\165",
-            "\1\166",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\167",
             "\1\170",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\1\172",
+            "\1\171",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\22\36\1\174\7\36",
-            "\1\175",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\22\36\1\176\7\36",
+            "",
+            "\1\173",
+            "\1\174",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\22\37\1\175\7\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\177",
             "\1\u0080",
             "\1\u0081",
-            "",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\1\u0083",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\u0082",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\22\37\1\u0083\7"+
+            "\37",
             "\1\u0084",
             "\1\u0085",
             "\1\u0086",
-            "",
             "\1\u0087",
             "\1\u0088",
             "\1\u0089",
@@ -2118,22 +2364,29 @@ public class SaseLexer extends Lexer {
             "\1\u008b",
             "\1\u008c",
             "\1\u008d",
+            "",
+            "",
             "\1\u008e",
             "\1\u008f",
-            "\1\u0091\14\uffff\1\u0090",
+            "\1\u0090",
+            "",
+            "\1\u0091",
             "\1\u0092",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "",
             "\1\u0093",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\22\36\1\u0094\7"+
-            "\36",
+            "\1\u0094",
             "\1\u0095",
             "\1\u0096",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\u0097",
             "\1\u0098",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
             "\1\u0099",
             "\1\u009a",
-            "\1\u009b",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\u009c",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\u009d",
             "\1\u009e",
             "\1\u009f",
@@ -2141,58 +2394,119 @@ public class SaseLexer extends Lexer {
             "\1\u00a1",
             "\1\u00a2",
             "\1\u00a3",
-            "\1\u00a4",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\u00a5",
             "\1\u00a6",
             "\1\u00a7",
             "\1\u00a8",
-            "\1\u00a9",
-            "\1\u00aa",
+            "",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\22\37\1\u00aa\7"+
+            "\37",
             "\1\u00ab",
             "\1\u00ac",
-            "\1\u00ad",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\22\37\1\u00ad\7"+
+            "\37",
             "\1\u00ae",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\u00b0",
+            "",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\u00b1",
             "\1\u00b2",
-            "",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\u00b3",
+            "",
             "\1\u00b4",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
             "\1\u00b5",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
-            "\13\36\6\uffff\32\36\4\uffff\1\36\1\uffff\32\36"
+            "\1\u00b6",
+            "\1\u00b7",
+            "\1\u00b8",
+            "\1\u00b9",
+            "\1\u00ba",
+            "\1\u00bb",
+            "\1\u00bc",
+            "\1\u00be\14\uffff\1\u00bd",
+            "\1\u00bf",
+            "\1\u00c0",
+            "\1\u00c1",
+            "\1\u00c2",
+            "\1\u00c3",
+            "\1\u00c4",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\22\37\1\u00c5\7"+
+            "\37",
+            "\1\u00c6",
+            "\1\u00c7",
+            "\1\u00c8",
+            "\1\u00c9",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\u00ca",
+            "\1\u00cb",
+            "\1\u00cc",
+            "\1\u00cd",
+            "\1\u00ce",
+            "\1\u00cf",
+            "\1\u00d0",
+            "\1\u00d1",
+            "\1\u00d2",
+            "\1\u00d3",
+            "\1\u00d4",
+            "\1\u00d5",
+            "\1\u00d6",
+            "\1\u00d7",
+            "\1\u00d8",
+            "\1\u00d9",
+            "\1\u00da",
+            "\1\u00db",
+            "\1\u00dc",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\u00de",
+            "\1\u00df",
+            "\1\u00e0",
+            "",
+            "\1\u00e1",
+            "\1\u00e2",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\13\37\6\uffff\32\37\4\uffff\1\37\1\uffff\32\37"
     };
 
-    static final short[] DFA15_eot = DFA.unpackEncodedString(DFA15_eotS);
-    static final short[] DFA15_eof = DFA.unpackEncodedString(DFA15_eofS);
-    static final char[] DFA15_min = DFA.unpackEncodedStringToUnsignedChars(DFA15_minS);
-    static final char[] DFA15_max = DFA.unpackEncodedStringToUnsignedChars(DFA15_maxS);
-    static final short[] DFA15_accept = DFA.unpackEncodedString(DFA15_acceptS);
-    static final short[] DFA15_special = DFA.unpackEncodedString(DFA15_specialS);
-    static final short[][] DFA15_transition;
+    static final short[] DFA20_eot = DFA.unpackEncodedString(DFA20_eotS);
+    static final short[] DFA20_eof = DFA.unpackEncodedString(DFA20_eofS);
+    static final char[] DFA20_min = DFA.unpackEncodedStringToUnsignedChars(DFA20_minS);
+    static final char[] DFA20_max = DFA.unpackEncodedStringToUnsignedChars(DFA20_maxS);
+    static final short[] DFA20_accept = DFA.unpackEncodedString(DFA20_acceptS);
+    static final short[] DFA20_special = DFA.unpackEncodedString(DFA20_specialS);
+    static final short[][] DFA20_transition;
 
     static {
-        int numStates = DFA15_transitionS.length;
-        DFA15_transition = new short[numStates][];
+        int numStates = DFA20_transitionS.length;
+        DFA20_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA15_transition[i] = DFA.unpackEncodedString(DFA15_transitionS[i]);
+            DFA20_transition[i] = DFA.unpackEncodedString(DFA20_transitionS[i]);
         }
     }
 
-    class DFA15 extends DFA {
+    class DFA20 extends DFA {
 
-        public DFA15(BaseRecognizer recognizer) {
+        public DFA20(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 15;
-            this.eot = DFA15_eot;
-            this.eof = DFA15_eof;
-            this.min = DFA15_min;
-            this.max = DFA15_max;
-            this.accept = DFA15_accept;
-            this.special = DFA15_special;
-            this.transition = DFA15_transition;
+            this.decisionNumber = 20;
+            this.eot = DFA20_eot;
+            this.eof = DFA20_eof;
+            this.min = DFA20_min;
+            this.max = DFA20_max;
+            this.accept = DFA20_accept;
+            this.special = DFA20_special;
+            this.transition = DFA20_transition;
         }
         public String getDescription() {
             return "1:1: Tokens : ( HAVING | PATTERN | WHERE | WITHIN | SEQ | LEFTCURLY | RIGHTCURLY | AND | FIRST | CURRENT | PREVIOUS | ALLTOPREVIOUS | LAST | BBRACKETLEFT | BBRACKETRIGHT | TIMEUNIT | SKIP_METHOD | AGGREGATEOP | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOT | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE );";

@@ -45,10 +45,11 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	class CompareExpression {
 		public List<PathAttribute> attributes = new LinkedList<PathAttribute>();
-		private String fullExpression;
-
+		String fullExpression = null;
+		
 		@Override
 		public String toString() {
+			
 			return attributes + " " + fullExpression;
 		}
 
@@ -242,7 +243,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				states = processStates(getChildren(child), sourceNames);
 				// Append Accepting State
 				if (states != null && states.size() > 0) {
-					states.add(new State("<ACCEPTING>", "", true));
+					states.add(new State("<ACCEPTING>", "", null ,true));
 					StateMachine<RelationalTuple<?>> sm = cepAo
 							.getStateMachine();
 					sm.setStates(states);
@@ -290,12 +291,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			String str = state.getChild(0).toString();
 			sourceNames.add(getChild(state, 0).getChild(0).getText());
 			if (str.equals("KTYPE")) {
+				String type = getChild(state, 0).getChild(0).getText();
 				String id = getChild(state, 1).getChild(0).getText();
-				recStates.add(new State(id + "[1]", id));
-				recStates.add(new State(id + "[i]", id));
+				recStates.add(new State(id + "[1]", id, type, false));
+				recStates.add(new State(id + "[i]", id, type, false));
 			} else if (str.equals("TYPE")) {
+				String type = getChild(state, 0).getChild(0).getText();
 				String id = getChild(state, 1).getChild(0).getText();
-				recStates.add(new State(id, id));
+				recStates.add(new State(id, id, type, false));
 			}
 		}
 		return recStates;
@@ -576,30 +579,22 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	public static void main(String[] args) {
 		SaseBuilder exec = new SaseBuilder();
 		// Zum Testen
-		AccessAO source = new AccessAO(new SDFSource("Stock",
-				"RelationalStreaming"));
-		source.setOutputSchema(new SDFAttributeList());
-		DataDictionary.getInstance().setView("Stock", source);
-
-		source = new AccessAO(new SDFSource("Shelf", "RelationalStreaming"));
-		source.setOutputSchema(new SDFAttributeList());
-		DataDictionary.getInstance().setView("Shelf", source);
-
-		source = new AccessAO(new SDFSource("Register", "RelationalStreaming"));
-		source.setOutputSchema(new SDFAttributeList());
-		DataDictionary.getInstance().setView("Register", source);
-
-		source = new AccessAO(new SDFSource("Exit", "RelationalStreaming"));
-		source.setOutputSchema(new SDFAttributeList());
-		DataDictionary.getInstance().setView("Exit", source);
-
-		source = new AccessAO(new SDFSource("Alert", "RelationalStreaming"));
-		source.setOutputSchema(new SDFAttributeList());
-		DataDictionary.getInstance().setView("Alert", source);
-
-		source = new AccessAO(new SDFSource("Shipment", "RelationalStreaming"));
-		source.setOutputSchema(new SDFAttributeList());
-		DataDictionary.getInstance().setView("Shipment", source);
+		createDummySource("Stock");
+		createDummySource("Shelf");
+		createDummySource("Register");
+		createDummySource("Exit");
+		createDummySource("Alert");
+		createDummySource("Shipment");
+		createDummySource("nexmark:bid2");
+		createDummySource("nexmark:person2");
+		createDummySource("nexmark:auction2");
+		createDummySource("nexmark:category2");
+		createDummySource("nexmark:bid");
+		createDummySource("nexmark:person");
+		createDummySource("nexmark:auction");
+		createDummySource("nexmark:category");
+		
+		
 
 		String[] toParse = new String[] {
 		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ a[1].symbol = a[i].symbol and a[1].symbol=b.symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
@@ -615,8 +610,9 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		// + "WHERE skip_till_any_match(a,b[]){"
 		// + "a.type = \"contaminated\" AND " + "b[1].from = a.site AND "
 		// + "b[i].from = b[i-1].to} " + "WITHIN 3 hours",
-		"PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour" };
-
+		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour", 
+		//"PATTERN SEQ(nexmark:person2 person, nexmark:auction2+ auction[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"
+				"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"};
 		try {
 			for (String q : toParse) {
 				System.out.println(q);
@@ -627,12 +623,18 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						+ cepAo.getStateMachine().prettyPrint());
 				System.out.println(AbstractTreeWalker.prefixWalk(top.get(0),
 						new AlgebraPlanToStringVisitor()));
-
 			}
 		} catch (QueryParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private static void createDummySource(String sourcename) {
+		AccessAO source;
+		source = new AccessAO(new SDFSource(sourcename, "RelationalStreaming"));
+		source.setOutputSchema(new SDFAttributeList());
+		DataDictionary.getInstance().setView(sourcename, source);
 	}
 
 }

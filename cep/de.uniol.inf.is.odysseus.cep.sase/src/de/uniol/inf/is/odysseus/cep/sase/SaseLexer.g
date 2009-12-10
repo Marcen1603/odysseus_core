@@ -2,14 +2,14 @@ lexer grammar SaseLexer;
 
 @lexer::header { package de.uniol.inf.is.odysseus.cep.sase; } 
   
-HAVING	: 'HAVING' ;
-PATTERN : 'PATTERN';
-WHERE : 'WHERE' ;
-WITHIN	: 'WITHIN';
-SEQ : 'SEQ';
+HAVING	: 'HAVING'|'having'|'Having' ;
+PATTERN : 'PATTERN'|'pattern'|'Pattern';
+WHERE : 'where'|'WHERE'|'Where';
+WITHIN	: 'WITHIN'|'within'|'Within';
+SEQ : 'SEQ'|'seq'|'Seq';
 LEFTCURLY : '{';
 RIGHTCURLY : '}';	
-AND :'AND'|'and';
+AND :'AND'|'and'|'And';
 FIRST :'[1]';
 CURRENT :'[i]';	
 PREVIOUS :  '[i-1]' ;	

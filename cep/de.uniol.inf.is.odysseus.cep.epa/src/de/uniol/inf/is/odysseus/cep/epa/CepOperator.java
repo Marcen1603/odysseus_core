@@ -234,8 +234,8 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 * Determine if Event can be processed in current State 
 	 */
 	private boolean checkType(int port, StateMachineInstance<R> instance) {
-		String stateId = instance.getCurrentState().getId();		
-		return eventReader.get(port).getType().equals(stateId);
+		String stateId = instance.getCurrentState().getType();		
+		return eventReader.get(port).getName().equals(stateId);
 	}
 
 	private void updateVariables(R object, StateMachineInstance<R> instance,

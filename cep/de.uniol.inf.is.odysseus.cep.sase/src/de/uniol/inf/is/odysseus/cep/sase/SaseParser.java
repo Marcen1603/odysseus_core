@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2009-12-09 11:45:06
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2009-12-10 09:23:27
  
 	package de.uniol.inf.is.odysseus.cep.sase; 
 
@@ -243,7 +243,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: NUMBER, WITHIN, TIMEUNIT
+            // elements: TIMEUNIT, WITHIN, NUMBER
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -382,7 +382,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: wherePart1, whereExpressions, WHERE
+                    // elements: WHERE, whereExpressions, wherePart1
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -512,7 +512,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: PATTERN, patternDecl
+            // elements: patternDecl, PATTERN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -814,7 +814,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: type, variable, NOT
+            // elements: variable, type, NOT
             // token labels: 
             // rule labels: retval, type, variable
             // token list labels: 
@@ -922,7 +922,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: op, NAME, NAME
+            // elements: NAME, op, NAME
             // token labels: op
             // rule labels: retval
             // token list labels: 
@@ -1853,7 +1853,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: f1, f2
+                    // elements: f2, f1
                     // token labels: 
                     // rule labels: retval, f1, f2
                     // token list labels: 
@@ -1906,7 +1906,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: COMPAREOP, f2, f1
+                    // elements: f1, f2, COMPAREOP
                     // token labels: 
                     // rule labels: retval, f1, f2
                     // token list labels: 
@@ -2166,7 +2166,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: NAME, kAttributeUsage
+                    // elements: kAttributeUsage, NAME
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -2340,7 +2340,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: member, var, ALLTOPREVIOUS, AGGREGATEOP
+            // elements: AGGREGATEOP, ALLTOPREVIOUS, var, member
             // token labels: member, var
             // rule labels: retval
             // token list labels: 

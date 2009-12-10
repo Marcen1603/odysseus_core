@@ -22,6 +22,7 @@ public class State {
 	 */
 	private String id;
 	private String var;
+	private String type;
 	/**
 	 * Gibt an, ob ein Zustand ein Endzustand ist oder nicht.
 	 */
@@ -38,12 +39,13 @@ public class State {
 	 * @param id
 	 *            Die ID des Zustands (eindeutig innerhalb des Automaten)
 	 * @param var Eine Variable, die diesen Zustand betrifft
+	 * @param type der Eventtyp der verarbeitet wird
 	 * @param accepting
 	 *            true, wenn der Zustand ein Endzustand ist, ansonsten false
 	 * @param outgoingTransitions
 	 *            Liste der vom Zustand ausgehenden Transitionen. Nicht null.
 	 */
-	public State(String id, String var, boolean accepting,
+	public State(String id, String var, String type, boolean accepting,
 			List<Transition> outgoingTransitions) {
 		setId(id);
 		setAccepting(accepting);
@@ -51,20 +53,17 @@ public class State {
 		setVar(var);
 	}
 
-	public State(String id, String var, boolean accepting) {
+	public State(String id, String var, String type, boolean accepting) {
 		setId(id);
 		setAccepting(accepting);
 		setVar(var);
+		setType(type);
 	}
 
 	public State() {
 	}
 	
 
-	public State(String id, String var) {
-		setVar(var);
-		setId(id);
-	}
 
 	/**
 	 * Gibt die automatenweit eindeutige ID des Zustands zurück.
@@ -170,6 +169,14 @@ public class State {
 
 	public void setVar(String var) {
 		this.var = var;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getType() {
+		return type;
 	}
 
 
