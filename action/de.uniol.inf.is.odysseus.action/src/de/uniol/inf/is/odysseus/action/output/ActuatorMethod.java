@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.actuatorManagement;
+package de.uniol.inf.is.odysseus.action.output;
 
 import java.util.ArrayList;
 import java.util.Arrays;

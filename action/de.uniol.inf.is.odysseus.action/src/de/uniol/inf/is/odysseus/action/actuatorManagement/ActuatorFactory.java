@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.ActuatorMethod;
+import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
  * Factory for Creation, Acess to all kind of {@link AbstractActuator}s

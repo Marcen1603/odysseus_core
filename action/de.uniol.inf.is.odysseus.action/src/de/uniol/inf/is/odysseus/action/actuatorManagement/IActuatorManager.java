@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.action.actuatorManagement;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.ActuatorMethod;
+import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
  * OSGI Service Interface for ActuatorManagers

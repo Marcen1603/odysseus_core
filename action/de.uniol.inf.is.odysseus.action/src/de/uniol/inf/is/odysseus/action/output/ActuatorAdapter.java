@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorMethod;
-import de.uniol.inf.is.odysseus.action.actuatorManagement.IActuator;
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 
 public abstract class ActuatorAdapter implements IActuator {

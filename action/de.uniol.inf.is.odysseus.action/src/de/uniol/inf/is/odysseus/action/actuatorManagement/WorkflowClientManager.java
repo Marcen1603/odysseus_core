@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.ActuatorMethod;
+import de.uniol.inf.is.odysseus.action.output.IActuator;
 import de.uniol.inf.is.odysseus.action.output.WorkflowClient;
 
 /**
