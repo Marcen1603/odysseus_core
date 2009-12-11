@@ -1,35 +1,21 @@
 package de.uniol.inf.is.odysseus.action.output;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+
 
 public class Action {
-	private Object actuator;
-	private Method method;
+	private IActuator actuator;
+	private String methodName;
 	
-	public Action (Object actuator, String methodName, Class<?>[] paramTypes){
-		try {
-			this.method = actuator.getClass().getMethod(methodName, paramTypes);
-			this.actuator = actuator;
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public Action (IActuator actuator, String methodName){
+		this.actuator = actuator;
+		this.methodName = methodName;
 	}
 	
 	public void executeMethod(Object[] params){
 		try {
-			method.invoke(this.actuator, params);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+			this.actuator.executeMethod(this.methodName, params);
+		} catch (ActuatorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

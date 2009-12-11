@@ -97,7 +97,6 @@ public class ECAParser implements IQueryParser{
 
 					//extract params 
 					ArrayList<ActionParameter> actionParameters = new ArrayList<ActionParameter>();
-					Class<?>[] paramTypes = null;
 					if (params.length() > 0){
 						ArrayList<Class<?>> paramList = new ArrayList<Class<?>>();
 						Matcher paramMatcher = PARAMPATTERN.matcher(params);
@@ -116,14 +115,10 @@ public class ECAParser implements IQueryParser{
 								//TODO determine type from schema
 							}	
 						}
-						paramTypes = new Class<?>[paramList.size()];
-						paramList.toArray(paramTypes);
-					}else{
-						paramTypes = new Class<?>[0];
 					}
 					//create action object & map with parameters
 					IActuator actuator = ActuatorFactory.getInstance().getActuator(actuatorName, managerName);
-					actions.put(new Action(actuator, methodName, paramTypes), actionParameters);
+					actions.put(new Action(actuator, methodName), actionParameters);
 				}
 				if (!actions.isEmpty()){
 					return this.createNewPlan(actions, plan);
