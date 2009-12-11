@@ -42,24 +42,22 @@ public class DBSelectPO extends AbstractPipe<Object, Object> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Object object, int port) {
+		
 		List<RelationalTuple<?>> result = controller.getData(object);
-		
-//		System.out.println(System.currentTimeMillis()-time);
-		RelationalMergeFunction dataMerge = new RelationalMergeFunction<IMetaAttribute>(outputSchema);
-		
-		List objOut = new LinkedList<RelationalTuple<?>>();
-		RelationalTuple<?> obj = (RelationalTuple<?>) object;
-		for (RelationalTuple<?> tuple : result) {
-			RelationalTuple<IMetaAttribute> addTuple = dataMerge.merge(obj, tuple);
-			objOut.add(addTuple);
+		if (result != null) {
+			if(result.size() > 0) {
+				RelationalMergeFunction dataMerge = new RelationalMergeFunction<IMetaAttribute>(outputSchema);
+				
+				List objOut = new LinkedList<RelationalTuple<?>>();
+				RelationalTuple<?> obj = (RelationalTuple<?>) object;
+				for (RelationalTuple<?> tuple : result) {
+					RelationalTuple<IMetaAttribute> addTuple = dataMerge.merge(obj, tuple);
+					objOut.add(addTuple);
+				}
+				
+				transfer(objOut);
+			}
 		}
-		
-		transfer(objOut);
-		
-		
-
-
-		
 	}
 
 	

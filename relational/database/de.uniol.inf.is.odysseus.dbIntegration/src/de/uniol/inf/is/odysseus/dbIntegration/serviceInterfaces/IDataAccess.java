@@ -13,5 +13,6 @@ public interface IDataAccess {
 	public List<RelationalTuple<?>> executeCacheQuery(RelationalTuple<?> tuple);
 	public List<RelationalTuple<?>> executePrefetchQuery(RelationalTuple<?> tuple);
 	public RelationalTuple<?> getRelevantParams(RelationalTuple<?> tuple);
+	public List<String> getOutAttributeSchema(DBQuery dbQuery);
 	
 }

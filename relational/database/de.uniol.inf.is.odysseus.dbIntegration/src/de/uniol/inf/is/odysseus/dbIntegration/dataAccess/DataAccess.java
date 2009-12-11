@@ -11,7 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.util.tracker.ServiceTracker;
 
 import de.uniol.inf.is.odysseus.dbIntegration.Activator;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBProperties;
@@ -19,65 +21,61 @@ import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IDataAccess;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class DataAccess implements IDataAccess {
 
-	
-	private PreparedStatement baseQuery;
-	private PreparedStatement cacheQuery;
-	private PreparedStatement prefetchQuery;
 	private DBQuery dbQuery;
-	private Connection connection;
-	private LinkedList<String> dsAttributes;
+	private SDFAttributeList inputSchema;
 	private IConnectionData connectionData;
-	private SDFAttributeList sdfList;
+	private Connection connection;
+	private LinkedList<String> refStreamAttributes;
+	private PreparedStatement prepBaseQuery;
+	private PreparedStatement prepCacheQuery;
+	private PreparedStatement prepPrefetchQuery;
+	private ConnectionDataServiceTracker connectionDataTracker;
 	
 	
-	public DataAccess(DBQuery dbQuery, SDFAttributeList sdfList) {
-		this.connectionData = getConnectionData(Activator.getContext());
-		this.dbQuery = dbQuery;
-		this.sdfList = sdfList;
-		baseQuery = prepareStatement(escape(dbQuery.getQuery()));
-		dsAttributes = findDataStreamAttr(dbQuery.getQuery());
-		
-		
+	public DataAccess(DBQuery dbQuery, SDFAttributeList inputSchema) {
+		this(dbQuery);
+		this.inputSchema = inputSchema;
+		refStreamAttributes = findDataStreamAttr(dbQuery.getQuery());
 	}
 	
-	
-
 	public DataAccess(DBQuery query) {
 		this.dbQuery = query;
-		connectionData = getConnectionData(Activator.getContext());
-		baseQuery = prepareStatement(escape(dbQuery.getQuery()));
+		connectionDataTracker = new ConnectionDataServiceTracker(Activator.getContext());
+		connectionDataTracker.open();
+		prepBaseQuery = prepareStatement(dbQuery);
 	}
 
 
 	@Override
 	public List<RelationalTuple<?>> executeBaseQuery (RelationalTuple<?> tuple) {
-		return executeQuery(sortInput(tuple, sdfList, dsAttributes), baseQuery);
+		return executeQuery(sortInput(tuple, inputSchema, refStreamAttributes), prepBaseQuery);
 	}
 	
 	@Override
 	public List<RelationalTuple<?>> executeCacheQuery(RelationalTuple<?> tuple) {
-		return executeQuery(tuple, cacheQuery);
+		return executeQuery(tuple, prepCacheQuery);
 	}
 
 	@Override
 	public List<RelationalTuple<?>> executePrefetchQuery(RelationalTuple<?> tuple) {
-		return executeQuery(tuple, prefetchQuery);
+		return executeQuery(tuple, prepPrefetchQuery);
 	}
 
 	@Override
 	public void setCacheQuery(DBQuery dbQuery) {
-		cacheQuery = prepareStatement(escape(dbQuery.getQuery()));
+		prepCacheQuery = prepareStatement(dbQuery);
 
 	}
 
 	@Override
 	public void setPrefetchQuery(DBQuery dbQuery) {
-		cacheQuery = prepareStatement(escape(dbQuery.getQuery()));
+		prepCacheQuery = prepareStatement(dbQuery);
 	}
 	
 	
@@ -89,7 +87,7 @@ public class DataAccess implements IDataAccess {
 		
 		try {
 			if (connection.isClosed()) {
-				openConnection();
+				openConnection(dbQuery);
 			}
 			
 			
@@ -97,10 +95,6 @@ public class DataAccess implements IDataAccess {
 				String input = tuple.getAttribute(i).toString();
 				prst.setString(i+1, input);
 			}
-			
-//			for (int i = 0; i < streamParam.getParams().size(); i++) {
-//				prst.setString(i, (String) streamParam.getParams().get(i));
-//			}
 			
 			if (dbQuery.isUpdate()) {
 				prst.execute();
@@ -119,18 +113,13 @@ public class DataAccess implements IDataAccess {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-//			try {
-//				closeConnection();
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
 		}
 		
 		return list;
 	}
 	
 	
-	private void openConnection() throws SQLException {
+	private void openConnection(DBQuery dbQuery) throws SQLException {
 		DBProperties properties;
 		try {
 			properties = connectionData.getConnection(dbQuery.getDatabase());
@@ -142,10 +131,8 @@ public class DataAccess implements IDataAccess {
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -155,7 +142,6 @@ public class DataAccess implements IDataAccess {
 						properties.getPassword());
 			}
 		} catch (BackingStoreException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -168,11 +154,11 @@ public class DataAccess implements IDataAccess {
 		}
 	}
 	
-	private PreparedStatement prepareStatement(String sql) {
+	private PreparedStatement prepareStatement(DBQuery dbQuery) {
 		PreparedStatement prst = null;
 		try {
-			openConnection();
-			
+			openConnection(dbQuery);
+			String sql = dbQuery.getQuery();
 			String prepSql = sql;
 			sql = sql.replace("(", " ");
 			sql = sql.replace(")", " ");
@@ -189,11 +175,7 @@ public class DataAccess implements IDataAccess {
 				prepSql = prepSql.replace(string, "?");
 			
 			}
-//			System.out.println(prepSql);
-//			
-//			//Elemente der Form "$source.attribute durch ? ersetzen
-//			sql = sql.replaceAll("\\$\\w+\\.\\w+", "?");
-			prst = connection.prepareStatement(prepSql);
+			prst = connection.prepareStatement(escape(prepSql));
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -201,11 +183,11 @@ public class DataAccess implements IDataAccess {
 		return prst;
 	}
 	
-	public List<String> getOutAttributeSchema() {
-		
+	@Override
+	public List<String> getOutAttributeSchema(DBQuery dbQuery) {
 		List<String> out = new ArrayList<String>();
 		try {
-			ResultSetMetaData meta = baseQuery.getMetaData();
+			ResultSetMetaData meta = prepareStatement(dbQuery).getMetaData();
 			for (int i = 0; i < meta.getColumnCount(); i++) {
 				
 				out.add(meta.getColumnName(i+1));
@@ -235,35 +217,32 @@ public class DataAccess implements IDataAccess {
 	/**
 	 * Bringt die Elemente eines DS-Tupels in die Reihenfolge, wie sie auch
 	 * fuer eine Datenbankanweisung benötigt werden.
-	 * @param oldTuple Tupel vom phys. Operator
-	 * @param list Liste der Attributsnamen aus dem Datenstrom
-	 * @param refAttributes Liste der referenzierten Attribute in 
+	 * @param streamInputTuple Tupel vom phys. Operator
+	 * @param inputSchemaList Liste der Attributsnamen aus dem Datenstrom
+	 * @param refDBAttributes Liste der referenzierten Attribute in 
 	 * 			der DB-Anweisung
 	 * @return Liste der DS-Werte in DB-korrekter Reihenfolge
 	 */
-	private RelationalTuple<?> sortInput(RelationalTuple<?> oldTuple, 
-			SDFAttributeList list, List<String> refAttributes) {
+	@SuppressWarnings("unchecked")
+	private RelationalTuple<?> sortInput(RelationalTuple<?> streamInputTuple, 
+			SDFAttributeList inputSchemaList, List<String> refDBAttributes) {
 		
-		Object[] objects = new Object[refAttributes.size()];
-//		for (String string : refAttributes) {
-//			for (int i = 0; i < list.size(); i++) {
-//				if (string.equals(((SDFAttribute) list.getAttribute(i)).getURI())) {
-//					objects[i] = oldTuple.getAttribute(i).toString();
-//				}
-//			}
-//		}
+		Object[] objects = new Object[refDBAttributes.size()];
 		
-		for (int i = 0; i < refAttributes.size(); i++) {
-			String refAttr = refAttributes.get(i);
-			for (int j = 0; j < list.size(); j++) {
+		DirectAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchemaList);
+		
+		
+		for (int i = 0; i < refDBAttributes.size(); i++) {
+			SDFAttribute refAttr = attributeResolver.getAttribute(refDBAttributes.get(i));
+			
+			for (int j = 0; j < inputSchemaList.size(); j++) {
 				
-				String inputSchemaAttr = ((SDFAttribute) list.getAttribute(j)).getURI();
+				SDFAttribute inputSchemaAttr = ((SDFAttribute) inputSchemaList.getAttribute(j));
 				
 				if (refAttr.equals(inputSchemaAttr)) {
-					objects[i] = oldTuple.getAttribute(j).toString();
+					objects[i] = streamInputTuple.getAttribute(j).toString();
 					break;
 				}
-				
 			}
 		}
 		return new RelationalTuple(objects);
@@ -276,15 +255,6 @@ public class DataAccess implements IDataAccess {
 	 * @return eine Liste der Referenzen
 	 */
 	private LinkedList<String> findDataStreamAttr(String sql) {
-//		String [] list = new String [0];
-//		list = sql.split("[^\\$\\w*\\.]");
-//		ArrayList<String> result = new ArrayList<String>();
-//		
-//		for (String string : list) {
-//			if(string.startsWith("$")) {
-//				result.add(string.replaceFirst("\\$", "").trim());
-//			}
-//		}
 		
 		sql = sql.replace("(", " ");
 		sql = sql.replace(")", " ");
@@ -297,33 +267,46 @@ public class DataAccess implements IDataAccess {
 				prefList.add(string.replace("$", ""));
 			}
 		}
-
-		
 		return prefList;
 	}
 	
-	private void filterSQLCommands(String sql) {
-		String[] queries = sql.split(";");
-		for (String string : queries) {
-			if (string.startsWith("drop")) {
-				//TODO: Exception werfen
-			}
-		}
-	}
+//	private void filterSQLCommands(String sql) {
+//		String[] queries = sql.split(";");
+//		for (String string : queries) {
+//			if (string.startsWith("drop")) {
+//			}
+//		}
+//	}
 	
-	private IConnectionData getConnectionData(BundleContext context) {
-		if (context != null) {
-			return (IConnectionData) context.getService(context.getServiceReference(IConnectionData.class.getName()));
-		}
-		return null;
-		
-	}
 	
 	@Override
 	public RelationalTuple<?> getRelevantParams(RelationalTuple<?> tuple) {
-		RelationalTuple<?> param = sortInput(tuple, sdfList, dsAttributes);
+		RelationalTuple<?> param = sortInput(tuple, inputSchema, refStreamAttributes);
 		return param;
 	}
+	
+	
+	class ConnectionDataServiceTracker extends ServiceTracker {
+
+		public ConnectionDataServiceTracker(BundleContext bundleContext) {
+			super(bundleContext, IConnectionData.class.getName(), null);
+		}
+
+		public Object addingService(ServiceReference reference) {
+			
+			IConnectionData connService = (IConnectionData) context.getService(reference);
+			
+			if (connService != null) {
+				connectionData = connService;
+			}
+			return connService;
+		}
+
+		public void removedService(ServiceReference reference, Object service) {
+			context.ungetService(reference);
+		}
+	}
+
 	
 
 }

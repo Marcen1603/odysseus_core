@@ -9,14 +9,16 @@ public class QueryParam {
 	
 	private RelationalTuple<?> dataStreamParam;
 	private LinkedList<RelationalTuple<?>> results;
-	private long maxTime;
-	private long time;
+	private long timeInCache;
+	//DBQuery.hashCode
+	private Integer queryHash;
 	
-	public QueryParam(RelationalTuple<?> dataStreamParam, LinkedList<RelationalTuple<?>> results, long maxTime) {
+	public QueryParam(RelationalTuple<?> dataStreamParam, LinkedList<RelationalTuple<?>> results, 
+			long timeInCache, Integer queryHash) {
 		this.results = results;
 		this.dataStreamParam = dataStreamParam;
-		this.maxTime = maxTime;
-		this.time = 0;
+		this.timeInCache = timeInCache;
+		this.queryHash = queryHash;
 		
 	}
 	
@@ -32,15 +34,12 @@ public class QueryParam {
 //		this.maxTime = maxTime;
 //	}
 	
-	public long getMaxTime() {
-		return maxTime;
+	public long getTimeInCache() {
+		return timeInCache;
 	}
 
-	public long getTime() {
-		return time;
-	}
-
-	public void setTime(long time) {
-		this.time = time;
+	
+	public Integer getQueryHash() {
+		return queryHash;
 	}
 }

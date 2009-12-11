@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.dbIntegration.simpleCache.service;
 
+
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -19,95 +19,132 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 public class CachingService implements ICache {
 
 	private final String TIMEINCACHE = "timeInCache";
-	
+	private final String  MAXUSEDMB = "maxUsedMB";
 	private ResourceBundle defaults;
 	
+	//key = DBQuery.hashCode
+	private HashMap<Integer, DatabaseQuery> queries;
 	
-	private HashMap<String, DatabaseQuery> queries = new HashMap<String, DatabaseQuery>();
-	private HashMap<Integer, QueryParam> params = new HashMap<Integer, QueryParam>();
+	//key = ParamKey.hashCode
+	private HashMap<Integer, QueryParam > params;
+	
+	//key = ParamKey.hashCode
+	private LinkedList<Integer> paramOrder;
+	
 	
 	private long maxTime;
+	private int maxObjects;
+	private int currentObjects = 0;
+	
 	
 	@Override
 	public void addData(List<RelationalTuple<?>> result, DBQuery dbQuery) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void addQuery(DBQuery dbQuery, List<String> queryPrefs,
 			IDataAccess dal) {
-		queries.put(dbQuery.getQuery(), new DatabaseQuery(dbQuery, dal));
-		maxTime = Long.parseLong(defaults.getString(TIMEINCACHE));
+		long time = 0;
+		if (queryPrefs != null) {
+			for (String string : queryPrefs) {
+				if (string.startsWith(TIMEINCACHE)) {
+					string = string.replaceAll(TIMEINCACHE, "").trim();
+					time = Long.valueOf(string);
+				}
+			}
+		}
+		
+		if (time <= 0) {
+			time = maxTime;
+		}
+		queries.put(dbQuery.hashCode(), new DatabaseQuery(dbQuery, dal, time));
 	}
 
 	@Override
 	public void closeQuery(DBQuery dbQuery) {
-		for (Integer param : queries.get(dbQuery.getQuery()).getParams()) {
-			params.remove(param);
-		}
-		queries.remove(dbQuery.getQuery());
+		DatabaseQuery query = queries.get(dbQuery.hashCode());
+
+		
+		
 		
 	}
 
 	@Override
 	public List<RelationalTuple<?>> getCachedData(RelationalTuple<?> streamParam,
 			DBQuery dbQuery) throws CacheMissException {
+		DatabaseQuery query = queries.get(dbQuery.hashCode());
 		
-		if (queries.containsKey(dbQuery.getQuery())) {
-			
-			DatabaseQuery query = queries.get(dbQuery.getQuery());
-			RelationalTuple<?> relevantStreamElement = query.getDataAccess().getRelevantParams(streamParam);
-			
-			QueryParam param = params.get(relevantStreamElement.hashCode());
-			LinkedList<RelationalTuple<?>> result;
-			if (param != null) {
-				if (param.getMaxTime() < System.currentTimeMillis()+maxTime) {
-					param.setTime(0);
-					System.out.println("cached object loaded");
-					result = param.getResults();
-//					return param.getResults();
-				} else {
-					
-					
-					
-					query.removeParam(param.hashCode());
-					params.remove(param.hashCode());
-					
-					result = (LinkedList<RelationalTuple<?>>) query.getDataAccess().executeBaseQuery(streamParam);
-					
-					QueryParam newParam = new QueryParam(streamParam, result, System.currentTimeMillis()+maxTime);
-					Integer key = relevantStreamElement.hashCode();
-					query.addParam(key);
-					params.put(key, newParam);
-					
-					System.out.println("in cache, but old - database load");
-					
-//					return result;
-				}
-			} else {
-				result = (LinkedList<RelationalTuple<?>>) query.getDataAccess().executeBaseQuery(streamParam);
-			
-				QueryParam newParam = new QueryParam(streamParam, result, System.currentTimeMillis()+maxTime);
-				Integer key = relevantStreamElement.hashCode();
-				query.addParam(key);
-				params.put(key, newParam);
-				
-				System.out.println("not in cache - database load");
-				
-//				return result;
-			}
-			System.out.print(result);
-			return result;
+		if (query == null) {
+			throw new CacheMissException();
+		}
+		LinkedList<RelationalTuple<?>> result;
+		
+		RelationalTuple<?> relevantStreamElement = query.getDataAccess().getRelevantParams(streamParam);
+		
+		
+		Integer paramHash = (new ParamKey(relevantStreamElement, dbQuery)).hashCode();
+		
+		
+		System.out.println(dbQuery.hashCode());
 
+		if (query.getParams().contains(Integer.valueOf(paramHash))
+				&& params.containsKey(paramHash)) {
+			
+			QueryParam param = params.get(paramHash);
+			long currentTime = System.currentTimeMillis();
+			
+			if (param.getTimeInCache()+query.getMaxTimeInCache() > currentTime) {
+				result = param.getResults();
+				paramOrder.remove(paramHash);
+				paramOrder.addFirst(paramHash);
+				return result;
+			} 
+			currentObjects = currentObjects - query.getTupelSize() * param.getResults().size();
+			paramOrder.remove(paramHash);
+			params.remove(paramHash);
+			query.removeParam(paramHash);
+		} 
+		result = (LinkedList<RelationalTuple<?>>) query.getDataAccess().executeBaseQuery(streamParam);
+		
+		if ((query.getTupelSize() * result.size()) > maxObjects) {
+			throw new CacheMissException();
+		}else if (result.size() > 0) {
+			QueryParam newParam = new QueryParam(streamParam, result, System.currentTimeMillis(), dbQuery.hashCode());
+			currentObjects = currentObjects + query.getTupelSize() * result.size();
+
+			while (currentObjects > maxObjects) {
+				System.out.println();
+				Integer replaceHash = paramOrder.removeLast();
+				if (replaceHash == null) {
+					throw new CacheMissException();
+				}
+				QueryParam replaceParam = params.get(replaceHash);
+				DatabaseQuery replaceQuery = queries.get(replaceParam.getQueryHash());
+				this.currentObjects = currentObjects - (replaceQuery.getTupelSize() * replaceParam.getResults().size());
+				replaceQuery.removeParam(replaceHash);				
+			}
+
+			params.put(paramHash, newParam);
+			query.addParam(paramHash);
+			paramOrder.addFirst(paramHash);
 		}
 
-		throw new CacheMissException();
+		return result;	
 	}
 
 	protected void activate(ComponentContext componentContext) {
 		defaults = ResourceBundle.getBundle("defaults");
 		//TODO: moegliche MissingResourceException abfangen 
+		
+		maxTime = Long.parseLong(defaults.getString(TIMEINCACHE));
+		
+		maxObjects = Integer.parseInt(defaults.getString(MAXUSEDMB));
+		maxObjects = 1024 * 1024 * maxObjects / 10;
+//		maxObjects = 300;
+		
+		queries = new HashMap<Integer, DatabaseQuery>();
+		params = new HashMap<Integer, QueryParam> ();
+		paramOrder = new LinkedList<Integer>();
 	}
 	
 
