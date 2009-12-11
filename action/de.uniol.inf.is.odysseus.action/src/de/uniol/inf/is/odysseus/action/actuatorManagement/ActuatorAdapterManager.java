@@ -85,6 +85,9 @@ public class ActuatorAdapterManager implements IActuatorManager{
 							}else if (type.equals("boolean")){
 								params.add(Boolean.valueOf(typeMatcher.group(1)));
 								paramTypes.add(boolean.class);
+							}else {
+								params.add(typeMatcher.group(1));
+								paramTypes.add(String.class);
 							}
 						}else {
 							params.add(param);
