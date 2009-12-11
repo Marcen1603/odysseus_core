@@ -12,16 +12,21 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
 public class ECAParser implements IQueryParser{
-	private Pattern ecaPattern;
-	
 	private ICompiler compiler;
 	private IAdvancedExecutor executer;
-
+	
+	private static Pattern ecaPattern ;
+	
+	private static final Pattern LANGPATTERN = Pattern.compile("\\[LANG:(\\w*)\\]");
+	private static final String DEFAULTLANG = "CQL";
+		
 	public ECAParser () {
-		String param = "[a-zA-Z0-9\"]+\\s*";
-		String method = "\\w+\\s*\\(["+param+"[,\\s*"+param+"]*]?\\)";
-		String actuator = "\\w+\\."+method;	
-		this.ecaPattern = Pattern.compile("(ON\\s*\\().*(\\)\\s*DO\\s+"+actuator+"[\\s+"+actuator+"]*)", Pattern.CASE_INSENSITIVE);
+		if (ecaPattern == null){
+			String param = "[a-zA-Z0-9\"]+\\s*";
+			String method = "\\w+\\s*\\(["+param+"[,\\s*"+param+"]*]?\\)";
+			String actuator = "\\w+\\."+method;	
+			ecaPattern = Pattern.compile("(ON\\s*\\().*(\\)\\s*DO\\s+"+actuator+"[\\s+"+actuator+"]*)", Pattern.CASE_INSENSITIVE);
+		}
 	}
 	
 	@Override
@@ -42,12 +47,19 @@ public class ECAParser implements IQueryParser{
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
 		//extract internal query
-		String lang = ""; // in query
-		Matcher matcher = this.ecaPattern.matcher(query);
+		Matcher matcher = ecaPattern.matcher(query);
 		if (matcher.matches()){
 			matcher.reset();
 			if (matcher.find()){
-				String interalQuery = query.substring(matcher.end(1), matcher.start(2));
+				String interalQuery = query.substring(matcher.end(1), matcher.start(2)).trim();
+
+				//check if internalQuery defines used language
+				String lang = DEFAULTLANG; 
+				Matcher langMatcher = LANGPATTERN.matcher(interalQuery);
+				if (langMatcher.find()){
+					lang = langMatcher.group(1);
+					interalQuery = langMatcher.replaceFirst("");
+				}
 				
 				String actuatorString = query.substring(matcher.start(2)+1, query.length());
 				//remove do-key phrase
@@ -55,7 +67,7 @@ public class ECAParser implements IQueryParser{
 				actuatorString = actuatorString.substring(2, actuatorString.length());
 				actuatorString = actuatorString.trim();
 			
-				//List<ILogicalOperator> plan = compiler.translateQuery(interalQuery, lang);
+				List<ILogicalOperator> plan = compiler.translateQuery(interalQuery, lang);
 				//this.determineSchema(plan);
 				return null;
 			}
@@ -85,11 +97,11 @@ public class ECAParser implements IQueryParser{
 		String[] statements = {
 				//correct
 				"on (CQL) do a.a()",
-				"ON  (Select * From abc where abc.a=5;)do a.a(5)",
+				"ON  ([LANG:SQL]Select * From abc where abc.a=5;)do a.a(5)",
 				"ON(Select * From (Select a from a)) do  a.b()",
 				"on () do a.b(), b.a(2, \"3\")",
 				//incorrect
-				"on (Select * From do a.b()",
+				"on ([Lang:bla] Select * From do a.b()",
 				"on Select * From) do a.b()",
 				"on (blub) do a.b, b.a()"};		
 		for (String statement : statements){
