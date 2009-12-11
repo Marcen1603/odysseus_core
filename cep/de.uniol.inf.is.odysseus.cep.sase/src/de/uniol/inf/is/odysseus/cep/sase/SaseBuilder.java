@@ -28,10 +28,12 @@ import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
+import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPCondition;
+import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
@@ -42,122 +44,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class SaseBuilder implements IQueryParser, BundleActivator {
-
-	class CompareExpression {
-		public List<PathAttribute> attributes = new LinkedList<PathAttribute>();
-		String fullExpression = null;
-
-		@Override
-		public String toString() {
-
-			return attributes + " " + fullExpression;
-		}
-
-		boolean contains(String attrib) {
-			return get(attrib) != null;
-		}
-		
-		PathAttribute get(String attrib){
-			for (PathAttribute a : attributes) {
-				if (attrib.startsWith(a.getStatename())) {
-					return a;
-				}
-			}
-			return null;			
-		}
-		
-
-		public String getFullExpression() {
-			return fullExpression;
-		}
-
-		public void setFullExpression(String fullExpression) {
-			this.fullExpression = fullExpression;
-		}
-	}
-
-	class PathAttribute {
-		private String aggregation;
-		private String attribute;
-		private String kleenePart;
-		private String path;
-		private String fullAttribute;
-		private String statename;
-
-		public PathAttribute(String attribute, String kleenePart, String path,
-				String aggregation) {
-			init(attribute, kleenePart, path, aggregation);
-		}
-
-		private void init(String attribute, String kleenePart, String path,
-				String aggregation) {
-			this.attribute = attribute;
-			this.kleenePart = kleenePart;
-			this.path = path;
-			this.aggregation = aggregation;
-			this.fullAttribute = aggregation
-					+ "#"
-					+ ((kleenePart == null) ? attribute : attribute
-							+ kleenePart) + "." + path;
-			this.statename = attribute;
-			if (kleenePart != null) {
-				this.statename += (kleenePart.equals("[1]") ? "[1]" : "[i]");
-			}
-		}
-
-		/**
-		 * Constructor used for Creation of Id-Expressions
-		 * 
-		 * @param statename
-		 * @param path
-		 */
-		public PathAttribute(String statename, String path) {
-			int kIndex = statename.indexOf("[");
-			if (kIndex > 0) {
-				init(statename.substring(0, kIndex), statename
-						.substring(kIndex), path, Write.class.getSimpleName());
-			} else {
-				init(statename, null, path, Write.class.getSimpleName());
-			}
-		}
-
-		public String getFullAttributeName() {
-			return fullAttribute;
-		}
-
-		public String getRealAttributeName() {
-			return attribute + "." + path;
-		}
-
-		public String getAggregation() {
-			return aggregation;
-		}
-
-		public String getAttribute() {
-			return attribute;
-		}
-
-		public String getKleenePart() {
-			return kleenePart;
-		}
-
-		boolean isKleeneAttribute() {
-			return kleenePart != null;
-		}
-
-		public String getStatename() {
-			return statename;
-		}
-
-		public String getPath() {
-			return path;
-		}
-
-		@Override
-		public String toString() {
-			return attribute + "." + path;
-		}
-	}
 
 	static final TreeAdaptor adaptor = new CommonTreeAdaptor() {
 		public Object create(Token payload) {
@@ -219,6 +105,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 					processWhere((CommonTree) child, cepAo, states);
 				} else if (cStr.equalsIgnoreCase("WITHIN")) {
 					processWithin((CommonTree) child, cepAo);
+				} else if (cStr.equalsIgnoreCase("RETURN")) {
+					processReturn((CommonTree) child, cepAo);
 				} else {
 					throw new RuntimeException(cStr + " no valid Syntax");
 				}
@@ -237,6 +125,22 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			}
 		}
 		return cepAo;
+	}
+
+	private void processReturn(CommonTree child, CepAO<RelationalTuple<?>> cepAo) {
+		List<PathAttribute> retAttr = processAttributes(getChildren(child));
+		JEPOutputSchemeEntry e = null;
+		OutputScheme scheme = new OutputScheme();
+		for (PathAttribute p : retAttr) {
+			String op = p.getAggregation();
+			String a = p.getAttribute();
+			String i = p.getIndex();
+			String path = p.getPath();
+			e = new JEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
+					+ "." + path));
+			scheme.append(e);
+		}
+		cepAo.getStateMachine().setOutputScheme(scheme);
 	}
 
 	private List<State> processPattern(CommonTree patternTree,
@@ -259,15 +163,31 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						State dest = states.get(i + 1);
 						if (source.getId().endsWith("[i]")) {
 							source.addTransition(new Transition(source.getId()
-									+ "_proceed", dest, new JEPCondition(CepVariable.createAttribute(source.getId())+".type==\""+source.getType()+"\""),
+									+ "_proceed", dest, new JEPCondition(
+									CepVariable.createAttribute(source.getId())
+											+ ".type==\"" + source.getType()
+											+ "\""),
 									EAction.consumeNoBufferWrite));
-							source.addTransition(new Transition(source.getId()
-									+ "_take", source, new JEPCondition(CepVariable.createAttribute(source.getId())+".type==\""+source.getType()+"\""),
-									EAction.consumeBufferWrite));
+							source
+									.addTransition(new Transition(source
+											.getId()
+											+ "_take", source,
+											new JEPCondition(CepVariable
+													.createAttribute(source
+															.getId())
+													+ ".type==\""
+													+ source.getType() + "\""),
+											EAction.consumeBufferWrite));
 						} else {
-							source.addTransition(new Transition(source.getId()
-									+ "_begin", dest, new JEPCondition(CepVariable.createAttribute(source.getId())+".type==\""+source.getType()+"\""),
-									EAction.consumeBufferWrite));
+							source
+									.addTransition(new Transition(source
+											.getId()
+											+ "_begin", dest, new JEPCondition(
+											CepVariable.createAttribute(source
+													.getId())
+													+ ".type==\""
+													+ source.getType() + "\""),
+											EAction.consumeBufferWrite));
 						}
 						if (i > 0 && i < states.size() - 1) {
 							// Ignore auf sich selbst!
@@ -356,15 +276,16 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				// Automaten auch der
 				// Reihenfolge im Ausdruck entspricht
 				for (int i = 0; i < states.size() - 2; i++) {
-					CompareExpression ce = new CompareExpression();
+					List<PathAttribute> attr = new ArrayList<PathAttribute>();
 					PathAttribute a = new PathAttribute(states.get(i).getId(),
 							elem.getChild(0).toString());
-					ce.attributes.add(a);
+					attr.add(a);
 					PathAttribute b = new PathAttribute(states.get(i + 1)
 							.getId(), elem.getChild(0).toString());
-					ce.attributes.add(b);
-					ce.fullExpression = a.getFullAttributeName() + " == "
-							+ b.getFullAttributeName();
+					attr.add(b);
+					CompareExpression ce = new CompareExpression(attr, a
+							.getFullAttributeName()
+							+ " == " + b.getFullAttributeName());
 					compareExpressions.add(ce);
 				}
 			} else if (elem.toString().equalsIgnoreCase("COMPAREEXPRESSION")) {
@@ -381,15 +302,15 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						.iterator();
 				while (compareIter.hasNext()) {
 					CompareExpression ce = compareIter.next();
-					//System.out.println(ce);
+					// System.out.println(ce);
 					PathAttribute attr = ce.get(s.getId());
 					if (attr != null) {
 						Transition t = s.getTransition(s.getId() + "_begin");
-						
-						if (t == null && attr.isKleeneAttribute()){
+
+						if (t == null && attr.isKleeneAttribute()) {
 							if (attr.getKleenePart().equals("[i]")) {
 								t = s.getTransition(s.getId() + "_take");
-							}else{
+							} else {
 								t = s.getTransition(s.getId() + "_proceed");
 							}
 						}
@@ -437,7 +358,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	private String tranformAttributesToMetamodell(CompareExpression ce, State s) {
 		// In die Syntax des Metamodells umwandeln
 		String ret = new String(ce.getFullExpression());
-		for (PathAttribute attrib : ce.attributes) {
+		for (PathAttribute attrib : ce.getAttributes()) {
 			String index = ""; // getKleenePart.equals("[i]")
 			String fullAttribName = attrib.getFullAttributeName();
 			String aggregation = attrib.getAggregation();
@@ -494,30 +415,37 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	private CompareExpression processCompareExpression(List<CommonTree> children) {
-		CompareExpression expr = new CompareExpression();
-		expr.setFullExpression(buildStringForExpression(children));
+		List<PathAttribute> attribs = processAttributes(children);
+		CompareExpression expr = new CompareExpression(attribs,
+				buildStringForExpression(children));
+		return expr;
+	}
+
+	private List<PathAttribute> processAttributes(List<CommonTree> children) {
+		List<PathAttribute> attribs = new ArrayList<PathAttribute>();
+
 		for (CommonTree elem : children) {
 			if (elem.toString().equalsIgnoreCase("KMEMBER")) {
 				PathAttribute attr = new PathAttribute(elem.getChild(0)
 						.toString(), elem.getChild(1).toString(), elem
 						.getChild(2).toString(), Write.class.getSimpleName());
-				expr.attributes.add(attr);
+				attribs.add(attr);
 			} else if (elem.toString().equalsIgnoreCase("MEMBER")) {
 				PathAttribute attr = new PathAttribute(elem.getChild(0)
 						.toString(), null, elem.getChild(1).toString(),
 						Write.class.getSimpleName());
-				expr.attributes.add(attr);
+				attribs.add(attr);
 			} else if (elem.toString().equalsIgnoreCase("AGGREGATION")) {
 				PathAttribute attr = new PathAttribute(elem.getChild(1)
 						.toString(), elem.getChild(2).toString(), elem
 						.getChild(3).toString(), SymbolTableOperationFactory
 						.getOperation(elem.getChild(0).toString()).getName());
-				//System.out.println("found aggregation " + attr + " "
-				//		+ attr.getAggregation());
-				expr.attributes.add(attr);
+				// System.out.println("found aggregation " + attr + " "
+				// + attr.getAggregation());
+				attribs.add(attr);
 			}
 		}
-		return expr;
+		return attribs;
 	}
 
 	private String buildStringForExpression(List<CommonTree> children) {
@@ -620,7 +548,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour",
 		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2+ auction[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"
 		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction) WHERE skip_till_any_match(person, auction){person.id = auction.seller}",
-		"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2}" };
+		"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2 RETURN person.id, person.name, autcion.id" };
 		try {
 			for (String q : toParse) {
 				System.out.println(q);
@@ -645,4 +573,137 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		DataDictionary.getInstance().setView(sourcename, source);
 	}
 
+}
+
+class CompareExpression {
+	private List<PathAttribute> _attributes = null;
+	private String _fullExpression = null;
+
+	public CompareExpression(List<PathAttribute> attributes,
+			String fullExpression) {
+		super();
+		_attributes = attributes;
+		_fullExpression = fullExpression;
+	}
+
+	@Override
+	public String toString() {
+
+		return _attributes + " " + _fullExpression;
+	}
+
+	boolean contains(String attrib) {
+		return get(attrib) != null;
+	}
+
+	PathAttribute get(String attrib) {
+		for (PathAttribute a : _attributes) {
+			if (attrib.startsWith(a.getStatename())) {
+				return a;
+			}
+		}
+		return null;
+	}
+
+	public String getFullExpression() {
+		return _fullExpression;
+	}
+
+	public void setFullExpression(String fullExpression) {
+		_fullExpression = fullExpression;
+	}
+
+	public List<PathAttribute> getAttributes() {
+		return _attributes;
+	}
+
+}
+
+class PathAttribute {
+	private String _aggregation;
+	private String _attribute;
+	private String _kleenePart;
+	private String _path;
+	private String _fullAttribute;
+	private String _statename;
+	private String _index;
+
+	public PathAttribute(String attribute, String kleenePart, String path,
+			String aggregation) {
+		init(attribute, kleenePart, path, aggregation);
+	}
+
+	public String getIndex() {
+		return _index;
+	}
+
+	private void init(String attribute, String kleenePart, String path,
+			String aggregation) {
+		_attribute = attribute;
+		_kleenePart = kleenePart;
+		_path = path;
+		_aggregation = aggregation;
+		_fullAttribute = aggregation + "#"
+				+ ((kleenePart == null) ? attribute : attribute + kleenePart)
+				+ "." + path;
+		_statename = attribute;
+		if (kleenePart != null) {
+			_statename += (kleenePart.equals("[1]") ? "[1]" : "[i]");
+			_index = kleenePart.substring(kleenePart.indexOf("[") + 1,
+					kleenePart.indexOf("]"));
+		}
+	}
+
+	/**
+	 * Constructor used for Creation of Id-Expressions
+	 * 
+	 * @param statename
+	 * @param path
+	 */
+	public PathAttribute(String statename, String path) {
+		int kIndex = statename.indexOf("[");
+		if (kIndex > 0) {
+			init(statename.substring(0, kIndex), statename.substring(kIndex),
+					path, Write.class.getSimpleName());
+		} else {
+			init(statename, null, path, Write.class.getSimpleName());
+		}
+	}
+
+	public String getFullAttributeName() {
+		return _fullAttribute;
+	}
+
+	public String getRealAttributeName() {
+		return _attribute + "." + _path;
+	}
+
+	public String getAggregation() {
+		return _aggregation;
+	}
+
+	public String getAttribute() {
+		return _attribute;
+	}
+
+	public String getKleenePart() {
+		return _kleenePart;
+	}
+
+	boolean isKleeneAttribute() {
+		return _kleenePart != null;
+	}
+
+	public String getStatename() {
+		return _statename;
+	}
+
+	public String getPath() {
+		return _path;
+	}
+
+	@Override
+	public String toString() {
+		return _attribute + "." + _path;
+	}
 }

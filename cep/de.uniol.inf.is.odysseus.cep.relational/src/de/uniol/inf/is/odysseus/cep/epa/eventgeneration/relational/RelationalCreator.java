@@ -1,15 +1,11 @@
 package de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.cep.epa.MatchedEvent;
 import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
+import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.AbstractComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.AbstractComplexEventFactory;
 
 public class RelationalCreator<R> extends AbstractComplexEventFactory<R,RelationalTuple<?>> {
 
@@ -25,18 +21,18 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 	public RelationalTuple<?> createComplexEvent(OutputScheme outputscheme,
 			MatchingTrace<R> matchingTrace, SymbolTable symTab) {
 		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
-		System.out.println("--------------------------------------------------------------------------");
-		System.out.println("RelationalCreator ");
-	
-		List<MatchedEvent<R>> eList = new LinkedList<MatchedEvent<R>>();
-		MatchedEvent<R> event = lastEvent;
-		eList.add(event);
-		while ((event = event.getPrevious()) != null){
-			eList.add(event);
-		}
-		Collections.reverse(eList);
-		System.out.println("Matched Events "+eList);		
-		System.out.println("--------------------------------------------------------------------------");
+//		System.out.println("--------------------------------------------------------------------------");
+//		System.out.println("RelationalCreator ");
+//	
+//		List<MatchedEvent<R>> eList = new LinkedList<MatchedEvent<R>>();
+//		MatchedEvent<R> event = lastEvent;
+//		eList.add(event);
+//		while ((event = event.getPrevious()) != null){
+//			eList.add(event);
+//		}
+//		Collections.reverse(eList);
+//		System.out.println("Matched Events "+eList);		
+//		System.out.println("--------------------------------------------------------------------------");
 		Object[] attributes = new Object[outputscheme.getEntries().size()];
 		for (int i = 0; i < outputscheme.getEntries().size(); i++) {
 			/*
@@ -47,7 +43,9 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 			attributes[i] = outputscheme.getEntries().get(i).getValueAsObject();
 		}
 		// TODO: Metadaten setzen, nur wie?
-		return new RelationalTuple(attributes);
+		RelationalTuple ret = new RelationalTuple(attributes);
+		System.out.println("EVENT "+ret);
+		return ret;
 	}
 
 }

@@ -29,7 +29,7 @@ tokens{
 	package de.uniol.inf.is.odysseus.cep.sase; 
 }
 
-query	:  patternPart (wherePart)? (withinPart)?
+query	:  patternPart (wherePart)? (withinPart)? (returnPart)?
 	;
 		
 withinPart
@@ -45,6 +45,9 @@ patternPart
 	: PATTERN patternDecl -> ^(PATTERN patternDecl)
 	;
 	
+returnPart
+	:	 RETURN term (COMMA term)* -> ^(RETURN term*)
+	;
 	
 patternDecl
 	:	SEQ LBRACKET pItem (COMMA pItem)* RBRACKET -> ^(SEQ pItem*)

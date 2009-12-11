@@ -54,4 +54,13 @@ public class OutputScheme {
 		return str;
 	}
 
+	public void append(AbstractOutputSchemeEntry e) {
+		entries.add(e);
+	}
+	
+	@Override
+	public String toString() {
+		return toString(" ");
+	}
+
 }

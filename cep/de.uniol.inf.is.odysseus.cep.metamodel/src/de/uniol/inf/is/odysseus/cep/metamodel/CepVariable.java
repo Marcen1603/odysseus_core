@@ -260,4 +260,9 @@ public class CepVariable {
 		}
 	}
 
+	public static String getStringFor(String operation, String stateIdentifier, String index, String attribute) {
+		return operation+getSeperator()+stateIdentifier+getSeperator()+(index!=null?index:"")+getSeperator()+attribute;
+		
+	}
+
 }

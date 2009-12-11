@@ -1,11 +1,11 @@
 lexer grammar SaseLexer;
 
 @lexer::header { package de.uniol.inf.is.odysseus.cep.sase; } 
-  
-HAVING	: 'HAVING'|'having'|'Having' ;
+
 PATTERN : 'PATTERN'|'pattern'|'Pattern';
 WHERE : 'where'|'WHERE'|'Where';
 WITHIN	: 'WITHIN'|'within'|'Within';
+RETURN 	: 'RETURN'|'Return'|'return';	 
 SEQ : 'SEQ'|'seq'|'Seq';
 LEFTCURLY : '{';
 RIGHTCURLY : '}';	
@@ -13,7 +13,7 @@ AND :'AND'|'and'|'And';
 FIRST :'[1]';
 CURRENT :'[i]';	
 PREVIOUS :  '[i-1]' ;	
-ALLTOPREVIOUS :	 '[..i-1]' ;
+ALLTOPREVIOUS :	 '[..i-1]';
 LAST 	:	 '['NAME'.LEN]';
 
 BBRACKETLEFT :  '[';

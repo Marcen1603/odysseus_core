@@ -167,7 +167,8 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				/*
 				 * Über Variablen iterieren und neu belegen.
 				 * Achtung! Sobald eine Variabel nicht belegbar ist, braucht (darf) 
-				 * die Transition nicht ausgewertet werden
+				 * die Transition nicht ausgewertet werden (kann also nie true sein)
+				 * kommt vor, wenn der Typ schon nicht stimmt.
 				 */
 				if (updateVariables(event, instance, transition, port)) {
 					try {
@@ -294,7 +295,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 						.getOutputScheme().getEntries()) {
 
 					for (String varName : entry.getVarNames()) {
-						Object value = getValue(port, instance, varName);
+						Object value = getValue(-1, instance, varName);
 						entry.setValue(varName, value);
 					}
 				}
@@ -327,8 +328,20 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(
 					split[1], index);
 			if (event != null) {
-				value = this.eventReader.get(port).getValue(split[3],
-						event.getEvent());
+				IEventReader<R, ?> eventR = this.eventReader.get(port);
+				if (port > 0) {
+					eventR = this.eventReader.get(port);
+				}else{
+					// For final Results ... find Event-Reader
+					String type = stateMachine.getState(split[1]).getType();
+					for (IEventReader<R, ?> r: eventReader.values()){
+						if (r.getType().equals(type)){
+							eventR = r;
+							break;
+						}
+					}
+				}
+				value = eventR.getValue(split[3], event.getEvent());
 			}
 		}
 		return value;

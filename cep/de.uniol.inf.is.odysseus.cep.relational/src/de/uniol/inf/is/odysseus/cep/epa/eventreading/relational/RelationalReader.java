@@ -52,8 +52,10 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>> {
 			// Variable ist alles nach dem letzten "."
 			String identifier = id.substring(id.lastIndexOf(".")+1);
 			pos = this.scheme.get(identifier);
-			// Beim nächsten mal sofort finden :-)
-			scheme.put(id, pos);
+			if (pos!=null){
+				// Beim nächsten mal sofort finden :-)
+				scheme.put(id, pos);
+			}
 		}
 		if (pos != null){
 			RelationalTuple<?> tuple = (RelationalTuple<?>) event;
