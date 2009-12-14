@@ -24,4 +24,8 @@ public class TestActuator extends ActuatorAdapter {
 	public String getName() {
 		return name;
 	}
+	
+	public static void main(String[] args) {
+		TestActuator a = new TestActuator("a");
+	}
 }

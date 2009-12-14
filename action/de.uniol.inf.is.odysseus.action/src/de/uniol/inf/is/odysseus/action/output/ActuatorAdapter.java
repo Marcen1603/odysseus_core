@@ -8,39 +8,26 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 
 public abstract class ActuatorAdapter implements IActuator {
-	private ArrayList<ActuatorMethod> methods;
+	private ArrayList<ActionMethod> methods;
 	
 	public ActuatorAdapter() {
-		this.methods = new ArrayList<ActuatorMethod>();
+		this.methods = new ArrayList<ActionMethod>();
 		for (Method method : this.getClass().getMethods()) {
 			this.methods.add(
-					new ActuatorMethod(method.getName(),method.getParameterTypes()));
+					new ActionMethod(method.getName(),method.getParameterTypes()));
 		}
 	}
 	
 	@Override
-	public List<ActuatorMethod> getSchema() {
+	public List<ActionMethod> getSchema() {
 		return this.methods;
 	}
 	
 	
 	@Override
-	public void executeMethod(String method, Object[] params) throws ActuatorException {
-		//check if method is defined in this class
-		ActuatorMethod existingMethod = null;
-		for (ActuatorMethod m : this.methods){
-			if (m.isCompatibleTo(method, params)){
-				existingMethod = m;
-				break;
-			}
-		}
-		if (existingMethod == null){
-			throw new ActuatorException("Method undefined for actuator: "+this.getClass().getName());
-		}
-		//execute method
+	public void executeMethod(String method, Class<?>[] types, Object[] params) throws ActuatorException {
 		try {
-			Method methodToExecute = this.getClass().getMethod(method, 
-					existingMethod.getParameterTypes());
+			Method methodToExecute = this.getClass().getMethod(method, types);
 			methodToExecute.invoke(this, params);
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block

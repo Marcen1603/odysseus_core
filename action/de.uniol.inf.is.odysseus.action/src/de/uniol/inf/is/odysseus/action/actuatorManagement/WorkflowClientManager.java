@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.action.output.ActuatorMethod;
+import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 import de.uniol.inf.is.odysseus.action.output.WorkflowClient;
 
@@ -47,7 +47,7 @@ public class WorkflowClientManager implements IActuatorManager {
 	}
 
 	@Override
-	public List<ActuatorMethod> getSchema(String name) {
+	public List<ActionMethod> getSchema(String name) {
 		WorkflowClient client = this.clients.get(name);
 		if (client != null){
 			return client.getSchema();

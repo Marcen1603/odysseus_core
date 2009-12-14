@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.action.output.ActuatorMethod;
+import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
@@ -49,7 +49,7 @@ public class ActuatorFactory {
 		return instance;
 	}
 	
-	public List<ActuatorMethod> getSchema(String actuatorName, String managerName){
+	public List<ActionMethod> getSchema(String actuatorName, String managerName){
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
 			return manager.getSchema(actuatorName);

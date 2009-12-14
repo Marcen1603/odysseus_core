@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 
 public interface IActuator {
 	
-	public void executeMethod (String method, Object[] params) throws ActuatorException;
+	public void executeMethod (String method, Class<?>[] types, Object[] params) throws ActuatorException;
 	
-	public List<ActuatorMethod> getSchema();
+	public List<ActionMethod> getSchema();
 
 }

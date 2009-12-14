@@ -8,15 +8,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorFactory;
+import de.uniol.inf.is.odysseus.action.exception.ActionException;
 import de.uniol.inf.is.odysseus.action.output.Action;
+import de.uniol.inf.is.odysseus.action.output.ActionAttribute;
 import de.uniol.inf.is.odysseus.action.output.ActionParameter;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 import de.uniol.inf.is.odysseus.action.output.ActionParameter.ParameterType;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class ECAParser implements IQueryParser{
 	private ICompiler compiler;
@@ -24,8 +29,8 @@ public class ECAParser implements IQueryParser{
 	
 	private static Pattern ecaPattern;
 	
-	private static final Pattern ACTIONPATTERN = Pattern.compile("(\\w+)\\.(\\w+)\\.(\\w+\\s*)\\(([^\\(\\)]*)\\)");
-	private static final Pattern LANGPATTERN = Pattern.compile("\\[LANG:(\\w*)\\]");
+	private static final Pattern ACTIONPATTERN = Pattern.compile("(\\w+)\\.(\\w+)\\.(\\w+\\s*)\\(([^\\(\\)]*)\\)",Pattern.CASE_INSENSITIVE);
+	private static final Pattern LANGPATTERN = Pattern.compile("\\[LANG:(\\w*)\\]",Pattern.CASE_INSENSITIVE);
 	private static final Pattern PARAMPATTERN = Pattern.compile("[^,]*");
 	private static final Pattern PARAMTYPEPATTERN = Pattern.compile("([^:]*)(\\w*)");
 	
@@ -48,21 +53,20 @@ public class ECAParser implements IQueryParser{
 		return "ECA";
 	}
 	
+	/**
+	 * static Service binding (used by OSGI)
+	 * @param compiler
+	 */
 	public void bindCompiler (ICompiler compiler){
 		this.compiler = compiler;
 	}
 	
-	public void bindExecuter (IAdvancedExecutor executer){
-		this.executer = executer;
-
-	}
-
 	@Override
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
 		HashMap<Action, ArrayList<ActionParameter>> actions = new HashMap<Action, ArrayList<ActionParameter>>();
 		//extract internal query
-		Matcher ecaMatcher = ecaPattern.matcher(query);
+		Matcher ecaMatcher = ecaPattern.matcher(query.toLowerCase());
 		if (ecaMatcher.matches()){
 			ecaMatcher.reset();
 			if (ecaMatcher.find()){
@@ -78,7 +82,7 @@ public class ECAParser implements IQueryParser{
 				
 				//create logical plan and retrieve schema
 				List<ILogicalOperator> plan = compiler.translateQuery(interalQuery, lang);
-				//this.determineSchema(plan);
+				SDFAttributeList schema = this.determineSchema(plan);
 				
 				//extract action part of query
 				String actionString = query.substring(ecaMatcher.start(2), query.length());
@@ -94,60 +98,129 @@ public class ECAParser implements IQueryParser{
 					String methodName = actionMatcher.group(3).trim();
 					String params = actionMatcher.group(4).trim();	
 
-
 					//extract params 
 					ArrayList<ActionParameter> actionParameters = new ArrayList<ActionParameter>();
 					if (params.length() > 0){
-						ArrayList<Class<?>> paramList = new ArrayList<Class<?>>();
 						Matcher paramMatcher = PARAMPATTERN.matcher(params);
 						while (paramMatcher.find()){
-							String completeParam = paramMatcher.group();
+							String completeParam = paramMatcher.group().trim();
 							Matcher paramTypeMatcher = PARAMTYPEPATTERN.matcher(completeParam);
 							if (paramTypeMatcher.find()){
 								String paramValue = paramTypeMatcher.group(1);
 								String paramType = paramTypeMatcher.group(2);
 								
-								Object value = this.generateValue(paramValue, paramType);
-								
-								paramList.add(value.getClass());
+								Object value = this.generateStandardValue(paramValue, paramType);
 								actionParameters.add(new ActionParameter(ParameterType.Value, value));
+							
 							}else{
-								//TODO determine type from schema
+								//check if schema contains attribute
+								boolean attributeFound = false;
+								for (int i=0; i<schema.getAttributeCount(); i++){
+									SDFAttribute attribute = schema.get(i);
+									String attributeName = attribute.getAttributeName();
+									if (attributeName.equals(
+											completeParam)){
+										actionParameters.add(new ActionParameter(ParameterType.Attribute, 
+												new ActionAttribute(attribute.getDatatype(), i)));
+										attributeFound = true;
+										break;
+									}
+								}
+								if (!attributeFound){
+									throw new QueryParseException("Referenced attribute: "+completeParam+" not found");
+								}
 							}	
 						}
 					}
 					//create action object & map with parameters
 					IActuator actuator = ActuatorFactory.getInstance().getActuator(actuatorName, managerName);
-					actions.put(new Action(actuator, methodName), actionParameters);
+					actions.put(this.createAction(actuator, methodName, actionParameters), actionParameters);
 				}
 				if (!actions.isEmpty()){
 					return this.createNewPlan(actions, plan);
 				}
-				return null;
+				throw new QueryParseException("No Actions defined");
 			}
 		}
 		throw new QueryParseException("Incorrect ECA syntax");
 	}
 
-	private Class<?> generateValue(String paramType, String paramType2) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Creates an Action Object if schema of the actuator is compatible 
+	 * @param actuator
+	 * @param methodName
+	 * @param actionParameters
+	 * @return
+	 * @throws QueryParseException
+	 */
+	private Action createAction(IActuator actuator, String methodName,
+			ArrayList<ActionParameter> actionParameters) throws QueryParseException {
+		Class<?>[] parameters = new Class<?>[actionParameters.size()];
+		for (int i=0; i<actionParameters.size(); i++){
+			parameters[i] = actionParameters.get(i).getParamClass();
+		}
+		try {
+			return new Action(actuator, methodName, parameters);
+		}catch (ActionException e){
+			throw new QueryParseException(e.getMessage());
+		}
+	}
+
+	private Object generateStandardValue(String paramValue, String paramType) throws QueryParseException {
+		try {
+			if (paramValue.equals("double")){
+				return Double.valueOf(paramValue);
+			}else if (paramValue.equals("float")){
+				return Float.valueOf(paramValue);
+			}else if (paramValue.equals("long")){
+				return Long.valueOf(paramValue);
+			}else if (paramValue.equals("int")){
+				return Integer.valueOf(paramValue);
+			}else if (paramValue.equals("short")){
+				return Short.valueOf(paramValue);
+			}else if (paramValue.equals("byte")){
+				return Byte.valueOf(paramValue);
+			}else if (paramValue.equals("char")){
+				return paramValue.charAt(0);
+			}else if (paramValue.equals("boolean")){
+				return Boolean.valueOf(paramValue);
+			}else if (paramValue.equals("string")){
+				return paramValue;
+			}
+		}catch (Exception e) {
+			throw new QueryParseException(e.getMessage());
+		}
+		throw new QueryParseException(paramType+" is an irregulator datatype");
 	}
 
 	private List<ILogicalOperator> createNewPlan(HashMap<Action, ArrayList<ActionParameter>> actions,
 			List<ILogicalOperator> plan) {
-		// TODO Auto-generated method stub
+		//TODO senke erzeugen
 		return null;
 	}
 
-	private void determineSchema(List<ILogicalOperator> plan) throws QueryParseException {
+	private SDFAttributeList determineSchema(List<ILogicalOperator> plan) throws QueryParseException {
 		if (!plan.isEmpty()){
-			//TODO last operator, always output operator?
-			ILogicalOperator outputOperator = plan.get(plan.size()-1);
-			outputOperator.getOutputSchema();
-			
+			if (plan.size()>1){
+				throw new QueryParseException("Multiple plans defined, cannot determine output scheme");
+			}else{
+				ILogicalOperator outputOperator = this.determineOutputOperator(plan.get(0));
+				return outputOperator.getOutputSchema();
+			}
 		}
 		throw new QueryParseException("No output schema defined");
+	}
+
+	/**
+	 * Find the output operator by walking one subScribedTo-path
+	 * @param iLogicalOperator
+	 * @return
+	 */
+	private ILogicalOperator determineOutputOperator(ILogicalOperator iLogicalOperator) {
+		for (LogicalSubscription subscription : iLogicalOperator.getSubscribedTo()){
+			return this.determineOutputOperator(subscription.getTarget());
+		}
+		return iLogicalOperator;
 	}
 
 	@Override

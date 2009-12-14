@@ -13,13 +13,13 @@ public class WorkflowClient implements IActuator {
 	}
 
 	@Override
-	public void executeMethod(String method, Object[] params) {
+	public void executeMethod(String method, Class<?>[] types, Object[] params) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public List<ActuatorMethod> getSchema() {
+	public List<ActionMethod> getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

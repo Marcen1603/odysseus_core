@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.output.ActuatorAdapter;
-import de.uniol.inf.is.odysseus.action.output.ActuatorMethod;
+import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 
@@ -146,7 +146,7 @@ public class ActuatorAdapterManager implements IActuatorManager{
 	}
 
 	@Override
-	public List<ActuatorMethod> getSchema(String name) {
+	public List<ActionMethod> getSchema(String name) {
 		ActuatorAdapter adapter = this.adapters.get(name);
 		if (adapter != null){
 			return adapter.getSchema();

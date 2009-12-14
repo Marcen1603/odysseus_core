@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.action.output.Action;
+import de.uniol.inf.is.odysseus.action.output.ActionAttribute;
 import de.uniol.inf.is.odysseus.action.output.ActionParameter;
 import de.uniol.inf.is.odysseus.action.output.ActionParameter.ParameterType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
@@ -23,7 +24,7 @@ public class EventDetectionSink<T> extends AbstractSink<T>{
 				if (param.getType().equals(ParameterType.Value)){
 					parameters[index] = param.getValue();
 				}else {
-					//TODO extract attribute from source
+					ActionAttribute attribute = (ActionAttribute) param.getValue();
 				}
 				index++;
 			}
