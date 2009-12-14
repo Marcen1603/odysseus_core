@@ -41,17 +41,22 @@ public class CachingService implements ICache {
 	public void addData(List<RelationalTuple<?>> result, DBQuery dbQuery) {
 	}
 
+	
 	@Override
 	public void addQuery(DBQuery dbQuery, List<String> queryPrefs,
 			IDataAccess dal) {
 		long time = 0;
-		if (queryPrefs != null) {
-			for (String string : queryPrefs) {
-				if (string.startsWith(TIMEINCACHE)) {
-					string = string.replaceAll(TIMEINCACHE, "").trim();
-					time = Long.valueOf(string);
+		try {
+			if (queryPrefs != null) {
+				for (String string : queryPrefs) {
+					if (string.startsWith(TIMEINCACHE)) {
+						string = string.replaceAll(TIMEINCACHE, "").trim();
+						time = Long.valueOf(string);
+					}
 				}
 			}
+		} catch (NumberFormatException e) {
+			
 		}
 		
 		if (time <= 0) {
@@ -62,11 +67,12 @@ public class CachingService implements ICache {
 
 	@Override
 	public void closeQuery(DBQuery dbQuery) {
-		DatabaseQuery query = queries.get(dbQuery.hashCode());
-
+		DatabaseQuery query = queries.remove(dbQuery.hashCode());
 		
-		
-		
+		for(Integer param : query.getParams()) {
+			params.remove(param);	
+		}
+		paramOrder.removeAll(query.getParams());		
 	}
 
 	@Override
@@ -108,7 +114,7 @@ public class CachingService implements ICache {
 		
 		if ((query.getTupelSize() * result.size()) > maxObjects) {
 			throw new CacheMissException();
-		}else if (result.size() > 0) {
+		}else{
 			QueryParam newParam = new QueryParam(streamParam, result, System.currentTimeMillis(), dbQuery.hashCode());
 			currentObjects = currentObjects + query.getTupelSize() * result.size();
 

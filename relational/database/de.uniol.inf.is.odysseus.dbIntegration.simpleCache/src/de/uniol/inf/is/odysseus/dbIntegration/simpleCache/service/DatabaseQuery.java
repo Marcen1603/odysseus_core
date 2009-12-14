@@ -50,14 +50,4 @@ public class DatabaseQuery extends DBQuery{
 		return maxTimeInCache;
 	}
 	
-	
-//	
-//	public List<RelationalTuple<?>> getData(RelationalTuple<?> param) {
-//		param = dal.getRelevantParams(param);
-//		if (queryParams.containsKey(param)) {
-//			
-//		}
-//		return null;
-//	}
-	
 }

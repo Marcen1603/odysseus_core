@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public interface IPrefetch {
 	public List<RelationalTuple<?>> getCachedData(RelationalTuple<?> streamParam, DBQuery dbQuery) throws PrefetchException;
-	public void addData(List<RelationalTuple<?>> result, DBQuery dbQuery);
 	public void addQuery(DBQuery dbQuery, List<String> queryPrefs, IDataAccess dal); 
 	public void closeQuery(DBQuery dbQuery);
 }
