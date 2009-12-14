@@ -1,14 +1,15 @@
 package de.uniol.inf.is.odysseus.cep.epa.eventreading.relational;
 
-
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 
-public class RelationalReader extends AbstractEventReader<RelationalTuple<?>> {
+public class RelationalReader extends AbstractEventReader<RelationalTuple<? extends ITimeInterval>> {
 
 	HashMap<String, Integer> scheme;
 	
@@ -43,7 +44,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>> {
 	 *            vom Typ {@link RelationalTuple} sein!
 	 */
 	@Override
-	protected Object getValue_internal(String id, RelationalTuple<?> event) {
+	protected Object getValue_internal(String id, RelationalTuple<? extends ITimeInterval> event) {
 		if (id.isEmpty())
 			return null;//Leere Attribut id bei bstimmten Aggregationen (z.B. Count)
 		
@@ -64,6 +65,12 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<?>> {
 		}else{
 			return null;
 		}
+	}
+	
+	@Override
+	public long getTime(RelationalTuple<? extends ITimeInterval> event) {
+		ITimeInterval meta = event.getMetadata();
+		return meta.getStart().getMainPoint(); // ACHTUNG: Natürlich nur ganze Zahlen liefern
 	}
 
 }

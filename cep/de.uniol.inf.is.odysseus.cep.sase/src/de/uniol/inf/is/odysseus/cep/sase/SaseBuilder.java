@@ -475,8 +475,42 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	private void processWithin(CommonTree child, CepAO<RelationalTuple<?>> cepAo) {
-		// TODO Auto-generated method stub
-
+		String value = getChild(child, 0).getText();
+		String unit = getChild(child,1).getText();
+		Long time = getTime(value,unit);
+		String var = cepAo.getStateMachine().getInitialState().getId();
+		PathAttribute startVar = new PathAttribute(var, "time");
+		for (State s:cepAo.getStateMachine().getStates()){
+			if (s.getId() != var && !s.isAccepting()){
+				PathAttribute eventVar = new PathAttribute(s.getId(),"time");
+				ArrayList<PathAttribute> attributes = new ArrayList<PathAttribute>();
+				attributes.add(eventVar);
+				attributes.add(startVar);
+				CompareExpression ce = new CompareExpression(attributes, Write.class.getSimpleName()+"#"+s.getId()+".time < "+Write.class.getSimpleName()+"#"+var+".time + "+time);
+				for (Transition t: s.getTransitions()){
+					String timeExpression = tranformAttributesToMetamodell(ce, s);
+					System.out.println(t.getId()+" add: "+timeExpression);
+					t.append(timeExpression);
+				}
+			}
+			
+		}
+		
+	}
+	
+	private long getTime(String value, String unit){
+		long time = Long.parseLong(value);
+		
+		if ("day".equals(unit) || "days".equals(unit)){
+			time *=24*60*60*1000;
+		}else if ("hour".equals(unit)|| "hours".equals(unit)){
+			time *=60*60*1000;
+		}else if ("minute".equals(unit) || "minutes".equals(unit)){
+			time *=60*1000;
+		}else if ("second".equals(unit) || "seconds".equals(unit)){
+			time *=1000;
+		}
+		return time;		
 	}
 
 	private CommonTree getChild(Object o, int i) {
@@ -532,23 +566,23 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		createDummySource("nexmark:category");
 
 		String[] toParse = new String[] {
-		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ a[1].symbol = a[i].symbol and a[1].symbol=b.symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
-		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > avg(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
-		// "PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "
-		// + "WHERE skip_till_next_match(a,b,c){ " + "tag_id"
-		// + "}" + "WITHIN 12 hours",
-		// "PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "
-		// + "WHERE skip_till_next_match(a,b,c){ "
-		// + "a.tag_id = b.tag_id AND " + "a.tag_id = c.tag_id }"
-		// + "WITHIN 12 hours",
-		// "PATTERN SEQ(Alert a, Shipment+ b[]) "
-		// + "WHERE skip_till_any_match(a,b[]){"
-		// + "a.type = \"contaminated\" AND " + "b[1].from = a.site AND "
-		// + "b[i].from = b[i-1].to} " + "WITHIN 3 hours",
-		// "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour",
-		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2+ auction[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller}"
-		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction) WHERE skip_till_any_match(person, auction){person.id = auction.seller}",
-		"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2 RETURN person.id, person.name, autcion.id" };
+		 "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ a[1].symbol = a[i].symbol and a[1].symbol=b.symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
+		 "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < a[a.LEN].volume} WITHIN 1 hour",
+		// "PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "+
+//		  "WHERE skip_till_next_match(a,b,c){ " + "tag_id"
+//		 + "}" + "WITHIN 12 hours",
+//		 //"PATTERN SEQ(Shelf a, ~(Register+ b[]), Exit c) "+
+//		  "WHERE skip_till_next_match(a,b,c){ "
+//		 + "a.tag_id = b.tag_id AND " + "a.tag_id = c.tag_id }"
+//		 + "WITHIN 12 hours",
+		 "PATTERN SEQ(Alert a, Shipment+ b[]) "
+		 + "WHERE skip_till_any_match(a,b[]){"
+		 + "a.type = \"contaminated\" AND " + "b[1].from = a.site AND "
+		 + "b[i].from = b[i-1].to} " + "WITHIN 3 hours",
+		 "PATTERN SEQ(Stock+ a[], Stock b) WHERE skip_till_next_match(a[],b){ symbol and a[1].volume > 1000 and a[i].price > Sum(a[..i-1].price)/Count(a[..i-1].price) and b.volume < 0.8 * a[a.LEN].volume} WITHIN 1 hour",
+		 "PATTERN SEQ(nexmark:person2 person, nexmark:auction2+ auction[]) WHERE skip_till_any_match(person, auction){person.id = auction.seller}",
+		 "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction) WHERE skip_till_any_match(person, auction){person.id = auction.seller}",
+		"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2} WITHIN 1 hour RETURN person.id, person.name, autcion.id" };
 		try {
 			for (String q : toParse) {
 				System.out.println(q);
@@ -651,6 +685,12 @@ class PathAttribute {
 			_statename += (kleenePart.equals("[1]") ? "[1]" : "[i]");
 			_index = kleenePart.substring(kleenePart.indexOf("[") + 1,
 					kleenePart.indexOf("]"));
+			try{
+				// Test if _index is a Number
+				Integer.parseInt(_index);
+			}catch(NumberFormatException e){
+				_index=null;
+			}
 		}
 	}
 

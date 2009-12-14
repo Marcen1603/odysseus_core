@@ -15,11 +15,14 @@ public abstract class AbstractEventReader<R> implements IEventReader<R,Object>{
 	final public Object getValue(String identifier, R event) {
 		if (identifier.endsWith(".type")){ // TODO: Hier eine effizientere Loesung finden
 			return type;
+		}else if (identifier.endsWith(".time")){
+			return getTime(event);
 		}else{
 			return getValue_internal(identifier, event);
 		}		
 	};
 	
 	abstract protected Object getValue_internal(String id, R event);
-	
+	@Override
+	abstract public long getTime(R event);
 }

@@ -5,11 +5,14 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.relational
 Bundle-Version: 1.0.0
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.cep.epa,
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
  de.uniol.inf.is.odysseus.cep.epa.eventreading,
  de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.cep.metamodel.symboltable,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
 Export-Package: de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
