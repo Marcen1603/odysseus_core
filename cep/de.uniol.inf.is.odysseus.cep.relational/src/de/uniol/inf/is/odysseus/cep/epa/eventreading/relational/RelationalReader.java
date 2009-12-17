@@ -2,12 +2,11 @@ package de.uniol.inf.is.odysseus.cep.epa.eventreading.relational;
 
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 
 public class RelationalReader extends AbstractEventReader<RelationalTuple<? extends ITimeInterval>> {
 

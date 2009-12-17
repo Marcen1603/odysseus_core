@@ -330,9 +330,9 @@ public class Validator<R> {
 	 *         Matching-Strategie gesetzt ist, ansonsten null.
 	 */
 	private ValidationError checkMatchingStrategy(StateMachine stateMachine) {
-		if (stateMachine.getConsumptionMode() == null) {
-			return new MissingMatchinStrategyError();
-		}
+//		if (stateMachine.getConsumptionMode() == null) {
+//			return new MissingMatchinStrategyError();
+//		}
 		return null;
 	}
 

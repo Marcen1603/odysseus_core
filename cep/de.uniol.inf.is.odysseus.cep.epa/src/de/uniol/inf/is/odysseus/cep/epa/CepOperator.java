@@ -13,9 +13,7 @@ import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.UndefinedConsumptionModeException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
-import de.uniol.inf.is.odysseus.cep.metamodel.EConsumptionMode;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
@@ -23,6 +21,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineExcep
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 
 /**
  * Objekte dieser Klasse stellen die Grundkomponente fuer das Complex Event
@@ -115,11 +114,12 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	@Override
 	protected void process_next(R event, int port) {
 		if (logger.isDebugEnabled())
-			logger.debug("Beginne Verarbeitung von Event " + event);
+			logger.debug("Start processing event " + event);
 		if (logger.isDebugEnabled())
 			logger.debug(this.getStats());
 
-		this.instances.add(new StateMachineInstance<R>(this.stateMachine));
+		this.instances.add(new StateMachineInstance<R>(this.stateMachine,
+				getEventReader().get(port).getTime(event)));
 		if (event == null)
 			throw new InvalidEventException(
 					"The event to be processed is null.");
@@ -127,27 +127,19 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
 		LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
 
-		// Auswerten der Transition:
 		validateTransitions(event, outdatedInstances, branchedInstances, port);
-
 		this.instances.addAll(branchedInstances);
-
-		// Überprüfen auf Endzustände und erzeugen komplexer Events
 		LinkedList<W> complexEvents = validateFinalStates(outdatedInstances,
 				port);
-
-		// Aufräumen: Alle als veraltet markierten Automateninstanzen
-		// entfernen.
 		this.instances.removeAll(outdatedInstances);
 
-		if (logger.isDebugEnabled())
-			if (complexEvents.size() > 0)
-				logger.debug("Erzeugte Events: " + complexEvents);
+		if (complexEvents.size() > 0) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create Events: " + complexEvents);
+			}
+			this.transfer(complexEvents);
+		}
 
-		this.transfer(complexEvents);
-
-		if (logger.isDebugEnabled())
-			logger.debug("Verarbeitung abgeschlossen\n");
 	}
 
 	private void validateTransitions(R event,
@@ -158,30 +150,40 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			if (logger.isDebugEnabled())
 				logger.debug(instance.getStats());
 			Stack<Transition> takeTransition = new Stack<Transition>();
+			boolean outofWindow = false;
 
-			// if (checkType(port,instance)){ // Das geht hier nicht, da u.U.
-			// einer bestimmten Kante
-			// die anderen Events egal sind ...
 			for (Transition transition : instance.getCurrentState()
 					.getTransitions()) {
-				/*
-				 * Über Variablen iterieren und neu belegen.
-				 * Achtung! Sobald eine Variabel nicht belegbar ist, braucht (darf) 
-				 * die Transition nicht ausgewertet werden (kann also nie true sein)
-				 * kommt vor, wenn der Typ schon nicht stimmt.
+				// Terminate if out of Window
+				if (outofWindow)
+					break;
+				// First check Type
+				if (!transition.getCondition().checkEventType(
+						eventReader.get(port).getType()))
+					continue;
+				// and Time
+				if (stateMachine.getWindowSize() > 0) {
+					if (!transition.getCondition().checkTime(
+							instance.getStartTimestamp(),
+							eventReader.get(port).getTime(event),
+							stateMachine.getWindowSize())) {
+						outofWindow = true;
+						continue;
+					}
+				}
+				/**
+				 * update variables /* Über Variablen iterieren und neu
+				 * belegen. Achtung! Sobald eine Variabel nicht belegbar ist,
+				 * braucht (darf) die Transition nicht ausgewertet werden (kann
+				 * also nie true sein)
 				 */
 				if (updateVariables(event, instance, transition, port)) {
 					try {
 						if (transition.evaluate()) {
 							takeTransition.push(transition);
 							if (logger.isDebugEnabled())
-								logger.debug("Transitionsbedingung ist true: "
-										+ transition.getCondition().getLabel()
-										+ " (Wert: "
-										+ transition.getCondition().getValue()
-										+ ", "
-										+ transition.getCondition()
-												.getErrorInfo() + ")");
+								logger.debug("TRUE: "
+										+ transition.getCondition().getLabel());
 
 						}
 					} catch (Exception e) {
@@ -201,17 +203,22 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				 * Verzweigungsspeicher entfernt werden um Speicherleichen zu
 				 * verhindern.
 				 */
-				if (logger.isDebugEnabled())
-					logger
-							.debug("Keine Transition kann genommen werden. Verwerfe Instanz "
-									+ instance);
+				if (logger.isDebugEnabled()) {
+					if (outofWindow) {
+						logger.debug("Instance " + instance + " out of window");
+					} else {
+						logger
+								.debug("No available transition. Remove instance "
+										+ instance);
+					}
+				}
 				outdatedInstances.add(instance);
 				this.branchingBuffer.removeBranch(instance);
 			} else if (takeTransition.size() == 1) {
-				// genau 1 Folgezustand: Zustand wechseln und Aktion ausführen.
-				if (logger.isDebugEnabled())
-					logger.debug("Eine gehbare Transition gefunden: "
-							+ takeTransition.peek());
+				// one next state: Change state, execute action
+				// if (logger.isDebugEnabled())
+				// logger.debug("One transition found: "
+				// + takeTransition.peek());
 				this
 						.takeTransition(instance, takeTransition.pop(), event,
 								port);
@@ -221,7 +228,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 					logger
 							.debug(""
 									+ takeTransition.size()
-									+ " Transitionen koennen genommen werden (Nichtdeterministische Verzweigung).");
+									+ "  transitions found (nondeterministic branching).");
 				while (takeTransition.size() > 1) {
 					StateMachineInstance<R> newInstance = instance.clone();
 					this.takeTransition(newInstance, takeTransition.pop(),
@@ -229,6 +236,10 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 					this.branchingBuffer.addBranch(instance, newInstance);
 					branchedInstances.add(newInstance);
 				}
+				// Warum dahinter? K�nnte das nicht auch als erstes gemacht
+				// werden?
+				// Dann kann man sich den Fall takeTransition.size()==1 sparen
+				// ...
 				this
 						.takeTransition(instance, takeTransition.pop(), event,
 								port);
@@ -236,20 +247,10 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		}
 	}
 
-	// /*
-	// * Determine if Event can be processed in current State
-	// */
-	// private boolean checkType(int port, StateMachineInstance<R> instance) {
-	// String stateId = instance.getCurrentState().getType();
-	// return eventReader.get(port).getName().equals(stateId);
-	// }
-
 	private boolean updateVariables(R object, StateMachineInstance<R> instance,
 			Transition transition, int port) {
 		for (String varName : transition.getCondition().getVarNames()) {
 			String name = CepVariable.getAttributeName(varName);
-			if (logger.isDebugEnabled())
-				logger.debug("Setze Variable " + varName);
 
 			Object newValue = null;
 			if (CepVariable.isActEventName(varName)) {
@@ -262,8 +263,8 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			}
 			transition.getCondition().setValue(varName, newValue);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Neuer Wert: " + newValue + "(" + name + ") "
-						+ object);
+				logger.debug(varName + " = " + newValue + " from (" + name
+						+ ") " + object);
 			}
 		}
 		return true;
@@ -289,6 +290,9 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				continue;
 
 			if (instance.getCurrentState().isAccepting()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Reached final state in " + instance);
+				}
 				// Werte in den Symboltabellen der JEP-Ausdrücke im
 				// Ausgabeschema setzen:
 				for (IOutputSchemeEntry entry : this.stateMachine
@@ -300,16 +304,21 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 					}
 				}
 				complexEvents.add(this.complexEventFactory.createComplexEvent(
-						this.stateMachine.getOutputScheme(), instance
-								.getMatchingTrace(), instance.getSymTab()));
+						this.stateMachine.getOutputScheme(), 
+						instance.getMatchingTrace(), 
+						instance.getSymTab(), 
+						new PointInTime(getEventReader().get(port).getTime(instance.getMatchingTrace().getLastEvent().getEvent()),0)));
 				/*
 				 * An dieser Stelle muss die Instanz, die zum Complex Event
 				 * geführt hat, als veraltet markiert werden. Je nach
 				 * Consumption-Mode müssen auch die verwandten Instanzen als
 				 * veraltet markiert werden.
 				 */
-				outdatedInstances.addAll(this
-						.getRemovableInstancesByConsumptionMode(instance));
+				// Hmmm Dont know
+				// outdatedInstances.addAll(this
+				// .getRemovableInstancesByConsumptionMode(instance));
+				// better this?
+				outdatedInstances.add(instance);
 			}
 		}
 		return complexEvents;
@@ -331,11 +340,11 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 				IEventReader<R, ?> eventR = this.eventReader.get(port);
 				if (port > 0) {
 					eventR = this.eventReader.get(port);
-				}else{
+				} else {
 					// For final Results ... find Event-Reader
 					String type = stateMachine.getState(split[1]).getType();
-					for (IEventReader<R, ?> r: eventReader.values()){
-						if (r.getType().equals(type)){
+					for (IEventReader<R, ?> r : eventReader.values()) {
+						if (r.getType().equals(type)) {
 							eventR = r;
 							break;
 						}
@@ -435,24 +444,27 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 *         Abhängigkeit vom Consumption Mode enthält. Die übergebene
 	 *         Instanz instance ist immer in der Liste enthalten.
 	 */
-	private LinkedList<StateMachineInstance<R>> getRemovableInstancesByConsumptionMode(
-			StateMachineInstance<R> instance) {
-		LinkedList<StateMachineInstance<R>> outdated = null;
-		if (this.stateMachine.getConsumptionMode() == EConsumptionMode.onlyOneMatch) {
-			outdated = this.branchingBuffer
-					.getAllNestedStateMachineInstances(instance);
-			this.branchingBuffer.removeAllNestedBranches(instance);
-		} else if (this.stateMachine.getConsumptionMode() == EConsumptionMode.allMatches) {
-			outdated = new LinkedList<StateMachineInstance<R>>();
-			outdated.add(instance);
-			this.branchingBuffer.removeBranch(instance);
-		} else {
-			throw new UndefinedConsumptionModeException(
-					"Undefined consumption mode: "
-							+ this.stateMachine.getConsumptionMode());
-		}
-		return outdated;
-	}
+	// private LinkedList<StateMachineInstance<R>>
+	// getRemovableInstancesByConsumptionMode(
+	// StateMachineInstance<R> instance) {
+	// LinkedList<StateMachineInstance<R>> outdated = null;
+	// if (this.stateMachine.getConsumptionMode() ==
+	// EConsumptionMode.onlyOneMatch) {
+	// outdated = this.branchingBuffer
+	// .getAllNestedStateMachineInstances(instance);
+	// this.branchingBuffer.removeAllNestedBranches(instance);
+	// } else if (this.stateMachine.getConsumptionMode() ==
+	// EConsumptionMode.allMatches) {
+	// outdated = new LinkedList<StateMachineInstance<R>>();
+	// outdated.add(instance);
+	// this.branchingBuffer.removeBranch(instance);
+	// } else {
+	// throw new UndefinedConsumptionModeException(
+	// "Undefined consumption mode: "
+	// + this.stateMachine.getConsumptionMode());
+	// }
+	// return outdated;
+	// }
 
 	/**
 	 * Wechselt den Zustand einer Automateninstanz
@@ -468,21 +480,20 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 */
 	private void takeTransition(StateMachineInstance<R> instance,
 			Transition transition, R event, int port) {
-		if (logger.isDebugEnabled())
-			logger.debug("Zustandswechsel: "
-					+ instance.getCurrentState().getId() + "-->"
-					+ transition.getNextState().getId());
+		if (logger.isDebugEnabled()) {
+			logger.debug(instance.toString() + " Fire: " + transition.getId()
+					+ " " + "Execute action: " + transition.getAction());
+		}
 
-		if (logger.isDebugEnabled())
-			logger.debug("Fuehre Aktion aus: " + transition.getAction());
 		instance.executeAction(transition.getAction(), event, this.eventReader
 				.get(port));
-		if (logger.isDebugEnabled())
-			logger.debug(instance.getMatchingTrace() + "");
 
-		// TODO: getauscht ... Auswirkungen??
+		// TODO: getauscht ... Auswirkungen (s.u.)??
 		instance.setCurrentState(transition.getNextState());
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("--> " + instance.getStats());
+		}
 		/*
 		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
 		 * das Event gespeichert wird. Wird der Zustand zuerst gewechselt, wird
@@ -492,7 +503,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		 * Die CEP-Komponente erfordert zur Zeit, dass erst der Zustand
 		 * gewechselt wird und anschließend die Aktion ausgeführt wird. Die
 		 * umgekehrte Reihenfolge würde zu Problemen mit der internen
-		 * Namenskonvention für Events führen.
+		 * Namenskonvention für Events führen. --> MG: Ist das so? Warum?
 		 */
 	}
 
@@ -502,10 +513,9 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 * @return
 	 */
 	public String getStats() {
-		String str = "Current EPA state:\n";
-		str = str + "Number of state machine instances:"
-				+ this.instances.size() + "\n";
-		str = str + "Number of branch trees:"
+		String str = "";
+		str = str + "#instances:" + this.instances.size() + " ";
+		str = str + "#branch trees:"
 				+ this.branchingBuffer.getBranches().size();
 		return str;
 	}

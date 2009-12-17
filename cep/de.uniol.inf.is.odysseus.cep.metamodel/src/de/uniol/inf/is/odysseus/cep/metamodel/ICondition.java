@@ -20,5 +20,25 @@ public interface ICondition extends IExpression{
 	public boolean evaluate();
 	public void append(String fullExpression);
 	public void negate();
-	
+	public boolean isNegate();
+	/**
+	 * Check if eventType is applicable for Transition 
+	 * @param type
+	 * @return !isNegate() && eventType == type;
+	 */
+	public boolean checkEventType(String eventType);
+	/**
+	 * Set Type of Events that can be processed by this Transition (only one possible?)
+	 * @param type
+	 * @return
+	 */
+	public void setEventType(String type);
+	/**
+	 * 
+	 * @param start
+	 * @param current
+	 * @param windowsize
+	 * @return !isNegate() && start + windowsize < current;
+	 */
+	public boolean checkTime(long start, long current, long windowsize);
 }

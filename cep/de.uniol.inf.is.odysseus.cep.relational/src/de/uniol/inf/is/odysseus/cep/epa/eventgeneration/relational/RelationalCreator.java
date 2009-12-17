@@ -1,13 +1,16 @@
 package de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.cep.epa.MatchedEvent;
 import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.AbstractComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class RelationalCreator<R> extends AbstractComplexEventFactory<R,RelationalTuple<?>> {
+public class RelationalCreator<R> extends AbstractComplexEventFactory<R,RelationalTuple<? extends ITimeInterval>> {
 
 	/**
 	 * Erzeugt einen neuen Creator für relationale Tupel vom Typ
@@ -18,9 +21,9 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 	}
 
 	@Override
-	public RelationalTuple<?> createComplexEvent(OutputScheme outputscheme,
-			MatchingTrace<R> matchingTrace, SymbolTable symTab) {
-		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
+	public RelationalTuple<? extends ITimeInterval> createComplexEvent(OutputScheme outputscheme,
+			MatchingTrace<R> matchingTrace, SymbolTable symTab, PointInTime timestamp) {
+//		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
 //		System.out.println("--------------------------------------------------------------------------");
 //		System.out.println("RelationalCreator ");
 //	
@@ -42,8 +45,9 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 			 */
 			attributes[i] = outputscheme.getEntries().get(i).getValueAsObject();
 		}
-		// TODO: Metadaten setzen, nur wie?
-		RelationalTuple ret = new RelationalTuple(attributes);
+
+		RelationalTuple<TimeInterval> ret = new RelationalTuple<TimeInterval>(attributes);
+		ret.setMetadata(new TimeInterval(timestamp));
 		System.out.println("EVENT "+ret);
 		return ret;
 	}

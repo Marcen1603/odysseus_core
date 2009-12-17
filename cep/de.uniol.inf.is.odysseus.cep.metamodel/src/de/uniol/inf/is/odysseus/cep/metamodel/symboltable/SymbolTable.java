@@ -83,11 +83,11 @@ public class SymbolTable {
 	
 	@Override
 	public String toString() {
-		String str = "Symbol table (entries: " + this.entries.size() + "):";
+		String str = "Symbol table (#: " + this.entries.size() + "): [";
 		for (Entry<String, Object> entry : this.entries.entrySet()) {
-			str += "\n" + entry.getKey()+":"+entry.getValue();
+			if (entry.getValue()!=null) str += " " + entry.getKey()+"="+entry.getValue();
 		}
-		return str;
+		return str+"]";
 	}
 	
 	public void executeOperation(CepVariable variable, Object value) {

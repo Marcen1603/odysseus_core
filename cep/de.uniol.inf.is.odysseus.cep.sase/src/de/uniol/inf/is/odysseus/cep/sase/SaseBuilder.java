@@ -162,37 +162,34 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 						State source = states.get(i);
 						State dest = states.get(i + 1);
 						if (source.getId().endsWith("[i]")) {
+							JEPCondition con = new JEPCondition("");
+							con.setEventType(source.getType());
 							source.addTransition(new Transition(source.getId()
-									+ "_proceed", dest, new JEPCondition(
-									CepVariable.createAttribute(source.getId())
-											+ ".type==\"" + source.getType()
-											+ "\""),
+									+ "_proceed", dest, con, 
 									EAction.consumeNoBufferWrite));
+							con = new JEPCondition("");
+							con.setEventType(source.getType());
 							source
 									.addTransition(new Transition(source
 											.getId()
-											+ "_take", source,
-											new JEPCondition(CepVariable
-													.createAttribute(source
-															.getId())
-													+ ".type==\""
-													+ source.getType() + "\""),
+											+ "_take", source,con,
 											EAction.consumeBufferWrite));
 						} else {
+							JEPCondition con = new JEPCondition("");
+							con.setEventType(source.getType());
 							source
 									.addTransition(new Transition(source
 											.getId()
-											+ "_begin", dest, new JEPCondition(
-											CepVariable.createAttribute(source
-													.getId())
-													+ ".type==\""
-													+ source.getType() + "\""),
+											+ "_begin", dest, con,
 											EAction.consumeBufferWrite));
 						}
 						if (i > 0 && i < states.size() - 1) {
+							JEPCondition con = new JEPCondition("");
+							// Achtung! Ignore hat keinen Typ!
+							//con.setEventType(source.getType());
 							// Ignore auf sich selbst!
 							source.addTransition(new Transition(source.getId()
-									+ "_ignore", source, new JEPCondition(""),
+									+ "_ignore", source, con,
 									EAction.discard));
 						}
 					}
@@ -478,23 +475,26 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		String value = getChild(child, 0).getText();
 		String unit = getChild(child,1).getText();
 		Long time = getTime(value,unit);
-		String var = cepAo.getStateMachine().getInitialState().getId();
-		PathAttribute startVar = new PathAttribute(var, "time");
-		for (State s:cepAo.getStateMachine().getStates()){
-			if (s.getId() != var && !s.isAccepting()){
-				PathAttribute eventVar = new PathAttribute(s.getId(),"time");
-				ArrayList<PathAttribute> attributes = new ArrayList<PathAttribute>();
-				attributes.add(eventVar);
-				attributes.add(startVar);
-				CompareExpression ce = new CompareExpression(attributes, Write.class.getSimpleName()+"#"+s.getId()+".time < "+Write.class.getSimpleName()+"#"+var+".time + "+time);
-				for (Transition t: s.getTransitions()){
-					String timeExpression = tranformAttributesToMetamodell(ce, s);
-					System.out.println(t.getId()+" add: "+timeExpression);
-					t.append(timeExpression);
-				}
-			}
-			
-		}
+		cepAo.getStateMachine().setWindowSize(time);
+
+		// check time explicit, no need to parse Expression at runtime!
+//		String var = cepAo.getStateMachine().getInitialState().getId();
+//		PathAttribute startVar = new PathAttribute(var, "time");
+//		for (State s:cepAo.getStateMachine().getStates()){
+//			if (s.getId() != var && !s.isAccepting()){
+//				PathAttribute eventVar = new PathAttribute(s.getId(),"time");
+//				ArrayList<PathAttribute> attributes = new ArrayList<PathAttribute>();
+//				attributes.add(eventVar);
+//				attributes.add(startVar);
+//				CompareExpression ce = new CompareExpression(attributes, Write.class.getSimpleName()+"#"+s.getId()+".time < "+Write.class.getSimpleName()+"#"+var+".time + "+time);
+//				for (Transition t: s.getTransitions()){
+//					String timeExpression = tranformAttributesToMetamodell(ce, s);
+//					System.out.println(t.getId()+" add: "+timeExpression);
+//					t.append(timeExpression);
+//				}
+//			}
+//			
+//		}
 		
 	}
 	

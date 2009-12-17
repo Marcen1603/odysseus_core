@@ -17,6 +17,7 @@ public class JEPCondition extends AbstractCondition {
 	 */
 	private JEP expression;
 	private Map<String, String> symbolTable = new HashMap<String, String>();
+	private boolean negate = false;
 
 	/**
 	 * Erzeugt eine neue Transitionsbedingung aus einer textuellen Beschreibung
@@ -134,7 +135,13 @@ public class JEPCondition extends AbstractCondition {
 
 	@Override
 	public void negate() {
+		if (negate) negate = false; else negate = true;
 		String curLabel = getLabel();
 		setLabel("!(" + curLabel + ")");
+	}
+	
+	@Override
+	public boolean isNegate() {
+		return negate;
 	}
 }

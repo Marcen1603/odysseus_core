@@ -1,12 +1,13 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
-import javax.xml.bind.annotation.*;
-
-import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
 
 //import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
 
@@ -19,6 +20,8 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFa
  */
 @XmlRootElement
 public class StateMachine<E> {
+	
+	long windowSize = -1;
 
 	/**
 	 * Liste aller Zustände des Automaten. Bei der Verarbeitung durch den EPA
@@ -41,12 +44,12 @@ public class StateMachine<E> {
 	 * Definiert das Ausgabeschema der CEP-Anfrage. Darf nicht null sein.
 	 */
 	private OutputScheme outputScheme;
-	/**
-	 * Strategie, die angibt, ob bei nichtdeterministischen Verzweigungen nur
-	 * die abgeschlossene Automateninstanz oder alle damit verbundenen
-	 * Automateninstanzen aus dem Instanzspeicher entfernt werden.
-	 */
-	private EConsumptionMode consumptionMode = EConsumptionMode.allMatches;
+//	/**
+//	 * Strategie, die angibt, ob bei nichtdeterministischen Verzweigungen nur
+//	 * die abgeschlossene Automateninstanz oder alle damit verbundenen
+//	 * Automateninstanzen aus dem Instanzspeicher entfernt werden.
+//	 */
+//	private EConsumptionMode consumptionMode = EConsumptionMode.allMatches;
 
 	private EEventSelectionStrategy eventSelectionStrategy;
 
@@ -72,7 +75,7 @@ public class StateMachine<E> {
 	 * @param outputScheme
 	 *            AusgabeSchema
 	 */
-	public StateMachine(List<State> states, State initialState, OutputScheme outputScheme) {
+	public StateMachine(List<State> states, State initialState, OutputScheme outputScheme, long windowSize) {
 		this.states = states;
 		this.initialState = initialState;
 		this.outputScheme = outputScheme;
@@ -192,25 +195,34 @@ public class StateMachine<E> {
 		this.outputScheme = outputScheme;
 	}
 
-	/**
-	 * Liefert die Matching-Strategie, die verfolgt werden soll.
-	 * 
-	 * @return Die Matching-Strategie des Automaten.
-	 */
-	public EConsumptionMode getConsumptionMode() {
-		return this.consumptionMode;
-	}
+//	/**
+//	 * Liefert die Matching-Strategie, die verfolgt werden soll.
+//	 * 
+//	 * @return Die Matching-Strategie des Automaten.
+//	 */
+//	public EConsumptionMode getConsumptionMode() {
+//		return this.consumptionMode;
+//	}
+//
+//	/**
+//	 * Setzt die Matching-Strategie des Automaten.
+//	 * 
+//	 * @param strategy
+//	 *            Die neue Matching-Strategie, nicht null.
+//	 */
+//	public void setConsumptionMode(EConsumptionMode strategy) {
+//		this.consumptionMode = strategy;
+//	}
 
-	/**
-	 * Setzt die Matching-Strategie des Automaten.
-	 * 
-	 * @param strategy
-	 *            Die neue Matching-Strategie, nicht null.
-	 */
-	public void setConsumptionMode(EConsumptionMode strategy) {
-		this.consumptionMode = strategy;
-	}
 
+	public void setWindowSize(long windowSize) {
+		this.windowSize = windowSize;
+	}
+	
+	public long getWindowSize() {
+		return windowSize;
+	}
+	
 	public String toString() {
 		String str = "StateMachine: " + this.hashCode() + " ";
 		str += states;
@@ -222,7 +234,7 @@ public class StateMachine<E> {
 		str += this.symTabScheme;
 
 		str += this.outputScheme;
-		str += "Matching Strategy: " + this.consumptionMode;
+//		str += "Matching Strategy: " + this.consumptionMode;
 		return str;
 	}
 
@@ -237,7 +249,7 @@ public class StateMachine<E> {
 		str += "\n";
 		str += this.symTabScheme + "\n";
 		str += this.outputScheme + "\n";
-		str += "Matching Strategy: " + this.consumptionMode + "\n";
+//		str += "Matching Strategy: " + this.consumptionMode + "\n";
 		return str;
 	}
 
@@ -255,6 +267,7 @@ public class StateMachine<E> {
 		return fStates;
 	}
 
+	
 	/**
 	 * Returns list of other (!) States that have outgoing transitions to state
 	 * 

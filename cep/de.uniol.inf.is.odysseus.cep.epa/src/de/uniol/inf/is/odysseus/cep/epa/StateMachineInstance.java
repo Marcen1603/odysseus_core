@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
  * übergebenen Automaten, sodass das eigentliche Automaten-Objekt vom Typ {@link
  * StateMachine} zur Laufzeit nur einmal vorgehalten werden muss.
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 public class StateMachineInstance<R> {
@@ -30,6 +30,7 @@ public class StateMachineInstance<R> {
 	 * Referenz auf den Puffer für bereits konsumierte Events
 	 */
 	private MatchingTrace<R> matchingTrace;
+	private long startTimestamp;
 
 	/**
 	 * erzeugt eine neue Automateninstanz
@@ -38,16 +39,18 @@ public class StateMachineInstance<R> {
 	 *            Referenz auf den Automaten, von dem eine neue Instanz erstellt
 	 *            werden soll
 	 */
-	public StateMachineInstance(StateMachine<R> stateMachine) {
+	public StateMachineInstance(StateMachine<R> stateMachine, long startTimestamp) {
 		this.currentState = stateMachine.getInitialState();
 		this.matchingTrace = new MatchingTrace<R>(stateMachine.getStates());
 		this.symTab = new SymbolTable(stateMachine.getSymTabScheme(true));
+		this.startTimestamp = startTimestamp;
 	}
 
 	public StateMachineInstance(StateMachineInstance<R> stateMachineInstance) {
 		this.currentState = stateMachineInstance.currentState; // Hier reicht Referenz
 		this.symTab = stateMachineInstance.symTab.clone();
 		this.matchingTrace =  stateMachineInstance.matchingTrace.clone();
+		this.startTimestamp = stateMachineInstance.startTimestamp;
 	}
 
 	/**
@@ -134,10 +137,19 @@ public class StateMachineInstance<R> {
 		return new StateMachineInstance<R>(this);
 	}
 	
+	public long getStartTimestamp() {
+		return startTimestamp;
+	}
+	
 	public String getStats() {
-		String str = "State machine instance statistics:\n";
-		str += "Current state: " + this.currentState.getId() + "\n";
+		String str = toString() + " ";
 		str += this.symTab.toString();
 		return str;
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName()+"@"+super.hashCode()+" ("+startTimestamp+") "+currentState.getId();
+	}
+
 }
