@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.action.output;
 
 /**
  * Class representing a parameter of an IActuator method
- * @author Simon
+ * @author Simon Flandergan
  *
  */
 public class ActionParameter {
@@ -10,7 +10,7 @@ public class ActionParameter {
 	 * Enum describing the type of a parameter.
 	 * Attribute for referencing the index of a tuple or
 	 * Value for a standard java object
-	 * @author Simon
+	 * @author Simon Flandergan
 	 *
 	 */
 	public enum ParameterType{Attribute, Value}

@@ -7,8 +7,9 @@ import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
- * OSGI Service Interface for ActuatorManagers
- * @author Simon
+ * OSGI Service Interface for ActuatorManagers.
+ * These are responsible for creation and access to each Actuator
+ * @author Simon Flandergan
  *
  */
 public interface IActuatorManager {

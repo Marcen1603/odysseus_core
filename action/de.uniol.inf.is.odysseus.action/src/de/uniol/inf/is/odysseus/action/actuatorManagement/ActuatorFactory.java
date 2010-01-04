@@ -8,7 +8,11 @@ import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
- * Factory for Creation, Acess to all kind of {@link AbstractActuator}s
+ * Factory for Creation, Access to all kind of {@link IActuator}s.
+ * The Management of each Actuator is done by a specific {@link IActuatorManager} referenced
+ * by a unique name
+ * @author Simon Flandergan
+ *
  */
 public class ActuatorFactory {
 	private volatile HashMap<String, IActuatorManager> actuatorManager;

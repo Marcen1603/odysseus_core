@@ -4,7 +4,9 @@ Bundle-Name: Action
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.action
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.action.Activator
-Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
+Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.apache.cxf.endpoint,
@@ -14,7 +16,7 @@ Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.action.actuatorManagement,
  de.uniol.inf.is.odysseus.action.exception,
+ de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.action.output,
- de.uniol.inf.is.odysseus.action.output.impl,
- de.uniol.inf.is.odysseus.action.physicaloperator
+ de.uniol.inf.is.odysseus.action.output.impl
 Service-Component: OSGI-INF/actuatorFactory.xml

@@ -4,7 +4,7 @@ Bundle-Name: Webservice
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.webservice
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.webservice.Activator
-Import-Package: de.uniol.inf.is.odysseus.action.physicaloperator,
+Import-Package: de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
