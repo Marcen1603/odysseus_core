@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.output;
+package de.uniol.inf.is.odysseus.action.actuatorManagement;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,20 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 public abstract class ActuatorAdapter implements IActuator {
-	private ArrayList<ActionMethod> methods;
+	private ArrayList<ActuatorAdapterMethod> methods;
 	
 	public ActuatorAdapter() {
-		this.methods = new ArrayList<ActionMethod>();
+		this.methods = new ArrayList<ActuatorAdapterMethod>();
 		for (Method method : this.getClass().getMethods()) {
 			this.methods.add(
-					new ActionMethod(method.getName(),method.getParameterTypes()));
+					new ActuatorAdapterMethod(method.getName(),method.getParameterTypes()));
 		}
 	}
 	
 	@Override
-	public List<ActionMethod> getSchema() {
+	public List<ActuatorAdapterMethod> getSchema() {
 		return this.methods;
 	}
 	

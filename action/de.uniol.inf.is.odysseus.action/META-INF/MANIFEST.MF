@@ -15,8 +15,8 @@ Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  org.osgi.framework;version="1.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.action.actuatorManagement,
+ de.uniol.inf.is.odysseus.action.actuatorManagement.impl,
  de.uniol.inf.is.odysseus.action.exception,
  de.uniol.inf.is.odysseus.action.operator,
- de.uniol.inf.is.odysseus.action.output,
- de.uniol.inf.is.odysseus.action.output.impl
-Service-Component: OSGI-INF/actuatorFactory.xml
+ de.uniol.inf.is.odysseus.action.output
+Service-Component: OSGI-INF/actuatorFactory.xml, OSGI-INF/dataExtractor.xml

@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.action.output.impl;
+package de.uniol.inf.is.odysseus.action.actuatorManagement.impl;
 
-import de.uniol.inf.is.odysseus.action.output.ActuatorAdapter;
+import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorAdapter;
 
 public class TestActuator extends ActuatorAdapter {
 	private String name;

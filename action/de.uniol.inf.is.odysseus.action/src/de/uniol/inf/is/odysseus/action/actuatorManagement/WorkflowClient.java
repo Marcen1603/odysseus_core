@@ -1,8 +1,10 @@
-package de.uniol.inf.is.odysseus.action.output;
+package de.uniol.inf.is.odysseus.action.actuatorManagement;
 
 import java.util.List;
 
 import org.apache.cxf.endpoint.Client;
+
+import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 
 public class WorkflowClient implements IActuator {
@@ -19,7 +21,7 @@ public class WorkflowClient implements IActuator {
 	}
 
 	@Override
-	public List<ActionMethod> getSchema() {
+	public List<ActuatorAdapterMethod> getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

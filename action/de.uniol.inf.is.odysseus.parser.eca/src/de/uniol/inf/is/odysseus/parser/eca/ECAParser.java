@@ -9,11 +9,13 @@ import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorFactory;
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
+import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
 import de.uniol.inf.is.odysseus.action.output.Action;
-import de.uniol.inf.is.odysseus.action.output.ActionAttribute;
-import de.uniol.inf.is.odysseus.action.output.ActionParameter;
+import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
-import de.uniol.inf.is.odysseus.action.output.ActionParameter.ParameterType;
+import de.uniol.inf.is.odysseus.action.output.StaticParameter;
+import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
@@ -62,7 +64,7 @@ public class ECAParser implements IQueryParser{
 	@Override
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
-		HashMap<Action, ArrayList<ActionParameter>> actions = new HashMap<Action, ArrayList<ActionParameter>>();
+		HashMap<Action, ArrayList<IActionParameter>> actions = new HashMap<Action, ArrayList<IActionParameter>>();
 		//extract internal query
 		Matcher ecaMatcher = ecaPattern.matcher(query.toLowerCase());
 		if (ecaMatcher.matches()){
@@ -97,7 +99,7 @@ public class ECAParser implements IQueryParser{
 					String params = actionMatcher.group(4).trim();	
 
 					//extract params 
-					ArrayList<ActionParameter> actionParameters = new ArrayList<ActionParameter>();
+					ArrayList<IActionParameter> actionParameters = new ArrayList<IActionParameter>();
 					if (params.length() > 0){
 						Matcher paramMatcher = PARAMPATTERN.matcher(params);
 						while (paramMatcher.find()){
@@ -108,7 +110,7 @@ public class ECAParser implements IQueryParser{
 								String paramType = paramTypeMatcher.group(2);
 								
 								Object value = this.generateStandardValue(paramValue, paramType);
-								actionParameters.add(new ActionParameter(ParameterType.Value, value));
+								actionParameters.add(new StaticParameter(value));
 							
 							}else{
 								//check if schema contains attribute
@@ -118,8 +120,7 @@ public class ECAParser implements IQueryParser{
 									String attributeName = attribute.getAttributeName();
 									if (attributeName.equals(
 											completeParam)){
-										actionParameters.add(new ActionParameter(ParameterType.Attribute, 
-												new ActionAttribute(attribute.getDatatype(), i)));
+										actionParameters.add(new StreamAttributeParameter(attribute.getDatatype(), i));
 										attributeFound = true;
 										break;
 									}
@@ -131,7 +132,13 @@ public class ECAParser implements IQueryParser{
 						}
 					}
 					//create action object & map with parameters
-					IActuator actuator = ActuatorFactory.getInstance().getActuator(actuatorName, managerName);
+					IActuator actuator = null;
+					try {
+						actuator = ActuatorFactory.getInstance().getActuator(actuatorName, managerName);
+					} catch (ActuatorException e) {
+						System.err.println("Actuator<"+actuatorName+"> unknown. Skipped Action!");
+						continue;
+					}
 					actions.put(this.createAction(actuator, methodName, actionParameters), actionParameters);
 				}
 				if (!actions.isEmpty()){
@@ -152,7 +159,7 @@ public class ECAParser implements IQueryParser{
 	 * @throws QueryParseException
 	 */
 	private Action createAction(IActuator actuator, String methodName,
-			ArrayList<ActionParameter> actionParameters) throws QueryParseException {
+			ArrayList<IActionParameter> actionParameters) throws QueryParseException {
 		Class<?>[] parameters = new Class<?>[actionParameters.size()];
 		for (int i=0; i<actionParameters.size(); i++){
 			parameters[i] = actionParameters.get(i).getParamClass();
@@ -191,10 +198,14 @@ public class ECAParser implements IQueryParser{
 		throw new QueryParseException(paramType+" is an irregulator datatype");
 	}
 
-	private List<ILogicalOperator> createNewPlan(HashMap<Action, ArrayList<ActionParameter>> actions,
+	private List<ILogicalOperator> createNewPlan(HashMap<Action, ArrayList<IActionParameter>> actions,
 			List<ILogicalOperator> plan) {
-		//TODO senke erzeugen
-		return null;
+		ILogicalOperator outputOperator = this.determineOutputOperator(plan.get(0));
+
+		//create new sink and subscribe to outputoperator
+		EventDetectionAO eAO = new EventDetectionAO(actions);
+		eAO.subscribeTo(outputOperator, 0, 0, outputOperator.getOutputSchema());
+		return plan;
 	}
 
 	private SDFAttributeList determineSchema(List<ILogicalOperator> plan) throws QueryParseException {
@@ -210,12 +221,13 @@ public class ECAParser implements IQueryParser{
 	}
 
 	/**
-	 * Find the output operator by walking one subScribedTo-path
+	 * Find the output operator by walking one subscriptions-path.
+	 * Assumption: outputOperator has no subscriptions
 	 * @param iLogicalOperator
 	 * @return
 	 */
 	private ILogicalOperator determineOutputOperator(ILogicalOperator iLogicalOperator) {
-		for (LogicalSubscription subscription : iLogicalOperator.getSubscribedTo()){
+		for (LogicalSubscription subscription : iLogicalOperator.getSubscriptions()){
 			return this.determineOutputOperator(subscription.getTarget());
 		}
 		return iLogicalOperator;

@@ -8,13 +8,12 @@ import java.util.List;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
-import de.uniol.inf.is.odysseus.action.output.WorkflowClient;
 
 /**
- * Singleton Manager for all WorkflowClients
- * @author Simon
+ * ActuatorManager for WorkflowClients
+ * Descriptions must be a URL poiting to a WSDL
+ * @author Simon Flandergan
  *
  */
 public class WorkflowClientManager implements IActuatorManager {
@@ -27,10 +26,6 @@ public class WorkflowClientManager implements IActuatorManager {
 		this.clients = new HashMap<String, WorkflowClient>();
 	}
 
-	public IActuator getActuator(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void createActuator(String name, String description) throws ActuatorException{
@@ -47,7 +42,7 @@ public class WorkflowClientManager implements IActuatorManager {
 	}
 
 	@Override
-	public List<ActionMethod> getSchema(String name) {
+	public List<ActuatorAdapterMethod> getSchema(String name) {
 		WorkflowClient client = this.clients.get(name);
 		if (client != null){
 			return client.getSchema();
@@ -59,6 +54,16 @@ public class WorkflowClientManager implements IActuatorManager {
 	@Override
 	public String getName() {
 		return "WorkflowClientManager";
+	}
+
+
+	@Override
+	public IActuator getActuator(String name) throws ActuatorException {
+		IActuator client = this.clients.get(name);
+		if (client != null){
+			return client;
+		}
+		throw new ActuatorException("Client <"+name+"> does not exist");
 	}
 
 

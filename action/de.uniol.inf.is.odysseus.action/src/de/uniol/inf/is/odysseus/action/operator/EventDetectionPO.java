@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.action.exception.OperatorException;
-import de.uniol.inf.is.odysseus.action.operator.AttributeExtractor.Datatype;
+import de.uniol.inf.is.odysseus.action.dataExtraction.DataExtractor;
+import de.uniol.inf.is.odysseus.action.exception.DataextractionException;
 import de.uniol.inf.is.odysseus.action.output.Action;
-import de.uniol.inf.is.odysseus.action.output.ActionAttribute;
-import de.uniol.inf.is.odysseus.action.output.ActionParameter;
-import de.uniol.inf.is.odysseus.action.output.ActionParameter.ParameterType;
+import de.uniol.inf.is.odysseus.action.output.IActionParameter;
+import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
+import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
 /**
@@ -19,31 +19,38 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
  * @param <T>
  */
 public class EventDetectionPO<T> extends AbstractSink<T>{
-	private Map<Action, ArrayList<ActionParameter>> actions;
-	private Datatype type;
+	private Map<Action, ArrayList<IActionParameter>> actions;
+	private String type;
 
-	public EventDetectionPO(Map<Action, ArrayList<ActionParameter>> actions, String type) throws OperatorException {
+	public EventDetectionPO(Map<Action, ArrayList<IActionParameter>> actions, String type) throws DataextractionException {
 		super();
 		this.actions = actions;
-		this.type = AttributeExtractor.determineDataType(type);
+		this.type = type;
 	}
 
 
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
+		DataExtractor extractor = DataExtractor.getInstance();
 		//extract parameters
-		for (Entry<Action, ArrayList<ActionParameter>> entry : actions.entrySet()){
-			ArrayList<ActionParameter> parameterList = entry.getValue();
+		for (Entry<Action, ArrayList<IActionParameter>> entry : actions.entrySet()){
+			ArrayList<IActionParameter> parameterList = entry.getValue();
 			Object[] parameters = new Object[parameterList.size()];
 			int index = 0;
-			for (ActionParameter param : parameterList){
+			for (IActionParameter param : parameterList){
 				if (param.getType().equals(ParameterType.Value)){
 					//static value
 					parameters[index] = param.getValue();
 				}else {
 					//value must be extracted from attribute
-					Object identifier = ((ActionAttribute)param.getValue()).getIdentifier();
-					parameters[index] = AttributeExtractor.extractAttribute(identifier, object, this.type);
+					Object identifier = ((StreamAttributeParameter)param.getValue());
+					try {
+						parameters[index] = extractor.extractAttribute(identifier, object, this.type);
+					} catch (DataextractionException e) {
+						parameters[index] = null;
+						System.err.println("Attribute: "+identifier+" wasn't extracted. \n" +
+								"Reason: "+ e.getMessage());
+					}
 				}
 				index++;
 			}

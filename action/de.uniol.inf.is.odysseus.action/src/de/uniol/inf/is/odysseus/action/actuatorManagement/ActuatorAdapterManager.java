@@ -9,11 +9,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.action.output.ActuatorAdapter;
-import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
-
+/**
+ * ActuatorManager for {@link ActuatorAdaper}s.
+ * Syntax for ActuatorAdapter descriptions:
+ * <fullclassname(parametername:parametertype[,parametername:parametertype]*)>.
+ * Parametertypes can only be atomic types or a String! 
+ * @author Simon Flandergan
+ *
+ */
 public class ActuatorAdapterManager implements IActuatorManager{
 	private HashMap<String, ActuatorAdapter> adapters;
 	
@@ -27,9 +32,6 @@ public class ActuatorAdapterManager implements IActuatorManager{
 		this.adapters = new HashMap<String, ActuatorAdapter>();
 	}
 	
-	public IActuator getActuator(String name) {
-		return this.adapters.get(name);
-	}
 
 	@Override
 	public void createActuator(String name, String description) throws ActuatorException{
@@ -146,7 +148,7 @@ public class ActuatorAdapterManager implements IActuatorManager{
 	}
 
 	@Override
-	public List<ActionMethod> getSchema(String name) {
+	public List<ActuatorAdapterMethod> getSchema(String name) {
 		ActuatorAdapter adapter = this.adapters.get(name);
 		if (adapter != null){
 			return adapter.getSchema();
@@ -158,5 +160,15 @@ public class ActuatorAdapterManager implements IActuatorManager{
 	@Override
 	public String getName() {
 		return "ActuatorAdapterManager";
+	}
+
+
+	@Override
+	public IActuator getActuator(String name) throws ActuatorException {
+		IActuator actuator = this.adapters.get(name);
+		if (actuator == null){
+			throw new ActuatorException("Adapter <"+name+"> does not exist.");
+		}
+		return actuator;
 	}
 }
