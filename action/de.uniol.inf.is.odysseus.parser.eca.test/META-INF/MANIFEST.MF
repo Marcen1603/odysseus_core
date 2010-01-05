@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECA-Parser Test
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.eca.test
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.parser.eca,
+ de.uniol.inf.is.odysseus.planmanagement.executor
+Require-Bundle: org.junit4
+Service-Component: OSGI-INF/executor.xml
