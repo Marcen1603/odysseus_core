@@ -38,6 +38,7 @@ public class ImportExport {
 	 * @throws FileNotFoundException
 	 *             Falls die angegebene Datei nicht gefunden werden kann.
 	 */
+	@SuppressWarnings("unchecked")
 	public StateMachine loadFromFile(File file) throws JAXBException,
 			FileNotFoundException {
 		JAXBContext context = JAXBContext.newInstance(StateMachine.class);
@@ -58,6 +59,7 @@ public class ImportExport {
 	 *             Falls aus irgendwelchen Gründen nicht in die angegebene Datei
 	 *             geschrieben werden konnt.
 	 */
+	@SuppressWarnings("unchecked")
 	public void saveToFile(StateMachine stateMachine, File file)
 			throws JAXBException, IOException {
 		JAXBContext context = JAXBContext.newInstance(StateMachine.class);

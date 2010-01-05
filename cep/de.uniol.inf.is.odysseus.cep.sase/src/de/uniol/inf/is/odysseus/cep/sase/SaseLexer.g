@@ -1,6 +1,6 @@
 lexer grammar SaseLexer;
 
-@lexer::header { package de.uniol.inf.is.odysseus.cep.sase; } 
+@lexer::header { package de.uniol.inf.is.odysseus.cep.sase;} 
 
 PATTERN : 'PATTERN'|'pattern'|'Pattern';
 WHERE : 'where'|'WHERE'|'Where';

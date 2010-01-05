@@ -6,6 +6,7 @@ import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
+@SuppressWarnings("all")
 public class SaseLexer extends Lexer {
     public static final int WHERE=5;
     public static final int POINT=25;
