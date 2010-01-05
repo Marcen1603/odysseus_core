@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.cep.epa.MatchedEvent;
 import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.AbstractComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
@@ -48,7 +47,7 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 
 		RelationalTuple<TimeInterval> ret = new RelationalTuple<TimeInterval>(attributes);
 		ret.setMetadata(new TimeInterval(timestamp));
-		System.out.println("EVENT "+ret);
+		//System.out.println("EVENT "+ret);
 		return ret;
 	}
 

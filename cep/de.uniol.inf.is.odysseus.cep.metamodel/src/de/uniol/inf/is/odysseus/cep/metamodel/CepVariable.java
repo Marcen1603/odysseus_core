@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAd
  * Die internen Variablennamen sind nach folgendem Muster aufgebaut:
  * <OperationName>#<StateID>#<Index>#<AttributName>
  * 
- * wobei das hier dargestellte Trennzeichen # hier definiert wird
+ * wobei das hier dargestellte Trennzeichen # hier definiert werden kann
  * 
  * OperationName: Name der Symboltabellenoperation. Bezieht sich der
  * Variablenname auf das aktuelle Event, so ist OperationName leer.
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAd
  * 
  * AttributName: Der Name des Attributs, auf das sich die Variable bezieht. Ist
  * leer, wenn sich die Variable nicht auf ein Attribut, sondern direkt auf ein
- * Event bezieht (nur für Operation Count)
+ * Event bezieht (nur fuer Operation Count)
  * 
  * 
  * @author Thomas Vogelgesang, Marco Grawunder
@@ -54,6 +54,7 @@ public class CepVariable {
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
 	 */
+	@SuppressWarnings("unchecked")
 	private ISymbolTableOperation operation;
 
 	/**
@@ -69,6 +70,7 @@ public class CepVariable {
 	 *            Operation, die bei der Aktualisierung des Eintrags ausgeführt
 	 *            werden soll
 	 */
+	@SuppressWarnings("unchecked")
 	public CepVariable(String stateIdentifier, int index, String attribute, ISymbolTableOperation operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
@@ -123,6 +125,7 @@ public class CepVariable {
 	 *            Eine konkrete Implementierung der Symboltabellenoperation,
 	 *            nicht null.
 	 */
+	@SuppressWarnings("unchecked")
 	public void setOperation(ISymbolTableOperation operation) {
 		this.operation = operation;
 	}
@@ -132,6 +135,7 @@ public class CepVariable {
 	 * 
 	 * @return Die Symboltabellenoperation des Eintrags.
 	 */
+	@SuppressWarnings("unchecked")
 	@XmlJavaTypeAdapter(SymbolTableOperationAdapter.class)
 	public ISymbolTableOperation getOperation() {
 		return operation;

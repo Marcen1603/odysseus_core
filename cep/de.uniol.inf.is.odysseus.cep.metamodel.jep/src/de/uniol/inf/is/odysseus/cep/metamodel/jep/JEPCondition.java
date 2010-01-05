@@ -40,6 +40,7 @@ public class JEPCondition extends AbstractCondition {
 		initJEPExpressionFromLabel();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initJEPExpressionFromLabel() {
 		this.expression = new JEP();
 		this.expression.setAllowUndeclared(true);

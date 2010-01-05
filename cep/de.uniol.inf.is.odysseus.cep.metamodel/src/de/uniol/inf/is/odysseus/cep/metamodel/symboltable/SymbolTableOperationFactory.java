@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
 public class SymbolTableOperationFactory {
 
+	@SuppressWarnings("unchecked")
 	public static AbstractSymbolTableOperation getOperation(String name) {
 		if (name == null || name.length() == 0){
 			return null;
@@ -23,7 +24,7 @@ public class SymbolTableOperationFactory {
 			return new Sum();
 		}
 		
-		throw new IllegalArgumentException("No such operation "+ name +" defined!");
+		throw new IllegalArgumentException("No operation "+ name +" defined!");
 	}
 	
 	

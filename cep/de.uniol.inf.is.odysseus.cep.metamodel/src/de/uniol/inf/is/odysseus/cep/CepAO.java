@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.cep;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.OutputSchemaSettable;
