@@ -90,6 +90,7 @@ public class SymbolTable {
 		return str+"]";
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void executeOperation(CepVariable variable, Object value) {
 		Object newValue = variable.getOperation().execute(getValue(variable), value);
 		setValue(variable, newValue);

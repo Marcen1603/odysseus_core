@@ -547,6 +547,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		SaseBuilder exec = new SaseBuilder();
 		// Zum Testen
