@@ -1,24 +1,15 @@
 package de.uniol.inf.is.odysseus.viewer;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 
-public class Activator implements BundleActivator, IPlanModificationListener {
+public class Activator implements BundleActivator{
 
 	static BundleContext context;
 	public static final String XSD_RESOURCES_FILE = "viewer_cfg/resourcesSchema.xsd";
@@ -51,21 +42,17 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 					try {
 						executor = (IAdvancedExecutor) execTracker.waitForService(0);
 						if (executor != null) {
-							ViewerStarterConfiguration cfg = new ViewerStarterConfiguration();
-							viewerStarter = new ViewerStarter(null, cfg);
+							viewerStarter = new ViewerStarter();
 							viewerThread = new Thread(viewerStarter, "Viewer Thread");
 							viewerThread.start();
-							executor.addPlanModificationListener(Activator.this);
-							updateModel(executor.getSealedPlan().getRoots());
+							executor.addPlanModificationListener(viewerStarter);
 						} else {
 							logger.error("cannot get executor service");
 						}
 						execTracker.close();
 					} catch (InterruptedException e) {
 						logger.error("cannot get executor service");
-					} catch (PlanManagementException e) {
-						logger.error(e.getMessage());
-					}
+					} 
 				}
 
 			});
@@ -91,40 +78,5 @@ public class Activator implements BundleActivator, IPlanModificationListener {
 		return context;
 	}
 
-	@Override
-	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		try {
-			ArrayList<IPhysicalOperator> roots = eventArgs.getSender().getSealedPlan().getRoots();
-			updateModel(roots);
-		} catch (PlanManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void updateModel(ArrayList<IPhysicalOperator> roots) {
-		if (!roots.isEmpty()) {
-			
-//			ArrayList<ISink<?>> sinks = new ArrayList<ISink<?>>();
-//			
-//			for( IPhysicalOperator o : roots ) {
-//				if( o instanceof ISink<?>)
-//					sinks.add((ISink<?>)o);
-//			}
-//			
-//			this.viewerStarter.setModelProvider(new OdysseusModelProviderMultipleSink(sinks));
-			
-			ListIterator<IPhysicalOperator> li = roots.listIterator(roots.size());
-			IPhysicalOperator lastRoot = null;
-			do {
-				lastRoot = li.previous();
-			} while (li.hasPrevious() && lastRoot == null);
-			if (lastRoot != null && lastRoot instanceof ISink<?>) {
-				if (viewerThread != null){
-					this.viewerStarter.setModelProvider(new OdysseusModelProviderSink((ISink<?>) lastRoot));
-				}
-			}
-		}
-	}
 
 }

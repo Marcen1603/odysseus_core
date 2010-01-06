@@ -88,7 +88,6 @@ import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTGroupingEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTMainWindow;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTOutputEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTParameterArea;
-import de.uniol.inf.is.odysseus.visualquerylanguage.swt.SWTRelationalPredicateEditor;
 import de.uniol.inf.is.odysseus.visualquerylanguage.swt.cursor.CursorManager;
 import de.uniol.inf.is.odysseus.visualquerylanguage.view.position.SugiyamaPositioner;
 
@@ -156,9 +155,8 @@ public class DefaultGraphArea extends Composite implements
 		DefaultGraphModel<INodeContent> graphModel = new DefaultGraphModel<INodeContent>();
 		this.controller = new DefaultModelController<INodeContent>(graphModel);
 
-		controller.getModel().addGraphModelChangeListener(this);
-		this.viewGraph = new DefaultGraphView<INodeContent>(controller
-				.getModel());
+		controller.getModelManager().getModels().get(0).addGraphModelChangeListener(this);
+		this.viewGraph = new DefaultGraphView<INodeContent>(controller.getModelManager().getModels().get(0));
 
 		buildGraphArea();
 	}
@@ -483,7 +481,7 @@ public class DefaultGraphArea extends Composite implements
 								ele.setConnectionView(connView);
 								connView.getSymbolContainer().add(ele);
 
-								controller.getModel().addConnection(connModel);
+								controller.getModelManager().getModels().get(0).addConnection(connModel);
 								viewGraph.insertViewedConnection(connView);
 								CursorManager.isNotConnection();
 								this.status.setText("Anfragestellung bereit.");
@@ -571,7 +569,7 @@ public class DefaultGraphArea extends Composite implements
 		}
 		for (INodeView<INodeContent> nodeView : renderManager.getSelector()
 				.getSelected()) {
-			controller.getModel().removeNode(nodeView.getModelNode());
+			controller.getModelManager().getModels().get(0).removeNode(nodeView.getModelNode());
 			viewGraph.removeViewedNode(nodeView);
 		}
 		renderManager.getSelector().unselectAll();
@@ -591,7 +589,7 @@ public class DefaultGraphArea extends Composite implements
 		ArrayList<IConnectionView<INodeContent>> connViewDeleteList = new ArrayList<IConnectionView<INodeContent>>(
 				nodeView.getAllConnections());
 		for (IConnectionView<INodeContent> connView : connViewDeleteList) {
-			controller.getModel().removeConnection(
+			controller.getModelManager().getModels().get(0).removeConnection(
 					connView.getModelConnection());
 			viewGraph.removeViewedConnection(connView);
 		}
@@ -614,7 +612,7 @@ public class DefaultGraphArea extends Composite implements
 			}
 			for (IConnectionView<INodeContent> connView : connViewDeleteList) {
 				if (connView.getModelConnection().equals(endConn)) {
-					controller.getModel().removeConnection(
+					controller.getModelManager().getModels().get(0).removeConnection(
 							connView.getModelConnection());
 					viewGraph.removeViewedConnection(connView);
 				}
@@ -630,7 +628,7 @@ public class DefaultGraphArea extends Composite implements
 			}
 			for (IConnectionView<INodeContent> connView : connViewDeleteList) {
 				if (connView.getModelConnection().equals(startConn)) {
-					controller.getModel().removeConnection(
+					controller.getModelManager().getModels().get(0).removeConnection(
 							connView.getModelConnection());
 					viewGraph.removeViewedConnection(connView);
 				}

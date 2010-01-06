@@ -1,43 +1,30 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.controler;
 
-import de.uniol.inf.is.odysseus.viewer.model.create.IModelProvider;
+import de.uniol.inf.is.odysseus.viewer.model.create.IModelManager;
+import de.uniol.inf.is.odysseus.viewer.model.create.ModelManager;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 
 public class DefaultModelController<C> implements IModelController<C>{
 	
-private IGraphModel<C> graph;
+	private IModelManager<C> modelManager = new ModelManager<C>(); 
 	
 	public DefaultModelController (IGraphModel<C> graph) {
 		if(graph == null) {
 			throw new IllegalArgumentException("graph is null");
 		}
-		this.graph = graph;
+		modelManager.addModel(graph);
 	}
 	
 	@Override
 	public void addNode(INodeModel<C> node) {
-		graph.addNode(node);
+		modelManager.getModels().get(0).addNode(node);
 	}
 
-	@Override
-	public IGraphModel<C> getModel() {
-		return graph;
-	}
 
 	@Override
-	public IModelProvider<C> getModelProvider() {
-		return null;
-	}
-
-	@Override
-	public void refreshModel() {
-		
-	}
-
-	@Override
-	public void setModelProvider(IModelProvider<C> modelProvider) {
-		
+	public IModelManager<C> getModelManager() {
+		return modelManager;
 	}
 	
 }

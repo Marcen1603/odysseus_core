@@ -512,6 +512,9 @@ public final class SWTRenderManager<C> implements PaintListener, MouseListener, 
 		else if( rightMouseButtonPressed ) {
 			// Ziehe Graphen
 			setGraphOffset( dragGraph.add( distanceRel ));
+			if( !canvas.isFocusControl() )
+				canvas.setFocus();
+			
 			refreshView();
 		}
 	}

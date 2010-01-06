@@ -78,7 +78,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		int g = clampInt(tryParseInt( params.get( "g" ), 0), 0, 255 );
 		int b = clampInt(tryParseInt( params.get( "b" ), 0), 0, 255);
 		
-		return SWTResourceManager.getInstance().getColor(Display.getDefault(), r, g, b );
+		return SWTResourceManager.getInstance().getColor(r, g, b );
 	}
 
 	private static int tryParseInt( String str, int defValue ) {

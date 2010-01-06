@@ -1,56 +1,43 @@
 package de.uniol.inf.is.odysseus.viewer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.ListIterator;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.viewer.ctrl.DefaultController;
 import de.uniol.inf.is.odysseus.viewer.ctrl.IController;
 import de.uniol.inf.is.odysseus.viewer.model.create.IModelProvider;
+import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
 import de.uniol.inf.is.odysseus.viewer.swt.SWTExceptionWindow;
 import de.uniol.inf.is.odysseus.viewer.swt.SWTMainWindow;
 
-public class ViewerStarter implements Runnable {
+public class ViewerStarter implements Runnable, IPlanModificationListener  {
 
-	private IModelProvider<IPhysicalOperator> modelProvider;
 	private static final String SHELL_TITLE = "ODYSSEUS - Query Plan Viewer";
 	private static final int SHELL_SIZE = 800;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ViewerStarter.class);
-	private IController<IPhysicalOperator> controller;
+	private static final Logger logger = LoggerFactory.getLogger(ViewerStarter.class);
+	private IController<IPhysicalOperator> controller = new DefaultController<IPhysicalOperator>();
 	private SWTMainWindow viewer;
 	private ViewerStarterConfiguration config;
-
-	public ViewerStarter(IModelProvider<IPhysicalOperator> modelProvider) {
-		this(modelProvider, null);
-	}
 
 	public ViewerStarter() {
 		this(null);
 	}
 
-	public ViewerStarter(IModelProvider<IPhysicalOperator> modelProvider,
-			ViewerStarterConfiguration cfg) {
-		setModelProvider(modelProvider);
+	public ViewerStarter(ViewerStarterConfiguration cfg) {
 		config = cfg;
 		if (config == null)
 			config = new ViewerStarterConfiguration();
-	}
-
-	public void setModelProvider(IModelProvider<IPhysicalOperator> modelProvider) {
-		this.modelProvider = modelProvider;
-		if (controller != null) {
-			controller.setModelProvider(modelProvider);
-
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					viewer.reloadModel();
-				}
-			});
-
-		}
 	}
 
 	@Override
@@ -58,12 +45,7 @@ public class ViewerStarter implements Runnable {
 
 		final Display display = new Display();
 		try {
-
-			controller = new DefaultController<IPhysicalOperator>();
-			if (modelProvider != null) {
-				controller.setModelProvider(modelProvider);
-			}
-
+			
 			// View erzeugen
 			final Shell shell = new Shell(display);
 			shell.setText(SHELL_TITLE);
@@ -79,8 +61,7 @@ public class ViewerStarter implements Runnable {
 
 			logger.info("Viewer started!");
 
-			while (!shell.isDisposed()
-					&& !Thread.currentThread().isInterrupted()) {
+			while (!shell.isDisposed() && !Thread.currentThread().isInterrupted()) {
 				try {
 					if (!display.readAndDispatch())
 						display.sleep();
@@ -98,6 +79,32 @@ public class ViewerStarter implements Runnable {
 
 			if (!display.isDisposed())
 				display.dispose();
+		}
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		try {
+			ArrayList<IPhysicalOperator> roots = eventArgs.getSender().getSealedPlan().getRoots();
+			updateModel(roots);
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	private void updateModel(ArrayList<IPhysicalOperator> roots) {
+		if (!roots.isEmpty()) {
+			
+			ListIterator<IPhysicalOperator> li = roots.listIterator(roots.size());
+			IPhysicalOperator lastRoot = null;
+			do {
+				lastRoot = li.previous();
+			} while (li.hasPrevious() && lastRoot == null);
+			if (lastRoot != null && lastRoot instanceof ISink<?>) {
+				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSink((ISink<?>) lastRoot);
+				controller.getModelManager().addModel(provider.get());
+			}
 		}
 	}
 }

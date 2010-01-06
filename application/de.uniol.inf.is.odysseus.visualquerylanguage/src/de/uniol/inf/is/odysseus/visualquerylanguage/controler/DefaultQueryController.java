@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.viewer.model.graph.IConnectionModel;
@@ -50,7 +49,7 @@ public class DefaultQueryController implements IQueryController {
 		int sinkCounter = 0;
 
 		for (INodeModel<INodeContent> nodeModel : area.getController()
-				.getModel().getNodes()) {
+				.getModelManager().getModels().get(0).getNodes()) {
 			for (IParamSetter<?> param : nodeModel.getContent()
 					.getSetterParameterList()) {
 				try {
@@ -106,8 +105,8 @@ public class DefaultQueryController implements IQueryController {
 
 		ILogicalOperator root = null;
 
-		for (INodeModel<INodeContent> nodeModel : area.getController()
-				.getModel().getNodes()) {
+		for (INodeModel<INodeContent> nodeModel : area.getController().getModelManager().getModels().get(0)
+				.getNodes()) {
 
 			logOp = nodeModel.getContent().getOperator();
 			modelList.add(nodeModel);

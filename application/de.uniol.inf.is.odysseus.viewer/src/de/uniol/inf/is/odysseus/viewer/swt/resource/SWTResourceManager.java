@@ -9,6 +9,7 @@ import java.util.Map;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,8 +181,7 @@ public class SWTResourceManager {
 
 	/**
 	 * Liefert zu den angegebenen RGB-Werten die entsprechende SWT-Color-Instanz.
-	 * Wurde die Farbe zuvor noch nicht angefordert, so wird diese neu über den
-	 * Device-Parameter geladen und innerhalb der SWTResourceManager-Klasse
+	 * Wurde die Farbe zuvor noch nicht angefordert, so wird diese geladen und innerhalb der SWTResourceManager-Klasse
 	 * gespeichert. Bei erneutem Aufruf mit den gleicher RGB-Werten wird die
 	 * entsprechende Color-Instanz zurückgegeben, ohne eine neue Instanz zu
 	 * erzeugen.
@@ -193,13 +193,8 @@ public class SWTResourceManager {
 	 * @param g Grün-Anteil der gewünschten Farbe
 	 * @param b Blau-Anteil der gewünschten Farbe
 	 * @return Color-Instanz mit den angegebenen RGB-Werten
-	 * 
-	 * @exception IllegalArgumentException Wenn der gegebene device null ist.
 	 */
-	public Color getColor( Device device, int r, int g, int b ) {
-		if( device == null) 
-			throw new IllegalArgumentException("device is null!");
-		
+	public Color getColor( int r, int g, int b ) {
 		// Nachschauen, ob diese RGB-Werte schon im Speicher sind
 		for( Color c : loadedColors ) {
 			if( c.getRed() == r && c.getGreen() == g && c.getBlue() == b ) {
@@ -210,7 +205,7 @@ public class SWTResourceManager {
 		// Wenn wir hier ankommen, dann haben wir diese RGB-Werte noch
 		// nicht als Color-Instanz. Dies wird dann nachgeholt und
 		// abgespeichert.
-		final Color color = new Color(device, r,g,b);
+		final Color color = new Color(Display.getDefault(), r,g,b);
 		
 		logger.debug( "Colorresource created:" + r + " " + g + " " + b );
 
