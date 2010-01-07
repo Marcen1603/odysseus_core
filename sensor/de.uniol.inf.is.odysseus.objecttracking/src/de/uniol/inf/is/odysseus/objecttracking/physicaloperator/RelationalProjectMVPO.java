@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
+import java.util.ArrayList;
+
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
@@ -24,6 +26,8 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 	RealMatrix projectMatrix;
 	RealMatrix projectVector;
 	SDFAttributeList inputSchema;
+	int[] inputMeasurementValuePositions;
+	
 	SDFAttributeList outputSchema;
 	
 	public RelationalProjectMVPO(ProjectMVAO ao){
@@ -31,6 +35,20 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 		this.projectMatrix = new RealMatrixImpl(ao.getProjectMatrix());
 		this.projectVector = new RealMatrixImpl(ao.getProjectVector());
 		this.inputSchema = ao.getInputSchema();
+		
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		for(int i = 0; i<this.inputSchema.size(); i++){
+			SDFAttribute attr = this.inputSchema.get(i);
+			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+				list.add(new Integer(i));	
+			}
+		}
+		
+		this.inputMeasurementValuePositions = new int[list.size()];
+		for(int i = 0; i<this.inputMeasurementValuePositions.length; i++){
+			this.inputMeasurementValuePositions[i] = list.get(i);
+		}
+		
 		this.outputSchema = ao.getOutputSchema();
 	}
 	
@@ -78,7 +96,8 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 		}
 		
 		// restrict the original tuple and set the new metadata
-		object.findMeasurementValuePositions(this.inputSchema);
+		//object.findMeasurementValuePositions(this.inputSchema);
+		object.setMeasurementValuePositions(this.inputMeasurementValuePositions);
 		MVRelationalTuple objectNew = object.restrict(this.restrictList, this.projectMatrix, this.projectVector, null, this.inputSchema);
 		objectNew.setMetadata(cov);
 		
