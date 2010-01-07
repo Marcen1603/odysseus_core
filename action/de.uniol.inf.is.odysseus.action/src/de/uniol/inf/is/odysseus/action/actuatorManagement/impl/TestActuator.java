@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorAdapter;
 public class TestActuator extends ActuatorAdapter {
 	private String name;
 	private byte adress;
+	private double result;
 	
 	public TestActuator (String name){
 		super();
@@ -25,7 +26,13 @@ public class TestActuator extends ActuatorAdapter {
 		return name;
 	}
 	
-	public static void main(String[] args) {
-		TestActuator a = new TestActuator("a");
+	public void doSomething (byte a, double b, double c, int d){
+		this.result = a+b+c+d;
 	}
+	
+	public double giveSomething () {
+		return this.result;
+	}
+	
+	
 }

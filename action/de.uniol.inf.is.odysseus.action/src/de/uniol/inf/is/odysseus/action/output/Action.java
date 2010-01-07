@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.action.output;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
@@ -9,7 +10,7 @@ import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
 
 /**
  * An Action is the combination of an {@link IActuator} and
- * a Method that should be executed. In Combination with {@link IActionParameter}s
+ * a Method that should be executed. In Combination with {@link ActionParameter}s
  * it can be executed by a {@link EventDetectionPO}.
  * @see EventDetectionPO
  * @see IActuator
@@ -53,14 +54,8 @@ public class Action {
 	 * given parameters
 	 * @param params
 	 */
-	public void executeMethod(Object[] params){
-		//FIXME reihenfolge der parameter evtl. korrigieren
-		try {
-			this.actuator.executeMethod(this.methodName, this.parameterTypes, params);
-		} catch (ActuatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void executeMethod(Object[] params) throws ActuatorException{
+		this.actuator.executeMethod(this.methodName, this.parameterTypes, params);
 	}
 	
 	/**
@@ -69,22 +64,19 @@ public class Action {
 	 * @return
 	 */
 	public List<IActionParameter> sortParameters(List<IActionParameter> parameters){
-		ArrayList<IActionParameter> newParameterOrder = new ArrayList<IActionParameter>(parameters.size());
+		IActionParameter[] newParameterOrder = new IActionParameter[parameters.size()];
 		Class<?>[] schema = this.method.getParameterTypes().clone();
 		for (IActionParameter param : parameters){
 			int index = 0;
 			for (;index<schema.length;index++){
-				if (schema[index].equals(param.getParamClass())){
+				if (PrimitivTypeComparator.sameType(schema[index], param.getParamClass())){
 					break;
 				}
 			}
 			//set class to null to prevent double usage of one parameter!
 			schema[index] = null;
-			newParameterOrder.set(index, param);
+			newParameterOrder[index] = param;
 		}
-		return newParameterOrder;
+		return Arrays.asList(newParameterOrder);
 	}
-	
-	
-
 }

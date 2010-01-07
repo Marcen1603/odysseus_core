@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.action.dataExtraction.DataExtractor;
+import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.exception.DataextractionException;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
@@ -54,7 +55,12 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 				}
 				index++;
 			}
-			entry.getKey().executeMethod(parameters);
+			try {
+				entry.getKey().executeMethod(parameters);
+			} catch (ActuatorException e) {
+				//Shouldnt happen, because method & parameters are checked during creation of action
+				System.err.println(e.getMessage());
+			}
 		}
 	}
 }

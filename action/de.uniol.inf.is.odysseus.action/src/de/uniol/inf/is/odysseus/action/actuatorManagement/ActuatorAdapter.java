@@ -32,20 +32,15 @@ public abstract class ActuatorAdapter implements IActuator {
 			Method methodToExecute = this.getClass().getMethod(method, types);
 			methodToExecute.invoke(this, params);
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ActuatorException(e.getMessage());
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ActuatorException(e.getMessage());
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ActuatorException(e.getMessage());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ActuatorException(e.getMessage());
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ActuatorException(e.getMessage());
 		}
 	}
 

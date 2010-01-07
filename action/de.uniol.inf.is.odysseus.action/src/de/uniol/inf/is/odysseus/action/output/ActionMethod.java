@@ -2,30 +2,14 @@ package de.uniol.inf.is.odysseus.action.output;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class ActionMethod {
 	private String name;
 	private ArrayList<Class<?>> parameterTypes;
-	
-	private static HashMap<Class<?>,Class<?>> primitivClassMapping;
-	
+		
 	public ActionMethod (String name, Class<?>[] classes){
 		this.name = name;
 		this.parameterTypes = new ArrayList<Class<?>>(Arrays.asList(classes));
-		
-		if (primitivClassMapping == null){
-			primitivClassMapping = new HashMap<Class<?>, Class<?>>();
-			primitivClassMapping.put(Double.class, double.class);
-			primitivClassMapping.put(Float.class, float.class);
-			primitivClassMapping.put(Long.class, long.class);
-			primitivClassMapping.put(Integer.class, int.class);
-			primitivClassMapping.put(Short.class, short.class);
-			primitivClassMapping.put(Byte.class, byte.class);
-			primitivClassMapping.put(Character.class, char.class);
-			primitivClassMapping.put(Boolean.class, boolean.class);
-		
-		}
 	}
 	
 	public String getName() {
@@ -44,15 +28,17 @@ public class ActionMethod {
 			//method name differs
 			return false;
 		}
-		for (Object param : parameters){
+		for (Class<?> param : parameters){
 			if (!types.remove(param)){
-				//parameter not found -> check primitiv type
-				Class<?> prim = primitivClassMapping.get(param);
-				if (prim != null){
-					if (!types.remove(prim)){
-						return false;
+				//parameter not found -> check wrapper types
+				Class<?> typeToRemove = null;
+				for (Class<?> type : types){
+					if (PrimitivTypeComparator.sameType(param, type)){
+						typeToRemove = type;
+						break;
 					}
 				}
+				types.remove(typeToRemove);
 			}
 		}
 		if (types.isEmpty()){
