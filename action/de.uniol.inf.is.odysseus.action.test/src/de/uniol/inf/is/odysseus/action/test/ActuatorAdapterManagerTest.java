@@ -11,6 +11,11 @@ import de.uniol.inf.is.odysseus.action.actuatorManagement.impl.TestActuator;
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
+/**
+ * JUnit test for ActuatorAdapter from de.uniol.inf.is.odysseus.action bundle.
+ * @author Simon Flandergan
+ *
+ */
 public class ActuatorAdapterManagerTest {
 
 	@Before
@@ -24,8 +29,7 @@ public class ActuatorAdapterManagerTest {
 		
 		//testcase 1
 		try {
-			manager.createActuator("test", "de.uniol.inf.is.odysseus.action.actuatorManagement.impl.TestActuator(name)");
-			IActuator actuator = manager.getActuator("test");
+			IActuator actuator = manager.createActuator("test", "de.uniol.inf.is.odysseus.action.actuatorManagement.impl.TestActuator(name)");
 			assertEquals(TestActuator.class, actuator.getClass());
 			assertEquals("name", ((TestActuator)actuator).getName());
 		} catch (ActuatorException e) {
@@ -34,8 +38,7 @@ public class ActuatorAdapterManagerTest {
 		
 		//testcase 2
 		try {
-			manager.createActuator("test2", "de.uniol.inf.is.odysseus.action.actuatorManagement.impl.TestActuator(name, 10:byte)");
-			IActuator actuator = manager.getActuator("test2");
+			IActuator actuator = manager.createActuator("test2", "de.uniol.inf.is.odysseus.action.actuatorManagement.impl.TestActuator(name, 10:byte)");
 			assertEquals(TestActuator.class, actuator.getClass());
 			assertEquals("name", ((TestActuator)actuator).getName());
 			assertEquals(10, ((TestActuator)actuator).getAdress());

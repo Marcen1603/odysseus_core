@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
@@ -39,11 +40,11 @@ public class ActuatorFactory {
 	 * @param managerName name of the manager responsible for the new Actuator
 	 * @throws ActuatorException
 	 */
-	public void createActuator (String name, String actuatorDescription, String managerName) 
+	public IActuator createActuator (String name, String actuatorDescription, String managerName) 
 		throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
-			manager.createActuator(name, actuatorDescription);
+			return manager.createActuator(name, actuatorDescription);
 		}
 		throw new ActuatorException("Actuator manager not bound yet");
 	}
@@ -79,7 +80,7 @@ public class ActuatorFactory {
 		return instance;
 	}
 	
-	public List<ActuatorAdapterMethod> getSchema(String actuatorName, String managerName) throws ActuatorException{
+	public List<ActionMethod> getSchema(String actuatorName, String managerName) throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
 			return manager.getSchema(actuatorName);

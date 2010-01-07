@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.action.output;
 
-import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorAdapterMethod;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
@@ -18,6 +20,7 @@ public class Action {
 	private IActuator actuator;
 	private String methodName;
 	private Class<?>[] parameterTypes;
+	private ActionMethod method;
 	
 	/**
 	 * Creates a new Action
@@ -29,9 +32,10 @@ public class Action {
 	public Action (IActuator actuator, String methodName, Class<?>[] parameterTypes) throws ActionException{
 		boolean compatible = false;
 		//check for compatibility
-		for (ActuatorAdapterMethod method : actuator.getSchema()){
+		for (ActionMethod method : actuator.getSchema()){
 			if(method.isCompatibleTo(methodName, parameterTypes)){
 				compatible = true;
+				this.method = method;
 				break;
 			}
 		}
@@ -58,5 +62,29 @@ public class Action {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 
+	 * @param parameters
+	 * @return
+	 */
+	public List<IActionParameter> sortParameters(List<IActionParameter> parameters){
+		ArrayList<IActionParameter> newParameterOrder = new ArrayList<IActionParameter>(parameters.size());
+		Class<?>[] schema = this.method.getParameterTypes().clone();
+		for (IActionParameter param : parameters){
+			int index = 0;
+			for (;index<schema.length;index++){
+				if (schema[index].equals(param.getParamClass())){
+					break;
+				}
+			}
+			//set class to null to prevent double usage of one parameter!
+			schema[index] = null;
+			newParameterOrder.set(index, param);
+		}
+		return newParameterOrder;
+	}
+	
+	
 
 }

@@ -5,6 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.eca.test
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.parser.eca,
- de.uniol.inf.is.odysseus.planmanagement.executor
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ org.osgi.framework
 Require-Bundle: org.junit4
 Service-Component: OSGI-INF/executor.xml
+Bundle-ActivationPolicy: lazy

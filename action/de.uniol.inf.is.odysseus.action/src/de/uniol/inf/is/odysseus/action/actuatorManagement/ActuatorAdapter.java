@@ -6,21 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 public abstract class ActuatorAdapter implements IActuator {
-	private ArrayList<ActuatorAdapterMethod> methods;
+	private ArrayList<ActionMethod> methods;
 	
 	public ActuatorAdapter() {
-		this.methods = new ArrayList<ActuatorAdapterMethod>();
+		this.methods = new ArrayList<ActionMethod>();
 		for (Method method : this.getClass().getMethods()) {
 			this.methods.add(
-					new ActuatorAdapterMethod(method.getName(),method.getParameterTypes()));
+					new ActionMethod(method.getName(),method.getParameterTypes()));
 		}
 	}
 	
 	@Override
-	public List<ActuatorAdapterMethod> getSchema() {
+	public List<ActionMethod> getSchema() {
 		return this.methods;
 	}
 	

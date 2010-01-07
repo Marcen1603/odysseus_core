@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
@@ -34,7 +35,7 @@ public class ActuatorAdapterManager implements IActuatorManager{
 	
 
 	@Override
-	public void createActuator(String name, String description) throws ActuatorException{
+	public IActuator createActuator(String name, String description) throws ActuatorException{
 		name = name.trim();
 		//error handling
 		if (name.equals("")){
@@ -125,8 +126,9 @@ public class ActuatorAdapterManager implements IActuatorManager{
 					}
 					//create object
 					if (compatible){
-						this.adapters.put(name, (ActuatorAdapter)constructor.newInstance(constructorParams));
-						return;
+						ActuatorAdapter newAdapter = (ActuatorAdapter)constructor.newInstance(constructorParams);
+						this.adapters.put(name, newAdapter);
+						return newAdapter;
 					}
 				}
 			}
@@ -148,7 +150,7 @@ public class ActuatorAdapterManager implements IActuatorManager{
 	}
 
 	@Override
-	public List<ActuatorAdapterMethod> getSchema(String name) {
+	public List<ActionMethod> getSchema(String name) {
 		ActuatorAdapter adapter = this.adapters.get(name);
 		if (adapter != null){
 			return adapter.getSchema();

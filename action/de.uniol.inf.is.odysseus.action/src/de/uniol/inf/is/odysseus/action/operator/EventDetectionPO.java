@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.action.operator;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,10 +19,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
  * @param <T>
  */
 public class EventDetectionPO<T> extends AbstractSink<T>{
-	private Map<Action, ArrayList<IActionParameter>> actions;
+	private Map<Action, List<IActionParameter>> actions;
 	private String type;
 
-	public EventDetectionPO(Map<Action, ArrayList<IActionParameter>> actions, String type) throws DataextractionException {
+	public EventDetectionPO(Map<Action, List<IActionParameter>> actions, String type) throws DataextractionException {
 		super();
 		this.actions = actions;
 		this.type = type;
@@ -33,8 +33,8 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		DataExtractor extractor = DataExtractor.getInstance();
 		//extract parameters
-		for (Entry<Action, ArrayList<IActionParameter>> entry : actions.entrySet()){
-			ArrayList<IActionParameter> parameterList = entry.getValue();
+		for (Entry<Action, List<IActionParameter>> entry : actions.entrySet()){
+			List<IActionParameter> parameterList = entry.getValue();
 			Object[] parameters = new Object[parameterList.size()];
 			int index = 0;
 			for (IActionParameter param : parameterList){

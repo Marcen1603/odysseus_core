@@ -11,3 +11,4 @@ Import-Package: de.uniol.inf.is.odysseus.action.actuatorManagement,
  org.osgi.framework;version="1.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit4
+Bundle-ActivationPolicy: lazy

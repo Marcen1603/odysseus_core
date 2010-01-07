@@ -1,16 +1,16 @@
-package de.uniol.inf.is.odysseus.action.actuatorManagement;
+package de.uniol.inf.is.odysseus.action.output;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class ActuatorAdapterMethod {
+public class ActionMethod {
 	private String name;
 	private ArrayList<Class<?>> parameterTypes;
 	
 	private static HashMap<Class<?>,Class<?>> primitivClassMapping;
 	
-	public ActuatorAdapterMethod (String name, Class<?>[] classes){
+	public ActionMethod (String name, Class<?>[] classes){
 		this.name = name;
 		this.parameterTypes = new ArrayList<Class<?>>(Arrays.asList(classes));
 		

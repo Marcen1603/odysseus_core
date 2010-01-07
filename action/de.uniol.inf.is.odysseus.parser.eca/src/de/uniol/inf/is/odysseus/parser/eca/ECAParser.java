@@ -64,7 +64,7 @@ public class ECAParser implements IQueryParser{
 	@Override
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
-		HashMap<Action, ArrayList<IActionParameter>> actions = new HashMap<Action, ArrayList<IActionParameter>>();
+		HashMap<Action, List<IActionParameter>> actions = new HashMap<Action, List<IActionParameter>>();
 		//extract internal query
 		Matcher ecaMatcher = ecaPattern.matcher(query.toLowerCase());
 		if (ecaMatcher.matches()){
@@ -131,7 +131,7 @@ public class ECAParser implements IQueryParser{
 							}	
 						}
 					}
-					//create action object & map with parameters
+					//fetch actuator
 					IActuator actuator = null;
 					try {
 						actuator = ActuatorFactory.getInstance().getActuator(actuatorName, managerName);
@@ -139,7 +139,10 @@ public class ECAParser implements IQueryParser{
 						System.err.println("Actuator<"+actuatorName+"> unknown. Skipped Action!");
 						continue;
 					}
-					actions.put(this.createAction(actuator, methodName, actionParameters), actionParameters);
+					
+					//create action object, sort parameters & map both
+					Action action = this.createAction(actuator, methodName, actionParameters);
+					actions.put(action, action.sortParameters(actionParameters));
 				}
 				if (!actions.isEmpty()){
 					return this.createNewPlan(actions, plan);
@@ -198,7 +201,7 @@ public class ECAParser implements IQueryParser{
 		throw new QueryParseException(paramType+" is an irregulator datatype");
 	}
 
-	private List<ILogicalOperator> createNewPlan(HashMap<Action, ArrayList<IActionParameter>> actions,
+	private List<ILogicalOperator> createNewPlan(HashMap<Action, List<IActionParameter>> actions,
 			List<ILogicalOperator> plan) {
 		ILogicalOperator outputOperator = this.determineOutputOperator(plan.get(0));
 

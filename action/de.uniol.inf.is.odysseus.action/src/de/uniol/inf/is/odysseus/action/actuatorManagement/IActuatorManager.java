@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.action.actuatorManagement;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.output.ActionMethod;
 import de.uniol.inf.is.odysseus.action.output.IActuator;
 
 /**
@@ -19,7 +20,7 @@ public interface IActuatorManager {
 	 * @param description
 	 * @throws ActuatorException thrown if Actuator with given name already exists
 	 */
-	public void createActuator(String name, String description) throws ActuatorException;
+	public IActuator createActuator(String name, String description) throws ActuatorException;
 	
 	/**
 	 * Returns the actuator with given name.
@@ -41,8 +42,8 @@ public interface IActuatorManager {
 	 * @param name
 	 * @return
 	 * @throws ActuatorException thrown if Actuator does not exist
-	 * @see ActuatorAdapterMethod
+	 * @see ActionMethod
 	 */
-	public List<ActuatorAdapterMethod> getSchema(String name) throws ActuatorException;
+	public List<ActionMethod> getSchema(String name) throws ActuatorException;
 	
 }
