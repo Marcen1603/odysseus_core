@@ -28,10 +28,6 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 */
 	private static final long serialVersionUID = -8921538607877809462L;
 	private int[] measurementValuePositions;
-	
-	public int[] getMeasurementValuePositions() {
-		return measurementValuePositions;
-	}
 
 	/**
 	 * Erzeugt ein neues Object, anhand der Zeile und des Trennzeichens
@@ -211,7 +207,9 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * This method should be called by an operator after creating a new tuple.
 	 * 
 	 * @param schema By this schema it can be found out which attributes are measurement values.
+	 * @deprecated This can be done before query runtime. Use setMeasurementValuePositions instead.
 	 */
+	@Deprecated
 	public void findMeasurementValuePositions(SDFAttributeList schema){
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for(int i = 0; i<schema.size(); i++){
@@ -225,6 +223,22 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		for(int i = 0; i<this.measurementValuePositions.length; i++){
 			this.measurementValuePositions[i] = list.get(i);
 		}
+	}
+	
+	public int[] getMeasurementValuePositions() {
+		return measurementValuePositions;
+	}
+	
+	public void setMeasurementValuePositions(int[] mvPos){
+		this.measurementValuePositions = mvPos;
+	}
+	
+	public double[] getMeasurementValues(){
+		double[] mvs = new double[this.measurementValuePositions.length];
+		for(int i = 0; i<this.measurementValuePositions.length; i++){
+			mvs[i] = ((Double)this.attributes[this.measurementValuePositions[i]]).doubleValue();
+		}
+		return mvs;
 	}
 	
 	/**
