@@ -4,6 +4,7 @@ Bundle-Name: Action
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.action
 Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus.action.services.actuator,
+ de.uniol.inf.is.odysseus.action.services.actuator.impl,
  de.uniol.inf.is.odysseus.action.services.dataExtraction,
  de.uniol.inf.is.odysseus.action.services.exception,
  de.uniol.inf.is.odysseus.logicaloperator.base,

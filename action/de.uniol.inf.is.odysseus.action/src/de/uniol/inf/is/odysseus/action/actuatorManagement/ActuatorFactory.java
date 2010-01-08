@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  *
  */
 public class ActuatorFactory {
-	private volatile HashMap<String, IActuatorManager> actuatorManager;
+	private HashMap<String, IActuatorManager> actuatorManager;
 	
 	private static ActuatorFactory instance = new ActuatorFactory();
 		
@@ -30,7 +30,7 @@ public class ActuatorFactory {
 	 * OSGI method for binding {@link IActuatorManager}s
 	 * @param manager
 	 */
-	public void bindActuatorManager(IActuatorManager manager){
+	public synchronized void bindActuatorManager(IActuatorManager manager){
 		this.actuatorManager.put(manager.getName(), manager);
 		System.out.println("ActuatorFactory bound <"+manager+"> successfully.");
 	}
@@ -55,7 +55,7 @@ public class ActuatorFactory {
 	 * OSGI method for unbinding {@link IActuatorManager}s
 	 * @param manager
 	 */
-	public void unbindActuatorManager(IActuatorManager manager){
+	public synchronized void unbindActuatorManager(IActuatorManager manager){
 		this.actuatorManager.remove(manager.getName());
 		System.out.println("ActuatorFactory unbound <"+manager+">");
 	}
