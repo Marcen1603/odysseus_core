@@ -23,7 +23,7 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 	private Map<Action, List<IActionParameter>> actions;
 	private String type;
 
-	public EventDetectionPO(Map<Action, List<IActionParameter>> actions, String type) throws DataextractionException {
+	public EventDetectionPO(Map<Action, List<IActionParameter>> actions, String type) {
 		super();
 		this.actions = actions;
 		this.type = type;

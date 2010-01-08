@@ -19,7 +19,7 @@ public class StreamAttributeParameter implements IActionParameter{
 	
 	public StreamAttributeParameter(SDFDatatype datatype, Object identifier){
 		String datatypeName = datatype.getQualName();
-		//TODO datentyp entsprechend definieren
+		//FIXME datentyp entsprechend definieren
 		this.identifier = identifier;
 	}
 	
