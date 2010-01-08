@@ -3,9 +3,10 @@ package de.uniol.inf.is.odysseus.action.actuatorManagement;
 import java.util.HashMap;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.action.output.ActionMethod;
-import de.uniol.inf.is.odysseus.action.output.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
+import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
  * Factory for Creation, Access to all kind of {@link IActuator}s.
@@ -31,6 +32,7 @@ public class ActuatorFactory {
 	 */
 	public void bindActuatorManager(IActuatorManager manager){
 		this.actuatorManager.put(manager.getName(), manager);
+		System.out.println("ActuatorFactory bound <"+manager+"> successfully.");
 	}
 	
 	/**
@@ -55,6 +57,7 @@ public class ActuatorFactory {
 	 */
 	public void unbindActuatorManager(IActuatorManager manager){
 		this.actuatorManager.remove(manager.getName());
+		System.out.println("ActuatorFactory unbound <"+manager+">");
 	}
 	
 	/**
@@ -86,6 +89,10 @@ public class ActuatorFactory {
 			return manager.getSchema(actuatorName);
 		}
 		throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
+	}
+	
+	public HashMap<String, IActuatorManager> getActuatorManager() {
+		return actuatorManager;
 	}
 	
 	

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.parser.eca.test.ecaParserTest">
+   <implementation class="de.uniol.inf.is.odysseus.parser.eca.test.ECAParserTest"/>
+   <service>
+      <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
+   </service>
+   <reference bind="bindParser" cardinality="0..n" interface="de.uniol.inf.is.odysseus.base.IQueryParser" name="IQueryParser" policy="dynamic"/>
+</scr:component>

@@ -5,16 +5,19 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
+	private static BundleContext context;
+
 	@Override
 	public void start(BundleContext context) throws Exception {
-		// TODO Auto-generated method stub
-		
+		Activator.context = context;
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		// TODO Auto-generated method stub
-		
+		Activator.context = null;
 	}
 
+	public static BundleContext getContext() {
+		return context;
+	}
 }

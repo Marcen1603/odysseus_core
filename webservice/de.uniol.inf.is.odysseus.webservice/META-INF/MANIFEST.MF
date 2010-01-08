@@ -8,7 +8,6 @@ Import-Package: de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
- de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  org.osgi.framework;version="1.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/executer.xml

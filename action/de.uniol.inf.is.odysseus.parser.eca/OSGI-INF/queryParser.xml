@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.parser.eca">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.parser.eca.ecaParser">
    <implementation class="de.uniol.inf.is.odysseus.parser.eca.ECAParser"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.base.IQueryParser"/>
    </service>
-   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.ICompiler" name="ICompiler" policy="static"/>
+   <reference bind="bindCompiler" cardinality="0..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.ICompiler" name="ICompiler" policy="dynamic"/>
 </scr:component>

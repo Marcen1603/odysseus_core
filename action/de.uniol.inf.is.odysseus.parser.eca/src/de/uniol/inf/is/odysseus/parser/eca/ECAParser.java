@@ -9,13 +9,13 @@ import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorFactory;
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
-import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
-import de.uniol.inf.is.odysseus.action.output.IActuator;
 import de.uniol.inf.is.odysseus.action.output.StaticParameter;
 import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
@@ -58,6 +58,7 @@ public class ECAParser implements IQueryParser{
 	 * @param compiler
 	 */
 	public void bindCompiler (ICompiler compiler){
+		System.out.println("ECAParser bound:<"+compiler+"> successfully");
 		this.compiler = compiler;
 	}
 	

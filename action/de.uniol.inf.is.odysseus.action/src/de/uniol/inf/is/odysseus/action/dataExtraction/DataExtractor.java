@@ -2,7 +2,8 @@ package de.uniol.inf.is.odysseus.action.dataExtraction;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.action.exception.DataextractionException;
+import de.uniol.inf.is.odysseus.action.services.dataExtraction.IAttributeExtractor;
+import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
 
 
 /**

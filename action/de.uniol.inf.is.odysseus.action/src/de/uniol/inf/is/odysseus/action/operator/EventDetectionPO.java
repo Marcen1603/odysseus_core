@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.action.dataExtraction.DataExtractor;
-import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.action.exception.DataextractionException;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
+import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
 /**

@@ -9,14 +9,14 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorAdapterManager;
-import de.uniol.inf.is.odysseus.action.actuatorManagement.impl.TestActuator;
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
-import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
-import de.uniol.inf.is.odysseus.action.output.IActuator;
 import de.uniol.inf.is.odysseus.action.output.StaticParameter;
+import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapterManager;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.impl.TestActuator;
+import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
  * JUnit test for Action from de.uniol.inf.is.odysseus.action bundle
@@ -29,7 +29,7 @@ public class ActionTest {
 	@Before
 	public void setUp() throws Exception {
 		ActuatorAdapterManager manager = new ActuatorAdapterManager();
-		this.actuator = manager.createActuator("test", "de.uniol.inf.is.odysseus.action.actuatorManagement.impl.TestActuator(name)");
+		this.actuator = manager.createActuator("test", "de.uniol.inf.is.odysseus.action.services.actuator.impl.TestActuator(name)");
 	}
 
 	@Test

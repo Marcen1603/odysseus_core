@@ -1,12 +1,14 @@
 package de.uniol.inf.is.odysseus.action.output;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
-import de.uniol.inf.is.odysseus.action.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
+import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.PrimitivTypeComparator;
+import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
  * An Action is the combination of an {@link IActuator} and

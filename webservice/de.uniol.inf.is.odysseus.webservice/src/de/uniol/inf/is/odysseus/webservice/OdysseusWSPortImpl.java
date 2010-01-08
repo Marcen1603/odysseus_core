@@ -7,13 +7,6 @@
 package de.uniol.inf.is.odysseus.webservice;
 
 import java.util.logging.Logger;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlList;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -40,6 +33,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     
     public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
+		System.out.println("Webservice bound <"+executor+"> successfully");
 	}
     
     /* (non-Javadoc)
