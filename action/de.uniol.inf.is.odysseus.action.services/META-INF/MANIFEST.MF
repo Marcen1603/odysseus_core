@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Action Services
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.services
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.action.services.Activator
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.relational.base,
+ org.apache.cxf.endpoint,
+ org.apache.cxf.endpoint.dynamic,
+ org.apache.cxf.jaxws.endpoint.dynamic,
+ org.osgi.framework;version="1.3.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.uniol.inf.is.odysseus.action.services.actuator,
+ de.uniol.inf.is.odysseus.action.services.actuator.impl,
+ de.uniol.inf.is.odysseus.action.services.dataExtraction,
+ de.uniol.inf.is.odysseus.action.services.exception
+Service-Component: OSGI-INF/actuatoradapter..xml, OSGI-INF/actuatoradapter.xml
