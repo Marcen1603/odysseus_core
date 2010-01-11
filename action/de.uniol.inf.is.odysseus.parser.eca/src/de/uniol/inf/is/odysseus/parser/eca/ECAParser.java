@@ -33,8 +33,8 @@ public class ECAParser implements IQueryParser{
 	private static final Pattern LANGPATTERN = Pattern.compile("\\[LANG:(\\w*)\\]",Pattern.CASE_INSENSITIVE);
 	private static final Pattern PARAMPATTERN = Pattern.compile("[^,]*");
 	private static final Pattern PARAMTYPEPATTERN = Pattern.compile("([^:]*)(\\w*)");
-	
 	private static final String DEFAULTLANG = "CQL";
+	
 	
 		
 	public ECAParser () {
@@ -243,6 +243,7 @@ public class ECAParser implements IQueryParser{
 		return null;
 	}
 	
+	//just for tets
 	public static void main(String[] args) {
 		ECAParser parser = new ECAParser();
 		String[] statements = {
@@ -263,5 +264,9 @@ public class ECAParser implements IQueryParser{
 			}
 		}
 	}
-
+	
+	//just for tests
+	public ICompiler getCompiler() {
+		return compiler;
+	}
 }

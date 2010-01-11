@@ -17,7 +17,19 @@ public class ECAParserTest implements CommandProvider {
 	}
 	
 	public void _testECA(CommandInterpreter ci){
-		ci.println(this.parser);
+		try {
+			System.out.println("Testcase 1: Checking if compiler has been bound.");
+			if (((ECAParser)this.parser).getCompiler() != null) {
+				System.out.println("---success---");
+			}
+			
+			System.out.println("Adding sources for next testcases");
+			
+		}catch (Exception e){
+			System.err.print("Test failed: ");
+			System.err.println(e.getMessage());
+		}
+		
 	}
 
 	@Override

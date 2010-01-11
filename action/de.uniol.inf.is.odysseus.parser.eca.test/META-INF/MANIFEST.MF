@@ -9,6 +9,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework
 Require-Bundle: org.junit4
-Service-Component: OSGI-INF/executor.xml, OSGI-INF/executer2.xml, OSGI-INF/executer.xml
+Service-Component: OSGI-INF/parser.xml, OSGI-INF/commandProvider.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.eca.test.Activator

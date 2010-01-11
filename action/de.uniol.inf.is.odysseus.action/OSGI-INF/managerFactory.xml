@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.action.managerBinding">
    <implementation class="de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorFactory"/>
-   <reference bind="bindActuatorManager" cardinality="0..n" interface="de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager" name="IActuatorManager" policy="dynamic" unbind="unbindActuatorManager"/>
+   <reference bind="bindActuatorManager" cardinality="1..n" interface="de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager" name="IActuatorManager" policy="dynamic" unbind="unbindActuatorManager"/>
 </scr:component>
