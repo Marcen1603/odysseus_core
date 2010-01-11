@@ -58,7 +58,6 @@ public class ECAParser implements IQueryParser{
 	 * @param compiler
 	 */
 	public void bindCompiler (ICompiler compiler){
-		System.out.println("ECAParser bound:<"+compiler+"> successfully");
 		this.compiler = compiler;
 	}
 	

@@ -22,5 +22,5 @@ Export-Package: de.uniol.inf.is.odysseus.action.actuatorManagement,
  de.uniol.inf.is.odysseus.action.exception,
  de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.action.output
-Service-Component: OSGI-INF/actuatorfactory.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.action.Activator
+Service-Component: OSGI-INF/managerFactory.xml

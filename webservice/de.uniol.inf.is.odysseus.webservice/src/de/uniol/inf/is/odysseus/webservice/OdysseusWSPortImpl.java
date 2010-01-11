@@ -33,7 +33,6 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     
     public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
-		System.out.println("Webservice bound <"+executor+"> successfully");
 	}
     
     /* (non-Javadoc)

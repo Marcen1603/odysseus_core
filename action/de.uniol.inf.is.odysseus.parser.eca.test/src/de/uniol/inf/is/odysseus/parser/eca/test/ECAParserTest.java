@@ -12,7 +12,6 @@ public class ECAParserTest implements CommandProvider {
 	public void bindParser (IQueryParser parser){
 		if (parser.getClass() == ECAParser.class){
 			this.parser = parser;
-			System.out.println("NoneJunitTest bound <"+parser+"> successfully");
 		}
 		
 	}
