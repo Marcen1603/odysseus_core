@@ -22,7 +22,7 @@ public class ActuatorFactory {
 	
 	private static ActuatorFactory instance = new ActuatorFactory();
 		
-	private ActuatorFactory () {
+	public ActuatorFactory () {
 		this.actuatorManager = new HashMap<String, IActuatorManager>();
 	}
 	
