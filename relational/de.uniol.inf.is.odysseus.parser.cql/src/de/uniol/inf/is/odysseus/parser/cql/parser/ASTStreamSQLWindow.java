@@ -7,6 +7,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 public class ASTStreamSQLWindow extends ASTWindow {
 	private Long offset;
 	private Long timeout;
+	private Long slide;
+	
+	public Long getSlide() {
+		return slide;
+	}
 
 	public ASTStreamSQLWindow(int id) {
 		super(id);
@@ -27,16 +32,40 @@ public class ASTStreamSQLWindow extends ASTWindow {
 		return (ASTPartition) jjtGetChild(this.type == Type.ON ? 3 : 2);
 
 	}
+	
+	@Override
+	public void setAdvance(Long advance) {
+		if (this.slide != null && advance != null && advance != 1 ) {
+			throw new IllegalArgumentException(
+					"cannot both of advance and slide parameters");
+		}
+		super.setAdvance(advance);
+	}
+
+	public void setSlide(Long slide) {
+		if (slide != null && getAdvance() != null && getAdvance() != 1) {
+			throw new IllegalArgumentException(
+					"cannot both of advance and slide parameters");
+		}
+		this.slide = slide == 1 ? null : slide;
+	}
+
 
 	@Override
 	public WindowType getType() {
 		if (this.type == Type.TUPLE) {
+			if (this.slide != null) {
+				return WindowType.PERIODIC_TUPLE_WINDOW;
+			}
 			if (getAdvance() == null || getAdvance() == 1) {
 				return WindowType.SLIDING_TUPLE_WINDOW;
 			} else {
 				return WindowType.JUMPING_TUPLE_WINDOW;
 			}
 		} else {
+			if (this.slide != null) {
+				return WindowType.PERIODIC_TIME_WINDOW;
+			}
 			if (getAdvance() == null || getAdvance() == 1) {
 				return WindowType.SLIDING_TIME_WINDOW;
 			} else {
