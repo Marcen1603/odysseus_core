@@ -100,30 +100,30 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * @param attributes
 	 *            Attributbelegungen des neuen Tuples
 	 */
-	@Deprecated
-	public MVRelationalTuple(SDFAttributeList schema, Object... attributes) {
-		if (schema.size() != attributes.length) {
-			throw new IllegalArgumentException("listsize doesn't match schema");
-		}
-
-		for (int i = 0; i < schema.size(); ++i) {
-			if (!checkDataType(attributes[i], schema.get(i))) {
-				throw new IllegalArgumentException("attribute " + i
-						+ " has an invalid type");
-			}
-		}
-
-		this.schema = schema;
-		this.attributes = attributes.clone();
-//		if(this.getAttribute(3).equals(19.3906)){
-//			try{
-//				throw new Exception("Doppelt.");
-//			}catch(Exception e){
-//				e.printStackTrace();
+//	@Deprecated
+//	public MVRelationalTuple(SDFAttributeList schema, Object... attributes) {
+//		if (schema.size() != attributes.length) {
+//			throw new IllegalArgumentException("listsize doesn't match schema");
+//		}
+//
+//		for (int i = 0; i < schema.size(); ++i) {
+//			if (!checkDataType(attributes[i], schema.get(i))) {
+//				throw new IllegalArgumentException("attribute " + i
+//						+ " has an invalid type");
 //			}
 //		}
-		this.findMeasurementValuePositions(schema);
-	}
+//
+////		this.schema = schema;
+//		this.attributes = attributes.clone();
+////		if(this.getAttribute(3).equals(19.3906)){
+////			try{
+////				throw new Exception("Doppelt.");
+////			}catch(Exception e){
+////				e.printStackTrace();
+////			}
+////		}
+//		this.findMeasurementValuePositions(schema);
+//	}
 
 	/**
 	 * Erzeugt ein neues Tuple mit Attributen und ohne Schemainformationen
@@ -269,16 +269,16 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		
 		MVRelationalTuple newAttrList = null;
 		
-		SDFAttributeList newSchema = overwriteSchema;
-		if (overwriteSchema == null){
-			// Schema anpassen		
-			if (schema != null){
-				newSchema = new SDFAttributeList();
-				for (int i: attrList) {
-					newSchema.add(getSchema().get(i));
-				}
-			}
-		}
+//		SDFAttributeList newSchema = overwriteSchema;
+//		if (overwriteSchema == null){
+//			// Schema anpassen		
+//			if (schema != null){
+//				newSchema = new SDFAttributeList();
+//				for (int i: attrList) {
+//					newSchema.add(getSchema().get(i));
+//				}
+//			}
+//		}
 		
 		// first, project the measurment values
 		RealMatrix result = null;
@@ -298,11 +298,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 			}
 		}
 		
-		if (this.schema == null && overwriteSchema == null) {
-			newAttrList = new MVRelationalTuple(attrList.length);
-		} else{
-			newAttrList = new MVRelationalTuple(newSchema);
-		}
+		newAttrList = new MVRelationalTuple(attrList.length);
 
 		int mvCounter = 0;
 		ArrayList<Integer> mvPos = new ArrayList<Integer>();
