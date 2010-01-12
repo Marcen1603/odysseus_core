@@ -20,13 +20,13 @@ public class StreamTupleConverter extends AbstractStreamConverter<RelationalTupl
 		
 		for( int i = 0; i < element.getAttributeCount(); i++ ){
 			String name = null;
-			if( element.getSchema() != null ){
-				SDFAttributeList schema = element.getSchema();
-				SDFAttribute attr = schema.getAttribute( i ); 
-				name = attr.getQualName();
-			}else{ 
+//			if( element.getSchema() != null ){
+//				SDFAttributeList schema = element.getSchema();
+//				SDFAttribute attr = schema.getAttribute( i ); 
+//				name = attr.getQualName();
+//			}else{ 
 				name = String.valueOf( i );
-			}
+//			}
 			String value = element.getAttribute( i ).toString();
 			tempMap.put( name, value );
 		}
