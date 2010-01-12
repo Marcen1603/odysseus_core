@@ -22,8 +22,13 @@ public class ActuatorFactory {
 	
 	private static ActuatorFactory instance = new ActuatorFactory();
 		
+	/**
+	 * Constructor called by OSGI, shouldnt be called by clients,
+	 * use getInstance instead!
+	 */
 	public ActuatorFactory () {
 		this.actuatorManager = new HashMap<String, IActuatorManager>();
+		instance = this;
 	}
 	
 	/**
@@ -32,7 +37,6 @@ public class ActuatorFactory {
 	 */
 	public synchronized void bindActuatorManager(IActuatorManager manager){
 		this.actuatorManager.put(manager.getName(), manager);
-		System.out.println("ActuatorFactory bound <"+manager+"> successfully.");
 	}
 	
 	/**
@@ -79,7 +83,10 @@ public class ActuatorFactory {
 	 * Returns factory instance (singleton pattern)
 	 * @return
 	 */
-	public static ActuatorFactory getInstance() {
+	public static synchronized ActuatorFactory getInstance() {
+		if (instance == null) {
+			instance = new ActuatorFactory();
+		}
 		return instance;
 	}
 	
