@@ -27,7 +27,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 
 	protected Object[] attributes;
 
-	protected SDFAttributeList schema;
+//	protected SDFAttributeList schema;
 
 	/**
 	 * @uml.property name="delimiter"
@@ -121,39 +121,39 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	}
 
 	public final void setAttribute(int pos, Object value) {
-		if (this.schema != null) {
-			if (value == null) {
-				// TODO kann man ueberpruefen, ob null werte erlaubt sind?
-				this.attributes[pos] = value;
-			} else {
-				if (value instanceof Number || value instanceof String) {
-					checkDataType(value, schema.get(pos));
-					this.attributes[pos] = value;
-				} else {
-					throw new IllegalArgumentException(RelationalTuple.class
-							.getSimpleName()
-							+ " only allows String and Number types");
-				}
-			}
-		} else {
+//		if (this.schema != null) {
+//			if (value == null) {
+//				// TODO kann man ueberpruefen, ob null werte erlaubt sind?
+//				this.attributes[pos] = value;
+//			} else {
+//				if (value instanceof Number || value instanceof String) {
+//					checkDataType(value, schema.get(pos));
+//					this.attributes[pos] = value;
+//				} else {
+//					throw new IllegalArgumentException(RelationalTuple.class
+//							.getSimpleName()
+//							+ " only allows String and Number types");
+//				}
+//			}
+//		} else {
 			this.attributes[pos] = value;
-		}
+//		}
 		//calcSize();
 	}
 
-	public final void setUnchecked() {
-		this.schema = null;
-	}
-
-	public final void setChecked(SDFAttributeList schema) {
-		this.schema = schema;
-		// TODO evtl hier schonmal die aktuellen attribute checken
-	}
+//	public final void setUnchecked() {
+//		this.schema = null;
+//	}
+//
+//	public final void setChecked(SDFAttributeList schema) {
+//		this.schema = schema;
+//		// TODO evtl hier schonmal die aktuellen attribute checken
+//	}
 
 	public final void setAttribute(int pos, String value) {
-		if (this.schema != null) {
-			checkDataType(value, schema.get(pos));
-		}
+//		if (this.schema != null) {
+//			checkDataType(value, schema.get(pos));
+//		}
 		this.attributes[pos] = value;
 		//calcSize();
 	}
@@ -165,17 +165,17 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	
 	
 	public final void setAttribute(int pos, Integer value) {
-		if (this.schema != null) {
-			checkDataType(value, schema.get(pos));
-		}
+//		if (this.schema != null) {
+//			checkDataType(value, schema.get(pos));
+//		}
 		this.attributes[pos] = value;
 		//calcSize();
 	}
 
 	public final void setAttribute(int pos, Double value) {
-		if (this.schema != null) {
-			checkDataType(value, schema.get(pos));
-		}
+//		if (this.schema != null) {
+//			checkDataType(value, schema.get(pos));
+//		}
 		this.attributes[pos] = value;
 		//calcSize();
 	}
@@ -205,22 +205,22 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			SDFAttributeList overwriteSchema) {
 		RelationalTuple<T> newAttrList = null;
 
-		SDFAttributeList newSchema = overwriteSchema;
-		if (overwriteSchema == null) {
-			// Schema anpassen
-			if (schema != null) {
-				newSchema = new SDFAttributeList();
-				for (int i : attrList) {
-					newSchema.add(getSchema().get(i));
-				}
-			}
-		}
+//		SDFAttributeList newSchema = overwriteSchema;
+//		if (overwriteSchema == null) {
+//			// Schema anpassen
+//			if (schema != null) {
+//				newSchema = new SDFAttributeList();
+//				for (int i : attrList) {
+//					newSchema.add(getSchema().get(i));
+//				}
+//			}
+//		}
 
-		if (this.schema == null && overwriteSchema == null) {
+//		if (this.schema == null && overwriteSchema == null) {
 			newAttrList = new RelationalTuple<T>(attrList.length);
-		} else {
-			newAttrList = new RelationalTuple<T>(newSchema);
-		}
+//		} else {
+//			newAttrList = new RelationalTuple<T>(newSchema);
+//		}
 
 		newAttrList.setMetadata(this.getMetadata());
 
@@ -352,7 +352,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 *            enthaelt die Anzahl der Attribute (Effizienzgr�nde)
 	 */
 	public RelationalTuple(SDFAttributeList schema, String line, char delimiter) {
-		this.schema = schema;
+//		this.schema = schema;
 		this.attributes = splittLineToAttributes(line, delimiter, schema);
 	}
 
@@ -363,15 +363,15 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 *            enthaelt die Anzahl der Attribute die das Objekt speichern
 	 *            koennen soll
 	 */
-	public RelationalTuple(SDFAttributeList schema) {
-		if (schema.size() == 0) {
-			throw new IllegalArgumentException("attribute count has to be > 0");
-		}
-
-		this.schema = schema;
-		this.attributes = new Object[schema.size()];
-		//calcSize();
-	}
+//	public RelationalTuple(SDFAttributeList schema) {
+//		if (schema.size() == 0) {
+//			throw new IllegalArgumentException("attribute count has to be > 0");
+//		}
+//
+//		this.schema = schema;
+//		this.attributes = new Object[schema.size()];
+//		//calcSize();
+//	}
 
 	/**
 	 * Erzeugt ein leeres Tuple ohne Schemainformationen
@@ -389,7 +389,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		this.attributes = new Object[attributeLength];
 		System.arraycopy(copy.attributes, 0, this.attributes, 0,
 				attributeLength);
-		this.schema = copy.schema;
+//		this.schema = copy.schema;
 		this.delimiter = copy.delimiter;
 		//calcSize();
 	}
@@ -415,7 +415,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			}
 		}
 
-		this.schema = schema;
+//		this.schema = schema;
 		this.attributes = attributes.clone();
 		//calcSize();
 	}
@@ -479,9 +479,9 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return ret;
 	}
 
-	public SDFAttributeList getSchema() {
-		return schema;
-	}
+//	public SDFAttributeList getSchema() {
+//		return schema;
+//	}
 
 	public Object[] getAttributes() {
 		return attributes;

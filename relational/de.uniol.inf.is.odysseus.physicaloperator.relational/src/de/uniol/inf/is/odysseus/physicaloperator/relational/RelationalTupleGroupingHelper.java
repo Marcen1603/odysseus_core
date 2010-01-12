@@ -99,8 +99,10 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	@Override
 	public RelationalTuple<T> createOutputElement(Integer groupID,
 			PairMap<SDFAttribute, AggregateFunction, RelationalTuple<T>, ?> r) {
-		RelationalTuple<T> returnTuple = new RelationalTuple<T>(outputSchema);
-
+		// ANDRE: do not use schema in a relational tuple
+//		RelationalTuple<T> returnTuple = new RelationalTuple<T>(outputSchema);
+		RelationalTuple<T> returnTuple = new RelationalTuple<T>(outputSchema.size()); 
+		
 		// in r stecken alle Aggregate drin
 		// notwendig: Finde die Ziel-Position in dem returnTuple
 		// ermittelt sich aus dem Attribute und der Aggregatfunktio
