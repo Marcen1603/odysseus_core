@@ -12,32 +12,43 @@ public class ExecutionListener extends AbstractExecutionListener{
 		setCallback(new ExecutionListenerCallback());
 	}
 	
-	private boolean execute(Lifecycle lifecycle) {
-		Thread executionThread = null;
+	@Override
+	protected void execute(Lifecycle lifecycle) {
 		if(getHandler().containsKey(lifecycle)) {
-			executionThread = new Thread(getHandler().get(lifecycle));
-			executionThread.start();
-			return true;
+			if(getActualExecutionThread()!=null) {
+				getActualExecutionThread().interrupt();
+			}
+			setActualExecutionThread(new Thread(getHandler().get(lifecycle)));
+			getActualExecutionThread().start();
 		}
-		return false;
 	}
 
 	@Override
 	public void run() {
+		
 		while(getQuery().getStatus()!=Lifecycle.CLOSED) {
-			synchronized (this) {
-				try {
-					this.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			Lifecycle temp = getQuery().getStatus();
+			System.out.println("aktueller Zustand: "+getQuery().getStatus());
 			if(getHandler().containsKey(getQuery().getStatus())) {
-				if(execute(getQuery().getStatus())) {
-					continue;
+				execute(getQuery().getStatus());
+			}
+			//Sonst hängen wir ewig in einer Schleife fest, falls es keinen passenden ExecutionHandler gibt.
+			else {
+				getCallback().changeState(Lifecycle.FAILED);
+				continue;
+				
+			}
+			synchronized (this) {
+				if(temp == getQuery().getStatus()) {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
+
 	}
 
 }

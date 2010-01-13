@@ -16,5 +16,8 @@ public class ExecutionListenerFactory implements IExecutionListenerFactory {
 		return listener;
 	}
 
-
+	@Override
+	public String getName() {
+		return "ExecutionListenerFactory";
+	}
 }
