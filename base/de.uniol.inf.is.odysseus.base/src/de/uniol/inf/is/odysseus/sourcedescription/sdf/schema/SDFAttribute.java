@@ -58,7 +58,7 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		super(attribute);
 		this.sourceName = attribute.sourceName;
 		this.attributeName = attribute.attributeName;
-		this.subattributes = attribute.subattributes.clone();
+		this.subattributes = attribute.subattributes == null ? null : attribute.subattributes.clone();
 	}
 	
 	public void addSubattribute(SDFAttribute subAttr){
