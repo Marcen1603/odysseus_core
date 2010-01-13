@@ -7,9 +7,12 @@ import net.jxta.id.IDFactory;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
-
+import de.uniol.inf.is.odysseus.p2p.jxta.SubplanJxtaImpl;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 
@@ -22,6 +25,7 @@ public class NoSplittingStrategy extends
 		P2PSinkAO p2psink = new P2PSinkAO(createSocketAdvertisement().toString());
 		plan.subscribe(p2psink, 0, 0, plan.getOutputSchema());
 		splitList.add(p2psink);
+
 		return splitList;
 	}
 
@@ -43,6 +47,26 @@ public class NoSplittingStrategy extends
 	@Override
 	public String getName() {
 		return "NoSplitting";
+	}
+
+	@Override
+	public void finalizeService() {
+		
+	}
+
+	@Override
+	public void initializeService() {
+		IExecutionHandler<AbstractPeer, AbstractSplittingStrategy> handler = new NoSplittingExecutionHandler();
+		handler.setPeer(getPeer());
+		handler.setFunction(this);
+		handler.setProvidedLifecycle(Lifecycle.SPLIT);
+
+		getPeer().bindExecutionHandler(handler);
+	}
+
+	@Override
+	public void startService() {
+		
 	}
 
 }
