@@ -2,12 +2,17 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.endpoint.Message;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeService;
@@ -15,6 +20,7 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.QueryResultHandlerJxtaImpl;
@@ -27,10 +33,14 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisemen
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
@@ -115,6 +125,9 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	public void activate() {
 		startPeer();
+		//TODO Splitting initialisieren
+//		getSplitting().initializeService();
+		getDistributionProvider().initializeService();
 		getLogger().info("Administration Peer started");
 
 //		try {
@@ -246,7 +259,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initQuerySpezificationListener() {
-		querySpezificationListener = new QuerySpezificationListenerJxtaImpl();
+		querySpezificationListener = new QuerySpezificationListenerJxtaImpl(getMessageSender());
 
 	}
 
@@ -418,10 +431,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	}
 
-	@Override
-	protected void initQueryResultHandler() {
-		registerMessageHandler(new QueryResultHandlerJxtaImpl());
-	}
 
 	@Override
 	protected void initHotPeerStrategy() {
@@ -447,6 +456,45 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		if(getMessageHandlerList()!=null) {
 			getSocketServerListener().registerMessageHandler(getMessageHandlerList());
 		}
+	}
+
+	@Override
+	public void initLocalMessageHandler() {
+		registerMessageHandler(new QueryResultHandlerJxtaImpl(getMessageSender()));
+	}
+
+	@Override
+	public void initLocalExecutionHandler() {
+		//TODO: Anders Lösen
+		for(IExecutionHandler h : getExecutionHandler()) {
+			if(h.getProvidedLifecycle() == Lifecycle.OPEN) {
+				h.setPeer(this);
+			}
+		}
+		
+//		try {
+//			for(IExecutionHandler<AbstractPeer,ICompiler> h : getExecutionHandler()) {
+//				if(h.getProvidedLifecycle()==Lifecycle.OPEN) {
+//					h.setFunction(getCompiler());
+//					Method[] m = h.getClass().getMethods();
+//					Method me = h.getClass().getMethod("getFunction");
+//					Type t = me.getGenericReturnType();
+//					Type[] ty = me.getGenericParameterTypes();
+//					me.
+//					if(h.getFunction() instanceof ICompiler) {
+//						System.out.println("ist ein Compiler");
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}
+
+	@Override
+	public void initMessageSender() {
+		setMessageSender(new MessageSender<PeerGroup, Message, PipeAdvertisement>());
 	}
 
 }

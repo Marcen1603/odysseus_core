@@ -25,7 +25,6 @@ public class MaxQueryBiddingStrategyJxtaImpl implements IThinPeerBiddingStrategy
 	
 	@Override
 	public boolean bidding(Query q) {
-		if (q.getStatus() == Lifecycle.OPEN) {
 
 			int i = 0;
 			for (Query key : getQueries().keySet()) {
@@ -43,8 +42,6 @@ public class MaxQueryBiddingStrategyJxtaImpl implements IThinPeerBiddingStrategy
 //				q.setStatus(Status.BIDDING);
 				return true;
 			}
-		}
-		return false;
 	}
 
 }

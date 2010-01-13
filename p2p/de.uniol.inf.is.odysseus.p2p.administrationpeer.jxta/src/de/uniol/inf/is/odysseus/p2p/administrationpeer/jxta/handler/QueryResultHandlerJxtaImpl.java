@@ -3,18 +3,26 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler;
 
 import java.util.HashMap;
 import net.jxta.endpoint.Message;
+import net.jxta.peergroup.PeerGroup;
+import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 
 
+
 public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 
 	
-	public QueryResultHandlerJxtaImpl() {
+	private IMessageSender<PeerGroup, Message, PipeAdvertisement> sender;
+
+	public QueryResultHandlerJxtaImpl(IMessageSender<PeerGroup, Message, PipeAdvertisement> sender) {
+		this.sender = sender;
 	}
 
 	public void handleMessage(Object _msg, String _namespace) {
@@ -32,13 +40,15 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 				"result", msg);
 		// String language = MessageTool.getMessageElementAsString(type,
 		// "language", msg);
-		String language = "CQL";
+		
 		// AdminPeer hat Zuspruch für eine Anfrage bekommen.
 		
 		if (queryResult.equals("granted")) {
 			Log.logAction(queryId, "Zusage für die Verwaltung der Anfrage bekommen.");
 			for(Query q : AdministrationPeerJxtaImpl.getInstance().getQueries().keySet()) {
-				if(q.getId() == queryId) {
+				if(q.getId().equals(queryId)) {
+					//Einstieg in die Ausführungsumgebung
+					q.setStatus(Lifecycle.OPEN);
 					AdministrationPeerJxtaImpl.getInstance().getQueries().get(q).startListener();
 				}
 			}
@@ -114,17 +124,24 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 	private  void sendSourceFailure(String queryId) {
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
 		messageElements.put("queryId", queryId);
-		MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance()
-				.getNetPeerGroup(), ((QueryJxtaImpl)AdministrationPeerJxtaImpl.getInstance()
-				.getQueries().get(queryId)).getResponseSocketThinPeer(),
-				
-				MessageTool.createSimpleMessage("UnknownSource", messageElements));
+//		MessageTool.sendMessage(AdministrationPeerJxtaImpl.getInstance()
+//				.getNetPeerGroup(), ((QueryJxtaImpl)AdministrationPeerJxtaImpl.getInstance()
+//				.getQueries().get(queryId)).getResponseSocketThinPeer(),
+//				MessageTool.createSimpleMessage("UnknownSource", messageElements));
+		this.sender.sendMessage(AdministrationPeerJxtaImpl.getInstance()
+				.getNetPeerGroup(), MessageTool.createSimpleMessage("UnknownSource", messageElements), ((QueryJxtaImpl)AdministrationPeerJxtaImpl.getInstance()
+				.getQueries().get(queryId)).getResponseSocketThinPeer());
 		Log.logAction(queryId, "Absage für die Verwaltung der Anfrage bekommen.");
 	}
 
 	@Override
 	public String getInterestedNamespace() {
 		return "BiddingResult";
+	}
+
+	@Override
+	public void setInterestedNamespace(String namespace) {
+		
 	}
 
 	
