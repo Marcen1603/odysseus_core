@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
@@ -31,46 +30,39 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 
 	private Thread socketListenerThread;
 
-	protected ISocketServerListener socketServerListener;
-
 	protected ISourceHandler sourceHandler;
 
 	private Thread sourceHandlerThread;
 	
 	protected HashMap<String, String> sources = new HashMap<String, String>();
 	
-	private IDistributionClient<AbstractPeer> distributionClient;
+	private IDistributionClient distributionClient;
 
 
 	public AbstractOperatorPeer() {
 		super();
 	}
 	
-	public void bindDistributionClient(IDistributionClient<AbstractPeer> dc) {
+	public void bindDistributionClient(IDistributionClient dc) {
 		getLogger().info("Binding Distribution Client", dc);
 		try {
 			this.distributionClient = dc;
 			this.distributionClient.setPeer(this);
 			this.distributionClient.initializeService();
-			try {
-				registerMessageHandler(this.distributionClient
-						.getMessageHandler());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void unbindDistributionClient(IDistributionClient<AbstractPeer> dc) {
+	public void unbindDistributionClient(IDistributionClient dc) {
+		getLogger().info("Unbinding Distribution Client", dc);
 		if(this.distributionClient == dc) {
 			this.distributionClient = null;			
 		}
 
 	}
 	
-	public IDistributionClient<AbstractPeer> getDistributionClient() {
+	public IDistributionClient getDistributionClient() {
 		return distributionClient;
 	}
 
@@ -91,10 +83,6 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		return priority;
 	}
 
-	public ISocketServerListener getSocketServerListener() {
-		return socketServerListener;
-	}
-
 	public Map<String, ISource<?>> getSourcesFromWrapperPlanFactory() {
 		return WrapperPlanFactory.getSources();
 	}
@@ -110,6 +98,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 			Log.setWindow(getGui());
 			initSources(this);
 			initPriorityMode();
+			initMessageSender();
 			initSourceHandler(this);
 			initSocketServerListener(this);
 			initExecutor();
@@ -130,12 +119,13 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	}
 
 	public void bindExecutor(IAdvancedExecutor executor) {
-		System.out.println("Binde Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
+		getLogger().info("Binding Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
 		this.executor = executor;
 	}
 	
 	public void unbindExecutor(IAdvancedExecutor executor) {
 		if(this.executor == executor) {
+			getLogger().info("Unbinding Executor: "+ executor.getCurrentScheduler() +" "+ executor.getCurrentSchedulingStrategy());
 			this.executor = null;
 		}
 	}
@@ -164,13 +154,6 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 	public void setPriority(IPriority priority) {
 		this.priority = priority;
 	}
-
-
-	public void setSocketServerListener(
-			ISocketServerListener socketServerListener) {
-		this.socketServerListener = socketServerListener;
-	}
-
 
 	protected void startAliveHandler() {
 		if (aliveHandlerThread != null && aliveHandlerThread.isAlive()) {
@@ -211,7 +194,7 @@ public abstract class AbstractOperatorPeer extends AbstractPeer {
 		if (socketListenerThread != null && socketListenerThread.isAlive()) {
 			socketListenerThread.interrupt();
 		}
-		this.socketListenerThread = new Thread(socketServerListener);
+		this.socketListenerThread = new Thread(getSocketServerListener());
 		socketListenerThread.start();
 	}
 
