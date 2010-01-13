@@ -21,4 +21,10 @@ public class EventMessageHandler implements IMessageHandler {
 		Log.addEvent(queryId, event);
 	}
 
+	@Override
+	public void setInterestedNamespace(String namespace) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

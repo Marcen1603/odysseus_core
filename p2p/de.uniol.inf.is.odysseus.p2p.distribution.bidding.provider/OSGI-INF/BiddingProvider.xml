@@ -4,6 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider"/>
    </service>
-   <reference bind="bindExecutionHandlerFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandlerFactory" name="IExecutionHandlerFactory" policy="static" unbind="unbindExecutionHandlerFactory"/>
-   <reference bind="bindClientSelectorFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.distribution.provider.selector.IClientSelectorFactory" name="IClientSelectorFactory" policy="static" unbind="unbindClientSelectorFactory"/>
+   <reference bind="bindClientSelectorFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelectorFactory" name="IClientSelectorFactory" policy="static" unbind="unbindClientSelectorFactory"/>
 </scr:component>

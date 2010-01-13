@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler;
 
 import java.util.HashMap;
+import java.util.List;
 
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
@@ -15,8 +16,9 @@ public class BiddingMessageResultHandler implements IMessageHandler {
 	
 	private HashMap<Query, IExecutionListener> managedQueries;
 	//Soll hier nicht den gesamten ExecutionListener kennen, sondern nur das ihm zugehörige CallbackObjekt
-	public BiddingMessageResultHandler(HashMap<Query, IExecutionListener> managedQueries) {
-		this.setManagedQueries(managedQueries);
+	public BiddingMessageResultHandler(HashMap<Query, IExecutionListener> hashMap) {
+		this.managedQueries = hashMap;
+
 	}
 
 
@@ -38,22 +40,26 @@ public class BiddingMessageResultHandler implements IMessageHandler {
 				namespace, "peerId", (Message)msg);
 		String subplanId = MessageTool.getMessageElementAsString(
 				namespace, "subplanId", (Message)msg);
-		Log.logAction(queryId, "Gebot von einem Operator-Peer eingegangen.");
-		if(getManagedQueries().get(queryId) != null && bid.equals("positive")) {
-			//Füge das Gebot dem entsprechenden Subplan der Query hinzu
-			((QueryJxtaImpl)getManagedQueries().get(queryId)).addBidding(pipeAdv, peerId, subplanId, bid);
-			for(Query query : getManagedQueries().keySet()) {
-				if(query.getId() == queryId) {
-					Log.addBid(queryId, query.getSubPlans().get(subplanId).getBiddings().size());		
-				}
+		Log.logAction(queryId, "Gebot ("+bid+") von einem Operator-Peer eingegangen.");
+		boolean exists = false;
+		Query actualQuery = null;
+		for(Query q : getManagedQueries().keySet()) {
+			if(q.getId().equals(queryId)) {
+				exists = true;
+				actualQuery = q;
+				break;
 			}
+		}
+		if(exists && bid.equals("positive")) {
+			//Füge das Gebot dem entsprechenden Subplan der Query hinzu
+			((QueryJxtaImpl)actualQuery).addBidding(pipeAdv, peerId, subplanId, bid);
+//			for(Query query : getManagedQueries().keySet()) {
+//				if(query.getId() == queryId) {
+					Log.addBid(queryId, actualQuery.getSubPlans().get(subplanId).getBiddings().size());		
+//				}
+//			}
 			
 		}
-	}
-
-
-	public void setManagedQueries(HashMap<Query, IExecutionListener> managedQueries) {
-		this.managedQueries = managedQueries;
 	}
 
 
@@ -61,6 +67,16 @@ public class BiddingMessageResultHandler implements IMessageHandler {
 		return managedQueries;
 	}
 
+	public void setManagedQueries(
+			HashMap<Query, IExecutionListener> managedQueries) {
+		this.managedQueries = managedQueries;
+	}
 
+
+	@Override
+	public void setInterestedNamespace(String namespace) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -12,29 +13,33 @@ import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
+
+import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
-import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.AbstractDistributionProvider;
 import de.uniol.inf.is.odysseus.p2p.distribution.provider.IDistributionProvider;
-import de.uniol.inf.is.odysseus.p2p.distribution.provider.selector.IClientSelector;
+import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelector;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.BiddingMessageResultHandler;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler.EventMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> {
+public class BiddingProvider<R extends PipeAdvertisement> extends AbstractDistributionProvider<R> {
 
 	private String events =  "OpenInit,OpenDone,ProcessInit,ProcessDone,ProcessInitNeg,ProcessDoneNeg,PushInit,PushDone,PushInitNeg,PushDoneNeg,Done" ;
 	private DiscoveryService discoveryService;
 
+	
 	public DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
@@ -46,24 +51,41 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 
 	public BiddingProvider() {
 		super();
+
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initializeService() {
 		getPeer().getLogger().info("Initializing message handler");
-		getPeer().registerMessageHandler(new EventMessageHandler());
-		getPeer().registerMessageHandler(new BiddingMessageResultHandler(getPeer().getQueries()));
-		getPeer().getLogger().info("Initializing execution handler factories");
-		IExecutionHandler executionHandler = new BiddingProviderExecutionHandler<AbstractPeer, IDistributionProvider>(Lifecycle.DISTRIBUTION, this, getPeer());
-		getExecutionHandlerFactory().setExecutionHandler(executionHandler);
-		getPeer().addExecutionHandlerFactory(getExecutionHandlerFactory());
+		
+		getRegisteredMessageHandler().add(new EventMessageHandler());
+		getRegisteredMessageHandler().add(new BiddingMessageResultHandler(getPeer().getQueries()));
+		for(IMessageHandler handler : getRegisteredMessageHandler()) {
+			getPeer().registerMessageHandler(handler);
+		}
+		getPeer().getLogger().info("Initializing execution handler");
+//		IExecutionHandler h = new BiddingProviderExecutionHandler<AbstractPeer, IDistributionProvider>(Lifecycle.DISTRIBUTION, this, getPeer());
+		IExecutionHandler handler = new BiddingProviderExecutionHandler(Lifecycle.DISTRIBUTION, this, getPeer());
+			getRegisteredExecutionHandler().add(new BiddingProviderExecutionHandler(Lifecycle.DISTRIBUTION, this, getPeer()));
+			getPeer().bindExecutionHandler(handler);
+//		getExecutionHandlerFactory().setExecutionHandler(executionHandler);
+//		getPeer().addExecutionHandlerFactory(getExecutionHandlerFactory());
+//		getPeer().bindExecutionHandler(executionHandler);
+//		getPeer().getExecutionHandler().add(executionHandler);
 			
 	}
 	
 	@Override
 	public void finalizeService() {
-		getPeer().removeExecutionHandlerFactory(getExecutionHandlerFactory());
+//		getPeer().removeExecutionHandlerFactory(getExecutionHandlerFactory());
+		for(IExecutionHandler handler : getRegisteredExecutionHandler()) {
+//			getPeer().getExecutionHandler().remove(handler);
+			getPeer().unbindExecutionHandler(handler);
+		}
+		for(IMessageHandler handler : getRegisteredMessageHandler()) {
+			getPeer().deregisterMessageHandler(handler);
+		}		
 	};
 	
 	private void startDiscoveryService() {
@@ -76,36 +98,50 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 		startDiscoveryService();
 	}
 
-	
+	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized void distributePlan(IExecutionListenerCallback callback, Object serverResponse) {
-		Query query = callback.getQuery();
+	public void distributePlan(Query query, PipeAdvertisement serverResponse) {
+		if(getDiscoveryService()==null) {
+			return;
+		}
 		// get("1"), weil die subpläne von den senken zu den quellen gehen und wir die p2psink für den thin-peer wollen
 		Subplan topSink = query.getSubPlans().get("1");
 		String pipeAdv = ((P2PSinkAO) topSink.getAo()).getAdv();
 		PeerAdvertisement peerAdv =PeerGroupTool.getPeerGroup().getPeerAdvertisement();
 		//Thin-Peer erhält Verbindungsinformationen zur letzten P2PSink
-		Message thinPeerResponse = MessageTool
-				.createMessage(
-						"ResultStreaming",
-						"queryId",
-						query.getId(),
-						MessageTool
-								.createPipeAdvertisementFromXml(pipeAdv),
-						peerAdv);
-		MessageTool.sendMessage(PeerGroupTool.getPeerGroup(),
-				((QueryJxtaImpl)query)
-						.getResponseSocketThinPeer(),
-				thinPeerResponse);
 		
+		HashMap<String, Object> messageElements = new HashMap<String, Object>();
+		messageElements.put("queryId", query.getId());
+		messageElements.put("queryAction", "ResultStreaming");
+		messageElements.put("pipeAdvertisement", MessageTool
+				.createPipeAdvertisementFromXml(pipeAdv));
+		messageElements.put("peerAdvertisement", peerAdv);
+		Message message = MessageTool.createSimpleMessage("QueryNegotiation", messageElements);
 		
-			Log.logAction(query.getId(), "Anfrage ausschreiben");
+//		Message thinPeerResponse = MessageTool
+//				.createMessage(
+//						"ResultStreaming",
+//						"queryId",
+//						query.getId(),
+//						MessageTool
+//								.createPipeAdvertisementFromXml(pipeAdv),
+//						peerAdv);
+//		MessageTool.sendMessage(PeerGroupTool.getPeerGroup(),
+//				((QueryJxtaImpl)query)
+//						.getResponseSocketThinPeer(),
+//				message);
+			getPeer().getMessageSender().sendMessage(PeerGroupTool.getPeerGroup(), message, ((QueryJxtaImpl)query)
+									.getResponseSocketThinPeer());
+			Log.logAction(query.getId(), "Sende Thin-Peer Verbindungsinformationen zum Operatorplan");
+			
 			// Anfragen ausschreiben
 			//query.setStatus(Status.BIDDING);
 			// Hier wird dann die Ausführung der Subpläne ausgeschrieben
 			for(Subplan subplan : query.getSubPlans().values()) {
-				
-
+				Log.logAction(query.getId(), "Teilplan ausschreiben: "+AbstractTreeWalker.prefixWalk(subplan.getAo(),
+						new AlgebraPlanToStringVisitor()));
+				//Falls der Subplan neu verteilt werden sollte, dann sind alte Gebote nicht mehr gültig
+				subplan.getBiddings().clear();
 				QueryExecutionSpezification adv = (QueryExecutionSpezification) AdvertisementFactory
 						.newAdvertisement(QueryExecutionSpezification
 								.getAdvertisementType());
@@ -149,7 +185,7 @@ public class BiddingProvider extends AbstractDistributionProvider<AbstractPeer> 
 					e.printStackTrace();
 				}
 			}
-			IClientSelector selector = getClientSelectorFactory().getNewInstance(15000, callback);
+			IClientSelector selector = getClientSelectorFactory().getNewInstance(15000, query, getCallback());
 			Thread t = new Thread(selector);
 			t.start();
 	}
