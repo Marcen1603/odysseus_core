@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorFactory;
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
 import de.uniol.inf.is.odysseus.action.output.Action;
@@ -15,6 +14,7 @@ import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.StaticParameter;
 import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
@@ -24,8 +24,19 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * Queryparser for Event, Condition, Action Queries.
+ * Pattern for queries:
+ * ON ([LANG:<LanguageName>]<Query>) 
+ * DO <managerName>.<actuatorName>.<methodName>(<params>)
+ * [,<managerName>.<actuatorName>.<methodName>(<params>)]*
+ * @author Simon Flandergan
+ *
+ */
 public class ECAParser implements IQueryParser{
 	private ICompiler compiler;
+
+	private IActuatorFactory actuatorFactory;
 	
 	private static Pattern ecaPattern;
 	
@@ -53,8 +64,13 @@ public class ECAParser implements IQueryParser{
 		return "ECA";
 	}
 	
+	public void bindActuatorFactory(IActuatorFactory factory){
+		this.actuatorFactory = factory; 
+	}
+	
+	
 	/**
-	 * static Service binding (used by OSGI)
+	 * Service binding (used by OSGI)
 	 * @param compiler
 	 */
 	public void bindCompiler (ICompiler compiler){
@@ -134,7 +150,7 @@ public class ECAParser implements IQueryParser{
 					//fetch actuator
 					IActuator actuator = null;
 					try {
-						actuator = ActuatorFactory.getInstance().getActuator(actuatorName, managerName);
+						actuator = this.actuatorFactory.getActuator(actuatorName, managerName);
 					} catch (ActuatorException e) {
 						System.err.println("Actuator<"+actuatorName+"> unknown. Skipped Action!");
 						continue;

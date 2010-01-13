@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
-import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -14,10 +14,16 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 
 public class Console implements	org.eclipse.osgi.framework.console.CommandProvider {
 	private IAdvancedExecutor executer;
+	private IActuatorFactory actuatorFactory;
 
-	public void bindExecuter(IAdvancedExecutor executer){
+	public void bindActuatorFactory(IActuatorFactory factory){
+		this.actuatorFactory = factory;
+	}
+	
+	public void bindExecutor(IAdvancedExecutor executer){
 		this.executer = executer;
 	}
+	
 	
 	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
@@ -45,7 +51,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		String actuatorName = args[1];
 		String description = args[2];
 		try {
-			ActuatorFactory.getInstance().createActuator(actuatorName, description, managerName);
+			this.actuatorFactory.createActuator(actuatorName, description, managerName);
 			ci.println("<"+managerName+"> created <"+actuatorName+"> successfully");
 		} catch (ActuatorException e) {
 			ci.println(e.getMessage());
@@ -54,7 +60,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	
 	public void _lsactuatormanager(CommandInterpreter ci) {
 		ci.println("--Registered ActuatorManager--");
-		for (String name : ActuatorFactory.getInstance().getActuatorManager().keySet()){
+		for (String name : this.actuatorFactory.getActuatorManager().keySet()){
 			ci.println(" + "+name);
 		}
 	}
@@ -70,7 +76,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		String managerName = args[0];
 		String actuatorName = args[1];
 		try {
-			List<ActionMethod> schema = ActuatorFactory.getInstance().getSchema(actuatorName, managerName);
+			List<ActionMethod> schema = this.actuatorFactory.getSchema(actuatorName, managerName);
 			ci.println("--Schema of <"+actuatorName+">--");
 			for (ActionMethod method : schema){
 				ci.print("+"+method.getName()+"(");

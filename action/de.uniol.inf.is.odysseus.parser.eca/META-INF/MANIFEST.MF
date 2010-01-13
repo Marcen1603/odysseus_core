@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ECA Parser
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.eca
 Bundle-Version: 1.0.0
-Import-Package: de.uniol.inf.is.odysseus.action.actuatorManagement,
- de.uniol.inf.is.odysseus.action.exception,
+Import-Package: de.uniol.inf.is.odysseus.action.exception,
  de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.action.output,
  de.uniol.inf.is.odysseus.action.services.actuator,

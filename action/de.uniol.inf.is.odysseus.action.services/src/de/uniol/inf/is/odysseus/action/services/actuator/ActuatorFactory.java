@@ -1,11 +1,8 @@
-package de.uniol.inf.is.odysseus.action.actuatorManagement;
+package de.uniol.inf.is.odysseus.action.services.actuator;
 
 import java.util.HashMap;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
-import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
-import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
@@ -17,11 +14,9 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  * @author Simon Flandergan
  *
  */
-public class ActuatorFactory {
-	private HashMap<String, IActuatorManager> actuatorManager;
-	
-	private static ActuatorFactory instance = new ActuatorFactory();
-		
+public class ActuatorFactory implements IActuatorFactory{
+	private volatile HashMap<String, IActuatorManager> actuatorManager;
+			
 	/**
 	 * Public Constructor called by OSGI, shouldnt be called by clients,
 	 * use getInstance instead!
@@ -34,17 +29,10 @@ public class ActuatorFactory {
 	 * OSGI method for binding {@link IActuatorManager}s
 	 * @param manager
 	 */
-	public synchronized void bindActuatorManager(IActuatorManager manager){
-		instance.actuatorManager.put(manager.getName(), manager);
+	public void bindActuatorManager(IActuatorManager manager){
+		this.actuatorManager.put(manager.getName(), manager);
 	}
 	
-	/**
-	 * Create a new Actuator
-	 * @param name name of the Actuator, must be unique for the chosen {@link IActuatorManager}!
-	 * @param actuatorDescription description for actuator, will be parsed by {@link IActuatorManager}
-	 * @param managerName name of the manager responsible for the new Actuator
-	 * @throws ActuatorException
-	 */
 	public IActuator createActuator (String name, String actuatorDescription, String managerName) 
 		throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
@@ -58,17 +46,10 @@ public class ActuatorFactory {
 	 * OSGI method for unbinding {@link IActuatorManager}s
 	 * @param manager
 	 */
-	public synchronized void unbindActuatorManager(IActuatorManager manager){
-		instance.actuatorManager.remove(manager.getName());
+	public void unbindActuatorManager(IActuatorManager manager){
+		this.actuatorManager.remove(manager.getName());
 	}
 	
-	/**
-	 * Looks up for Actuator and returns it
-	 * @param actuatorName
-	 * @param managerName
-	 * @return
-	 * @throws ActuatorException
-	 */
 	public IActuator getActuator (String actuatorName, String managerName) throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
@@ -76,14 +57,7 @@ public class ActuatorFactory {
 		}
 		throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
 	}
-	
-	/**
-	 * Returns factory instance (singleton pattern)
-	 * @return
-	 */
-	public static ActuatorFactory getInstance() {
-		return instance;
-	}
+
 	
 	public List<ActionMethod> getSchema(String actuatorName, String managerName) throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);

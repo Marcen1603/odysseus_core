@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.action.services.dataextractor">
+   <implementation class="de.uniol.inf.is.odysseus.action.services.dataExtraction.DataExtractor"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.action.services.dataExtraction.IDataExtractor"/>
+   </service>
+   <reference bind="bindAttributeExtractor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.action.services.dataExtraction.IAttributeExtractor" name="IAttributeExtractor" policy="static" unbind="unbindAttributeExtractor"/>
+</scr:component>

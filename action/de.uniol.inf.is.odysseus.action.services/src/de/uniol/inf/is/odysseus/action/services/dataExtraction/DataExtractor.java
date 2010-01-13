@@ -1,8 +1,7 @@
-package de.uniol.inf.is.odysseus.action.dataExtraction;
+package de.uniol.inf.is.odysseus.action.services.dataExtraction;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.action.services.dataExtraction.IAttributeExtractor;
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
 
 
@@ -12,12 +11,10 @@ import de.uniol.inf.is.odysseus.action.services.exception.DataextractionExceptio
  * @author Simon Flandergan
  *
  */
-public class DataExtractor {
+public class DataExtractor implements IDataExtractor{
 	private volatile HashMap<String, IAttributeExtractor> extractors;
 	
-	private static DataExtractor instance = new DataExtractor();
-	
-	private DataExtractor () {
+	public DataExtractor () {
 		this.extractors = new HashMap<String, IAttributeExtractor>();
 	}
 	
@@ -38,14 +35,6 @@ public class DataExtractor {
 	}
 	
 	
-	/**
-	 * Extracts the value of given attribute
-	 * @param element data stream element
-	 * @param attributeIdentifier identifier for attribute
-	 * @param type name of the datatype/ name of {@link IAttributeExtractor}-Service
-	 * @return
-	 * @throws DataextractionException 
-	 */
 	public Object extractAttribute(Object element, Object attributeIdentifier, String type) throws DataextractionException{
 		IAttributeExtractor extractor = this.extractors.get(type);
 		if (extractor == null){
@@ -55,13 +44,5 @@ public class DataExtractor {
 		Object result = extractor.extractAttribute(attributeIdentifier, element);
 		return result;
 	}
-	
-	/**
-	 * Returns instance (singleton pattern)
-	 * @return
-	 */
-	public static DataExtractor getInstance() {
-		return instance;
-	}
-	
+
 }

@@ -4,11 +4,15 @@ Bundle-Name: ECA-Parser Test
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.eca.test
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.parser.eca,
+Import-Package: de.uniol.inf.is.odysseus.action.services.actuator,
+ de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement,
+ de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.console,
  org.eclipse.osgi.framework.console;version="1.0.0",
+ org.junit;version="4.5.0",
  org.osgi.framework
-Require-Bundle: org.junit4
 Service-Component: OSGI-INF/parser.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.eca.test.Activator
