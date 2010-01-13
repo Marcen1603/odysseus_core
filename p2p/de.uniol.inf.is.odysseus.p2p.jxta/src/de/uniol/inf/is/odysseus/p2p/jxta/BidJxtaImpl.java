@@ -6,6 +6,10 @@ import net.jxta.protocol.PipeAdvertisement;
 
 public class BidJxtaImpl extends Bid{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2911499561644551179L;
 	private PipeAdvertisement responseSocket;
 	private PeerAdvertisement peer;
 	

@@ -13,12 +13,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
-public class QueryJxtaImpl extends Query implements Serializable {
+public class QueryJxtaImpl extends Query{
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8784146315565652081L;
 	private PipeAdvertisement responseSocketThinPeer;
 	private PipeAdvertisement adminPeerPipe;
 	private Map<String,BidJxtaImpl> adminPeerBidding;
@@ -40,14 +40,7 @@ public class QueryJxtaImpl extends Query implements Serializable {
 		this.responseSocketThinPeer = responseSocketThinPeer;
 	}
 
-	public void setSubplans(ArrayList<AbstractLogicalOperator> list) {
-		int planCounter = 1;
-		for(ILogicalOperator op : list) {
-			addSubPlan(""+planCounter, new Subplan(""+planCounter, op));
-			planCounter++;
-		}
-		
-	}
+
 	public void addBidding(PipeAdvertisement socket, String peerId, String subPlanId, String bid){
 		
 		synchronized(getSubPlans().get(subPlanId).getBiddings()){

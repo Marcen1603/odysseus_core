@@ -30,30 +30,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 public class MessageTool {
 	
 	
-	public static Message createMessage(String namespace,
-			String namespace2, String message, PipeAdvertisement responsePipe, PeerAdvertisement peerAdvertisement) {
-		Message response = new Message();
-		MessageElement respElement = new StringMessageElement(namespace2,
-				message, null);
-		response.addMessageElement(namespace, respElement);
-		
-		TextDocumentMessageElement responsePipeAdv = new TextDocumentMessageElement(
-	            "pipeAdv0", 
-	            (XMLDocument) responsePipe.getDocument(MimeMediaType.XMLUTF8),
-	            null);
-		response.addMessageElement(namespace,responsePipeAdv);
-		
-		
-		TextDocumentMessageElement peerAdv = new TextDocumentMessageElement(
-	            "peerAdv", 
-	            (XMLDocument) peerAdvertisement.getDocument(MimeMediaType.XMLUTF8),
-	            null);
-		response.addMessageElement(namespace,peerAdv);
-		
-		// JXTA Workaround um MessageElemente ueber Socket zu versenden.
-		response.addMessageElement(null, respElement);
-		return response;
-	}
 
 
 	public static void sendMessage(PeerGroup netPeerGroup, PipeAdvertisement adv, Message message){
@@ -181,6 +157,16 @@ public class MessageTool {
 			if(messageElements.get(elem) instanceof String) {
 				response.addMessageElement(namespace, new StringMessageElement(elem, (CharSequence) messageElements.get(elem), null));
 			}
+			else if(messageElements.get(elem) instanceof PeerAdvertisement) {
+				TextDocumentMessageElement peerAdv = new TextDocumentMessageElement(
+			            "peerAdv", 
+			            (XMLDocument) ((PeerAdvertisement)messageElements.get(elem)).getDocument(MimeMediaType.XMLUTF8),
+			            null);
+				response.addMessageElement(namespace,peerAdv);
+			}
+			
+			
+			
 			else if(messageElements.get(elem) instanceof PipeAdvertisement) {
 				TextDocumentMessageElement responsePipeAdv = new TextDocumentMessageElement(
 			            "pipeAdv"+pipeCounter++, 
