@@ -16,7 +16,7 @@ public class ECAParserTest implements CommandProvider {
 		
 	}
 	
-	public void _testECA(CommandInterpreter ci){
+	public void _testeca(CommandInterpreter ci){
 		try {
 			System.out.println("Testcase 1: Checking if compiler has been bound.");
 			if (((ECAParser)this.parser).getCompiler() != null) {
@@ -34,7 +34,8 @@ public class ECAParserTest implements CommandProvider {
 
 	@Override
 	public String getHelp() {
-		return "\n---ECA Parser test \ntestECA - runs eca test cases\n";
+		return "\n---ECA Parser test--- \n" +
+				"	testeca - runs eca test cases\n";
 	}
 
 

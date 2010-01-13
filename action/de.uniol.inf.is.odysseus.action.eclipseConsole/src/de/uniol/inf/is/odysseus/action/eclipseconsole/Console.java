@@ -8,6 +8,7 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import de.uniol.inf.is.odysseus.action.actuatorManagement.ActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -18,11 +19,15 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		this.executer = executer;
 	}
 	
-	public void _addActionQuery(CommandInterpreter ci){
+	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
+		if (args.length < 1){
+			ci.println("Insufficient number of arguments. You must provide: <queryDescription>");
+			return;
+		}
+		
 		try {
-			//FIXME korrekte parameter setzen
-			this.executer.addQuery(args[0], "ECA", null);
+			this.executer.addQuery(args[0], "ECA", new ParameterParserID("ECA"));
 		} catch (PlanManagementException e) {
 			ci.println(e.getMessage());
 		}
@@ -31,9 +36,11 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	public void _createactuator(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
 		if (args.length < 3){
-			ci.println("Insufficient number of args. You must provide: <managerName>, " +
+			ci.println("Insufficient number of arguments. You must provide: <managerName>, " +
 					"<actuatorName> and <description>");
+			return;
 		}
+		
 		String managerName = args[0];
 		String actuatorName = args[1];
 		String description = args[2];
@@ -54,17 +61,28 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	
 	public void _showschema(CommandInterpreter ci) {
 		String args[] = this.extractArgument(ci);
+		if (args.length <2){
+			ci.println("Insufficient number of arguments. You have to provide: <managerName>" +
+					" and <actuatorName");
+			return;
+		}
+		
 		String managerName = args[0];
 		String actuatorName = args[1];
 		try {
 			List<ActionMethod> schema = ActuatorFactory.getInstance().getSchema(actuatorName, managerName);
 			ci.println("--Schema of <"+actuatorName+">--");
 			for (ActionMethod method : schema){
-				ci.println("+"+method.getName());
+				ci.print("+"+method.getName()+"(");
+				int ctr = 0;
 				for (Class<?>c : method.getParameterTypes()){
-					ci.println(" *"+c.getName());
+					if (ctr > 0){
+						ci.print(", ");
+					}
+					ci.print(c.getName());
+					ctr++;
 				}
-				ci.println();
+				ci.println(")");
 			}
 		}catch (ActuatorException e){
 			ci.println(e.getMessage());
@@ -84,8 +102,13 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 
 	@Override
 	public String getHelp() {
-		// TODO Auto-generated method stub
-		return null;
+		return "\n---Action-Functions---\n" +
+				"	addactionquery '<queryDescription>' - adds new action query\n" +
+				"	createactuator <managerName> <actuatorName> <actuatorDescription> " +
+				"- triggers specified manager to create a new actuator\n" +
+				"	lsactuatormanager - lists all registered actuator managers\n" +
+				"	showschema <managerName> <actuatorName> - shows all methods provided by" +
+				"the specified actuator\n";
 	}
 
 }

@@ -8,6 +8,7 @@ package de.uniol.inf.is.odysseus.webservice;
 
 import java.util.logging.Logger;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -40,7 +41,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
      */
     public java.lang.String createStatement(QueryType query) { 
         try {
-			this.executor.addQuery(query.getQuery(), query.getLanguage(), null);
+			this.executor.addQuery(query.getQuery(), query.getLanguage(), 
+					new ParameterParserID(query.getLanguage()));
 		} catch (PlanManagementException e) {
 			return e.getMessage();
 		}
