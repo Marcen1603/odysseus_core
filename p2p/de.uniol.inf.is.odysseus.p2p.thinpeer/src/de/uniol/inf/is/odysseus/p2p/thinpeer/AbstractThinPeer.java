@@ -10,11 +10,9 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 
 public abstract class AbstractThinPeer extends AbstractPeer {
 
-	protected ISocketServerListener socketServerListener;
 
 	private Thread socketListenerThread;
 
@@ -77,7 +75,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 		if (socketListenerThread != null && socketListenerThread.isAlive()) {
 			socketListenerThread.interrupt();
 		}
-		this.socketListenerThread = new Thread(socketServerListener);
+		this.socketListenerThread = new Thread(getSocketServerListener());
 		socketListenerThread.start();
 	}
 
@@ -124,7 +122,7 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 
 	protected void stopServerSocketListener() {
 		this.socketListenerThread.interrupt();
-		socketServerListener = null;
+		setSocketServerListener(null);
 	}
 
 	protected void stopGuiUpdater() {
@@ -134,7 +132,9 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 
 	private void init() {
 		initServerResponseConnection();
+		initMessageSender();
 		initSocketServerListener();
+		initLocalMessageHandler();
 		initQueryPublisher();
 		initGuiUpdater();
 //		initQueryBiddingHandler();
@@ -146,14 +146,6 @@ public abstract class AbstractThinPeer extends AbstractPeer {
 
 	}
 
-	public ISocketServerListener getSocketServerListener() {
-		return socketServerListener;
-	}
-
-	public void setSocketServerListener(
-			ISocketServerListener socketServerListener) {
-		this.socketServerListener = socketServerListener;
-	}
 
 	protected abstract void initServerResponseConnection();
 	

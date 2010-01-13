@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.p2p,
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
  de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
@@ -16,6 +18,7 @@ Import-Package: de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.thinpeer.handler,
  de.uniol.inf.is.odysseus.p2p.thinpeer.listener,
  de.uniol.inf.is.odysseus.p2p.thinpeer.strategy,
+ de.uniol.inf.is.odysseus.relational.base,
  net.jxta.discovery,
  net.jxta.document,
  net.jxta.endpoint,

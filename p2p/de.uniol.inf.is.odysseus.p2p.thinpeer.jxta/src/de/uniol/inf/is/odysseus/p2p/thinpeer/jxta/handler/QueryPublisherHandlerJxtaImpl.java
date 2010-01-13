@@ -12,12 +12,20 @@ import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
 public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
+	
+	private AbstractPeer peer;
+
+	public QueryPublisherHandlerJxtaImpl(AbstractPeer peer) {
+		this.peer = peer;
+	}
 	// Wie lange ist eine Ausschreibung gültig.
 	private int VALID = 15000;
 
@@ -27,6 +35,8 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		QueryJxtaImpl q = new QueryJxtaImpl();
 		q.setDeclarativeQuery(query);
 		q.setId(queryId);
+		q.setStatus(Lifecycle.OPEN);
+		q.setLanguage("CQL");
 		QueryTranslationSpezification adv = (QueryTranslationSpezification) AdvertisementFactory
 				.newAdvertisement(QueryTranslationSpezification
 						.getAdvertisementType());
@@ -50,7 +60,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		Log.addTab(q.getId(), query);
 		
 		//Hier den "Timer" starten für die Behandlung der Gebote
-		IBiddingHandler handler = new BiddingHandlerJxtaImpl(q);
+		IBiddingHandler handler = new BiddingHandlerJxtaImpl(q,this.peer.getMessageSender());
 		Thread t = new Thread(handler);
 		t.start();
 	}
@@ -83,9 +93,10 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		messageElements.put("thinPeerPipe", thinPeerPipe);
 		
 		Message message = MessageTool.createSimpleMessage("DoQuery", messageElements);
-		MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
-				.getNetPeerGroup(), adminPipe, message);
-
+//		MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
+//				.getNetPeerGroup(), adminPipe, message);
+		this.peer.getMessageSender().sendMessage(ThinPeerJxtaImpl.getInstance()
+				.getNetPeerGroup(), message, adminPipe);
 		Log.addTab(q.getId(), query);
 	}
 

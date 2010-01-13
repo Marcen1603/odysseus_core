@@ -3,6 +3,11 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import net.jxta.endpoint.Message;
+import net.jxta.peergroup.PeerGroup;
+import net.jxta.protocol.PipeAdvertisement;
+
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Bid;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
@@ -29,14 +34,16 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 	// Wie oft werden Antworten auf Bewerbungen herausgeschickt
 	private int WAIT_TIME = 10000;
 	private Query query;
+	private IMessageSender<PeerGroup, Message, PipeAdvertisement> sender;
 
-	public BiddingHandlerJxtaImpl(Query query) {
+	public BiddingHandlerJxtaImpl(Query query, IMessageSender<PeerGroup, Message, PipeAdvertisement> sender) {
 		this.query = query;
+		this.sender = sender;
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+//		while (true) {
 			try {
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
@@ -75,11 +82,14 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 						HashMap<String, Object> messageElements = new HashMap<String, Object>();
 						messageElements.put("queryId", getQuery().getId());
 						messageElements.put("result", "granted");
-						
-						MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
-								.getNetPeerGroup(), ((BidJxtaImpl) bid)
-								.getResponseSocket(), MessageTool
-								.createSimpleMessage("BiddingResult", messageElements));
+						this.sender.sendMessage(ThinPeerJxtaImpl.getInstance()
+								.getNetPeerGroup(), MessageTool
+								.createSimpleMessage("BiddingResult", messageElements), ((BidJxtaImpl) bid)
+								.getResponseSocket());
+//						MessageTool.sendMessage(ThinPeerJxtaImpl.getInstance()
+//								.getNetPeerGroup(), ((BidJxtaImpl) bid)
+//								.getResponseSocket(), MessageTool
+//								.createSimpleMessage("BiddingResult", messageElements));
 						((QueryJxtaImpl) getQuery())
 								.setAdminPeerPipe(((BidJxtaImpl) bid)
 										.getResponseSocket());
@@ -97,9 +107,9 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 					}
 
 				}
-
+System.out.println("timer abgelaufen");
 			
-		}
+//		}
 	}
 	
 	public Query getQuery() {

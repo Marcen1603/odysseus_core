@@ -20,10 +20,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 
 public class MainWindow extends AbstractMainWindow implements ActionListener {
-	
 	//Thin-Peer spezifisch
 	protected JList adminPeers;
 	protected JLabel adminPeersLabel;
@@ -282,7 +280,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 					queryPanel.add(header);
 					header.setText("Odysseus Thin-Peer");
 					header.setBounds(12, 12, 379, 40);
-					header.setFont(new java.awt.Font("AlArabiya", 1, 36));
+					header.setFont(new java.awt.Font("AlArabiya", 1, 12));
 				}
 				{
 					close = new JButton();

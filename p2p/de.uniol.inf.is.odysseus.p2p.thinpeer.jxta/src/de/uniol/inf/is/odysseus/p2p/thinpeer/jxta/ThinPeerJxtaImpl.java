@@ -8,12 +8,14 @@ import java.util.HashMap;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.endpoint.Message;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
@@ -26,6 +28,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.GuiUpdaterJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryNegotiationMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryPublisherHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.AdministrationPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
@@ -123,7 +126,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 			CacheTool.checkForExistingConfigurationDeletion("ThinPeer_" + name,
 					new File(new File(".cache"), "ThinPeer_" + name));
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 
@@ -154,7 +156,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 					manager.getConfigurator().addSeedRelay(
 							new URI(TCP_RELAY_URI));
 				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -179,7 +180,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 			}
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -187,10 +187,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 			try {
 				manager.startNetwork();
 			} catch (PeerGroupException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -203,7 +201,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 			discoveryService.publish(netPeerGroup.getPeerAdvertisement());
 			discoveryService.remotePublish(netPeerGroup.getPeerAdvertisement());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -243,8 +240,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	protected void initSocketServerListener() {
-		if (socketServerListener == null) {
-			socketServerListener = new SocketServerListener(this);
+		if (getSocketServerListener() == null) {
+			setSocketServerListener(new SocketServerListener(this));
 			if(getMessageHandlerList()!=null) {
 				getSocketServerListener().registerMessageHandler(getMessageHandlerList());
 			}
@@ -281,7 +278,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	protected void initQueryPublisher() {
-		queryPublisher = new QueryPublisherHandlerJxtaImpl();
+		queryPublisher = new QueryPublisherHandlerJxtaImpl(this);
 	}
 
 	@Override
@@ -334,6 +331,25 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
 	}
 
+
+	@Override
+	public void initLocalMessageHandler() {
+			registerMessageHandler(new QueryNegotiationMessageHandler());
+
+
+	}
+
+
+	@Override
+	public void initLocalExecutionHandler() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void initMessageSender() {
+		setMessageSender(new MessageSender<PeerGroup, Message, PipeAdvertisement>());
+	}
 
 
 
