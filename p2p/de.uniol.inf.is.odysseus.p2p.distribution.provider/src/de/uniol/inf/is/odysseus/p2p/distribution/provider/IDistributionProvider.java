@@ -1,16 +1,15 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.provider;
 
-import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandlerFactory;
-import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
-import de.uniol.inf.is.odysseus.p2p.distribution.provider.selector.IClientSelectorFactory;
+import de.uniol.inf.is.odysseus.p2p.peer.IPeer;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.IClientSelectorFactory;
 
-public interface IDistributionProvider<P> {
+public interface IDistributionProvider<R> {
 	public void initializeService();
 	public void finalizeService();
 	public void startService();
 	public String getDistributionStrategy();
-	public void setPeer(P peer);
-	public void distributePlan(IExecutionListenerCallback callback, Object serverResponse);
-	public IExecutionHandlerFactory getExecutionHandlerFactory();
-	public IClientSelectorFactory getClientSelectorFactory();
+	public void setPeer(IPeer peer);
+	public void distributePlan(Query q, R serverResponse);
+	public IClientSelectorFactory<?> getClientSelectorFactory();
 }
