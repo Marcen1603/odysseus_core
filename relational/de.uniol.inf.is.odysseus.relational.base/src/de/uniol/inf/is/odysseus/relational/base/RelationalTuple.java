@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.relational.base;
 
 import java.io.Serializable;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -120,40 +122,17 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return (K) this.attributes[pos];
 	}
 
-	public final void setAttribute(int pos, Object value) {
-//		if (this.schema != null) {
-//			if (value == null) {
-//				// TODO kann man ueberpruefen, ob null werte erlaubt sind?
-//				this.attributes[pos] = value;
-//			} else {
-//				if (value instanceof Number || value instanceof String) {
-//					checkDataType(value, schema.get(pos));
-//					this.attributes[pos] = value;
-//				} else {
-//					throw new IllegalArgumentException(RelationalTuple.class
-//							.getSimpleName()
-//							+ " only allows String and Number types");
-//				}
-//			}
-//		} else {
-			this.attributes[pos] = value;
-//		}
-		//calcSize();
+	public final void addAttributeValue(int pos, Object value){		
+		if(this.attributes[pos] != null && !(this.attributes[pos] instanceof Collection)){
+			throw new RuntimeException("Cannot add value to non collection type");
+		}
+		if(this.attributes[pos] == null){
+			this.attributes[pos] = new ArrayList<Object>();
+		}
+		((Collection)this.attributes[pos]).add(value);
 	}
-
-//	public final void setUnchecked() {
-//		this.schema = null;
-//	}
-//
-//	public final void setChecked(SDFAttributeList schema) {
-//		this.schema = schema;
-//		// TODO evtl hier schonmal die aktuellen attribute checken
-//	}
-
-	public final void setAttribute(int pos, String value) {
-//		if (this.schema != null) {
-//			checkDataType(value, schema.get(pos));
-//		}
+	
+	public final void setAttribute(int pos, Object value) {
 		this.attributes[pos] = value;
 		//calcSize();
 	}
@@ -163,23 +142,6 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		setAttribute(pos, stringValue);	
 	}
 	
-	
-	public final void setAttribute(int pos, Integer value) {
-//		if (this.schema != null) {
-//			checkDataType(value, schema.get(pos));
-//		}
-		this.attributes[pos] = value;
-		//calcSize();
-	}
-
-	public final void setAttribute(int pos, Double value) {
-//		if (this.schema != null) {
-//			checkDataType(value, schema.get(pos));
-//		}
-		this.attributes[pos] = value;
-		//calcSize();
-	}
-
 	public final int getAttributeCount() {
 		return this.attributes.length;
 	}
