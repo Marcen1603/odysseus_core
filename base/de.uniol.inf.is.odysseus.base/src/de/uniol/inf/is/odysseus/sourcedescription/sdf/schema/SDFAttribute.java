@@ -9,12 +9,31 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	private String attributeName;
 	
 	/**
+	 * For NF2 we need subattributes
+	 */
+	private SDFAttributeList subattributes;
+	
+	/**
 	 * used for measurement values 
 	 */
 	private ArrayList<?> covariance;
 	
 	private static final long serialVersionUID = -5128455072793206061L;
 
+	public SDFAttribute(String sourceAndAttributeName, SDFAttributeList subattributes){
+		super(sourceAndAttributeName);
+		int pointPos = sourceAndAttributeName.lastIndexOf(".");
+		if (pointPos > 0){
+			this.sourceName = sourceAndAttributeName.substring(0,pointPos);
+			this.attributeName = sourceAndAttributeName.substring(pointPos+1);
+		}else{
+			this.sourceName = null;
+			this.attributeName = sourceAndAttributeName;
+		}
+		
+		this.subattributes = subattributes;
+	}
+	
 	public SDFAttribute(String sourceName, String attributeName) {
 		super(sourceName == null ? attributeName : sourceName + "."
 				+ attributeName);
@@ -39,6 +58,50 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		super(attribute);
 		this.sourceName = attribute.sourceName;
 		this.attributeName = attribute.attributeName;
+		this.subattributes = attribute.subattributes.clone();
+	}
+	
+	public void addSubattribute(SDFAttribute subAttr){
+		if(this.subattributes == null){
+			this.subattributes = new SDFAttributeList();
+		}
+		
+		this.subattributes.add(subAttr);
+	}
+	
+	public void addSubattribute(int pos, SDFAttribute subAttr){
+		if(this.subattributes == null){
+			this.subattributes = new SDFAttributeList();
+		}
+		
+		if(pos > this.subattributes.size()){
+			throw new RuntimeException("Not enough subattributes avaiable. Cannot add new subattribute at position " + pos);
+		}
+		this.subattributes.add(pos, subAttr);
+	}
+	
+	public boolean removeSubattribute(SDFAttribute subAttr){
+		if(this.subattributes == null){
+			return false;
+		}
+		
+		return this.subattributes.remove(subAttr);
+	}
+	
+	public boolean removeSubattribute(int pos){
+		if(this.subattributes == null){
+			return false;
+		}
+		
+		return this.subattributes.remove(pos) != null;
+	}
+	
+	public void setSubattributes(SDFAttributeList subAttrs){
+		this.subattributes = subAttrs;
+	}
+	
+	public void clearSubattributes(){
+		this.subattributes = new SDFAttributeList();
 	}
 
 	public String getSourceName() {
