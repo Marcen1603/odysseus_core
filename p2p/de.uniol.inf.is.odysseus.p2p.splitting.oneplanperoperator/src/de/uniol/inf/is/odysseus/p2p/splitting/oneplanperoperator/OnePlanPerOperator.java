@@ -16,6 +16,9 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSourceAO;
+import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
 import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
@@ -132,6 +135,26 @@ public class OnePlanPerOperator extends
 	@Override
 	public String getName() {
 		return "OneOperatorPerPeer";
+	}
+
+	@Override
+	public void finalizeService() {
+		
+	}
+
+	@Override
+	public void initializeService() {
+		IExecutionHandler<AbstractPeer, AbstractSplittingStrategy> handler = new OnePlanPerOperatorExecutionHandler<AbstractPeer, AbstractSplittingStrategy>();
+		handler.setPeer(getPeer());
+		handler.setFunction(this);
+		handler.setProvidedLifecycle(Lifecycle.SPLIT);
+		getPeer().bindExecutionHandler(handler);
+		
+	}
+
+	@Override
+	public void startService() {
+		
 	}
 	
 
