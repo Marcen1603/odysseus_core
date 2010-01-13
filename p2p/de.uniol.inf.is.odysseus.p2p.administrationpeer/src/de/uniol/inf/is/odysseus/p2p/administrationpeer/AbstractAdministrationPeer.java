@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
-import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.gui.MainWindow;
@@ -37,8 +36,6 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	
 	protected IHotPeerListener hotPeerFinder;
 
-	protected ISocketServerListener socketServerListener;
-	
 	protected ISourceListener sourceListener;
 	
 	private Thread sourceListenerThread;
@@ -47,12 +44,10 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	
 	protected IHotPeerStrategy hotPeerStrategy;
 	
-	protected boolean peerStarted = false;
-	
 	
 	private IAdvancedExecutor executor;
 	protected ISplittingStrategy splitting;
-	protected IDistributionProvider<AbstractPeer> distributionProvider;
+	protected IDistributionProvider<?> distributionProvider;
 	
 	private ICompiler compiler;
 
@@ -60,7 +55,6 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	public ICompiler getCompiler() {
 		return compiler;
 	}
-	
 	
 	
 	public void bindCompiler(ICompiler compiler) {
@@ -91,28 +85,26 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 		}
 	}
 	
-	public IDistributionProvider<AbstractPeer> getDistributionProvider() {
+	public IDistributionProvider<?> getDistributionProvider() {
 		return distributionProvider;
 	}
 
-	public void bindDistributionProvider(IDistributionProvider<AbstractPeer> dp) {
-		getLogger().info("Binding Distribution Provider" , dp);
-		this.distributionProvider = dp;
-//		this.distributionProvider.setManagedQueries(getQueries());
-		this.distributionProvider.setPeer(this);
-		this.distributionProvider.initializeService();
-		//Handler des Distribution Providers registrieren
-//		try {
-//			registerMessageHandler(this.distributionProvider
-//					.getMessageHandler());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+	public void bindDistributionProvider(IDistributionProvider<?> dp) {
+		try {
+			getLogger().info("Binding Distribution Provider" , dp);
+			this.distributionProvider = dp;
+			this.distributionProvider.setPeer(this);
+			this.distributionProvider.initializeService();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 	
-	public void unbindDistributionProvider(IDistributionProvider<AbstractPeer> dp) {
+	public void unbindDistributionProvider(IDistributionProvider<?> dp) {
 		if(this.distributionProvider == dp) {
 			getLogger().info("Unbinding Distribution Provider" , dp);
+			this.distributionProvider.finalizeService();
 			this.distributionProvider = null;
 //			deregisterMessageHandler(this.distributionProvider.getMessageHandler());
 		}
@@ -129,23 +121,26 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 
 	
 	public void bindSplitting(ISplittingStrategy splitting) {
-		getLogger().info("Binding Splitting Service" , splitting);
+		try {
+			getLogger().info("Binding Splitting Service" , splitting);
 			this.splitting = splitting;
+			this.splitting.setPeer(this);
+			this.splitting.initializeService();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void unbindSplitting(ISplittingStrategy splitting) {
 		getLogger().info("Unbinding Splitting Service" , splitting);
 		if(this.splitting == splitting) {
+			this.splitting.finalizeService();
 			this.splitting = null;
 		}
 	}
 	
 	public IHotPeerStrategy getHotPeerStrategy() {
 		return hotPeerStrategy;
-	}
-
-	public ISocketServerListener getSocketServerListener() {
-		return socketServerListener;
 	}
 
 	public ISplittingStrategy getSplitting() {
@@ -157,13 +152,15 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 		initServerResponseConnection();
 		initWrapperPlanFactory();
 		initOperatorPeerListener();
+		initMessageSender();
 		initQuerySpezificationListener();
 		initSourceListener();
 		initAliveHandler();
 		initHotPeerFinder();
-		initQueryResultHandler();
+		initLocalMessageHandler();
 		initHotPeerStrategy();
 		initSocketServerListener();
+		initLocalExecutionHandler();
 	}
 	
 	protected abstract void initServerResponseConnection();
@@ -202,10 +199,6 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 		}
 	}
 
-	public void setSocketServerListener(ISocketServerListener socketServerListener) {
-		this.socketServerListener = socketServerListener;
-	}
-
 	protected abstract void startNetwork();
 
 	public void startPeer() {
@@ -230,7 +223,7 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 			socketListenerThread.interrupt();
 		}
 		
-		this.socketListenerThread = new Thread(socketServerListener);
+		this.socketListenerThread = new Thread(getSocketServerListener());
 		socketListenerThread.start();		
 	}
 
@@ -289,8 +282,6 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 	protected abstract void stopNetwork();
 	
 	protected abstract void initHotPeerFinder();
-	
-	protected abstract void initQueryResultHandler();
 	
 	protected abstract void initHotPeerStrategy();
 	
