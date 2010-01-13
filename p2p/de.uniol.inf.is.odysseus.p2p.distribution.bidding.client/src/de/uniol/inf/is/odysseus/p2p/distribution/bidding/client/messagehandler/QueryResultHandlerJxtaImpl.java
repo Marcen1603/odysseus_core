@@ -36,17 +36,18 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 				"queryId", msg);
 		String subPlanId = MessageTool.getMessageElementAsString(namespace,
 				"subplanId", msg);
-		String events = MessageTool.getMessageElementAsString(namespace,
-				"events", msg);
+//		String events = MessageTool.getMessageElementAsString(namespace,
+//				"events", msg);
 
 		if (result.equals("granted")) {
 //			AbstractLogicalOperator ao = getQueries().get(queryId).getSubPlans().get(subPlanId).getAo();
 			for(Query q : getQueries().keySet()) {
-				if(q.getId() == queryId) {
+				if(q.getId().equals(queryId)) {
 					IExecutionListener listener = getQueries().get(q);
 					for(Subplan sp : q.getSubPlans().values()) {
-						sp.setStatus(Lifecycle.GRANTED);
+						sp.setStatus(Lifecycle.RUNNING);
 					}
+					q.setStatus(Lifecycle.RUNNING);
 					listener.startListener();
 				}
 			}
@@ -81,7 +82,6 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 //				e.printStackTrace();
 //			}
 			
-			Log.addEvent(queryId, "Muss nur noch ausgeführt werden können");
 //			getQueries().get(queryId)
 //					.setStatus(Status.RUN);
 
@@ -109,6 +109,11 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 	@Override
 	public String getInterestedNamespace() {
 		return "BiddingClient";
+	}
+
+	@Override
+	public void setInterestedNamespace(String namespace) {
+		
 	}
 
 }

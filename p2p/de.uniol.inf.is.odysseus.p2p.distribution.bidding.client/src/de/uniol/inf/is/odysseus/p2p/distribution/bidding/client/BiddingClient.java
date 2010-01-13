@@ -4,12 +4,13 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler.QueryResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.AbstractDistributionClient;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
+import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationListener;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
 
-public class BiddingClient<T extends AbstractPeer> extends AbstractDistributionClient<T> {
+public class BiddingClient extends AbstractDistributionClient {
 	private IMessageHandler queryResultHandler;
-	private IQuerySpecificationListener listener;
+	private IQuerySpecificationListener<QueryExecutionSpezification> listener;
 
 	public BiddingClient() {
 	}
@@ -26,28 +27,26 @@ public class BiddingClient<T extends AbstractPeer> extends AbstractDistributionC
 	}
 
 	private void startQuerySpezificationListener(){
-		this.listener = new QuerySpecificationListenerJxtaImpl(getPeer(), getReceiverStrategy());
+		this.listener = new QuerySpecificationListenerJxtaImpl<QueryExecutionSpezification>(getPeer(), getQuerySelectionStrategy());
 	}
 
 	private void initQueryResultHandler() {
-		queryResultHandler = new QueryResultHandlerJxtaImpl(getPeer().getQueries());
+		this.queryResultHandler = new QueryResultHandlerJxtaImpl(getPeer().getQueries());
+		getPeer().registerMessageHandler(this.queryResultHandler);
 		
 	}
 
 	@Override
 	public void startService() {
 		startQuerySpezificationListener();
-		Thread t = new Thread(getListener());
+		Thread t = new Thread(getQuerySpecificationListener());
 		t.start();
 	}
 
 	@Override
-	public IMessageHandler getMessageHandler() {
-		return this.queryResultHandler;
-	}
-
-	public IQuerySpecificationListener getListener() {
+	public IQuerySpecificationListener<QueryExecutionSpezification> getQuerySpecificationListener() {
 		return listener;
 	}
+
 
 }

@@ -15,16 +15,19 @@ import net.jxta.protocol.PipeAdvertisement;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 
+import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.jxta.QueryJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.distribution.client.receiver.IReceiverStrategy;
+import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
+import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * Gefundene Anfragen werden hier behandelt
@@ -32,19 +35,21 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezificat
  * @author Mart Köhler
  *
  */
-public class QuerySpecificationHandlerJxtaImpl implements IQuerySpecificationHandler{
+public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezification> implements IQuerySpecificationHandler<S>{
 	
 	private AbstractPeer aPeer;
-	private IReceiverStrategy reveiver;
+	private IQuerySelectionStrategy querySelectionStrategy;
 
-	public QuerySpecificationHandlerJxtaImpl(QueryExecutionSpezification temp2, AbstractPeer aPeer, IReceiverStrategy receiver) {
+	public QuerySpecificationHandlerJxtaImpl(S temp2, AbstractPeer aPeer, IQuerySelectionStrategy querySelectionStrategy) {
 		this.aPeer = aPeer;
-		this.reveiver = receiver;
+		this.querySelectionStrategy = querySelectionStrategy;
 		handleQuerySpezification(temp2);
+		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void handleQuerySpezification(QueryExecutionSpezification adv) {
+	@Override
+	public void handleQuerySpezification(S adv) {
 		System.out.println("handle adv zu Subplan "+adv.getSubplanId());
 		QueryJxtaImpl query = null;
 		for(Query q : aPeer.getQueries().keySet()) {
@@ -97,9 +102,10 @@ public class QuerySpecificationHandlerJxtaImpl implements IQuerySpecificationHan
 			  }
 			  query.getSubPlans().put(adv.getSubplanId(), (Subplan)obj);
 		}
-
-
-//		Log.logAction(adv.getQueryId(), "Ausschreibung für Anfrageausführung gefunden !");
+		
+		
+		Log.logAction(adv.getQueryId(), "Ausgeschriebene(r) Anfrage/Teilplan gefunden: "+AbstractTreeWalker.prefixWalk(query.getSubPlans().get(adv.getSubplanId()).getAo(),
+				new AlgebraPlanToStringVisitor()));
 		
 		
 		// Strategy ob sich überhaupt beworben werden soll
@@ -107,13 +113,16 @@ public class QuerySpecificationHandlerJxtaImpl implements IQuerySpecificationHan
 //				null)) {
 		
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
-		if(getReveiver().handleQuery(query, getaPeer())) {
+		if(getQuerySelectionStrategy().handleQuery(query, getaPeer())) {
 			messageElements.put("ExecutionBid", "positive");
 			query.setStatus(Lifecycle.GRANTED);
-			aPeer.getQueries().put(query, aPeer.getExecutionListenerFactory().getNewInstance(query, aPeer.getExecutionHandler()));
+			aPeer.addQuery(query);
+			Log.logAction(adv.getQueryId(), "Biete auf Anfrage/Teilplan");
+//			aPeer.getQueries().put(query, aPeer.getExecutionListenerFactory().getNewInstance(query, aPeer.getExecutionHandler()));
 		}
 		else {
 			messageElements.put("ExecutionBid", "negative");
+			Log.logAction(adv.getQueryId(), "Biete nicht auf Anfrage/Teilplan");
 			aPeer.removeQuery(query);
 		}
 		messageElements.put("queryId", adv.getQueryId());
@@ -121,17 +130,19 @@ public class QuerySpecificationHandlerJxtaImpl implements IQuerySpecificationHan
 		messageElements.put("peerId", PeerGroupTool.getPeerGroup().getPeerID().toString());
 		messageElements.put("subplanId", adv.getSubplanId());
 		messageElements.put("pipeAdvertisement", pipe);
-			MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), pipeAdv, MessageTool
-					.createSimpleMessage("BiddingProvider", messageElements));
-			Log.logAction(adv.getQueryId(), "Für Anfrageausführung beworben !");
-
+//			MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), pipeAdv, MessageTool
+//					.createSimpleMessage("BiddingProvider", messageElements));
+//			Log.logAction(adv.getQueryId(), "Für Anfrageausführung beworben !");
+			getaPeer().getMessageSender().sendMessage(PeerGroupTool.getPeerGroup(), MessageTool
+					.createSimpleMessage("BiddingProvider", messageElements), pipeAdv);
 	}
 	
 	public AbstractPeer getaPeer() {
 		return aPeer;
 	}
 	
-	public IReceiverStrategy getReveiver() {
-		return reveiver;
+	public IQuerySelectionStrategy getQuerySelectionStrategy() {
+		return querySelectionStrategy;
 	}
+
 }
