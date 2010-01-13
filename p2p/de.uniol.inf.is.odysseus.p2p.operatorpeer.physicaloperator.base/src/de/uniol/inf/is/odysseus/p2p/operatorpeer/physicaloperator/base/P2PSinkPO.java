@@ -77,17 +77,12 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		}
 
 		public void transfer(Object o) {
-			System.out.println("sink transfer "+adv.getID().toString());
 			try {
 				oout.writeObject(o);
 				oout.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			//TODO: GUI AUSGABE durch Registrierung?!?!
-//			if (queryId!=null && OperatorPeerJxtaImpl.getInstance().isGuiEnabled()){
-//				OperatorPeerJxtaImpl.getInstance().getGui().addOperation(queryId, o.toString());
-//			}
 		}
 		
 		public void done() {

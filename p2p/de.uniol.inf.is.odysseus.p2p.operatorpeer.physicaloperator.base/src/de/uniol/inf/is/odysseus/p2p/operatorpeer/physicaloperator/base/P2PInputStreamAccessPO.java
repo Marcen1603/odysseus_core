@@ -22,20 +22,12 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	private JxtaSocket socket;
 
 	private ConnectionHandler con;
-//	private boolean connectToPipe = false;
 	private PeerGroup peerGroup;
 
 	class ConnectionHandler extends Thread {
 
 		@Override
 		public void run() {
-//			while (true) {
-//				try {
-//					Thread.sleep(200);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
 			while (socket == null) {
 				try {
 					socket = new JxtaSocket(getPeerGroup(), null, adv, 15000,
@@ -129,18 +121,6 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		return done;
 	}
 
-//	@Override
-//	public synchronized void transferNext() {
-//		System.out
-//				.println("Transferiere aber---------------------------------------------------");
-//		// if (buffer != null){
-//		if (hasNext()) {
-//			transfer(buffer);
-//
-//		}
-//		buffer = null;
-//
-//	}
 
 	@Override
 	protected void process_done() {
@@ -153,18 +133,6 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		}
 	}
 
-//	public boolean isConnectedToPipe() {
-//		return connectToPipe;
-//	}
-//
-//	public void setConnectedToPipe(boolean connectToPipe) {
-//		if (connectToPipe) {
-//			System.out
-//					.println("ConnectToPipe auf true gesetzt bei InputStreamAccess Adv "
-//							+ adv.toString());
-//		}
-//		this.connectToPipe = connectToPipe;
-//	}
 
 	public PeerGroup getPeerGroup() {
 		return peerGroup;
