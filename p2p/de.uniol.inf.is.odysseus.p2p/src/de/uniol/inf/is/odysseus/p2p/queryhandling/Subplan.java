@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
  * @author Mart Köhler
  *
  */
-public class Subplan implements Serializable{
+public abstract class Subplan implements Serializable{
 	
 	/**
 	 * 

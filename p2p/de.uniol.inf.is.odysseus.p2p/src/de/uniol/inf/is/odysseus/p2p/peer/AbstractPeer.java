@@ -8,12 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
+import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageSender;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
-import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandlerFactory;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
 
 /**
@@ -26,33 +25,35 @@ public abstract class AbstractPeer implements IPeer {
 
 	private Logger logger;
 	private HashMap<Query, IExecutionListener > queries;
-	private HashMap<Lifecycle, List<IExecutionHandlerFactory>> executionHandlerFactoryList;
+//	private HashMap<Lifecycle, List<IExecutionHandlerFactory>> executionHandlerFactoryList;
+	private List<IExecutionHandler> executionHandler;
 	private List<IMessageHandler> messageHandlerList;
+	private IMessageSender messageSender;
 	private ISocketServerListener socketServerListener;
 	private IExecutionListenerFactory executionListenerFactory;
 
-	public void addExecutionHandlerFactory(IExecutionHandlerFactory factory) {
-		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
-			getLogger().info("Adding ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
-			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).add(factory);
-		}
-		else {
-			List<IExecutionHandlerFactory> tempFactory = new ArrayList<IExecutionHandlerFactory>();
-			tempFactory.add(factory);
-			getLogger().info("Adding ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
-			this.executionHandlerFactoryList.put(factory.getProvidedLifecycle(), tempFactory);
-		}
-	}
-	
-	public void removeExecutionHandlerFactory(IExecutionHandlerFactory factory) {
-		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
-			getLogger().info("Removing ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
-			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).remove(factory);
-		}
-	}
+//	public void addExecutionHandlerFactory(IExecutionHandlerFactory factory) {
+//		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
+//			getLogger().info("Adding ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
+//			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).add(factory);
+//		}
+//		else {
+//			List<IExecutionHandlerFactory> tempFactory = new ArrayList<IExecutionHandlerFactory>();
+//			tempFactory.add(factory);
+//			getLogger().info("Adding ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
+//			this.executionHandlerFactoryList.put(factory.getProvidedLifecycle(), tempFactory);
+//		}
+//	}
+//	
+//	public void removeExecutionHandlerFactory(IExecutionHandlerFactory factory) {
+//		if(this.executionHandlerFactoryList.containsKey(factory.getProvidedLifecycle())) {
+//			getLogger().info("Removing ("+factory.getProvidedLifecycle()+") ExecutionHandlerFactory: "+factory.getName());
+//			this.executionHandlerFactoryList.get(factory.getProvidedLifecycle()).remove(factory);
+//		}
+//	}
 	
 	public void bindExecutionListenerFactory(IExecutionListenerFactory factory) {
-		getLogger().info("Binding ExecutionListenerFactory:");
+		getLogger().info("Binding ExecutionListenerFactory: "+factory.getName());
 		this.executionListenerFactory = factory;
 	}
 	
@@ -62,11 +63,27 @@ public abstract class AbstractPeer implements IPeer {
 		}
 	}
 	
+	public void bindExecutionHandler(IExecutionHandler handler) {
+		getLogger().info("Binding Execution Handler: "+handler.getName());
+		if(handler.getPeer()==null) {
+			handler.setPeer(this);
+		}
+		this.executionHandler.add(handler); 
+	}
+	public void unbindExecutionHandler(IExecutionHandler handler) {
+		if(this.executionHandler.contains(handler)) {
+			this.executionHandler.remove(handler);
+		}
+	}
+	
+	
+	
 	public AbstractPeer() {
 		this.logger = LoggerFactory.getLogger(AbstractPeer.class);
-		this.setQueries(new HashMap<Query, IExecutionListener>());
+		this.queries = new HashMap<Query, IExecutionListener>();
 		this.messageHandlerList = new ArrayList<IMessageHandler>();
-		this.executionHandlerFactoryList = new HashMap<Lifecycle, List<IExecutionHandlerFactory>>();
+//		this.executionHandlerFactoryList = new HashMap<Lifecycle, List<IExecutionHandlerFactory>>();
+		this.executionHandler = new ArrayList<IExecutionHandler>();
 	
 	}
 	
@@ -76,11 +93,22 @@ public abstract class AbstractPeer implements IPeer {
 	@Override
 	public abstract void stopPeer();
 	
+	public abstract void initLocalMessageHandler();
+	
+	public abstract void initMessageSender();
+	
+	public abstract void initLocalExecutionHandler();
+	
 	public abstract Object getServerResponseAddress();
 	
 	public synchronized void registerMessageHandler(
 			IMessageHandler messageHandler) {
-		this.messageHandlerList.add(messageHandler);
+		if(getSocketServerListener()==null) {
+			this.messageHandlerList.add(messageHandler);
+		}
+		else {
+			getSocketServerListener().registerMessageHandler(messageHandler);
+		}
 	}
 
 	public synchronized void registerMessageHandler(
@@ -102,10 +130,6 @@ public abstract class AbstractPeer implements IPeer {
 		this.socketServerListener = ssl;
 	}
 
-	public void setQueries(HashMap<Query, IExecutionListener > queries) {
-		this.queries = queries;
-	}
-
 	public HashMap<Query, IExecutionListener > getQueries() {
 		return queries;
 	}
@@ -114,15 +138,24 @@ public abstract class AbstractPeer implements IPeer {
 	public void addQuery(Query query) {
 		//Für alle Peers, welche die Ausführungsumgebung nutzen
 		if(getExecutionListenerFactory()!=null) {
-			List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
-			for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactoryList().values()) {
-				for(IExecutionHandlerFactory factory : factoryList) {
-					execHandlerList.add(factory.getNewInstance());
+			List<IExecutionHandler> executionHandlerCopy = new ArrayList<IExecutionHandler>();
+			for(IExecutionHandler handler : getExecutionHandler()) {
+				try { 
+					executionHandlerCopy.add(handler.clone());
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
 				}
 			}
-			IExecutionListener listener = getExecutionListenerFactory().getNewInstance(query, execHandlerList);
+//			
+//			List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
+//			for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactoryList().values()) {
+//				for(IExecutionHandlerFactory factory : factoryList) {
+//					execHandlerList.add(factory.getNewInstance());
+//				}
+//			}
+			IExecutionListener listener = getExecutionListenerFactory().getNewInstance(query, executionHandlerCopy);
 			getQueries().put(query, listener);
-			listener.startListener();
+//			listener.startListener();
 		}
 		//Für alle Peers bspw. Thin-Peer, welche nicht aktiv an der Anfrageausführung mitwirken und daher nur die Anfrage intern in einer Liste verwalten möchten
 		//Kann zu Fehlern führen, wenn man nicht beachtet, dass value null ist.
@@ -134,7 +167,7 @@ public abstract class AbstractPeer implements IPeer {
 		
 	}
 
-	public IExecutionListenerFactory getExecutionListenerFactory() {
+	protected IExecutionListenerFactory getExecutionListenerFactory() {
 		return this.executionListenerFactory;
 	}
 
@@ -145,25 +178,38 @@ public abstract class AbstractPeer implements IPeer {
 	}
 	
 	public void deregisterMessageHandler(IMessageHandler messageHandler) {
-		getMessageHandlerList().remove(messageHandler);
+		if(getSocketServerListener()==null) {
+			getMessageHandlerList().remove(messageHandler);
+		}
+		else{
+			getSocketServerListener().deregisterMessageHandler(messageHandler);
+		}
+		 
 	}
 	
-	public List<IMessageHandler> getMessageHandlerList() {
+	protected synchronized List<IMessageHandler> getMessageHandlerList() {
 		return messageHandlerList;
 	}
 	
-	public List<IExecutionHandler> getExecutionHandler() {
-		List<IExecutionHandler> handlerList = new ArrayList<IExecutionHandler>();
-		for(List<IExecutionHandlerFactory> factoryList : getExecutionHandlerFactoryList().values()) {
-			for (IExecutionHandlerFactory factory : factoryList) {
-				handlerList.add(factory.getNewInstance());
-			}
-		}
-		return handlerList;
+	protected synchronized List<IExecutionHandler> getExecutionHandler() {
+//		List<IExecutionHandler> handlerList = new ArrayList<IExecutionHandler>();
+//		for(List<IExecutionHandlerFactory> factoryList : getExecutionHandlerFactoryList().values()) {
+//			for (IExecutionHandlerFactory factory : factoryList) {
+//				handlerList.add(factory.getNewInstance());
+//			}
+//		}
+//		return handlerList;
+		return this.executionHandler;
 	}
 	
-	protected HashMap<Lifecycle, List<IExecutionHandlerFactory>> getExecutionHandlerFactoryList() {
-		return executionHandlerFactoryList;
+//	protected HashMap<Lifecycle, List<IExecutionHandlerFactory>> getExecutionHandlerFactoryList() {
+//		return executionHandlerFactoryList;
+//	}
+	public IMessageSender getMessageSender() {
+		return messageSender;
 	}
 	
+	protected void setMessageSender(IMessageSender messageSender) {
+		this.messageSender = messageSender;
+	}
 }

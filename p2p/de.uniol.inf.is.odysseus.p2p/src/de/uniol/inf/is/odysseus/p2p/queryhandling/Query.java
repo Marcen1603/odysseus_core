@@ -1,14 +1,20 @@
 package de.uniol.inf.is.odysseus.p2p.queryhandling;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 
-public abstract class Query {
+public abstract class Query implements Serializable{
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5425656893540775498L;
+
 	private Lifecycle status;
 	
 	public String getId() {
@@ -129,5 +135,12 @@ public abstract class Query {
 			this.logicalOperatorPlan = plan;
 		}
 	}
-
+//	public void setSubplans(ArrayList<ILogicalOperator> list) {
+//		int planCounter = 1;
+//		for(ILogicalOperator op : list) {
+//			addSubPlan(""+planCounter, new Subplan(""+planCounter, op));
+//			planCounter++;
+//		}
+//		
+//	}
 }

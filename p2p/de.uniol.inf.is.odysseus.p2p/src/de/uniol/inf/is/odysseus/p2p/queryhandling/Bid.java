@@ -1,8 +1,13 @@
 package de.uniol.inf.is.odysseus.p2p.queryhandling;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Bid {
+public abstract class Bid implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6960627612625664351L;
 	private Date date;
 	private String peerId;
 	private String subplanId;

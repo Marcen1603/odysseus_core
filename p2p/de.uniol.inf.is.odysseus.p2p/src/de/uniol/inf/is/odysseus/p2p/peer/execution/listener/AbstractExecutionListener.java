@@ -12,7 +12,9 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	
 	private Query query;
 	private IExecutionListenerCallback callback;
+	private Thread actualExecutionThread;
 	
+
 	public void setCallback(IExecutionListenerCallback callback) {
 		this.callback = callback;
 		getCallback().setExecutionListener(this);
@@ -41,6 +43,8 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	
 	@Override
 	public abstract void run();
+	
+	protected abstract void execute(Lifecycle lifecycle);
 	
 	@Override
 	public synchronized Query getQuery() {
@@ -79,5 +83,13 @@ public abstract class AbstractExecutionListener implements IExecutionListener {
 	@Override
 	public Map<Lifecycle, IExecutionHandler> getHandler() {
 		return handler;
+	}
+	
+	protected synchronized Thread getActualExecutionThread() {
+		return actualExecutionThread;
+	}
+
+	protected synchronized void setActualExecutionThread(Thread actualExecutionThread) {
+		this.actualExecutionThread = actualExecutionThread;
 	}
 }
