@@ -268,7 +268,6 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		while (true) {
 			for (SourceAdvertisement adv : advList) {
 				try {
-					System.out.println("Publishe Quelle "+adv.getSourceName());
 					OperatorPeerJxtaImpl.getInstance().getDiscoveryService()
 							.publish(adv, LIFETIME, LIFETIME);
 				} catch (IOException e) {

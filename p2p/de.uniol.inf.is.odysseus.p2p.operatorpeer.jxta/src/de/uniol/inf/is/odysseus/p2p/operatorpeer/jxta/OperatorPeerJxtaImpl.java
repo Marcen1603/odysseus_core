@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.endpoint.Message;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeService;
@@ -17,6 +18,7 @@ import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
@@ -87,8 +89,9 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	
 	
 	public void activate() {
-		System.out.println("OSGi Services für den Operator-Peer geladen.");
+		getLogger().info("OSGi Services loaded");
 		startPeer();
+		getDistributionClient().initializeService();
 	}
 	
 	public static OperatorPeerJxtaImpl instance = null;
@@ -133,7 +136,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 	@Override
 	protected void initSocketServerListener(AbstractOperatorPeer aPeer) {
-		this.socketServerListener = new SocketServerListener(aPeer);
+		setSocketServerListener(new SocketServerListener(aPeer));
 		if(getMessageHandlerList()!=null) {
 			getSocketServerListener().registerMessageHandler(getMessageHandlerList());
 		}
@@ -233,7 +236,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		
 		if (manager.getNetPeerGroup() == null) {
 			try {
-				System.out.println("Aufruf startnetwork");
 				manager.startNetwork();
 			} catch (PeerGroupException e) {
 				e.printStackTrace();
@@ -297,7 +299,6 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	
 	@Override
 	protected void initSourceHandler(AbstractOperatorPeer aPeer) {
-		System.out.println("SourceHandler initialisieren");
 		this.sourceHandler = new SourceHandlerJxtaImpl((OperatorPeerJxtaImpl)aPeer);
 		
 	}
@@ -324,6 +325,23 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	public Object getServerResponseAddress() {
 		return this.serverResponseAddress;
+	}
+
+	@Override
+	public void initLocalMessageHandler() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initLocalExecutionHandler() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initMessageSender() {
+		setMessageSender(new MessageSender<PeerGroup, Message, PipeAdvertisement>());
 	}
 	
 }

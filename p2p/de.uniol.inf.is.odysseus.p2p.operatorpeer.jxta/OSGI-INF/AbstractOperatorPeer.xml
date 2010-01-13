@@ -3,4 +3,6 @@
    <implementation class="de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor" name="IAdvancedExecutor" policy="static" unbind="unbindExecutor"/>
    <reference bind="bindDistributionClient" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient" name="IDistributionClient" policy="static" unbind="unbindDistributionClient"/>
+   <reference bind="bindExecutionListenerFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory" name="IExecutionListenerFactory" policy="static" unbind="unbindExecutionListenerFactory"/>
+   <reference bind="bindExecutionHandler" cardinality="0..n" interface="de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler" name="IExecutionHandler" policy="dynamic" unbind="unbindExecutionHandler"/>
 </scr:component>
