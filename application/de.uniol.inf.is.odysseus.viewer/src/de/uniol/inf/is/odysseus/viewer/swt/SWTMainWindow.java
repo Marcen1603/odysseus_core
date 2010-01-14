@@ -105,7 +105,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		try {
 			resourceConfiguration = new XMLResourceConfiguration(Activator.getContext().getBundle().getEntry(Activator.RESOURCES_FILE), Activator.getContext().getBundle().getEntry(
 					Activator.XSD_RESOURCES_FILE));
-			SWTResourceManager.getInstance().freeAllResources();
+//			SWTResourceManager.getInstance().freeAllResources();
 			SWTResourceManager.getInstance().load(shell.getDisplay(), resourceConfiguration);
 		} catch (Exception ex) {
 			new SWTExceptionWindow(shell, ex);
@@ -812,7 +812,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 
 			resourceConfiguration = new XMLResourceConfiguration(Activator.getContext().getBundle().getEntry(Activator.RESOURCES_FILE), Activator.getContext().getBundle().getEntry(
 					Activator.XSD_RESOURCES_FILE));
-			SWTResourceManager.getInstance().freeImageResources();
+//			SWTResourceManager.getInstance().freeImageResources();
 			SWTResourceManager.getInstance().load(shell.getDisplay(), resourceConfiguration);
 		} catch (IOException ex) {
 			ex.printStackTrace();

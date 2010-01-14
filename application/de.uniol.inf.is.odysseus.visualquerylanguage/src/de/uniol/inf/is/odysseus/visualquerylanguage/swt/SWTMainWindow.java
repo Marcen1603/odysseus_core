@@ -409,11 +409,11 @@ public class SWTMainWindow {
 		tabFolder.setSelection(queryListTab);
 
 		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		display.dispose();
+//		while (!shell.isDisposed()) {
+//			if (!display.readAndDispatch())
+//				display.sleep();
+//		}
+//		display.dispose();
 	}
 
 	private void createNewGraphTab() {

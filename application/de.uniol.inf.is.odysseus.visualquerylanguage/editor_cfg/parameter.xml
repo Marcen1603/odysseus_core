@@ -6,7 +6,7 @@
 		<pipe>
 			<pipe-name>Selektion</pipe-name>
 			<pipe-type>de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO</pipe-type>
-			<pipe-image>select</pipe-image>
+			<pipe-image>selectPO</pipe-image>
 			<pipe-editor>NoEditor</pipe-editor>
 			<sparams>
 				

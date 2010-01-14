@@ -22,9 +22,13 @@ public class EditorStarter implements CommandProvider, Runnable {
 	private IAdvancedExecutor executor;
 
 	public void _visual(CommandInterpreter interpreter) {
-		Thread thread = new Thread(this);
-		thread.setDaemon(true);
-		thread.start();
+		
+		Display d = Display.getDefault();
+		d.asyncExec(this);
+		
+//		Thread thread = new Thread(this);
+//		thread.setDaemon(true);
+//		thread.start();
 	}
 
 	@Override
@@ -47,8 +51,6 @@ public class EditorStarter implements CommandProvider, Runnable {
 	@Override
 	public void run() {
 
-		Display d = new Display();
-
 		try {
 			URL xmlFile = de.uniol.inf.is.odysseus.viewer.Activator.getContext().getBundle().getEntry(
 					"editor_cfg/resources.xml");
@@ -56,8 +58,8 @@ public class EditorStarter implements CommandProvider, Runnable {
 					"editor_cfg/resourcesSchema.xsd");
 			XMLResourceConfiguration cfg = new XMLResourceConfiguration(
 					xmlFile, xsdFile);
-			SWTResourceManager.getInstance().freeAllResources();
-			SWTResourceManager.getInstance().load(d, cfg);
+//			SWTResourceManager.getInstance().freeAllResources();
+			SWTResourceManager.getInstance().load(Display.getDefault(), cfg);
 		} catch (IOException e) {
 			logger.error("Could not load XMLConfiguration because ");
 			logger.error(e.getMessage());
@@ -65,12 +67,12 @@ public class EditorStarter implements CommandProvider, Runnable {
 
 		try {
 			@SuppressWarnings("unused")
-			SWTMainWindow main = new SWTMainWindow(d, executor);
+			SWTMainWindow main = new SWTMainWindow(Display.getDefault(), executor);
 		} catch (IOException e) {
 			logger.error("SWTMainWindow not loaded");
 		}
 
-		SWTResourceManager.getInstance().freeAllResources();
+//		SWTResourceManager.getInstance().freeAllResources();
 
 	}
 }
