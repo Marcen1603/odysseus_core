@@ -24,9 +24,7 @@ public class EventDetectionAO extends AbstractLogicalOperator {
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		//FIXME darf null sein oder schema der subscription liefern???
-		//does not provide any output
-		return null;
+		return getInputSchema(0);
 	}
 	
 	/**

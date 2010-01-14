@@ -55,7 +55,7 @@ public class ECAParser implements IQueryParser{
 			String actuator = "\\w+";
 			String manager = "\\w+";
 			String actionConstruct = manager+"\\."+actuator+"\\."+method+"\\(.*\\)";
-			ecaPattern = Pattern.compile("(ON\\s*\\().*\\)(\\s*DO\\s+"+actionConstruct+"[\\s*\\,"+actionConstruct+"]*)", Pattern.CASE_INSENSITIVE);		
+			ecaPattern = Pattern.compile("(ON\\s*\\().*(\\)\\s*DO\\s+"+actionConstruct+"[\\s*\\,"+actionConstruct+"]*)", Pattern.CASE_INSENSITIVE);		
 		}
 	}
 	
@@ -103,7 +103,8 @@ public class ECAParser implements IQueryParser{
 				//extract action part of query
 				String actionString = query.substring(ecaMatcher.start(2), query.length());
 				actionString = actionString.trim();
-				actionString = actionString.substring(2, actionString.length());
+				//remove ')DO'
+				actionString = actionString.substring(3, actionString.length());
 				actionString = actionString.trim();
 				
 				//split action into manager, actuator, method & params 
@@ -219,11 +220,16 @@ public class ECAParser implements IQueryParser{
 
 	private List<ILogicalOperator> createNewPlan(HashMap<Action, List<IActionParameter>> actions,
 			List<ILogicalOperator> plan) {
-		ILogicalOperator outputOperator = this.determineOutputOperator(plan.get(0));
+		//not necessary cause top operator is always the one in the plan
+		//this.determineOutputOperator(plan.get(0));
+		ILogicalOperator outputOperator = plan.get(0);
 
 		//create new sink and subscribe to outputoperator
 		EventDetectionAO eAO = new EventDetectionAO(actions);
 		eAO.subscribeTo(outputOperator, 0, 0, outputOperator.getOutputSchema());
+		
+		//replace old top element through sink
+		plan.set(0, eAO);
 		return plan;
 	}
 
