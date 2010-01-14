@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.viewer.swt.diagram;
 
 import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -12,6 +13,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.viewer.view.stream.Parameters;
 
 
@@ -41,8 +44,8 @@ public class SWTLineDiagram extends AbstractSWTDiagram<Float> implements PaintLi
 	private ArrayList<Float> values = new ArrayList<Float>();
 	private ArrayList<Float> recievedElements = new ArrayList<Float>();
 	
-	public SWTLineDiagram( final Composite composite, Parameters params ) {
-		super( composite, params );
+	public SWTLineDiagram( INodeModel<?> node, final Composite composite, Parameters params ) {
+		super( node, composite, params );
 		
 		composite.setLayout( new GridLayout() );
 		width = composite.getClientArea().width;

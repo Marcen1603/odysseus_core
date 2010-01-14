@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.viewer.view.stream.Parameters;
 
 public class SWTHistogram extends AbstractSWTDiagram<Integer> implements PaintListener {
@@ -32,8 +34,8 @@ public class SWTHistogram extends AbstractSWTDiagram<Integer> implements PaintLi
 	private int maxCount;
 	private int[] counts = new int[DIVIDE];
 	
-	public SWTHistogram( final Composite composite, Parameters params ) {
-		super( composite, params );
+	public SWTHistogram( INodeModel<?> node, final Composite composite, Parameters params ) {
+		super( node, composite, params );
 		
 		composite.setLayout( new GridLayout() );
 		

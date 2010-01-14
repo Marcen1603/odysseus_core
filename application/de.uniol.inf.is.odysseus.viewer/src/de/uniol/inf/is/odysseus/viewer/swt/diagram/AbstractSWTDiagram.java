@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.viewer.swt.diagram;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+
+import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.viewer.view.stream.IStreamDiagram;
 import de.uniol.inf.is.odysseus.viewer.view.stream.Parameters;
 
@@ -10,10 +12,12 @@ public abstract class AbstractSWTDiagram<T> implements IStreamDiagram<T> {
 
 	private Composite composite;
 	private Parameters params;
+	private INodeModel<?> node;
 	
-	public AbstractSWTDiagram( Composite composite, Parameters params ) {
+	public AbstractSWTDiagram( INodeModel<?> node, Composite composite, Parameters params ) {
 		this.composite = composite;
 		this.params = params;
+		this.node = node;
 	}
 
 	@Override
@@ -27,6 +31,10 @@ public abstract class AbstractSWTDiagram<T> implements IStreamDiagram<T> {
 				dataElementRecievedSynchronized( element, port );				
 			}
 		});
+	}
+	
+	public final INodeModel<?> getNode() {
+		return node;
 	}
 	
 	public final Composite getComposite() {

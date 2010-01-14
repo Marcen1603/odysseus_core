@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -142,7 +143,7 @@ public class SWTStreamWindow<In, Out> implements INodeModelChangeListener<IPhysi
 		
 		// Diagramme und Converter erzeugen
 		IDiagramFactory diagramFactory = new SWTDiagramFactory(composite);
-		DiagramConverterPair<In,Out> pair = diagramFactory.create( diagramInfo );
+		DiagramConverterPair<In,Out> pair = diagramFactory.create( node.getModelNode(), diagramInfo );
 		this.converter = pair.getConverter();
 		this.diagram = pair.getDiagram();
 		

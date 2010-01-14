@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import de.uniol.inf.is.odysseus.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.viewer.view.stream.Parameters;
 
 public class SWTListDiagram extends AbstractSWTDiagram<String[]> {
@@ -22,8 +23,8 @@ public class SWTListDiagram extends AbstractSWTDiagram<String[]> {
 	private final int maxItems;
 	private Collection<TableColumn> columns = new ArrayList<TableColumn>();
 	
-	public SWTListDiagram( Composite composite, Parameters params ) {
-		super( composite, params );
+	public SWTListDiagram( INodeModel<?> node, Composite composite, Parameters params ) {
+		super( node, composite, params );
 		
 		composite.setLayout( new GridLayout() );
 		table = new Table( composite, SWT.MULTI | SWT.BORDER );
@@ -31,6 +32,7 @@ public class SWTListDiagram extends AbstractSWTDiagram<String[]> {
 		table.setHeaderVisible( true );
 		GridData tableGridData = new GridData( GridData.FILL_BOTH );
 		table.setLayoutData( tableGridData );
+		
 		table.addListener( SWT.Resize, new Listener() {
 			@Override
 			public void handleEvent( Event arg0 ) {
