@@ -19,8 +19,14 @@ public interface IActuatorFactory {
 	 * @param managerName name of the manager responsible for the new Actuator
 	 * @throws ActuatorException
 	 */
-	public IActuator createActuator (String name, String actuatorDescription, String managerName)
+	public IActuator createActuator(String name, String actuatorDescription, String managerName)
 		throws ActuatorException;
+	
+	/**
+	 * Removes an existing Actuator
+	 * @param name
+	 */
+	public void removeActuator(String actuatorName, String managerName) throws ActuatorException;
 	
 	/**
 	 * Looks up for specified Actuator and returns it
@@ -29,7 +35,7 @@ public interface IActuatorFactory {
 	 * @return
 	 * @throws ActuatorException
 	 */
-	public IActuator getActuator (String actuatorName, String managerName) throws ActuatorException;
+	public IActuator getActuator(String actuatorName, String managerName) throws ActuatorException;
 
 	/**
 	 * Fetches and returns the schema of specified Actuator
@@ -44,5 +50,5 @@ public interface IActuatorFactory {
 	 * Returns all registered ActuatorManagers
 	 * @return
 	 */
-	public HashMap<String, IActuatorManager> getActuatorManager();
+	public HashMap<String, IActuatorManager> getActuatorManagers();
 }

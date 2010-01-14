@@ -67,8 +67,19 @@ public class ActuatorFactory implements IActuatorFactory{
 		throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
 	}
 	
-	public HashMap<String, IActuatorManager> getActuatorManager() {
+	public HashMap<String, IActuatorManager> getActuatorManagers() {
 		return actuatorManager;
+	}
+
+	@Override
+	public void removeActuator(String actuatorName, String managerName) throws ActuatorException {
+		IActuatorManager manager = this.actuatorManager.get(managerName);
+		if (manager != null){
+			manager.removeActuator(actuatorName);
+			System.out.println("<"+managerName+"> successfully removed: <"+actuatorName+">");
+		}else {
+			throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
+		}
 	}
 	
 	

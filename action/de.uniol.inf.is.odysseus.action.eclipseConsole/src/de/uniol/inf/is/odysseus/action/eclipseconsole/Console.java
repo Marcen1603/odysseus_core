@@ -6,12 +6,20 @@ import java.util.List;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
+/**
+ * Extension for the Equinox OSGI Console providing commands to access
+ * action & actuator functions
+ * @author Simon Flandergan
+ *
+ */
 public class Console implements	org.eclipse.osgi.framework.console.CommandProvider {
 	private IAdvancedExecutor executer;
 	private IActuatorFactory actuatorFactory;
@@ -60,8 +68,44 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	
 	public void _lsactuatormanager(CommandInterpreter ci) {
 		ci.println("--Registered ActuatorManager--");
-		for (String name : this.actuatorFactory.getActuatorManager().keySet()){
+		for (String name : this.actuatorFactory.getActuatorManagers().keySet()){
 			ci.println(" + "+name);
+		}
+	}
+	
+	public void _lsactuators(CommandInterpreter ci){
+		String[] args = this.extractArgument(ci);
+		if (args.length<1){
+			ci.println("Insufficient number of arguments. You must provide: <managerName>");
+			return;
+		}
+		
+		String managerName = args[0];
+		IActuatorManager manager = this.actuatorFactory.getActuatorManagers().get(managerName);
+		if (manager != null){
+			ci.println("Actuators registered at <"+managerName+">:");
+			for (String actuator : manager.getRegisteredActuatorNames()){
+				ci.println(" + "+actuator);
+			}
+		}else {
+			ci.println("<"+managerName+"> does not exist.");
+		}
+	}
+	
+	public void _removeactuator(CommandInterpreter ci){
+		String[] args = this.extractArgument(ci);
+		if (args.length < 2){
+			ci.println("Insufficient number of arguments. You must provide: <managerName>" +
+			"and <actuatorName>");
+			return;
+		}
+		
+		String managerName = args[0];
+		String actuatorName = args[1];
+		try {
+			this.actuatorFactory.removeActuator(actuatorName, managerName);
+		} catch (ActuatorException e) {
+			ci.println(e.getMessage());
 		}
 	}
 	
@@ -113,6 +157,8 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"	createactuator <managerName> <actuatorName> <actuatorDescription> " +
 				"- triggers specified manager to create a new actuator\n" +
 				"	lsactuatormanager - lists all registered actuator managers\n" +
+				"	removeactuator <managerName> <actuatorName> - triggers specified " +
+				"manager to remove declared actuator\n" +
 				"	showschema <managerName> <actuatorName> - shows all methods provided by" +
 				"the specified actuator\n";
 	}

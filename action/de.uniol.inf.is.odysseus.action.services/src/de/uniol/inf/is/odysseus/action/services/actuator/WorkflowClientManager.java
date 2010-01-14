@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.action.services.actuator;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,6 +66,20 @@ public class WorkflowClientManager implements IActuatorManager {
 			return client;
 		}
 		throw new ActuatorException("Client <"+name+"> does not exist");
+	}
+
+
+	@Override
+	public void removeActuator(String name) throws ActuatorException{
+		if (this.clients.remove(name) == null){
+			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
+		}
+	}
+
+
+	@Override
+	public List<String> getRegisteredActuatorNames() {
+		return new ArrayList<String>(this.clients.keySet());
 	}
 
 

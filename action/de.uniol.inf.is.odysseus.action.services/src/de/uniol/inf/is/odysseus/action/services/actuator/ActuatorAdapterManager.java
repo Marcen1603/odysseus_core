@@ -171,4 +171,18 @@ public class ActuatorAdapterManager implements IActuatorManager{
 		}
 		return actuator;
 	}
+
+
+	@Override
+	public void removeActuator(String name) throws ActuatorException {
+		if (this.adapters.remove(name) == null) {
+			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
+		}
+	}
+
+
+	@Override
+	public List<String> getRegisteredActuatorNames() {
+		return new ArrayList<String>(this.adapters.keySet());
+	}
 }
