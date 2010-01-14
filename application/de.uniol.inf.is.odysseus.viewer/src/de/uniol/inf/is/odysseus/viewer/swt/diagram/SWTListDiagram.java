@@ -2,8 +2,7 @@ package de.uniol.inf.is.odysseus.viewer.swt.diagram;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -13,9 +12,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
 import de.uniol.inf.is.odysseus.viewer.view.stream.Parameters;
 
-public class SWTListDiagram extends AbstractSWTDiagram<Map<String, String>> {
+public class SWTListDiagram extends AbstractSWTDiagram<String[]> {
 	
 	private Table table;
 	private boolean columnsAdded = false;
@@ -54,16 +54,14 @@ public class SWTListDiagram extends AbstractSWTDiagram<Map<String, String>> {
 	}
 
 	@Override
-	public void dataElementRecievedSynchronized( Map< String, String > element, int port ) {
+	public void dataElementRecievedSynchronized( String[] element, int port ) {
 		if( table.isDisposed() )
 			return;
 		
-		Set<String> keys = element.keySet();
-		
 		if( columnsAdded == false ) {
-			for( String k : keys ) {
+			for(int i = 0; i < element.length; i++ ) {
 				TableColumn col = new TableColumn( table, SWT.NONE);
-				col.setText( k );
+				col.setText( String.valueOf(i) );
 				col.setAlignment( SWT.CENTER );
 				col.pack();
 				columns.add(col);
@@ -73,9 +71,8 @@ public class SWTListDiagram extends AbstractSWTDiagram<Map<String, String>> {
 		}
 		
 		TableItem ti = new TableItem( table, 0 );
-		int i = 0;
-		for( String str : keys ) {
-			ti.setText( i++, element.get( str ) );
+		for(int j = 0; j < element.length; j++ ) {
+			ti.setText( j, element[j] );
 		}
 		
 		if( maxItems > 0 && table.getItemCount() > maxItems )
