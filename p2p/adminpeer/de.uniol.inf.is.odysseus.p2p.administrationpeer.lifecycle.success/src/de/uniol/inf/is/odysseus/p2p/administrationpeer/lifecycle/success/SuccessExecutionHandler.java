@@ -24,7 +24,7 @@ public class SuccessExecutionHandler<F> extends AbstractExecutionHandler<Abstrac
 	@Override
 	public void run() {
 		Lifecycle priorLifecycle = getExecutionListenerCallback().getQuery().getHistory().get(getExecutionListenerCallback().getQuery().getHistory().size()-2);
-		if(priorLifecycle == Lifecycle.OPEN) {
+		if(priorLifecycle == Lifecycle.NEW) {
 			getExecutionListenerCallback().changeState(Lifecycle.SPLIT);
 		} else if (priorLifecycle == Lifecycle.SPLIT) {
 			getExecutionListenerCallback().changeState(Lifecycle.DISTRIBUTION);
@@ -33,7 +33,7 @@ public class SuccessExecutionHandler<F> extends AbstractExecutionHandler<Abstrac
 		} else if (priorLifecycle == Lifecycle.GRANTED) {
 			getExecutionListenerCallback().changeState(Lifecycle.RUNNING);
 		} else if (priorLifecycle == Lifecycle.RUNNING) {
-			getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
+			getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);
 		}
 	}
 	

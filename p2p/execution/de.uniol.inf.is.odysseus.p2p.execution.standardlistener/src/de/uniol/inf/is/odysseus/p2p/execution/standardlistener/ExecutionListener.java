@@ -26,7 +26,7 @@ public class ExecutionListener extends AbstractExecutionListener{
 	@Override
 	public void run() {
 		
-		while(getQuery().getStatus()!=Lifecycle.CLOSED) {
+		while(getQuery().getStatus()!=Lifecycle.TERMINATED) {
 			Lifecycle temp = getQuery().getStatus();
 			System.out.println("aktueller Zustand: "+getQuery().getStatus());
 			if(getHandler().containsKey(getQuery().getStatus())) {

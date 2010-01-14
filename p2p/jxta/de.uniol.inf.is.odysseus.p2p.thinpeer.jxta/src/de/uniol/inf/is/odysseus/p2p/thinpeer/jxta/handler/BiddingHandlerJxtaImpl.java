@@ -65,7 +65,7 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 //				}
 
 				if (getQuery()
-						.getStatus() == Lifecycle.OPEN) {
+						.getStatus() == Lifecycle.NEW) {
 					ArrayList<Bid> biddings = new ArrayList<Bid>();
 					QueryJxtaImpl query = ((QueryJxtaImpl)getQuery());
 					

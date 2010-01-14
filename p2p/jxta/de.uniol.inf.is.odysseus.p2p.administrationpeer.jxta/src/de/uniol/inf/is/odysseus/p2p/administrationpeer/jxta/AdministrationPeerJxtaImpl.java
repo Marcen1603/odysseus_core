@@ -467,7 +467,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	public void initLocalExecutionHandler() {
 		//TODO: Anders Lösen
 		for(IExecutionHandler h : getExecutionHandler()) {
-			if(h.getProvidedLifecycle() == Lifecycle.OPEN) {
+			if(h.getProvidedLifecycle() == Lifecycle.NEW) {
 				h.setPeer(this);
 			}
 		}

@@ -79,7 +79,7 @@ public abstract class Subplan implements Serializable{
 	public Subplan(String id, ILogicalOperator ao) {
 		super();
 		this.ao = ao;
-		this.status = Lifecycle.OPEN;
+		this.status = Lifecycle.NEW;
 		this.id=id;
 	}
 

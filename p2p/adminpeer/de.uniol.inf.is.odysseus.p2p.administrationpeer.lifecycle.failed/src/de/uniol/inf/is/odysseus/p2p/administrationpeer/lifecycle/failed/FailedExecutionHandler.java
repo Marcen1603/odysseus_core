@@ -41,20 +41,20 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<Abstract
 		Lifecycle priorLifecycle = getExecutionListenerCallback().getQuery().getHistory().get(getExecutionListenerCallback().getQuery().getHistory().size()-2);
 		//Falls Failed direkt nach Failed kommt, dann exisitert der geforderte Handler nicht und wir brechen hier komplett ab
 		if(occurence(history, Arrays.asList(Lifecycle.FAILED, Lifecycle.FAILED))>0) {
-			getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
+			getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);
 			return;
 		}
 		else {
-			if(priorLifecycle == Lifecycle.OPEN) {
+			if(priorLifecycle == Lifecycle.NEW) {
 				if(occurence(history, Arrays.asList(priorLifecycle, Lifecycle.FAILED)) > 0) {
-					getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
+					getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);
 				}
 			} else if (priorLifecycle == Lifecycle.SPLIT) {
 				if(occurence(history, Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
 					getExecutionListenerCallback().changeState(Lifecycle.SPLIT);
 				}
 				else {
-					getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
+					getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);
 				}
 				
 			} else if (priorLifecycle == Lifecycle.DISTRIBUTION) {
@@ -62,7 +62,7 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<Abstract
 					getExecutionListenerCallback().changeState(Lifecycle.SPLIT);
 				}
 				else {
-					getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
+					getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);
 				}
 				
 			} else if (priorLifecycle == Lifecycle.GRANTED) {
@@ -70,14 +70,14 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<Abstract
 					getExecutionListenerCallback().changeState(Lifecycle.DISTRIBUTION);
 				}
 				else {
-					getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
+					getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);
 				}
 			} else if (priorLifecycle == Lifecycle.RUNNING) {
 				if(occurence(history, Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
 					getExecutionListenerCallback().changeState(Lifecycle.DISTRIBUTION);
 				}
 				else {
-					getExecutionListenerCallback().changeState(Lifecycle.CLOSED);
+					getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);
 				}
 			}
 		}

@@ -48,7 +48,7 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 			for(Query q : AdministrationPeerJxtaImpl.getInstance().getQueries().keySet()) {
 				if(q.getId().equals(queryId)) {
 					//Einstieg in die Ausführungsumgebung
-					q.setStatus(Lifecycle.OPEN);
+					q.setStatus(Lifecycle.NEW);
 					AdministrationPeerJxtaImpl.getInstance().getQueries().get(q).startListener();
 				}
 			}

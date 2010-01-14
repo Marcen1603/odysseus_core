@@ -35,7 +35,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		QueryJxtaImpl q = new QueryJxtaImpl();
 		q.setDeclarativeQuery(query);
 		q.setId(queryId);
-		q.setStatus(Lifecycle.OPEN);
+		q.setStatus(Lifecycle.NEW);
 		q.setLanguage("CQL");
 		QueryTranslationSpezification adv = (QueryTranslationSpezification) AdvertisementFactory
 				.newAdvertisement(QueryTranslationSpezification

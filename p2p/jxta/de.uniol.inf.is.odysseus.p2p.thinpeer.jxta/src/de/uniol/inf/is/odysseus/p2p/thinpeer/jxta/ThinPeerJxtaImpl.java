@@ -288,7 +288,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		queryPublisher.sendQuerySpezificationToAdminPeer(queryId, query,
 				language, adminPeer);
 		for(Query q : ThinPeerJxtaImpl.getInstance().getQueries().keySet()) {
-			q.setStatus(Lifecycle.OPEN);
+			q.setStatus(Lifecycle.NEW);
 			Log.addAdminPeer(queryId,
 					adminPeerName);
 			Log.addStatus(

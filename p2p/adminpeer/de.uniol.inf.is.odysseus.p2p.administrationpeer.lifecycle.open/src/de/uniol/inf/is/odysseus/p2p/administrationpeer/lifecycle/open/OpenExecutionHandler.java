@@ -17,7 +17,7 @@ public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer,
 
 	public OpenExecutionHandler() {
 		super();
-		setProvidedLifecycle(Lifecycle.OPEN);
+		setProvidedLifecycle(Lifecycle.NEW);
 	}
 	
 	@Override
