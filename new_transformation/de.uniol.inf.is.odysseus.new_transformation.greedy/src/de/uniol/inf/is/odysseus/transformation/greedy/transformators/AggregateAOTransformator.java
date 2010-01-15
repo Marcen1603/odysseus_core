@@ -27,7 +27,7 @@ public class AggregateAOTransformator implements IPOTransformator<AggregateAO> {
 		StreamGroupingWithAggregationPO po = new StreamGroupingWithAggregationPO(aggregateAO.getInputSchema(),
 				aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations());
 		po.setMetadataType(MetadataRegistry.getMetadataType(config.getMetaTypes()));
-
+		po.setOutputSchema(aggregateAO.getOutputSchema());
 		// TODO relational Teile ausgliedern
 		if (config.getDataType() == "relational") {
 			po.setGroupingHelper(new RelationalTupleGroupingHelper(po.getInputSchema(), po.getOutputSchema(), po

@@ -17,6 +17,7 @@ public class SelectAOTransformator implements IPOTransformator<SelectAO> {
 	public TransformedPO transform(SelectAO selectAO, TransformationConfiguration config,
 			ITransformation transformation) {
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
+		selectPO.setOutputSchema(selectAO.getOutputSchema());
 		return new TransformedPO(selectPO);
 	}
 

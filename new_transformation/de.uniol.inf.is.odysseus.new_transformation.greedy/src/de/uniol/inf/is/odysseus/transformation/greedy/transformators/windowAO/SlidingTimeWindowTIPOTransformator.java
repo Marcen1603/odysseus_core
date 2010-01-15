@@ -27,7 +27,7 @@ public class SlidingTimeWindowTIPOTransformator implements IPOTransformator<Wind
 	public TransformedPO transform(WindowAO windowAO, TransformationConfiguration config, ITransformation transformation)
 			throws TransformationException {
 		SlidingTimeWindowTIPO windowPO = new SlidingTimeWindowTIPO(windowAO);
-
+		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		MetadataUpdatePO mPO = WindowPOMetadata.createMetadata(windowPO, config);
 
 		if (mPO == null) {

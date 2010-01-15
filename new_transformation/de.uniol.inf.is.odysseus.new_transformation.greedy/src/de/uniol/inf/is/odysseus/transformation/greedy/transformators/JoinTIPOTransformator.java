@@ -29,7 +29,7 @@ public class JoinTIPOTransformator implements IPOTransformator<JoinAO> {
 	@Override
 	public TransformedPO transform(JoinAO joinAO, TransformationConfiguration config, ITransformation transformation) {
 		JoinTIPO joinPO = new JoinTIPO();
-
+		joinPO.setOutputSchema(joinAO.getOutputSchema());
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred);
 

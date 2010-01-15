@@ -26,13 +26,17 @@ public class SlidingAdvanceTimeWindowTIPOTransformator implements IPOTransformat
 	public TransformedPO transform(WindowAO windowAO, TransformationConfiguration config, ITransformation transformation)
 			throws TransformationException {
 		SlidingAdvanceTimeWindowTIPO windowPO = new SlidingAdvanceTimeWindowTIPO(windowAO);
-
+		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		MetadataUpdatePO mPO = WindowPOMetadata.createMetadata(windowPO, config);
 		
+		TransformedPO po = null;
+		
 		if (mPO == null) {
-			return new TransformedPO(windowPO);
+			po = new TransformedPO(windowPO);
+		}else{
+			po = new TransformedPO(windowPO, mPO);
 		}
-		return new TransformedPO(windowPO, mPO);
+		return po;
 	}
 	
 	@Override

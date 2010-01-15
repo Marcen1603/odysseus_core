@@ -27,7 +27,7 @@ public class SlidingPeriodicWindowTIPOTransformator implements IPOTransformator<
 	public TransformedPO transform(WindowAO windowAO, TransformationConfiguration config, ITransformation transformation)
 			throws TransformationException {
 		SlidingPeriodicWindowTIPO windowPO = new SlidingPeriodicWindowTIPO(windowAO);
-
+		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		MetadataUpdatePO mPO = WindowPOMetadata.createMetadata(windowPO, config);
 
 		if (mPO == null) {

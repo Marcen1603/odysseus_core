@@ -27,7 +27,7 @@ public class SlidingElementWindowTIPOTransformator implements IPOTransformator<W
 	public TransformedPO transform(WindowAO windowAO, TransformationConfiguration config, ITransformation transformation)
 			throws TransformationException {
 		SlidingElementWindowTIPO windowPO = new SlidingElementWindowTIPO(windowAO);
-
+		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		MetadataUpdatePO mPO = WindowPOMetadata.createMetadata(windowPO, config);
 
 		if (mPO == null) {
