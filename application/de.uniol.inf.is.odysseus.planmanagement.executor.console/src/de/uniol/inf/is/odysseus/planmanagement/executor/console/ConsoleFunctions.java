@@ -43,11 +43,11 @@ public class ConsoleFunctions {
 			b.append(((IIterableSource<?>)mySink).isActive());
 		}
 		b.append("(");
-		b.append(mySink.getSubscribedTo());
+		b.append(mySink.getSubscribedToSource());
 		b.append(")\n");
 
 		for (PhysicalSubscription<? extends ISource<?>> source : mySink
-				.getSubscribedTo()) {
+				.getSubscribedToSource()) {
 			dumpPlan(source.getTarget(), depth + 1, b);
 		}
 	}
@@ -82,7 +82,7 @@ public class ConsoleFunctions {
 					+ sink.getMonitoringData(type).getValue());
 		}
 
-		Collection<PhysicalSubscription<ISource>> subscriptions = sink.getSubscribedTo();
+		Collection<PhysicalSubscription<ISource>> subscriptions = sink.getSubscribedToSource();
 		for (PhysicalSubscription<ISource> sub :  subscriptions) {
 			if (sub.getTarget().isSink()) {
 				printPlanMetadata((ISink) sub.getTarget());

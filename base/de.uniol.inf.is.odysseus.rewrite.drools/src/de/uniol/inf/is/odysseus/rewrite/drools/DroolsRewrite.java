@@ -68,7 +68,7 @@ public class DroolsRewrite implements IRewrite {
 		}
 		StatefulSession session = rulebase.newStatefulSession();
 		TopAO top = new TopAO();
-		plan.subscribe(top, 0, 0, plan.getOutputSchema());
+		plan.subscribeSink(top, 0, 0, plan.getOutputSchema());
 
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
@@ -92,10 +92,10 @@ public class DroolsRewrite implements IRewrite {
 							new AlgebraPlanToStringVisitor()));
 
 		}
-		LogicalSubscription sub = top.getSubscribedTo(0);
+		LogicalSubscription sub = top.getSubscribedToSource(0);
 		ILogicalOperator ret = sub.getTarget();
-		top.unsubscribeSubscriptionTo(ret, sub.getSinkPort(), sub
-				.getSourcePort());
+		top.unsubscribeFromSource(ret, sub.getSinkPort(), sub
+				.getSourcePort(), sub.getSchema());
 		if (logger.isInfoEnabled()) {
 			logger.info("post rewrite:"
 					+ AbstractTreeWalker.prefixWalk(ret,
@@ -146,7 +146,7 @@ public class DroolsRewrite implements IRewrite {
 			session.insert(op);
 			inserted.add(op);
 
-			for (LogicalSubscription sub : op.getSubscribedTo()) {
+			for (LogicalSubscription sub : op.getSubscribedToSource()) {
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
 			for (LogicalSubscription sub : op.getSubscriptions()) {

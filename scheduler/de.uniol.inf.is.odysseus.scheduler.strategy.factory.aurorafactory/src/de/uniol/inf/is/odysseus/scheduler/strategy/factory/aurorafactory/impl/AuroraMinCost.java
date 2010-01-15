@@ -33,7 +33,7 @@ public class AuroraMinCost extends AbstractExecListSchedulingStrategy {
 	}
 
 	private void postOrderAdd(ISink<?> sink, List<IIterableSource<?>> execList) {
-		for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedTo()) {
+		for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
 			if (execList.contains(sub.getTarget())) {
 				continue;
 			}

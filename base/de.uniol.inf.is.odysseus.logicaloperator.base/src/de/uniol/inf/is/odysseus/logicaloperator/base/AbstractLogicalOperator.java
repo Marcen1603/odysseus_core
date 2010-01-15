@@ -113,7 +113,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		LogicalSubscription s = subscribedTo.get(pos);
 		SDFAttributeList ret = null;
 		if (s!=null){
-			ret =  s.getInputSchema();
+			ret =  s.getSchema();
 			if (ret == null) {
 				ILogicalOperator op = s.getTarget();
 				if (op != null) {
@@ -185,8 +185,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.physInputOperators.put(subscription.getSinkPort(), subscription.getTarget());
 	}
 	
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort){
-		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkPort, sourcePort));
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort, SDFAttributeList schema){
+		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkPort, sourcePort, schema));
 	}
 	
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo(){
@@ -240,23 +240,15 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return this;
 	}
 	
-	@Override
-	public void subscribeTo(ILogicalOperator source, int sinkPort, int sourcePort) {
-		if (source.getOutputSchema() == null){
-			throw new IllegalArgumentException("No schema set at source "+source);
-		}else{
-			subscribeTo(source, sinkPort, sourcePort, source.getOutputSchema());
-		}
-	}
 	
 	@Override
-	public void subscribeTo(ILogicalOperator source, int sinkPort,
+	public void subscribeToSource(ILogicalOperator source, int sinkPort,
 			int sourcePort, SDFAttributeList inputSchema) {	
 		LogicalSubscription sub = new LogicalSubscription(source, sinkPort, sourcePort, inputSchema);
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.containsKey(sinkPort)) {
 				this.subscribedTo.put(sinkPort, sub);
-				source.subscribe(getInstance(), sinkPort, sourcePort, inputSchema);
+				source.subscribeSink(getInstance(), sinkPort, sourcePort, inputSchema);
 				recalcOutputSchemata = true;
 			}
 		}
@@ -264,25 +256,25 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 	
 	@Override
-	public void unsubscribeSubscriptionTo(ILogicalOperator source, int sinkPort, int sourcePort) {
+	public void unsubscribeFromSource(ILogicalOperator source, int sinkPort, int sourcePort, SDFAttributeList schema) {
 		if (this.subscribedTo.remove(sinkPort) != null) {
 			recalcOutputSchemata = true;
-			source.unsubscribe(this, sinkPort, sourcePort);
+			source.unsubscribeSink(this, sinkPort, sourcePort, schema);
 		}
 	}
 	
 	@Override
-	public void unsubscribeTo(LogicalSubscription subscription) {
-		unsubscribeSubscriptionTo(subscription.getTarget(), subscription.getSinkPort(), subscription.getSourcePort());
+	public void unsubscribeFromSource(LogicalSubscription subscription) {
+		unsubscribeFromSource(subscription.getTarget(), subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
 	}
 		
 	@Override
-	final public Collection<LogicalSubscription> getSubscribedTo() {
+	final public Collection<LogicalSubscription> getSubscribedToSource() {
 		return this.subscribedTo.values();
 	}
 	
 	@Override
-	public LogicalSubscription getSubscribedTo(int i) {
+	public LogicalSubscription getSubscribedToSource(int i) {
 		return this.subscribedTo.get(i);
 	}
 	
@@ -296,37 +288,28 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		}
 		return subs;
 	}
-
-	@Override
-	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
-		if (this.getOutputSchema() == null){
-			throw new IllegalArgumentException("No schema set at source "+this);
-		}else{
-			subscribeTo(sink, sinkPort, sourcePort, this.getOutputSchema());
-		}
-	}
 	
 	@Override
-	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema) {
+	public void subscribeSink(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema) {
 		LogicalSubscription sub = new LogicalSubscription(
 				sink, sinkPort, sourcePort, inputSchema);
 				if (!this.subscriptions.contains(sub)){
 					this.subscriptions.add(sub);
-					sink.subscribeTo(this, sinkPort, sourcePort, inputSchema);
+					sink.subscribeToSource(this, sinkPort, sourcePort, inputSchema);
 					recalcOutputSchemata = true;
 				}
 	}
 	
 	
 	@Override
-	final public void unsubscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
-		unsubscribe(new LogicalSubscription(sink, sinkPort, sourcePort));
+	final public void unsubscribeSink(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
+		unsubscribeSink(new LogicalSubscription(sink, sinkPort, sourcePort, schema));
 	}
 	
 	@Override
-	public void unsubscribe(LogicalSubscription subscription) {
+	public void unsubscribeSink(LogicalSubscription subscription) {
 		if (this.subscriptions.remove(subscription)) {
-			subscription.getTarget().unsubscribeSubscriptionTo(this, subscription.getSinkPort(), subscription.getSourcePort());
+			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
 			recalcOutputSchemata = true;
 		}
 	}

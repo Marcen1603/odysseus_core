@@ -81,7 +81,7 @@ public class ActionHandler {
 			tempSink.setFacade(facade);
 			sink = tempSink;
 		}
-		po.subscribe(sink, port, 0);
+		po.subscribeSink(sink, port, 0, po.getOutputSchema());
 		
 	}
 	public synchronized void unsubscribe() {

@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Jonas Jacobi
@@ -33,6 +34,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	private boolean hasSingleConsumer;
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name;
+	private SDFAttributeList outputSchema;
 
 	// Events
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
@@ -166,28 +168,28 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 	
 	@Override
-	final public void subscribe(ISink<? super T> sink, int sinkPort, int sourcePort) {
+	final public void subscribeSink(ISink<? super T> sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
-				sink, sinkPort, sourcePort);
+				sink, sinkPort, sourcePort, schema);
 		synchronized (this.subscriptions) {
 			if (!this.subscriptions.contains(sub)) {
 				this.subscriptions.add(sub);
-				sink.subscribeTo(this, sinkPort, sourcePort);
+				sink.subscribeToSource(this, sinkPort, sourcePort, schema);
 				this.hasSingleConsumer = this.subscriptions.size() == 1;
 			}
 		}
 	}
 
 	@Override
-	final public void unsubscribe(ISink<? super T> sink, int sinkPort, int sourcePort) {
-		unsubscribe(new PhysicalSubscription<ISink<? super T>>(	sink, sinkPort, sourcePort));
+	final public void unsubscribeSink(ISink<? super T> sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
+		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(	sink, sinkPort, sourcePort, schema));
 	}
 	
 	@Override
-	public void unsubscribe(PhysicalSubscription<ISink<? super T>> subscription) {
+	public void unsubscribeSink(PhysicalSubscription<ISink<? super T>> subscription) {
 		synchronized (this.subscriptions) {
 			if (this.subscriptions.remove(subscription)) {
-				subscription.getTarget().unsubscribeSubscriptionTo(this,subscription.getSinkPort(), subscription.getSourcePort());
+				subscription.getTarget().unsubscribeFromSource(this,subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
 			}
 			this.hasSingleConsumer = this.subscriptions.size() == 1;
 		}	
@@ -304,6 +306,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.name = name;
 	}
 
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
+	
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		this.outputSchema = outputSchema;	
+	}
+	
 	@Override
 	public void addOwner(IOperatorOwner owner) {
 		this.owners.add(owner);

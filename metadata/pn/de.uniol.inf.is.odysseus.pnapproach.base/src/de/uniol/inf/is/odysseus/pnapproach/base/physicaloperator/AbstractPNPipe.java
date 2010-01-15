@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Andre Bolles, Jonas Jacobi
@@ -37,8 +38,8 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 	
 	
 	@Override
-	public void subscribeTo(ISource<? extends R> source, int sinkPort, int sourcePort) {
-		super.subscribeTo(source, sinkPort, sourcePort);
+	public void subscribeToSource(ISource<? extends R> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
+		super.subscribeToSource(source, sinkPort, sourcePort, schema);
 		int portCount = delegateSink.getInputPortCount();
 		processInitNegEvent = new POEvent[portCount];
 		processDoneNegEvent = new POEvent[portCount];

@@ -94,7 +94,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			operator = new RenameAO();
 			SDFAttributeList newSchema = createAliasSchema(node.getAlias(),
 					access);
-			operator.subscribeTo(access, 0, 0, newSchema);
+			operator.subscribeToSource(access, 0, 0, newSchema);
 		}
 
 		this.attributeResolver.addSource(sourceString, operator);
@@ -120,7 +120,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator inputOp = access;
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
-			inputOp.subscribeTo(access, 0, 0, access.getOutputSchema());
+			inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
 			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node
 					.getAlias(), access));
 			sourceName = node.getAlias();
@@ -136,7 +136,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	private WindowAO createWindow(ASTWindow windowNode,
 			AbstractLogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
-		window.subscribeTo(inputOp, 0, 0, inputOp.getOutputSchema());
+		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
 		if (windowNode.isPartitioned()) {
 			if (containsWindow(inputOp)) {
@@ -190,12 +190,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (inputOp instanceof WindowAO) {
 			return true;
 		}
-		int numberOfInputs = inputOp.getSubscribedTo().size();
+		int numberOfInputs = inputOp.getSubscribedToSource().size();
 		if (inputOp instanceof ExistenceAO) {
 			numberOfInputs = 1;// don't check subselects in existenceaos
 		}
 		for (int i = 0; i < numberOfInputs; ++i) {
-			if (containsWindow(inputOp.getSubscribedTo(i).getTarget())) {
+			if (containsWindow(inputOp.getSubscribedToSource(i).getTarget())) {
 				return true;
 			}
 		}
@@ -218,7 +218,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		ASTIdentifier asIdentifier = (ASTIdentifier) asNode.jjtGetChild(0);
 		RenameAO rename = new RenameAO();
-		rename.subscribeTo(result, 0, 0, result.getOutputSchema());
+		rename.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		rename
 				.setOutputSchema(createAliasSchema(asIdentifier.getName(),
 						result));

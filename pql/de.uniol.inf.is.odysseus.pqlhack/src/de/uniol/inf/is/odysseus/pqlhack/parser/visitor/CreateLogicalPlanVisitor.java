@@ -166,8 +166,8 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		newData.add(((ArrayList)data).get(0));
 		AbstractLogicalOperator rightIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 			
-		join.subscribeTo(leftIn, 0, 0, leftIn.getOutputSchema());
-		join.subscribeTo(rightIn, 1, 0, rightIn.getOutputSchema());
+		join.subscribeToSource(leftIn, 0, 0, leftIn.getOutputSchema());
+		join.subscribeToSource(rightIn, 1, 0, rightIn.getOutputSchema());
 				
 		((ArrayList)data).add(join);
 		

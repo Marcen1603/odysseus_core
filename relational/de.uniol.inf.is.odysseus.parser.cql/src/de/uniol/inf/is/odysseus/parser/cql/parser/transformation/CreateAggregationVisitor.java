@@ -39,7 +39,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	public void init(ILogicalOperator top, AttributeResolver attributeResolver) {
 		ao = new AggregateAO();
 		this.top = top;
-		ao.subscribeTo(top,0,0,top.getOutputSchema());
+		ao.subscribeToSource(top,0,0,top.getOutputSchema());
 		select = null;
 		this.attributeResolver = attributeResolver;
 		this.hasGrouping = false;
@@ -155,7 +155,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTHavingClause node, Object data) {
 		select = new SelectAO();
-		select.subscribeTo(ao,0,0,ao.getOutputSchema());
+		select.subscribeToSource(ao,0,0,ao.getOutputSchema());
 		IPredicate<RelationalTuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate((ASTPredicate) node
 				.jjtGetChild(0), this.attributeResolver);
@@ -167,18 +167,18 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		// remove possible subscriptions!!
 		if (this.select != null) {
 			for (LogicalSubscription l: select.getSubscriptions()){				
-				select.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
+				select.unsubscribeSink(l.getTarget(), l.getSinkPort(), l.getSourcePort(), l.getSchema());
 			}
 			return this.select;
 		}
 		if (this.ao.hasAggregations() || hasGrouping ){
 			for (LogicalSubscription l: ao.getSubscriptions()){				
-				ao.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
+				ao.unsubscribeSink(l.getTarget(), l.getSinkPort(), l.getSourcePort(), l.getSchema());
 			}
 			return this.ao;
 		}else{
 			for (LogicalSubscription l: top.getSubscriptions()){				
-				top.unsubscribe(l.getTarget(), l.getSinkPort(), l.getSourcePort());
+				top.unsubscribeSink(l.getTarget(), l.getSinkPort(), l.getSourcePort(), l.getSchema());
 			}
 			return top;
 		}

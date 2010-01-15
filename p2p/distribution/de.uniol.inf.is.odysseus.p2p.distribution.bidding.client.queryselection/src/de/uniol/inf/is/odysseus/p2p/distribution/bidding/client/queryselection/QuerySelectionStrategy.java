@@ -47,7 +47,7 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 			sources.add((AccessAO) op);
 		}
 		else {
-			for(LogicalSubscription subscription : op.getSubscribedTo()) {
+			for(LogicalSubscription subscription : op.getSubscribedToSource()) {
 				collectSourcesFromPlan(subscription.getTarget(), sources);
 			}
 		}

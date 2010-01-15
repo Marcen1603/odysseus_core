@@ -12,7 +12,7 @@ public class ObjectTrackingTransformationHelper {
 	
 	@SuppressWarnings("unchecked")
 	public static SDFAttributeList getOutputSchema(MetadataCreationPO mPO){
-		List<ISubscription<ISource>> subscriptionsTo = mPO.getSubscribedTo();
+		List<ISubscription<ISource>> subscriptionsTo = mPO.getSubscribedToSource();
 		SDFAttributeList outputSchema = null;
 		for(ISubscription<ISource> sub: subscriptionsTo){
 			// if the target of this subscription is not a sink

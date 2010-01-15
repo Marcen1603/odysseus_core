@@ -35,7 +35,7 @@ AbstractBufferPlacementStrategy {
 		}
 		
 		return subscriptions.size() > 1
-		|| childSink.getSubscribedTo().size() > 1;
+		|| childSink.getSubscribedToSource().size() > 1;
 	}
 
 	@SuppressWarnings("unchecked")

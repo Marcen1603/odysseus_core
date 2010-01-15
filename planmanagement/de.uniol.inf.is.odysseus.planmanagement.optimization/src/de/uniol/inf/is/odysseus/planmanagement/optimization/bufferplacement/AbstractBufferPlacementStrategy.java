@@ -49,7 +49,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan.isSink() && !plan.isSource()) {
 			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
-					.getSubscribedTo()) {
+					.getSubscribedToSource()) {
 				addBuffers(s.getTarget());
 			}
 		}
@@ -62,9 +62,9 @@ public abstract class AbstractBufferPlacementStrategy implements
 	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
 			PhysicalSubscription<? extends ISource<?>> s) {
 		// TODO Warnings
-		s.getTarget().unsubscribe((ISink) sink, s.getSinkPort(),0);
-		buffer.subscribe(sink, s.getSinkPort(),0);
-		s.getTarget().subscribe(buffer, 0,0);
+		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkPort(),0, s.getSchema());
+		buffer.subscribeSink(sink, s.getSinkPort(),0, s.getSchema());
+		s.getTarget().subscribeSink(buffer, 0,0, s.getSchema());
 		initBuffer(buffer);
 	}
 	
@@ -82,7 +82,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 		while (!sinks.isEmpty()) {
 			ISink<?> sink = sinks.pop();
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions = sink
-					.getSubscribedTo();
+					.getSubscribedToSource();
 			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
 				if (s.getTarget().isSink()) {
 					if (s.getTarget() instanceof IBuffer) {

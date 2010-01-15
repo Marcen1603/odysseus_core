@@ -179,7 +179,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 			if (curSource instanceof IPipe) {
 				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
 				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
-						.getSubscribedTo()) {
+						.getSubscribedToSource()) {
 					sources.push(subscription.getTarget());
 				}
 			}
@@ -201,7 +201,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 			return iterableSources((ISource<?>) sink);
 		}
 		Collection<? extends PhysicalSubscription<? extends ISource<?>>> slist = sink
-				.getSubscribedTo();
+				.getSubscribedToSource();
 		ArrayList<IIterableSource<?>> ret = new ArrayList<IIterableSource<?>>();
 		for (PhysicalSubscription<? extends ISource<?>> s : slist) {
 			ret.addAll(iterableSources(s.getTarget()));

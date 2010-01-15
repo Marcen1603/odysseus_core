@@ -192,7 +192,7 @@ public class Query implements IEditableQuery {
 			if (curSource instanceof IPipe) {
 				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
 				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
-						.getSubscribedTo()) {
+						.getSubscribedToSource()) {
 					sources.push(subscription.getTarget());
 				}
 			}
@@ -212,7 +212,7 @@ public class Query implements IEditableQuery {
 			return getChildren((ISource<?>) sink);
 		}
 		Collection<? extends PhysicalSubscription<? extends ISource<?>>> slist = sink
-				.getSubscribedTo();
+				.getSubscribedToSource();
 		ArrayList<IPhysicalOperator> ret = new ArrayList<IPhysicalOperator>();
 		for (PhysicalSubscription<? extends ISource<?>> s : slist) {
 			ret.addAll(getChildren(s.getTarget()));
@@ -266,7 +266,7 @@ public class Query implements IEditableQuery {
 				//root keine source ist
 				if (defaultRoot != null && defaultRoot.isSink()
 						&& root.isSource()) {
-					((ISink) defaultRoot).subscribeTo((ISource) root, 0,0);
+					((ISink) defaultRoot).subscribeToSource((ISource) root, 0,0, root.getOutputSchema());
 				}
 			}
 		}

@@ -38,7 +38,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTElementPriorities node, Object data) {
 		PriorityAO<RelationalTuple<? extends IPriority>> ao = new PriorityAO<RelationalTuple<? extends IPriority>>();
-		top.subscribe(ao, 0, 0, top.getOutputSchema());
+		top.subscribeSink(ao, 0, 0, top.getOutputSchema());
 		node.childrenAccept(this, ao);
 		top = ao;
 		return null;

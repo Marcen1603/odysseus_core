@@ -53,8 +53,8 @@ public class JoinAO extends BinaryLogicalOp {
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata){
 			outputSchema = new SDFAttributeList();
-			for (LogicalSubscription l:getSubscribedTo()){
-				outputSchema.addAttributes(l.getInputSchema());
+			for (LogicalSubscription l:getSubscribedToSource()){
+				outputSchema.addAttributes(l.getSchema());
 			}
 			recalcOutputSchemata = false;
 		}

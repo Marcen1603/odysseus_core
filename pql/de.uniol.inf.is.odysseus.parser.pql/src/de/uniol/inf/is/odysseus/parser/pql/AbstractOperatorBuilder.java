@@ -38,7 +38,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		checkInputSize(inputOps, inputPortCount);
 		int i = 0;
 		for (ILogicalOperator op : inputOps) {
-			operator.subscribeTo(op, i++, 0, schema);
+			operator.subscribeToSource(op, i++, 0, schema);
 		}
 	}
 

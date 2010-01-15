@@ -23,7 +23,7 @@ public class NoSplittingStrategy extends
 	public ArrayList<ILogicalOperator> splitPlan(ILogicalOperator plan) {
 		ArrayList<ILogicalOperator> splitList = new ArrayList<ILogicalOperator>();
 		P2PSinkAO p2psink = new P2PSinkAO(createSocketAdvertisement().toString());
-		plan.subscribe(p2psink, 0, 0, plan.getOutputSchema());
+		plan.subscribeSink(p2psink, 0, 0, plan.getOutputSchema());
 		splitList.add(p2psink);
 
 		return splitList;

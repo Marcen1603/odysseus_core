@@ -179,7 +179,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				AbstractLogicalOperator dsOp = (AbstractLogicalOperator) node
 						.jjtGetChild(1).jjtAccept(this, data);
 				// op.setInputAO(0, dsOp);
-				op.subscribeTo(dsOp, 0, 0);
+				op.subscribeToSource(dsOp, 0, 0, dsOp.getOutputSchema());
 				// hat nun 3 statt 2 kinder
 				if (node.jjtGetNumChildren() == 3) {
 					priority = (Integer) node.jjtGetChild(2).jjtAccept(this,
@@ -242,8 +242,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 						"inputs of set operator have different schemas");
 			}
 		}
-		setOperator.subscribeTo(left, 0, 0, left.getOutputSchema());
-		setOperator.subscribeTo(right, 1, 1, right.getOutputSchema());
+		setOperator.subscribeToSource(left, 0, 0, left.getOutputSchema());
+		setOperator.subscribeToSource(right, 1, 1, right.getOutputSchema());
 		return setOperator;
 	}
 
@@ -304,14 +304,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public static void initPredicates(ILogicalOperator curInputAO) {
 		if (curInputAO.getPredicate() != null) {
 			SDFAttributeList rightInputSchema = null;
-			if (curInputAO.getSubscribedTo().size() > 1) {
+			if (curInputAO.getSubscribedToSource().size() > 1) {
 				rightInputSchema = curInputAO.getInputSchema(1);
 			}
 			initPredicate(curInputAO.getPredicate(), curInputAO
 					.getInputSchema(0), rightInputSchema);
 		}
-		for (int i = 0; i < curInputAO.getSubscribedTo().size(); ++i) {
-			initPredicates(curInputAO.getSubscribedTo(i).getTarget());
+		for (int i = 0; i < curInputAO.getSubscribedToSource().size(); ++i) {
+			initPredicates(curInputAO.getSubscribedToSource(i).getTarget());
 		}
 	}
 

@@ -13,9 +13,9 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	public SDFAttributeList getOutputSchema();
 	public SDFAttributeList getInputSchema(int pos);
 	
-	public void subscribeTo(ILogicalOperator source, int sinkPort,
+	public void subscribeToSource(ILogicalOperator source, int sinkPort,
 			int sourcePort, SDFAttributeList inputSchema);
-	public void subscribe(ILogicalOperator sink, int sinkPort, 
+	public void subscribeSink(ILogicalOperator sink, int sinkPort, 
 			int sourcePort, SDFAttributeList inputSchema);	
 	
 	@SuppressWarnings("unchecked")
@@ -28,7 +28,7 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	
 	boolean isAllPhysicalInputSet();
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort);
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort, SDFAttributeList schema);
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();
 	// Currently needed for Transformation --> we should get rid of this!

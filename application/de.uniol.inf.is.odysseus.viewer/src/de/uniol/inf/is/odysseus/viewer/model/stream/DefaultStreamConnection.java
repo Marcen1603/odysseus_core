@@ -35,7 +35,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 		if(sources != null ) {
 			int i = 0;
 			for( ISource<? extends In> s : sources ) {
-				subscribeTo( s, i++,0 );
+				subscribeToSource( s, i++,0 , s.getOutputSchema());
 			}
 			connected = true;
 			logger.debug("Connected");
@@ -47,7 +47,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 		if( sources != null ) {
 			int i = 0;
 			for(ISource<? extends In> s : sources ) {
-				unsubscribeSubscriptionTo( s, i++, 0 );
+				unsubscribeFromSource( s, i++, 0, s.getOutputSchema());
 			}
 			connected = false;
 			logger.debug("Disconnected");

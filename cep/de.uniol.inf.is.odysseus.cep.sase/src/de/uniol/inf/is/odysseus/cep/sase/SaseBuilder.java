@@ -119,7 +119,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		for (String sn : sourceNames) {
 			ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
 			if (ao != null) {
-				cepAo.subscribeTo(ao, i++, 0, ao.getOutputSchema());
+				cepAo.subscribeToSource(ao, i++, 0, ao.getOutputSchema());
 			} else {
 				throw new RuntimeException("Source " + sn + " not found");
 			}

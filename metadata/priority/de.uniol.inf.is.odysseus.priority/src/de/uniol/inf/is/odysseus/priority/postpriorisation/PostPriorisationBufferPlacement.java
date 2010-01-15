@@ -32,7 +32,7 @@ public class PostPriorisationBufferPlacement extends
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {
 		return subscriptions.size() > 1
-				|| childSink.getSubscribedTo().size() > 1;
+				|| childSink.getSubscribedToSource().size() > 1;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,7 +47,7 @@ public class PostPriorisationBufferPlacement extends
 
 		if (buffer instanceof DirectInterlinkBufferedPipePostPriorisation) {
 
-			Iterator<PhysicalSubscription> it = buffer.getSubscribedTo()
+			Iterator<PhysicalSubscription> it = buffer.getSubscribedToSource()
 					.iterator();
 
 			while (it.hasNext()) {

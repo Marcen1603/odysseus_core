@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Provides basic functionality for interval based operators to handle data
@@ -26,9 +27,9 @@ public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<
 	@Override
 	//make sure the punctuation storage contains a list for every input port,
 	//as the number of input ports may increase after a subscription
-	public void subscribeTo(ISource<? extends R> source, int sinkPort,
-			int sourcePort) {
-		super.subscribeTo(source, sinkPort, sourcePort);
+	public void subscribeToSource(ISource<? extends R> source, int sinkPort,
+			int sourcePort, SDFAttributeList schema) {
+		super.subscribeToSource(source, sinkPort, sourcePort, schema);
 		storage.subscribePort(getInputPortCount());
 	}
 

@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 @SuppressWarnings("unchecked")
 public class TransformationHelper {
 	
@@ -26,8 +27,8 @@ public class TransformationHelper {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
-			physical.subscribeTo((ISource) psub.getTarget(),
-					psub.getSinkPort(), psub.getSourcePort());
+			physical.subscribeToSource((ISource) psub.getTarget(),
+					psub.getSinkPort(), psub.getSourcePort(),psub.getSchema());
 		}
 		for (LogicalSubscription l : logical.getSubscriptions()) {
 			ILogicalOperator target = l.getTarget();
@@ -45,7 +46,7 @@ public class TransformationHelper {
 
 		for (LogicalSubscription l : logical.getSubscriptions()) {
 			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkPort(),
-					l.getSourcePort());
+					l.getSourcePort(), l.getSchema());
 			ret.add(l.getTarget());
 		}
 		return ret;
@@ -68,14 +69,14 @@ public class TransformationHelper {
 			for(Subscription<ISource<?>> subscription : child.getPhysSubscriptionsTo()){
 				// if the following is true, we found the correct subscription
 				if(subscription.getTarget() == oldFather){
-					child.setPhysSubscriptionTo(newFather, subscription.getSinkPort(), subscription.getSourcePort());
+					child.setPhysSubscriptionTo(newFather, subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
 					modifiedChildren.add(child);
 				}
 			}
 		}
 		
 		// then add the new father as child to the old father
-		oldFather.subscribe(newFather, 0, 0);
+		oldFather.subscribeSink(newFather, 0, 0, oldFather.getOutputSchema());
 		
 		// return the modified children to update the drools working memory
 		return modifiedChildren;
@@ -98,14 +99,15 @@ public class TransformationHelper {
 			ISink child = subscription.getTarget();
 			int sinkPort = subscription.getSinkPort();
 			int sourcePort = subscription.getSourcePort();
+			SDFAttributeList schema = subscription.getSchema();
 			
-			oldFather.unsubscribe(subscription);
-			newFather.subscribe(child, sinkPort, sourcePort);
+			oldFather.unsubscribeSink(subscription);
+			newFather.subscribeSink(child, sinkPort, sourcePort, schema);
 			modifiedChildren.add(child);
 		}
 		
 		// then add the new father as child to the old father
-		oldFather.subscribe(newFather, 0, 0);
+		oldFather.subscribeSink(newFather, 0, 0, oldFather.getOutputSchema());
 		
 		// return the modified children to update the drools working memory
 		return modifiedChildren;

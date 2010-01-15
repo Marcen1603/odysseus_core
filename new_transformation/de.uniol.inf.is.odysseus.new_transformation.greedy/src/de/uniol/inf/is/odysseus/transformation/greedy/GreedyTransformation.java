@@ -52,7 +52,7 @@ public class GreedyTransformation implements ITransformation {
 			throw new TransformationException("Missing CostModel while using GreedyTransformation");
 		}
 		TopAO top = new TopAO();
-		op.subscribe(top, 0, 0, op.getOutputSchema());
+		op.subscribeSink(top, 0, 0, op.getOutputSchema());
 
 		// transformiere diesen Plan bottom-up
 		Map<ILogicalOperator, ILogicalOperator> transformedOperators = new IdentityHashMap<ILogicalOperator, ILogicalOperator>();
@@ -62,7 +62,7 @@ public class GreedyTransformation implements ITransformation {
 		if (logger.isInfoEnabled()) {
 			logger.info("transformation result: \n" + planToString(physicalOp, ""));
 		}
-		op.unsubscribe(top, 0, 0);
+		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 
 		return physicalOp;
 	}
@@ -93,7 +93,7 @@ public class GreedyTransformation implements ITransformation {
 		if (!transformedOperators.containsKey(logicalOperator)) {
 			transformedOperators.put(logicalOperator, logicalOperator);
 
-			Collection<LogicalSubscription> children = logicalOperator.getSubscribedTo();
+			Collection<LogicalSubscription> children = logicalOperator.getSubscribedToSource();
 			for (LogicalSubscription logicalChild : children) {
 				transformOperator(logicalChild.getTarget(), transformedOperators, config);
 			}
@@ -146,7 +146,7 @@ public class GreedyTransformation implements ITransformation {
 	 *         {@link StreamCharacteristicCollection}s
 	 */
 	private List<StreamCharacteristicCollection> getIncomingStreamCharacteristics(ILogicalOperator logicalOperator) {
-		Collection<LogicalSubscription> childSubscriptions = logicalOperator.getSubscribedTo();
+		Collection<LogicalSubscription> childSubscriptions = logicalOperator.getSubscribedToSource();
 		List<StreamCharacteristicCollection> incomingStreamMetadatas = new ArrayList<StreamCharacteristicCollection>();
 		for (LogicalSubscription childSubscription : childSubscriptions) {
 			ILogicalOperator child = childSubscription.getTarget();
@@ -160,7 +160,7 @@ public class GreedyTransformation implements ITransformation {
 		if (physical == null)
 			return;
 		for (LogicalSubscription l : logical.getSubscriptions()) {
-			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkPort(), l.getSourcePort());
+			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkPort(), l.getSourcePort(), l.getSchema());
 		}
 	}
 
@@ -168,7 +168,7 @@ public class GreedyTransformation implements ITransformation {
 		if (physical == null)
 			return;
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
-			physical.subscribeTo((ISource) psub.getTarget(), psub.getSinkPort(), psub.getSourcePort());
+			physical.subscribeToSource((ISource) psub.getTarget(), psub.getSinkPort(), psub.getSourcePort(), psub.getSchema());
 		}
 	}
 
@@ -238,7 +238,7 @@ public class GreedyTransformation implements ITransformation {
 		builder.append(physicalPO);
 		builder.append('\n');
 		if (physicalPO.isSink()) {
-			for (PhysicalSubscription<?> sub : ((ISink<?>) physicalPO).getSubscribedTo()) {
+			for (PhysicalSubscription<?> sub : ((ISink<?>) physicalPO).getSubscribedToSource()) {
 				builder.append(planToString((IPhysicalOperator) sub.getTarget(), "  " + indent));
 			}
 		}

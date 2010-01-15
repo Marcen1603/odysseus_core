@@ -109,7 +109,7 @@ public class SWTParameterArea {
 							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
 							for (LogicalSubscription subscription : nodeView
 									.getModelNode().getContent().getOperator()
-									.getSubscribedTo()) {
+									.getSubscribedToSource()) {
 								inputs.add(subscription.getTarget()
 										.getOutputSchema());
 							}
@@ -177,7 +177,7 @@ public class SWTParameterArea {
 							Collection<SDFAttributeList> inputs = new ArrayList<SDFAttributeList>();
 							for (LogicalSubscription subscription : nodeView
 									.getModelNode().getContent().getOperator()
-									.getSubscribedTo()) {
+									.getSubscribedToSource()) {
 								inputs.add(subscription.getTarget()
 										.getOutputSchema());
 							}

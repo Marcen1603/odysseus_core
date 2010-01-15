@@ -44,7 +44,7 @@ public class CreateDatabaseAOVisitor extends AbstractDefaultVisitor implements I
 			Controller dbController = new Controller(query, dbOptions,
 					inputSchema);
 			logicalOp = new DBSelectAO(query, dbOptions, dbController, alias);
-			logicalOp.subscribeTo((ILogicalOperator) data, 0, 0, inputSchema);
+			logicalOp.subscribeToSource((ILogicalOperator) data, 0, 0, inputSchema);
 		} else {
 			DBQuery query = new DBQuery(database, sql, false);
 			Controller dbController = new Controller(query);

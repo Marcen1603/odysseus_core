@@ -453,17 +453,17 @@ public class DefaultGraphArea extends Composite implements
 								}
 								
 								if (endOp instanceof UnaryLogicalOp) {
-									endOp.subscribeTo(nodeView.getModelNode()
+									endOp.subscribeToSource(nodeView.getModelNode()
 											.getContent().getOperator(), 0, 0, nodeView.getModelNode()
 											.getContent().getOperator().getOutputSchema());
 								} else if (endOp instanceof BinaryLogicalOp) {
-									if (endOp.getSubscribedTo().isEmpty()) {
-										endOp.subscribeTo(nodeView
+									if (endOp.getSubscribedToSource().isEmpty()) {
+										endOp.subscribeToSource(nodeView
 												.getModelNode().getContent()
 												.getOperator(), 0, 0, nodeView.getModelNode()
 												.getContent().getOperator().getOutputSchema());
 									} else {
-										endOp.subscribeTo(nodeView
+										endOp.subscribeToSource(nodeView
 												.getModelNode().getContent()
 												.getOperator(), 1, 0, nodeView.getModelNode()
 												.getContent().getOperator().getOutputSchema());
@@ -578,12 +578,12 @@ public class DefaultGraphArea extends Composite implements
 	private void removeConnections(INodeView<INodeContent> nodeView) {
 		for (LogicalSubscription subscription : nodeView.getModelNode()
 				.getContent().getOperator().getSubscriptions()) {
-			nodeView.getModelNode().getContent().getOperator().unsubscribe(
+			nodeView.getModelNode().getContent().getOperator().unsubscribeSink(
 					subscription);
 		}
 		for (LogicalSubscription subscription : nodeView.getModelNode()
-				.getContent().getOperator().getSubscribedTo()) {
-			nodeView.getModelNode().getContent().getOperator().unsubscribeTo(
+				.getContent().getOperator().getSubscribedToSource()) {
+			nodeView.getModelNode().getContent().getOperator().unsubscribeFromSource(
 					subscription);
 		}
 		ArrayList<IConnectionView<INodeContent>> connViewDeleteList = new ArrayList<IConnectionView<INodeContent>>(
@@ -607,7 +607,7 @@ public class DefaultGraphArea extends Composite implements
 				if (nodeView2.getModelNode().getContent().getOperator().equals(
 						subscription.getTarget())) {
 					nodeView1.getModelNode().getContent().getOperator()
-							.unsubscribe(subscription);
+							.unsubscribeSink(subscription);
 				}
 			}
 			for (IConnectionView<INodeContent> connView : connViewDeleteList) {
@@ -619,11 +619,11 @@ public class DefaultGraphArea extends Composite implements
 			}
 		} else if (startConn != null) {
 			for (LogicalSubscription subscription : nodeView1.getModelNode()
-					.getContent().getOperator().getSubscribedTo()) {
+					.getContent().getOperator().getSubscribedToSource()) {
 				if (nodeView2.getModelNode().getContent().getOperator().equals(
 						subscription.getTarget())) {
 					nodeView1.getModelNode().getContent().getOperator()
-							.unsubscribeTo(subscription);
+							.unsubscribeFromSource(subscription);
 				}
 			}
 			for (IConnectionView<INodeContent> connView : connViewDeleteList) {

@@ -55,7 +55,7 @@ public class OnePlanPerOperator extends
 	}
 
 	private void splitPlan(ILogicalOperator iLogicalOperator, String current, List<ILogicalOperator> splitList) {
-		int outputCount = iLogicalOperator.getSubscribedTo().size();
+		int outputCount = iLogicalOperator.getSubscribedToSource().size();
 		String temp = null;
 		P2PSinkAO p2psink = new P2PSinkAO(current);
 		String adv = createSocketAdvertisement().toString();
@@ -63,7 +63,7 @@ public class OnePlanPerOperator extends
  		//für den ersten Operator
  		if(iLogicalOperator.getSubscriptions().isEmpty()) {
  			P2PSinkAO tempAO = new P2PSinkAO(createSocketAdvertisement().toString());
- 			tempAO.subscribeTo(iLogicalOperator, 0, 0, iLogicalOperator.getOutputSchema());
+ 			tempAO.subscribeToSource(iLogicalOperator, 0, 0, iLogicalOperator.getOutputSchema());
  			splitList.add(tempAO);
  		}
  		if(!(iLogicalOperator instanceof P2PAO)) {
@@ -124,10 +124,10 @@ public class OnePlanPerOperator extends
 			if (iLogicalOperator instanceof AccessAO) {
 				return;
 			}
-			splitPlan(iLogicalOperator.getSubscribedTo(i).getTarget(), adv, splitList);
+			splitPlan(iLogicalOperator.getSubscribedToSource(i).getTarget(), adv, splitList);
 			//Nach der Rekursion Verbindung zwischen P2PSource und P2PSinks kappen
 			if(iLogicalOperator instanceof P2PSourceAO) {
-				((P2PSourceAO)iLogicalOperator).unsubscribeTo(iLogicalOperator.getSubscribedTo(0));
+				((P2PSourceAO)iLogicalOperator).unsubscribeFromSource(iLogicalOperator.getSubscribedToSource(0));
 			}
 		}
 	}

@@ -18,7 +18,8 @@ public class WindowPOMetadata {
 		if (windowAO.getWindowOn() == null) {
 			IMetadataUpdater mFac = new SystemTimeIntervalFactory<ITimeInterval, RelationalTuple<ITimeInterval>>();
 			MetadataUpdatePO mPO = new MetadataUpdatePO(mFac);
-			mPO.subscribe(windowPO, 0, 0);
+			mPO.setOutputSchema(windowAO.getOutputSchema());
+			mPO.subscribeSink(windowPO, 0, 0, mPO.getOutputSchema());
 			return mPO;
 		} else {
 			if (config.getDataType() == "relational") {
@@ -27,7 +28,8 @@ public class WindowPOMetadata {
 				IMetadataUpdater mFac = new RelationalTimestampAttributeTimeIntervalMFactory(attrPos);
 
 				MetadataUpdatePO mPO = new MetadataUpdatePO(mFac);
-				mPO.subscribe(windowPO, 0, 0);
+				mPO.setOutputSchema(windowAO.getOutputSchema());
+				mPO.subscribeSink(windowPO, 0, 0,  mPO.getOutputSchema());
 				return mPO;
 			}
 		}

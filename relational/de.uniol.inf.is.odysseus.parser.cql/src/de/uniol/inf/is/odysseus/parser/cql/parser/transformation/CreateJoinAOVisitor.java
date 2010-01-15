@@ -92,8 +92,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator leftSource = (AbstractLogicalOperator) data;
 		JoinAO join = new JoinAO();
 
-		join.subscribeTo(leftSource, 0, 0, leftSource.getOutputSchema());
-		join.subscribeTo(source, 1, 0, source.getOutputSchema());
+		join.subscribeToSource(leftSource, 0, 0, leftSource.getOutputSchema());
+		join.subscribeToSource(source, 1, 0, source.getOutputSchema());
 		return join;
 	}
 
@@ -218,8 +218,8 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 					}
 				}
 				UnionAO result = new UnionAO();
-				result.subscribeTo(left, 0, 0, left.getOutputSchema());
-				result.subscribeTo(right, 1, 0, right.getOutputSchema());
+				result.subscribeToSource(left, 0, 0, left.getOutputSchema());
+				result.subscribeToSource(right, 1, 0, right.getOutputSchema());
 				return result;
 			}
 			throw new IllegalArgumentException("unsupported predicate type");
@@ -250,17 +250,17 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		getBottomOperators(plan, oldInput, bottomOps);
 		for (ILogicalOperator curOp : bottomOps) {
 			for (LogicalSubscription l : curOp.getSubscribedTo(oldInput)) {
-				l.getTarget().unsubscribe(curOp, l.getSinkPort(),
-						l.getSourcePort());
+				l.getTarget().unsubscribeSink(curOp, l.getSinkPort(),
+						l.getSourcePort(), l.getSchema());
 				replacement
-						.subscribe(curOp, l.getSinkPort(), l.getSourcePort());
+						.subscribeSink(curOp, l.getSinkPort(), l.getSourcePort(), replacement.getOutputSchema());
 			}
 		}
 	}
 
 	private void getBottomOperators(ILogicalOperator op,
 			ILogicalOperator bottom, List<ILogicalOperator> ops) {
-		for (LogicalSubscription s : op.getSubscribedTo()) {
+		for (LogicalSubscription s : op.getSubscribedToSource()) {
 			ILogicalOperator curInput = s.getTarget();
 			if (curInput == bottom) {
 				ops.add(op);
@@ -331,7 +331,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			AbstractLogicalOperator inputAO, Type type) {
 		ExistenceAO existsAO = new ExistenceAO();
 
-		existsAO.subscribeTo(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
+		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
 				.getOutputSchema());
 		AbstractLogicalOperator subquery = subquery(node.getQuery());
 		if (node.getTuple().jjtGetNumChildren() != subquery.getOutputSchema()
@@ -339,7 +339,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			throw new IllegalArgumentException(
 					"wrong number of outputs in predicate subquery");
 		}
-		existsAO.subscribeTo(subquery, BinaryLogicalOp.RIGHT, 0, subquery
+		existsAO.subscribeToSource(subquery, BinaryLogicalOp.RIGHT, 0, subquery
 				.getOutputSchema());
 		existsAO.setType(type);
 		String expression = node.getTuple().toString()
@@ -359,9 +359,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTExists node, Object data) {
 		AbstractLogicalOperator inputAO = (AbstractLogicalOperator) data;
 		ExistenceAO existsAO = new ExistenceAO();
-		existsAO.subscribeTo(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
+		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
 				.getOutputSchema());
-		existsAO.subscribeTo(subquery(node.getQuery()), BinaryLogicalOp.RIGHT,
+		existsAO.subscribeToSource(subquery(node.getQuery()), BinaryLogicalOp.RIGHT,
 				0, subquery(node.getQuery()).getOutputSchema());
 		existsAO.setType(node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);

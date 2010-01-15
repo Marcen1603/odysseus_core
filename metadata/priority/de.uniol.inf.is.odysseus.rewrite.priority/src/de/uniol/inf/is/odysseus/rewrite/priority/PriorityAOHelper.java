@@ -44,7 +44,7 @@ public class PriorityAOHelper {
 		
 		IPredicate predicate = join.getPredicate();
 
-		Iterator<LogicalSubscription> it = join.getSubscribedTo().iterator();
+		Iterator<LogicalSubscription> it = join.getSubscribedToSource().iterator();
 		
 		while(it.hasNext()) {
 			LogicalSubscription sub = it.next();
@@ -69,8 +69,8 @@ public class PriorityAOHelper {
 		}
 
 		if(isCriticalAO(current) || 
-			current.getSubscribedTo() == null || 
-				current.getSubscribedTo().size() == 0) {
+			current.getSubscribedToSource() == null || 
+				current.getSubscribedToSource().size() == 0) {
 			PostPriorisationAO prioAO = new PostPriorisationAO();
 
 			// Nur die Default-Prioritaet setzen. Den Rest macht dann die jeweilige Strategie
@@ -82,7 +82,7 @@ public class PriorityAOHelper {
 			base.getCopartners().add(prioAO);
 
 		} else {
-			Iterator<LogicalSubscription> it = current.getSubscribedTo().iterator();
+			Iterator<LogicalSubscription> it = current.getSubscribedToSource().iterator();
 			
 			while(it.hasNext()) {
 				LogicalSubscription sub = it.next();
@@ -99,10 +99,10 @@ public class PriorityAOHelper {
 		while(it.hasNext()) {
 			LogicalSubscription sub = it.next();
 			//sub.getTarget().unsubscribeSubscriptionTo(current, sub.getSinkPort(),sub.getSourcePort());
-			prioAO.subscribe(sub.getTarget(), sub.getSinkPort(),sub.getSourcePort(), sub.getInputSchema());
+			prioAO.subscribeSink(sub.getTarget(), sub.getSinkPort(),sub.getSourcePort(), sub.getSchema());
 		}
 
-		current.subscribe(prioAO, 0, 0, current.getOutputSchema());	
+		current.subscribeSink(prioAO, 0, 0, current.getOutputSchema());	
 	}
 
 	public synchronized static boolean isCriticalAO(AbstractLogicalOperator current) {

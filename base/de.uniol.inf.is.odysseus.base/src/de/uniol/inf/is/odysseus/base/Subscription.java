@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.base;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+
 
 /**
  * 
@@ -11,18 +13,18 @@ import java.io.Serializable;
  */
 
 public class Subscription<K> implements ISubscription<K>, Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 5744808958349736195L;
 	private K target;
 	private int sinkPort;
 	private int sourcePort;
+	private SDFAttributeList schema;
 
-	public Subscription(K target, int sinkPort, int sourcePort) {
+	public Subscription(K target, int sinkPort, int sourcePort, SDFAttributeList schema) {
 		this.target = target;
 		this.sinkPort = sinkPort;
 		this.sourcePort = sourcePort;
+		this.schema=schema;
 	}
 
 	@Override
@@ -38,6 +40,14 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		return sourcePort;
 	}
 
+	public void setSchema(SDFAttributeList inputSchema) {
+		this.schema = inputSchema;
+	}
+	
+	public SDFAttributeList getSchema() {
+		return schema;
+	}
+	
 	@Override
 	public String toString() {
 		return target+" "+sinkPort+" "+sourcePort;

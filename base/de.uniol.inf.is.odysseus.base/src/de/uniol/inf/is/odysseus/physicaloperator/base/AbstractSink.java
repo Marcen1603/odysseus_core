@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Jonas Jacobi
@@ -40,7 +41,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected int noInputPorts = -1;
 
 	private String name;
-
+	private SDFAttributeList outputSchema;
+	
 	protected Vector<IOperatorOwner> owners = new Vector<IOperatorOwner>();
 
 	private volatile boolean allInputsDone = false;
@@ -152,16 +154,16 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void subscribeTo(ISource<? extends T> source, int sinkPort, int sourcePort) {
+	public void subscribeToSource(ISource<? extends T> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
 		if (sinkPort >= this.noInputPorts) {
 			setInputPortCount(sinkPort + 1);
 		}
 		PhysicalSubscription<ISource<? extends T>> sub = new PhysicalSubscription<ISource<? extends T>>(
-				source, sinkPort, sourcePort);
+				source, sinkPort, sourcePort, schema);
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.contains(sub)) {
 				this.subscribedTo.add(sub);
-				source.subscribe(getInstance(), sinkPort, sourcePort);
+				source.subscribeSink(getInstance(), sinkPort, sourcePort, schema);
 			}
 		}
 	}
@@ -173,11 +175,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@SuppressWarnings("unchecked")
 	@Override
-	final public List<PhysicalSubscription<ISource<? extends T>>> getSubscribedTo() {
+	final public List<PhysicalSubscription<ISource<? extends T>>> getSubscribedToSource() {
 		return (List<PhysicalSubscription<ISource<? extends T>>>) this.subscribedTo.clone();
 	}
 
-	final public PhysicalSubscription<ISource<? extends T>> getSubscribedTo(int port) {
+	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(int port) {
 		return this.subscribedTo.get(port);
 	}
 
@@ -211,14 +213,14 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void unsubscribeSubscriptionTo(ISource<? extends T> source, int sinkPort, int sourcePort) {
-		unsubscribeTo(new PhysicalSubscription<ISource<? extends T>>(source, sinkPort, sourcePort));
+	public void unsubscribeFromSource(ISource<? extends T> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
+		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(source, sinkPort, sourcePort, schema));
 	}
 
 	@Override
-	public void unsubscribeTo(PhysicalSubscription<ISource<? extends T>> subscription) {
+	public void unsubscribeFromSource(PhysicalSubscription<ISource<? extends T>> subscription) {
 		if (this.subscribedTo.remove(subscription)) {
-			subscription.getTarget().unsubscribe(this, subscription.getSinkPort(), subscription.getSourcePort());
+			subscription.getTarget().unsubscribeSink(this, subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
 		}	
 		
 	}
@@ -282,6 +284,16 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		this.name = name;
 	}
 
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
+	
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		this.outputSchema = outputSchema;	
+	}
+	
 	@Override
 	public void addOwner(IOperatorOwner owner) {
 		this.owners.add(owner);

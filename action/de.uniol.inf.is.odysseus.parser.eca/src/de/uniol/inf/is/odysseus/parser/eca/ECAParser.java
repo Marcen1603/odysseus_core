@@ -226,7 +226,7 @@ public class ECAParser implements IQueryParser{
 
 		//create new sink and subscribe to outputoperator
 		EventDetectionAO eAO = new EventDetectionAO(actions);
-		eAO.subscribeTo(outputOperator, 0, 0, outputOperator.getOutputSchema());
+		eAO.subscribeToSource(outputOperator, 0, 0, outputOperator.getOutputSchema());
 		
 		//replace old top element through sink
 		plan.set(0, eAO);

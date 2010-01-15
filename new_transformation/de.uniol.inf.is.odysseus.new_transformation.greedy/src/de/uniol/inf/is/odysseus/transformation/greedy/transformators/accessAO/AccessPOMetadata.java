@@ -24,7 +24,8 @@ public class AccessPOMetadata {
 		}
 		if (po == null) {
 			po = new MetadataCreationPO(type);
-			accessPO.subscribe(po, 0, 0); // TODO: Hier wird ignoriert, dass die
+			po.setOutputSchema(accessPO.getOutputSchema());
+			accessPO.subscribeSink(po, 0, 0, accessPO.getOutputSchema()); // TODO: Hier wird ignoriert, dass die
 			// Source evtl. mehrere Ausgänge hat
 		}
 

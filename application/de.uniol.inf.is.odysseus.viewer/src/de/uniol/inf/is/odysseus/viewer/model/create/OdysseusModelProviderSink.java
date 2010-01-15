@@ -104,7 +104,7 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 		traversedObjects.add( sink );
 		
 		// Subscriptions folgen
-		Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedTo();
+		Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
 		for( PhysicalSubscription< ISource<? extends T> > sub : sources ) {
 			if( sub.getTarget() instanceof ISink<?> ) {
 				parse( (ISink<?>)sub.getTarget(), graphModel, node, false );

@@ -2,10 +2,6 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -20,7 +16,6 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.QueryResultHandlerJxtaImpl;
@@ -38,7 +33,6 @@ import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 
@@ -52,6 +46,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 			HashMap<String, ExtendedPeerAdvertisement> operatorPeers) {
 		this.operatorPeers = operatorPeers;
 	}
+	
+	//TODO: Daten in Config oder Umgebung auslagern.
 
 	private static final String name = "adminPeer";
 
@@ -124,6 +120,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 	private static AdministrationPeerJxtaImpl instance = null;
 
 	public void activate() {
+		
+		// TODO: Read from Config-File
+		
+		
 		startPeer();
 		//TODO Splitting initialisieren
 //		getSplitting().initializeService();

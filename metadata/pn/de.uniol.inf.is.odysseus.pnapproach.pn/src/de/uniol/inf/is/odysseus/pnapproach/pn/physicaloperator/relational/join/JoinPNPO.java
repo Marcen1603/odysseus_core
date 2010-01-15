@@ -435,10 +435,10 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 	
 	@Override
 	protected boolean isDone() { 
-		if (getSubscribedTo(0).isDone()) {
-			return getSubscribedTo(1).isDone() || areas[0].isEmpty();
+		if (getSubscribedToSource(0).isDone()) {
+			return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 		} else {
-			return getSubscribedTo(0).isDone() && areas[1].isEmpty();
+			return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 		}
 	}
 

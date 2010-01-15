@@ -191,11 +191,11 @@ abstract public class AbstractExecListSchedulingStrategy extends
 			}
 
 	static public void findLeafs(ISink<?> sink, List<ISource<?>> leafs) {
-		if (sink.getSubscribedTo() == null
-				|| sink.getSubscribedTo().size() == 0) {
+		if (sink.getSubscribedToSource() == null
+				|| sink.getSubscribedToSource().size() == 0) {
 			leafs.add((ISource<?>) sink);
 		} else {
-			for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedTo()) {
+			for (PhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
 				if (sub.getTarget() instanceof ISink<?>) {
 					findLeafs((ISink<?>) sub.getTarget(), leafs);
 				} else {

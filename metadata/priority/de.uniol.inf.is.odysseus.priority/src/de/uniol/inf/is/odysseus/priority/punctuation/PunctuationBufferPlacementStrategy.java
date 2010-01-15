@@ -31,7 +31,7 @@ public class PunctuationBufferPlacementStrategy  extends
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {
 		return subscriptions.size() > 1
-				|| childSink.getSubscribedTo().size() > 1;
+				|| childSink.getSubscribedToSource().size() > 1;
 	}
 
 	@SuppressWarnings("unchecked")

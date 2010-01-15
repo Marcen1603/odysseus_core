@@ -18,7 +18,7 @@ public class MuhBuilder implements IOperatorBuilder {
 		MuhOperator op = new MuhOperator();
 		int i = 0;
 		for(ILogicalOperator curOp : inputOps) {
-			op.subscribeTo(curOp, i++,0, new SDFAttributeList());	
+			op.subscribeToSource(curOp, i++,0, new SDFAttributeList());	
 		}
 		return op;
 	}

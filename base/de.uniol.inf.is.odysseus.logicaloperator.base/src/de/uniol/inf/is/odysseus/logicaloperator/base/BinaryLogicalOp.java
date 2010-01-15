@@ -18,11 +18,11 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 	}
 	
 	public ILogicalOperator getLeftInput(){
-		return getSubscribedTo(LEFT).getTarget();
+		return getSubscribedToSource(LEFT).getTarget();
 	}
 	
 	public ILogicalOperator getRightInput(){
-		return getSubscribedTo(RIGHT).getTarget();
+		return getSubscribedToSource(RIGHT).getTarget();
 	}
 
 //	public void setLeftInput(ILogicalOperator source, SDFAttributeList inputSchema) {

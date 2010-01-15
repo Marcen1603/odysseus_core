@@ -32,7 +32,7 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 //	}
 
 	public ILogicalOperator getInputAO(){
-		return getSubscribedTo(PORTNUMBER)==null?null:getSubscribedTo(PORTNUMBER).getTarget();
+		return getSubscribedToSource(PORTNUMBER)==null?null:getSubscribedToSource(PORTNUMBER).getTarget();
 	}
 	
 	public Subscription<ISource<?>> getPhysSubscriptionTo() {
@@ -40,44 +40,28 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 	}
 	
 	public void subscribeTo(ILogicalOperator source, SDFAttributeList inputSchema){
-		subscribeTo(source, 0, 0, inputSchema);
+		subscribeToSource(source, 0, 0, inputSchema);
 	}
-	
+		
 	@Override
-	public void subscribeTo(ILogicalOperator source, int sinkPort,
-			int sourcePort) {
-		if (sinkPort != 0) {
-			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkPort);
-		}
-		super.subscribeTo(source, sinkPort, sourcePort);
-	}
-	
-	@Override
-	public void subscribeTo(ILogicalOperator source, int sinkPort,
+	public void subscribeToSource(ILogicalOperator source, int sinkPort,
 			int sourcePort, SDFAttributeList inputSchema) {
 		if (sinkPort != 0) {
 			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkPort);
 		}
-		super.subscribeTo(source, sinkPort, sourcePort, inputSchema);
+		super.subscribeToSource(source, sinkPort, sourcePort, inputSchema);
 	}
 	
 	
 	@Override
-	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort) {
+	public void subscribeSink(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
 		if (sourcePort != 0) {
 			throw new IllegalArgumentException("illegal source port for subscription in unary operatore: " + sinkPort);
 		}
-		super.subscribe(sink, sinkPort, sourcePort);
+		super.subscribeSink(sink, sinkPort, sourcePort, schema);
 	}
 	
-	@Override
-	public void subscribe(ILogicalOperator sink, int sinkPort, int sourcePort,
-			SDFAttributeList inputSchema) {
-		if (sourcePort != 0) {
-			throw new IllegalArgumentException("illegal source port for subscription in unary operatore: " + sinkPort);
-		}
-		super.subscribe(sink, sinkPort, sourcePort, inputSchema);
-	}
+
 	
 	public LogicalSubscription getSubscription() {
 		return getSubscriptions().iterator().next();

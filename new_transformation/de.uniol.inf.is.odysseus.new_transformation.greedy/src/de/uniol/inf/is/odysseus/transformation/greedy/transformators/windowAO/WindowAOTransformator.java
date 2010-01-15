@@ -60,7 +60,8 @@ public class WindowAOTransformator implements IPOTransformator<WindowAO> {
 		if (windowAO.getWindowOn() == null) {
 			IMetadataUpdater mFac = new SystemTimeIntervalFactory<ITimeInterval, RelationalTuple<ITimeInterval>>();
 			MetadataUpdatePO mPO = new MetadataUpdatePO(mFac);
-			mPO.subscribe(windowPO, 0, 0);
+			mPO.setOutputSchema(windowAO.getOutputSchema());
+			mPO.subscribeSink(windowPO, 0, 0, mPO.getOutputSchema());
 			return new TransformedPO(windowPO, mPO);
 		} else {
 			if (config.getDataType() == "relational") {
@@ -69,7 +70,8 @@ public class WindowAOTransformator implements IPOTransformator<WindowAO> {
 				IMetadataUpdater mFac = new RelationalTimestampAttributeTimeIntervalMFactory(attrPos);
 
 				MetadataUpdatePO mPO = new MetadataUpdatePO(mFac);
-				mPO.subscribe(windowPO, 0, 0);
+				mPO.setOutputSchema(windowAO.getOutputSchema());
+				mPO.subscribeSink(windowPO, 0, 0, mPO.getOutputSchema());
 				return new TransformedPO(windowPO, mPO);
 			}
 		}

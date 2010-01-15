@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -168,30 +169,30 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void subscribeTo(ISource<? extends R> source, int sinkPort, int sourcePort) {
+	public void subscribeToSource(ISource<? extends R> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
 		// TODO vernuenftig synchronosieren
-		this.delegateSink.subscribeTo(source, sinkPort, sourcePort);
+		this.delegateSink.subscribeToSource(source, sinkPort, sourcePort, schema);
 	}
 	
 	@Override
-	public void unsubscribeTo(
+	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends R>> subscription) {
-		this.delegateSink.unsubscribeTo(subscription);
+		this.delegateSink.unsubscribeFromSource(subscription);
 		
 	}
 
-	public PhysicalSubscription<ISource<? extends R>> getSubscribedTo(int port) {
-		return this.delegateSink.getSubscribedTo(port);
+	public PhysicalSubscription<ISource<? extends R>> getSubscribedToSource(int port) {
+		return this.delegateSink.getSubscribedToSource(port);
 	}
 
 	@Override
-	final public List<PhysicalSubscription<ISource<? extends R>>> getSubscribedTo() {
-		return delegateSink.getSubscribedTo();
+	final public List<PhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
+		return delegateSink.getSubscribedToSource();
 	}
 
 	@Override
-	public void unsubscribeSubscriptionTo(ISource<? extends R> source, int sinkPort, int sourcePort) {
-		this.delegateSink.unsubscribeSubscriptionTo(source, sinkPort, sourcePort);
+	public void unsubscribeFromSource(ISource<? extends R> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
+		this.delegateSink.unsubscribeFromSource(source, sinkPort, sourcePort, schema);
 	}
 
 	@Override

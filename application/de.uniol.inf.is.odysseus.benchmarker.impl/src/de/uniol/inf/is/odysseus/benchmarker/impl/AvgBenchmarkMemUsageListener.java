@@ -102,7 +102,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 	
 	@SuppressWarnings("unchecked")
 	private void addMemListeners(ISink<?> op) {
-		for(PhysicalSubscription<?> sub : op.getSubscribedTo()) {
+		for(PhysicalSubscription<?> sub : op.getSubscribedToSource()) {
 			
 			if(op instanceof JoinTIPO && hash.get(op.hashCode()) == null) {
 				System.out.println("Monitoring temp memory usage for: " + op.getName() + " with hash " + op.hashCode());

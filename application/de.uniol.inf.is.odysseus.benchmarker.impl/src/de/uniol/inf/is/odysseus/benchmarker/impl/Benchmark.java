@@ -109,7 +109,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				.createBenchmarkResult();
 		BenchmarkSink sink = new BenchmarkSink<ILatency>(result, maxResults);
 		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
-		latency.subscribe(sink, 0, 0);
+		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
 
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(
 				dataType, getMetadataTypes());

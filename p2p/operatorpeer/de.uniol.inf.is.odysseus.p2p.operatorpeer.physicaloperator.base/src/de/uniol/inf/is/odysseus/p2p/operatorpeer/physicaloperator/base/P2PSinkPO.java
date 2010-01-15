@@ -67,7 +67,7 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			while(getSubscribedTo().get(0)==null){
+			while(getSubscribedToSource().get(0)==null){
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {

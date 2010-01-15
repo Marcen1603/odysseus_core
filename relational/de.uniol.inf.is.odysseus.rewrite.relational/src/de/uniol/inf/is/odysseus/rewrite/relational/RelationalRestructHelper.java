@@ -80,7 +80,7 @@ public class RelationalRestructHelper {
 
 	public static boolean subsetPredicate(
 			IPredicate<RelationalTuple<?>> predicate, ILogicalOperator op) {
-		for (LogicalSubscription l : op.getSubscribedTo()) {
+		for (LogicalSubscription l : op.getSubscribedToSource()) {
 			if (!subsetPredicate(predicate, l.getTarget().getOutputSchema())) {
 				return false;
 			}
@@ -148,14 +148,14 @@ public class RelationalRestructHelper {
 		SDFAttributeList inputSchema = son.getInputSchema();
 		SDFAttributeList renameOutputSchema = son.getOutputSchema();
 		SDFAttributeList oldOutputSchema = father.getOutputSchema();
-		LogicalSubscription toDown = son.getSubscribedTo(0);
+		LogicalSubscription toDown = son.getSubscribedToSource(0);
 		LogicalSubscription toUp = father.getSubscription();
 
-		son.unsubscribeTo(toDown);
-		father.unsubscribeSubscriptionTo(son, 0, 0);
-		father.unsubscribe(toUp);
+		son.unsubscribeFromSource(toDown);
+		father.unsubscribeFromSource(son, 0, 0, son.getOutputSchema());
+		father.unsubscribeSink(toUp);
 
-		father.subscribeTo(toDown.getTarget(), toDown.getInputSchema());
+		father.subscribeTo(toDown.getTarget(), toDown.getSchema());
 
 		// change attribute names for projection
 		SDFAttributeList newOutputSchema = new SDFAttributeList();
@@ -165,7 +165,7 @@ public class RelationalRestructHelper {
 		}
 		father.setOutputSchema(newOutputSchema);
 
-		father.subscribe(son, 0, 0, father.getOutputSchema());
+		father.subscribeSink(son, 0, 0, father.getOutputSchema());
 
 		// remove attributes from rename operator that get projected away
 		SDFAttributeList newRenameSchema = new SDFAttributeList();
@@ -180,7 +180,7 @@ public class RelationalRestructHelper {
 		}
 		son.setOutputSchema(newRenameSchema);
 
-		son.subscribe(toUp.getTarget(), toUp.getSinkPort(), 0, son
+		son.subscribeSink(toUp.getTarget(), toUp.getSinkPort(), 0, son
 				.getOutputSchema());
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList(2);

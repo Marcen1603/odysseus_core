@@ -47,7 +47,7 @@ public class DroolsTransformation implements ITransformation {
 			session.insert(op);
 			inserted.add(op);
 
-			for (LogicalSubscription sub : op.getSubscribedTo()) {
+			for (LogicalSubscription sub : op.getSubscribedToSource()) {
 				addLogicalOperatorToSession(session, sub.getTarget(), inserted);
 			}
 			for (LogicalSubscription sub : op.getSubscriptions()) {
@@ -74,7 +74,7 @@ public class DroolsTransformation implements ITransformation {
 		StatefulSession session = rulebase.newStatefulSession();
 		session.insert(config);
 		TopAO top = new TopAO();
-		op.subscribe(top, 0, 0, op.getOutputSchema());
+		op.subscribeSink(top, 0, 0, op.getOutputSchema());
 
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
@@ -114,7 +114,7 @@ public class DroolsTransformation implements ITransformation {
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
 			LoggerHelper.getInstance(LOGGER_NAME).info("transformation result: \n" + planToString(physicalPO, ""));
 		}
-		op.unsubscribe(top, 0, 0);
+		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 		return physicalPO;
 	}
 
@@ -126,7 +126,7 @@ public class DroolsTransformation implements ITransformation {
 		builder.append('\n');
 		if (physicalPO.isSink()) {
 			for (PhysicalSubscription sub : ((ISink<?>) physicalPO)
-					.getSubscribedTo()) {
+					.getSubscribedToSource()) {
 				builder.append(planToString((IPhysicalOperator) sub.getTarget(), "  " + indent));
 			}
 		}
