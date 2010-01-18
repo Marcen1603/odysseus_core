@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.eca.test;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.console.ExecutorConsole;
 
@@ -26,6 +29,8 @@ public class ECAParserTest implements CommandProvider {
 	private IActuatorFactory actuatorFactory;
 	private ICompiler compiler;
 	
+	//set to false if u want to prevent removal of testActuators!
+	private static boolean autoRemoveActuator = true;
 	
 	public void bindActuatorFactory (IActuatorFactory factory){
 		this.actuatorFactory = factory;
@@ -54,12 +59,21 @@ public class ECAParserTest implements CommandProvider {
 			//create nexmark sources
 			executerConsole._nmsn(ci);
 			
+			//remove existing actuator
+			try {
+				this.actuatorFactory.removeActuator("ecatest1", "ActuatorAdapterManager");
+			}catch(Exception e){}
+			
 			//create actuator
 			this.actuatorFactory.createActuator("ecatest1", 
 					"de.uniol.inf.is.odysseus.action.services.actuator.impl.TestActuator(name)", 
 					"ActuatorAdapterManager");
 			
-			this.runTestSuite1();			
+			//1st testsuite
+			System.out.println("--Testsuite1, Query: ON(Select * from nexmark:person2)" +
+			"DO ActuatorAdapterManager.ecatest1.getName()--");
+			this.runTestSuite("ON(Select * from nexmark:person2)" +
+					"DO ActuatorAdapterManager.ecatest1.getName()", new ArrayList<IActionParameter>());			
 
 		}catch (Exception e){
 			System.err.print("Test failed: ");
@@ -68,36 +82,55 @@ public class ECAParserTest implements CommandProvider {
 		
 	}
 
-	private void runTestSuite1() throws Exception {
-		System.out.println("--Testsuite1, Query: ON(Select * from nexmark:person2)" +
-		"DO ActuatorAdapterManager.ecatest1.getName()--");
-		List<ILogicalOperator> logicalPlan = this.compiler.translateQuery(
-				"ON(Select * from nexmark:person2)" +
-				"DO ActuatorAdapterManager.ecatest1.getName()", "ECA");
+	private void runTestSuite(String query, List<IActionParameter> parameters) throws Exception {	
+		List<ILogicalOperator> logicalPlan = this.compiler.translateQuery(query , "ECA");
 		
+		//check logical operator
 		System.out.println("	*Testcase1: Check if top operator is eAO");
 		ILogicalOperator eAO = logicalPlan.get(0);
 		if (! (eAO.getClass() == EventDetectionAO.class)) {
-			throw new Exception("EventDetecionAO is not top operator");
+			throw new Exception("EventDetectionAO is not top operator");
 		}
-		System.out.println("		++success, top operatortype is <"+EventDetectionAO.class+">++");
+		System.out.println("		++success, top operatortype is <"+EventDetectionAO.class+">");
 		
+		if (eAO.getSubscriptions().size() != 0 || eAO.getSubscribedToSource().size() != 1){
+			throw new Exception("EventDetectionAO is not subscribed correctly");
+		}
+		System.out.println("		++success, eAO has no subscriptions and is subscribed to one source");
+		
+		//check actions
 		System.out.println("	*Testcase2: Check if action bound to eAO is correct");
 		Map<Action, List<IActionParameter>> actions = ((EventDetectionAO)eAO).getActions();
 		if (actions.size()!= 1){
 			throw new Exception("Incompatible number of actions bound");
 		}
 		Action action = actions.keySet().iterator().next();
-		List<IActionParameter> parameters = actions.get(action);
-		if (parameters.size() != 0){
-			throw new Exception("Incompatible number of parameters");
+		List<IActionParameter> parametersSet = actions.get(action);
+		
+		Iterator<IActionParameter> iterator1 = parameters.iterator();
+		Iterator<IActionParameter> iterator2 = parametersSet.iterator();
+		if (parameters.size() == parametersSet.size()){
+			while (iterator1.hasNext()){
+				IActionParameter param1 = iterator1.next();
+				IActionParameter param2 = iterator2.next();
+				if (
+						param1.getType() != param2.getType() ||
+						param1.getParamClass() != param2.getParamClass() ||
+						param1.getValue() != param2.getValue()){
+					throw new Exception("One or more parameter is incompatible");
+				}
+			}
+		}else {
+			throw new Exception("Incompatible number of parameters set");
 		}
+		
 		System.out.println("		++success, number of actions & parameters is correct");
 		
 		action.executeMethod(null);
 		System.out.println("		++success, action can be executed properly");
 		
-		System.out.println(eAO);
+		//check physical operators
+		this.executor.addQuery(logicalPlan.get(0), new ParameterParserID("ECA"));
 	}
 
 	@Override
