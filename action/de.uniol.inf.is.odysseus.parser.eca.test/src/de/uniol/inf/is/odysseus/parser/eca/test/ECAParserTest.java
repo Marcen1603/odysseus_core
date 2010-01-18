@@ -9,11 +9,15 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
+import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.console.ExecutorConsole;
@@ -82,6 +86,7 @@ public class ECAParserTest implements CommandProvider {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	private void runTestSuite(String query, List<IActionParameter> parameters) throws Exception {	
 		List<ILogicalOperator> logicalPlan = this.compiler.translateQuery(query , "ECA");
 		
@@ -130,7 +135,20 @@ public class ECAParserTest implements CommandProvider {
 		System.out.println("		++success, action can be executed properly");
 		
 		//check physical operators
-		this.executor.addQuery(logicalPlan.get(0), new ParameterParserID("ECA"));
+		System.out.println("	*Testcase3: Check if physical plan is correct");
+		int queryID = this.executor.addQuery(logicalPlan.get(0), new ParameterParserID("ECA"));
+		IPlan plan = this.executor.getSealedPlan();
+		IQuery installedQuery = plan.getQuery(queryID);
+		IPhysicalOperator physicalOp = installedQuery.getSealedRoot();
+		if (! (physicalOp.getClass() == EventDetectionPO.class)){
+			throw new Exception("Physical operator root is wrong class: <"+physicalOp.getClass()+">");
+		}
+		System.out.println("		++success, physical operator root class is correct");
+		
+		if (!((EventDetectionPO)physicalOp).getActions().equals(actions)){
+			throw new Exception("Actions from physical and logical operator differ");
+		}
+		System.out.println("		++success, actions bound by physical operator are correct");
 	}
 
 	@Override
