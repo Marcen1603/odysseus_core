@@ -1,0 +1,180 @@
+/**
+* JJTree file
+*/
+
+options {
+  JDK_VERSION = "1.5";
+  IGNORE_CASE = true;
+  MULTI = true;
+  VISITOR = true;
+  DEBUG_TOKEN_MANAGER = false;
+  //  NODE_DEFAULT_VOID=true;
+  JJTREE_OUTPUT_DIRECTORY = "nodes";
+  NODE_PACKAGE = "de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes";
+  //LOOKAHEAD = 2;
+  //FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(MapleResultParser) 
+	package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes;
+
+	public class MapleResultParser{}
+
+PARSER_END(MapleResultParser)
+ 
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+/*| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+| <"/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/">*/
+}
+
+TOKEN:/* Keywords */
+{
+  < K_PIECEWISE: "PIECEWISE" >
+| < K_AND: "AND" >
+}
+
+TOKEN:{
+  <IDENTIFIER:(<LETTER>)+(<DIGIT>
+  | <LETTER>
+  | <SPECIAL_CHARS>)*>
+  | <#LETTER:["a"-"z", "A"-"Z"]>
+  | <#SPECIAL_CHARS:":"
+  | "_"
+  | ".">
+  | <CHAR_LITERAL:"'"(~["'"])*"'"("'"(~["'"])*"'")*>
+  | <QUOTED_IDENTIFIER:"\""(~["\n", "\r", "\""])*"\"">
+  | <COMPARE_OPERATOR:"="
+  | "<>"
+  | ">"
+  | "<"
+  | "<="
+  | ">=">
+  | <REGEXP: "/" ("^")?(<LETTER> | <DIGIT> | "\\" | "+" | "." | "*" | "?" | "$")+ "/" >
+}
+
+
+TOKEN:/* Numeric Constants */
+{
+  //  <NUMBER:<FLOAT>
+//  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>
+//  | <#FLOAT:<INTEGER>
+//  | <INTEGER>("."<INTEGER>)?
+//  | "."<INTEGER>>
+<FLOAT:("-")?(<INTEGER>"."<INTEGER>
+  | "."<INTEGER>)>
+  | <INTEGER:(<DIGIT>)+>
+  | <#DIGIT:["0"-"9"]>
+ | <IPADDRESS:<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?>
+}
+
+ASTMaplePiecewise MaplePiecewise():{}
+{
+  < K_PIECEWISE >"("(ConditionSolution())+")"
+  {return jjtThis;}}
+
+void ConditionSolution():{}{
+  Condition() "," Solution() ","}
+
+void Condition():{}{
+  ComplexCondition() | SimpleCondition()}
+
+void ComplexCondition():{}{
+  < K_AND > "("SimpleCondition()("," SimpleCondition())*")" }
+
+
+
+void SimpleCondition():{}{
+  Expression()CompareOperator()Expression()}
+
+void CompareOperator():{
+  Token t;
+}
+{
+  t = <COMPARE_OPERATOR> {
+    jjtThis.setOperator(t.image);
+  }
+}
+
+void Solution():{}{
+  "{[{" SimpleSolution() "}]}"}
+
+void SimpleSolution():{}
+{
+  Expression()CompareOperator()Expression()
+}
+
+void Expression():{
+  String tOp;
+}
+{
+  LOOKAHEAD(SimpleToken()MathOperator())SimpleToken()tOp = MathOperator(){
+    jjtThis.setOperator(tOp);
+  }
+  Expression()
+  | SimpleToken()
+}
+
+void SimpleToken():{}{
+  Number()
+  | String()
+  /*| LOOKAHEAD(AggregateExpression())AggregateExpression()*/
+  | LOOKAHEAD(FunctionExpression())FunctionExpression()
+  | "("Expression()")"
+  | ("-")? Identifier()
+//TODO DISTINCE Expression
+}
+
+void FunctionExpression():{}{
+  Identifier()#FunctionName "("Expression()")"
+}
+
+String MathOperator()#void :{}{
+  "*"{
+    return "*";
+  }
+  | "+"{
+    return "+";
+  }
+  | "-"{
+    return "-";
+  }
+  | "/"{
+    return "/";
+  }
+  | "^"{
+    return "^";
+  }
+}
+
+void Number():{
+  Token t;
+}
+{
+  (t = <FLOAT>
+  | t = <INTEGER>){
+    jjtThis.setValue(t.image);
+  }
+}
+
+void String():{
+  Token t;
+}
+{
+  t = <CHAR_LITERAL>{
+    jjtThis.setValue(t.image);
+  }
+}
+
+void Identifier():{
+  Token t;
+}
+{
+  t = <IDENTIFIER>{
+    jjtThis.setName(t.image);
+  }
+}
