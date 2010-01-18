@@ -74,11 +74,11 @@ TOKEN:/* Numeric Constants */
 
 ASTMaplePiecewise MaplePiecewise():{}
 {
-  < K_PIECEWISE >"("(ConditionSolution())+")"
+  < K_PIECEWISE >"("ConditionSolution() ("," ConditionSolution())*")"
   {return jjtThis;}}
 
 void ConditionSolution():{}{
-  Condition() "," Solution() ","}
+  Condition() "," Solution()}
 
 void Condition():{}{
   ComplexCondition() | SimpleCondition()}
@@ -101,11 +101,25 @@ void CompareOperator():{
 }
 
 void Solution():{}{
-  "{[{" SimpleSolution() "}]}"}
+  LOOKAHEAD(SimpleSolution()) SimpleSolution() | LOOKAHEAD(FullSolution()) FullSolution() | EmptySolution()}
 
-void SimpleSolution():{}
+void SimpleSolution():{}{
+	"{[{" SimpleSolutionContent() "}]}"
+}
+
+void SimpleSolutionContent():{}
 {
+// A solution can be a comparison, an identifiere, if
+// it is valid for all x or nothing if it is valid for no x
   Expression()CompareOperator()Expression()
+}
+
+void FullSolution():{}{
+	"{[{" Identifier() "}]}"
+}
+
+void EmptySolution():{}{
+	"{}"
 }
 
 void Expression():{

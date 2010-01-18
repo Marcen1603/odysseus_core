@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser;
 
 import java.io.StringReader;
-import java.util.ArrayList;
+import java.util.Map;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTMaplePiecewise;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.MapleResultParser;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ParseException;
+import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.visitor.CreateExpressionMapVisitor;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
 public class MapleResultParserFacade {
 
@@ -15,7 +18,7 @@ public class MapleResultParserFacade {
 	public MapleResultParserFacade(){
 	}
 	
-	public void parse(String mapleResult){
+	public Map<IPredicate, ISolution> parse(String mapleResult, IAttributeResolver attributeResolver){
 		// TODO Auto-generated method stub
 		
 		if(this.parser == null){
@@ -32,11 +35,15 @@ public class MapleResultParserFacade {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return (Map<IPredicate, ISolution>)new CreateExpressionMapVisitor().visit(tree, attributeResolver);
 	}
 	
 	public static void main(String[] args){
 		MapleResultParserFacade parser = new MapleResultParserFacade();
 		
 		parser.parse("piecewise(0 < -b+a,{[{x < c/(-b+a)}]},-b+a < 0,{[{c/(-b+a) < x}]},And(0 < c,a = b),{[{x}]},And(c <= 0,a = b),{})");
+		parser.parse("piecewise(0 < a,{[{x < 30/a}]},a < 0,{[{30/a < x}]},a = 0,{[{x}]})");
+
 	}
 }
