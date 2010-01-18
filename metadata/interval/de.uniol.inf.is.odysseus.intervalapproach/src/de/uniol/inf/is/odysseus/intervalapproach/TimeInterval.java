@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
@@ -109,18 +111,18 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return left.getEnd().beforeOrEquals(right.getStart());
 	}
 
-	/**
-	 * Berhren sich die beiden Intervall an einer der beiden Grenzen
-	 * 
-	 * @param left
-	 *            Linkes Intervall
-	 * @param right
-	 *            Rechtes Intervall
-	 * @return true, wenn das Ende von left und das Start von right oder wenn
-	 *         der Start von left und das Ende von right zusammenfallen
-	 * 
-	 *         ACHTUNG! Rechtsoffenes Intervall --> evtl. Klassennamen anpassen?
-	 */
+//	/**
+//	 * Berhren sich die beiden Intervall an einer der beiden Grenzen
+//	 * 
+//	 * @param left
+//	 *            Linkes Intervall
+//	 * @param right
+//	 *            Rechtes Intervall
+//	 * @return true, wenn das Ende von left und das Start von right oder wenn
+//	 *         der Start von left und das Ende von right zusammenfallen
+//	 * 
+//	 *         ACHTUNG! Rechtsoffenes Intervall --> evtl. Klassennamen anpassen?
+//	 */
 	// public static boolean meets(TimeInterval left, TimeInterval right) {
 	// return left.getEnd().equals(right.getStart()) ||
 	// left.getStart().equals(right.getEnd());
