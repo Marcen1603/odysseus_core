@@ -28,6 +28,7 @@ public class TestActuator extends ActuatorAdapter {
 	
 	public void doSomething (byte a, double b, double c, int d){
 		this.result = a+b+c+d;
+		System.out.println(this.result);
 	}
 	
 	public double giveSomething () {

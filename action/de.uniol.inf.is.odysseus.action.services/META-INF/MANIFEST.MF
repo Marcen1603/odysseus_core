@@ -15,4 +15,4 @@ Export-Package: de.uniol.inf.is.odysseus.action.services.actuator,
  de.uniol.inf.is.odysseus.action.services.actuator.impl,
  de.uniol.inf.is.odysseus.action.services.dataExtraction,
  de.uniol.inf.is.odysseus.action.services.exception
-Service-Component: OSGI-INF/actuatoradapter.xml, OSGI-INF/workflowAdapter.xml, OSGI-INF/managerFactory.xml, OSGI-INF/dataExtractor.xml
+Service-Component: OSGI-INF/actuatoradapter.xml, OSGI-INF/workflowAdapter.xml, OSGI-INF/managerFactory.xml, OSGI-INF/dataExtractor.xml, OSGI-INF/relationalExtractor.xml
