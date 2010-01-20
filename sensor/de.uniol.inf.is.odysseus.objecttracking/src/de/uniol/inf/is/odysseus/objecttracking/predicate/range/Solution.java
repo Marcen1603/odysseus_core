@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * This class is the default implemention of the ISolution interface
@@ -10,16 +11,16 @@ import de.uniol.inf.is.odysseus.base.IClone;
  */
 public class Solution implements ISolution, IClone{
 
-	private String variable;
+	private SDFExpression variable;
 	private String compareOperator;
-	private String solution;
+	private SDFExpression solution;
 	
 	// we need both variables, since it is possible
 	// that the solution is neither full nor empty
 	private boolean isFull;
 	private boolean isEmpty;
 	
-	public Solution(String variable, String operator, String solution){
+	public Solution(SDFExpression variable, String operator, SDFExpression solution){
 		this.variable = variable;
 		this.compareOperator = operator;
 		this.solution = solution;
@@ -40,10 +41,10 @@ public class Solution implements ISolution, IClone{
 		this.solution = solution.solution;
 	}
 	
-	public String getVariable() {
+	public SDFExpression getVariable() {
 		return variable;
 	}
-	public void setVariable(String variable) {
+	public void setVariable(SDFExpression variable) {
 		this.variable = variable;
 	}
 	public String getCompareOperator() {
@@ -52,10 +53,10 @@ public class Solution implements ISolution, IClone{
 	public void setCompareOperator(String compareOperator) {
 		this.compareOperator = compareOperator;
 	}
-	public String getSolution() {
+	public SDFExpression getSolution() {
 		return solution;
 	}
-	public void setSolution(String solution) {
+	public void setSolution(SDFExpression solution) {
 		this.solution = solution;
 	}
 	

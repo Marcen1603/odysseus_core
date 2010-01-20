@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
@@ -12,7 +13,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 /**
  * This is a metadata item, that implements TimeInterval, IProbability and IPredictionFunction.
  * It works only for relational tuples.
+ * @deprecated Do not use this class any longer, since not the whole prediction function has to
+ * be carried by a tuple but only a key, that can be used to identify the correct prediction
+ * functions in the operators.
  */
+@Deprecated
 public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContainer<M>, M extends IProbability> extends TimeInterval implements IProbabilityPredictionFunction<T, M>, IProbability, ILatency{
 
 	/**
@@ -134,12 +139,12 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	}
 
 	@Override
-	public SDFExpression[] getPredictionFunction() {
+	public SDFExpression[] getExpressions() {
 		// TODO Auto-generated method stub
 		if(this.predFct == null){
 			return null;
 		}
-		return this.predFct.getPredictionFunction();
+		return this.predFct.getExpressions();
 	}
 	
 	@Override
@@ -158,8 +163,8 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	}
 
 	@Override
-	public void setPredictionFunction(SDFExpression[] expressions) {
-		this.predFct.setPredictionFunction(expressions);
+	public void setExpressions(SDFExpression[] expressions) {
+		this.predFct.setExpressions(expressions);
 		
 	}
 

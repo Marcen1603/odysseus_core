@@ -66,10 +66,10 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 	@Override
 	public Object visit(ASTConditionSolution node, Object data) {
 		// first get the condition
-		IPredicate condition = (IPredicate)node.jjtGetChild(0).jjtAccept(this, null);
+		IPredicate condition = (IPredicate)node.jjtGetChild(0).jjtAccept(this, (IAttributeResolver)data);
 		
 		// second get the solutions
-		ISolution solution = (ISolution)node.jjtGetChild(1).jjtAccept(this, null);
+		ISolution solution = (ISolution)node.jjtGetChild(1).jjtAccept(this, (IAttributeResolver)data);
 		
 		ArrayList condSolCombi = new ArrayList();
 		condSolCombi.add(condition);
@@ -80,7 +80,7 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 
 	@Override
 	public Object visit(ASTCondition node, Object data) {
-		return node.jjtGetChild(0).jjtAccept(this, null);
+		return node.jjtGetChild(0).jjtAccept(this, (IAttributeResolver)data);
 	}
 
 	@Override
@@ -135,13 +135,13 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 	@Override
 	public Object visit(ASTSolution node, Object data) {
 		// TODO Auto-generated method stub
-		return node.jjtGetChild(0).jjtAccept(this, null);
+		return node.jjtGetChild(0).jjtAccept(this, (IAttributeResolver)data);
 	}
 
 	@Override
 	public Object visit(ASTSimpleSolution node, Object data) {
 		// go to SimpleSolutionContent
-		return node.jjtGetChild(0).jjtAccept(this, null);
+		return node.jjtGetChild(0).jjtAccept(this, (IAttributeResolver)data);
 	}
 
 	@Override
@@ -153,11 +153,38 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 		
 		// we are just looking for t
 		if(leftExpression.trim().equals("t")){
-			Solution solution = new Solution(leftExpression.trim(), compareOperator, rightExpression);
+			Solution solution = new Solution(
+					new SDFExpression(null, leftExpression.trim(), (IAttributeResolver)data), 
+					compareOperator, 
+					new SDFExpression(null, rightExpression, (IAttributeResolver)data));
 			return solution;
 		}
+		
+		// the variable t is on the right side of
+		// the comparison. However, we need a standardized
+		// form, in which it has to be on the left side.
+		// so, what we have to do is to change the compare operator
 		else{
-			Solution solution = new Solution(rightExpression.trim(), compareOperator, leftExpression);
+			if(compareOperator.equals("<")){
+				compareOperator = ">";
+			}
+			else if(compareOperator.equals("<=")){
+				compareOperator = ">=";
+			}
+			else if(compareOperator.equals(">")){
+				compareOperator = "<";
+			}
+			else if(compareOperator.equals(">=")){
+				compareOperator = "<=";
+			}
+			else{
+				throw new IllegalArgumentException("Compare operator " + compareOperator + " not supported.");
+			}
+			
+			Solution solution = new Solution(
+					new SDFExpression(null, rightExpression.trim(), (IAttributeResolver)data), 
+					compareOperator, 
+					new SDFExpression(null, leftExpression, (IAttributeResolver)data));
 			return solution;
 		}
 	}
@@ -171,7 +198,10 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 	@Override
 	public Object visit(ASTFullSolution node, Object data) {
 		// the first child is the identifier
-		return new Solution(node.jjtGetChild(0).toString(), null, null);
+		return new Solution(
+				new SDFExpression(null, node.jjtGetChild(0).toString(), (IAttributeResolver)data), 
+				null, 
+				null);
 	}
 
 	@Override

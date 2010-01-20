@@ -25,9 +25,13 @@ public class PredictionMetadataMergeFunction<M extends IPredictionFunction<? ext
 	public PredictionMetadataMergeFunction(){
 	}
 
+	/**
+	 * This method returns a prediction function that contains
+	 * both the left and the right prediction function.
+	 */
 	@Override
 	public void mergeInto(M res, M left, M right) {		
-		res.setPredictionFunction(null);
+		res.setExpressions(null);
 	}
 
 }

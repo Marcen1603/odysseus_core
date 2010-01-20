@@ -86,7 +86,7 @@ public class RelationalProjectPredictionMVPO<T extends IProbability & IProbabili
 	 */
 	private T updatePrdFct(T mData){
 		int[][] variables = mData.getVariables();
-		SDFExpression[] expressions = mData.getPredictionFunction();
+		SDFExpression[] expressions = mData.getExpressions();
 		
 		int[][] newVariables = new int[this.restrictList.length][];
 		SDFExpression[] newExpressions = new SDFExpression[this.restrictList.length];
@@ -109,7 +109,7 @@ public class RelationalProjectPredictionMVPO<T extends IProbability & IProbabili
 					}
 				}
 				
-				mData.setPredictionFunction(null);
+				mData.setExpressions(null);
 				mData.setTimeInterval(null);
 				return mData;
 			}
@@ -118,7 +118,7 @@ public class RelationalProjectPredictionMVPO<T extends IProbability & IProbabili
 		// if all needed prediction functions only use variables
 		// that are availabe after the projection
 		// then these prediction functions can be used further
-		mData.setPredictionFunction(newExpressions);
+		mData.setExpressions(newExpressions);
 		mData.initVariables();
 		return mData;
 	}

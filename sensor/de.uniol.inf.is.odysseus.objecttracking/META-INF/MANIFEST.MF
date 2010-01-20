@@ -4,7 +4,9 @@ Bundle-Name: de.uniol.inf.is.odysseus.objecttracking
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.objecttracking
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.objecttracking.Activator
-Import-Package: com.mathworks.toolbox.javabuilder,
+Import-Package: com.maplesoft.externalcall,
+ com.maplesoft.openmaple,
+ com.mathworks.toolbox.javabuilder,
  de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.interval_latency,

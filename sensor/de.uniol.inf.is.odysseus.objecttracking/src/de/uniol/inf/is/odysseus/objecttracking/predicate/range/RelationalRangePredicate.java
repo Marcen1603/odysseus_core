@@ -1,11 +1,17 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -22,21 +28,22 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	private SDFExpression[] expressions;
 	private String[] operators;
 
+	private Map<IPredicate, ISolution> solutions;
+	
 	/**
-	 * Stores, which attributes to use for the variable bindings
-	 * [0][]: attributes for the first expression
-	 * [1][]: attributes for the second expression
-	 * 
-	 * and so on.
+	 * Stores the attribute positions for each solution,
+	 * so that these do not have to be determined during runtime
+	 * of the query.
 	 */
-	private int[][] attributePositions;
+	private Map<IPredicate, int[]> attributePositions;
 
 	/** 
-	 * fromRightChannel[u][i] stores if the getAttribute(attributePositions[u][i])
-	 * should be called on the left or on the right input tuple for expression no u
+	 * fromRightChannel.get(p)[i] stores if the getAttribute(attributePositions.get(p)[i])
+	 * should be called on the left or on the right input tuple for the solution corresponding to
+	 * predicate p
 	 *
 	 */
-	private boolean[][] fromRightChannel;
+	private Map<IPredicate, boolean[]> fromRightChannel;
 
 	/**
 	 * A relational range predicate has to evaluate expressions like
@@ -54,19 +61,22 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	 * 
 	 * @param expression
 	 */
-	public RelationalRangePredicate(SDFExpression[] expressions, String[] operators) {
-		this.expressions = expressions;
-		this.operators = operators;
+	public RelationalRangePredicate(Map<IPredicate, ISolution> solutions) {
+		this.solutions = solutions;
 	}
 
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
-		this.attributePositions = new int[this.expressions.length][];
-		this.fromRightChannel = new boolean[this.expressions.length][];
-		for(int exprNo = 0; exprNo <this.expressions.length; exprNo++){
-			List<SDFAttribute> neededAttributes = this.expressions[exprNo].getAllAttributes();
+		this.attributePositions = new HashMap<IPredicate, int[]>();
+		this.fromRightChannel = new HashMap<IPredicate, boolean[]>();
+		
+		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+			IPredicate predicate = entry.getKey();
+			ISolution solution = entry.getValue();
+			
+			List<SDFAttribute> neededAttributes = solution.getSolution().getAllAttributes();
 			int[] curAttributePositions = new int[neededAttributes.size()];
 			boolean[] curFromRightChannel = new boolean[neededAttributes.size()];
-	
+			
 			int i = 0;
 			for (SDFAttribute curAttribute : neededAttributes) {
 				SDFAttribute cqlAttr = (SDFAttribute) curAttribute;
@@ -82,8 +92,8 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 				curAttributePositions[i++] = pos;
 			}
 			
-			this.attributePositions[exprNo] = curAttributePositions;
-			this.fromRightChannel[exprNo] = curFromRightChannel;
+			this.attributePositions.put(predicate, curAttributePositions);
+			this.fromRightChannel.put(predicate, curFromRightChannel);
 		}
 	}
 
@@ -98,33 +108,123 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	}
 
 	public RelationalRangePredicate(RelationalRangePredicate predicate) {
-		this.attributePositions = predicate.attributePositions.clone();
-		this.fromRightChannel = predicate.fromRightChannel.clone();
-		this.expressions = predicate.expressions.clone();
+		throw new UnsupportedOperationException();
+//		this.attributePositions = predicate.attributePositions.clone();
+//		this.fromRightChannel = predicate.fromRightChannel.clone();
+//		this.expressions = predicate.expressions.clone();
 	}
 
 	public List<ITimeInterval> evaluate(RelationalTuple<?> input) {
-		for(int exprNo = 0; exprNo<this.expressions.length; exprNo++){
-			Object[] values = new Object[this.attributePositions[exprNo].length];
-			for (int i = 0; i < values.length; ++i) {
-				values[i] = input.getAttribute(this.attributePositions[exprNo][i]);
+		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
+		
+		// first check, which solution maps for this tuple
+		// so test every predicate in this.solutions for this tuple
+		// the first predicate that is true will be taken.
+		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+			if(entry.getKey().evaluate(input)){
+				int[] curAttributePositions = this.attributePositions.get(entry.getKey());
+				Object[] values = new Object[curAttributePositions.length];
+				for(int i = 0; i<values.length; ++i){
+					values[i] = input.getAttribute(curAttributePositions[i]);
+				}
+				
+				entry.getValue().getSolution().bindVariables(values);
+				double result = (Double)entry.getValue().getSolution().getValue();
+				
+				// TODO at the moment we only have one solution for each predicate
+				// because of the use of only linear prediction functions.
+				String compareOperator = entry.getValue().getCompareOperator();
+				ITimeInterval timeInterval = null;
+				if(compareOperator.equals("<")){
+					// since the dsm only uses discrete time, we have to round
+					// the result
+					long discretePointInTime = (long)Math.floor(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime, 0));
+				}
+				else if(compareOperator.equals("<=")){
+					long discretePointInTime = (long)Math.floor(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1, 0));
+				}
+				else if(compareOperator.equals(">=")){
+					long discretePointInTime = (long)Math.ceil(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(new PointInTime(discretePointInTime, 0), PointInTime.getZeroTime());
+				}
+				else if(compareOperator.equals(">")){
+					long discretePointInTime = (long)Math.ceil(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1, 0), PointInTime.getZeroTime());
+				}
+				
+				intervals.add(timeInterval);
+				break;
 			}
-			this.expressions[exprNo].bindVariables(values);
-			double result = (Double)this.expressions[exprNo].getValue();
-			
-			
 		}
-		return (Boolean) this.expression.getValue();
+		
+		return intervals;
 	}
 
 	public List<ITimeInterval> evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
-		Object[] values = new Object[this.attributePositions.length];
-		for (int i = 0; i < values.length; ++i) {
-			RelationalTuple<?> r = fromRightChannel[i] ? right : left;
-			values[i] = r.getAttribute(this.attributePositions[i]);
+		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
+		
+		// first check, which solution maps for this tuple
+		// so test every predicate in this.solutions for this tuple
+		// the first predicate that is true will be taken.
+		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+			if(entry.getKey().evaluate(left, right)){
+				int[] curAttributePositions = this.attributePositions.get(entry.getKey());
+				Object[] values = new Object[curAttributePositions.length];
+				for(int i = 0; i<values.length; ++i){
+					RelationalTuple<?> r = this.fromRightChannel.get(entry.getKey())[i] ? right : left;
+					values[i] = r.getAttribute(curAttributePositions[i]);
+				}
+				
+				entry.getValue().getSolution().bindVariables(values);
+				double result = (Double)entry.getValue().getSolution().getValue();
+				
+				// TODO at the moment we only have one solution for each predicate
+				// because of the use of only linear prediction functions.
+				String compareOperator = entry.getValue().getCompareOperator();
+				ITimeInterval timeInterval = null;
+				if(compareOperator.equals("<")){
+					// since the dsm only uses discrete time, we have to round
+					// the result
+					long discretePointInTime = (long)Math.floor(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime, 0));
+				}
+				else if(compareOperator.equals("<=")){
+					long discretePointInTime = (long)Math.floor(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1, 0));
+				}
+				else if(compareOperator.equals(">=")){
+					long discretePointInTime = (long)Math.ceil(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(new PointInTime(discretePointInTime, 0), PointInTime.getZeroTime());
+				}
+				else if(compareOperator.equals(">")){
+					long discretePointInTime = (long)Math.ceil(result);
+					
+					// -infinity has the meaning of zero time in our context
+					timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1, 0), PointInTime.getZeroTime());
+				}
+				
+				intervals.add(timeInterval);
+				break;
+			}
 		}
-		this.expression.bindVariables(values);
-		return (Boolean) this.expression.getValue();
+		
+		return intervals;
 	}
 
 	@Override
@@ -134,15 +234,26 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 
 	@Override
 	public String toString() {
-		return this.expression.toString();
+		String res = "";
+		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+			res += "if " + entry.getKey().toString() + 
+					" then " + entry.getValue().getVariable().toString() + " " +
+					entry.getValue().getCompareOperator() + " " + 
+					entry.getValue().getSolution().toString() + "\n"; 
+		}
+		return res;
 	}
 
-	public List<SDFAttribute> getAttributes() {
-		return this.expression.getAllAttributes();
+	public Map<IPredicate, List<SDFAttribute>> getAttributes() {
+		Map<IPredicate, List<SDFAttribute>> attributes = new HashMap<IPredicate, List<SDFAttribute>>();
+		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+			attributes.put(entry.getKey(), entry.getValue().getSolution().getAllAttributes());
+		}
+		return attributes;
 	}
 	
 	public boolean isSetOperator(String symbol) {
-		return expression.isSetOperator(symbol);
+		throw new UnsupportedOperationException();
 	}
 
 	

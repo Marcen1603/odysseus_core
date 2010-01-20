@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -25,13 +26,13 @@ public interface IPredictionFunction<T extends MetaAttributeContainer<M>, M exte
 	
 	public T predictAll(SDFAttributeList schema, T object, PointInTime t);
 	
-	public void setPredictionFunction(SDFExpression[] expressions);
+	public void setExpressions(SDFExpression[] expressions);
 	
 	public void setVariables(int[][] variables);
 	
 	public void setTimeInterval(ITimeInterval timeInterval);
 	
-	public SDFExpression[] getPredictionFunction();
+	public SDFExpression[] getExpressions();
 	
 	public int[][] getVariables();
 	

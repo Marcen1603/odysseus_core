@@ -39,11 +39,11 @@ public class MapleResultParserFacade {
 		return (Map<IPredicate, ISolution>)new CreateExpressionMapVisitor().visit(tree, attributeResolver);
 	}
 	
-	public static void main(String[] args){
-		MapleResultParserFacade parser = new MapleResultParserFacade();
-		
-		parser.parse("piecewise(0 < -b+a,{[{x < c/(-b+a)}]},-b+a < 0,{[{c/(-b+a) < x}]},And(0 < c,a = b),{[{x}]},And(c <= 0,a = b),{})");
-		parser.parse("piecewise(0 < a,{[{x < 30/a}]},a < 0,{[{30/a < x}]},a = 0,{[{x}]})");
-
-	}
+//	public static void main(String[] args){
+//		MapleResultParserFacade parser = new MapleResultParserFacade();
+//		
+//		parser.parse("piecewise(0 < -b+a,{[{x < c/(-b+a)}]},-b+a < 0,{[{c/(-b+a) < x}]},And(0 < c,a = b),{[{x}]},And(c <= 0,a = b),{})");
+//		parser.parse("piecewise(0 < a,{[{x < 30/a}]},a < 0,{[{30/a < x}]},a = 0,{[{x}]})");
+//
+//	}
 }

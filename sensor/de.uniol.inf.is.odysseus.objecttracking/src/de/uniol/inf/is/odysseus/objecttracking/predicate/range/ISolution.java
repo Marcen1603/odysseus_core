@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+
 /**
  * This interface represents a solution for a system of equations or
  * inequalities.
@@ -9,7 +11,7 @@ package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
  */
 public interface ISolution {
 
-	public String getVariable();
+	public SDFExpression getVariable();
 	public String getCompareOperator();
-	public String getSolution();
+	public SDFExpression getSolution();
 }

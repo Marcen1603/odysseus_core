@@ -6,6 +6,7 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class LinearProbabilityPredictionFunction<M extends IProbability>
 			extends AbstractPredictionFunction<MVRelationalTuple<M>, M>
 			implements IProbabilityPredictionFunction<MVRelationalTuple<M>, M>{
-		
+	
 	/**
 	 * This matrix contains all variables, that are used for
 	 * the different expressions. 
@@ -485,6 +486,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public void initVariables(){
 		this.variables = new int[this.expressions.length][];
 		for(int u = 0; u<expressions.length; u++){
@@ -529,7 +531,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	}
 
 	@Override
-	public void setPredictionFunction(SDFExpression[] expressions) {
+	public void setExpressions(SDFExpression[] expressions) {
 		this.expressions = expressions;
 		
 		// expressions can be null, what has
@@ -546,7 +548,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	}
 
 	@Override
-	public SDFExpression[] getPredictionFunction() {
+	public SDFExpression[] getExpressions() {
 		// TODO Auto-generated method stub
 		return this.expressions;
 	}
