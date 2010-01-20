@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
+import de.uniol.inf.is.odysseus.action.output.StaticParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
+import de.uniol.inf.is.odysseus.action.services.actuator.PrimitivTypeComparator;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
@@ -74,11 +76,25 @@ public class ECAParserTest implements CommandProvider {
 					"ActuatorAdapterManager");
 			
 			//1st testsuite
-			System.out.println("--Testsuite1, Query: ON(Select * from nexmark:person2)" +
+			System.err.println("--Testsuite1, Query: ON(Select * from nexmark:person2 RANGE 10000)" +
 			"DO ActuatorAdapterManager.ecatest1.getName()--");
-			this.runTestSuite("ON(Select * from nexmark:person2)" +
+			this.runSingleActionTestSuite("ON(Select * from nexmark:person2)" +
 					"DO ActuatorAdapterManager.ecatest1.getName()", new ArrayList<IActionParameter>());			
-
+	
+			//2nd testsuite
+			ArrayList<IActionParameter> parameters = new ArrayList<IActionParameter>();
+			parameters.add(new StaticParameter((byte)1));
+			parameters.add(new StaticParameter(2.0d));
+			parameters.add(new StaticParameter(3.0d));
+			parameters.add(new StaticParameter(4));
+			System.err.println("--Testsuite2, Query: ON(Select * from nexmark:person2 RANGE 10000)" +
+			"DO ActuatorAdapterManager.ecatest1.doSomething" +
+			"(1:byte, 2.0:double, 3.0:double, 4:int)");
+			this.runSingleActionTestSuite("ON(Select * from nexmark:person2)" +
+					"DO ActuatorAdapterManager.ecatest1.doSomething" +
+					"(1:byte, 2.0:double, 3.0:double, 4:int)"
+					, parameters);
+			
 		}catch (Exception e){
 			System.err.print("Test failed: ");
 			System.err.println(e.getMessage());
@@ -87,24 +103,24 @@ public class ECAParserTest implements CommandProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void runTestSuite(String query, List<IActionParameter> parameters) throws Exception {	
+	private void runSingleActionTestSuite(String query, List<IActionParameter> parameters) throws Exception {	
 		List<ILogicalOperator> logicalPlan = this.compiler.translateQuery(query , "ECA");
 		
 		//check logical operator
-		System.out.println("	*Testcase1: Check if top operator is eAO");
+		System.err.println("	*Testcase1: Check if top operator is eAO");
 		ILogicalOperator eAO = logicalPlan.get(0);
 		if (! (eAO.getClass() == EventDetectionAO.class)) {
 			throw new Exception("EventDetectionAO is not top operator");
 		}
-		System.out.println("		++success, top operatortype is <"+EventDetectionAO.class+">");
+		System.err.println("		++success, top operatortype is <"+EventDetectionAO.class+">");
 		
 		if (eAO.getSubscriptions().size() != 0 || eAO.getSubscribedToSource().size() != 1){
 			throw new Exception("EventDetectionAO is not subscribed correctly");
 		}
-		System.out.println("		++success, eAO has no subscriptions and is subscribed to one source");
+		System.err.println("		++success, eAO has no subscriptions and is subscribed to one source");
 		
 		//check actions
-		System.out.println("	*Testcase2: Check if action bound to eAO is correct");
+		System.err.println("	*Testcase2: Check if action bound to eAO is correct");
 		Map<Action, List<IActionParameter>> actions = ((EventDetectionAO)eAO).getActions();
 		if (actions.size()!= 1){
 			throw new Exception("Incompatible number of actions bound");
@@ -118,24 +134,24 @@ public class ECAParserTest implements CommandProvider {
 			while (iterator1.hasNext()){
 				IActionParameter param1 = iterator1.next();
 				IActionParameter param2 = iterator2.next();
-				if (
-						param1.getType() != param2.getType() ||
-						param1.getParamClass() != param2.getParamClass() ||
-						param1.getValue() != param2.getValue()){
-					throw new Exception("One or more parameter is incompatible");
+				if (param1.getType() != param2.getType()){
+					throw new Exception("Type <"+param1.getType()+"> expected but type <"+param2.getType()+"> set.");
+				}
+				if (!PrimitivTypeComparator.sameType(param1.getParamClass(), param2.getParamClass())) {
+					throw new Exception("Class <"+param1.getParamClass()+"> expected but class <"+param2.getParamClass()+"> set.");
+				}
+				if (!param1.getValue().equals(param2.getValue())){
+					throw new Exception("Value <"+param1.getValue()+"> expected but value <"+param2.getValue()+"> set.");
 				}
 			}
 		}else {
 			throw new Exception("Incompatible number of parameters set");
 		}
 		
-		System.out.println("		++success, number of actions & parameters is correct");
-		
-		action.executeMethod(null);
-		System.out.println("		++success, action can be executed properly");
+		System.err.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		System.out.println("	*Testcase3: Check if physical plan is correct");
+		System.err.println("	*Testcase3: Check if physical plan is correct");
 		int queryID = this.executor.addQuery(logicalPlan.get(0), new ParameterParserID("ECA"));
 		IPlan plan = this.executor.getSealedPlan();
 		IQuery installedQuery = plan.getQuery(queryID);
@@ -143,12 +159,13 @@ public class ECAParserTest implements CommandProvider {
 		if (! (physicalOp.getClass() == EventDetectionPO.class)){
 			throw new Exception("Physical operator root is wrong class: <"+physicalOp.getClass()+">");
 		}
-		System.out.println("		++success, physical operator root class is correct");
+		System.err.println("		++success, physical operator root class is correct");
 		
 		if (!((EventDetectionPO)physicalOp).getActions().equals(actions)){
 			throw new Exception("Actions from physical and logical operator differ");
 		}
-		System.out.println("		++success, actions bound by physical operator are correct");
+		System.err.println("		++success, actions bound by physical operator are correct");
+		
 	}
 
 	@Override
