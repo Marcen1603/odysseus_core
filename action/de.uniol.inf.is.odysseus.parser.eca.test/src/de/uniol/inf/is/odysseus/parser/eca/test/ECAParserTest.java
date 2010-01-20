@@ -137,7 +137,7 @@ public class ECAParserTest implements CommandProvider {
 				if (param1.getType() != param2.getType()){
 					throw new Exception("Type <"+param1.getType()+"> expected but type <"+param2.getType()+"> set.");
 				}
-				if (!PrimitivTypeComparator.sameType(param1.getParamClass(), param2.getParamClass())) {
+				if (param1.getParamClass() != param2.getParamClass()) {
 					throw new Exception("Class <"+param1.getParamClass()+"> expected but class <"+param2.getParamClass()+"> set.");
 				}
 				if (!param1.getValue().equals(param2.getValue())){
