@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 public class EventDetectionPO<T> extends AbstractSink<T>{
 	private Map<Action, List<IActionParameter>> actions;
 	private String type;
-	private IDataExtractor dataExtractor;
+	private static IDataExtractor dataExtractor;
 
 	public EventDetectionPO(Map<Action, List<IActionParameter>> actions, String type) {
 		super();
@@ -31,7 +31,7 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 	}
 	
 	public void bindDataExtractor(IDataExtractor extractor){
-		this.dataExtractor = extractor;
+		dataExtractor = extractor;
 	}
 
 
@@ -50,7 +50,7 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 					//value must be extracted from attribute
 					Object identifier = ((StreamAttributeParameter)param.getValue());
 					try {
-						parameters[index] = this.dataExtractor.extractAttribute(identifier, object, this.type);
+						parameters[index] = dataExtractor.extractAttribute(identifier, object, this.type);
 					} catch (DataextractionException e) {
 						parameters[index] = null;
 						System.err.println("Attribute: "+identifier+" wasn't extracted. \n" +

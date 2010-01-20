@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 public class Action {
 	private IActuator actuator;
 	private String methodName;
-	private Class<?>[] parameterTypes;
 	private ActionMethod method;
 	
 	/**
@@ -48,7 +47,6 @@ public class Action {
 		
 		this.actuator = actuator;
 		this.methodName = methodName;
-		this.parameterTypes = parameterTypes;
 	}
 	
 	/**
@@ -57,7 +55,7 @@ public class Action {
 	 * @param params
 	 */
 	public void executeMethod(Object[] params) throws ActuatorException{
-		this.actuator.executeMethod(this.methodName, this.parameterTypes, params);
+		this.actuator.executeMethod(this.methodName, this.method.getParameterTypes(), params);
 	}
 	
 	/**
