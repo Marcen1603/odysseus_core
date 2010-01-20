@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * Queryparser for Event, Condition, Action Queries.
  * Pattern for queries:
  * ON ([LANG:<LanguageName>]<Query>) 
- * DO <managerName>.<actuatorName>.<methodName>(<params>)
+ * DO <managerName>.<actuatorName>.<methodName>(<staticValue>:<type>,<attributeName>, ...)
  * [,<managerName>.<actuatorName>.<methodName>(<params>)]*
  * @author Simon Flandergan
  *
@@ -42,8 +42,8 @@ public class ECAParser implements IQueryParser{
 	
 	private static final Pattern ACTIONPATTERN = Pattern.compile("(\\w+)\\.(\\w+)\\.(\\w+\\s*)\\(([^\\(\\)]*)\\)",Pattern.CASE_INSENSITIVE);
 	private static final Pattern LANGPATTERN = Pattern.compile("\\[LANG:(\\w*)\\]",Pattern.CASE_INSENSITIVE);
-	private static final Pattern PARAMPATTERN = Pattern.compile("[^,]*");
-	private static final Pattern PARAMTYPEPATTERN = Pattern.compile("([^:]*)(\\w*)");
+	private static final Pattern PARAMPATTERN = Pattern.compile("[^,]+");
+	private static final Pattern PARAMTYPEPATTERN = Pattern.compile("(.*):(.*)");
 	private static final String DEFAULTLANG = "CQL";
 	
 	
@@ -193,23 +193,23 @@ public class ECAParser implements IQueryParser{
 
 	private Object generateStandardValue(String paramValue, String paramType) throws QueryParseException {
 		try {
-			if (paramValue.equals("double")){
+			if (paramType.equals("double")){
 				return Double.valueOf(paramValue);
-			}else if (paramValue.equals("float")){
+			}else if (paramType.equals("float")){
 				return Float.valueOf(paramValue);
-			}else if (paramValue.equals("long")){
+			}else if (paramType.equals("long")){
 				return Long.valueOf(paramValue);
-			}else if (paramValue.equals("int")){
+			}else if (paramType.equals("int")){
 				return Integer.valueOf(paramValue);
-			}else if (paramValue.equals("short")){
+			}else if (paramType.equals("short")){
 				return Short.valueOf(paramValue);
-			}else if (paramValue.equals("byte")){
+			}else if (paramType.equals("byte")){
 				return Byte.valueOf(paramValue);
-			}else if (paramValue.equals("char")){
+			}else if (paramType.equals("char")){
 				return paramValue.charAt(0);
-			}else if (paramValue.equals("boolean")){
+			}else if (paramType.equals("boolean")){
 				return Boolean.valueOf(paramValue);
-			}else if (paramValue.equals("string")){
+			}else if (paramType.equals("string")){
 				return paramValue;
 			}
 		}catch (Exception e) {
