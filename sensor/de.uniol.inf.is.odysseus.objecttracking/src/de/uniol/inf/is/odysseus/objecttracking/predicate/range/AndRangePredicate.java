@@ -81,4 +81,17 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 		
 		return resultRanges;
 	}
+	
+	public boolean equals(Object other){
+		if(!(other instanceof AndRangePredicate)){
+			return false;
+		}
+		else{
+			return this.left.equals(((AndRangePredicate)other).getLeft()) && this.right.equals(((AndRangePredicate)other).getRight());
+		}
+	}
+	
+	public int hashCode(){
+		return 53 * this.left.hashCode() * 41 * this.right.hashCode();
+	}
 }

@@ -256,5 +256,17 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		throw new UnsupportedOperationException();
 	}
 
+	public boolean equals(Object other){
+		if(!(other instanceof RelationalRangePredicate)){
+			return false;
+		}
+		else{
+			return this.solutions.equals(((RelationalRangePredicate)other).solutions);
+		}
+	}
+	
+	public int hashCode(){
+		return 53 * this.solutions.hashCode();
+	}
 	
 }

@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.AndRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
@@ -34,8 +35,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class ObjectTrackingSelectAO<T> extends SelectAO{
 
-	private Map<IPredicate, SDFExpression[]> predictionFunctions;
-	
+
 	/**
 	 * In this.predictionFunctions we have different prediction functions for
 	 * different tuples according to predicate these tuples fulfill. 
@@ -72,7 +72,6 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 
 	public ObjectTrackingSelectAO(ObjectTrackingSelectAO po) {
 		super(po);
-		this.predictionFunctions = po.predictionFunctions;
 		this.rangePredicates = po.rangePredicates;
 	}
 
@@ -102,16 +101,23 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 		
 		if(this.getInputSchema() instanceof SDFAttributeListExtended){
 			SDFAttributeListExtended inputSchema = (SDFAttributeListExtended)this.getInputSchema();
-			this.predictionFunctions = (Map<IPredicate, SDFExpression[]>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 			
 			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
-			for(Entry<IPredicate, SDFExpression[]> entry : this.predictionFunctions.entrySet()){
-				IRangePredicate rangePredicate = this.generateRangePredicate(entry.getKey(), entry.getValue(), attributeResolver);
+			for(Entry<IPredicate, IPredictionFunction> entry : predictionFunctions.entrySet()){
+				IRangePredicate rangePredicate = this.generateRangePredicate(this.getPredicate(), entry.getValue().getExpressions(), attributeResolver);
 				this.rangePredicates.put(entry.getKey(), rangePredicate);
 			}
 		}
 	}
 	
+	/**
+	 * 
+	 * @param selectionPredicate The predicate of the selection operator
+	 * @param predictionFunction The prediction function expressions to be used for the serveral attributes
+	 * @param attributeResolver The attribute resolver to know, where the predicate is from
+	 * @return
+	 */
 	private IRangePredicate generateRangePredicate(IPredicate selectionPredicate, SDFExpression[] predictionFunction, IAttributeResolver attributeResolver){
 		if(selectionPredicate instanceof AndPredicate){
 			return new AndRangePredicate(

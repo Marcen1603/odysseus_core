@@ -53,4 +53,17 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 		
 		return resultRanges;
 	}
+	
+	public boolean equals(Object other){
+		if(!(other instanceof OrRangePredicate)){
+			return false;
+		}
+		else{
+			return this.left.equals(((OrRangePredicate)other).getLeft()) && this.right.equals(((OrRangePredicate)other).getRight());
+		}
+	}
+	
+	public int hashCode(){
+		return 53 * this.left.hashCode() + 41 * this.right.hashCode();
+	}
 }
