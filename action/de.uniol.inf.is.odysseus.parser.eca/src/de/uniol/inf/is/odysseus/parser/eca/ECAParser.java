@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
+import de.uniol.inf.is.odysseus.action.exception.AttributeParsingException;
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
@@ -132,18 +133,35 @@ public class ECAParser implements IQueryParser{
 							}else{
 								//check if schema contains attribute
 								boolean attributeFound = false;
+								ArrayList<Integer> possibleMatches = new ArrayList<Integer>(); 
 								for (int i=0; i<schema.getAttributeCount(); i++){
 									SDFAttribute attribute = schema.get(i);
-									String attributeName = attribute.getAttributeName();
-									if (attributeName.equals(
-											completeParam)){
-										actionParameters.add(new StreamAttributeParameter(attribute.getDatatype(), i));
+									//check for uri since it is unique
+									if (attribute.getURI().equals(completeParam)){
+										try {
+											actionParameters.add(new StreamAttributeParameter(attribute.getDatatype(), i));
+										} catch (AttributeParsingException e) {
+											throw new QueryParseException(e.getMessage());
+										}
 										attributeFound = true;
 										break;
+									}else if (attribute.getAttributeName().equals(completeParam)){
+										//attribute name is not unique so, it is only a possible match
+										possibleMatches.add(i);
 									}
 								}
 								if (!attributeFound){
-									throw new QueryParseException("Referenced attribute: "+completeParam+" not found");
+									//check there is only 1 possible match
+									if (possibleMatches.size() == 1){
+										int index = possibleMatches.get(0);
+										try {
+											actionParameters.add(new StreamAttributeParameter(schema.get(index).getDatatype(), index));
+										} catch (AttributeParsingException e) {
+											throw new QueryParseException(e.getMessage());
+										}
+									}else {
+										throw new QueryParseException("Referenced attribute <"+completeParam+"> is ambiguous or inexistent");
+									}
 								}
 							}	
 						}
@@ -153,8 +171,7 @@ public class ECAParser implements IQueryParser{
 					try {
 						actuator = this.actuatorFactory.getActuator(actuatorName, managerName);
 					} catch (ActuatorException e) {
-						System.err.println("Actuator<"+actuatorName+"> unknown. Skipped Action!");
-						continue;
+						throw new QueryParseException("Actuator<"+actuatorName+"> unknown.");
 					}
 					
 					//create action object, sort parameters & map both
