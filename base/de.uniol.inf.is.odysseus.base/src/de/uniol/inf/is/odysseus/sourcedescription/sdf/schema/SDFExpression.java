@@ -202,7 +202,10 @@ public class SDFExpression implements Serializable {
 		} else {
 			init(expression.attribute);
 		}
-		this.attributePositions = expression.attributePositions;
+		this.attributePositions = new int[expression.attributePositions.length];
+		for(int i = 0; i<expression.attributePositions.length; i++){
+			this.attributePositions[i] = expression.attributePositions[i];
+		}
 	}
 
 	private Variable toVariable(String token) {
