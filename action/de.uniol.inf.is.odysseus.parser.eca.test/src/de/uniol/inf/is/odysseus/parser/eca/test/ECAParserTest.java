@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.StaticParameter;
+import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.PrimitivTypeComparator;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -76,10 +77,13 @@ public class ECAParserTest implements CommandProvider {
 					"ActuatorAdapterManager");
 			
 			//1st testsuite
-			System.err.println("--Testsuite1, Query: ON(Select * from nexmark:person2 RANGE 10000)" +
-			"DO ActuatorAdapterManager.ecatest1.getName()--");
-			this.runSingleActionTestSuite("ON(Select * from nexmark:person2)" +
-					"DO ActuatorAdapterManager.ecatest1.getName()", new ArrayList<IActionParameter>());			
+			System.err.println("--Testsuite1, Query: " +
+					"ON(Select * from nexmark:person2 RANGE 10000)" +
+					"DO ActuatorAdapterManager.ecatest1.getName()");
+			this.runSingleActionTestSuite(
+					"ON(Select * from nexmark:person2)" +
+					"DO ActuatorAdapterManager.ecatest1.getName()", 
+					new ArrayList<IActionParameter>());			
 	
 			//2nd testsuite
 			ArrayList<IActionParameter> parameters = new ArrayList<IActionParameter>();
@@ -87,13 +91,51 @@ public class ECAParserTest implements CommandProvider {
 			parameters.add(new StaticParameter(2.0d));
 			parameters.add(new StaticParameter(3.0d));
 			parameters.add(new StaticParameter(4));
-			System.err.println("--Testsuite2, Query: ON(Select * from nexmark:person2 RANGE 10000)" +
-			"DO ActuatorAdapterManager.ecatest1.doSomething" +
-			"(1:byte, 2.0:double, 3.0:double, 4:int)");
-			this.runSingleActionTestSuite("ON(Select * from nexmark:person2)" +
+			System.err.println("--Testsuite2, Query: " +
+					"ON(Select * from nexmark:person2)" +
+					"DO ActuatorAdapterManager.ecatest1.doSomething" +
+					"(1:byte, 2.0:double, 3.0:double, 4:int)");
+			this.runSingleActionTestSuite( 
+					"ON(Select * from nexmark:person2)" +
 					"DO ActuatorAdapterManager.ecatest1.doSomething" +
 					"(1:byte, 2.0:double, 3.0:double, 4:int)"
 					, parameters);
+			
+			//3rd testsuite
+			ArrayList<IActionParameter> parameters2 = new ArrayList<IActionParameter>();
+			parameters2.add(new StreamAttributeParameter(String.class, 2)); //2 == attributeIndex
+			parameters2.add(new StaticParameter((byte)33));
+			System.err.println("--Testsuite3, Query:" +
+					"ON(Select p.timestamp, p.id, p.name from nexmark:person2 as p)" +
+					"DO ActuatorAdapterManager.ecatest1.setFields" +
+					"(name, 33:byte)");
+			this.runSingleActionTestSuite(
+					"ON(Select * from nexmark:person2)" +
+					"DO ActuatorAdapterManager.ecatest1.setFields" +
+					"(name, 33:byte)"
+					, parameters2);
+			
+			//4th testsuite
+			ArrayList<ArrayList<IActionParameter>> allParameters = new ArrayList<ArrayList<IActionParameter>>();
+			allParameters.add(new ArrayList<IActionParameter>());
+			allParameters.add(parameters);
+			allParameters.add(parameters2);
+			System.err.println("--Testsuite4, Query:" +
+					"ON(Select * from nexmark:person2)"+
+					"DO " +
+					"ActuatorAdapterManager.ecatest1.getName()," +
+					"ActuatorAdapterManager.ecatest1.doSomething" +
+						"(1:byte, 2.0:double, 3.0:double, 4:int),"+
+					"ActuatorAdapterManager.ecatest1.setFields" +
+						"(name, 33:byte)");
+			this.runMultipleActionTestSuite(
+					"ON(Select * from nexmark:person2)"+
+					"DO " +
+					"ActuatorAdapterManager.ecatest1.getName()," +
+					"ActuatorAdapterManager.ecatest1.doSomething" +
+						"(1:byte, 2.0:double, 3.0:double, 4:int),"+
+					"ActuatorAdapterManager.ecatest1.setFields" +
+						"(name, 33:byte)", allParameters);
 			
 		}catch (Exception e){
 			System.err.print("Test failed: ");
@@ -102,9 +144,84 @@ public class ECAParserTest implements CommandProvider {
 		
 	}
 
+	private void runMultipleActionTestSuite(String query,
+			ArrayList<ArrayList<IActionParameter>> allParameters) 
+			throws Exception {
+		List<ILogicalOperator> logicalPlan = this.compiler.translateQuery(query , "ECA");
+		logicalPlan.get(0).getOutputSchema();
+		
+		//check logical operator
+		System.err.println("	*Testcase1: Check if top operator is eAO");
+		ILogicalOperator eAO = logicalPlan.get(0);
+		if (! (eAO.getClass() == EventDetectionAO.class)) {
+			throw new Exception("EventDetectionAO is not top operator");
+		}
+		System.err.println("		++success, top operatortype is <"+EventDetectionAO.class+">");
+		
+		if (eAO.getSubscriptions().size() != 0 || eAO.getSubscribedToSource().size() != 1){
+			throw new Exception("EventDetectionAO is not subscribed correctly");
+		}
+		System.err.println("		++success, eAO has no subscriptions and is subscribed to one source");
+		
+		//check actions
+		System.err.println("	*Testcase2: Check if action bound to eAO is correct");
+		Map<Action, List<IActionParameter>> actions = ((EventDetectionAO)eAO).getActions();
+		if (actions.size()!= allParameters.size()){
+			throw new Exception("Incompatible number of actions bound");
+		}
+		
+		Iterator<Action> iterator = actions.keySet().iterator();
+		Iterator<ArrayList<IActionParameter>> iterator2 = allParameters.iterator();
+		while (iterator.hasNext()){
+			Action action = iterator.next();
+			ArrayList<IActionParameter> params2 = iterator2.next();
+			List<IActionParameter> params = actions.get(action);
+			
+			Iterator<IActionParameter> paramiterator1 = params2.iterator();
+			Iterator<IActionParameter> paramiterator2 = params.iterator();
+			if (params.size() == params2.size()){
+				while (paramiterator1.hasNext()){
+					IActionParameter param1 = paramiterator1.next();
+					IActionParameter param2 = paramiterator2.next();
+					if (param1.getType() != param2.getType()){
+						throw new Exception("Type <"+param1.getType()+"> expected but type <"+param2.getType()+"> set.");
+					}
+					if (param1.getParamClass() != param2.getParamClass()) {
+						throw new Exception("Class <"+param1.getParamClass()+"> expected but class <"+param2.getParamClass()+"> set.");
+					}
+					if (!param1.getValue().equals(param2.getValue())){
+						throw new Exception("Value <"+param1.getValue()+"> expected but value <"+param2.getValue()+"> set.");
+					}
+				}
+			}else {
+				throw new Exception("Incompatible number of parameters set");
+			}
+			
+			System.err.println("		++success, number of actions & parameters is correct");
+			
+			//check physical operators
+			System.err.println("	*Testcase3: Check if physical plan is correct");
+			//FIXME transform klappt nicht, wenn outputschema begrenzt ist
+			int queryID = this.executor.addQuery(logicalPlan.get(0), new ParameterParserID("ECA"));
+			IPlan plan = this.executor.getSealedPlan();
+			IQuery installedQuery = plan.getQuery(queryID);
+			IPhysicalOperator physicalOp = installedQuery.getSealedRoot();
+			if (! (physicalOp.getClass() == EventDetectionPO.class)){
+				throw new Exception("Physical operator root is wrong class: <"+physicalOp.getClass()+">");
+			}
+			System.err.println("		++success, physical operator root class is correct");
+			
+			if (!((EventDetectionPO)physicalOp).getActions().equals(actions)){
+				throw new Exception("Actions from physical and logical operator differ");
+			}
+			System.err.println("		++success, actions bound by physical operator are correct");
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	private void runSingleActionTestSuite(String query, List<IActionParameter> parameters) throws Exception {	
 		List<ILogicalOperator> logicalPlan = this.compiler.translateQuery(query , "ECA");
+		logicalPlan.get(0).getOutputSchema();
 		
 		//check logical operator
 		System.err.println("	*Testcase1: Check if top operator is eAO");
@@ -152,6 +269,7 @@ public class ECAParserTest implements CommandProvider {
 		
 		//check physical operators
 		System.err.println("	*Testcase3: Check if physical plan is correct");
+		//FIXME transform klappt nicht, wenn outputschema begrenzt ist
 		int queryID = this.executor.addQuery(logicalPlan.get(0), new ParameterParserID("ECA"));
 		IPlan plan = this.executor.getSealedPlan();
 		IQuery installedQuery = plan.getQuery(queryID);
