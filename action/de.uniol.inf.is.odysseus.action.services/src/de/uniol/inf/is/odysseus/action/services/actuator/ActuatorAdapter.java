@@ -7,6 +7,14 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
+/**
+ * Actuator bases on reflections. Allows the use of any java-class as 
+ * Actuator when extending this class. It does not have to implements any
+ * special framework specific functionality! Schema and method execution is
+ * retrieved dynamically through reflections technology
+ * @author Simon Flandergan
+ *
+ */
 public abstract class ActuatorAdapter implements IActuator {
 	private ArrayList<ActionMethod> methods;
 	

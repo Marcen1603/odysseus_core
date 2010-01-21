@@ -26,13 +26,18 @@ public class TestActuator extends ActuatorAdapter {
 		return name;
 	}
 	
-	public void doSomething (byte a, double b, double c, int d){
+	public void doSomething(byte a, double b, double c, int d){
 		this.result = a+b+c+d;
-		System.out.println(this.result);
 	}
 	
-	public double giveSomething () {
+	public double giveSomething() {
 		return this.result;
+	}
+	
+	public void setFields(String name, byte adress){
+		this.name = name;
+		this.adress = adress;
+		System.out.println(this.name+":"+adress);
 	}
 	
 	
