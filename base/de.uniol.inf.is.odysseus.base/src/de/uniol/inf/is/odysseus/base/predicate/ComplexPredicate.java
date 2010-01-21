@@ -55,5 +55,21 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.left.init();
 		this.right.init();
 	}
+	
+	@Override
+	public boolean equals(Object other){
+		if(!(other instanceof ComplexPredicate)){
+			return false;
+		}
+		else{
+			return this.left.equals(((ComplexPredicate)other).left) &&
+				this.right.equals(((ComplexPredicate)other).right);
+		}
+	}
+	
+	@Override
+	public int hashCode(){
+		return 37 * this.left.hashCode() + 41 * this.right.hashCode();
+	}
 
 }

@@ -38,4 +38,17 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 		return "(" + getLeft().toString() + ") OR (" + getRight().toString()
 				+ ")";
 	}
+	
+	public boolean equals(Object other){
+		if(!(other instanceof OrPredicate)){
+			return false;
+		}
+		else{
+			return this.getLeft().equals(((OrPredicate)other).getLeft()) && this.getRight().equals(((OrPredicate)other).getRight());
+		}
+	}
+	
+	public int hashCode(){
+		return 19 * this.getLeft().hashCode() + 19 * this.getRight().hashCode();
+	}
 }

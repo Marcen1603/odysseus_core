@@ -38,5 +38,18 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 	public String toString() {
 		return "(" + getLeft().toString() + ") AND (" + getRight().toString() + ")";
 	}
+	
+	public boolean equals(Object other){
+		if(!(other instanceof AndPredicate)){
+			return false;
+		}
+		else{
+			return this.getLeft().equals(((AndPredicate)other).getLeft()) && this.getRight().equals(((AndPredicate)other).getRight());
+		}
+	}
+	
+	public int hashCode(){
+		return 17 * this.getLeft().hashCode() * 19 * this.getRight().hashCode();
+	}
 
 }
