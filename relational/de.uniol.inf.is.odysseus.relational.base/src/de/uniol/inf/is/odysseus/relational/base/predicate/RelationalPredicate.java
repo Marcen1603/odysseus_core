@@ -104,4 +104,16 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 		return expression.isSetOperator(symbol);
 	}
 	
+	public boolean equals(Object other){
+		if(!(other instanceof RelationalPredicate)){
+			return false;
+		}
+		else{
+			return this.expression.equals(((RelationalPredicate)other).expression);
+		}
+	}
+	
+	public int hashCode(){
+		return 23 * this.expression.hashCode();
+	}
 }
