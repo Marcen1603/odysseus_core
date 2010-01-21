@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.action.output;
 
+import de.uniol.inf.is.odysseus.action.exception.AttributeParsingException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -17,9 +18,30 @@ public class StreamAttributeParameter implements IActionParameter{
 		this.identifier = identifier;
 	}
 	
-	public StreamAttributeParameter(SDFDatatype datatype, Object identifier){
-		String datatypeName = datatype.getQualName();
-		//FIXME datentyp entsprechend definieren
+	public StreamAttributeParameter(SDFDatatype datatype, Object identifier) throws AttributeParsingException{
+		String datatypeName = datatype.getURI().toLowerCase();
+		//identify datatype
+		if(datatypeName.equals("byte")){
+			this.datatype = Byte.class;
+		}else if(datatypeName.equals("short")){
+			this.datatype = Short.class;
+		}else if(datatypeName.equals("integer")){
+			this.datatype = Integer.class;
+		}else if(datatypeName.equals("long")){
+			this.datatype = Long.class;
+		}else if(datatypeName.equals("float")){
+			this.datatype = Float.class;
+		}else if(datatypeName.equals("double")){
+			this.datatype = Double.class;
+		}else if(datatypeName.equals("character")){
+			this.datatype = Character.class;
+		}else if(datatypeName.equals("string")){
+			this.datatype = String.class;
+		}else {
+			throw new AttributeParsingException(
+					"Unknown datatype for attribute <"+
+					identifier+">");
+		}
 		this.identifier = identifier;
 	}
 	

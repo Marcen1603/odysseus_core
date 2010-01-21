@@ -6,11 +6,9 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
-import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
 import de.uniol.inf.is.odysseus.action.services.dataExtraction.IDataExtractor;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
 /**
@@ -24,6 +22,18 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 	private String type;
 	private static IDataExtractor dataExtractor;
 
+	/**
+	 * Public Constructor used by OSGI
+	 */
+	public EventDetectionPO(){
+		
+	}
+	
+	/**
+	 * Public Constructor for Transformation rule
+	 * @param actions
+	 * @param type
+	 */
 	public EventDetectionPO(Map<Action, List<IActionParameter>> actions, String type) {
 		super();
 		this.actions = actions;
@@ -48,14 +58,14 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 					parameters[index] = param.getValue();
 				}else {
 					//value must be extracted from attribute
-					Object identifier = ((StreamAttributeParameter)param.getValue());
+					Object identifier = param.getValue();
 					try {
-						parameters[index] = dataExtractor.extractAttribute(identifier, object, this.type);
-					} catch (DataextractionException e) {
-						parameters[index] = null;
+						parameters[index] = dataExtractor.extractAttribute(object, identifier, this.type);
+					} catch (Exception e) {
 						System.err.println("Attribute: "+identifier+" wasn't extracted. \n" +
 								"Reason: "+ e.getMessage());
-					}
+						return;
+					} 
 				}
 				index++;
 			}
