@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
@@ -20,6 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 public class EventDetectionPO<T> extends AbstractSink<T>{
 	private Map<Action, List<IActionParameter>> actions;
 	private String type;
+	private Logger logger;
 	private static IDataExtractor dataExtractor;
 
 	/**
@@ -38,6 +42,7 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 		super();
 		this.actions = actions;
 		this.type = type;
+		this.logger = LoggerFactory.getLogger(EventDetectionPO.class);
 	}
 	
 	public void bindDataExtractor(IDataExtractor extractor){
@@ -62,7 +67,7 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 					try {
 						parameters[index] = dataExtractor.extractAttribute(object, identifier, this.type);
 					} catch (Exception e) {
-						System.err.println("Attribute: "+identifier+" wasn't extracted. \n" +
+						this.logger.error("Attribute: "+identifier+" wasn't extracted. \n" +
 								"Reason: "+ e.getMessage());
 						return;
 					} 
@@ -73,7 +78,7 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 				entry.getKey().executeMethod(parameters);
 			} catch (ActuatorException e) {
 				//Shouldnt happen, because method & parameters are checked during creation of action
-				System.err.println(e.getMessage());
+				this.logger.error("Method execution failed: "+e.getMessage());
 			}
 		}
 	}
