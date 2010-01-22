@@ -56,14 +56,14 @@ public class DroolsRewrite implements IRewrite {
 
 	public ILogicalOperator rewritePlanInternal(ILogicalOperator plan) {
 
-		logger.info("Current Top subscriptions  "
+		logger.debug("Current Top subscriptions  "
 				+ plan.getSubscriptions().toString());
 
-		System.out.println("RULES: ");
+		logger.debug("RULES: ");
 		for(Package pkg : rulebase.getPackages()){
-			System.out.println("PACKAGE: " + pkg.getName());
+			logger.debug("PACKAGE: " + pkg.getName());
 			for(Rule r : pkg.getRules()){
-				System.out.println(r.getName()+ " : " + r.getRuleFlowGroup());
+				logger.debug(r.getName()+ " : " + r.getRuleFlowGroup());
 			}
 		}
 		StatefulSession session = rulebase.newStatefulSession();
@@ -73,7 +73,7 @@ public class DroolsRewrite implements IRewrite {
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
 		if (logger.isInfoEnabled()) {
-			logger.info("pre rewrite: "
+			logger.debug("pre rewrite: "
 					+ AbstractTreeWalker.prefixWalk(top,
 							new AlgebraPlanToStringVisitor()));
 		}
@@ -87,7 +87,7 @@ public class DroolsRewrite implements IRewrite {
 		session.fireAllRules();
 		session.dispose();
 		if (logger.isInfoEnabled()) {
-			logger.info("post rewrite:"
+			logger.debug("post rewrite:"
 					+ AbstractTreeWalker.prefixWalk(top,
 							new AlgebraPlanToStringVisitor()));
 
@@ -97,7 +97,7 @@ public class DroolsRewrite implements IRewrite {
 		top.unsubscribeFromSource(ret, sub.getSinkPort(), sub
 				.getSourcePort(), sub.getSchema());
 		if (logger.isInfoEnabled()) {
-			logger.info("post rewrite:"
+			logger.debug("post rewrite:"
 					+ AbstractTreeWalker.prefixWalk(ret,
 							new AlgebraPlanToStringVisitor()));
 
@@ -142,7 +142,7 @@ public class DroolsRewrite implements IRewrite {
 		}
 
 		if (!inserted.contains(op)) {
-			logger.info("insert into wm: " + op);
+			logger.debug("insert into wm: " + op);
 			session.insert(op);
 			inserted.add(op);
 
