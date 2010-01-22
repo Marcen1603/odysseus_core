@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
-import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
