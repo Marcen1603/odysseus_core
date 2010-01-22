@@ -226,7 +226,7 @@ public class StandardExecutor extends AbstractExecutor implements
 					QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
 		}
 
-		this.logger.debug("Queries added (Count: " + newQueries.size() + ").");
+		this.logger.info("Queries added (Count: " + newQueries.size() + ").");
 	}
 
 	/**
