@@ -174,10 +174,12 @@ public class ActuatorAdapterManager implements IActuatorManager{
 
 
 	@Override
-	public void removeActuator(String name) throws ActuatorException {
-		if (this.adapters.remove(name) == null) {
+	public IActuator removeActuator(String name) throws ActuatorException {
+		ActuatorAdapter adapter = this.adapters.remove(name);
+		if (adapter == null) {
 			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
 		}
+		return adapter;
 	}
 
 

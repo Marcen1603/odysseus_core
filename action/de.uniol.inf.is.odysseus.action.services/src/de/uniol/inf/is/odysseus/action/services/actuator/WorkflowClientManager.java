@@ -70,10 +70,12 @@ public class WorkflowClientManager implements IActuatorManager {
 
 
 	@Override
-	public void removeActuator(String name) throws ActuatorException{
-		if (this.clients.remove(name) == null){
+	public IActuator removeActuator(String name) throws ActuatorException{
+		WorkflowClient client = this.clients.remove(name);
+		if (client == null){
 			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
 		}
+		return client;
 	}
 
 

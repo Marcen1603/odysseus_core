@@ -9,7 +9,8 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.apache.cxf.endpoint,
  org.apache.cxf.endpoint.dynamic,
  org.apache.cxf.jaxws.endpoint.dynamic,
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.action.services.actuator,
  de.uniol.inf.is.odysseus.action.services.actuator.impl,

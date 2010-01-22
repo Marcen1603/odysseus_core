@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.action.services.actuator;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
@@ -16,6 +19,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  */
 public class ActuatorFactory implements IActuatorFactory{
 	private volatile HashMap<String, IActuatorManager> actuatorManager;
+	private Logger logger;
 			
 	/**
 	 * Public Constructor called by OSGI, shouldnt be called by clients,
@@ -23,6 +27,7 @@ public class ActuatorFactory implements IActuatorFactory{
 	 */
 	public ActuatorFactory () {
 		this.actuatorManager = new HashMap<String, IActuatorManager>();
+		this.logger = LoggerFactory.getLogger(ActuatorFactory.class);
 	}
 	
 	/**
@@ -37,7 +42,9 @@ public class ActuatorFactory implements IActuatorFactory{
 		throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
-			return manager.createActuator(name, actuatorDescription);
+			IActuator actuator = manager.createActuator(name, actuatorDescription);
+			this.logger.debug(manager.getClass()+ " created instance of "+actuator.getClass());
+			return actuator;
 		}
 		throw new ActuatorException("Actuator manager not bound yet");
 	}
@@ -75,8 +82,8 @@ public class ActuatorFactory implements IActuatorFactory{
 	public void removeActuator(String actuatorName, String managerName) throws ActuatorException {
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
-			manager.removeActuator(actuatorName);
-			System.out.println("<"+managerName+"> successfully removed: <"+actuatorName+">");
+			IActuator actuator = manager.removeActuator(actuatorName);
+			this.logger.debug(manager.getClass()+" removed "+ actuator.getClass() +"with id: <"+actuatorName);
 		}else {
 			throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
 		}

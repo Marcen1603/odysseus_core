@@ -25,7 +25,7 @@ public interface IActuatorManager {
 	 * @param name
 	 * @throws ActuatorException thrown if Actuator with given name does not exist
 	 */
-	public void removeActuator(String name) throws ActuatorException;
+	public IActuator removeActuator(String name) throws ActuatorException;
 	
 	/**
 	 * Returns the actuator with given name.
