@@ -51,5 +51,11 @@ public class LoggerHelper {
 			_logger.warn(message);
 		}
 	}
+	
+	public void debug(String message){
+		if (_logger != null) {
+			_logger.debug(message);
+		}
+	}
 
 }
