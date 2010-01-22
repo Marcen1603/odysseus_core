@@ -95,10 +95,13 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		CepAO<RelationalTuple<?>> cepAo = new CepAO<RelationalTuple<?>>();
 		Set<String> sourceNames = new TreeSet<String>();
 		List<State> states = null;
+		String createStreamName = null;
 		if (tree != null) {
 			for (Object child : tree.getChildren()) {
 				String cStr = child.toString();
-				if (cStr.equalsIgnoreCase("PATTERN")) {
+				if (cStr.equalsIgnoreCase("CREATESTREAM")){
+					createStreamName =  getChild(cStr,0).toString();
+				}else if (cStr.equalsIgnoreCase("PATTERN")) {
 					states = processPattern((CommonTree) child, cepAo,
 							sourceNames);
 				} else if (cStr.equalsIgnoreCase("WHERE")) {
@@ -124,7 +127,13 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				throw new RuntimeException("Source " + sn + " not found");
 			}
 		}
-		return cepAo;
+		if (createStreamName == null){
+			return cepAo;
+		}else{
+			// Create a new Source with cepAo as Base
+			DataDictionary.getInstance().setView(createStreamName, cepAo);
+			return null;
+		}
 	}
 
 	private void processReturn(CommonTree child, CepAO<RelationalTuple<?>> cepAo) {

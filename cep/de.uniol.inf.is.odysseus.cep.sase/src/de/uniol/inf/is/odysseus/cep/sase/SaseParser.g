@@ -22,6 +22,7 @@ tokens{
 	COMPAREEXPRESSION;
 	IDEXPRESSION;
 	AGGREGATION;
+	CREATESTREAM;
 }
 
 	
@@ -29,8 +30,11 @@ tokens{
 	package de.uniol.inf.is.odysseus.cep.sase; 
 }
 
-query	:  patternPart (wherePart)? (withinPart)? (returnPart)?
+query	: (createPart)? patternPart (wherePart)? (withinPart)? (returnPart)?
 	;
+	
+createPart
+	: CREATE STREAM NAME -> ^(CREATESTREAM NAME)	;
 		
 withinPart
 	: WITHIN NUMBER TIMEUNIT -> ^(WITHIN NUMBER TIMEUNIT)

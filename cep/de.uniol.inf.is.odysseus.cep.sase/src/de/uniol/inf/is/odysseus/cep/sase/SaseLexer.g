@@ -2,6 +2,8 @@ lexer grammar SaseLexer;
 
 @lexer::header { package de.uniol.inf.is.odysseus.cep.sase;} 
 
+CREATE 	: 'CREATE'|'create'|'Create';
+STREAM  : 'STREAM'|'stream'|'Stream' ;
 PATTERN : 'PATTERN'|'pattern'|'Pattern';
 WHERE : 'where'|'WHERE'|'Where';
 WITHIN	: 'WITHIN'|'within'|'Within';
