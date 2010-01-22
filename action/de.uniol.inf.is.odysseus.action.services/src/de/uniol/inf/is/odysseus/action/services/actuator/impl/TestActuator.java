@@ -1,15 +1,20 @@
 package de.uniol.inf.is.odysseus.action.services.actuator.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapter;
 
 public class TestActuator extends ActuatorAdapter {
 	private String name;
 	private byte adress;
 	private double result;
+	private Logger logger;
 	
 	public TestActuator (String name){
 		super();
-		this.name = name;		
+		this.name = name;	
+		this.logger = LoggerFactory.getLogger(TestActuator.class);
 	}
 	
 	public TestActuator (String name, byte adress){
@@ -37,7 +42,7 @@ public class TestActuator extends ActuatorAdapter {
 	public void setFields(String name, byte adress){
 		this.name = name;
 		this.adress = adress;
-		System.out.println(this.name+":"+adress);
+		this.logger.debug(this.name+":"+adress);
 	}
 	
 	
