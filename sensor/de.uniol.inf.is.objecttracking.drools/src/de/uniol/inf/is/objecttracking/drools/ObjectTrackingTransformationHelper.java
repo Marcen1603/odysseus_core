@@ -75,8 +75,8 @@ public class ObjectTrackingTransformationHelper {
 //		SweepArea<MVRelationalTuple<IntervalProbabilityLatencyPrediction>>[] sas = new SweepArea[2];
 //		ITransferFunction<MVRelationalTuple<IntervalProbabilityLatencyPrediction>> transferFunction;
 //		if (priorityMode == PriorityMode.NO_PRIORITY) {
-//			sas[0] = new RelationalJoinTIMVPredictionSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
-//			sas[1] = new RelationalJoinTIMVPredictionSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
+//			sas[0] = new ObjectTrackingSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
+//			sas[1] = new ObjectTrackingSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
 //			transferFunction = new TITransferFunction<MVRelationalTuple<IntervalProbabilityLatencyPrediction>>();
 //		} else {
 //			throw new IllegalArgumentException(

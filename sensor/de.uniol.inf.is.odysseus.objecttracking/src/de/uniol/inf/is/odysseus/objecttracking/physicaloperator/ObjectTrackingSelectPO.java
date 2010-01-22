@@ -6,11 +6,12 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
-public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey> extends AbstractPipe<T, T> {
+public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey & IApplicationTime> extends AbstractPipe<T, T> {
 
 	private Map<IPredicate<? super T>, IRangePredicate> rangePredicates;
 	
@@ -38,8 +39,15 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 		IRangePredicate rangePredicate = this.rangePredicates.get(object.getMetadata().getPredictionFunctionKey());
 		List<ITimeInterval> appIntervals = rangePredicate.evaluate(object);
 		
-		// set the time intervals and return the tuple
-		// TODO intervals setzen.
-		transfer(object);		
+		// only transfer the object, if it is valid in future!
+		// What is with elements, that are valid in the past
+		// but not in the future?
+		if(!appIntervals.isEmpty()){
+			// set the time intervals and return the tuple
+			// TODO intervals setzen.
+			object.getMetadata().setApplicationIntervals(appIntervals);
+			
+			transfer(object);
+		}
 	}
 }

@@ -131,38 +131,46 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 				entry.getValue().getSolution().bindVariables(values);
 				double result = (Double)entry.getValue().getSolution().getValue();
 				
-				// TODO at the moment we only have one solution for each predicate
-				// because of the use of only linear prediction functions.
-				String compareOperator = entry.getValue().getCompareOperator();
-				ITimeInterval timeInterval = null;
-				if(compareOperator.equals("<")){
-					// since the dsm only uses discrete time, we have to round
-					// the result
-					long discretePointInTime = (long)Math.floor(result);
-					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime, 0));
-				}
-				else if(compareOperator.equals("<=")){
-					long discretePointInTime = (long)Math.floor(result);
-					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1, 0));
-				}
-				else if(compareOperator.equals(">=")){
-					long discretePointInTime = (long)Math.ceil(result);
-					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(new PointInTime(discretePointInTime, 0), PointInTime.getZeroTime());
-				}
-				else if(compareOperator.equals(">")){
-					long discretePointInTime = (long)Math.ceil(result);
-					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1, 0), PointInTime.getZeroTime());
-				}
+				// the result is the value for t and t is the delta time from start
+				// timestamp on. This value must be > 0, since otherwise
+				// the application time would not be in the future.
+				// In ObjectTracking context only future results have useful semantics. 
+				if(result > 0){
 				
-				intervals.add(timeInterval);
+				
+					// TODO at the moment we only have one solution for each predicate
+					// because of the use of only linear prediction functions.
+					String compareOperator = entry.getValue().getCompareOperator();
+					ITimeInterval timeInterval = null;
+					if(compareOperator.equals("<")){
+						// since the dsm only uses discrete time, we have to round
+						// the result
+						long discretePointInTime = (long)Math.floor(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime, 0));
+					}
+					else if(compareOperator.equals("<=")){
+						long discretePointInTime = (long)Math.floor(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1, 0));
+					}
+					else if(compareOperator.equals(">=")){
+						long discretePointInTime = (long)Math.ceil(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(new PointInTime(discretePointInTime, 0), PointInTime.getZeroTime());
+					}
+					else if(compareOperator.equals(">")){
+						long discretePointInTime = (long)Math.ceil(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1, 0), PointInTime.getZeroTime());
+					}
+					
+					intervals.add(timeInterval);
+				}
 				break;
 			}
 		}
@@ -173,7 +181,7 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	public List<ITimeInterval> evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
 		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
 		
-		// first check, which solution maps for this tuple
+		// first check, which solution maps for this tuples
 		// so test every predicate in this.solutions for this tuple
 		// the first predicate that is true will be taken.
 		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
@@ -188,38 +196,45 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 				entry.getValue().getSolution().bindVariables(values);
 				double result = (Double)entry.getValue().getSolution().getValue();
 				
-				// TODO at the moment we only have one solution for each predicate
-				// because of the use of only linear prediction functions.
-				String compareOperator = entry.getValue().getCompareOperator();
-				ITimeInterval timeInterval = null;
-				if(compareOperator.equals("<")){
-					// since the dsm only uses discrete time, we have to round
-					// the result
-					long discretePointInTime = (long)Math.floor(result);
+				// the result is the value for t and t is the delta time from start
+				// timestamp on. This value must be > 0, since otherwise
+				// the application time would not be in the future.
+				// In ObjectTracking context only future results have useful semantics. 
+				if(result > 0){
 					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime, 0));
-				}
-				else if(compareOperator.equals("<=")){
-					long discretePointInTime = (long)Math.floor(result);
+					// TODO at the moment we only have one solution for each predicate
+					// because of the use of only linear prediction functions.
+					String compareOperator = entry.getValue().getCompareOperator();
+					ITimeInterval timeInterval = null;
+					if(compareOperator.equals("<")){
+						// since the dsm only uses discrete time, we have to round
+						// the result
+						long discretePointInTime = (long)Math.floor(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime, 0));
+					}
+					else if(compareOperator.equals("<=")){
+						long discretePointInTime = (long)Math.floor(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1, 0));
+					}
+					else if(compareOperator.equals(">=")){
+						long discretePointInTime = (long)Math.ceil(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(new PointInTime(discretePointInTime, 0), PointInTime.getZeroTime());
+					}
+					else if(compareOperator.equals(">")){
+						long discretePointInTime = (long)Math.ceil(result);
+						
+						// -infinity has the meaning of zero time in our context
+						timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1, 0), PointInTime.getZeroTime());
+					}
 					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1, 0));
+					intervals.add(timeInterval);
 				}
-				else if(compareOperator.equals(">=")){
-					long discretePointInTime = (long)Math.ceil(result);
-					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(new PointInTime(discretePointInTime, 0), PointInTime.getZeroTime());
-				}
-				else if(compareOperator.equals(">")){
-					long discretePointInTime = (long)Math.ceil(result);
-					
-					// -infinity has the meaning of zero time in our context
-					timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1, 0), PointInTime.getZeroTime());
-				}
-				
-				intervals.add(timeInterval);
 				break;
 			}
 		}
