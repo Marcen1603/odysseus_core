@@ -43,7 +43,7 @@ public class DroolsTransformation implements ITransformation {
 		}
 
 		if (!inserted.contains(op)) {
-			LoggerHelper.getInstance(LOGGER_NAME).info("insert into wm: " + op);
+			LoggerHelper.getInstance(LOGGER_NAME).debug("insert into wm: " + op);
 			session.insert(op);
 			inserted.add(op);
 
@@ -80,10 +80,10 @@ public class DroolsTransformation implements ITransformation {
 		addLogicalOperatorToSession(session, top, list);
 
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
-			LoggerHelper.getInstance(LOGGER_NAME).info("transformation of: "
+			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation of: "
 					+ AbstractTreeWalker.prefixWalk(top,
 							new AlgebraPlanToStringVisitor()));
-			LoggerHelper.getInstance(LOGGER_NAME).info("added to working memory " + list);
+			LoggerHelper.getInstance(LOGGER_NAME).debug("added to working memory " + list);
 		}
 
 		session.insert(this);
@@ -112,7 +112,7 @@ public class DroolsTransformation implements ITransformation {
 		}
 		session.dispose();
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
-			LoggerHelper.getInstance(LOGGER_NAME).info("transformation result: \n" + planToString(physicalPO, ""));
+			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation result: \n" + planToString(physicalPO, ""));
 		}
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 		return physicalPO;
