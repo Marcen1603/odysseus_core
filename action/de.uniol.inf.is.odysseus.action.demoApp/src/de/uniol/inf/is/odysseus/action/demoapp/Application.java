@@ -19,7 +19,7 @@ public class Application implements IApplication {
 	 */
 	public Object start(IApplicationContext context) {
 		this.display = new Display();
-		this.shell = AuctionMonitor.runApplication(display);
+		this.shell = AuctionMonitor.getInstance().runApplication(display);
 		while(!shell.isDisposed()){
 			if(! display.readAndDispatch()) {
 		        display.sleep();
@@ -39,5 +39,10 @@ public class Application implements IApplication {
 			});
 			this.display.dispose();
 		}
+	}
+	
+	public static void main(String[] args) {
+		Application app = new Application();
+		app.start(null);
 	}
 }
