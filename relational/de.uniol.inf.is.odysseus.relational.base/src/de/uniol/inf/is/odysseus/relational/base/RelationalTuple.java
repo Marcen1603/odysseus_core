@@ -163,8 +163,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
 	 *            attrList enth�lt
 	 */
-	public RelationalTuple<T> restrict(int[] attrList,
-			SDFAttributeList overwriteSchema) {
+	public RelationalTuple<T> restrict(int[] attrList) {
 		RelationalTuple<T> newAttrList = null;
 
 //		SDFAttributeList newSchema = overwriteSchema;
