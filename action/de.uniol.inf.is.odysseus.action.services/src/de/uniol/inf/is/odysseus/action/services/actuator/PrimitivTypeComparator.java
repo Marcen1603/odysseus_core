@@ -26,6 +26,8 @@ private static HashMap<Class<?>,Class<?>> primitivClassMapping;
 		
 		if (c1 == c2){
 			return true;
+		}else if (c1 == null || c2 == null){
+			return false;	
 		}else if (primitivClassMapping.get(c1) == c2 || primitivClassMapping.get(c2) == c1){
 			return true;
 		}
