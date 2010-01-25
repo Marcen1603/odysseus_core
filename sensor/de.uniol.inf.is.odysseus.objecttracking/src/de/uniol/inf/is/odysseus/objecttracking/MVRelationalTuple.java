@@ -264,7 +264,10 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * @param matrix projection matrix for the measurement values
 	 * @param b a vector for moving the projected measurement values matrix * mv + b
 	 * @param originalSchema will be used to determine wether an attribute is a measurement value or not.
+	 * @deprecated I don't a real application for this method. I think, simply reducing to the values
+	 * in the restrict list should be adequate.
 	 */
+	@Deprecated
 	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix, RealMatrix b, SDFAttributeList overwriteSchema, SDFAttributeList originalSchema) {
 		
 		MVRelationalTuple newAttrList = null;

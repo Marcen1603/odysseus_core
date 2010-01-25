@@ -3,7 +3,7 @@ package de.uniol.inf.is.objecttracking.drools;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ISubscription;
-import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.AbstractSensorAccessPO;
+import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -75,8 +75,8 @@ public class ObjectTrackingTransformationHelper {
 //		SweepArea<MVRelationalTuple<IntervalProbabilityLatencyPrediction>>[] sas = new SweepArea[2];
 //		ITransferFunction<MVRelationalTuple<IntervalProbabilityLatencyPrediction>> transferFunction;
 //		if (priorityMode == PriorityMode.NO_PRIORITY) {
-//			sas[0] = new ObjectTrackingSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
-//			sas[1] = new ObjectTrackingSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
+//			sas[0] = new ObjectTrackingJoinSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
+//			sas[1] = new ObjectTrackingJoinSweepArea<IntervalProbabilityLatencyPrediction>(joinAO.getLeftInputSchema(), joinAO.getRightInputSchema());
 //			transferFunction = new TITransferFunction<MVRelationalTuple<IntervalProbabilityLatencyPrediction>>();
 //		} else {
 //			throw new IllegalArgumentException(
@@ -127,7 +127,7 @@ public class ObjectTrackingTransformationHelper {
 //	
 //	@Override
 //	public ISource<?> createPredictionPO(PredictionAO<?> predictionAO){
-//		return new PredictionPO<MVRelationalTuple<IntervalProbabilityLatencyPrediction>, IntervalProbabilityLatencyPrediction>
+//		return new ObjectTrackingPredictionAssignPO<MVRelationalTuple<IntervalProbabilityLatencyPrediction>, IntervalProbabilityLatencyPrediction>
 //				((PredictionAO<MVRelationalTuple<IntervalProbabilityLatencyPrediction>>) predictionAO);
 //	}
 //
@@ -140,15 +140,15 @@ public class ObjectTrackingTransformationHelper {
 //		// if no vector has been specified, there will
 //		// be a default vector 0.
 //		if (matrix != null && vector != null) {
-//			projectPO = new RelationalProjectMVPO<IntervalProbabilityLatency>(
+//			projectPO = new ObjectTrackingProjectBasePO<IntervalProbabilityLatency>(
 //					projectAO.getRestrictList(), new RealMatrixImpl(matrix),
 //					new RealMatrixImpl(vector), projectAO.getInputSchema(0));
 //		} else if (matrix != null && vector == null) {
-//			projectPO = new RelationalProjectMVPO<IntervalProbabilityLatency>(
+//			projectPO = new ObjectTrackingProjectBasePO<IntervalProbabilityLatency>(
 //					projectAO.getRestrictList(), new RealMatrixImpl(matrix),
 //					null, projectAO.getInputSchema(0));
 //		} else {
-//			projectPO = new RelationalProjectMVPO<IntervalProbabilityLatency>(
+//			projectPO = new ObjectTrackingProjectBasePO<IntervalProbabilityLatency>(
 //					projectAO.getRestrictList(), null, null, projectAO
 //							.getInputSchema(0));
 //		}

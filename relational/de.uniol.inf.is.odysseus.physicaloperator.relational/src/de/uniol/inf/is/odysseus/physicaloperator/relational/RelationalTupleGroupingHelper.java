@@ -50,7 +50,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		if (gRestrict == null || gRestrict.length == 0)
 			return 0;
 		// Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
-		RelationalTuple<T> gTuple = elem.restrict(gRestrict);
+		RelationalTuple<T> gTuple = elem.restrict(gRestrict, true);
 		// Gibt es diese Kombination schon?
 		Integer id = keyMap.get(gTuple);
 		// Wenn nicht, neu eintragen

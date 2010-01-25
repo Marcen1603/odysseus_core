@@ -208,7 +208,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		
 		// The following must not be done any more, since
 		// this will be done in the method initVariables (former getVariables2)
-		// called in PredictionPO operator
+		// called in ObjectTrackingPredictionAssignPO operator
 //		this.variables = this.getVariables2();
 		
 		synchronized (this.expressions) {
@@ -305,7 +305,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		
 		// The following must not be done any more, since
 		// this will be done in the method initVariables (former getVariables2)
-		// called in PredictionPO operator
+		// called in ObjectTrackingPredictionAssignPO operator
 //		this.variables = this.getVariables2();
 		
 		M metadata = object.getMetadata();
@@ -479,7 +479,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 * This method uses the fact, that the variable positions
 	 * can be determined in advance of query processing.
 	 * 
-	 * TODO Andre: Diese Methode wird noch im RelationalProjectPredictionMVPO benutzt.
+	 * TODO Andre: Diese Methode wird noch im ObjectTrackingProjectPO benutzt.
 	 * Sollte aber eigentlich nicht mehr benutzt werden, da sich auch die Prädiktions-
 	 * funktion, die nach einer Projektion noch verwendet werden kann, auf der logischen
 	 * Ebene vorberechnet werden kann. (Ist aber jetzt zuviel Aufwand, um das einzubauen).

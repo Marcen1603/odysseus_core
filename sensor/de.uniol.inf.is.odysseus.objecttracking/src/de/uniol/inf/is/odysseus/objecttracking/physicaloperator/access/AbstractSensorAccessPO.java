@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
+package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;

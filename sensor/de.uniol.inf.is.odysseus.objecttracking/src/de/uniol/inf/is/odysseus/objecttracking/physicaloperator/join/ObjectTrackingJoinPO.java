@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.sweeparea.ObjectTrackingJoinSweepArea;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
@@ -39,7 +40,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPredictionFunctionKey & IApplicationTime, T extends MVRelationalTuple<K>>
 		extends AbstractPipe<T, T> {
 
-	private ObjectTrackingSweepArea<K, T>[] areas;
+	private ObjectTrackingJoinSweepArea<K, T>[] areas;
 	protected IDataMergeFunction<T> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
 	
@@ -75,7 +76,7 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 			IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
 			ITransferFunction<T> transferFunction,
-			ObjectTrackingSweepArea<K, T>[] areas) {
+			ObjectTrackingJoinSweepArea<K, T>[] areas) {
 		this.rangePredicates = rangePredicates;
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
@@ -114,8 +115,8 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		return areas[port];
 	}
 	
-	public void setAreas(ObjectTrackingSweepArea<K, T> leftArea, ObjectTrackingSweepArea<K, T> rightArea){
-		this.areas = new ObjectTrackingSweepArea[2];
+	public void setAreas(ObjectTrackingJoinSweepArea<K, T> leftArea, ObjectTrackingJoinSweepArea<K, T> rightArea){
+		this.areas = new ObjectTrackingJoinSweepArea[2];
 		this.areas[0] = leftArea;
 		this.areas[1] = rightArea;
 	}
@@ -126,13 +127,13 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 	 * of the join, that has been set before
 	 */
 	public void initDefaultAreas(){
-		this.areas = new ObjectTrackingSweepArea[2];
+		this.areas = new ObjectTrackingJoinSweepArea[2];
 		
-		this.areas[0] = new ObjectTrackingSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
+		this.areas[0] = new ObjectTrackingJoinSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
 		this.areas[0].setRangePredicates(this.rangePredicates);
 		// the remove predicate is set automatically
 		
-		this.areas[1] = new ObjectTrackingSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
+		this.areas[1] = new ObjectTrackingJoinSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
 		this.areas[1].setRangePredicates(this.rangePredicates);
 		// the remove predicate is set automatically
 	}

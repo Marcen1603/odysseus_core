@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
+package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.association.merge;
 
 /**
  * This class is used in a prediction join and the corresponding SweepAreas.

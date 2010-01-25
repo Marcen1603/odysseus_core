@@ -1,7 +1,7 @@
 // a Java socket client
 //
 // Keith Vertanen 11/98, updated 10/09
-package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
+package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 
 import java.io.*;
 import java.net.*;

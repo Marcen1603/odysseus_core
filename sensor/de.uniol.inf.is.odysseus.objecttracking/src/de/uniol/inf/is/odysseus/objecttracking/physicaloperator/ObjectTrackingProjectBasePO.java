@@ -16,9 +16,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
+ * This is the superclass of the our project PO.
+ * TODO: In einer Klasse vereinheitlichen
  * @author Andre Bolles
  */
-public class RelationalProjectMVPO<T extends IProbability> extends
+public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 		AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>> {
 
 	
@@ -30,7 +32,7 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 	
 	SDFAttributeList outputSchema;
 	
-	public RelationalProjectMVPO(ObjectTrackingProjectAO ao){
+	public ObjectTrackingProjectBasePO(ObjectTrackingProjectAO ao){
 		this.restrictList = ao.determineRestrictList();
 		this.projectMatrix = new RealMatrixImpl(ao.getProjectMatrix());
 		this.projectVector = new RealMatrixImpl(ao.getProjectVector());
@@ -52,7 +54,7 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 		this.outputSchema = ao.getOutputSchema();
 	}
 	
-	public RelationalProjectMVPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,
+	public ObjectTrackingProjectBasePO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,
 			SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
 		this.restrictList = restrictList;
 		this.projectMatrix = projectMatrix;
@@ -60,12 +62,12 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 		this.inputSchema = inputSchema;
 		this.outputSchema = outputSchema;
 		
-		final RelationalProjectMVPO<T> t = this;
+		final ObjectTrackingProjectBasePO<T> t = this;
 		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,
 				"selectivity", 1d));
 	}
 
-	public RelationalProjectMVPO(RelationalProjectMVPO<T> copy) {
+	public ObjectTrackingProjectBasePO(ObjectTrackingProjectBasePO<T> copy) {
 		super();
 		int length = copy.restrictList.length;
 		restrictList = new int[length];
@@ -75,7 +77,7 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 		this.projectVector = copy.projectVector;
 		this.inputSchema = copy.inputSchema;
 		
-		final RelationalProjectMVPO<T> t = this;
+		final ObjectTrackingProjectBasePO<T> t = this;
 		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,
 				"selectivity", 1d));
 	}
@@ -106,8 +108,8 @@ public class RelationalProjectMVPO<T extends IProbability> extends
 	}
 
 	@Override
-	public RelationalProjectMVPO<T> clone() {
-		return new RelationalProjectMVPO<T>(this);
+	public ObjectTrackingProjectBasePO<T> clone() {
+		return new ObjectTrackingProjectBasePO<T>(this);
 	}
 	
 	/**

@@ -48,7 +48,7 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 		
 	}
 
-//	private ObjectTrackingSweepArea<K, T>[] areas;
+//	private ObjectTrackingJoinSweepArea<K, T>[] areas;
 //	protected IDataMergeFunction<T> dataMerge;
 //	protected IMetadataMergeFunction<K> metadataMerge;
 //
@@ -78,7 +78,7 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //
 //	public PredictionJoinTIPO(IDataMergeFunction<T> dataMerge,
 //			IMetadataMergeFunction<K> metadataMerge,
-//			ITransferFunction<T> transferFunction, ObjectTrackingSweepArea<K, T>[] areas) {
+//			ITransferFunction<T> transferFunction, ObjectTrackingJoinSweepArea<K, T>[] areas) {
 //		this.dataMerge = dataMerge;
 //		this.metadataMerge = metadataMerge;
 //		this.transferFunction = transferFunction;
@@ -106,8 +106,8 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //		return areas[port];
 //	}
 //	
-//	public void setAreas(ObjectTrackingSweepArea<K, T> leftArea, ObjectTrackingSweepArea<K, T> rightArea){
-//		this.areas = new ObjectTrackingSweepArea[2];
+//	public void setAreas(ObjectTrackingJoinSweepArea<K, T> leftArea, ObjectTrackingJoinSweepArea<K, T> rightArea){
+//		this.areas = new ObjectTrackingJoinSweepArea[2];
 //		this.areas[0] = leftArea;
 //		this.areas[1] = rightArea;
 //	}
@@ -118,13 +118,13 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //	 * of the join, that has been set before
 //	 */
 //	public void initDefaultAreas(){
-//		this.areas = new ObjectTrackingSweepArea[2];
+//		this.areas = new ObjectTrackingJoinSweepArea[2];
 //		
-//		this.areas[0] = new ObjectTrackingSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
+//		this.areas[0] = new ObjectTrackingJoinSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
 //		this.areas[0].setQueryPredicate(this.joinPredicate);
 //		// the remove predicate is set automatically
 //		
-//		this.areas[1] = new ObjectTrackingSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
+//		this.areas[1] = new ObjectTrackingJoinSweepArea<K, T>(this.leftInputSchema, this.rightInputSchema);
 //		this.areas[1].setQueryPredicate(this.joinPredicate);
 //		// the remove predicate is set automatically
 //	}
@@ -282,20 +282,20 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //		areas[0].clear();
 //		areas[1].clear();
 //		System.out.println("Join-Duration (JoinTIPO): " + this.duration);
-//		System.out.println("Join SA Duration: " + ObjectTrackingSweepArea.duration);
-//		System.out.println("Join SA Duration normal: " + ObjectTrackingSweepArea.durationNormal);
-//		System.out.println("Join SA Duration prediction: " + ObjectTrackingSweepArea.durationPrediction);
-//		System.out.println("Join SA Duration prediction predicate: "+ObjectTrackingSweepArea.durationPredictionPredicate);
+//		System.out.println("Join SA Duration: " + ObjectTrackingJoinSweepArea.duration);
+//		System.out.println("Join SA Duration normal: " + ObjectTrackingJoinSweepArea.durationNormal);
+//		System.out.println("Join SA Duration prediction: " + ObjectTrackingJoinSweepArea.durationPrediction);
+//		System.out.println("Join SA Duration prediction predicate: "+ObjectTrackingJoinSweepArea.durationPredictionPredicate);
 //		System.out.println("Join Prediction Data Duration: " + LinearProbabilityPredictionFunction.durationData);
 //		System.out.println("Join Prediction Data Expression Duration: " + LinearProbabilityPredictionFunction.durationExpr);
 //		System.out.println("Join Prediction MData Duration: " + LinearProbabilityPredictionFunction.durationMData);
-//		System.out.println("Query Aufrufe SA: " + ObjectTrackingSweepArea.counter);
+//		System.out.println("Query Aufrufe SA: " + ObjectTrackingJoinSweepArea.counter);
 //		System.out.println("Prediction Aufrufe: " + LinearProbabilityPredictionFunction.counter);
 //		System.out.println("Join ProcessNext-Aufrufe: " + this.counter);
 //		System.out.println("OutDuration: " + this.outDuration);
 //		System.out.println("OutCounter: " + this.outCounter);
 //		System.out.println("PurgeDuration: " + this.purgeDuration);
-//		System.out.println("Compares: " + ObjectTrackingSweepArea.compareCounter);
+//		System.out.println("Compares: " + ObjectTrackingJoinSweepArea.compareCounter);
 //	}
 //
 //	@Override

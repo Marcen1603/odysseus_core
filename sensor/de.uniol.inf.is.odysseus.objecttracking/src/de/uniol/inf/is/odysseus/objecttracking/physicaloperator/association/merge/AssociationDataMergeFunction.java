@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
+package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.association.merge;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-public class TIMVPredictRelationalDataMergeFunction<M extends IProbability & IPredictionFunction<RelationalTuple<M>, M> & ITimeInterval> 
+public class AssociationDataMergeFunction<M extends IProbability & IPredictionFunction<RelationalTuple<M>, M> & ITimeInterval> 
 		implements IDataMergeFunction<MVRelationalTuple<M>>{
 
 	/**
@@ -28,7 +28,7 @@ public class TIMVPredictRelationalDataMergeFunction<M extends IProbability & IPr
 	 */
 	SDFAttributeList rightSchema;
 	
-	public TIMVPredictRelationalDataMergeFunction(SDFAttributeList leftSchema, SDFAttributeList rightSchema, SDFAttributeList resultSchema){
+	public AssociationDataMergeFunction(SDFAttributeList leftSchema, SDFAttributeList rightSchema, SDFAttributeList resultSchema){
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.schema = resultSchema;

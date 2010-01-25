@@ -19,13 +19,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @author Andre Bolles
  */
 @SuppressWarnings("unchecked")
-public class PredictionPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey<IPredicate>> extends AbstractPipe<T, T>{
+public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey<IPredicate>> extends AbstractPipe<T, T>{
 
 	private final Map<IPredicate<? super T>, IPredictionFunction> predictionFunctions;
 	private final int[] restrictList;
 	private final SDFExpression[] defaultPredictionFunction;
 	
-	public PredictionPO(PredictionAO<T> predictionAO) {
+	public ObjectTrackingPredictionAssignPO(PredictionAO<T> predictionAO) {
 		super();
 		this.predictionFunctions = predictionAO.getPredictionFunctions();
 		this.defaultPredictionFunction = predictionAO.getDefaultPredictionFunction();

@@ -162,35 +162,35 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 * @param attrList
 	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
 	 *            attrList enth�lt
+	 * @param createNew if true, a new tuple will be created, if false the original
+	 * one will be modified
 	 */
-	public RelationalTuple<T> restrict(int[] attrList) {
-		RelationalTuple<T> newAttrList = null;
-
-//		SDFAttributeList newSchema = overwriteSchema;
-//		if (overwriteSchema == null) {
-//			// Schema anpassen
-//			if (schema != null) {
-//				newSchema = new SDFAttributeList();
-//				for (int i : attrList) {
-//					newSchema.add(getSchema().get(i));
-//				}
-//			}
-//		}
-
-//		if (this.schema == null && overwriteSchema == null) {
-			newAttrList = new RelationalTuple<T>(attrList.length);
-//		} else {
-//			newAttrList = new RelationalTuple<T>(newSchema);
-//		}
-
-		newAttrList.setMetadata(this.getMetadata());
-
+	public RelationalTuple<T> restrict(int[] attrList, boolean createNew) {
+		Object[] newAttrs = new Object[attrList.length];
+		
 		for (int i = 0; i < attrList.length; i++) {
-			Object curAttribute = this.attributes[attrList[i]];
-			newAttrList.setAttribute(i, curAttribute);
+			newAttrs[i] = this.attributes[attrList[i]];
 		}
-
-		return newAttrList;
+		
+		if(createNew){
+			RelationalTuple<T> newTuple = new RelationalTuple<T>(attrList.length);
+			newTuple.setAttributes(newAttrs);
+			newTuple.setMetadata(this.getMetadata());
+			return newTuple;
+		}
+		else{
+			this.attributes = newAttrs;
+			return this;
+		}
+	}
+	
+	/**
+	 * Sets the attribute values of this tuple to the specified
+	 * values in attributes.
+	 * @param attributes The new attribute values for this tuple.
+	 */
+	public void setAttributes(Object[] attributes){
+		this.attributes = attributes;
 	}
 
 	

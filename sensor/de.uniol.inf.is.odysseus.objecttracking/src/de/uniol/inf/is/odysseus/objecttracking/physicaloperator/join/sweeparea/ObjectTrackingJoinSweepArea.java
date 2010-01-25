@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
+package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.sweeparea;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,14 +30,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  */
 @SuppressWarnings("unchecked")
-public class ObjectTrackingSweepArea<M extends IPredictionFunctionKey & ITimeInterval & IProbability & IApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
+public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITimeInterval & IProbability & IApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
 
 	SDFAttributeList leftSchema;
 	SDFAttributeList rightSchema;
 	
 	Map<IPredicate, IRangePredicate> rangePredicates;
 	
-	public ObjectTrackingSweepArea(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+	public ObjectTrackingJoinSweepArea(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
 		super();
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;

@@ -15,14 +15,14 @@ public class RelationalMinMax extends MinMax<RelationalTuple<?>> {
 	
 	@Override
 	public PartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
-		return super.init(in.restrict(attrList));
+		return super.init(in.restrict(attrList, true));
 	}
 	
 	@Override
 	public PartialAggregate<RelationalTuple<?>> merge(
 			PartialAggregate<RelationalTuple<?>> p, RelationalTuple<?> toMerge,
 			boolean createNew) {
-		return super.merge(p, toMerge.restrict(attrList), createNew);
+		return super.merge(p, toMerge.restrict(attrList, true), createNew);
 	}
 	
 }
