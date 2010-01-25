@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.action.eclipseconsole;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -40,7 +41,8 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			this.executer.addQuery(args[0], "ECA", new ParameterParserID("ECA"));
+			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA", new ParameterParserID("ECA"));
+			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (PlanManagementException e) {
 			ci.println(e.getMessage());
 		}
