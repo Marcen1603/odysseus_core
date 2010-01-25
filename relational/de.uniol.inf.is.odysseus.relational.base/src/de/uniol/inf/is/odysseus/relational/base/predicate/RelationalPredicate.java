@@ -62,9 +62,9 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	}
 
 	public RelationalPredicate(RelationalPredicate predicate) {
-		this.attributePositions = predicate.attributePositions.clone();
-		this.fromRightChannel = predicate.fromRightChannel.clone();
-		this.expression = predicate.expression.clone();
+		this.attributePositions = predicate.attributePositions == null ? null:predicate.attributePositions.clone();
+		this.fromRightChannel = predicate.fromRightChannel == null ? null:predicate.fromRightChannel.clone();
+		this.expression = predicate.expression == null ? null:predicate.expression.clone();
 	}
 
 	public boolean evaluate(RelationalTuple<?> input) {
