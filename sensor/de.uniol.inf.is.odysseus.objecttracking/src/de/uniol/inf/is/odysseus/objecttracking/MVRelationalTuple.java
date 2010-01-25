@@ -335,6 +335,41 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		return newAttrList;
 	}
 	
+	/**
+	 * 
+	 * @param restrictList This list is used to identify the original attribute positions
+	 * @param restrictMatrix This matrix has been calculated out of the restrict list and the measurement
+	 * value positions. It is used to transform the covariance matrix of this tuple.
+	 * @param createNew If true, a new tuple will be created, else this one will be modified.
+	 * @return
+	 */
+	public MVRelationalTuple<T> restrict(int[] restrictList, RealMatrix restrictMatrix, boolean createNew){
+		if(!createNew){
+			MVRelationalTuple<T> modifiedAttrs = (MVRelationalTuple<T>)super.restrict(restrictList, createNew);
+			double[][] modifiedCovariance = restrictMatrix.multiply(new RealMatrixImpl(modifiedAttrs.getMetadata().getCovariance())).multiply(restrictMatrix.transpose()).getData();
+			modifiedAttrs.getMetadata().setCovariance(modifiedCovariance);
+			return modifiedAttrs;
+		}
+		else{
+			MVRelationalTuple<T> newTuple = new MVRelationalTuple<T>(restrictList.length);
+			Object[] newAttrs = new Object[restrictList.length];
+			
+			for (int i = 0; i < restrictList.length; i++) {
+				newAttrs[i] = this.attributes[restrictList[i]];
+			}
+			newTuple.setAttributes(newAttrs);
+			newTuple.setMetadata((T)this.getMetadata().clone());
+			double[][] modifiedCovariance = restrictMatrix.multiply(
+					new RealMatrixImpl(this.getMetadata().getCovariance())).
+					multiply(restrictMatrix.transpose()).getData();
+			
+			newTuple.getMetadata().setCovariance(modifiedCovariance);
+			
+			return newTuple;
+			
+		}
+	}
+	
 	@Override
 	public MVRelationalTuple<T> clone() {
 		return new MVRelationalTuple<T>(this);

@@ -26,16 +26,14 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	
 	int[] restrictList;
 	RealMatrix projectMatrix;
-	RealMatrix projectVector;
 	SDFAttributeList inputSchema;
 	int[] inputMeasurementValuePositions;
 	
 	SDFAttributeList outputSchema;
 	
-	public ObjectTrackingProjectBasePO(ObjectTrackingProjectAO ao){
+	public ObjectTrackingProjectBasePO(ObjectTrackingProjectAO ao, int[] restrictList, RealMatrix projectMatrix){
 		this.restrictList = ao.determineRestrictList();
-		this.projectMatrix = new RealMatrixImpl(ao.getProjectMatrix());
-		this.projectVector = new RealMatrixImpl(ao.getProjectVector());
+		this.projectMatrix = projectMatrix;
 		this.inputSchema = ao.getInputSchema();
 		
 		ArrayList<Integer> list = new ArrayList<Integer>();
@@ -58,7 +56,6 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 			SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
 		this.restrictList = restrictList;
 		this.projectMatrix = projectMatrix;
-		this.projectVector = projectVector;
 		this.inputSchema = inputSchema;
 		this.outputSchema = outputSchema;
 		
@@ -74,7 +71,6 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 		System.arraycopy(copy.restrictList, 0, restrictList, 0, length);
 		
 		this.projectMatrix = copy.projectMatrix;
-		this.projectVector = copy.projectVector;
 		this.inputSchema = copy.inputSchema;
 		
 		final ObjectTrackingProjectBasePO<T> t = this;
@@ -86,22 +82,10 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	@SuppressWarnings("unchecked")
 	protected void process_next(MVRelationalTuple<T> object, int port) {
 		
-		// first project the metadata:
-		
-		IProbability cov = object.getMetadata();
-		if(cov.getCovariance() != null){
-			RealMatrixImpl c = new RealMatrixImpl(cov.getCovariance());
-			if(this.projectMatrix != null){
-				double[][] covProjected = this.projectMatrix.multiply(c).multiply(this.projectMatrix.transpose()).getData();
-				cov.setCovariance(covProjected);
-			}
-		}
-		
 		// restrict the original tuple and set the new metadata
 		//object.findMeasurementValuePositions(this.inputSchema);
 		object.setMeasurementValuePositions(this.inputMeasurementValuePositions);
-		MVRelationalTuple objectNew = object.restrict(this.restrictList, this.projectMatrix, this.projectVector, null, this.inputSchema);
-		objectNew.setMetadata(cov);
+		MVRelationalTuple objectNew = object.restrict(this.restrictList, this.projectMatrix, false);
 		
 		// transfer the new tuple
 		transfer(objectNew);

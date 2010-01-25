@@ -1,18 +1,21 @@
 package de.uniol.inf.is.odysseus.objecttracking.logicaloperator;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.PredictionSchema;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -25,8 +28,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(projectMatrix);
-		result = prime * result + Arrays.hashCode(projectVector);
+		result *= prime;
 		return result;
 	}
 
@@ -38,30 +40,13 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ObjectTrackingProjectAO other = (ObjectTrackingProjectAO) obj;
-		if (!Arrays.equals(projectMatrix, other.projectMatrix))
-			return false;
-		if (!Arrays.equals(projectVector, other.projectVector))
-			return false;
 		return true;
 	}
-	
-	/**
-	 * only used in multivariate case
-	 */
-	private double[][] projectMatrix;
-	
-	/**
-	 * only used in multivariate case
-	 */
-	private double[] projectVector;
 	
 	private SDFAttributeList outAttributes;
 	
 	public ObjectTrackingProjectAO(ObjectTrackingProjectAO projectMVAO) {
 		super(projectMVAO);
-		this.projectMatrix = projectMVAO.projectMatrix;
-		this.projectVector = projectMVAO.projectVector;
 	}
 
 	public ObjectTrackingProjectAO() {
@@ -76,22 +61,6 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	public @Override
 	ProjectAO clone() {
 		return new ProjectAO(this);
-	}
-	
-	public double[][] getProjectMatrix(){
-		return this.projectMatrix;
-	}
-	
-	public void setProjectMatrix(double[][] matrix){
-		this.projectMatrix = matrix;
-	}
-	
-	public double[] getProjectVector(){
-		return this.projectVector;
-	}
-	
-	public void setProjectVector(double[] vector){
-		this.projectVector = vector;
 	}
 	
 	/**
@@ -115,51 +84,102 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		SDFAttributeListExtended inputSchema = (SDFAttributeListExtended)this.getSubscribedToSource(0).getSchema();
 		
 		Map<IPredicate, IPredictionFunction> newPredFcts = new HashMap<IPredicate, IPredictionFunction>();
-		Map<IPredicate, IPredictionFunction> predFcts = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+		
+		
+		PredictionSchema predSchema = inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+		Map<IPredicate, IPredictionFunction> predFcts = (Map<IPredicate, IPredictionFunction>)predSchema.getPredictionFunctions();
 		
 		
 		for(Entry<IPredicate, IPredictionFunction> entry : predFcts.entrySet()){
-			/*
-			 * it is not necessary to test, whether the attributes of the predicate
-			 * are still available since the predicate will not be evaluated again.
-			 * It will just be used as a key to know, which prediction function
-			 * to use.
-			 */
-			IPredictionFunction newPredFct = new LinearProbabilityPredictionFunction();
-			SDFExpression[] oldExprs = entry.getValue().getExpressions();
-			SDFExpression[] newExprs = new SDFExpression[outAttributes.getAttributeCount()];
-			
-			int[] restrictList = ProjectAO.calcRestrictList(inputSchema, outAttributes);
-			for(int i = 0; i<restrictList.length; i++){
-				SDFExpression oldExpr = oldExprs[restrictList[i]];
-				boolean attributesStillAvailable = true;
-				for(SDFAttribute oldAttr : oldExpr.getAllAttributes()){
-					if(outAttributes.indexOf(oldAttr) < 0){
-						attributesStillAvailable = false;
-						break;
-					}
-				}
-				newExprs[i] = attributesStillAvailable ? oldExpr : null;
-				if(newExprs[i] != null)
-					newExprs[i].initAttributePositions(outAttributes);
-			}
-			
-			int[][] vars = new int[newExprs.length][];
-			for(int u = 0; u<newExprs.length; u++){
-				SDFExpression expression = newExprs[u];
-				if(expression != null)
-					vars[u] = expression.getAttributePositions();
-			}
-			
-			
-			newPredFct.setExpressions(newExprs);
-			newPredFct.setVariables(vars);
-			
+			IPredictionFunction newPredFct = this.getNewPredictionFunction(inputSchema, outAttributes, entry.getValue().getExpressions());			
 			newPredFcts.put(entry.getKey(), newPredFct);
 		}
 		
-		newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);
+		// do the same for the default prediction function
+		IPredictionFunction newDefaultPredFct = this.getNewPredictionFunction(inputSchema, outAttributes, predSchema.getDefaultPredictionFunction().getExpressions());
+		
+		PredictionSchema newPredSchema = new PredictionSchema(newPredFcts, newDefaultPredFct);
+		
+		newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredSchema);
 		
 		return newOutputSchema;
+	}
+	
+	private IPredictionFunction getNewPredictionFunction(SDFAttributeList inputSchema, SDFAttributeList outAttributes, SDFExpression[] oldExprs){
+		/*
+		 * it is not necessary to test, whether the attributes of the predicate
+		 * are still available since the predicate will not be evaluated again.
+		 * It will just be used as a key to know, which prediction function
+		 * to use.
+		 */
+		IPredictionFunction newPredFct = new LinearProbabilityPredictionFunction();
+		SDFExpression[] newExprs = new SDFExpression[outAttributes.getAttributeCount()];
+		
+		int[] restrictList = ProjectAO.calcRestrictList(inputSchema, outAttributes);
+		for(int i = 0; i<restrictList.length; i++){
+			SDFExpression oldExpr = oldExprs[restrictList[i]];
+			boolean attributesStillAvailable = true;
+			for(SDFAttribute oldAttr : oldExpr.getAllAttributes()){
+				if(outAttributes.indexOf(oldAttr) < 0){
+					attributesStillAvailable = false;
+					break;
+				}
+			}
+			newExprs[i] = attributesStillAvailable ? oldExpr : null;
+			if(newExprs[i] != null)
+				newExprs[i].initAttributePositions(outAttributes);
+		}
+		
+		int[][] vars = new int[newExprs.length][];
+		for(int u = 0; u<newExprs.length; u++){
+			SDFExpression expression = newExprs[u];
+			if(expression != null)
+				vars[u] = expression.getAttributePositions();
+		}
+		
+		
+		newPredFct.setExpressions(newExprs);
+		newPredFct.setVariables(vars);
+		
+		return newPredFct;
+	}
+	
+	/**
+	 * The restrict list is used to identify the old positions
+	 * of the attributes.
+	 * @return
+	 */
+	public int[] determineRestrictList(){
+		return ProjectAO.calcRestrictList(this.getInputSchema(), this.getOutputSchema());
+	}
+
+	/**
+	 * The project matrix is used to calculate the new covariance
+	 * matrix of incoming tuples.
+	 * @return
+	 */
+	public static RealMatrix calcProjectMatrix(int[] restrictList, SDFAttributeListExtended inputSchema){
+		double[][] projectMatrix = new double[restrictList.length][inputSchema.getMeasurementAttributePositions().length];
+		
+		// The first row of the matrix means,
+		// that this is first measurement value
+		// in the output schema.
+		// Second row is the same for the second
+		// attribute and so on.
+		// The column in the row indicates the position
+		// of the measurement attribute in the input schema.
+		// So the measurement attribute move from pos col to
+		// pos row. So we have to set the value in 
+		// matrix[row][restrictList[row]] = 1.0
+		for(int i = 0; i<projectMatrix.length; i++){
+			projectMatrix[i][restrictList[i]] = 1.0;
+		}
+		
+		return new RealMatrixImpl(projectMatrix);
+		
+	}
+	
+	public RealMatrix determineProjectMatrix(int[] restrictList){
+		return calcProjectMatrix(restrictList, (SDFAttributeListExtended)this.getInputSchema(0));
 	}
 }

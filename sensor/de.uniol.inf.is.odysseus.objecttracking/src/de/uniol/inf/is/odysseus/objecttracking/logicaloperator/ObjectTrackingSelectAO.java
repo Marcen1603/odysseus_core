@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.objecttracking.logicaloperator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +22,15 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.OrRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.MapleResultParserFacade;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.PredictionSchema;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.OdysseusMapleCallBack;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class ObjectTrackingSelectAO<T> extends SelectAO{
 
@@ -49,6 +48,12 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 	 * to the tuple as a key and return the resulting rangePredicate.
 	 */
 	private Map<IPredicate, IRangePredicate> rangePredicates;
+	
+	/**
+	 * The default range predicate will be used, if the default prediction
+	 * function has been used by a tuple.
+	 */
+	IRangePredicate defaultRangePredicate;
 	
 	
 	/** 
@@ -72,7 +77,11 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 
 	public ObjectTrackingSelectAO(ObjectTrackingSelectAO po) {
 		super(po);
-		this.rangePredicates = po.rangePredicates;
+		this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
+		for(Entry<IPredicate, IRangePredicate> entry: ((Map<IPredicate, IRangePredicate>)po.rangePredicates).entrySet()){
+			this.rangePredicates.put(entry.getKey().clone(), entry.getValue().clone());
+		}
+		this.defaultRangePredicate = po.defaultRangePredicate.clone();
 	}
 
 	public ObjectTrackingSelectAO(IPredicate<?> predicate) {
@@ -101,13 +110,17 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 		
 		if(this.getInputSchema() instanceof SDFAttributeListExtended){
 			SDFAttributeListExtended inputSchema = (SDFAttributeListExtended)this.getInputSchema();
-			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+			PredictionSchema predSchema = (PredictionSchema)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+			
+			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)predSchema.getPredictionFunctions();
 			
 			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
 			for(Entry<IPredicate, IPredictionFunction> entry : predictionFunctions.entrySet()){
 				IRangePredicate rangePredicate = this.generateRangePredicate(this.getPredicate(), entry.getValue().getExpressions(), attributeResolver);
 				this.rangePredicates.put(entry.getKey(), rangePredicate);
 			}
+			
+			this.defaultRangePredicate = this.generateRangePredicate(this.getPredicate(), predSchema.getDefaultPredictionFunction().getExpressions(), attributeResolver);
 		}
 	}
 	
@@ -202,18 +215,6 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 	
 	
 	private void initRestrictList(){
-		ArrayList<Integer> tempList = new ArrayList<Integer>();
-		
-		for(int i = 0; i<this.getInputSchema().getAttributeCount(); i++){
-			if(SDFDatatypes.isMeasurementValue(this.getInputSchema().getAttribute(i).getDatatype())){
-				tempList.add(i);
-			}
-		}
-		
-		// put the positions into an array
-		this.restrictList = new int[tempList.size()];
-		for(int i = 0; i<tempList.size(); i++){
-			this.restrictList[i] = tempList.get(i);
-		}
+		this.restrictList = ((SDFAttributeListExtended)this.getInputSchema(0)).getMeasurementAttributePositions();
 	}
 }

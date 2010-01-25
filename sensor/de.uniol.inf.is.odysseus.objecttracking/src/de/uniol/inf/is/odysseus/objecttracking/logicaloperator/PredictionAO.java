@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.objecttracking.logicaloperator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,11 +9,11 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.PredictionSchema;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 @SuppressWarnings("unchecked")
 public class PredictionAO<T> extends UnaryLogicalOp{
 
@@ -26,7 +25,7 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 //	private Map<IPredicate<? super T>, SDFExpression[]> predictionFunctions;
 	private Map<IPredicate<? super T>, IPredictionFunction> predictionFunctions;
 	
-	private SDFExpression[] defaultPredictionFunction;
+	private IPredictionFunction defaultPredictionFunction;
 	
 	private SDFAttributeListExtended outputSchema;
 	
@@ -42,12 +41,23 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 	 */
 	private int[] restrictList;
 	
-	public SDFExpression[] getDefaultPredictionFunction() {
+	public IPredictionFunction getDefaultPredictionFunction() {
 		return defaultPredictionFunction;
 	}
 
 	public void setDefaultPredictionFunction(SDFExpression[] defaultPredictionFunction) {
-		this.defaultPredictionFunction = defaultPredictionFunction;
+		IPredictionFunction predFct = new LinearProbabilityPredictionFunction();
+		predFct.setExpressions(defaultPredictionFunction);
+		
+		int[][] vars = new int[defaultPredictionFunction.length][];
+		for(int u = 0; u<defaultPredictionFunction.length; u++){
+			SDFExpression expression = defaultPredictionFunction[u];
+			if(expression != null)
+				vars[u] = expression.getAttributePositions();
+		}
+		
+		predFct.setVariables(vars);
+		this.defaultPredictionFunction = predFct;
 	}
 
 	public PredictionAO() {
@@ -101,28 +111,10 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		this.outputSchema = new SDFAttributeListExtended(this.getInputSchema());
-		this.outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, this.predictionFunctions);
+		PredictionSchema predSchema = new PredictionSchema(this.predictionFunctions, this.defaultPredictionFunction);
+		this.outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, predSchema);
 		
 		return this.outputSchema;
 	}
 	
-	public void initRestrictList(){
-		ArrayList<Integer> tempList = new ArrayList<Integer>();
-		
-		for(int i = 0; i<this.getInputSchema().getAttributeCount(); i++){
-			if(SDFDatatypes.isMeasurementValue(this.getInputSchema().getAttribute(i).getDatatype())){
-				tempList.add(i);
-			}
-		}
-		
-		// put the positions into an array
-		this.restrictList = new int[tempList.size()];
-		for(int i = 0; i<tempList.size(); i++){
-			this.restrictList[i] = tempList.get(i);
-		}
-	}
-	
-	public int[] getRestrictList() {
-		return restrictList;
-	}
 }

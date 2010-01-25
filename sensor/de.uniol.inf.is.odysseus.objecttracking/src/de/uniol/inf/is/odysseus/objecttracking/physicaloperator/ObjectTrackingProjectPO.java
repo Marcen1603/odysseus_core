@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey> extends ObjectTrackingProjectBasePO<T> {
 
 	
-	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao){
-		super(ao);
+	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao, int[] restrictList, RealMatrix projectMatrix){
+		super(ao, restrictList, projectMatrix);
 	}
 	
 	public ObjectTrackingProjectPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
@@ -44,15 +44,8 @@ public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctio
 	final protected void process_next(MVRelationalTuple<T> object, int port) {
 
 		try {
-			// first project the metadata:
-			T mData = object.getMetadata();
-			RealMatrixImpl c = new RealMatrixImpl(mData.getCovariance());
-			double[][] covProjected = this.projectMatrix.multiply(c).multiply(this.projectMatrix.transpose()).getData();
-			mData.setCovariance(covProjected);
-			
 			// restrict the original tuple and set the new metadata
-			object.findMeasurementValuePositions(this.inputSchema);
-			MVRelationalTuple objectNew = (MVRelationalTuple)object.restrict(this.restrictList, false);
+			MVRelationalTuple objectNew = (MVRelationalTuple)object.restrict(this.restrictList, this.projectMatrix, false);
 			
 			// updating the prediction function
 			// is not necessary, since the
