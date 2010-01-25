@@ -1818,7 +1818,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  Long size;  Long advance;  Long value;}{/*@bgen(jjtree) StreamSQLWindow */
   try {
-/*@egen*/  < K_SIZE > size = Time() < K_ADVANCE > advance = Time()  {    jjtn000.setType(ASTOldWindow.Type.TIME);    jjtn000.setSize(size);    jjtn000.setAdvance(advance);  }  (    < K_TIME >  | < K_TUPLE >    {      jjtn000.setType(ASTOldWindow.Type.TUPLE);    }  | < K_ON > Identifier()    {      jjtn000.setType(ASTOldWindow.Type.ON);    }  )  [    < K_SLIDE > value = Slide()    {      jjtn000.setSlide(value);    }  ]  [ < K_PARTITION > < K_BY > Partition() ] [ < K_VALID > < K_ALWAYS > ]  [    < K_OFFSET > value = Integer()    {      jjtn000.setOffset(value);    }  ]  [    < K_TIMEOUT > value = Integer()    {      jjtn000.setOffset(value);    }  ]/*@bgen(jjtree)*/
+/*@egen*/  < K_SIZE > size = Time() < K_ADVANCE > advance = Time()  {    jjtn000.setType(ASTOldWindow.Type.TIME);    jjtn000.setSize(size);    jjtn000.setAdvance(advance);  }  (    < K_TIME >  | < K_TUPLE >    {      jjtn000.setType(ASTOldWindow.Type.TUPLE);    }  | < K_ON > Identifier()    {      jjtn000.setType(ASTOldWindow.Type.ON);    }  )  [    value = Slide()    {      jjtn000.setSlide(value);    }  ]  [ < K_PARTITION > < K_BY > Partition() ] [ < K_VALID > < K_ALWAYS > ]  [    < K_OFFSET > value = Integer()    {      jjtn000.setOffset(value);    }  ]  [    < K_TIMEOUT > value = Integer()    {      jjtn000.setOffset(value);    }  ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1901,7 +1901,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  Long value;}{/*@bgen(jjtree) Slide */
   try {
-/*@egen*/  < K_SLIDE > value = Integer()/*@bgen(jjtree)*/
+/*@egen*/  < K_SLIDE > value = Time()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

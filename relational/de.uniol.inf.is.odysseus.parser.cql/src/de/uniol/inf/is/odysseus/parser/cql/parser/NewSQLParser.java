@@ -3201,7 +3201,6 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_SLIDE:
-        jj_consume_token(K_SLIDE);
         value = Slide();
       jjtn000.setSlide(value);
         break;
@@ -3350,7 +3349,7 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
   jjtree.openNodeScope(jjtn000);Long value;
     try {
       jj_consume_token(K_SLIDE);
-      value = Integer();
+      value = Time();
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     {if (true) return value;}
@@ -3665,7 +3664,6 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
   }
 
   static private boolean jj_3R_167() {
-    if (jj_scan_token(K_SLIDE)) return true;
     if (jj_3R_175()) return true;
     return false;
   }
@@ -5011,7 +5009,7 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
 
   static private boolean jj_3R_175() {
     if (jj_scan_token(K_SLIDE)) return true;
-    if (jj_3R_52()) return true;
+    if (jj_3R_164()) return true;
     return false;
   }
 
