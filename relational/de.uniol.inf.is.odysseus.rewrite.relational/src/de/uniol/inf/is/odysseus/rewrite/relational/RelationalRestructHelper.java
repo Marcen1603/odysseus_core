@@ -288,10 +288,10 @@ public class RelationalRestructHelper {
 		return ret;
 	}
 
-	public static Collection<ILogicalOperator> removeOperator(RenameAO op) {
-		LoggerHelper.getInstance(LOGGER_NAME).debug("removing rename:" + op);
-		return RestructHelper.removeOperator(op, true);
-	}
+//	public static Collection<ILogicalOperator> removeOperator(RenameAO op) {
+//		LoggerHelper.getInstance(LOGGER_NAME).debug("removing rename:" + op);
+//		return RestructHelper.removeOperator(op, true);
+//	}
 
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op) {
 		LoggerHelper.getInstance(LOGGER_NAME).debug("removing operator:" + op);
