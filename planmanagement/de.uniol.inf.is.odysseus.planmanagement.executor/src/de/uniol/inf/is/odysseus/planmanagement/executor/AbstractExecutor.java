@@ -126,6 +126,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				schedulerManager().refreshScheduling(this);
 				this.logger.info("New execution plan set.");
 			} catch (Exception e) {
+				e.printStackTrace();
 				this.logger.error("Error while setting new execution plan. "
 						+ e.getMessage());
 				fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
