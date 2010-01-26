@@ -50,7 +50,7 @@ public class AuctionMonitor {
 		table.setLinesVisible(true);		
 		
 		//create columns
-		String[] columnTitels = {"Auction-ID", "Item name", "Highest bid", "Bidder", "Status"}; 
+		String[] columnTitels = {"Auction-ID", "Item name", "Highest bid", "Bidder", "Status", "Time"}; 
 		for (String title : columnTitels){
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
@@ -82,12 +82,11 @@ public class AuctionMonitor {
 						if (rowID == null){
 							rowID = table.getItemCount();
 							auctions.put(id, rowID);
-						}
-						TableItem item = new TableItem(table, SWT.NONE, rowID.intValue());
-						item.setText(data);
-						
-						for (TableColumn col : table.getColumns()){
-							col.pack();
+							TableItem item = new TableItem(table, SWT.NONE, rowID.intValue());
+							item.setText(data);
+						}else {
+							TableItem item = AuctionMonitor.this.table.getItem(rowID.intValue());
+							item.setText(data);
 						}
 						
 						AuctionMonitor.this.shell.pack();
