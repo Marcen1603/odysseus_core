@@ -126,9 +126,9 @@ public class ObjectTrackingTransformationHelper {
 //	}
 //	
 //	@Override
-//	public ISource<?> createPredictionPO(PredictionAO<?> predictionAO){
+//	public ISource<?> createPredictionPO(ObjectTrackingPredictionAssignAO<?> predictionAO){
 //		return new ObjectTrackingPredictionAssignPO<MVRelationalTuple<IntervalProbabilityLatencyPrediction>, IntervalProbabilityLatencyPrediction>
-//				((PredictionAO<MVRelationalTuple<IntervalProbabilityLatencyPrediction>>) predictionAO);
+//				((ObjectTrackingPredictionAssignAO<MVRelationalTuple<IntervalProbabilityLatencyPrediction>>) predictionAO);
 //	}
 //
 //	@Override
