@@ -4,9 +4,14 @@ import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -15,14 +20,18 @@ import org.eclipse.swt.widgets.TableItem;
 public class AuctionMonitor {
 	private Table table;
 	private HashMap<Integer, Integer> auctions;
+	private HashMap<Integer, AuctionStatus> auctionStatus;
+	
 	private Shell shell;
 	private Display display;
 	
+	public enum AuctionStatus {GREEN, ORANGE, RED};
+	
 	private static AuctionMonitor instance = new AuctionMonitor();
 
-
 	private AuctionMonitor(){
-		auctions = new HashMap<Integer, Integer>();
+		this.auctions = new HashMap<Integer, Integer>();
+		this.auctionStatus = new HashMap<Integer, AuctionStatus>();
 	}
 	
 	public Shell runApplication(Display display) {
@@ -50,7 +59,7 @@ public class AuctionMonitor {
 		table.setLinesVisible(true);		
 		
 		//create columns
-		String[] columnTitels = {"Auction-ID", "Item name", "Highest bid", "Bidder", "Status", "Time"}; 
+		String[] columnTitels = {"Auction-ID", "Item name", "Highest bid", "Bidder", "Time", "Status"}; 
 		for (String title : columnTitels){
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(title);
@@ -58,6 +67,11 @@ public class AuctionMonitor {
 		
 		for (TableColumn col : table.getColumns()){
 			col.pack();
+			if (col.getText().equals("Item name") || col.getText().equals("Bidder")){
+				col.setWidth(col.getWidth()*2);
+			}else if (col.getText().equals("Time")){
+				col.setWidth(col.getWidth()*3);
+			}
 		}
 
 		//set sizes for composite/shell
@@ -72,22 +86,43 @@ public class AuctionMonitor {
 		return shell;
 	}
 	
-	public void updateData (final String[] data) {
+	public void updateData (final String[] data, final AuctionStatus status) {
+		final int id = Integer.valueOf(data[0]);
+		
+		this.auctionStatus.put(id, status);
 		try {
 			this.display.syncExec(new Runnable() {
 				@Override
 				public void run() {
-						int id = Integer.valueOf(data[0]);
 						Integer rowID = auctions.get(id);
+						TableItem item = null;
+						
 						if (rowID == null){
 							rowID = table.getItemCount();
-							auctions.put(id, rowID);
-							TableItem item = new TableItem(table, SWT.NONE, rowID.intValue());
+							AuctionMonitor.this.auctions.put(id, rowID);
+							item = new TableItem(AuctionMonitor.this.table, 
+									SWT.NONE, rowID.intValue());
 							item.setText(data);
 						}else {
-							TableItem item = AuctionMonitor.this.table.getItem(rowID.intValue());
-							item.setText(data);
+							 item = AuctionMonitor.this.table.getItem(rowID.intValue());
+							item.setText(data);						
 						}
+						
+						Color bgColor = null; 
+						switch (status){
+						case GREEN:
+							bgColor = AuctionMonitor.this.display.getSystemColor(SWT.COLOR_GREEN);
+							break;
+						case ORANGE:
+							bgColor = AuctionMonitor.this.display.getSystemColor(SWT.COLOR_YELLOW);
+							break;
+						case RED:
+						default:
+							bgColor = AuctionMonitor.this.display.getSystemColor(SWT.COLOR_RED);
+							break;
+						}
+						item.setBackground(data.length, bgColor);
+						item.setText(data.length, "			");
 						
 						AuctionMonitor.this.shell.pack();
 						
