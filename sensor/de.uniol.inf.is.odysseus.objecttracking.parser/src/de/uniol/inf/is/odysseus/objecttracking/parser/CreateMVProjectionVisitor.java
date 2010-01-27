@@ -17,11 +17,6 @@ public class CreateMVProjectionVisitor implements IVisitor{
 		ObjectTrackingProjectAO project = new ObjectTrackingProjectAO();
 		project.subscribeTo(cpv.getTop(), cpv.getTop().getOutputSchema());
 		project.setOutputSchema(cpv.getOutputSchema());
-		// cannot be done if a MapAO is used, so it must be done
-		// here
-		project.setProjectMatrix(cpv.getProjectionMatrix());
-		project.setProjectVector(cpv.getProjectionVector());
-
 		return project;
 	}
 
