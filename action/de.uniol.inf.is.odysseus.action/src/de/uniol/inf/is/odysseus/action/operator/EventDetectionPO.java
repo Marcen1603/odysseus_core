@@ -45,6 +45,10 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 		this.logger = LoggerFactory.getLogger(EventDetectionPO.class);
 	}
 	
+	/**
+	 * Method called by OSGi to fulfill binding
+	 * @param extractor
+	 */
 	public void bindDataExtractor(IDataExtractor extractor){
 		dataExtractor = extractor;
 	}
