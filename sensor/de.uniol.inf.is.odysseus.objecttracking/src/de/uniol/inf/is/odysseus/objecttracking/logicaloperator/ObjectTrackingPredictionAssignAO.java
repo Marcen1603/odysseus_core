@@ -6,16 +6,16 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.PredictionSchema;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 @SuppressWarnings("unchecked")
-public class PredictionAO<T> extends UnaryLogicalOp{
+public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
 
 	/**
 	 * 
@@ -25,6 +25,14 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 //	private Map<IPredicate<? super T>, SDFExpression[]> predictionFunctions;
 	private Map<IPredicate<? super T>, IPredictionFunction> predictionFunctions;
 	
+	/**
+	 * The default prediction function only has be separated from
+	 * the other prediction functions in this operator. In all other
+	 * operators, they can be put together into the hashmap. This is,
+	 * because only in this operator, the predicates will be evaluated.
+	 * In all the other operators, the predicates will be used as keys,
+	 * but they will not be evaluated.
+	 */
 	private IPredictionFunction defaultPredictionFunction;
 	
 	private SDFAttributeListExtended outputSchema;
@@ -60,13 +68,13 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 		this.defaultPredictionFunction = predFct;
 	}
 
-	public PredictionAO() {
+	public ObjectTrackingPredictionAssignAO() {
 		super();
 		this.predictionFunctions = new HashMap<IPredicate<? super T>, IPredictionFunction>();
 		this.defaultPredictionFunction = null;
 	}
 	
-	public PredictionAO(PredictionAO predictionAO) {
+	public ObjectTrackingPredictionAssignAO(ObjectTrackingPredictionAssignAO predictionAO) {
 		super(predictionAO);
 		this.predictionFunctions = new HashMap<IPredicate<? super T>, IPredictionFunction>();
 		Set<Entry<IPredicate<? super T>, IPredictionFunction>> entries = predictionAO.predictionFunctions.entrySet();
@@ -104,15 +112,19 @@ public class PredictionAO<T> extends UnaryLogicalOp{
 	}
 
 	@Override
-	public PredictionAO clone() {
-		return new PredictionAO(this);
+	public ObjectTrackingPredictionAssignAO clone() {
+		return new ObjectTrackingPredictionAssignAO(this);
 	}
 	
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		this.outputSchema = new SDFAttributeListExtended(this.getInputSchema());
-		PredictionSchema predSchema = new PredictionSchema(this.predictionFunctions, this.defaultPredictionFunction);
-		this.outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, predSchema);
+		HashMap<IPredicate<? super T>, IPredictionFunction> outPredFcts = new HashMap<IPredicate<? super T>, IPredictionFunction>();
+		for(Entry<IPredicate<? super T>, IPredictionFunction> entry : this.predictionFunctions.entrySet()){
+			outPredFcts.put(entry.getKey(), entry.getValue());
+		}
+		outPredFcts.put(new TruePredicate(), this.defaultPredictionFunction);
+		this.outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, this.predictionFunctions);
 		
 		return this.outputSchema;
 	}

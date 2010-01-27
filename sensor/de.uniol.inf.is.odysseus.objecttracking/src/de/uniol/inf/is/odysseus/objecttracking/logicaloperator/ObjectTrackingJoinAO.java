@@ -11,7 +11,6 @@ import com.maplesoft.externalcall.MapleException;
 import com.maplesoft.openmaple.Algebraic;
 import com.maplesoft.openmaple.Engine;
 
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
@@ -27,6 +26,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePr
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.MapleResultParserFacade;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.OdysseusMapleCallBack;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class ObjectTrackingJoinAO extends JoinAO{
 
+	private SDFAttributeListExtended outputSchema;
 	
 	/**
 	 * In this.predictionFunctions we have different prediction functions for
@@ -103,7 +104,6 @@ public class ObjectTrackingJoinAO extends JoinAO{
 		if (outputSchema == null || recalcOutputSchemata){
 			outputSchema = new SDFAttributeListExtended();
 			
-			
 			Map<IPredicate, IPredictionFunction> newPredictionFunctions = new HashMap<IPredicate, IPredictionFunction>();
 			
 			// there can only be two input schemas
@@ -158,6 +158,7 @@ public class ObjectTrackingJoinAO extends JoinAO{
 				}
 			}			
 			recalcOutputSchemata = false;
+			outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredictionFunctions);
 		}
 		return outputSchema;
 		
@@ -257,23 +258,13 @@ public class ObjectTrackingJoinAO extends JoinAO{
 				
 			}
 			
-			// the RangePredicateExpression must not be solved for t by Maple
-			try{
-				String[] a = {"java"};
-	 			Engine t = new Engine(a, new OdysseusMapleCallBack(), null, null);
-	 			Algebraic alg = t.evaluate("with(SolveTools[Inequality]); LinearMultivariateSystem({" + rangePredicateExpression + "}, [x]);");
-	 			
-	 			Map<IPredicate, ISolution> solutions = new MapleResultParserFacade().parse(alg.toString(), attributeResolver);
-	 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
-	 			rangePredicate.init(leftSchema, rightSchema);
-	 			
-	 			return rangePredicate;
-	 			
-			}catch(MapleException e){
-				e.printStackTrace();
-				return null;
-			}
-			
+			// the RangePredicateExpression must be solved for t by Maple
+			Map<IPredicate, ISolution> solutions = MapleFacade.getInstance().solveInequality(rangePredicateExpression, attributeResolver);
+		
+ 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
+ 			rangePredicate.init(leftSchema, rightSchema);
+ 			
+ 			return rangePredicate;	
 			
 		}else if(joinPredicate instanceof NotPredicate){
 			// exchange the compare operator

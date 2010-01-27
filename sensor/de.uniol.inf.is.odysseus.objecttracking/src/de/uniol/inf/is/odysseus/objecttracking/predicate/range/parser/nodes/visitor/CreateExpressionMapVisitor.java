@@ -2,10 +2,14 @@ package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.vis
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.Solution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTCompareOperator;
@@ -56,8 +60,58 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 		// the children of this node are the condition/solution combinations
 		
 		for(int i = 0; i<node.jjtGetNumChildren(); i++){
-			ArrayList condSolCombi = (ArrayList)node.jjtGetChild(i).jjtAccept(this, data);
-			solutions.put((IPredicate)condSolCombi.get(0), (ISolution)condSolCombi.get(1));
+			if(node.jjtGetChild(i) instanceof ASTConditionSolution){
+				ArrayList condSolCombi = (ArrayList)node.jjtGetChild(i).jjtAccept(this, data);
+				solutions.put((IPredicate)condSolCombi.get(0), (ISolution)condSolCombi.get(1));
+			}
+			// the "otherwise" part of the maple solution
+			// this can only be true, for the last child, so
+			// we can read from the EntrySet of the map, since
+			// all elements must already be in this map.
+			else if(node.jjtGetChild(i) instanceof ASTSolution){
+				ISolution solution = (ISolution)node.jjtGetChild(i).jjtAccept(this, data);
+				// create a NotPredicate(OrPredicate) from all other predicates
+				// all the other predicates must already be in the map
+				if(solutions.entrySet().size() == 1){
+					for(Entry<IPredicate<RelationalTuple<?>>, ISolution> entry: solutions.entrySet()){
+						NotPredicate notPred = new NotPredicate(entry.getKey());
+						solutions.put(notPred, solution);
+					}
+				}
+				else if(solutions.entrySet().size() == 2){
+					OrPredicate orPred = new OrPredicate();
+					Iterator<Entry<IPredicate<RelationalTuple<?>>, ISolution>> iter = solutions.entrySet().iterator();
+					
+					orPred.setLeft(iter.next().getKey());
+					orPred.setRight(iter.next().getKey());
+					
+					NotPredicate notPred = new NotPredicate(orPred);
+					solutions.put(notPred, solution);
+				}
+				else if(solutions.entrySet().size() > 2){
+					Iterator<Entry<IPredicate<RelationalTuple<?>>, ISolution>> iter = solutions.entrySet().iterator();
+					
+					ArrayList<IPredicate<RelationalTuple<?>>> listOfPreds = new ArrayList<IPredicate<RelationalTuple<?>>>();
+					for(Entry<IPredicate<RelationalTuple<?>>, ISolution> entry: solutions.entrySet()){
+						listOfPreds.add(entry.getKey());
+					}
+
+					OrPredicate orPred = new OrPredicate();
+					orPred.setLeft(listOfPreds.get(0));
+					orPred.setRight(listOfPreds.get(1));
+					
+					for(int u = 2; u<listOfPreds.size(); u++){
+						OrPredicate subOr = new OrPredicate();
+						subOr.setLeft(listOfPreds.get(u));
+						subOr.setRight(orPred);
+						orPred = subOr;
+					}
+					
+					NotPredicate notPred = new NotPredicate(orPred);
+					solutions.put(notPred, solution);
+				}
+				
+			}
 		}
 		
 		return solutions;
@@ -135,6 +189,10 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 	@Override
 	public Object visit(ASTSolution node, Object data) {
 		// TODO Auto-generated method stub
+		if(node.isEmpty()){
+			return new Solution(null, null, null);
+		}
+		
 		return node.jjtGetChild(0).jjtAccept(this, (IAttributeResolver)data);
 	}
 
@@ -188,12 +246,6 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 			return solution;
 		}
 	}
-
-	@Override
-	public Object visit(ASTEmptySolution node, Object data) {
-		// TODO Auto-generated method stub
-		return new Solution(null, null, null);
-	}
 	
 	@Override
 	public Object visit(ASTFullSolution node, Object data) {
@@ -242,6 +294,12 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 
 	@Override
 	public Object visit(ASTIdentifier node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTEmptySolution node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}

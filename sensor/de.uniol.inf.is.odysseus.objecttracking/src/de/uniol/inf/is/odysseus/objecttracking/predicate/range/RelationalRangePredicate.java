@@ -58,6 +58,11 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	 * pos 0: >
 	 * pos 1: <
 	 * 
+	 * TODO: Das ist noch gar nicht drin. Was hier gemacht wird, ist, dass
+	 * für die einzelnen Bedingungen die Attributpositionen bestimmt werden.
+	 * 
+	 * Falls a<b => t > c
+	 * Falls a>b => t < c usw.
 	 * 
 	 * @param expression
 	 */
@@ -73,27 +78,35 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 			IPredicate predicate = entry.getKey();
 			ISolution solution = entry.getValue();
 			
-			List<SDFAttribute> neededAttributes = solution.getSolution().getAllAttributes();
-			int[] curAttributePositions = new int[neededAttributes.size()];
-			boolean[] curFromRightChannel = new boolean[neededAttributes.size()];
-			
-			int i = 0;
-			for (SDFAttribute curAttribute : neededAttributes) {
-				SDFAttribute cqlAttr = (SDFAttribute) curAttribute;
-				int pos = indexOf(leftSchema, cqlAttr);
-				if (pos == -1) {
-					// if you get here, there is an attribute
-					// in the predicate that does not exist
-					// in the left schema, so there must also be
-					// a right schema
-					pos = indexOf(rightSchema, cqlAttr);
-					curFromRightChannel[i] = true;
+			// TODO: Was ist mit der FullSolution?
+			if(solution.getSolution() != null){
+				List<SDFAttribute> neededAttributes = solution.getSolution().getAllAttributes();
+				int[] curAttributePositions = new int[neededAttributes.size()];
+				boolean[] curFromRightChannel = new boolean[neededAttributes.size()];
+				
+				int i = 0;
+				for (SDFAttribute curAttribute : neededAttributes) {
+					SDFAttribute cqlAttr = (SDFAttribute) curAttribute;
+					int pos = indexOf(leftSchema, cqlAttr);
+					if (pos == -1) {
+						// if you get here, there is an attribute
+						// in the predicate that does not exist
+						// in the left schema, so there must also be
+						// a right schema
+						pos = indexOf(rightSchema, cqlAttr);
+						curFromRightChannel[i] = true;
+					}
+					curAttributePositions[i++] = pos;
 				}
-				curAttributePositions[i++] = pos;
+				
+				this.attributePositions.put(predicate, curAttributePositions);
+				this.fromRightChannel.put(predicate, curFromRightChannel);
 			}
-			
-			this.attributePositions.put(predicate, curAttributePositions);
-			this.fromRightChannel.put(predicate, curFromRightChannel);
+			else{
+				// the solution is null, since it is the empty solution
+				this.attributePositions.put(predicate, null);
+				this.fromRightChannel.put(predicate, null);
+			}
 		}
 	}
 

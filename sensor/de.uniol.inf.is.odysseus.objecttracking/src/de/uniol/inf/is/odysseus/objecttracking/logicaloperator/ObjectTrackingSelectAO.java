@@ -22,9 +22,9 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.OrRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.MapleResultParserFacade;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.PredictionSchema;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.OdysseusMapleCallBack;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -110,17 +110,14 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 		
 		if(this.getInputSchema() instanceof SDFAttributeListExtended){
 			SDFAttributeListExtended inputSchema = (SDFAttributeListExtended)this.getInputSchema();
-			PredictionSchema predSchema = (PredictionSchema)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 			
-			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)predSchema.getPredictionFunctions();
+			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 			
 			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
 			for(Entry<IPredicate, IPredictionFunction> entry : predictionFunctions.entrySet()){
 				IRangePredicate rangePredicate = this.generateRangePredicate(this.getPredicate(), entry.getValue().getExpressions(), attributeResolver);
 				this.rangePredicates.put(entry.getKey(), rangePredicate);
 			}
-			
-			this.defaultRangePredicate = this.generateRangePredicate(this.getPredicate(), predSchema.getDefaultPredictionFunction().getExpressions(), attributeResolver);
 		}
 	}
 	
@@ -181,22 +178,13 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 				
 			}
 			
-			// the RangePredicateExpression must not be solved for t by Maple
-			try{
-				String[] a = {"java"};
-	 			Engine t = new Engine(a, new OdysseusMapleCallBack(), null, null);
-	 			Algebraic alg = t.evaluate("with(SolveTools[Inequality]); LinearMultivariateSystem({" + rangePredicateExpression + "}, [x]);");
+			// the RangePredicateExpression must be solved for t by Maple
+			Map<IPredicate, ISolution> solutions = MapleFacade.getInstance().solveInequality(rangePredicateExpression, attributeResolver);
+ 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
+ 			rangePredicate.init(this.getInputSchema(), null);
+ 			
+ 			return rangePredicate;
 	 			
-	 			Map<IPredicate, ISolution> solutions = new MapleResultParserFacade().parse(alg.toString(), attributeResolver);
-	 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
-	 			rangePredicate.init(this.getInputSchema(), null);
-	 			
-	 			return rangePredicate;
-	 			
-			}catch(MapleException e){
-				e.printStackTrace();
-				return null;
-			}
 			
 			
 		}else if(selectionPredicate instanceof NotPredicate){

@@ -14,8 +14,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 public class MapleResultParserFacade {
 
 	public MapleResultParser parser;
+	private static MapleResultParserFacade instance = new MapleResultParserFacade();
 	
-	public MapleResultParserFacade(){
+	private MapleResultParserFacade(){
+	}
+	
+	public static MapleResultParserFacade getInstance(){
+		if(instance == null){
+			instance = new MapleResultParserFacade();
+		}
+		return instance;
 	}
 	
 	public Map<IPredicate, ISolution> parse(String mapleResult, IAttributeResolver attributeResolver){

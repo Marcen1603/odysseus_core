@@ -7,6 +7,7 @@ options {
   IGNORE_CASE = true;
   MULTI = true;
   VISITOR = true;
+  DEBUG_PARSER = false;
   DEBUG_TOKEN_MANAGER = false;
   //  NODE_DEFAULT_VOID=true;
   JJTREE_OUTPUT_DIRECTORY = "nodes";
@@ -74,7 +75,7 @@ TOKEN:/* Numeric Constants */
 
 ASTMaplePiecewise MaplePiecewise():{}
 {
-  < K_PIECEWISE >"("ConditionSolution() ("," ConditionSolution())*")"
+  < K_PIECEWISE >"("ConditionSolution() (LOOKAHEAD("," ConditionSolution())"," ConditionSolution())* ("," Solution())?")"
   {return jjtThis;}}
 
 void ConditionSolution():{}{
@@ -101,7 +102,7 @@ void CompareOperator():{
 }
 
 void Solution():{}{
-  LOOKAHEAD(SimpleSolution()) SimpleSolution() | LOOKAHEAD(FullSolution()) FullSolution() | EmptySolution()}
+  (LOOKAHEAD(SimpleSolution()) SimpleSolution() | LOOKAHEAD(FullSolution()) FullSolution() | EmptySolution() {jjtThis.setEmpty(true);} )}
 
 void SimpleSolution():{}{
 	"{[{" SimpleSolutionContent() "}]}"
@@ -139,7 +140,7 @@ void SimpleToken():{}{
   /*| LOOKAHEAD(AggregateExpression())AggregateExpression()*/
   | LOOKAHEAD(FunctionExpression())FunctionExpression()
   | "("Expression()")"
-  | ("-")? Identifier()
+  | ("-" {jjtThis.setMinus(true);})? Identifier()
 //TODO DISTINCE Expression
 }
 

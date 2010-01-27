@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.PredictionSchema;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -86,8 +85,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		Map<IPredicate, IPredictionFunction> newPredFcts = new HashMap<IPredicate, IPredictionFunction>();
 		
 		
-		PredictionSchema predSchema = inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
-		Map<IPredicate, IPredictionFunction> predFcts = (Map<IPredicate, IPredictionFunction>)predSchema.getPredictionFunctions();
+		Map<IPredicate, IPredictionFunction> predFcts = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 		
 		
 		for(Entry<IPredicate, IPredictionFunction> entry : predFcts.entrySet()){
@@ -95,12 +93,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 			newPredFcts.put(entry.getKey(), newPredFct);
 		}
 		
-		// do the same for the default prediction function
-		IPredictionFunction newDefaultPredFct = this.getNewPredictionFunction(inputSchema, outAttributes, predSchema.getDefaultPredictionFunction().getExpressions());
-		
-		PredictionSchema newPredSchema = new PredictionSchema(newPredFcts, newDefaultPredFct);
-		
-		newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredSchema);
+		newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);
 		
 		return newOutputSchema;
 	}

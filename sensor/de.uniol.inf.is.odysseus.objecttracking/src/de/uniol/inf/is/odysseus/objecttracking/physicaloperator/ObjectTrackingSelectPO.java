@@ -14,11 +14,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey & IApplicationTime> extends AbstractPipe<T, T> {
 
 	private Map<IPredicate<? super T>, IRangePredicate> rangePredicates;
-	private IRangePredicate defaultRangePredicate;
 	
-	public ObjectTrackingSelectPO(Map<IPredicate<? super T>, IRangePredicate> rangePredicates, IRangePredicate defaultRangePredicate){
+	public ObjectTrackingSelectPO(Map<IPredicate<? super T>, IRangePredicate> rangePredicates){
 		this.rangePredicates = rangePredicates;
-		this.defaultRangePredicate = defaultRangePredicate;
 	}
 	
 	public int hashCode() {
@@ -40,15 +38,7 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 		// first get the range predicate
 		IRangePredicate rangePredicate = this.rangePredicates.get(object.getMetadata().getPredictionFunctionKey());
 		
-		List<ITimeInterval> appIntervals = null;
-		// if the range predicate is null
-		// the default range predicate has to be used.
-		if(rangePredicate == null){
-			appIntervals = this.defaultRangePredicate.evaluate(object);
-		}
-		else{
-			appIntervals = rangePredicate.evaluate(object);
-		}
+		List<ITimeInterval> appIntervals = rangePredicate.evaluate(object);
 		
 		// only transfer the object, if it is valid in future!
 		// What is with elements, that are valid in the past
