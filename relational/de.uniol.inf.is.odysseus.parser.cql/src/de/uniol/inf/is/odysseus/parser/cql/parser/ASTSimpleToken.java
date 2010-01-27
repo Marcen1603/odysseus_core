@@ -22,11 +22,7 @@ public class ASTSimpleToken extends SimpleNode {
 	@Override
 	public String toString() {
 		Node node = jjtGetChild(0);
-		if (node instanceof ASTExpression) {
-			return " ( " + node.toString() + " ) ";
-		}
-
-		return (this.hasMinus ? "-" : "") + node.toString();
+		return "(" + (this.hasMinus ? "-" : "") + node.toString()+ ")";
 	}
 
 	public void setMinus(boolean hasMinus) {
