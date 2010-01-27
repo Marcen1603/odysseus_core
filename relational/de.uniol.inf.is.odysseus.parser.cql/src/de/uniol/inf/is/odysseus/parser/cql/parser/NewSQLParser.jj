@@ -1533,7 +1533,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) SimpleToken */
   try {
-/*@egen*/  Number()| String()| LOOKAHEAD(AggregateExpression())  AggregateExpression()| LOOKAHEAD(FunctionExpression())  FunctionExpression()| "(" Expression() ")"| ("-")? Identifier()/*@bgen(jjtree)*/
+/*@egen*/  Number()| String()| LOOKAHEAD(AggregateExpression())  AggregateExpression()| LOOKAHEAD(FunctionExpression())  FunctionExpression()| "(" Expression() ")"|  (    "-"    {      jjtn000.setMinus(true);    }  )?  Identifier()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

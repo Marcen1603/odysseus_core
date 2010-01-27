@@ -3,6 +3,8 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public class ASTSimpleToken extends SimpleNode {
+	private boolean hasMinus = false;
+
 	public ASTSimpleToken(int id) {
 		super(id);
 	}
@@ -23,7 +25,11 @@ public class ASTSimpleToken extends SimpleNode {
 		if (node instanceof ASTExpression) {
 			return " ( " + node.toString() + " ) ";
 		}
-		
-		return node.toString();
+
+		return (this.hasMinus ? "-" : "") + node.toString();
+	}
+
+	public void setMinus(boolean hasMinus) {
+		this.hasMinus = hasMinus;
 	}
 }
