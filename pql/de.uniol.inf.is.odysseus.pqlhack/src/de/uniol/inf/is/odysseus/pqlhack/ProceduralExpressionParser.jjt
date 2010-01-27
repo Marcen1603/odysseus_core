@@ -10,13 +10,13 @@ options {
   DEBUG_TOKEN_MANAGER = false;
   //  NODE_DEFAULT_VOID=true;
   JJTREE_OUTPUT_DIRECTORY = "parser";
-  NODE_PACKAGE = "de.uniol.inf.is.odysseus.querytranslation.procedural.parser";
+  NODE_PACKAGE = "de.uniol.inf.is.odysseus.pqlhack.parser";
   //LOOKAHEAD = 2;
   //FORCE_LA_CHECK = true;
 }
  
 PARSER_BEGIN(ProceduralExpressionParser) 
-package de.uniol.inf.is.odysseus.querytranslation.procedural.parser;
+package de.uniol.inf.is.odysseus.pqlhack.parser;
 
 public class ProceduralExpressionParser{} PARSER_END(ProceduralExpressionParser)
 
@@ -119,7 +119,7 @@ void SelectionOp(): {}{
 void JoinOp(): {}{
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() ")"
+	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ")"
 }
 
 void WindowOp():{}{

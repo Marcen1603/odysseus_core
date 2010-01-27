@@ -8,12 +8,14 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
-import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.PredictionAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoinAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingSelectAO;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
@@ -77,7 +79,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	@Override
 	public Object visit(ASTProjectionOp node, Object data) {
 		// TODO Auto-generated method stub
-		ProjectAO projection = new ProjectAO();
+		ObjectTrackingProjectAO projection = new ObjectTrackingProjectAO();
 		// first the output schema is empty, it will be 
 		// filled by the projection attributes
 		projection.setOutputSchema(new SDFAttributeList());
@@ -93,13 +95,19 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		projection.subscribeTo(inputForProjection, inputForProjection.getOutputSchema());
 		
 		// the further children are the identifiers
+		SDFAttributeListExtended outAttributes = new SDFAttributeListExtended();
 		for(int i = 1; i<node.jjtGetNumChildren(); i++){
-			newData = new ArrayList();
-			newData.add(((ArrayList)data).get(0));
-			newData.add(projection);
+			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier)node.jjtGetChild(i);
 			
-			node.jjtGetChild(i).jjtAccept(this, newData);
+			IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
+			ProjectAO projectAO = (ProjectAO)((ArrayList)data).get(1);
+			
+			String attrString = ((ASTIdentifier)attrIdentifier.jjtGetChild(0)).getName();
+			SDFAttribute attr = attrRes.getAttribute(attrString);
+			
+			outAttributes.add(attr);			
 		}
+		projection.setOutAttributes(outAttributes);
 		
 //		// the restrict list must be set
 //		int[] restrictList = new int[projection.getOutputSchema().getAttributeCount()];
@@ -123,7 +131,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTSelectionOp node, Object data) {
-		SelectAO selection = new SelectAO();
+		ObjectTrackingSelectAO selection = new ObjectTrackingSelectAO();
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
@@ -142,6 +150,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		initPredicate(predicate, selection.getInputSchema(), null);
 		
 		selection.setPredicate(predicate);
+		selection.init((IAttributeResolver)((ArrayList)data).get(0));
 		
 		((ArrayList)data).add(selection);
 		
@@ -151,7 +160,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	@Override
 	public Object visit(ASTJoinOp node, Object data) {
 		// TODO Auto-generated method stub
-		JoinAO join = new JoinAO();
+		ObjectTrackingJoinAO join = new ObjectTrackingJoinAO();
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
@@ -168,7 +177,16 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			
 		join.subscribeToSource(leftIn, 0, 0, leftIn.getOutputSchema());
 		join.subscribeToSource(rightIn, 1, 0, rightIn.getOutputSchema());
-				
+		
+		// setting the predicate and initializing the operator
+		newData.clear();
+		newData.add(((ArrayList)data).get(0));
+		IPredicate predicate = (IPredicate)((ArrayList)node.jjtGetChild(2).jjtAccept(this, newData)).get(1);
+		initPredicate(predicate, join.getInputSchema(0), join.getInputSchema(1));
+		
+		join.setPredicate(predicate);
+		join.init((IAttributeResolver)((ArrayList)data).get(0));
+		
 		((ArrayList)data).add(join);
 		
 		return data;
@@ -228,7 +246,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	@Override
 	public Object visit(ASTPredictionOp node, Object data) {
 		// TODO Auto-generated method stub
-		PredictionAO prediction = new PredictionAO();
+		ObjectTrackingPredictionAssignAO prediction = new ObjectTrackingPredictionAssignAO();
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
@@ -239,12 +257,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		
 
 		prediction.subscribeTo(inputForPrediction, inputForPrediction.getOutputSchema());
-		
-		// Now, since the input schema for this operator is available , we
-		// can initialize the restrict list for the operator that contains
-		// the positions of the measurement attributes in the schema
-		prediction.initRestrictList();
-		
+				
 		for(int i = 1; i<node.jjtGetNumChildren(); i++){
 			
 			// handle the standard prediction definitions
