@@ -1,13 +1,9 @@
 package de.uniol.inf.is.odysseus.action.output;
 
-import java.util.Arrays;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
 import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
-import de.uniol.inf.is.odysseus.action.services.actuator.PrimitivTypeComparator;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
@@ -56,27 +52,5 @@ public class Action {
 	 */
 	public void executeMethod(Object[] params) throws ActuatorException{
 		this.actuator.executeMethod(this.methodName, this.method.getParameterTypes(), params);
-	}
-	
-	/**
-	 * 
-	 * @param parameters
-	 * @return
-	 */
-	public List<IActionParameter> sortParameters(List<IActionParameter> parameters){
-		IActionParameter[] newParameterOrder = new IActionParameter[parameters.size()];
-		Class<?>[] schema = this.method.getParameterTypes().clone();
-		for (IActionParameter param : parameters){
-			int index = 0;
-			for (;index<schema.length;index++){
-				if (PrimitivTypeComparator.sameType(schema[index], param.getParamClass())){
-					break;
-				}
-			}
-			//set class to null to prevent double usage of one parameter!
-			schema[index] = null;
-			newParameterOrder[index] = param;
-		}
-		return Arrays.asList(newParameterOrder);
 	}
 }
