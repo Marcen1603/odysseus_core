@@ -21,31 +21,17 @@ public class ActionMethod {
 		return this.parameterTypes.toArray(parameters);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public boolean isCompatibleTo(String methodName, Class<?>[] parameters){
-		ArrayList<Class<?>> types = (ArrayList<Class<?>>) this.parameterTypes.clone();
-		if (!this.name.equals(methodName)){
+		if (!this.name.equals(methodName) || parameters.length != this.parameterTypes.size()){
 			//method name differs
 			return false;
 		}
-		for (Class<?> param : parameters){
-			if (!types.remove(param)){
-				//parameter not found -> check wrapper types
-				Class<?> typeToRemove = null;
-				for (Class<?> type : types){
-					if (PrimitivTypeComparator.sameType(param, type)){
-						typeToRemove = type;
-						break;
-					}
-				}
-				types.remove(typeToRemove);
+		for (int i=0; i < parameters.length; i++){
+			if (!PrimitivTypeComparator.sameType(parameters[i], this.parameterTypes.get(i))){
+				return false;
 			}
 		}
-		if (types.isEmpty()){
-			//all parameters used
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 }
