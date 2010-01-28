@@ -4,28 +4,30 @@ package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes;
 @SuppressWarnings("all")
 public interface MapleResultParserTreeConstants
 {
-  public int JJTMAPLEPIECEWISE = 0;
-  public int JJTCONDITIONSOLUTION = 1;
-  public int JJTCONDITION = 2;
-  public int JJTCOMPLEXCONDITION = 3;
-  public int JJTSIMPLECONDITION = 4;
-  public int JJTCOMPAREOPERATOR = 5;
-  public int JJTSOLUTION = 6;
-  public int JJTSIMPLESOLUTION = 7;
-  public int JJTSIMPLESOLUTIONCONTENT = 8;
-  public int JJTFULLSOLUTION = 9;
-  public int JJTEMPTYSOLUTION = 10;
-  public int JJTEXPRESSION = 11;
-  public int JJTSIMPLETOKEN = 12;
-  public int JJTFUNCTIONEXPRESSION = 13;
-  public int JJTFUNCTIONNAME = 14;
-  public int JJTVOID = 15;
-  public int JJTNUMBER = 16;
-  public int JJTSTRING = 17;
-  public int JJTIDENTIFIER = 18;
+  public int JJTMAPLE = 0;
+  public int JJTMAPLEPIECEWISE = 1;
+  public int JJTCONDITIONSOLUTION = 2;
+  public int JJTCONDITION = 3;
+  public int JJTCOMPLEXCONDITION = 4;
+  public int JJTSIMPLECONDITION = 5;
+  public int JJTCOMPAREOPERATOR = 6;
+  public int JJTSOLUTION = 7;
+  public int JJTSIMPLESOLUTION = 8;
+  public int JJTSIMPLESOLUTIONCONTENT = 9;
+  public int JJTFULLSOLUTION = 10;
+  public int JJTEMPTYSOLUTION = 11;
+  public int JJTEXPRESSION = 12;
+  public int JJTSIMPLETOKEN = 13;
+  public int JJTFUNCTIONEXPRESSION = 14;
+  public int JJTFUNCTIONNAME = 15;
+  public int JJTVOID = 16;
+  public int JJTNUMBER = 17;
+  public int JJTSTRING = 18;
+  public int JJTIDENTIFIER = 19;
 
 
   public String[] jjtNodeName = {
+    "Maple",
     "MaplePiecewise",
     "ConditionSolution",
     "Condition",
@@ -47,4 +49,4 @@ public interface MapleResultParserTreeConstants
     "Identifier",
   };
 }
-/* JavaCC - OriginalChecksum=9324effc6aa23f59c1a9f1eec065d425 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4b4af6710a716370f16cd26b936d3b4c (do not edit this line) */

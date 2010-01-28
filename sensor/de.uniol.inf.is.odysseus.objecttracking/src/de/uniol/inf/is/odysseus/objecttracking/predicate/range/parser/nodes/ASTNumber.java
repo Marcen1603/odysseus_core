@@ -17,6 +17,9 @@ class ASTNumber extends SimpleNode {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	public String toString(){
+		return this.getValue();
+	}
 
 	public ASTNumber(int id) {
     super(id);

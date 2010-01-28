@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes;
 public interface MapleResultParserVisitor
 {
   public Object visit(SimpleNode node, Object data);
+  public Object visit(ASTMaple node, Object data);
   public Object visit(ASTMaplePiecewise node, Object data);
   public Object visit(ASTConditionSolution node, Object data);
   public Object visit(ASTCondition node, Object data);
@@ -24,4 +25,4 @@ public interface MapleResultParserVisitor
   public Object visit(ASTString node, Object data);
   public Object visit(ASTIdentifier node, Object data);
 }
-/* JavaCC - OriginalChecksum=0f10df1698fb8e78fb87839c12de52c4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=30363d4168b6d56d845f7ea60e5c8371 (do not edit this line) */

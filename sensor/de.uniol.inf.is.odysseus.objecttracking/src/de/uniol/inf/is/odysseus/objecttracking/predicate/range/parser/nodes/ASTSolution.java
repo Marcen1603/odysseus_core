@@ -7,12 +7,23 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.*;
 public
 @SuppressWarnings("all")
 class ASTSolution extends SimpleNode {
+  
+	boolean isEmpty;
+	
   public ASTSolution(int id) {
     super(id);
   }
 
   public ASTSolution(MapleResultParser p, int id) {
     super(p, id);
+  }
+  
+  public void setEmpty(boolean isEmpty){
+	  this.isEmpty = isEmpty;
+  }
+  
+  public boolean isEmpty(){
+	  return this.isEmpty;
   }
 
 

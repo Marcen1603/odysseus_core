@@ -7,7 +7,10 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.*;
 public
 @SuppressWarnings("all")
 class ASTSimpleToken extends SimpleNode {
-  public ASTSimpleToken(int id) {
+  
+	private boolean hasMinus;
+	
+	public ASTSimpleToken(int id) {
     super(id);
   }
 
@@ -20,5 +23,15 @@ class ASTSimpleToken extends SimpleNode {
   public Object jjtAccept(MapleResultParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public void setMinus(boolean hasMinus){
+	  this.hasMinus = hasMinus;
+  }
+  
+	@Override
+	public String toString() {
+		Node node = jjtGetChild(0);
+		return "(" + (this.hasMinus ? "-" : "") + node.toString() + ")";
+	}
 }
 /* JavaCC - OriginalChecksum=ea5958b49ff19b3e0192ad9762dd5f30 (do not edit this line) */

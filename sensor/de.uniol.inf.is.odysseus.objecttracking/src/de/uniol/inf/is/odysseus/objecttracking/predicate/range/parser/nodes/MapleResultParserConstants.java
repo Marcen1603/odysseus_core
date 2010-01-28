@@ -12,31 +12,33 @@ public interface MapleResultParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int K_PIECEWISE = 5;
+  int K_AND = 5;
   /** RegularExpression Id. */
-  int K_AND = 6;
+  int K_MAPLE = 6;
   /** RegularExpression Id. */
-  int IDENTIFIER = 7;
+  int K_PIECEWISE = 7;
   /** RegularExpression Id. */
-  int LETTER = 8;
+  int IDENTIFIER = 8;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 9;
+  int LETTER = 9;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 10;
+  int SPECIAL_CHARS = 10;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 11;
+  int CHAR_LITERAL = 11;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 12;
+  int QUOTED_IDENTIFIER = 12;
   /** RegularExpression Id. */
-  int REGEXP = 13;
+  int COMPARE_OPERATOR = 13;
   /** RegularExpression Id. */
-  int FLOAT = 14;
+  int REGEXP = 14;
   /** RegularExpression Id. */
-  int INTEGER = 15;
+  int FLOAT = 15;
   /** RegularExpression Id. */
-  int DIGIT = 16;
+  int INTEGER = 16;
   /** RegularExpression Id. */
-  int IPADDRESS = 17;
+  int DIGIT = 17;
+  /** RegularExpression Id. */
+  int IPADDRESS = 18;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -48,8 +50,9 @@ public interface MapleResultParserConstants {
     "\"\\t\"",
     "\"\\n\"",
     "\"\\r\"",
-    "\"PIECEWISE\"",
     "\"AND\"",
+    "\"MAPLE\"",
+    "\"PIECEWISE\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

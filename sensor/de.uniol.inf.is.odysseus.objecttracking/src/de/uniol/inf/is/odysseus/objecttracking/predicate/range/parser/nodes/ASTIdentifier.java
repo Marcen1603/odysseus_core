@@ -17,6 +17,10 @@ class ASTIdentifier extends SimpleNode {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String toString(){
+		return this.getName();
+	}
 
 	public ASTIdentifier(int id) {
     super(id);
