@@ -5,7 +5,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
-import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTMaplePiecewise;
+import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTMaple;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.MapleResultParser;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ParseException;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.visitor.CreateExpressionMapVisitor;
@@ -36,9 +36,9 @@ public class MapleResultParserFacade {
 			MapleResultParser.ReInit(new StringReader(mapleResult));
 		}
 	
-		ASTMaplePiecewise tree = null;
+		ASTMaple tree = null;
 		try {
-			tree = MapleResultParser.MaplePiecewise();
+			tree = MapleResultParser.Maple();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

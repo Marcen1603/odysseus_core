@@ -35,8 +35,9 @@ SKIP :
 
 TOKEN:/* Keywords */
 {
-  < K_PIECEWISE: "PIECEWISE" >
-| < K_AND: "AND" >
+  < K_AND: "AND" >
+  |< K_MAPLE: "MAPLE">
+  |< K_PIECEWISE: "PIECEWISE" >
 }
 
 TOKEN:{
@@ -73,10 +74,14 @@ TOKEN:/* Numeric Constants */
  | <IPADDRESS:<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?>
 }
 
-ASTMaplePiecewise MaplePiecewise():{}
+ASTMaple Maple():{}{
+	<K_MAPLE> (Solution() | MaplePiecewise())
+	{return jjtThis;}
+}
+
+void MaplePiecewise():{}
 {
-  < K_PIECEWISE >"("ConditionSolution() (LOOKAHEAD("," ConditionSolution())"," ConditionSolution())* ("," Solution())?")"
-  {return jjtThis;}}
+  < K_PIECEWISE >"("ConditionSolution() (LOOKAHEAD("," ConditionSolution())"," ConditionSolution())* ("," Solution())?")"}
 
 void ConditionSolution():{}{
   Condition() "," Solution()}

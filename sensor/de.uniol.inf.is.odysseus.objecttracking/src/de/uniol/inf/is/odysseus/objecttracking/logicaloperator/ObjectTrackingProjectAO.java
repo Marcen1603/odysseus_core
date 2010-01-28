@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 /**
  * @author Andre Bolles
  */
+@SuppressWarnings("unchecked")
 public class ObjectTrackingProjectAO extends ProjectAO {
 	private static final long serialVersionUID = 5487345119018834806L;
 
@@ -112,10 +113,15 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		for(int i = 0; i<restrictList.length; i++){
 			SDFExpression oldExpr = oldExprs[restrictList[i]];
 			boolean attributesStillAvailable = true;
-			for(SDFAttribute oldAttr : oldExpr.getAllAttributes()){
-				if(outAttributes.indexOf(oldAttr) < 0){
-					attributesStillAvailable = false;
-					break;
+			
+			// an expression can be null, if
+			// a constant prediction function will be used.
+			if(oldExpr != null){
+				for(SDFAttribute oldAttr : oldExpr.getAllAttributes()){
+					if(outAttributes.indexOf(oldAttr) < 0){
+						attributesStillAvailable = false;
+						break;
+					}
 				}
 			}
 			newExprs[i] = attributesStillAvailable ? oldExpr : null;

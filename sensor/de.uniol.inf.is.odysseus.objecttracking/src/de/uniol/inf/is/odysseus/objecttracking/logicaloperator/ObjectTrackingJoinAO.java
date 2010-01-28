@@ -54,6 +54,11 @@ public class ObjectTrackingJoinAO extends JoinAO{
 	private Map<IPredicate, IRangePredicate> rangePredicates;
 	
 	
+	public Map<IPredicate, IRangePredicate> getRangePredicates() {
+		return rangePredicates;
+	}
+
+
 	/** 
 	 * The first measurement attribute has not necessarily to be the
 	 * first attribute in the schema and so on. So, we have to find the measurement
@@ -144,6 +149,7 @@ public class ObjectTrackingJoinAO extends JoinAO{
 							newExpressions[i].initAttributePositions(outputSchema);
 						}
 					}
+					newFunction.setExpressions(newExpressions);
 					
 					int[][] vars = new int[newExpressions.length][];
 					for(int u = 0; u<newExpressions.length; u++){
@@ -151,7 +157,6 @@ public class ObjectTrackingJoinAO extends JoinAO{
 						if(expression != null)
 							vars[u] = expression.getAttributePositions();
 					}
-					
 					newFunction.setVariables(vars);
 					
 					newPredictionFunctions.put(newPredicate, newFunction);

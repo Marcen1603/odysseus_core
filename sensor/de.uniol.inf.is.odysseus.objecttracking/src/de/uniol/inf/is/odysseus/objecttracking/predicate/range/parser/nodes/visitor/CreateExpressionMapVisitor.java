@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
+import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.Solution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTCompareOperator;
@@ -22,6 +23,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTF
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTFunctionName;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTIdentifier;
+import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTMaple;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTMaplePiecewise;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTNumber;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTSimpleCondition;
@@ -49,8 +51,26 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 	
 	@Override
 	public Object visit(SimpleNode node, Object data) {
-		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
+	}
+	
+	@Override
+	public Object visit(ASTMaple node, Object data) {
+		if(node.jjtGetChild(0) instanceof ASTSolution){
+			ISolution solution = (ISolution)node.jjtGetChild(0).jjtAccept(this, data);
+			Map<IPredicate<RelationalTuple<?>>, ISolution> solutions = new HashMap<IPredicate<RelationalTuple<?>>, ISolution>();
+			//TODO: Funktioniert das wirklich oder ist das TruePredicate in Konkurrenz zum
+			//default predicate des prediction assign operators?
+			//Nein, kein Problem. Die default prediction function mapped auf ein
+			//RangePredicate. Das RangePredicate wiederum enthält eine Map
+			//mit Prädikaten und Solutions. Die TruePredicates befinden sich also
+			//in zwei verschiedenen Maps.
+			solutions.put(new TruePredicate(), solution);
+			return solutions;
+		}
+		else{
+			return node.jjtGetChild(0).jjtAccept(this, data);
+		}
 	}
 
 	@Override
@@ -303,6 +323,7 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 	
 }

@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey> extends ObjectTrackingProjectBasePO<T> {
 
 	
-	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao, int[] restrictList, RealMatrix projectMatrix){
-		super(ao, restrictList, projectMatrix);
+	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao){
+		super(ao);
 	}
 	
-	public ObjectTrackingProjectPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
-		super(restrictList, projectMatrix, projectVector, inputSchema, outputSchema);
-	}
+//	public ObjectTrackingProjectPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
+//		super(restrictList, projectMatrix, projectVector, inputSchema, outputSchema);
+//	}
 	
 	public ObjectTrackingProjectPO(ObjectTrackingProjectPO<T> copy) {
 		super(copy);

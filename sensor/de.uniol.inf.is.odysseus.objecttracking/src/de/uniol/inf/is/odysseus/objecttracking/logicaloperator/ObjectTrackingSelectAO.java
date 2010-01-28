@@ -6,9 +6,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
-import com.maplesoft.externalcall.MapleException;
-import com.maplesoft.openmaple.Algebraic;
-import com.maplesoft.openmaple.Engine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -21,11 +20,9 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.OrRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePredicate;
-import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.MapleResultParserFacade;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
-import de.uniol.inf.is.odysseus.objecttracking.util.OdysseusMapleCallBack;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -35,6 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class ObjectTrackingSelectAO<T> extends SelectAO{
 
 
+	private Logger logger;
 	/**
 	 * In this.predictionFunctions we have different prediction functions for
 	 * different tuples according to predicate these tuples fulfill. 
@@ -73,6 +71,7 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 	
 	public ObjectTrackingSelectAO(){
 		super();
+		this.logger = LoggerFactory.getLogger(this.getClass());
 	}
 
 	public ObjectTrackingSelectAO(ObjectTrackingSelectAO po) {
@@ -82,6 +81,7 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 			this.rangePredicates.put(entry.getKey().clone(), entry.getValue().clone());
 		}
 		this.defaultRangePredicate = po.defaultRangePredicate.clone();
+		this.logger = LoggerFactory.getLogger(this.getClass());
 	}
 
 	public ObjectTrackingSelectAO(IPredicate<?> predicate) {
@@ -179,6 +179,7 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 			}
 			
 			// the RangePredicateExpression must be solved for t by Maple
+			this.logger.debug("Predicate '" + predicateString + "' transformed to rangePredicate '" + rangePredicateExpression + "'.");
 			Map<IPredicate, ISolution> solutions = MapleFacade.getInstance().solveInequality(rangePredicateExpression, attributeResolver);
  			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
  			rangePredicate.init(this.getInputSchema(), null);

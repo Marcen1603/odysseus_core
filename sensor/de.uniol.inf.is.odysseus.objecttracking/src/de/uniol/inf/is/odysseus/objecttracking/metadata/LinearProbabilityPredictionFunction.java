@@ -188,7 +188,11 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 * @param schema The schema of the element. To identfy the correct attribute values
 	 * @param object The element to be predicted
 	 * @param t The point in time to which the element is to be predicted
+	 * @deprecated Man darf nicht mehr von delta t ausgehen. Man muss t als absoluten Wert betrachten. Sollte
+	 *             auch kein Problem sein, da man ohnehin zwei verschiedene Intervalle hat
+	 *             (Application Time und Transaction Time)
 	 */
+	@Deprecated
 	public MVRelationalTuple<M> predictData(SDFAttributeList schema, MVRelationalTuple<M> object, PointInTime t){	
 		counter++;
 		long start = System.currentTimeMillis();

@@ -78,7 +78,8 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTProjectionOp node, Object data) {
-		// TODO Auto-generated method stub
+		IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
+		
 		ObjectTrackingProjectAO projection = new ObjectTrackingProjectAO();
 		// first the output schema is empty, it will be 
 		// filled by the projection attributes
@@ -86,7 +87,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
-		newData.add(((ArrayList)data).get(0));
+		newData.add(attrRes);
 		
 		// the first child is the input operator
 		AbstractLogicalOperator inputForProjection = 
@@ -97,11 +98,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// the further children are the identifiers
 		SDFAttributeListExtended outAttributes = new SDFAttributeListExtended();
 		for(int i = 1; i<node.jjtGetNumChildren(); i++){
-			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier)node.jjtGetChild(i);
-			
-			IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
-			ProjectAO projectAO = (ProjectAO)((ArrayList)data).get(1);
-			
+			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier)node.jjtGetChild(i);			
 			String attrString = ((ASTIdentifier)attrIdentifier.jjtGetChild(0)).getName();
 			SDFAttribute attr = attrRes.getAttribute(attrString);
 			

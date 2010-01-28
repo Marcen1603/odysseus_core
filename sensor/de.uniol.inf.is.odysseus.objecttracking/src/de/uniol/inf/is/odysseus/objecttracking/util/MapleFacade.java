@@ -41,7 +41,7 @@ public class MapleFacade {
 		try{
 			Algebraic alg = this.engine.evaluate("with(SolveTools[Inequality]); LinearMultivariateSystem({" + inequality + "}, [t]);");
 			logger.debug("Maple result: " + alg.toString());
-			return MapleResultParserFacade.getInstance().parse(alg.toString(), attributeResolver);
+			return MapleResultParserFacade.getInstance().parse("MAPLE " + alg.toString(), attributeResolver);
 		}catch(MapleException e){
 			e.printStackTrace();
 			return null;

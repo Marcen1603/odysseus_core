@@ -31,9 +31,9 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	
 	SDFAttributeList outputSchema;
 	
-	public ObjectTrackingProjectBasePO(ObjectTrackingProjectAO ao, int[] restrictList, RealMatrix projectMatrix){
+	public ObjectTrackingProjectBasePO(ObjectTrackingProjectAO ao){
 		this.restrictList = ao.determineRestrictList();
-		this.projectMatrix = projectMatrix;
+		this.projectMatrix = ao.determineProjectMatrix(this.restrictList);
 		this.inputSchema = ao.getInputSchema();
 		
 		ArrayList<Integer> list = new ArrayList<Integer>();
@@ -52,17 +52,17 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 		this.outputSchema = ao.getOutputSchema();
 	}
 	
-	public ObjectTrackingProjectBasePO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,
-			SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
-		this.restrictList = restrictList;
-		this.projectMatrix = projectMatrix;
-		this.inputSchema = inputSchema;
-		this.outputSchema = outputSchema;
-		
-		final ObjectTrackingProjectBasePO<T> t = this;
-		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,
-				"selectivity", 1d));
-	}
+//	public ObjectTrackingProjectBasePO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,
+//			SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
+//		this.restrictList = restrictList;
+//		this.projectMatrix = projectMatrix;
+//		this.inputSchema = inputSchema;
+//		this.outputSchema = outputSchema;
+//		
+//		final ObjectTrackingProjectBasePO<T> t = this;
+//		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,
+//				"selectivity", 1d));
+//	}
 
 	public ObjectTrackingProjectBasePO(ObjectTrackingProjectBasePO<T> copy) {
 		super();
