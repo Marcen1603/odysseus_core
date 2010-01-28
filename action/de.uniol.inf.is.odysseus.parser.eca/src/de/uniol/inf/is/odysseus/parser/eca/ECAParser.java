@@ -176,7 +176,7 @@ public class ECAParser implements IQueryParser{
 					
 					//create action object, sort parameters & map both
 					Action action = this.createAction(actuator, methodName, actionParameters);
-					actions.put(action, action.sortParameters(actionParameters));
+					actions.put(action, actionParameters);
 				}
 				if (!actions.isEmpty()){
 					return this.createNewPlan(actions, plan);
