@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class ComplexRangePredicate<T> extends
 		AbstractRangePredicate<T> {
@@ -38,6 +35,11 @@ public abstract class ComplexRangePredicate<T> extends
 		newPred.left = this.left.clone();
 		newPred.right = this.right.clone();
 		return newPred;
+	}
+	
+	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+		this.left.init(leftSchema, rightSchema);
+		this.right.init(leftSchema, rightSchema);
 	}
 	
 }

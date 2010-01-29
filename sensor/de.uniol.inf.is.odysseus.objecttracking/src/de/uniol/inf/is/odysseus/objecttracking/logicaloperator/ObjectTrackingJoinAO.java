@@ -35,9 +35,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
-public class ObjectTrackingJoinAO extends JoinAO{
+public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 
 	private SDFAttributeListExtended outputSchema;
+	
+	private boolean notInitialized;
 	
 	/**
 	 * In this.predictionFunctions we have different prediction functions for
@@ -82,11 +84,13 @@ public class ObjectTrackingJoinAO extends JoinAO{
 	
 	public ObjectTrackingJoinAO(){
 		super();
+		this.notInitialized = true;
 	}
 
 	public ObjectTrackingJoinAO(ObjectTrackingJoinAO original) {
 		super(original);
 		this.rangePredicates = original.rangePredicates;
+		this.notInitialized = original.notInitialized;
 	}
 
 	public ObjectTrackingJoinAO(IPredicate<?> predicate) {
@@ -316,6 +320,12 @@ public class ObjectTrackingJoinAO extends JoinAO{
 		}
 		
 
+	}
+
+	@Override
+	public boolean isNotInitialized() {
+		// TODO Auto-generated method stub
+		return this.notInitialized;
 	}
 
 }

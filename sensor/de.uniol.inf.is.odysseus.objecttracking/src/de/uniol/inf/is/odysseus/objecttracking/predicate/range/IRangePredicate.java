@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
 /**
@@ -21,5 +22,6 @@ public interface IRangePredicate<T> extends IClone, Serializable{
 	public List<ITimeInterval> evaluate(T input);
 	public List<ITimeInterval> evaluate(T left, T right);
 	public IRangePredicate<T> clone();
+	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema);
 	
 }

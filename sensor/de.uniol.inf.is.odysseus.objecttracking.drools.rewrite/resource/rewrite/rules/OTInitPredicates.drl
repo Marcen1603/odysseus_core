@@ -1,0 +1,16 @@
+package de.uniol.inf.is.odysseus.rewrite.rules;
+
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.objecttracking.drools.rewrite.ObjectTrackingRestructHelper;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.IHasRangePredicates;
+
+#@author Andre Bolles
+rule "Init RangePredicates"
+	salience -1
+	ruleflow-group "Cleanup"
+when
+	$op : IHasRangePredicates(rangePredicates != null && notInitialized)
+then 
+	ObjectTrackingRestructHelper.visitPredicates($op.getRangePredicates(), (ILogicalOperator)$op);
+end

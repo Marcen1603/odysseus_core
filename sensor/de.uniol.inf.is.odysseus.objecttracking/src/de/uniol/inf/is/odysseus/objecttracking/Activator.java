@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 
 public class Activator implements BundleActivator {
 
@@ -18,7 +18,7 @@ public class Activator implements BundleActivator {
 	 */
 	@SuppressWarnings("unchecked")
 	public void start(BundleContext context) throws Exception {
-		MetadataRegistry.addMetadataType(IntervalProbabilityLatencyPrediction.class, ITimeInterval.class, IProbability.class, ILatency.class, IPredictionFunctionKey.class);
+		MetadataRegistry.addMetadataType(ObjectTrackingMetadata.class, ITimeInterval.class, IProbability.class, ILatency.class, IPredictionFunctionKey.class);
 	}
 
 	/*
@@ -27,7 +27,7 @@ public class Activator implements BundleActivator {
 	 */
 	@SuppressWarnings("unchecked")
 	public void stop(BundleContext context) throws Exception {
-		MetadataRegistry.removeCombinedMetadataType(IntervalProbabilityLatencyPrediction.class);
+		MetadataRegistry.removeCombinedMetadataType(ObjectTrackingMetadata.class);
 	}
 
 }

@@ -94,4 +94,5 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 	public int hashCode(){
 		return 53 * this.left.hashCode() * 41 * this.right.hashCode();
 	}
+	
 }

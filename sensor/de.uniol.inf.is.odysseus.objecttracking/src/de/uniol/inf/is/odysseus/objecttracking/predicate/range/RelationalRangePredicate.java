@@ -76,6 +76,8 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		
 		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
 			IPredicate predicate = entry.getKey();
+			predicate.init();
+			
 			ISolution solution = entry.getValue();
 			
 			// TODO: Was ist mit der FullSolution?

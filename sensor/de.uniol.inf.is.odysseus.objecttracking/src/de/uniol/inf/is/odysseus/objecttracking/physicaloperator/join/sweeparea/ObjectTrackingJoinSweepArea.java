@@ -88,4 +88,9 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITim
 		}		
 		return result.iterator();
 	}
+	
+	@Override
+	public void init(){
+		// do nothing, the predicates have already been initialized.
+	}
 }

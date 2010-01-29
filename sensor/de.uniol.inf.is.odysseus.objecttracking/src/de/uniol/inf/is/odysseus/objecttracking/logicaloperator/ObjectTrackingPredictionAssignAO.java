@@ -107,6 +107,8 @@ public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
 				vars[u] = expression.getAttributePositions();
 		}
 		
+		predicate.init();
+		
 		predFct.setVariables(vars);
 		this.predictionFunctions.put(predicate, predFct);
 	}
