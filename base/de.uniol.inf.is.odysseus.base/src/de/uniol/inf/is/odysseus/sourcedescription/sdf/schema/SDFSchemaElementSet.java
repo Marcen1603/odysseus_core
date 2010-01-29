@@ -16,7 +16,7 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	 * @uml.property  name="elements"
 	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchemaElement"
 	 */
-    List<T> elements = new ArrayList<T>();
+    protected List<T> elements = new ArrayList<T>();
 
 	public SDFSchemaElementSet(String URI) {
 		super(URI);

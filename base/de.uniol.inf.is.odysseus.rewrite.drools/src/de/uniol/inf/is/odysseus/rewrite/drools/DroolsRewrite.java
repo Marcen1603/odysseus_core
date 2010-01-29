@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.drools.RuleBase;
+import org.drools.RuleBaseFactory;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
 import org.drools.audit.WorkingMemoryConsoleLogger;
@@ -66,6 +67,7 @@ public class DroolsRewrite implements IRewrite {
 				logger.debug(r.getName()+ " : " + r.getRuleFlowGroup());
 			}
 		}
+		
 		StatefulSession session = rulebase.newStatefulSession();
 		TopAO top = new TopAO();
 		plan.subscribeSink(top, 0, 0, plan.getOutputSchema());

@@ -42,6 +42,17 @@ public interface ICompiler extends IInfoProvider {
 	 * @return rewrited logical plan.
 	 */
 	public ILogicalOperator restructPlan(ILogicalOperator logicalAlgebraList);
+	
+	/**
+	 * Rewrites a logical plan.
+	 * 
+	 * @param logicalAlgebraList
+	 *            logical plan which should be rewrited.
+	 * @param rules Contains the name of the rules to use. Other rules will not be used.
+	 * 
+	 * @return rewrited logical plan.
+	 */
+	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan, Set<String> rulesToUse);
 
 	/**
 	 * Transforms a logical plan into a physical representation.
