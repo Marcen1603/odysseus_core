@@ -17,8 +17,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * be set by the SetPredictionOperator.
  * 
  * @author Andre Bolles
+ * @deprecated Sollte eigentlich nirgends mehr verwendet werden. Es muss ja
+ *             nun eine Metadatum erzeugt werden, dass ILatency, IProbability,
+ *             ITimeInterval, IApplicationTime und IPredictionFunctionKey
+ *             erfüllt
  *
  */
+@Deprecated
 public class IntervalProbabilityLatencyPredictionMFactory implements IMetadataUpdater<IntervalProbabilityLatencyPrediction, MVRelationalTuple<IntervalProbabilityLatencyPrediction>>{
 
 	SDFAttributeList schema;
