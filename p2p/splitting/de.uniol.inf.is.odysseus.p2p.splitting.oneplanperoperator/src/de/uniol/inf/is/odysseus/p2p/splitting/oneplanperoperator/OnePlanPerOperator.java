@@ -37,7 +37,12 @@ public class OnePlanPerOperator extends
 		if(getRefinement()!=null) {
 			return getRefinement().refinePlan(splitList);
 		}
-			
+		System.out.println("Zeige Splits--------------------------");
+		for (ILogicalOperator iLogicalOperator : splitList) {
+			System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
+					new AlgebraPlanToStringVisitor(true)));
+		}
+		System.out.println("Zeige Splits Ende-------------------");
 		return splitList;
 	}
 
@@ -69,9 +74,17 @@ public class OnePlanPerOperator extends
  		if(!(iLogicalOperator instanceof P2PAO)) {
 			// Bei Operatoren mit zwei Eingabeports
 			if (outputCount == 2) {
+				
+				System.out.println("Hier kommen wir auch rein, aber wir machen hier garnichts");
 				String adv2 = createSocketAdvertisement().toString();
 			//	P2PSourceAO p2paccess2 = new P2PSourceAO(adv2);
 				temp = adv2;
+				P2PSinkAO p2psink2 = new P2PSinkAO(temp);
+				P2PSourceAO p2psource2 = new P2PSourceAO(p2psink2.getAdv());
+				RestructHelper.insertOperator(p2psource, iLogicalOperator, 0, 0, 0);
+				RestructHelper.insertOperator(p2psource2, iLogicalOperator, 1, 0, 0);
+				RestructHelper.insertOperator(p2psink, p2psource,0,0,0);
+				RestructHelper.insertOperator(p2psink2, p2psource2,0,0,0);
 				
 	//			if (iLogicalOperator.getSubscribedTo(0).getTarget() instanceof AccessAO) {
 	//				SDFSource source = ((AccessAO) iLogicalOperator.getSubscribedTo(0).getTarget()).getSource();
@@ -106,11 +119,11 @@ public class OnePlanPerOperator extends
 	//			}
 			} else if(outputCount == 1){
 				RestructHelper.insertOperator(p2psource, iLogicalOperator, 0, 0, 0);
-				System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
-						new AlgebraPlanToStringVisitor(true)));
+//				System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
+//						new AlgebraPlanToStringVisitor(true)));
 				RestructHelper.insertOperator(p2psink, p2psource,0,0,0);
-				System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
-						new AlgebraPlanToStringVisitor(true)));
+//				System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
+//						new AlgebraPlanToStringVisitor(true)));
 				temp = adv;
 			} 
  		}

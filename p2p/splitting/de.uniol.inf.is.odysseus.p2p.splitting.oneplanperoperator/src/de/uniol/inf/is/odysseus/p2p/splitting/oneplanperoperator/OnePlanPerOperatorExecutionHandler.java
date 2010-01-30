@@ -16,13 +16,14 @@ public class OnePlanPerOperatorExecutionHandler<P extends AbstractPeer,F extends
 		IExecutionHandler<P, F> handler = new OnePlanPerOperatorExecutionHandler<P, F>();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());
+		handler.setProvidedLifecycle(getProvidedLifecycle());
 		handler.setExecutionListenerCallback(getExecutionListenerCallback());
 		return handler;
 	}
 
 	@Override
 	public String getName() {
-		return "NoSplittingExecutionHandler";
+		return "OnePlanPerOperatorExecutionHandler";
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class OnePlanPerOperatorExecutionHandler<P extends AbstractPeer,F extends
 			}
 			else{				
 				for(int i=0; i<plan.size(); i++) {
-					getExecutionListenerCallback().getQuery().addSubPlan(""+i+1, new SubplanJxtaImpl(""+i+1, plan.get(i)));	
+					getExecutionListenerCallback().getQuery().addSubPlan(""+(i+1), new SubplanJxtaImpl(""+(i+1), plan.get(i)));	
 				}
 				getExecutionListenerCallback().changeState(Lifecycle.SUCCESS);
 			}
