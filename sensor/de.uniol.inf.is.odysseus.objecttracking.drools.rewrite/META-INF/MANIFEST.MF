@@ -13,4 +13,5 @@ Import-Package: de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join,
  de.uniol.inf.is.odysseus.objecttracking.predicate,
  de.uniol.inf.is.odysseus.objecttracking.predicate.range,
+ de.uniol.inf.is.odysseus.objecttracking.util,
  de.uniol.inf.is.odysseus.relational.base.predicate

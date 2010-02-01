@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.IHasRangePredicates;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.sweeparea.ObjectTrackingJoinSweepArea;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -45,7 +45,6 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 	protected IMetadataMergeFunction<K> metadataMerge;
 	
 	protected Map<IPredicate, IRangePredicate> rangePredicates;
-
 
 	protected ITransferFunction<T> transferFunction;
 	protected IPredicate<? super T> joinPredicate;

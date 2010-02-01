@@ -123,7 +123,7 @@ public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
 		this.outputSchema = new SDFAttributeListExtended(this.getInputSchema());
 		HashMap<IPredicate<? super T>, IPredictionFunction> outPredFcts = new HashMap<IPredicate<? super T>, IPredictionFunction>();
 		for(Entry<IPredicate<? super T>, IPredictionFunction> entry : this.predictionFunctions.entrySet()){
-			outPredFcts.put(entry.getKey(), entry.getValue());
+			outPredFcts.put((IPredicate<? super T>)entry.getKey().clone(), (IPredictionFunction)entry.getValue().clone());
 		}
 		outPredFcts.put(new TruePredicate(), this.defaultPredictionFunction);
 		this.outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, this.predictionFunctions);

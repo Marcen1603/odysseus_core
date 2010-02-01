@@ -7,5 +7,6 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 
 public interface IHasRangePredicates {	
 	public Map<IPredicate, IRangePredicate> getRangePredicates();
-	public boolean isNotInitialized();
+	public boolean isInitialized();
+	public void setInitialized(boolean b);
 }

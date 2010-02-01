@@ -39,7 +39,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 
 	private SDFAttributeListExtended outputSchema;
 	
-	private boolean notInitialized;
+	private boolean initialized;
 	
 	/**
 	 * In this.predictionFunctions we have different prediction functions for
@@ -84,13 +84,13 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	
 	public ObjectTrackingJoinAO(){
 		super();
-		this.notInitialized = true;
+		this.initialized = false;
 	}
 
 	public ObjectTrackingJoinAO(ObjectTrackingJoinAO original) {
 		super(original);
 		this.rangePredicates = original.rangePredicates;
-		this.notInitialized = original.notInitialized;
+		this.initialized = original.initialized;
 	}
 
 	public ObjectTrackingJoinAO(IPredicate<?> predicate) {
@@ -127,7 +127,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			
 			for(Entry<IPredicate, IPredictionFunction> leftEntry: leftFcts.entrySet()){
 				for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
-					AndPredicate newPredicate = new AndPredicate(leftEntry.getKey(), rightEntry.getKey());
+					AndPredicate newPredicate = new AndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
 					IPredictionFunction newFunction = new LinearProbabilityPredictionFunction();
 					
 					IPredictionFunction leftFct = leftEntry.getValue();
@@ -323,9 +323,15 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	}
 
 	@Override
-	public boolean isNotInitialized() {
+	public boolean isInitialized() {
 		// TODO Auto-generated method stub
-		return this.notInitialized;
+		return this.initialized;
+	}
+
+	@Override
+	public void setInitialized(boolean b) {
+		this.initialized = b;
+		
 	}
 
 }

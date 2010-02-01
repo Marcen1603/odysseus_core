@@ -91,7 +91,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		
 		for(Entry<IPredicate, IPredictionFunction> entry : predFcts.entrySet()){
 			IPredictionFunction newPredFct = this.getNewPredictionFunction(inputSchema, outAttributes, entry.getValue().getExpressions());			
-			newPredFcts.put(entry.getKey(), newPredFct);
+			newPredFcts.put(entry.getKey().clone(), newPredFct);
 		}
 		
 		newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);

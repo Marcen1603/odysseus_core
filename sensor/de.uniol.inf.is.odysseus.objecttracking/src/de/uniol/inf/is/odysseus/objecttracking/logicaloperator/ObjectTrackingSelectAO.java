@@ -29,9 +29,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
-public class ObjectTrackingSelectAO<T> extends SelectAO{
+public class ObjectTrackingSelectAO<T> extends SelectAO implements IHasRangePredicates{
 
 
+	private boolean initialized;
+	
 	private Logger logger;
 	/**
 	 * In this.predictionFunctions we have different prediction functions for
@@ -72,6 +74,7 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 	public ObjectTrackingSelectAO(){
 		super();
 		this.logger = LoggerFactory.getLogger(this.getClass());
+		this.initialized = false;
 	}
 
 	public ObjectTrackingSelectAO(ObjectTrackingSelectAO po) {
@@ -82,10 +85,13 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 		}
 		this.defaultRangePredicate = po.defaultRangePredicate.clone();
 		this.logger = LoggerFactory.getLogger(this.getClass());
+		this.initialized = false;
 	}
 
 	public ObjectTrackingSelectAO(IPredicate<?> predicate) {
 		setPredicate(predicate);
+		this.logger = LoggerFactory.getLogger(this.getClass());
+		this.initialized = false;
 	}
 
 	@Override
@@ -206,4 +212,24 @@ public class ObjectTrackingSelectAO<T> extends SelectAO{
 	private void initRestrictList(){
 		this.restrictList = ((SDFAttributeListExtended)this.getInputSchema(0)).getMeasurementAttributePositions();
 	}
+
+	@Override
+	public Map<IPredicate, IRangePredicate> getRangePredicates() {
+		// TODO Auto-generated method stub
+		return this.rangePredicates;
+	}
+
+	@Override
+	public boolean isInitialized() {
+		// TODO Auto-generated method stub
+		return this.initialized;
+	}
+
+	@Override
+	public void setInitialized(boolean b) {
+		this.initialized = b;
+		
+	}
+	
+	
 }
