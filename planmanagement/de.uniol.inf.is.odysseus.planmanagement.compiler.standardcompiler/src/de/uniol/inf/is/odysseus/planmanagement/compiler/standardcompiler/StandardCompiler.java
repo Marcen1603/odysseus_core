@@ -189,4 +189,13 @@ public class StandardCompiler implements ICompiler {
 	public Set<String> getSupportedQueryParser() {
 		return Collections.unmodifiableSet(this.parserList.keySet());
 	}
+
+
+	@Override
+	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan,
+			Set<String> rulesToUse) {
+		// FIXME Implementieren!
+		System.err.println(this.getClass()+" restructPlan nicht implementiert!");
+		return null;
+	}
 }
