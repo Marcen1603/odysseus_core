@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,7 @@ import de.uniol.inf.is.odysseus.viewer.ctrl.DefaultController;
 import de.uniol.inf.is.odysseus.viewer.ctrl.IController;
 import de.uniol.inf.is.odysseus.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.viewer.model.create.OdysseusModelProviderSink;
+import de.uniol.inf.is.odysseus.viewer.swt.SWTBaseWindow;
 import de.uniol.inf.is.odysseus.viewer.swt.SWTExceptionWindow;
 import de.uniol.inf.is.odysseus.viewer.swt.SWTMainWindow;
 
@@ -46,28 +46,23 @@ public class ViewerStarter implements Runnable, IPlanModificationListener  {
 		final Display display = new Display();
 		try {
 			
-			// View erzeugen
-			final Shell shell = new Shell(display);
-			shell.setText(SHELL_TITLE);
-			shell.setSize(SHELL_SIZE, SHELL_SIZE);
-
 			if (config.useOGL)
 				logger.info("Using OpenGL for rendering");
 			else
 				logger.info("Using SWT for rendering");
-			viewer = new SWTMainWindow(shell, controller, config.useOGL);
+			viewer = new SWTMainWindow(SWTBaseWindow.getInstance(), controller, config.useOGL);
 
-			shell.open();
+			SWTBaseWindow.getInstance().getShell().open();
 
 			logger.info("Viewer started!");
 
-			while (!shell.isDisposed() && !Thread.currentThread().isInterrupted()) {
+			while (!SWTBaseWindow.getInstance().getShell().isDisposed() && !Thread.currentThread().isInterrupted()) {
 				try {
 					if (!display.readAndDispatch())
 						display.sleep();
 				} catch (Exception ex) {
 					ex.printStackTrace();
-					new SWTExceptionWindow(shell, ex);
+					new SWTExceptionWindow(SWTBaseWindow.getInstance().getShell(), ex);
 				}
 			}
 

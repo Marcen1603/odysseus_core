@@ -88,18 +88,14 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 	private final Shell shell;
 	private final boolean useOGL;
 
-	public SWTMainWindow(Shell comp, IController<IPhysicalOperator> ctrl, boolean useOGL) {
+	public SWTMainWindow(ISWTBaseWindow baseWindow, IController<IPhysicalOperator> ctrl, boolean useOGL) {
 		super(ctrl);
 
 		this.useOGL = useOGL;
 		ctrl.getModelManager().addListener(this);
 
-		// Parameter pr√ºfen
-		if (comp == null)
-			throw new IllegalArgumentException("composite is null!");
-
-		// Parameter √ºbernehmen
-		shell = comp;
+		// Parameter ¸bernehmen
+		shell = baseWindow.getShell();
 
 		// Ressourcen laden
 		try {
@@ -112,18 +108,21 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		}
 
 		// *******************************
-		// Men√º
+		// Men¸
 		// *******************************
-		Menu menu = new Menu(shell, SWT.BAR);
-		shell.setMenuBar(menu);
-
-		MenuItem fileItem = new MenuItem(menu, SWT.CASCADE);
+		Menu menu = baseWindow.getMenu();
+		MenuItem viewerItem = new MenuItem( menu, SWT.CASCADE );
+		viewerItem.setText("Query Viewer Menu");
+		Menu viewerMenu = new Menu( shell, SWT.DROP_DOWN);
+		viewerItem.setMenu(viewerMenu);
+		
+		MenuItem fileItem = new MenuItem(viewerMenu, SWT.CASCADE);
 		fileItem.setText("&Datei");
-		MenuItem editItem = new MenuItem(menu, SWT.CASCADE);
+		MenuItem editItem = new MenuItem(viewerMenu, SWT.CASCADE);
 		editItem.setText("&Bearbeiten");
-		MenuItem viewItem = new MenuItem(menu, SWT.CASCADE);
+		MenuItem viewItem = new MenuItem(viewerMenu, SWT.CASCADE);
 		viewItem.setText("&Ansicht");
-		MenuItem nodeItem = new MenuItem(menu, SWT.CASCADE);
+		MenuItem nodeItem = new MenuItem(viewerMenu, SWT.CASCADE);
 		nodeItem.setText("K&noten");
 //		MenuItem configItem = new MenuItem(menu, SWT.CASCADE);
 //		configItem.setText("&Optionen");
@@ -201,7 +200,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 			}
 		});
 		MenuItem selectStartMenuItem = new MenuItem(editSubMenu, SWT.PUSH);
-		selectStartMenuItem.setText("&Vorg√§nger ausw√§hlen\tStrg+PfeilUnten");
+		selectStartMenuItem.setText("&Vorg‰nger ausw‰hlen\tStrg+PfeilUnten");
 		selectStartMenuItem.setAccelerator(SWT.MOD1 + SWT.ARROW_DOWN);
 		selectStartMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -223,7 +222,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 			}
 		});
 		MenuItem selectEndMenuItem = new MenuItem(editSubMenu, SWT.PUSH);
-		selectEndMenuItem.setText("&Nachfolger ausw√§hlen\tStrg+PfeilOben");
+		selectEndMenuItem.setText("&Nachfolger ausw‰hlen\tStrg+PfeilOben");
 		selectEndMenuItem.setAccelerator(SWT.MOD1 + SWT.ARROW_UP);
 		selectEndMenuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -249,7 +248,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		new MenuItem(editSubMenu, SWT.SEPARATOR);
 
 		MenuItem selectPathMenuItem = new MenuItem(editSubMenu, SWT.PUSH);
-		selectPathMenuItem.setText("&Pfad ausw√§hlen\tStrg+P");
+		selectPathMenuItem.setText("&Pfad ausw‰hlen\tStrg+P");
 		selectPathMenuItem.setAccelerator(SWT.MOD1 + 'P');
 		selectPathMenuItem.addSelectionListener(new SelectionAdapter() {
 			@SuppressWarnings("unchecked")
@@ -417,17 +416,33 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		// *******************************
 		// Layout
 		// *******************************
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		gridLayout.verticalSpacing = 0;
-		gridLayout.marginHeight = 0;
-		gridLayout.marginWidth = 0;
-		shell.setLayout(gridLayout);
+//		GridLayout gridLayout = new GridLayout();
+//		gridLayout.numColumns = 1;
+//		gridLayout.verticalSpacing = 0;
+//		gridLayout.marginHeight = 0;
+//		gridLayout.marginWidth = 0;
+//		shell.setLayout(gridLayout);
+		
+		// *******************************
+		// TAB
+		// *******************************
+		TabFolder tabFolder2 = baseWindow.getTabFolder();
+		TabItem tabItem = new TabItem(tabFolder2, SWT.NULL);
+		tabItem.setText("Query Viewer");
+		
+		Composite tabComposite = new Composite(tabFolder2, SWT.BORDER);
+		GridLayout tabGridLayout = new GridLayout();
+		tabGridLayout.numColumns = 1;
+		tabGridLayout.verticalSpacing = 0;
+		tabGridLayout.marginHeight = 0;
+		tabGridLayout.marginWidth = 0;
+		tabComposite.setLayout(tabGridLayout);
+		tabItem.setControl(tabComposite);
 
 		// *******************************
 		// Toolbar
 		// *******************************
-		ToolBar toolbar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
+		ToolBar toolbar = new ToolBar(tabComposite, SWT.FLAT | SWT.RIGHT);
 		ToolItem positionizeToolItem = new ToolItem(toolbar, SWT.PUSH);
 		positionizeToolItem.setImage(SWTResourceManager.getInstance().getImage("position"));
 		positionizeToolItem.setToolTipText("Graphen ausrichten");
@@ -533,7 +548,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		// ************************
 		// Steuerelemente
 		// ************************
-		Composite upperRightComp = new Composite(shell, 0);
+		Composite upperRightComp = new Composite(tabComposite, 0);
 		GridLayout updaterLayout = new GridLayout();
 		updaterLayout.numColumns = 3;
 		updaterLayout.verticalSpacing = 0;
@@ -541,7 +556,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		updaterLayout.marginWidth = 0;
 		upperRightComp.setLayout(updaterLayout);
 
-		tabFolder = new TabFolder(shell, SWT.BORDER);
+		tabFolder = new TabFolder(tabComposite, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tabFolder.setBackground(SWTResourceManager.getInstance().getColor(180, 180, 180));
 		tabFolder.addSelectionListener(new SelectionAdapter() {
@@ -552,7 +567,7 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		});
 
 		// Statuszeile
-		Composite statusLine = new Composite(shell, 0);
+		Composite statusLine = new Composite(tabComposite, 0);
 		statusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		statusLine.setBackground(shell.getBackground());
 		statusLine.setForeground(shell.getForeground());
@@ -830,12 +845,12 @@ public class SWTMainWindow extends AbstractView<IPhysicalOperator> implements SW
 		else if (selectedNodes.size() == 1) {
 			for (INodeView<IPhysicalOperator> n : selectedNodes) {
 				if (n.getModelNode() != null)
-					statusText.setText(n.getModelNode().getName() + " ausgew√§hlt");
+					statusText.setText(n.getModelNode().getName() + " ausgew‰hlt");
 				else
 					statusText.setText("");
 			}
 		} else {
-			statusText.setText(selectedNodes.size() + " Knoten ausgew√§hlt");
+			statusText.setText(selectedNodes.size() + " Knoten ausgew‰hlt");
 		}
 
 		if (getSelectedGraphView() != null) {

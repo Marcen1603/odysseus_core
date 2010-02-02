@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.ToolBar;
 
 public class SWTBaseWindow implements ISWTBaseWindow {
 
@@ -17,7 +16,6 @@ public class SWTBaseWindow implements ISWTBaseWindow {
 	
 	private Shell shell;
 	private Menu menu;
-	private ToolBar toolBar;
 	private TabFolder tabFolder;
 	
 	private SWTBaseWindow() {
@@ -27,9 +25,12 @@ public class SWTBaseWindow implements ISWTBaseWindow {
 		
 		menu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menu);
-		shell.setLayout(new GridLayout());
-		
-		toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 1;
+		gridLayout.verticalSpacing = 0;
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		shell.setLayout(gridLayout);
 		
 		tabFolder = new TabFolder(shell, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -49,11 +50,6 @@ public class SWTBaseWindow implements ISWTBaseWindow {
 	@Override
 	public Menu getMenu() {
 		return menu;
-	}
-
-	@Override
-	public ToolBar getToolBar() {
-		return toolBar;
 	}
 
 	@Override

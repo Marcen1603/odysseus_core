@@ -9,6 +9,5 @@ public interface ISWTBaseWindow {
 
 	public Menu getMenu();
 	public Shell getShell();
-	public ToolBar getToolBar();
 	public TabFolder getTabFolder();
 }
