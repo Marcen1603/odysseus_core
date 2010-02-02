@@ -47,5 +47,12 @@ public interface ISink<T> extends IPhysicalOperator, ISubscriber<ISource<? exten
 	public void done(int port);
 
 	public void processPunctuation(PointInTime timestamp);
+	
+	/**
+	 * Creates a copy of the operator without subscribing to any sources.
+	 * 
+	 * @return copy of sink
+	 */
+	public ISink<T> createCopy();
 
 }

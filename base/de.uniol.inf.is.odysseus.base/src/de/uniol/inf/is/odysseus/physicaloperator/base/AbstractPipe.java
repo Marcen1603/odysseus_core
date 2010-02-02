@@ -243,4 +243,14 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 	}	
 	
+	@Override
+	public ISink<R> createCopy() {
+		try {
+			return (ISink<R>)this.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }
