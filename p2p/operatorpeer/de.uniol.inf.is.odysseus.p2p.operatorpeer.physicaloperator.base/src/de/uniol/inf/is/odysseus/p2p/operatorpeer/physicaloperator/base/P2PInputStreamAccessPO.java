@@ -137,5 +137,11 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	public PeerGroup getPeerGroup() {
 		return peerGroup;
 	}
+	
+	@Override
+	public P2PInputStreamAccessPO<In, Out> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.base;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -39,4 +40,6 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public void setName(String name);
 	public SDFAttributeList getOutputSchema();
 	public void setOutputSchema(SDFAttributeList outputSchema);
+	
+	public IPhysicalOperator clone() throws CloneNotSupportedException;
 }

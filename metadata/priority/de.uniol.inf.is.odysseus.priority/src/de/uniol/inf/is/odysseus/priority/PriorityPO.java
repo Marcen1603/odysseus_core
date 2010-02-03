@@ -88,5 +88,11 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 	public void setPunctuationActive(boolean isPunctuationActive) {
 		this.isPunctuationActive = isPunctuationActive;
 	}
+	
+	@Override
+	public PriorityPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

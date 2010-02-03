@@ -10,5 +10,10 @@ public class MySink extends AbstractSink {
 		System.out.println("Port:" + port + ", Object:" + object.toString());
 	}
 
+	@Override
+	public MySink clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 	
 }

@@ -66,5 +66,11 @@ public class DBSelectPO extends AbstractPipe<Object, Object> {
 		super.process_open();
 	}
 	
+	@Override
+	public DBSelectPO clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
+	
 
 }

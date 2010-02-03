@@ -124,4 +124,10 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 	
 	public final void process_close(){
 	}
+	
+	@Override
+	public DuplicateEliminationTIPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

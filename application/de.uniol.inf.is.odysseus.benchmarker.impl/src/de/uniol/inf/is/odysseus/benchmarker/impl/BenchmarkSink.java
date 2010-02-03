@@ -77,5 +77,11 @@ class BenchmarkSink<M extends ILatency> extends
 	public IBenchmarkResult<M> waitForResult() throws InterruptedException {
 		return resultQueue.take();
 	}
+	
+	@Override
+	public BenchmarkSink<M> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

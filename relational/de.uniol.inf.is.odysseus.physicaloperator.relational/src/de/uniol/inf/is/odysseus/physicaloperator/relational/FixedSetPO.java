@@ -44,4 +44,9 @@ public final class FixedSetPO<T extends IMetaAttributeContainer<? extends IClone
 		return this.isDone.get();
 	}
 
+	@Override
+	public FixedSetPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

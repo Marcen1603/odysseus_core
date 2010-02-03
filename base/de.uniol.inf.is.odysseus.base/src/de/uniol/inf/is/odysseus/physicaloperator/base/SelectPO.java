@@ -42,7 +42,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 	}
 	
 	@Override
-	protected SelectPO<T> clone() throws CloneNotSupportedException {
+	public SelectPO<T> clone() throws CloneNotSupportedException {
 		return new SelectPO<T>(this);
 	}
 

@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2010-01-22 09:17:49
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2010-01-27 08:45:55
  
 	package de.uniol.inf.is.odysseus.cep.sase; 
 
@@ -85,18 +85,19 @@ public class SaseParser extends DebugParser {
     // delegators
 
     public static final String[] ruleNames = new String[] {
-        "invalidRule", "synpred24_SaseParser", "synpred23_SaseParser", 
-        "synpred12_SaseParser", "synpred9_SaseParser", "query", "synpred14_SaseParser", 
-        "patternDecl", "synpred4_SaseParser", "parameterList", "sAttributeName", 
-        "whereExpressions", "synpred8_SaseParser", "kAttributeName", "patternPart", 
-        "synpred5_SaseParser", "pItem", "synpred16_SaseParser", "synpred10_SaseParser", 
-        "createPart", "synpred17_SaseParser", "value", "wherePart", "synpred22_SaseParser", 
-        "synpred11_SaseParser", "synpred7_SaseParser", "kAttributeUsage", 
-        "typeName", "returnPart", "term", "synpred15_SaseParser", "mathExpression", 
-        "synpred3_SaseParser", "withinPart", "synpred1_SaseParser", "expression", 
-        "synpred21_SaseParser", "synpred18_SaseParser", "aggregation", "synpred19_SaseParser", 
-        "synpred13_SaseParser", "wherePart1", "synpred2_SaseParser", "attributeName", 
-        "synpred6_SaseParser", "synpred25_SaseParser", "synpred20_SaseParser"
+        "invalidRule", "synpred1_SaseParser", "attributeName", "whereExpressions", 
+        "synpred7_SaseParser", "term", "synpred15_SaseParser", "synpred20_SaseParser", 
+        "wherePart", "createPart", "synpred12_SaseParser", "mathExpression", 
+        "pItem", "synpred8_SaseParser", "synpred13_SaseParser", "kAttributeName", 
+        "synpred4_SaseParser", "synpred16_SaseParser", "synpred14_SaseParser", 
+        "synpred9_SaseParser", "parameterList", "value", "synpred5_SaseParser", 
+        "patternPart", "synpred11_SaseParser", "synpred6_SaseParser", "withinPart", 
+        "typeName", "kAttributeUsage", "wherePart1", "query", "synpred10_SaseParser", 
+        "synpred21_SaseParser", "synpred19_SaseParser", "synpred23_SaseParser", 
+        "aggregation", "synpred22_SaseParser", "synpred2_SaseParser", "expression", 
+        "synpred17_SaseParser", "sAttributeName", "synpred3_SaseParser", 
+        "synpred25_SaseParser", "synpred24_SaseParser", "synpred18_SaseParser", 
+        "returnPart", "patternDecl"
     };
      
         public int ruleLevel = 0;
@@ -688,7 +689,7 @@ public class SaseParser extends DebugParser {
 
 
                     // AST REWRITE
-                    // elements: whereExpressions, WHERE, wherePart1
+                    // elements: WHERE, whereExpressions, wherePart1
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1002,7 +1003,7 @@ public class SaseParser extends DebugParser {
 
 
             // AST REWRITE
-            // elements: RETURN, term
+            // elements: term, RETURN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1177,7 +1178,7 @@ public class SaseParser extends DebugParser {
 
 
             // AST REWRITE
-            // elements: pItem, SEQ
+            // elements: SEQ, pItem
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1397,7 +1398,7 @@ public class SaseParser extends DebugParser {
 
 
             // AST REWRITE
-            // elements: variable, type, NOT
+            // elements: NOT, variable, type
             // token labels: 
             // rule labels: retval, type, variable
             // token list labels: 
@@ -1538,7 +1539,7 @@ public class SaseParser extends DebugParser {
 
 
             // AST REWRITE
-            // elements: op, NAME, NAME
+            // elements: NAME, op, NAME
             // token labels: op
             // rule labels: retval
             // token list labels: 
@@ -1676,7 +1677,7 @@ public class SaseParser extends DebugParser {
 
 
             // AST REWRITE
-            // elements: parameterList, SKIP_METHOD
+            // elements: SKIP_METHOD, parameterList
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2516,7 +2517,7 @@ public class SaseParser extends DebugParser {
 
 
             // AST REWRITE
-            // elements: expression, AND
+            // elements: AND, expression
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2771,7 +2772,7 @@ public class SaseParser extends DebugParser {
 
 
                     // AST REWRITE
-                    // elements: COMPAREOP, f1, f2
+                    // elements: f2, f1, COMPAREOP
                     // token labels: 
                     // rule labels: retval, f1, f2
                     // token list labels: 
@@ -3094,7 +3095,7 @@ public class SaseParser extends DebugParser {
 
 
                     // AST REWRITE
-                    // elements: kAttributeUsage, NAME
+                    // elements: NAME, kAttributeUsage
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3147,7 +3148,7 @@ public class SaseParser extends DebugParser {
 
 
                     // AST REWRITE
-                    // elements: member, aName
+                    // elements: aName, member
                     // token labels: member, aName
                     // rule labels: retval
                     // token list labels: 
@@ -3307,7 +3308,7 @@ public class SaseParser extends DebugParser {
 
 
             // AST REWRITE
-            // elements: AGGREGATEOP, var, member, ALLTOPREVIOUS
+            // elements: ALLTOPREVIOUS, var, AGGREGATEOP, member
             // token labels: member, var
             // rule labels: retval
             // token list labels: 

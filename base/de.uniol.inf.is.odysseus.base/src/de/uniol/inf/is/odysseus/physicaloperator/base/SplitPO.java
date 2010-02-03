@@ -71,6 +71,10 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 		return true;
 	}
 	
-	
+	@Override
+	public SplitPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

@@ -57,5 +57,11 @@ public class BatchProducer extends
 		t.setPriority(Thread.MAX_PRIORITY);
 		t.start();
 	}
+	
+	@Override
+	public BatchProducer clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

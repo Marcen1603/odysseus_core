@@ -182,5 +182,11 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	// IMetadataFactory<M, RelationalTuple<M>> metadataFactory) {
 	// this.metadataFactory = metadataFactory;
 	// }
+	
+	@Override
+	public AtomicDataInputStreamAccessMVPO<M> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

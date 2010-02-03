@@ -146,5 +146,10 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 		return this.prioBuffer.size();
 	}
 
+	@Override
+	public PriorityBufferedPipe2<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

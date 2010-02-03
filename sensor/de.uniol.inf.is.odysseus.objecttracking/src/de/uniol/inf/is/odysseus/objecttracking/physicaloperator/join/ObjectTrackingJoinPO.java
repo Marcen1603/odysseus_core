@@ -307,4 +307,10 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		// TODO Auto-generated method stub
 		return OutputMode.MODIFIED_INPUT;
 	}
+	
+	@Override
+	public ObjectTrackingJoinPO<K, T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

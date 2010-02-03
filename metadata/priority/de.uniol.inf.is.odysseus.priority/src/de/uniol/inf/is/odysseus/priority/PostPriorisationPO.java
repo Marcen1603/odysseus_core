@@ -121,6 +121,12 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		setActive(true);
 		functionality.getPriorisationIntervals().add(time.clone());
 	}
+	
+	@Override
+	public PostPriorisationPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 
 }

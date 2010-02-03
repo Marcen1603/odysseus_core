@@ -59,4 +59,9 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		transfer(outputVal);
 	}
 
+	@Override
+	public RelationalMapPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

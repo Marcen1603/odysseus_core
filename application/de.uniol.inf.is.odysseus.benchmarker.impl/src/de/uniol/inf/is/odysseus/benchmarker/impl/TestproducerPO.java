@@ -54,4 +54,11 @@ public class TestproducerPO extends
 		};
 		t.start();
 	}
+	
+	@Override
+	public TestproducerPO clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
+	
 }

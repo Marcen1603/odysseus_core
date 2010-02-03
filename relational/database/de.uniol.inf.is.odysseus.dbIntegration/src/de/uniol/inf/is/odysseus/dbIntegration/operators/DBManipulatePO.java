@@ -40,4 +40,9 @@ public class DBManipulatePO<T> extends AbstractSink<T> {
 		controller.closeQuery();
 	}
 
+	@Override
+	public DBManipulatePO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

@@ -38,6 +38,13 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			return AbstractPipe.this;
 		}
 
+		@Override
+		public AbstractSink<R> clone() throws CloneNotSupportedException {
+			throw new CloneNotSupportedException();
+		}
+		
+		
+
 	};
 
 	final protected DelegateSink delegateSink = new DelegateSink();
@@ -244,13 +251,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}	
 	
 	@Override
-	public ISink<R> createCopy() {
-		try {
-			return (ISink<R>)this.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public AbstractPipe<R, W> clone() throws CloneNotSupportedException{
+		throw new CloneNotSupportedException();
 	}
 	
 }

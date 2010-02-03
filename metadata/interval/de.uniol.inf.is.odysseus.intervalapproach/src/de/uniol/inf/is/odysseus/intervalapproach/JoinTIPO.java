@@ -265,4 +265,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	}
 
+	@Override
+	public JoinTIPO<K, T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

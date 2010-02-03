@@ -37,5 +37,11 @@ public class SelectPNPO<T extends IMetaAttributeContainer<? extends IPosNeg>> ex
 			transfer(object);
 		}
 	}
+	
+	@Override
+	public SelectPNPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

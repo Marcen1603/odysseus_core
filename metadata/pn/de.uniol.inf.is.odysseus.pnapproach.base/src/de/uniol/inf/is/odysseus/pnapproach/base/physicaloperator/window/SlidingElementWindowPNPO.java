@@ -47,4 +47,9 @@ public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>
 	public final void process_close() {
 	}
 
+	@Override
+	public SlidingElementWindowPNPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

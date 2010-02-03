@@ -409,4 +409,10 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 //		IMonitoringData<Integer> item = factory.createPNJoinMemoryHandler(this, preareas, areas, nareas);
 //		addMonitoringData(MemoryUsageMonitoringDataFactory.METADATA_TYPE, item);
 //	}
+	
+	@Override
+	public ResultUnawareJoinPNIDPO<M, T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

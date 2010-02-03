@@ -174,4 +174,9 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	// this.p2p = p2p;
 	// }
 
+	@Override
+	public AtomicDataInputStreamAccessPO<M> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

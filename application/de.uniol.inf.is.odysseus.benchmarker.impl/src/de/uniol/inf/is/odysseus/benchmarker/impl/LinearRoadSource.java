@@ -81,5 +81,11 @@ public class LinearRoadSource extends
 		transfer(buffer);
 		buffer = null;
 	}
+	
+	@Override
+	public LinearRoadSource clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

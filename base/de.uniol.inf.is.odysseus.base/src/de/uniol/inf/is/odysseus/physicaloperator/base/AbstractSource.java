@@ -343,6 +343,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
+	
+	
+	public AbstractSource<T> clone() throws CloneNotSupportedException{
+		throw new CloneNotSupportedException();
+	}
 
 	
 }

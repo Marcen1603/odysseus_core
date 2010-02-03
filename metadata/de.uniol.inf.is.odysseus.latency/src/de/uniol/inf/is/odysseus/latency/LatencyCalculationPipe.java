@@ -14,6 +14,13 @@ public class LatencyCalculationPipe<T extends IMetaAttributeContainer<? extends 
 	protected void process_next(T object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
 		transfer(object);
+
 	}
+	
+	@Override
+	public LatencyCalculationPipe<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

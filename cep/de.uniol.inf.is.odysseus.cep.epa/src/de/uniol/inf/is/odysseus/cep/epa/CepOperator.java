@@ -520,4 +520,9 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 		return str;
 	}
 
+	@Override
+	public CepOperator<R, W> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

@@ -60,5 +60,10 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 		}
 	}
 
+	@Override
+	public InputStreamAccessPO<In, Out> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

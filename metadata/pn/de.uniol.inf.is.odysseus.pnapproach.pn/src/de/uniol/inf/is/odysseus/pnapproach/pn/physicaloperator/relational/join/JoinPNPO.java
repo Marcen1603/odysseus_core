@@ -455,4 +455,10 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 //		IMonitoringData<Integer> item = factory.createPNJoinMemoryHandler(this, preareas, areas, nareas);
 //		addMonitoringData(MemoryUsageMonitoringDataFactory.METADATA_TYPE, item);
 //	}
+	
+	@Override
+	public JoinPNPO<M, T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

@@ -139,5 +139,11 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 		}
 		
 	}
+	
+	@Override
+	public DefaultStreamConnection<In> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

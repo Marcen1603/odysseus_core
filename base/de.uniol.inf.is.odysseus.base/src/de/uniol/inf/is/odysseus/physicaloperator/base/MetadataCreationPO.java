@@ -38,4 +38,10 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 	public Class<M> getType() {
 		return type;
 	}
+	
+	@Override
+	public MetadataCreationPO<M, In> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

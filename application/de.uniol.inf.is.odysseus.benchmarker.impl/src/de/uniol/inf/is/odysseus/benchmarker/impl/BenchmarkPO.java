@@ -84,4 +84,9 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractP
 		return OutputMode.INPUT;
 	}
 
+	@Override
+	public BenchmarkPO<R> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

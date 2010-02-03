@@ -48,4 +48,10 @@ public class HSDASink<T extends IClone>  extends AbstractSink<T> {
 	public void setFacade(IFacade facade) {
 		this.facade = facade;
 	}
+	
+	@Override
+	public HSDASink<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

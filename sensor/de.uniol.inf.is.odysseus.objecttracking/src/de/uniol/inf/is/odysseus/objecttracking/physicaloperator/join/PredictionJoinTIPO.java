@@ -329,4 +329,10 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //		// TODO Auto-generated method stub
 //		return OutputMode.MODIFIED_INPUT;
 //	}
+	
+	@Override
+	public PredictionJoinTIPO<K,T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

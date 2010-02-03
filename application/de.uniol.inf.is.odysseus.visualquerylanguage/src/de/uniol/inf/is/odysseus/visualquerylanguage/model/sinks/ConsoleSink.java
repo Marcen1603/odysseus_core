@@ -10,4 +10,9 @@ public class ConsoleSink extends AbstractSink{
 		System.out.println("Port:" + port + ", Object:" + object.toString());
 	}
 	
+	@Override
+	public ConsoleSink clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

@@ -42,7 +42,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	private String name;
 	private SDFAttributeList outputSchema;
-	
+
 	protected Vector<IOperatorOwner> owners = new Vector<IOperatorOwner>();
 
 	private volatile boolean allInputsDone = false;
@@ -91,7 +91,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			process_open();
 			fire(openDoneEvent);
 			this.isOpen.set(true);
-			//FIXME subscribedTo richtig locken
+			// FIXME subscribedTo richtig locken
 			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
 				sub.getTarget().open();
 			}
@@ -154,7 +154,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void subscribeToSource(ISource<? extends T> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
+	public void subscribeToSource(ISource<? extends T> source, int sinkPort,
+			int sourcePort, SDFAttributeList schema) {
 		if (sinkPort >= this.noInputPorts) {
 			setInputPortCount(sinkPort + 1);
 		}
@@ -163,12 +164,13 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.contains(sub)) {
 				this.subscribedTo.add(sub);
-				source.subscribeSink(getInstance(), sinkPort, sourcePort, schema);
+				source.subscribeSink(getInstance(), sinkPort, sourcePort,
+						schema);
 			}
 		}
 	}
 
-	//"delegatable this", used for the delegate sink
+	// "delegatable this", used for the delegate sink
 	protected ISink<T> getInstance() {
 		return this;
 	}
@@ -176,10 +178,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@SuppressWarnings("unchecked")
 	@Override
 	final public List<PhysicalSubscription<ISource<? extends T>>> getSubscribedToSource() {
-		return (List<PhysicalSubscription<ISource<? extends T>>>) this.subscribedTo.clone();
+		return (List<PhysicalSubscription<ISource<? extends T>>>) this.subscribedTo
+				.clone();
 	}
 
-	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(int port) {
+	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(
+			int port) {
 		return this.subscribedTo.get(port);
 	}
 
@@ -213,19 +217,23 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void unsubscribeFromSource(ISource<? extends T> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(source, sinkPort, sourcePort, schema));
+	public void unsubscribeFromSource(ISource<? extends T> source,
+			int sinkPort, int sourcePort, SDFAttributeList schema) {
+		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
+				source, sinkPort, sourcePort, schema));
 	}
 
 	@Override
-	public void unsubscribeFromSource(PhysicalSubscription<ISource<? extends T>> subscription) {
+	public void unsubscribeFromSource(
+			PhysicalSubscription<ISource<? extends T>> subscription) {
 		if (this.subscribedTo.remove(subscription)) {
-			subscription.getTarget().unsubscribeSink(this, subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
-		}	
-		
+			subscription.getTarget().unsubscribeSink(this,
+					subscription.getSinkPort(), subscription.getSourcePort(),
+					subscription.getSchema());
+		}
+
 	}
-	
-	
+
 	/**
 	 * One listener can have multiple subscriptions to the same event sender
 	 * 
@@ -288,12 +296,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
-	
+
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema;	
+		this.outputSchema = outputSchema;
 	}
-	
+
 	@Override
 	public void addOwner(IOperatorOwner owner) {
 		this.owners.add(owner);
@@ -318,14 +326,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	final public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
-	
+
 	@Override
-	public ISink<T> createCopy() {
-		try {
-			return (ISink<T>)this.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public AbstractSink<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
 	}
+
 }

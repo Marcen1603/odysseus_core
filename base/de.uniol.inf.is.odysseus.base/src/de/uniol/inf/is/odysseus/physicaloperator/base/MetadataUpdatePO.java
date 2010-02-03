@@ -26,5 +26,11 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 		this.metadataFactory.updateMetadata(object);
 		transfer(object);
 	}
+	
+	@Override
+	public MetadataUpdatePO<M, T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 
 }

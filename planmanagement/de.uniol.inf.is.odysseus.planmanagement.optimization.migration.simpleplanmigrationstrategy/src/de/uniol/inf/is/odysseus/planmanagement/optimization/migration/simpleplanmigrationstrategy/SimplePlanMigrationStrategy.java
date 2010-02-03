@@ -90,7 +90,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		}
 		
 		// create copy
-		ISink<?> copy = ((ISink<?>)op).createCopy();
+		ISink<?> copy = null;
+		try {
+			copy = (ISink<?>) op.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			// TODO: Hier eine geeigente Reaktion!!
+			e.printStackTrace();
+		}
 		
 		if (parentNewPlan == null) {
 			// subscribe union to root of new plan

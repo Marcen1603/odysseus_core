@@ -54,4 +54,10 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 	public OutputMode getOutputMode(){
 		return OutputMode.MODIFIED_INPUT;
 	}
+	
+	@Override
+	public ObjectTrackingPredictionAssignPO<T, M> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

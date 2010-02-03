@@ -162,6 +162,10 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 		this.peerGroup = peerGroup;
 	}
 
+	@Override
+	public P2PSinkPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
 
 
 

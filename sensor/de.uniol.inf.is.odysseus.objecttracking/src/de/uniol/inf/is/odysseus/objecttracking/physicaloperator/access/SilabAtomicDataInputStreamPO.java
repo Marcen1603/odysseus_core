@@ -163,4 +163,10 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	public SDFAttributeList getOutputSchema(){
 		return this.outputSchema;
 	}
+	
+	@Override
+	public SilabAtomicDataInputStreamPO<M> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

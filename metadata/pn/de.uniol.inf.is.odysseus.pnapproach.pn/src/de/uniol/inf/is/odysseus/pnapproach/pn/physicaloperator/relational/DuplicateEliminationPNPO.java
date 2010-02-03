@@ -118,4 +118,10 @@ public class DuplicateEliminationPNPO<T extends IMetaAttributeContainer<? extend
 	
 	public final void process_close(){
 	}
+	
+	@Override
+	public DuplicateEliminationPNPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+
 }

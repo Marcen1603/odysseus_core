@@ -87,10 +87,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		}
 		CommonTree tree = (CommonTree) ret.getTree();
 		// printTree(tree, 2);
+		// TODO: Tree-Grammar verwenden!!
 		retList.add(createLogicalPlan(tree));
 		return retList;
 	}
 
+	
+	// TODO: Dieses und das Folgende muss unbedingt in eine Tree-Grammar verlagert
+	// werden!!
 	private ILogicalOperator createLogicalPlan(CommonTree tree) {
 		CepAO<RelationalTuple<?>> cepAo = new CepAO<RelationalTuple<?>>();
 		Set<String> sourceNames = new TreeSet<String>();
