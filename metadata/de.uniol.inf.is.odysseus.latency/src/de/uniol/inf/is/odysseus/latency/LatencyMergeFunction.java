@@ -11,4 +11,7 @@ public class LatencyMergeFunction implements IInlineMetadataMergeFunction<ILaten
 		result.setLatencyStart(Math.min(inLeft.getLatencyStart(), inRight.getLatencyStart()));
 	}
 
+	public LatencyMergeFunction clone() throws CloneNotSupportedException{
+		return new LatencyMergeFunction();
+	}
 }

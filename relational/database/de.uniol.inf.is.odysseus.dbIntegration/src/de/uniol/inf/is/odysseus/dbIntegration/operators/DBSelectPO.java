@@ -46,7 +46,7 @@ public class DBSelectPO extends AbstractPipe<Object, Object> {
 		List<RelationalTuple<?>> result = controller.getData(object);
 		if (result != null) {
 			if(result.size() > 0) {
-				RelationalMergeFunction dataMerge = new RelationalMergeFunction<IMetaAttribute>(outputSchema);
+				RelationalMergeFunction dataMerge = new RelationalMergeFunction<IMetaAttribute>(outputSchema.size());
 				
 				List objOut = new LinkedList<RelationalTuple<?>>();
 				RelationalTuple<?> obj = (RelationalTuple<?>) object;

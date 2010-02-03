@@ -110,6 +110,13 @@ public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepAr
 //		this.saSupervisor.start();
 	}
 
+	public SweepArea(SweepArea<T> area){
+		this.elements = new LinkedList<T>(area.elements);
+		this.comparator = area.comparator;
+		this.queryPredicate = area.queryPredicate.clone();
+		this.removePredicate = area.removePredicate.clone();
+	}
+	
 	public void insert(T s) {
 		if (this.comparator == null) {
 			this.elements.add(s);
@@ -308,5 +315,9 @@ public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepAr
 	public void init(){
 		this.queryPredicate.init();
 		this.removePredicate.init();
+	}
+	
+	public SweepArea<T> clone() throws CloneNotSupportedException{
+		return new SweepArea<T>(this);
 	}
 }

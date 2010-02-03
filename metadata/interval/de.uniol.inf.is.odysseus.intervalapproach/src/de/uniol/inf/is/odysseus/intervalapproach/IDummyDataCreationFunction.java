@@ -14,4 +14,5 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 public interface IDummyDataCreationFunction<K extends IMetaAttribute,T extends IMetaAttributeContainer<K>> {
 		public T createMetadata(T source);
 		public boolean hasMetadata(T source);
+		public IDummyDataCreationFunction<K, T> clone() throws CloneNotSupportedException;
 }

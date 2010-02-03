@@ -20,4 +20,9 @@ public class PriorityIntervalMergeFunction implements
 		((ITimeInterval)result).setEnd(PointInTime.min(((ITimeInterval)inLeft).getEnd(), ((ITimeInterval)inRight).getEnd()));
 	}
 
+	@Override
+	public PriorityIntervalMergeFunction clone() throws CloneNotSupportedException {
+		return new PriorityIntervalMergeFunction();
+	}
+	
 }

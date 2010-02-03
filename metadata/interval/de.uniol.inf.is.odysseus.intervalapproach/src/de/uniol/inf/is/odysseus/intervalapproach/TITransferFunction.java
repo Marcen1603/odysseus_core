@@ -16,11 +16,24 @@ public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITim
 
 	final private ITimeInterval[] minTs;
 	protected AbstractSource<T> po;
+	// Initiale Groesse da Comperator uebergeben werden muss
 	final private PriorityQueue<T> out = new PriorityQueue<T>(11,
 			new MetadataComparator<ITimeInterval>());
 
 	public TITransferFunction() {
 		minTs = new ITimeInterval[2];
+	}
+
+	public TITransferFunction(TITransferFunction<T> tiTransferFunction) throws CloneNotSupportedException {
+		minTs = new ITimeInterval[2];
+		minTs[0] = tiTransferFunction.minTs[0].clone();
+		minTs[1] = tiTransferFunction.minTs[1].clone();
+		po = tiTransferFunction.po.clone();
+		out.addAll(tiTransferFunction.out);
+	}
+
+	public void setSourcePo(AbstractSource<T> po) {
+		this.po = po;
 	}
 
 	@Override
@@ -70,6 +83,10 @@ public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITim
 	@Override
 	public int size() {
 		return out.size();
+	}
+	
+	public TITransferFunction<T> clone() throws CloneNotSupportedException{
+		return new TITransferFunction<T>(this);
 	}
 
 	

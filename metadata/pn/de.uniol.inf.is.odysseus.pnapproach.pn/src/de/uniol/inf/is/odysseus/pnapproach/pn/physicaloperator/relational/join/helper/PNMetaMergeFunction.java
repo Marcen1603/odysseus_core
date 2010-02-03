@@ -17,6 +17,10 @@ public class PNMetaMergeFunction implements IMetadataMergeFunction<IPosNeg> {
 //		this.rightIDSize = rightIDSize;
 	}
 	
+	
+	public PNMetaMergeFunction(PNMetaMergeFunction pnMetaMergeFunction) {
+	}
+
 	@Override
 	public IPosNeg mergeMetadata(IPosNeg left, IPosNeg right) {
 		PosNeg pn = new PosNeg();
@@ -42,4 +46,8 @@ public class PNMetaMergeFunction implements IMetadataMergeFunction<IPosNeg> {
 	public void init(){
 	}
 
+	@Override
+	public PNMetaMergeFunction clone() throws CloneNotSupportedException {
+		return new PNMetaMergeFunction(this);
+	}
 }

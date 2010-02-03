@@ -17,6 +17,12 @@ public abstract class LeftMergeFunction<T extends IClone> implements  IDataMerge
 		this.resultSchema = resultSchema;
 	}
 	
+	public LeftMergeFunction(LeftMergeFunction<T> mf){
+		this.leftSchema = mf.leftSchema.clone();
+		this.rightSchema = mf.rightSchema.clone();
+		this.resultSchema = mf.resultSchema.clone();
+	}
+	
 	public T merge(T left, T right){
 		return leftMerge(left, right);
 	}
@@ -25,4 +31,7 @@ public abstract class LeftMergeFunction<T extends IClone> implements  IDataMerge
 	
 	public abstract T createLeftFilledUp(T left);
 	
+	public LeftMergeFunction<T> clone() throws CloneNotSupportedException{
+		throw new CloneNotSupportedException();
+	}
 }

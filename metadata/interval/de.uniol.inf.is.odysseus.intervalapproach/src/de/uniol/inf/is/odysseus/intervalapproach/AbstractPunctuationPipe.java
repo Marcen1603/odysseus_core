@@ -20,6 +20,15 @@ public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<
 	
     protected PunctuationStorage<W,R> storage = new PunctuationStorage<W,R>(this); 
 
+    public AbstractPunctuationPipe(AbstractPunctuationPipe<W,R> pipe){
+    	super(pipe);
+    }
+    
+    public AbstractPunctuationPipe(){
+    	super();
+    }
+    
+    
 	protected void updatePunctuationData(W object) {
 		storage.updatePunctuationData(object);
 	}

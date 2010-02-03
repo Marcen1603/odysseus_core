@@ -22,6 +22,13 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 		this.counter = 0;
 	}
 
+	public PNTransferFunction(PNTransferFunction<T> pnTransferFunction) throws CloneNotSupportedException {
+		minTs = new PointInTime[2];
+		this.minTs[0] = pnTransferFunction.minTs[0].clone();
+		this.minTs[1] = pnTransferFunction.minTs[1].clone();
+		this.sweepArea = pnTransferFunction.sweepArea.clone();
+	}
+
 	public void init(AbstractSource<T> po) {
 		this.po = po;
 		this.minTs[0] = PointInTime.getZeroTime();
@@ -29,6 +36,11 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 		this.sweepArea.clear();
 	}
 
+	@Override
+	public void setSourcePo(AbstractSource<T> source) {
+		this.po = source;
+	}
+	
 	@Override
 	public void newElement(T object, int port) {
 		PointInTime minimum;
@@ -65,6 +77,10 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 	
 	public int size(){
 		return sweepArea.size();
+	}
+	
+	public PNTransferFunction<T> clone() throws CloneNotSupportedException{
+		return new PNTransferFunction<T>(this);
 	}
 
 }

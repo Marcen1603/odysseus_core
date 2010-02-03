@@ -64,6 +64,20 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public JoinTIPO() {
 
 	}
+	
+	public JoinTIPO(JoinTIPO<K,T> join) throws CloneNotSupportedException {
+		super(join);
+		this.areas = join.areas.clone();
+		this.joinPredicate = join.joinPredicate.clone();
+		this.dataMerge = join.dataMerge.clone();
+
+		this.metadataMerge = join.metadataMerge.clone();
+		this.transferFunction = join.transferFunction.clone();
+		this.transferFunction.setSourcePo(this);
+		this.outputSchema = join.outputSchema.clone();
+		this.creationFunction = join.creationFunction.clone();
+		
+	}
 
 	public IDataMergeFunction<T> getDataMerge() {
 		return dataMerge;

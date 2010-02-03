@@ -5,6 +5,14 @@ import de.uniol.inf.is.odysseus.metadata.base.IInlineMetadataMergeFunction;
 
 public class TimeIntervalInlineMetadataMergeFunction implements
 		IInlineMetadataMergeFunction<ITimeInterval> {
+	
+	
+	public TimeIntervalInlineMetadataMergeFunction(
+			TimeIntervalInlineMetadataMergeFunction timeIntervalInlineMetadataMergeFunction) {
+
+	}
+	
+	public TimeIntervalInlineMetadataMergeFunction(){};
 
 	@Override
 	public void mergeInto(ITimeInterval result, ITimeInterval inLeft,
@@ -13,4 +21,9 @@ public class TimeIntervalInlineMetadataMergeFunction implements
 		result.setEnd(PointInTime.min(inLeft.getEnd(), inRight.getEnd()));
 	}
 
+	@Override
+	public TimeIntervalInlineMetadataMergeFunction clone() throws CloneNotSupportedException {
+		return new TimeIntervalInlineMetadataMergeFunction(this);
+	}
+	
 }

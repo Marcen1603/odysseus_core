@@ -30,7 +30,10 @@ public interface ITransferFunction<T extends IMetaAttributeContainer<?>> {
 	public void done();
 
 	public void init(AbstractSource<T> source);
+	public void setSourcePo(AbstractSource<T> source);
 
 	public int size();
+
+	public ITransferFunction<T> clone() throws CloneNotSupportedException;
 	
 }

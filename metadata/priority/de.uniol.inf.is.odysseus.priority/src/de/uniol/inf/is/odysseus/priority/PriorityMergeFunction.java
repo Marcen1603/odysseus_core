@@ -15,5 +15,9 @@ public class PriorityMergeFunction implements
 						.getPriority()
 						: inRight.getPriority());
 	}
+	
+	public PriorityMergeFunction clone() throws CloneNotSupportedException{
+		return new PriorityMergeFunction();
+	}
 
 }

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Implements a merge function for RelationalTuples. A full outer join is
@@ -15,16 +14,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class RelationalMergeFunction<M extends IMetaAttribute> implements
 		IDataMergeFunction<RelationalTuple<M>> {
 
-	private SDFAttributeList schema;
+	private int resultSchemasize;
 
 
-	public RelationalMergeFunction(SDFAttributeList resultSchema) {
-		this.schema = resultSchema;
+	public RelationalMergeFunction(int resultSchemasize) {
+		this.resultSchemasize = resultSchemasize;
 	}
 
 	public RelationalTuple<M> merge(RelationalTuple<M> left,
 			RelationalTuple<M> right) {
-		Object[] newAttributes = new Object[schema.size()];
+		Object[] newAttributes = new Object[resultSchemasize];
 		if (left != null) {
 			Object[] leftAttributes = left.getAttributes();
 			System.arraycopy(leftAttributes, 0, newAttributes, 0,
@@ -32,7 +31,7 @@ public class RelationalMergeFunction<M extends IMetaAttribute> implements
 		}
 		if (right != null) {
 			Object[] rightAttributes = right.getAttributes();
-			System.arraycopy(rightAttributes, 0, newAttributes, schema.size()
+			System.arraycopy(rightAttributes, 0, newAttributes, resultSchemasize
 					- rightAttributes.length, rightAttributes.length);
 		}
 		RelationalTuple<M> r = new RelationalTuple<M>(newAttributes);
@@ -41,4 +40,9 @@ public class RelationalMergeFunction<M extends IMetaAttribute> implements
 	
 	public void init(){
 	}
+	
+	public RelationalMergeFunction<M> clone() throws CloneNotSupportedException{
+		return new RelationalMergeFunction<M>(resultSchemasize);
+	}
+	
 }

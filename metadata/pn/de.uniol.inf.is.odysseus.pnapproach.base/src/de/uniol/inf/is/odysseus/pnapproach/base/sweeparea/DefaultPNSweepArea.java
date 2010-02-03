@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
 /**
- * SweepArea f�r den PN-Ansatz.
+ * SweepArea fuer den PN-Ansatz.
  * @author Andre Bolles
  */
 public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPosNeg>>
@@ -22,6 +22,10 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 	
 	public DefaultPNSweepArea() {
 		super(new MetadataComparator<IPosNeg>());
+	}
+
+	public DefaultPNSweepArea(DefaultPNSweepArea<T> defaultPNSweepArea) {
+		super(defaultPNSweepArea);
 	}
 
 	/**
@@ -269,5 +273,9 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 			super.insert(s);
 		}
 		return count;
+	}
+	
+	public DefaultPNSweepArea<T> clone() throws CloneNotSupportedException{
+		return new DefaultPNSweepArea<T>(this);
 	}
 }

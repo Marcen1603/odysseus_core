@@ -4,6 +4,13 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class DefaultTIDummyDataCreation implements IDummyDataCreationFunction<ITimeInterval, IMetaAttributeContainer<ITimeInterval>>{
 
+	public DefaultTIDummyDataCreation(
+			DefaultTIDummyDataCreation defaultTIDummyDataCreation) {
+		
+	}
+
+	public DefaultTIDummyDataCreation(){};
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public IMetaAttributeContainer<ITimeInterval> createMetadata(
@@ -16,5 +23,9 @@ public class DefaultTIDummyDataCreation implements IDummyDataCreationFunction<IT
 		return true;
 	}
 
+	@Override
+	public DefaultTIDummyDataCreation clone() {
+		return new DefaultTIDummyDataCreation(this);
+	}
 
 }

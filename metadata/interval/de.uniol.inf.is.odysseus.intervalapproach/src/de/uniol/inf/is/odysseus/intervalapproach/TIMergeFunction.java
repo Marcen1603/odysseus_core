@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 
 /**
@@ -15,6 +16,10 @@ public class TIMergeFunction implements
 	
 	private TIMergeFunction() {
 	}
+	
+	public TIMergeFunction(TIMergeFunction tiMergeFunction) {
+		
+	}
 
 	public ITimeInterval mergeMetadata(
 			ITimeInterval left,
@@ -28,4 +33,10 @@ public class TIMergeFunction implements
 	
 	public void init(){
 	}
+	
+	@Override
+	public TIMergeFunction clone() {
+		return new TIMergeFunction(this);
+	}
+	
 }

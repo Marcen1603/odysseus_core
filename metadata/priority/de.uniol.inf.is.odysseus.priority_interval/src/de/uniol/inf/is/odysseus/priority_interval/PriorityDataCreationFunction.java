@@ -33,5 +33,9 @@ public class PriorityDataCreationFunction<K extends IMetaAttribute,T extends IMe
 		
 		return false;
 	}
+	
+	public PriorityDataCreationFunction<K,T> clone() throws CloneNotSupportedException{
+		return new PriorityDataCreationFunction<K, T>(type);
+	}
 
 }
