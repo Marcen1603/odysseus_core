@@ -31,9 +31,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final protected Map<POEventType, ArrayList<POEventListener>> eventListener = new HashMap<POEventType, ArrayList<POEventListener>>();
 	final protected ArrayList<POEventListener> genericEventListener = new ArrayList<POEventListener>();
-	private boolean hasSingleConsumer;
+	private boolean hasSingleConsumer = false;
 	private AtomicBoolean open = new AtomicBoolean(false);
-	private String name;
+	private String name = null;
 	private SDFAttributeList outputSchema;
 
 	// Events
@@ -49,6 +49,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	protected List<IOperatorOwner> owners = new Vector<IOperatorOwner>();
 
+	public AbstractSource(){};
+			
+	public AbstractSource(AbstractSource<T> source) {
+		this.outputSchema = source.outputSchema;
+	}
+	
 	@Override
 	public boolean isSink() {
 		return false;

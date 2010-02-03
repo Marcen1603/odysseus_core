@@ -13,6 +13,14 @@ public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 
 	protected List<IOperatorOwner> deactivateRequestControls = new Vector<IOperatorOwner>();
 	
+	public AbstractIterableSource(){
+
+	}
+	
+	public AbstractIterableSource(AbstractIterableSource<T> source){
+		super(source);
+	}
+	
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
 		super.removeOwner(owner);

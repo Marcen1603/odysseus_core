@@ -60,6 +60,12 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	private boolean[] inputExclusive;
 
+	public AbstractPipe(){};
+	
+	public AbstractPipe(AbstractPipe<R,W> pipe) {
+		super(pipe);
+	}
+	
 	@Override
 	public boolean isSink() {
 		return true;
