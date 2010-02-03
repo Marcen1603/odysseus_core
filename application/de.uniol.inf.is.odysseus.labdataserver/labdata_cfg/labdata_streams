@@ -27,6 +27,13 @@ CREATE STREAM movingObjectsOL(
 	yNext DOUBLE
 ) SOCKET MV localhost : 55570
 
+CREATE STREAM linearMove(
+	timestamp INTEGER,
+	id INTEGER,
+	pos INTEGER,
+	speed INTEGER
+) SOCKET MV localhost : 55570
+
 
 CREATE STREAM fas:EnviroFusion1(
 	timestamp LONG,
