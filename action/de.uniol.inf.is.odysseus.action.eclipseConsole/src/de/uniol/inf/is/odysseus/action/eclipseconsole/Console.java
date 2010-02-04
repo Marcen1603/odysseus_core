@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 /**
  * Extension for the Equinox OSGI Console providing commands to access
@@ -43,7 +42,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		try {
 			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA", new ParameterParserID("ECA"));
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
-		} catch (PlanManagementException e) {
+		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
 	}
