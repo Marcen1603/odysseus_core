@@ -66,12 +66,8 @@ public class ActuatorFactory implements IActuatorFactory{
 	}
 
 	
-	public List<ActionMethod> getSchema(String actuatorName, String managerName) throws ActuatorException{
-		IActuatorManager manager = this.actuatorManager.get(managerName);
-		if (manager != null){
-			return manager.getSchema(actuatorName);
-		}
-		throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
+	public List<ActionMethod> getFullSchema(String actuatorName, String managerName) throws ActuatorException{
+		return this.getActuator(actuatorName, managerName).getFullSchema();
 	}
 	
 	public HashMap<String, IActuatorManager> getActuatorManagers() {
@@ -87,6 +83,12 @@ public class ActuatorFactory implements IActuatorFactory{
 		}else {
 			throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
 		}
+	}
+
+	@Override
+	public List<ActionMethod> getReducedSchema(String actuatorName,
+			String managerName) throws ActuatorException {
+		return this.getActuator(actuatorName, managerName).getReducedSchema();
 	}
 	
 	

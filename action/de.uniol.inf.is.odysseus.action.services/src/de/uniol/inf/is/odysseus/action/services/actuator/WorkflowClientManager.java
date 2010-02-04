@@ -43,15 +43,6 @@ public class WorkflowClientManager implements IActuatorManager {
 		return client;
 	}
 
-	@Override
-	public List<ActionMethod> getSchema(String name) {
-		WorkflowClient client = this.clients.get(name);
-		if (client != null){
-			return client.getSchema();
-		}
-		return null;
-	}
-
 
 	@Override
 	public String getName() {

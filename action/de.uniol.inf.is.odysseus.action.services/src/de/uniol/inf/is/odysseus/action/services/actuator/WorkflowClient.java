@@ -20,7 +20,13 @@ public class WorkflowClient implements IActuator {
 	}
 
 	@Override
-	public List<ActionMethod> getSchema() {
+	public List<ActionMethod> getFullSchema() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ActionMethod> getReducedSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

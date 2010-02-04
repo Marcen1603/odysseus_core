@@ -43,15 +43,6 @@ public interface IActuatorManager {
 	public String getName();
 	
 	/**
-	 * Returns the schema, list of all Methods, of the Actuator with give name.
-	 * @param name
-	 * @return
-	 * @throws ActuatorException thrown if Actuator does not exist
-	 * @see ActionMethod
-	 */
-	public List<ActionMethod> getSchema(String name) throws ActuatorException;
-	
-	/**
 	 * Returns names of all registered Actuators
 	 * @return
 	 */

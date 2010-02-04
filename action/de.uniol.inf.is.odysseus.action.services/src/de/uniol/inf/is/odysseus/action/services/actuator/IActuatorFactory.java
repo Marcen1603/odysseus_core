@@ -38,13 +38,24 @@ public interface IActuatorFactory {
 	public IActuator getActuator(String actuatorName, String managerName) throws ActuatorException;
 
 	/**
-	 * Fetches and returns the schema of specified Actuator
+	 * Fetches and returns the full schema of specified Actuator
 	 * @param actuatorName
 	 * @param managerName
 	 * @return
 	 * @throws ActuatorException
 	 */
-	public List<ActionMethod> getSchema(String actuatorName, String managerName) throws ActuatorException;
+	public List<ActionMethod> getFullSchema(String actuatorName, String managerName) throws ActuatorException;
+	
+	/**
+	 * Fetches and returns the reduced schema of specified Actuator
+	 * Reduced schema only includes those methods, marked as toShow
+	 * @param actuatorName
+	 * @param managerName
+	 * @see IActuator
+	 * @return
+	 * @throws ActuatorException
+	 */
+	public List<ActionMethod> getReducedSchema(String actuatorName, String managerName) throws ActuatorException;
 	
 	/**
 	 * Returns all registered ActuatorManagers

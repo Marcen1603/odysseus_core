@@ -6,10 +6,12 @@ import java.util.Arrays;
 public class ActionMethod {
 	private String name;
 	private ArrayList<Class<?>> parameterTypes;
+	private boolean showInSchema;
 		
-	public ActionMethod (String name, Class<?>[] classes){
+	public ActionMethod (String name, Class<?>[] classes, boolean showInSchema){
 		this.name = name;
 		this.parameterTypes = new ArrayList<Class<?>>(Arrays.asList(classes));
+		this.showInSchema = showInSchema;
 	}
 	
 	public String getName() {
@@ -32,6 +34,10 @@ public class ActionMethod {
 			}
 		}
 		return true;
+	}
+	
+	public boolean isShowInSchema() {
+		return showInSchema;
 	}
 
 }

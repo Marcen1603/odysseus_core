@@ -23,13 +23,17 @@ public class ActuatorAdapter implements IActuator {
 		this.adapter = adapter;
 		this.methods = new ArrayList<ActionMethod>();
 		for (Method method : this.adapter.getClass().getMethods()) {
+			boolean show = false;
+			if (method.isAnnotationPresent(ActuatorAdapterSchema.class)){
+				show = method.getAnnotation(ActuatorAdapterSchema.class).show();
+			}
 			this.methods.add(
-					new ActionMethod(method.getName(),method.getParameterTypes()));
+					new ActionMethod(method.getName(),method.getParameterTypes(), show));
 		}
 	}
 	
 	@Override
-	public List<ActionMethod> getSchema() {
+	public List<ActionMethod> getFullSchema() {
 		return this.methods;
 	}
 	
@@ -50,6 +54,18 @@ public class ActuatorAdapter implements IActuator {
 		} catch (InvocationTargetException e) {
 			throw new ActuatorException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<ActionMethod> getReducedSchema() {
+		ArrayList<ActionMethod> reducedSchema = new ArrayList<ActionMethod>();
+		for (ActionMethod m : this.methods){
+			if (m.isShowInSchema()){
+				reducedSchema.add(m);
+			}
+			
+		}
+		return reducedSchema;
 	}
 
 }

@@ -25,10 +25,18 @@ public interface IActuator {
 	public void executeMethod (String method, Class<?>[] types, Object[] params) throws ActuatorException;
 	
 	/**
-	 * Returns all available methods of this actuator including parameters
+	 * Returns ALL available methods of this actuator including parameters
 	 * @see ActionMethod
 	 * @return
 	 */
-	public List<ActionMethod> getSchema();
+	public List<ActionMethod> getFullSchema();
+	
+	/**
+	 * Returns methods of this actuator marked as to show
+	 * @see ActionMethod
+	 * @return
+	 */
+	public List<ActionMethod> getReducedSchema();
+
 
 }

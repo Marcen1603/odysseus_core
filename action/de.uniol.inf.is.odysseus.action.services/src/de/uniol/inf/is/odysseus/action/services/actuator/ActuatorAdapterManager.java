@@ -145,15 +145,6 @@ public class ActuatorAdapterManager implements IActuatorManager{
 		throw new ActuatorException("Constructor undefined");
 	}
 
-	@Override
-	public List<ActionMethod> getSchema(String name) {
-		ActuatorAdapter adapter = this.adapters.get(name);
-		if (adapter != null){
-			return adapter.getSchema();
-		}
-		return null;
-	}
-
 
 	@Override
 	public String getName() {
