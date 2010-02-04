@@ -315,5 +315,38 @@ public class SDFExpression implements Serializable {
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 19;
+		int result = 1;
+		result = prime * result
+				+ ((attribute == null) ? 0 : attribute.hashCode());
+		result = prime * result
+				+ ((expression == null) ? 0 : expression.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SDFExpression other = (SDFExpression) obj;
+		if (attribute == null) {
+			if (other.attribute != null)
+				return false;
+		} else if (!attribute.equals(other.attribute))
+			return false;
+		if (expression == null) {
+			if (other.expression != null)
+				return false;
+		} else if (!expression.equals(other.expression))
+			return false;
+		return true;
+	}
 
 }

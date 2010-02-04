@@ -89,11 +89,11 @@ public class DroolsTransformation implements ITransformation {
 		session.insert(this);
 		session.startProcess("flow");
 
-		 WorkingMemoryConsoleLogger lg = new
-		 WorkingMemoryConsoleLogger(session);
-		 lg.clearFilters();
-		 session.addEventListener( new DebugAgendaEventListener() );
-		 session.addEventListener( new DebugWorkingMemoryEventListener() );
+//		 WorkingMemoryConsoleLogger lg = new
+//		 WorkingMemoryConsoleLogger(session);
+//		 lg.clearFilters();
+//		 session.addEventListener( new DebugAgendaEventListener() );
+//		 session.addEventListener( new DebugWorkingMemoryEventListener() );
 
 
 		 
