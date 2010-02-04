@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
 import de.uniol.inf.is.odysseus.action.exception.AttributeParsingException;
-import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
+import de.uniol.inf.is.odysseus.action.operator.EventTriggerAO;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.StaticParameter;
@@ -242,7 +242,7 @@ public class ECAParser implements IQueryParser{
 		ILogicalOperator outputOperator = plan.get(0);
 
 		//create new sink and subscribe to outputoperator
-		EventDetectionAO eAO = new EventDetectionAO(actions);
+		EventTriggerAO eAO = new EventTriggerAO(actions);
 		eAO.subscribeToSource(outputOperator, 0, 0, outputOperator.getOutputSchema());
 		
 		//replace old top element through sink
