@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+
 public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttribute>, Serializable {
 
 	private String sourceName;
@@ -118,6 +120,12 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		updateName();
 	}
 
+	/**
+	 * Returns the name of the attribute without source information.
+	 * To get the complete name use getURI.
+	 * @see SDFElement
+	 * @return
+	 */
 	public String getAttributeName() {
 		return this.attributeName;
 	}

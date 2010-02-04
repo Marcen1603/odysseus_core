@@ -80,6 +80,11 @@ public abstract class SDFElement implements Serializable{
 		//return getQualName();
 	}
 	
+	/**
+	 * Returns complete name of this element.
+	 * In case of an attribute <sourceName>.<attributeName>
+	 * @return
+	 */
 	public String getURI() {
 		return URI;
 	}
