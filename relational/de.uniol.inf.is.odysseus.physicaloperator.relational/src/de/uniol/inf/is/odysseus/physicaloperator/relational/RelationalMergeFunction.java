@@ -19,6 +19,11 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 	public RelationalMergeFunction(int resultSchemaSize) {
 		super(resultSchemaSize);
 	}
+	
+	private RelationalMergeFunction(RelationalMergeFunction<M> original){
+		super(original.schemaSize);
+	}
+	
 
 	public RelationalTuple<M> merge(RelationalTuple<M> left,
 			RelationalTuple<M> right) {
@@ -31,4 +36,7 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 	public void init(){
 	}
 	
+	public RelationalMergeFunction<M> clone(){
+		return new RelationalMergeFunction<M>(this);
+	}
 }
