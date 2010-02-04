@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simplepla
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -25,10 +28,18 @@ import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
  *
  */
 public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
+	
+	private Logger logger;
+	
+	public SimplePlanMigrationStrategy() {
+		this.logger = LoggerFactory.getLogger(SimplePlanMigrationStrategy.class);
+	}
 
 	@Override
 	public IEditableExecutionPlan migratePlan(IPlanMigratable sender,
 			IEditableExecutionPlan newExecutionPlan) {
+		this.logger.info("Start Planmigration.");
+		
 		try {
 			sender.getSchedulerManager().stopScheduling();
 		} catch (NoSchedulerLoadedException e) {
@@ -46,8 +57,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			// TODO: partial plan anpassen?!
 			
 		} catch (Exception e1) {
-			System.err.println("Plan migration failed: "+e1.getMessage());
-			e1.printStackTrace();
+			this.logger.error("Plan migration failed: "+e1.getMessage(),e1);
 		}
 		
 		try {
@@ -57,6 +67,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		} catch (OpenFailedException e) {
 			e.printStackTrace();
 		}
+		
+		this.logger.info("Finished Planmigration.");
 		
 		return newExecutionPlan;
 	}

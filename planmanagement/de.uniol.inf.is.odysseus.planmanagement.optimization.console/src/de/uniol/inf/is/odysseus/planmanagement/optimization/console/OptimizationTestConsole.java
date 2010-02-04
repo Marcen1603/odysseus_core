@@ -51,6 +51,9 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
 			//query.stop();
 			
+			//query.reoptimize();
+			System.out.println(this.executor.getInfos());
+			
 			
 			
 		} catch (PlanManagementException e) {
