@@ -15,12 +15,14 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  * @author Simon Flandergan
  *
  */
-public abstract class ActuatorAdapter implements IActuator {
+public class ActuatorAdapter implements IActuator {
+	private Object adapter;
 	private ArrayList<ActionMethod> methods;
 	
-	public ActuatorAdapter() {
+	public ActuatorAdapter(Object adapter) {
+		this.adapter = adapter;
 		this.methods = new ArrayList<ActionMethod>();
-		for (Method method : this.getClass().getMethods()) {
+		for (Method method : this.adapter.getClass().getMethods()) {
 			this.methods.add(
 					new ActionMethod(method.getName(),method.getParameterTypes()));
 		}
@@ -35,8 +37,8 @@ public abstract class ActuatorAdapter implements IActuator {
 	@Override
 	public void executeMethod(String method, Class<?>[] types, Object[] params) throws ActuatorException {
 		try {
-			Method methodToExecute = this.getClass().getMethod(method, types);
-			methodToExecute.invoke(this, params);
+			Method methodToExecute = this.adapter.getClass().getMethod(method, types);
+			methodToExecute.invoke(this.adapter, params);
 		} catch (SecurityException e) {
 			throw new ActuatorException(e.getMessage());
 		} catch (NoSuchMethodException e) {

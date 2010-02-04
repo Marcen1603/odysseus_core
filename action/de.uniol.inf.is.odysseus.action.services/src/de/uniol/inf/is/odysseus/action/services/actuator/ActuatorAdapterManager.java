@@ -122,10 +122,10 @@ public class ActuatorAdapterManager implements IActuatorManager{
 							break;
 						}
 					}
-					//create object
+					//create object and adapter
 					if (compatible){
-						ActuatorAdapter newAdapter = (ActuatorAdapter)constructor.newInstance(constructorParams);
-						this.adapters.put(name, newAdapter);
+						ActuatorAdapter newAdapter =  new ActuatorAdapter(constructor.newInstance(constructorParams));
+						this.adapters.put(name,newAdapter);
 						return newAdapter;
 					}
 				}
@@ -140,8 +140,6 @@ public class ActuatorAdapterManager implements IActuatorManager{
 			throw new ActuatorException(e.getMessage());
 		} catch (InvocationTargetException e) {
 			throw new ActuatorException(e.getMessage());
-		} catch (ClassCastException e){
-			throw new ActuatorException("Adapter is not derived from ActuatorAdapter.class");
 		}
 		
 		throw new ActuatorException("Constructor undefined");
