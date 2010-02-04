@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Optimization Test Console
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.console
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.planmanagement.optimization.console.Activator
+Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
+ org.osgi.framework;version="1.3.0",
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.plan,
+ de.uniol.inf.is.odysseus.base.planmanagement.query,
+ de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.exception
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/component.xml

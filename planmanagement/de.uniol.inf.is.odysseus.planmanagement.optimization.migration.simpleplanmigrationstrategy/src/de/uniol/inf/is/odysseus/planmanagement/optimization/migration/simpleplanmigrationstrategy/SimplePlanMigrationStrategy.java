@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -14,7 +15,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 
 /**
  * 
@@ -26,16 +29,34 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 	@Override
 	public IEditableExecutionPlan migratePlan(IPlanMigratable sender,
 			IEditableExecutionPlan newExecutionPlan) {
-		// TODO: queries stoppen?
-		// benötige mehr Kontrolle als IEditableExecutionPlan
-
-		List<IPhysicalOperator> newRoots = new Vector<IPhysicalOperator>();
-		for (IPhysicalOperator pOp : newExecutionPlan.getRoots()) {
-			newRoots.add(prepareParallelExecution(pOp));
+		try {
+			sender.getSchedulerManager().stopScheduling();
+		} catch (NoSchedulerLoadedException e) {
+			e.printStackTrace();
+			return newExecutionPlan;
 		}
-		newExecutionPlan.setRoots(newRoots);
+
+		try {
+			List<IPhysicalOperator> newRoots = new ArrayList<IPhysicalOperator>();
+			for (IPhysicalOperator pOp : newExecutionPlan.getRoots()) {
+				newRoots.add(prepareParallelExecution(pOp));
+			}
+			newExecutionPlan.setRoots(newRoots);
+			
+			// TODO: partial plan anpassen?!
+			
+		} catch (Exception e1) {
+			System.err.println("Plan migration failed: "+e1.getMessage());
+			e1.printStackTrace();
+		}
 		
-		// TODO: partial plan anpassen?!
+		try {
+			sender.getSchedulerManager().startScheduling();
+		} catch (NoSchedulerLoadedException e) {
+			e.printStackTrace();
+		} catch (OpenFailedException e) {
+			e.printStackTrace();
+		}
 		
 		return newExecutionPlan;
 	}
@@ -45,7 +66,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 	 * @param root
 	 * @return new root of operator tree
 	 */
-	private IPhysicalOperator prepareParallelExecution(IPhysicalOperator root) {
+	private IPhysicalOperator prepareParallelExecution(IPhysicalOperator root) throws QueryOptimizationException {
 		// create copy of operator-tree
 		// TODO: mit treewalker probleme, da IPhysicalOperator kein ISubscriber<T, H> ist
 		// evtl. mit Umweg mit ISink, ISource ?
@@ -68,7 +89,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 	}
 	
 	private void copyOperatorTree(IPhysicalOperator op, IPhysicalOperator parentOldPlan, 
-			IPhysicalOperator parentNewPlan, PhysicalSubscription parentSubscription) {
+			IPhysicalOperator parentNewPlan, PhysicalSubscription parentSubscription) throws QueryOptimizationException {
 		System.out.println(op.getName());
 		
 		if (!op.isSink()) {
@@ -76,7 +97,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			((ISink<?>)parentOldPlan).unsubscribeFromSource(parentSubscription);
 			
 			// create splitPO
-			List<IPredicate<?>> predicates = new Vector<IPredicate<?>>();
+			List<IPredicate<?>> predicates = new ArrayList<IPredicate<?>>();
 			predicates.add(new TruePredicate());
 			SplitPO<?> split = new SplitPO(predicates);
 			split.setOutputSchema(op.getOutputSchema());
@@ -94,9 +115,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		try {
 			copy = (ISink<?>) op.clone();
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			// TODO: Hier eine geeigente Reaktion!!
-			e.printStackTrace();
+			throw new QueryOptimizationException("Operator cannot be cloned.",e);
 		}
 		
 		if (parentNewPlan == null) {
