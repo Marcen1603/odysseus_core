@@ -244,11 +244,13 @@ String MathOperator()#void :{}{
 }
 
 void Identifier():{
+  Token sign = null;
   Token t;
 }
 {
+ (sign = "-")?
   t = <IDENTIFIER>{
-    jjtThis.setName(t.image);
+    jjtThis.setName((sign != null && sign.image != null ? sign.image : "") + t.image);
   }
 }
 

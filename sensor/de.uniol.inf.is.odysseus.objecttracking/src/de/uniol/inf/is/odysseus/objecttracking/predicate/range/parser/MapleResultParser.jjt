@@ -7,7 +7,7 @@ options {
   IGNORE_CASE = true;
   MULTI = true;
   VISITOR = true;
-  DEBUG_PARSER = false;
+  DEBUG_PARSER = true;
   DEBUG_TOKEN_MANAGER = false;
   //  NODE_DEFAULT_VOID=true;
   JJTREE_OUTPUT_DIRECTORY = "nodes";
@@ -67,7 +67,7 @@ TOKEN:/* Numeric Constants */
 //  | <#FLOAT:<INTEGER>
 //  | <INTEGER>("."<INTEGER>)?
 //  | "."<INTEGER>>
-<FLOAT:("-")?(<INTEGER>"."<INTEGER>
+<FLOAT:(<INTEGER>"."(<INTEGER>)?
   | "."<INTEGER>)>
   | <INTEGER:(<DIGIT>)+>
   | <#DIGIT:["0"-"9"]>
@@ -107,7 +107,7 @@ void CompareOperator():{
 }
 
 void Solution():{}{
-  (LOOKAHEAD(SimpleSolution()) SimpleSolution() | LOOKAHEAD(FullSolution()) FullSolution() | EmptySolution() {jjtThis.setEmpty(true);} )}
+  (LOOKAHEAD(FullSolution()) FullSolution() | /*LOOKAHEAD(SimpleSolution())*/ SimpleSolution()  | EmptySolution() {jjtThis.setEmpty(true);} )}
 
 void SimpleSolution():{}{
 	"{[{" SimpleSolutionContent() "}]}"
@@ -140,12 +140,11 @@ void Expression():{
 }
 
 void SimpleToken():{}{
-  Number()
+  LOOKAHEAD(Number())Number()
   | String()
   /*| LOOKAHEAD(AggregateExpression())AggregateExpression()*/
   | LOOKAHEAD(FunctionExpression())FunctionExpression()
-  | "("Expression()")"
-  | ("-" {jjtThis.setMinus(true);})? Identifier()
+  | ("-" {jjtThis.setMinus(true);})? ("("Expression()")" | Identifier()) 
 //TODO DISTINCE Expression
 }
 
@@ -172,12 +171,14 @@ String MathOperator()#void :{}{
 }
 
 void Number():{
+  Token sign = null;
   Token t;
 }
 {
+  (sign = "-")?
   (t = <FLOAT>
   | t = <INTEGER>){
-    jjtThis.setValue(t.image);
+    jjtThis.setValue(sign != null && sign.image != null ? sign.image + t.image : "" + t.image);
   }
 }
 
@@ -191,10 +192,12 @@ void String():{
 }
 
 void Identifier():{
+  Token sign = null;
   Token t;
 }
 {
+ (sign = "-")?
   t = <IDENTIFIER>{
-    jjtThis.setName(t.image);
+    jjtThis.setName((sign != null && sign.image != null ? sign.image : "") + t.image);
   }
 }

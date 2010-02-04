@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
+@SuppressWarnings("unchecked")
 public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 
 	private SDFAttributeListExtended outputSchema;
@@ -223,7 +224,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			List<SDFAttribute> neededAttributes = ((RelationalPredicate)joinPredicate).getAttributes();
 			String predicateString = joinPredicate.toString();
 			
-			StringTokenizer tokens = new StringTokenizer(predicateString,  " \t\n\r\f + - * / < > '<=' '>=' ^", true);
+			StringTokenizer tokens = new StringTokenizer(predicateString,  IRangePredicate.tokenizerDelimiters, true);
 			
 			// for each occurence of an attribute in the expression, we have to substitute this occurence by
 			// the corresponding prediction function of that attribute

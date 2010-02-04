@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
-public class ObjectTrackingSelectAO<T> extends SelectAO implements IHasRangePredicates{
+public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredicates{
 
 
 	private boolean initialized;
@@ -88,7 +88,7 @@ public class ObjectTrackingSelectAO<T> extends SelectAO implements IHasRangePred
 		this.initialized = false;
 	}
 
-	public ObjectTrackingSelectAO(IPredicate<?> predicate) {
+	public ObjectTrackingSelectAO(IPredicate predicate) {
 		setPredicate(predicate);
 		this.logger = LoggerFactory.getLogger(this.getClass());
 		this.initialized = false;
@@ -135,7 +135,7 @@ public class ObjectTrackingSelectAO<T> extends SelectAO implements IHasRangePred
 	 * @return
 	 */
 	private IRangePredicate generateRangePredicate(IPredicate selectionPredicate, SDFExpression[] predictionFunction, IAttributeResolver attributeResolver){
-		if(selectionPredicate instanceof AndPredicate){
+		if(selectionPredicate instanceof AndPredicate<?>){
 			return new AndRangePredicate(
 					generateRangePredicate(((AndPredicate)selectionPredicate).getLeft(), predictionFunction, attributeResolver), 
 					generateRangePredicate(((AndPredicate)selectionPredicate).getRight(), predictionFunction, attributeResolver));
@@ -147,7 +147,7 @@ public class ObjectTrackingSelectAO<T> extends SelectAO implements IHasRangePred
 			List<SDFAttribute> neededAttributes = ((RelationalPredicate)selectionPredicate).getAttributes();
 			String predicateString = selectionPredicate.toString();
 			
-			StringTokenizer tokens = new StringTokenizer(predicateString,  " \t\n\r\f + - * / < > '<=' '>=' ^", true);
+			StringTokenizer tokens = new StringTokenizer(predicateString,  IRangePredicate.tokenizerDelimiters, true);
 			
 			// for each occurence of an attribute in the expression, we have to substitute this occurence by
 			// the corresponding prediction function of that attribute

@@ -95,4 +95,7 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 		return 53 * this.left.hashCode() * 41 * this.right.hashCode();
 	}
 	
+	public String toString(){
+		return this.left.toString() + " AND " + this.right.toString();
+	}
 }

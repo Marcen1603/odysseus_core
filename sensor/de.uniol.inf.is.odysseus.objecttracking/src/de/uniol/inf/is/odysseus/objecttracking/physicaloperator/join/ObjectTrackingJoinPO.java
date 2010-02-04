@@ -192,8 +192,6 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 
 	@Override
 	protected void process_next(T object, int port) {
-		long start = System.currentTimeMillis();
-		counter++;
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
 			// JJ: weil man schon fertig sein

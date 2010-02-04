@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public interface IRangePredicate<T> extends IClone, Serializable{
 
+	public static String tokenizerDelimiters = " \t\n\r\f + - * / < > '<=' '>=' ^ ( )";
+	
 	public List<ITimeInterval> evaluate(T input);
 	public List<ITimeInterval> evaluate(T left, T right);
 	public IRangePredicate<T> clone();

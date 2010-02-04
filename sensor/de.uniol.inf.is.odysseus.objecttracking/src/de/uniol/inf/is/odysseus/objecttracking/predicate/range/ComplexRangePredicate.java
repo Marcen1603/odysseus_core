@@ -41,5 +41,4 @@ public abstract class ComplexRangePredicate<T> extends
 		this.left.init(leftSchema, rightSchema);
 		this.right.init(leftSchema, rightSchema);
 	}
-	
 }

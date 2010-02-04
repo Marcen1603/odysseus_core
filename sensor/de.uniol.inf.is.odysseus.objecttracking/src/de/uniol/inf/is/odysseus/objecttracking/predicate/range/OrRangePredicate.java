@@ -66,4 +66,8 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 	public int hashCode(){
 		return 53 * this.left.hashCode() + 41 * this.right.hashCode();
 	}
+	
+	public String toString(){
+		return this.left.toString() + " OR " + this.right.toString();
+	}
 }

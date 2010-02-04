@@ -14,4 +14,6 @@ public interface ISolution {
 	public SDFExpression getVariable();
 	public String getCompareOperator();
 	public SDFExpression getSolution();
+	public boolean isEmpty();
+	public boolean isFull();
 }

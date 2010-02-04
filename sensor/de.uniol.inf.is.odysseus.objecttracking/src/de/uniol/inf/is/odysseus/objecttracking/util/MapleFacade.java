@@ -39,6 +39,7 @@ public class MapleFacade {
 	
 	public Map<IPredicate, ISolution> solveInequality(String inequality, IAttributeResolver attributeResolver){
 		try{
+			logger.debug("Solving inequality for t: " + inequality);
 			Algebraic alg = this.engine.evaluate("with(SolveTools[Inequality]); LinearMultivariateSystem({" + inequality + "}, [t]);");
 			logger.debug("Maple result: " + alg.toString());
 			return MapleResultParserFacade.getInstance().parse("MAPLE " + alg.toString(), attributeResolver);

@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-public class AssociationDataMergeFunction<M extends IProbability & IPredictionFunction<RelationalTuple<M>, M> & ITimeInterval> 
+public class AssociationDataMergeFunction<M extends IProbability & IPredictionFunction<RelationalTuple<M>, M> & ITimeInterval>
 		implements IDataMergeFunction<MVRelationalTuple<M>>{
 
 	/**
@@ -32,6 +32,16 @@ public class AssociationDataMergeFunction<M extends IProbability & IPredictionFu
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.schema = resultSchema;
+	}
+	
+	private AssociationDataMergeFunction(AssociationDataMergeFunction<M> original){
+		this.leftSchema = original.leftSchema.clone();
+		this.rightSchema = original.rightSchema.clone();
+		this.schema = original.schema.clone();
+	}
+	
+	public AssociationDataMergeFunction<M> clone(){
+		return new AssociationDataMergeFunction<M>(this);
 	}
 	
 	@Override
