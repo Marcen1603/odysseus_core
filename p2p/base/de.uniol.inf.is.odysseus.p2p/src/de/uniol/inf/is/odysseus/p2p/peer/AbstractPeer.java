@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.peer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerFactory;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
+import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 /**
  * 
@@ -107,7 +109,7 @@ public abstract class AbstractPeer implements IPeer {
 			this.messageHandlerList.add(messageHandler);
 		}
 		else {
-			getSocketServerListener().registerMessageHandler(messageHandler);
+			this.messageHandlerList =  getSocketServerListener().registerMessageHandler(messageHandler);
 		}
 	}
 
@@ -138,14 +140,29 @@ public abstract class AbstractPeer implements IPeer {
 	public void addQuery(Query query) {
 		//Für alle Peers, welche die Ausführungsumgebung nutzen
 		if(getExecutionListenerFactory()!=null) {
-			List<IExecutionHandler> executionHandlerCopy = new ArrayList<IExecutionHandler>();
-			for(IExecutionHandler handler : getExecutionHandler()) {
-				try { 
-					executionHandlerCopy.add(handler.clone());
-				} catch (CloneNotSupportedException e) {
-					e.printStackTrace();
+			boolean contain = false;
+			Query actualQuery = null;
+			for(Query q : getQueries().keySet()) {
+				if(q.getId().equals(query.getId())) {
+					contain = true;
+					actualQuery = q;
+					break;
 				}
 			}
+			if(contain) {				
+				Collection<Subplan> sub =  query.getSubPlans().values();
+				actualQuery.addSubPlan(""+(actualQuery.getSubPlans().size()+1), sub.iterator().next());
+			}
+			else {
+				List<IExecutionHandler> executionHandlerCopy = new ArrayList<IExecutionHandler>();
+				for(IExecutionHandler handler : getExecutionHandler()) {
+					try { 
+						executionHandlerCopy.add(handler.clone());
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+				}
+				
 //			
 //			List<IExecutionHandler> execHandlerList = new ArrayList<IExecutionHandler>();
 //			for(List<IExecutionHandlerFactory> factoryList: getExecutionHandlerFactoryList().values()) {
@@ -153,9 +170,10 @@ public abstract class AbstractPeer implements IPeer {
 //					execHandlerList.add(factory.getNewInstance());
 //				}
 //			}
-			IExecutionListener listener = getExecutionListenerFactory().getNewInstance(query, executionHandlerCopy);
-			getQueries().put(query, listener);
+				IExecutionListener listener = getExecutionListenerFactory().getNewInstance(query, executionHandlerCopy);
+				getQueries().put(query, listener);
 //			listener.startListener();
+			}
 		}
 		//Für alle Peers bspw. Thin-Peer, welche nicht aktiv an der Anfrageausführung mitwirken und daher nur die Anfrage intern in einer Liste verwalten möchten
 		//Kann zu Fehlern führen, wenn man nicht beachtet, dass value null ist.

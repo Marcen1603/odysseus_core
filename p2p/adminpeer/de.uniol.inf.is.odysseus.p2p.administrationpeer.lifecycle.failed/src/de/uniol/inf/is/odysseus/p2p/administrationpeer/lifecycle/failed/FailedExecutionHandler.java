@@ -59,7 +59,7 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<Abstract
 				
 			} else if (priorLifecycle == Lifecycle.DISTRIBUTION) {
 				if(occurence(history, Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
-					getExecutionListenerCallback().changeState(Lifecycle.SPLIT);
+					getExecutionListenerCallback().changeState(Lifecycle.DISTRIBUTION);
 				}
 				else {
 					getExecutionListenerCallback().changeState(Lifecycle.TERMINATED);

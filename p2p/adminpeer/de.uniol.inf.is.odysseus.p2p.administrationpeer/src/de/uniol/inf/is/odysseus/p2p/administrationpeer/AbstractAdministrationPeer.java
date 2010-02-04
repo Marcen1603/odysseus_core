@@ -106,7 +106,6 @@ public abstract class AbstractAdministrationPeer extends AbstractPeer {
 			getLogger().info("Unbinding Distribution Provider" , dp);
 			this.distributionProvider.finalizeService();
 			this.distributionProvider = null;
-//			deregisterMessageHandler(this.distributionProvider.getMessageHandler());
 		}
 	}
 	

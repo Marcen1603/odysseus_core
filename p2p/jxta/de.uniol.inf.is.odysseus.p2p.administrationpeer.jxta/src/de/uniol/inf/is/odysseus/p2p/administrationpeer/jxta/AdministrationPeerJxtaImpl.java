@@ -128,6 +128,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		//TODO Splitting initialisieren
 //		getSplitting().initializeService();
 		getDistributionProvider().initializeService();
+		for(IExecutionHandler eHandler : getExecutionHandler()){
+			eHandler.setPeer(this);
+		}
+		
 		getLogger().info("Administration Peer started");
 
 //		try {
@@ -184,17 +188,17 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 //			e.printStackTrace();
 //		}
 //		System.out.println("split");
-//		ArrayList<AbstractLogicalOperator> alo = null;
+//		ArrayList<ILogicalOperator> alo = null;
 //		try {
-//			alo = getSplitting().splitPlan(
-//					(AbstractLogicalOperator) restructList.get(0));
+//
+//			alo = getSplitting().splitPlan(restructList.get(0));
 //
 ////			alo.addAll(getSplitting().splitPlan(
 ////					(AbstractLogicalOperator) restructList.get(1)));
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-//		for (AbstractLogicalOperator elem : alo) {
+//		for (ILogicalOperator elem : alo) {
 //			try {
 //				getExecutor().addQuery(elem, new ParameterPriority(2));
 //
@@ -202,11 +206,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 //				e.printStackTrace();
 //			}
 //		}
-//		// try {
-//		// getExecutor().startExecution();
-//		// } catch (PlanManagementException e) {
-//		// e.printStackTrace();
-//		// }
 
 	}
 
@@ -471,25 +470,6 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 				h.setPeer(this);
 			}
 		}
-		
-//		try {
-//			for(IExecutionHandler<AbstractPeer,ICompiler> h : getExecutionHandler()) {
-//				if(h.getProvidedLifecycle()==Lifecycle.OPEN) {
-//					h.setFunction(getCompiler());
-//					Method[] m = h.getClass().getMethods();
-//					Method me = h.getClass().getMethod("getFunction");
-//					Type t = me.getGenericReturnType();
-//					Type[] ty = me.getGenericParameterTypes();
-//					me.
-//					if(h.getFunction() instanceof ICompiler) {
-//						System.out.println("ist ein Compiler");
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 
 	@Override
