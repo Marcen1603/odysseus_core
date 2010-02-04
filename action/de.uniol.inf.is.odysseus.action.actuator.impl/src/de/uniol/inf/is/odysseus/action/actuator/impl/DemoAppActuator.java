@@ -5,9 +5,12 @@ import java.util.Date;
 
 import de.uniol.inf.is.odysseus.action.demoapp.AuctionMonitor;
 import de.uniol.inf.is.odysseus.action.demoapp.AuctionMonitor.AuctionStatus;
+import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapterSchema;
+
 
 public class DemoAppActuator{
 	
+	@ActuatorAdapterSchema(show = true)
 	public void newAuction(int id, String itemName, long timeStamp) {
 		AuctionMonitor.getInstance().updateData(
 				new String[] {
@@ -15,6 +18,7 @@ public class DemoAppActuator{
                 }, AuctionStatus.RED);
 	}
 	
+	@ActuatorAdapterSchema(show = true)
 	public void updateOrange(int id, String itemName, String personName, double price, long timeStamp){
 		AuctionMonitor.getInstance().updateData(
 				new String[] {
@@ -22,6 +26,7 @@ public class DemoAppActuator{
                 }, AuctionStatus.ORANGE);
 	}
 	
+	@ActuatorAdapterSchema(show = true)
 	public void updateGreen(int id, String itemName, String personName, double price, long timeStamp){
 		AuctionMonitor.getInstance().updateData(
 				new String[] {
