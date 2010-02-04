@@ -30,7 +30,7 @@ public class Action {
 	public Action (IActuator actuator, String methodName, Class<?>[] parameterTypes) throws ActionException{
 		boolean compatible = false;
 		//check for compatibility
-		for (ActionMethod method : actuator.getSchema()){
+		for (ActionMethod method : actuator.getFullSchema()){
 			if(method.isCompatibleTo(methodName, parameterTypes)){
 				compatible = true;
 				this.method = method;
