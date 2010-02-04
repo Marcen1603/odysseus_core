@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.action.output;
 
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
-import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
+import de.uniol.inf.is.odysseus.action.operator.EventTriggerPO;
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 /**
  * An Action is the combination of an {@link IActuator} and
  * a Method that should be executed. In Combination with {@link ActionParameter}s
- * it can be executed by a {@link EventDetectionPO}.
- * @see EventDetectionPO
+ * it can be executed by a {@link EventTriggerPO}.
+ * @see EventTriggerPO
  * @see IActuator
  * @author Simon Flandergan
  *

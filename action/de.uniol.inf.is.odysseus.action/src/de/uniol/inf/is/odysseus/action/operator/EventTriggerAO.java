@@ -13,12 +13,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Simon Flandergan
  *
  */
-public class EventDetectionAO extends AbstractLogicalOperator {
+public class EventTriggerAO extends AbstractLogicalOperator {
 	private Map<Action, List<IActionParameter>> actions;
 	
 	private static final long serialVersionUID = 5876348180345982247L;
 	
-	public EventDetectionAO(Map<Action, List<IActionParameter>> actionsToExecute) {
+	public EventTriggerAO(Map<Action, List<IActionParameter>> actionsToExecute) {
 		this.actions = actionsToExecute;
 	}
 

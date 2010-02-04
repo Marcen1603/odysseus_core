@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.action.output;
 
-import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
+import de.uniol.inf.is.odysseus.action.operator.EventTriggerPO;
 
 /**
  * Interface describing a parameter for the method of an {@link Action}
  * @see Action
- * @see EventDetectionPO
+ * @see EventTriggerPO
  * @author Simon Flandergan
  *
  */

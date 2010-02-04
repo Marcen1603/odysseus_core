@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
  *
  * @param <T>
  */
-public class EventDetectionPO<T> extends AbstractSink<T>{
+public class EventTriggerPO<T> extends AbstractSink<T>{
 	private Map<Action, List<IActionParameter>> actions;
 	private String type;
 	private Logger logger;
@@ -29,7 +29,7 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 	/**
 	 * Public Constructor used by OSGI
 	 */
-	public EventDetectionPO(){
+	public EventTriggerPO(){
 		
 	}
 	
@@ -38,11 +38,11 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 	 * @param actions
 	 * @param type
 	 */
-	public EventDetectionPO(Map<Action, List<IActionParameter>> actions, String type) {
+	public EventTriggerPO(Map<Action, List<IActionParameter>> actions, String type) {
 		super();
 		this.actions = actions;
 		this.type = type;
-		this.logger = LoggerFactory.getLogger(EventDetectionPO.class);
+		this.logger = LoggerFactory.getLogger(EventTriggerPO.class);
 	}
 	
 	/**
@@ -89,10 +89,5 @@ public class EventDetectionPO<T> extends AbstractSink<T>{
 	
 	public Map<Action, List<IActionParameter>> getActions() {
 		return actions;
-	}
-
-	@Override
-	public EventDetectionPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
 	}
 }
