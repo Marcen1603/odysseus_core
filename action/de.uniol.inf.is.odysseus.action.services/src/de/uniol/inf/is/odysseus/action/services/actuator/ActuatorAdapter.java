@@ -25,6 +25,10 @@ public class ActuatorAdapter implements IActuator {
 		for (Method method : this.adapter.getClass().getMethods()) {
 			boolean show = false;
 			if (method.isAnnotationPresent(ActuatorAdapterSchema.class)){
+				if (!method.getAnnotation(ActuatorAdapterSchema.class).provide()){
+					//do not provide this method
+					continue;
+				}
 				show = method.getAnnotation(ActuatorAdapterSchema.class).show();
 			}
 			this.methods.add(
