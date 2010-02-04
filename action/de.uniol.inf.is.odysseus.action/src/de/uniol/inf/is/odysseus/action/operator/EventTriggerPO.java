@@ -90,4 +90,9 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	public Map<Action, List<IActionParameter>> getActions() {
 		return actions;
 	}
+	
+	@Override
+	public EventTriggerPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
 }
