@@ -8,8 +8,8 @@ import java.util.Map;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
-import de.uniol.inf.is.odysseus.action.operator.EventDetectionAO;
-import de.uniol.inf.is.odysseus.action.operator.EventDetectionPO;
+import de.uniol.inf.is.odysseus.action.operator.EventTriggerAO;
+import de.uniol.inf.is.odysseus.action.operator.EventTriggerPO;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.StaticParameter;
@@ -131,10 +131,10 @@ public class ECAParserTest implements CommandProvider {
 		//check logical operator
 		ci.println("	*Testcase1: Check if top operator is eAO");
 		ILogicalOperator eAO = logicalPlan.get(0);
-		if (! (eAO.getClass() == EventDetectionAO.class)) {
+		if (! (eAO.getClass() == EventTriggerAO.class)) {
 			throw new Exception("EventDetectionAO is not top operator");
 		}
-		ci.println("		++success, top operatortype is <"+EventDetectionAO.class+">");
+		ci.println("		++success, top operatortype is <"+EventTriggerAO.class+">");
 		
 		if (eAO.getSubscriptions().size() != 0 || eAO.getSubscribedToSource().size() != 1){
 			throw new Exception("EventDetectionAO is not subscribed correctly");
@@ -143,7 +143,7 @@ public class ECAParserTest implements CommandProvider {
 		
 		//check actions
 		ci.println("	*Testcase2: Check if action bound to eAO is correct");
-		Map<Action, List<IActionParameter>> actions = ((EventDetectionAO)eAO).getActions();
+		Map<Action, List<IActionParameter>> actions = ((EventTriggerAO)eAO).getActions();
 		if (actions.size()!= 1){
 			throw new Exception("Incompatible number of actions bound");
 		}
@@ -178,12 +178,12 @@ public class ECAParserTest implements CommandProvider {
 		IPlan plan = this.executor.getSealedPlan();
 		IQuery installedQuery = plan.getQuery(queryID);
 		IPhysicalOperator physicalOp = installedQuery.getSealedRoot();
-		if (! (physicalOp.getClass() == EventDetectionPO.class)){
+		if (! (physicalOp.getClass() == EventTriggerPO.class)){
 			throw new Exception("Physical operator root is wrong class: <"+physicalOp.getClass()+">");
 		}
 		ci.println("		++success, physical operator root class is correct");
 		
-		if (!((EventDetectionPO)physicalOp).getActions().equals(actions)){
+		if (!((EventTriggerPO)physicalOp).getActions().equals(actions)){
 			throw new Exception("Actions from physical and logical operator differ");
 		}
 		ci.println("		++success, actions bound by physical operator are correct");
