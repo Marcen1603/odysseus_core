@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
@@ -12,6 +13,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 
 /**
@@ -40,6 +42,29 @@ public class StandardOptimizer extends AbstractOptimizer {
 		}
 		return sender.getEditableExecutionPlan();
 	}
+	
+	@Override
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
+			throws QueryOptimizationException {
+		if (!queries.isEmpty()) {
+			for (IEditableQuery editableQuery : queries) {
+				this.queryOptimizer.optimizeQuery(sender, editableQuery,
+						parameter, rulesToUse);
+			}
+
+			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
+			newPlan.addAll(queries);
+
+			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
+					.optimizePlan(sender, parameter, newPlan);
+
+			return this.planMigrationStrategie.migratePlan(sender,
+					newExecutionPlan);
+			
+		}
+		return sender.getEditableExecutionPlan();
+	}
 
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
@@ -55,6 +80,17 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 		return this.planMigrationStrategie
 				.migratePlan(sender, newExecutionPlan);
+	}
+
+
+	@Override
+	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
+			T sender, IQuery removedQuery,
+			IEditableExecutionPlan executionPlan,
+			AbstractOptimizationParameter<?>... parameters)
+			throws QueryOptimizationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -8,7 +8,7 @@ options {
   IGNORE_CASE = true;
                
                  
-  DEBUG_PARSER = false;
+  DEBUG_PARSER = true;
   DEBUG_TOKEN_MANAGER = false;
                              
                                     
@@ -71,7 +71,7 @@ TOKEN:/* Numeric Constants */
 //  | <#FLOAT:<INTEGER>
 //  | <INTEGER>("."<INTEGER>)?
 //  | "."<INTEGER>>
-<FLOAT:("-")?(<INTEGER>"."<INTEGER>
+<FLOAT:(<INTEGER>"."(<INTEGER>)?
   | "."<INTEGER>)>
   | <INTEGER:(<DIGIT>)+>
   | <#DIGIT:["0"-"9"]>
@@ -295,11 +295,11 @@ void Solution():{/*@bgen(jjtree) Solution */
 /*@egen*/}{/*@bgen(jjtree) Solution */
   try {
 /*@egen*/
-  (LOOKAHEAD(SimpleSolution()) SimpleSolution() | LOOKAHEAD(FullSolution()) FullSolution() | EmptySolution()/*@bgen(jjtree)*/
-                                                                                                             {
-                                                                                                               jjtree.closeNodeScope(jjtn000, true);
-                                                                                                               jjtc000 = false;
-                                                                                                             }
+  (LOOKAHEAD(FullSolution()) FullSolution() | /*LOOKAHEAD(SimpleSolution())*/ SimpleSolution()  | EmptySolution()/*@bgen(jjtree)*/
+                                                                                                                  {
+                                                                                                                    jjtree.closeNodeScope(jjtn000, true);
+                                                                                                                    jjtc000 = false;
+                                                                                                                  }
 /*@egen*/ {jjtn000.setEmpty(true);} )/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -475,12 +475,11 @@ void SimpleToken():{/*@bgen(jjtree) SimpleToken */
 /*@egen*/}{/*@bgen(jjtree) SimpleToken */
   try {
 /*@egen*/
-  Number()
+  LOOKAHEAD(Number())Number()
   | String()
   /*| LOOKAHEAD(AggregateExpression())AggregateExpression()*/
   | LOOKAHEAD(FunctionExpression())FunctionExpression()
-  | "("Expression()")"
-  | ("-" {jjtn000.setMinus(true);})? Identifier()/*@bgen(jjtree)*/
+  | ("-" {jjtn000.setMinus(true);})? ("("Expression()")" | Identifier())/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -500,7 +499,7 @@ void SimpleToken():{/*@bgen(jjtree) SimpleToken */
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/
+/*@egen*/ 
 //TODO DISTINCE Expression
 }
 
@@ -584,11 +583,13 @@ void Number():{/*@bgen(jjtree) Number */
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
+  Token sign = null;
   Token t;
 }
 {/*@bgen(jjtree) Number */
   try {
 /*@egen*/
+  (sign = "-")?
   (t = <FLOAT>
   | t = <INTEGER>)/*@bgen(jjtree)*/
                   {
@@ -596,7 +597,7 @@ void Number():{/*@bgen(jjtree) Number */
                     jjtc000 = false;
                   }
 /*@egen*/{
-    jjtn000.setValue(t.image);
+    jjtn000.setValue(sign != null && sign.image != null ? sign.image + t.image : "" + t.image);
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
@@ -637,23 +638,25 @@ void Identifier():{/*@bgen(jjtree) Identifier */
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
+  Token sign = null;
   Token t;
 }
 {/*@bgen(jjtree) Identifier */
-  try {
+ try {
 /*@egen*/
+ (sign = "-")?
   t = <IDENTIFIER>/*@bgen(jjtree)*/
                   {
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
                   }
 /*@egen*/{
-    jjtn000.setName(t.image);
+    jjtn000.setName((sign != null && sign.image != null ? sign.image : "") + t.image);
   }/*@bgen(jjtree)*/
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
 /*@egen*/
 }

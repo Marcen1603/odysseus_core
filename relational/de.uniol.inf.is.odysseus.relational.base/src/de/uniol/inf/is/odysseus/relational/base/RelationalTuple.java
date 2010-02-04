@@ -175,7 +175,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		if(createNew){
 			RelationalTuple<T> newTuple = new RelationalTuple<T>(attrList.length);
 			newTuple.setAttributes(newAttrs);
-			newTuple.setMetadata(this.getMetadata());
+			newTuple.setMetadata((T)this.getMetadata().clone());
 			return newTuple;
 		}
 		else{

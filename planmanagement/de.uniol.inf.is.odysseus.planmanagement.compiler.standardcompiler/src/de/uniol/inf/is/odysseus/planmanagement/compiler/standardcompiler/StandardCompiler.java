@@ -170,6 +170,14 @@ public class StandardCompiler implements ICompiler {
 	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan) {
 		return this.rewrite.rewritePlan(logicalPlan);
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#restructPlan(de.uniol.inf.is.odysseus.base.ILogicalOperator)
+	 */
+	@Override
+	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan, Set<String> rulesToUse) {
+		return this.rewrite.rewritePlan(logicalPlan, rulesToUse);
+	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.base.ILogicalOperator, de.uniol.inf.is.odysseus.base.TransformationConfiguration)

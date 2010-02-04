@@ -90,6 +90,33 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	public Collection<Integer> addQuery(String query, String compilerID,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
+	
+	/**
+	 * addQuery fügt Odysseus eine Anfrage hinzu, die als Zeichenkette vorliegt.
+	 * Es kann sein, dass die Anfrage nicht direkt der Auführung hinzugefügt
+	 * wird (bspw. bei interner asychronen Optimierung). Die zurückgebegen ID
+	 * ist daher nur vorläufig. Erst beim Empfangen des Hinzufügen-Events kann
+	 * davon ausgegangen werden, dass die Anfrage hinzugefügt wurde.
+	 * 
+	 * @param query
+	 *            Anfrage in Form einer Zeichenkette
+	 * @param compilerID
+	 *            ID des zu verwendenden Parsers
+	 * @param doRestruct
+	 *            If true, the query plan will be restructured, if false, it will not.
+	 * @param rulesToUse
+	 *            Contains the names of the rules to be used for restructuring. Other
+	 *            rules will not be used.
+	 * @param parameters
+	 *            Parameter zum Bearbeiten, Erstellen und Verändern der Anfrage
+	 * @return vorläufige ID der neuen Anfrage
+	 * @throws PlanManagementException
+	 */
+	public Collection<Integer> addQuery(String query, String parserID,
+			boolean doRestruct,
+			Set<String> rulesToUse,
+			AbstractQueryBuildParameter<?>... parameters)
+			throws PlanManagementException;
 
 	/**
 	 * addQuery fügt Odysseus eine Anfrage hinzu, die als physischer Plan

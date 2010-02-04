@@ -248,6 +248,19 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return preQueryAddOptimization(sender, newQueries,
 				new OptimizeParameter(parameters));
 	};
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter<?>[])
+	 */
+	@Override
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> newQueries,
+			Set<String> rulesToUse,
+			AbstractOptimizationParameter<?>... parameters)
+			throws QueryOptimizationException {
+		return preQueryAddOptimization(sender, newQueries,
+				new OptimizeParameter(parameters), rulesToUse);
+	};
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)

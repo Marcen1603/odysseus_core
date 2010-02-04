@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
@@ -132,7 +133,10 @@ public class RelationalRestructHelper {
 			if (curPred instanceof ComplexPredicate<?>) {
 				predicates.push(((ComplexPredicate<?>) curPred).getLeft());
 				predicates.push(((ComplexPredicate<?>) curPred).getRight());
-			} else {
+			} else if(curPred instanceof NotPredicate){
+				predicates.push(((NotPredicate) curPred).getChild());
+			}
+			else {
 				functor.call(curPred);
 			}
 		}

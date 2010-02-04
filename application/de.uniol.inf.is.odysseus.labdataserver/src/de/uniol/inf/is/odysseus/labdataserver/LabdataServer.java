@@ -130,6 +130,11 @@ public class LabdataServer {
 				// do not process it
 				for (int i = 0; i < limit; i++) {
 					String[] line = csvParser.getLine();
+					// if line is null, eof is reached
+					// so limit has been set higher than data is available
+					if(line == null){
+						break;
+					}
 					inner: for (int u = 0; u < schema.size(); u++) {
 						SDFAttribute attr = schema.get(u);
 						if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
@@ -382,10 +387,17 @@ class CSVHandler extends ClientHandler {
 //			Long diff = 0L;
 			int i = 0;
 			long startDuration = System.nanoTime();
+			boolean stop = false;
 
-			while (limit < 1 || i < limit) {
+			while ((limit < 1 || i < limit) && !stop) {
 				if (limit > 0) {
 					for (int u = 0; u < cachedValues[i].length; u++) {
+						// if the following condition is true,
+						// limit is higher than data is available.
+						if(cachedValues[i] == null || cachedValues[i][u] == null){
+							stop = true;
+							break;
+						}
 						SDFAttribute attr = this.schema.get(u);
 						if (SDFDatatypes.isMeasurementValue(attr.getDatatype())
 								|| SDFDatatypes.isDouble(attr.getDatatype())) {

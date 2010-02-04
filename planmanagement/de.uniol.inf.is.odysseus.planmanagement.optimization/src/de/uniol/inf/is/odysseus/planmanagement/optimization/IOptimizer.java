@@ -171,6 +171,28 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 			List<IEditableQuery> newQueries,
 			AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException;
+	
+	/**
+	 * Initializes an optimization if queries should be added.
+	 * 
+	 * @param sender
+	 *            Optimization request sender, which provides informations for
+	 *            the optimization.
+	 * @param newQueries
+	 *            Queries which should be added.
+	 * @param parameters
+	 *            Parameter for the optimization.
+	 * @param rulesToUse Contains the name of the rules to use during optimization.
+	 *            Rules that are not contained in this set are not used during optimization.
+	 * @return New optimized execution plan.
+	 * @throws QueryOptimizationException
+	 *             An exception occurred during optimization.
+	 */
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> queries,
+			Set<String> rulesToUse,
+			AbstractOptimizationParameter<?>... parameters)
+			throws QueryOptimizationException;
 
 	/**
 	 * Initializes an optimization if queries should be added.
@@ -188,5 +210,25 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 */
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IEditableQuery> newQueries, OptimizeParameter parameter)
+			throws QueryOptimizationException;
+	
+	/**
+	 * Initializes an optimization if queries should be added.
+	 * 
+	 * @param sender
+	 *            Optimization request sender, which provides informations for
+	 *            the optimization.
+	 * @param newQueries
+	 *            Queries which should be added.
+	 * @param parameter
+	 *            Parameter for the optimization.
+	 * @param rulesToUse Contains the name of the rules to use during optimization.
+	 *            Rules that are not contained in this set are not used during optimization.
+	 * @return New optimized execution plan.
+	 * @throws QueryOptimizationException
+	 *             An exception occurred during optimization.
+	 */
+	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
+			List<IEditableQuery> newQueries, OptimizeParameter parameter, Set<String> rulesToUse)
 			throws QueryOptimizationException;
 }

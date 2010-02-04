@@ -10,11 +10,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -793,7 +795,7 @@ public class ExecutorConsole implements CommandProvider,
 					trafoConfig = new TransformationConfiguration(
 							"relational",
 							ITimeInterval.class.getName(),
-							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbabilityPredictionFunction",
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
 							"de.uniol.inf.is.odysseus.latency.ILatency",
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability"
 							);
@@ -874,20 +876,16 @@ public class ExecutorConsole implements CommandProvider,
 	}
 		
 		
-	@Help(parameter = "<query string> [S]", description = "add query [with console-output-sink]\n\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
+	@Help(parameter = "<query string> [S] [true|false] \"[rule name](\",\"<rule name>)*\" ", description = "add query [with console-output-sink] " +
+			"[with|without restructuring the query plan, default true] \n" +
+			"and specify the rules to use for restructuring. If no rules are specified, all available rules are used. \n" +
+			"\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
 		if (args != null && args.length > 0) {
 			try {
-				if (args.length > 1 && args[1].toUpperCase().equals("S")) {
-					this.executor.addQuery(args[0], parser(),
-							new ParameterDefaultRoot(new MySink()),
-							this.trafoConfigParam);
-				} else {
-					this.executor.addQuery(args[0], parser(),
-							this.trafoConfigParam);
-				}
+				this.delegateAddQueryCmd(args);
 			} catch (Exception e) {
 				ci.println(e.getMessage());
 			}
@@ -903,7 +901,8 @@ public class ExecutorConsole implements CommandProvider,
 		addCommand(args);
 		
 		
-		if(args.length == 2 && args[1].equalsIgnoreCase("useProp")){
+		if((args.length == 2 && args[1].equalsIgnoreCase("useProp")) || 
+				args.length == 3 && args[2].equalsIgnoreCase("useProp")){
 			this.path = System.getProperty("user.files");
 		}
 		
@@ -931,19 +930,137 @@ public class ExecutorConsole implements CommandProvider,
 				return;
 			}
 			
-			try{
-				if(args.length > 1 && args[1].toUpperCase().equals("S")){
-					this.executor.addQuery(queries, parser(),
-							new ParameterDefaultRoot(new MySink()),
-							this.trafoConfigParam);
-				} else {
-					this.executor.addQuery(queries, parser(),
-							this.trafoConfigParam);
+			try{				
+				String[] newArgs = new String[args.length];
+				newArgs[0] = queries;
+				for(int i = 1; i<args.length; i++){
+					newArgs[i] = args[i];
 				}
+				
+				this.delegateAddQueryCmd(newArgs);
 			}catch(Exception e){
 				ci.printStackTrace(e);
 			}
 		}
+	}
+	
+	/**
+	 * This method is used by _addQuery and _addFromFile
+	 * @param args The arguments that have been passed to the above methods
+	 *             by the CommandInterpreter.
+	 * @throws Exception 
+	 * @throws PlanManagementException 
+	 */
+	private void delegateAddQueryCmd(String[] args) throws PlanManagementException, Exception{
+		// a CREATE statement has no arguments
+		// a QUERY statement does have to have arguments
+		if(args.length == 1){
+			this.executor.addQuery(args[0], parser(),
+					this.trafoConfigParam);
+		}
+		// a QUERY statement can have arguments
+		else if(args.length == 2){
+			// the second argument can be for sink, so 'S'
+			// or it can be for doRestruct, so 'true' or 'false'
+			if(args[1].equalsIgnoreCase("S")){
+				this.executor.addQuery(args[0], parser(),
+						new ParameterDefaultRoot(new MySink()),
+						this.trafoConfigParam);
+			}
+			else if(args[1].equalsIgnoreCase("TRUE")){
+				this.executor.addQuery(args[0], parser(),
+						this.trafoConfigParam);
+			}
+			else if(args[1].equalsIgnoreCase("FALSE")){
+				this.executor.addQuery(args[0], parser(), false, null,
+						this.trafoConfigParam);
+			}
+		}
+		else if(args.length == 3){
+			if(args[1].toUpperCase().equals("S")){
+				// the thrid argument is setting the restructuring mode.
+				if(args[2].equalsIgnoreCase("TRUE") || args[2].equalsIgnoreCase("FALSE")){
+					this.executor.addQuery(args[0], parser(),
+							args[2].equalsIgnoreCase("TRUE") ? true : false,
+							null,
+							new ParameterDefaultRoot(new MySink()),
+							this.trafoConfigParam);
+				}
+				// the third argument are the rule names, restructuring is set per default to true
+				else{
+					StringTokenizer tokens = new StringTokenizer(args[2],  ",", false);
+					Set<String> ruleNames = new HashSet<String>();
+					while(tokens.hasMoreTokens()){
+						ruleNames.add(tokens.nextToken());
+					}
+					
+					this.executor.addQuery(args[0], parser(),
+							true,
+							ruleNames,
+							new ParameterDefaultRoot(new MySink()),
+							this.trafoConfigParam);
+				}
+			}
+			else{
+				
+				if(args[1].equalsIgnoreCase("TRUE") || args[1].equalsIgnoreCase("FALSE")){
+					
+					StringTokenizer tokens = new StringTokenizer(args[2],  ",", false);
+					Set<String> ruleNames = new HashSet<String>();
+					while(tokens.hasMoreTokens()){
+						ruleNames.add(tokens.nextToken());
+					}
+					
+					this.executor.addQuery(args[0], parser(),
+							args[2].equalsIgnoreCase("TRUE") ? true : false,
+							ruleNames,
+							this.trafoConfigParam);
+
+				}
+				else{
+					StringTokenizer tokens = new StringTokenizer(args[2],  ",", false);
+					Set<String> ruleNames = new HashSet<String>();
+					while(tokens.hasMoreTokens()){
+						ruleNames.add(tokens.nextToken());
+					}
+					
+					this.executor.addQuery(args[0], parser(),
+							true,
+							ruleNames,
+							this.trafoConfigParam);
+				}
+			}
+		}
+		else if(args.length == 4){
+			if(args[1].equalsIgnoreCase("S")){
+				// get the rule names
+				StringTokenizer tokens = new StringTokenizer(args[3],  ",", false);
+				Set<String> ruleNames = new HashSet<String>();
+				while(tokens.hasMoreTokens()){
+					ruleNames.add(tokens.nextToken());
+				}
+				
+				this.executor.addQuery(args[0], parser(),
+						args[2].equalsIgnoreCase("TRUE") ? true : false,
+						ruleNames,
+						new ParameterDefaultRoot(new MySink()),
+						this.trafoConfigParam);
+			}
+			else{
+				// get the rule names
+				StringTokenizer tokens = new StringTokenizer(args[3],  ",", false);
+				Set<String> ruleNames = new HashSet<String>();
+				while(tokens.hasMoreTokens()){
+					ruleNames.add(tokens.nextToken());
+				}
+				
+				this.executor.addQuery(args[0], parser(),
+						args[2].equalsIgnoreCase("TRUE") ? true : false,
+						ruleNames,
+						this.trafoConfigParam);
+			}
+		}
+
 	}
 	
 	@Help(parameter = "<path>",
@@ -1225,14 +1342,43 @@ public class ExecutorConsole implements CommandProvider,
 			return;
 		}
 
-		
+		CommandInterpreter delegateCi;
 		try {
 			ci.println("--- running macro from file: " + file.getAbsolutePath() + " ---");
 			String line = null;
 			while((line = br.readLine()) != null ){
 				String commandString = line;
+				System.out.println("Command: " + commandString);
 				
-				String[] commandAndArgs = commandString.split(" ");
+				StringTokenizer tokens = new StringTokenizer(commandString, " \n\t'", true);
+				ArrayList<String> tokenList = new ArrayList<String>();
+				while(tokens.hasMoreTokens()){
+					String token = tokens.nextToken();
+					// this is for complex tokens that are in ' '
+					if(token.equals("'")){
+						boolean isEnd = false;
+						String complexArgument = "";
+						while(!isEnd){
+							String innerToken = tokens.nextToken();
+							if(!innerToken.equals("'")){
+								complexArgument += innerToken;
+							}
+							else{
+								isEnd = true;
+							}
+						}
+						tokenList.add(complexArgument); 
+					}
+					else if(!token.equals(" ") && !token.equals("\n") && !token.equals("\t")){
+						tokenList.add(token);
+					}
+				}
+				
+				String[] commandAndArgs = new String[tokenList.size()];
+				for(int i = 0; i<tokenList.size(); i++){
+					commandAndArgs[i] = tokenList.get(i);
+				}
+				
 				String[] currentArgs = new String[commandAndArgs.length -1];
 				System.arraycopy(commandAndArgs, 1, currentArgs, 0, commandAndArgs.length - 1);
 				Command command = new Command();
@@ -1242,7 +1388,7 @@ public class ExecutorConsole implements CommandProvider,
 				Method m = this.getClass().getMethod(command.name,
 						CommandInterpreter.class);
 
-				CommandInterpreter delegateCi = new DelegateCommandInterpreter(
+				delegateCi = new DelegateCommandInterpreter(
 						ci, command.getArgs());
 
 				m.invoke(this, delegateCi);
@@ -1267,8 +1413,7 @@ public class ExecutorConsole implements CommandProvider,
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getTargetException().printStackTrace();
 		}
 		
 		

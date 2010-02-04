@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecutionPlan;
 
@@ -228,7 +229,95 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		this.logger.info("Queries added (Count: " + newQueries.size() + ").");
 	}
+	
+	/**
+	 * Optimize new queries, if corresponding parameter is set true
+	 * and set the resulting execution plan. After setting
+	 * the execution plan all new queries are stored in the global queries
+	 * storage ({@link IPlan}).
+	 * 
+	 * @param newQueries
+	 *            Queries to process.
+	 * @param doRestruct If true, restructuring the query plan will be done. If false, it will
+	 *            not be done.
+	 * @param rulesToUse Contains the names of the rules to be used for restructuring. Other
+	 *            rules will not be used.
+	 * @throws NoOptimizerLoadedException
+	 *             No optimizer is set.
+	 * @throws QueryOptimizationException
+	 *             An exception during optimization occurred.
+	 */
+	private void addQueries(List<IEditableQuery> newQueries, boolean doRestruct, Set<String> rulesToUse)
+			throws NoOptimizerLoadedException, QueryOptimizationException {
+		this.logger.debug("Optimize Queries. Count:" + newQueries.size());
+		if (newQueries.isEmpty()) {
+			return;
+		}
 
+		// synchronize the process
+		this.executionPlanLock.lock();
+		try {
+			// optimize queries and set resulting execution plan
+			setExecutionPlan(optimizer().preQueryAddOptimization(this,
+					newQueries, rulesToUse, doRestruct ? ParameterDoRestruct.TRUE : ParameterDoRestruct.FALSE));
+		} finally {
+			// end synchronize of the process
+			this.executionPlanLock.unlock();
+		}
+
+		// store optimized queries
+		for (IEditableQuery optimizedQuery : newQueries) {
+			this.plan.addQuery(optimizedQuery);
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
+		}
+
+		this.logger.info("Queries added (Count: " + newQueries.size() + ").");
+	}	
+
+	/**
+	 * Optimize new queries, if corresponding parameter is set true
+	 * and set the resulting execution plan. After setting
+	 * the execution plan all new queries are stored in the global queries
+	 * storage ({@link IPlan}).
+	 * 
+	 * @param newQueries
+	 *            Queries to process.
+	 *            
+	 * @param doRestrcut If true, restructuring will be done. If false, it will not.
+	 * @throws NoOptimizerLoadedException
+	 *             No optimizer is set.
+	 * @throws QueryOptimizationException
+	 *             An exception during optimization occurred.
+	 */
+	private void addQueries(List<IEditableQuery> newQueries, boolean doRestruct)
+			throws NoOptimizerLoadedException, QueryOptimizationException {
+		this.logger.debug("Optimize Queries. Count:" + newQueries.size());
+		if (newQueries.isEmpty()) {
+			return;
+		}
+
+		// synchronize the process
+		this.executionPlanLock.lock();
+		try {
+			// optimize queries and set resulting execution plan
+			setExecutionPlan(optimizer().preQueryAddOptimization(this,
+					newQueries, doRestruct ? ParameterDoRestruct.TRUE : ParameterDoRestruct.FALSE));
+		} finally {
+			// end synchronize of the process
+			this.executionPlanLock.unlock();
+		}
+
+		// store optimized queries
+		for (IEditableQuery optimizedQuery : newQueries) {
+			this.plan.addQuery(optimizedQuery);
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
+		}
+
+		this.logger.info("Queries added (Count: " + newQueries.size() + ").");
+	}
+	
 	/**
 	 * Returns a ID list of the given queries.
 	 * 
@@ -319,6 +408,41 @@ public class StandardExecutor extends AbstractExecutor implements
 			ArrayList<IEditableQuery> newQueries = createQueries(query,
 					parserID, params);
 			addQueries(newQueries);
+			return getQuerieIDs(newQueries);
+		} catch (Exception e) {
+			this.logger.error("Error adding Queries. Details: "
+					+ e.getMessage());
+			e.printStackTrace();
+			throw new QueryAddException(e);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(java
+	 * .lang.String, java.lang.String, boolean
+	 * de.uniol.inf.is.odysseus.base.planmanagement
+	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
+	 */
+	@Override
+	public Collection<Integer> addQuery(String query, String parserID,
+			boolean doRestruct,
+			Set<String> rulesToUse,
+			AbstractQueryBuildParameter<?>... parameters)
+			throws PlanManagementException {
+		this.logger.info("Start adding Queries. " + query);
+		try {
+			QueryBuildParameter params = getBuildParameter(parameters);
+			ArrayList<IEditableQuery> newQueries = createQueries(query,
+					parserID, params);
+			if(rulesToUse != null && !rulesToUse.isEmpty()){
+				addQueries(newQueries, doRestruct, rulesToUse);
+			}
+			else{
+				addQueries(newQueries, doRestruct);
+			}
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
 			this.logger.error("Error adding Queries. Details: "
