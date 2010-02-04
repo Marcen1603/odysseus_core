@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.MimeMediaType;
@@ -39,10 +40,12 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 	
 	private AbstractPeer aPeer;
 	private IQuerySelectionStrategy querySelectionStrategy;
+	private List<QueryExecutionSpezification> specifications;
 
-	public QuerySpecificationHandlerJxtaImpl(S temp2, AbstractPeer aPeer, IQuerySelectionStrategy querySelectionStrategy) {
+	public QuerySpecificationHandlerJxtaImpl(S temp2, AbstractPeer aPeer, IQuerySelectionStrategy querySelectionStrategy, List<QueryExecutionSpezification> specifications) {
 		this.aPeer = aPeer;
 		this.querySelectionStrategy = querySelectionStrategy;
+		this.specifications = specifications;
 		handleQuerySpezification(temp2);
 		
 	}
@@ -53,10 +56,10 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		System.out.println("handle adv zu Subplan "+adv.getSubplanId());
 		QueryJxtaImpl query = null;
 		for(Query q : aPeer.getQueries().keySet()) {
-			if(q.getId() == adv.getQueryId()) {
+			if(adv.getQueryId().equals(q.getId())) {
 				query = (QueryJxtaImpl) q;
 				if(q.getSubPlans().containsKey(adv.getSubplanId())) {
-					return;
+//					return;
 				}
 				break;
 			}
@@ -113,7 +116,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 //				null)) {
 		
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
-		if(getQuerySelectionStrategy().handleQuery(query, getaPeer())) {
+		if(getQuerySelectionStrategy().handleQuery(query.getSubPlans().get(adv.getSubplanId()), getaPeer())) {
 			messageElements.put("ExecutionBid", "positive");
 			query.setStatus(Lifecycle.GRANTED);
 			aPeer.addQuery(query);

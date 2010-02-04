@@ -59,7 +59,8 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 					boolean createHandler = true;
 					System.out.println("QueryExecutionSpezifikation Anfrage: "+spec.getQueryId()+" Subplan:" +spec.getSubplanId());
 					for(QueryExecutionSpezification s : getSpecifications()) {
-						if(s.getQueryId().toString().equals(spec.getQueryId())) {
+						if(s.getSubplanId().equals(spec.getSubplanId()))
+						{
 							
 							createHandler = false;
 							break;
@@ -106,7 +107,7 @@ public class QuerySpecificationListenerJxtaImpl<S extends QueryExecutionSpezific
 
 	@Override
 	public IQuerySpecificationHandler<S> getQuerySpecificationHandler(S spec) {
-		return new QuerySpecificationHandlerJxtaImpl<S>(spec, getaPeer(), getSelectionStrategy());
+		return new QuerySpecificationHandlerJxtaImpl<S>(spec, getaPeer(), getSelectionStrategy(), specifications);
 	}
 
 	@Override

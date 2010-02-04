@@ -37,11 +37,11 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 
 	@Override
 	public void run() {
-		//TODO Überwachung der Anfrage durch hinzufügen von Services
+		System.out.println("running wird ausgeführt");
 		try {
 
 		for(Subplan s :getExecutionListenerCallback().getQuery().getSubPlans().values()) {
-			if(s.getStatus() == Lifecycle.RUNNING) {
+			if(s.getStatus() == Lifecycle.GRANTED) {
 				System.out.println("Füge hinzu: "+AbstractTreeWalker.prefixWalk(s.getAo(),
 						new AlgebraPlanToStringVisitor()));
 				getFunction().addQuery(s.getAo(), new ParameterPriority(2));		
@@ -56,12 +56,12 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 		e2.printStackTrace();
 	}
 		//Lasse eine bestimmte Zeit laufen, bis Anfrage beendet wird
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		getExecutionListenerCallback().changeState(Lifecycle.SUCCESS);
+//		try {
+//			Thread.sleep(100000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		getExecutionListenerCallback().changeState(Lifecycle.SUCCESS);
 	}
 	
 	@Override

@@ -18,17 +18,14 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 	private static int MAXQUERIES = 10;
 	
 	@Override
-	public boolean handleQuery(Query query, IPeer peer) {
+	public boolean handleQuery(Subplan subplan, IPeer peer) {
 		
 		if(((AbstractPeer)peer).getQueries().size()== MAXQUERIES) {
 			return false;
 		}
 		//Prüfen, ob adressierte Quellen überhaupt verwaltet werden
 		List<AccessAO> sources = new ArrayList<AccessAO>();
-		for(Subplan subplan :  query.getSubPlans().values()) {
-			
-			collectSourcesFromPlan(subplan.getAo(), sources);
-		}
+		collectSourcesFromPlan(subplan.getAo(), sources);
 		if(!sources.isEmpty()) {
 			for(AccessAO ao : sources) {
 				
@@ -38,7 +35,14 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy{
 			}
 			return true;
 		}
-		return false;
+		//keine Quellen werden verwaltet
+		if(DataDictionary.getInstance().sourceTypeMap.isEmpty()) {
+			return true;
+		}
+		//Zum einfacheren testen wird true zurückgeliefert, obwohl false geliefert werden müsste
+		else {
+			return true;
+		}
 	}
 	
 

@@ -38,17 +38,28 @@ public class QueryResultHandlerJxtaImpl implements IMessageHandler {
 				"subplanId", msg);
 //		String events = MessageTool.getMessageElementAsString(namespace,
 //				"events", msg);
-
+		Log.logAction(queryId, "Erhalte Zusage für Teilplan "+subPlanId);
 		if (result.equals("granted")) {
 //			AbstractLogicalOperator ao = getQueries().get(queryId).getSubPlans().get(subPlanId).getAo();
 			for(Query q : getQueries().keySet()) {
 				if(q.getId().equals(queryId)) {
 					IExecutionListener listener = getQueries().get(q);
 					for(Subplan sp : q.getSubPlans().values()) {
-						sp.setStatus(Lifecycle.RUNNING);
+						if(sp.getId().toString().equals(subPlanId)) {
+							sp.setStatus(Lifecycle.GRANTED);
+						}
 					}
-					q.setStatus(Lifecycle.RUNNING);
-					listener.startListener();
+					boolean run = true;
+					for(Subplan sp : q.getSubPlans().values()) {
+						if(sp.getStatus()!=Lifecycle.GRANTED) {
+							run = false;
+							break;
+						}
+					}
+					if(run) {
+						q.setStatus(Lifecycle.GRANTED);
+						listener.startListener();
+					}
 				}
 			}
 //			getQueries().get(queryId).setStatus(Status.GRANTED);

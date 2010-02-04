@@ -138,7 +138,7 @@ public class BiddingProvider<R extends PipeAdvertisement> extends AbstractDistri
 			//query.setStatus(Status.BIDDING);
 			// Hier wird dann die Ausführung der Subpläne ausgeschrieben
 			for(Subplan subplan : query.getSubPlans().values()) {
-				Log.logAction(query.getId(), "Teilplan ausschreiben: "+AbstractTreeWalker.prefixWalk(subplan.getAo(),
+				Log.logAction(query.getId(), "Teilplan "+ subplan.getId()+" ausschreiben: "+AbstractTreeWalker.prefixWalk(subplan.getAo(),
 						new AlgebraPlanToStringVisitor()));
 				//Falls der Subplan neu verteilt werden sollte, dann sind alte Gebote nicht mehr gültig
 				subplan.getBiddings().clear();

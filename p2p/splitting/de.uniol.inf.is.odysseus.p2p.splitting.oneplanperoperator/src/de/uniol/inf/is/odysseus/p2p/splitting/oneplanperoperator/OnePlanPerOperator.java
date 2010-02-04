@@ -85,45 +85,9 @@ public class OnePlanPerOperator extends
 				RestructHelper.insertOperator(p2psource2, iLogicalOperator, 1, 0, 0);
 				RestructHelper.insertOperator(p2psink, p2psource,0,0,0);
 				RestructHelper.insertOperator(p2psink2, p2psource2,0,0,0);
-				
-	//			if (iLogicalOperator.getSubscribedTo(0).getTarget() instanceof AccessAO) {
-	//				SDFSource source = ((AccessAO) iLogicalOperator.getSubscribedTo(0).getTarget()).getSource();
-	//				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
-	//						.getSources().get(source.toString()).toString();
-	//				p2paccess.setAdv(sourceAdv);
-	//			}
-	//			if (iLogicalOperator.getSubscribedTo(1).getTarget() instanceof AccessAO) {
-	//				SDFSource source = ((AccessAO) iLogicalOperator.getSubscribedTo(1).getTarget()).getSource();
-	//				String sourceAdv = AdministrationPeerJxtaImpl.getInstance()
-	//						.getSources().get(source.toString()).toString();
-	//				p2paccess2.setAdv(sourceAdv);
-	//			}
-	
-	//			tempAO.subscribeTo(p2paccess,0,0, tempAO.getOutputSchema());
-	//			tempAO.subscribeTo(p2paccess2,1,0, tempAO.getOutputSchema());
-	//			p2psink.subscribeTo(tempAO,0,0, tempAO.getOutputSchema());
-	//			if(!tempAO.getSubscribedTo().isEmpty()) {
-	//				
-	//				for(LogicalSubscription ls : tempAO.getSubscribedTo()) {
-	//					if(!ls.getTarget().equals(p2paccess) || !ls.getTarget().equals(p2paccess2) || !ls.getTarget().equals(p2psink)) {
-	//						tempAO.unsubscribeTo(ls);
-	//					}
-	//				}
-	//			}
-	//			if(!tempAO.getSubscriptions().isEmpty()) {
-	//				for(LogicalSubscription ls :tempAO.getSubscriptions()) {
-	//					if(!ls.getTarget().equals(p2paccess) || !ls.getTarget().equals(p2paccess2) || !ls.getTarget().equals(p2psink)) {
-	//						tempAO.unsubscribe(ls);
-	//					}
-	//				}
-	//			}
 			} else if(outputCount == 1){
 				RestructHelper.insertOperator(p2psource, iLogicalOperator, 0, 0, 0);
-//				System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
-//						new AlgebraPlanToStringVisitor(true)));
 				RestructHelper.insertOperator(p2psink, p2psource,0,0,0);
-//				System.out.println(AbstractTreeWalker.prefixWalk(iLogicalOperator,
-//						new AlgebraPlanToStringVisitor(true)));
 				temp = adv;
 			} 
  		}
