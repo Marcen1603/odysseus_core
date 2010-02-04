@@ -35,7 +35,8 @@ public class ExecutionListener extends AbstractExecutionListener{
 			//Sonst hängen wir ewig in einer Schleife fest, falls es keinen passenden ExecutionHandler gibt.
 			else {
 				getCallback().changeState(Lifecycle.FAILED);
-				continue;
+				return;
+//				continue;
 				
 			}
 			synchronized (this) {

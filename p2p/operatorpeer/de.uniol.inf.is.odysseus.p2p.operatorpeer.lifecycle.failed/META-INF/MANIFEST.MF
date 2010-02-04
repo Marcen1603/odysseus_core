@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Failed
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.failed
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.failed.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
+ de.uniol.inf.is.odysseus.p2p.queryhandling
+Service-Component: OSGI-INF/failedExecutionHandler.xml

@@ -49,6 +49,7 @@ public class ServerSocketConnectionHandler implements IServerSocketConnectionHan
 				String namespace="";
 				while (it.hasNext()) {
 					namespace = it.next();
+					System.out.println("ERHALTE NACHRICHT: "+namespace);
 					//Existiert ein registrierter Handler, dann sende die Nachricht an diesen weiter
 					if(getMessageHandlerList().containsKey(namespace)) {
 						getMessageHandlerList().get(namespace).handleMessage(msg, namespace);

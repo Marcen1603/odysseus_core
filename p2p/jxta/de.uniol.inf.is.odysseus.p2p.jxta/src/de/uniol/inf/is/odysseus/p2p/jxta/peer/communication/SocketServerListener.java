@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p.jxta.peer.communication;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,12 +70,16 @@ public class SocketServerListener implements ISocketServerListener {
 	}
 
 	@Override
-	public synchronized boolean registerMessageHandler(IMessageHandler messageHandler) {
+	public synchronized List<IMessageHandler> registerMessageHandler(IMessageHandler messageHandler) {
 		if(!getMessageHandler().containsKey(messageHandler.getInterestedNamespace())) {
 			getMessageHandler().put(messageHandler.getInterestedNamespace(), messageHandler);
-			return true;
+
 		}
-		return false;
+		ArrayList<IMessageHandler> handler = new ArrayList<IMessageHandler>();
+		for(IMessageHandler h : this.messageHandler.values()) {
+			handler.add(h);
+		}
+		return handler;
 	}
 	
 
@@ -102,14 +107,12 @@ public class SocketServerListener implements ISocketServerListener {
 	}
 
 	@Override
-	public synchronized boolean registerMessageHandler(List<IMessageHandler> messageHandler) {
-		boolean success = true;
+	public synchronized List<IMessageHandler> registerMessageHandler(List<IMessageHandler> messageHandler) {
+		List<IMessageHandler> result = null;
 		for (IMessageHandler iMessageHandler : messageHandler) {
-			if(!registerMessageHandler(iMessageHandler)) {
-				success = false;
-			}
+			result = registerMessageHandler(iMessageHandler);
 		}
-		return success;
+		return result;
 	}
 
 

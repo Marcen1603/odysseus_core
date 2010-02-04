@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Closed
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.closed
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.closed.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/closedExecutionHandler.xml
+Import-Package: de.uniol.inf.is.odysseus.p2p.peer,
+ de.uniol.inf.is.odysseus.p2p.peer.execution.handler
