@@ -23,6 +23,22 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 		this.counter = 0;
 	}
 	
+	public ResultAwarePNTransferFunction(
+			ResultAwarePNTransferFunction<M, T> resultAwarePNTransferFunction) throws CloneNotSupportedException {
+		minTs = new PointInTime[2];
+		minTs[0] = resultAwarePNTransferFunction.minTs[0].clone();
+		minTs[1] = resultAwarePNTransferFunction.minTs[1].clone();
+		sweepArea = resultAwarePNTransferFunction.sweepArea.clone();;
+		counter = resultAwarePNTransferFunction.counter;
+		po = resultAwarePNTransferFunction.po;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setSourcePo(AbstractSource<T> source) {
+		po = (ResultAwareJoinPNIDPO<M,T>) source;
+	}
+
 	public void init(AbstractSource<T> po){
 		throw new UnsupportedOperationException("Method not supported for this kind of transfer function.\n" +
 				"Use init(ResultAwareJoinPNIDPO instead.");
@@ -78,5 +94,9 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 	
 	public int size(){
 		return sweepArea.size();
+	}
+	
+	public ResultAwarePNTransferFunction<M,T> clone() throws CloneNotSupportedException{
+		return new ResultAwarePNTransferFunction<M,T>(this);
 	}
 }

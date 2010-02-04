@@ -18,6 +18,15 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  */
 public class ResultAwarePNIDSweepArea<T extends IMetaAttributeContainer<? extends IPosNeg>> extends DefaultPNIDSweepArea<T>{
 
+	public ResultAwarePNIDSweepArea(
+			ResultAwarePNIDSweepArea<T> resultAwarePNIDSweepArea) {
+		super(resultAwarePNIDSweepArea);
+	}
+
+	public ResultAwarePNIDSweepArea() {
+		super();	
+	}
+
 	/**
 	 * There is a problem with the join in the pn-approach.
 	 * If an element occurs in stream left and then the scheduler
@@ -107,5 +116,10 @@ public class ResultAwarePNIDSweepArea<T extends IMetaAttributeContainer<? extend
 			super.insert(s);
 		}
 		return count;
+	}
+	
+	@Override
+	public ResultAwarePNIDSweepArea<T> clone() throws CloneNotSupportedException {
+		return new ResultAwarePNIDSweepArea<T>(this);
 	}
 }

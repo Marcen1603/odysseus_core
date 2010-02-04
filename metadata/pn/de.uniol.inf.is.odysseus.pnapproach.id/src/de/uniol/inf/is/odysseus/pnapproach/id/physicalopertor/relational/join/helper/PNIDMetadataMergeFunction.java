@@ -20,6 +20,13 @@ public class PNIDMetadataMergeFunction implements IPNMetadataMergeFunction<IPosN
 		this.rightIDSize = rightIDSize;
 	}
 	
+	public PNIDMetadataMergeFunction(
+			PNIDMetadataMergeFunction pnidMetadataMergeFunction) {
+		this.leftIDSize = pnidMetadataMergeFunction.leftIDSize;
+		this.rightIDSize = pnidMetadataMergeFunction.rightIDSize;
+		
+	}
+
 	@Override
 	public IPosNeg mergeMetadata(IPosNeg left, IPosNeg right) {
 		PosNeg pn = new PosNeg();
@@ -79,6 +86,10 @@ public class PNIDMetadataMergeFunction implements IPNMetadataMergeFunction<IPosN
 	}
 	
 	public void init(){
+	}
+	
+	public PNIDMetadataMergeFunction clone() throws CloneNotSupportedException{
+		return new PNIDMetadataMergeFunction(this);
 	}
 
 }

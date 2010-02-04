@@ -23,6 +23,10 @@ public class DefaultPNIDSweepArea<T extends IMetaAttributeContainer<? extends IP
 	public DefaultPNIDSweepArea() {
 		super(new MetadataComparator<IPosNeg>());
 	}
+	
+	public DefaultPNIDSweepArea(DefaultPNIDSweepArea<T> sa) {
+		super(sa.comparator);
+	}
 
 	/**
 	 * Keine Exception werfen, da sonst alle Operatoren doch neu implementiert werden muessen.
