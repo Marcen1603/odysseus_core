@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.action.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
@@ -10,7 +9,6 @@ import de.uniol.inf.is.odysseus.action.exception.ActionException;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapterManager;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
-import de.uniol.inf.is.odysseus.action.services.actuator.impl.TestActuator;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
@@ -24,7 +22,7 @@ public class ActionTest {
 	@Before
 	public void setUp() throws Exception {
 		ActuatorAdapterManager manager = new ActuatorAdapterManager();
-		this.actuator = manager.createActuator("test", "de.uniol.inf.is.odysseus.action.services.actuator.impl.TestActuator(name)");
+		this.actuator = manager.createActuator("test", "de.uniol.inf.is.odysseus.action.actuator.impl.TestActuator(name)");
 	}
 
 	@Test
@@ -39,7 +37,6 @@ public class ActionTest {
 			} catch (ActuatorException e) {
 				fail();
 			}
-			assertEquals(8.5, ((TestActuator)this.actuator).giveSomething(), 0.0);
 			
 			values[0] = (int)5;
 			try {
