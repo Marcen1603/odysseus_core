@@ -26,7 +26,7 @@ public class DemoAppActuator{
                 }, AuctionStatus.ORANGE);
 	}
 	
-	@ActuatorAdapterSchema(show = true)
+	@ActuatorAdapterSchema(show = true, provide = false)
 	public void updateGreen(int id, String itemName, String personName, double price, long timeStamp){
 		AuctionMonitor.getInstance().updateData(
 				new String[] {
