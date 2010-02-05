@@ -70,8 +70,8 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 		restrictList = new int[length];
 		System.arraycopy(copy.restrictList, 0, restrictList, 0, length);
 		
-		this.projectMatrix = copy.projectMatrix;
-		this.inputSchema = copy.inputSchema;
+		this.projectMatrix = copy.projectMatrix.copy();
+		this.inputSchema = copy.inputSchema.clone();
 		
 		final ObjectTrackingProjectBasePO<T> t = this;
 		this.addMonitoringData("selectivity", new StaticValueMonitoringData<Double>(t,

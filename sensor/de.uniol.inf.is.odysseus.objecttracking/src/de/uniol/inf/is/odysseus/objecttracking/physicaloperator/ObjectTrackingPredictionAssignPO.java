@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
@@ -24,6 +26,19 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 	public ObjectTrackingPredictionAssignPO(ObjectTrackingPredictionAssignAO<T> predictionAO) {
 		super();
 		this.predictionFunctions = predictionAO.getPredictionFunctions();
+	}
+	
+	private ObjectTrackingPredictionAssignPO(ObjectTrackingPredictionAssignPO<T, M> predictionPO){
+		super();
+		this.predictionFunctions = new HashMap<IPredicate<? super T>, IPredictionFunction>();
+		for(Entry<IPredicate<? super T>, IPredictionFunction> entry : predictionFunctions.entrySet()){
+			this.predictionFunctions.put(entry.getKey().clone(), entry.getValue().clone());
+		}
+	}
+	
+	@Override
+	public ObjectTrackingPredictionAssignPO<T, M> clone(){
+		return new ObjectTrackingPredictionAssignPO(this);
 	}
 
 	/**
@@ -53,11 +68,6 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 	@Override
 	public OutputMode getOutputMode(){
 		return OutputMode.MODIFIED_INPUT;
-	}
-	
-	@Override
-	public ObjectTrackingPredictionAssignPO<T, M> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
 	}
 
 }

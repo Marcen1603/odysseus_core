@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
@@ -18,6 +20,13 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 	
 	public ObjectTrackingSelectPO(Map<IPredicate<? super T>, IRangePredicate> rangePredicates){
 		this.rangePredicates = rangePredicates;
+	}
+	
+	public ObjectTrackingSelectPO(ObjectTrackingSelectPO<T, M> original){
+		this.rangePredicates = new HashMap<IPredicate<? super T>, IRangePredicate>();
+		for(Entry<IPredicate<? super T>, IRangePredicate> entry: original.rangePredicates.entrySet()){
+			this.rangePredicates.put(entry.getKey(), entry.getValue());
+		}
 	}
 	
 	public int hashCode() {
@@ -54,8 +63,8 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 	}
 	
 	@Override
-	public ObjectTrackingSelectPO<T, M> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public ObjectTrackingSelectPO<T, M> clone() throws CloneNotSupportedException{
+		return new ObjectTrackingSelectPO<T, M>(this);
 	}
 
 }
