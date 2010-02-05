@@ -41,7 +41,11 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 	}
 	
 	public RelationalPostPriorisationFunctionality() {
-		
+	}
+
+	public RelationalPostPriorisationFunctionality(
+			RelationalPostPriorisationFunctionality<T> relationalPostPriorisationFunctionality) {
+		//TODO: Jonas 
 	}
 
 	public boolean hasToBePrefered(ITimeInterval current) {
@@ -150,4 +154,8 @@ public class RelationalPostPriorisationFunctionality<T extends IMetaAttributeCon
 		this.pipe = pipe;
 	}
 
+	@Override
+	public RelationalPostPriorisationFunctionality<T> clone(){
+		return new RelationalPostPriorisationFunctionality<T>(this);
+	}
 }

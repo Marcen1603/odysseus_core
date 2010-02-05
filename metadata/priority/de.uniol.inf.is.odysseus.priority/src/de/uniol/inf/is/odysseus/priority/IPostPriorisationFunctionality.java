@@ -14,4 +14,5 @@ public interface IPostPriorisationFunctionality<T extends IMetaAttributeContaine
 	public List<IPredicate<? super T>> getJoinFragment();
 	@SuppressWarnings("unchecked")
 	public IPostPriorisationFunctionality<IMetaAttributeContainer<? extends IPriority>> newInstance(IPostPriorisationPipe pipe);
+	public IPostPriorisationFunctionality<T> clone();
 }

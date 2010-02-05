@@ -12,6 +12,13 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 		extends AbstractPunctuationBuffer<T,T> {
 	Lock directLinkLock = new ReentrantLock();
 
+	public DirectInterlinkBufferedPipe(
+			DirectInterlinkBufferedPipe<T> directInterlinkBufferedPipe) {
+		super(directInterlinkBufferedPipe);
+	}
+
+	public DirectInterlinkBufferedPipe() {}
+
 	@Override
 	public void transferNext() {
 		directLinkLock.lock();
@@ -52,4 +59,9 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 			IMetaAttributeContainer<?> current) {
 		return true;
 	}
+	
+	public DirectInterlinkBufferedPipe<T> clone(){
+		return new DirectInterlinkBufferedPipe<T>(this);
+	}
+
 }

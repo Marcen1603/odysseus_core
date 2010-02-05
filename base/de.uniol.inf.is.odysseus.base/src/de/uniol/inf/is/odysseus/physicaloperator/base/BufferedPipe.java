@@ -26,6 +26,15 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 	}
 
+	public BufferedPipe(BufferedPipe<T> bufferedPipe) {
+		super(bufferedPipe);
+		buffer.addAll(bufferedPipe.buffer);
+		final BufferedPipe<T> t = this;
+		this.addMonitoringData("selectivity",
+				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
+		
+	}
+
 	@Override
 	final protected void process_open() throws OpenFailedException {
 		super.process_open();
@@ -114,7 +123,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 
 	@Override
 	public BufferedPipe<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+		return new BufferedPipe<T>(this);
 	}
 
 	

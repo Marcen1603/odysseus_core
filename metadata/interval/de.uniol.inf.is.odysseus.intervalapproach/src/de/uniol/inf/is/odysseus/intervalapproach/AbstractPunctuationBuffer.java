@@ -22,6 +22,13 @@ abstract public class AbstractPunctuationBuffer<W extends IMetaAttributeContaine
 	
 	protected PunctuationStorage<W,W> storage = new PunctuationStorage<W,W>(this); 
 	
+	public AbstractPunctuationBuffer(){};
+	
+	public AbstractPunctuationBuffer(
+			AbstractPunctuationBuffer<W,W> abstractPunctuationBuffer) {
+		super(abstractPunctuationBuffer);
+	}
+
 	protected void updatePunctuationData(W object) {
 		storage.updatePunctuationData(object);
 	}	

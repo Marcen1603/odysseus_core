@@ -12,6 +12,10 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 
 	private Comparator<? super T> comparator = new MetadataComparator<IPriority>();
 
+	public PriorityBufferedPipe(PriorityBufferedPipe<T> priorityBufferedPipe) {
+		super(priorityBufferedPipe);
+	}
+
 	@SuppressWarnings("unchecked")
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		byte prio = object.getMetadata().getPriority();
@@ -54,5 +58,10 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 		T obj = this.buffer.peek();
 		return obj.getMetadata().getPriority();
 	}
+	
+	public PriorityBufferedPipe<T> clone(){
+		return new PriorityBufferedPipe<T>(this);
+	}
 
 }
+

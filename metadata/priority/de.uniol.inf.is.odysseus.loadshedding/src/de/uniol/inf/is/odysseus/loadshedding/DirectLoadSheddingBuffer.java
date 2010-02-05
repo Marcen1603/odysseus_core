@@ -16,7 +16,14 @@ extends DirectInterlinkBufferedPipePostPriorisation<T> {
 	private int rate = NO_LOAD_SHEDDING;
 	private double weight = 0;
 
+	public DirectLoadSheddingBuffer(){};
 
+	public DirectLoadSheddingBuffer(
+			DirectLoadSheddingBuffer<T> directLoadSheddingBuffer) {
+		super(directLoadSheddingBuffer);
+		rate = directLoadSheddingBuffer.rate;
+		weight = directLoadSheddingBuffer.weight;
+	}
 
 	@Override
 	protected void process_next(T next, int port) {
@@ -60,5 +67,9 @@ extends DirectInterlinkBufferedPipePostPriorisation<T> {
 	public void setWeight(double weight) {
 		this.weight = weight;
 	}	
+	
+	public DirectLoadSheddingBuffer<T> clone(){
+		return new DirectLoadSheddingBuffer<T>(this);
+	}
 	
 }

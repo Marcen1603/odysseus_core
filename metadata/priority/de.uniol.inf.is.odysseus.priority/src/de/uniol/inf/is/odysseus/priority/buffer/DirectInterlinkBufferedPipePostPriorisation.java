@@ -27,6 +27,16 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	private boolean active;
 	private POEvent finished = new POEvent(this, POEventType.PostPriorisation);
 
+	public DirectInterlinkBufferedPipePostPriorisation(){};
+	
+	public DirectInterlinkBufferedPipePostPriorisation(
+			DirectInterlinkBufferedPipePostPriorisation<T> directInterlinkBufferedPipePostPriorisation) {
+		super(directInterlinkBufferedPipePostPriorisation);
+		functionality = directInterlinkBufferedPipePostPriorisation.functionality.clone();
+		postPriorisationRoot = directInterlinkBufferedPipePostPriorisation.postPriorisationRoot;
+		active = directInterlinkBufferedPipePostPriorisation.active;
+	}
+
 	@Override
 	public void transferNext() {
 		directLinkLock.lock();
@@ -150,5 +160,8 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	public void setJoinFragment(List fragment) {
 		functionality.setJoinFragment(fragment);
 	}
-
+	
+	public DirectInterlinkBufferedPipePostPriorisation<T> clone(){
+		return new DirectInterlinkBufferedPipePostPriorisation<T>(this);
+	}
 }
