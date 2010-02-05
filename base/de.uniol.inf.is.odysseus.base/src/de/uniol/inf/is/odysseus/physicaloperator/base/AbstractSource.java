@@ -204,10 +204,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public List<PhysicalSubscription<ISink<? super T>>> getSubscriptions() {
-		synchronized (this.subscriptions) {
-			//TODO: Hier war clone. Warum?
-			return this.subscriptions;
-		}
+			return Collections.unmodifiableList(this.subscriptions);
 	}
 
 	final protected void propagateDone() {

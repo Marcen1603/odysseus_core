@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 //import org.slf4j.Logger;
@@ -200,7 +201,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	final public List<PhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
-		return delegateSink.getSubscribedToSource();
+		return Collections.unmodifiableList(delegateSink.getSubscribedToSource());
 	}
 
 	@Override
