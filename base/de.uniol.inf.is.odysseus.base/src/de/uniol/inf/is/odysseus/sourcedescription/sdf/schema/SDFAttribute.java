@@ -7,6 +7,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
 public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttribute>, Serializable {
 
+	/**
+	 * An attribute consists of two parts, the sourceName and the attributeName
+	 */
 	private String sourceName;
 	private String attributeName;
 	
@@ -22,20 +25,36 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	
 	private static final long serialVersionUID = -5128455072793206061L;
 
+	/**
+	 * Creates a new SDFAttribute from a String "SourceName.AttributeName" where
+	 * AttributeName must not contain "." (i.e. the String after the last "." is used 
+	 * as AttributeName
+	 * @param sourceAndAttributeName
+	 */
+	public SDFAttribute(String sourceAndAttributeName) {
+		super(sourceAndAttributeName);
+		init(sourceAndAttributeName);
+	}
+	
+	/**
+	 * Creates a new SDFAttribute from a String "SourceName.AttributeName" where
+	 * AttributeName must not contain "." (i.e. the String after the last "." is used 
+	 * as AttributeName
+	 * Each SDFAttribute can have SubAttributes (to allow NF2-Attributes) 
+	 * @param sourceAndAttributeName
+	 * @param subattributes
+	 */
 	public SDFAttribute(String sourceAndAttributeName, SDFAttributeList subattributes){
 		super(sourceAndAttributeName);
-		int pointPos = sourceAndAttributeName.lastIndexOf(".");
-		if (pointPos > 0){
-			this.sourceName = sourceAndAttributeName.substring(0,pointPos);
-			this.attributeName = sourceAndAttributeName.substring(pointPos+1);
-		}else{
-			this.sourceName = null;
-			this.attributeName = sourceAndAttributeName;
-		}
-		
+		init(sourceAndAttributeName);
 		this.subattributes = subattributes;
 	}
 	
+	/**
+	 * Creates a new SDFAttribute from sourceName and AttributeName
+	 * @param sourceName
+	 * @param attributeName
+	 */
 	public SDFAttribute(String sourceName, String attributeName) {
 		super(sourceName == null ? attributeName : sourceName + "."
 				+ attributeName);
@@ -43,8 +62,22 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		this.attributeName = attributeName;
 	}
 	
-	public SDFAttribute(String sourceAndAttributeName) {
-		super(sourceAndAttributeName);
+	/**
+	 * Copy Construktor
+	 * @param attribute
+	 */
+	public SDFAttribute(SDFAttribute attribute) {
+		super(attribute);
+		this.sourceName = attribute.sourceName;
+		this.attributeName = attribute.attributeName;
+		this.subattributes = attribute.subattributes == null ? null : attribute.subattributes.clone();
+	}
+
+	/**
+	 * Methode to share code between constructors
+	 * @param sourceAndAttributeName
+	 */
+	private void init(String sourceAndAttributeName) {
 		int pointPos = sourceAndAttributeName.lastIndexOf(".");
 		if (pointPos > 0){
 			this.sourceName = sourceAndAttributeName.substring(0,pointPos);
@@ -53,16 +86,14 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 			this.sourceName = null;
 			this.attributeName = sourceAndAttributeName;
 		}
+		updateName();
+	}
 
-	}
 	
-	public SDFAttribute(SDFAttribute attribute) {
-		super(attribute);
-		this.sourceName = attribute.sourceName;
-		this.attributeName = attribute.attributeName;
-		this.subattributes = attribute.subattributes == null ? null : attribute.subattributes.clone();
-	}
-	
+	/**
+	 * Adds a new Subattribute to the end of the current subattribute list
+	 * @param subAttr
+	 */
 	public void addSubattribute(SDFAttribute subAttr){
 		if(this.subattributes == null){
 			this.subattributes = new SDFAttributeList();
@@ -71,17 +102,27 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		this.subattributes.add(subAttr);
 	}
 	
-	public void addSubattribute(int pos, SDFAttribute subAttr){
-		if(this.subattributes == null){
-			this.subattributes = new SDFAttributeList();
-		}
-		
-		if(pos > this.subattributes.size()){
-			throw new RuntimeException("Not enough subattributes avaiable. Cannot add new subattribute at position " + pos);
-		}
-		this.subattributes.add(pos, subAttr);
-	}
+// Diese Methode macht so keinen Sinn!
+	//	/**
+//	 * Overwrites oder sets a Subattribute to Position pos in subattribute list
+//	 * 
+//	 * @param pos
+//	 * @param subAttr
+//	 */
+//	public void addSubattribute(int pos, SDFAttribute subAttr){
+//		if(this.subattributes == null){
+//			this.subattributes = new SDFAttributeList();
+//		}
+//		
+//		if(pos > this.subattributes.size()){
+//			throw new RuntimeException("Not enough subattributes avaiable. Cannot add new subattribute at position " + pos);
+//		}
+//		this.subattributes.add(pos, subAttr);
+//	}
 	
+	/**
+	 * Removes subattribute
+	 */
 	public boolean removeSubattribute(SDFAttribute subAttr){
 		if(this.subattributes == null){
 			return false;
@@ -90,6 +131,11 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		return this.subattributes.remove(subAttr);
 	}
 	
+	/**
+	 * removes Subattribute at position pos
+	 * @param pos
+	 * @return
+	 */
 	public boolean removeSubattribute(int pos){
 		if(this.subattributes == null){
 			return false;
@@ -98,23 +144,43 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		return this.subattributes.remove(pos) != null;
 	}
 	
+	/**
+	 * Use a list von Attributes as subattributes
+	 * @param subAttrs
+	 */
 	public void setSubattributes(SDFAttributeList subAttrs){
 		this.subattributes = subAttrs;
 	}
 	
+	/**
+	 * Remove all subattributes
+	 */
 	public void clearSubattributes(){
 		this.subattributes = new SDFAttributeList();
 	}
 
+	/**
+	 * Get Sourcename-Part of the Attribute
+	 * @return
+	 */
 	public String getSourceName() {
 		return this.sourceName;
 	}
+	
+	/**
+	 * Set Sourcename-Part of the Attribute
+	 * @param sourceName
+	 */
 
 	public void setSourceName(String sourceName) {
 		this.sourceName = sourceName;
 		updateName();
 	}
 
+	/**
+	 * Sets AttributeName part
+	 * @param attributeName
+	 */
 	public void setAttributeName(String attributeName) {
 		this.attributeName = attributeName;
 		updateName();
@@ -122,7 +188,7 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 
 	/**
 	 * Returns the name of the attribute without source information.
-	 * To get the complete name use getURI.
+	 * To get the complete name use getURI oder getSourceName()
 	 * @see SDFElement
 	 * @return
 	 */
@@ -143,6 +209,14 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 				+ attributeName);
 	}
 	
+	/**
+	 * Compares current attribute with attr, returns true if 
+	 * both sourceNames are not null and equals and attributeNames are
+	 * equals
+	 * If one of the sourceName is null, only attributeNames are compared 
+	 * @param attr
+	 * @return true if attributeNames/sourceNames are equal
+	 */
 	public boolean equalsCQL(SDFAttribute attr) {
 		if (this.sourceName != null && attr.sourceName != null) {
 			if (!this.sourceName.equals(attr.sourceName)) {
@@ -204,7 +278,14 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	
 	@Override
 	public int compareTo(SDFAttribute o) {
-		return this.getURI(false).compareTo(o.getURI(false));
+		int comp = 0;
+		if (sourceName != null && o.getSourceName() != null){
+			comp = sourceName.compareTo(o.getSourceName());
+		}
+		if (comp == 0){
+			comp = attributeName.compareTo(o.getAttributeName());
+		}
+		return comp;
 	}
 	
 }
