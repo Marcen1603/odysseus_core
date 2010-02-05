@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
@@ -49,12 +50,11 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 			
 			IEditablePlan plan = (IEditablePlan)this.executor.getSealedPlan();
 			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
-			//query.stop();
 			
-			//query.reoptimize();
-			System.out.println(this.executor.getInfos());
+			IPhysicalOperator op = query.getRoot();
+			System.out.println(op.getName());
 			
-			
+			query.reoptimize();
 			
 		} catch (PlanManagementException e) {
 			// TODO Auto-generated catch block

@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.noplanmigrationstrategie;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
@@ -20,5 +22,11 @@ public class NoPlanMigrationStrategie implements IPlanMigrationStrategie {
 	public IEditableExecutionPlan migratePlan(IPlanMigratable sender,
 			IEditableExecutionPlan newExecutionPlan) {
 		return newExecutionPlan;
+	}
+
+	@Override
+	public IEditableQuery migrateQuery(IEditableQuery runningQuery,
+			IPhysicalOperator newPlanRoot) {
+		return runningQuery;
 	}
 }

@@ -4,6 +4,8 @@ Bundle-Name: No Plan Migration Strategie Plug-In
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.noplanmigrationstrategie
 Bundle-Version: 1.0.0
 Import-Package: 
+ de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.physicaloperator.base.plan,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
  de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration,

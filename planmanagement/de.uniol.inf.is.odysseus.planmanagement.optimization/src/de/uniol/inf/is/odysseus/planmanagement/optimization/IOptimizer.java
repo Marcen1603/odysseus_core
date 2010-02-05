@@ -87,7 +87,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan reoptimize(IQuery sender,
+	public IExecutionPlan reoptimize(IEditableQuery sender,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException;
 

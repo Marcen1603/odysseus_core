@@ -266,7 +266,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan reoptimize(IQuery sender,
+	public IExecutionPlan reoptimize(IEditableQuery sender,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		return executionPlan;

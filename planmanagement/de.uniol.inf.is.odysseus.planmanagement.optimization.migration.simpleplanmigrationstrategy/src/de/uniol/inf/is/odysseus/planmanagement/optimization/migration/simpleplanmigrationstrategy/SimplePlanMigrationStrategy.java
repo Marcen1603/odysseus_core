@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPla
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
-import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 
 /**
  * 
@@ -40,12 +39,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			IEditableExecutionPlan newExecutionPlan) {
 		this.logger.info("Start Planmigration.");
 		
-		try {
+		// TODO: stoppen und starten muss auﬂerhalb erfolgen
+		/*try {
 			sender.getSchedulerManager().stopScheduling();
 		} catch (NoSchedulerLoadedException e) {
 			e.printStackTrace();
 			return newExecutionPlan;
-		}
+		}*/
 
 		try {
 			List<IPhysicalOperator> newRoots = new ArrayList<IPhysicalOperator>();
@@ -60,13 +60,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			this.logger.error("Plan migration failed: "+e1.getMessage(),e1);
 		}
 		
-		try {
+		/*try {
 			sender.getSchedulerManager().startScheduling();
 		} catch (NoSchedulerLoadedException e) {
 			e.printStackTrace();
 		} catch (OpenFailedException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		this.logger.info("Finished Planmigration.");
 		
@@ -144,6 +144,22 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			PhysicalSubscription<?> pSub = ((ISink<?>)op).getSubscribedToSource(i);
 			copyOperatorTree((IPhysicalOperator)pSub.getTarget(), op, (IPhysicalOperator)copy, pSub);
 		}
+	}
+
+	@Override
+	public IEditableQuery migrateQuery(IEditableQuery runningQuery,
+			IPhysicalOperator newPlanRoot) {
+		boolean queryWasRunning = runningQuery.isStarted();
+		if (queryWasRunning) {
+			runningQuery.stop();
+		}
+		
+		
+		
+		if (queryWasRunning) {
+			runningQuery.start();
+		}
+		return runningQuery;
 	}
 
 }

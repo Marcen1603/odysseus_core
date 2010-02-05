@@ -636,7 +636,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		try {
 			if (sender instanceof Query) {
 				this.executionPlanLock.lock();
-				setExecutionPlan(optimizer().reoptimize(sender,
+				setExecutionPlan(optimizer().reoptimize((IEditableQuery)sender,
 						this.executionPlan));
 
 				this.logger.debug("Query " + sender.getID() + " reoptimized.");
