@@ -20,6 +20,14 @@ public class PredictionKeyMetadataMergeFunction<M extends IPredictionFunctionKey
 	
 	public PredictionKeyMetadataMergeFunction(){
 	}
+	
+	public PredictionKeyMetadataMergeFunction(PredictionKeyMetadataMergeFunction<M> original){
+		super();
+	}
+	
+	public PredictionKeyMetadataMergeFunction<M> clone() throws CloneNotSupportedException{
+		return new PredictionKeyMetadataMergeFunction<M>(this);
+	}
 
 	/**
 	 * This method returns a new AndPredicate, that

@@ -17,6 +17,6 @@ public abstract class AbstractPredictionFunction<T extends MetaAttributeContaine
 	}
 	
 	@Override
-	public abstract IClone clone();
+	public abstract AbstractPredictionFunction<T, M> clone();
 
 }

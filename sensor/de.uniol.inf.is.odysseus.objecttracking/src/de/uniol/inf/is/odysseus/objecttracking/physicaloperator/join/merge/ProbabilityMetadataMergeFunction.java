@@ -14,6 +14,21 @@ public class ProbabilityMetadataMergeFunction<M extends IProbability> implements
 	public ProbabilityMetadataMergeFunction(double[][] covLeftRight){
 		this.covLeftRight = covLeftRight;
 	}
+	
+	private ProbabilityMetadataMergeFunction(ProbabilityMetadataMergeFunction<M> original){
+		if(original.covLeftRight != null){
+			this.covLeftRight = new double[original.covLeftRight.length][original.covLeftRight[0].length];
+			for(int i = 0; i<original.covLeftRight.length; i++){
+				for(int u = 0; u<original.covLeftRight[i].length; u++){
+					this.covLeftRight[i][u] = original.covLeftRight[i][u];
+				}
+			}
+		}
+	}
+	
+	public ProbabilityMetadataMergeFunction<M> clone(){
+		return new ProbabilityMetadataMergeFunction<M>(this);
+	}
 
 	@Override
 	public void mergeInto(M res, M left, M right) {
