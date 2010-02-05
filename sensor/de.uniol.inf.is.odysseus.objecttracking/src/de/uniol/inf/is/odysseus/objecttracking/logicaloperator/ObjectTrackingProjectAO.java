@@ -158,6 +158,13 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 * @return
 	 */
 	public static RealMatrix calcProjectMatrix(int[] restrictList, SDFAttributeListExtended inputSchema){
+		// if there are no measurement values, no covariance matrix
+		// has to be modified, and therefore no project matrix
+		// has to be calculated.
+		if(inputSchema.getMeasurementAttributePositions().length == 0){
+			return null;
+		}
+		
 		double[][] projectMatrix = new double[restrictList.length][inputSchema.getMeasurementAttributePositions().length];
 		
 		// The first row of the matrix means,

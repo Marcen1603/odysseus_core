@@ -49,5 +49,10 @@ public class Latency implements ILatency{
 	public ILatency clone(){
 		return new Latency(this);
 	}
+	
+	@Override
+	public String toString(){
+		return "" + (this.lend - this.lstart);
+	}
 
 }

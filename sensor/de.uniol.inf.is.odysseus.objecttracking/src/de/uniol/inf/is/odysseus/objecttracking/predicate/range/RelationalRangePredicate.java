@@ -232,6 +232,12 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 					Object[] values = new Object[curAttributePositions.length];
 					for(int i = 0; i<values.length; ++i){
 						RelationalTuple<?> r = this.fromRightChannel.get(entry.getKey())[i] ? right : left;
+						if(curAttributePositions[i] == -1){
+							System.out.println("AttrPos: " + this.attributePositions.get(entry.getKey()));
+							System.out.println("frc: " + this.fromRightChannel.get(entry.getKey()));
+							System.out.println("Solution: " + entry.getValue());
+							System.out.println("NAttrs: " + entry.getValue().getSolution().getAllAttributes());
+						}
 						values[i] = r.getAttribute(curAttributePositions[i]);
 					}
 					

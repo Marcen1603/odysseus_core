@@ -33,7 +33,7 @@ class ASTSimpleToken extends SimpleNode {
 		Node node = jjtGetChild(0);
 		// only set the braces "(" and ")", if there is a "-" sign, because
 		// we want to test against special variables like t for example.
-		return this.hasMinus ? "(-" + node.toString() + ")" : node.toString();
+		return "(" + (this.hasMinus ? "(-" + node.toString() + ")" : node.toString()) + ")";
 	}
 }
 /* JavaCC - OriginalChecksum=ea5958b49ff19b3e0192ad9762dd5f30 (do not edit this line) */

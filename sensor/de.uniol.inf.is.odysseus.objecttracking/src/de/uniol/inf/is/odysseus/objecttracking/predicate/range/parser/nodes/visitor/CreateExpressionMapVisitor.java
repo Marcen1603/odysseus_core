@@ -230,7 +230,8 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor  {
 		String rightExpression = node.jjtGetChild(2).toString();
 		
 		// we are just looking for t
-		if(leftExpression.trim().equals("t")){
+		// because for the right brackets it could also be "(t)"
+		if(leftExpression.trim().equals("t") || leftExpression.trim().equals("(t)")){
 			Solution solution = new Solution(
 					new SDFExpression(null, leftExpression.trim(), (IAttributeResolver)data), 
 					compareOperator, 

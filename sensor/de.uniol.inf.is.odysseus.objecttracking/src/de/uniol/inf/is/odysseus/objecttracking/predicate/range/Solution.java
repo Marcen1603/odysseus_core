@@ -85,4 +85,8 @@ public class Solution implements ISolution, IClone{
 			this.isFull = false;
 		}
 	}
+	
+	public String toString(){
+		return this.variable + " " + this.compareOperator + " " + this.solution.toString();
+	}
 }

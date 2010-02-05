@@ -346,8 +346,14 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	public MVRelationalTuple<T> restrict(int[] restrictList, RealMatrix restrictMatrix, boolean createNew){
 		if(!createNew){
 			MVRelationalTuple<T> modifiedAttrs = (MVRelationalTuple<T>)super.restrict(restrictList, createNew);
-			double[][] modifiedCovariance = restrictMatrix.multiply(new RealMatrixImpl(modifiedAttrs.getMetadata().getCovariance())).multiply(restrictMatrix.transpose()).getData();
-			modifiedAttrs.getMetadata().setCovariance(modifiedCovariance);
+			/**
+			 * If no measurement attributes are in the output schema, the restrictMatrix will be null.
+			 * In this case nothing has to be done.
+			 */
+			if(restrictMatrix != null){
+				double[][] modifiedCovariance = restrictMatrix.multiply(new RealMatrixImpl(modifiedAttrs.getMetadata().getCovariance())).multiply(restrictMatrix.transpose()).getData();
+				modifiedAttrs.getMetadata().setCovariance(modifiedCovariance);
+			}
 			return modifiedAttrs;
 		}
 		else{
@@ -359,11 +365,18 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 			}
 			newTuple.setAttributes(newAttrs);
 			newTuple.setMetadata((T)this.getMetadata().clone());
-			double[][] modifiedCovariance = restrictMatrix.multiply(
-					new RealMatrixImpl(this.getMetadata().getCovariance())).
-					multiply(restrictMatrix.transpose()).getData();
 			
-			newTuple.getMetadata().setCovariance(modifiedCovariance);
+			/**
+			 * If no measurement attributes are in the output schema, the restrictMatrix will be null.
+			 * In this case nothing has to be done.
+			 */
+			if(restrictMatrix != null){
+				double[][] modifiedCovariance = restrictMatrix.multiply(
+						new RealMatrixImpl(this.getMetadata().getCovariance())).
+						multiply(restrictMatrix.transpose()).getData();
+				
+				newTuple.getMetadata().setCovariance(modifiedCovariance);
+			}
 			
 			return newTuple;
 			
