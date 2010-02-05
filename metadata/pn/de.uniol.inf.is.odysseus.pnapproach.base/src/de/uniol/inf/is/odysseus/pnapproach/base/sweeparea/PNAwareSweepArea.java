@@ -17,6 +17,13 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  */
 public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNeg>>
 		extends SweepArea<T> implements IPNAwareSweepArea<T> {
+	
+	public PNAwareSweepArea(){};
+	
+	public PNAwareSweepArea(PNAwareSweepArea<T> pnAwareSweepArea) {
+		super(pnAwareSweepArea);
+	}
+
 	@Override
 	public int getNegativeElementCount() {
 		int count = 0;
@@ -37,5 +44,9 @@ public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNe
 			}
 		}
 		return count;
+	}
+	
+	public PNAwareSweepArea<T> clone(){
+		return new PNAwareSweepArea<T>(this);
 	}
 }

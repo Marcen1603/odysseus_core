@@ -67,6 +67,30 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 		this.isDone[1] = false;
 	}
 
+	@SuppressWarnings("unchecked")
+	public JoinPNPO(JoinPNPO<M, T> joinPNPO) throws CloneNotSupportedException {
+		super(joinPNPO); 
+		
+		this.dataMerge = joinPNPO.dataMerge.clone();
+		this.metadataMerge = joinPNPO.metadataMerge.clone();
+		this.transferFunction = joinPNPO.transferFunction.clone();
+		this.areas = joinPNPO.areas.clone();
+		this.nareas = joinPNPO.nareas.clone();
+		this.lookahead = joinPNPO.lookahead;
+		
+		this.preareas = new PNAwareSweepArea[2];
+		this.preareas[0] = joinPNPO.preareas[0].clone();
+		this.preareas[1] = joinPNPO.preareas[1].clone();
+		
+		this.lastTs = new PointInTime[2];
+		this.lastTs[0] = joinPNPO.lastTs[0].clone();
+		this.lastTs[1] = joinPNPO.lastTs[1].clone();
+		
+		this.isDone = new boolean[2];
+		this.isDone[0] = joinPNPO.isDone[0];
+		this.isDone[1] = joinPNPO.isDone[1];
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -458,7 +482,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 	
 	@Override
 	public JoinPNPO<M, T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+		return new JoinPNPO<M, T>(this);
 	}
 
 }

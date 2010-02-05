@@ -505,6 +505,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 	
 	@Override
 	public ResultAwareJoinPNIDPO<M, T> clone() throws CloneNotSupportedException {
+		// TODO: Implement clone-Method
 		throw new CloneNotSupportedException();
 	}
 

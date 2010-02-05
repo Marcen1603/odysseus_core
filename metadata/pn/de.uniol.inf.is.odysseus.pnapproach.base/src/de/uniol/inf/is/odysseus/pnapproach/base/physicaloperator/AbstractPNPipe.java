@@ -22,6 +22,14 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 	protected POEvent pushDoneNegEvent = new POEvent(this,
 			POEventType.PushDoneNeg);
 	
+	public AbstractPNPipe(){};
+	
+	public AbstractPNPipe(AbstractPNPipe<R,W> pipe){
+		super(pipe);
+		initNegPOEvents(pipe.getInputPortCount());
+	}
+	
+	
 	@Override
 	public void process(R object, int port, boolean exclusive) {
 		// if (!isOpen()) System.err.println(this+" PROCESS BEFORE OPEN!!!");
@@ -41,6 +49,10 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 	public void subscribeToSource(ISource<? extends R> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
 		super.subscribeToSource(source, sinkPort, sourcePort, schema);
 		int portCount = delegateSink.getInputPortCount();
+		initNegPOEvents(portCount);
+	}
+
+	private void initNegPOEvents(int portCount) {
 		processInitNegEvent = new POEvent[portCount];
 		processDoneNegEvent = new POEvent[portCount];
 		for (int i = 0; i < portCount; ++i) {

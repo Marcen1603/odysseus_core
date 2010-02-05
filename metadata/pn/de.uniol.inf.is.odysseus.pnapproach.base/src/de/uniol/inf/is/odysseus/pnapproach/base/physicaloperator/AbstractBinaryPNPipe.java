@@ -14,6 +14,11 @@ public abstract class AbstractBinaryPNPipe<Read extends IMetaAttributeContainer<
 	
 	protected AbstractBinaryPNPipe(){
 	}
+	
+	public AbstractBinaryPNPipe(AbstractBinaryPNPipe<Read,Write> pipe){
+		super(pipe);
+	}
+	
 
 	@Override
 	public final void subscribeToSource(ISource<? extends Read> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
