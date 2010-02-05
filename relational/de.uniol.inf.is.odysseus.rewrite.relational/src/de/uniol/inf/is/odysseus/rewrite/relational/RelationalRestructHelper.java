@@ -96,7 +96,7 @@ public class RelationalRestructHelper {
 		final List<String> uris = new ArrayList<String>(attributes
 				.getAttributeCount());
 		for (SDFAttribute curAttr : attributes) {
-			uris.add(curAttr.getURI());
+			uris.add(curAttr.getPointURI());
 		}
 		final boolean[] retValue = new boolean[] { true };
 		RelationalRestructHelper.visitPredicates(predicate,
@@ -109,7 +109,7 @@ public class RelationalRestructHelper {
 							List<String> tmpUris = new ArrayList<String>(
 									tmpAttrs.size());
 							for (SDFAttribute curAttr : tmpAttrs) {
-								tmpUris.add(curAttr.getURI());
+								tmpUris.add(curAttr.getPointURI());
 							}
 							if (!uris.containsAll(tmpUris)) {
 								retValue[0] = false;

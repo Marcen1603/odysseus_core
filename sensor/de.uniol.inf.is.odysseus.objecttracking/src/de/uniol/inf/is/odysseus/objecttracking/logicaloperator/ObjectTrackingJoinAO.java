@@ -233,7 +233,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 				String token = tokens.nextToken();
 				boolean found = false;
 				for(SDFAttribute curAttr: neededAttributes){
-					if(token.equals(curAttr.toString())){
+					if(token.equals(curAttr.toPointString())){
 						int attrPos = leftSchema.indexOf(curAttr);
 						boolean fromRightChannel = false;
 						

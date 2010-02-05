@@ -36,7 +36,7 @@ public class SDFAttributeAttributeBindingPair extends SDFElement {
 	@Override
 	public String toString() {
 		//StringBuffer ret = new StringBuffer("(" + this.attribute.getURI(true));
-		StringBuffer ret = new StringBuffer("(" + this.attribute.toString());
+		StringBuffer ret = new StringBuffer("(" + this.attribute);
 		if (this.attributeBinding != null)
 			ret.append("," + this.attributeBinding.toString());
 		return ret.toString() + ")";

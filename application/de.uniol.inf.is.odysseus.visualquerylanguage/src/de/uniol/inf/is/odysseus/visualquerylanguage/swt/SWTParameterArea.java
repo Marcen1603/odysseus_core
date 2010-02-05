@@ -71,9 +71,9 @@ public class SWTParameterArea {
 			String outPut = "";
 			for (SDFAttribute att : content.getOperator().getOutputSchema()) {
 				if (outPut.isEmpty()) {
-					outPut = att.toString();
+					outPut = att.toPointString();
 				} else {
-					outPut += ", " + att.toString();
+					outPut += ", " + att.toPointString();
 				}
 			}
 			typLabel.setText("Ausgabeschema: " + outPut);

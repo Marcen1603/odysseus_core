@@ -81,7 +81,7 @@ public class SDFEntity extends SDFSchemaElement {
 		}
 		ret.append("\t\t Attributes \n");
 		for (SDFAttribute a: attributes) {
-			ret.append("\t\t").append(a.toString());
+			ret.append("\t\t").append(a);
 			if (isIdentifiying(a)) ret.append(" identifying ");
 			ret.append("\n");
 		}

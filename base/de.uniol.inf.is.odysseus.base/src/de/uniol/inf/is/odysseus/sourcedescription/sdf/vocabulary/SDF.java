@@ -129,6 +129,7 @@ public class SDF {
 	}
 
 	public static String getNamespaceForUri(String base) {
+		if (sdffiles == null) init();
 		String ret = null;
 		for (int i = 0; i < sdffiles.size(); i++) {
 			SDF file = (SDF) sdffiles.get(i);
@@ -141,6 +142,7 @@ public class SDF {
 	}
 
 	public static String getUriForNamespace(String namespace) {
+		if (sdffiles == null) init();
 		String ret = null;
 		for (int i = 0; i < sdffiles.size(); i++) {
 			SDF file = (SDF) sdffiles.get(i);
@@ -152,26 +154,26 @@ public class SDF {
 		return ret;
 	}
 	
-	public static String prettyPrintURI(String uri) {
-		if (sdffiles == null)
-			init();
-		String ret = uri;
-		if (uri != null) {
-			String base = uri.substring(0, uri.lastIndexOf("#") + 1);
-			String elem = uri.substring(uri.lastIndexOf("#") + 1);
-
-			String namespaceName = getNamespaceForUri(base);
-			if (namespaceName != null) {
-				ret = namespaceName + ":" + elem;
-			}
-		}
-		return ret;
-	}
-
+//	public static String prettyPrintURI(String uri) {
+//		if (sdffiles == null)
+//			init();
+//		String ret = uri;
+//		if (uri != null) {
+//			String base = uri.substring(0, uri.lastIndexOf("#") + 1);
+//			String elem = uri.substring(uri.lastIndexOf("#") + 1);
+//
+//			String namespaceName = getNamespaceForUri(base);
+//			if (namespaceName != null) {
+//				ret = namespaceName + ":" + elem;
+//			}
+//		}
+//		return ret;
+//	}
+	
 	public static void main(String[] args) {
-		System.out
-				.println(de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDF
-						.prettyPrintURI("http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_descriptions.sdf#SourceDescription"));
+//		System.out
+//				.println(de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDF
+//						.prettyPrintURI("http://www-is.informatik.uni-oldenburg.de/~grawund/rdf/2003/04/sdf_descriptions.sdf#SourceDescription"));
 	}
 
 }

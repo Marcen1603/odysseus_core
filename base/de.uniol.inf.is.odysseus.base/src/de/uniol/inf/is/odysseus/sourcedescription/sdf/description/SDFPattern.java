@@ -164,12 +164,12 @@ abstract public class SDFPattern extends SDFElement {
 		// sonst......
 		for (int i = 0; i < leftSet.getAttributeCount(); i++) {
 			logger.info("##### => CHECK: "
-					+ rightSet.getAttribute(i).toString()
+					+ rightSet.getAttribute(i)
 					+ " <==> "
-					+ leftSet.getAttribute(i).toString()
+					+ leftSet.getAttribute(i)
 					+ "("
-					+ leftSet.getAttribute(i).toString().equals(
-							rightSet.getAttribute(i).toString()) + ")");
+					+ leftSet.getAttribute(i).equals(
+							rightSet.getAttribute(i)) + ")");
 
 			// if(!leftSet.getAttribute(i).getQualName().equals(rightSet.getAttribute(i).getQualName())
 			// )

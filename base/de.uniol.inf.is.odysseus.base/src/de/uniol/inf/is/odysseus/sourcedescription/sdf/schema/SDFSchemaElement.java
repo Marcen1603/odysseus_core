@@ -14,6 +14,10 @@ public abstract class SDFSchemaElement extends SDFElement {
     private Map<String, SDFDatatypeConstraint> dtConstraints = new HashMap<String, SDFDatatypeConstraint>();
     private SDFUnit unit = null;
 
+    protected SDFSchemaElement(){
+    	super();
+    }
+    
 	public SDFSchemaElement(String URI) {
 		super(URI);
 	}

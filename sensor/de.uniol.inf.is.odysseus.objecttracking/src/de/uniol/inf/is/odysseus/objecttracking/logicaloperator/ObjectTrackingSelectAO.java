@@ -156,7 +156,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 				String token = tokens.nextToken();
 				boolean found = false;
 				for(SDFAttribute curAttr: neededAttributes){
-					if(token.equals(curAttr.toString())){
+					if(token.equals(curAttr.toPointString())){
 						int attrPos = this.getInputSchema().indexOf(curAttr);
 						
 						// attrPos can be -1 if curAttr is t (for time)

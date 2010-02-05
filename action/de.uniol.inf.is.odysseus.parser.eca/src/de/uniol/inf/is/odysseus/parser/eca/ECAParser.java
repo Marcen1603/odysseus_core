@@ -137,7 +137,7 @@ public class ECAParser implements IQueryParser{
 								for (int i=0; i<schema.getAttributeCount(); i++){
 									SDFAttribute attribute = schema.get(i);
 									//check for uri since it is unique
-									if (attribute.getURI().equals(completeParam)){
+									if (attribute.getPointURI().equals(completeParam)){
 										try {
 											actionParameters.add(new StreamAttributeParameter(attribute.getDatatype(), i));
 										} catch (AttributeParsingException e) {

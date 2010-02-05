@@ -117,7 +117,7 @@ public class AttributeResolver implements IAttributeResolver {
 		String name = expression.jjtGetChild(1).toString();
 		SDFAttribute attribute = getAttribute(name);
 		String aggregateName = expression.jjtGetChild(0).toString() + "("
-				+ attribute.getURI(false) + ")";
+				+ attribute.getPointURI() + ")";
 		for (SDFAttribute curAttribute : this.attributes) {
 			if (curAttribute.getAttributeName().equals(aggregateName)) {
 				return curAttribute;

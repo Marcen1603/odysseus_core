@@ -107,7 +107,8 @@ public class SDFExpression implements Serializable {
 		this.attribute = attribute;
 		this.attributes = new ArrayList<SDFAttribute>(1);
 		this.attributes.add(attribute);
-		this.expression = attribute.toString();
+		// TODO: Hier wird noch die Punkt-Notation benötigt?
+		this.expression = attribute.toPointString();
 	}
 
 	private void init(String value, IAttributeResolver attributeResolver)
@@ -235,7 +236,7 @@ public class SDFExpression implements Serializable {
 			aliasName = "t";
 			attribute = new SDFAttribute(null, "t");
 		} else {
-			aliasName = attribute.getURI(false);
+			aliasName = attribute.getPointURI();
 		}
 
 		Variable var = this.variables.get(aliasName);

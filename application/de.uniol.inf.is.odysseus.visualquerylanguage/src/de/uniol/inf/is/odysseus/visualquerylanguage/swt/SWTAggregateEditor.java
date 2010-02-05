@@ -69,7 +69,7 @@ public class SWTAggregateEditor {
 		for (final SDFAttribute sdfAttribute : inputList) {
 			final Map<AggregateFunction, SDFAttribute> outputs = new HashMap<AggregateFunction, SDFAttribute>();
 			final Text inputText = new Text(comp, SWT.SINGLE);
-			inputText.setText(sdfAttribute.toString());
+			inputText.setText(sdfAttribute.toPointString());
 			inputText.setData(sdfAttribute);
 			inputText.setEnabled(false);
 			Color c = new Color(Display.getCurrent(), 255, 255, 255);

@@ -25,7 +25,7 @@ public class DirectAttributeResolver implements IAttributeResolver {
 					found = attr;
 				}
 			} else {
-				if (attr.getURI(false).equals(name)) {
+				if (attr.getPointURI().equals(name)) {
 					return attr;
 				}
 			}

@@ -5,13 +5,23 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
+/**
+ * This class represents Attributes. Each Attribute can have two parts: A global unique source name and 
+ * a source unique attribute name. 
+ * 
+ * Each attribute can have a list of subattributes to support NF2 based attributes
+ *  
+ * @author Marco Grawunder, Andre Bolles
+ *
+ */
+
 public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttribute>, Serializable {
 
 	/**
 	 * An attribute consists of two parts, the sourceName and the attributeName
 	 */
-	private String sourceName;
-	private String attributeName;
+//	private String sourceName;
+//	private String attributeName;
 	
 	/**
 	 * For NF2 we need subattributes
@@ -32,8 +42,8 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 * @param sourceAndAttributeName
 	 */
 	public SDFAttribute(String sourceAndAttributeName) {
-		super(sourceAndAttributeName);
-		init(sourceAndAttributeName);
+	    super();
+	    initAttribute(sourceAndAttributeName);	    
 	}
 	
 	/**
@@ -45,8 +55,8 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 * @param subattributes
 	 */
 	public SDFAttribute(String sourceAndAttributeName, SDFAttributeList subattributes){
-		super(sourceAndAttributeName);
-		init(sourceAndAttributeName);
+		super();
+		initAttribute(sourceAndAttributeName);
 		this.subattributes = subattributes;
 	}
 	
@@ -56,10 +66,9 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 * @param attributeName
 	 */
 	public SDFAttribute(String sourceName, String attributeName) {
-		super(sourceName == null ? attributeName : sourceName + "."
-				+ attributeName);
-		this.sourceName = sourceName;
-		this.attributeName = attributeName;
+		super();
+		setSourceName(sourceName);
+		setAttributeName(attributeName);
 	}
 	
 	/**
@@ -68,8 +77,6 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 */
 	public SDFAttribute(SDFAttribute attribute) {
 		super(attribute);
-		this.sourceName = attribute.sourceName;
-		this.attributeName = attribute.attributeName;
 		this.subattributes = attribute.subattributes == null ? null : attribute.subattributes.clone();
 	}
 
@@ -77,16 +84,15 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 * Methode to share code between constructors
 	 * @param sourceAndAttributeName
 	 */
-	private void init(String sourceAndAttributeName) {
+	private void initAttribute(String sourceAndAttributeName) {
 		int pointPos = sourceAndAttributeName.lastIndexOf(".");
 		if (pointPos > 0){
-			this.sourceName = sourceAndAttributeName.substring(0,pointPos);
-			this.attributeName = sourceAndAttributeName.substring(pointPos+1);
+			setSourceName(sourceAndAttributeName.substring(0,pointPos));
+			setAttributeName(sourceAndAttributeName.substring(pointPos+1));
 		}else{
-			this.sourceName = null;
-			this.attributeName = sourceAndAttributeName;
+			setSourceName(null);
+			setAttributeName(sourceAndAttributeName);
 		}
-		updateName();
 	}
 
 	
@@ -158,13 +164,13 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	public void clearSubattributes(){
 		this.subattributes = new SDFAttributeList();
 	}
-
+	
 	/**
 	 * Get Sourcename-Part of the Attribute
 	 * @return
 	 */
 	public String getSourceName() {
-		return this.sourceName;
+		return getURIWithoutQualName();
 	}
 	
 	/**
@@ -173,8 +179,7 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 */
 
 	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
-		updateName();
+		setURIWithoutQualName(sourceName);
 	}
 
 	/**
@@ -182,8 +187,7 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 * @param attributeName
 	 */
 	public void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
-		updateName();
+		setQualName(attributeName);
 	}
 
 	/**
@@ -193,7 +197,7 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 * @return
 	 */
 	public String getAttributeName() {
-		return this.attributeName;
+		return getQualName();
 	}
 	
 	public void setCovariance(ArrayList<?> cov){
@@ -202,11 +206,6 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	
 	public ArrayList<?> getCovariance(){
 		return this.covariance;
-	}
-
-	private void updateName() {
-		setURI(sourceName == null ? attributeName : sourceName + "."
-				+ attributeName);
 	}
 	
 	/**
@@ -218,12 +217,12 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	 * @return true if attributeNames/sourceNames are equal
 	 */
 	public boolean equalsCQL(SDFAttribute attr) {
-		if (this.sourceName != null && attr.sourceName != null) {
-			if (!this.sourceName.equals(attr.sourceName)) {
+		if (this.getSourceName() != null && attr.getSourceName() != null) {
+			if (!this.getSourceName().equals(attr.getSourceName())) {
 				return false;
 			}
 		} 
-		return this.attributeName.equals(attr.attributeName);
+		return this.getAttributeName().equals(attr.getAttributeName());
 	}
 	
 	
@@ -232,11 +231,11 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ ((attributeName == null) ? 0 : attributeName.hashCode());
+				+ ((getAttributeName() == null) ? 0 : getAttributeName().hashCode());
 		result = prime * result
 				+ ((covariance == null) ? 0 : covariance.hashCode());
 		result = prime * result
-				+ ((sourceName == null) ? 0 : sourceName.hashCode());
+				+ ((getSourceName() == null) ? 0 : getSourceName().hashCode());
 		return result;
 	}
 
@@ -249,10 +248,10 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		if (getClass() != obj.getClass())
 			return false;
 		SDFAttribute other = (SDFAttribute) obj;
-		if (attributeName == null) {
-			if (other.attributeName != null)
+		if (getAttributeName() == null) {
+			if (other.getAttributeName() != null)
 				return false;
-		} else if (!attributeName.equals(other.attributeName))
+		} else if (!getAttributeName().equals(other.getAttributeName()))
 			return false;
 		if (covariance == null) {
 			if (other.covariance != null)
@@ -260,13 +259,13 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 		} else if (!covariance.equals(other.covariance))
 			return false;
 		// TODO: Kurzfristiger Hack
-		if (sourceName == null || other.sourceName == null){
+		if (getSourceName() == null || other.getSourceName() == null){
 			return true;
 		}
-		if (sourceName == null) {
-			if (other.sourceName != null)
+		if (getSourceName() == null) {
+			if (other.getSourceName() != null)
 				return false;
-		} else if (!sourceName.equals(other.sourceName))
+		} else if (!getSourceName().equals(other.getSourceName()))
 			return false;
 		return true;
 	}
@@ -279,13 +278,44 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	@Override
 	public int compareTo(SDFAttribute o) {
 		int comp = 0;
-		if (sourceName != null && o.getSourceName() != null){
-			comp = sourceName.compareTo(o.getSourceName());
+		if (getSourceName() != null && o.getSourceName() != null){
+			comp = getSourceName().compareTo(o.getSourceName());
 		}
 		if (comp == 0){
-			comp = attributeName.compareTo(o.getAttributeName());
+			comp = getAttributeName().compareTo(o.getAttributeName());
 		}
 		return comp;
 	}
 	
+	
+	
+//	// TODO: Anpassen!
+//	@Override
+//	private String toString() {
+//		if (getSourceName() != null){
+//			return getSourceName()+"."+getAttributeName();
+//		}else{
+//			return getAttributeName();
+//		}
+//	}
+//
+//	// TODO: Anpassen!
+//	@Override
+//	private String getURI() {
+//		return toString();
+//	}
+//	
+//	// TODO: Anpassen!
+//	private String getURI(boolean prettyPrint) {
+//		return getURI(prettyPrint, ".");
+//	}
+	
+	public String getPointURI(){
+		return getURI(false,".");
+	}
+
+	public String toPointString() {
+		return getPointURI();
+	}
+
 }

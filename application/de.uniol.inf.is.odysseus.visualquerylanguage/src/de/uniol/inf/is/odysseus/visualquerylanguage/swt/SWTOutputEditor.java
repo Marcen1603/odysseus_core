@@ -59,14 +59,14 @@ public class SWTOutputEditor {
 		for (SDFAttribute sdfAttribute : inputList) {
 			final Button button = new Button(comp, SWT.PUSH);
 			button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			button.setText(sdfAttribute.toString());
+			button.setText(sdfAttribute.toPointString());
 			button.setData(sdfAttribute);
 			final Text text = new Text(comp, SWT.SINGLE);
 			textList.add(text);
 			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			if (EditorChecker.getInstance().hasProjectEditor(
 					content.getEditor())) {
-				button.setText(sdfAttribute.toString());
+				button.setText(sdfAttribute.toPointString());
 				button.setData(sdfAttribute);
 				text.setEditable(false);
 				Color c = new Color(Display.getCurrent(), 255, 255, 255);

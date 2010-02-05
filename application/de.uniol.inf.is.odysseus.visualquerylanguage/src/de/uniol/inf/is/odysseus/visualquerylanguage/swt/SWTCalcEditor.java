@@ -66,7 +66,7 @@ public class SWTCalcEditor {
 			if (sdfAttribute != null) {
 				button = new Button(comp, SWT.PUSH);
 				button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				button.setText(sdfAttribute.toString());
+				button.setText(sdfAttribute.toPointString());
 				button.setData(sdfAttribute);
 				button.addSelectionListener(new SelectionAdapter() {
 
