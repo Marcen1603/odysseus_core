@@ -26,6 +26,13 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		private List<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>>> groups_queue = new ArrayList<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>>>();
 		private HashMap<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>>, Integer> gToId = new HashMap<DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>>, Integer>();
 
+		public G(){};
+		
+		public G(G g){
+			groups_queue.addAll(g.groups_queue);
+			gToId.putAll(g.gToId);
+		}
+		
 		synchronized void insert(
 				DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> sa,
 				Integer groupID) {
@@ -50,6 +57,11 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			if (isEmpty())
 				return;
 			gToId.remove(groups_queue.remove(0));
+		}
+		
+		@Override
+		protected G clone(){
+			return new G(this);
 		}
 
 	}
@@ -86,8 +98,11 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	public StreamGroupingWithAggregationPO(
-			StreamGroupingWithAggregationPO<Q, R> agg) {
+			StreamGroupingWithAggregationPO<Q, R> agg) throws CloneNotSupportedException {
 		super(agg);
+		g = agg.g.clone();
+		q = agg.q.clone();
+		groups.putAll(agg.groups);
 	}
 
 	protected void initAggFunctions() {
@@ -244,7 +259,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	public StreamGroupingWithAggregationPO<Q, R> clone() {
+	public StreamGroupingWithAggregationPO<Q, R> clone() throws CloneNotSupportedException {
 		return new StreamGroupingWithAggregationPO<Q, R>(this);
 	}
 

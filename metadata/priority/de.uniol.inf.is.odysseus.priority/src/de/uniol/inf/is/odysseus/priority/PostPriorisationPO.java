@@ -31,6 +31,11 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		this.predicates = postAO.getPredicates();
 	}	
 	
+	public PostPriorisationPO(PostPriorisationPO<T> postPriorisationPO) {
+		super(postPriorisationPO);
+		// TODO: Jonas!
+	}
+
 	@SuppressWarnings("unchecked")
 	public void setPostPriorisationFunctionality(IPostPriorisationFunctionality functionality) {
 		this.functionality = functionality;
@@ -124,7 +129,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	
 	@Override
 	public PostPriorisationPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+		return new PostPriorisationPO<T>(this);
 	}
 
 

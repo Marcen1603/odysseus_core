@@ -30,6 +30,10 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		super(new MetadataComparator<ITimeInterval>());
 		super.setRemovePredicate(TotallyBeforePredicate.getInstance());
 	}
+	
+	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea){
+		super(defaultTISweepArea);
+	}
 
 	public Iterator<T> queryOverlaps(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -170,5 +174,10 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		UnsupportedOperationException exception = new UnsupportedOperationException("Das remove-Praedikat in der DefaultTISweepArea ist fest. Es wird ein TotallyBeforePredicate verwendet.");
 		exception.fillInStackTrace();
 		throw exception;
+	}
+	
+	@Override
+	public DefaultTISweepArea<T> clone() throws CloneNotSupportedException {
+		return new DefaultTISweepArea<T>(this);
 	}
 }

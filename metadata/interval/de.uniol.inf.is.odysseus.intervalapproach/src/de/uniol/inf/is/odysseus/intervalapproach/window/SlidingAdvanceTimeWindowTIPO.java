@@ -22,14 +22,15 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IMetaAttributeContainer<? e
 	public SlidingAdvanceTimeWindowTIPO(SlidingAdvanceTimeWindowTIPO<T> name) {
 		super(name);
 	}
+		
+	@Override
+	protected PointInTime calcWindowEnd(ITimeInterval time) {
+		return WindowCalculator.calcSlidingDeltaWindowEnd(time, this.windowAdvance, this.windowSize);
+	}
 	
 	@Override
 	public SlidingAdvanceTimeWindowTIPO<T> clone() {
 		return new SlidingAdvanceTimeWindowTIPO<T>(this);
 	}
-	
-	@Override
-	protected PointInTime calcWindowEnd(ITimeInterval time) {
-		return WindowCalculator.calcSlidingDeltaWindowEnd(time, this.windowAdvance, this.windowSize);
-	}
+
 }
