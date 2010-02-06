@@ -53,7 +53,7 @@ public class JMXRegistryServiceImpl implements JMXRegistryService {
 
     @Override
     public void removeManagedBean(OdysseusManagedBean bean) {
-        map.remove(bean.getObjectName());
+        map.remove(bean.getObjectNameAlias());
     }
 
     @Override
