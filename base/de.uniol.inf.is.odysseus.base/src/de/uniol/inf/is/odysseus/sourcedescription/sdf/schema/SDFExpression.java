@@ -59,7 +59,6 @@ public class SDFExpression implements Serializable {
 	private int[] attributePositions;
 
 	private SDFAttribute attribute;
-	
 
 	private IAttributeResolver attributeResolver;
 
@@ -84,7 +83,7 @@ public class SDFExpression implements Serializable {
 		this.variableArray = new Variable[0];
 		init(attribute);
 	}
-	
+
 	public synchronized static void addFunction(CustomFunction function) {
 		customFunctions.add(function);
 		functions.add(function.getName());
@@ -147,9 +146,12 @@ public class SDFExpression implements Serializable {
 
 		Matcher m = variablePattern.matcher(value);
 		String totalResult = "";
+		start = 0;
 		while (m.find()) {
 			String group = m.group(1);
-			if (group == null) {
+			if (group == null || group.toUpperCase().equals("AND")
+					|| group.toUpperCase().equals("OR")
+					|| group.toUpperCase().equals("NOT")) {
 				continue;
 			}
 			Variable variable = toVariable(group);
@@ -286,7 +288,7 @@ public class SDFExpression implements Serializable {
 	public String toString() {
 		return this.expression;
 	}
-	
+
 	public String getExpression() {
 		return expression;
 	}
