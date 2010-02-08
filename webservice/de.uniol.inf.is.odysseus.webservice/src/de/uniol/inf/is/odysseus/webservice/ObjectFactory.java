@@ -25,7 +25,9 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _Actuator_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuator");
     private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
+    private final static QName _ActuatorName_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorName");
     private final static QName _Schema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "Schema");
 
     /**
@@ -33,6 +35,14 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link ActuatorInformation }
+     * 
+     */
+    public ActuatorInformation createActuatorInformation() {
+        return new ActuatorInformation();
     }
 
     /**
@@ -44,12 +54,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ActuatorReducedInformation }
+     * 
+     */
+    public ActuatorReducedInformation createActuatorReducedInformation() {
+        return new ActuatorReducedInformation();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ActuatorInformation }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "actuator")
+    public JAXBElement<ActuatorInformation> createActuator(ActuatorInformation value) {
+        return new JAXBElement<ActuatorInformation>(_Actuator_QNAME, ActuatorInformation.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "query")
     public JAXBElement<QueryType> createQuery(QueryType value) {
         return new JAXBElement<QueryType>(_Query_QNAME, QueryType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ActuatorReducedInformation }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "actuatorName")
+    public JAXBElement<ActuatorReducedInformation> createActuatorName(ActuatorReducedInformation value) {
+        return new JAXBElement<ActuatorReducedInformation>(_ActuatorName_QNAME, ActuatorReducedInformation.class, null, value);
     }
 
     /**
