@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.webservice;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -16,8 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="queryType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="query" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="language" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;sequence>
+ *         &lt;element name="query" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="language" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -26,12 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "queryType")
+@XmlType(name = "queryType", propOrder = {
+    "query",
+    "language"
+})
 public class QueryType {
 
-    @XmlAttribute
+    @XmlElement(required = true)
     protected String query;
-    @XmlAttribute
+    @XmlElement(required = true)
     protected String language;
 
     /**
