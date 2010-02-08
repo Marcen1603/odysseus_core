@@ -290,14 +290,14 @@ public class SDFAttribute extends SDFSchemaElement implements Comparable<SDFAttr
 	
 	
 //	// TODO: Anpassen!
-//	@Override
-//	private String toString() {
-//		if (getSourceName() != null){
-//			return getSourceName()+"."+getAttributeName();
-//		}else{
-//			return getAttributeName();
-//		}
-//	}
+	@Override
+	public String toString() {
+		if (getSourceName() != null){
+			return getSourceName()+"."+getAttributeName();
+		}else{
+			return getAttributeName();
+		}
+	}
 //
 //	// TODO: Anpassen!
 //	@Override

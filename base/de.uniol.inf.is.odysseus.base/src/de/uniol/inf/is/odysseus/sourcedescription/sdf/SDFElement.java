@@ -59,11 +59,7 @@ public abstract class SDFElement implements Serializable {
 	}
 	
 	protected String getURI(boolean prettyPrint, String seperator) {
-		if (prettyPrint) {
-			return getURI(uRIWithoutQualName, qualName, true, seperator);
-		} else {
-			return getURI(uRIWithoutQualName, qualName, false, seperator);
-		}
+		return getURI(uRIWithoutQualName, qualName, prettyPrint, seperator);
 	}
 	
 
@@ -81,7 +77,7 @@ public abstract class SDFElement implements Serializable {
 		String sep = defaultSperator==null?"#":defaultSperator;
 		StringBuffer ret = new StringBuffer();
 
-		if (uRIWithoutQualName != null) {
+		if (uRIWithoutQualName != null && uRIWithoutQualName.length() > 0) {
 			if (substSDFNamespace) {
 				String namespaceName = SDF
 						.getNamespaceForUri(uRIWithoutQualName);
@@ -93,7 +89,7 @@ public abstract class SDFElement implements Serializable {
 			}
 		} 
 		if (qualName != null){
-			if (uRIWithoutQualName != null){
+			if (uRIWithoutQualName != null && uRIWithoutQualName.length() > 0){
 				if (substSDFNamespace){
 					ret.append(":");
 				}else{
