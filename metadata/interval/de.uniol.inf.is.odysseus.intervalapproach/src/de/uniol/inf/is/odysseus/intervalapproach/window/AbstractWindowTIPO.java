@@ -9,12 +9,12 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 		extends AbstractPipe<T, T> {
 	protected final long windowSize;
 	protected final long windowAdvance;
-	private final WindowAO windowAO;
+	protected final WindowAO windowAO;
 	
 	public AbstractWindowTIPO(WindowAO ao) {
 		this.windowSize = ao.getWindowSize();
 		this.windowAdvance = ao.getWindowAdvance();
-		this.windowAO = ao;
+		this.windowAO = ao.clone();
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
