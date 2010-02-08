@@ -16,6 +16,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface ActuatorAdapterSchema {
-	boolean show();
+	boolean show() default true;
 	boolean provide() default true;
 }
