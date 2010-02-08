@@ -899,12 +899,13 @@ public class ExecutorConsole implements CommandProvider,
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
 			}else if (args[args.length-2].toUpperCase().equals("<F>")){
-					this.executor.addQuery(q.toString(), parser(),
+				this.executor.addQuery(q.toString(), parser(),
 							new ParameterDefaultRoot(new FileSink(args[args.length-1])),
 							this.trafoConfigParam);
 
 			} else {
-				q.append(args[args.length-1]);
+				q.append(args[args.length-2]).append(" ");
+				q.append(args[args.length-1]).append(" ");
 				this.executor.addQuery(q.toString(), parser(),
 						this.trafoConfigParam);
 			}
