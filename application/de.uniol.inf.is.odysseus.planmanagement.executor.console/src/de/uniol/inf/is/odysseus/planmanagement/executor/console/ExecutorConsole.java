@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.physicaloperator.base.FileSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -219,6 +220,8 @@ public class ExecutorConsole implements CommandProvider,
 			new TransformationConfiguration("relational", ITimeInterval.class));
 
 	private LinkedList<Command> currentCommands;
+
+	private String outputputFilename;
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		System.out.println("executor gebunden");
@@ -742,10 +745,39 @@ public class ExecutorConsole implements CommandProvider,
 
 	}
 
+	@Help(parameter = "<filename>", description = "Set a filename for result dump. Each result is dumped to this file. Call without parameter to unset.")
+	public void _setOutputFilename(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		if (args.length > 0){
+			outputputFilename = args[0];
+			ci.println("Output written to "+outputputFilename);
+		}else{
+			outputputFilename = "";
+			ci.println("No output file set");
+		}
+	}
+
+	public void _getOutputFilename(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		if (outputputFilename != null && outputputFilename.length() > 0){
+			ci.println("Output written to "+outputputFilename);
+		}else{
+			ci.println("No output file set");
+		}
+	}
+
+	
 	private void addQuery(String q) {
 		try {
-			this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
-					new MySink()));
+			if (outputputFilename == null || outputputFilename.length() == 0){
+				this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
+						new MySink()));
+			}else{
+				this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
+						new FileSink(outputputFilename)));				
+			}
 		} catch (PlanManagementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -853,18 +885,24 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 	
-	@Help(parameter = "<query string without SELECT> [<S>]", description = "add query [with console-output-sink]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
+	@Help(parameter = "<query string without SELECT> [<S>|<F> filename]", description = "add query [with console-output-sink]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
 	public void _SELECT(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		StringBuffer q = new StringBuffer("SELECT "); 
-		for (int i=0;i<args.length-1;i++){
+		for (int i=0;i<args.length-2;i++){
 			q.append(args[i]).append(" ");
 		}
 		try {
 			if (args[args.length-1].toUpperCase().equals("<S>")){
+				q.append(args[args.length-2]).append(" ");
 				this.executor.addQuery(q.toString(), parser(),
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
+			}else if (args[args.length-2].toUpperCase().equals("<F>")){
+					this.executor.addQuery(q.toString(), parser(),
+							new ParameterDefaultRoot(new FileSink(args[args.length-1])),
+							this.trafoConfigParam);
+
 			} else {
 				q.append(args[args.length-1]);
 				this.executor.addQuery(q.toString(), parser(),

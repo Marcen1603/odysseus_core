@@ -267,6 +267,7 @@ public class Query implements IEditableQuery {
 				if (defaultRoot != null && defaultRoot.isSink()
 						&& root.isSource()) {
 					((ISink) defaultRoot).subscribeToSource((ISource) root, 0,0, root.getOutputSchema());
+					this.root = defaultRoot;
 				}
 			}
 		}
