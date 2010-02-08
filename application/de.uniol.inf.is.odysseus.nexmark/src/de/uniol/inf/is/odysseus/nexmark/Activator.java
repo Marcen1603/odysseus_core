@@ -1,5 +1,11 @@
 package de.uniol.inf.is.odysseus.nexmark;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -10,6 +16,9 @@ import de.uniol.inf.is.odysseus.nexmark.simulation.NexmarkServer;
 public class Activator implements BundleActivator {
 	private static final Logger logger = LoggerFactory.getLogger( BundleActivator.class );
 	
+	static private String categories;
+	private static final String categoriesFile = "/config/categories.txt";
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -32,6 +41,10 @@ public class Activator implements BundleActivator {
 		if (args[1] != null){
 			NexmarkServer.main(args);
 		}
+		URL catURL = context.getBundle().getEntry(categoriesFile);
+		logger.debug("Read Categories from "+categoriesFile+" --> "+catURL);
+		categories = readCategoryFile(catURL);
+		logger.debug("done ");
 		
 	}
 
@@ -42,4 +55,37 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 	}
 
+	static public String getCategoryFile(){
+		return categories;
+	}
+	
+	static private String readCategoryFile(URL input) {
+		BufferedReader br = null;
+		String text = "";
+
+		try {
+
+			// Windows
+			br = new BufferedReader(new InputStreamReader(input.openStream()));
+
+			String zeile = null;
+			while ((zeile = br.readLine()) != null) {
+				text += zeile.trim();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return text;
+
+	}
 }

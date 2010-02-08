@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.nexmark.simulation;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
@@ -16,8 +13,9 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.traversal.NodeIterator;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.nexmark.Activator;
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.Container;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
@@ -55,7 +53,6 @@ class TagMap {
  */
 public class NexmarkStaticClientHandler extends Thread {
 	private static final TagMap categoryTagMap = initCategoryTagMap();
-	private static final String categoriesFile = "/de/uniol/inf/is/odysseus/evaluation/nexmark/simulation/categories.txt";
 
 	private String document;
 
@@ -136,40 +133,10 @@ public class NexmarkStaticClientHandler extends Thread {
 	}
 
 	private void initCategoryStream() {
-		document = readCategoryFile();
+		document = Activator.getCategoryFile();
 		tagMap = categoryTagMap;
 	}
 
-	private String readCategoryFile() {
-		BufferedReader br = null;
-		String text = "";
-
-		try {
-			String file = getClass().getResource(categoriesFile).getFile();
-			file = file.replace("%20", " "); // Leerzeichen im Pfad unter
-			// Windows
-			br = new BufferedReader(new FileReader(file));
-
-			String zeile = null;
-			while ((zeile = br.readLine()) != null) {
-				text += zeile.trim();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return text;
-
-	}
 
 	/**
 	 * Transformiert eine Node Struktur in ein Relationales Tupel
