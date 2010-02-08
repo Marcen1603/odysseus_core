@@ -104,9 +104,8 @@ public class AttributeResolver implements IAttributeResolver {
 			throw new IllegalArgumentException("no such source: " + sourceName);
 		}
 		for (SDFAttribute attribute : source.getOutputSchema()) {
-			SDFAttribute SDFAttribute = (SDFAttribute) attribute;
-			if (SDFAttribute.getAttributeName().equals(attributeName)) {
-				return SDFAttribute;
+			if (attribute.getAttributeName().equals(attributeName)) {
+				return attribute;
 			}
 		}
 		throw new IllegalArgumentException("no such attribute: " + sourceName
@@ -131,4 +130,8 @@ public class AttributeResolver implements IAttributeResolver {
 		return getAttribute(name) != null;
 	}
 
+	@Override
+	public String toString() {
+		return "Sources "+sources+" attributes"+attributes;
+	}
 }
