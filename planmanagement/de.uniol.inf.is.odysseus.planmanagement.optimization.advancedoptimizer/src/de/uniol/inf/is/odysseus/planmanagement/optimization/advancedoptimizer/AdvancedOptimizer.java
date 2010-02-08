@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -26,24 +27,44 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries, OptimizeParameter parameter)
+			List<IEditableQuery> queries, OptimizeParameter parameter)
 			throws QueryOptimizationException {
+		if (!queries.isEmpty()) {
+			for (IEditableQuery editableQuery : queries) {
+				this.queryOptimizer.optimizeQuery(sender, editableQuery,
+						parameter);
+			}
+
+			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
+			newPlan.addAll(queries);
+
+			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
+					.optimizePlan(sender, parameter, newPlan);
+
+			return newExecutionPlan;
+		}
 		return sender.getEditableExecutionPlan();
 	}
-
+	
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries, OptimizeParameter parameter,
-			Set<String> rulesToUse) throws QueryOptimizationException {
-		return sender.getEditableExecutionPlan();
-	}
-
-	@Override
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
-			T sender, IQuery removedQuery,
-			IEditableExecutionPlan executionPlan,
-			AbstractOptimizationParameter<?>... parameters)
+			List<IEditableQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
 			throws QueryOptimizationException {
+		if (!queries.isEmpty()) {
+			for (IEditableQuery editableQuery : queries) {
+				this.queryOptimizer.optimizeQuery(sender, editableQuery,
+						parameter, rulesToUse);
+			}
+
+			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
+			newPlan.addAll(queries);
+
+			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
+					.optimizePlan(sender, parameter, newPlan);
+
+			return newExecutionPlan;
+			
+		}
 		return sender.getEditableExecutionPlan();
 	}
 
@@ -52,7 +73,25 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			T sender, IQuery removedQuery,
 			IEditableExecutionPlan executionPlan, OptimizeParameter parameter)
 			throws QueryOptimizationException {
-		return sender.getEditableExecutionPlan();
+		ArrayList<IEditableQuery> newPlan = new ArrayList<IEditableQuery>(
+				sender.getRegisteredQueries());
+		newPlan.remove(removedQuery);
+
+		IEditableExecutionPlan newExecutionPlan = this.planOptimizer
+				.optimizePlan(sender, parameter, newPlan);
+
+		return newExecutionPlan;
+	}
+
+
+	@Override
+	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
+			T sender, IQuery removedQuery,
+			IEditableExecutionPlan executionPlan,
+			AbstractOptimizationParameter<?>... parameters)
+			throws QueryOptimizationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	@Override
@@ -73,7 +112,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// testweise gleicher plan
 			newPlan = MigrationHelper.clonePhysicalPlan(sender.getRoot());
 		} catch (Exception e) { // CloneNotSupportedException
-			e.printStackTrace();
 			this.logger.warn("Reoptimization failed. Could not copy physical plan.",e);
 			return executionPlan;
 		}
