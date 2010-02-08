@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
                       serviceName = "OdysseusWS",
                       portName = "OdysseusWSSOAP",
                       targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/",
-                      //wsdlLocation = "file:OdysseusWebService.wsdl",
+                      wsdlLocation = "resources/OdysseusWebService.wsdl",
                       endpointInterface = "de.uniol.inf.is.odysseus.webservice.OdysseusWSPort")
                       
 public class OdysseusWSPortImpl implements OdysseusWSPort {
