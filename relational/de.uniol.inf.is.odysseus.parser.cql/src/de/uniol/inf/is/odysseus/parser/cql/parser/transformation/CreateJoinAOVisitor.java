@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO.Type;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
@@ -388,6 +390,14 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		}
 
 
+	}
+	
+	@Override	
+	public Object visit(ASTBrokerSource node, Object data) {
+		// same thing like simple-source
+		ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
+		String name = ident.getName();		
+		return createJoin(name, data);			
 	}
 
 }

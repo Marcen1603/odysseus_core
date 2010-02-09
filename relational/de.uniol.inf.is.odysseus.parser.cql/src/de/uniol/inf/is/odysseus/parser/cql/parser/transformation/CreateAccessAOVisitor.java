@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.QueryAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
@@ -21,9 +23,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -55,6 +55,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		SDFSource source = DataDictionary.getInstance().getSource(sourceString);
 		if (source.getSourceType().equals("RelationalStreaming")) {
 			relationalStreamingSource(node, source, sourceString);
+			return null;
+		} else if (source.getSourceType().equals("brokerStreaming")) {
+			brokerStreamingSource(node, data);
 			return null;
 		} else {
 			throw new RuntimeException("unknown type of source '"
@@ -252,6 +255,47 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		} catch (Exception e) {
 			throw new RuntimeException("missing database plugin for cql parser");
 		}
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTBrokerSource node, Object data) {
+		try {
+			Class<?> brokerSourceVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.CreateBrokerSourceVisitor");
+			Object bsv = brokerSourceVisitor.newInstance();
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+					ASTBrokerSource.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+					.invoke(bsv, node, data);
+
+			ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
+			String name = ident.getName();
+			this.attributeResolver.addSource(name, sourceOp);			
+		} catch (Exception e) {
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.");
+		}
+
+		return null;
+	}
+
+	private Object brokerStreamingSource(ASTSimpleSource node, Object data) {
+		try {
+			Class<?> brokerSourceVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.CreateBrokerSourceVisitor");
+			Object bsv = brokerSourceVisitor.newInstance();
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+					ASTSimpleSource.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+					.invoke(bsv, node, data);
+
+			ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
+			String name = ident.getName();
+			this.attributeResolver.addSource(name, sourceOp);			
+		} catch (Exception e) {
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.");
+		}
+
 		return null;
 	}
 }

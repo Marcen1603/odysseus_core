@@ -401,4 +401,14 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTCreateBroker node, Object data) {		
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTBrokerSource node, Object data) {
+		return pvisit(node);
+	}
+
 }
