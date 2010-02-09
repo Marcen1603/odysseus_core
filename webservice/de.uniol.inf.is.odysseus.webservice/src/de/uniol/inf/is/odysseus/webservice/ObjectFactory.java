@@ -25,10 +25,11 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _Fault_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "fault");
     private final static QName _Actuator_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuator");
     private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
     private final static QName _ActuatorName_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorName");
-    private final static QName _Schema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "Schema");
+    private final static QName _Schema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "schema");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.uniol.inf.is.odysseus.webservice
@@ -62,6 +63,23 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Fault }
+     * 
+     */
+    public Fault createFault() {
+        return new Fault();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Fault }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "fault")
+    public JAXBElement<Fault> createFault(Fault value) {
+        return new JAXBElement<Fault>(_Fault_QNAME, Fault.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ActuatorInformation }{@code >}}
      * 
      */
@@ -92,7 +110,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "Schema")
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "schema")
     public JAXBElement<List<String>> createSchema(List<String> value) {
         return new JAXBElement<List<String>>(_Schema_QNAME, ((Class) List.class), null, ((List<String> ) value));
     }

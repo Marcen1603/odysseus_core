@@ -8,17 +8,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for actuatorInformation complex type.
+ * <p>Java class for ActuatorInformation complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="actuatorInformation">
+ * &lt;complexType name="ActuatorInformation">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="managerName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="actuatorName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="actuatorName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "actuatorInformation", propOrder = {
+@XmlType(name = "ActuatorInformation", propOrder = {
     "managerName",
     "actuatorName",
     "description"
@@ -38,7 +38,6 @@ public class ActuatorInformation {
 
     @XmlElement(required = true)
     protected String managerName;
-    @XmlElement(required = true)
     protected String actuatorName;
     @XmlElement(required = true)
     protected String description;
