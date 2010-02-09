@@ -81,6 +81,8 @@ public interface NewSQLParserTreeConstants
   public int JJTCOMPAREOPERATOR = 75;
   public int JJTSPATIALCOMPAREOPERATOR = 76;
   public int JJTOSGI = 77;
+  public int JJTCREATEBROKER = 78;
+  public int JJTBROKERSOURCE = 79;
 
 
   public String[] jjtNodeName = {
@@ -162,6 +164,8 @@ public interface NewSQLParserTreeConstants
     "CompareOperator",
     "SpatialCompareOperator",
     "OSGI",
+    "CreateBroker",
+    "BrokerSource",
   };
 }
-/* JavaCC - OriginalChecksum=7b072f8debcc09b33ae23aec41ab222a (do not edit this line) */
+/* JavaCC - OriginalChecksum=a25e3a4dcf3ab5a2caea49c65c62bcb0 (do not edit this line) */

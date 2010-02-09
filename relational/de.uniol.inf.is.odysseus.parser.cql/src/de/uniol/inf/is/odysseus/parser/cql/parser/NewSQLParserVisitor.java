@@ -81,5 +81,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTCompareOperator node, Object data);
   public Object visit(ASTSpatialCompareOperator node, Object data);
   public Object visit(ASTOSGI node, Object data);
+  public Object visit(ASTCreateBroker node, Object data);
+  public Object visit(ASTBrokerSource node, Object data);
 }
-/* JavaCC - OriginalChecksum=ede767b10d27fdff100912d2e25da268 (do not edit this line) */
+/* JavaCC - OriginalChecksum=6e746e756cd81f1ba802a75f19d4989e (do not edit this line) */
