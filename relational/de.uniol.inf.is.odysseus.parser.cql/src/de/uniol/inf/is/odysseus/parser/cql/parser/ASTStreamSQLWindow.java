@@ -8,7 +8,8 @@ public class ASTStreamSQLWindow extends ASTWindow {
 	private Long offset;
 	private Long timeout;
 	private Long slide;
-	
+	private boolean isUnbounded = false;
+
 	public Long getSlide() {
 		return slide;
 	}
@@ -32,10 +33,10 @@ public class ASTStreamSQLWindow extends ASTWindow {
 		return (ASTPartition) jjtGetChild(this.type == Type.ON ? 3 : 2);
 
 	}
-	
+
 	@Override
 	public void setAdvance(Long advance) {
-		if (this.slide != null && advance != null && advance != 1 ) {
+		if (this.slide != null && advance != null && advance != 1) {
 			throw new IllegalArgumentException(
 					"cannot both of advance and slide parameters");
 		}
@@ -50,9 +51,15 @@ public class ASTStreamSQLWindow extends ASTWindow {
 		this.slide = slide == 1 ? null : slide;
 	}
 
+	public void setUnbounded(boolean value) {
+		this.isUnbounded = value;
+	}
 
 	@Override
 	public WindowType getType() {
+		if (this.isUnbounded) {
+			return WindowType.UNBOUNDED;
+		}
 		if (this.type == Type.TUPLE) {
 			if (this.slide != null) {
 				return WindowType.PERIODIC_TUPLE_WINDOW;
@@ -91,7 +98,11 @@ public class ASTStreamSQLWindow extends ASTWindow {
 	@Override
 	public ASTIdentifier getOn() {
 		if (this.type == Type.ON) {
-			return (ASTIdentifier) jjtGetChild(2);
+			if (this.isUnbounded) {
+				return (ASTIdentifier) jjtGetChild(0);
+			} else {
+				return (ASTIdentifier) jjtGetChild(2);
+			}
 		}
 		return null;
 	}
@@ -121,6 +132,6 @@ public class ASTStreamSQLWindow extends ASTWindow {
 
 	@Override
 	public boolean isUnbounded() {
-		return false;
+		return this.isUnbounded;
 	}
 }

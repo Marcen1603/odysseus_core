@@ -430,12 +430,12 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 		return null;
 	}
-
-	@Override
-	public Object visit(ASTDateFormat node, Object data) {
-
-		return null;
-	}
+//
+//	@Override
+//	public Object visit(ASTDateFormat node, Object data) {
+//
+//		return null;
+//	}
 
 	@Override
 	public Object visit(ASTSpatialPredicate node, Object data) {

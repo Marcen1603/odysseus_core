@@ -34,13 +34,12 @@ public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
 		return getAlias() != null;
 	}
 
-	/**
-	 * @return true, if a window is defined and it is not unbounded.
-	 */
+//	/**
+//	 * @return true, if a window is defined and it is not unbounded.
+//	 */
 	public boolean hasWindow() {
 		return  jjtGetNumChildren() > 1
-				&& jjtGetChild(1) instanceof ASTWindow
-				&& !((ASTWindow) jjtGetChild(1)).isUnbounded();
+				&& jjtGetChild(1) instanceof ASTWindow;
 	}
 
 	public ASTWindow getWindow() {

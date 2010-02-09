@@ -7,7 +7,9 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.ISubscription;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.Subscription;
+import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -113,5 +115,20 @@ public class TransformationHelper {
 		return modifiedChildren;
 	}
 
+	public static boolean containsWindow(ILogicalOperator inputOp) {
+		if (inputOp instanceof WindowAO) {
+			return true;
+		}
+		int numberOfInputs = inputOp.getSubscribedToSource().size();
+		if (inputOp instanceof ExistenceAO) {
+			numberOfInputs = 1;// don't check subselects in existenceaos
+		}
+		for (int i = 0; i < numberOfInputs; ++i) {
+			if (containsWindow(inputOp.getSubscribedToSource(i).getTarget())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

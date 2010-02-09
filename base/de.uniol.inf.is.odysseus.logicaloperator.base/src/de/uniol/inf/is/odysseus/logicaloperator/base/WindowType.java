@@ -13,4 +13,5 @@ public enum WindowType {
     
     SLIDING_TUPLE_WINDOW, // ElementBasiertes (Advance == 1)
     JUMPING_TUPLE_WINDOW, // ElementBasiertes mit Advance (im Moment nur CQL)
-    START_END_PREDICATE_WINDOW} // Start-/Ende-Praedikatfenster (im Moment nur Streaming SPARQL)
+    START_END_PREDICATE_WINDOW,// Start-/Ende-Praedikatfenster (im Moment nur Streaming SPARQL) 
+    UNBOUNDED} //unbounded (end timestamp = \infty)

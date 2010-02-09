@@ -314,10 +314,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
-	@Override
-	public Object visit(ASTDateFormat node, Object data) {
-		return pvisit(node);
-	}
+//	@Override
+//	public Object visit(ASTDateFormat node, Object data) {
+//		return pvisit(node);
+//	}
 
 	@Override
 	public Object visit(ASTSpatialPredicate node, Object data) {

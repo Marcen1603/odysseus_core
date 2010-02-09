@@ -142,10 +142,10 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
 		if (windowNode.isPartitioned()) {
-			if (containsWindow(inputOp)) {
-				throw new IllegalArgumentException(
-						"redefinition of window in subselect");
-			}
+//			if (containsWindow(inputOp)) {
+//				throw new IllegalArgumentException(
+//						"redefinition of window in subselect");
+//			}
 			ASTPartition partition = windowNode.getPartition();
 			ArrayList<SDFAttribute> partitionAttributes = new ArrayList<SDFAttribute>();
 			for (int i = 0; i < partition.jjtGetNumChildren(); ++i) {
@@ -180,11 +180,13 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			}
 			window.setWindowOn(onAttribute);
 		}
-		window.setWindowSize(windowNode.getSize());
-		Long advance = windowNode.getAdvance();
-		window.setWindowAdvance(advance != null ? advance : 1);
-		if (windowNode.getSlide() != null) {
-			window.setWindowSlide(windowNode.getSlide());
+		if (!windowNode.isUnbounded()) {
+			window.setWindowSize(windowNode.getSize());
+			Long advance = windowNode.getAdvance();
+			window.setWindowAdvance(advance != null ? advance : 1);
+			if (windowNode.getSlide() != null) {
+				window.setWindowSlide(windowNode.getSlide());
+			}
 		}
 		return window;
 	}
