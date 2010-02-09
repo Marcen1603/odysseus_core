@@ -29,13 +29,23 @@ public class ObjectFactory {
     private final static QName _Actuator_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuator");
     private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
     private final static QName _ActuatorName_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorName");
+    private final static QName _Source_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "source");
     private final static QName _Schema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "schema");
+    private final static QName _Id_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "id");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.uniol.inf.is.odysseus.webservice
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link ActuatorReducedInformation }
+     * 
+     */
+    public ActuatorReducedInformation createActuatorReducedInformation() {
+        return new ActuatorReducedInformation();
     }
 
     /**
@@ -47,14 +57,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Fault }
-     * 
-     */
-    public Fault createFault() {
-        return new Fault();
-    }
-
-    /**
      * Create an instance of {@link QueryType }
      * 
      */
@@ -63,11 +65,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ActuatorReducedInformation }
+     * Create an instance of {@link Fault }
      * 
      */
-    public ActuatorReducedInformation createActuatorReducedInformation() {
-        return new ActuatorReducedInformation();
+    public Fault createFault() {
+        return new Fault();
     }
 
     /**
@@ -107,12 +109,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "source")
+    public JAXBElement<String> createSource(String value) {
+        return new JAXBElement<String>(_Source_QNAME, String.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "schema")
     public JAXBElement<List<String>> createSchema(List<String> value) {
         return new JAXBElement<List<String>>(_Schema_QNAME, ((Class) List.class), null, ((List<String> ) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "id")
+    public JAXBElement<String> createId(String value) {
+        return new JAXBElement<String>(_Id_QNAME, String.class, null, value);
     }
 
 }
