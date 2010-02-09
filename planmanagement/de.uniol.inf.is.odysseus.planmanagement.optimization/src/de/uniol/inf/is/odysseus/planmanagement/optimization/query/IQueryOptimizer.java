@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
@@ -68,10 +69,10 @@ public interface IQueryOptimizer {
 	 * @param rulesToUse Contains the names of the rules to be used for restructuring.
 	 *            Other rules will not be used.
 	 * @return
-	 * 			  Collection of alternative physical plans
+	 * 			  Map of alternative physical plans and corresponding logical plans
 	 * @throws QueryOptimizationException
 	 * 			  An exception occurred during the optimization.
 	 */
-	public Collection<IPhysicalOperator> createAlternativePlans(IQueryOptimizable sender, IEditableQuery query,
+	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(IQueryOptimizable sender, IEditableQuery query,
 			OptimizeParameter parameters, Set<String> rulesToUse) throws QueryOptimizationException;
 }

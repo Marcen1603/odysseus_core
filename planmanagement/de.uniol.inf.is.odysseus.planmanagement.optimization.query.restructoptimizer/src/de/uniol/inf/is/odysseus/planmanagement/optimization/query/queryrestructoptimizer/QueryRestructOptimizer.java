@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query.queryrestructoptimizer;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -145,7 +145,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 
 
 	@Override
-	public Collection<IPhysicalOperator> createAlternativePlans(
+	public Map<IPhysicalOperator,ILogicalOperator> createAlternativePlans(
 			IQueryOptimizable sender, IEditableQuery query,
 			OptimizeParameter parameters, Set<String> rulesToUse)
 			throws QueryOptimizationException {
@@ -159,6 +159,17 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		}
 
 		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
+		
+		// if a logical rewrite should be processed.
+		ILogicalOperator sealedLogicalPlan = query
+				.getSealedLogicalPlan();
+		
+		ILogicalOperator newLogicalAlgebra = null;
+		if (sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE) {
+			newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan, rulesToUse);
+			// set new logical plan.
+			query.setLogicalPlan(newLogicalAlgebra);
+		}
 
 		if (query.getSealedRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
 		try {
@@ -179,8 +190,8 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 					}
 				}
 				
-				Collection<IPhysicalOperator> alternatives = new ArrayList<IPhysicalOperator>(1);
-				alternatives.add(physicalPlan);
+				Map<IPhysicalOperator,ILogicalOperator> alternatives = new HashMap<IPhysicalOperator, ILogicalOperator>(1);
+				alternatives.put(physicalPlan, newLogicalAlgebra);
 				
 				return alternatives;
 
@@ -190,7 +201,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 			}
 		}
 		
-		return new ArrayList<IPhysicalOperator>(0);
+		return new HashMap<IPhysicalOperator, ILogicalOperator>(0);
 	}
 
 }

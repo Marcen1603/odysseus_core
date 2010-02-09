@@ -1,16 +1,14 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.costmodel.base.ICost;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -20,7 +18,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanExecutionCostCalculator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
@@ -33,7 +30,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.pa
  */
 public class AdvancedOptimizer extends AbstractOptimizer {
 	
+	private static final int MAX_CONCURRENT_OPTIMIZATIONS = 2;
+	
 	private IAdvancedExecutor executor;
+	private List<Integer> optimizationLock;
+	
+	public AdvancedOptimizer() {
+		this.optimizationLock = new ArrayList<Integer>();
+	}
 	
 	public void bindExecutor(IAdvancedExecutor executor){
 		this.executor = executor;
@@ -114,18 +118,27 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			throws QueryOptimizationException {
 		this.logger.info("Start reoptimize query ID "+sender.getID());
 		
-		// TODO: optimization lock on query
+		// optimization lock on query
+		if (this.optimizationLock.contains(sender)) {
+			this.logger.warn("Aborted reoptimization. Query with ID "+sender.getID()+" is currently getting optimized.");
+			return executionPlan;
+		} else if (this.optimizationLock.size() >= MAX_CONCURRENT_OPTIMIZATIONS) {
+			// TODO: evtl. spaeters triggern der Optimierungsanforderung
+			this.logger.warn("Aborted reoptimization. There are currently "+this.optimizationLock.size()+" optimizations running.");
+			return executionPlan;
+		}
+		this.optimizationLock.add(sender.getID());
 		
 		try {
 			// build alternative physical plans
-			Collection<IPhysicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
+			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
 					(IQueryOptimizable)this.executor, sender, 
 					new OptimizeParameter(ParameterDoRestruct.TRUE), null);
 			
 			// TODO: set parameters to CostCalculator
 			
 			// pick out optimal plan by cost analysis
-			IPhysicalOperator newPlan = PlanExecutionCostCalculator.pickOptimalPlan(alternatives);
+			IPhysicalOperator newPlan = PlanExecutionCostCalculator.pickOptimalPlan(alternatives.keySet());
 			
 			// TODO: calculate migration overhead cost
 			
@@ -137,11 +150,15 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			sender = this.planMigrationStrategie.migrateQuery(sender, newPlan);
 			
 			// TODO: migration end callback
+			sender.setLogicalPlan(alternatives.get(newPlan));
+			sender.initializePhysicalPlan(newPlan);
 			
 			// TODO: executionPlan aktualisieren
 			
 		} catch (Exception e) {
 			this.logger.warn("Reoptimization failed.",e);
+		} finally {
+			this.optimizationLock.remove(sender.getID());
 		}
 		
 		return executionPlan;
