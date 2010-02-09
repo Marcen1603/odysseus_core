@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query.queryrestructoptimizer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -139,6 +141,56 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 						"Exeception while initialize query.", e);
 			}
 		}
+	}
+
+
+	@Override
+	public Collection<IPhysicalOperator> createAlternativePlans(
+			IQueryOptimizable sender, IEditableQuery query,
+			OptimizeParameter parameters, Set<String> rulesToUse)
+			throws QueryOptimizationException {
+		// TODO nur angepasste Logik von optimizeQuery, muss aber verschiedene 
+		// Plaene liefern, die z.B. durch Vertauschen von Joins erzeugt werden
+		
+		ICompiler compiler = sender.getCompiler();
+		
+		if (compiler == null) {
+			throw new QueryOptimizationException("Compiler is not loaded.");
+		}
+
+		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
+
+		if (query.getSealedRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
+		try {
+				// create the physical plan
+				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
+						.getTransformationConfiguration());
+
+				IBufferPlacementStrategy bufferPlacementStrategy = query
+						.getBuildParameter().getBufferPlacementStrategy();
+
+				// add Buffer
+				if (bufferPlacementStrategy != null) {
+					try {
+						bufferPlacementStrategy.addBuffers(physicalPlan);
+					} catch (Exception e) {
+						throw new QueryOptimizationException(
+								"Exeception while initialize query.", e);
+					}
+				}
+				
+				Collection<IPhysicalOperator> alternatives = new ArrayList<IPhysicalOperator>(1);
+				alternatives.add(physicalPlan);
+				
+				return alternatives;
+
+			} catch (Throwable e) {
+				throw new QueryOptimizationException(
+						"Exeception while initialize query.", e);
+			}
+		}
+		
+		return new ArrayList<IPhysicalOperator>(0);
 	}
 
 }
