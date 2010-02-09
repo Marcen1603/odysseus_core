@@ -49,6 +49,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 				return -1;
 
 			// die Elemente der queue k�nnen sich �ndern ...
+			// TODO: Nicht sehr effizient... Sortieren ist gar nicht
+			// notwendig!!
 			Collections.sort(groups_queue);
 			return gToId.get(groups_queue.get(0));
 		}
@@ -231,7 +233,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			if (minTs.before(s.getMetadata().getStart())) {
 				g.removeLastMin();
 				Iterator<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> results = sa
-						.extractElements(s.getMetadata());
+						.extractElements(s.getMetadata().getStart());
 				produceResults(results, groupID);
 				// Falls noch nicht alle Elemente der SweepArea verarbeitet
 				// wurden

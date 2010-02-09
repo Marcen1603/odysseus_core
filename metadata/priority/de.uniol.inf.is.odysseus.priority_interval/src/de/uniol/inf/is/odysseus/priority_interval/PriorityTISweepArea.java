@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
@@ -90,7 +91,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 	 * @return
 	 */
 	@Override
-	public Iterator<T> extractElements(ITimeInterval validity) {
+	public Iterator<T> extractElements(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		Iterator<T> li = elements.iterator();
 		while (li.hasNext()) {

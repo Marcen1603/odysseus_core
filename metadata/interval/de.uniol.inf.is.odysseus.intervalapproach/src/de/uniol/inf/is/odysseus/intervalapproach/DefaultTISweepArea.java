@@ -97,7 +97,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 * 
 	 * @return
 	 */
-	public Iterator<T> extractElements(ITimeInterval validity) {
+	public Iterator<T> extractElements(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized(elements){
 			Iterator<T> li = elements.iterator();

@@ -1,15 +1,18 @@
 package de.uniol.inf.is.odysseus.relational_interval;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 
 public class RelationalSlidingElementWindowTIPO extends
 		SlidingElementWindowTIPO<RelationalTuple<ITimeInterval>> {
@@ -18,6 +21,8 @@ public class RelationalSlidingElementWindowTIPO extends
 	Map<RelationalTuple<ITimeInterval>, Integer> keyMap = null;
 	int maxId = 0;
 	private Map<Integer, List<RelationalTuple<ITimeInterval>>> buffers = null;
+	private DefaultTISweepArea<RelationalTuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<RelationalTuple<ITimeInterval>>();
+
 
 	public RelationalSlidingElementWindowTIPO(
 			SlidingElementWindowTIPO<RelationalTuple<ITimeInterval>> po) {
@@ -83,10 +88,26 @@ public class RelationalSlidingElementWindowTIPO extends
 	
 	@Override
 	public void transfer(RelationalTuple<ITimeInterval> object) {
-		// FIXME: Hier muss jetzt eine Queue erstellt werden, sortiert nach
-		// dem Startzeitstempel --> analog zum GroupBy
-		throw new RuntimeException("Transfer not implemented now");
-		//super.transfer(object);
+		
+		outputQueue.insert(object);
+		PointInTime minTS = getMinTS();
+		Iterator<RelationalTuple<ITimeInterval>> out = outputQueue.extractElements(minTS);
+		while (out.hasNext()){
+			super.transfer(out.next());
+		}
+	}
+	
+	private PointInTime getMinTS(){
+		PointInTime minTS = new PointInTime();
+		for (List<RelationalTuple<ITimeInterval>> b: buffers.values()){
+			// an der obersten Stelle eines jeden Puffers steht das pro
+			// partition aelteste Element
+			PointInTime p = b.get(0).getMetadata().getStart();
+			if (p.before(minTS)){
+				minTS = p;
+			}
+		}
+		return minTS;
 	}
 	
 }

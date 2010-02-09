@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
@@ -105,10 +103,14 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	 *         ist ( NEIN! oder gleich dem Endzeitpunkt von right ist)
 	 */
 	public static boolean totallyBefore(ITimeInterval left, ITimeInterval right) {
-		// return left.getEnd().beforeOrEquals(right.getStart());
+		return totallyBefore(left,right.getStart());
+	}
+	
+	public static boolean totallyBefore(ITimeInterval interval,
+			PointInTime point) {
 		// ACHTUNG: Rechtsoffenes Intervall, d.h. der letzte Punkte geh�rt nicht
 		// mehr dazu
-		return left.getEnd().beforeOrEquals(right.getStart());
+		return interval.getEnd().beforeOrEquals(point);
 	}
 
 //	/**
@@ -286,5 +288,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	public TimeInterval clone() {
 		return new TimeInterval(this);
 	}
+
+
 
 }

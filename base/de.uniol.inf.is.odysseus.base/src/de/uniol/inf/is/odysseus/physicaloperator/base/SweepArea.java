@@ -320,4 +320,5 @@ public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepAr
 	public SweepArea<T> clone() throws CloneNotSupportedException{
 		return new SweepArea<T>(this);
 	}
+
 }
