@@ -87,6 +87,12 @@ public class Solution implements ISolution, IClone{
 	}
 	
 	public String toString(){
+		if(this.isEmpty){
+			return "{}";
+		}
+		if(this.isFull){
+			return "{t}";
+		}
 		return this.variable + " " + this.compareOperator + " " + this.solution.toString();
 	}
 }

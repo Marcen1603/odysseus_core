@@ -222,7 +222,10 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		Iterator<T> qualifies;
 		synchronized (this.areas) {
 			synchronized (this.areas[otherport]) {
+				long start = System.nanoTime();
 				qualifies = areas[otherport].query(object, order);
+				long end = System.nanoTime();
+				this.duration += (end - start);
 			}
 			transferFunction.newElement(object, port);
 			synchronized (areas[port]) {
@@ -236,6 +239,7 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 			T newElement = merge(object, next, order);
 			transferFunction.transfer(newElement);			
 		}
+		
 		
 
 	}
@@ -270,6 +274,9 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 	@Override
 	protected void process_done() {
 		transferFunction.done();
+		System.out.println("Join comparisons: " + (this.areas[0].compareCounter + this.areas[1].compareCounter));
+		System.out.println("Join duration: " + this.duration + "ns");
+		System.out.println("Comparisons per second: " + (1e9 * (this.areas[0].compareCounter + this.areas[1].compareCounter) / this.duration));
 		areas[0].clear();
 		areas[1].clear();
 	}

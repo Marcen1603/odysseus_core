@@ -37,10 +37,13 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITim
 	
 	Map<IPredicate, IRangePredicate> rangePredicates;
 	
+	public int compareCounter;
+	
 	public ObjectTrackingJoinSweepArea(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
 		super();
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
+		this.compareCounter = 0;
 	}
 	
 	public void setRangePredicates(Map<IPredicate, IRangePredicate> rangePredicates){
@@ -80,6 +83,8 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITim
 				
 				IRangePredicate rangePredicate = this.rangePredicates.get(newPredFctKey);
 				List<ITimeInterval> intervals = rangePredicate.evaluate(left, right);
+				
+				this.compareCounter++;
 				
 				if(!intervals.isEmpty()){
 					result.add(next);

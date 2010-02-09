@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
-import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealMatrixImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 
 /**
  * This operator works the same way as relationalProjectMVPO. It additionally deletes
@@ -20,9 +20,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @param <T>
  */
 @SuppressWarnings("unchecked")
-public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey> extends ObjectTrackingProjectBasePO<T> {
+public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey & ILatency> extends ObjectTrackingProjectBasePO<T> {
 
-	
+	private static Logger logger = LoggerFactory.getLogger(ObjectTrackingProjectPO.class);
 	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao){
 		super(ao);
 	}
@@ -45,7 +45,8 @@ public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctio
 
 		try {
 			// restrict the original tuple and set the new metadata
-			MVRelationalTuple objectNew = (MVRelationalTuple)object.restrict(this.restrictList, this.projectMatrix, false);
+			MVRelationalTuple<T> objectNew = (MVRelationalTuple<T>)object.restrict(this.restrictList, this.projectMatrix, false);
+			objectNew.getMetadata().setLatencyEnd(System.nanoTime());
 			
 			// updating the prediction function
 			// is not necessary, since the

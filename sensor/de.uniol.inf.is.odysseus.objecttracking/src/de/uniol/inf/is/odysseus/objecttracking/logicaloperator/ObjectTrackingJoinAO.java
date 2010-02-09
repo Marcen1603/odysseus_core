@@ -7,10 +7,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
-import com.maplesoft.externalcall.MapleException;
-import com.maplesoft.openmaple.Algebraic;
-import com.maplesoft.openmaple.Engine;
-
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
@@ -23,11 +19,10 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.OrRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePredicate;
-import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.MapleResultParserFacade;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
-import de.uniol.inf.is.odysseus.objecttracking.util.OdysseusMapleCallBack;
+import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -270,6 +265,62 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			
 			// the RangePredicateExpression must be solved for t by Maple
 			Map<IPredicate, ISolution> solutions = MapleFacade.getInstance().solveInequality(rangePredicateExpression, attributeResolver);
+			
+			// ********************************************************
+			// Hack for the missing solutions that come from maple
+			// this is only necessary, if the the predicate contains the variable
+			// t and must be transformed. Join predicates not containing t will
+			// not be transformed and therefore no missing solution will exist
+			
+			if(!rangePredicateExpression.equals(predicateString)){
+			
+				Entry<IPredicate, ISolution> entry = solutions.entrySet().iterator().next();
+				String conditionString = entry.getKey().toString();
+				
+				// there always a < compare opeartor and never a > compare operator
+				int indexOfCompareOperator = conditionString.indexOf("<");		
+				String denominator = null;
+				
+				if(conditionString.substring(0, indexOfCompareOperator).trim().equals("0") ||
+						conditionString.substring(0, indexOfCompareOperator).trim().equals("(0)")){
+					denominator = conditionString.substring(indexOfCompareOperator + 1).trim();
+				}
+				else if(conditionString.substring(indexOfCompareOperator + 1).trim().equals("0") ||
+						conditionString.substring(indexOfCompareOperator + 1).trim().equals("(0)")){
+					denominator = conditionString.substring(0, indexOfCompareOperator).trim();
+				}
+				
+				String solution = entry.getValue().getSolution().toString();
+				
+				// Add the missing solutions, that Maple does not generate
+				Map<IPredicate, ISolution> missingSolutions = MapleHack.getMissingJoinSolutions(rangePredicateExpression, denominator, solution, attributeResolver);
+				if(missingSolutions != null){
+					for(Entry<IPredicate, ISolution> missing: missingSolutions.entrySet()){
+						solutions.put(missing.getKey(), missing.getValue());
+					}
+				}
+				
+				// *********************************************************
+				// ONLY FOR EVALUATION
+				List<SDFAttribute> attributes = new SDFExpression(null, rangePredicateExpression, attributeResolver).getAllAttributes();
+				// remove attribute t
+				for(int a = 0;a<attributes.size(); a++){
+					if(attributes.get(a).toPointString().equals("t")){
+						attributes.remove(a);
+						break;
+					}
+				}
+				Map<IPredicate, ISolution> additionalFalseSolutions = MapleHack.getAdditionalFalsePredrdicates(Math.min(0, attributes.size() * attributes.size()), attributes, attributeResolver);
+				for(Entry<IPredicate, ISolution> additional: additionalFalseSolutions.entrySet()){
+					solutions.put(additional.getKey(), additional.getValue());
+				}
+				// *********************************************************
+				
+				
+			}
+			// *********************************************************
+			
+
 		
  			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
  			rangePredicate.init(leftSchema, rightSchema);
