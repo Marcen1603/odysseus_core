@@ -47,6 +47,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Fault }
+     * 
+     */
+    public Fault createFault() {
+        return new Fault();
+    }
+
+    /**
      * Create an instance of {@link QueryType }
      * 
      */
@@ -60,14 +68,6 @@ public class ObjectFactory {
      */
     public ActuatorReducedInformation createActuatorReducedInformation() {
         return new ActuatorReducedInformation();
-    }
-
-    /**
-     * Create an instance of {@link Fault }
-     * 
-     */
-    public Fault createFault() {
-        return new Fault();
     }
 
     /**
