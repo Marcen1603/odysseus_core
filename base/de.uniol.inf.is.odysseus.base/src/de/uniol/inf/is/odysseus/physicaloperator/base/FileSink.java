@@ -39,7 +39,8 @@ public class FileSink extends AbstractSink<Object> {
 	@Override
 	protected void process_next(Object object, int port, boolean isReadOnly) {
 		try {
-			out.write(""+object+"\n");
+			out.write(""+object);
+			out.newLine();
 			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

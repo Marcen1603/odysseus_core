@@ -258,8 +258,8 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			retBuff.append(delimiter);
 			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
 		}
-		retBuff.append(" sz="+(memSize==-1?"(-)":memSize));
-		retBuff.append(" {META " + getMetadata() + "}");
+		retBuff.append(" | sz="+(memSize==-1?"(-)":memSize));
+		retBuff.append(" | META | " + getMetadata());
 		return retBuff.toString();
 	}
 	

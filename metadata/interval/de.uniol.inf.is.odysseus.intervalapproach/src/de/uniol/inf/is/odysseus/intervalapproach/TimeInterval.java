@@ -263,7 +263,8 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 
 	@Override
 	public String toString() {
-		return "[" + getStart().toString() + "," + getEnd().toString() + ")";
+		//return "[" + getStart().toString() + "," + getEnd().toString() + ")";
+		return getStart().toString() + "|" + getEnd().toString();
 	}
 
 	public String toString(PointInTime baseTime) {
