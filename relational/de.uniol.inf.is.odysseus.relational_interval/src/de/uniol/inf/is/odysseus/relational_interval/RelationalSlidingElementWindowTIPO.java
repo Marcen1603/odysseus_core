@@ -81,4 +81,12 @@ public class RelationalSlidingElementWindowTIPO extends
 		return id;
 	}
 	
+	@Override
+	public void transfer(RelationalTuple<ITimeInterval> object) {
+		// FIXME: Hier muss jetzt eine Queue erstellt werden, sortiert nach
+		// dem Startzeitstempel --> analog zum GroupBy
+		throw new RuntimeException("Transfer not implemented now");
+		//super.transfer(object);
+	}
+	
 }

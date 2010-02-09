@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
@@ -20,7 +21,7 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
 		this.windowSize = window.windowSize;
 		this.windowAdvance = window.windowAdvance;
-		this.windowAO = window.windowAO;
+		this.windowAO = window.windowAO.clone();
 	}
 
 	public long getWindowSize() {

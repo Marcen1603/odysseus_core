@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInt
 
 	List<T> _buffer = null;
 	boolean forceElement = true;
+	private long elemsToRemoveFromStream;
 	
 	public SlidingElementWindowTIPO(WindowAO ao) {
 		super(ao);
@@ -33,18 +35,35 @@ public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInt
 		if (this.windowAO.isPartitioned()){
 			throw new RuntimeException("Partioning not supported in this class");
 		}else{
-			_buffer.add(object);
+			if (elemsToRemoveFromStream > 0){
+				elemsToRemoveFromStream--;
+			}else{
+				_buffer.add(object);
+			}
 			processBuffer(_buffer, object);
 		}
 	}
 
-	protected void processBuffer(List<T> buffer, T object) {
-		// TODO: Advance wird nicht berücksichtigt!
+	protected synchronized void processBuffer(List<T> buffer, T object) {
 		// Fall testen, dass der Strom zu Ende ist ...
+		// Fenster hat die maximale Groesse erreicht
 		if (buffer.size() == this.windowSize +1){
-			T toReturn = buffer.remove(0);
-			toReturn.getMetadata().setEnd(object.getMetadata().getStart());
-			this.transfer(toReturn);
+			// jetzt advance-Elemente rauswerfen
+			Iterator<T> bufferIter = buffer.iterator();
+			long elemsToSend = windowAdvance;
+			// Problem: Fenster ist kleiner als Schrittlaenge -->
+			// dann nur alle Elemente aus dem Fenster werfen
+			// und Tupel solange verwerfen bis advance wieder erreicht
+			if (windowSize < windowAdvance){
+				elemsToSend = windowSize;
+				elemsToRemoveFromStream = windowAdvance-windowSize;
+			}
+			for (int i=0;i<elemsToSend;i++){
+				T toReturn = bufferIter.next();
+				bufferIter.remove();
+				toReturn.getMetadata().setEnd(object.getMetadata().getStart());
+				transfer(toReturn);
+			}
 		}
 	}
 
