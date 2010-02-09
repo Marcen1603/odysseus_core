@@ -39,8 +39,8 @@ public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInt
 				elemsToRemoveFromStream--;
 			}else{
 				_buffer.add(object);
+				processBuffer(_buffer, object);
 			}
-			processBuffer(_buffer, object);
 		}
 	}
 
@@ -63,6 +63,11 @@ public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInt
 				bufferIter.remove();
 				toReturn.getMetadata().setEnd(object.getMetadata().getStart());
 				transfer(toReturn);
+			}
+			if (elemsToRemoveFromStream > 0){
+				elemsToRemoveFromStream--;
+				// Geht, da noch genau 1 Element im Buffer ist!
+				buffer.clear();
 			}
 		}
 	}
