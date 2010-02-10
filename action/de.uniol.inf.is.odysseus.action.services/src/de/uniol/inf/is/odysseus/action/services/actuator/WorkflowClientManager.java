@@ -40,22 +40,22 @@ public class WorkflowClientManager implements IActuatorManager {
 			if (matcher.find()){
 				String uriString = matcher.group(1).trim();	
 				String correlation = matcher.group(2).trim();
-				WorkflowClient client = this.clients.get(uriString);
-				if (client == null){
-					try {
-						URL url = new URL(uriString);
-						if (correlation != null && correlation.length() > 1){
-							client = new WorkflowClient(factory.createClient(url), correlation);
-						}else {
-							client = new WorkflowClient(factory.createClient(url));
-						}
-						this.clients.put(name, client);		
-						return client;
-					} catch (MalformedURLException e) {
-						throw new ActuatorException(e.getMessage());
-					} 
+				WorkflowClient client = this.clients.get(name);
+				if (client != null){
+					throw new ActuatorException("Actuator with name: "+name+" is already registered");
 				}
-				return client;
+				try {
+					URL url = new URL(uriString);
+					if (correlation != null && correlation.length() > 1){
+						client = new WorkflowClient(factory.createClient(url), correlation);
+					}else {
+						client = new WorkflowClient(factory.createClient(url));
+					}
+					this.clients.put(name, client);		
+					return client;
+				} catch (MalformedURLException e) {
+					throw new ActuatorException(e.getMessage());
+				}
 			}
 		}
 		throw new ActuatorException("Irregular ActuatorDescription");
