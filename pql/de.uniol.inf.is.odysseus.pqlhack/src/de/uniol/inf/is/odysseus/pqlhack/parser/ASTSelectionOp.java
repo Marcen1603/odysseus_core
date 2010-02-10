@@ -4,7 +4,18 @@ package de.uniol.inf.is.odysseus.pqlhack.parser;
 
 @SuppressWarnings("all")
 public class ASTSelectionOp extends SimpleNode {
-  public ASTSelectionOp(int id) {
+  
+	private int windowSize;
+	
+	public int getWindowSize() {
+		return windowSize;
+	}
+
+	public void setWindowSize(String windowSizeString) {
+		this.windowSize = Integer.parseInt(windowSizeString);
+	}
+
+	public ASTSelectionOp(int id) {
     super(id);
   }
 

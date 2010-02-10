@@ -7,6 +7,7 @@ options {
   IGNORE_CASE = true;
   MULTI = true;
   VISITOR = true;
+  DEBUG_PARSER = true;
   DEBUG_TOKEN_MANAGER = false;
   //  NODE_DEFAULT_VOID=true;
   JJTREE_OUTPUT_DIRECTORY = "parser";
@@ -112,14 +113,19 @@ void ProjectionOp(): {}{
 	<K_TUMBLING_TIME_WINDOW>"(" AlgebraOp() "," Number()#WindowSize "," Number()#WindowAdvance ")"
 }*/
 
-void SelectionOp(): {}{
-	<K_SELECTION>"(" AlgebraOp() "," Predicate() ")"
+void SelectionOp(): {
+	Token windowSize;
+}{
+	<K_SELECTION>"(" AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
 }
 
-void JoinOp(): {}{
+void JoinOp(): {
+	Token windowSize;
+
+}{
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ")"
+	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
 }
 
 void WindowOp():{}{

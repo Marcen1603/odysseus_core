@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
+import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -9,7 +10,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @author André Bolles
  *
  */
-public interface ISolution {
+public interface ISolution extends IClone{
 
 	public SDFExpression getVariable();
 	public String getCompareOperator();

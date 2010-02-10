@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,7 +16,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
+import de.uniol.inf.is.odysseus.objecttracking.util.ComparablePair;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateInitializer;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -31,8 +33,12 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	private static final long serialVersionUID = 1222104352250883947L;
 	
 	private static Logger logger = LoggerFactory.getLogger(RelationalRangePredicate.class);
+	
+	private LinkedList<ComparablePair<IPredicate, ISolution>> lastEvaluated;
+	private int windowSize;
 
-	private Map<IPredicate, ISolution> solutions;
+	private List<ComparablePair<IPredicate, ISolution>> solutions;
+//	private Map<IPredicate, ISolution> solutions;
 	
 	/**
 	 * Stores the attribute positions for each solution,
@@ -68,19 +74,30 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	 * Falls a<b => t > c
 	 * Falls a>b => t < c usw.
 	 * 
-	 * @param expression
+	 * @param solutions The solutions with their conditions, that hold for this range predicate.
+	 * @param windowSize The last windowSize evaluations of this predicate will be used to determine which condition
+	 *                   has been most often been true. This conditions will then be evaluated first, the next time.
 	 */
-	public RelationalRangePredicate(Map<IPredicate, ISolution> solutions) {
-		this.solutions = solutions;
+	public RelationalRangePredicate(Map<IPredicate, ISolution> solutions, int windowSize) {		
+		this.solutions = new ArrayList<ComparablePair<IPredicate, ISolution>>();
+		
+		for(Entry<IPredicate, ISolution> entry : solutions.entrySet()){
+			this.solutions.add(new ComparablePair<IPredicate, ISolution>(entry.getKey(), entry.getValue()));
+		}
+		
+		this.lastEvaluated = new LinkedList<ComparablePair<IPredicate, ISolution>>();
+		this.windowSize = windowSize;
+		
+		
 	}
 
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
 		this.attributePositions = new HashMap<IPredicate, int[]>();
 		this.fromRightChannel = new HashMap<IPredicate, boolean[]>();
 		
-		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			IPredicate predicate = entry.getKey();
-			
+
 			// could be a complex predicate, that contains relational
 			// predicates. These must be initialized with the schema.
 			ObjectTrackingPredicateInitializer.visitPredicates(predicate, leftSchema, rightSchema);
@@ -142,9 +159,9 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		// first check, which solution maps for this tuple
 		// so test every predicate in this.solutions for this tuple
 		// the first predicate that is true will be taken.
-		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			if(entry.getKey().evaluate(input)){
-				
+//				logger.debug("Range predicate is true: " + entry.getKey().toString());
 				// the solution could be empty
 				// in this case the following must not be done
 				if(entry.getValue().getSolution() != null && !entry.getValue().isFull()){
@@ -203,11 +220,13 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 							logger.debug("Invalid time interval created: " + e.getMessage());
 						}
 					}
-					break;
 				}
 				else if(entry.getValue().isFull()){
 					intervals.add(new TimeInterval(PointInTime.getZeroTime(), PointInTime.getInfinityTime()));
 				}
+				
+				this.moveEvaluationWindow(entry);
+				break;
 			}
 		}
 		
@@ -220,9 +239,9 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		// first check, which solution maps for this tuples
 		// so test every predicate in this.solutions for this tuple
 		// the first predicate that is true will be taken.
-		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			if(entry.getKey().evaluate(left, right)){
-				
+//				logger.debug("Range predicate is true: " + entry.getKey().toString());
 				// the solution can be empty
 				// in this case the following must not be done.
 				// However, if the solution is full
@@ -285,11 +304,13 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 							logger.debug("Invalid time interval created: " + e.getMessage());
 						}
 					}
-					break;
 				}
 				else if(entry.getValue().isFull()){
 					intervals.add(new TimeInterval(PointInTime.getZeroTime(), PointInTime.getInfinityTime()));
 				}
+				
+				this.moveEvaluationWindow(entry);
+				break;
 			}
 		}
 		
@@ -304,7 +325,7 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	@Override
 	public String toString() {
 		String res = "";
-		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			res += "if " + entry.getKey().toString() + 
 					" then " + entry.getValue().getVariable().toString() + " " +
 					entry.getValue().getCompareOperator() + " " + 
@@ -315,9 +336,10 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 
 	public Map<IPredicate, List<SDFAttribute>> getAttributes() {
 		Map<IPredicate, List<SDFAttribute>> attributes = new HashMap<IPredicate, List<SDFAttribute>>();
-		for(Entry<IPredicate, ISolution> entry: this.solutions.entrySet()){
+		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			attributes.put(entry.getKey(), entry.getValue().getSolution().getAllAttributes());
 		}
+		
 		return attributes;
 	}
 	
@@ -338,4 +360,41 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		return 53 * this.solutions.hashCode();
 	}
 	
+	public void sortSolutions(){
+		Collections.sort(this.solutions);
+	}
+	
+	/**
+	 * This method moves a window of size windowSize over the last evaluations of the
+	 * solution predicates. Everytime a predicate is added to the window, the priority of
+	 * this predicate is increased. Everytime a predicate is removed from the window, the
+	 * priority of this predicate is decreased. Furthermore, the list of predicates is
+	 * sorted again according to their new priorities. This guarantees, that always the
+	 * predicate ist evaluated first, that has been true most often during the last
+	 * windowSize evaluations.
+	 * 
+	 * @param lastEvaluatedPredicate The predicate that hase been true this time.
+	 */
+	private void moveEvaluationWindow(ComparablePair<IPredicate, ISolution> lastEvaluatedPredicate){
+		// if window size is 0, then no
+		// optimization is wanted.
+		if(this.windowSize == 0){
+			return;
+		}
+		
+		ComparablePair<IPredicate, ISolution> removed = null;
+		if(this.lastEvaluated.size() == this.windowSize){
+			removed = this.lastEvaluated.removeFirst();
+			removed.decreasePriority();
+		}
+		this.lastEvaluated.addLast(lastEvaluatedPredicate);
+		lastEvaluatedPredicate.increasePriority();
+		
+//		logger.debug("Last evaluated: " + this.lastEvaluated);
+		
+		// a sorting is necessary only if the removed and the added predicate are not equal
+		if(removed == null || (removed != null && removed != lastEvaluatedPredicate)){
+			Collections.sort(this.solutions);
+		}
+	}
 }

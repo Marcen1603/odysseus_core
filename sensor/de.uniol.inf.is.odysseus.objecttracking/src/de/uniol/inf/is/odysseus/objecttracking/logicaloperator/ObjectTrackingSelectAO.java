@@ -34,6 +34,16 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 
 	private boolean initialized;
 	
+	/**
+	 * window size is use for sorting the conditions
+	 * in a range predicate. if the second condition
+	 * in a range predicate is has been true most often
+	 * for the last window size evaluations, then
+	 * this condition will be evaluated first the next
+	 * time.
+	 */
+	private int windowSize;
+	
 	private Logger logger;
 	/**
 	 * In this.predictionFunctions we have different prediction functions for
@@ -49,6 +59,14 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	 */
 	private Map<IPredicate, IRangePredicate> rangePredicates;
 	
+	public int getWindowSize() {
+		return windowSize;
+	}
+
+	public void setWindowSize(int windowSize) {
+		this.windowSize = windowSize;
+	}
+
 	/**
 	 * The default range predicate will be used, if the default prediction
 	 * function has been used by a tuple.
@@ -187,7 +205,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 			// the RangePredicateExpression must be solved for t by Maple
 			this.logger.debug("Predicate '" + predicateString + "' transformed to rangePredicate '" + rangePredicateExpression + "'.");
 			Map<IPredicate, ISolution> solutions = MapleFacade.getInstance().solveInequality(rangePredicateExpression, attributeResolver);
- 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
+ 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions, this.windowSize);
  			rangePredicate.init(this.getInputSchema(), null);
  			
  			return rangePredicate;

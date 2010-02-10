@@ -51,9 +51,29 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	 */
 	private Map<IPredicate, IRangePredicate> rangePredicates;
 	
-	
 	public Map<IPredicate, IRangePredicate> getRangePredicates() {
 		return rangePredicates;
+	}
+	
+	/**
+	 * 
+	 * This values is the number of the last evaluations, that are used
+	 * to determine which condition of a range predicate has been evaluated
+	 * most often. E. g. if window size is 10. Then if in the last 10 evaluations
+	 * of a range predicate the second condition has been true 5 times and another
+	 * condition has been evaluated 3 times and a third one 2 times, then in the next
+	 * evaluation the second condition will be evaluated first.
+	 * 
+	 */
+	private int windowSize;
+	
+	
+	public int getWindowSize() {
+		return windowSize;
+	}
+
+	public void setWindowSize(int windowSize) {
+		this.windowSize = windowSize;
 	}
 
 
@@ -310,7 +330,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 						break;
 					}
 				}
-				Map<IPredicate, ISolution> additionalFalseSolutions = MapleHack.getAdditionalFalsePredrdicates(Math.min(0, attributes.size() * attributes.size()), attributes, attributeResolver);
+				Map<IPredicate, ISolution> additionalFalseSolutions = MapleHack.getAdditionalFalsePredrdicates(Math.min(14, attributes.size() * attributes.size()), attributes, attributeResolver);
 				for(Entry<IPredicate, ISolution> additional: additionalFalseSolutions.entrySet()){
 					solutions.put(additional.getKey(), additional.getValue());
 				}
@@ -322,7 +342,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			
 
 		
- 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions);
+ 			RelationalRangePredicate rangePredicate = new RelationalRangePredicate(solutions, this.windowSize);
  			rangePredicate.init(leftSchema, rightSchema);
  			
  			return rangePredicate;	

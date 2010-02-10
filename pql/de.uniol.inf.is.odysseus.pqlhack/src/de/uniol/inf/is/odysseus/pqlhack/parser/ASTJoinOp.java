@@ -4,7 +4,10 @@ package de.uniol.inf.is.odysseus.pqlhack.parser;
 
 @SuppressWarnings("all")
 public class ASTJoinOp extends SimpleNode {
-  public ASTJoinOp(int id) {
+  
+	private int windowSize;
+	
+	public ASTJoinOp(int id) {
     super(id);
   }
 
@@ -16,6 +19,14 @@ public class ASTJoinOp extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(ProceduralExpressionParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  public void setWindowSize(String windowSizeString){
+	  this.windowSize = Integer.parseInt(windowSizeString);
+  }
+  
+  public int getWindowSize(){
+	  return this.windowSize;
   }
 }
 /* JavaCC - OriginalChecksum=b44156a42138545f6f94f42065b5982a (do not edit this line) */

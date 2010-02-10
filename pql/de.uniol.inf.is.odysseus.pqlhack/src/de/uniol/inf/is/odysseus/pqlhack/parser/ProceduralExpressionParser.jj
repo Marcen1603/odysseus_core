@@ -8,6 +8,7 @@ options {
   IGNORE_CASE = true;
                
                  
+  DEBUG_PARSER = true;
   DEBUG_TOKEN_MANAGER = false;
                              
                                      
@@ -227,13 +228,15 @@ void ProjectionOp(): {/*@bgen(jjtree) ProjectionOp */
 }*/
 
 void SelectionOp(): {/*@bgen(jjtree) SelectionOp */
-  ASTSelectionOp jjtn000 = new ASTSelectionOp(JJTSELECTIONOP);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) SelectionOp */
+        ASTSelectionOp jjtn000 = new ASTSelectionOp(JJTSELECTIONOP);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	Token windowSize;
+}{/*@bgen(jjtree) SelectionOp */
         try {
 /*@egen*/
-	<K_SELECTION>"(" AlgebraOp() "," Predicate() ")"/*@bgen(jjtree)*/
+	<K_SELECTION>"(" AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -257,15 +260,18 @@ void SelectionOp(): {/*@bgen(jjtree) SelectionOp */
 }
 
 void JoinOp(): {/*@bgen(jjtree) JoinOp */
-  ASTJoinOp jjtn000 = new ASTJoinOp(JJTJOINOP);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) JoinOp */
+        ASTJoinOp jjtn000 = new ASTJoinOp(JJTJOINOP);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	Token windowSize;
+
+}{/*@bgen(jjtree) JoinOp */
         try {
 /*@egen*/
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ")"/*@bgen(jjtree)*/
+	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

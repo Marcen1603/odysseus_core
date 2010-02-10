@@ -129,6 +129,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	@Override
 	public Object visit(ASTSelectionOp node, Object data) {
 		ObjectTrackingSelectAO selection = new ObjectTrackingSelectAO();
+		selection.setWindowSize(node.getWindowSize());
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
@@ -158,6 +159,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	public Object visit(ASTJoinOp node, Object data) {
 		// TODO Auto-generated method stub
 		ObjectTrackingJoinAO join = new ObjectTrackingJoinAO();
+		
+		// the window size determine how many evaluations
+		// are considered for determining the most often true
+		// condition of a range predicate.
+		join.setWindowSize(node.getWindowSize());
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
