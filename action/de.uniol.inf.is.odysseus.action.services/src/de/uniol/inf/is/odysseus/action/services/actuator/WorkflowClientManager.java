@@ -5,21 +5,26 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
  * ActuatorManager for WorkflowClients
- * Descriptions must be a URL poiting to a WSDL
+ * Descriptions have following syntax:
+ * URL[; coorelationID]
+ * The URL must point to a WSDL, the correlationID is optional for BPEL
+ * processes that dont rely on correlations
  * @author Simon Flandergan
  *
  */
 public class WorkflowClientManager implements IActuatorManager {
 	private JaxWsDynamicClientFactory factory;
 	private HashMap<String, WorkflowClient> clients;
-
+	
+	private static Pattern descriptionPattern = Pattern.compile("([^;]+);?(.*)?"); 
 	
 	public WorkflowClientManager(){
 		this.factory = JaxWsDynamicClientFactory.newInstance();
@@ -29,18 +34,31 @@ public class WorkflowClientManager implements IActuatorManager {
 
 	@Override
 	public IActuator createActuator(String name, String description) throws ActuatorException{
-		WorkflowClient client = this.clients.get(description);
-		if (client == null){
-			try {
-				URL url = new URL(description);
-				client = new WorkflowClient(factory.createClient(url));
-				this.clients.put(name, client);		
+		Matcher matcher = descriptionPattern.matcher(description);
+		if (matcher.matches()){
+			matcher.reset();
+			if (matcher.find()){
+				String uriString = matcher.group(1).trim();	
+				String correlation = matcher.group(2).trim();
+				WorkflowClient client = this.clients.get(uriString);
+				if (client == null){
+					try {
+						URL url = new URL(uriString);
+						if (correlation != null && correlation.length() > 1){
+							client = new WorkflowClient(factory.createClient(url), correlation);
+						}else {
+							client = new WorkflowClient(factory.createClient(url));
+						}
+						this.clients.put(name, client);		
+						return client;
+					} catch (MalformedURLException e) {
+						throw new ActuatorException(e.getMessage());
+					} 
+				}
 				return client;
-			} catch (MalformedURLException e) {
-				throw new ActuatorException(e.getMessage());
-			} 
+			}
 		}
-		return client;
+		throw new ActuatorException("Irregular ActuatorDescription");
 	}
 
 
@@ -74,6 +92,4 @@ public class WorkflowClientManager implements IActuatorManager {
 	public List<String> getRegisteredActuatorNames() {
 		return new ArrayList<String>(this.clients.keySet());
 	}
-
-
 }

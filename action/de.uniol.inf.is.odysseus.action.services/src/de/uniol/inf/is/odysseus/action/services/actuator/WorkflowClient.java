@@ -8,9 +8,15 @@ import org.apache.cxf.endpoint.Client;
 
 public class WorkflowClient implements IActuator {
 	private Client client;
+	private String correlationID;
 	
 	public WorkflowClient(Client client){
 		this.client = client;
+	}
+	
+	public WorkflowClient(Client client, String correlationID){
+		this(client);
+		this.correlationID = correlationID;
 	}
 
 	@Override

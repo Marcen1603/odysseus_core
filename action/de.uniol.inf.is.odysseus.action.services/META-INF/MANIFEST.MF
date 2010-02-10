@@ -6,6 +6,7 @@ Bundle-Version: 1.0.1
 Bundle-Activator: de.uniol.inf.is.odysseus.action.services.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.relational.base,
+ javax.wsdl,
  org.apache.cxf.endpoint,
  org.apache.cxf.endpoint.dynamic,
  org.apache.cxf.jaxws.endpoint.dynamic,
