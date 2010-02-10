@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  * URL[; coorelationID]
  * The URL must point to a WSDL, the correlationID is optional for BPEL
  * processes that dont rely on correlations
+ * WARNING requires JDK 6 Update 18! 
  * @author Simon Flandergan
  *
  */
