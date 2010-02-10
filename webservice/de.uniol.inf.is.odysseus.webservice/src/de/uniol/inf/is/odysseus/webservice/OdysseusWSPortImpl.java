@@ -109,7 +109,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	for (int i=0; i<outputSchema.getAttributeCount(); i++){
         		SDFAttribute attribute = outputSchema.getAttribute(i);
         		schema.add(attribute.getAttributeName());
-        		schema.add(attribute.getDatatype().getQualName());
+        		schema.add(attribute.getDatatype().getURI());
         	}
         	return schema.toArray(new String[schema.size()]);
         }catch (Exception e){
