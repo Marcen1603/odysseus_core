@@ -78,6 +78,7 @@ public class RandomDataProvider extends Thread {
 									break;
 								}
 					    	}
+					    	System.out.print(this.port+"\t | ");
 							for (int i = 0; i < tuple.length; i++) {								
 								System.out.print(tuple[i] + "\t");
 							}
