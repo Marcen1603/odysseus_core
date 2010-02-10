@@ -19,7 +19,7 @@ public class StreamAttributeParameter implements IActionParameter{
 	}
 	
 	public StreamAttributeParameter(SDFDatatype datatype, Object identifier) throws AttributeParsingException{
-		String datatypeName = datatype.getURI().toLowerCase();
+		String datatypeName = datatype.getQualName().toLowerCase();
 		//identify datatype
 		if(datatypeName.equals("byte")){
 			this.datatype = Byte.class;
