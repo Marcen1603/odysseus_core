@@ -26,15 +26,15 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
                       
 public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
-	private IAdvancedExecutor executor;
-	private IActuatorFactory actuatorFactory;
+	private static IAdvancedExecutor executor;
+	private static IActuatorFactory actuatorFactory;
 	
 	/**
 	 * Used by osgi for binding the executor
 	 * @param executor
 	 */
     public void bindExecutor(IAdvancedExecutor executor) {
-		this.executor = executor;
+		OdysseusWSPortImpl.executor = executor;
 	}
     
     /**
@@ -42,7 +42,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
      * @param factory
      */
     public void bindActuatorFactory(IActuatorFactory factory){
-    	this.actuatorFactory = factory;
+    	actuatorFactory = factory;
     }
     
     
@@ -56,9 +56,9 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     			//generate actuatorName
     			actuatorName = actuator.getManagerName();
     			actuatorCount++;
-    			actuatorName.concat(""+actuatorCount);
+    			actuatorName = actuatorName.concat(""+actuatorCount);
     		}
-    		this.actuatorFactory.createActuator(
+    		actuatorFactory.createActuator(
     				actuatorName, 
     				actuator.getDescription(),
     				actuator.getManagerName());
@@ -77,7 +77,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
      */
     public java.lang.String createStatement(QueryType query) throws StatementQueryFault , StatementServiceFault    { 
         try {
-			Integer queryID = this.executor.addQuery(query.getQuery(), query.getLanguage(), 
+			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), 
 					new ParameterParserID(query.getLanguage())).iterator().next();
 			return queryID.toString();
 		} catch (PlanManagementException e) {
@@ -103,7 +103,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
      */
     public java.lang.String[] getSchema(java.lang.String id) throws SchemaServiceFault , SchemaIDFault    { 
         try {
-        	IQuery query = this.executor.getSealedPlan().getQuery(Integer.valueOf(id));
+        	IQuery query = executor.getSealedPlan().getQuery(Integer.valueOf(id));
         	SDFAttributeList outputSchema = query.getSealedLogicalPlan().getOutputSchema();
         	ArrayList<String> schema = new ArrayList<String>();
         	for (int i=0; i<outputSchema.getAttributeCount(); i++){
@@ -122,7 +122,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
      */
     public java.lang.String removeActuator(ActuatorReducedInformation actuator) throws RemoveActuatorFault    { 
         try {
-        	this.actuatorFactory.removeActuator(actuator.getActuatorName(), actuator.getManagerName());
+        	actuatorFactory.removeActuator(actuator.getActuatorName(), actuator.getManagerName());
         	return "";
         }catch (Exception e){
         	throw new RemoveActuatorFault();
