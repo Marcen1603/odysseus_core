@@ -12,7 +12,7 @@ import javax.xml.ws.Endpoint;
  
 public class OdysseusWSPort_OdysseusWSSOAP_Server{
     private Endpoint endPoint;
-    private static String address = "http://134.106.56.231:10001/OdysseusWSSOAP"; 
+    private static String address = "http://127.0.0.1:9998/OdysseusWSSOAP"; 
 
 	public OdysseusWSPort_OdysseusWSSOAP_Server() throws Exception {
         Object implementor = new OdysseusWSPortImpl();
