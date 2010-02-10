@@ -8,5 +8,15 @@ public class SDFDatatype extends SDFElement {
 	public SDFDatatype(String URI) {
 		super(URI);
 	}
+	
+	@Override
+	// TODO: später wieder entfernen!!
+	public String getQualName() {
+		if (super.getQualName() != null && super.getQualName().length() > 0){
+			return super.getQualName();
+		}else{
+			return getURI();
+		}
+	}
 
 }
