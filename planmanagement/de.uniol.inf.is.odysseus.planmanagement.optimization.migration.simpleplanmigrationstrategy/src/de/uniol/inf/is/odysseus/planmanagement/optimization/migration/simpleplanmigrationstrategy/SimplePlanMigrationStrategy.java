@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SplitPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
@@ -37,39 +38,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 	@Override
 	public IEditableExecutionPlan migratePlan(IPlanMigratable sender,
 			IEditableExecutionPlan newExecutionPlan) {
-		this.logger.info("Start Planmigration.");
-		
-		// TODO: stoppen und starten muss auﬂerhalb erfolgen
-		/*try {
-			sender.getSchedulerManager().stopScheduling();
-		} catch (NoSchedulerLoadedException e) {
-			e.printStackTrace();
-			return newExecutionPlan;
-		}*/
-
-		try {
-			List<IPhysicalOperator> newRoots = new ArrayList<IPhysicalOperator>();
-			for (IPhysicalOperator pOp : newExecutionPlan.getRoots()) {
-				newRoots.add(prepareParallelExecution(pOp));
-			}
-			newExecutionPlan.setRoots(newRoots);
-			
-			// TODO: partial plan anpassen?!
-			
-		} catch (Exception e1) {
-			this.logger.error("Plan migration failed: "+e1.getMessage(),e1);
-		}
-		
-		/*try {
-			sender.getSchedulerManager().startScheduling();
-		} catch (NoSchedulerLoadedException e) {
-			e.printStackTrace();
-		} catch (OpenFailedException e) {
-			e.printStackTrace();
-		}*/
-		
-		this.logger.info("Finished Planmigration.");
-		
 		return newExecutionPlan;
 	}
 	
@@ -147,19 +115,10 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 	}
 
 	@Override
-	public IEditableQuery migrateQuery(IEditableQuery runningQuery,
+	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
-		boolean queryWasRunning = runningQuery.isStarted();
-		if (queryWasRunning) {
-			runningQuery.stop();
-		}
 		
 		
-		
-		if (queryWasRunning) {
-			runningQuery.start();
-		}
-		return runningQuery;
 	}
 
 }

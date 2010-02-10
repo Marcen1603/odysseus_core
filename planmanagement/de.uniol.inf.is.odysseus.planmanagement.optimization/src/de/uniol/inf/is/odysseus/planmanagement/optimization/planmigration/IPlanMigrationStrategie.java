@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 
 /**
@@ -27,14 +28,14 @@ public interface IPlanMigrationStrategie {
 			IEditableExecutionPlan newExecutionPlan);
 	
 	/**
-	 * Migrates a running or stopped query to a new physical plan.
+	 * Migrates a query to a new physical plan.
 	 * 
+	 * @param sender
+	 * 				Optimizer possibly receives a callback, when the migration has finished
 	 * @param runningQuery
-	 * 				running query
+	 * 				installed query, was stopped before by optimizer
 	 * @param newPlanRoot
 	 * 				new physical plan to migrate to
-	 * @return
-	 * 				modified query
 	 */
-	public IEditableQuery migrateQuery(IEditableQuery runningQuery, IPhysicalOperator newPlanRoot);
+	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery, IPhysicalOperator newPlanRoot);
 }

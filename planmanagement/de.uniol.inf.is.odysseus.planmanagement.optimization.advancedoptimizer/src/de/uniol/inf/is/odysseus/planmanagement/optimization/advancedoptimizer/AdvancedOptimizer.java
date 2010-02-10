@@ -1,12 +1,14 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
@@ -19,7 +21,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanExecutionCostCalculator;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 
@@ -33,10 +34,10 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	private static final int MAX_CONCURRENT_OPTIMIZATIONS = 2;
 	
 	private IAdvancedExecutor executor;
-	private List<Integer> optimizationLock;
+	private Map<Integer, PlanMigrationContext> optimizationContext;
 	
 	public AdvancedOptimizer() {
-		this.optimizationLock = new ArrayList<Integer>();
+		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 	}
 	
 	public void bindExecutor(IAdvancedExecutor executor){
@@ -59,7 +60,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
 
-			return newExecutionPlan;
+			return this.planMigrationStrategie.migratePlan(sender,
+					newExecutionPlan);
 		}
 		return sender.getEditableExecutionPlan();
 	}
@@ -80,7 +82,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
 
-			return newExecutionPlan;
+			return this.planMigrationStrategie.migratePlan(sender,
+					newExecutionPlan);
 			
 		}
 		return sender.getEditableExecutionPlan();
@@ -98,18 +101,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 				.optimizePlan(sender, parameter, newPlan);
 
-		return newExecutionPlan;
-	}
-
-
-	@Override
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
-			T sender, IQuery removedQuery,
-			IEditableExecutionPlan executionPlan,
-			AbstractOptimizationParameter<?>... parameters)
-			throws QueryOptimizationException {
-		// TODO Auto-generated method stub
-		return null;
+		return this.planMigrationStrategie
+				.migratePlan(sender, newExecutionPlan);
 	}
 	
 	@Override
@@ -119,15 +112,16 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		this.logger.info("Start reoptimize query ID "+sender.getID());
 		
 		// optimization lock on query
-		if (this.optimizationLock.contains(sender)) {
+		if (this.optimizationContext.containsKey(sender.getID())) {
 			this.logger.warn("Aborted reoptimization. Query with ID "+sender.getID()+" is currently getting optimized.");
 			return executionPlan;
-		} else if (this.optimizationLock.size() >= MAX_CONCURRENT_OPTIMIZATIONS) {
+		} else if (this.optimizationContext.size() >= MAX_CONCURRENT_OPTIMIZATIONS) {
 			// TODO: evtl. spaeters triggern der Optimierungsanforderung
-			this.logger.warn("Aborted reoptimization. There are currently "+this.optimizationLock.size()+" optimizations running.");
+			this.logger.warn("Aborted reoptimization. There are currently "+this.optimizationContext.size()+" optimizations running.");
 			return executionPlan;
 		}
-		this.optimizationLock.add(sender.getID());
+		PlanMigrationContext context = new PlanMigrationContext(sender);
+		this.optimizationContext.put(sender.getID(), context);
 		
 		try {
 			// build alternative physical plans
@@ -143,25 +137,61 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// TODO: calculate migration overhead cost
 			
 			// TODO: pick near optimal plan with low migration cost
+			context.setRoot(newPlan);
+			context.setLogicalPlan(alternatives.get(newPlan));
 			
 			// TODO: pick optimal migration strategy
 			
+			// TODO: possibly need to drain buffers and remove them
+			// stop scheduling
+			sender.stop();
+			
 			// start migration to new plan 
-			sender = this.planMigrationStrategie.migrateQuery(sender, newPlan);
+			this.logger.info("Start migration to new physical plan (query ID "+sender.getID()+")");
+			this.planMigrationStrategie.migrateQuery(this, sender, newPlan);
 			
-			// TODO: migration end callback
-			sender.setLogicalPlan(alternatives.get(newPlan));
-			sender.initializePhysicalPlan(newPlan);
-			
-			// TODO: executionPlan aktualisieren
+			// wait for migration end callback
+			this.logger.info("Plan migration running (query ID "+sender.getID()+")");
 			
 		} catch (Exception e) {
-			this.logger.warn("Reoptimization failed.",e);
-		} finally {
-			this.optimizationLock.remove(sender.getID());
+			//this.optimizationContext.remove(sender.getID());
+			this.logger.warn("Reoptimization failed. (query ID "+sender.getID()+")",e);
 		}
 		
 		return executionPlan;
+	}
+
+	@Override
+	public void handleFinishedMigration(IEditableQuery query) {
+		PlanMigrationContext context = this.optimizationContext.get(query.getID());
+
+		try {
+			// set new logical plan
+			query.setLogicalPlan(context.getLogicalPlan());
+
+			// reapply buffers to plan
+			IBufferPlacementStrategy bufferPlacementStrategy = query
+					.getBuildParameter().getBufferPlacementStrategy();
+			if (bufferPlacementStrategy != null) {
+				bufferPlacementStrategy.addBuffers(context.getRoot());
+			}
+
+			// set and initialize new physical plan
+			query.initializePhysicalPlan(context.getRoot());
+
+			// continue scheduling
+			query.start();
+
+			// remove lock and context
+			this.optimizationContext.remove(query.getID());
+			this.logger.info("Finished plan migration (query ID "
+					+ query.getID() + ")");
+
+		} catch (Exception e) {
+			// this.optimizationContext.remove(sender.getID());
+			this.logger.warn("Reoptimization failed. (query ID "
+					+ query.getID() + ")", e);
+		}
 	}
 
 }

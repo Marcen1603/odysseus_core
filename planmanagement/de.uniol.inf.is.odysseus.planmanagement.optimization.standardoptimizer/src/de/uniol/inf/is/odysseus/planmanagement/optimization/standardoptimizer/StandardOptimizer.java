@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 
 /**
@@ -82,15 +81,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 				.migratePlan(sender, newExecutionPlan);
 	}
 
-
 	@Override
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan preQueryRemoveOptimization(
-			T sender, IQuery removedQuery,
-			IEditableExecutionPlan executionPlan,
-			AbstractOptimizationParameter<?>... parameters)
-			throws QueryOptimizationException {
+	public void handleFinishedMigration(IEditableQuery query) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 }

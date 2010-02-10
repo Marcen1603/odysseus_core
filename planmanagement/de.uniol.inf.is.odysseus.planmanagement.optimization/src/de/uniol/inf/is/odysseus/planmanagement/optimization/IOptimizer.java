@@ -231,4 +231,12 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IEditableQuery> newQueries, OptimizeParameter parameter, Set<String> rulesToUse)
 			throws QueryOptimizationException;
+	
+	/**
+	 * Handles a callback, when a plan migration has finished.
+	 * 
+	 * @param query
+	 * 			Query that has finished a migration to a new plan.
+	 */
+	public void handleFinishedMigration(IEditableQuery query);
 }
