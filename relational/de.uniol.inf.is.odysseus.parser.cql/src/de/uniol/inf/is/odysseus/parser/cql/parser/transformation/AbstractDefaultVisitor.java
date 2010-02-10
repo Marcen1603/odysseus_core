@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBasicPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCSVSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
@@ -23,7 +24,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseOptions;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDateFormat;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDistinctExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
@@ -545,6 +545,12 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTBrokerSelectInto node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}
