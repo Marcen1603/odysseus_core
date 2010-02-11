@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -25,6 +28,7 @@ public class MigrationHelper {
 		return copyTree(root, null, null);
 	}
 	
+	// FIXME: root ist jetzt die letzte senke
 	private static IPhysicalOperator copyTree(IPhysicalOperator op, IPhysicalOperator parentNewPlan,
 			PhysicalSubscription parentSubscription) throws CloneNotSupportedException {
 		System.out.println(op.getName());
@@ -56,6 +60,22 @@ public class MigrationHelper {
 			copyTree((IPhysicalOperator)pSub.getTarget(), (IPhysicalOperator)copy, pSub);
 		}
 		return copy;
+	}
+	
+	public static List<ISource> getSources(IPhysicalOperator op) {
+		List<ISource> sources = new ArrayList<ISource>();
+		getSources(sources,op);
+		return sources;
+	}
+	
+	private static void getSources(List<ISource> sources, IPhysicalOperator op) {
+		if (!op.isSink()) {
+			sources.add((ISource)op);
+			return;
+		}
+		for ( PhysicalSubscription<?> sub : ((ISink<?>)op).getSubscribedToSource()) {
+			getSources(sources, (IPhysicalOperator)sub.getTarget());
+		}
 	}
 
 }

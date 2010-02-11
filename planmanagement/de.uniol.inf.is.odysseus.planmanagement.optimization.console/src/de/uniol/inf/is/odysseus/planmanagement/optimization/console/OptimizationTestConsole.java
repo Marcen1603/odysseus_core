@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.console;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
@@ -10,6 +12,9 @@ import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -61,6 +66,60 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 			e.printStackTrace();
 		}
 	}
+	
+	public void _n (CommandInterpreter ci) {
+		try {
+			this.executor.addQuery("CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )", 
+					parser(),this.trafoConfigParam);
+			Collection<Integer> queryIds = this.executor.addQuery("SELECT (a * 2) as value FROM test WHERE a > 2", 
+					parser(), this.trafoConfigParam);
+			queryIds.addAll(this.executor.addQuery("SELECT (a * 3) as value FROM test WHERE a > 1", 
+					parser(), this.trafoConfigParam));
+			//this.executor.startExecution();
+			
+			IEditablePlan plan = (IEditablePlan)this.executor.getSealedPlan();
+			IEditableQuery query = plan.getQuery(0);
+			
+			IPhysicalOperator p1 = query.getRoot();
+			IPhysicalOperator p2 = plan.getQuery(1).getRoot();
+			
+			System.out.println("---------------------");
+			System.out.println(p1.getName());
+			System.out.println(p2.getName());
+			
+			List<IPhysicalOperator> sources1 = new ArrayList<IPhysicalOperator>();
+			getSources(sources1, p1);
+			IPhysicalOperator s1 = sources1.get(0);
+			sources1.clear();
+			getSources(sources1, p2);
+			IPhysicalOperator s2 = sources1.get(0);
+			
+			System.out.println(s1==s2);
+			
+			for (PhysicalSubscription s : ((ISource<?>)s1).getSubscriptions()) {
+				IPhysicalOperator op = (IPhysicalOperator)s.getTarget();
+				System.out.println(op.getName());
+				System.out.println(op.getOwner());
+			}
+			
+			
+		} catch (PlanManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void getSources(List<IPhysicalOperator> sources, IPhysicalOperator op) {
+		if (!op.isSink()) {
+			sources.add(op);
+			return;
+		}
+		for ( PhysicalSubscription<?> sub : ((ISink<?>)op).getSubscribedToSource()) {
+			getSources(sources, (IPhysicalOperator)sub.getTarget());
+		}
+	}
+	
+	
 
 	private String parser() {
 		return "CQL";

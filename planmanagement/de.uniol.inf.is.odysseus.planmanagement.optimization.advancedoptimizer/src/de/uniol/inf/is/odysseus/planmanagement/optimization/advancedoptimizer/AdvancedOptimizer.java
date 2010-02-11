@@ -40,6 +40,9 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 	}
 	
+	// FIXME: zyklische abhaengigkeit
+	// <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor" name="IAdvancedExecutor" policy="dynamic"/>
+	// reoptimize bietet kein IQueryOptimizable bzw. executor, daher kommt IQueryOptimizer nicht an den compiler
 	public void bindExecutor(IAdvancedExecutor executor){
 		this.executor = executor;
 	}
