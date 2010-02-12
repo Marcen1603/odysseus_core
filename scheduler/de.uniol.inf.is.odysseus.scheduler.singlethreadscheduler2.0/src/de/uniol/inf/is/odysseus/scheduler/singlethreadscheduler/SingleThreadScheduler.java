@@ -217,7 +217,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
-	public void setSources(List<IIterableSource<?>> sourcesToSchedule) {
+	public synchronized void setSources(List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
 			for (SingleSourceExecutor source : sourceThreads) {
 				source.terminate();
@@ -225,7 +225,9 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 
 			for (IIterableSource<?> source : sourcesToSchedule) {
 				final IIterableSource<?> s = source;
-				sourceThreads.add(new SingleSourceExecutor(s));
+				SingleSourceExecutor singleSourceExecutor = new SingleSourceExecutor(s);
+				sourceThreads.add(singleSourceExecutor);
+				singleSourceExecutor.start();
 			}
 
 		}
