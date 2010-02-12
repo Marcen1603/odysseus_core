@@ -76,13 +76,13 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * 
 	 */
 	private class ExecutorThread extends Thread {
-		
+
 		private boolean terminate;
 
 		public void terminate() {
 			terminate = true;
 		};
-		
+
 		@Override
 		public void run() {
 			terminate = false;
@@ -104,21 +104,22 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			}
 		}
 	}
-	
-	private class SingleSourceExecutor extends Thread{
-		
+
+	private class SingleSourceExecutor extends Thread {
+
 		private IIterableSource<?> s;
-		
+
 		boolean terminate = false;
-		
-		public SingleSourceExecutor(IIterableSource<?> s){
+
+		public SingleSourceExecutor(IIterableSource<?> s) {
 			this.s = s;
 		}
-		
+
 		public void run() {
 			sourceThreads.add(this);
 			terminate = false;
-			while (!isInterrupted() && !s.isDone() && s.isActive() && !terminate) {
+			while (!isInterrupted() && !s.isDone() && s.isActive()
+					&& !terminate) {
 				while (s.hasNext()) {
 					s.transferNext();
 				}
@@ -131,7 +132,6 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			terminate = true;
 		};
 	}
-	
 
 	/*
 	 * (non-Javadoc)
@@ -217,7 +217,8 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
-	public synchronized void setSources(List<IIterableSource<?>> sourcesToSchedule) {
+	public synchronized void setSources(
+			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
 			for (SingleSourceExecutor source : sourceThreads) {
 				source.terminate();
@@ -225,9 +226,12 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 
 			for (IIterableSource<?> source : sourcesToSchedule) {
 				final IIterableSource<?> s = source;
-				SingleSourceExecutor singleSourceExecutor = new SingleSourceExecutor(s);
+				SingleSourceExecutor singleSourceExecutor = new SingleSourceExecutor(
+						s);
 				sourceThreads.add(singleSourceExecutor);
-				singleSourceExecutor.start();
+				if (!singleSourceExecutor.isAlive()) {
+					singleSourceExecutor.start();
+				}
 			}
 
 		}
@@ -243,7 +247,6 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	public ArrayList<IPartialPlan> getPartialPlans() {
 		return (ArrayList<IPartialPlan>) this.parts.keySet();
 	}
-
 
 	/*
 	 * (non-Javadoc)
