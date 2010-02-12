@@ -229,7 +229,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 				SingleSourceExecutor singleSourceExecutor = new SingleSourceExecutor(
 						s);
 				sourceThreads.add(singleSourceExecutor);
-				if (!singleSourceExecutor.isAlive()) {
+				if (this.isRunning() && !singleSourceExecutor.isAlive()) {
 					singleSourceExecutor.start();
 				}
 			}
