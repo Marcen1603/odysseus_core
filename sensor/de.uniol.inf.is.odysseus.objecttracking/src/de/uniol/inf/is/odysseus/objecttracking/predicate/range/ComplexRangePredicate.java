@@ -41,4 +41,10 @@ public abstract class ComplexRangePredicate<T> extends
 		this.left.init(leftSchema, rightSchema);
 		this.right.init(leftSchema, rightSchema);
 	}
+	
+	@Override
+	public long getAdditionalEvaluationDuration() {
+		// TODO Auto-generated method stub
+		return this.left.getAdditionalEvaluationDuration() + this.right.getAdditionalEvaluationDuration();
+	}
 }

@@ -77,6 +77,12 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	@Override
 	protected void process_done() {
 		super.process_done();
+		try {
+			this.channel.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.isOpen = false;
 	}
 

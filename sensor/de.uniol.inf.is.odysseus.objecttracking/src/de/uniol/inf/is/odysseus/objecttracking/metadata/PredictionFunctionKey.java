@@ -30,4 +30,8 @@ public class PredictionFunctionKey<T> implements IPredictionFunctionKey<T> {
 	public PredictionFunctionKey<T> clone(){
 		return new PredictionFunctionKey<T>(this);
 	}
+	
+	public String toString(){
+		return this.key.toString();
+	}
 }

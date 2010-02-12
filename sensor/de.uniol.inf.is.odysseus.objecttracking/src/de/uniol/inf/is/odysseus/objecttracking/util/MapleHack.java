@@ -147,8 +147,8 @@ public class MapleHack {
 				}
 				counter++;
 				
-				SDFExpression leftExpr = new SDFExpression(null, attributes.get(i).toPointString() + "<" + attributes.get(u).toPointString(), attrRes );
-				SDFExpression rightExpr = new SDFExpression(null, attributes.get(i).toPointString() + ">" + attributes.get(u).toPointString(), attrRes);
+				SDFExpression leftExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") < sqrt(" + attributes.get(u).toPointString() + ")", attrRes );
+				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") > sqrt(" + attributes.get(u).toPointString() + ")", attrRes);
 				IPredicate left = new RelationalPredicate(leftExpr);
 				IPredicate right = new RelationalPredicate(rightExpr);
 				AndPredicate andPred = new AndPredicate(left, right);

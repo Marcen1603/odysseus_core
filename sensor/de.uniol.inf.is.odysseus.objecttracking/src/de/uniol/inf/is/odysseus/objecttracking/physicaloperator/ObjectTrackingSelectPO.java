@@ -17,7 +17,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M extends IPredictionFunctionKey & IApplicationTime> extends AbstractPipe<T, T> {
 
 	private Map<IPredicate<? super T>, IRangePredicate> rangePredicates;
-	
+
+	private long duration;
+	private long counter;
+	private long transfered;
+
 	public ObjectTrackingSelectPO(Map<IPredicate<? super T>, IRangePredicate> rangePredicates){
 		this.rangePredicates = rangePredicates;
 	}
@@ -46,9 +50,13 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 	@Override
 	protected void process_next(T object, int port) {
 		// first get the range predicate
+		this.counter++;
+		long start = System.nanoTime();
 		IRangePredicate rangePredicate = this.rangePredicates.get(object.getMetadata().getPredictionFunctionKey());
 		
 		List<ITimeInterval> appIntervals = rangePredicate.evaluate(object);
+		long end = System.nanoTime();
+		this.duration += (end - start);
 		
 		// only transfer the object, if it is valid in future!
 		// What is with elements, that are valid in the past
@@ -59,12 +67,29 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 			object.getMetadata().setApplicationIntervals(appIntervals);
 			
 			transfer(object);
+			this.transfered++;
 		}
 	}
 	
 	@Override
 	public ObjectTrackingSelectPO<T, M> clone() throws CloneNotSupportedException{
 		return new ObjectTrackingSelectPO<T, M>(this);
+	}
+	
+	@Override
+	protected void process_done() {
+		System.out.println("elements processed: " + this.counter);
+		System.out.println("Brutto duration: " + this.duration);
+		
+		long additionalEvaluationDuration = 0;
+		for(Entry<IPredicate<? super T>, IRangePredicate> entry : this.rangePredicates.entrySet()){
+			additionalEvaluationDuration += entry.getValue().getAdditionalEvaluationDuration();
+		}
+		System.out.println("additional duration: " + additionalEvaluationDuration);
+		System.out.println("Netto duration: " + (this.duration - additionalEvaluationDuration));
+		
+		System.out.println("elements transfered: " + this.transfered);
+		System.out.println("elements per second: " + 1e9 * this.counter / (this.duration - additionalEvaluationDuration));
 	}
 
 }

@@ -25,5 +25,6 @@ public interface IRangePredicate<T> extends IClone, Serializable{
 	public List<ITimeInterval> evaluate(T left, T right);
 	public IRangePredicate<T> clone();
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema);
+	public long getAdditionalEvaluationDuration();
 	
 }

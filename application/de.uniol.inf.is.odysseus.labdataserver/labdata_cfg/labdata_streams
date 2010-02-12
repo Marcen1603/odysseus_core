@@ -31,7 +31,9 @@ CREATE STREAM linearMove(
 	timestamp INTEGER,
 	id INTEGER,
 	pos INTEGER,
-	speed INTEGER
+	speed INTEGER,
+	add1 INTEGER,
+	add2 INTEGER
 ) SOCKET MV localhost : 55570
 
 

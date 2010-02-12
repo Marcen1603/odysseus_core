@@ -169,6 +169,7 @@ public class LabdataServer {
 			System.out.println("Caching done");
 		}
 		ServerSocket server = new ServerSocket(port);
+
 		while (true) {
 			System.out.println("Waiting for connection on port " + port);
 			Socket s = server.accept();

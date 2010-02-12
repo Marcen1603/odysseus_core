@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DateHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
@@ -33,6 +37,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	private boolean isDone;
 	private SDFAttributeList outputSchema;
 
+	private static Logger logger = LoggerFactory.getLogger(AtomicDataInputStreamAccessMVPO.class);
 
 //	private int limit;
 //	
@@ -83,6 +88,13 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	@Override
 	protected void process_done() {
 		super.process_done();
+		// Evaluation
+		try {
+			this.channel.close();
+			logger.debug("Channel closed.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		this.isOpen = false;
 	}
 
