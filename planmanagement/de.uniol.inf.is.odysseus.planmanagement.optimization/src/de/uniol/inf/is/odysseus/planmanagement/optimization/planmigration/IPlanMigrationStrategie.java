@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 
 /**
  * Describes an object which migrates an old and a new execution plan. Used for
@@ -36,6 +37,8 @@ public interface IPlanMigrationStrategie {
 	 * 				installed query, was stopped before by optimizer
 	 * @param newPlanRoot
 	 * 				new physical plan to migrate to
+	 * @throws QueryOptimizationException
 	 */
-	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery, IPhysicalOperator newPlanRoot);
+	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery, 
+			IPhysicalOperator newPlanRoot) throws QueryOptimizationException;
 }

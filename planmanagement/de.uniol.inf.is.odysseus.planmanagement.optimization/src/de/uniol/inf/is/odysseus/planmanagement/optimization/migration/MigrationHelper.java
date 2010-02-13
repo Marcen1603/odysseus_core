@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.intervalapproach.window.AbstractWindowTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.SplitPO;
 
 /**
  * 
@@ -62,20 +64,54 @@ public class MigrationHelper {
 		return copy;
 	}
 	
-	public static List<ISource> getSources(IPhysicalOperator op) {
-		List<ISource> sources = new ArrayList<ISource>();
+	public static List<ISource<?>> getSources(IPhysicalOperator op) {
+		List<ISource<?>> sources = new ArrayList<ISource<?>>();
 		getSources(sources,op);
 		return sources;
 	}
 	
-	private static void getSources(List<ISource> sources, IPhysicalOperator op) {
+	private static void getSources(List<ISource<?>> sources, IPhysicalOperator op) {
 		if (!op.isSink()) {
-			sources.add((ISource)op);
+			sources.add((ISource<?>)op);
 			return;
 		}
-		for ( PhysicalSubscription<?> sub : ((ISink<?>)op).getSubscribedToSource()) {
+		for (PhysicalSubscription<?> sub : ((ISink<?>)op).getSubscribedToSource()) {
 			getSources(sources, (IPhysicalOperator)sub.getTarget());
 		}
+	}
+	
+	public static List<ISink<?>> getOperatorsBeforeSplit(IPhysicalOperator op) {
+		List<ISink<?>> operators = new ArrayList<ISink<?>>();
+		getOperatorsBeforeSplit(operators, op);
+		return operators;
+	}
+	
+	private static void getOperatorsBeforeSplit(List<ISink<?>> operators, IPhysicalOperator op) {
+		for (PhysicalSubscription<?> sub : ((ISink<?>)op).getSubscribedToSource()) {
+			IPhysicalOperator target = (IPhysicalOperator)sub.getTarget();
+			if (target instanceof SplitPO) {
+				operators.add((ISink<?>) op);
+				continue;
+			}
+			getOperatorsBeforeSplit(operators, target);
+		}
+	}
+	
+	public static long getLongestWindowSize(IPhysicalOperator root) {
+		if (!root.isSink()) {
+			return 0L;
+		}
+		long wMax = 0L;
+		if (root instanceof AbstractWindowTIPO) {
+			wMax = ((AbstractWindowTIPO)root).getWindowSize();
+		}
+		for (PhysicalSubscription<?> sub : ((ISink<?>)root).getSubscribedToSource()) {
+			long w = getLongestWindowSize((IPhysicalOperator)sub.getTarget());
+			if (w > wMax) {
+				wMax = w;
+			}
+		}
+		return wMax;
 	}
 
 }
