@@ -6,20 +6,23 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BrokerAO extends AbstractLogicalOperator{
 
+	private boolean alreadyVisited = false;
 	private static final long serialVersionUID = 6441896379097181325L;
-
+	private int visitCounter =0;
 	private String identifier;
 	private SDFAttributeList outputSchema = null;
-	
+	private long generatedTime;
 	
 	public BrokerAO(String identifier){
 		this.identifier = identifier;
+		this.generatedTime = System.currentTimeMillis();
 	}
 	
 	public BrokerAO(BrokerAO original){
 		super(original);
 		this.outputSchema = original.outputSchema.clone();
 		this.identifier = original.identifier;
+		this.generatedTime = System.currentTimeMillis();
 	}
 	
 	public ILogicalOperator getInput(int number){
@@ -56,9 +59,9 @@ public class BrokerAO extends AbstractLogicalOperator{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((identifier == null) ? 0 : identifier.hashCode());
+				+ (int) (generatedTime ^ (generatedTime >>> 32));
 		result = prime * result
-				+ ((outputSchema == null) ? 0 : outputSchema.hashCode());
+				+ ((identifier == null) ? 0 : identifier.hashCode());
 		return result;
 	}
 
@@ -71,17 +74,23 @@ public class BrokerAO extends AbstractLogicalOperator{
 		if (getClass() != obj.getClass())
 			return false;
 		BrokerAO other = (BrokerAO) obj;
+		if (generatedTime != other.generatedTime)
+			return false;
 		if (identifier == null) {
 			if (other.identifier != null)
 				return false;
 		} else if (!identifier.equals(other.identifier))
 			return false;
-		if (outputSchema == null) {
-			if (other.outputSchema != null)
-				return false;
-		} else if (!outputSchema.equals(other.outputSchema))
-			return false;
 		return true;
+	}
+	
+	@Override
+	public boolean isAllPhysicalInputSet() {		
+		visitCounter++;
+		boolean isSet = super.isAllPhysicalInputSet();
+		//System.out.println("Broker physical input set: "+isSet+" ("+visitCounter+")");
+		
+		return isSet;		
 	}
 
 }
