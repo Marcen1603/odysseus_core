@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Implementation of the generated webservice
- * TODO return um query ids, erweitern
  * @author Simon Flandergan
  */
 
@@ -75,11 +74,11 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
      */
-    public java.lang.String createStatement(QueryType query) throws StatementQueryFault , StatementServiceFault    { 
+    public int addStatement(QueryType query) throws StatementQueryFault , StatementServiceFault    { 
         try {
 			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), 
 					new ParameterParserID(query.getLanguage())).iterator().next();
-			return queryID.toString();
+			return queryID;
 		} catch (PlanManagementException e) {
 			throw new StatementQueryFault(e.getMessage());
 		} catch (NullPointerException e){
@@ -115,6 +114,18 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         }catch (Exception e){
     		throw new SchemaServiceFault(e.getMessage());
     	}
+    }
+    
+    /* (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeStatement(java.math.BigInteger  queryID )*
+     */
+    public java.lang.String removeStatement(java.math.BigInteger queryID) throws RemoveStatementFault    { 
+        try {
+        	executor.removeQuery(queryID.intValue());
+        	return "";
+        }catch (Exception e){
+        	throw new RemoveStatementFault(e.getMessage());
+        }
     }
     
     /* (non-Javadoc)

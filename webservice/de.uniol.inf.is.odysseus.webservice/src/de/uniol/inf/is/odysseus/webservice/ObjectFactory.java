@@ -1,6 +1,7 @@
 
 package de.uniol.inf.is.odysseus.webservice;
 
+import java.math.BigInteger;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
@@ -26,7 +27,10 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private final static QName _Fault_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "fault");
+    private final static QName _QueryID_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "queryID");
+    private final static QName _In_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "in");
     private final static QName _Actuator_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuator");
+    private final static QName _RemoveStatementFault_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "RemoveStatementFault");
     private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
     private final static QName _ActuatorName_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorName");
     private final static QName _Source_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "source");
@@ -41,11 +45,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ActuatorReducedInformation }
+     * Create an instance of {@link Fault }
      * 
      */
-    public ActuatorReducedInformation createActuatorReducedInformation() {
-        return new ActuatorReducedInformation();
+    public Fault createFault() {
+        return new Fault();
     }
 
     /**
@@ -65,11 +69,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Fault }
+     * Create an instance of {@link ActuatorReducedInformation }
      * 
      */
-    public Fault createFault() {
-        return new Fault();
+    public ActuatorReducedInformation createActuatorReducedInformation() {
+        return new ActuatorReducedInformation();
     }
 
     /**
@@ -82,12 +86,39 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "queryID")
+    public JAXBElement<BigInteger> createQueryID(BigInteger value) {
+        return new JAXBElement<BigInteger>(_QueryID_QNAME, BigInteger.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "in")
+    public JAXBElement<String> createIn(String value) {
+        return new JAXBElement<String>(_In_QNAME, String.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ActuatorInformation }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "actuator")
     public JAXBElement<ActuatorInformation> createActuator(ActuatorInformation value) {
         return new JAXBElement<ActuatorInformation>(_Actuator_QNAME, ActuatorInformation.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "RemoveStatementFault")
+    public JAXBElement<String> createRemoveStatementFault(String value) {
+        return new JAXBElement<String>(_RemoveStatementFault_QNAME, String.class, null, value);
     }
 
     /**
