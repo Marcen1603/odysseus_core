@@ -193,7 +193,9 @@ public class Query implements IEditableQuery {
 				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
 				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
 						.getSubscribedToSource()) {
-					sources.push(subscription.getTarget());
+					if(!ret.contains(subscription.getTarget())){
+						sources.push(subscription.getTarget());
+					}
 				}
 			}
 		}

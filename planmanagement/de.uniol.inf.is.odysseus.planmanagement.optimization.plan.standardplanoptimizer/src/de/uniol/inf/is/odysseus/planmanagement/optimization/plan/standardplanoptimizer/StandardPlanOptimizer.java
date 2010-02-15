@@ -133,7 +133,8 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 					if (iterableSource.isSink()
 							&& !partialPlanSources.contains(iterableSource)) {
 						partialPlanSources.add(iterableSource);
-					} else if (!iterableSource.isSink() // IterableSource is a global Source
+					} else if (!iterableSource.isSink() // IterableSource is a
+														// global Source
 							&& !sources.contains(iterableSource)) {
 						sources.add(iterableSource);
 					}
@@ -170,18 +171,22 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	@SuppressWarnings("unchecked")
 	private ArrayList<IIterableSource<?>> iterableSources(ISource<?> source) {
 		ArrayList<IIterableSource<?>> ret = new ArrayList<IIterableSource<?>>();
+		List<ISource<?>> visited = new ArrayList<ISource<?>>();
 		Stack<ISource<?>> sources = new Stack<ISource<?>>();
 		sources.push(source);
 		while (!sources.isEmpty()) {
 			ISource<?> curSource = sources.pop();
-			if (curSource instanceof IIterableSource) {
-				ret.add((IIterableSource<?>) curSource);
-			}
-			if (curSource instanceof IPipe) {
-				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
-				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
-						.getSubscribedToSource()) {
-					sources.push(subscription.getTarget());
+			if (!visited.contains(curSource)) {
+				visited.add(curSource);
+				if (curSource instanceof IIterableSource) {
+					ret.add((IIterableSource<?>) curSource);
+				}
+				if (curSource instanceof IPipe) {
+					IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
+					for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
+							.getSubscribedToSource()) {
+						sources.push(subscription.getTarget());
+					}
 				}
 			}
 		}
