@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.parser.cql;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,6 +99,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTupleSet;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ParseException;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckAttributes;
@@ -677,8 +679,23 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTBrokerSelectInto node, Object data) {
-		System.out.println("SELECT INTO invoked");
-		return null;
-	}
+		
+			try {
+				Class<?> brokerSourceVisitor = Class
+						.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+				Object bsv = brokerSourceVisitor.newInstance();
+				Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+						ASTBrokerSelectInto.class, Object.class);
+				AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+						.invoke(bsv, node, data);
+				plans.add(sourceOp);
+				return plans;
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException("Brokerplugin is missing in CQL parser.");
+			} catch (Exception e) {
+				throw new RuntimeException("Error while parsing select into broker");
+			}			
+		}
+	
 
 }

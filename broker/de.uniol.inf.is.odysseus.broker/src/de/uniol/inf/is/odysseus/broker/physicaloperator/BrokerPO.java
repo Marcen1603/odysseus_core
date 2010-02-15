@@ -14,7 +14,7 @@ public class BrokerPO<T> extends AbstractPipe<T, T> {
 	
 	@Override
 	protected void process_next(T object, int port) {
-		System.out.println("Broker invoked...");
+		System.out.println("Broker incoming: "+object.toString());
 		transfer(object);		
 		
 	}

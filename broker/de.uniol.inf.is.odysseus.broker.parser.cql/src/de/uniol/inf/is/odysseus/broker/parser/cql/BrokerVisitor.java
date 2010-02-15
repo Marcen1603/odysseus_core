@@ -4,15 +4,17 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
-public class CreateBrokerSourceVisitor extends AbstractDefaultVisitor {
+public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) {
@@ -57,6 +59,32 @@ public class CreateBrokerSourceVisitor extends AbstractDefaultVisitor {
 		}else{
 			throw new RuntimeException("Broker "+brokerName+" not exists");
 		}
+		
+	}
+	
+	public Object visit(ASTBrokerSelectInto node, Object data) {
+		ASTSelectStatement statement = new ASTSelectStatement(0);
+		int number = 0;
+		
+		// add selectClause
+		statement.jjtAddChild(node.jjtGetChild(0), number);
+		number++;
+		//get broker name
+		String brokerName = ((ASTIdentifier)node.jjtGetChild(1)).getName();
+		
+		//add rest from select
+		for(int i=2;i<node.jjtGetNumChildren();i++){			
+			statement.jjtAddChild(node.jjtGetChild(i), number);
+			number++;			
+		}
+		CQLParser v = new CQLParser();
+		AbstractLogicalOperator selectStatementOperator = (AbstractLogicalOperator) v.visit(
+				statement, null);
+		BrokerAO broker = new BrokerAO(brokerName);
+		broker.setOutputSchema(BrokerDictionary.getInstance().getBroker(brokerName).getOutputSchema());
+		
+		broker.subscribeToSource(selectStatementOperator, 0, 0, selectStatementOperator.getOutputSchema());		
+		return broker;
 		
 	}
 

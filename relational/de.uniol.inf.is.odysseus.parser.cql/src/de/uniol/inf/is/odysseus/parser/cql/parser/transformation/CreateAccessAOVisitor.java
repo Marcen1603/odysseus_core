@@ -264,7 +264,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTBrokerSource node, Object data) {
 		try {
 			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.CreateBrokerSourceVisitor");
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
 			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTBrokerSource.class, Object.class);
@@ -284,7 +284,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	private Object brokerStreamingSource(ASTSimpleSource node, Object data) {
 		try {
 			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.CreateBrokerSourceVisitor");
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
 			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTSimpleSource.class, Object.class);
