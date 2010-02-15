@@ -43,7 +43,8 @@ public class DroolsTransformation implements ITransformation {
 		}
 
 		if (!inserted.contains(op)) {
-			LoggerHelper.getInstance(LOGGER_NAME).debug("insert into wm: " + op);
+			LoggerHelper.getInstance(LOGGER_NAME)
+					.debug("insert into wm: " + op);
 			session.insert(op);
 			inserted.add(op);
 
@@ -80,24 +81,23 @@ public class DroolsTransformation implements ITransformation {
 		addLogicalOperatorToSession(session, top, list);
 
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
-			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation of: "
-					+ AbstractTreeWalker.prefixWalk(top,
-							new AlgebraPlanToStringVisitor()));
-			LoggerHelper.getInstance(LOGGER_NAME).debug("added to working memory " + list);
+			LoggerHelper.getInstance(LOGGER_NAME).debug(
+					"transformation of: "
+							+ AbstractTreeWalker.prefixWalk(top,
+									new AlgebraPlanToStringVisitor()));
+			LoggerHelper.getInstance(LOGGER_NAME).debug(
+					"added to working memory " + list);
 		}
 
 		session.insert(this);
 		session.startProcess("flow");
 
-//		 WorkingMemoryConsoleLogger lg = new
-//		 WorkingMemoryConsoleLogger(session);
-//		 lg.clearFilters();
-//		 session.addEventListener( new DebugAgendaEventListener() );
-//		 session.addEventListener( new DebugWorkingMemoryEventListener() );
+		// WorkingMemoryConsoleLogger lg = new
+		// WorkingMemoryConsoleLogger(session);
+		// lg.clearFilters();
+		// session.addEventListener( new DebugAgendaEventListener() );
+		// session.addEventListener( new DebugWorkingMemoryEventListener() );
 
-
-		 
-		 
 		session.fireAllRules();
 		IPhysicalOperator physicalPO = null;
 		try {
@@ -112,14 +112,16 @@ public class DroolsTransformation implements ITransformation {
 		}
 		session.dispose();
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
-			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation result: \n" + planToString(physicalPO, ""));
+			LoggerHelper.getInstance(LOGGER_NAME).debug(
+					"transformation result: \n" + planToString(physicalPO, ""));
 		}
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 		return physicalPO;
 	}
 
-	@SuppressWarnings("unchecked")
-	private String planToString(IPhysicalOperator physicalPO, String indent) {
+	
+	@SuppressWarnings({ "unused", "unchecked" })
+	private String planToStringOLD(IPhysicalOperator physicalPO, String indent) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
 		builder.append(physicalPO);
@@ -127,8 +129,35 @@ public class DroolsTransformation implements ITransformation {
 		if (physicalPO.isSink()) {
 			for (PhysicalSubscription sub : ((ISink<?>) physicalPO)
 					.getSubscribedToSource()) {
-				builder.append(planToString((IPhysicalOperator) sub.getTarget(), "  " + indent));
+				builder.append(planToString(
+						(IPhysicalOperator) sub.getTarget(), "  " + indent));
 			}
+		}
+		return builder.toString();
+	}
+
+	private String planToString(IPhysicalOperator physicalPO, String indent) {
+		return this.planToString(physicalPO, indent,
+				new ArrayList<IPhysicalOperator>());
+	}
+
+	private String planToString(IPhysicalOperator physicalPO, String indent,
+			List<IPhysicalOperator> visited) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(indent);
+		if (!visited.contains(physicalPO)) {
+			visited.add(physicalPO);
+			builder.append(physicalPO);
+			builder.append('\n');
+			if (physicalPO.isSink()) {
+				for (PhysicalSubscription<?> sub : ((ISink<?>) physicalPO)
+						.getSubscribedToSource()) {
+					builder.append(planToString((IPhysicalOperator) sub
+							.getTarget(), "  " + indent, visited));
+				}
+			}
+		}else{
+			builder.append("[cyclic connection]\n");
 		}
 		return builder.toString();
 	}

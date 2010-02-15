@@ -28,7 +28,10 @@ public class RestructHelper {
 							.getTarget().getOutputSchema());
 			ret.add(father.getTarget());
 		}
-		ret.add(child.getTarget());
+		//prevents duplicate entry if child.getTarget=father.getTarget
+		if(!ret.contains(child.getTarget())){
+			ret.add(child.getTarget());
+		}
 		for (LogicalSubscription a : child.getTarget().getSubscriptions()) {
 			System.out.println("NEW SUBPLAN AFTER REMOVE: " + a.getTarget());
 		}
