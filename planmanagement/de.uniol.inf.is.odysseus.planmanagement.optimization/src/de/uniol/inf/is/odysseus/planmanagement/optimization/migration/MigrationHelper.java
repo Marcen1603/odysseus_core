@@ -40,8 +40,8 @@ public class MigrationHelper {
 			ISource<?> copy = (ISource<?>) op.clone();
 			
 			// subscribe to source
-			((ISink)parentNewPlan).subscribeToSource(copy, parentSubscription.getSinkPort(),
-					parentSubscription.getSourcePort(), parentSubscription.getSchema());
+			((ISink)parentNewPlan).subscribeToSource(copy, parentSubscription.getSinkInPort(),
+					parentSubscription.getSourceOutPort(), parentSubscription.getSchema());
 			
 			return copy;
 		}
@@ -52,8 +52,8 @@ public class MigrationHelper {
 		
 		if (parentNewPlan != null) {
 			// subscribe it's parent to copied operator
-			((ISink)parentNewPlan).subscribeToSource(copy, parentSubscription.getSinkPort(),
-					parentSubscription.getSourcePort(), parentSubscription.getSchema());
+			((ISink)parentNewPlan).subscribeToSource(copy, parentSubscription.getSinkInPort(),
+					parentSubscription.getSourceOutPort(), parentSubscription.getSchema());
 		}
 		
 		// navigate depth-first through plan

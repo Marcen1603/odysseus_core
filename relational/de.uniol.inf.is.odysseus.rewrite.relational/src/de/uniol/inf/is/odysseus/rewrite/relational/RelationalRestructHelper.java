@@ -184,7 +184,7 @@ public class RelationalRestructHelper {
 		}
 		son.setOutputSchema(newRenameSchema);
 
-		son.subscribeSink(toUp.getTarget(), toUp.getSinkPort(), 0, son
+		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0, son
 				.getOutputSchema());
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList(2);

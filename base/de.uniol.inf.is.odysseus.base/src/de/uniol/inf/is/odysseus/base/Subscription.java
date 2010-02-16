@@ -16,14 +16,14 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 
 	private static final long serialVersionUID = 5744808958349736195L;
 	private K target;
-	private int sinkPort;
-	private int sourcePort;
+	private int sinkInPort;
+	private int sourceOutPort;
 	private SDFAttributeList schema;
 
-	public Subscription(K target, int sinkPort, int sourcePort, SDFAttributeList schema) {
+	public Subscription(K target, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
 		this.target = target;
-		this.sinkPort = sinkPort;
-		this.sourcePort = sourcePort;
+		this.sinkInPort = sinkInPort;
+		this.sourceOutPort = sourceOutPort;
 		this.schema=schema;
 	}
 
@@ -31,15 +31,27 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	public K getTarget() {
 		return target;
 	}
+	
 	@Override
 	public int getSinkPort() {
-		return sinkPort;
+		return getSinkInPort();
 	}
+	
+	@Override
+	public int getSinkInPort() {
+		return sinkInPort;
+	}
+	
 	@Override
 	public int getSourcePort() {
-		return sourcePort;
+		return getSourceOutPort();
 	}
-
+	
+	@Override
+	public int getSourceOutPort() {
+		return sourceOutPort;
+	}
+	
 	public void setSchema(SDFAttributeList inputSchema) {
 		this.schema = inputSchema;
 	}
@@ -50,7 +62,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	
 	@Override
 	public String toString() {
-		return target+" "+sinkPort+" "+sourcePort;
+		return target+" "+sinkInPort+" "+sourceOutPort;
 	}
 
 	// ACHTUNG: BEI DER GENERIERUNG VON HASHCODE UND EQUALS
@@ -64,8 +76,8 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + sinkPort;
-		result = prime * result + sourcePort;
+		result = prime * result + sinkInPort;
+		result = prime * result + sourceOutPort;
 		result = prime * result + ((target == null) ? 0 : target.hashCode());
 		return result;
 	}
@@ -83,9 +95,9 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 			return false;
 		@SuppressWarnings("unchecked")
 		Subscription other = (Subscription) obj;
-		if (sinkPort != other.sinkPort)
+		if (sinkInPort != other.sinkInPort)
 			return false;
-		if (sourcePort != other.sourcePort)
+		if (sourceOutPort != other.sourceOutPort)
 			return false;
 		if (target == null) {
 			if (other.target != null)

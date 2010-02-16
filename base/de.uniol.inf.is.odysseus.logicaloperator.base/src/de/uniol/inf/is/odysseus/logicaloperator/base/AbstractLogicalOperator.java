@@ -181,8 +181,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * (int, de.uniol.inf.is.odysseus.base.IPhysicalOperator)
 	 */
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> subscription) {
-		this.physSubscriptionTo.put(subscription.getSinkPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkPort(), subscription.getTarget());
+		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
+		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
 	}
 	
 	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort, SDFAttributeList schema){
@@ -265,7 +265,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	
 	@Override
 	public void unsubscribeFromSource(LogicalSubscription subscription) {
-		unsubscribeFromSource(subscription.getTarget(), subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
+		unsubscribeFromSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 	}
 		
 	@Override
@@ -309,7 +309,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public void unsubscribeSink(LogicalSubscription subscription) {
 		if (this.subscriptions.remove(subscription)) {
-			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
+			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			recalcOutputSchemata = true;
 		}
 	}

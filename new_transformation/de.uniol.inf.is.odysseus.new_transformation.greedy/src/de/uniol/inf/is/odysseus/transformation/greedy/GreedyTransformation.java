@@ -160,7 +160,7 @@ public class GreedyTransformation implements ITransformation {
 		if (physical == null)
 			return;
 		for (LogicalSubscription l : logical.getSubscriptions()) {
-			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkPort(), l.getSourcePort(), l.getSchema());
+			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 		}
 	}
 
@@ -168,7 +168,7 @@ public class GreedyTransformation implements ITransformation {
 		if (physical == null)
 			return;
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
-			physical.subscribeToSource((ISource) psub.getTarget(), psub.getSinkPort(), psub.getSourcePort(), psub.getSchema());
+			physical.subscribeToSource((ISource) psub.getTarget(), psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
 		}
 	}
 

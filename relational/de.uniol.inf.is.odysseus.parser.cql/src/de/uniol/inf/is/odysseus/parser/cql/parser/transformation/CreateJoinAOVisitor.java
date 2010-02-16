@@ -251,10 +251,10 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		getBottomOperators(plan, oldInput, bottomOps);
 		for (ILogicalOperator curOp : bottomOps) {
 			for (LogicalSubscription l : curOp.getSubscribedTo(oldInput)) {
-				l.getTarget().unsubscribeSink(curOp, l.getSinkPort(),
-						l.getSourcePort(), l.getSchema());
+				l.getTarget().unsubscribeSink(curOp, l.getSinkInPort(),
+						l.getSourceOutPort(), l.getSchema());
 				replacement
-						.subscribeSink(curOp, l.getSinkPort(), l.getSourcePort(), replacement.getOutputSchema());
+						.subscribeSink(curOp, l.getSinkInPort(), l.getSourceOutPort(), replacement.getOutputSchema());
 			}
 		}
 	}

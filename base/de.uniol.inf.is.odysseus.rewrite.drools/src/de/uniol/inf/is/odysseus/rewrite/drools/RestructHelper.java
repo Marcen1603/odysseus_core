@@ -22,8 +22,8 @@ public class RestructHelper {
 			remove.unsubscribeSink(father);
 			child.getTarget().subscribeSink(
 					father.getTarget(),
-					father.getSinkPort(),
-					child.getSourcePort(),
+					father.getSinkInPort(),
+					child.getSourceOutPort(),
 					reserveOutputSchema ? remove.getOutputSchema() : child
 							.getTarget().getOutputSchema());
 			ret.add(father.getTarget());
@@ -58,7 +58,7 @@ public class RestructHelper {
 		ret.add(source.getTarget());
 		after.unsubscribeFromSource(source);
 		source.getTarget().subscribeSink(toInsert, toInsertSinkPort,
-				source.getSourcePort(), source.getTarget().getOutputSchema());
+				source.getSourceOutPort(), source.getTarget().getOutputSchema());
 		toInsert.subscribeSink(after, sinkPort, toInsertSourcePort, toInsert
 				.getOutputSchema());
 		ret.add(after);
@@ -75,11 +75,11 @@ public class RestructHelper {
 		LogicalSubscription toUp = father.getSubscription();
 		father.unsubscribeSink(toUp);
 
-		father.subscribeToSource(toDown.getTarget(), 0, toDown.getSourcePort(),
+		father.subscribeToSource(toDown.getTarget(), 0, toDown.getSourceOutPort(),
 				toDown.getSchema());
 		father.subscribeSink(son, 0, 0, father.getOutputSchema());
 
-		son.subscribeSink(toUp.getTarget(), toUp.getSinkPort(), 0, son
+		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0, son
 				.getOutputSchema());
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>(2);

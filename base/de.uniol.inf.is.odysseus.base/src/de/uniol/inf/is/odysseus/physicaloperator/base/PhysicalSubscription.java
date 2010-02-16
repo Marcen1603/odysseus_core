@@ -11,8 +11,8 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	private static final long serialVersionUID = -6266008340674321020L;
 	private boolean done;
 	
-	public PhysicalSubscription(K target, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		super(target, sinkPort, sourcePort, schema);
+	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		super(target, sinkInPort, sourceOutPort, schema);
 		done = false;
 	}
 	

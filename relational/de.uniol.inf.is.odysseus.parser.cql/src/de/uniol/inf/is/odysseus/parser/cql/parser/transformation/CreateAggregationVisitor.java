@@ -166,18 +166,18 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		// remove possible subscriptions!!
 		if (this.select != null) {
 			for (LogicalSubscription l: select.getSubscriptions()){				
-				select.unsubscribeSink(l.getTarget(), l.getSinkPort(), l.getSourcePort(), l.getSchema());
+				select.unsubscribeSink(l.getTarget(), l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 			}
 			return this.select;
 		}
 		if (this.ao.hasAggregations() || hasGrouping ){
 			for (LogicalSubscription l: ao.getSubscriptions()){				
-				ao.unsubscribeSink(l.getTarget(), l.getSinkPort(), l.getSourcePort(), l.getSchema());
+				ao.unsubscribeSink(l.getTarget(), l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 			}
 			return this.ao;
 		}else{
 			for (LogicalSubscription l: top.getSubscriptions()){				
-				top.unsubscribeSink(l.getTarget(), l.getSinkPort(), l.getSourcePort(), l.getSchema());
+				top.unsubscribeSink(l.getTarget(), l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 			}
 			return top;
 		}

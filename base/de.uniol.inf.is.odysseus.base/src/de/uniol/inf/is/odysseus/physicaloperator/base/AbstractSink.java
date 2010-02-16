@@ -137,7 +137,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		synchronized (this.subscribedTo) {
 			this.allInputsDone = true;
 			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
-				if (sub.getSinkPort() == port) {
+				if (sub.getSinkInPort() == port) {
 					sub.setDone(true);
 				}
 				if (!sub.isDone()) {
@@ -228,7 +228,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			PhysicalSubscription<ISource<? extends T>> subscription) {
 		if (this.subscribedTo.remove(subscription)) {
 			subscription.getTarget().unsubscribeSink(this,
-					subscription.getSinkPort(), subscription.getSourcePort(),
+					subscription.getSinkInPort(), subscription.getSourceOutPort(),
 					subscription.getSchema());
 		}
 

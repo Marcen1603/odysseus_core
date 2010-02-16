@@ -96,8 +96,8 @@ public class DroolsRewrite implements IRewrite {
 		}
 		LogicalSubscription sub = top.getSubscribedToSource(0);
 		ILogicalOperator ret = sub.getTarget();
-		top.unsubscribeFromSource(ret, sub.getSinkPort(), sub
-				.getSourcePort(), sub.getSchema());
+		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub
+				.getSourceOutPort(), sub.getSchema());
 		if (logger.isInfoEnabled()) {
 			logger.debug("post rewrite:"
 					+ AbstractTreeWalker.prefixWalk(ret,

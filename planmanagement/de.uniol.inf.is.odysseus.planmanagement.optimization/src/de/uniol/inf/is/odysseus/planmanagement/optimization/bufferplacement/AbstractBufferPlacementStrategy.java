@@ -62,8 +62,8 @@ public abstract class AbstractBufferPlacementStrategy implements
 	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
 			PhysicalSubscription<? extends ISource<?>> s) {
 		// TODO Warnings
-		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkPort(),0, s.getSchema());
-		buffer.subscribeSink(sink, s.getSinkPort(),0, s.getSchema());
+		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(),0, s.getSchema());
+		buffer.subscribeSink(sink, s.getSinkInPort(),0, s.getSchema());
 		s.getTarget().subscribeSink(buffer, 0,0, s.getSchema());
 		initBuffer(buffer);
 	}

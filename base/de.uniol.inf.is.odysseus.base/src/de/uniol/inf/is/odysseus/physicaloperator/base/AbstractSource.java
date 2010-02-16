@@ -126,8 +126,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// transferbatchevent
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
-				if (sink.getSourcePort() == sourcePort){
-					sink.getTarget().process(object, sink.getSinkPort(), isTransferExclusive());
+				if (sink.getSourceOutPort() == sourcePort){
+					sink.getTarget().process(object, sink.getSinkInPort(), isTransferExclusive());
 				}
 			}
 		}
@@ -168,7 +168,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected void process_transfer(T object) {
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
-				sink.getTarget().process(object, sink.getSinkPort(), !this.hasSingleConsumer);
+				sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer);
 			}
 		}
 	}
@@ -195,7 +195,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void unsubscribeSink(PhysicalSubscription<ISink<? super T>> subscription) {
 		synchronized (this.subscriptions) {
 			if (this.subscriptions.remove(subscription)) {
-				subscription.getTarget().unsubscribeFromSource(this,subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
+				subscription.getTarget().unsubscribeFromSource(this,subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			}
 			this.hasSingleConsumer = this.subscriptions.size() == 1;
 		}	
@@ -212,7 +212,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		this.process_done();
 		synchronized (subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sub : subscriptions) {
-				sub.getTarget().done(sub.getSinkPort());
+				sub.getTarget().done(sub.getSinkInPort());
 			}
 		}
 	}

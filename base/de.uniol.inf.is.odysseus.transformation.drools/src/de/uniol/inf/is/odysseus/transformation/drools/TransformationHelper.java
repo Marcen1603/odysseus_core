@@ -30,7 +30,7 @@ public class TransformationHelper {
 
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
 			physical.subscribeToSource((ISource) psub.getTarget(),
-					psub.getSinkPort(), psub.getSourcePort(),psub.getSchema());
+					psub.getSinkInPort(), psub.getSourceOutPort(),psub.getSchema());
 		}
 		for (LogicalSubscription l : logical.getSubscriptions()) {
 			ILogicalOperator target = l.getTarget();
@@ -47,8 +47,8 @@ public class TransformationHelper {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
 		for (LogicalSubscription l : logical.getSubscriptions()) {
-			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkPort(),
-					l.getSourcePort(), l.getSchema());
+			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkInPort(),
+					l.getSourceOutPort(), l.getSchema());
 			ret.add(l.getTarget());
 		}
 		return ret;
@@ -71,7 +71,7 @@ public class TransformationHelper {
 			for(Subscription<ISource<?>> subscription : child.getPhysSubscriptionsTo()){
 				// if the following is true, we found the correct subscription
 				if(subscription.getTarget() == oldFather){
-					child.setPhysSubscriptionTo(newFather, subscription.getSinkPort(), subscription.getSourcePort(), subscription.getSchema());
+					child.setPhysSubscriptionTo(newFather, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 					modifiedChildren.add(child);
 				}
 			}
@@ -99,8 +99,8 @@ public class TransformationHelper {
 		// its old father and add it to its new father.
 		for(ISubscription<ISink> subscription: children){
 			ISink child = subscription.getTarget();
-			int sinkPort = subscription.getSinkPort();
-			int sourcePort = subscription.getSourcePort();
+			int sinkPort = subscription.getSinkInPort();
+			int sourcePort = subscription.getSourceOutPort();
 			SDFAttributeList schema = subscription.getSchema();
 			
 			oldFather.unsubscribeSink(subscription);
