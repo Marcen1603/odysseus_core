@@ -1,8 +1,19 @@
 package de.uniol.inf.is.odysseus.action.services.actuator;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.xml.namespace.QName;
+
+import org.apache.cxf.binding.Binding;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.ClientImpl;
+import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.service.Service;
+import org.apache.cxf.service.model.MessageInfo;
+import org.apache.cxf.service.model.ServiceInfo;
 
 
 
@@ -12,6 +23,16 @@ public class WorkflowClient implements IActuator {
 	
 	public WorkflowClient(Client client){
 		this.client = client;
+		
+		//build schema
+		ClientImpl clientImpl = (ClientImpl) client;
+        Endpoint endpoint = clientImpl.getEndpoint();
+        Service service = endpoint.getService();
+        ServiceInfo serviceInfo = service.getServiceInfos().get(0);
+        Map<QName, MessageInfo> messages = serviceInfo.getMessages();
+        for (Entry<QName, MessageInfo> message : messages.entrySet()){
+        	System.out.print(message.getKey().getNamespaceURI()+" || "+message.getValue().getMessagePart(0));
+        }
 	}
 	
 	public WorkflowClient(Client client, String correlationID){
