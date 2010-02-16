@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DateHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
@@ -20,6 +19,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.access.LongHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.StringHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 /**
  * @author Jonas Jacobi, Andre Bolles
@@ -36,8 +36,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	private Object[] attributeData;
 	private boolean isDone;
 	private SDFAttributeList outputSchema;
-
-	private static Logger logger = LoggerFactory.getLogger(AtomicDataInputStreamAccessMVPO.class);
+	private final String LOGGER_NAME = "AtomicDataInputStreamAccessMVPO";
 
 //	private int limit;
 //	
@@ -91,7 +90,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		// Evaluation
 		try {
 			this.channel.close();
-			logger.debug("Channel closed.");
+			LoggerHelper.getInstance(LOGGER_NAME).debug("Channel closed.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
