@@ -99,12 +99,12 @@ public class TransformationHelper {
 		// its old father and add it to its new father.
 		for(ISubscription<ISink> subscription: children){
 			ISink child = subscription.getTarget();
-			int sinkPort = subscription.getSinkInPort();
-			int sourcePort = subscription.getSourceOutPort();
+			int sinkInPort = subscription.getSinkInPort();
+			int sourceOutPort = subscription.getSourceOutPort();
 			SDFAttributeList schema = subscription.getSchema();
 			
 			oldFather.unsubscribeSink(subscription);
-			newFather.subscribeSink(child, sinkPort, sourcePort, schema);
+			newFather.subscribeSink(child, sinkInPort, sourceOutPort, schema);
 			modifiedChildren.add(child);
 		}
 		

@@ -98,7 +98,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	};
 
 	@Override
-	public void transfer(T object, int sourcePort) {
+	public void transfer(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
 		process_transfer(object);
 		// DEBUG
@@ -121,12 +121,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	};
 
 	@Override
-	public void transfer(Collection<T> object, int sourcePort) {
+	public void transfer(Collection<T> object, int sourceOutPort) {
 		// TODO events erzeugen und verschicken, bzw. ein spezielles
 		// transferbatchevent
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
-				if (sink.getSourceOutPort() == sourcePort){
+				if (sink.getSourceOutPort() == sourceOutPort){
 					sink.getTarget().process(object, sink.getSinkInPort(), isTransferExclusive());
 				}
 			}
@@ -174,21 +174,21 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 	
 	@Override
-	final public void subscribeSink(ISink<? super T> sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
+	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
-				sink, sinkPort, sourcePort, schema);
+				sink, sinkInPort, sourceOutPort, schema);
 		synchronized (this.subscriptions) {
 			if (!this.subscriptions.contains(sub)) {
 				this.subscriptions.add(sub);
-				sink.subscribeToSource(this, sinkPort, sourcePort, schema);
+				sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
 				this.hasSingleConsumer = this.subscriptions.size() == 1;
 			}
 		}
 	}
 
 	@Override
-	final public void unsubscribeSink(ISink<? super T> sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(	sink, sinkPort, sourcePort, schema));
+	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(	sink, sinkInPort, sourceOutPort, schema));
 	}
 	
 	@Override

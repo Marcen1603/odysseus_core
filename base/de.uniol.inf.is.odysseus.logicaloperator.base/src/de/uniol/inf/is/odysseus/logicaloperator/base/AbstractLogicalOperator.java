@@ -26,7 +26,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private ArrayList<IOperatorOwner> owner = new ArrayList<IOperatorOwner>();
 	
-	protected Map<Integer, LogicalSubscription> subscribedTo = new HashMap<Integer, LogicalSubscription>();
+	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
 	
 	protected boolean recalcOutputSchemata = false;
@@ -41,7 +41,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private IPredicate predicate = null;;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
-		this.subscribedTo = new HashMap<Integer, LogicalSubscription>(op.subscribedTo);
+		this.subscribedToSource = new HashMap<Integer, LogicalSubscription>(op.subscribedToSource);
 		this.subscriptions = new Vector<LogicalSubscription>(op.subscriptions);
 		predicate =  op.predicate;
 		setName(op.getName());
@@ -63,7 +63,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		AbstractLogicalOperator clone;
 		try {
 			clone = (AbstractLogicalOperator) super.clone();
-			clone.subscribedTo = new HashMap<Integer, LogicalSubscription>(this.subscribedTo);
+			clone.subscribedToSource = new HashMap<Integer, LogicalSubscription>(this.subscribedToSource);
 			clone.subscriptions = new Vector<LogicalSubscription>(this.subscriptions);
 			clone.physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>(
 					this.physSubscriptionTo);
@@ -110,7 +110,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * (int)
 	 */
 	public SDFAttributeList getInputSchema(int pos) {
-		LogicalSubscription s = subscribedTo.get(pos);
+		LogicalSubscription s = subscribedToSource.get(pos);
 		SDFAttributeList ret = null;
 		if (s!=null){
 			ret =  s.getSchema();
@@ -154,7 +154,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public boolean isAllPhysicalInputSet() {
-		for(Integer i : this.subscribedTo.keySet()){
+		for(Integer i : this.subscribedToSource.keySet()){
 			if (this.physInputOperators.get(i) == null ) {
 				return false;
 			}
@@ -185,8 +185,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
 	}
 	
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort, SDFAttributeList schema){
-		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkPort, sourcePort, schema));
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFAttributeList schema){
+		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort, sourceOutPort, schema));
 	}
 	
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo(){
@@ -242,13 +242,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	
 	
 	@Override
-	public void subscribeToSource(ILogicalOperator source, int sinkPort,
-			int sourcePort, SDFAttributeList inputSchema) {	
-		LogicalSubscription sub = new LogicalSubscription(source, sinkPort, sourcePort, inputSchema);
-		synchronized (this.subscribedTo) {
-			if (!this.subscribedTo.containsKey(sinkPort)) {
-				this.subscribedTo.put(sinkPort, sub);
-				source.subscribeSink(getInstance(), sinkPort, sourcePort, inputSchema);
+	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
+			int sourceOutPort, SDFAttributeList inputSchema) {	
+		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort, sourceOutPort, inputSchema);
+		synchronized (this.subscribedToSource) {
+			if (!this.subscribedToSource.containsKey(sinkInPort)) {
+				this.subscribedToSource.put(sinkInPort, sub);
+				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort, inputSchema);
 				recalcOutputSchemata = true;
 			}
 		}
@@ -256,10 +256,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 	
 	@Override
-	public void unsubscribeFromSource(ILogicalOperator source, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		if (this.subscribedTo.remove(sinkPort) != null) {
+	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		if (this.subscribedToSource.remove(sinkInPort) != null) {
 			recalcOutputSchemata = true;
-			source.unsubscribeSink(this, sinkPort, sourcePort, schema);
+			source.unsubscribeSink(this, sinkInPort, sourceOutPort, schema);
 		}
 	}
 	
@@ -270,18 +270,18 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		
 	@Override
 	final public Collection<LogicalSubscription> getSubscribedToSource() {
-		return this.subscribedTo.values();
+		return this.subscribedToSource.values();
 	}
 	
 	@Override
 	public LogicalSubscription getSubscribedToSource(int i) {
-		return this.subscribedTo.get(i);
+		return this.subscribedToSource.get(i);
 	}
 	
 	@Override
-	public Collection<LogicalSubscription> getSubscribedTo(ILogicalOperator a) {
+	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a) {
 		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
-		for(LogicalSubscription l:subscribedTo.values()){
+		for(LogicalSubscription l:subscribedToSource.values()){
 			if (l.getTarget() == a){
 				subs.add(l);
 			}
@@ -290,20 +290,20 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 	
 	@Override
-	public void subscribeSink(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList inputSchema) {
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList inputSchema) {
 		LogicalSubscription sub = new LogicalSubscription(
-				sink, sinkPort, sourcePort, inputSchema);
+				sink, sinkInPort, sourceOutPort, inputSchema);
 				if (!this.subscriptions.contains(sub)){
 					this.subscriptions.add(sub);
-					sink.subscribeToSource(this, sinkPort, sourcePort, inputSchema);
+					sink.subscribeToSource(this, sinkInPort, sourceOutPort, inputSchema);
 					recalcOutputSchemata = true;
 				}
 	}
 	
 	
 	@Override
-	final public void unsubscribeSink(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		unsubscribeSink(new LogicalSubscription(sink, sinkPort, sourcePort, schema));
+	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
 	}
 	
 	@Override
@@ -336,7 +336,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	
 	@Override
 	public int getNumberOfInputs() {
-		return this.subscribedTo.size();
+		return this.subscribedToSource.size();
 	}
 		
 }

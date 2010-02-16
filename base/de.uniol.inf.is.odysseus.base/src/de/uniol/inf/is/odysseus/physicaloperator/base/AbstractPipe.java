@@ -183,9 +183,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void subscribeToSource(ISource<? extends R> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
+	public void subscribeToSource(ISource<? extends R> source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
 		// TODO vernuenftig synchronosieren
-		this.delegateSink.subscribeToSource(source, sinkPort, sourcePort, schema);
+		this.delegateSink.subscribeToSource(source, sinkInPort, sourceOutPort, schema);
 	}
 	
 	@Override
@@ -205,8 +205,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void unsubscribeFromSource(ISource<? extends R> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		this.delegateSink.unsubscribeFromSource(source, sinkPort, sourcePort, schema);
+	public void unsubscribeFromSource(ISource<? extends R> source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		this.delegateSink.unsubscribeFromSource(source, sinkInPort, sourceOutPort, schema);
 	}
 
 	@Override

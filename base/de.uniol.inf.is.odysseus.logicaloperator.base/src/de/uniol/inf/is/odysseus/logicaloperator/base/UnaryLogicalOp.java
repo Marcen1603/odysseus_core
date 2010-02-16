@@ -44,21 +44,21 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 	}
 		
 	@Override
-	public void subscribeToSource(ILogicalOperator source, int sinkPort,
-			int sourcePort, SDFAttributeList inputSchema) {
-		if (sinkPort != 0) {
-			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkPort);
+	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
+			int sourceOutPort, SDFAttributeList inputSchema) {
+		if (sinkInPort != 0) {
+			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkInPort);
 		}
-		super.subscribeToSource(source, sinkPort, sourcePort, inputSchema);
+		super.subscribeToSource(source, sinkInPort, sourceOutPort, inputSchema);
 	}
 	
 	
 	@Override
-	public void subscribeSink(ILogicalOperator sink, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		if (sourcePort != 0) {
-			throw new IllegalArgumentException("illegal source port for subscription in unary operatore: " + sinkPort);
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		if (sourceOutPort != 0) {
+			throw new IllegalArgumentException("illegal source port for subscription in unary operatore: " + sinkInPort);
 		}
-		super.subscribeSink(sink, sinkPort, sourcePort, schema);
+		super.subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
 	
 

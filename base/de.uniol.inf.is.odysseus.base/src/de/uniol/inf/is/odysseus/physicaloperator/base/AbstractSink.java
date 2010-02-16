@@ -154,17 +154,17 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void subscribeToSource(ISource<? extends T> source, int sinkPort,
-			int sourcePort, SDFAttributeList schema) {
-		if (sinkPort >= this.noInputPorts) {
-			setInputPortCount(sinkPort + 1);
+	public void subscribeToSource(ISource<? extends T> source, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		if (sinkInPort >= this.noInputPorts) {
+			setInputPortCount(sinkInPort + 1);
 		}
 		PhysicalSubscription<ISource<? extends T>> sub = new PhysicalSubscription<ISource<? extends T>>(
-				source, sinkPort, sourcePort, schema);
+				source, sinkInPort, sourceOutPort, schema);
 		synchronized (this.subscribedTo) {
 			if (!this.subscribedTo.contains(sub)) {
 				this.subscribedTo.add(sub);
-				source.subscribeSink(getInstance(), sinkPort, sourcePort,
+				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 						schema);
 			}
 		}
@@ -218,9 +218,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void unsubscribeFromSource(ISource<? extends T> source,
-			int sinkPort, int sourcePort, SDFAttributeList schema) {
+			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
 		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
-				source, sinkPort, sourcePort, schema));
+				source, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override

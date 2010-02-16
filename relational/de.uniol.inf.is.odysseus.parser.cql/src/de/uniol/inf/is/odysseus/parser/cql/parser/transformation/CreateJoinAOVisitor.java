@@ -250,7 +250,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		List<ILogicalOperator> bottomOps = new LinkedList<ILogicalOperator>();
 		getBottomOperators(plan, oldInput, bottomOps);
 		for (ILogicalOperator curOp : bottomOps) {
-			for (LogicalSubscription l : curOp.getSubscribedTo(oldInput)) {
+			for (LogicalSubscription l : curOp.getSubscribedToSource(oldInput)) {
 				l.getTarget().unsubscribeSink(curOp, l.getSinkInPort(),
 						l.getSourceOutPort(), l.getSchema());
 				replacement

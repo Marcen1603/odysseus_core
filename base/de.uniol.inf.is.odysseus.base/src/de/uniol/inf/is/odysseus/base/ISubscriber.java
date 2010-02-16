@@ -20,7 +20,7 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	 * A -> B
 	 *
 	 */
-	public void subscribeToSource(T source, int sinkPort, int sourcePort, SDFAttributeList schema);
+	public void subscribeToSource(T source, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
 	
 	/**
 	 * Removes a subscription installed by the methods
@@ -33,7 +33,7 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	/**
 	 * Removes a subscription installed by {@link ISubscriber#subscribeTo(Object, int, int)}.
 	 */
-	public void unsubscribeFromSource(T source, int sinkPort, int sourcePort, SDFAttributeList schema);
+	public void unsubscribeFromSource(T source, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
 	public Collection<S> getSubscribedToSource();
 	public S getSubscribedToSource(int i);
 }

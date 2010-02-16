@@ -13,10 +13,10 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	public SDFAttributeList getOutputSchema();
 	public SDFAttributeList getInputSchema(int pos);
 	
-	public void subscribeToSource(ILogicalOperator source, int sinkPort,
-			int sourcePort, SDFAttributeList inputSchema);
-	public void subscribeSink(ILogicalOperator sink, int sinkPort, 
-			int sourcePort, SDFAttributeList inputSchema);	
+//	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
+//			int sourceOutPort, SDFAttributeList inputSchema);
+//	public void subscribeSink(ILogicalOperator sink, int sinkInPort, 
+//			int sourceOutPort, SDFAttributeList inputSchema);	
 	
 	@SuppressWarnings("unchecked")
 	public IPredicate getPredicate();
@@ -28,7 +28,7 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	
 	boolean isAllPhysicalInputSet();
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkPort, int sourcePort, SDFAttributeList schema);
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();
 	// Currently needed for Transformation --> we should get rid of this!
@@ -36,5 +36,5 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	public int getNumberOfInputs();
 
 	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a);
-	public Collection<LogicalSubscription> getSubscribedTo(ILogicalOperator a);
+	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a);
 }

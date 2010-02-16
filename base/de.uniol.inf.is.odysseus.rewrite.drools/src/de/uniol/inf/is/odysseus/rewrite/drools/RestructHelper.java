@@ -51,15 +51,15 @@ public class RestructHelper {
 	 * @return
 	 */
 	public static Collection<ILogicalOperator> insertOperator(
-			ILogicalOperator toInsert, ILogicalOperator after, int sinkPort,
-			int toInsertSinkPort, int toInsertSourcePort) {
+			ILogicalOperator toInsert, ILogicalOperator after, int sinkInPort,
+			int toInsertsinkInPort, int toInsertsourceOutPort) {
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-		LogicalSubscription source = after.getSubscribedToSource(sinkPort);
+		LogicalSubscription source = after.getSubscribedToSource(sinkInPort);
 		ret.add(source.getTarget());
 		after.unsubscribeFromSource(source);
-		source.getTarget().subscribeSink(toInsert, toInsertSinkPort,
+		source.getTarget().subscribeSink(toInsert, toInsertsinkInPort,
 				source.getSourceOutPort(), source.getTarget().getOutputSchema());
-		toInsert.subscribeSink(after, sinkPort, toInsertSourcePort, toInsert
+		toInsert.subscribeSink(after, sinkInPort, toInsertsourceOutPort, toInsert
 				.getOutputSchema());
 		ret.add(after);
 		return ret;

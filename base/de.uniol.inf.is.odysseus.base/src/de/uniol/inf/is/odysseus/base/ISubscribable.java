@@ -16,12 +16,12 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 * A -> B
 	 *
 	 */
-	public void subscribeSink(T sink, int sinkPort, int sourcePort, SDFAttributeList schema);
+	public void subscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
 	
 	/**
 	 * Removes a subscription installed by {@link ISubscribable#subscribe(Object, int, int)}
 	 */
-	public void unsubscribeSink(T sink, int sinkPort, int sourcePort, SDFAttributeList schema);
+	public void unsubscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
 	
 	/**
 	 * Removes a subscription installed by the methods

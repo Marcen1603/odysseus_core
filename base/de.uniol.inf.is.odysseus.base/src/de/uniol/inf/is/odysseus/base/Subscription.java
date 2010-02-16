@@ -33,7 +33,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	}
 	
 	@Override
-	public int getSinkPort() {
+	public int getsinkInPort() {
 		return getSinkInPort();
 	}
 	
@@ -43,7 +43,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	}
 	
 	@Override
-	public int getSourcePort() {
+	public int getsourceOutPort() {
 		return getSourceOutPort();
 	}
 	

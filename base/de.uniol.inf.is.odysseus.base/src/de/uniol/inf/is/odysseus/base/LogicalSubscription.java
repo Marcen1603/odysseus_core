@@ -8,9 +8,9 @@ public class LogicalSubscription extends Subscription<ILogicalOperator> implemen
 
 	private static final long serialVersionUID = 678442733825703258L;
 		
-	public LogicalSubscription(ILogicalOperator target, int sinkPort,
-			int sourcePort, SDFAttributeList schema) {
-		super(target, sinkPort, sourcePort, schema);
+	public LogicalSubscription(ILogicalOperator target, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		super(target, sinkInPort, sourceOutPort, schema);
 	}
 		
 	//ACHTUNG. NICHT ÄNDERN!
