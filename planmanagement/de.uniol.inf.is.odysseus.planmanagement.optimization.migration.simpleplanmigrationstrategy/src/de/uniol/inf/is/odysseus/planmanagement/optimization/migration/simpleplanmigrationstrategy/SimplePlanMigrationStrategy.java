@@ -100,9 +100,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 				}
 				// remove subscription to source and subscribe to split
 				((ISink)o).unsubscribeFromSource(sub);
-				((ISink)o).subscribeToSource(split, sub.getSinkPort(), sub.getSourcePort(), split.getOutputSchema());
+				((ISink)o).subscribeToSource(split, sub.getSinkInPort(), sub.getSourceOutPort(), split.getOutputSchema());
 				if (freeSourcePort == -1) {
-					freeSourcePort = sub.getSourcePort();
+					freeSourcePort = sub.getSourceOutPort();
 				}
 			}
 			
@@ -122,13 +122,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		IPipe select = new SelectPO(new FalsePredicate());
 		select.setOutputSchema(lastOperatorNewPlan.getOutputSchema());
 		
-		((ISink)newPlanRoot).subscribeToSource(union, newPlanRootSub.getSinkPort(), 
-				newPlanRootSub.getSourcePort(), union.getOutputSchema());
+		((ISink)newPlanRoot).subscribeToSource(union, newPlanRootSub.getSinkInPort(), 
+				newPlanRootSub.getSourceOutPort(), union.getOutputSchema());
 		union.subscribeToSource(lastOperatorOldPlan, 0, 
-				oldPlanRootSub.getSourcePort(), lastOperatorOldPlan.getOutputSchema());
+				oldPlanRootSub.getSourceOutPort(), lastOperatorOldPlan.getOutputSchema());
 		union.subscribeToSource(select, 1, 0, select.getOutputSchema());
 		select.subscribeToSource(lastOperatorNewPlan, 0, 
-				newPlanRootSub.getSourcePort(), lastOperatorNewPlan.getOutputSchema());
+				newPlanRootSub.getSourceOutPort(), lastOperatorNewPlan.getOutputSchema());
 		
 		
 		// execute plans for at least 'w_max' (longest window duration)
@@ -175,8 +175,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		select.unsubscribeFromSource(selectSubscription);
 		
 		IPipe lastOperator = (IPipe)selectSubscription.getTarget();
-		newPlanRoot.subscribeToSource(lastOperator, newRootSubscription.getSinkPort(), 
-				selectSubscription.getSourcePort(), lastOperator.getOutputSchema());
+		newPlanRoot.subscribeToSource(lastOperator, newRootSubscription.getSinkInPort(), 
+				selectSubscription.getSourceOutPort(), lastOperator.getOutputSchema());
 		
 		// connect new plan directly to buffers, unsubscribe from split
 		// TODO: kann buffer mehrere ausgabestroeme haben?
@@ -185,7 +185,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			for (PhysicalSubscription sub : op.getSubscribedToSource()) {
 				op.unsubscribeFromSource(sub);
 				IPipe buffer = (IPipe)((IPipe)sub.getTarget()).getSubscribedToSource(0).getTarget();
-				op.subscribeToSource(buffer, sub.getSinkPort(), sub.getSourcePort(), buffer.getOutputSchema());
+				op.subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
 			}
 		}
 		
@@ -199,7 +199,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 				IPipe buffer = (IPipe)sub.getTarget();
 				ISource source = (ISource)buffer.getSubscribedToSource(0);
 				// TODO: freier Port bei source?
-				op.subscribeToSource(source, sub.getSinkPort(), sub.getSourcePort(), source.getOutputSchema());
+				op.subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), source.getOutputSchema());
 			}
 		}
 		
