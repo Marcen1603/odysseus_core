@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.base.ICost;
+
 /**
  * 
  * @author Tobias Witt
  *
  */
-public class PlanExecutionCost implements Comparable<PlanExecutionCost> {
+public class PlanExecutionCost implements ICost<IPhysicalOperator> {
 	
 	private int memoryConsumption;	// in bytes / 100 tuples
 	private int cpuTime;			// in ms / 100 tuples
@@ -62,8 +65,8 @@ public class PlanExecutionCost implements Comparable<PlanExecutionCost> {
 	}
 
 	@Override
-	public int compareTo(PlanExecutionCost o) {
+	public int compareTo(ICost<IPhysicalOperator> o) {
 		return o.getScore() - this.score;
 	}
-
+	
 }

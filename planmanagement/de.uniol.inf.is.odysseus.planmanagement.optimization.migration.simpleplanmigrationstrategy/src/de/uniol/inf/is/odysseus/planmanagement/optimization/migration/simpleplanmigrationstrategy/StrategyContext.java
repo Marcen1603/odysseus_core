@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SplitPO;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 
 /**

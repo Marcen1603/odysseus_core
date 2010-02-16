@@ -135,7 +135,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// TODO: set parameters to CostCalculator
 			
 			// pick out optimal plan by cost analysis
-			IPhysicalOperator newPlan = PlanExecutionCostCalculator.pickOptimalPlan(alternatives.keySet());
+			IPhysicalOperator newPlan = new PlanExecutionCostCalculator().pickBest(alternatives.keySet());
 			
 			// TODO: calculate migration overhead cost
 			
