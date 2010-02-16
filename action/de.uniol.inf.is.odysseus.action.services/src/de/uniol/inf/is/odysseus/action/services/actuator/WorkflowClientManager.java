@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.cxf.endpoint.dynamic.DynamicClientFactory;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
@@ -22,13 +24,13 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  *
  */
 public class WorkflowClientManager implements IActuatorManager {
-	private JaxWsDynamicClientFactory factory;
+	private DynamicClientFactory factory;
 	private HashMap<String, WorkflowClient> clients;
 	
 	private static Pattern descriptionPattern = Pattern.compile("([^;]+);?(.*)?"); 
 	
 	public WorkflowClientManager(){
-		this.factory = JaxWsDynamicClientFactory.newInstance();
+		this.factory = DynamicClientFactory.newInstance();
 		this.clients = new HashMap<String, WorkflowClient>();
 	}
 
