@@ -11,6 +11,12 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.monitoring.physicaloperator.Datarate;
+import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -20,6 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanExecutionCostCalculator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
@@ -35,9 +42,11 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	
 	private IAdvancedExecutor executor;
 	private Map<Integer, PlanMigrationContext> optimizationContext;
+	private List<IMonitoringData<?>> sourceDatarates;
 	
 	public AdvancedOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
+		this.sourceDatarates = new ArrayList<IMonitoringData<?>>();
 	}
 	
 	// FIXME: zyklische abhaengigkeit
@@ -62,13 +71,15 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
+			
+			updateMetadataListener(newExecutionPlan);
 
 			return this.planMigrationStrategie.migratePlan(sender,
 					newExecutionPlan);
 		}
 		return sender.getEditableExecutionPlan();
 	}
-	
+
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
 			List<IEditableQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
@@ -84,6 +95,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
+
+			updateMetadataListener(newExecutionPlan);
 
 			return this.planMigrationStrategie.migratePlan(sender,
 					newExecutionPlan);
@@ -106,6 +119,23 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 
 		return this.planMigrationStrategie
 				.migratePlan(sender, newExecutionPlan);
+	}
+	
+	private void updateMetadataListener(IEditableExecutionPlan newExecutionPlan) {
+		// install datarate listener on sources
+		// FIXME: getSources() leer
+		for (IPhysicalOperator root : newExecutionPlan.getRoots()) {
+			for (ISource<?> source : MigrationHelper.getSources(root)) {
+				if (source.getProvidedMonitoringData().contains(MonitoringDataTypes.DATARATE.name)) {
+					continue;
+				}
+				IMonitoringData<?> mData = MonitoringDataTypes.createMetadata(MonitoringDataTypes.DATARATE.name, source);
+				source.addMonitoringData(MonitoringDataTypes.DATARATE.name, mData);
+				source.subscribe((POEventListener)mData, POEventType.PushDone);
+				this.sourceDatarates.add(mData);
+			}
+		}
+		
 	}
 	
 	@Override
@@ -131,6 +161,11 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
 					(IQueryOptimizable)this.executor, sender, 
 					new OptimizeParameter(ParameterDoRestruct.TRUE), null);
+			
+			// prepare metadata usage
+			for (IMonitoringData<?> rates : this.sourceDatarates) {
+				((Datarate)rates).run();
+			}
 			
 			// TODO: set parameters to CostCalculator
 			
