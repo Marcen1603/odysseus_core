@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.action.services.actuator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class representing a Method of an {@link IActuator}. 
@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public class ActionMethod {
 	private String name;
-	private ArrayList<Class<?>> parameterTypes;
+	private List<ActionParameter> parameters;
 	private boolean showInSchema;
 		
 	/**
@@ -20,10 +20,22 @@ public class ActionMethod {
 	 * @param classes class types of each parameter in order
 	 * @param showInSchema flag for applications to reduce number of shown methods
 	 */
-	public ActionMethod (String name, Class<?>[] classes, boolean showInSchema){
+	public ActionMethod (String name, Class<?>[] classes, String[] attributes, boolean showInSchema){
 		this.name = name;
-		this.parameterTypes = new ArrayList<Class<?>>(Arrays.asList(classes));
 		this.showInSchema = showInSchema;
+		this.parameters = new ArrayList<ActionParameter>();
+		
+		for (int i=0; i<classes.length; i++){
+			ActionParameter param = null;
+			try{
+				param = new ActionParameter(attributes[i], classes[i]);
+			}catch(IndexOutOfBoundsException e){
+				param = new ActionParameter("var", classes[i]);
+			}
+			
+			this.parameters.add(param);
+		}
+		
 	}
 	
 	/**
@@ -39,8 +51,14 @@ public class ActionMethod {
 	 * @return
 	 */
 	public Class<?>[] getParameterTypes() {
-		Class<?>[] parameters = new Class<?>[this.parameterTypes.size()];
-		return this.parameterTypes.toArray(parameters);
+		Class<?>[] params = new Class<?>[this.parameters.size()];
+		
+		int index=0;
+		for (ActionParameter param : this.parameters){
+			params[index] = param.getType();
+			index++;
+		}
+		return params;
 	}
 	
 	/**
@@ -51,12 +69,12 @@ public class ActionMethod {
 	 * @return
 	 */
 	public boolean isCompatibleTo(String methodName, Class<?>[] parameters){
-		if (!this.name.equals(methodName) || parameters.length != this.parameterTypes.size()){
+		if (!this.name.equals(methodName) || parameters.length != this.parameters.size()){
 			//method name differs
 			return false;
 		}
 		for (int i=0; i < parameters.length; i++){
-			if (!PrimitivTypeComparator.sameType(parameters[i], this.parameterTypes.get(i))){
+			if (!PrimitivTypeComparator.sameType(parameters[i], this.parameters.get(i).getType())){
 				return false;
 			}
 		}
@@ -69,6 +87,15 @@ public class ActionMethod {
 	 */
 	public boolean isShowInSchema() {
 		return showInSchema;
+	}
+	
+	/**
+	 * Returns mapping of parameterClasses and name.
+	 * Mainly relevant for displaying schema
+	 * @return
+	 */
+	public List<ActionParameter> getParameters() {
+		return parameters;
 	}
 
 }

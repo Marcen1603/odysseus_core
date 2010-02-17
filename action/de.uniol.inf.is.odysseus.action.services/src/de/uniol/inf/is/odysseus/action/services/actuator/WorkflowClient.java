@@ -62,14 +62,18 @@ public class WorkflowClient implements IActuator {
 	            
 	            //addPropertyDescriptors for each field and remember field type as parameter
 	            Field[] fields = partClass.getDeclaredFields();
-	            int counter = 0;
+	            int index = 0;
 	            
 	            Class<?>[] parameterTypes = new Class<?>[fields.length];
+	            String[] parameterNames = new String[fields.length];
 	            for (Field field : fields){
-	            	messagePart.addPropertyDescriptor(field.getName());
+	            	String fieldName = field.getName();
+	            	messagePart.addPropertyDescriptor(fieldName);
 	            	
-	            	parameterTypes[counter] = field.getType();
-	            	counter++;
+	            	parameterTypes[index] = field.getType();
+	            	parameterNames[index] = fieldName;
+	            	
+	            	index++;
 	            }
 	            
 	            //add messagepart
@@ -77,7 +81,7 @@ public class WorkflowClient implements IActuator {
 	          
 	            //create method for schema
 	            ActionMethod method = new ActionMethod(methodName.getLocalPart(),
-            			parameterTypes, true);
+            			parameterTypes, parameterNames, true);
 	            this.methods.add(method);
    
 	        }

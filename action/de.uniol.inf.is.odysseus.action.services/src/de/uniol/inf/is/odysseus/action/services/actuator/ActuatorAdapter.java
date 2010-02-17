@@ -31,8 +31,9 @@ public class ActuatorAdapter implements IActuator {
 				}
 				show = method.getAnnotation(ActuatorAdapterSchema.class).show();
 			}
+			
 			this.methods.add(
-					new ActionMethod(method.getName(),method.getParameterTypes(), show));
+					new ActionMethod(method.getName(), method.getParameterTypes(), new String[]{}, show));
 		}
 	}
 	
