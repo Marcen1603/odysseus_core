@@ -85,7 +85,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			split.setOutputSchema(buffer.getOutputSchema());
 			context.getSplits().add(split);
 			
-			int freeSourcePort = -1;
+			int freesourceOutPort = -1;
 			for (PhysicalSubscription<?> sub : source.getSubscriptions()) {
 				IPhysicalOperator o = (IPhysicalOperator)sub.getTarget();
 				boolean belongsToThisQuery = false;
@@ -101,14 +101,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 				// remove subscription to source and subscribe to split
 				((ISink)o).unsubscribeFromSource(sub);
 				((ISink)o).subscribeToSource(split, sub.getSinkInPort(), sub.getSourceOutPort(), split.getOutputSchema());
-				if (freeSourcePort == -1) {
-					freeSourcePort = sub.getSourceOutPort();
+				if (freesourceOutPort == -1) {
+					freesourceOutPort = sub.getSourceOutPort();
 				}
 			}
 			
 			// subscribe split to buffer and buffer to source
 			split.subscribeToSource(buffer, 0, 0, buffer.getOutputSchema());
-			buffer.subscribeToSource(source, 0, freeSourcePort, source.getOutputSchema());
+			buffer.subscribeToSource(source, 0, freesourceOutPort, source.getOutputSchema());
 		}
 		
 		// 'merge' operator at top, discarding tuples of new plan
