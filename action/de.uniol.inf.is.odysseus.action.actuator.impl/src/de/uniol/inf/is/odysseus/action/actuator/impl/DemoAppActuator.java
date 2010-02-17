@@ -5,7 +5,7 @@ import java.util.Date;
 
 import de.uniol.inf.is.odysseus.action.demoapp.AuctionMonitor;
 import de.uniol.inf.is.odysseus.action.demoapp.AuctionMonitor.AuctionStatus;
-import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapterSchema;
+import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapterSchema;
 
 
 public class DemoAppActuator{
