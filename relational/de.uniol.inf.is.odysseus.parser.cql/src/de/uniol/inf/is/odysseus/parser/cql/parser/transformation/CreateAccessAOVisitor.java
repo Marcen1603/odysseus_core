@@ -274,8 +274,10 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);			
-		} catch (Exception e) {
-			throw new RuntimeException("Brokerplugin is missing in CQL parser.");
+		}catch (ClassNotFoundException ex){
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.", ex.getCause());
+		}catch (Exception e) {
+			throw new RuntimeException("Error while accessing broker as source.",e.getCause());
 		}
 
 		return null;
@@ -294,8 +296,10 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);			
-		} catch (Exception e) {
-			throw new RuntimeException("Brokerplugin is missing in CQL parser.");
+		}catch (ClassNotFoundException ex){
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.", ex.getCause());
+		}catch (Exception e) {
+			throw new RuntimeException("Error while creating broker as source.",e.getCause());
 		}
 
 		return null;

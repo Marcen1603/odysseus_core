@@ -693,7 +693,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			} catch (ClassNotFoundException e) {
 				throw new RuntimeException("Brokerplugin is missing in CQL parser.");
 			} catch (Exception e) {
-				throw new RuntimeException("Error while parsing select into broker");
+				throw new RuntimeException("Error while parsing the SELECT INTO statement");
 			}			
 		}
 	
