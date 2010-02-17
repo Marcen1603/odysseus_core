@@ -191,29 +191,29 @@ public class ExecutorConsole implements CommandProvider,
 	private String[][] nexmarkQ = new String[][] {
 			{
 			// Q1
-					"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid UNBOUNDED AS b",
+					"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid [UNBOUNDED] AS b",
 					// Q2
 					"SELECT auction, price FROM nexmark:bid WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
 					// Q3
-					"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction UNBOUNDED AS a, nexmark:person UNBOUNDED AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
+					"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction [UNBOUNDED] AS a, nexmark:person [UNBOUNDED] AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
 					// Q4
-					"SELECT AVG(q.final) FROM nexmark:category AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction UNBOUNDED AS a, nexmark:bid UNBOUNDED AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
+					"SELECT AVG(q.final) FROM nexmark:category AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction [UNBOUNDED] AS a, nexmark:bid [UNBOUNDED] AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
 					// Q7
-					"SELECT b.auction, b.price, b.bidder FROM nexmark:bid RANGE 1000 SLIDE 1000 AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid RANGE 1000 SLIDE 1000) AS sub WHERE sub.max_price = b.price",
+					"SELECT b.auction, b.price, b.bidder FROM nexmark:bid [SIZE 1000 ADVANCE 1000 TIME] AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid [SIZE 1000 ADVANCE 1000 TIME]) AS sub WHERE sub.max_price = b.price",
 					// Q8
-					"SELECT p.id, p.name, a.reserve FROM nexmark:person RANGE 43200000 AS p, nexmark:auction RANGE 43200000 AS a WHERE p.id = a.seller" },
+					"SELECT p.id, p.name, a.reserve FROM nexmark:person [SIZE 12 HOURS TIME] AS p, nexmark:auction [SIZE 12 HOURS TIME] AS a WHERE p.id = a.seller" },
 			{ // Q1
-					"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 UNBOUNDED AS b",
+					"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 [UNBOUNDED] AS b",
 					// Q2
 					"SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
 					// Q3
-					"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction2 UNBOUNDED AS a, nexmark:person2 UNBOUNDED AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
+					"SELECT p.name, p.city, p.state, a.id FROM nexmark:auction2 [UNBOUNDED] AS a, nexmark:person2 [UNBOUNDED] AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California')",
 					// Q4
-					"SELECT AVG(q.final) FROM nexmark:category2 AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction2 UNBOUNDED AS a, nexmark:bid2 UNBOUNDED AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
+					"SELECT AVG(q.final) FROM nexmark:category2 AS c, (SELECT MAX(b.price) AS final, a.category FROM nexmark:auction2 [UNBOUNDED] AS a, nexmark:bid2 [UNBOUNDED] AS b  WHERE a.id = b.auction AND b.datetime < a.expires AND  a.expires < Now() GROUP BY a.id, a.category) AS q WHERE q.category = c.id GROUP BY c.id",
 					// Q7
-					"SELECT b.auction, b.price, b.bidder	FROM nexmark:bid2 RANGE 1000 SLIDE 1000 AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid2 RANGE 1000 SLIDE 1000) AS sub WHERE sub.max_price = b.price",
+					"SELECT b.auction, b.price, b.bidder	FROM nexmark:bid2 [SIZE 1000 ADVANCE 1000 TIME] AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid2 [SIZE 1000 ADVANCE 1000 TIME]) AS sub WHERE sub.max_price = b.price",
 					// Q8
-					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 RANGE 43200000 AS p, nexmark:auction2 RANGE 43200000 AS a WHERE p.id = a.seller" } };
+					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 [SIZE 12 HOURS TIME] AS p, nexmark:auction2 [SIZE 12 HOURS TIME] AS a WHERE p.id = a.seller" } };
 
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
