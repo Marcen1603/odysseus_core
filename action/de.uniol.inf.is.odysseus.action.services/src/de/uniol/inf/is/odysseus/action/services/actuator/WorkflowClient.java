@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.action.services.actuator;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,8 +97,25 @@ public class WorkflowClient implements IActuator {
 	}
 
 	@Override
-	public void executeMethod(String method, Class<?>[] types, Object[] params) {
-		
+	public void executeMethod(String method, Class<?>[] types, Object[] params) throws ActuatorException {
+		try {
+			MessagePart part = this.methodPartMapping.get(method);
+
+			//fill part with values
+			part.setValsForProperties(params);
+			Object[] result = client.invoke(part.getMessageName(), part.getInputObject());
+
+		}catch (NullPointerException e){
+			throw new ActuatorException(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			throw new ActuatorException(e.getMessage());
+		} catch (IllegalAccessException e) {
+			throw new ActuatorException(e.getMessage());
+		} catch (InvocationTargetException e) {
+			throw new ActuatorException(e.getMessage());
+		} catch (Exception e) {
+			throw new ActuatorException(e.getMessage());
+		}
 		
 	}
 

@@ -58,6 +58,8 @@ public class ActuatorAdapter implements IActuator {
 			throw new ActuatorException(e.getMessage());
 		} catch (InvocationTargetException e) {
 			throw new ActuatorException(e.getMessage());
+		}catch (NullPointerException e){
+			throw new ActuatorException(e.getMessage());
 		}
 	}
 
