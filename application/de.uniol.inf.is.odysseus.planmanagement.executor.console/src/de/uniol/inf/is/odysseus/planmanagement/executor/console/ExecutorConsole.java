@@ -201,7 +201,7 @@ public class ExecutorConsole implements CommandProvider,
 					// Q7
 					"SELECT b.auction, b.price, b.bidder FROM nexmark:bid [SIZE 1000 ADVANCE 1000 TIME] AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid [SIZE 1000 ADVANCE 1000 TIME]) AS sub WHERE sub.max_price = b.price",
 					// Q8
-					"SELECT p.id, p.name, a.reserve FROM nexmark:person [SIZE 12 HOURS TIME] AS p, nexmark:auction [SIZE 12 HOURS TIME] AS a WHERE p.id = a.seller" },
+					"SELECT p.id, p.name, a.reserve FROM nexmark:person [SIZE 12 HOURS ADVANCE 1 TIME] AS p, nexmark:auction [SIZE 12 HOURS ADVANCE 1 TIME] AS a WHERE p.id = a.seller" },
 			{ // Q1
 					"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 [UNBOUNDED] AS b",
 					// Q2
@@ -213,7 +213,7 @@ public class ExecutorConsole implements CommandProvider,
 					// Q7
 					"SELECT b.auction, b.price, b.bidder	FROM nexmark:bid2 [SIZE 1000 ADVANCE 1000 TIME] AS b,(SELECT MAX(price) AS max_price FROM nexmark:bid2 [SIZE 1000 ADVANCE 1000 TIME]) AS sub WHERE sub.max_price = b.price",
 					// Q8
-					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 [SIZE 12 HOURS TIME] AS p, nexmark:auction2 [SIZE 12 HOURS TIME] AS a WHERE p.id = a.seller" } };
+					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 [SIZE 12 HOURS ADVANCE 1 TIME] AS p, nexmark:auction2 [SIZE 12 HOURS ADVANCE 1 TIME] AS a WHERE p.id = a.seller" } };
 
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
@@ -686,10 +686,8 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				this.executor.addQuery(s, parser());
 			} catch (PlanManagementException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -713,10 +711,8 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				this.executor.addQuery(s, parser());
 			} catch (PlanManagementException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -779,10 +775,8 @@ public class ExecutorConsole implements CommandProvider,
 						new FileSink(outputputFilename)));				
 			}
 		} catch (PlanManagementException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -952,7 +946,6 @@ public class ExecutorConsole implements CommandProvider,
 				file = new File(this.path != null ? this.path + args[0] : args[0]);
 				br = new BufferedReader(new FileReader(file));
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				ci.println("File not found: " + file.getAbsolutePath());
 				return;
 			}
@@ -964,7 +957,6 @@ public class ExecutorConsole implements CommandProvider,
 					queries += line + "\n";
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				ci.printStackTrace(e);
 				return;
 			}
@@ -1376,7 +1368,6 @@ public class ExecutorConsole implements CommandProvider,
 			file = new File(this.path != null ? this.path + args[0] : args[0]);
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			ci.println("File not found: " + file.getAbsolutePath());
 			return;
 		}
@@ -1436,20 +1427,15 @@ public class ExecutorConsole implements CommandProvider,
 			
 			ci.println("--- macro from file " + file.getAbsolutePath() + " done ---");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			ci.printStackTrace(e);
 			return;
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.getTargetException().printStackTrace();
