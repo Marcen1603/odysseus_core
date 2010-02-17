@@ -125,7 +125,7 @@ public class ECAParser implements IQueryParser{
 							Matcher paramTypeMatcher = PARAMTYPEPATTERN.matcher(completeParam);
 							if (paramTypeMatcher.find()){
 								String paramValue = paramTypeMatcher.group(1);
-								String paramType = paramTypeMatcher.group(2);
+								String paramType = paramTypeMatcher.group(2).toLowerCase();
 								
 								Object value = this.generateStandardValue(paramValue, paramType);
 								actionParameters.add(new StaticParameter(value));
