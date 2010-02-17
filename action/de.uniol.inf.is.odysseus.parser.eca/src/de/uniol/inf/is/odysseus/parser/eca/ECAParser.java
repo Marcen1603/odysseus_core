@@ -105,7 +105,9 @@ public class ECAParser implements IQueryParser{
 				String actionString = query.substring(ecaMatcher.start(2), query.length());
 				actionString = actionString.trim();
 				//remove ')DO'
-				actionString = actionString.substring(3, actionString.length());
+				actionString = actionString.substring(1, actionString.length());
+				actionString = actionString.trim();
+				actionString = actionString.substring(2, actionString.length());
 				actionString = actionString.trim();
 				
 				//split action into manager, actuator, method & params 
