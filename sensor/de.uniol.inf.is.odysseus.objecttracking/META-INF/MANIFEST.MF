@@ -47,3 +47,4 @@ Export-Package: de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.visitor,
  de.uniol.inf.is.odysseus.objecttracking.sdf,
  de.uniol.inf.is.odysseus.objecttracking.util
+Require-Bundle: de.uniol.inf.is.odysseus.base
