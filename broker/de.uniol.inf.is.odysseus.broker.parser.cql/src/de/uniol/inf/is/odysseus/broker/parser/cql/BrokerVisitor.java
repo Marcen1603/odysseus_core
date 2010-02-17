@@ -11,8 +11,10 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDF;
 
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
@@ -42,8 +44,9 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		// make it accessible like a normal source
 		DataDictionary.getInstance().sourceTypeMap.put(name, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(name);
-		SDFAttributeList attributes = new SDFAttributeList();
-		entity.setAttributes(attributes);
+		//SDFAttributeList attributes = new SDFAttributeList();
+		entity.setAttributes(broker.getOutputSchema());
+		
 		DataDictionary.getInstance().entityMap.put(name, entity);
 		return broker;
 	}
@@ -78,14 +81,36 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			number++;			
 		}
 		CQLParser v = new CQLParser();
-		AbstractLogicalOperator selectStatementOperator = (AbstractLogicalOperator) v.visit(
+		AbstractLogicalOperator topOfSelectStatementOperator = (AbstractLogicalOperator) v.visit(
 				statement, null);
 		BrokerAO broker = new BrokerAO(brokerName);
+		// add the outputschema from existing one
+		if(BrokerDictionary.getInstance().getBroker(brokerName)==null){
+			throw new RuntimeException("Broker with name \""+brokerName+"\" not found. You have to create one first.");
+		}
 		broker.setOutputSchema(BrokerDictionary.getInstance().getBroker(brokerName).getOutputSchema());
-		
-		broker.subscribeToSource(selectStatementOperator, 0, 0, selectStatementOperator.getOutputSchema());		
+		// check, if broker and top of select have the same attributelist		
+		if(schemaEquals(topOfSelectStatementOperator.getOutputSchema(),broker.getOutputSchema())){
+			broker.subscribeToSource(topOfSelectStatementOperator, 0, 0, topOfSelectStatementOperator.getOutputSchema());		
+		}else{			
+			String message = "Schema to insert: "+topOfSelectStatementOperator.getOutputSchema().toString()+"\n";
+			message = message + "Schema of Broker: "+broker.getOutputSchema().toString();
+			throw new RuntimeException("Statement and broker have not the same schema.\n"+message);
+		}
 		return broker;
 		
 	}
-
+	
+	private boolean schemaEquals(SDFAttributeList left, SDFAttributeList right){
+		if(left.size()!=right.size()){
+			return false;
+		}else{
+			for(int i=0;i<left.size();i++){
+				if(!left.get(i).getAttributeName().equals(right.get(i).getAttributeName())){
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 }

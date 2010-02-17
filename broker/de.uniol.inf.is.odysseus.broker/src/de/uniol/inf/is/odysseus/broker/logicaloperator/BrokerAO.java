@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BrokerAO extends AbstractLogicalOperator{
@@ -43,7 +44,16 @@ public class BrokerAO extends AbstractLogicalOperator{
 	}
 
 	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema.clone();
+		//this.outputSchema = outputSchema.clone();
+		//create alias schema
+		SDFAttributeList aliasSchema = new SDFAttributeList();
+		for(SDFAttribute attribute : outputSchema){
+			SDFAttribute newAttribute = attribute.clone();
+			newAttribute.setSourceName(null);
+			aliasSchema.add(newAttribute);
+		}
+		this.outputSchema = aliasSchema;
+		
 	}
 	
 	public String getIdentifier(){

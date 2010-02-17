@@ -691,9 +691,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				plans.add(sourceOp);
 				return plans;
 			} catch (ClassNotFoundException e) {
-				throw new RuntimeException("Brokerplugin is missing in CQL parser.");
+				throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
 			} catch (Exception e) {
-				throw new RuntimeException("Error while parsing the SELECT INTO statement");
+				throw new RuntimeException("Error while parsing the SELECT INTO statement", e.getCause());
 			}			
 		}
 	
