@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
@@ -128,11 +129,11 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 			for (ActionMethod method : schema){
 				ci.print("+"+method.getName()+"(");
 				int ctr = 0;
-				for (Class<?>c : method.getParameterTypes()){
+				for (ActionParameter param : method.getParameters()){
 					if (ctr > 0){
 						ci.print(", ");
 					}
-					ci.print(c.getName());
+					ci.print(param.getName()+":"+param.getType());
 					ctr++;
 				}
 				ci.println(")");
