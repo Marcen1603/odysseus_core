@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.action.services.actuator;
+package de.uniol.inf.is.odysseus.action.services.actuator.adapter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 
 /**
  * Annotation for {@link ActuatorAdapter}s. 

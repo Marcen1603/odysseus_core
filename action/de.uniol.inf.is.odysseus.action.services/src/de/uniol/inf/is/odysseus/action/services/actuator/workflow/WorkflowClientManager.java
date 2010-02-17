@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.services.actuator;
+package de.uniol.inf.is.odysseus.action.services.actuator.workflow;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import org.apache.cxf.endpoint.dynamic.DynamicClientFactory;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
@@ -30,7 +32,7 @@ public class WorkflowClientManager implements IActuatorManager {
 	private static Pattern descriptionPattern = Pattern.compile("([^;]+);?(.*)?"); 
 	
 	public WorkflowClientManager(){
-		this.factory = DynamicClientFactory.newInstance();
+		this.factory = JaxWsDynamicClientFactory.newInstance();
 		this.clients = new HashMap<String, WorkflowClient>();
 	}
 

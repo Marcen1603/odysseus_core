@@ -1,10 +1,12 @@
-package de.uniol.inf.is.odysseus.action.services.actuator;
+package de.uniol.inf.is.odysseus.action.services.actuator.adapter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**

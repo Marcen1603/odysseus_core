@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.services.actuator;
+package de.uniol.inf.is.odysseus.action.services.actuator.workflow;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -16,19 +16,16 @@ import javax.xml.namespace.QName;
  *
  */
 public class MessagePart {
-	private QName messageName;
 	private Object inputObject;
-	
-	private List<PropertyDescriptor> propertyDescriptors;
 	private Class<?> partClass;
+	private List<PropertyDescriptor> propertyDescriptors;
+	private boolean correlation;
 		
-	public MessagePart(QName messageName, Class<?> partClass) throws InstantiationException, IllegalAccessException{
-		this.messageName = messageName;
+	public MessagePart(QName messageName, Class<?> partClass, boolean isCorrelation) throws InstantiationException, IllegalAccessException{
+		this.propertyDescriptors = new ArrayList<PropertyDescriptor>();
 		this.inputObject = partClass.newInstance();
 		this.partClass = partClass;
-		
-		this.propertyDescriptors = new ArrayList<PropertyDescriptor>();
-		
+		this.correlation = isCorrelation;
 	}
 	
 	/**
@@ -55,16 +52,21 @@ public class MessagePart {
 		}else {
 			Iterator<PropertyDescriptor> iterator = this.propertyDescriptors.iterator();
 			for (Object val : values){
-				iterator.next().getWriteMethod().invoke(this.inputObject, val);
+				iterator.next().getWriteMethod().invoke(inputObject, val);
 			}
 		}
+	}
+	
+	public int getNumberOfProperties(){
+		return this.propertyDescriptors.size();
 	}
 	
 	public Object getInputObject() {
 		return inputObject;
 	}
 	
-	public QName getMessageName() {
-		return messageName;
+	public boolean isCorrelation() {
+		return correlation;
 	}
+	
 }
