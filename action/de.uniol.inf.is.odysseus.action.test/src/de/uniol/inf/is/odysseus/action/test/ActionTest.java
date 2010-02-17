@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.action.exception.ActionException;
 import de.uniol.inf.is.odysseus.action.output.Action;
-import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapterManager;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapterManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**

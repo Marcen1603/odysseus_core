@@ -6,9 +6,9 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapter;
-import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorAdapterManager;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
+import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapter;
+import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapterManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
 /**
