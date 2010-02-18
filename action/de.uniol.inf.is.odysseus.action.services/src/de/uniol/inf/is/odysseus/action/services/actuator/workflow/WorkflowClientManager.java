@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.dynamic.DynamicClientFactory;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
@@ -29,12 +30,14 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 public class WorkflowClientManager implements IActuatorManager {
 	private DynamicClientFactory factory;
 	private Map<String, WorkflowClient> clients;
+	private Map<String, Client> clientCache;
 	
 	private static Pattern descriptionPattern = Pattern.compile("([^;]+);?(.*)?"); 
 	
 	public WorkflowClientManager(){
 		this.factory = JaxWsDynamicClientFactory.newInstance();
 		this.clients = new HashMap<String, WorkflowClient>();
+		this.clientCache = new HashMap<String, Client>();
 	}
 
 
@@ -51,11 +54,18 @@ public class WorkflowClientManager implements IActuatorManager {
 					throw new ActuatorException("Actuator with name: "+name+" is already registered");
 				}
 				try {
-					URL url = new URL(uriString);
+					//try to fetch client from cache
+					Client wsClient = this.clientCache.get(uriString);
+					if (wsClient == null){
+						URL url = new URL(uriString);
+						wsClient = factory.createClient(url);
+						this.clientCache.put(uriString, wsClient);
+					}
+					
 					if (correlation != null && correlation.length() > 1){
-						client = new WorkflowClient(factory.createClient(url), correlation);
+						client = new WorkflowClient(wsClient, correlation);
 					}else {
-						client = new WorkflowClient(factory.createClient(url));
+						client = new WorkflowClient(wsClient);
 					}
 					this.clients.put(name, client);		
 					return client;

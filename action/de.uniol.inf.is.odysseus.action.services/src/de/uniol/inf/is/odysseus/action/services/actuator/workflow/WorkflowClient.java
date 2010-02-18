@@ -163,7 +163,11 @@ public class WorkflowClient implements IActuator {
 			for (MessagePart part : parts){
 				//insert correlationID for correlation parts or attributes for other parts
 				if (part.isCorrelation()){
-					part.setValsForProperties(new String[]{this.correlationID});
+					if (this.correlationID != null){
+						part.setValsForProperties(new String[]{this.correlationID});
+					}else {
+						throw new ActuatorException("Cannot send message: CorrelationID is missing");
+					}
 				}else {
 					int endIndex = startIndex+part.getNumberOfProperties();
 					part.setValsForProperties(Arrays.copyOfRange(params, startIndex, endIndex));
