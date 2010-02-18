@@ -19,16 +19,16 @@ public class TestActuator {
 		this.adress = adress;
 	}
 	
+	public void doSomething(byte a, double b, double c, int d){
+		this.result = a+b+c+d;
+	}
+	
 	public byte getAdress() {
 		return adress;
 	}
 	
 	public String getName() {
 		return name;
-	}
-	
-	public void doSomething(byte a, double b, double c, int d){
-		this.result = a+b+c+d;
 	}
 	
 	public double giveSomething() {

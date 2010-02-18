@@ -19,19 +19,19 @@ public class DemoAppActuator{
 	}
 	
 	@ActuatorAdapterSchema(show = true)
-	public void updateOrange(int id, String itemName, String personName, double price, long timeStamp){
-		AuctionMonitor.getInstance().updateData(
-				new String[] {
-						""+id,itemName, ""+price, personName, DateFormat.getInstance().format(new Date(timeStamp)) 
-                }, AuctionStatus.ORANGE);
-	}
-	
-	@ActuatorAdapterSchema(show = true)
 	public void updateGreen(int id, String itemName, String personName, double price, long timeStamp){
 		AuctionMonitor.getInstance().updateData(
 				new String[] {
 						""+id,itemName, ""+price, personName, DateFormat.getInstance().format(new Date(timeStamp)) 
                 }, AuctionStatus.GREEN);
+	}
+	
+	@ActuatorAdapterSchema(show = true)
+	public void updateOrange(int id, String itemName, String personName, double price, long timeStamp){
+		AuctionMonitor.getInstance().updateData(
+				new String[] {
+						""+id,itemName, ""+price, personName, DateFormat.getInstance().format(new Date(timeStamp)) 
+                }, AuctionStatus.ORANGE);
 	}
 
 }
