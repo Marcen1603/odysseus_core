@@ -35,20 +35,42 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  */
 public class ECAParser implements IQueryParser{
-	private ICompiler compiler;
+	//just for tets
+	public static void main(String[] args) {
+		ECAParser parser = new ECAParser();
+		String[] statements = {
+				//correct
+				"on (CQL) do m.a.a()",
+				"ON  ([LANG:SQL]Select * From abc where abc.a=5;)do m.a.a(52)",
+				"ON(Select * From (Select a from a)) do  m.a.b()",
+				"on () do m.a.b(), m.b.a(2, \"3\")",
+				//incorrect
+				"on ([Lang:bla] Select * From do a.b()",
+				"on Select * From) do a.b()",
+				"on (blub) do a.b, b.a()"};		
+		for (String statement : statements){
+			try {
+				parser.parse(statement);
+			} catch (QueryParseException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
 
+	private ICompiler compiler;
+	
 	private IActuatorFactory actuatorFactory;
 	
 	private static Pattern ecaPattern;
-	
 	private static final Pattern ACTIONPATTERN = Pattern.compile("(\\w+)\\.(\\w+)\\.(\\w+\\s*)\\(([^\\(\\)]*)\\)",Pattern.CASE_INSENSITIVE);
 	private static final Pattern LANGPATTERN = Pattern.compile("\\[LANG:(\\w*)\\]",Pattern.CASE_INSENSITIVE);
 	private static final Pattern PARAMPATTERN = Pattern.compile("[^,]+");
 	private static final Pattern PARAMTYPEPATTERN = Pattern.compile("(.*):(.*)");
-	private static final String DEFAULTLANG = "CQL";
 	
 	
 		
+	private static final String DEFAULTLANG = "CQL";
+	
 	public ECAParser () {
 		//non final - just for clearness!
 		if (ecaPattern == null){
@@ -58,11 +80,6 @@ public class ECAParser implements IQueryParser{
 			String actionConstruct = manager+"\\."+actuator+"\\."+method+"\\(.*\\)";
 			ecaPattern = Pattern.compile("(ON\\s*\\().*(\\)\\s*DO\\s+"+actionConstruct+"[\\s*\\,"+actionConstruct+"]*)", Pattern.CASE_INSENSITIVE);		
 		}
-	}
-	
-	@Override
-	public String getLanguage() {
-		return "ECA";
 	}
 	
 	public void bindActuatorFactory(IActuatorFactory factory){
@@ -76,6 +93,111 @@ public class ECAParser implements IQueryParser{
 	 */
 	public void bindCompiler (ICompiler compiler){
 		this.compiler = compiler;
+	}
+	
+	/**
+	 * Creates an Action Object if schema of the actuator is compatible 
+	 * @param actuator
+	 * @param methodName
+	 * @param actionParameters
+	 * @return
+	 * @throws QueryParseException
+	 */
+	private Action createAction(IActuator actuator, String methodName,
+			ArrayList<IActionParameter> actionParameters) throws QueryParseException {
+		Class<?>[] parameters = new Class<?>[actionParameters.size()];
+		for (int i=0; i<actionParameters.size(); i++){
+			parameters[i] = actionParameters.get(i).getParamClass();
+		}
+		try {
+			return new Action(actuator, methodName, parameters);
+		}catch (ActionException e){
+			throw new QueryParseException(e.getMessage());
+		}
+	}
+
+	private List<ILogicalOperator> createNewPlan(HashMap<Action, List<IActionParameter>> actions,
+			List<ILogicalOperator> plan) {
+		//not necessary cause top operator is always the one in the plan
+		//this.determineOutputOperator(plan.get(0));
+		ILogicalOperator outputOperator = plan.get(0);
+
+		//create new sink and subscribe to outputoperator
+		EventTriggerAO eAO = new EventTriggerAO(actions);
+		eAO.subscribeToSource(outputOperator, 0, 0, outputOperator.getOutputSchema());
+		
+		//replace old top element through sink
+		plan.set(0, eAO);
+		return plan;
+	}
+
+	/**
+	 * Find the output operator by walking one subscriptions-path.
+	 * Assumption: outputOperator has no subscriptions
+	 * @param iLogicalOperator
+	 * @return
+	 */
+	private ILogicalOperator determineOutputOperator(ILogicalOperator iLogicalOperator) {
+		for (LogicalSubscription subscription : iLogicalOperator.getSubscriptions()){
+			return this.determineOutputOperator(subscription.getTarget());
+		}
+		return iLogicalOperator;
+	}
+
+	private SDFAttributeList determineSchema(List<ILogicalOperator> plan) throws QueryParseException {
+		if (!plan.isEmpty()){
+			if (plan.size()>1){
+				throw new QueryParseException("Multiple plans defined, cannot determine output scheme");
+			}else{
+				ILogicalOperator outputOperator = this.determineOutputOperator(plan.get(0));
+				return outputOperator.getOutputSchema();
+			}
+		}
+		throw new QueryParseException("No output schema defined");
+	}
+
+	private Object generateStandardValue(String paramValue, String paramType) throws QueryParseException {
+		try {
+			if (paramType.equals("double")){
+				return Double.valueOf(paramValue);
+			}else if (paramType.equals("float")){
+				return Float.valueOf(paramValue);
+			}else if (paramType.equals("long")){
+				return Long.valueOf(paramValue);
+			}else if (paramType.equals("int")){
+				return Integer.valueOf(paramValue);
+			}else if (paramType.equals("short")){
+				return Short.valueOf(paramValue);
+			}else if (paramType.equals("byte")){
+				return Byte.valueOf(paramValue);
+			}else if (paramType.equals("char")){
+				return paramValue.charAt(0);
+			}else if (paramType.equals("boolean")){
+				return Boolean.valueOf(paramValue);
+			}else if (paramType.equals("string")){
+				return paramValue;
+			}
+		}catch (Exception e) {
+			throw new QueryParseException(e.getMessage());
+		}
+		throw new QueryParseException(paramType+" is an irregulator datatype");
+	}
+
+	//just for tests
+	public ICompiler getCompiler() {
+		return compiler;
+	}
+
+	@Override
+	public String getLanguage() {
+		return "ECA";
+	}
+	
+	@Override
+	public List<ILogicalOperator> parse(Reader reader)
+			throws QueryParseException {
+		// TODO Auto-generated method stub 
+		return null;
 	}
 	
 	@Override
@@ -187,127 +309,5 @@ public class ECAParser implements IQueryParser{
 			}
 		}
 		throw new QueryParseException("Incorrect ECA syntax");
-	}
-
-	/**
-	 * Creates an Action Object if schema of the actuator is compatible 
-	 * @param actuator
-	 * @param methodName
-	 * @param actionParameters
-	 * @return
-	 * @throws QueryParseException
-	 */
-	private Action createAction(IActuator actuator, String methodName,
-			ArrayList<IActionParameter> actionParameters) throws QueryParseException {
-		Class<?>[] parameters = new Class<?>[actionParameters.size()];
-		for (int i=0; i<actionParameters.size(); i++){
-			parameters[i] = actionParameters.get(i).getParamClass();
-		}
-		try {
-			return new Action(actuator, methodName, parameters);
-		}catch (ActionException e){
-			throw new QueryParseException(e.getMessage());
-		}
-	}
-
-	private Object generateStandardValue(String paramValue, String paramType) throws QueryParseException {
-		try {
-			if (paramType.equals("double")){
-				return Double.valueOf(paramValue);
-			}else if (paramType.equals("float")){
-				return Float.valueOf(paramValue);
-			}else if (paramType.equals("long")){
-				return Long.valueOf(paramValue);
-			}else if (paramType.equals("int")){
-				return Integer.valueOf(paramValue);
-			}else if (paramType.equals("short")){
-				return Short.valueOf(paramValue);
-			}else if (paramType.equals("byte")){
-				return Byte.valueOf(paramValue);
-			}else if (paramType.equals("char")){
-				return paramValue.charAt(0);
-			}else if (paramType.equals("boolean")){
-				return Boolean.valueOf(paramValue);
-			}else if (paramType.equals("string")){
-				return paramValue;
-			}
-		}catch (Exception e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		throw new QueryParseException(paramType+" is an irregulator datatype");
-	}
-
-	private List<ILogicalOperator> createNewPlan(HashMap<Action, List<IActionParameter>> actions,
-			List<ILogicalOperator> plan) {
-		//not necessary cause top operator is always the one in the plan
-		//this.determineOutputOperator(plan.get(0));
-		ILogicalOperator outputOperator = plan.get(0);
-
-		//create new sink and subscribe to outputoperator
-		EventTriggerAO eAO = new EventTriggerAO(actions);
-		eAO.subscribeToSource(outputOperator, 0, 0, outputOperator.getOutputSchema());
-		
-		//replace old top element through sink
-		plan.set(0, eAO);
-		return plan;
-	}
-
-	private SDFAttributeList determineSchema(List<ILogicalOperator> plan) throws QueryParseException {
-		if (!plan.isEmpty()){
-			if (plan.size()>1){
-				throw new QueryParseException("Multiple plans defined, cannot determine output scheme");
-			}else{
-				ILogicalOperator outputOperator = this.determineOutputOperator(plan.get(0));
-				return outputOperator.getOutputSchema();
-			}
-		}
-		throw new QueryParseException("No output schema defined");
-	}
-
-	/**
-	 * Find the output operator by walking one subscriptions-path.
-	 * Assumption: outputOperator has no subscriptions
-	 * @param iLogicalOperator
-	 * @return
-	 */
-	private ILogicalOperator determineOutputOperator(ILogicalOperator iLogicalOperator) {
-		for (LogicalSubscription subscription : iLogicalOperator.getSubscriptions()){
-			return this.determineOutputOperator(subscription.getTarget());
-		}
-		return iLogicalOperator;
-	}
-
-	@Override
-	public List<ILogicalOperator> parse(Reader reader)
-			throws QueryParseException {
-		// TODO Auto-generated method stub 
-		return null;
-	}
-	
-	//just for tets
-	public static void main(String[] args) {
-		ECAParser parser = new ECAParser();
-		String[] statements = {
-				//correct
-				"on (CQL) do m.a.a()",
-				"ON  ([LANG:SQL]Select * From abc where abc.a=5;)do m.a.a(52)",
-				"ON(Select * From (Select a from a)) do  m.a.b()",
-				"on () do m.a.b(), m.b.a(2, \"3\")",
-				//incorrect
-				"on ([Lang:bla] Select * From do a.b()",
-				"on Select * From) do a.b()",
-				"on (blub) do a.b, b.a()"};		
-		for (String statement : statements){
-			try {
-				parser.parse(statement);
-			} catch (QueryParseException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-	}
-	
-	//just for tests
-	public ICompiler getCompiler() {
-		return compiler;
 	}
 }
