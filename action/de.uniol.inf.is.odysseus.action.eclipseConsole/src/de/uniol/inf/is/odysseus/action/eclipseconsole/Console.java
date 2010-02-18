@@ -24,15 +24,6 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IAdvancedExecutor executer;
 	private IActuatorFactory actuatorFactory;
 
-	public void bindActuatorFactory(IActuatorFactory factory){
-		this.actuatorFactory = factory;
-	}
-	
-	public void bindExecutor(IAdvancedExecutor executer){
-		this.executer = executer;
-	}
-	
-	
 	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
 		if (args.length < 1){
@@ -66,6 +57,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 			ci.println(e.getMessage());
 		}
 	}
+	
 	
 	public void _lsactuatormanager(CommandInterpreter ci) {
 		ci.println("--Registered ActuatorManager--");
@@ -141,6 +133,14 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}catch (ActuatorException e){
 			ci.println(e.getMessage());
 		}
+	}
+	
+	public void bindActuatorFactory(IActuatorFactory factory){
+		this.actuatorFactory = factory;
+	}
+	
+	public void bindExecutor(IAdvancedExecutor executer){
+		this.executer = executer;
 	}
 	
 	
