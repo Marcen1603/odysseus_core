@@ -38,27 +38,6 @@ public class ECAParserTest implements CommandProvider {
 	//set to false if u want to prevent removal of testActuators!
 	private static boolean autoRemoveActuator = true;
 	
-	public void bindActuatorFactory (IActuatorFactory factory){
-		this.actuatorFactory = factory;
-	}
-	
-	public void bindConsole(CommandProvider cp){
-		if(cp.getClass() == ExecutorConsole.class){
-			this.executerConsole = (ExecutorConsole)cp;
-		}
-	}
-	
-	public void bindCompiler(ICompiler compiler){
-		this.compiler = compiler;
-	}
-	
-	public void bindExecutor(IAdvancedExecutor exec){
-		this.executor = exec;
-		
-	}
-	
-	
-	
 	public void _testeca(CommandInterpreter ci){
 		try {
 			ci.println("Preparing sources and actuators");
@@ -121,7 +100,34 @@ public class ECAParserTest implements CommandProvider {
 		}
 		
 	}
+	
+	public void bindActuatorFactory (IActuatorFactory factory){
+		this.actuatorFactory = factory;
+	}
+	
+	public void bindCompiler(ICompiler compiler){
+		this.compiler = compiler;
+	}
+	
+	public void bindConsole(CommandProvider cp){
+		if(cp.getClass() == ExecutorConsole.class){
+			this.executerConsole = (ExecutorConsole)cp;
+		}
+	}
+	
+	
+	
+	public void bindExecutor(IAdvancedExecutor exec){
+		this.executor = exec;
+		
+	}
 
+
+	@Override
+	public String getHelp() {
+		return "\n---ECA Parser test--- \n" +
+				"	testeca - runs eca test cases\n";
+	}
 
 	@SuppressWarnings("unchecked")
 	private void runTestSuite(String query, List<IActionParameter> parameters, CommandInterpreter ci) throws Exception {	
@@ -188,12 +194,6 @@ public class ECAParserTest implements CommandProvider {
 		}
 		ci.println("		++success, actions bound by physical operator are correct");
 		
-	}
-
-	@Override
-	public String getHelp() {
-		return "\n---ECA Parser test--- \n" +
-				"	testeca - runs eca test cases\n";
 	}
 
 

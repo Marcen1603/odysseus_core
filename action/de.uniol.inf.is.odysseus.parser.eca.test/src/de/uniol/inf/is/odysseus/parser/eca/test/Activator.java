@@ -7,6 +7,10 @@ public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 
+	public static BundleContext getContext() {
+		return context;
+	}
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		Activator.context = context;
@@ -15,9 +19,5 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		Activator.context = null;
-	}
-
-	public static BundleContext getContext() {
-		return context;
 	}
 }
