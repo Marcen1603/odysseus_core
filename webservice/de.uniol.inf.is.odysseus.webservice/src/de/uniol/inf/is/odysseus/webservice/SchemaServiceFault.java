@@ -25,10 +25,6 @@ public class SchemaServiceFault extends Exception {
         super(message);
     }
     
-    public SchemaServiceFault(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public SchemaServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault) {
         super(message);
         this.fault = fault;
@@ -37,6 +33,10 @@ public class SchemaServiceFault extends Exception {
     public SchemaServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault, Throwable cause) {
         super(message, cause);
         this.fault = fault;
+    }
+
+    public SchemaServiceFault(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public de.uniol.inf.is.odysseus.webservice.Fault getFaultInfo() {

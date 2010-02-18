@@ -28,13 +28,22 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static IAdvancedExecutor executor;
 	private static IActuatorFactory actuatorFactory;
 	
-	/**
-	 * Used by osgi for binding the executor
-	 * @param executor
-	 */
-    public void bindExecutor(IAdvancedExecutor executor) {
-		OdysseusWSPortImpl.executor = executor;
-	}
+	/* (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
+     */
+    public int addStatement(QueryType query) throws StatementQueryFault , StatementServiceFault    { 
+        try {
+			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), 
+					new ParameterParserID(query.getLanguage())).iterator().next();
+			return queryID;
+		} catch (PlanManagementException e) {
+			throw new StatementQueryFault(e.getMessage());
+		} catch (NullPointerException e){
+			throw new StatementServiceFault("Querymanagement not avaiable");
+		}catch (Exception e){
+    		throw new StatementServiceFault(e.getMessage());
+    	}
+    }
     
     /**
      * Used by osgi for binding the actuator service 
@@ -44,6 +53,14 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     	actuatorFactory = factory;
     }
     
+    
+    /**
+	 * Used by osgi for binding the executor
+	 * @param executor
+	 */
+    public void bindExecutor(IAdvancedExecutor executor) {
+		OdysseusWSPortImpl.executor = executor;
+	}
     
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createActuator(de.uniol.inf.is.odysseus.webservice.ActuatorInformation  actuator )*
@@ -68,23 +85,6 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     		throw new ActuatorManagerFault();
     	}catch (Exception e){
     		throw new ActuatorServiceFault(e.getMessage());
-    	}
-    }
-    
-    /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
-     */
-    public int addStatement(QueryType query) throws StatementQueryFault , StatementServiceFault    { 
-        try {
-			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), 
-					new ParameterParserID(query.getLanguage())).iterator().next();
-			return queryID;
-		} catch (PlanManagementException e) {
-			throw new StatementQueryFault(e.getMessage());
-		} catch (NullPointerException e){
-			throw new StatementServiceFault("Querymanagement not avaiable");
-		}catch (Exception e){
-    		throw new StatementServiceFault(e.getMessage());
     	}
     }
 
@@ -117,18 +117,6 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     }
     
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeStatement(java.math.BigInteger  queryID )*
-     */
-    public java.lang.String removeStatement(java.math.BigInteger queryID) throws RemoveStatementFault    { 
-        try {
-        	executor.removeQuery(queryID.intValue());
-        	return "";
-        }catch (Exception e){
-        	throw new RemoveStatementFault(e.getMessage());
-        }
-    }
-    
-    /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeActuator(de.uniol.inf.is.odysseus.webservice.ActuatorReducedInformation  actuator )*
      */
     public java.lang.String removeActuator(ActuatorReducedInformation actuator) throws RemoveActuatorFault    { 
@@ -137,6 +125,18 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	return "";
         }catch (Exception e){
         	throw new RemoveActuatorFault();
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeStatement(java.math.BigInteger  queryID )*
+     */
+    public java.lang.String removeStatement(java.math.BigInteger queryID) throws RemoveStatementFault    { 
+        try {
+        	executor.removeQuery(queryID.intValue());
+        	return "";
+        }catch (Exception e){
+        	throw new RemoveStatementFault(e.getMessage());
         }
     }
 

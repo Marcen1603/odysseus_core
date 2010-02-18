@@ -25,10 +25,6 @@ public class StatementServiceFault extends Exception {
         super(message);
     }
     
-    public StatementServiceFault(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public StatementServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault) {
         super(message);
         this.fault = fault;
@@ -37,6 +33,10 @@ public class StatementServiceFault extends Exception {
     public StatementServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault, Throwable cause) {
         super(message, cause);
         this.fault = fault;
+    }
+
+    public StatementServiceFault(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public de.uniol.inf.is.odysseus.webservice.Fault getFaultInfo() {

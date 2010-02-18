@@ -25,10 +25,6 @@ public class ActuatorServiceFault extends Exception {
         super(message);
     }
     
-    public ActuatorServiceFault(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public ActuatorServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault) {
         super(message);
         this.fault = fault;
@@ -37,6 +33,10 @@ public class ActuatorServiceFault extends Exception {
     public ActuatorServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault, Throwable cause) {
         super(message, cause);
         this.fault = fault;
+    }
+
+    public ActuatorServiceFault(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public de.uniol.inf.is.odysseus.webservice.Fault getFaultInfo() {

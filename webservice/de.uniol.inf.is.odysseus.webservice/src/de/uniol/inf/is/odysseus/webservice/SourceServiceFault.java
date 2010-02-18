@@ -25,10 +25,6 @@ public class SourceServiceFault extends Exception {
         super(message);
     }
     
-    public SourceServiceFault(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public SourceServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault) {
         super(message);
         this.fault = fault;
@@ -37,6 +33,10 @@ public class SourceServiceFault extends Exception {
     public SourceServiceFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault, Throwable cause) {
         super(message, cause);
         this.fault = fault;
+    }
+
+    public SourceServiceFault(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public de.uniol.inf.is.odysseus.webservice.Fault getFaultInfo() {

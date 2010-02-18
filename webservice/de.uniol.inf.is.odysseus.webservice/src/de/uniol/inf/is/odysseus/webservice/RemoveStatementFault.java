@@ -25,10 +25,6 @@ public class RemoveStatementFault extends Exception {
         super(message);
     }
     
-    public RemoveStatementFault(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public RemoveStatementFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault) {
         super(message);
         this.fault = fault;
@@ -37,6 +33,10 @@ public class RemoveStatementFault extends Exception {
     public RemoveStatementFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault, Throwable cause) {
         super(message, cause);
         this.fault = fault;
+    }
+
+    public RemoveStatementFault(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public de.uniol.inf.is.odysseus.webservice.Fault getFaultInfo() {

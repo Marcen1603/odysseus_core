@@ -40,30 +40,6 @@ public class QueryType {
     protected String language;
 
     /**
-     * Gets the value of the query property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getQuery() {
-        return query;
-    }
-
-    /**
-     * Sets the value of the query property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setQuery(String value) {
-        this.query = value;
-    }
-
-    /**
      * Gets the value of the language property.
      * 
      * @return
@@ -76,6 +52,18 @@ public class QueryType {
     }
 
     /**
+     * Gets the value of the query property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getQuery() {
+        return query;
+    }
+
+    /**
      * Sets the value of the language property.
      * 
      * @param value
@@ -85,6 +73,18 @@ public class QueryType {
      */
     public void setLanguage(String value) {
         this.language = value;
+    }
+
+    /**
+     * Sets the value of the query property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setQuery(String value) {
+        this.query = value;
     }
 
 }

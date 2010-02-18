@@ -20,19 +20,19 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 public interface OdysseusWSPort {
 
-    @WebResult(name = "actuatorName", targetNamespace = "", partName = "actuatorName")
-    @WebMethod(operationName = "CreateActuator", action = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/CreateActuator")
-    public java.lang.String createActuator(
-        @WebParam(partName = "actuator", name = "actuator", targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/")
-        ActuatorInformation actuator
-    ) throws ActuatorServiceFault, ActuatorFault, ActuatorManagerFault;
-
     @WebResult(name = "queryID", targetNamespace = "", partName = "queryID")
     @WebMethod(operationName = "AddStatement", action = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/AddStatement")
     public int addStatement(
         @WebParam(partName = "query", name = "query", targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/")
         QueryType query
     ) throws StatementQueryFault, StatementServiceFault;
+
+    @WebResult(name = "actuatorName", targetNamespace = "", partName = "actuatorName")
+    @WebMethod(operationName = "CreateActuator", action = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/CreateActuator")
+    public java.lang.String createActuator(
+        @WebParam(partName = "actuator", name = "actuator", targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/")
+        ActuatorInformation actuator
+    ) throws ActuatorServiceFault, ActuatorFault, ActuatorManagerFault;
 
     @WebResult(name = "status", targetNamespace = "", partName = "status")
     @WebMethod(operationName = "CreateSource", action = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/CreateSource")
@@ -50,16 +50,16 @@ public interface OdysseusWSPort {
     ) throws SchemaServiceFault, SchemaIDFault;
 
     @WebResult(name = "null", targetNamespace = "", partName = "null")
-    @WebMethod(operationName = "RemoveStatement")
-    public java.lang.String removeStatement(
-        @WebParam(partName = "queryID", name = "queryID", targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/")
-        java.math.BigInteger queryID
-    ) throws RemoveStatementFault;
-
-    @WebResult(name = "null", targetNamespace = "", partName = "null")
     @WebMethod(operationName = "RemoveActuator", action = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/RemoveActuator")
     public java.lang.String removeActuator(
         @WebParam(partName = "actuator", name = "actuatorName", targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/")
         ActuatorReducedInformation actuator
     ) throws RemoveActuatorFault;
+
+    @WebResult(name = "null", targetNamespace = "", partName = "null")
+    @WebMethod(operationName = "RemoveStatement")
+    public java.lang.String removeStatement(
+        @WebParam(partName = "queryID", name = "queryID", targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/")
+        java.math.BigInteger queryID
+    ) throws RemoveStatementFault;
 }
