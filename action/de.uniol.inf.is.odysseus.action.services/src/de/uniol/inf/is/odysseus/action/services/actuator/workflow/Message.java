@@ -16,16 +16,28 @@ public class Message {
 	private List<MessagePart> inputParts;
 	private List<MessagePart> outputParts;
 	
+	/**
+	 * Creates new Message with qualified name
+	 * @param name
+	 */
 	public Message(QName name){
 		this.inputParts = new ArrayList<MessagePart>();
 		this.outputParts = new ArrayList<MessagePart>();
 		this.messageName = name;
 	}
 	
+	/**
+	 * Adds a {@link MessagePart} used at invokes
+	 * @param part
+	 */
 	public void addInputMessagePart(MessagePart part){
 		this.inputParts.add(part);
 	}
 	
+	/**
+	 * Adds a {@link MessagePart} expected as result from invoking
+	 * @param part
+	 */
 	public void addOutputMessagePart(MessagePart part){
 		this.outputParts.add(part);
 	}

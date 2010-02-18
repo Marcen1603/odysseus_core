@@ -45,6 +45,11 @@ public class WorkflowClient implements IActuator {
 	
 	private static String correlationName = "correlation";
 	
+	/**
+	 * Creates a new WorkflowClient without correlation information
+	 * @param client
+	 * @throws ActuatorException
+	 */
 	public WorkflowClient(Client client) throws ActuatorException{
 		this.client = client;
 		
@@ -83,6 +88,12 @@ public class WorkflowClient implements IActuator {
 		}
 	}
 	
+	/**
+	 * Creates a new WorkflowClient with correlation information
+	 * @param client
+	 * @param correlationID
+	 * @throws ActuatorException
+	 */
 	public WorkflowClient(Client client, String correlationID) throws ActuatorException{
 		this(client);
 		this.correlationID = correlationID;
@@ -100,7 +111,7 @@ public class WorkflowClient implements IActuator {
             if (partClass.getName().toLowerCase().contains(correlationName)){
             	correlation = true;
             }
-            MessagePart messagePart = new MessagePart(message.getMessageName(), partClass.newInstance(), correlation);
+            MessagePart messagePart = new MessagePart(partClass.newInstance(), correlation);
             
             //addPropertyDescriptors for each field and remember field type as parameter
             for (Field field : partClass.getDeclaredFields()){
@@ -135,7 +146,7 @@ public class WorkflowClient implements IActuator {
             if (partClass.getName().toLowerCase().contains(correlationName)){
             	correlation = true;
             }
-            MessagePart messagePart = new MessagePart(message.getMessageName(), partClass.newInstance(), correlation);
+            MessagePart messagePart = new MessagePart(partClass.newInstance(), correlation);
             
             //addPropertyDescriptors for each field and remember field type as parameter
             for (Field field : partClass.getDeclaredFields()){
