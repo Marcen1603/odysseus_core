@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.action.services.actuator;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
@@ -23,12 +23,6 @@ public interface IActuatorFactory {
 		throws ActuatorException;
 	
 	/**
-	 * Removes an existing Actuator
-	 * @param name
-	 */
-	public void removeActuator(String actuatorName, String managerName) throws ActuatorException;
-	
-	/**
 	 * Looks up for specified Actuator and returns it
 	 * @param actuatorName
 	 * @param managerName
@@ -36,6 +30,12 @@ public interface IActuatorFactory {
 	 * @throws ActuatorException
 	 */
 	public IActuator getActuator(String actuatorName, String managerName) throws ActuatorException;
+	
+	/**
+	 * Returns all registered ActuatorManagers
+	 * @return
+	 */
+	public Map<String, IActuatorManager> getActuatorManagers();
 
 	/**
 	 * Fetches and returns the full schema of specified Actuator
@@ -58,8 +58,8 @@ public interface IActuatorFactory {
 	public List<ActionMethod> getReducedSchema(String actuatorName, String managerName) throws ActuatorException;
 	
 	/**
-	 * Returns all registered ActuatorManagers
-	 * @return
+	 * Removes an existing Actuator
+	 * @param name
 	 */
-	public HashMap<String, IActuatorManager> getActuatorManagers();
+	public void removeActuator(String actuatorName, String managerName) throws ActuatorException;
 }

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.action.services.actuator;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper which checks if a class is the primitiv wrapper of the other one
@@ -9,7 +10,7 @@ import java.util.HashMap;
  */
 public class PrimitivTypeComparator {
 	
-private static HashMap<Class<?>,Class<?>> primitivClassMapping;
+private static Map<Class<?>,Class<?>> primitivClassMapping;
 
 	public static boolean sameType (Class<?>c1, Class<?> c2){
 		if (primitivClassMapping == null){

@@ -7,29 +7,39 @@ import javax.xml.namespace.QName;
 
 /**
  * Class representing a message for a webservice call.
- * Holds a number of {@link MessagePart} 
+ * Holds a number of {@link MessagePart} for in- and output
  * @author Simon Flandergan
  *
  */
 public class Message {
 	private QName messageName;
-	private List<MessagePart> parts;
+	private List<MessagePart> inputParts;
+	private List<MessagePart> outputParts;
 	
 	public Message(QName name){
-		this.parts = new ArrayList<MessagePart>();
+		this.inputParts = new ArrayList<MessagePart>();
+		this.outputParts = new ArrayList<MessagePart>();
 		this.messageName = name;
 	}
 	
-	public void addMessagePart(MessagePart part){
-		this.parts.add(part);
+	public void addInputMessagePart(MessagePart part){
+		this.inputParts.add(part);
+	}
+	
+	public void addOutputMessagePart(MessagePart part){
+		this.outputParts.add(part);
+	}
+	
+	public List<MessagePart> getInputParts() {
+		return inputParts;
 	}
 	
 	public QName getMessageName() {
 		return messageName;
 	}
 	
-	public List<MessagePart> getParts() {
-		return parts;
+	public List<MessagePart> getOutputParts() {
+		return outputParts;
 	}
 	
 	

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.action.services.actuator;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  *
  */
 public class ActuatorFactory implements IActuatorFactory{
-	private volatile HashMap<String, IActuatorManager> actuatorManager;
+	private volatile Map<String, IActuatorManager> actuatorManager;
 	private Logger logger;
 			
 	/**
@@ -49,14 +50,6 @@ public class ActuatorFactory implements IActuatorFactory{
 		throw new ActuatorException("Actuator manager not bound yet");
 	}
 	
-	/**
-	 * OSGI method for unbinding {@link IActuatorManager}s
-	 * @param manager
-	 */
-	public void unbindActuatorManager(IActuatorManager manager){
-		this.actuatorManager.remove(manager.getName());
-	}
-	
 	public IActuator getActuator (String actuatorName, String managerName) throws ActuatorException{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
@@ -64,14 +57,20 @@ public class ActuatorFactory implements IActuatorFactory{
 		}
 		throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
 	}
+	
+	public Map<String, IActuatorManager> getActuatorManagers() {
+		return actuatorManager;
+	}
 
 	
 	public List<ActionMethod> getFullSchema(String actuatorName, String managerName) throws ActuatorException{
 		return this.getActuator(actuatorName, managerName).getFullSchema();
 	}
 	
-	public HashMap<String, IActuatorManager> getActuatorManagers() {
-		return actuatorManager;
+	@Override
+	public List<ActionMethod> getReducedSchema(String actuatorName,
+			String managerName) throws ActuatorException {
+		return this.getActuator(actuatorName, managerName).getReducedSchema();
 	}
 
 	@Override
@@ -85,10 +84,12 @@ public class ActuatorFactory implements IActuatorFactory{
 		}
 	}
 
-	@Override
-	public List<ActionMethod> getReducedSchema(String actuatorName,
-			String managerName) throws ActuatorException {
-		return this.getActuator(actuatorName, managerName).getReducedSchema();
+	/**
+	 * OSGI method for unbinding {@link IActuatorManager}s
+	 * @param manager
+	 */
+	public void unbindActuatorManager(IActuatorManager manager){
+		this.actuatorManager.remove(manager.getName());
 	}
 	
 	

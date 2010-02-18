@@ -47,6 +47,15 @@ public class ActionMethod {
 	}
 	
 	/**
+	 * Returns mapping of parameterClasses and name.
+	 * Mainly relevant for displaying schema
+	 * @return
+	 */
+	public List<ActionParameter> getParameters() {
+		return parameters;
+	}
+	
+	/**
 	 * return classes for each parameter in order
 	 * @return
 	 */
@@ -87,15 +96,6 @@ public class ActionMethod {
 	 */
 	public boolean isShowInSchema() {
 		return showInSchema;
-	}
-	
-	/**
-	 * Returns mapping of parameterClasses and name.
-	 * Mainly relevant for displaying schema
-	 * @return
-	 */
-	public List<ActionParameter> getParameters() {
-		return parameters;
 	}
 
 }

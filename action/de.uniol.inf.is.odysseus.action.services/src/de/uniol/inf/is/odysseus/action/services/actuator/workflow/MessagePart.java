@@ -4,8 +4,10 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -21,10 +23,10 @@ public class MessagePart {
 	private List<PropertyDescriptor> propertyDescriptors;
 	private boolean correlation;
 		
-	public MessagePart(QName messageName, Class<?> partClass, boolean isCorrelation) throws InstantiationException, IllegalAccessException{
+	public MessagePart(QName messageName, Object inputObject, boolean isCorrelation){
 		this.propertyDescriptors = new ArrayList<PropertyDescriptor>();
-		this.inputObject = partClass.newInstance();
-		this.partClass = partClass;
+		this.inputObject = inputObject;
+		this.partClass = inputObject.getClass();
 		this.correlation = isCorrelation;
 	}
 	
@@ -38,6 +40,31 @@ public class MessagePart {
 		this.propertyDescriptors.add(propDescriptor);
 	}
 	
+	
+	public Object getInputObject() {
+		return inputObject;
+	}
+	
+	public int getNumberOfProperties(){
+		return this.propertyDescriptors.size();
+	}
+	
+	public Class<?> getPartClass() {
+		return partClass;
+	}
+	
+	public Map<String, Object> getValsForProperties(Object input) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+		Map<String, Object> properties = new HashMap<String, Object>();
+		for (PropertyDescriptor descriptor : this.propertyDescriptors){
+			Object val = descriptor.getReadMethod().invoke(input);
+			properties.put(descriptor.getName(), val);
+		}
+		return properties;
+	}
+	
+	public boolean isCorrelation() {
+		return correlation;
+	}
 	
 	/**
 	 * Write values to properties with values
@@ -57,16 +84,5 @@ public class MessagePart {
 		}
 	}
 	
-	public int getNumberOfProperties(){
-		return this.propertyDescriptors.size();
-	}
-	
-	public Object getInputObject() {
-		return inputObject;
-	}
-	
-	public boolean isCorrelation() {
-		return correlation;
-	}
 	
 }

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.action.services.actuator.workflow;
 
+import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -30,14 +31,14 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  * - Only one service supported!
  * - Only one binding supported!
  * - Correlations element must include the unique name 'correlation' case-insensitive
+ * - All elements from possible results are ignored, besides correlations
  * @author Simon Flandergan
  *
  */
 public class WorkflowClient implements IActuator {
 	private Client client;
 	
-	//TODO debug, über konstruktor oder invoke holen!
-	private String correlationID = "http://sflan1:8001/soa-infra/services/default/BPELScenario/maintenance_client_ep?WSDL5";
+	private String correlationID;
 	
 	private Map<String, Message> methodMessageMapping;
 	private ArrayList<ActionMethod> methods;
@@ -61,43 +62,16 @@ public class WorkflowClient implements IActuator {
 	        for (BindingOperationInfo operation : binding.getOperations()){       	
 	        	QName methodName = operation.getName();    	
 	        	BindingMessageInfo inputMessageInfo = operation.getInput();
+	        	BindingMessageInfo outputMessageInfo = operation.getOutput();
 	        	
 	        	Message message = new Message(methodName);
 	
-	        	//create parts for each messagePart
-	        	List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
-		        List<String> parameterNames = new ArrayList<String>();
-		        
-	        	for (MessagePartInfo partInfo : inputMessageInfo.getMessageInfo().getMessageParts()){
-		            Class<?> partClass = partInfo.getTypeClass();
-		            
-		            //check if this part is a correlation
-		            boolean correlation = false;
-		            if (partClass.getName().toLowerCase().contains(correlationName)){
-		            	correlation = true;
-		            }
-		            MessagePart messagePart = new MessagePart(methodName, partClass, correlation);
-		            
-		            //addPropertyDescriptors for each field and remember field type as parameter
-		            for (Field field : partClass.getDeclaredFields()){
-		            	String fieldName = field.getName();
-		            	messagePart.addPropertyDescriptor(fieldName);
-		            	
-		            	//only add if messagePart is not the correlation!
-		            	if (!correlation){
-		            		parameterTypes.add(field.getType());
-		            		parameterNames.add(fieldName);
-		            	}
-		            }
-		            
-		            //add messagepart to message
-		            message.addMessagePart(messagePart);    
+	        	if (inputMessageInfo != null){
+	        		this.createInputMessageParts(inputMessageInfo, message);
 	        	}
-	        	//create method for schema
-	        	ActionMethod method = new ActionMethod(methodName.getLocalPart(),
-	            			parameterTypes.toArray(new Class<?>[parameterTypes.size()]), 
-	            			parameterNames.toArray(new String[parameterNames.size()]), true);
-	        	this.methods.add(method);
+	        	if (outputMessageInfo != null){
+	        		this.createOutputMessageParts(outputMessageInfo, message);
+	        	}
 	        	
 	        	//add message to mapping
 	        	this.methodMessageMapping.put(methodName.getLocalPart(), message);
@@ -114,13 +88,73 @@ public class WorkflowClient implements IActuator {
 		this.correlationID = correlationID;
 	}
 
+	private void createInputMessageParts(BindingMessageInfo inputMessageInfo, Message message) throws InstantiationException, IllegalAccessException, IntrospectionException {
+    	List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
+        List<String> parameterNames = new ArrayList<String>();
+        
+    	for (MessagePartInfo partInfo : inputMessageInfo.getMessageInfo().getMessageParts()){
+            Class<?> partClass = partInfo.getTypeClass();
+            
+            //check if this part is a correlation
+            boolean correlation = false;
+            if (partClass.getName().toLowerCase().contains(correlationName)){
+            	correlation = true;
+            }
+            MessagePart messagePart = new MessagePart(message.getMessageName(), partClass.newInstance(), correlation);
+            
+            //addPropertyDescriptors for each field and remember field type as parameter
+            for (Field field : partClass.getDeclaredFields()){
+            	String fieldName = field.getName();
+            	messagePart.addPropertyDescriptor(fieldName);
+            	
+            	//only add if messagePart is not the correlation!
+            	if (!correlation){
+            		parameterTypes.add(field.getType());
+            		parameterNames.add(fieldName);
+            	}
+            }
+            
+            //add messagepart to message
+            message.addInputMessagePart(messagePart);    
+    	}
+    	
+    	//create method for schema
+    	ActionMethod method = new ActionMethod(message.getMessageName().getLocalPart(),
+        			parameterTypes.toArray(new Class<?>[parameterTypes.size()]), 
+        			parameterNames.toArray(new String[parameterNames.size()]), true);
+    	this.methods.add(method);
+	}
+	
+	private void createOutputMessageParts(BindingMessageInfo outputMessageInfo,
+			Message message) throws InstantiationException, IllegalAccessException, IntrospectionException {
+		for (MessagePartInfo partInfo : outputMessageInfo.getMessageInfo().getMessageParts()){
+            Class<?> partClass = partInfo.getTypeClass();
+            
+            //check if this part is a correlation
+            boolean correlation = false;
+            if (partClass.getName().toLowerCase().contains(correlationName)){
+            	correlation = true;
+            }
+            MessagePart messagePart = new MessagePart(message.getMessageName(), partClass.newInstance(), correlation);
+            
+            //addPropertyDescriptors for each field and remember field type as parameter
+            for (Field field : partClass.getDeclaredFields()){
+            	String fieldName = field.getName();
+            	messagePart.addPropertyDescriptor(fieldName);
+            }
+            
+            //add messagepart to message
+            message.addOutputMessagePart(messagePart);    
+    	}
+	}
+
 	@Override
 	public void executeMethod(String method, Class<?>[] types, Object[] params) throws ActuatorException {
 		try {
 			Message message = this.methodMessageMapping.get(method);
 
 			//fill parts with values by splitting param array
-			List<MessagePart> parts = message.getParts();
+			List<MessagePart> parts = message.getInputParts();
 			int startIndex = 0;
 			
 			Object[] inputs = new Object[parts.size()];
@@ -139,8 +173,10 @@ public class WorkflowClient implements IActuator {
 				inputs[inputIndex] = part.getInputObject();
 				inputIndex++;
 			}
-
+			//invoke message
 			Object[] result = client.invoke(message.getMessageName(), inputs);
+			
+			this.interpretResult(result, message);
 
 		}catch (NullPointerException e){
 			throw new ActuatorException(e.getMessage());
@@ -171,6 +207,34 @@ public class WorkflowClient implements IActuator {
 			
 		}
 		return reducedSchema;
+	}
+
+	private void interpretResult(Object[] result, Message message) throws ActuatorException {
+		for (Object res : result){
+			//find corresponding message part
+			Class<?> resultClass = res.getClass();
+			for (MessagePart part : message.getOutputParts()){
+				if (part.getPartClass().equals(resultClass)){
+					//only interpret correlation results
+					if (part.isCorrelation()){
+						try {
+							Object val = part.getValsForProperties(res).values().iterator().next();
+							if (val != null){
+								this.correlationID = (String)val;
+							}
+						} catch (IllegalArgumentException e) {
+							throw new ActuatorException("Interpreting result failed: " +e.getMessage());
+						} catch (IllegalAccessException e) {
+							throw new ActuatorException("Interpreting result failed: " +e.getMessage());
+						} catch (InvocationTargetException e) {
+							throw new ActuatorException("Interpreting result failed: " +e.getMessage());
+						} catch (ClassCastException e){
+							throw new ActuatorException("Interpreting result failed: " +e.getMessage());
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

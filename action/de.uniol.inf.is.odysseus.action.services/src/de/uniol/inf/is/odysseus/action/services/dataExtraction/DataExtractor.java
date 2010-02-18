@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.action.services.dataExtraction;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
 
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.DataextractionExceptio
  *
  */
 public class DataExtractor implements IDataExtractor{
-	private volatile HashMap<String, IAttributeExtractor> extractors;
+	private volatile Map<String, IAttributeExtractor> extractors;
 	
 	public DataExtractor () {
 		this.extractors = new HashMap<String, IAttributeExtractor>();
@@ -26,15 +27,6 @@ public class DataExtractor implements IDataExtractor{
 		this.extractors.put(extractor.getName(), extractor);
 	}
 	
-	/**
-	 * OSGI method for unbinding {@link IAttributeExtractor}s
-	 * @param extractor
-	 */
-	public void unbindAttributeExtractor (IAttributeExtractor extractor){
-		this.extractors.remove(extractor.getName());
-	}
-	
-	
 	public Object extractAttribute(Object element, Object attributeIdentifier, String type) throws DataextractionException{
 		IAttributeExtractor extractor = this.extractors.get(type);
 		if (extractor == null){
@@ -43,6 +35,15 @@ public class DataExtractor implements IDataExtractor{
 		
 		Object result = extractor.extractAttribute(attributeIdentifier, element);
 		return result;
+	}
+	
+	
+	/**
+	 * OSGI method for unbinding {@link IAttributeExtractor}s
+	 * @param extractor
+	 */
+	public void unbindAttributeExtractor (IAttributeExtractor extractor){
+		this.extractors.remove(extractor.getName());
 	}
 
 }

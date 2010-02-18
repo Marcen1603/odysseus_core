@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  *
  */
 public class ActuatorAdapterManager implements IActuatorManager{
-	private HashMap<String, ActuatorAdapter> adapters;
+	private Map<String, ActuatorAdapter> adapters;
 	
 	private static Pattern constructorPattern = Pattern.compile(
 			"([A-Z][A-Z0-9_\\.]*)" + //fullclass name
@@ -149,12 +150,6 @@ public class ActuatorAdapterManager implements IActuatorManager{
 
 
 	@Override
-	public String getName() {
-		return "ActuatorAdapterManager";
-	}
-
-
-	@Override
 	public IActuator getActuator(String name) throws ActuatorException {
 		IActuator actuator = this.adapters.get(name);
 		if (actuator == null){
@@ -165,17 +160,23 @@ public class ActuatorAdapterManager implements IActuatorManager{
 
 
 	@Override
-	public IActuator removeActuator(String name) throws ActuatorException {
-		ActuatorAdapter adapter = this.adapters.remove(name);
-		if (adapter == null) {
-			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
-		}
-		return adapter;
+	public String getName() {
+		return "ActuatorAdapterManager";
 	}
 
 
 	@Override
 	public List<String> getRegisteredActuatorNames() {
 		return new ArrayList<String>(this.adapters.keySet());
+	}
+
+
+	@Override
+	public IActuator removeActuator(String name) throws ActuatorException {
+		ActuatorAdapter adapter = this.adapters.remove(name);
+		if (adapter == null) {
+			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
+		}
+		return adapter;
 	}
 }

@@ -21,13 +21,6 @@ public interface IActuatorManager {
 	public IActuator createActuator(String name, String description) throws ActuatorException;
 	
 	/**
-	 * Removes Actuator with given name if it exists.
-	 * @param name
-	 * @throws ActuatorException thrown if Actuator with given name does not exist
-	 */
-	public IActuator removeActuator(String name) throws ActuatorException;
-	
-	/**
 	 * Returns the actuator with given name.
 	 * @param name
 	 * @throws ActuatorException thrown if Actuator does not exist
@@ -47,5 +40,12 @@ public interface IActuatorManager {
 	 * @return
 	 */
 	public List<String> getRegisteredActuatorNames();
+	
+	/**
+	 * Removes Actuator with given name if it exists.
+	 * @param name
+	 * @throws ActuatorException thrown if Actuator with given name does not exist
+	 */
+	public IActuator removeActuator(String name) throws ActuatorException;
 	
 }

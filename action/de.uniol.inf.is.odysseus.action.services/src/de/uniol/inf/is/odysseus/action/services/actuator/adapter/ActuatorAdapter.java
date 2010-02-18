@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  */
 public class ActuatorAdapter implements IActuator {
 	private Object adapter;
-	private ArrayList<ActionMethod> methods;
+	private List<ActionMethod> methods;
 	
 	public ActuatorAdapter(Object adapter) {
 		this.adapter = adapter;
@@ -40,12 +40,6 @@ public class ActuatorAdapter implements IActuator {
 	}
 	
 	@Override
-	public List<ActionMethod> getFullSchema() {
-		return this.methods;
-	}
-	
-	
-	@Override
 	public void executeMethod(String method, Class<?>[] types, Object[] params) throws ActuatorException {
 		try {
 			Method methodToExecute = this.adapter.getClass().getMethod(method, types);
@@ -63,6 +57,12 @@ public class ActuatorAdapter implements IActuator {
 		}catch (NullPointerException e){
 			throw new ActuatorException(e.getMessage());
 		}
+	}
+	
+	
+	@Override
+	public List<ActionMethod> getFullSchema() {
+		return this.methods;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
  */
 public class WorkflowClientManager implements IActuatorManager {
 	private DynamicClientFactory factory;
-	private HashMap<String, WorkflowClient> clients;
+	private Map<String, WorkflowClient> clients;
 	
 	private static Pattern descriptionPattern = Pattern.compile("([^;]+);?(.*)?"); 
 	
@@ -68,12 +69,6 @@ public class WorkflowClientManager implements IActuatorManager {
 
 
 	@Override
-	public String getName() {
-		return "WorkflowClientManager";
-	}
-
-
-	@Override
 	public IActuator getActuator(String name) throws ActuatorException {
 		IActuator client = this.clients.get(name);
 		if (client != null){
@@ -84,17 +79,23 @@ public class WorkflowClientManager implements IActuatorManager {
 
 
 	@Override
-	public IActuator removeActuator(String name) throws ActuatorException{
-		WorkflowClient client = this.clients.remove(name);
-		if (client == null){
-			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
-		}
-		return client;
+	public String getName() {
+		return "WorkflowClientManager";
 	}
 
 
 	@Override
 	public List<String> getRegisteredActuatorNames() {
 		return new ArrayList<String>(this.clients.keySet());
+	}
+
+
+	@Override
+	public IActuator removeActuator(String name) throws ActuatorException{
+		WorkflowClient client = this.clients.remove(name);
+		if (client == null){
+			throw new ActuatorException(this.getName()+": Actuator <"+name+"> does not exist");
+		}
+		return client;
 	}
 }
