@@ -13,10 +13,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.Datarate;
-import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -26,10 +22,10 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanExecutionCostCalculator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * 
@@ -64,6 +60,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			for (IEditableQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 						parameter);
+				updateMetadataListener(editableQuery);
 			}
 
 			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
@@ -71,8 +68,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
-			
-			updateMetadataListener(newExecutionPlan);
 
 			return this.planMigrationStrategie.migratePlan(sender,
 					newExecutionPlan);
@@ -88,6 +83,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			for (IEditableQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 						parameter, rulesToUse);
+				updateMetadataListener(editableQuery);
 			}
 
 			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
@@ -95,8 +91,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
-
-			updateMetadataListener(newExecutionPlan);
 
 			return this.planMigrationStrategie.migratePlan(sender,
 					newExecutionPlan);
@@ -121,21 +115,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 				.migratePlan(sender, newExecutionPlan);
 	}
 	
-	private void updateMetadataListener(IEditableExecutionPlan newExecutionPlan) {
-		// install datarate listener on sources
-		// FIXME: getSources() leer
-		for (IPhysicalOperator root : newExecutionPlan.getRoots()) {
-			for (ISource<?> source : MigrationHelper.getSources(root)) {
-				if (source.getProvidedMonitoringData().contains(MonitoringDataTypes.DATARATE.name)) {
-					continue;
-				}
-				IMonitoringData<?> mData = MonitoringDataTypes.createMetadata(MonitoringDataTypes.DATARATE.name, source);
-				source.addMonitoringData(MonitoringDataTypes.DATARATE.name, mData);
-				source.subscribe((POEventListener)mData, POEventType.PushDone);
-				this.sourceDatarates.add(mData);
-			}
-		}
-		
+	private void updateMetadataListener(IEditableQuery editableQuery) {
+		AbstractTreeWalker.prefixWalk2(editableQuery.getRoot(), new InstallMetadataListenerVisitor(this));
 	}
 	
 	@Override
@@ -231,5 +212,11 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 					+ query.getID() + ")", e);
 		}
 	}
+
+	List<IMonitoringData<?>> getSourceDatarates() {
+		return sourceDatarates;
+	}
+	
+	
 
 }

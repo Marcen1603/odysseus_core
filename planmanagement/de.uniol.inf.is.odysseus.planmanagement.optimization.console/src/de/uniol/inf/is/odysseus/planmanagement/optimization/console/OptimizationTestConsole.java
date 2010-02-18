@@ -59,7 +59,9 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 	public void _m (CommandInterpreter ci) {
 		try {
 			nmsn(ci);
-			Collection<Integer> queryIds = this.executor.addQuery("SELECT * FROM nexmark:bid2", 
+			/*Collection<Integer> queryIds = this.executor.addQuery("SELECT * FROM nexmark:bid2", 
+					parser(), new ParameterDefaultRoot(new OptimizationTestSink(false)), this.trafoConfigParam);*/
+			Collection<Integer> queryIds = this.executor.addQuery("SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction", 
 					parser(), new ParameterDefaultRoot(new OptimizationTestSink(false)), this.trafoConfigParam);
 			this.executor.startExecution();
 			
@@ -71,12 +73,15 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 			
 			//query.reoptimize();
 			
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {}
+			while (true) {
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {}
+				System.out.println("Plan cost test...");
+				new PlanExecutionCostCalculator().calculateCost(op);
+			}
 			
-			System.out.println("Plan cost test...");
-			new PlanExecutionCostCalculator().calculateCost(op);
+			//AbstractTreeWalker.prefixWalk2(op, new CopyPhysicalPlanVisitor());
 			
 		} catch (PlanManagementException e) {
 			e.printStackTrace();

@@ -15,6 +15,7 @@ Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel,
+ de.uniol.inf.is.odysseus.util,
  de.uniol.inf.is.odysseus.base.planmanagement
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
