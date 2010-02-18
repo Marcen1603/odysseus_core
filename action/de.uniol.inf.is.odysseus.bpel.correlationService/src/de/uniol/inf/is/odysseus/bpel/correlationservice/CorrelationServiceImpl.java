@@ -34,7 +34,7 @@ public class CorrelationServiceImpl implements CorrelationService {
     public java.lang.String getCorrelation(java.lang.String uri) { 
        int sIndex = this.randomGen.nextInt(uri.length());
        int eIndex = sIndex + this.randomGen.nextInt(uri.length()-sIndex);
-       return uri.substring(sIndex, eIndex)+System.currentTimeMillis();
+       return ""+uri.substring(sIndex, eIndex).hashCode()+System.currentTimeMillis();
     }
 
 }
