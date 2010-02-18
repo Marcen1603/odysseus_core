@@ -11,7 +11,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Application implements IApplication {
 
+	public static void main(String[] args) {
+		Application app = new Application();
+		app.start(null);
+	}
 	private Display display;
+
 	private Shell shell;
 
 	/* (non-Javadoc)
@@ -28,7 +33,7 @@ public class Application implements IApplication {
 		display.dispose();
 		return IApplication.EXIT_OK;
 	}
-
+	
 	public void stop() {
 		if (this.shell != null && !this.shell.isDisposed()){
 			this.display.syncExec(new Runnable() {
@@ -39,10 +44,5 @@ public class Application implements IApplication {
 			});
 			this.display.dispose();
 		}
-	}
-	
-	public static void main(String[] args) {
-		Application app = new Application();
-		app.start(null);
 	}
 }

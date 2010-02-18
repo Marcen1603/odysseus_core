@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.action.demoapp;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -14,24 +15,24 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 public class AuctionMonitor {
+	public enum AuctionStatus {GREEN, ORANGE, RED}
 	private Table table;
-	private HashMap<Integer, Integer> auctions;
-	private HashMap<Integer, AuctionStatus> auctionStatus;
+	private Map<Integer, Integer> auctions;
 	
+	private Map<Integer, AuctionStatus> auctionStatus;
 	private Shell shell;
-	private Display display;
 	
-	public enum AuctionStatus {GREEN, ORANGE, RED};
+	private Display display;;
 	
 	private static AuctionMonitor instance = new AuctionMonitor();
 
+	public static AuctionMonitor getInstance() {
+		return instance;
+	}
+	
 	private AuctionMonitor(){
 		this.auctions = new HashMap<Integer, Integer>();
 		this.auctionStatus = new HashMap<Integer, AuctionStatus>();
-	}
-	
-	public Shell runApplication(Display display) {
-		return this.init(display);
 	}
 	
 	private Shell init(Display display) {
@@ -82,6 +83,10 @@ public class AuctionMonitor {
 		return shell;
 	}
 	
+	public Shell runApplication(Display display) {
+		return this.init(display);
+	}
+	
 	public void updateData (final String[] data, final AuctionStatus status) {
 		final int id = Integer.valueOf(data[0]);
 		
@@ -128,10 +133,6 @@ public class AuctionMonitor {
 		}catch (Exception e){
 			System.err.println("Error updating");
 		};
-	}
-	
-	public static AuctionMonitor getInstance() {
-		return instance;
 	}
 
 }
