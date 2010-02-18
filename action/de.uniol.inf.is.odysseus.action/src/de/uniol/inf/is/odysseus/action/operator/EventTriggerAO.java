@@ -22,17 +22,17 @@ public class EventTriggerAO extends AbstractLogicalOperator {
 		this.actions = actionsToExecute;
 	}
 
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return getInputSchema(0);
-	}
-	
 	/**
 	 * Return actions, which should be executed
 	 * @return
 	 */
 	public Map<Action, List<IActionParameter>> getActions() {
 		return actions;
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return getInputSchema(0);
 	}
 
 }

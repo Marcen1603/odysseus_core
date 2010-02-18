@@ -55,6 +55,15 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 
 
 	@Override
+	public EventTriggerPO<T> clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
+	
+	public Map<Action, List<IActionParameter>> getActions() {
+		return actions;
+	}
+	
+	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		//extract parameters
 		for (Entry<Action, List<IActionParameter>> entry : actions.entrySet()){
@@ -85,14 +94,5 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 				this.logger.error("Method execution failed: "+e.getMessage());
 			}
 		}
-	}
-	
-	public Map<Action, List<IActionParameter>> getActions() {
-		return actions;
-	}
-	
-	@Override
-	public EventTriggerPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
 	}
 }
