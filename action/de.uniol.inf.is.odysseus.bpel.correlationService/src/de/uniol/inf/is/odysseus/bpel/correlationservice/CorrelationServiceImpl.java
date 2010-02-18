@@ -6,7 +6,7 @@
 
 package de.uniol.inf.is.odysseus.bpel.correlationservice;
 
-import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Implementation of the webservice
@@ -22,26 +22,19 @@ import java.util.HashMap;
                       endpointInterface = "de.uniol.inf.is.odysseus.bpel.correlationservice.CorrelationService")
                       
 public class CorrelationServiceImpl implements CorrelationService {
-	private HashMap<String, Integer> correlations;
+	private Random randomGen;
 
-
-	public CorrelationServiceImpl(){
-		this.correlations = new HashMap<String, Integer>();
+	public CorrelationServiceImpl() {
+		this.randomGen = new Random();
 	}
-  
 
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.bpel.correlationservice.CorrelationService#getCorrelation(java.lang.String  uri )*
      */
     public java.lang.String getCorrelation(java.lang.String uri) { 
-       Integer idNo = this.correlations.get(uri);
-       if (idNo == null){
-    	   idNo = 0;
-       }else {
-    	   idNo++;
-       }    
-       this.correlations.put(uri, idNo);
-       return uri+idNo;
+       int sIndex = this.randomGen.nextInt(uri.length());
+       int eIndex = sIndex + this.randomGen.nextInt(uri.length()-sIndex);
+       return uri.substring(sIndex, eIndex)+System.currentTimeMillis();
     }
 
 }
