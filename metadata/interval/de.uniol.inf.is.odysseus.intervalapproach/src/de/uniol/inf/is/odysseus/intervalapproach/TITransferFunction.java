@@ -28,7 +28,6 @@ public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITim
 		minTs = new ITimeInterval[2];
 		minTs[0] = tiTransferFunction.minTs[0].clone();
 		minTs[1] = tiTransferFunction.minTs[1].clone();
-		po = tiTransferFunction.po.clone();
 		out.addAll(tiTransferFunction.out);
 	}
 
