@@ -59,8 +59,8 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 		this.preareas[1] = new PNAwareSweepArea<T>();
 		
 		this.lastTs = new PointInTime[2];
-		this.lastTs[0] = new PointInTime(0, 0);
-		this.lastTs[1] = new PointInTime(0, 0);
+		this.lastTs[0] = new PointInTime(0);
+		this.lastTs[1] = new PointInTime(0);
 		
 		this.isDone = new boolean[2];
 		this.isDone[0] = false;
@@ -142,7 +142,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 		
 		synchronized(this.nareas){
 			synchronized(this.areas){
-				Iterator<T> negatives = this.nareas[otherport].extractElements( new PointInTime(object.getMetadata().getTimestamp().getMainPoint() + 1, 0));
+				Iterator<T> negatives = this.nareas[otherport].extractElements( new PointInTime(object.getMetadata().getTimestamp().getMainPoint() + 1));
 				while(negatives.hasNext()){
 					T neg = negatives.next();
 					areas[otherport].insert(neg, null);

@@ -11,7 +11,7 @@ public class WindowCalculator {
 	
 	
 	static public PointInTime calcJumpingWindowEnd(PointInTime startTimestamp, long windowSize){
-		return new PointInTime((startTimestamp.getMainPoint()/windowSize + 1) * windowSize, startTimestamp.getSubpoint());
+		return new PointInTime((startTimestamp.getMainPoint()/windowSize + 1) * windowSize);
 	}
 	
 	
@@ -21,7 +21,7 @@ public class WindowCalculator {
 	
 	
 	static public PointInTime calcSlidingDeltaWindowEnd(PointInTime startTimestamp, long windowAdvance, long windowSize){
-		return new PointInTime(startTimestamp.getMainPoint()/windowAdvance * windowAdvance + windowSize, startTimestamp.getSubpoint());
+		return new PointInTime(startTimestamp.getMainPoint()/windowAdvance * windowAdvance + windowSize);
 	}
 
 

@@ -95,7 +95,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 			// (t_s/delta) * delta - winsize <= start timestamp < (t_s/ delta) *
 			// delta
 			long comp_t_start = this.slideNo * delta - winSize;
-			PointInTime p_start = new PointInTime(Math.max(comp_t_start, 0), 0);
+			PointInTime p_start = new PointInTime(Math.max(comp_t_start, 0));
 			// p_end must be infinity because otherwise, the lies in predicate
 			// will
 			// not work. the elements in the sweep area still have no end
@@ -114,7 +114,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 				retval.getMetadata().setStart(p_start);
 				// the end time stamp must be ( actual / delta )
 				retval.getMetadata().setEnd(
-						new PointInTime(this.slideNo * delta, 0));
+						new PointInTime(this.slideNo * delta));
 				this.deliveryList.add(retval);
 			}
 
@@ -122,9 +122,9 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 			// (t_s / delta) * delta - winsize <= start timestamp < (t_s /
 			// delta) * delta - winsize + delta
 			long remove_t_start = (this.slideNo * delta) - winSize + delta - 1;
-			PointInTime p_remove = new PointInTime(remove_t_start, 0);
+			PointInTime p_remove = new PointInTime(remove_t_start);
 			TimeInterval remove_val = new TimeInterval(p_remove,
-					new PointInTime(remove_t_start + 1, 0));
+					new PointInTime(remove_t_start + 1));
 			IMetaAttributeContainer<ITimeInterval> ref_elem = new MetaAttributeContainer<ITimeInterval>(
 					remove_val);
 

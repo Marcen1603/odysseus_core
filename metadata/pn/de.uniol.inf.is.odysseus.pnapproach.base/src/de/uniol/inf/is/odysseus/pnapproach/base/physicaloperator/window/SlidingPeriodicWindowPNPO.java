@@ -94,7 +94,7 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
 			// timestamp
 			// timstamp < (t_s/delta) * delta - winSize
 			long remove_t_start = (this.slideNo * delta) - winSize - 1; // -1 because the predicate uses beforeOrEquals()-method
-			PointInTime p_remove = new PointInTime(remove_t_start, 0);
+			PointInTime p_remove = new PointInTime(remove_t_start);
 			IPosNeg pn = new PosNeg();
 			pn.setTimestamp(p_remove);
 			IMetaAttributeContainer<IPosNeg> ref_elem = new MetaAttributeContainer<IPosNeg>(pn);
@@ -106,7 +106,7 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
 				R retval = (R)iter_remove.next().clone();
 				retval.getMetadata().setElementType(ElementType.NEGATIVE);
 				// edit the timeinterval
-				retval.getMetadata().setTimestamp(new PointInTime(remove_t_start, 0));
+				retval.getMetadata().setTimestamp(new PointInTime(remove_t_start));
 				this.transfer(retval);
 			} 
 			
@@ -114,8 +114,8 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
 			// (t_s/delta) * delta - winsize <= start timestamp < (t_s/ delta) * delta
 			long comp_t_start = this.slideNo * delta - winSize;
 			long comp_t_end = this.slideNo * delta;
-			PointInTime p_start = new PointInTime(comp_t_start, 0);
-			PointInTime p_end = new PointInTime(comp_t_end, 0);
+			PointInTime p_start = new PointInTime(comp_t_start);
+			PointInTime p_end = new PointInTime(comp_t_end);
 			
 			// the query predicate must be updated every time, because the start and end time
 			// stamps continuously change

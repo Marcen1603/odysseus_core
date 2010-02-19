@@ -292,23 +292,23 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 			long discretePointInTime = (long)Math.floor(pointInTime);
 			
 			// -infinity has the meaning of zero time in our context
-			timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime, 0));
+			timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime));
 		}
 		else if(compareOperator.equals("<=")){
 			long discretePointInTime = (long)Math.floor(pointInTime);
 			
 			// -infinity has the meaning of zero time in our context
-			timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1, 0));
+			timeInterval = new TimeInterval(PointInTime.getZeroTime(), new PointInTime(discretePointInTime+1));
 		}
 		else if(compareOperator.equals(">=")){
 			long discretePointInTime = (long)Math.ceil(pointInTime);
 			
-			timeInterval = new TimeInterval(new PointInTime(discretePointInTime, 0), PointInTime.getInfinityTime());
+			timeInterval = new TimeInterval(new PointInTime(discretePointInTime), PointInTime.getInfinityTime());
 		}
 		else if(compareOperator.equals(">")){
 			long discretePointInTime = (long)Math.ceil(pointInTime);
 			
-			timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1, 0), PointInTime.getInfinityTime());
+			timeInterval = new TimeInterval(new PointInTime(discretePointInTime+1), PointInTime.getInfinityTime());
 		}
 		
 		return timeInterval;

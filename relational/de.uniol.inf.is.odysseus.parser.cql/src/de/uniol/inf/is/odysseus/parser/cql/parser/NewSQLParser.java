@@ -711,11 +711,11 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
     jjtc000 = false;
     if (t2 == null)
     {
-      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image), 0), PointInTime.getInfinityTime()));
+      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image)), PointInTime.getInfinityTime()));
     }
     else
     {
-      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image), 0), new PointInTime(Long.parseLong(t2.image), 0)));
+      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image)), new PointInTime(Long.parseLong(t2.image))));
     }
     } finally {
     if (jjtc000) {

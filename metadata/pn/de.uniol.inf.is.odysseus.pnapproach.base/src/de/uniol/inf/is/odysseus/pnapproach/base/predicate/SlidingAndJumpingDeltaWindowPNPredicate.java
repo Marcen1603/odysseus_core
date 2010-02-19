@@ -44,7 +44,7 @@ public class SlidingAndJumpingDeltaWindowPNPredicate<T extends IMetaAttributeCon
 	public boolean evaluate(T left, T right) {
 		// TODO Auto-generated method stub
 		// first calc the end time stamp of the right element
-		PointInTime end = new PointInTime(right.getMetadata().getTimestamp().getMainPoint()/windowAdvance * windowAdvance + windowSize, right.getMetadata().getTimestamp().getSubpoint());
+		PointInTime end = new PointInTime(right.getMetadata().getTimestamp().getMainPoint()/windowAdvance * windowAdvance + windowSize);
 		if(end.beforeOrEquals(left.getMetadata().getTimestamp())){
 			return true;
 		}

@@ -51,11 +51,7 @@ public abstract class SDFElement implements Serializable {
 	}
 
 	public String getURI(boolean prettyPrint) {
-		if (prettyPrint) {
-			return getURI(uRIWithoutQualName, qualName, true, null);
-		} else {
-			return getURI(uRIWithoutQualName, qualName, false, null);
-		}
+		return getURI(uRIWithoutQualName, qualName, prettyPrint, null);
 	}
 	
 	protected String getURI(boolean prettyPrint, String seperator) {

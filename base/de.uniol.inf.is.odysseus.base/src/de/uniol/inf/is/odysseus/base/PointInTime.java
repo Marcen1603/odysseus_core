@@ -12,16 +12,13 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 
 	long point;
 
-	long subpoint;
-
 	boolean isInfinite = false;
 
 	static volatile PointInTime infinityValue = null;
-	private static final PointInTime zeroTime = new PointInTime(0, 0);
+	private static final PointInTime zeroTime = new PointInTime(0);
 
-	public PointInTime(long point, long subpoint) {
+	public PointInTime(long point) {
 		this.point = point;
-		this.subpoint = subpoint;
 	}
 
 	public PointInTime() {
@@ -30,7 +27,6 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 
 	public PointInTime(PointInTime time) {
 		this.point = time.point;
-		this.subpoint = time.subpoint;
 		this.isInfinite = time.isInfinite;
 	}
 
@@ -58,22 +54,14 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		this.isInfinite = true;
 	}
 
-	public void setSubpoint(long subpoint) {
-		this.subpoint = subpoint;
-	}
 
-	public void setPoint(long mainPoint, long subpoint) {
+	public void setPoint(long mainPoint) {
 		this.point = mainPoint;
-		this.subpoint = subpoint;
 		this.isInfinite = false;
 	}
 
 	public long getMainPoint() {
 		return this.point;
-	}
-
-	public long getSubpoint() {
-		return this.subpoint;
 	}
 
 	public boolean before(PointInTime time) {
@@ -97,7 +85,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	}
 
 	public static PointInTime currentPointInTime() {
-		return new PointInTime(System.currentTimeMillis(), 0);
+		return new PointInTime(System.currentTimeMillis());
 	}
 
 	public static boolean before(PointInTime left, PointInTime right) {
@@ -114,8 +102,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		}
 
 		// Ansonsten ganz normal
-		return left.point < right.point
-				|| (left.point == right.point && left.subpoint < right.subpoint);
+		return left.point < right.point;
 	}
 
 	public static boolean equals(PointInTime left, PointInTime right) {
@@ -129,7 +116,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 			if (right.isInfinite) {
 				return false;
 			}
-			return (left.point == right.point && left.subpoint == right.subpoint);
+			return (left.point == right.point);
 		}
 	}
 
@@ -183,7 +170,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		if (isInfinite()) {
 			return "\u221E";
 		} else {
-			return getMainPoint() + ":" + getSubpoint();
+			return ""+getMainPoint();
 		}
 	}
 
@@ -191,8 +178,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		if (isInfinite()) {
 			return "\u221E";
 		} else {
-			return (getMainPoint() - baseTime.getMainPoint()) + ":"
-					+ (getSubpoint() - baseTime.getSubpoint());
+			return ""+(getMainPoint() - baseTime.getMainPoint());
 		}
 	}
 
@@ -205,8 +191,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	public PointInTime minus(PointInTime time) {
 		if (isInfinite)
 			return this;
-		return new PointInTime(this.point - time.point, this.subpoint
-				- time.subpoint);
+		return new PointInTime(this.point - time.point);
 	}
 
 	@Override
@@ -215,7 +200,6 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		int result = 1;
 		result = PRIME * result + (isInfinite ? 1231 : 1237);
 		result = PRIME * result + (int) (point ^ (point >>> 32));
-		result = PRIME * result + (int) (subpoint ^ (subpoint >>> 32));
 		return result;
 	}
 
@@ -232,12 +216,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	}
 
 	public PointInTime sum(long point, int subpoint) {
-		// TODO eigentlich auch nicht so ganz richtig
-		// 5.5 + 4.6 sind ja auch nicht 9.11 sondern 10.1
-		// Aber nur dann wenn die Punkte eine Beziehung zueinander haben ... (dazu muesste man dann definieren
-		// das n subpoints ein Punkt sind ... aber wozu? Subpoint sind nur zum Unterscheiden "fast" zeitgleicher 
-		// Punkte ...)
-		return new PointInTime(this.point + point, this.subpoint + subpoint);
+		return new PointInTime(this.point + point);
 	}
 
 	public static PointInTime getZeroTime() {

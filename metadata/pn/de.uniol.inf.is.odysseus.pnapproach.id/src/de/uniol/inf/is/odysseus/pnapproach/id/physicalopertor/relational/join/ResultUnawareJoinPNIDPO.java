@@ -60,8 +60,8 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 		this.nareas = nareas;
 		
 		this.lastTs = new PointInTime[2];
-		this.lastTs[0] = new PointInTime(0,0);
-		this.lastTs[1] = new PointInTime(0,0);
+		this.lastTs[0] = new PointInTime(0);
+		this.lastTs[1] = new PointInTime(0);
 		
 		this.preareas = new PNAwareSweepArea[2];
 		this.preareas[0] = new PNAwareSweepArea<T>();
@@ -215,7 +215,7 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 		// verarbeitet werden.
 		synchronized(this.nareas){
 			synchronized(this.areas){
-				Iterator<T> negatives = this.nareas[otherport].extractElements(new PointInTime(object.getMetadata().getTimestamp().getMainPoint() + 1, 0));
+				Iterator<T> negatives = this.nareas[otherport].extractElements(new PointInTime(object.getMetadata().getTimestamp().getMainPoint() + 1));
 				while(negatives.hasNext()){
 					T neg = negatives.next();
 					areas[otherport].insert(neg, null);

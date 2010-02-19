@@ -88,7 +88,7 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 			// this.sa.sort();
 		}
 		else{
-			PointInTime maxEnd = new PointInTime(0,0);
+			PointInTime maxEnd = new PointInTime(0);
 			while(qualifies.hasNext()){
 				PointInTime newEnd = qualifies.next().getMetadata().getEnd();
 				if(maxEnd.before(newEnd)){

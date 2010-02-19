@@ -48,7 +48,7 @@ public class LinearProbabilityPredictionFunctionTest {
 			exprList[1] = expr_b;
 			exprList[2] = expr_c;
 			
-			ITimeInterval interval = new TimeInterval(new PointInTime(0,0), new PointInTime(10, 0));//, new TimeInterval(new PointInTime(3,0), new PointInTime(10, 0))};
+			ITimeInterval interval = new TimeInterval(new PointInTime(0), new PointInTime(10));//, new TimeInterval(new PointInTime(3,0), new PointInTime(10, 0))};
 			
 			double[][] cov = new double[3][3];
 			
@@ -86,8 +86,8 @@ public class LinearProbabilityPredictionFunctionTest {
 				LinearProbabilityPredictionFunction<Probability> predFkt = new LinearProbabilityPredictionFunction<Probability>(exprList, interval, q);
 			
 				long start = System.nanoTime();
-				MVRelationalTuple<Probability> predTuple = predFkt.predictData(schema, tuple, new PointInTime(5,0));
-				predTuple.setMetadata(predFkt.predictMetadata(schema, tuple, new PointInTime(5,0)));
+				MVRelationalTuple<Probability> predTuple = predFkt.predictData(schema, tuple, new PointInTime(5));
+				predTuple.setMetadata(predFkt.predictMetadata(schema, tuple, new PointInTime(5)));
 				long end = System.nanoTime();
 				
 				System.out.println(predTuple.toString());

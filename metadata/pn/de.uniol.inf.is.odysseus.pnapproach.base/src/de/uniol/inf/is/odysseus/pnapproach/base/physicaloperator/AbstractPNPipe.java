@@ -46,8 +46,8 @@ public abstract class AbstractPNPipe<R extends IMetaAttributeContainer<? extends
 	
 	
 	@Override
-	public void subscribeToSource(ISource<? extends R> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		super.subscribeToSource(source, sinkPort, sourcePort, schema);
+	public void subscribeToSource(ISource<? extends R> source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		super.subscribeToSource(source, sinkInPort, sourceOutPort, schema);
 		int portCount = delegateSink.getInputPortCount();
 		initNegPOEvents(portCount);
 	}

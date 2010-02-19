@@ -51,16 +51,16 @@ public abstract class SDFSchemaElement extends SDFElement {
         return unit;
     }
 
-	@Override
-	public String toString() {
-		StringBuffer ret = new StringBuffer(super.toString());
-//		if (getDatatype() != null)
-//			ret.append(" : " + this.getDatatype().toString());
-//		if (this.getDtConstraint() != null)
-//			ret.append("/" + this.getDtConstraint().toString());
-//		if (this.getUnit() != null)
-//			ret.append(" --> " + this.getUnit().toString());
-		return ret.toString();
-	}
+//	@Override
+//	public String toString() {
+//		StringBuffer ret = new StringBuffer(super.toString());
+////		if (getDatatype() != null)
+////			ret.append(" : " + this.getDatatype().toString());
+////		if (this.getDtConstraint() != null)
+////			ret.append("/" + this.getDtConstraint().toString());
+////		if (this.getUnit() != null)
+////			ret.append(" --> " + this.getUnit().toString());
+//		return ret.toString();
+//	}
 
 }

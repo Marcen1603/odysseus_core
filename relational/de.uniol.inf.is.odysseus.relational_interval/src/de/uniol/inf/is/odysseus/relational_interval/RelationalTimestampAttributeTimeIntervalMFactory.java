@@ -21,7 +21,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory
 	public void updateMetadata(RelationalTuple<? extends ITimeInterval> inElem) {
 		Number startN = (Number) inElem.getAttribute(attrPos);
 		long startTime = startN.longValue();
-		PointInTime start = new PointInTime(startTime, 0);
+		PointInTime start = new PointInTime(startTime);
 		inElem.getMetadata().setStart(start);
 	}
 

@@ -36,9 +36,9 @@ public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<
 	@Override
 	//make sure the punctuation storage contains a list for every input port,
 	//as the number of input ports may increase after a subscription
-	public void subscribeToSource(ISource<? extends R> source, int sinkPort,
-			int sourcePort, SDFAttributeList schema) {
-		super.subscribeToSource(source, sinkPort, sourcePort, schema);
+	public void subscribeToSource(ISource<? extends R> source, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		super.subscribeToSource(source, sinkInPort, sourceOutPort, schema);
 		storage.subscribePort(getInputPortCount());
 	}
 

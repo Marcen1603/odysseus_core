@@ -98,7 +98,7 @@ public class PriorityAOHelper {
 		
 		while(it.hasNext()) {
 			LogicalSubscription sub = it.next();
-			//sub.getTarget().unsubscribeSubscriptionTo(current, sub.getSinkPort(),sub.getSourcePort());
+			//sub.getTarget().unsubscribeSubscriptionTo(current, sub.getsinkInPort(),sub.getsourceOutPort());
 			prioAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(),sub.getSourceOutPort(), sub.getSchema());
 		}
 

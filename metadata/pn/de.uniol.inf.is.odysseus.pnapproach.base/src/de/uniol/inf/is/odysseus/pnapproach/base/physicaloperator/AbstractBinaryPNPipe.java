@@ -21,11 +21,11 @@ public abstract class AbstractBinaryPNPipe<Read extends IMetaAttributeContainer<
 	
 
 	@Override
-	public final void subscribeToSource(ISource<? extends Read> source, int sinkPort, int sourcePort, SDFAttributeList schema) {
-		if (sinkPort != 0 && sinkPort != 1) {
+	public final void subscribeToSource(ISource<? extends Read> source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		if (sinkInPort != 0 && sinkInPort != 1) {
 			throw new IllegalArgumentException("Subscription on illegal port ("
-					+ sinkPort + ") for binary opperator");
+					+ sinkInPort + ") for binary opperator");
 		}
-		super.subscribeToSource(source, sinkPort, sourcePort, schema);
+		super.subscribeToSource(source, sinkInPort, sourceOutPort, schema);
 	}
 }
