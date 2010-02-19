@@ -35,38 +35,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  */
 public class ECAParser implements IQueryParser{
-	//just for tets
-	public static void main(String[] args) {
-		ECAParser parser = new ECAParser();
-		String[] statements = {
-				//correct
-				"on (CQL) do m.a.a()",
-				"ON  ([LANG:SQL]Select * From abc where abc.a=5;)do m.a.a(52)",
-				"ON(Select * From (Select a from a)) do  m.a.b()",
-				"on () do m.a.b(), m.b.a(2, \"3\")",
-				//incorrect
-				"on ([Lang:bla] Select * From do a.b()",
-				"on Select * From) do a.b()",
-				"on (blub) do a.b, b.a()"};		
-		for (String statement : statements){
-			try {
-				parser.parse(statement);
-			} catch (QueryParseException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-	}
-
 	private ICompiler compiler;
 	
 	private IActuatorFactory actuatorFactory;
 	
 	private static Pattern ecaPattern;
-	private static final Pattern ACTIONPATTERN = Pattern.compile("(\\w+)\\.(\\w+)\\.(\\w+\\s*)\\(([^\\(\\)]*)\\)",Pattern.CASE_INSENSITIVE);
+	private static final Pattern ACTIONPATTERN = Pattern.compile("(\\w+)\\.(\\w+)\\.(\\w+\\s*)\\((.*)\\)",Pattern.CASE_INSENSITIVE);
 	private static final Pattern LANGPATTERN = Pattern.compile("\\[LANG:(\\w*)\\]",Pattern.CASE_INSENSITIVE);
 	private static final Pattern PARAMPATTERN = Pattern.compile("[^,]+");
 	private static final Pattern PARAMTYPEPATTERN = Pattern.compile("(.*):(.*)");
-	
+	private static final Pattern ESCAPEDCHARS = Pattern.compile("\"(.+)\"");
+	private static final Pattern REFERENCE = Pattern.compile("#(.+)#");
 	
 		
 	private static final String DEFAULTLANG = "CQL";
@@ -78,7 +57,7 @@ public class ECAParser implements IQueryParser{
 			String actuator = "\\w+";
 			String manager = "\\w+";
 			String actionConstruct = manager+"\\."+actuator+"\\."+method+"\\(.*\\)";
-			ecaPattern = Pattern.compile("(ON\\s*\\().*(\\)\\s*DO\\s+"+actionConstruct+"[\\s*\\,"+actionConstruct+"]*)", Pattern.CASE_INSENSITIVE);		
+			ecaPattern = Pattern.compile("(ON\\s*\\()[^\\(\\)]*(\\)\\s*DO\\s+"+actionConstruct+"[\\s*\\,"+actionConstruct+"]*)", Pattern.CASE_INSENSITIVE);		
 		}
 	}
 	
@@ -239,13 +218,34 @@ public class ECAParser implements IQueryParser{
 					String actuatorName = actionMatcher.group(2).trim();
 					String methodName = actionMatcher.group(3).trim();
 					String params = actionMatcher.group(4).trim();	
-
+					
+					//find escaped parameters
+					HashMap<Integer, String> references = new HashMap<Integer, String>();
+					int refID = 0;
+					
+					Matcher escapedParamsMatcher = ESCAPEDCHARS.matcher(params);
+					while (escapedParamsMatcher.find()){
+						String param = escapedParamsMatcher.group(1);
+						references.put(refID, param);
+						params = escapedParamsMatcher.replaceFirst("#"+refID+"#");
+						refID++;
+					}
+					
 					//extract params 
 					ArrayList<IActionParameter> actionParameters = new ArrayList<IActionParameter>();
 					if (params.length() > 0){
 						Matcher paramMatcher = PARAMPATTERN.matcher(params);
 						while (paramMatcher.find()){
 							String completeParam = paramMatcher.group().trim();
+							
+							//check for reference
+							Matcher refMatcher = REFERENCE.matcher(completeParam);
+							while (refMatcher.find()){
+								Integer id = Integer.valueOf(refMatcher.group(1));
+								completeParam = refMatcher.replaceFirst(references.get(id));
+							}
+
+							//check if attribute or static value
 							Matcher paramTypeMatcher = PARAMTYPEPATTERN.matcher(completeParam);
 							if (paramTypeMatcher.find()){
 								String paramValue = paramTypeMatcher.group(1);
