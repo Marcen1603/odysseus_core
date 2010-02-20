@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanExecutionCostCalculator;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -73,14 +72,21 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 			
 			//query.reoptimize();
 			
-			while (true) {
+			/*while (true) {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {}
 				System.out.println("Plan cost test...");
-				new PlanExecutionCostCalculator().calculateCost(op);
-			}
+				for (ISource<?> s : MigrationHelper.getSources(op)) {
+					IMonitoringData<?> d = s.getMonitoringData(MonitoringDataTypes.DATARATE.name);
+					((Datarate)d).run();
+					//System.out.println("datarate on "+s.getName()+" is "+s.getMonitoringData(MonitoringDataTypes.DATARATE.name).getValue());
+				}
+				ICost<?> cost = PlanExecutionCostModel.getCostCalculator().calculateCost(op);
+				System.out.println("Plan score: "+cost.getScore());
+			}*/
 			
+			//query.stop();
 			//AbstractTreeWalker.prefixWalk2(op, new CopyPhysicalPlanVisitor());
 			
 		} catch (PlanManagementException e) {

@@ -3,12 +3,14 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
+ * Installs {@link POEventListener} for datarates and selectivity on operators.
  * 
  * @author Tobias Witt
  *
@@ -40,10 +42,19 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 		if (!op.isSink() && !((ISource<?>)op).getProvidedMonitoringData().contains(MonitoringDataTypes.DATARATE.name)) {
 			ISource<?> source = (ISource<?>) op;
 			IMonitoringData<?> mData = MonitoringDataTypes.createMetadata(MonitoringDataTypes.DATARATE.name, source);
-			source.addMonitoringData(MonitoringDataTypes.DATARATE.name, mData);
 			source.subscribe((POEventListener)mData, POEventType.PushDone);
 			this.optimizer.getSourceDatarates().add(mData);
 		}
+		// install selectivity listener on every pipe operator
+		if (op.isPipe() && !((IPipe<?,?>)op).getProvidedMonitoringData().contains(MonitoringDataTypes.SELECTIVITY.name)) {
+			MonitoringDataTypes.createMetadata(MonitoringDataTypes.SELECTIVITY.name, (IPipe<?, ?>) op);
+			// subscribe is done in constructor
+		}
+		/* TODO: latency messen
+		 * es gibt keinen operator ausser ObjectTrackingMetadataFactory, der latency setzt
+		 * LatencyCalculationPipe setzt Ende
+		 * Benchmark benutzt latency
+		 */
 	}
 
 }

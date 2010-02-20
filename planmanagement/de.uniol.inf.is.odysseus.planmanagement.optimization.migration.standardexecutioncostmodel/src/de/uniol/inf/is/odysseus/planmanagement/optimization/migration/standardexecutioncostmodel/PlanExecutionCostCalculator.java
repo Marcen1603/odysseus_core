@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel;
+package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardexecutioncostmodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,13 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.monitoring.physicaloperator.Datarate;
-import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.base.ICost;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.base.ICostCalculator;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.ICost;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.ICostCalculator;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * 
@@ -24,28 +20,15 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
  */
 public class PlanExecutionCostCalculator implements ICostCalculator<IPhysicalOperator> {
 	
-	// TODO: Gewichtungen einstellbar machen
+	private PlanExecutionCostModel model;
+	
+	public PlanExecutionCostCalculator(PlanExecutionCostModel costModel) {
+		this.model = costModel;
+	}
 
-	// TODO: historische metadaten wie datenrate und selektivitaet einfuegen
 	@Override
 	public ICost<IPhysicalOperator> calculateCost(IPhysicalOperator candidate) {
-		
-		for (ISource<?> source : MigrationHelper.getSources(candidate)) {
-			IMonitoringData<?> datarate = source.getMonitoringData(MonitoringDataTypes.DATARATE.name);
-			if (datarate == null) {
-				continue;
-			}
-			((Datarate)datarate).run();
-			System.out.println("datarate on "+source.getName()+" is "+datarate.getValue());
-		}
-		
-		// TODO: visitor fuer Kostenberechnung an jedem Operator
-		PlanExecutionCost c = new PlanExecutionCost(24000, 60, 12, 0);
-		c.setScore((int)(0.1 * c.getMemoryConsumption()
-				+ 3.0 * c.getCpuTime()
-				+ 0.5 * c.getLatency()
-				+ 0.1 * c.getNetworkBandwidth()));
-		return (ICost<IPhysicalOperator>)c;
+		return AbstractTreeWalker.prefixWalk2(candidate, new PlanExecutionCostVisitor(this.model));
 	}
 	
 	@Override

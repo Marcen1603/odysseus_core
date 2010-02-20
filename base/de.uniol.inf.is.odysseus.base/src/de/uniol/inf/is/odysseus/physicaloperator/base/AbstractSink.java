@@ -254,7 +254,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	final protected void fire(POEvent event) {
-		ArrayList<POEventListener> list = this.eventListener.get(event);
+		ArrayList<POEventListener> list = this.eventListener.get(event.getPOEventType());
 		if (list != null) {
 			synchronized (list) {
 				for (POEventListener listener : list) {

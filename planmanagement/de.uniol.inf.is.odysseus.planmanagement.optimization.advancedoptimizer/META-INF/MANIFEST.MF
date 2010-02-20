@@ -20,7 +20,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
  de.uniol.inf.is.odysseus.planmanagement.optimization.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization.migration,
- de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel,
  de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter,
  de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter,
  de.uniol.inf.is.odysseus.planmanagement.optimization.plan,
@@ -32,4 +31,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
+Require-Bundle: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer

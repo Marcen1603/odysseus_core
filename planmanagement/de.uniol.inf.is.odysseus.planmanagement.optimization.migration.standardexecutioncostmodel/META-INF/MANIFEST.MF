@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Standard Plan Execution Costmodel
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardexecutioncostmodel
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.monitoring.physicaloperator,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.access,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel,
+ de.uniol.inf.is.odysseus.util,
+ org.slf4j
+Service-Component: OSGI-INF/component.xml
