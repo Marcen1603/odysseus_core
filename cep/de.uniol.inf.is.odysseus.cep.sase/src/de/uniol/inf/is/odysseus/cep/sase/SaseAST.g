@@ -143,11 +143,13 @@ query returns [ILogicalOperator op]
     // Initialize Schema
     cepAo.getStateMachine().getSymTabScheme(true);
     // Set Inputs for cepAO;
-    int i = 0;
+    int port = 0;
     for (String sn : sourceNames) {
       ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
       if (ao != null) {
-        cepAo.subscribeToSource(ao, i++, 0, ao.getOutputSchema());
+        cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
+        cepAo.setInputTypeName(port, sn);
+        port++;
       } else {
         throw new RuntimeException("Source " + sn + " not found");
       }

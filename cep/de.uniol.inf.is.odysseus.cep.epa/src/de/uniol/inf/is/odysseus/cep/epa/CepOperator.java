@@ -230,8 +230,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				}
 					
 				// First check Type
-				if (!transition.getCondition().checkEventType(
-						eventReader.get(port).getType())){
+				if (!transition.getCondition().checkEventTypeWithPort(
+						port)){
 					//System.out.println("Wrong Datatype "+eventReader.get(port).getType()+" in State "+instance.getCurrentState());
 					continue;
 				}

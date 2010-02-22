@@ -28,11 +28,25 @@ public interface ICondition extends IExpression{
 	 */
 	public boolean checkEventType(String eventType);
 	/**
+	 * Same as checkEventType but using port
+	 * @param port
+	 * @return !isNegate() && eventTypePort == port;
+	 */
+	public boolean checkEventTypeWithPort(int port);
+	/**
 	 * Set Type of Events that can be processed by this Transition (only one possible?)
 	 * @param type
 	 * @return
 	 */
 	public void setEventType(String type);
+	
+	/**
+	 * Set InputPort of Events that can be processed by this Transition 
+	 * @param port
+	 * @return
+	 */
+	void setEventPort(int eventPort);
+	
 	/**
 	 * 
 	 * @param start
@@ -41,4 +55,6 @@ public interface ICondition extends IExpression{
 	 * @return !isNegate() && start + windowsize < current;
 	 */
 	public boolean checkTime(long start, long current, long windowsize);
+	
+
 }
