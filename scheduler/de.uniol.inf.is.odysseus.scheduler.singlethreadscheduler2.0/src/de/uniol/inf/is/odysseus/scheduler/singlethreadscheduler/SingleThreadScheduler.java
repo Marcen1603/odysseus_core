@@ -90,12 +90,14 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			Iterator<ISchedulingStrategy> part;
 			try {
 				while (!isInterrupted() && !values.isEmpty() && !terminate) {
-					part = values.iterator();
-					while (part.hasNext()) {
-						if (part.next().schedule(timeSlicePerStrategy)) {// part
-							// is
-							// done
-							part.remove();
+					synchronized(parts){
+						part = values.iterator();
+						while (part.hasNext()) {
+							if (part.next().schedule(timeSlicePerStrategy)) {// part
+								// is
+								// done
+								part.remove();
+							}
 						}
 					}
 				}
