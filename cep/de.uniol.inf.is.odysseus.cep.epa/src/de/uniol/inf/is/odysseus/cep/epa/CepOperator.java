@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineExcep
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
@@ -159,14 +160,14 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				}
 			}
 		}
+		
 		synchronized(inputQueue){
-			Iterator<Pair<R, Integer>> iter = inputQueue.iterator();
-			while(iter.hasNext()){
-				Pair<R, Integer> e = iter.next();
-				if (e.getE1().getMetadata().getStart().before(minTS)){
-					iter.remove();
-					process_internal(e.getE1(), e.getE2());
-				}
+			// don't use an iterator, it does NOT guarantee ordered traversal!
+			Pair<R, Integer> e = inputQueue.peek();
+			while(e!=null &&  e.getE1().getMetadata().getStart().beforeOrEquals(minTS)){
+				this.inputQueue.poll();
+				process_internal(e.getE1(), e.getE2());
+				e = this.inputQueue.peek();
 			}
 		}
 	}
