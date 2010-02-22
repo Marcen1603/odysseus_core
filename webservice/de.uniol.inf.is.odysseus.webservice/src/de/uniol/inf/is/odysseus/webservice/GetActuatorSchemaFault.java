@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="RemoveActuatorFault" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="GetActuatorSchemaFault" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,36 +29,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "removeActuatorFault"
+    "getActuatorSchemaFault"
 })
-@XmlRootElement(name = "RemoveActuatorFault")
-public class RemoveActuatorFault {
+@XmlRootElement(name = "GetActuatorSchemaFault")
+public class GetActuatorSchemaFault {
 
-    @XmlElement(name = "RemoveActuatorFault", required = true)
-    protected String removeActuatorFault;
+    @XmlElement(name = "GetActuatorSchemaFault", required = true)
+    protected String getActuatorSchemaFault;
 
     /**
-     * Gets the value of the removeActuatorFault property.
+     * Gets the value of the getActuatorSchemaFault property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getRemoveActuatorFault() {
-        return removeActuatorFault;
+    public String getGetActuatorSchemaFault() {
+        return getActuatorSchemaFault;
     }
 
     /**
-     * Sets the value of the removeActuatorFault property.
+     * Sets the value of the getActuatorSchemaFault property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setRemoveActuatorFault(String value) {
-        this.removeActuatorFault = value;
+    public void setGetActuatorSchemaFault(String value) {
+        this.getActuatorSchemaFault = value;
     }
 
 }

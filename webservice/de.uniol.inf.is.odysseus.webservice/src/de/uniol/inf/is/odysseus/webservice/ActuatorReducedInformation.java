@@ -40,18 +40,6 @@ public class ActuatorReducedInformation {
     protected String actuatorName;
 
     /**
-     * Gets the value of the actuatorName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getActuatorName() {
-        return actuatorName;
-    }
-
-    /**
      * Gets the value of the managerName property.
      * 
      * @return
@@ -64,18 +52,6 @@ public class ActuatorReducedInformation {
     }
 
     /**
-     * Sets the value of the actuatorName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setActuatorName(String value) {
-        this.actuatorName = value;
-    }
-
-    /**
      * Sets the value of the managerName property.
      * 
      * @param value
@@ -85,6 +61,30 @@ public class ActuatorReducedInformation {
      */
     public void setManagerName(String value) {
         this.managerName = value;
+    }
+
+    /**
+     * Gets the value of the actuatorName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getActuatorName() {
+        return actuatorName;
+    }
+
+    /**
+     * Sets the value of the actuatorName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setActuatorName(String value) {
+        this.actuatorName = value;
     }
 
 }

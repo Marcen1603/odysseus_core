@@ -8,17 +8,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for QueryType complex type.
+ * <p>Java class for ParameterType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="QueryType">
+ * &lt;complexType name="ParameterType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="query" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="language" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="paramName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="paramType" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,63 +28,63 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "QueryType", propOrder = {
-    "query",
-    "language"
+@XmlType(name = "ParameterType", propOrder = {
+    "paramName",
+    "paramType"
 })
-public class QueryType {
+public class ParameterType {
 
     @XmlElement(required = true)
-    protected String query;
+    protected String paramName;
     @XmlElement(required = true)
-    protected String language;
+    protected String paramType;
 
     /**
-     * Gets the value of the query property.
+     * Gets the value of the paramName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getQuery() {
-        return query;
+    public String getParamName() {
+        return paramName;
     }
 
     /**
-     * Sets the value of the query property.
+     * Sets the value of the paramName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setQuery(String value) {
-        this.query = value;
+    public void setParamName(String value) {
+        this.paramName = value;
     }
 
     /**
-     * Gets the value of the language property.
+     * Gets the value of the paramType property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getLanguage() {
-        return language;
+    public String getParamType() {
+        return paramType;
     }
 
     /**
-     * Sets the value of the language property.
+     * Sets the value of the paramType property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setLanguage(String value) {
-        this.language = value;
+    public void setParamType(String value) {
+        this.paramType = value;
     }
 
 }

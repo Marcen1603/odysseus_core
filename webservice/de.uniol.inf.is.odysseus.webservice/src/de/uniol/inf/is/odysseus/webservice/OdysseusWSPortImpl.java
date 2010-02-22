@@ -1,13 +1,15 @@
 package de.uniol.inf.is.odysseus.webservice;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
+import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -31,18 +33,14 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	/* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
      */
-    public int addStatement(QueryType query) throws StatementQueryFault , StatementServiceFault    { 
+	public int addStatement(QueryType query) throws StatementQueryFault    { 
         try {
 			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), 
 					new ParameterParserID(query.getLanguage())).iterator().next();
 			return queryID;
-		} catch (PlanManagementException e) {
+		} catch (Exception e) {
 			throw new StatementQueryFault(e.getMessage());
-		} catch (NullPointerException e){
-			throw new StatementServiceFault("Querymanagement not avaiable");
-		}catch (Exception e){
-    		throw new StatementServiceFault(e.getMessage());
-    	}
+		}
     }
     
     /**
@@ -65,7 +63,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createActuator(de.uniol.inf.is.odysseus.webservice.ActuatorInformation  actuator )*
      */
-    public java.lang.String createActuator(ActuatorInformation actuator) throws ActuatorServiceFault , ActuatorFault , ActuatorManagerFault  { 
+    public java.lang.String createActuator(ActuatorInformation actuator) throws ActuatorFault    {  
     	try {
     		String actuatorName = actuator.getActuatorName();
     		if (actuatorName == null || actuatorName.trim().length() == 0){
@@ -79,65 +77,113 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     				actuator.getDescription(),
     				actuator.getManagerName());
     		return actuatorName;
-    	}catch (ActuatorException e){
-    		throw new ActuatorFault(e.getMessage());
-    	}catch (NullPointerException e){
-    		throw new ActuatorManagerFault();
     	}catch (Exception e){
-    		throw new ActuatorServiceFault(e.getMessage());
+    		throw new ActuatorFault(e.getMessage());
     	}
     }
 
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSource(java.lang.String  sourceDescription )*
      */
-    public java.lang.String createSource(java.lang.String sourceDescription) throws SourceQueryFault , SourceServiceFault    { 
+    public java.lang.String createSource(java.lang.String sourceDescription) throws CreateSourceFault    { 
        //TODO implementieren ....
-    	throw new SourceServiceFault();
+    	throw new CreateSourceFault();
     }
 
 
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#getSchema(java.lang.String  id )*
      */
-    public java.lang.String[] getSchema(java.lang.String id) throws SchemaServiceFault , SchemaIDFault    { 
+    public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
         try {
-        	IQuery query = executor.getSealedPlan().getQuery(Integer.valueOf(id));
+        	IQuery query = executor.getSealedPlan().getQuery(Integer.valueOf(queryID));
         	SDFAttributeList outputSchema = query.getSealedLogicalPlan().getOutputSchema();
-        	ArrayList<String> schema = new ArrayList<String>();
+        	ObjectFactory factory = new ObjectFactory();
+        	
+        	SchemaArray schemaArray = factory.createSchemaArray();
+        	//initialize schemaElement list
+        	List<SchemaElementType> schemaElements = schemaArray.getSchemaElement();
+        	
         	for (int i=0; i<outputSchema.getAttributeCount(); i++){
         		SDFAttribute attribute = outputSchema.getAttribute(i);
-        		schema.add(attribute.getAttributeName());
-        		schema.add(attribute.getDatatype().getQualName());
+        		
+        		SchemaElementType schemaElement = factory.createSchemaElementType();
+        		schemaElement.setType(attribute.getDatatype().getQualName());
+        		schemaElement.setIdentifier(attribute.getAttributeName());
+        		schemaElements.add(schemaElement);
         	}
-        	return schema.toArray(new String[schema.size()]);
+        	return schemaArray;
+        	
         }catch (Exception e){
-    		throw new SchemaServiceFault(e.getMessage());
+    		throw new QueryIDFault(e.getMessage());
     	}
     }
     
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeActuator(de.uniol.inf.is.odysseus.webservice.ActuatorReducedInformation  actuator )*
      */
-    public java.lang.String removeActuator(ActuatorReducedInformation actuator) throws RemoveActuatorFault    { 
+    public java.lang.String removeActuator(ActuatorReducedInformation actuator) throws NonExistingActuatorFault    { 
         try {
         	actuatorFactory.removeActuator(actuator.getActuatorName(), actuator.getManagerName());
         	return "";
         }catch (Exception e){
-        	throw new RemoveActuatorFault();
+        	throw new NonExistingActuatorFault();
         }
     }
     
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeStatement(java.math.BigInteger  queryID )*
      */
-    public java.lang.String removeStatement(java.math.BigInteger queryID) throws RemoveStatementFault    { 
+    public java.lang.String removeStatement(java.math.BigInteger queryID) throws NonExistingStatementFault    {  
         try {
         	executor.removeQuery(queryID.intValue());
         	return "";
         }catch (Exception e){
-        	throw new RemoveStatementFault(e.getMessage());
+        	throw new NonExistingStatementFault(e.getMessage());
         }
+    }
+
+    /* (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#getActuatorSchema(de.uniol.inf.is.odysseus.webservice.ActuatorReducedInformation  actuator )*
+     */
+    public de.uniol.inf.is.odysseus.webservice.ActuatorSchemaArray getActuatorSchema(ActuatorReducedInformation actuator) throws ActuatorDoesNotExistFault    {
+		try {
+			IActuator refActuator = actuatorFactory.getActuator(actuator.getActuatorName(),actuator.getManagerName());
+			
+			ObjectFactory factory = new ObjectFactory();
+        	
+        	ActuatorSchemaArray schemaArray = factory.createActuatorSchemaArray();
+        	//initialize schemaElement list
+        	List<Method> methods = schemaArray.getMethod();
+        	
+        	List<ActionMethod> schema = refActuator.getReducedSchema();
+        	if (schema.isEmpty()){
+        		schema = refActuator.getFullSchema();
+        	}
+        	
+        	for (ActionMethod method : schema){
+        		Method actuatorMethod = factory.createMethod();
+        		actuatorMethod.setMethodName(method.getName());
+        		
+        		List<ParameterType> params = actuatorMethod.getParameter();
+        		//add params
+        		for (ActionParameter param : method.getParameters()){
+        			ParameterType paramType = factory.createParameterType();
+        			paramType.setParamName(param.getName());
+        			paramType.setParamType(param.getType().toString());
+        			
+        			params.add(paramType);
+        		}
+        		
+        		methods.add(actuatorMethod);
+        		
+        	}
+        	return schemaArray;
+        	
+		} catch (ActuatorException e) {
+			throw new ActuatorDoesNotExistFault(e.getMessage());
+		}
+       
     }
 
 }

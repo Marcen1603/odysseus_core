@@ -12,29 +12,29 @@ import javax.xml.ws.WebFault;
  */
 
 @WebFault(name = "fault", targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/")
-public class StatementQueryFault extends Exception {
+public class NonExistingActuatorFault extends Exception {
     public static final long serialVersionUID = 20100222135652L;
     
     private de.uniol.inf.is.odysseus.webservice.Fault fault;
 
-    public StatementQueryFault() {
+    public NonExistingActuatorFault() {
         super();
     }
     
-    public StatementQueryFault(String message) {
+    public NonExistingActuatorFault(String message) {
         super(message);
     }
     
-    public StatementQueryFault(String message, Throwable cause) {
+    public NonExistingActuatorFault(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public StatementQueryFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault) {
+    public NonExistingActuatorFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault) {
         super(message);
         this.fault = fault;
     }
 
-    public StatementQueryFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault, Throwable cause) {
+    public NonExistingActuatorFault(String message, de.uniol.inf.is.odysseus.webservice.Fault fault, Throwable cause) {
         super(message, cause);
         this.fault = fault;
     }

@@ -43,30 +43,6 @@ public class ActuatorInformation {
     protected String description;
 
     /**
-     * Gets the value of the actuatorName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getActuatorName() {
-        return actuatorName;
-    }
-
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
      * Gets the value of the managerName property.
      * 
      * @return
@@ -76,6 +52,30 @@ public class ActuatorInformation {
      */
     public String getManagerName() {
         return managerName;
+    }
+
+    /**
+     * Sets the value of the managerName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setManagerName(String value) {
+        this.managerName = value;
+    }
+
+    /**
+     * Gets the value of the actuatorName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getActuatorName() {
+        return actuatorName;
     }
 
     /**
@@ -91,6 +91,18 @@ public class ActuatorInformation {
     }
 
     /**
+     * Gets the value of the description property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
      * Sets the value of the description property.
      * 
      * @param value
@@ -100,18 +112,6 @@ public class ActuatorInformation {
      */
     public void setDescription(String value) {
         this.description = value;
-    }
-
-    /**
-     * Sets the value of the managerName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setManagerName(String value) {
-        this.managerName = value;
     }
 
 }
