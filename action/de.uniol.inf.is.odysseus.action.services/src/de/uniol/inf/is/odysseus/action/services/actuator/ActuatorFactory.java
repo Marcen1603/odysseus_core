@@ -78,7 +78,7 @@ public class ActuatorFactory implements IActuatorFactory{
 		IActuatorManager manager = this.actuatorManager.get(managerName);
 		if (manager != null){
 			IActuator actuator = manager.removeActuator(actuatorName);
-			this.logger.debug(manager.getClass()+" removed "+ actuator.getClass() +"with id: <"+actuatorName);
+			this.logger.debug(manager.getClass()+" removed "+ actuator.getClass() +"with id: <"+actuatorName+">");
 		}else {
 			throw new ActuatorException("Referenced manager <"+managerName+"> does not exist");
 		}

@@ -198,7 +198,7 @@ public class WorkflowClient implements IActuator {
 			//invoke message
 			Object[] result = client.invoke(message.getMessageName(), inputs);
 			
-			this.logger.debug("Invoked: "+message.getMessageName()+ "with Correlation: "+this.correlationID +"\n " +
+			this.logger.debug("Invoked: "+message.getMessageName()+ " \nwith Correlation: "+this.correlationID +"\n" +
 					"target: "+ this.client.getEndpoint().getEndpointInfo().getAddress());
 			
 			if (result != null){
