@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SplitPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
@@ -28,6 +27,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
 
 /**
  * 
@@ -117,7 +118,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		((ISink)oldPlanRoot).unsubscribeFromSource(oldPlanRootSub);
 		PhysicalSubscription<?> newPlanRootSub = ((ISink<?>)newPlanRoot).getSubscribedToSource(0);
 		((ISink)newPlanRoot).unsubscribeFromSource(newPlanRootSub);
-		IPipe union = new UnionPO(new SweepArea(), null);	// FIXME: unionhelper for interval approach?
+		IPipe union = new UnionPO(new TITransferFunction());	// FIXME: migration strategy only for Interval approach?
 		union.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
 		IPipe select = new SelectPO(new FalsePredicate());
 		select.setOutputSchema(lastOperatorNewPlan.getOutputSchema());
