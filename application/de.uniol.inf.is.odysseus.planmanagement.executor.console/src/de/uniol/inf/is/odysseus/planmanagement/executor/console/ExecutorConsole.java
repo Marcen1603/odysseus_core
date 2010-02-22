@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,6 +30,7 @@ import org.osgi.service.prefs.Preferences;
 import org.osgi.service.prefs.PreferencesService;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
@@ -664,24 +666,23 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@Help(description = "register NIO nexmark sources")
-	public void _nmsN(CommandInterpreter ci) {
-		_nexmarkSourcesNIO(ci);
-	}
-
-	@Help(description = "register NIO nexmark sources")
+	@Help(description = "register NIO nexmark sources and views")
 	public void _nmsn(CommandInterpreter ci) {
 		_nexmarkSourcesNIO(ci);
 	}
 
-	@Help(description = "register NIO nexmark sources")
+	@Help(description = "register NIO nexmark sources and views")
 	public void _nexmarkSourcesNIO(CommandInterpreter ci) {
 		addCommand();
-		String[] q = new String[4];
+		String[] q = new String[8];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
+		q[4] = "CREATE STREAM nexmark:person2_v (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) SELECT * FROM nexmark:person2 [UNBOUNDED ON timestamp]";
 		q[1] = "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
+		q[5] = "CREATE STREAM nexmark:bid2_v (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) SELECT * FROM nexmark:bid2 [UNBOUNDED ON timestamp]";
 		q[2] = "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
+		q[6] = "CREATE STREAM nexmark:auction2_v (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) SELECT * FROM nexmark:auction2 [UNBOUNDED ON timestamp]";
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
+		q[7] = "CREATE STREAM nexmark:category2_v (id INTEGER, name STRING, description STRING, parentid INTEGER) SELECT * FROM nexmark:category2 [UNBOUNDED]";
 		for (String s : q) {
 			try {
 				this.executor.addQuery(s, parser());
@@ -740,7 +741,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 
 	}
-
+	
 	@Help(parameter = "<filename>", description = "Set a filename for result dump. Each result is dumped to this file. Call without parameter to unset.")
 	public void _setOutputFilename(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -1122,6 +1123,16 @@ public class ExecutorConsole implements CommandProvider,
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	@Help(description = "show registered sources")
+	public void _lssources(CommandInterpreter ci) {
+		addCommand();
+		System.out.println("Current registered sources");
+		for (Entry<String, ILogicalOperator> e : DataDictionary.getInstance()
+				.getViews()) {
+			ci.println(e.getKey() + " | " + e.getValue());
 		}
 	}
 
