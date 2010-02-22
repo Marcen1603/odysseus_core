@@ -19,8 +19,11 @@ import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.ServiceInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
+import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
@@ -42,6 +45,8 @@ public class WorkflowClient implements IActuator {
 	
 	private Map<String, Message> methodMessageMapping;
 	private ArrayList<ActionMethod> methods;
+
+	private Logger logger;
 	
 	private static String correlationName = "correlation";
 	
@@ -52,6 +57,8 @@ public class WorkflowClient implements IActuator {
 	 */
 	public WorkflowClient(Client client) throws ActuatorException{
 		this.client = client;
+		
+		this.logger = LoggerFactory.getLogger(WorkflowClient.class);
 		
 		this.methodMessageMapping = new HashMap<String, Message>();
 		this.methods = new ArrayList<ActionMethod>();
@@ -191,7 +198,12 @@ public class WorkflowClient implements IActuator {
 			//invoke message
 			Object[] result = client.invoke(message.getMessageName(), inputs);
 			
-			this.interpretResult(result, message);
+			this.logger.debug("Invoked: "+message.getMessageName()+ "with Correlation: "+this.correlationID +"\n " +
+					"target: "+ this.client.getEndpoint().getEndpointInfo().getAddress());
+			
+			if (result != null){
+				this.interpretResult(result, message);	
+			}
 
 		}catch (NullPointerException e){
 			throw new ActuatorException(e.getMessage());
