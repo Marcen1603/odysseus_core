@@ -178,19 +178,23 @@ List<State> states = new LinkedList<State>();
          if (source.getId().endsWith("[i]")) {
            JEPCondition con = new JEPCondition("");
            con.setEventType(source.getType());
+           con.setEventPort(i);
            source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.consumeNoBufferWrite));
            con = new JEPCondition("");
            con.setEventType(source.getType());
+           con.setEventPort(i);
            source.addTransition(new Transition(source.getId()+ "_take", source,con, EAction.consumeBufferWrite));
          } else {
             JEPCondition con = new JEPCondition("");
             con.setEventType(source.getType());
+            con.setEventPort(i);
             source.addTransition(new Transition(source.getId()+ "_begin", dest, con,EAction.consumeBufferWrite));
          }
          if (i > 0 && i < states.size() - 1) {
             JEPCondition con = new JEPCondition("");
             // Achtung! Ignore hat keinen Typ!
             //con.setEventType(source.getType());
+            // con.con.setEventPort(i);
             // Ignore auf sich selbst!
             source.addTransition(new Transition(source.getId()+ "_ignore", source, con,EAction.discard));
           }

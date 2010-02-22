@@ -127,8 +127,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	}
 	
 	private void insertIntoInputBuffer(R event, int port){
-		if (logger.isDebugEnabled())
-			logger.debug("InputBuffer with (" +eventReader.get(port).getType()+") " + event);
+//		if (logger.isDebugEnabled())
+//			logger.debug("InputBuffer with (" +eventReader.get(port).getType()+") " + event);
 		synchronized(lastTSFromPort){
 			PointInTime tsi = event.getMetadata().getStart();
 			lastTSFromPort.put(port, tsi);
