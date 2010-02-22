@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimize
  * {@link OptimizeParameter} a Rewrite is used and buffer are placed by an
  * {@link IBufferPlacementStrategy}.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Tobias Witt
  * 
  */
 public class QueryRestructOptimizer implements IQueryOptimizer {
@@ -166,7 +167,8 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		
 		ILogicalOperator newLogicalAlgebra = null;
 		if (sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE) {
-			newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan, rulesToUse);
+			// TODO rules nicht benutzt, weil null
+			newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan);
 			// set new logical plan.
 			query.setLogicalPlan(newLogicalAlgebra);
 		}
@@ -189,6 +191,16 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 								"Exeception while initialize query.", e);
 					}
 				}
+				
+				// put last sink on top
+				IPhysicalOperator oldRoot = query.getRoot();
+				if (oldRoot.isSource()) {
+					throw new QueryOptimizationException(
+							"Migration needs a sink only as operator root.");
+				}
+				IPhysicalOperator newRoot = oldRoot.clone();
+				((ISink)newRoot).subscribeToSource(physicalPlan, 0, 0, physicalPlan.getOutputSchema());
+				physicalPlan = newRoot;
 				
 				Map<IPhysicalOperator,ILogicalOperator> alternatives = new HashMap<IPhysicalOperator, ILogicalOperator>(1);
 				alternatives.put(physicalPlan, newLogicalAlgebra);

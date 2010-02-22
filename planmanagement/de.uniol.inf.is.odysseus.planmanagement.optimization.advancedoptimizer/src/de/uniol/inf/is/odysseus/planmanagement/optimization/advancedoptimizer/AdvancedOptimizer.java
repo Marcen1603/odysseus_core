@@ -94,8 +94,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
 
-			return this.planMigrationStrategie.migratePlan(sender,
-					newExecutionPlan);
+			return newExecutionPlan;
 		}
 		return sender.getEditableExecutionPlan();
 	}
@@ -117,8 +116,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
 
-			return this.planMigrationStrategie.migratePlan(sender,
-					newExecutionPlan);
+			return newExecutionPlan;
 			
 		}
 		return sender.getEditableExecutionPlan();
@@ -136,8 +134,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 				.optimizePlan(sender, parameter, newPlan);
 
-		return this.planMigrationStrategie
-				.migratePlan(sender, newExecutionPlan);
+		return newExecutionPlan;
 	}
 	
 	private void updateMetadataListener(IEditableQuery editableQuery) {
@@ -189,6 +186,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			IPhysicalOperator newPlan = optimalMigration.getNewPlan();
 			context.setRoot(newPlan);
 			context.setLogicalPlan(alternatives.get(newPlan));
+			
+			
 			
 			// TODO: possibly need to drain buffers and remove them
 			// stop scheduling

@@ -70,7 +70,11 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 			IPhysicalOperator op = query.getRoot();
 			System.out.println(op.getName());
 			
-			//query.reoptimize();
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {}
+			System.out.println("reoptimize...");
+			query.reoptimize();
 			
 			/*while (true) {
 				try {
