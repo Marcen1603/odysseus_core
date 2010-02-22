@@ -2,32 +2,40 @@ lexer grammar SaseLexer;
 
 @lexer::header { package de.uniol.inf.is.odysseus.cep.sase;} 
 
-CREATE 	: 'CREATE'|'create'|'Create';
-STREAM  : 'STREAM'|'stream'|'Stream' ;
-PATTERN : 'PATTERN'|'pattern'|'Pattern';
-WHERE : 'where'|'WHERE'|'Where';
-WITHIN	: 'WITHIN'|'within'|'Within';
-RETURN 	: 'RETURN'|'Return'|'return';	 
-SEQ : 'SEQ'|'seq'|'Seq';
+CREATE 	: ('C'|'c')('R'|'r')('E'|'e')('A'|'a')('T'|'t')('E'|'e');
+STREAM  : ('S'|'s')('T'|'t')('R'|'r')('E'|'e')('A'|'a')('M'|'m');
+PATTERN : ('P'|'p')('A'|'a')('T'|'t')('T'|'t')('E'|'e')('R'|'r')('N'|'n');
+WHERE : ('W'|'w')('H'|'h')('E'|'e')('R'|'r')('E'|'e');
+WITHIN	:('W'|'w')('I'|'i')('T'|'t')('H'|'h')('I'|'i')('N'|'n');
+RETURN 	: ('R'|'r')('E'|'e')('T'|'t')('U'|'u')('R'|'r')('N'|'n');	 
+SEQ : ('S'|'s')('E'|'e')('Q'|'q');
 LEFTCURLY : '{';
 RIGHTCURLY : '}';	
-AND :'AND'|'and'|'And';
-FIRST :'[1]';
-CURRENT :'[i]';	
-PREVIOUS :  '[i-1]' ;	
-ALLTOPREVIOUS :	 '[..i-1]';
-LAST 	:	 '['NAME'.LEN]';
+AND : ('A'|'a')('N'|'n')('D'|'d');	
+LEN 	: ('L'|'l')('E'|'e')('N'|'n');
 
 BBRACKETLEFT :  '[';
 BBRACKETRIGHT :  ']';
 
-TIMEUNIT: 'hour'| 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds';
+WEEK: ('W'|'w')('E'|'e')('E'|'e')('K'|'k')('S'|'s')?;
+DAY: ('D'|'d')('A'|'a')('Y'|'y')('S'|'s')?;
+HOUR: ('H'|'h')('O'|'o')('U'|'u')('R'|'r')('S'|'s')?; 
+MINUTE: ('M'|'m')('I'|'i')('N'|'n')('U'|'u')('T'|'t')('E'|'e')('S'|'s')?;
+SECOND:	('S'|'s')('E'|'e')('C'|'c')('O'|'o')('N'|'n')('D'|'d')('S'|'s')?;  
+MILLISECOND:('M'|'m')('I'|'i')('L'|'l')('L'|'l')('I'|'i')('S'|'s')('E'|'e')('C'|'c')('O'|'o')('N'|'n')('D'|'d')('S'|'s')? ;
 
-SKIP_METHOD
-	: 'skip_till_next_match'|'skip_till_any_match'|'strict_contiguity'|'partition_contiguity';
 
-AGGREGATEOP : 'Avg' | 'Min' | 'Max' | 'Sum' | 'Count'
-		;
+SKIP_TILL_NEXT_MATCH: ('S'|'s')('K'|'k')('I'|'i')('P'|'p')('_')('T'|'t')('I'|'i')('L'|'l')('L'|'l')('_')('N'|'n')('E'|'e')('X'|'x')('T'|'t')('_')('M'|'m')('A'|'a')('T'|'t')('C'|'c')('H'|'h');
+SKIP_TILL_ANY_MATCH:	  ('S'|'s')('K'|'k')('I'|'i')('P'|'p')('_')('T'|'t')('I'|'i')('L'|'l')('L'|'l')('_')('A'|'a')('N'|'n')('Y'|'y')('_')('M'|'m')('A'|'a')('T'|'t')('C'|'c')('H'|'h');
+STRICT_CONTIGUITY:	  ('S'|'s')('T'|'t')('R'|'r')('I'|'i')('C'|'c')('T'|'t')('_')('C'|'c')('O'|'o')('N'|'n')('T'|'t')('I'|'i')('G'|'g')('U'|'u')('I'|'i')('T'|'t')('Y'|'y');
+PARTITION_CONTIGUITY:	  ('P'|'p')('A'|'a')('R'|'r')('T'|'t')('I'|'i')('T'|'t')('I'|'i')('O'|'o')('N'|'n')('_')('C'|'c')('O'|'o')('N'|'n')('T'|'t')('I'|'i')('G'|'g')('U'|'u')('I'|'i')('T'|'t')('Y'|'y');
+
+AVG : ('A'|'a')('V'|'v')('G'|'g');
+MIN : ('M'|'m')('I'|'i')('N'|'n');
+MAX : ('M'|'m')('A'|'a')('X'|'x');
+SUM :	('S'|'s')('U'|'u')('M'|'m');
+COUNT : ('C'|'c')('O'|'o')('U'|'u')('N'|'n')('T'|'t');
+
 
 PLUS	: '+';
 MINUS	: '-';
@@ -39,7 +47,7 @@ COMPAREOP : '<='|'>='|'!='|'<'|'>';
 SINGLEEQUALS : '=';
 EQUALS 	: '==';
 
-NOT	: '~';
+NOTSIGN	: '~';
 	
 COMMA	: ',';
 

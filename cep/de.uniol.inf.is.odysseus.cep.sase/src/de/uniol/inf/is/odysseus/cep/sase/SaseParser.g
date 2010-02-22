@@ -4,13 +4,14 @@ options {
 	output = AST;
 	tokenVocab = SaseLexer;
 	backtrack = true;
+	ASTLabelType=CommonTree;
 }
 
 tokens{
+	KSTATE;
 	STATE;
 	KTYPE;
 	TYPE;
-	WHERESTRAT;
 	WHEREEXPRESSION;
 	MATHEXPRESSION;
 	TERM;
@@ -23,6 +24,11 @@ tokens{
 	IDEXPRESSION;
 	AGGREGATION;
 	CREATESTREAM;
+	QUERY;
+	NOT;
+	PREV;
+	FIRST;
+	CURRENT;
 }
 
 	
@@ -30,90 +36,149 @@ tokens{
 	package de.uniol.inf.is.odysseus.cep.sase; 
 }
 
-query	: (createPart)? patternPart (wherePart)? (withinPart)? (returnPart)?
+start 	: createStmt|
+	  queryStmt;
+
+
+createStmt
+	: CREATE STREAM NAME queryStmt -> ^(CREATESTREAM NAME queryStmt);
+	
+
+queryStmt:  patternPart wherePart? withinPart? returnPart? -> ^(QUERY patternPart wherePart? withinPart? returnPart?)
 	;
 	
-createPart
-	: CREATE STREAM NAME -> ^(CREATESTREAM NAME)	;
 		
 withinPart
-	: WITHIN NUMBER TIMEUNIT -> ^(WITHIN NUMBER TIMEUNIT)
+	: WITHIN NUMBER timeunit? -> ^(WITHIN NUMBER timeunit?)
 	;
+	
+timeunit: WEEK|DAY|HOUR|MINUTE|SECOND|MILLISECOND;
 	
 wherePart
-	: WHERE wherePart1 LEFTCURLY whereExpressions RIGHTCURLY -> ^(WHERE wherePart1 whereExpressions) |
+	: WHERE skipPart LEFTCURLY whereExpressions RIGHTCURLY -> ^(WHERE skipPart whereExpressions) |
 	  WHERE	whereExpressions -> ^(WHERE whereExpressions)
 	;
-	
+
+skipPart
+	: skipMethod LBRACKET parameterList RBRACKET 
+	-> ^(skipMethod parameterList)
+	;
+
+skipMethod:
+  SKIP_TILL_NEXT_MATCH
+  |SKIP_TILL_ANY_MATCH
+  |STRICT_CONTIGUITY
+  |PARTITION_CONTIGUITY;
+  	
 patternPart 
-	: PATTERN patternDecl -> ^(PATTERN patternDecl)
+	: PATTERN patternDecl -> ^(patternDecl)
 	;
 	
 returnPart
-	:	 RETURN term (COMMA term)* -> ^(RETURN term*)
+	:	 RETURN attributeTerm (COMMA attributeTerm)* -> ^(RETURN attributeTerm*)
 	;
 	
 patternDecl
-	:	SEQ LBRACKET pItem (COMMA pItem)* RBRACKET -> ^(SEQ pItem*)
+	:	SEQ LBRACKET stateDef (COMMA stateDef)* RBRACKET -> ^(SEQ stateDef*)
 	;
 		
 	
-pItem 	:	(NOT)? LBRACKET?  type=typeName variable=attributeName RBRACKET? -> ^(STATE $type $variable NOT?) 
+stateDef :	(NOTSIGN)? ktypeDefinition  -> ^(KSTATE ktypeDefinition NOTSIGN?)
+		| (NOTSIGN)? typeDefinition  -> ^(STATE typeDefinition NOTSIGN?)  
+		| (NOTSIGN)? LBRACKET ktypeDefinition RBRACKET -> ^(KSTATE ktypeDefinition NOTSIGN?)
+		| (NOTSIGN)? LBRACKET typeDefinition RBRACKET -> ^(STATE typeDefinition NOTSIGN?)  
+	; 
+
+typeDefinition
+	:	NAME sAttributeName
 	;
-	
-typeName:	NAME op=PLUS? -> {$op != null}? ^(KTYPE NAME $op) 
-			     -> ^(TYPE NAME)
+
+ktypeDefinition
+	:	NAME PLUS! kAttributeName
 	;
-	
-wherePart1
-	:	SKIP_METHOD LBRACKET parameterList RBRACKET -> ^(WHERESTRAT SKIP_METHOD parameterList)
-	;
+
 	
 parameterList 
-	:	attributeName(COMMA attributeName)* -> ^(PARAMLIST attributeName*)
+	:	attributeName (COMMA attributeName)* -> ^(PARAMLIST attributeName*)
 	;
 	
 attributeName
-	:	 kAttributeName|sAttributeName
-	;
+	:	 kAttributeName -> ^(KATTRIBUTE NAME) 
+		|sAttributeName -> ^(ATTRIBUTE NAME)
+	;  
 	
 kAttributeName
-	:	NAME  BBRACKETLEFT BBRACKETRIGHT  -> ^(KATTRIBUTE NAME) 
+	:	NAME  BBRACKETLEFT! BBRACKETRIGHT!   
 	;
-	
 
 sAttributeName
-	:	NAME -> ^(ATTRIBUTE NAME)
+	:	NAME 
 	;
+	
 kAttributeUsage
-	: 	NAME CURRENT |
-		NAME FIRST|
-		NAME PREVIOUS|
-		NAME LAST
+	: NAME  current  -> ^(NAME CURRENT)
+	 |NAME first -> ^(NAME FIRST)
+	 |NAME last -> ^(NAME PREV)
+	 |NAME len -> ^(NAME LEN)
+	;
+	
+current	:	
+	BBRACKETLEFT name=NAME BBRACKETRIGHT {$name.getText().equalsIgnoreCase("I")}?
+	;
+	
+first	:	
+	BBRACKETLEFT number=NUMBER BBRACKETRIGHT {Integer.parseInt($number.getText()) == 1}?
+	;
+
+last	:
+	BBRACKETLEFT name=NAME MINUS number=NUMBER BBRACKETRIGHT  {$name.getText().equalsIgnoreCase("I") && Integer.parseInt($number.getText()) == 1}?	
+	;
+	
+len	:
+	BBRACKETLEFT NAME POINT LEN BBRACKETRIGHT	
 	;
 	
 whereExpressions
-	:	expression (AND expression)* -> ^(WHEREEXPRESSION AND? expression*)
+	:	expression (AND expression)* -> ^(WHEREEXPRESSION expression*)
 	;
 	
 expression
-	:	NAME -> ^(IDEXPRESSION NAME) | f1=mathExpression SINGLEEQUALS f2=mathExpression ->  ^(COMPAREEXPRESSION $f1 EQUALS $f2) | f1=mathExpression COMPAREOP f2=mathExpression -> ^(COMPAREEXPRESSION $f1 COMPAREOP $f2)
+	:	BBRACKETLEFT NAME BBRACKETRIGHT -> ^(IDEXPRESSION NAME) |
+		f1=mathExpression (op=SINGLEEQUALS|op=COMPAREOP) f2=mathExpression ->  ^(COMPAREEXPRESSION $f1 $op $f2)
 	;
 	
-mathExpression:	left=term (op=(MULT|DIVISION) right=term)*
-							  
+mathExpression:	mult ((PLUS^|MINUS^) mult)* 
 	;
 
-term	:	aggregation |
-		kAttributeUsage POINT NAME -> ^(KMEMBER kAttributeUsage NAME)|
-		aName=NAME POINT member=NAME -> ^(MEMBER $aName $member)|
-		value
+mult 	:	term ((MULT^|DIVISION^) term)* 
+;	
+
+
+term:	attributeTerm |
+		value|
+		LBRACKET! mathExpression RBRACKET! 
 	;
 	
+attributeTerm: aggregation |
+    kAttributeUsage POINT NAME -> ^(KMEMBER kAttributeUsage NAME)|
+    aName=NAME POINT member=NAME -> ^(MEMBER $aName $member)
+	;
 	
 aggregation
-	:	AGGREGATEOP LBRACKET var=NAME ALLTOPREVIOUS POINT member=NAME RBRACKET -> ^(AGGREGATION AGGREGATEOP $var ALLTOPREVIOUS $member )
+	:	 saveaggop LBRACKET var=NAME BBRACKETLEFT POINT POINT name=NAME MINUS number=NUMBER BBRACKETRIGHT POINT member=NAME RBRACKET {$name.getText().equalsIgnoreCase("I") && Integer.parseInt($number.getText()) == 1}?
+		 -> ^(AGGREGATION saveaggop $var $member )
+		 | AVG LBRACKET var=NAME BBRACKETLEFT POINT POINT name=NAME MINUS number=NUMBER BBRACKETRIGHT POINT member=NAME RBRACKET   {$name.getText().equalsIgnoreCase("I") && Integer.parseInt($number.getText()) == 1}?
+		 -> ^(DIVISION ^(AGGREGATION SUM $var $member) ^(AGGREGATION COUNT $var $member) ) 
+		 |saveaggop LBRACKET var=NAME BBRACKETLEFT BBRACKETRIGHT (POINT member=NAME)? RBRACKET 
+		 -> ^(AGGREGATION saveaggop $var $member?)
+		 | AVG LBRACKET var=NAME BBRACKETLEFT BBRACKETRIGHT (POINT member=NAME)? RBRACKET 
+		 -> ^(DIVISION ^(AGGREGATION SUM $var $member?) ^(AGGREGATION COUNT $var $member?) )     
+		 ; 
+
+saveaggop 
+	: MIN|MAX|SUM|COUNT	
 	;
 	
 value 	:	 NUMBER | STRING_LITERAL;
+	
 	

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cep Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.cep
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.3
 Bundle-Vendor: University of Oldenburg
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -12,4 +12,10 @@ Import-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
  de.uniol.inf.is.odysseus.cep.epa.eventreading,
  de.uniol.inf.is.odysseus.cep.epa.eventreading.relational,
- de.uniol.inf.is.odysseus.cep.metamodel
+ de.uniol.inf.is.odysseus.cep.epa.exceptions,
+ de.uniol.inf.is.odysseus.cep.metamodel,
+ de.uniol.inf.is.odysseus.cep.metamodel.exception,
+ de.uniol.inf.is.odysseus.cep.metamodel.jep,
+ de.uniol.inf.is.odysseus.cep.metamodel.symboltable,
+ de.uniol.inf.is.odysseus.cep.metamodel.validator,
+ de.uniol.inf.is.odysseus.cep.metamodel.xml

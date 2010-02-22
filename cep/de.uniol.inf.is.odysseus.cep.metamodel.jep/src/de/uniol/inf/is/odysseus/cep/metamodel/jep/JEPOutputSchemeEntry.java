@@ -35,7 +35,7 @@ public class JEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 		String str = indent + "Output scheme entry: " + this.hashCode();
 		indent += "  ";
 		str += indent + "Label: " + getLabel();
-		str += indent + "Expression" + this.expression.getValue();
+		str += indent + "Expression " + this.expression.getValue();
 		return str;
 	}
 

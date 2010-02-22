@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2010-01-22 09:05:27
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2010-02-16 16:23:37
  package de.uniol.inf.is.odysseus.cep.sase;
 
 import org.antlr.runtime.*;
@@ -7,52 +7,60 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SaseLexer extends Lexer {
+    public static final int WEEK=17;
     public static final int WHERE=7;
-    public static final int POINT=27;
-    public static final int LETTER=41;
-    public static final int EQUALS=32;
-    public static final int FLOAT=38;
-    public static final int NOT=33;
+    public static final int MILLISECOND=22;
+    public static final int POINT=34;
+    public static final int LETTER=48;
+    public static final int MAX=29;
+    public static final int FLOAT=45;
+    public static final int DAY=18;
+    public static final int COUNT=31;
+    public static final int EQUALS=39;
     public static final int AND=13;
-    public static final int SPACE=44;
+    public static final int SUM=30;
+    public static final int SPACE=52;
     public static final int EOF=-1;
     public static final int PATTERN=6;
-    public static final int LBRACKET=35;
-    public static final int SINGLEEQUALS=31;
-    public static final int NAME=18;
+    public static final int LBRACKET=42;
+    public static final int SINGLEEQUALS=38;
+    public static final int NAME=49;
     public static final int CREATE=4;
-    public static final int STRING_LITERAL=43;
+    public static final int STRING_LITERAL=51;
+    public static final int NOTSIGN=40;
     public static final int LEFTCURLY=11;
     public static final int SEQ=10;
-    public static final int COMMA=34;
-    public static final int PREVIOUS=16;
+    public static final int COMMA=41;
+    public static final int AVG=27;
     public static final int RETURN=9;
     public static final int RIGHTCURLY=12;
-    public static final int DIVISION=28;
-    public static final int PLUS=25;
-    public static final int DIGIT=40;
-    public static final int LAST=19;
-    public static final int RBRACKET=36;
+    public static final int DIVISION=35;
+    public static final int PLUS=32;
+    public static final int DIGIT=47;
+    public static final int RBRACKET=43;
     public static final int STREAM=5;
-    public static final int BBRACKETRIGHT=21;
-    public static final int INTEGER=37;
-    public static final int ALLTOPREVIOUS=17;
-    public static final int TIMEUNIT=22;
-    public static final int SKIP_METHOD=23;
-    public static final int NUMBER=39;
-    public static final int WHITESPACE=48;
-    public static final int MINUS=26;
-    public static final int MULT=29;
-    public static final int AGGREGATEOP=24;
-    public static final int CURRENT=15;
-    public static final int NEWLINE=47;
-    public static final int NONCONTROL_CHAR=42;
-    public static final int BBRACKETLEFT=20;
+    public static final int BBRACKETRIGHT=16;
+    public static final int INTEGER=44;
+    public static final int SECOND=21;
+    public static final int NUMBER=46;
+    public static final int WHITESPACE=56;
+    public static final int MIN=28;
+    public static final int MINUS=33;
+    public static final int MULT=36;
+    public static final int HOUR=19;
+    public static final int SKIP_TILL_NEXT_MATCH=23;
+    public static final int NEWLINE=55;
+    public static final int NONCONTROL_CHAR=50;
+    public static final int BBRACKETLEFT=15;
+    public static final int PARTITION_CONTIGUITY=26;
     public static final int WITHIN=8;
-    public static final int LOWER=45;
-    public static final int COMPAREOP=30;
-    public static final int UPPER=46;
-    public static final int FIRST=14;
+    public static final int SKIP_TILL_ANY_MATCH=24;
+    public static final int LEN=14;
+    public static final int LOWER=53;
+    public static final int MINUTE=20;
+    public static final int STRICT_CONTIGUITY=25;
+    public static final int COMPAREOP=37;
+    public static final int UPPER=54;
 
     // delegates
     // delegators
@@ -72,62 +80,66 @@ public class SaseLexer extends Lexer {
         try {
             int _type = CREATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:9: ( 'CREATE' | 'create' | 'Create' )
-            int alt1=3;
-            int LA1_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:9: ( ( 'C' | 'c' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:11: ( 'C' | 'c' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' )
+            {
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
 
-            if ( (LA1_0=='C') ) {
-                int LA1_1 = input.LA(2);
-
-                if ( (LA1_1=='R') ) {
-                    alt1=1;
-                }
-                else if ( (LA1_1=='r') ) {
-                    alt1=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 1, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else if ( (LA1_0=='c') ) {
-                alt1=2;
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 1, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt1) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:11: 'CREATE'
-                    {
-                    match("CREATE"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:20: 'create'
-                    {
-                    match("create"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:5:29: 'Create'
-                    {
-                    match("Create"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -141,62 +153,66 @@ public class SaseLexer extends Lexer {
         try {
             int _type = STREAM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:9: ( 'STREAM' | 'stream' | 'Stream' )
-            int alt2=3;
-            int LA2_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:9: ( ( 'S' | 's' ) ( 'T' | 't' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'M' | 'm' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:11: ( 'S' | 's' ) ( 'T' | 't' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'M' | 'm' )
+            {
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
 
-            if ( (LA2_0=='S') ) {
-                int LA2_1 = input.LA(2);
-
-                if ( (LA2_1=='T') ) {
-                    alt2=1;
-                }
-                else if ( (LA2_1=='t') ) {
-                    alt2=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 2, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else if ( (LA2_0=='s') ) {
-                alt2=2;
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 2, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt2) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:11: 'STREAM'
-                    {
-                    match("STREAM"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:20: 'stream'
-                    {
-                    match("stream"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:6:29: 'Stream'
-                    {
-                    match("Stream"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -210,62 +226,75 @@ public class SaseLexer extends Lexer {
         try {
             int _type = PATTERN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:9: ( 'PATTERN' | 'pattern' | 'Pattern' )
-            int alt3=3;
-            int LA3_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:9: ( ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ( 'N' | 'n' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:11: ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ( 'N' | 'n' )
+            {
+            if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
+                input.consume();
 
-            if ( (LA3_0=='P') ) {
-                int LA3_1 = input.LA(2);
-
-                if ( (LA3_1=='A') ) {
-                    alt3=1;
-                }
-                else if ( (LA3_1=='a') ) {
-                    alt3=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 3, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else if ( (LA3_0=='p') ) {
-                alt3=2;
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 3, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt3) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:11: 'PATTERN'
-                    {
-                    match("PATTERN"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:21: 'pattern'
-                    {
-                    match("pattern"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:7:31: 'Pattern'
-                    {
-                    match("Pattern"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -279,62 +308,57 @@ public class SaseLexer extends Lexer {
         try {
             int _type = WHERE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:7: ( 'where' | 'WHERE' | 'Where' )
-            int alt4=3;
-            int LA4_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:7: ( ( 'W' | 'w' ) ( 'H' | 'h' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ( 'E' | 'e' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:9: ( 'W' | 'w' ) ( 'H' | 'h' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ( 'E' | 'e' )
+            {
+            if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
+                input.consume();
 
-            if ( (LA4_0=='w') ) {
-                alt4=1;
-            }
-            else if ( (LA4_0=='W') ) {
-                int LA4_2 = input.LA(2);
-
-                if ( (LA4_2=='H') ) {
-                    alt4=2;
-                }
-                else if ( (LA4_2=='h') ) {
-                    alt4=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 4, 2, input);
-
-                    throw nvae;
-                }
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 4, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt4) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:9: 'where'
-                    {
-                    match("where"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:17: 'WHERE'
-                    {
-                    match("WHERE"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:8:25: 'Where'
-                    {
-                    match("Where"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -348,62 +372,66 @@ public class SaseLexer extends Lexer {
         try {
             int _type = WITHIN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:8: ( 'WITHIN' | 'within' | 'Within' )
-            int alt5=3;
-            int LA5_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:8: ( ( 'W' | 'w' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'H' | 'h' ) ( 'I' | 'i' ) ( 'N' | 'n' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:9: ( 'W' | 'w' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'H' | 'h' ) ( 'I' | 'i' ) ( 'N' | 'n' )
+            {
+            if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
+                input.consume();
 
-            if ( (LA5_0=='W') ) {
-                int LA5_1 = input.LA(2);
-
-                if ( (LA5_1=='I') ) {
-                    alt5=1;
-                }
-                else if ( (LA5_1=='i') ) {
-                    alt5=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 5, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else if ( (LA5_0=='w') ) {
-                alt5=2;
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 5, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt5) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:10: 'WITHIN'
-                    {
-                    match("WITHIN"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:19: 'within'
-                    {
-                    match("within"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:9:28: 'Within'
-                    {
-                    match("Within"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -417,62 +445,66 @@ public class SaseLexer extends Lexer {
         try {
             int _type = RETURN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:10:9: ( 'RETURN' | 'Return' | 'return' )
-            int alt6=3;
-            int LA6_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:10:9: ( ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'T' | 't' ) ( 'U' | 'u' ) ( 'R' | 'r' ) ( 'N' | 'n' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:10:11: ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'T' | 't' ) ( 'U' | 'u' ) ( 'R' | 'r' ) ( 'N' | 'n' )
+            {
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
 
-            if ( (LA6_0=='R') ) {
-                int LA6_1 = input.LA(2);
-
-                if ( (LA6_1=='E') ) {
-                    alt6=1;
-                }
-                else if ( (LA6_1=='e') ) {
-                    alt6=2;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 6, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else if ( (LA6_0=='r') ) {
-                alt6=3;
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 6, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt6) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:10:11: 'RETURN'
-                    {
-                    match("RETURN"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:10:20: 'Return'
-                    {
-                    match("Return"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:10:29: 'return'
-                    {
-                    match("return"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -486,62 +518,39 @@ public class SaseLexer extends Lexer {
         try {
             int _type = SEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:11:5: ( 'SEQ' | 'seq' | 'Seq' )
-            int alt7=3;
-            int LA7_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:11:5: ( ( 'S' | 's' ) ( 'E' | 'e' ) ( 'Q' | 'q' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:11:7: ( 'S' | 's' ) ( 'E' | 'e' ) ( 'Q' | 'q' )
+            {
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
 
-            if ( (LA7_0=='S') ) {
-                int LA7_1 = input.LA(2);
-
-                if ( (LA7_1=='E') ) {
-                    alt7=1;
-                }
-                else if ( (LA7_1=='e') ) {
-                    alt7=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 7, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else if ( (LA7_0=='s') ) {
-                alt7=2;
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 7, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt7) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:11:7: 'SEQ'
-                    {
-                    match("SEQ"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:11:13: 'seq'
-                    {
-                    match("seq"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:11:19: 'Seq'
-                    {
-                    match("Seq"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='Q'||input.LA(1)=='q' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -595,62 +604,39 @@ public class SaseLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:14:5: ( 'AND' | 'and' | 'And' )
-            int alt8=3;
-            int LA8_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:14:5: ( ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:14:7: ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' )
+            {
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
 
-            if ( (LA8_0=='A') ) {
-                int LA8_1 = input.LA(2);
-
-                if ( (LA8_1=='N') ) {
-                    alt8=1;
-                }
-                else if ( (LA8_1=='n') ) {
-                    alt8=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 8, 1, input);
-
-                    throw nvae;
-                }
-            }
-            else if ( (LA8_0=='a') ) {
-                alt8=2;
             }
             else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 8, 0, input);
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-                throw nvae;
-            }
-            switch (alt8) {
-                case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:14:6: 'AND'
-                    {
-                    match("AND"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:14:12: 'and'
-                    {
-                    match("and"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:14:18: 'And'
-                    {
-                    match("And"); 
-
-
-                    }
-                    break;
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
 
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
@@ -659,15 +645,40 @@ public class SaseLexer extends Lexer {
     }
     // $ANTLR end "AND"
 
-    // $ANTLR start "FIRST"
-    public final void mFIRST() throws RecognitionException {
+    // $ANTLR start "LEN"
+    public final void mLEN() throws RecognitionException {
         try {
-            int _type = FIRST;
+            int _type = LEN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:15:7: ( '[1]' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:15:8: '[1]'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:15:6: ( ( 'L' | 'l' ) ( 'E' | 'e' ) ( 'N' | 'n' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:15:8: ( 'L' | 'l' ) ( 'E' | 'e' ) ( 'N' | 'n' )
             {
-            match("[1]"); 
+            if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
 
             }
@@ -678,101 +689,15 @@ public class SaseLexer extends Lexer {
         finally {
         }
     }
-    // $ANTLR end "FIRST"
-
-    // $ANTLR start "CURRENT"
-    public final void mCURRENT() throws RecognitionException {
-        try {
-            int _type = CURRENT;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:16:9: ( '[i]' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:16:10: '[i]'
-            {
-            match("[i]"); 
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "CURRENT"
-
-    // $ANTLR start "PREVIOUS"
-    public final void mPREVIOUS() throws RecognitionException {
-        try {
-            int _type = PREVIOUS;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:17:10: ( '[i-1]' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:17:13: '[i-1]'
-            {
-            match("[i-1]"); 
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "PREVIOUS"
-
-    // $ANTLR start "ALLTOPREVIOUS"
-    public final void mALLTOPREVIOUS() throws RecognitionException {
-        try {
-            int _type = ALLTOPREVIOUS;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:18:15: ( '[..i-1]' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:18:18: '[..i-1]'
-            {
-            match("[..i-1]"); 
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "ALLTOPREVIOUS"
-
-    // $ANTLR start "LAST"
-    public final void mLAST() throws RecognitionException {
-        try {
-            int _type = LAST;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:19:7: ( '[' NAME '.LEN]' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:19:10: '[' NAME '.LEN]'
-            {
-            match('['); 
-            mNAME(); 
-            match(".LEN]"); 
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "LAST"
+    // $ANTLR end "LEN"
 
     // $ANTLR start "BBRACKETLEFT"
     public final void mBBRACKETLEFT() throws RecognitionException {
         try {
             int _type = BBRACKETLEFT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:21:14: ( '[' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:21:17: '['
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:17:14: ( '[' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:17:17: '['
             {
             match('['); 
 
@@ -791,8 +716,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = BBRACKETRIGHT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:22:15: ( ']' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:22:18: ']'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:18:15: ( ']' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:18:18: ']'
             {
             match(']'); 
 
@@ -806,262 +731,1581 @@ public class SaseLexer extends Lexer {
     }
     // $ANTLR end "BBRACKETRIGHT"
 
-    // $ANTLR start "TIMEUNIT"
-    public final void mTIMEUNIT() throws RecognitionException {
+    // $ANTLR start "WEEK"
+    public final void mWEEK() throws RecognitionException {
         try {
-            int _type = TIMEUNIT;
+            int _type = WEEK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:9: ( 'hour' | 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds' )
-            int alt9=10;
-            alt9 = dfa9.predict(input);
-            switch (alt9) {
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:20:5: ( ( 'W' | 'w' ) ( 'E' | 'e' ) ( 'E' | 'e' ) ( 'K' | 'k' ) ( 'S' | 's' )? )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:20:7: ( 'W' | 'w' ) ( 'E' | 'e' ) ( 'E' | 'e' ) ( 'K' | 'k' ) ( 'S' | 's' )?
+            {
+            if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:20:43: ( 'S' | 's' )?
+            int alt1=2;
+            int LA1_0 = input.LA(1);
+
+            if ( (LA1_0=='S'||LA1_0=='s') ) {
+                alt1=1;
+            }
+            switch (alt1) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:11: 'hour'
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
                     {
-                    match("hour"); 
-
+                    if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                        input.consume();
 
                     }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:19: 'minute'
-                    {
-                    match("minute"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:30: 'second'
-                    {
-                    match("second"); 
-
-
-                    }
-                    break;
-                case 4 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:41: 'day'
-                    {
-                    match("day"); 
-
-
-                    }
-                    break;
-                case 5 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:49: 'millisecond'
-                    {
-                    match("millisecond"); 
-
-
-                    }
-                    break;
-                case 6 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:65: 'hours'
-                    {
-                    match("hours"); 
-
-
-                    }
-                    break;
-                case 7 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:75: 'minutes'
-                    {
-                    match("minutes"); 
-
-
-                    }
-                    break;
-                case 8 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:87: 'seconds'
-                    {
-                    match("seconds"); 
-
-
-                    }
-                    break;
-                case 9 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:99: 'days'
-                    {
-                    match("days"); 
-
-
-                    }
-                    break;
-                case 10 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:108: 'milliseconds'
-                    {
-                    match("milliseconds"); 
+                    else {
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
 
 
                     }
                     break;
 
             }
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end "TIMEUNIT"
+    // $ANTLR end "WEEK"
 
-    // $ANTLR start "SKIP_METHOD"
-    public final void mSKIP_METHOD() throws RecognitionException {
+    // $ANTLR start "DAY"
+    public final void mDAY() throws RecognitionException {
         try {
-            int _type = SKIP_METHOD;
+            int _type = DAY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:27:2: ( 'skip_till_next_match' | 'skip_till_any_match' | 'strict_contiguity' | 'partition_contiguity' )
-            int alt10=4;
-            alt10 = dfa10.predict(input);
-            switch (alt10) {
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:21:4: ( ( 'D' | 'd' ) ( 'A' | 'a' ) ( 'Y' | 'y' ) ( 'S' | 's' )? )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:21:6: ( 'D' | 'd' ) ( 'A' | 'a' ) ( 'Y' | 'y' ) ( 'S' | 's' )?
+            {
+            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:21:33: ( 'S' | 's' )?
+            int alt2=2;
+            int LA2_0 = input.LA(1);
+
+            if ( (LA2_0=='S'||LA2_0=='s') ) {
+                alt2=1;
+            }
+            switch (alt2) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:27:4: 'skip_till_next_match'
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
                     {
-                    match("skip_till_next_match"); 
-
+                    if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                        input.consume();
 
                     }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:27:27: 'skip_till_any_match'
-                    {
-                    match("skip_till_any_match"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:27:49: 'strict_contiguity'
-                    {
-                    match("strict_contiguity"); 
-
-
-                    }
-                    break;
-                case 4 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:27:69: 'partition_contiguity'
-                    {
-                    match("partition_contiguity"); 
+                    else {
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
 
 
                     }
                     break;
 
             }
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end "SKIP_METHOD"
+    // $ANTLR end "DAY"
 
-    // $ANTLR start "AGGREGATEOP"
-    public final void mAGGREGATEOP() throws RecognitionException {
+    // $ANTLR start "HOUR"
+    public final void mHOUR() throws RecognitionException {
         try {
-            int _type = AGGREGATEOP;
+            int _type = HOUR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:13: ( 'Avg' | 'Min' | 'Max' | 'Sum' | 'Count' )
-            int alt11=5;
-            switch ( input.LA(1) ) {
-            case 'A':
-                {
-                alt11=1;
-                }
-                break;
-            case 'M':
-                {
-                int LA11_2 = input.LA(2);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:22:5: ( ( 'H' | 'h' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'R' | 'r' ) ( 'S' | 's' )? )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:22:7: ( 'H' | 'h' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'R' | 'r' ) ( 'S' | 's' )?
+            {
+            if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
+                input.consume();
 
-                if ( (LA11_2=='i') ) {
-                    alt11=2;
-                }
-                else if ( (LA11_2=='a') ) {
-                    alt11=3;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 11, 2, input);
-
-                    throw nvae;
-                }
-                }
-                break;
-            case 'S':
-                {
-                alt11=4;
-                }
-                break;
-            case 'C':
-                {
-                alt11=5;
-                }
-                break;
-            default:
-                NoViableAltException nvae =
-                    new NoViableAltException("", 11, 0, input);
-
-                throw nvae;
             }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
-            switch (alt11) {
+            if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:22:43: ( 'S' | 's' )?
+            int alt3=2;
+            int LA3_0 = input.LA(1);
+
+            if ( (LA3_0=='S'||LA3_0=='s') ) {
+                alt3=1;
+            }
+            switch (alt3) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:15: 'Avg'
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
                     {
-                    match("Avg"); 
-
+                    if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                        input.consume();
 
                     }
-                    break;
-                case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:23: 'Min'
-                    {
-                    match("Min"); 
-
-
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:31: 'Max'
-                    {
-                    match("Max"); 
-
-
-                    }
-                    break;
-                case 4 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:39: 'Sum'
-                    {
-                    match("Sum"); 
-
-
-                    }
-                    break;
-                case 5 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:47: 'Count'
-                    {
-                    match("Count"); 
+                    else {
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
 
 
                     }
                     break;
 
             }
+
+
+            }
+
             state.type = _type;
             state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end "AGGREGATEOP"
+    // $ANTLR end "HOUR"
+
+    // $ANTLR start "MINUTE"
+    public final void mMINUTE() throws RecognitionException {
+        try {
+            int _type = MINUTE;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:23:7: ( ( 'M' | 'm' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'U' | 'u' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'S' | 's' )? )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:23:9: ( 'M' | 'm' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'U' | 'u' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'S' | 's' )?
+            {
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:23:63: ( 'S' | 's' )?
+            int alt4=2;
+            int LA4_0 = input.LA(1);
+
+            if ( (LA4_0=='S'||LA4_0=='s') ) {
+                alt4=1;
+            }
+            switch (alt4) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
+                    {
+                    if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                        input.consume();
+
+                    }
+                    else {
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "MINUTE"
+
+    // $ANTLR start "SECOND"
+    public final void mSECOND() throws RecognitionException {
+        try {
+            int _type = SECOND;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:7: ( ( 'S' | 's' ) ( 'E' | 'e' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'S' | 's' )? )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:9: ( 'S' | 's' ) ( 'E' | 'e' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'S' | 's' )?
+            {
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:24:63: ( 'S' | 's' )?
+            int alt5=2;
+            int LA5_0 = input.LA(1);
+
+            if ( (LA5_0=='S'||LA5_0=='s') ) {
+                alt5=1;
+            }
+            switch (alt5) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
+                    {
+                    if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                        input.consume();
+
+                    }
+                    else {
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "SECOND"
+
+    // $ANTLR start "MILLISECOND"
+    public final void mMILLISECOND() throws RecognitionException {
+        try {
+            int _type = MILLISECOND;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:25:12: ( ( 'M' | 'm' ) ( 'I' | 'i' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'E' | 'e' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'S' | 's' )? )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:25:13: ( 'M' | 'm' ) ( 'I' | 'i' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'E' | 'e' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'S' | 's' )?
+            {
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:25:112: ( 'S' | 's' )?
+            int alt6=2;
+            int LA6_0 = input.LA(1);
+
+            if ( (LA6_0=='S'||LA6_0=='s') ) {
+                alt6=1;
+            }
+            switch (alt6) {
+                case 1 :
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
+                    {
+                    if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                        input.consume();
+
+                    }
+                    else {
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "MILLISECOND"
+
+    // $ANTLR start "SKIP_TILL_NEXT_MATCH"
+    public final void mSKIP_TILL_NEXT_MATCH() throws RecognitionException {
+        try {
+            int _type = SKIP_TILL_NEXT_MATCH;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:21: ( ( 'S' | 's' ) ( 'K' | 'k' ) ( 'I' | 'i' ) ( 'P' | 'p' ) ( '_' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ( '_' ) ( 'N' | 'n' ) ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'T' | 't' ) ( '_' ) ( 'M' | 'm' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'C' | 'c' ) ( 'H' | 'h' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:23: ( 'S' | 's' ) ( 'K' | 'k' ) ( 'I' | 'i' ) ( 'P' | 'p' ) ( '_' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ( '_' ) ( 'N' | 'n' ) ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'T' | 't' ) ( '_' ) ( 'M' | 'm' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'C' | 'c' ) ( 'H' | 'h' )
+            {
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:59: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:60: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:100: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:101: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='X'||input.LA(1)=='x' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:141: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:28:142: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "SKIP_TILL_NEXT_MATCH"
+
+    // $ANTLR start "SKIP_TILL_ANY_MATCH"
+    public final void mSKIP_TILL_ANY_MATCH() throws RecognitionException {
+        try {
+            int _type = SKIP_TILL_ANY_MATCH;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:20: ( ( 'S' | 's' ) ( 'K' | 'k' ) ( 'I' | 'i' ) ( 'P' | 'p' ) ( '_' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ( '_' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'Y' | 'y' ) ( '_' ) ( 'M' | 'm' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'C' | 'c' ) ( 'H' | 'h' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:24: ( 'S' | 's' ) ( 'K' | 'k' ) ( 'I' | 'i' ) ( 'P' | 'p' ) ( '_' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ( '_' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'Y' | 'y' ) ( '_' ) ( 'M' | 'm' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'C' | 'c' ) ( 'H' | 'h' )
+            {
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:60: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:61: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:101: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:102: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:133: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:29:134: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "SKIP_TILL_ANY_MATCH"
+
+    // $ANTLR start "STRICT_CONTIGUITY"
+    public final void mSTRICT_CONTIGUITY() throws RecognitionException {
+        try {
+            int _type = STRICT_CONTIGUITY;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:30:18: ( ( 'S' | 's' ) ( 'T' | 't' ) ( 'R' | 'r' ) ( 'I' | 'i' ) ( 'C' | 'c' ) ( 'T' | 't' ) ( '_' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'G' | 'g' ) ( 'U' | 'u' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'Y' | 'y' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:30:22: ( 'S' | 's' ) ( 'T' | 't' ) ( 'R' | 'r' ) ( 'I' | 'i' ) ( 'C' | 'c' ) ( 'T' | 't' ) ( '_' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'G' | 'g' ) ( 'U' | 'u' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'Y' | 'y' )
+            {
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:30:76: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:30:77: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "STRICT_CONTIGUITY"
+
+    // $ANTLR start "PARTITION_CONTIGUITY"
+    public final void mPARTITION_CONTIGUITY() throws RecognitionException {
+        try {
+            int _type = PARTITION_CONTIGUITY;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:31:21: ( ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'R' | 'r' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( '_' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'G' | 'g' ) ( 'U' | 'u' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'Y' | 'y' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:31:25: ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'R' | 'r' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( '_' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'G' | 'g' ) ( 'U' | 'u' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'Y' | 'y' )
+            {
+            if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:31:106: ( '_' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:31:107: '_'
+            {
+            match('_'); 
+
+            }
+
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "PARTITION_CONTIGUITY"
+
+    // $ANTLR start "AVG"
+    public final void mAVG() throws RecognitionException {
+        try {
+            int _type = AVG;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:33:5: ( ( 'A' | 'a' ) ( 'V' | 'v' ) ( 'G' | 'g' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:33:7: ( 'A' | 'a' ) ( 'V' | 'v' ) ( 'G' | 'g' )
+            {
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='V'||input.LA(1)=='v' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "AVG"
+
+    // $ANTLR start "MIN"
+    public final void mMIN() throws RecognitionException {
+        try {
+            int _type = MIN;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:34:5: ( ( 'M' | 'm' ) ( 'I' | 'i' ) ( 'N' | 'n' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:34:7: ( 'M' | 'm' ) ( 'I' | 'i' ) ( 'N' | 'n' )
+            {
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "MIN"
+
+    // $ANTLR start "MAX"
+    public final void mMAX() throws RecognitionException {
+        try {
+            int _type = MAX;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:35:5: ( ( 'M' | 'm' ) ( 'A' | 'a' ) ( 'X' | 'x' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:35:7: ( 'M' | 'm' ) ( 'A' | 'a' ) ( 'X' | 'x' )
+            {
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='X'||input.LA(1)=='x' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "MAX"
+
+    // $ANTLR start "SUM"
+    public final void mSUM() throws RecognitionException {
+        try {
+            int _type = SUM;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:36:5: ( ( 'S' | 's' ) ( 'U' | 'u' ) ( 'M' | 'm' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:36:7: ( 'S' | 's' ) ( 'U' | 'u' ) ( 'M' | 'm' )
+            {
+            if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "SUM"
+
+    // $ANTLR start "COUNT"
+    public final void mCOUNT() throws RecognitionException {
+        try {
+            int _type = COUNT;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:37:7: ( ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'T' | 't' ) )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:37:9: ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'T' | 't' )
+            {
+            if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "COUNT"
 
     // $ANTLR start "PLUS"
     public final void mPLUS() throws RecognitionException {
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:32:6: ( '+' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:32:8: '+'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:40:6: ( '+' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:40:8: '+'
             {
             match('+'); 
 
@@ -1080,8 +2324,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:33:7: ( '-' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:33:9: '-'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:41:7: ( '-' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:41:9: '-'
             {
             match('-'); 
 
@@ -1100,8 +2344,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = POINT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:34:7: ( '.' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:34:9: '.'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:42:7: ( '.' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:42:9: '.'
             {
             match('.'); 
 
@@ -1120,8 +2364,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = DIVISION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:35:9: ( '/' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:35:11: '/'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:43:9: ( '/' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:43:11: '/'
             {
             match('/'); 
 
@@ -1140,8 +2384,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = MULT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:36:6: ( '*' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:36:8: '*'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:44:6: ( '*' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:44:8: '*'
             {
             match('*'); 
 
@@ -1160,46 +2404,46 @@ public class SaseLexer extends Lexer {
         try {
             int _type = COMPAREOP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:38:11: ( '<=' | '>=' | '!=' | '<' | '>' )
-            int alt12=5;
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:11: ( '<=' | '>=' | '!=' | '<' | '>' )
+            int alt7=5;
             switch ( input.LA(1) ) {
             case '<':
                 {
-                int LA12_1 = input.LA(2);
+                int LA7_1 = input.LA(2);
 
-                if ( (LA12_1=='=') ) {
-                    alt12=1;
+                if ( (LA7_1=='=') ) {
+                    alt7=1;
                 }
                 else {
-                    alt12=4;}
+                    alt7=4;}
                 }
                 break;
             case '>':
                 {
-                int LA12_2 = input.LA(2);
+                int LA7_2 = input.LA(2);
 
-                if ( (LA12_2=='=') ) {
-                    alt12=2;
+                if ( (LA7_2=='=') ) {
+                    alt7=2;
                 }
                 else {
-                    alt12=5;}
+                    alt7=5;}
                 }
                 break;
             case '!':
                 {
-                alt12=3;
+                alt7=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 12, 0, input);
+                    new NoViableAltException("", 7, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt12) {
+            switch (alt7) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:38:13: '<='
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:13: '<='
                     {
                     match("<="); 
 
@@ -1207,7 +2451,7 @@ public class SaseLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:38:18: '>='
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:18: '>='
                     {
                     match(">="); 
 
@@ -1215,7 +2459,7 @@ public class SaseLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:38:23: '!='
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:23: '!='
                     {
                     match("!="); 
 
@@ -1223,14 +2467,14 @@ public class SaseLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:38:28: '<'
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:28: '<'
                     {
                     match('<'); 
 
                     }
                     break;
                 case 5 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:38:32: '>'
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:32: '>'
                     {
                     match('>'); 
 
@@ -1251,8 +2495,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = SINGLEEQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:39:14: ( '=' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:39:16: '='
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:47:14: ( '=' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:47:16: '='
             {
             match('='); 
 
@@ -1271,8 +2515,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:40:9: ( '==' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:40:11: '=='
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:48:9: ( '==' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:48:11: '=='
             {
             match("=="); 
 
@@ -1287,13 +2531,13 @@ public class SaseLexer extends Lexer {
     }
     // $ANTLR end "EQUALS"
 
-    // $ANTLR start "NOT"
-    public final void mNOT() throws RecognitionException {
+    // $ANTLR start "NOTSIGN"
+    public final void mNOTSIGN() throws RecognitionException {
         try {
-            int _type = NOT;
+            int _type = NOTSIGN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:42:5: ( '~' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:42:7: '~'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:50:9: ( '~' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:50:11: '~'
             {
             match('~'); 
 
@@ -1305,15 +2549,15 @@ public class SaseLexer extends Lexer {
         finally {
         }
     }
-    // $ANTLR end "NOT"
+    // $ANTLR end "NOTSIGN"
 
     // $ANTLR start "COMMA"
     public final void mCOMMA() throws RecognitionException {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:44:7: ( ',' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:44:9: ','
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:7: ( ',' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:9: ','
             {
             match(','); 
 
@@ -1332,8 +2576,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = LBRACKET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:47:2: ( '(' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:47:4: '('
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:55:2: ( '(' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:55:4: '('
             {
             match('('); 
 
@@ -1352,8 +2596,8 @@ public class SaseLexer extends Lexer {
         try {
             int _type = RBRACKET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:49:2: ( ')' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:49:4: ')'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:2: ( ')' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:4: ')'
             {
             match(')'); 
 
@@ -1372,19 +2616,19 @@ public class SaseLexer extends Lexer {
         try {
             int _type = NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:8: ( INTEGER | FLOAT )
-            int alt13=2;
-            alt13 = dfa13.predict(input);
-            switch (alt13) {
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:60:8: ( INTEGER | FLOAT )
+            int alt8=2;
+            alt8 = dfa8.predict(input);
+            switch (alt8) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:11: INTEGER
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:60:11: INTEGER
                     {
                     mINTEGER(); 
 
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:52:21: FLOAT
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:60:21: FLOAT
                     {
                     mFLOAT(); 
 
@@ -1403,26 +2647,26 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "FLOAT"
     public final void mFLOAT() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:53:16: ( INTEGER '.' ( DIGIT )+ )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:53:18: INTEGER '.' ( DIGIT )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:16: ( INTEGER '.' ( DIGIT )+ )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:18: INTEGER '.' ( DIGIT )+
             {
             mINTEGER(); 
             match('.'); 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:53:30: ( DIGIT )+
-            int cnt14=0;
-            loop14:
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:30: ( DIGIT )+
+            int cnt9=0;
+            loop9:
             do {
-                int alt14=2;
-                int LA14_0 = input.LA(1);
+                int alt9=2;
+                int LA9_0 = input.LA(1);
 
-                if ( ((LA14_0>='0' && LA14_0<='9')) ) {
-                    alt14=1;
+                if ( ((LA9_0>='0' && LA9_0<='9')) ) {
+                    alt9=1;
                 }
 
 
-                switch (alt14) {
+                switch (alt9) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:53:30: DIGIT
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:30: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -1430,12 +2674,12 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt14 >= 1 ) break loop14;
+            	    if ( cnt9 >= 1 ) break loop9;
                         EarlyExitException eee =
-                            new EarlyExitException(14, input);
+                            new EarlyExitException(9, input);
                         throw eee;
                 }
-                cnt14++;
+                cnt9++;
             } while (true);
 
 
@@ -1450,48 +2694,48 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "INTEGER"
     public final void mINTEGER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:18: ( '0' | '1' .. '9' ( '0' .. '9' )* )
-            int alt16=2;
-            int LA16_0 = input.LA(1);
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:18: ( '0' | '1' .. '9' ( '0' .. '9' )* )
+            int alt11=2;
+            int LA11_0 = input.LA(1);
 
-            if ( (LA16_0=='0') ) {
-                alt16=1;
+            if ( (LA11_0=='0') ) {
+                alt11=1;
             }
-            else if ( ((LA16_0>='1' && LA16_0<='9')) ) {
-                alt16=2;
+            else if ( ((LA11_0>='1' && LA11_0<='9')) ) {
+                alt11=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 16, 0, input);
+                    new NoViableAltException("", 11, 0, input);
 
                 throw nvae;
             }
-            switch (alt16) {
+            switch (alt11) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:20: '0'
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:20: '0'
                     {
                     match('0'); 
 
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:26: '1' .. '9' ( '0' .. '9' )*
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:26: '1' .. '9' ( '0' .. '9' )*
                     {
                     matchRange('1','9'); 
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:35: ( '0' .. '9' )*
-                    loop15:
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:35: ( '0' .. '9' )*
+                    loop10:
                     do {
-                        int alt15=2;
-                        int LA15_0 = input.LA(1);
+                        int alt10=2;
+                        int LA10_0 = input.LA(1);
 
-                        if ( ((LA15_0>='0' && LA15_0<='9')) ) {
-                            alt15=1;
+                        if ( ((LA10_0>='0' && LA10_0<='9')) ) {
+                            alt10=1;
                         }
 
 
-                        switch (alt15) {
+                        switch (alt10) {
                     	case 1 :
-                    	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:54:36: '0' .. '9'
+                    	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:36: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1499,7 +2743,7 @@ public class SaseLexer extends Lexer {
                     	    break;
 
                     	default :
-                    	    break loop15;
+                    	    break loop10;
                         }
                     } while (true);
 
@@ -1519,22 +2763,22 @@ public class SaseLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:56:6: ( LETTER ( LETTER | DIGIT | '_' | ':' )* )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:56:8: LETTER ( LETTER | DIGIT | '_' | ':' )*
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:6: ( LETTER ( LETTER | DIGIT | '_' | ':' )* )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:8: LETTER ( LETTER | DIGIT | '_' | ':' )*
             {
             mLETTER(); 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:56:15: ( LETTER | DIGIT | '_' | ':' )*
-            loop17:
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:15: ( LETTER | DIGIT | '_' | ':' )*
+            loop12:
             do {
-                int alt17=2;
-                int LA17_0 = input.LA(1);
+                int alt12=2;
+                int LA12_0 = input.LA(1);
 
-                if ( ((LA17_0>='0' && LA17_0<=':')||(LA17_0>='A' && LA17_0<='Z')||LA17_0=='_'||(LA17_0>='a' && LA17_0<='z')) ) {
-                    alt17=1;
+                if ( ((LA12_0>='0' && LA12_0<=':')||(LA12_0>='A' && LA12_0<='Z')||LA12_0=='_'||(LA12_0>='a' && LA12_0<='z')) ) {
+                    alt12=1;
                 }
 
 
-                switch (alt17) {
+                switch (alt12) {
             	case 1 :
             	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             	    {
@@ -1552,7 +2796,7 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop17;
+            	    break loop12;
                 }
             } while (true);
 
@@ -1572,24 +2816,24 @@ public class SaseLexer extends Lexer {
         try {
             int _type = STRING_LITERAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:16: ( '\"' ( NONCONTROL_CHAR )* '\"' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:18: '\"' ( NONCONTROL_CHAR )* '\"'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:65:16: ( '\"' ( NONCONTROL_CHAR )* '\"' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:65:18: '\"' ( NONCONTROL_CHAR )* '\"'
             {
             match('\"'); 
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:22: ( NONCONTROL_CHAR )*
-            loop18:
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:65:22: ( NONCONTROL_CHAR )*
+            loop13:
             do {
-                int alt18=2;
-                int LA18_0 = input.LA(1);
+                int alt13=2;
+                int LA13_0 = input.LA(1);
 
-                if ( (LA18_0=='\t'||LA18_0==' '||(LA18_0>='0' && LA18_0<='9')||(LA18_0>='A' && LA18_0<='Z')||(LA18_0>='a' && LA18_0<='z')) ) {
-                    alt18=1;
+                if ( (LA13_0=='\t'||LA13_0==' '||(LA13_0>='0' && LA13_0<='9')||(LA13_0>='A' && LA13_0<='Z')||(LA13_0>='a' && LA13_0<='z')) ) {
+                    alt13=1;
                 }
 
 
-                switch (alt18) {
+                switch (alt13) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:57:22: NONCONTROL_CHAR
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:65:22: NONCONTROL_CHAR
             	    {
             	    mNONCONTROL_CHAR(); 
 
@@ -1597,7 +2841,7 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop18;
+            	    break loop13;
                 }
             } while (true);
 
@@ -1616,7 +2860,7 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "NONCONTROL_CHAR"
     public final void mNONCONTROL_CHAR() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:59:26: ( LETTER | DIGIT | SPACE )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:67:26: ( LETTER | DIGIT | SPACE )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
             if ( input.LA(1)=='\t'||input.LA(1)==' '||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -1640,7 +2884,7 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:60:17: ( LOWER | UPPER )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:68:17: ( LOWER | UPPER )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -1664,8 +2908,8 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "LOWER"
     public final void mLOWER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:17: ( 'a' .. 'z' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:61:19: 'a' .. 'z'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:69:17: ( 'a' .. 'z' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:69:19: 'a' .. 'z'
             {
             matchRange('a','z'); 
 
@@ -1680,8 +2924,8 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "UPPER"
     public final void mUPPER() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:17: ( 'A' .. 'Z' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:62:19: 'A' .. 'Z'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:70:17: ( 'A' .. 'Z' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:70:19: 'A' .. 'Z'
             {
             matchRange('A','Z'); 
 
@@ -1696,8 +2940,8 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:17: ( '0' .. '9' )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:19: '0' .. '9'
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:71:17: ( '0' .. '9' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:71:19: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -1712,7 +2956,7 @@ public class SaseLexer extends Lexer {
     // $ANTLR start "SPACE"
     public final void mSPACE() throws RecognitionException {
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:64:17: ( ' ' | '\\t' )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:72:17: ( ' ' | '\\t' )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
             if ( input.LA(1)=='\t'||input.LA(1)==' ' ) {
@@ -1738,35 +2982,35 @@ public class SaseLexer extends Lexer {
         try {
             int _type = NEWLINE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:9: ( ( ( '\\r' )? '\\n' )+ )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:11: ( ( '\\r' )? '\\n' )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:74:9: ( ( ( '\\r' )? '\\n' )+ )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:74:11: ( ( '\\r' )? '\\n' )+
             {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:11: ( ( '\\r' )? '\\n' )+
-            int cnt20=0;
-            loop20:
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:74:11: ( ( '\\r' )? '\\n' )+
+            int cnt15=0;
+            loop15:
             do {
-                int alt20=2;
-                int LA20_0 = input.LA(1);
+                int alt15=2;
+                int LA15_0 = input.LA(1);
 
-                if ( (LA20_0=='\n'||LA20_0=='\r') ) {
-                    alt20=1;
+                if ( (LA15_0=='\n'||LA15_0=='\r') ) {
+                    alt15=1;
                 }
 
 
-                switch (alt20) {
+                switch (alt15) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:12: ( '\\r' )? '\\n'
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:74:12: ( '\\r' )? '\\n'
             	    {
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:12: ( '\\r' )?
-            	    int alt19=2;
-            	    int LA19_0 = input.LA(1);
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:74:12: ( '\\r' )?
+            	    int alt14=2;
+            	    int LA14_0 = input.LA(1);
 
-            	    if ( (LA19_0=='\r') ) {
-            	        alt19=1;
+            	    if ( (LA14_0=='\r') ) {
+            	        alt14=1;
             	    }
-            	    switch (alt19) {
+            	    switch (alt14) {
             	        case 1 :
-            	            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:66:12: '\\r'
+            	            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:74:12: '\\r'
             	            {
             	            match('\r'); 
 
@@ -1781,12 +3025,12 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt20 >= 1 ) break loop20;
+            	    if ( cnt15 >= 1 ) break loop15;
                         EarlyExitException eee =
-                            new EarlyExitException(20, input);
+                            new EarlyExitException(15, input);
                         throw eee;
                 }
-                cnt20++;
+                cnt15++;
             } while (true);
 
             _channel = HIDDEN;
@@ -1806,24 +3050,24 @@ public class SaseLexer extends Lexer {
         try {
             int _type = WHITESPACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:68:12: ( ( SPACE )+ )
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:68:14: ( SPACE )+
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:12: ( ( SPACE )+ )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:14: ( SPACE )+
             {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:68:14: ( SPACE )+
-            int cnt21=0;
-            loop21:
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:14: ( SPACE )+
+            int cnt16=0;
+            loop16:
             do {
-                int alt21=2;
-                int LA21_0 = input.LA(1);
+                int alt16=2;
+                int LA16_0 = input.LA(1);
 
-                if ( (LA21_0=='\t'||LA21_0==' ') ) {
-                    alt21=1;
+                if ( (LA16_0=='\t'||LA16_0==' ') ) {
+                    alt16=1;
                 }
 
 
-                switch (alt21) {
+                switch (alt16) {
             	case 1 :
-            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:68:14: SPACE
+            	    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:76:14: SPACE
             	    {
             	    mSPACE(); 
 
@@ -1831,12 +3075,12 @@ public class SaseLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt21 >= 1 ) break loop21;
+            	    if ( cnt16 >= 1 ) break loop16;
                         EarlyExitException eee =
-                            new EarlyExitException(21, input);
+                            new EarlyExitException(16, input);
                         throw eee;
                 }
-                cnt21++;
+                cnt16++;
             } while (true);
 
             _channel = HIDDEN;
@@ -1852,10 +3096,10 @@ public class SaseLexer extends Lexer {
     // $ANTLR end "WHITESPACE"
 
     public void mTokens() throws RecognitionException {
-        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:8: ( CREATE | STREAM | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | FIRST | CURRENT | PREVIOUS | ALLTOPREVIOUS | LAST | BBRACKETLEFT | BBRACKETRIGHT | TIMEUNIT | SKIP_METHOD | AGGREGATEOP | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOT | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE )
-        int alt22=37;
-        alt22 = dfa22.predict(input);
-        switch (alt22) {
+        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:8: ( CREATE | STREAM | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | LEN | BBRACKETLEFT | BBRACKETRIGHT | WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND | SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY | AVG | MIN | MAX | SUM | COUNT | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOTSIGN | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE )
+        int alt17=45;
+        alt17 = dfa17.predict(input);
+        switch (alt17) {
             case 1 :
                 // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:10: CREATE
                 {
@@ -1927,189 +3171,245 @@ public class SaseLexer extends Lexer {
                 }
                 break;
             case 11 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:81: FIRST
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:81: LEN
                 {
-                mFIRST(); 
+                mLEN(); 
 
                 }
                 break;
             case 12 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:87: CURRENT
-                {
-                mCURRENT(); 
-
-                }
-                break;
-            case 13 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:95: PREVIOUS
-                {
-                mPREVIOUS(); 
-
-                }
-                break;
-            case 14 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:104: ALLTOPREVIOUS
-                {
-                mALLTOPREVIOUS(); 
-
-                }
-                break;
-            case 15 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:118: LAST
-                {
-                mLAST(); 
-
-                }
-                break;
-            case 16 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:123: BBRACKETLEFT
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:85: BBRACKETLEFT
                 {
                 mBBRACKETLEFT(); 
 
                 }
                 break;
-            case 17 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:136: BBRACKETRIGHT
+            case 13 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:98: BBRACKETRIGHT
                 {
                 mBBRACKETRIGHT(); 
 
                 }
                 break;
-            case 18 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:150: TIMEUNIT
+            case 14 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:112: WEEK
                 {
-                mTIMEUNIT(); 
+                mWEEK(); 
+
+                }
+                break;
+            case 15 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:117: DAY
+                {
+                mDAY(); 
+
+                }
+                break;
+            case 16 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:121: HOUR
+                {
+                mHOUR(); 
+
+                }
+                break;
+            case 17 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:126: MINUTE
+                {
+                mMINUTE(); 
+
+                }
+                break;
+            case 18 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:133: SECOND
+                {
+                mSECOND(); 
 
                 }
                 break;
             case 19 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:159: SKIP_METHOD
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:140: MILLISECOND
                 {
-                mSKIP_METHOD(); 
+                mMILLISECOND(); 
 
                 }
                 break;
             case 20 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:171: AGGREGATEOP
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:152: SKIP_TILL_NEXT_MATCH
                 {
-                mAGGREGATEOP(); 
+                mSKIP_TILL_NEXT_MATCH(); 
 
                 }
                 break;
             case 21 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:183: PLUS
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:173: SKIP_TILL_ANY_MATCH
+                {
+                mSKIP_TILL_ANY_MATCH(); 
+
+                }
+                break;
+            case 22 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:193: STRICT_CONTIGUITY
+                {
+                mSTRICT_CONTIGUITY(); 
+
+                }
+                break;
+            case 23 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:211: PARTITION_CONTIGUITY
+                {
+                mPARTITION_CONTIGUITY(); 
+
+                }
+                break;
+            case 24 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:232: AVG
+                {
+                mAVG(); 
+
+                }
+                break;
+            case 25 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:236: MIN
+                {
+                mMIN(); 
+
+                }
+                break;
+            case 26 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:240: MAX
+                {
+                mMAX(); 
+
+                }
+                break;
+            case 27 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:244: SUM
+                {
+                mSUM(); 
+
+                }
+                break;
+            case 28 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:248: COUNT
+                {
+                mCOUNT(); 
+
+                }
+                break;
+            case 29 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:254: PLUS
                 {
                 mPLUS(); 
 
                 }
                 break;
-            case 22 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:188: MINUS
+            case 30 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:259: MINUS
                 {
                 mMINUS(); 
 
                 }
                 break;
-            case 23 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:194: POINT
+            case 31 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:265: POINT
                 {
                 mPOINT(); 
 
                 }
                 break;
-            case 24 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:200: DIVISION
+            case 32 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:271: DIVISION
                 {
                 mDIVISION(); 
 
                 }
                 break;
-            case 25 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:209: MULT
+            case 33 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:280: MULT
                 {
                 mMULT(); 
 
                 }
                 break;
-            case 26 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:214: COMPAREOP
+            case 34 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:285: COMPAREOP
                 {
                 mCOMPAREOP(); 
 
                 }
                 break;
-            case 27 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:224: SINGLEEQUALS
+            case 35 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:295: SINGLEEQUALS
                 {
                 mSINGLEEQUALS(); 
 
                 }
                 break;
-            case 28 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:237: EQUALS
+            case 36 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:308: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
-            case 29 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:244: NOT
+            case 37 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:315: NOTSIGN
                 {
-                mNOT(); 
+                mNOTSIGN(); 
 
                 }
                 break;
-            case 30 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:248: COMMA
+            case 38 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:323: COMMA
                 {
                 mCOMMA(); 
 
                 }
                 break;
-            case 31 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:254: LBRACKET
+            case 39 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:329: LBRACKET
                 {
                 mLBRACKET(); 
 
                 }
                 break;
-            case 32 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:263: RBRACKET
+            case 40 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:338: RBRACKET
                 {
                 mRBRACKET(); 
 
                 }
                 break;
-            case 33 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:272: NUMBER
+            case 41 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:347: NUMBER
                 {
                 mNUMBER(); 
 
                 }
                 break;
-            case 34 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:279: NAME
+            case 42 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:354: NAME
                 {
                 mNAME(); 
 
                 }
                 break;
-            case 35 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:284: STRING_LITERAL
+            case 43 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:359: STRING_LITERAL
                 {
                 mSTRING_LITERAL(); 
 
                 }
                 break;
-            case 36 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:299: NEWLINE
+            case 44 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:374: NEWLINE
                 {
                 mNEWLINE(); 
 
                 }
                 break;
-            case 37 :
-                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:307: WHITESPACE
+            case 45 :
+                // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:382: WHITESPACE
                 {
                 mWHITESPACE(); 
 
@@ -2121,183 +3421,21 @@ public class SaseLexer extends Lexer {
     }
 
 
-    protected DFA9 dfa9 = new DFA9(this);
-    protected DFA10 dfa10 = new DFA10(this);
-    protected DFA13 dfa13 = new DFA13(this);
-    protected DFA22 dfa22 = new DFA22(this);
-    static final String DFA9_eotS =
-        "\15\uffff\1\23\1\25\12\uffff\1\35\1\uffff\1\40\10\uffff\1\46\2"+
-        "\uffff";
-    static final String DFA9_eofS =
-        "\47\uffff";
-    static final String DFA9_minS =
-        "\1\144\1\157\1\151\1\145\1\141\1\165\1\154\1\143\1\171\1\162\1"+
-        "\165\1\154\1\157\2\163\1\164\1\151\1\156\4\uffff\1\145\1\163\1\144"+
-        "\1\163\1\145\1\163\2\uffff\1\143\2\uffff\1\157\1\156\1\144\1\163"+
-        "\2\uffff";
-    static final String DFA9_maxS =
-        "\1\163\1\157\1\151\1\145\1\141\1\165\1\156\1\143\1\171\1\162\1"+
-        "\165\1\154\1\157\2\163\1\164\1\151\1\156\4\uffff\1\145\1\163\1\144"+
-        "\1\163\1\145\1\163\2\uffff\1\143\2\uffff\1\157\1\156\1\144\1\163"+
-        "\2\uffff";
-    static final String DFA9_acceptS =
-        "\22\uffff\1\11\1\4\1\6\1\1\6\uffff\1\7\1\2\1\uffff\1\10\1\3\4\uffff"+
-        "\1\12\1\5";
-    static final String DFA9_specialS =
-        "\47\uffff}>";
-    static final String[] DFA9_transitionS = {
-            "\1\4\3\uffff\1\1\4\uffff\1\2\5\uffff\1\3",
-            "\1\5",
-            "\1\6",
-            "\1\7",
-            "\1\10",
-            "\1\11",
-            "\1\13\1\uffff\1\12",
-            "\1\14",
-            "\1\15",
-            "\1\16",
-            "\1\17",
-            "\1\20",
-            "\1\21",
-            "\1\22",
-            "\1\24",
-            "\1\26",
-            "\1\27",
-            "\1\30",
-            "",
-            "",
-            "",
-            "",
-            "\1\31",
-            "\1\32",
-            "\1\33",
-            "\1\34",
-            "\1\36",
-            "\1\37",
-            "",
-            "",
-            "\1\41",
-            "",
-            "",
-            "\1\42",
-            "\1\43",
-            "\1\44",
-            "\1\45",
-            "",
-            ""
-    };
-
-    static final short[] DFA9_eot = DFA.unpackEncodedString(DFA9_eotS);
-    static final short[] DFA9_eof = DFA.unpackEncodedString(DFA9_eofS);
-    static final char[] DFA9_min = DFA.unpackEncodedStringToUnsignedChars(DFA9_minS);
-    static final char[] DFA9_max = DFA.unpackEncodedStringToUnsignedChars(DFA9_maxS);
-    static final short[] DFA9_accept = DFA.unpackEncodedString(DFA9_acceptS);
-    static final short[] DFA9_special = DFA.unpackEncodedString(DFA9_specialS);
-    static final short[][] DFA9_transition;
-
-    static {
-        int numStates = DFA9_transitionS.length;
-        DFA9_transition = new short[numStates][];
-        for (int i=0; i<numStates; i++) {
-            DFA9_transition[i] = DFA.unpackEncodedString(DFA9_transitionS[i]);
-        }
-    }
-
-    class DFA9 extends DFA {
-
-        public DFA9(BaseRecognizer recognizer) {
-            this.recognizer = recognizer;
-            this.decisionNumber = 9;
-            this.eot = DFA9_eot;
-            this.eof = DFA9_eof;
-            this.min = DFA9_min;
-            this.max = DFA9_max;
-            this.accept = DFA9_accept;
-            this.special = DFA9_special;
-            this.transition = DFA9_transition;
-        }
-        public String getDescription() {
-            return "24:1: TIMEUNIT : ( 'hour' | 'minute' | 'second' | 'day' | 'millisecond' | 'hours' | 'minutes' | 'seconds' | 'days' | 'milliseconds' );";
-        }
-    }
-    static final String DFA10_eotS =
-        "\17\uffff";
-    static final String DFA10_eofS =
-        "\17\uffff";
-    static final String DFA10_minS =
-        "\1\160\1\153\1\uffff\1\151\1\uffff\1\160\1\137\1\164\1\151\2\154"+
-        "\1\137\1\141\2\uffff";
-    static final String DFA10_maxS =
-        "\1\163\1\164\1\uffff\1\151\1\uffff\1\160\1\137\1\164\1\151\2\154"+
-        "\1\137\1\156\2\uffff";
-    static final String DFA10_acceptS =
-        "\2\uffff\1\4\1\uffff\1\3\10\uffff\1\1\1\2";
-    static final String DFA10_specialS =
-        "\17\uffff}>";
-    static final String[] DFA10_transitionS = {
-            "\1\2\2\uffff\1\1",
-            "\1\3\10\uffff\1\4",
-            "",
-            "\1\5",
-            "",
-            "\1\6",
-            "\1\7",
-            "\1\10",
-            "\1\11",
-            "\1\12",
-            "\1\13",
-            "\1\14",
-            "\1\16\14\uffff\1\15",
-            "",
-            ""
-    };
-
-    static final short[] DFA10_eot = DFA.unpackEncodedString(DFA10_eotS);
-    static final short[] DFA10_eof = DFA.unpackEncodedString(DFA10_eofS);
-    static final char[] DFA10_min = DFA.unpackEncodedStringToUnsignedChars(DFA10_minS);
-    static final char[] DFA10_max = DFA.unpackEncodedStringToUnsignedChars(DFA10_maxS);
-    static final short[] DFA10_accept = DFA.unpackEncodedString(DFA10_acceptS);
-    static final short[] DFA10_special = DFA.unpackEncodedString(DFA10_specialS);
-    static final short[][] DFA10_transition;
-
-    static {
-        int numStates = DFA10_transitionS.length;
-        DFA10_transition = new short[numStates][];
-        for (int i=0; i<numStates; i++) {
-            DFA10_transition[i] = DFA.unpackEncodedString(DFA10_transitionS[i]);
-        }
-    }
-
-    class DFA10 extends DFA {
-
-        public DFA10(BaseRecognizer recognizer) {
-            this.recognizer = recognizer;
-            this.decisionNumber = 10;
-            this.eot = DFA10_eot;
-            this.eof = DFA10_eof;
-            this.min = DFA10_min;
-            this.max = DFA10_max;
-            this.accept = DFA10_accept;
-            this.special = DFA10_special;
-            this.transition = DFA10_transition;
-        }
-        public String getDescription() {
-            return "26:1: SKIP_METHOD : ( 'skip_till_next_match' | 'skip_till_any_match' | 'strict_contiguity' | 'partition_contiguity' );";
-        }
-    }
-    static final String DFA13_eotS =
+    protected DFA8 dfa8 = new DFA8(this);
+    protected DFA17 dfa17 = new DFA17(this);
+    static final String DFA8_eotS =
         "\1\uffff\2\3\2\uffff\1\3";
-    static final String DFA13_eofS =
+    static final String DFA8_eofS =
         "\6\uffff";
-    static final String DFA13_minS =
+    static final String DFA8_minS =
         "\1\60\2\56\2\uffff\1\56";
-    static final String DFA13_maxS =
+    static final String DFA8_maxS =
         "\1\71\1\56\1\71\2\uffff\1\71";
-    static final String DFA13_acceptS =
+    static final String DFA8_acceptS =
         "\3\uffff\1\1\1\2\1\uffff";
-    static final String DFA13_specialS =
+    static final String DFA8_specialS =
         "\6\uffff}>";
-    static final String[] DFA13_transitionS = {
+    static final String[] DFA8_transitionS = {
             "\1\1\11\2",
             "\1\4",
             "\1\4\1\uffff\12\5",
@@ -2306,135 +3444,124 @@ public class SaseLexer extends Lexer {
             "\1\4\1\uffff\12\5"
     };
 
-    static final short[] DFA13_eot = DFA.unpackEncodedString(DFA13_eotS);
-    static final short[] DFA13_eof = DFA.unpackEncodedString(DFA13_eofS);
-    static final char[] DFA13_min = DFA.unpackEncodedStringToUnsignedChars(DFA13_minS);
-    static final char[] DFA13_max = DFA.unpackEncodedStringToUnsignedChars(DFA13_maxS);
-    static final short[] DFA13_accept = DFA.unpackEncodedString(DFA13_acceptS);
-    static final short[] DFA13_special = DFA.unpackEncodedString(DFA13_specialS);
-    static final short[][] DFA13_transition;
+    static final short[] DFA8_eot = DFA.unpackEncodedString(DFA8_eotS);
+    static final short[] DFA8_eof = DFA.unpackEncodedString(DFA8_eofS);
+    static final char[] DFA8_min = DFA.unpackEncodedStringToUnsignedChars(DFA8_minS);
+    static final char[] DFA8_max = DFA.unpackEncodedStringToUnsignedChars(DFA8_maxS);
+    static final short[] DFA8_accept = DFA.unpackEncodedString(DFA8_acceptS);
+    static final short[] DFA8_special = DFA.unpackEncodedString(DFA8_specialS);
+    static final short[][] DFA8_transition;
 
     static {
-        int numStates = DFA13_transitionS.length;
-        DFA13_transition = new short[numStates][];
+        int numStates = DFA8_transitionS.length;
+        DFA8_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA13_transition[i] = DFA.unpackEncodedString(DFA13_transitionS[i]);
+            DFA8_transition[i] = DFA.unpackEncodedString(DFA8_transitionS[i]);
         }
     }
 
-    class DFA13 extends DFA {
+    class DFA8 extends DFA {
 
-        public DFA13(BaseRecognizer recognizer) {
+        public DFA8(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 13;
-            this.eot = DFA13_eot;
-            this.eof = DFA13_eof;
-            this.min = DFA13_min;
-            this.max = DFA13_max;
-            this.accept = DFA13_accept;
-            this.special = DFA13_special;
-            this.transition = DFA13_transition;
+            this.decisionNumber = 8;
+            this.eot = DFA8_eot;
+            this.eof = DFA8_eof;
+            this.min = DFA8_min;
+            this.max = DFA8_max;
+            this.accept = DFA8_accept;
+            this.special = DFA8_special;
+            this.transition = DFA8_transition;
         }
         public String getDescription() {
-            return "52:1: NUMBER : ( INTEGER | FLOAT );";
+            return "60:1: NUMBER : ( INTEGER | FLOAT );";
         }
     }
-    static final String DFA22_eotS =
-        "\1\uffff\12\41\2\uffff\2\41\1\104\1\uffff\4\41\6\uffff\1\114\11"+
-        "\uffff\34\41\5\uffff\5\41\2\uffff\6\41\2\171\1\172\1\41\1\171\17"+
-        "\41\2\u008c\1\172\1\u008c\2\uffff\3\41\1\u0091\2\172\6\41\2\uffff"+
-        "\21\41\1\uffff\1\u0091\2\41\1\u0091\1\uffff\2\41\1\172\13\41\1\u00b9"+
-        "\1\41\2\u00b9\5\41\1\u0091\2\41\3\u00c2\3\u00c3\1\41\1\u0091\5\41"+
-        "\1\uffff\3\u00cb\3\u00cc\1\u0091\1\41\2\uffff\1\41\1\u0091\1\41"+
-        "\3\u00d1\1\41\2\uffff\1\u0091\3\41\1\uffff\16\41\1\u0091\4\41\1"+
-        "\u0091\20\41\1\u00fa\3\41\1\uffff\4\41\1\u00fa\1\41\2\u00fa";
-    static final String DFA22_eofS =
-        "\u0103\uffff";
-    static final String DFA22_minS =
-        "\1\11\1\122\1\162\1\105\1\145\1\101\1\141\1\150\1\110\1\105\1\145"+
-        "\2\uffff\1\116\1\156\1\56\1\uffff\1\157\1\151\2\141\6\uffff\1\75"+
-        "\11\uffff\1\105\1\145\1\165\1\145\1\122\1\162\1\121\1\161\1\155"+
-        "\1\162\1\143\1\151\1\124\1\164\1\162\1\145\1\164\1\105\1\145\1\124"+
-        "\1\164\1\124\2\164\1\104\1\144\1\147\1\144\1\uffff\1\55\3\uffff"+
-        "\1\165\1\154\1\171\1\156\1\170\2\uffff\1\101\1\141\1\156\1\141\1"+
-        "\105\1\145\3\60\1\145\1\60\1\157\1\160\1\124\3\164\1\162\1\150\1"+
-        "\122\1\162\1\110\1\150\1\125\2\165\4\60\2\uffff\1\162\1\165\1\154"+
-        "\3\60\1\124\3\164\1\101\1\141\2\uffff\1\141\1\143\1\156\1\137\1"+
-        "\105\2\145\1\151\1\145\1\151\1\105\1\145\1\111\1\151\1\122\2\162"+
-        "\1\uffff\1\60\1\164\1\151\1\60\1\uffff\1\105\1\145\1\60\1\145\1"+
-        "\115\2\155\1\164\1\144\1\164\1\122\2\162\1\164\1\60\1\156\2\60\1"+
-        "\116\1\156\1\116\2\156\1\60\1\145\1\163\6\60\1\137\1\60\1\151\1"+
-        "\116\2\156\1\151\1\uffff\7\60\1\145\2\uffff\1\143\1\60\1\154\3\60"+
-        "\1\157\2\uffff\1\60\1\143\1\157\1\154\1\uffff\1\156\1\157\1\156"+
-        "\2\137\1\156\1\164\1\141\1\143\1\144\1\151\1\145\1\156\1\157\1\60"+
-        "\1\147\1\170\1\171\1\156\1\60\1\165\1\164\1\137\1\164\1\151\1\137"+
-        "\1\155\1\151\1\164\1\155\1\141\1\147\1\171\1\141\1\164\1\165\1\60"+
-        "\1\164\1\143\1\151\1\uffff\1\143\1\150\1\164\1\150\1\60\1\171\2"+
-        "\60";
-    static final String DFA22_maxS =
-        "\1\176\2\162\1\165\1\164\2\141\2\151\2\145\2\uffff\1\166\1\156"+
-        "\1\172\1\uffff\1\157\1\151\1\141\1\151\6\uffff\1\75\11\uffff\1\105"+
-        "\1\145\1\165\1\145\1\122\1\162\1\121\1\161\1\155\1\162\1\161\1\151"+
-        "\1\124\2\164\1\145\1\164\1\105\1\145\1\124\1\164\1\124\2\164\1\104"+
-        "\1\144\1\147\1\144\1\uffff\1\172\3\uffff\1\165\1\156\1\171\1\156"+
-        "\1\170\2\uffff\1\101\1\141\1\156\1\141\1\105\1\145\3\172\1\151\1"+
-        "\172\1\157\1\160\1\124\3\164\1\162\1\150\1\122\1\162\1\110\1\150"+
-        "\1\125\2\165\4\172\2\uffff\1\162\1\165\1\154\3\172\1\124\3\164\1"+
-        "\101\1\141\2\uffff\1\141\1\143\1\156\1\137\1\105\2\145\1\151\1\145"+
-        "\1\151\1\105\1\145\1\111\1\151\1\122\2\162\1\uffff\1\172\1\164\1"+
-        "\151\1\172\1\uffff\1\105\1\145\1\172\1\145\1\115\2\155\1\164\1\144"+
-        "\1\164\1\122\2\162\1\164\1\172\1\156\2\172\1\116\1\156\1\116\2\156"+
-        "\1\172\1\145\1\163\6\172\1\137\1\172\1\151\1\116\2\156\1\151\1\uffff"+
-        "\7\172\1\145\2\uffff\1\143\1\172\1\154\3\172\1\157\2\uffff\1\172"+
-        "\1\143\1\157\1\154\1\uffff\1\156\1\157\1\156\2\137\1\156\1\164\1"+
-        "\156\1\143\1\144\1\151\1\145\1\156\1\157\1\172\1\147\1\170\1\171"+
-        "\1\156\1\172\1\165\1\164\1\137\1\164\1\151\1\137\1\155\1\151\1\164"+
-        "\1\155\1\141\1\147\1\171\1\141\1\164\1\165\1\172\1\164\1\143\1\151"+
-        "\1\uffff\1\143\1\150\1\164\1\150\1\172\1\171\2\172";
-    static final String DFA22_acceptS =
-        "\13\uffff\1\10\1\11\3\uffff\1\21\4\uffff\1\25\1\26\1\27\1\30\1"+
-        "\31\1\32\1\uffff\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\34"+
-        "\uffff\1\13\1\uffff\1\16\1\20\1\17\5\uffff\1\34\1\33\36\uffff\1"+
-        "\14\1\15\14\uffff\1\7\1\24\21\uffff\1\12\4\uffff\1\22\47\uffff\1"+
-        "\4\10\uffff\1\1\1\2\7\uffff\1\5\1\6\4\uffff\1\3\50\uffff\1\23\10"+
-        "\uffff";
-    static final String DFA22_specialS =
-        "\u0103\uffff}>";
-    static final String[] DFA22_transitionS = {
-            "\1\44\1\43\2\uffff\1\43\22\uffff\1\44\1\32\1\42\5\uffff\1\36"+
-            "\1\37\1\31\1\25\1\35\1\26\1\27\1\30\12\40\2\uffff\1\32\1\33"+
-            "\1\32\2\uffff\1\15\1\41\1\1\11\41\1\24\2\41\1\5\1\41\1\11\1"+
-            "\3\3\41\1\10\3\41\1\17\1\uffff\1\20\3\uffff\1\16\1\41\1\2\1"+
-            "\23\3\41\1\21\4\41\1\22\2\41\1\6\1\41\1\12\1\4\3\41\1\7\3\41"+
-            "\1\13\1\uffff\1\14\1\34",
-            "\1\45\34\uffff\1\47\2\uffff\1\46",
-            "\1\50",
-            "\1\53\16\uffff\1\51\20\uffff\1\54\16\uffff\1\52\1\55",
-            "\1\57\5\uffff\1\60\10\uffff\1\56",
-            "\1\61\37\uffff\1\62",
-            "\1\63",
-            "\1\64\1\65",
-            "\1\66\1\70\36\uffff\1\67\1\71",
-            "\1\72\37\uffff\1\73",
-            "\1\74",
+    static final String DFA17_eotS =
+        "\1\uffff\5\33\2\uffff\2\33\2\uffff\3\33\6\uffff\1\62\11\uffff\22"+
+        "\33\2\uffff\3\33\1\114\2\33\1\117\6\33\1\126\1\127\1\130\1\131\1"+
+        "\33\1\135\1\33\1\137\4\33\1\uffff\2\33\1\uffff\4\33\1\152\1\33\4"+
+        "\uffff\1\131\1\155\1\33\1\uffff\1\33\1\uffff\1\33\1\162\6\33\1\171"+
+        "\1\33\1\uffff\1\152\1\33\1\uffff\1\155\2\33\1\176\1\uffff\1\177"+
+        "\1\33\1\u0081\3\33\1\uffff\1\u0086\1\u0087\1\u0088\1\33\2\uffff"+
+        "\1\33\1\uffff\1\u0081\1\33\1\u008d\1\33\3\uffff\1\u0088\3\33\1\uffff"+
+        "\16\33\1\u00a1\4\33\1\uffff\1\u00a1\20\33\1\u00b7\3\33\1\uffff\4"+
+        "\33\1\u00bf\1\33\1\u00c1\1\uffff\1\u00c2\2\uffff";
+    static final String DFA17_eofS =
+        "\u00c3\uffff";
+    static final String DFA17_minS =
+        "\1\11\1\117\1\105\1\101\2\105\2\uffff\1\116\1\105\2\uffff\1\101"+
+        "\1\117\1\101\6\uffff\1\75\11\uffff\1\105\1\125\1\122\1\103\1\111"+
+        "\1\115\1\122\1\105\1\124\1\105\1\124\1\104\1\107\1\116\1\131\1\125"+
+        "\1\114\1\130\2\uffff\1\101\1\116\1\105\1\60\1\117\1\120\1\60\2\124"+
+        "\1\122\1\110\1\113\1\125\4\60\1\122\1\60\1\114\1\60\2\124\1\101"+
+        "\1\103\1\uffff\1\116\1\137\1\uffff\1\105\1\111\1\105\1\111\1\60"+
+        "\1\122\4\uffff\2\60\1\124\1\uffff\1\111\1\uffff\1\105\1\60\1\115"+
+        "\1\124\1\104\1\124\1\122\1\124\1\60\1\116\1\uffff\1\60\1\116\1\uffff"+
+        "\1\60\1\105\1\123\1\60\1\uffff\1\60\1\137\1\60\1\111\1\116\1\111"+
+        "\1\uffff\3\60\1\105\2\uffff\1\103\1\uffff\1\60\1\114\1\60\1\117"+
+        "\3\uffff\1\60\1\103\1\117\1\114\1\uffff\1\116\1\117\1\116\2\137"+
+        "\1\116\1\124\1\101\1\103\1\104\1\111\1\105\1\116\1\117\1\60\1\107"+
+        "\1\130\1\131\1\116\1\uffff\1\60\1\125\1\124\1\137\1\124\1\111\1"+
+        "\137\1\115\1\111\1\124\1\115\1\101\1\107\1\131\1\101\1\124\1\125"+
+        "\1\60\1\124\1\103\1\111\1\uffff\1\103\1\110\1\124\1\110\1\60\1\131"+
+        "\1\60\1\uffff\1\60\2\uffff";
+    static final String DFA17_maxS =
+        "\1\176\1\162\1\165\1\141\1\151\1\145\2\uffff\1\166\1\145\2\uffff"+
+        "\1\141\1\157\1\151\6\uffff\1\75\11\uffff\1\145\1\165\1\162\1\161"+
+        "\1\151\1\155\1\164\1\145\1\164\1\145\1\164\1\144\1\147\1\156\1\171"+
+        "\1\165\1\156\1\170\2\uffff\1\141\1\156\1\151\1\172\1\157\1\160\1"+
+        "\172\2\164\1\162\1\150\1\153\1\165\4\172\1\162\1\172\1\154\1\172"+
+        "\2\164\1\141\1\143\1\uffff\1\156\1\137\1\uffff\1\145\1\151\1\145"+
+        "\1\151\1\172\1\162\4\uffff\2\172\1\164\1\uffff\1\151\1\uffff\1\145"+
+        "\1\172\1\155\1\164\1\144\1\164\1\162\1\164\1\172\1\156\1\uffff\1"+
+        "\172\1\156\1\uffff\1\172\1\145\1\163\1\172\1\uffff\1\172\1\137\1"+
+        "\172\1\151\1\156\1\151\1\uffff\3\172\1\145\2\uffff\1\143\1\uffff"+
+        "\1\172\1\154\1\172\1\157\3\uffff\1\172\1\143\1\157\1\154\1\uffff"+
+        "\1\156\1\157\1\156\2\137\1\156\1\164\1\156\1\143\1\144\1\151\1\145"+
+        "\1\156\1\157\1\172\1\147\1\170\1\171\1\156\1\uffff\1\172\1\165\1"+
+        "\164\1\137\1\164\1\151\1\137\1\155\1\151\1\164\1\155\1\141\1\147"+
+        "\1\171\1\141\1\164\1\165\1\172\1\164\1\143\1\151\1\uffff\1\143\1"+
+        "\150\1\164\1\150\1\172\1\171\1\172\1\uffff\1\172\2\uffff";
+    static final String DFA17_acceptS =
+        "\6\uffff\1\10\1\11\2\uffff\1\14\1\15\3\uffff\1\35\1\36\1\37\1\40"+
+        "\1\41\1\42\1\uffff\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55"+
+        "\22\uffff\1\44\1\43\31\uffff\1\7\2\uffff\1\33\6\uffff\1\12\1\30"+
+        "\1\13\1\17\3\uffff\1\31\1\uffff\1\32\12\uffff\1\16\2\uffff\1\20"+
+        "\4\uffff\1\34\6\uffff\1\4\4\uffff\1\1\1\2\1\uffff\1\22\4\uffff\1"+
+        "\5\1\6\1\21\4\uffff\1\3\23\uffff\1\23\25\uffff\1\26\7\uffff\1\25"+
+        "\1\uffff\1\24\1\27";
+    static final String DFA17_specialS =
+        "\u00c3\uffff}>";
+    static final String[] DFA17_transitionS = {
+            "\1\36\1\35\2\uffff\1\35\22\uffff\1\36\1\24\1\34\5\uffff\1\30"+
+            "\1\31\1\23\1\17\1\27\1\20\1\21\1\22\12\32\2\uffff\1\24\1\25"+
+            "\1\24\2\uffff\1\10\1\33\1\1\1\14\3\33\1\15\3\33\1\11\1\16\2"+
+            "\33\1\3\1\33\1\5\1\2\3\33\1\4\3\33\1\12\1\uffff\1\13\3\uffff"+
+            "\1\10\1\33\1\1\1\14\3\33\1\15\3\33\1\11\1\16\2\33\1\3\1\33\1"+
+            "\5\1\2\3\33\1\4\3\33\1\6\1\uffff\1\7\1\26",
+            "\1\40\2\uffff\1\37\34\uffff\1\40\2\uffff\1\37",
+            "\1\42\5\uffff\1\43\10\uffff\1\41\1\44\17\uffff\1\42\5\uffff"+
+            "\1\43\10\uffff\1\41\1\44",
+            "\1\45\37\uffff\1\45",
+            "\1\50\2\uffff\1\46\1\47\33\uffff\1\50\2\uffff\1\46\1\47",
+            "\1\51\37\uffff\1\51",
             "",
             "",
-            "\1\75\37\uffff\1\76\7\uffff\1\77",
-            "\1\100",
-            "\1\103\2\uffff\1\101\17\uffff\32\105\6\uffff\10\105\1\102"+
-            "\21\105",
+            "\1\52\7\uffff\1\53\27\uffff\1\52\7\uffff\1\53",
+            "\1\54\37\uffff\1\54",
             "",
-            "\1\106",
-            "\1\107",
-            "\1\110",
-            "\1\112\7\uffff\1\111",
+            "",
+            "\1\55\37\uffff\1\55",
+            "\1\56\37\uffff\1\56",
+            "\1\60\7\uffff\1\57\27\uffff\1\60\7\uffff\1\57",
             "",
             "",
             "",
             "",
             "",
             "",
-            "\1\113",
+            "\1\61",
             "",
             "",
             "",
@@ -2444,267 +3571,210 @@ public class SaseLexer extends Lexer {
             "",
             "",
             "",
-            "\1\115",
-            "\1\116",
-            "\1\117",
-            "\1\120",
-            "\1\121",
-            "\1\122",
-            "\1\123",
-            "\1\124",
-            "\1\125",
-            "\1\126",
-            "\1\130\15\uffff\1\127",
-            "\1\131",
-            "\1\132",
-            "\1\133",
-            "\1\135\1\uffff\1\134",
-            "\1\136",
-            "\1\137",
-            "\1\140",
-            "\1\141",
-            "\1\142",
-            "\1\143",
-            "\1\144",
+            "\1\63\37\uffff\1\63",
+            "\1\64\37\uffff\1\64",
+            "\1\65\37\uffff\1\65",
+            "\1\67\15\uffff\1\66\21\uffff\1\67\15\uffff\1\66",
+            "\1\70\37\uffff\1\70",
+            "\1\71\37\uffff\1\71",
+            "\1\73\1\uffff\1\72\35\uffff\1\73\1\uffff\1\72",
+            "\1\74\37\uffff\1\74",
+            "\1\75\37\uffff\1\75",
+            "\1\76\37\uffff\1\76",
+            "\1\77\37\uffff\1\77",
+            "\1\100\37\uffff\1\100",
+            "\1\101\37\uffff\1\101",
+            "\1\102\37\uffff\1\102",
+            "\1\103\37\uffff\1\103",
+            "\1\104\37\uffff\1\104",
+            "\1\106\1\uffff\1\105\35\uffff\1\106\1\uffff\1\105",
+            "\1\107\37\uffff\1\107",
+            "",
+            "",
+            "\1\110\37\uffff\1\110",
+            "\1\111\37\uffff\1\111",
+            "\1\112\3\uffff\1\113\33\uffff\1\112\3\uffff\1\113",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\115\37\uffff\1\115",
+            "\1\116\37\uffff\1\116",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\120\37\uffff\1\120",
+            "\1\121\37\uffff\1\121",
+            "\1\122\37\uffff\1\122",
+            "\1\123\37\uffff\1\123",
+            "\1\124\37\uffff\1\124",
+            "\1\125\37\uffff\1\125",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\13\33\6\uffff\22\33\1\132\7\33\4\uffff\1\33\1\uffff\22\33"+
+            "\1\132\7\33",
+            "\1\133\37\uffff\1\133",
+            "\13\33\6\uffff\24\33\1\134\5\33\4\uffff\1\33\1\uffff\24\33"+
+            "\1\134\5\33",
+            "\1\136\37\uffff\1\136",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\140\37\uffff\1\140",
+            "\1\141\37\uffff\1\141",
+            "\1\142\37\uffff\1\142",
+            "\1\143\37\uffff\1\143",
+            "",
+            "\1\144\37\uffff\1\144",
             "\1\145",
-            "\1\146",
-            "\1\147",
-            "\1\150",
-            "\1\151",
-            "\1\152",
             "",
-            "\1\154\1\105\1\uffff\13\105\6\uffff\32\105\2\uffff\1\153\1"+
-            "\uffff\1\105\1\uffff\32\105",
-            "",
-            "",
-            "",
-            "\1\155",
-            "\1\157\1\uffff\1\156",
-            "\1\160",
-            "\1\161",
-            "\1\162",
+            "\1\146\37\uffff\1\146",
+            "\1\147\37\uffff\1\147",
+            "\1\150\37\uffff\1\150",
+            "\1\151\37\uffff\1\151",
+            "\13\33\6\uffff\22\33\1\153\7\33\4\uffff\1\33\1\uffff\22\33"+
+            "\1\153\7\33",
+            "\1\154\37\uffff\1\154",
             "",
             "",
-            "\1\163",
-            "\1\164",
-            "\1\165",
-            "\1\166",
-            "\1\167",
-            "\1\170",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\173\3\uffff\1\174",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\175",
-            "\1\176",
-            "\1\177",
+            "",
+            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\13\33\6\uffff\22\33\1\156\7\33\4\uffff\1\33\1\uffff\22\33"+
+            "\1\156\7\33",
+            "\1\157\37\uffff\1\157",
+            "",
+            "\1\160\37\uffff\1\160",
+            "",
+            "\1\161\37\uffff\1\161",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\163\37\uffff\1\163",
+            "\1\164\37\uffff\1\164",
+            "\1\165\37\uffff\1\165",
+            "\1\166\37\uffff\1\166",
+            "\1\167\37\uffff\1\167",
+            "\1\170\37\uffff\1\170",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\172\37\uffff\1\172",
+            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\173\37\uffff\1\173",
+            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\174\37\uffff\1\174",
+            "\1\175\37\uffff\1\175",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
             "\1\u0080",
-            "\1\u0081",
-            "\1\u0082",
-            "\1\u0083",
-            "\1\u0084",
-            "\1\u0085",
-            "\1\u0086",
-            "\1\u0087",
-            "\1\u0088",
-            "\1\u0089",
-            "\1\u008a",
-            "\1\u008b",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
+            "\13\33\6\uffff\22\33\1\u0082\7\33\4\uffff\1\33\1\uffff\22"+
+            "\33\1\u0082\7\33",
+            "\1\u0083\37\uffff\1\u0083",
+            "\1\u0084\37\uffff\1\u0084",
+            "\1\u0085\37\uffff\1\u0085",
+            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\13\33\6\uffff\22\33\1\u0089\7\33\4\uffff\1\33\1\uffff\22"+
+            "\33\1\u0089\7\33",
+            "\1\u008a\37\uffff\1\u008a",
             "",
             "",
-            "\1\u008d",
-            "\1\u008e",
-            "\1\u008f",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\22\41\1\u0090\7"+
-            "\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u0092",
-            "\1\u0093",
-            "\1\u0094",
+            "\1\u008b\37\uffff\1\u008b",
+            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\u008c\37\uffff\1\u008c",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\u008e\37\uffff\1\u008e",
+            "",
+            "",
+            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\u008f\37\uffff\1\u008f",
+            "\1\u0090\37\uffff\1\u0090",
+            "\1\u0091\37\uffff\1\u0091",
+            "",
+            "\1\u0092\37\uffff\1\u0092",
+            "\1\u0093\37\uffff\1\u0093",
+            "\1\u0094\37\uffff\1\u0094",
             "\1\u0095",
             "\1\u0096",
-            "\1\u0097",
+            "\1\u0097\37\uffff\1\u0097",
+            "\1\u0098\37\uffff\1\u0098",
+            "\1\u009a\14\uffff\1\u0099\22\uffff\1\u009a\14\uffff\1\u0099",
+            "\1\u009b\37\uffff\1\u009b",
+            "\1\u009c\37\uffff\1\u009c",
+            "\1\u009d\37\uffff\1\u009d",
+            "\1\u009e\37\uffff\1\u009e",
+            "\1\u009f\37\uffff\1\u009f",
+            "\1\u00a0\37\uffff\1\u00a0",
+            "\13\33\6\uffff\22\33\1\u00a2\7\33\4\uffff\1\33\1\uffff\22"+
+            "\33\1\u00a2\7\33",
+            "\1\u00a3\37\uffff\1\u00a3",
+            "\1\u00a4\37\uffff\1\u00a4",
+            "\1\u00a5\37\uffff\1\u00a5",
+            "\1\u00a6\37\uffff\1\u00a6",
             "",
-            "",
-            "\1\u0098",
-            "\1\u0099",
-            "\1\u009a",
-            "\1\u009b",
-            "\1\u009c",
-            "\1\u009d",
-            "\1\u009e",
-            "\1\u009f",
-            "\1\u00a0",
-            "\1\u00a1",
-            "\1\u00a2",
-            "\1\u00a3",
-            "\1\u00a4",
-            "\1\u00a5",
-            "\1\u00a6",
-            "\1\u00a7",
-            "\1\u00a8",
-            "",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\22\41\1\u00a9\7"+
-            "\41",
-            "\1\u00aa",
-            "\1\u00ab",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\u00a7\37\uffff\1\u00a7",
+            "\1\u00a8\37\uffff\1\u00a8",
+            "\1\u00a9",
+            "\1\u00aa\37\uffff\1\u00aa",
+            "\1\u00ab\37\uffff\1\u00ab",
             "\1\u00ac",
-            "\1\u00ad",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00ae",
-            "\1\u00af",
-            "\1\u00b0",
-            "\1\u00b1",
-            "\1\u00b2",
-            "\1\u00b3",
-            "\1\u00b4",
-            "\1\u00b5",
-            "\1\u00b6",
-            "\1\u00b7",
-            "\1\u00b8",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00ba",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00bb",
-            "\1\u00bc",
-            "\1\u00bd",
-            "\1\u00be",
-            "\1\u00bf",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00c0",
-            "\1\u00c1",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00c4",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\22\41\1\u00c5\7"+
-            "\41",
-            "\1\u00c6",
-            "\1\u00c7",
-            "\1\u00c8",
-            "\1\u00c9",
-            "\1\u00ca",
+            "\1\u00ad\37\uffff\1\u00ad",
+            "\1\u00ae\37\uffff\1\u00ae",
+            "\1\u00af\37\uffff\1\u00af",
+            "\1\u00b0\37\uffff\1\u00b0",
+            "\1\u00b1\37\uffff\1\u00b1",
+            "\1\u00b2\37\uffff\1\u00b2",
+            "\1\u00b3\37\uffff\1\u00b3",
+            "\1\u00b4\37\uffff\1\u00b4",
+            "\1\u00b5\37\uffff\1\u00b5",
+            "\1\u00b6\37\uffff\1\u00b6",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\u00b8\37\uffff\1\u00b8",
+            "\1\u00b9\37\uffff\1\u00b9",
+            "\1\u00ba\37\uffff\1\u00ba",
             "",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\22\41\1\u00cd\7"+
-            "\41",
-            "\1\u00ce",
+            "\1\u00bb\37\uffff\1\u00bb",
+            "\1\u00bc\37\uffff\1\u00bc",
+            "\1\u00bd\37\uffff\1\u00bd",
+            "\1\u00be\37\uffff\1\u00be",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
+            "\1\u00c0\37\uffff\1\u00c0",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
             "",
+            "\13\33\6\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
             "",
-            "\1\u00cf",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00d0",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00d2",
-            "",
-            "",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00d3",
-            "\1\u00d4",
-            "\1\u00d5",
-            "",
-            "\1\u00d6",
-            "\1\u00d7",
-            "\1\u00d8",
-            "\1\u00d9",
-            "\1\u00da",
-            "\1\u00db",
-            "\1\u00dc",
-            "\1\u00de\14\uffff\1\u00dd",
-            "\1\u00df",
-            "\1\u00e0",
-            "\1\u00e1",
-            "\1\u00e2",
-            "\1\u00e3",
-            "\1\u00e4",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\22\41\1\u00e5\7"+
-            "\41",
-            "\1\u00e6",
-            "\1\u00e7",
-            "\1\u00e8",
-            "\1\u00e9",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00ea",
-            "\1\u00eb",
-            "\1\u00ec",
-            "\1\u00ed",
-            "\1\u00ee",
-            "\1\u00ef",
-            "\1\u00f0",
-            "\1\u00f1",
-            "\1\u00f2",
-            "\1\u00f3",
-            "\1\u00f4",
-            "\1\u00f5",
-            "\1\u00f6",
-            "\1\u00f7",
-            "\1\u00f8",
-            "\1\u00f9",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u00fb",
-            "\1\u00fc",
-            "\1\u00fd",
-            "",
-            "\1\u00fe",
-            "\1\u00ff",
-            "\1\u0100",
-            "\1\u0101",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\1\u0102",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41",
-            "\13\41\6\uffff\32\41\4\uffff\1\41\1\uffff\32\41"
+            ""
     };
 
-    static final short[] DFA22_eot = DFA.unpackEncodedString(DFA22_eotS);
-    static final short[] DFA22_eof = DFA.unpackEncodedString(DFA22_eofS);
-    static final char[] DFA22_min = DFA.unpackEncodedStringToUnsignedChars(DFA22_minS);
-    static final char[] DFA22_max = DFA.unpackEncodedStringToUnsignedChars(DFA22_maxS);
-    static final short[] DFA22_accept = DFA.unpackEncodedString(DFA22_acceptS);
-    static final short[] DFA22_special = DFA.unpackEncodedString(DFA22_specialS);
-    static final short[][] DFA22_transition;
+    static final short[] DFA17_eot = DFA.unpackEncodedString(DFA17_eotS);
+    static final short[] DFA17_eof = DFA.unpackEncodedString(DFA17_eofS);
+    static final char[] DFA17_min = DFA.unpackEncodedStringToUnsignedChars(DFA17_minS);
+    static final char[] DFA17_max = DFA.unpackEncodedStringToUnsignedChars(DFA17_maxS);
+    static final short[] DFA17_accept = DFA.unpackEncodedString(DFA17_acceptS);
+    static final short[] DFA17_special = DFA.unpackEncodedString(DFA17_specialS);
+    static final short[][] DFA17_transition;
 
     static {
-        int numStates = DFA22_transitionS.length;
-        DFA22_transition = new short[numStates][];
+        int numStates = DFA17_transitionS.length;
+        DFA17_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA22_transition[i] = DFA.unpackEncodedString(DFA22_transitionS[i]);
+            DFA17_transition[i] = DFA.unpackEncodedString(DFA17_transitionS[i]);
         }
     }
 
-    class DFA22 extends DFA {
+    class DFA17 extends DFA {
 
-        public DFA22(BaseRecognizer recognizer) {
+        public DFA17(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 22;
-            this.eot = DFA22_eot;
-            this.eof = DFA22_eof;
-            this.min = DFA22_min;
-            this.max = DFA22_max;
-            this.accept = DFA22_accept;
-            this.special = DFA22_special;
-            this.transition = DFA22_transition;
+            this.decisionNumber = 17;
+            this.eot = DFA17_eot;
+            this.eof = DFA17_eof;
+            this.min = DFA17_min;
+            this.max = DFA17_max;
+            this.accept = DFA17_accept;
+            this.special = DFA17_special;
+            this.transition = DFA17_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( CREATE | STREAM | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | FIRST | CURRENT | PREVIOUS | ALLTOPREVIOUS | LAST | BBRACKETLEFT | BBRACKETRIGHT | TIMEUNIT | SKIP_METHOD | AGGREGATEOP | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOT | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE );";
+            return "1:1: Tokens : ( CREATE | STREAM | PATTERN | WHERE | WITHIN | RETURN | SEQ | LEFTCURLY | RIGHTCURLY | AND | LEN | BBRACKETLEFT | BBRACKETRIGHT | WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND | SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY | AVG | MIN | MAX | SUM | COUNT | PLUS | MINUS | POINT | DIVISION | MULT | COMPAREOP | SINGLEEQUALS | EQUALS | NOTSIGN | COMMA | LBRACKET | RBRACKET | NUMBER | NAME | STRING_LITERAL | NEWLINE | WHITESPACE );";
         }
     }
  

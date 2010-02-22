@@ -1,14 +1,18 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.Pair;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
@@ -20,8 +24,9 @@ import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 
 /**
  * Objekte dieser Klasse stellen die Grundkomponente fuer das Complex Event
@@ -31,7 +36,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
  * @author Thomas Vogelgesang
  * 
  */
-public class CepOperator<R, W> extends AbstractPipe<R, W> {
+public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterval>, W> extends AbstractPipe<R, W> {
 
 	Logger logger = LoggerFactory.getLogger(CepOperator.class);
 
@@ -44,6 +49,19 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	 * datenmodellunabhaengigen Auslesen von Events.
 	 */
 	private Map<Integer, IEventReader<R, ?>> eventReader = new HashMap<Integer, IEventReader<R, ?>>();
+	
+	/**
+	 * Input-Puffer zur Sortierung
+	 */
+	private PriorityQueue<Pair<R, Integer>> inputQueue = new PriorityQueue<Pair<R, Integer>>(10, new Comparator<Pair<R,Integer>>(){
+		public int compare(Pair<R,Integer> left, Pair<R,Integer> right) {
+			return   left.getE1().getMetadata().compareTo(right.getE1().getMetadata());
+		};
+	});
+	private Map<Integer,PointInTime> lastTSFromPort = new HashMap<Integer, PointInTime>();
+
+	private boolean allInputsRead = false;
+	
 	/**
 	 * Referenz auf den Verzweigungsspeicher
 	 */
@@ -107,14 +125,66 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-
+	
+	private void insertIntoInputBuffer(R event, int port){
+		if (logger.isDebugEnabled())
+			logger.debug("InputBuffer with (" +eventReader.get(port).getType()+") " + event);
+		synchronized(lastTSFromPort){
+			PointInTime tsi = event.getMetadata().getStart();
+			lastTSFromPort.put(port, tsi);
+		}
+		synchronized(inputQueue){
+			inputQueue.add(new Pair<R, Integer>(event,port));
+			if (allInputsRead){
+				processInternal();
+			}else{
+				// Von jeder Quelle mindestens ein Element (Zeitstempel) gelesen
+				allInputsRead = lastTSFromPort.size() == getInputPortCount();
+				if (allInputsRead){
+					processInternal();
+				}
+			}
+		}
+	}
+		
+	private void processInternal(){
+		PointInTime minTS = null;
+		synchronized(lastTSFromPort){
+			Iterator<PointInTime> iter = lastTSFromPort.values().iterator(); 
+			minTS = iter.next();
+			while(iter.hasNext()){
+				PointInTime l = iter.next();
+				if (l.before(minTS)){
+					minTS = l;
+				}
+			}
+		}
+		synchronized(inputQueue){
+			Iterator<Pair<R, Integer>> iter = inputQueue.iterator();
+			while(iter.hasNext()){
+				Pair<R, Integer> e = iter.next();
+				if (e.getE1().getMetadata().getStart().before(minTS)){
+					iter.remove();
+					process_internal(e.getE1(), e.getE2());
+				}
+			}
+		}
+	}
+	
+	
 	/**
 	 * Verarbeitet ein übergebenes Event.
 	 */
 	@Override
 	protected void process_next(R event, int port) {
+		insertIntoInputBuffer(event, port);
+	}
+	
+	private  void process_internal(R event, int port){
+		
+	
 		if (logger.isDebugEnabled())
-			logger.debug("Start processing event " + event);
+			logger.debug("INIT with (" +eventReader.get(port).getType()+") " + event);
 		if (logger.isDebugEnabled())
 			logger.debug(this.getStats());
 
@@ -155,12 +225,16 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 			for (Transition transition : instance.getCurrentState()
 					.getTransitions()) {
 				// Terminate if out of Window
-				if (outofWindow)
+				if (outofWindow){
 					break;
+				}
+					
 				// First check Type
 				if (!transition.getCondition().checkEventType(
-						eventReader.get(port).getType()))
+						eventReader.get(port).getType())){
+					//System.out.println("Wrong Datatype "+eventReader.get(port).getType()+" in State "+instance.getCurrentState());
 					continue;
+				}
 				// and Time
 				if (stateMachine.getWindowSize() > 0) {
 					if (!transition.getCondition().checkTime(
@@ -168,6 +242,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 							eventReader.get(port).getTime(event),
 							stateMachine.getWindowSize())) {
 						outofWindow = true;
+						//System.out.println("Out of Window ...");
 						continue;
 					}
 				}
@@ -187,9 +262,8 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 
 						}
 					} catch (Exception e) {
-						// System.out.println(transition.getCondition().getLabel());
-						// System.out.println(transition.getCondition().getExpression().getErrorInfo());
-						// e.printStackTrace();
+						//System.out.println(transition.getCondition().getLabel());
+						e.printStackTrace();
 						throw new ConditionEvaluationException(
 								"Cannot evaluate condition "
 										+ transition.getCondition(), e);
@@ -307,7 +381,7 @@ public class CepOperator<R, W> extends AbstractPipe<R, W> {
 						this.stateMachine.getOutputScheme(), 
 						instance.getMatchingTrace(), 
 						instance.getSymTab(), 
-						new PointInTime(getEventReader().get(port).getTime(instance.getMatchingTrace().getLastEvent().getEvent()),0)));
+						new PointInTime(getEventReader().get(port).getTime(instance.getMatchingTrace().getLastEvent().getEvent()))));
 				/*
 				 * An dieser Stelle muss die Instanz, die zum Complex Event
 				 * geführt hat, als veraltet markiert werden. Je nach
