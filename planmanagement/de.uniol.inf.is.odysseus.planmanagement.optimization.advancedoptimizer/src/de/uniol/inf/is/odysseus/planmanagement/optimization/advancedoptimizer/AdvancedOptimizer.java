@@ -15,12 +15,10 @@ import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.Datarate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel;
@@ -40,7 +38,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	private static final int MAX_CONCURRENT_OPTIMIZATIONS = 2;
 	private static final int NUM_COMPARE_PLANCANDIDATES = 5;
 	
-	private IAdvancedExecutor executor;
 	private IPlanExecutionCostModel executionCostModel;
 	private IPlanMigrationCostModel migrationCostModel;
 	private List<IPlanMigrationStrategie> planMigrationStrategies;
@@ -52,13 +49,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 		this.sourceDatarates = new ArrayList<IMonitoringData<?>>();
 		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategie>();
-	}
-	
-	// FIXME: zyklische abhaengigkeit
-	// <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor" name="IAdvancedExecutor" policy="dynamic"/>
-	// reoptimize bietet kein IQueryOptimizable bzw. executor, daher kommt IQueryOptimizer nicht an den compiler
-	public void bindExecutor(IAdvancedExecutor executor){
-		this.executor = executor;
 	}
 	
 	public void bindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
@@ -155,27 +145,27 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	}
 	
 	@Override
-	public IExecutionPlan reoptimize(IEditableQuery sender,
+	public IExecutionPlan reoptimize(IOptimizable sender, IEditableQuery query,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
-		this.logger.info("Start reoptimize query ID "+sender.getID());
+		this.logger.info("Start reoptimize query ID "+query.getID());
 		
 		// optimization lock on query
-		if (this.optimizationContext.containsKey(sender.getID())) {
-			this.logger.warn("Aborted reoptimization. Query with ID "+sender.getID()+" is currently getting optimized.");
+		if (this.optimizationContext.containsKey(query.getID())) {
+			this.logger.warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
 			return executionPlan;
 		} else if (this.optimizationContext.size() >= MAX_CONCURRENT_OPTIMIZATIONS) {
 			// TODO: evtl. spaeters triggern der Optimierungsanforderung
 			this.logger.warn("Aborted reoptimization. There are currently "+this.optimizationContext.size()+" optimizations running.");
 			return executionPlan;
 		}
-		PlanMigrationContext context = new PlanMigrationContext(sender);
-		this.optimizationContext.put(sender.getID(), context);
+		PlanMigrationContext context = new PlanMigrationContext(query);
+		this.optimizationContext.put(query.getID(), context);
 		
 		try {
 			// build alternative physical plans
 			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
-					(IQueryOptimizable)this.executor, sender, 
+					sender, query, 
 					new OptimizeParameter(ParameterDoRestruct.TRUE), null);
 			
 			// prepare metadata usage
@@ -191,7 +181,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
 			for (IPhysicalOperator cPlan : candidates) {
 				for (IPlanMigrationStrategie strategy : this.planMigrationStrategies) {
-					migrationCandidates.add(new PlanMigration(sender.getRoot(), cPlan, strategy));
+					migrationCandidates.add(new PlanMigration(query.getRoot(), cPlan, strategy));
 				}
 			}
 			// pick near optimal plan with acceptable migration cost
@@ -202,18 +192,18 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			
 			// TODO: possibly need to drain buffers and remove them
 			// stop scheduling
-			sender.stop();
+			query.stop();
 			
 			// start migration to new plan 
-			this.logger.info("Start migration to new physical plan (query ID "+sender.getID()+")");
-			optimalMigration.getStrategy().migrateQuery(this, sender, newPlan);
+			this.logger.info("Start migration to new physical plan (query ID "+query.getID()+")");
+			optimalMigration.getStrategy().migrateQuery(this, query, newPlan);
 			
 			// wait for migration end callback
-			this.logger.info("Plan migration running (query ID "+sender.getID()+")");
+			this.logger.info("Plan migration running (query ID "+query.getID()+")");
 			
 		} catch (Exception e) {
-			//this.optimizationContext.remove(sender.getID());
-			this.logger.warn("Reoptimization failed. (query ID "+sender.getID()+")",e);
+			//this.optimizationContext.remove(query.getID());
+			this.logger.warn("Reoptimization failed. (query ID "+query.getID()+")",e);
 		}
 		
 		return executionPlan;

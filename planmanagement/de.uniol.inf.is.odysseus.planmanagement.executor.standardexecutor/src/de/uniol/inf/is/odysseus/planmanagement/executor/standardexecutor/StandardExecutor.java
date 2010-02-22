@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecutionPlan;
 
@@ -636,7 +635,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		try {
 			if (sender instanceof Query) {
 				this.executionPlanLock.lock();
-				setExecutionPlan(optimizer().reoptimize((IEditableQuery)sender,
+				setExecutionPlan(optimizer().reoptimize(this,(IEditableQuery)sender,
 						this.executionPlan));
 
 				this.logger.debug("Query " + sender.getID() + " reoptimized.");
@@ -673,8 +672,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		if (sender instanceof Plan) {
 			try {
 				this.executionPlanLock.lock();
-				setExecutionPlan(optimizer().reoptimize((Plan) sender,
-						this.executionPlan));
+				setExecutionPlan(optimizer().reoptimize(this, this.executionPlan));
 				this.logger.debug("Plan reoptimized.");
 				firePlanModificationEvent(new PlanModificationEvent(this,
 						PlanModificationEvent.PLAN_REOPTIMIZE, this.plan));

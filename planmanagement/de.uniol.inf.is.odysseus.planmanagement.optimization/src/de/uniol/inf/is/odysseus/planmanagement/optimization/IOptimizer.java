@@ -6,7 +6,6 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
@@ -19,15 +18,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.Op
  * Defines an object which provides optimization methods. IOptimizer is the base
  * of the optimization module and combines all optimization services.
  * 
- * @author Jonas Jacobi, Wolf Bauer
- */
-/**
- * @author Wolf Bauer
- * 
- */
-/**
- * @author Wolf Bauer
- * 
+ * @author Jonas Jacobi, Wolf Bauer, Tobias Witt
  */
 public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	/**
@@ -80,6 +71,9 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * Initializes an optimization if a query requests a reoptimization.
 	 * 
 	 * @param sender
+	 *            Optimization request sender, which provides informations for
+	 *            the optimization.
+	 * @param query
 	 *            Query that requests a reoptimization.
 	 * @param executionPlan
 	 *            Current execution plan.
@@ -87,7 +81,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan reoptimize(IEditableQuery sender,
+	public IExecutionPlan reoptimize(IOptimizable sender, IEditableQuery query,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException;
 
@@ -95,14 +89,15 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * Initializes an optimization if a plan requests a reoptimization.
 	 * 
 	 * @param sender
-	 *            Plan that requests a reoptimization.
+	 *            Optimization request sender, which provides informations for
+	 *            the optimization.
 	 * @param executionPlan
 	 *            Current execution plan.
 	 * @return New optimized execution plan.
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan reoptimize(IPlan sender,
+	public IExecutionPlan reoptimize(IOptimizable sender,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException;
 
