@@ -49,6 +49,9 @@ public class ReoptimizeTimer extends AbstractPlanReoptimizeRule implements
 	 */
 	@Override
 	public void run() {
+		
+		// TODO: KEIN BUISY-WAIT!!!
+		
 		// while this Thread is running
 		while (this.running) {
 			this.curTime++;
