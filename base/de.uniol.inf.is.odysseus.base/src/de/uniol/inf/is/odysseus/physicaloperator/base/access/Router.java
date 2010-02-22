@@ -10,7 +10,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.base.UnsortedPair;
+import de.uniol.inf.is.odysseus.base.Pair;
 
 public class Router extends Thread {
 
@@ -19,7 +19,7 @@ public class Router extends Thread {
 	// HashMap<SocketChannel, ISink<ByteBuffer>>();
 	Selector selector = null;
 	static Router instance = null;
-	private LinkedList<UnsortedPair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<UnsortedPair<SocketChannel, IRouterReceiver>>();
+	private LinkedList<Pair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<Pair<SocketChannel, IRouterReceiver>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
 
@@ -135,7 +135,7 @@ public class Router extends Thread {
 
 	private void deferedRegister(SocketChannel sc, IRouterReceiver sink) {
 		synchronized (deferredList) {
-			deferredList.add(new UnsortedPair<SocketChannel, IRouterReceiver>(
+			deferredList.add(new Pair<SocketChannel, IRouterReceiver>(
 					sc, sink));
 			registerAction = true;
 		}
@@ -144,7 +144,7 @@ public class Router extends Thread {
 	private synchronized void processRegister() {
 		synchronized (deferredList) {
 			while (deferredList.size() > 0) {
-				UnsortedPair<SocketChannel, IRouterReceiver> pair = deferredList
+				Pair<SocketChannel, IRouterReceiver> pair = deferredList
 						.poll();
 				try {
 					// System.out.println("Registering "+pair.getE1()+" "+pair.getE2());

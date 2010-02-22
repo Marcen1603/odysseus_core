@@ -10,7 +10,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.base.UnsortedPair;
+import de.uniol.inf.is.odysseus.base.Pair;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 
 
@@ -21,7 +21,7 @@ public class IEC61970Router extends Thread{
 	// HashMap<SocketChannel, ISink<ByteBuffer>>();
 	Selector selector = null;
 	static IEC61970Router instance = null;
-	private LinkedList<UnsortedPair<SocketChannel, ISink<ByteBuffer>>> deferredList = new LinkedList<UnsortedPair<SocketChannel, ISink<ByteBuffer>>>();
+	private LinkedList<Pair<SocketChannel, ISink<ByteBuffer>>> deferredList = new LinkedList<Pair<SocketChannel, ISink<ByteBuffer>>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
 
@@ -120,7 +120,7 @@ public class IEC61970Router extends Thread{
 
 	private void deferedRegister(SocketChannel sc, ISink<ByteBuffer> sink) {
 		synchronized (deferredList) {
-			deferredList.add(new UnsortedPair<SocketChannel, ISink<ByteBuffer>>(
+			deferredList.add(new Pair<SocketChannel, ISink<ByteBuffer>>(
 					sc, sink));
 			registerAction = true;
 		}
@@ -129,7 +129,7 @@ public class IEC61970Router extends Thread{
 	private synchronized void processRegister() {
 		synchronized (deferredList) {
 			while (deferredList.size() > 0) {
-				UnsortedPair<SocketChannel, ISink<ByteBuffer>> pair = deferredList
+				Pair<SocketChannel, ISink<ByteBuffer>> pair = deferredList
 						.poll();
 				try {
 					// System.out.println("Registering "+pair.getE1()+" "+pair.getE2());

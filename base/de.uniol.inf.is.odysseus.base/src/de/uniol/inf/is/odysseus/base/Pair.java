@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.base;
 
-public class UnsortedPair<E1, E2> {
+public class Pair<E1, E2> {
 
 	private E1 e1;
 	private E2 e2;
 	
-	public UnsortedPair(E1 e1, E2 e2) {
+	public Pair(E1 e1, E2 e2) {
 		this.e1 = e1;
 		this.e2 = e2;
 	}
@@ -42,7 +42,7 @@ public class UnsortedPair<E1, E2> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final UnsortedPair<?,?> other = (UnsortedPair<?,?>) obj;
+		final Pair<?,?> other = (Pair<?,?>) obj;
 		if (e1 == null) {
 			if (other.e1 != null)
 				return false;

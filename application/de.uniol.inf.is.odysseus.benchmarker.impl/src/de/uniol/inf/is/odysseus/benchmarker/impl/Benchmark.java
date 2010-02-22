@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.UnsortedPair;
+import de.uniol.inf.is.odysseus.base.Pair;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
@@ -36,7 +36,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private IBenchmarkResultFactory<ILatency> resultFactory;
 	private String[] metadataTypes;
 	private ArrayList<AbstractQueryBuildParameter<?>> buildParameters;
-	private List<UnsortedPair<String, String>> queries;
+	private List<Pair<String, String>> queries;
 	private boolean usePunctuations;
 	private boolean useLoadShedding;
 	private boolean extendedPostPriorisation = false;
@@ -56,7 +56,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		this.dataType = "relational";
 		this.maxResults = -1;
 		this.buildParameters = null;
-		this.queries = new ArrayList<UnsortedPair<String, String>>();
+		this.queries = new ArrayList<Pair<String, String>>();
 		this.buildParameters = new ArrayList<AbstractQueryBuildParameter<?>>();
 		this.metadataTypes = new String[] { ITimeInterval.class.getName(),
 				ILatency.class.getName() };
@@ -72,10 +72,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	}
 
 	public void addQuery(String language, String query) {
-		this.queries.add(new UnsortedPair<String, String>(language, query));
+		this.queries.add(new Pair<String, String>(language, query));
 	}
 
-	public List<UnsortedPair<String, String>> getQueries() {
+	public List<Pair<String, String>> getQueries() {
 		return this.queries;
 	}
 
@@ -133,7 +133,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 					.add(new ParameterTransformationConfiguration(trafoConfig));
 			parameters.add(new ParameterDefaultRoot(latency));
 			parameters.addAll(getBuildParameters());
-			for (UnsortedPair<String, String> query : getQueries()) {
+			for (Pair<String, String> query : getQueries()) {
 				executor.addQuery(query.getE2(), query.getE1(), parameters
 						.toArray(new AbstractQueryBuildParameter<?>[0]));
 			}
