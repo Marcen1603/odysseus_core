@@ -17,34 +17,34 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
  * @author Tobias Witt
  *
  */
-public class PlanExecutionCostModel implements IPlanExecutionCostModel {
+public class StandardPlanExecutionCostModel implements IPlanExecutionCostModel {
 	
-	private Map<Class<?>, PlanExecutionCost> operatorCost;
+	private Map<Class<?>, StandardPlanExecutionCost> operatorCost;
 
-	public PlanExecutionCostModel() {
-		this.operatorCost = new HashMap<Class<?>, PlanExecutionCost>();
+	public StandardPlanExecutionCostModel() {
+		this.operatorCost = new HashMap<Class<?>, StandardPlanExecutionCost>();
 		
 		// base
-		this.operatorCost.put(SelectPO.class, 				new PlanExecutionCost(1, 20, 1, 1));
-		this.operatorCost.put(MetadataCreationPO.class, 	new PlanExecutionCost(1, 5, 1, 1));
+		this.operatorCost.put(SelectPO.class, 				new StandardPlanExecutionCost(1, 20, 1, 1));
+		this.operatorCost.put(MetadataCreationPO.class, 	new StandardPlanExecutionCost(1, 5, 1, 1));
 		// access
-		this.operatorCost.put(ByteBufferReceiverPO.class, 	new PlanExecutionCost(1, 6, 1, 1));
+		this.operatorCost.put(ByteBufferReceiverPO.class, 	new StandardPlanExecutionCost(1, 6, 1, 1));
 		// intervalapproach
-		this.operatorCost.put(JoinTIPO.class, 				new PlanExecutionCost(1, 30, 10, 1));
+		this.operatorCost.put(JoinTIPO.class, 				new StandardPlanExecutionCost(1, 30, 10, 1));
 		// relational
-		this.operatorCost.put(RelationalProjectPO.class, 	new PlanExecutionCost(1, 2, 1, 1));
+		this.operatorCost.put(RelationalProjectPO.class, 	new StandardPlanExecutionCost(1, 2, 1, 1));
 	}
 	
 	@Override
 	public ICostCalculator<IPhysicalOperator> getCostCalculator() {
-		return new PlanExecutionCostCalculator(this);
+		return new StandardPlanExecutionCostCalculator(this);
 	}
 	
-	PlanExecutionCost getCost(IPhysicalOperator op) {
-		return new PlanExecutionCost(this.operatorCost.get(op.getClass()));
+	StandardPlanExecutionCost getCost(IPhysicalOperator op) {
+		return new StandardPlanExecutionCost(this.operatorCost.get(op.getClass()));
 	}
 	
-	void calculateScore(PlanExecutionCost cost) {
+	void calculateScore(StandardPlanExecutionCost cost) {
 		cost.setScore((int)(1.0f * cost.getCpuTime()
 				+ 0.3f * cost.getLatency()
 				+ 0.1f * cost.getMemoryConsumption()

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Standard Plan Execution Costmodel
+Bundle-Name: Standard Plan Execution Cost Model
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardexecutioncostmodel
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

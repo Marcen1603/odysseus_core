@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Simple Migration Costmodel
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simplemigrationcostmodel
+Bundle-Name: Standard Plan Migration Cost Model
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel

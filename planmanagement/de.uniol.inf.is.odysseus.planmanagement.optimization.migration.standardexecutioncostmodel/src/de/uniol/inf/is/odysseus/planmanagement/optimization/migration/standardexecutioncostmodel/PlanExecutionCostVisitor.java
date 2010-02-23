@@ -18,17 +18,17 @@ import de.uniol.inf.is.odysseus.util.INodeVisitor;
  * @author Tobias Witt
  *
  */
-public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator, PlanExecutionCost> {
+public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator, StandardPlanExecutionCost> {
 	
-	private PlanExecutionCost cost;
-	private PlanExecutionCostModel model;
+	private StandardPlanExecutionCost cost;
+	private StandardPlanExecutionCostModel model;
 	private Stack<Double> datarates;
 	private Map<IPhysicalOperator, Integer> passCount;
 	
 	private Logger logger;
 	
-	public PlanExecutionCostVisitor(PlanExecutionCostModel costModel) {
-		this.cost = new PlanExecutionCost(0, 0, 0, 0);
+	public PlanExecutionCostVisitor(StandardPlanExecutionCostModel costModel) {
+		this.cost = new StandardPlanExecutionCost(0, 0, 0, 0);
 		this.model = costModel;
 		this.datarates = new Stack<Double>();
 		this.logger = LoggerFactory.getLogger(PlanExecutionCostVisitor.class);
@@ -57,7 +57,7 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 		}
 		IMonitoringData<Double> selectivity = to.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
 		if (selectivity!=null) {
-			PlanExecutionCost opCost = this.model.getCost(to);
+			StandardPlanExecutionCost opCost = this.model.getCost(to);
 			if (opCost!=null) {
 				opCost.scaleWithDatarate(datarate.floatValue());
 				this.cost.add(opCost);
@@ -77,7 +77,7 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 	}
 	
 	@Override
-	public PlanExecutionCost getResult() {
+	public StandardPlanExecutionCost getResult() {
 		this.model.calculateScore(this.cost);
 		//this.logger.debug("total plan score: "+this.cost.getScore());
 		return this.cost;
@@ -89,7 +89,7 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 		if (!op.isSink()) {
 			IMonitoringData<Double> datarate = op.getMonitoringData(MonitoringDataTypes.DATARATE.name);
 			if (datarate!=null) {
-				PlanExecutionCost opCost = this.model.getCost(op);
+				StandardPlanExecutionCost opCost = this.model.getCost(op);
 				if (opCost!=null) {
 					opCost.scaleWithDatarate(datarate.getValue().floatValue());
 					this.cost.add(opCost);

@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
  * @author Tobias Witt
  *
  */
-public class PlanExecutionCost implements ICost<IPhysicalOperator> {
+public class StandardPlanExecutionCost implements ICost<IPhysicalOperator> {
 	
 	private float memoryConsumption;	// in bytes / 100 tuples
 	private float cpuTime;			// in ms / 100 tuples
@@ -16,7 +16,7 @@ public class PlanExecutionCost implements ICost<IPhysicalOperator> {
 	private float networkBandwidth;	// in bytes / 100 tuples
 	private int score;
 	
-	public PlanExecutionCost(float memoryConsumption, float cpuTime, float latency, float networkBandwidth) {
+	public StandardPlanExecutionCost(float memoryConsumption, float cpuTime, float latency, float networkBandwidth) {
 		this.memoryConsumption = memoryConsumption;
 		this.cpuTime = cpuTime;
 		this.latency = latency;
@@ -24,7 +24,7 @@ public class PlanExecutionCost implements ICost<IPhysicalOperator> {
 		this.score = 0;
 	}
 	
-	PlanExecutionCost(PlanExecutionCost cost) {
+	StandardPlanExecutionCost(StandardPlanExecutionCost cost) {
 		this.cpuTime = cost.getCpuTime();
 		this.latency = cost.getLatency();
 		this.memoryConsumption = cost.getMemoryConsumption();
@@ -91,7 +91,7 @@ public class PlanExecutionCost implements ICost<IPhysicalOperator> {
 		this.score = score;
 	}
 	
-	public void add(PlanExecutionCost cost) {
+	public void add(StandardPlanExecutionCost cost) {
 		this.cpuTime += cost.getCpuTime();
 		this.latency += cost.getLatency();
 		this.memoryConsumption += cost.getMemoryConsumption();

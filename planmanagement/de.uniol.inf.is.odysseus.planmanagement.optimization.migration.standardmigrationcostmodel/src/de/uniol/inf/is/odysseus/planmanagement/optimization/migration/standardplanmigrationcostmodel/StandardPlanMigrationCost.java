@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simplemigrationcostmodel;
+package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel;
 
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.ICost;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
  * @author Tobias Witt
  *
  */
-public class PlanMigrationCost implements ICost<PlanMigration> {
+public class StandardPlanMigrationCost implements ICost<PlanMigration> {
 
 	@Override
 	public int getScore() {
