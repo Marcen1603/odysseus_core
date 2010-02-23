@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.base.CopyLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
@@ -15,6 +16,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
@@ -154,30 +156,31 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		// Plaene liefern, die z.B. durch Vertauschen von Joins erzeugt werden
 		
 		ICompiler compiler = sender.getCompiler();
-		
+
 		if (compiler == null) {
 			throw new QueryOptimizationException("Compiler is not loaded.");
 		}
 
 		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
-		
-		// if a logical rewrite should be processed.
-		ILogicalOperator sealedLogicalPlan = query
-				.getSealedLogicalPlan();
+
+		// create working copy of plan
+		ILogicalOperator logicalPlanCopy = AbstractTreeWalker.prefixWalk(query.getSealedLogicalPlan(), 
+				new CopyLogicalPlanVisitor());
 		
 		ILogicalOperator newLogicalAlgebra = null;
-		if (sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE) {
-			// TODO rules nicht benutzt, weil null
-			newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan);
-			// set new logical plan.
-			query.setLogicalPlan(newLogicalAlgebra);
+		if (restruct != null && restruct == ParameterDoRestruct.TRUE) {
+			if (rulesToUse==null) {
+				newLogicalAlgebra = compiler.restructPlan(logicalPlanCopy);
+			} else {
+				newLogicalAlgebra = compiler.restructPlan(logicalPlanCopy,rulesToUse);
+			}
 		}
 
-		if (query.getSealedRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
+		if ((restruct != null && restruct == ParameterDoRestruct.TRUE)){
 		try {
 				// create the physical plan
-				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
-						.getTransformationConfiguration());
+				IPhysicalOperator physicalPlan = compiler.transform(newLogicalAlgebra,
+						query.getBuildParameter().getTransformationConfiguration());	
 
 				IBufferPlacementStrategy bufferPlacementStrategy = query
 						.getBuildParameter().getBufferPlacementStrategy();
