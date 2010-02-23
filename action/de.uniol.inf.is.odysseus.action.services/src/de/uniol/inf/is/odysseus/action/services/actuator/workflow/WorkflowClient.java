@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
-import de.uniol.inf.is.odysseus.action.services.actuator.ActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 
