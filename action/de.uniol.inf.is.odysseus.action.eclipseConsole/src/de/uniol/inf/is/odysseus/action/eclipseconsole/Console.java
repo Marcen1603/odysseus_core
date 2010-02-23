@@ -114,7 +114,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		String actuatorName = args[1];
 		try {
 			List<ActionMethod> schema = this.actuatorFactory.getReducedSchema(actuatorName, managerName);
-			if (schema.size() <= 0){
+			if (schema.isEmpty()){
 				schema = this.actuatorFactory.getFullSchema(actuatorName, managerName);
 			}
 			ci.println("--Schema of <"+actuatorName+">--");
