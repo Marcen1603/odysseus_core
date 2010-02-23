@@ -78,12 +78,20 @@ public class StreamServer extends Thread {
 	
 	@Override
 	protected void finalize() throws Throwable {
-		if (this.socket != null && !this.socket.isClosed()) {
-			this.socket.close();
-		}
-		
-		if (this.sensorClient != null && this.sensorClient.isAlive()){
-			this.sensorClient.closeSocket();
+		this.closeSockets();
+	}
+
+	public void closeSockets() {
+		try{
+			if (this.socket != null && !this.socket.isClosed()) {
+				this.socket.close();
+			}
+			
+			if (this.sensorClient != null && this.sensorClient.isAlive()){
+				this.sensorClient.closeSocket();
+			}
+		}catch (IOException e){
+			e.printStackTrace();
 		}
 	}
 
