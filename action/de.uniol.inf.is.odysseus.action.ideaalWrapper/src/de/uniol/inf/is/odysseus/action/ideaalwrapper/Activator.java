@@ -17,7 +17,9 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		servers = new ArrayList<StreamServer>();
 		for (Sensor sensor : Sensor.values()){
-			servers.add(new StreamServer(sensor, ++startPort));
+			StreamServer server = new StreamServer(sensor, ++startPort);
+			server.start();
+			servers.add(server);
 		}
 	}
 
