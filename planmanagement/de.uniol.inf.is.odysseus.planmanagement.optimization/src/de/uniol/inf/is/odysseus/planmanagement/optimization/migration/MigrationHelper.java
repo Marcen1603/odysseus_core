@@ -80,20 +80,20 @@ public class MigrationHelper {
 		}
 	}
 	
-	public static List<ISink<?>> getOperatorsBeforeSplit(IPhysicalOperator op) {
-		List<ISink<?>> operators = new ArrayList<ISink<?>>();
-		getOperatorsBeforeSplit(operators, op);
-		return operators;
+	public static List<IPhysicalOperator> getOperatorsBeforeSources(IPhysicalOperator op) {
+		List<IPhysicalOperator> list = new ArrayList<IPhysicalOperator>();
+		getOperatorsBeforeSources(list, op);
+		return list;
 	}
 	
-	private static void getOperatorsBeforeSplit(List<ISink<?>> operators, IPhysicalOperator op) {
+	private static void getOperatorsBeforeSources(List<IPhysicalOperator> list, IPhysicalOperator op) {
 		for (PhysicalSubscription<?> sub : ((ISink<?>)op).getSubscribedToSource()) {
 			IPhysicalOperator target = (IPhysicalOperator)sub.getTarget();
-			if (target instanceof SplitPO) {
-				operators.add((ISink<?>) op);
+			if (!target.isSink()) {
+				list.add(op);
 				continue;
 			}
-			getOperatorsBeforeSplit(operators, target);
+			getOperatorsBeforeSources(list, target);
 		}
 	}
 	

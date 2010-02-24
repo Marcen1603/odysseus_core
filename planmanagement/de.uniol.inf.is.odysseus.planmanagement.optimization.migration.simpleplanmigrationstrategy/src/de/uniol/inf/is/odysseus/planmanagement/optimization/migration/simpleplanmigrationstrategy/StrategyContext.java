@@ -6,7 +6,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 
 /**
@@ -21,7 +20,6 @@ class StrategyContext {
 	private IPhysicalOperator newPlanRoot;
 	private long ms;
 	private List<BlockingBuffer<?>> blockingBuffers;
-	private List<IPipe> splits;
 
 	public StrategyContext(IOptimizer optimizer, IEditableQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
@@ -29,7 +27,6 @@ class StrategyContext {
 		this.runningQuery = runningQuery;
 		this.newPlanRoot = newPlanRoot;
 		this.blockingBuffers = new ArrayList<BlockingBuffer<?>>();
-		this.splits = new ArrayList<IPipe>();
 	}
 
 	public IOptimizer getOptimizer() {
@@ -70,14 +67,6 @@ class StrategyContext {
 
 	public void setBlockingBuffers(List<BlockingBuffer<?>> blockingBuffers) {
 		this.blockingBuffers = blockingBuffers;
-	}
-
-	public List<IPipe> getSplits() {
-		return splits;
-	}
-
-	public void setSplits(List<IPipe> splits) {
-		this.splits = splits;
 	}
 
 }

@@ -1,25 +1,21 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.predicate.FalsePredicate;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SplitPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
@@ -27,8 +23,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
-
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
 
 /**
  * 
@@ -57,6 +51,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		// install both plans for parallel execution
 		IPhysicalOperator oldPlanRoot = runningQuery.getRoot();
 		List<ISource<?>> oldPlanSources = MigrationHelper.getSources(oldPlanRoot);
+		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(oldPlanRoot);
 		
 		// get last operators before output sink
 		IPhysicalOperator lastOperatorOldPlan;
@@ -80,36 +75,20 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 			IPipe buffer = new BlockingBuffer();
 			buffer.setOutputSchema(source.getOutputSchema());
 			context.getBlockingBuffers().add((BlockingBuffer<?>)buffer);
-			List<IPredicate<?>> predicates = new ArrayList<IPredicate<?>>();
-			predicates.add(new TruePredicate());
-			IPipe split = new SplitPO(predicates);
-			split.setOutputSchema(buffer.getOutputSchema());
-			context.getSplits().add(split);
 			
-			int freesourceOutPort = -1;
 			for (PhysicalSubscription<?> sub : source.getSubscriptions()) {
 				IPhysicalOperator o = (IPhysicalOperator)sub.getTarget();
-				boolean belongsToThisQuery = false;
-				for (IOperatorOwner owner : o.getOwner()) {
-					if (owner == runningQuery) {
-						belongsToThisQuery = true;
-						break;
-					}
-				}
-				if (!belongsToThisQuery) {
+				if (!oldPlanOperatorsBeforeSources.contains(o)) {
+					// operator doesn't belong to this query
 					continue;
 				}
-				// remove subscription to source and subscribe to split
+				// remove subscription to source and subscribe to buffer
 				((ISink)o).unsubscribeFromSource(sub);
-				((ISink)o).subscribeToSource(split, sub.getSinkInPort(), sub.getSourceOutPort(), split.getOutputSchema());
-				if (freesourceOutPort == -1) {
-					freesourceOutPort = sub.getSourceOutPort();
-				}
+				((ISink)o).subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
 			}
 			
-			// subscribe split to buffer and buffer to source
-			split.subscribeToSource(buffer, 0, 0, buffer.getOutputSchema());
-			buffer.subscribeToSource(source, 0, freesourceOutPort, source.getOutputSchema());
+			// subscribe buffer to source
+			buffer.subscribeToSource(source, 0, 0, source.getOutputSchema());
 		}
 		
 		// 'merge' operator at top, discarding tuples of new plan
@@ -179,28 +158,16 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		newPlanRoot.subscribeToSource(lastOperator, newRootSubscription.getSinkInPort(), 
 				selectSubscription.getSourceOutPort(), lastOperator.getOutputSchema());
 		
-		// connect new plan directly to buffers, unsubscribe from split
-		// TODO: kann buffer mehrere ausgabestroeme haben?
-		List<ISink<?>> opBeforeSplits = MigrationHelper.getOperatorsBeforeSplit(newPlanRoot);
-		for (ISink<?> op : opBeforeSplits) {
-			for (PhysicalSubscription sub : op.getSubscribedToSource()) {
-				op.unsubscribeFromSource(sub);
-				IPipe buffer = (IPipe)((IPipe)sub.getTarget()).getSubscribedToSource(0).getTarget();
-				op.subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
-			}
-		}
-		
 		// push data from buffers into plan
 		// TODO direct push (s.o.)?
 		
 		// remove buffers
-		for (ISink<?> op : opBeforeSplits) {
-			for (PhysicalSubscription sub : op.getSubscribedToSource()) {
-				op.unsubscribeFromSource(sub);
-				IPipe buffer = (IPipe)sub.getTarget();
-				ISource source = (ISource)buffer.getSubscribedToSource(0);
-				// TODO: freier Port bei source?
-				op.subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), source.getOutputSchema());
+		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
+			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
+			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
+				ISink sink = (ISink<?>) sub.getTarget();
+				((ISource)buffer).unsubscribeSink(sub);
+				sink.subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), source.getOutputSchema());
 			}
 		}
 		
