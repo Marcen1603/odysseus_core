@@ -5,15 +5,21 @@ import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
@@ -98,6 +104,46 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 		return broker;
 		
+	}
+	
+	public Object visit(ASTCreateBroker node, Object data) {
+		String brokerName = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+		//check first if name already exists
+		if(BrokerDictionary.getInstance().brokerExists(brokerName)){
+			throw new RuntimeException("There is already a broker named \""+brokerName+"\".");
+		}
+		
+		//parse attributes
+		SDFAttributeList attributes = new SDFAttributeList();
+		ASTAttributeDefinitions attributeDe = (ASTAttributeDefinitions) node.jjtGetChild(1);
+		for(int i=0;i<attributeDe.jjtGetNumChildren();i++){
+			ASTAttributeDefinition attrNode = (ASTAttributeDefinition)attributeDe.jjtGetChild(i);
+			String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
+			SDFAttribute attribute = new SDFAttribute(brokerName, attrName);
+			ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
+			attribute.setDatatype(astAttrType.getType());
+			if (SDFDatatypes.isDate(attribute.getDatatype())) {
+				attribute.addDtConstraint("format", astAttrType.getDateFormat());
+			}
+			attribute.setCovariance(astAttrType.getRow());
+			attributes.add(attribute);
+		}
+		
+		// add everything to DataDictionary
+		for (SDFAttribute a : attributes) {
+			DataDictionary.getInstance().attributeMap.put(brokerName, a);
+		}
+								
+		// make it accessible like a normal source
+		DataDictionary.getInstance().sourceTypeMap.put(brokerName, "brokerStreaming");
+		SDFEntity entity = new SDFEntity(brokerName);		
+		entity.setAttributes(attributes);		
+		DataDictionary.getInstance().entityMap.put(brokerName, entity);
+		//create the broker
+		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
+		broker.setOutputSchema(attributes);
+		BrokerDictionary.getInstance().addBroker(brokerName, broker);
+		return broker;
 	}
 	
 	private boolean schemaEquals(SDFAttributeList left, SDFAttributeList right){
