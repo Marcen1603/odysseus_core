@@ -1119,7 +1119,7 @@ public class ExecutorConsole implements CommandProvider,
 			System.out
 					.println("Current registered queries (ID | STARTED | PARSERID):");
 			for (IQuery query : this.executor.getSealedPlan().getQueries()) {
-				ci.println(query.getID() + " | " + query.isStarted());
+				ci.println(query.getID() + " | " + query.isRunning()+" | "+query.getParserId());
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();

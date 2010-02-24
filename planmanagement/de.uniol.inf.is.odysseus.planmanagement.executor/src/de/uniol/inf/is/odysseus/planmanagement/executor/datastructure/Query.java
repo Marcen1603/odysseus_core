@@ -534,10 +534,15 @@ public class Query implements IEditableQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.IOperatorControl#isStarted()
+	 * de.uniol.inf.is.odysseus.base.planmanagement.IOperatorControl#îsRunning()
 	 */
 	@Override
-	public boolean isStarted() {
+	public boolean isRunning() {
 		return this.started;
+	}
+	
+	@Override
+	public String getParserId() {
+		return parserID;
 	}
 }

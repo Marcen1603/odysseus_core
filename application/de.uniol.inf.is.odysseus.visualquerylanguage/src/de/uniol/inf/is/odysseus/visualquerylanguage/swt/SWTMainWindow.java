@@ -245,7 +245,7 @@ public class SWTMainWindow {
 								.getSelection()[0].getData() instanceof IQuery) {
 							if (((IQuery) ((Table) (tabFolder.getSelection()
 									.getControl())).getSelection()[0].getData())
-									.isStarted()) {
+									.isRunning()) {
 								try {
 									executor
 											.stopQuery(((IQuery) ((Table) (tabFolder
@@ -269,7 +269,7 @@ public class SWTMainWindow {
 						IQuery query = executor.getSealedPlan().getQuery(
 								((DefaultGraphArea) tabFolder.getSelection()
 										.getControl()).getQueryID());
-						if (query != null && query.isStarted()) {
+						if (query != null && query.isRunning()) {
 							executor.stopQuery(query.getID());
 							((DefaultGraphArea) tabFolder.getSelection()
 									.getControl()).setQueryID(-1);
@@ -447,7 +447,7 @@ public class SWTMainWindow {
 				for (IQuery query : executor.getSealedPlan().getQueries()) {
 					firstItem = new TableItem(table, SWT.NONE);
 					firstItem.setData(query);
-					if (query.isStarted()) {
+					if (query.isRunning()) {
 						firstItem.setText(new String[] {
 								Integer.toString(query.getID()), "Ja" });
 					} else {
