@@ -429,7 +429,7 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    if (t2 == null)    {      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image), 0), PointInTime.getInfinityTime()));    }    else    {      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image), 0), new PointInTime(Long.parseLong(t2.image), 0)));    }  }/*@bgen(jjtree)*/
+/*@egen*/  {    if (t2 == null)    {      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image)), PointInTime.getInfinityTime()));    }    else    {      jjtn000.setInterval(new TimeInterval(new PointInTime(Long.parseLong(t.image)), new PointInTime(Long.parseLong(t2.image))));    }  }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -2004,7 +2004,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CreateBroker */
   try {
-/*@egen*/  < K_CREATE ><K_BROKER > Identifier()/*@bgen(jjtree)*/
+/*@egen*/  < K_CREATE ><K_BROKER > Identifier() "(" AttributeDefinitions() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2024,7 +2024,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/ }void BrokerSource() : {/*@bgen(jjtree) BrokerSource */
+/*@egen*/}void BrokerSource() : {/*@bgen(jjtree) BrokerSource */
   ASTBrokerSource jjtn000 = new ASTBrokerSource(JJTBROKERSOURCE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

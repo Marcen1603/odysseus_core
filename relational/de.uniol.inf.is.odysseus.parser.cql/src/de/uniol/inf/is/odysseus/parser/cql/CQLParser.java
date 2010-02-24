@@ -667,8 +667,21 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateBroker node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			Class<?> brokerSourceVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Object bsv = brokerSourceVisitor.newInstance();
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+					ASTCreateBroker.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+					.invoke(bsv, node, data);
+			plans.add(sourceOp);
+			return plans;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
+		} catch (Exception e) {
+			throw new RuntimeException("Error while parsing CREATE BROKER statement", e.getCause());
+		}		
 	}
 
 	@Override

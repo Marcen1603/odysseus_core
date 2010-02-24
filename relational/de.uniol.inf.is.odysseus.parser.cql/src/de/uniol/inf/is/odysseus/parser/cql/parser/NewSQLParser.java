@@ -3499,6 +3499,9 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
       jj_consume_token(K_CREATE);
       jj_consume_token(K_BROKER);
       Identifier();
+      jj_consume_token(104);
+      AttributeDefinitions();
+      jj_consume_token(106);
     } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
