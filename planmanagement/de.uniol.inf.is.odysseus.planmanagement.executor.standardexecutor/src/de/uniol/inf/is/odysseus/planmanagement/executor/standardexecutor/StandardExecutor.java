@@ -557,7 +557,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public void startQuery(int queryID) {
 		Query queryToStart = (Query) this.plan.getQuery(queryID);
-		if (queryToStart.isStarted()) {
+		if (queryToStart.isRunning()) {
 			this.logger.info("Query (ID: " + queryID + ") is already started.");
 			return ;
 		}
