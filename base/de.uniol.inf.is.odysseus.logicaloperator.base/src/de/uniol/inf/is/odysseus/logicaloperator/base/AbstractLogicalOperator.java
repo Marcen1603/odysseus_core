@@ -41,12 +41,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private IPredicate predicate = null;;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
-		this.subscribedToSource = new HashMap<Integer, LogicalSubscription>(op.subscribedToSource);
-		this.subscriptions = new Vector<LogicalSubscription>(op.subscriptions);
-		predicate =  op.predicate;
+		// Subscriptions gehoeren eigentlich nicht zum Operator?
+//		this.subscribedToSource = new HashMap<Integer, LogicalSubscription>(op.subscribedToSource);
+//		this.subscriptions = new Vector<LogicalSubscription>(op.subscriptions);
+		predicate =   (op.predicate == null)?null:op.predicate.clone();
 		setName(op.getName());
-		physSubscriptionTo = op.physSubscriptionTo == null ? null
-				: new HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
+//		physSubscriptionTo = op.physSubscriptionTo == null ? null
+//				: new HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
 	}
 
 	public AbstractLogicalOperator() {
@@ -59,23 +60,24 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#clone()
 	 */
 	@Override
-	public AbstractLogicalOperator clone() {
-		AbstractLogicalOperator clone;
-		try {
-			clone = (AbstractLogicalOperator) super.clone();
-			clone.subscribedToSource = new HashMap<Integer, LogicalSubscription>(this.subscribedToSource);
-			clone.subscriptions = new Vector<LogicalSubscription>(this.subscriptions);
-			clone.physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>(
-					this.physSubscriptionTo);
-			clone.name = this.name;
-			if (this.predicate != null)
-				clone.predicate = this.predicate.clone();
-
-			// TODO ueberall kopien von anlegen
-			return clone;
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
+	public AbstractLogicalOperator clone() throws CloneNotSupportedException{
+		throw new CloneNotSupportedException();
+//		AbstractLogicalOperator clone;
+//		try {
+//			clone = (AbstractLogicalOperator) super.clone();
+//			clone.subscribedToSource = new HashMap<Integer, LogicalSubscription>(this.subscribedToSource);
+//			clone.subscriptions = new Vector<LogicalSubscription>(this.subscriptions);
+//			clone.physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>(
+//					this.physSubscriptionTo);
+//			clone.name = this.name;
+//			if (this.predicate != null)
+//				clone.predicate = this.predicate.clone();
+//
+//			// TODO ueberall kopien von anlegen
+//			return clone;
+//		} catch (CloneNotSupportedException e) {
+//			return null;
+//		}
 	}
 
 	/*
@@ -337,6 +339,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public int getNumberOfInputs() {
 		return this.subscribedToSource.size();
+	}
+	
+	@Override
+	public void clearPhysicalSubscriptions() {
+		this.physInputOperators.clear();
+		this.physSubscriptionTo.clear();
 	}
 		
 }

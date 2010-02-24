@@ -32,7 +32,10 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	@Override
 	final protected void process_next(RelationalTuple<T> object, int port) {
 		try {
-			RelationalTuple<T> out = object.restrict(this.restrictList, false);
+			// System.out.println("RelationalTuple "+this+" "+object);
+			//RelationalTuple<T> out = object.restrict(this.restrictList, false);
+			// TODO: Change the Following
+			RelationalTuple<T> out = object.restrict(this.restrictList, true);
 			transfer(out);
 		} catch (Exception e) {
 			e.printStackTrace();

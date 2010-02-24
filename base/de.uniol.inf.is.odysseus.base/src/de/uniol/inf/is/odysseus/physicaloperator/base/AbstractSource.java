@@ -31,7 +31,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final protected Map<POEventType, ArrayList<POEventListener>> eventListener = new HashMap<POEventType, ArrayList<POEventListener>>();
 	final protected ArrayList<POEventListener> genericEventListener = new ArrayList<POEventListener>();
-	private boolean hasSingleConsumer = false;
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
 	private SDFAttributeList outputSchema;
@@ -145,7 +144,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	 * @return
 	 */
 	protected boolean isTransferExclusive() {
-		return hasSingleConsumer;
+		return hasSingleConsumer();
+	}
+	
+	protected boolean hasSingleConsumer(){
+		return this.subscriptions.size() == 1;
 	}
 
 	final protected void fire(POEvent event) {
@@ -169,7 +172,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
 				//if (sink.getTarget().isActive() ?? hasOwner??){
-					sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer);
+					sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer());
 				//}
 			}
 		}
@@ -183,7 +186,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			if (!this.subscriptions.contains(sub)) {
 				this.subscriptions.add(sub);
 				sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
-				this.hasSingleConsumer = this.subscriptions.size() == 1;
 			}
 		}
 	}
@@ -199,7 +201,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			if (this.subscriptions.remove(subscription)) {
 				subscription.getTarget().unsubscribeFromSource(this,subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			}
-			this.hasSingleConsumer = this.subscriptions.size() == 1;
 		}	
 	}
 	
@@ -244,10 +245,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// es kann z.B. sein, dass ein MetadataItem f�r zwei Events
 			// registriert wird, aber nat�rlich trotzdem nur einmal
 			// als MetadataItem registriert sein muss
-			try {
+			
+			// TODO: Die Loesung mit der Exception war nicht schoen ...
+			// Jetzt wird es einfach ignoriert
+			//try {
 				this.addMonitoringData(mItem.getType(), mItem);
-			} catch (IllegalArgumentException e) {
-			}
+//			} catch (IllegalArgumentException e) {
+//			}
 		}
 	}
 
@@ -279,9 +283,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	final protected boolean hasSingleConsumer() {
-		return this.hasSingleConsumer;
-	}
 
 	@Override
 	public String toString() {

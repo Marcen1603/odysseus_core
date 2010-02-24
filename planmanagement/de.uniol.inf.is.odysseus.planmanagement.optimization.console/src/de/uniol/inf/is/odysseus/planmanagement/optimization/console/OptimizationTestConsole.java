@@ -19,17 +19,18 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Settin
  * custom OSGi console to test planoptimization scenarios
  * 
  * @author Tobias Witt
- *
+ * 
  */
-public class OptimizationTestConsole implements	org.eclipse.osgi.framework.console.CommandProvider {
-	
+public class OptimizationTestConsole implements
+		org.eclipse.osgi.framework.console.CommandProvider {
+
 	private IAdvancedExecutor executor;
-	
+
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration("relational", ITimeInterval.class));
-	
-	public void bindExecutor(IAdvancedExecutor executor){
+
+	public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
 		System.out.println("executor gebunden");
 	}
@@ -37,9 +38,9 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 	@Override
 	public String getHelp() {
 		return " --- Optimization Test Console Functions --- \n"
-			+"  m - default planmigration test\n";
+				+ "  m - default planmigration test\n";
 	}
-	
+
 	private void nmsn(CommandInterpreter ci) {
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
@@ -55,45 +56,58 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 		}
 		ci.println("Nexmark Sources with NIO added.");
 	}
-	
-	public void _m (CommandInterpreter ci) {
+
+	public void _m(CommandInterpreter ci) {
 		try {
 			nmsn(ci);
-			/*Collection<Integer> queryIds = this.executor.addQuery("SELECT * FROM nexmark:bid2", 
-					parser(), new ParameterDefaultRoot(new OptimizationTestSink(false)), this.trafoConfigParam);*/
-			Collection<Integer> queryIds = this.executor.addQuery("SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction", 
-					parser(), new ParameterDefaultRoot(new OptimizationTestSink(false)), this.trafoConfigParam);
+			/*
+			 * Collection<Integer> queryIds =
+			 * this.executor.addQuery("SELECT * FROM nexmark:bid2", parser(),
+			 * new ParameterDefaultRoot(new OptimizationTestSink(false)),
+			 * this.trafoConfigParam);
+			 */
+			Collection<Integer> queryIds = this.executor
+					.addQuery(
+//							"SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction",
+//							"SELECT bid.price FROM nexmark:bid2 AS bid WHERE bid.price > 1",
+							"SELECT bid.price FROM nexmark:bid2 AS bid",
+							parser(), new ParameterDefaultRoot(
+									new OptimizationTestSink(false)),
+							this.trafoConfigParam);
 			this.executor.startExecution();
-			
-			IEditablePlan plan = (IEditablePlan)this.executor.getSealedPlan();
+
+			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
 			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
 			IPhysicalOperator op = query.getRoot();
 			System.out.println(op.getName());
-			
-			this.executor.getOptimizerConfiguration().set(new SettingMaxConcurrentOptimizations(1));
+
+			this.executor.getOptimizerConfiguration().set(
+					new SettingMaxConcurrentOptimizations(1));
 			try {
 				Thread.sleep(2000);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
 			System.out.println("reoptimize...");
 			query.reoptimize();
-			
-			/*while (true) {
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {}
-				System.out.println("Plan cost test...");
-				for (ISource<?> s : MigrationHelper.getSources(op)) {
-					IMonitoringData<?> d = s.getMonitoringData(MonitoringDataTypes.DATARATE.name);
-					((Datarate)d).run();
-					//System.out.println("datarate on "+s.getName()+" is "+s.getMonitoringData(MonitoringDataTypes.DATARATE.name).getValue());
-				}
-				ICost<?> cost = PlanExecutionCostModel.getCostCalculator().calculateCost(op);
-				System.out.println("Plan score: "+cost.getScore());
-			}*/
-			
-			//query.stop();
-			//AbstractTreeWalker.prefixWalk2(op, new CopyPhysicalPlanVisitor());
-			
+
+			/*
+			 * while (true) { try { Thread.sleep(2000); } catch
+			 * (InterruptedException e) {}
+			 * System.out.println("Plan cost test..."); for (ISource<?> s :
+			 * MigrationHelper.getSources(op)) { IMonitoringData<?> d =
+			 * s.getMonitoringData(MonitoringDataTypes.DATARATE.name);
+			 * ((Datarate)d).run();
+			 * //System.out.println("datarate on "+s.getName
+			 * ()+" is "+s.getMonitoringData
+			 * (MonitoringDataTypes.DATARATE.name).getValue()); } ICost<?> cost
+			 * = PlanExecutionCostModel.getCostCalculator().calculateCost(op);
+			 * System.out.println("Plan score: "+cost.getScore()); }
+			 */
+
+			// query.stop();
+			// AbstractTreeWalker.prefixWalk2(op, new
+			// CopyPhysicalPlanVisitor());
+
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}

@@ -10,6 +10,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 public class AbstractTreeWalker {
 	public static <R,T extends ISubscriber, H extends ISubscription<T>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {
 		visitor.node(node);
+		if (!(node instanceof ISubscriber)){
+			return null;
+		}
 		for (H s:node.getSubscribedToSource()){
 			visitor.descend(s.getTarget());
 			prefixWalk(s.getTarget(), visitor);

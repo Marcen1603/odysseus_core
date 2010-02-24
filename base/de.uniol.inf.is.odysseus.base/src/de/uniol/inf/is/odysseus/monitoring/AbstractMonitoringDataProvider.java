@@ -61,7 +61,8 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 	public void addMonitoringData(String type,
 			IMonitoringData<?> item) {
 		if (this.metaDataItem.containsKey(type)) {
-			throw new IllegalArgumentException(type + " is already registered");
+			//throw new IllegalArgumentException(type + " is already registered");
+			return;
 		}
 
 		this.metaDataItem.put(type, item);

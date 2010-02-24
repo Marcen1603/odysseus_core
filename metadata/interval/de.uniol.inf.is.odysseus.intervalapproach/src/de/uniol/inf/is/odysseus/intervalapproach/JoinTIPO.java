@@ -76,10 +76,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		
 		this.joinPredicate = join.joinPredicate.clone();
 		this.dataMerge = join.dataMerge.clone();
+		dataMerge.init();
 
 		this.metadataMerge = join.metadataMerge.clone();
+		metadataMerge.init();
 		this.transferFunction = join.transferFunction.clone();
-		this.transferFunction.setSourcePo(this);
+		this.transferFunction.init(this);
 		this.outputSchema = join.outputSchema.clone();
 		this.creationFunction = join.creationFunction.clone();
 		

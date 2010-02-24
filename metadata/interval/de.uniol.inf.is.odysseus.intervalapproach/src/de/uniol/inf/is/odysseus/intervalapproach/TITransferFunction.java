@@ -47,19 +47,23 @@ public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITim
 
 	@Override
 	public void newElement(T object, int port) {
-		ITimeInterval minimum;
+		ITimeInterval minimum = null;
 		synchronized (minTs) {
 			minTs[port] = object.getMetadata();
-			minimum = TimeInterval.startsBefore(minTs[0], minTs[1]) ? minTs[0]
-					: minTs[1];
+			if (minTs[0]!=null && minTs[1]!=null){
+				minimum = TimeInterval.startsBefore(minTs[0], minTs[1]) ? minTs[0]
+				                                                               : minTs[1];
+			}
 		}
-		synchronized (this.out) {
-			// don't use an iterator, it does NOT guarantee ordered traversal!
-			T elem = this.out.peek();
-			while(elem != null && TimeInterval.startsBeforeOrEqual(elem.getMetadata(), minimum)){
-				this.out.poll();
-				po.transfer(elem);
-				elem = this.out.peek();
+		if (minimum != null){
+			synchronized (this.out) {
+				// don't use an iterator, it does NOT guarantee ordered traversal!
+				T elem = this.out.peek();
+				while(elem != null && TimeInterval.startsBeforeOrEqual(elem.getMetadata(), minimum)){
+					this.out.poll();
+					po.transfer(elem);
+					elem = this.out.peek();
+				}
 			}
 		}
 	}

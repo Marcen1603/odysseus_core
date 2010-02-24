@@ -47,7 +47,11 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 		}
 		// install selectivity listener on every pipe operator
 		if (op.isPipe() && !((IPipe<?,?>)op).getProvidedMonitoringData().contains(MonitoringDataTypes.SELECTIVITY.name)) {
-			MonitoringDataTypes.createMetadata(MonitoringDataTypes.SELECTIVITY.name, (IPipe<?, ?>) op);
+			try{
+				MonitoringDataTypes.createMetadata(MonitoringDataTypes.SELECTIVITY.name, (IPipe<?, ?>) op);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 			// subscribe is done in constructor
 		}
 		/* TODO: latency messen

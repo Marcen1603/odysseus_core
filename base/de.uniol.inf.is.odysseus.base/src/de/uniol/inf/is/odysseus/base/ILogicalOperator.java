@@ -6,10 +6,10 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public interface ILogicalOperator extends IClone, IOwnedOperator, 
+public interface ILogicalOperator extends IOwnedOperator, 
 	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>{
 
-	public ILogicalOperator clone();
+	public ILogicalOperator clone() throws CloneNotSupportedException;
 	public SDFAttributeList getOutputSchema();
 	public SDFAttributeList getInputSchema(int pos);
 	
@@ -29,6 +29,7 @@ public interface ILogicalOperator extends IClone, IOwnedOperator,
 	boolean isAllPhysicalInputSet();
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
 	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
+	public void clearPhysicalSubscriptions();
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();
 	// Currently needed for Transformation --> we should get rid of this!

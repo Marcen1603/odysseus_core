@@ -59,15 +59,22 @@ public class CopyLogicalPlanVisitor	implements
 	public void node(ISubscriber<ILogicalOperator, LogicalSubscription> node) {
 		ILogicalOperator op = (ILogicalOperator) node;
 		this.logger.debug("copy " + op.getName());
-		ILogicalOperator op2 = op.clone();
-		if (this.root == null) {
-			this.root = op2;
-		}
-		for (int i=op2.getSubscribedToSource().size()-1; i>=0; i--) {
-			op2.unsubscribeFromSource(op2.getSubscribedToSource(i));
-		}
-		this.last.push(op2);
+		ILogicalOperator op2 = null;
+		try {
+			op2 = op.clone();
+			op2.clearPhysicalSubscriptions();
+			if (this.root == null) {
+				this.root = op2;
+			}
+//			for (int i=op2.getSubscribedToSource().size()-1; i>=0; i--) {
+//				op2.unsubscribeFromSource(op2.getSubscribedToSource(i));
+//			}
+			this.last.push(op2);
 		this.lastOld.push(op);
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

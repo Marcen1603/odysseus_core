@@ -43,7 +43,8 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	// -----------------------------------------------------------------
 	@Override
 	public RelationalTuple<T> clone() {
-		return new RelationalTuple<T>(this);
+		RelationalTuple<T> t = new RelationalTuple<T>(this);
+		return t;
 	}
 
 	/**
