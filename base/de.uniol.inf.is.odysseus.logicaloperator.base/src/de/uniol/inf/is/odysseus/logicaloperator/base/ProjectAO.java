@@ -21,7 +21,7 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable{
 
 	public ProjectAO(ProjectAO ao){
 		super(ao);
-		if (outputSchema != null) this.outputSchema = new SDFAttributeList(outputSchema);
+		if (ao.outputSchema != null) this.outputSchema = new SDFAttributeList(ao.outputSchema);
 	}
 	
 
