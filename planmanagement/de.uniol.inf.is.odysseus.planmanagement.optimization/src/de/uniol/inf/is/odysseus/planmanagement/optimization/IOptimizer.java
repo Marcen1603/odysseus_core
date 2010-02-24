@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
@@ -234,4 +235,10 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * 			Query that has finished a migration to a new plan.
 	 */
 	public void handleFinishedMigration(IEditableQuery query);
+	
+	/**
+	 * 
+	 * @return configuration of current {@link IOptimizer}
+	 */
+	public OptimizationConfiguration getConfiguration();
 }

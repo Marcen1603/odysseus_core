@@ -20,6 +20,7 @@ Import-Package:
  de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
  de.uniol.inf.is.odysseus.planmanagement.optimization.exception,
  de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter,
  de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter,

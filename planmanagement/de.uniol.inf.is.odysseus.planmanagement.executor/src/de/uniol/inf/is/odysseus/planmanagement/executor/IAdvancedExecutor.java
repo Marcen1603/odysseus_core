@@ -2,12 +2,18 @@ package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.Set;
 
+import javax.security.auth.login.Configuration;
+
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+
 /**
  * IAdvancedExecutor describes an advanced {@link IExecutor}. IAdvancedExecutor
- * provides methods to get all available buffer placement strategies, scheduling strategy factories
- * and scheduler factories. It also provides Methods to set the buffer placement
- * strategy, the scheduling strategy factory and the scheduler factory which should be
- * used.
+ * provides methods to get all available buffer placement strategies, scheduling
+ * strategy factories and scheduler factories. It also provides Methods to set
+ * the buffer placement strategy, the scheduling strategy factory and the
+ * scheduler factory which should be used.
  * 
  * @author Wolf Bauer
  * 
@@ -72,4 +78,13 @@ public interface IAdvancedExecutor extends IExecutor {
 	 * @return current active scheduling strategy factory represented by an id.
 	 */
 	public String getCurrentSchedulingStrategy();
+
+	/**
+	 * 
+	 * @return {@link Configuration} of current {@link IOptimizer}.
+	 * 
+	 * @throws NoOptimizerLoadedException
+	 */
+	public OptimizationConfiguration getOptimizerConfiguration()
+			throws NoOptimizerLoadedException;
 }

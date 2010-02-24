@@ -35,9 +35,6 @@ import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
  */
 public class AdvancedOptimizer extends AbstractOptimizer {
 	
-	private static final int MAX_CONCURRENT_OPTIMIZATIONS = 2;
-	private static final int NUM_COMPARE_PLANCANDIDATES = 5;
-	
 	private IPlanExecutionCostModel executionCostModel;
 	private IPlanMigrationCostModel migrationCostModel;
 	private List<IPlanMigrationStrategie> planMigrationStrategies;
@@ -151,7 +148,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		if (this.optimizationContext.containsKey(query.getID())) {
 			this.logger.warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
 			return executionPlan;
-		} else if (this.optimizationContext.size() >= MAX_CONCURRENT_OPTIMIZATIONS) {
+		} else if (this.optimizationContext.size() >= this.configuration.getSettingMaxConcurrentOptimizations().getValue()) {
 			// TODO: evtl. spaeters triggern der Optimierungsanforderung
 			this.logger.warn("Aborted reoptimization. There are currently "+this.optimizationContext.size()+" optimizations running.");
 			return executionPlan;
@@ -172,7 +169,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			
 			// pick out optimal plan by cost analysis
 			List<IPhysicalOperator> candidates = this.executionCostModel.getCostCalculator().pickBest(
-					alternatives.keySet(), NUM_COMPARE_PLANCANDIDATES);
+					alternatives.keySet(), this.configuration.getSettingComparePlanCandidates().getValue());
 			
 			// calculate migration overhead with every registered strategy
 			List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
@@ -244,7 +241,5 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	List<IMonitoringData<?>> getSourceDatarates() {
 		return sourceDatarates;
 	}
-	
-	
 
 }

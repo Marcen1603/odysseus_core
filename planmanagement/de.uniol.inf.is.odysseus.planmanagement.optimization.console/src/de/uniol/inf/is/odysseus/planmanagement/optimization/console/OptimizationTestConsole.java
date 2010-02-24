@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -66,10 +67,10 @@ public class OptimizationTestConsole implements	org.eclipse.osgi.framework.conso
 			
 			IEditablePlan plan = (IEditablePlan)this.executor.getSealedPlan();
 			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
-			
 			IPhysicalOperator op = query.getRoot();
 			System.out.println(op.getName());
 			
+			this.executor.getOptimizerConfiguration().set(new SettingMaxConcurrentOptimizations(1));
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {}

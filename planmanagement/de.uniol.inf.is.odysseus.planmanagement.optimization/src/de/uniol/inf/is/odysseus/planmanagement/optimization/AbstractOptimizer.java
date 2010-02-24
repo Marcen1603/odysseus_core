@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
@@ -68,6 +69,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * List of error event listener. If an error occurs these objects should be informed.
 	 */
 	private ArrayList<IErrorEventListener> errorEventListener = new ArrayList<IErrorEventListener>();
+	
+	protected OptimizationConfiguration configuration = new OptimizationConfiguration();
 
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
@@ -345,5 +348,10 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
 		this.errorEventListener.remove(errorEventListener);
+	}
+	
+	@Override
+	public OptimizationConfiguration getConfiguration() {
+		return this.configuration;
 	}
 }

@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoa
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecutionPlan;
@@ -823,5 +824,10 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public IEditableExecutionPlan getEditableExecutionPlan() {
 		return this.executionPlan;
+	}
+
+	@Override
+	public OptimizationConfiguration getOptimizerConfiguration() throws NoOptimizerLoadedException {
+		return this.optimizer().getConfiguration();
 	}
 }
