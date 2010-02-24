@@ -120,7 +120,7 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 	}
 
 	@Override
-	public Collection<ITimeInterval> getAllApplicationTimeIntervals() {
+	public List<ITimeInterval> getAllApplicationTimeIntervals() {
 		return this.appTime.getAllApplicationTimeIntervals();
 	}
 

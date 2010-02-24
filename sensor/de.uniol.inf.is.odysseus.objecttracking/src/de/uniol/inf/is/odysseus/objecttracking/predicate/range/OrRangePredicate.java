@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
@@ -30,6 +31,8 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 		resultRanges.addAll(leftRanges);
 		resultRanges.addAll(rightRanges);
 		
+		Collections.sort(resultRanges);
+		
 		return resultRanges;
 		
 	}
@@ -50,6 +53,8 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 		
 		resultRanges.addAll(leftRanges);
 		resultRanges.addAll(rightRanges);
+		
+		Collections.sort(resultRanges);
 		
 		return resultRanges;
 	}

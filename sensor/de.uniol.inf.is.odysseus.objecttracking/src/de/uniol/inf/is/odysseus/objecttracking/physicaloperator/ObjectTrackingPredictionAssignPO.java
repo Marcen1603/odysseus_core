@@ -46,13 +46,14 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 	 */
 	@Override
 	protected void process_next(T next, int port) {
-		
+
 		for (Map.Entry<IPredicate<? super T>, IPredictionFunction> curPredictionFunction : this.predictionFunctions
 				.entrySet()) {
-			if (curPredictionFunction.getKey().evaluate(next)) {
+			IPredicate pred = curPredictionFunction.getKey();
+			if (pred.evaluate(next)) {
 				// The keys in predictionFunctions and variables are the same, so
 				// a mapping between both entries exists.
-				next.getMetadata().setPredictionFunctionKey(curPredictionFunction.getKey());
+				next.getMetadata().setPredictionFunctionKey(curPredictionFunction.getKey());				
 				transfer(next);
 				return;
 			}
@@ -70,4 +71,7 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@Override
+	public void process_done(){
+	}
 }

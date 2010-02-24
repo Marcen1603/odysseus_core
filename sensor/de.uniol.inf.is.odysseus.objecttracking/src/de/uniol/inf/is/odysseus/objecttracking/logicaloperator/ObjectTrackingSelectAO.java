@@ -251,7 +251,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 						break;
 					}
 				}
-				Map<IPredicate, ISolution> additionalFalseSolutions = MapleHack.getAdditionalFalsePredrdicates(Math.min(16, attributes.size() * attributes.size()), attributes, attributeResolver);
+				Map<IPredicate, ISolution> additionalFalseSolutions = MapleHack.getAdditionalFalsePredrdicates(Math.min(1, attributes.size() * attributes.size()), attributes, attributeResolver);
 				for(Entry<IPredicate, ISolution> additional: additionalFalseSolutions.entrySet()){
 					solutions.put(additional.getKey(), additional.getValue());
 				}

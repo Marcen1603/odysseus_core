@@ -1,14 +1,10 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 
 /**
  * This operator works the same way as relationalProjectMVPO. It additionally deletes
@@ -22,7 +18,7 @@ import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 @SuppressWarnings("unchecked")
 public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey & ILatency> extends ObjectTrackingProjectBasePO<T> {
 
-	private static Logger logger = LoggerFactory.getLogger(ObjectTrackingProjectPO.class);
+	private final String LOGGER_NAME = "ObjectTrackingProjectPO";
 	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao){
 		super(ao);
 	}

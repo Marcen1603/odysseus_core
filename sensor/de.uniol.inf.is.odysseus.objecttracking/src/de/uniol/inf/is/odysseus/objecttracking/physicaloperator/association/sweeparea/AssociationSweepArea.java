@@ -46,7 +46,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //	}
 //	
 //	public Iterator<T> query(T element, Order order){
-//		LinkedList<MergePair<T>> result = new LinkedList<MergePair<T>>();
+//		LinkedList<Pair<T>> result = new LinkedList<Pair<T>>();
 //		synchronized(this.elements){
 //			switch (order) {
 //			case LeftRight:
@@ -69,7 +69,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						
 //						long sp2 = System.currentTimeMillis();
 //						if(getQueryPredicate().evaluate(element, next_predicted)){
-//							result.add(new MergePair<T>(element, next_predicted));
+//							result.add(new Pair<T>(element, next_predicted));
 //						}
 //						long ep2 = System.currentTimeMillis();
 //						durationPredictionPredicate += (ep2 - sp2);
@@ -81,7 +81,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						compareCounter++;
 //						long startNormal = System.currentTimeMillis();
 //						if(getQueryPredicate().evaluate(element, next)){
-//							result.add(new MergePair<T>(element, next));
+//							result.add(new Pair<T>(element, next));
 //						}
 //						long endNormal = System.currentTimeMillis();
 //						durationNormal += (endNormal - startNormal);
@@ -97,7 +97,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						
 //						long sp2 = System.currentTimeMillis();
 //						if (getQueryPredicate().evaluate(element_predicted, next)) {
-//							result.add(new MergePair<T>(element_predicted, next));
+//							result.add(new Pair<T>(element_predicted, next));
 //						}
 //						long ep2 = System.currentTimeMillis();
 //						durationPredictionPredicate += (ep2 - sp2);
@@ -131,7 +131,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						long sp2 = System.currentTimeMillis();
 //						
 //						if(getQueryPredicate().evaluate(next_predicted, element)){
-//							result.add(new MergePair<T>(next_predicted, element));
+//							result.add(new Pair<T>(next_predicted, element));
 //						}
 //						
 //						long ep2 = System.currentTimeMillis();
@@ -145,7 +145,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						
 //						long startNormal = System.currentTimeMillis();
 //						if(getQueryPredicate().evaluate(element, next)){
-//							result.add(new MergePair<T>(next, element));
+//							result.add(new Pair<T>(next, element));
 //						}
 //						long endNormal = System.currentTimeMillis();
 //						durationNormal += (endNormal - startNormal);
@@ -161,7 +161,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						long sp2 = System.currentTimeMillis();
 //						
 //						if (getQueryPredicate().evaluate(next, element_predicted)) {
-//							result.add(new MergePair<T>(next, element_predicted));
+//							result.add(new Pair<T>(next, element_predicted));
 //						}
 //						
 //						long ep2 = System.currentTimeMillis();
@@ -178,10 +178,10 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //		return result.iterator();
 //	}
 //	
-//	public Iterator<MergePair<T>> queryCopyPrediction(T element, Order order) {
+//	public Iterator<Pair<T>> queryCopyPrediction(T element, Order order) {
 //		counter++;
 //		long startDuration = System.currentTimeMillis();
-//		LinkedList<MergePair<T>> result = new LinkedList<MergePair<T>>();
+//		LinkedList<Pair<T>> result = new LinkedList<Pair<T>>();
 //		synchronized(this.elements){
 //			switch (order) {
 //			case LeftRight:
@@ -205,7 +205,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						
 //						long sp2 = System.currentTimeMillis();
 //						if(getQueryPredicate().evaluate(element, next_predicted)){
-//							result.add(new MergePair<T>(element, next_predicted));
+//							result.add(new Pair<T>(element, next_predicted));
 //						}
 //						long ep2 = System.currentTimeMillis();
 //						durationPredictionPredicate += (ep2 - sp2);
@@ -217,7 +217,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						compareCounter++;
 //						long startNormal = System.currentTimeMillis();
 //						if(getQueryPredicate().evaluate(element, next)){
-//							result.add(new MergePair<T>(element, next));
+//							result.add(new Pair<T>(element, next));
 //						}
 //						long endNormal = System.currentTimeMillis();
 //						durationNormal += (endNormal - startNormal);
@@ -233,7 +233,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						
 //						long sp2 = System.currentTimeMillis();
 //						if (getQueryPredicate().evaluate(element_predicted, next)) {
-//							result.add(new MergePair<T>(element_predicted, next));
+//							result.add(new Pair<T>(element_predicted, next));
 //						}
 //						long ep2 = System.currentTimeMillis();
 //						durationPredictionPredicate += (ep2 - sp2);
@@ -267,7 +267,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						long sp2 = System.currentTimeMillis();
 //						
 //						if(getQueryPredicate().evaluate(next_predicted, element)){
-//							result.add(new MergePair<T>(next_predicted, element));
+//							result.add(new Pair<T>(next_predicted, element));
 //						}
 //						
 //						long ep2 = System.currentTimeMillis();
@@ -281,7 +281,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						
 //						long startNormal = System.currentTimeMillis();
 //						if(getQueryPredicate().evaluate(element, next)){
-//							result.add(new MergePair<T>(next, element));
+//							result.add(new Pair<T>(next, element));
 //						}
 //						long endNormal = System.currentTimeMillis();
 //						durationNormal += (endNormal - startNormal);
@@ -297,7 +297,7 @@ public class AssociationSweepArea<M extends IPredictionFunctionKey & ITimeInterv
 //						long sp2 = System.currentTimeMillis();
 //						
 //						if (getQueryPredicate().evaluate(next, element_predicted)) {
-//							result.add(new MergePair<T>(next, element_predicted));
+//							result.add(new Pair<T>(next, element_predicted));
 //						}
 //						
 //						long ep2 = System.currentTimeMillis();

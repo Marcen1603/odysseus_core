@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
+import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
@@ -50,8 +51,8 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITim
 		this.rangePredicates = rangePredicates;
 	}
 	
-	public Iterator<T> query(T element, Order order){
-		LinkedList<T> result = new LinkedList<T>();
+	public Iterator<Pair<T, List<ITimeInterval>>> queryOT(T element, Order order){
+		LinkedList<Pair<T, List<ITimeInterval>>> result = new LinkedList<Pair<T, List<ITimeInterval>>>();
 		synchronized(this.elements){
 			for(T next : this.elements){
 				if(TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())){
@@ -59,6 +60,24 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITim
 				}
 				if(TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())){
 					break;
+				}
+				
+				// comparing application times
+				boolean appTimeOverlapping = false;
+				outer:
+				for(ITimeInterval curIntervalNext : next.getMetadata().getAllApplicationTimeIntervals()){
+					for(ITimeInterval curIntervalElem : element.getMetadata().getAllApplicationTimeIntervals()){
+						if(TimeInterval.overlaps(curIntervalNext, curIntervalElem)){
+							appTimeOverlapping = true;
+							break outer;
+						}
+					}
+				}
+				
+				
+				if(!appTimeOverlapping){
+					// try the next element
+					continue;
 				}
 				
 				T left = null;
@@ -86,8 +105,12 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITim
 				
 				this.compareCounter++;
 				
+				// if there are already some intervals
+				// these have to be AND concatenated with
+				// the new ones.
+				
 				if(!intervals.isEmpty()){
-					result.add(next);
+					result.add(new Pair<T, List<ITimeInterval>>(next, intervals));
 				}
 			}
 		}		

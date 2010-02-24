@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IClone;
@@ -16,7 +15,7 @@ public interface IApplicationTime extends IMetaAttribute, IClone{
 	
 	// reading
 	public ITimeInterval getApplicationInterval(int pos);
-	public Collection<ITimeInterval> getAllApplicationTimeIntervals();
+	public List<ITimeInterval> getAllApplicationTimeIntervals();
 	
 	// removing
 	public void removeApplicationInterval(ITimeInterval interval);

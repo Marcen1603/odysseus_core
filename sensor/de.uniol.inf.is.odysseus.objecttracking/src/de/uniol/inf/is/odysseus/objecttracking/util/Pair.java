@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.association.merge;
+package de.uniol.inf.is.odysseus.objecttracking.util;
 
 /**
  * This class is used in a prediction join and the corresponding SweepAreas.
@@ -10,32 +10,32 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.association.mer
  * 
  * @author abolles
  *
- * @param <T> The element carried by this class. Both, left and right, must be
+ * @param <T1> The element carried by this class. Both, left and right, must be
  * of the same type.
  */
-public class MergePair<T>{
+public class Pair<T1, T2>{
 
-	T left;
-	T right;
+	T1 left;
+	T2 right;
 	
-	public MergePair(T left, T right){
+	public Pair(T1 left, T2 right){
 		this.left = left;
 		this.right = right;
 	}
 	
-	public T getLeft(){
+	public T1 getLeft(){
 		return left;
 	}
 	
-	public T getRight(){
+	public T2 getRight(){
 		return right;
 	}
 	
-	public void setLeft(T left){
+	public void setLeft(T1 left){
 		this.left = left;
 	}
 	
-	public void setRight(T right){
+	public void setRight(T2 right){
 		this.right = right;
 	}
 }

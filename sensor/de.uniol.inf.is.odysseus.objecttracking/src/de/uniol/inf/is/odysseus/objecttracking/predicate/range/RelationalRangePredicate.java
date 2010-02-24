@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.ApplicationTime;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.util.ComparablePair;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateInitializer;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -29,7 +31,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  */
 @SuppressWarnings("unchecked")
-public class RelationalRangePredicate extends AbstractRangePredicate<RelationalTuple<?>>{
+public class RelationalRangePredicate<M extends IApplicationTime> extends AbstractRangePredicate<RelationalTuple<M>>{
 
 	private static final long serialVersionUID = 1222104352250883947L;
 	
@@ -37,6 +39,8 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	
 	private LinkedList<ComparablePair<IPredicate, ISolution>> lastEvaluated;
 	private int windowSize;
+	private ComparablePair<IPredicate, ISolution> truePred;
+	private boolean changed;
 	
 	/**
 	 * EVALUATION: Alle changeWindow Evaluationen wird die Liste mit den
@@ -45,7 +49,7 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	 * Prädikate, ganz nach vorne. Entsprechend wird auch die Liste
 	 * lastEvaluated umsortiert.
 	 */
-	private int changeWindow = 100;
+	private int changeWindow = 1;
 	
 	/**
 	 * EVLUATION: count the number of evaluations of this predicate
@@ -171,10 +175,9 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 //		this.fromRightChannel = predicate.fromRightChannel.clone();
 //		this.expressions = predicate.expressions.clone();
 	}
-
-	private boolean found = false;
 	
-	public List<ITimeInterval> evaluate(RelationalTuple<?> input) {
+	
+	public List<ITimeInterval> evaluate(RelationalTuple<M> input) {
 		this.evaluationCount++;
 		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
 		
@@ -184,11 +187,6 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		// the first predicate that is true will be taken.
 		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			if(entry.getKey().evaluate(input)){
-//				logger.debug("Range predicate is true: " + entry.getKey().toString());
-//				logger.debug("Found at predicate " + (this.solutions.indexOf(entry) + 1) + " from " + this.solutions.size());
-//				this.found = true;
-				
-				
 				// the solution could be empty
 				// in this case the following must not be done
 				if(entry.getValue().getSolution() != null && !entry.getValue().isFull()){
@@ -219,15 +217,22 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 					intervals.add(new TimeInterval(PointInTime.getZeroTime(), PointInTime.getInfinityTime()));
 				}
 				
-				this.moveEvaluationWindow(entry);
+//				this.moveEvaluationWindow(entry);
 				break;
 			}
 		}
 		
+		// now the intersection between elem and new must be calculated
+		List<ITimeInterval> leftRanges = input.getMetadata().getAllApplicationTimeIntervals();
+		List<ITimeInterval> resultRanges = ApplicationTime.intersectIntervals(leftRanges, intervals);
+		
+		// assuming input is already sorted
+		Collections.sort(resultRanges);
+		
 		return intervals;
 	}
 
-	public List<ITimeInterval> evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
+	public List<ITimeInterval> evaluate(RelationalTuple<M> left, RelationalTuple<M> right) {
 		this.evaluationCount++;
 		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
 		
@@ -236,7 +241,7 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		// the first predicate that is true will be taken.
 		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			if(entry.getKey().evaluate(left, right)){
-//				logger.debug("Range predicate is true: " + entry.getKey().toString());
+				truePred = entry;
 				// the solution can be empty
 				// in this case the following must not be done.
 				// However, if the solution is full
@@ -246,12 +251,6 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 					Object[] values = new Object[curAttributePositions.length];
 					for(int i = 0; i<values.length; ++i){
 						RelationalTuple<?> r = this.fromRightChannel.get(entry.getKey())[i] ? right : left;
-						if(curAttributePositions[i] == -1){
-							System.out.println("AttrPos: " + this.attributePositions.get(entry.getKey()));
-							System.out.println("frc: " + this.fromRightChannel.get(entry.getKey()));
-							System.out.println("Solution: " + entry.getValue());
-							System.out.println("NAttrs: " + entry.getValue().getSolution().getAllAttributes());
-						}
 						values[i] = r.getAttribute(curAttributePositions[i]);
 					}
 					
@@ -278,9 +277,34 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 			}
 		}
 		
-		return intervals;
+		// EVALUATION
+		if(!changed && this.solutions.size() > 2){
+			this.solutions.remove(truePred);
+			this.solutions.add(3, truePred);
+			changed = true;
+		}
+		
+		// now the intersection between left, right new must be calculated
+		List<ITimeInterval> leftRanges = left.getMetadata().getAllApplicationTimeIntervals();
+		List<ITimeInterval> rightRanges = right.getMetadata().getAllApplicationTimeIntervals();
+		
+		// assuming left and right are sorted;
+		Collections.sort(intervals);
+		
+		List<ITimeInterval> tmpResultRanges = ApplicationTime.intersectIntervals(leftRanges, rightRanges);
+		List<ITimeInterval> resultRanges = ApplicationTime.intersectIntervals(tmpResultRanges, intervals);
+		
+		Collections.sort(resultRanges);
+		
+		return resultRanges;
 	}
 	
+	/**
+	 * TODO Wir behandeln nur Intervalle im positiven Bereich
+	 * @param compareOperator
+	 * @param pointInTime
+	 * @return
+	 */
 	private ITimeInterval createApplicationTime(String compareOperator, double pointInTime){
 		// TODO at the moment we only have one solution for each predicate
 		// because of the use of only linear prediction functions.
@@ -381,13 +405,13 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		
 		
 		// FOR EVALUATION
-		if(this.changeWindow > 0 && this.evaluationCount % this.changeWindow == 0){
-			long start = System.nanoTime();
-			this.changeOrder();
-			long end = System.nanoTime();
-			this.changeDuration += (end -start);
-			return;
-		}
+//		if(this.changeWindow > 0 && this.evaluationCount % this.changeWindow == 0){
+//			long start = System.nanoTime();
+//			this.changeOrder();
+//			long end = System.nanoTime();
+//			this.changeDuration += (end -start);
+//			return;
+//		}
 		
 		ComparablePair<IPredicate, ISolution> removed = null;
 		if(this.lastEvaluated.size() == this.windowSize){
@@ -396,8 +420,6 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 		}
 		this.lastEvaluated.addLast(lastEvaluatedPredicate);
 		lastEvaluatedPredicate.increasePriority();
-		
-//		logger.debug("Last evaluated: " + this.lastEvaluated);
 		
 		// a sorting is necessary only if the removed and the added predicate are not equal
 		if(removed == null || (removed != null && removed != lastEvaluatedPredicate)){
@@ -410,25 +432,48 @@ public class RelationalRangePredicate extends AbstractRangePredicate<RelationalT
 	 * vorkommt.
 	 */
 	private void changeOrder(){
-		Collections.reverse(this.solutions);
+		Random r = new Random();
 		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
 			entry.setPriority(0);
 		}
 		
+		this.solutions.remove(this.truePred);
+		this.solutions.add(0, this.truePred);
+		
 		this.lastEvaluated.clear();
-		outer:
-		for(int i = 0; i<this.solutions.size()-1; i++){
-			for(int u = 0; u<=i; u++){
-				if(this.lastEvaluated.size() < this.windowSize){
-					ComparablePair<IPredicate, ISolution> curSolution = this.solutions.get(u);
-					this.lastEvaluated.addLast(curSolution);
-					curSolution.increasePriority();
-				}
-				else{
-					break outer;
-				}
-			}
+		
+		while(this.lastEvaluated.size() < this.windowSize){
+			int nextInt = r.nextInt(3);
+			this.lastEvaluated.add(this.solutions.get(nextInt));
+			this.solutions.get(nextInt).increasePriority();
 		}
+		
+//		long start = System.nanoTime();
+		Collections.sort(this.solutions);
+//		long end = System.nanoTime();
+//		this.changeDuration -= (end - start);
+		
+//		====================================================================
+		
+//		Collections.reverse(this.solutions);
+//		for(ComparablePair<IPredicate, ISolution> entry: this.solutions){
+//			entry.setPriority(0);
+//		}
+//		
+//		this.lastEvaluated.clear();
+//		outer:
+//		for(int i = 0; i<this.solutions.size()-1; i++){
+//			for(int u = 0; u<=i; u++){
+//				if(this.lastEvaluated.size() < this.windowSize){
+//					ComparablePair<IPredicate, ISolution> curSolution = this.solutions.get(u);
+//					this.lastEvaluated.addLast(curSolution);
+//					curSolution.increasePriority();
+//				}
+//				else{
+//					break outer;
+//				}
+//			}
+//		}
 	}
 
 	@Override

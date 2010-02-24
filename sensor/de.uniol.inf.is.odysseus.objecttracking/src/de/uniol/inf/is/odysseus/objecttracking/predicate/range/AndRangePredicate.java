@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
@@ -42,6 +43,8 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 			}
 		}
 		
+		Collections.sort(resultRanges);
+		
 		return resultRanges;
 	}
 	
@@ -63,13 +66,12 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 			outer:
 			for(ITimeInterval leftInterval: leftRanges){
 				for(ITimeInterval rightInterval: rightRanges){
-					// Im Moment sind die Listen noch nicht sortiert (dauert, glaube ich, zu lange)
-	//				if(TimeInterval.totallyAfter(rightInterval, leftInterval)){
-	//					// TODO funktioniert das mit dem Label so?
-	//					// Es muss mit dem nächsten Intervall aus der linken Liste
-	//					// weitergemacht werden.
-	//					continue outer;
-	//				}
+					if(TimeInterval.totallyAfter(rightInterval, leftInterval)){
+						// TODO funktioniert das mit dem Label so?
+						// Es muss mit dem nächsten Intervall aus der linken Liste
+						// weitergemacht werden.
+						continue outer;
+					}
 					
 					ITimeInterval intersection = TimeInterval.intersection(leftInterval, rightInterval);
 					if(intersection != null){
@@ -78,6 +80,8 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 				}
 			}
 		}
+		
+		Collections.sort(resultRanges);
 		
 		return resultRanges;
 	}

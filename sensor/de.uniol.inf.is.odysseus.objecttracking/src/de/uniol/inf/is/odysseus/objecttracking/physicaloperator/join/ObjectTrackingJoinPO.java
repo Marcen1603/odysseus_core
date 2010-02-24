@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
 
 import java.lang.management.MemoryUsage;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
@@ -9,12 +10,12 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.IHasRangePredicates;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.sweeparea.ObjectTrackingJoinSweepArea;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
+import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
@@ -219,11 +220,11 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		}
 		
 		
-		Iterator<T> qualifies;
+		Iterator<Pair<T, List<ITimeInterval>>> qualifies;
 		synchronized (this.areas) {
 			synchronized (this.areas[otherport]) {
 				long start = System.nanoTime();
-				qualifies = areas[otherport].query(object, order);
+				qualifies = areas[otherport].queryOT(object, order);
 				long end = System.nanoTime();
 				this.duration += (end - start);
 			}
@@ -235,7 +236,7 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		
 
 		while (qualifies.hasNext()) {
-			T next = qualifies.next();
+			Pair<T, List<ITimeInterval>> next = qualifies.next();
 			T newElement = merge(object, next, order);
 			transferFunction.transfer(newElement);			
 		}
@@ -244,19 +245,22 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 
 	}
 
-	private T merge(T left, T right, Order order) {
+	private T merge(T left, Pair<T, List<ITimeInterval>> fromSA, Order order) {
 		T mergedData;
 		K mergedMetadata;
 		if (order == Order.LeftRight) {
-			mergedData = dataMerge.merge(left, right);
+			mergedData = dataMerge.merge(left, fromSA.getLeft());
 			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(),
-					right.getMetadata());
+					fromSA.getLeft().getMetadata());
 		} else {
-			mergedData = dataMerge.merge(right, left);
-			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(),
+			mergedData = dataMerge.merge(fromSA.getLeft(), left);
+			mergedMetadata = metadataMerge.mergeMetadata(fromSA.getLeft().getMetadata(),
 					left.getMetadata());
 		}
 		mergedData.setMetadata(mergedMetadata);
+		// setting the application intervals
+		mergedData.getMetadata().setApplicationIntervals(fromSA.getRight());
+		
 		return mergedData;
 	}
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.Solution;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -162,6 +163,42 @@ public class MapleHack {
 		logger.debug(counter + " additional false predicates added.");
 		
 		return falseSolutions;
+	}
+	
+	/**
+	 * This method is used for evaluation.
+	 * 
+	 * @param noOfPredicates
+	 * @param attributes
+	 * @param attrRes
+	 * @return
+	 */
+	public static Map<IPredicate, IPredictionFunction> getAdditionalPredictionFunctions(int noOfPredicates, List<SDFAttribute> attributes, IAttributeResolver attrRes){
+		Map<IPredicate, IPredictionFunction> falsePredictes = new HashMap<IPredicate, IPredictionFunction>();
+		int counter = 0;
+		for(int i = 0; i<attributes.size(); i++){
+			for(int u = 0; u<attributes.size(); u++){
+				
+				if(counter >= noOfPredicates){
+					logger.debug(counter + " additional false predicates added.");
+					return falsePredictes;
+				}
+				counter++;
+				
+				SDFExpression leftExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") < sqrt(" + attributes.get(u).toPointString() + ")", attrRes );
+				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") > sqrt(" + attributes.get(u).toPointString() + ")", attrRes);
+				IPredicate left = new RelationalPredicate(leftExpr);
+				IPredicate right = new RelationalPredicate(rightExpr);
+				AndPredicate andPred = new AndPredicate(left, right);
+				
+				falsePredictes.put(andPred, null);
+				logger.debug("Additional false predicate: " + andPred);
+			}
+		}
+		
+		logger.debug(counter + " additional false predicates added.");
+		
+		return falsePredictes;
 	}
 	
 	

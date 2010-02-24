@@ -220,7 +220,7 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 ////			System.out.println("Found object");
 ////		}
 //		
-//		Iterator<MergePair<T>> qualifies;
+//		Iterator<Pair<T>> qualifies;
 //		synchronized (this.areas) {
 //			synchronized (this.areas[otherport]) {
 //				qualifies = areas[otherport].queryCopyPrediction(object, order);
@@ -238,7 +238,7 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //			start = System.currentTimeMillis();
 //			outCounter++;
 //			
-//			MergePair<T> next = qualifies.next();
+//			Pair<T> next = qualifies.next();
 //			T newElement = merge(next.getLeft(), next.getRight(), order);
 //			transferFunction.transfer(newElement);
 //			
