@@ -96,4 +96,8 @@ public class BrokerAO extends AbstractLogicalOperator{
 	public String toString(){
 		return super.toString()+" ("+this.identifier+")";
 	}	
+	
+	public void setGeneratedTime(long newTime){
+		this.generatedTime = newTime;
+	}
 }

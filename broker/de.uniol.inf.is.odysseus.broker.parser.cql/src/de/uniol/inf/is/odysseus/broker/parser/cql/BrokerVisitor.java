@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.broker.parser.cql;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
+import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto;
@@ -11,10 +12,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDF;
 
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
@@ -31,7 +30,8 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 				childNode, null);
 
 		// get existing broker or generate a new one
-		BrokerAO broker = new BrokerAO(name);
+		//BrokerAO broker = new BrokerAO(name);
+		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
 		broker.setOutputSchema(result.getOutputSchema());
 		if (!BrokerDictionary.getInstance().brokerExists(name)) {
 			BrokerDictionary.getInstance().addBroker(name, broker);
@@ -54,9 +54,8 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSimpleSource node,Object data) {
 		String brokerName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		if (BrokerDictionary.getInstance().brokerExists(brokerName)) {					
-			//BrokerAO broker = BrokerDictionary.getInstance().getBroker(brokerName);			
-			//return broker;
-			BrokerAO broker = new BrokerAO(brokerName);
+			
+			BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);			
 			broker.setOutputSchema(BrokerDictionary.getInstance().getBroker(brokerName).getOutputSchema());
 			return broker;
 		}else{
@@ -83,7 +82,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		CQLParser v = new CQLParser();
 		AbstractLogicalOperator topOfSelectStatementOperator = (AbstractLogicalOperator) v.visit(
 				statement, null);
-		BrokerAO broker = new BrokerAO(brokerName);
+		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		// add the outputschema from existing one
 		if(BrokerDictionary.getInstance().getBroker(brokerName)==null){
 			throw new RuntimeException("Broker with name \""+brokerName+"\" not found. You have to create one first.");

@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.broker.physicaloperator;
 
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 
-public class BrokerPO<T> extends AbstractPipe<T, T> {
+public class BrokerPO<T extends IMetaAttributeContainer<?>> extends AbstractPipe<T, T> {
 
 	
 	private volatile T currentProcessing;
 	private String identifier;
+	private SweepArea<T> sweepArea = new SweepArea<T>();
 	
 	public BrokerPO(BrokerPO<T> po){
 		this.identifier = po.getIdentifier();
@@ -19,7 +22,8 @@ public class BrokerPO<T> extends AbstractPipe<T, T> {
 	public BrokerPO(String identifier){
 		this.identifier = identifier;
 	}
-	//currentProcessing könnte probleme beim scheduling machen...
+
+	
 	@Override
 	protected void process_next(T object, int port) {
 		System.out.println("Broker processing: "+object.toString());
