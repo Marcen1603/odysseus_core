@@ -31,7 +31,7 @@ public interface IQuery extends
 	 * 
 	 * @return TRUE: This query will be scheduled. FALSE: else
 	 */
-	public boolean isStarted();
+	public boolean isRunning();
 
 	/**
 	 * Returns the logical plan of this query.
@@ -67,4 +67,6 @@ public interface IQuery extends
 	 *            The new priority with which this query should be scheduled.
 	 */
 	public void setPriority(int priority);
+	
+	public String getParserId();
 }

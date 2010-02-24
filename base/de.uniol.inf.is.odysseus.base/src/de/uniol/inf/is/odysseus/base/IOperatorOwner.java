@@ -27,5 +27,5 @@ public interface IOperatorOwner {
 	 * 
 	 * @return TRUE: The child operators are scheduled. FALSE: else
 	 */
-	public boolean isStarted();
+	public boolean isRunning();
 }

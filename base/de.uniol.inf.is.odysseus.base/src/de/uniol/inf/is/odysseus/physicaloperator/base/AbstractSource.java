@@ -168,7 +168,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected void process_transfer(T object) {
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
-				sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer);
+				//if (sink.getTarget().isActive() ?? hasOwner??){
+					sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer);
+				//}
 			}
 		}
 	}
