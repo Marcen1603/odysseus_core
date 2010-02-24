@@ -6,12 +6,18 @@ public class BrokerPO<T> extends AbstractPipe<T, T> {
 
 	
 	private volatile T currentProcessing;
-	public BrokerPO(BrokerPO<T> po){
+	private String identifier;
 	
+	public BrokerPO(BrokerPO<T> po){
+		this.identifier = po.getIdentifier();
 	}
 
-	public BrokerPO(){
-		
+	private String getIdentifier() {
+		return this.identifier;
+	}
+
+	public BrokerPO(String identifier){
+		this.identifier = identifier;
 	}
 	//currentProcessing könnte probleme beim scheduling machen...
 	@Override
@@ -33,4 +39,9 @@ public class BrokerPO<T> extends AbstractPipe<T, T> {
 	public OutputMode getOutputMode() { 
 		return OutputMode.INPUT;
 	}			
+	
+	@Override
+	public String toString(){
+		return super.toString()+" ("+this.identifier+")";
+	}
 }

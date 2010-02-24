@@ -6,10 +6,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BrokerAO extends AbstractLogicalOperator{
-
-	private boolean alreadyVisited = false;
-	private static final long serialVersionUID = 6441896379097181325L;
-	private int visitCounter =0;
+	
+	private static final long serialVersionUID = 6441896379097181325L;	
 	private String identifier;
 	private SDFAttributeList outputSchema = null;
 	private long generatedTime;
@@ -95,12 +93,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 	}
 	
 	@Override
-	public boolean isAllPhysicalInputSet() {		
-		visitCounter++;
-		boolean isSet = super.isAllPhysicalInputSet();
-		//System.out.println("Broker physical input set: "+isSet+" ("+visitCounter+")");
-		
-		return isSet;		
-	}
-
+	public String toString(){
+		return super.toString()+" ("+this.identifier+")";
+	}	
 }
