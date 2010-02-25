@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
@@ -23,6 +25,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * 
@@ -47,11 +50,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 	@Override
 	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery,
 			IPhysicalOperator newPlanRoot) throws QueryOptimizationException {
+		this.logger.debug("Start planmigration.");
 		
 		// install both plans for parallel execution
 		IPhysicalOperator oldPlanRoot = runningQuery.getRoot();
-		List<ISource<?>> oldPlanSources = MigrationHelper.getSources(oldPlanRoot);
+		List<ISource<?>> oldPlanSources = MigrationHelper.getPseudoSources(oldPlanRoot);
 		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(oldPlanRoot);
+		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(newPlanRoot);
 		
 		// get last operators before output sink
 		IPhysicalOperator lastOperatorOldPlan;
@@ -69,21 +74,27 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		}
 		
 		StrategyContext context = new StrategyContext(sender, runningQuery, newPlanRoot);
+		context.setOldPlanOperatorsBeforeSources(oldPlanOperatorsBeforeSources);
 		
+		this.logger.debug("Preparing plan for parallel execution.");
 		// insert buffers before sources
 		for (ISource<?> source : oldPlanSources) {
 			IPipe buffer = new BlockingBuffer();
 			buffer.setOutputSchema(source.getOutputSchema());
 			context.getBlockingBuffers().add((BlockingBuffer<?>)buffer);
 			
+			List<PhysicalSubscription<?>> unSubList = new ArrayList<PhysicalSubscription<?>>();
 			for (PhysicalSubscription<?> sub : source.getSubscriptions()) {
 				IPhysicalOperator o = (IPhysicalOperator)sub.getTarget();
-				if (!oldPlanOperatorsBeforeSources.contains(o)) {
-					// operator doesn't belong to this query
-					continue;
+				if (oldPlanOperatorsBeforeSources.contains(o) || newPlanOperatorsBeforeSources.contains(o)) {
+					// operator has to belong to this query
+					unSubList.add(sub);
 				}
+			}
+			for (PhysicalSubscription<?> sub : unSubList) {
+				ISink o = (ISink) sub.getTarget();
 				// remove subscription to source and subscribe to buffer
-				((ISink)o).unsubscribeFromSource(sub);
+				((ISource)source).unsubscribeSink(sub);
 				((ISink)o).subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
 			}
 			
@@ -110,44 +121,48 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		select.subscribeToSource(lastOperatorNewPlan, 0, 
 				newPlanRootSub.getSourceOutPort(), lastOperatorNewPlan.getOutputSchema());
 		
+		this.logger.debug("Result:\n"+AbstractTreeWalker.prefixWalk2(newPlanRoot, new PhysicalPlanToStringVisitor()));
 		
 		// execute plans for at least 'w_max' (longest window duration)
 		long wMax = MigrationHelper.getLongestWindowSize(lastOperatorNewPlan);
 		context.setMs(wMax);
+		this.logger.debug("Initializing parallel execution plan.");
 		try {
 			runningQuery.initializePhysicalPlan(newPlanRoot);
 		} catch (OpenFailedException e) {
 			throw new QueryOptimizationException("Failed to initialize parallel execution plan.", e);
 		}
 		runningQuery.start();
+		this.logger.debug("Parallel execution started.");
 		new Thread(new ParallelExecutionWaiter(this, context)).start();
+		this.logger.debug("ParallelExecutionWaiter started with "+wMax+"ms waiting period.");
 		
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
+		this.logger.debug("ParallelExecutionWaiter terminated.");
 		// activate blocking buffers
+		this.logger.debug("Blocking input buffers.");
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
 			buffer.block();
 		}
 		
 		// drain all tuples out of plans
-		// TODO: monitor if there are no more operators that can be scheduled and produce output
-		// TODO: duerfen operatoren explizit gescheduled werden?
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {}
+		this.logger.debug("Draining tuples out of plans.");
 		context.getRunningQuery().stop();
+		MigrationHelper.drainTuples(context.getRunningQuery().getRoot());
 		
-		// remove old plan and migration operators, keep buffers
+		// remove old plan, keep buffers
 		// TODO: muessen owner entfernt/hinzugefuegt werden?
 		// top operators
+		this.logger.debug("Deinitializing parallel execution plan.");
 		ISink<?> newPlanRoot = (ISink<?>)context.getNewPlanRoot();
 		PhysicalSubscription newRootSubscription = newPlanRoot.getSubscribedToSource(0);
 		newPlanRoot.unsubscribeFromSource(newRootSubscription);
 		
 		ISink<?> union = (ISink<?>)newRootSubscription.getTarget();
 		union.unsubscribeFromSource((PhysicalSubscription)union.getSubscribedToSource(0));
-		PhysicalSubscription unionSubscription = union.getSubscribedToSource(1);
+		PhysicalSubscription unionSubscription = union.getSubscribedToSource(0);
 		union.unsubscribeFromSource(unionSubscription);
 		
 		ISink<?> select = (ISink<?>)unionSubscription.getTarget();
@@ -158,13 +173,31 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		newPlanRoot.subscribeToSource(lastOperator, newRootSubscription.getSinkInPort(), 
 				selectSubscription.getSourceOutPort(), lastOperator.getOutputSchema());
 		
-		// push data from buffers into plan
-		// TODO direct push (s.o.)?
-		
-		// remove buffers
+		// remove connection from buffers to old plan
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
 			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
-			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
+			for (PhysicalSubscription<?> sub : buffer.getSubscriptions().toArray(new PhysicalSubscription<?>[buffer.getSubscriptions().size()])) {
+				ISink sink = (ISink<?>) sub.getTarget();
+				if (context.getOldPlanOperatorsBeforeSources().contains(sink)) {
+					((ISource)buffer).unsubscribeSink(sub);
+				}
+			}
+		}
+		
+		// push data from buffers into plan
+		this.logger.debug("Pushing data from BlockingBuffers.");
+		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
+			// TODO: wie in MigrationHelper volllaufen von Puffern?
+			for (int i=0; i<buffer.size(); i++) {
+				buffer.transferNext();
+			}
+		}
+		
+		// remove buffers
+		this.logger.debug("Removing buffers.");
+		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
+			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
+			for (PhysicalSubscription<?> sub : buffer.getSubscriptions().toArray(new PhysicalSubscription<?>[buffer.getSubscriptions().size()])) {
 				ISink sink = (ISink<?>) sub.getTarget();
 				((ISource)buffer).unsubscribeSink(sub);
 				sink.subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), source.getOutputSchema());
@@ -172,7 +205,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		}
 		
 		// new plan is ready to be initialized
-		
+		this.logger.debug("Planmigration finished. Result:"
+				+ AbstractTreeWalker.prefixWalk2(newPlanRoot, new PhysicalPlanToStringVisitor()));
+		context.getOptimizer().handleFinishedMigration(context.getRunningQuery());
 	}
 
 }

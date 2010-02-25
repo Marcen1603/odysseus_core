@@ -20,6 +20,7 @@ class StrategyContext {
 	private IPhysicalOperator newPlanRoot;
 	private long ms;
 	private List<BlockingBuffer<?>> blockingBuffers;
+	private List<IPhysicalOperator> oldPlanOperatorsBeforeSources;
 
 	public StrategyContext(IOptimizer optimizer, IEditableQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
@@ -67,6 +68,15 @@ class StrategyContext {
 
 	public void setBlockingBuffers(List<BlockingBuffer<?>> blockingBuffers) {
 		this.blockingBuffers = blockingBuffers;
+	}
+
+	public void setOldPlanOperatorsBeforeSources(
+			List<IPhysicalOperator> oldPlanOperatorsBeforeSources) {
+		this.oldPlanOperatorsBeforeSources = oldPlanOperatorsBeforeSources;
+	}
+
+	public List<IPhysicalOperator> getOldPlanOperatorsBeforeSources() {
+		return oldPlanOperatorsBeforeSources;
 	}
 
 }

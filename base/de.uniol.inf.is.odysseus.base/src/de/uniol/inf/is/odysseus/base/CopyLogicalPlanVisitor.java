@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
+ * Copies every logical operator in a query plan and connects them with
+ * subscriptions like in the given plan. Result is the root of the copied plan.
  * 
  * @author Tobias Witt
  * 
@@ -19,12 +21,14 @@ public class CopyLogicalPlanVisitor	implements
 	private ILogicalOperator root;
 	private Stack<ILogicalOperator> last;
 	private Stack<ILogicalOperator> lastOld;
+	private boolean errorsOccured;
 
 	public CopyLogicalPlanVisitor() {
 		this.logger = LoggerFactory.getLogger(CopyLogicalPlanVisitor.class);
 		this.root = null;
 		this.last = new Stack<ILogicalOperator>();
 		this.lastOld = new Stack<ILogicalOperator>();
+		this.errorsOccured = false;
 	}
 
 	@Override
@@ -33,6 +37,9 @@ public class CopyLogicalPlanVisitor	implements
 		ILogicalOperator sink = this.last.peek();
 		ILogicalOperator oldSource = this.lastOld.pop();
 		ILogicalOperator oldSink = (ILogicalOperator) to;
+		if (source==null || sink==null) {
+			return;
+		}
 		LogicalSubscription sub = null;
 		for (LogicalSubscription s : oldSink.getSubscribedToSource()) {
 			if (s.getTarget() == oldSource) {
@@ -52,7 +59,7 @@ public class CopyLogicalPlanVisitor	implements
 
 	@Override
 	public ILogicalOperator getResult() {
-		return this.root;
+		return errorsOccured ? null : this.root;
 	}
 
 	@Override
@@ -66,15 +73,13 @@ public class CopyLogicalPlanVisitor	implements
 			if (this.root == null) {
 				this.root = op2;
 			}
-//			for (int i=op2.getSubscribedToSource().size()-1; i>=0; i--) {
-//				op2.unsubscribeFromSource(op2.getSubscribedToSource(i));
-//			}
 			this.last.push(op2);
-		this.lastOld.push(op);
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			this.errorsOccured = true;
+			this.last.push(null);
 		}
+		this.lastOld.push(op);
 	}
 
 }

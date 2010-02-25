@@ -158,11 +158,13 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		
 		try {
 			// build alternative physical plans
+			this.logger.debug("Building alternative plans.");
 			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
 					sender, query, 
 					new OptimizeParameter(ParameterDoRestruct.TRUE), null);
 			
 			// prepare metadata usage
+			this.logger.debug("Comparing plan execution cost and plan migration cost.");
 			for (IMonitoringData<?> rates : this.sourceDatarates) {
 				((Datarate)rates).run();
 			}
@@ -184,10 +186,9 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			context.setRoot(newPlan);
 			context.setLogicalPlan(alternatives.get(newPlan));
 			
-			
-			
 			// TODO: possibly need to drain buffers and remove them
 			// stop scheduling
+			this.logger.debug("Pause query.");
 			query.stop();
 			
 			// start migration to new plan 
@@ -224,6 +225,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			query.initializePhysicalPlan(context.getRoot());
 
 			// continue scheduling
+			this.logger.debug("Resume query.");
 			query.start();
 
 			// remove lock and context
