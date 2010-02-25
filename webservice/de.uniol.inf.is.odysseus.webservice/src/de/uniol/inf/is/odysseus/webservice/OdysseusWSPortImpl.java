@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -35,11 +34,14 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
      */
 	public int addStatement(QueryType query) throws StatementQueryFault    { 
         try {
-			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), 
-					new ParameterParserID(query.getLanguage())).iterator().next();
+			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage()
+					).iterator().next();
 			return queryID;
 		} catch (Exception e) {
-			throw new StatementQueryFault(e.getMessage());
+			ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+			throw new StatementQueryFault(e.getMessage(), fault);
 		}
     }
     
@@ -78,16 +80,59 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     				actuator.getManagerName());
     		return actuatorName;
     	}catch (Exception e){
-    		throw new ActuatorFault(e.getMessage());
+    		ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+    		throw new ActuatorFault(e.getMessage(), fault);
     	}
     }
 
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSource(java.lang.String  sourceDescription )*
+     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSource(de.uniol.inf.is.odysseus.webservice.SourceSchema  sourceDescription )*
      */
-    public java.lang.String createSource(java.lang.String sourceDescription) throws CreateSourceFault    { 
-       //TODO implementieren ....
-    	throw new CreateSourceFault();
+    public java.lang.String createSource(SourceSchema sourceDescription) throws CreateSourceFault    { 
+    	try {
+    		//build string from information
+    		String query = "CREATE STREAM ";
+    		query = query.concat(sourceDescription.getStreamName()+" (");
+    	
+    		for (SchemaElementType elem : sourceDescription.getAttributeSchema().getSchemaElement()){
+    			query = query.concat(elem.getIdentifier()+" ");
+    			query = query.concat(elem.getType()+",");
+    		}
+    		//replace last ',' by ')'
+    		query = query.substring(0, query.length() -1);
+    		query = query.concat(") CHANNEL ");
+    		
+    		Channel chan = sourceDescription.getChannel();
+    		query = query.concat(chan.getAdress()+ " ");
+    		query = query.concat(chan.getPort());
+    		
+    		executor.addQuery(query, "CQL");
+    		return "";
+    	}catch (Exception e){
+    		ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+        	throw new CreateSourceFault(e.getMessage(), fault);
+    	}
+    }
+    
+    /* (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSourceString(java.lang.String  sourceDescription )*
+     */
+    public java.lang.String createSourceString(java.lang.String sourceDescription) throws CreateSourceStringFault    { 
+		try {
+			executor.addQuery(sourceDescription, "CQL");
+			return "";
+		}catch (Exception e){
+			ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+        	throw new CreateSourceStringFault(e.getMessage(), fault);
+		}
+    	
+        //
     }
 
 
@@ -115,7 +160,10 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	return schemaArray;
         	
         }catch (Exception e){
-    		throw new QueryIDFault(e.getMessage());
+        	ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+    		throw new QueryIDFault(e.getMessage(), fault);
     	}
     }
     
@@ -127,7 +175,10 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	actuatorFactory.removeActuator(actuator.getActuatorName(), actuator.getManagerName());
         	return "";
         }catch (Exception e){
-        	throw new NonExistingActuatorFault();
+        	ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+        	throw new NonExistingActuatorFault(e.getMessage(), fault);
         }
     }
     
@@ -139,7 +190,10 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	executor.removeQuery(queryID.intValue());
         	return "";
         }catch (Exception e){
-        	throw new NonExistingStatementFault(e.getMessage());
+        	ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+        	throw new NonExistingStatementFault(e.getMessage(), fault);
         }
     }
 
@@ -181,7 +235,10 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	return schemaArray;
         	
 		} catch (ActuatorException e) {
-			throw new ActuatorDoesNotExistFault(e.getMessage());
+			ObjectFactory factory = new ObjectFactory();
+        	Fault fault = factory.createFault();
+        	fault.setReason(e.getMessage());
+			throw new ActuatorDoesNotExistFault(e.getMessage(), fault);
 		}
        
     }

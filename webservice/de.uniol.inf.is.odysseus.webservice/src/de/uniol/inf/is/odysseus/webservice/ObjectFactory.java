@@ -26,104 +26,22 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private final static QName _ActuatorReference_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorReference");
+    private final static QName _Fault_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "fault");
     private final static QName _QueryID_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "queryID");
+    private final static QName _SourceSchema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "sourceSchema");
+    private final static QName _Actuator_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuator");
+    private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
     private final static QName _Source_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "source");
     private final static QName _ActuatorSchema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorSchema");
     private final static QName _Schema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "schema");
     private final static QName _Id_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "id");
     private final static QName _ActuatorToDelete_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorToDelete");
-    private final static QName _Fault_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "fault");
-    private final static QName _In_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "in");
-    private final static QName _Actuator_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuator");
-    private final static QName _RemoveStatementFault_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "RemoveStatementFault");
-    private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
-    private final static QName _In1_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "in1");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.uniol.inf.is.odysseus.webservice
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link Method }
-     * 
-     */
-    public Method createMethod() {
-        return new Method();
-    }
-
-    /**
-     * Create an instance of {@link GetActuatorSchemaFault }
-     * 
-     */
-    public GetActuatorSchemaFault createGetActuatorSchemaFault() {
-        return new GetActuatorSchemaFault();
-    }
-
-    /**
-     * Create an instance of {@link GetActuatorSchemaFault1 }
-     * 
-     */
-    public GetActuatorSchemaFault1 createGetActuatorSchemaFault1() {
-        return new GetActuatorSchemaFault1();
-    }
-
-    /**
-     * Create an instance of {@link ActuatorSchemaArray }
-     * 
-     */
-    public ActuatorSchemaArray createActuatorSchemaArray() {
-        return new ActuatorSchemaArray();
-    }
-
-    /**
-     * Create an instance of {@link ActuatorInformation }
-     * 
-     */
-    public ActuatorInformation createActuatorInformation() {
-        return new ActuatorInformation();
-    }
-
-    /**
-     * Create an instance of {@link QueryType }
-     * 
-     */
-    public QueryType createQueryType() {
-        return new QueryType();
-    }
-
-    /**
-     * Create an instance of {@link ParameterType }
-     * 
-     */
-    public ParameterType createParameterType() {
-        return new ParameterType();
-    }
-
-    /**
-     * Create an instance of {@link Fault }
-     * 
-     */
-    public Fault createFault() {
-        return new Fault();
-    }
-
-    /**
-     * Create an instance of {@link RemoveActuatorFault }
-     * 
-     */
-    public RemoveActuatorFault createRemoveActuatorFault() {
-        return new RemoveActuatorFault();
-    }
-
-    /**
-     * Create an instance of {@link ActuatorReducedInformation }
-     * 
-     */
-    public ActuatorReducedInformation createActuatorReducedInformation() {
-        return new ActuatorReducedInformation();
     }
 
     /**
@@ -135,11 +53,83 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link QueryType }
+     * 
+     */
+    public QueryType createQueryType() {
+        return new QueryType();
+    }
+
+    /**
+     * Create an instance of {@link Channel }
+     * 
+     */
+    public Channel createChannel() {
+        return new Channel();
+    }
+
+    /**
+     * Create an instance of {@link SourceSchema }
+     * 
+     */
+    public SourceSchema createSourceSchema() {
+        return new SourceSchema();
+    }
+
+    /**
+     * Create an instance of {@link Method }
+     * 
+     */
+    public Method createMethod() {
+        return new Method();
+    }
+
+    /**
+     * Create an instance of {@link ActuatorReducedInformation }
+     * 
+     */
+    public ActuatorReducedInformation createActuatorReducedInformation() {
+        return new ActuatorReducedInformation();
+    }
+
+    /**
+     * Create an instance of {@link ParameterType }
+     * 
+     */
+    public ParameterType createParameterType() {
+        return new ParameterType();
+    }
+
+    /**
+     * Create an instance of {@link ActuatorSchemaArray }
+     * 
+     */
+    public ActuatorSchemaArray createActuatorSchemaArray() {
+        return new ActuatorSchemaArray();
+    }
+
+    /**
      * Create an instance of {@link SchemaArray }
      * 
      */
     public SchemaArray createSchemaArray() {
         return new SchemaArray();
+    }
+
+    /**
+     * Create an instance of {@link Fault }
+     * 
+     */
+    public Fault createFault() {
+        return new Fault();
+    }
+
+    /**
+     * Create an instance of {@link ActuatorInformation }
+     * 
+     */
+    public ActuatorInformation createActuatorInformation() {
+        return new ActuatorInformation();
     }
 
     /**
@@ -152,12 +142,48 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Fault }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "fault")
+    public JAXBElement<Fault> createFault(Fault value) {
+        return new JAXBElement<Fault>(_Fault_QNAME, Fault.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "queryID")
     public JAXBElement<BigInteger> createQueryID(BigInteger value) {
         return new JAXBElement<BigInteger>(_QueryID_QNAME, BigInteger.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SourceSchema }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "sourceSchema")
+    public JAXBElement<SourceSchema> createSourceSchema(SourceSchema value) {
+        return new JAXBElement<SourceSchema>(_SourceSchema_QNAME, SourceSchema.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ActuatorInformation }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "actuator")
+    public JAXBElement<ActuatorInformation> createActuator(ActuatorInformation value) {
+        return new JAXBElement<ActuatorInformation>(_Actuator_QNAME, ActuatorInformation.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "query")
+    public JAXBElement<QueryType> createQuery(QueryType value) {
+        return new JAXBElement<QueryType>(_Query_QNAME, QueryType.class, null, value);
     }
 
     /**
@@ -203,60 +229,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "actuatorToDelete")
     public JAXBElement<ActuatorReducedInformation> createActuatorToDelete(ActuatorReducedInformation value) {
         return new JAXBElement<ActuatorReducedInformation>(_ActuatorToDelete_QNAME, ActuatorReducedInformation.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Fault }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "fault")
-    public JAXBElement<Fault> createFault(Fault value) {
-        return new JAXBElement<Fault>(_Fault_QNAME, Fault.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "in")
-    public JAXBElement<String> createIn(String value) {
-        return new JAXBElement<String>(_In_QNAME, String.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ActuatorInformation }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "actuator")
-    public JAXBElement<ActuatorInformation> createActuator(ActuatorInformation value) {
-        return new JAXBElement<ActuatorInformation>(_Actuator_QNAME, ActuatorInformation.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "RemoveStatementFault")
-    public JAXBElement<String> createRemoveStatementFault(String value) {
-        return new JAXBElement<String>(_RemoveStatementFault_QNAME, String.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "query")
-    public JAXBElement<QueryType> createQuery(QueryType value) {
-        return new JAXBElement<QueryType>(_Query_QNAME, QueryType.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "in1")
-    public JAXBElement<String> createIn1(String value) {
-        return new JAXBElement<String>(_In1_QNAME, String.class, null, value);
     }
 
 }
