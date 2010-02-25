@@ -2,13 +2,14 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
@@ -41,11 +42,13 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	
 	private Map<Integer, PlanMigrationContext> optimizationContext;
 	private List<IMonitoringData<?>> sourceDatarates;
+	private Queue<IEditableQuery> pendingRequests;
 	
 	public AdvancedOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 		this.sourceDatarates = new ArrayList<IMonitoringData<?>>();
 		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategie>();
+		this.pendingRequests = new LinkedList<IEditableQuery>();
 	}
 	
 	public void bindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
@@ -149,8 +152,10 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			this.logger.warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
 			return executionPlan;
 		} else if (this.optimizationContext.size() >= this.configuration.getSettingMaxConcurrentOptimizations().getValue()) {
-			// TODO: evtl. spaeters triggern der Optimierungsanforderung
-			this.logger.warn("Aborted reoptimization. There are currently "+this.optimizationContext.size()+" optimizations running.");
+			this.logger.warn("Reoptimization request queued. There are currently "+this.optimizationContext.size()+" optimizations running.");
+			if (!this.pendingRequests.contains(query)) {
+				this.pendingRequests.offer(query);
+			}
 			return executionPlan;
 		}
 		PlanMigrationContext context = new PlanMigrationContext(query);
@@ -172,6 +177,11 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// pick out optimal plan by cost analysis
 			List<IPhysicalOperator> candidates = this.executionCostModel.getCostCalculator().pickBest(
 					alternatives.keySet(), this.configuration.getSettingComparePlanCandidates().getValue());
+			if (candidates.isEmpty()) {
+				this.logger.info("No alternative plans for query ID "+query.getID());
+				this.optimizationContext.remove(query.getID());
+				return executionPlan;
+			}
 			
 			// calculate migration overhead with every registered strategy
 			List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
@@ -186,7 +196,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			context.setRoot(newPlan);
 			context.setLogicalPlan(alternatives.get(newPlan));
 			
-			// TODO: possibly need to drain buffers and remove them
 			// stop scheduling
 			this.logger.debug("Pause query.");
 			query.stop();
@@ -214,13 +223,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// set new logical plan
 			query.setLogicalPlan(context.getLogicalPlan());
 
-			// reapply buffers to plan
-			IBufferPlacementStrategy bufferPlacementStrategy = query
-					.getBuildParameter().getBufferPlacementStrategy();
-			if (bufferPlacementStrategy != null) {
-				bufferPlacementStrategy.addBuffers(context.getRoot());
-			}
-
 			// set and initialize new physical plan
 			query.initializePhysicalPlan(context.getRoot());
 
@@ -232,6 +234,11 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			this.optimizationContext.remove(query.getID());
 			this.logger.info("Finished plan migration (query ID "
 					+ query.getID() + ")");
+			
+			// handle pending requests
+			if (!this.pendingRequests.isEmpty()) {
+				this.pendingRequests.poll().reoptimize();
+			}
 
 		} catch (Exception e) {
 			// this.optimizationContext.remove(sender.getID());

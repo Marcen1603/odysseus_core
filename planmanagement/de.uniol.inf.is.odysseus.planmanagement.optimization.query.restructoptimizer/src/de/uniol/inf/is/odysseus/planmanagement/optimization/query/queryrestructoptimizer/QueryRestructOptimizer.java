@@ -7,6 +7,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.base.CopyLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
@@ -65,21 +66,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
 						.getTransformationConfiguration());
 
-				IBufferPlacementStrategy bufferPlacementStrategy = query
-						.getBuildParameter().getBufferPlacementStrategy();
-
-				// add Buffer
-				if (bufferPlacementStrategy != null) {
-					try {
-						bufferPlacementStrategy.addBuffers(physicalPlan);
-					} catch (Exception e) {
-						throw new QueryOptimizationException(
-								"Exeception while initialize query.", e);
-					}
-				}
-
-				// Initialize the physical plan of the query.
-				query.initializePhysicalPlan(physicalPlan);
+				postTransformationInit(query, physicalPlan);
 			} catch (Throwable e) {
 				throw new QueryOptimizationException(
 						"Exeception while initialize query.", e);
@@ -124,28 +111,38 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
 						.getTransformationConfiguration());
 
-				IBufferPlacementStrategy bufferPlacementStrategy = query
-						.getBuildParameter().getBufferPlacementStrategy();
-
-				// add Buffer
-				if (bufferPlacementStrategy != null) {
-					try {
-						bufferPlacementStrategy.addBuffers(physicalPlan);
-					} catch (Exception e) {
-						throw new QueryOptimizationException(
-								"Exeception while initialize query.", e);
-					}
-				}
-
-				// Initialize the physical plan of the query.
-				query.initializePhysicalPlan(physicalPlan);
+				postTransformationInit(query, physicalPlan);
 			} catch (Throwable e) {
 				throw new QueryOptimizationException(
 						"Exeception while initialize query.", e);
 			}
 		}
 	}
-
+	
+	@Override
+	public void postTransformationInit(IEditableQuery query, IPhysicalOperator physicalPlan) 
+			throws QueryOptimizationException, OpenFailedException {
+		addBuffers(query, physicalPlan);
+		
+		// Initialize the physical plan of the query.
+		query.initializePhysicalPlan(physicalPlan);
+	}
+	
+	private void addBuffers(IEditableQuery query, IPhysicalOperator physicalPlan) 
+			throws QueryOptimizationException {
+		IBufferPlacementStrategy bufferPlacementStrategy = query
+				.getBuildParameter().getBufferPlacementStrategy();
+		
+		// add Buffer
+		if (bufferPlacementStrategy != null) {
+			try {
+				bufferPlacementStrategy.addBuffers(physicalPlan);
+			} catch (Exception e) {
+				throw new QueryOptimizationException(
+						"Exeception while initialize query.", e);
+			}
+		}
+	}
 
 	@Override
 	public Map<IPhysicalOperator,ILogicalOperator> createAlternativePlans(
@@ -156,7 +153,6 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		// Plaene liefern, die z.B. durch Vertauschen von Joins erzeugt werden
 		
 		ICompiler compiler = sender.getCompiler();
-
 		if (compiler == null) {
 			throw new QueryOptimizationException("Compiler is not loaded.");
 		}
@@ -182,18 +178,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 				IPhysicalOperator physicalPlan = compiler.transform(newLogicalAlgebra,
 						query.getBuildParameter().getTransformationConfiguration());	
 
-				IBufferPlacementStrategy bufferPlacementStrategy = query
-						.getBuildParameter().getBufferPlacementStrategy();
-
-				// add Buffer
-				if (bufferPlacementStrategy != null) {
-					try {
-						bufferPlacementStrategy.addBuffers(physicalPlan);
-					} catch (Exception e) {
-						throw new QueryOptimizationException(
-								"Exeception while initialize query.", e);
-					}
-				}
+				addBuffers(query, physicalPlan);
 				
 				// put last sink on top
 				IPhysicalOperator oldRoot = query.getRoot();
