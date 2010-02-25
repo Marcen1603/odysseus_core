@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator {
 	private int startPort = 55555;
@@ -15,11 +17,17 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
+		Logger logger = LoggerFactory.getLogger( Activator.class );
+		logger.info("Starting wrapper servers ...");
 		servers = new ArrayList<StreamServer>();
 		for (Sensor sensor : Sensor.values()){
-			StreamServer server = new StreamServer(sensor, ++startPort);
-			server.start();
-			servers.add(server);
+			try {
+				StreamServer server = new StreamServer(sensor, ++startPort);
+				server.start();
+				servers.add(server);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 	}
 

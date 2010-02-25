@@ -35,7 +35,7 @@ public class StreamServer extends Thread {
 		serverChannel.configureBlocking(true);
 		
 		this.sensorClient = new SocketSensorClient(sensor.getIp(), sensor.getPort(), 
-				sensor.getInterval(), sensor.getMessage(), sensor.getSchema());
+				sensor.getInterval(), sensor.getMessage(), Sensor.getSchema(sensor));
 			
 		this.logger = LoggerFactory.getLogger( StreamServer.class );
 	}
@@ -59,7 +59,7 @@ public class StreamServer extends Thread {
 			try {
 				synchronized (this.sensorClient){
 					//start sensor client if it's not yet running
-					if (this.sensorClient.isAlive()){
+					if (!this.sensorClient.isAlive()){
 						this.sensorClient.start();
 					}
 				}

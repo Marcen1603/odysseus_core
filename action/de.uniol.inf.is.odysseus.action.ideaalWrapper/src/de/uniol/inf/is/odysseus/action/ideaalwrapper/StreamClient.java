@@ -41,14 +41,12 @@ public class StreamClient {
 				ch.write(gbuffer);
 				ch.write(buffer);
 			}
-			
-		}else{
-			connection.getChannel().close();
 		}
 	}
 
 	public void closeSocket() {
 		try {
+			this.connection.getChannel().close();
 			this.connection.close();
 		} catch (IOException e) {
 			e.printStackTrace();
