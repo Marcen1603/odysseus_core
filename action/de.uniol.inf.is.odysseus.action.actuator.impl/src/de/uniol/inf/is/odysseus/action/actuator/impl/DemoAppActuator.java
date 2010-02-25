@@ -7,7 +7,11 @@ import de.uniol.inf.is.odysseus.action.demoapp.AuctionMonitor;
 import de.uniol.inf.is.odysseus.action.demoapp.AuctionMonitor.AuctionStatus;
 import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapterSchema;
 
-
+/**
+ * Actuator notifying DemoApp of new auction data
+ * @author Simon Flandergan
+ *
+ */
 public class DemoAppActuator{
 	
 	@ActuatorAdapterSchema(show = true)
