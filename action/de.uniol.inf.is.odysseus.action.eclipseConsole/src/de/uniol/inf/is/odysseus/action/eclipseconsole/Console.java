@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
 /**
@@ -32,7 +31,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA", new ParameterParserID("ECA"));
+			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA");
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -66,7 +65,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 	}
 	
-	public void _lsactuators(CommandInterpreter ci){
+	public void _lsactuator(CommandInterpreter ci){
 		String[] args = this.extractArgument(ci);
 		if (args.length<1){
 			ci.println("Insufficient number of arguments. You must provide: <managerName>");
@@ -160,6 +159,8 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"	addactionquery '<queryDescription>' - adds new action query\n" +
 				"	createactuator <managerName> <actuatorName> <actuatorDescription> " +
 				"- triggers specified manager to create a new actuator\n" +
+				" 	lsactuator <managerName> - lists all actuators registered to " +
+				"specified manager\n"+
 				"	lsactuatormanager - lists all registered actuator managers\n" +
 				"	removeactuator <managerName> <actuatorName> - triggers specified " +
 				"manager to remove declared actuator\n" +
