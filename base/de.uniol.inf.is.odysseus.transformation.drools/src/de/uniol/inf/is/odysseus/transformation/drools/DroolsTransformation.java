@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.drools.FactException;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
@@ -162,7 +161,9 @@ public class DroolsTransformation implements ITransformation {
 				}
 			}
 		}else{
-			builder.append("[cyclic connection]\n");
+			builder.append(physicalPO);
+			builder.append('\n');
+			builder.append(indent+"  [see above for following operators]\n");
 		}
 		return builder.toString();
 	}
