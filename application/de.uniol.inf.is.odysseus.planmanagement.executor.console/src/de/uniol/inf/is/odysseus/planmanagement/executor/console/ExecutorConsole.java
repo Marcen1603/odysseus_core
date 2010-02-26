@@ -68,10 +68,10 @@ public class ExecutorConsole implements CommandProvider,
 	private IAdvancedExecutor executor;
 
 	private String parser = null;
-	
+
 	/**
-	 * This is the bath to files, to read queries from.
-	 * This path can be set by command addPath.
+	 * This is the bath to files, to read queries from. This path can be set by
+	 * command addPath.
 	 */
 	private String path;
 
@@ -227,32 +227,32 @@ public class ExecutorConsole implements CommandProvider,
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		System.out.println("executor gebunden");
-			
+
 		this.executor = executor;
 
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
-		
+
 		// Typically no compiler is loaded here, so the following
 		// code will always break
 
-//		try {
-//			// Default is CQL
-//			for (String p: this.executor.getSupportedQueryParser()){
-//				if ("CQL".equalsIgnoreCase(p)){
-//					parser = p;
-//				}
-//			}
-//			// Only if CQL-Parser isn't bound, set another Parser
-//			if (this.parser == null && executor.getSupportedQueryParser()!=null){
-//				this.parser = this.executor.getSupportedQueryParser().iterator()
-//						.next();
-//			}
-//		} catch (PlanManagementException e) {
-//			System.out.println("Error setting parser.");
-//			e.printStackTrace();
-//		}
+		// try {
+		// // Default is CQL
+		// for (String p: this.executor.getSupportedQueryParser()){
+		// if ("CQL".equalsIgnoreCase(p)){
+		// parser = p;
+		// }
+		// }
+		// // Only if CQL-Parser isn't bound, set another Parser
+		// if (this.parser == null && executor.getSupportedQueryParser()!=null){
+		// this.parser = this.executor.getSupportedQueryParser().iterator()
+		// .next();
+		// }
+		// } catch (PlanManagementException e) {
+		// System.out.println("Error setting parser.");
+		// e.printStackTrace();
+		// }
 	}
 
 	public void unbindExecutor(IAdvancedExecutor executor) {
@@ -288,7 +288,7 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			parserList = this.executor.getSupportedQueryParser();
 			// "Set" Default-Parser
-			if (parser == null && parserList.size() > 0){
+			if (parser == null && parserList.size() > 0) {
 				parser = parserList.iterator().next();
 			}
 		} catch (PlanManagementException e) {
@@ -494,11 +494,14 @@ public class ExecutorConsole implements CommandProvider,
 
 				usePunctuations = toBoolean(args[0]);
 
-				if(usePunctuations) {
-					trafoConfigParam.getValue().setOption("usePunctuations", true);
+				if (usePunctuations) {
+					trafoConfigParam.getValue().setOption("usePunctuations",
+							true);
 				} else {
-					if(trafoConfigParam.getValue().getOption("usePunctuations") != null) {
-						trafoConfigParam.getValue().setOption("usePunctuations", null);
+					if (trafoConfigParam.getValue()
+							.getOption("usePunctuations") != null) {
+						trafoConfigParam.getValue().setOption(
+								"usePunctuations", null);
 					}
 				}
 
@@ -510,7 +513,7 @@ public class ExecutorConsole implements CommandProvider,
 				+ (usePunctuations ? "activated" : "deactivated"));
 
 	}
-	
+
 	@Help(description = "<on|off> - Adds or removes load shedding support.")
 	public void _addLoadShedding(CommandInterpreter ci) {
 		boolean useLoadShedding = false;
@@ -521,11 +524,14 @@ public class ExecutorConsole implements CommandProvider,
 
 				useLoadShedding = toBoolean(args[0]);
 
-				if(useLoadShedding) {
-					trafoConfigParam.getValue().setOption("useLoadShedding", true);
+				if (useLoadShedding) {
+					trafoConfigParam.getValue().setOption("useLoadShedding",
+							true);
 				} else {
-					if(trafoConfigParam.getValue().getOption("useLoadShedding") != null) {
-						trafoConfigParam.getValue().setOption("useLoadShedding", null);
+					if (trafoConfigParam.getValue()
+							.getOption("useLoadShedding") != null) {
+						trafoConfigParam.getValue().setOption(
+								"useLoadShedding", null);
 					}
 				}
 
@@ -536,8 +542,8 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Load shedding is "
 				+ (useLoadShedding ? "activated" : "deactivated"));
 
-	}	
-	
+	}
+
 	@Help(description = "<on|off> - Adds or removes optimized post priorsation functionality.")
 	public void _addExtendedPostPriorisation(CommandInterpreter ci) {
 		boolean useExtPostPriorisation = false;
@@ -548,11 +554,14 @@ public class ExecutorConsole implements CommandProvider,
 
 				useExtPostPriorisation = toBoolean(args[0]);
 
-				if(useExtPostPriorisation) {
-					trafoConfigParam.getValue().setOption("useExtendedPostPriorisation", true);
+				if (useExtPostPriorisation) {
+					trafoConfigParam.getValue().setOption(
+							"useExtendedPostPriorisation", true);
 				} else {
-					if(trafoConfigParam.getValue().getOption("useExtendedPostPriorisation") != null) {
-						trafoConfigParam.getValue().setOption("useExtendedPostPriorisation", null);
+					if (trafoConfigParam.getValue().getOption(
+							"useExtendedPostPriorisation") != null) {
+						trafoConfigParam.getValue().setOption(
+								"useExtendedPostPriorisation", null);
 					}
 				}
 
@@ -563,7 +572,7 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Extended Post Priorisation is "
 				+ (useExtPostPriorisation ? "activated" : "deactivated"));
 
-	}		
+	}
 
 	@SuppressWarnings("unchecked")
 	@Help(description = "dump physical plan of all registered roots")
@@ -741,15 +750,15 @@ public class ExecutorConsole implements CommandProvider,
 		}
 
 	}
-	
+
 	@Help(parameter = "<filename>", description = "Set a filename for result dump. Each result is dumped to this file. Call without parameter to unset.")
 	public void _setOutputFilename(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
-		if (args.length > 0){
+		if (args.length > 0) {
 			outputputFilename = args[0];
-			ci.println("Output written to "+outputputFilename);
-		}else{
+			ci.println("Output written to " + outputputFilename);
+		} else {
 			outputputFilename = "";
 			ci.println("No output file set");
 		}
@@ -758,22 +767,21 @@ public class ExecutorConsole implements CommandProvider,
 	public void _getOutputFilename(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
-		if (outputputFilename != null && outputputFilename.length() > 0){
-			ci.println("Output written to "+outputputFilename);
-		}else{
+		if (outputputFilename != null && outputputFilename.length() > 0) {
+			ci.println("Output written to " + outputputFilename);
+		} else {
 			ci.println("No output file set");
 		}
 	}
 
-	
 	private void addQuery(String q) {
 		try {
-			if (outputputFilename == null || outputputFilename.length() == 0){
+			if (outputputFilename == null || outputputFilename.length() == 0) {
 				this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
 						new MySink()));
-			}else{
+			} else {
 				this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
-						new FileSink(outputputFilename)));				
+						new FileSink(outputputFilename)));
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -824,8 +832,7 @@ public class ExecutorConsole implements CommandProvider,
 							ITimeInterval.class.getName(),
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
 							"de.uniol.inf.is.odysseus.latency.ILatency",
-							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability"
-							);
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability");
 				} else {
 					trafoConfig = new TransformationConfiguration("relational",
 							ITimeInterval.class);
@@ -864,43 +871,46 @@ public class ExecutorConsole implements CommandProvider,
 				+ "' to boolean value");
 	}
 
-	
 	@Help(parameter = "<query string without CREATE>", description = "CREATE Command\n\tExample: CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )")
 	public void _CREATE(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
-		StringBuffer q = new StringBuffer("CREATE "); 
-		for (int i=0;i<args.length-1;i++){
+		StringBuffer q = new StringBuffer("CREATE ");
+		for (int i = 0; i < args.length - 1; i++) {
 			q.append(args[i]).append(" ");
 		}
 		try {
-			q.append(args[args.length-1]);
-			this.executor.addQuery(q.toString(), parser(),this.trafoConfigParam);
+			q.append(args[args.length - 1]);
+			this.executor.addQuery(q.toString(), parser(),
+					this.trafoConfigParam);
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
 	}
-	
-	@Help(parameter = "<query string without SELECT> [<S>|<F> filename]", description = "add query [with console-output-sink]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
+
+	@Help(parameter = "<query string without SELECT> [<S>|<F> filename|<E>]", description = "add query [with console-output-sink|File output|eclipse output]\n\tExample:SELECT (a * 2) as value FROM test WHERE a > 2 <S>")
 	public void _SELECT(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
-		StringBuffer q = new StringBuffer("SELECT "); 
-		for (int i=0;i<args.length-2;i++){
+		StringBuffer q = new StringBuffer("SELECT ");
+		for (int i = 0; i < args.length - 2; i++) {
 			q.append(args[i]).append(" ");
 		}
 		try {
-			if (args[args.length-1].toUpperCase().equals("<S>")){
-				q.append(args[args.length-2]).append(" ");
+			if (args[args.length - 1].toUpperCase().equals("<S>")) {
+				q.append(args[args.length - 2]).append(" ");
 				this.executor.addQuery(q.toString(), parser(),
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
-			}else if (args[args.length-2].toUpperCase().equals("<F>")){
+			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
 				this.executor.addQuery(q.toString(), parser(),
-							new ParameterDefaultRoot(new FileSink(args[args.length-1])),
-							this.trafoConfigParam);
+						new ParameterDefaultRoot(new FileSink(
+								args[args.length - 1])), this.trafoConfigParam);
 
+			} else if (args[args.length - 1].toUpperCase().equals("<E>")) {
+				q.append(args[args.length - 2]).append(" ");
+				this.addQueryWithEclipseConsoleOutput(q.toString(), ci);
 			} else {
-				q.append(args[args.length-2]).append(" ");
-				q.append(args[args.length-1]).append(" ");
+				q.append(args[args.length - 2]).append(" ");
+				q.append(args[args.length - 1]).append(" ");
 				this.executor.addQuery(q.toString(), parser(),
 						this.trafoConfigParam);
 			}
@@ -908,12 +918,11 @@ public class ExecutorConsole implements CommandProvider,
 			ci.println(e.getMessage());
 		}
 	}
-		
-		
-	@Help(parameter = "<query string> [S] [true|false] \"[rule name](\",\"<rule name>)*\" ", description = "add query [with console-output-sink] " +
-			"[with|without restructuring the query plan, default true] \n" +
-			"and specify the rules to use for restructuring. If no rules are specified, all available rules are used. \n" +
-			"\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
+
+	@Help(parameter = "<query string> [S] [true|false] \"[rule name](\",\"<rule name>)*\" ", description = "add query [with console-output-sink] "
+			+ "[with|without restructuring the query plan, default true] \n"
+			+ "and specify the rules to use for restructuring. If no rules are specified, all available rules are used. \n"
+			+ "\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
@@ -928,23 +937,23 @@ public class ExecutorConsole implements CommandProvider,
 			ci.println("No query argument.");
 		}
 	}
-	
+
 	@Help(parameter = "<filename> [S] [useProp]", description = "add query declared in <filename> [with console-output-sink] [filepath automatically read from user.files")
-	public void _addFromFile(CommandInterpreter ci){
+	public void _addFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
-		
-		
-		if((args.length == 2 && args[1].equalsIgnoreCase("useProp")) || 
-				args.length == 3 && args[2].equalsIgnoreCase("useProp")){
+
+		if ((args.length == 2 && args[1].equalsIgnoreCase("useProp"))
+				|| args.length == 3 && args[2].equalsIgnoreCase("useProp")) {
 			this.path = System.getProperty("user.files");
 		}
-		
-		if(args != null && args.length > 0){
+
+		if (args != null && args.length > 0) {
 			BufferedReader br = null;
 			File file = null;
 			try {
-				file = new File(this.path != null ? this.path + args[0] : args[0]);
+				file = new File(this.path != null ? this.path + args[0]
+						: args[0]);
 				br = new BufferedReader(new FileReader(file));
 			} catch (FileNotFoundException e) {
 				ci.println("File not found: " + file.getAbsolutePath());
@@ -954,161 +963,155 @@ public class ExecutorConsole implements CommandProvider,
 			String queries = "";
 			try {
 				String line = null;
-				while((line = br.readLine()) != null ){
+				while ((line = br.readLine()) != null) {
 					queries += line + "\n";
 				}
 			} catch (IOException e) {
 				ci.printStackTrace(e);
 				return;
 			}
-			
-			try{				
+
+			try {
 				String[] newArgs = new String[args.length];
 				newArgs[0] = queries;
-				for(int i = 1; i<args.length; i++){
+				for (int i = 1; i < args.length; i++) {
 					newArgs[i] = args[i];
 				}
-				
+
 				this.delegateAddQueryCmd(newArgs);
-			}catch(Exception e){
+			} catch (Exception e) {
 				ci.printStackTrace(e);
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is used by _addQuery and _addFromFile
-	 * @param args The arguments that have been passed to the above methods
-	 *             by the CommandInterpreter.
-	 * @throws Exception 
-	 * @throws PlanManagementException 
+	 * 
+	 * @param args
+	 *            The arguments that have been passed to the above methods by
+	 *            the CommandInterpreter.
+	 * @throws Exception
+	 * @throws PlanManagementException
 	 */
-	private void delegateAddQueryCmd(String[] args) throws PlanManagementException, Exception{
+	private void delegateAddQueryCmd(String[] args)
+			throws PlanManagementException, Exception {
 		// a CREATE statement has no arguments
 		// a QUERY statement does have to have arguments
-		if(args.length == 1){
-			this.executor.addQuery(args[0], parser(),
-					this.trafoConfigParam);
+		if (args.length == 1) {
+			this.executor.addQuery(args[0], parser(), this.trafoConfigParam);
 		}
 		// a QUERY statement can have arguments
-		else if(args.length == 2){
+		else if (args.length == 2) {
 			// the second argument can be for sink, so 'S'
 			// or it can be for doRestruct, so 'true' or 'false'
-			if(args[1].equalsIgnoreCase("S")){
+			if (args[1].equalsIgnoreCase("S")) {
 				this.executor.addQuery(args[0], parser(),
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
-			}
-			else if(args[1].equalsIgnoreCase("TRUE")){
-				this.executor.addQuery(args[0], parser(),
-						this.trafoConfigParam);
-			}
-			else if(args[1].equalsIgnoreCase("FALSE")){
+			} else if (args[1].equalsIgnoreCase("TRUE")) {
+				this.executor
+						.addQuery(args[0], parser(), this.trafoConfigParam);
+			} else if (args[1].equalsIgnoreCase("FALSE")) {
 				this.executor.addQuery(args[0], parser(), false, null,
 						this.trafoConfigParam);
 			}
-		}
-		else if(args.length == 3){
-			if(args[1].toUpperCase().equals("S")){
+		} else if (args.length == 3) {
+			if (args[1].toUpperCase().equals("S")) {
 				// the thrid argument is setting the restructuring mode.
-				if(args[2].equalsIgnoreCase("TRUE") || args[2].equalsIgnoreCase("FALSE")){
-					this.executor.addQuery(args[0], parser(),
-							args[2].equalsIgnoreCase("TRUE") ? true : false,
-							null,
+				if (args[2].equalsIgnoreCase("TRUE")
+						|| args[2].equalsIgnoreCase("FALSE")) {
+					this.executor.addQuery(args[0], parser(), args[2]
+							.equalsIgnoreCase("TRUE") ? true : false, null,
 							new ParameterDefaultRoot(new MySink()),
 							this.trafoConfigParam);
 				}
-				// the third argument are the rule names, restructuring is set per default to true
-				else{
-					StringTokenizer tokens = new StringTokenizer(args[2],  ",", false);
+				// the third argument are the rule names, restructuring is set
+				// per default to true
+				else {
+					StringTokenizer tokens = new StringTokenizer(args[2], ",",
+							false);
 					Set<String> ruleNames = new HashSet<String>();
-					while(tokens.hasMoreTokens()){
+					while (tokens.hasMoreTokens()) {
 						ruleNames.add(tokens.nextToken());
 					}
-					
-					this.executor.addQuery(args[0], parser(),
-							true,
-							ruleNames,
-							new ParameterDefaultRoot(new MySink()),
-							this.trafoConfigParam);
-				}
-			}
-			else{
-				
-				if(args[1].equalsIgnoreCase("TRUE") || args[1].equalsIgnoreCase("FALSE")){
-					
-					StringTokenizer tokens = new StringTokenizer(args[2],  ",", false);
-					Set<String> ruleNames = new HashSet<String>();
-					while(tokens.hasMoreTokens()){
-						ruleNames.add(tokens.nextToken());
-					}
-					
-					this.executor.addQuery(args[0], parser(),
-							args[2].equalsIgnoreCase("TRUE") ? true : false,
-							ruleNames,
-							this.trafoConfigParam);
 
+					this.executor.addQuery(args[0], parser(), true, ruleNames,
+							new ParameterDefaultRoot(new MySink()),
+							this.trafoConfigParam);
 				}
-				else{
-					StringTokenizer tokens = new StringTokenizer(args[2],  ",", false);
+			} else {
+
+				if (args[1].equalsIgnoreCase("TRUE")
+						|| args[1].equalsIgnoreCase("FALSE")) {
+
+					StringTokenizer tokens = new StringTokenizer(args[2], ",",
+							false);
 					Set<String> ruleNames = new HashSet<String>();
-					while(tokens.hasMoreTokens()){
+					while (tokens.hasMoreTokens()) {
 						ruleNames.add(tokens.nextToken());
 					}
-					
-					this.executor.addQuery(args[0], parser(),
-							true,
-							ruleNames,
+
+					this.executor.addQuery(args[0], parser(), args[2]
+							.equalsIgnoreCase("TRUE") ? true : false,
+							ruleNames, this.trafoConfigParam);
+
+				} else {
+					StringTokenizer tokens = new StringTokenizer(args[2], ",",
+							false);
+					Set<String> ruleNames = new HashSet<String>();
+					while (tokens.hasMoreTokens()) {
+						ruleNames.add(tokens.nextToken());
+					}
+
+					this.executor.addQuery(args[0], parser(), true, ruleNames,
 							this.trafoConfigParam);
 				}
 			}
-		}
-		else if(args.length == 4){
-			if(args[1].equalsIgnoreCase("S")){
+		} else if (args.length == 4) {
+			if (args[1].equalsIgnoreCase("S")) {
 				// get the rule names
-				StringTokenizer tokens = new StringTokenizer(args[3],  ",", false);
+				StringTokenizer tokens = new StringTokenizer(args[3], ",",
+						false);
 				Set<String> ruleNames = new HashSet<String>();
-				while(tokens.hasMoreTokens()){
+				while (tokens.hasMoreTokens()) {
 					ruleNames.add(tokens.nextToken());
 				}
-				
-				this.executor.addQuery(args[0], parser(),
-						args[2].equalsIgnoreCase("TRUE") ? true : false,
-						ruleNames,
+
+				this.executor.addQuery(args[0], parser(), args[2]
+						.equalsIgnoreCase("TRUE") ? true : false, ruleNames,
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
-			}
-			else{
+			} else {
 				// get the rule names
-				StringTokenizer tokens = new StringTokenizer(args[3],  ",", false);
+				StringTokenizer tokens = new StringTokenizer(args[3], ",",
+						false);
 				Set<String> ruleNames = new HashSet<String>();
-				while(tokens.hasMoreTokens()){
+				while (tokens.hasMoreTokens()) {
 					ruleNames.add(tokens.nextToken());
 				}
-				
-				this.executor.addQuery(args[0], parser(),
-						args[2].equalsIgnoreCase("TRUE") ? true : false,
-						ruleNames,
+
+				this.executor.addQuery(args[0], parser(), args[2]
+						.equalsIgnoreCase("TRUE") ? true : false, ruleNames,
 						this.trafoConfigParam);
 			}
 		}
 
 	}
-	
-	@Help(parameter = "<path>",
-			description = "Sets the path from which to read files." +
-					"E. g. setPath 'C:\\Users\\name\\' and addFromFile 'queries.txt' uses the file C:\\Users\\name\\queries.txt")
-	public void _setPath(CommandInterpreter ci){
+
+	@Help(parameter = "<path>", description = "Sets the path from which to read files."
+			+ "E. g. setPath 'C:\\Users\\name\\' and addFromFile 'queries.txt' uses the file C:\\Users\\name\\queries.txt")
+	public void _setPath(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
-		
-		if(args == null || args.length == 0){
+
+		if (args == null || args.length == 0) {
 			ci.println("No path defined.");
 			return;
 		}
-		
+
 		this.path = args[0].endsWith("/") ? args[0] : args[0] + "/";
-		
+
 		ci.println("Path has been set. New path: " + this.path);
 	}
 
@@ -1119,13 +1122,14 @@ public class ExecutorConsole implements CommandProvider,
 			System.out
 					.println("Current registered queries (ID | STARTED | PARSERID):");
 			for (IQuery query : this.executor.getSealedPlan().getQueries()) {
-				ci.println(query.getID() + " | " + query.isRunning()+" | "+query.getParserId());
+				ci.println(query.getID() + " | " + query.isRunning() + " | "
+						+ query.getParserId());
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Help(description = "show registered sources")
 	public void _lssources(CommandInterpreter ci) {
 		addCommand();
@@ -1360,19 +1364,19 @@ public class ExecutorConsole implements CommandProvider,
 			ci.printStackTrace(e);
 		}
 	}
-	
-	@Help(parameter = "<file name> [useProp]", description = "runs commands contained in a file.\n" +
-			"The filename can be specified in an absolute manner or, together with \"setPath\" command in a relative manner.\n" +
-			"If useProp option is set, then the path to the file will be automatically read from system property user.files.")
-	public void _runFromFile(CommandInterpreter ci){
+
+	@Help(parameter = "<file name> [useProp]", description = "runs commands contained in a file.\n"
+			+ "The filename can be specified in an absolute manner or, together with \"setPath\" command in a relative manner.\n"
+			+ "If useProp option is set, then the path to the file will be automatically read from system property user.files.")
+	public void _runFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
-		
+
 		addCommand(args);
-		
-		if(args.length == 2 && args[1].equalsIgnoreCase("useProp")){
+
+		if (args.length == 2 && args[1].equalsIgnoreCase("useProp")) {
 			this.path = System.getProperty("user.files");
 		}
-		
+
 		BufferedReader br = null;
 		File file = null;
 		try {
@@ -1385,58 +1389,61 @@ public class ExecutorConsole implements CommandProvider,
 
 		CommandInterpreter delegateCi;
 		try {
-			ci.println("--- running macro from file: " + file.getAbsolutePath() + " ---");
+			ci.println("--- running macro from file: " + file.getAbsolutePath()
+					+ " ---");
 			String line = null;
-			while((line = br.readLine()) != null ){
+			while ((line = br.readLine()) != null) {
 				String commandString = line;
 				System.out.println("Command: " + commandString);
-				
-				StringTokenizer tokens = new StringTokenizer(commandString, " \n\t'", true);
+
+				StringTokenizer tokens = new StringTokenizer(commandString,
+						" \n\t'", true);
 				ArrayList<String> tokenList = new ArrayList<String>();
-				while(tokens.hasMoreTokens()){
+				while (tokens.hasMoreTokens()) {
 					String token = tokens.nextToken();
 					// this is for complex tokens that are in ' '
-					if(token.equals("'")){
+					if (token.equals("'")) {
 						boolean isEnd = false;
 						String complexArgument = "";
-						while(!isEnd){
+						while (!isEnd) {
 							String innerToken = tokens.nextToken();
-							if(!innerToken.equals("'")){
+							if (!innerToken.equals("'")) {
 								complexArgument += innerToken;
-							}
-							else{
+							} else {
 								isEnd = true;
 							}
 						}
-						tokenList.add(complexArgument); 
-					}
-					else if(!token.equals(" ") && !token.equals("\n") && !token.equals("\t")){
+						tokenList.add(complexArgument);
+					} else if (!token.equals(" ") && !token.equals("\n")
+							&& !token.equals("\t")) {
 						tokenList.add(token);
 					}
 				}
-				
+
 				String[] commandAndArgs = new String[tokenList.size()];
-				for(int i = 0; i<tokenList.size(); i++){
+				for (int i = 0; i < tokenList.size(); i++) {
 					commandAndArgs[i] = tokenList.get(i);
 				}
-				
-				String[] currentArgs = new String[commandAndArgs.length -1];
-				System.arraycopy(commandAndArgs, 1, currentArgs, 0, commandAndArgs.length - 1);
+
+				String[] currentArgs = new String[commandAndArgs.length - 1];
+				System.arraycopy(commandAndArgs, 1, currentArgs, 0,
+						commandAndArgs.length - 1);
 				Command command = new Command();
 				command.name = "_" + commandAndArgs[0];
 				command.setArgs(currentArgs);
-				
+
 				Method m = this.getClass().getMethod(command.name,
 						CommandInterpreter.class);
 
-				delegateCi = new DelegateCommandInterpreter(
-						ci, command.getArgs());
+				delegateCi = new DelegateCommandInterpreter(ci, command
+						.getArgs());
 
 				m.invoke(this, delegateCi);
-				
+
 			}
-			
-			ci.println("--- macro from file " + file.getAbsolutePath() + " done ---");
+
+			ci.println("--- macro from file " + file.getAbsolutePath()
+					+ " done ---");
 		} catch (IOException e) {
 			ci.printStackTrace(e);
 			return;
@@ -1451,8 +1458,7 @@ public class ExecutorConsole implements CommandProvider,
 		} catch (InvocationTargetException e) {
 			e.getTargetException().printStackTrace();
 		}
-		
-		
+
 	}
 
 	@Help(parameter = "<macro name>", description = "begin macro recording")
@@ -1598,6 +1604,26 @@ public class ExecutorConsole implements CommandProvider,
 		} finally {
 			preferencesLock.unlock();
 		}
+	}
+
+	private void addQueryWithEclipseConsoleOutput(String query,
+			CommandInterpreter ci) {
+		try {
+
+			Class<?> eclipseConsoleSink = Class
+					.forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
+			Object ecs = eclipseConsoleSink.newInstance();
+			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
+
+			this.executor.addQuery(query, parser(), new ParameterDefaultRoot(
+					ecSink), this.trafoConfigParam);
+		}catch(ClassNotFoundException e){
+			ci.println("Eclipse Console Plugin is missing!");
+		}
+		catch (Exception e) {
+			ci.println(e.getMessage());
+		}
+
 	}
 
 }

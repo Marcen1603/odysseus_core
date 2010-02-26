@@ -5,6 +5,9 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+
 public class RandomDataProvider extends Thread {
 
 	private int port;
@@ -37,57 +40,46 @@ public class RandomDataProvider extends Thread {
 							+ clientSocket.getInetAddress() + ":"
 							+ clientSocket.getPort());
 
-					ObjectOutputStream oStream;
-
-				
-
-				
-				
-					oStream = new ObjectOutputStream(this.clientSocket
+					ObjectOutputStream oStream = new ObjectOutputStream(this.clientSocket
 							.getOutputStream());
 
 					while (this.clientSocket != null
 							&& this.clientSocket.isConnected()) {
 						try {					
-							
-							Object[] tuple = new Object[schema.getAttributes().size()];
-					    	for(int i=0;i<tuple.length;i++){    		
+							RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(schema.getAttributes().size());							
+					    	for(int i=0;i<tuple.getAttributeCount();i++){    		
 					    		BasicAttribute attribute = schema.getAttributes().get(i);
 					    		switch (attribute.getDataType()) {
 								case Double:
-									tuple[i] = Double.valueOf(RandomGenerator.randomDouble(Double.parseDouble(attribute.getMin()), Double.parseDouble(attribute.getMax())));
-									oStream.writeDouble((Double) tuple[i]);
+									tuple.addAttributeValue(i,Double.valueOf(RandomGenerator.randomDouble(Double.parseDouble(attribute.getMin()), Double.parseDouble(attribute.getMax()))));									
 									break;
 								case Integer:
-									tuple[i] = Integer.valueOf(RandomGenerator.randomInt(Integer.parseInt(attribute.getMin()), Integer.parseInt(attribute.getMax())));
-									oStream.writeInt((Integer) tuple[i]);
+									tuple.addAttributeValue(i, Integer.valueOf(RandomGenerator.randomInt(Integer.parseInt(attribute.getMin()), Integer.parseInt(attribute.getMax()))));									
 									break;
 								case Long:
-									tuple[i] = Long.valueOf(RandomGenerator.randomLong(Long.parseLong(attribute.getMin()), Long.parseLong(attribute.getMax())));
-									oStream.writeLong((Long) tuple[i]);
+									tuple.addAttributeValue(i, Long.valueOf(RandomGenerator.randomLong(Long.parseLong(attribute.getMin()), Long.parseLong(attribute.getMax()))));									
 									break;
 								case Time:
-									tuple[i] = Long.valueOf(System.currentTimeMillis());
-									oStream.writeLong((Long) tuple[i]);
+									tuple.addAttributeValue(i, Long.valueOf(System.currentTimeMillis()));									
 									break;
 								case String:
-									tuple[i] = RandomGenerator.randomString(Integer.parseInt(attribute.getMin()), Integer.parseInt(attribute.getMax()));
-									oStream.writeChars((String) tuple[i]);
+									tuple.addAttributeValue(i, RandomGenerator.randomString(Integer.parseInt(attribute.getMin()), Integer.parseInt(attribute.getMax())));									
 									break;
 								default:
 									break;
 								}
 					    	}
+					    	oStream.writeObject(tuple);					    	
 					    	System.out.print(this.port+"\t | ");
-							for (int i = 0; i < tuple.length; i++) {								
-								System.out.print(tuple[i] + "\t");
+							for (int i = 0; i < tuple.getAttributeCount(); i++) {								
+								System.out.print(tuple.getAttribute(i).toString() + "\t");
 							}
 							System.out.println();
 							oStream.flush();
 							sleep(1000);
 						} catch (IOException ex) {												
 							this.clientSocket = null;
-
+							ex.printStackTrace();
 							System.err
 									.println("Connection closed by client on port "
 											+ this.port + ". Server is still alive...");
