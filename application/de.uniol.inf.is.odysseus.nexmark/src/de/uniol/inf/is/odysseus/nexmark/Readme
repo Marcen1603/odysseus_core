@@ -6,7 +6,7 @@ Configuration:
 The configuration can be changed in the NEXMarkGeneratorConfiguration.properties file.
 
 Usage:
-The Generator can either be instantiated or used as an external sever.
+The Generator can either be instantiated or used as an external server.
 
 As an instance:
 
@@ -18,15 +18,15 @@ As an instance:
     
     server.start();
     
-   2. create a conneciton to the server
+   2. create a connection to the server
     Socket socket = new Socket(<host>, <port>);
-    // the <port> specifies the benchmark stream to be recieved 
-    // if used locally <host> would be "localhost"
+    // the <port> specifies the benchmark stream to be received 
+    // if used locally, <host> would be "localhost"
     
     ObjectInputStream in = new ObjectInputStream(s.getInputStream());
     
    3. use the stream
-    // the data (RelationalTuples) is now send through the ObjectInputStream
+    // the data (RelationalTuples) is now sent through the ObjectInputStream
     in.readObject();
     
    4. stop the server when finished
@@ -46,7 +46,7 @@ As an external server
 	Example:
 	    java NexmarkServer -pr 2000 -el 10000    
     
-   2. create a conneciton to the server
+   2. create a connection to the server
     Socket socket = new Socket(<host>, <port>);
     ObjectInputStream in = new ObjectInputStream(s.getInputStream());
     
