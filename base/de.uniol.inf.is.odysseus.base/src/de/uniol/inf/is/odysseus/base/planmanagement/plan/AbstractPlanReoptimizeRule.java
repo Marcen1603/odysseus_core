@@ -44,4 +44,6 @@ public abstract class AbstractPlanReoptimizeRule
 	public void removeReoptimieRequester(IEditablePlan reoptimizable) {
 		this.reoptimizable.remove(reoptimizable);
 	}
+	
+	public abstract void deinitialize();
 }

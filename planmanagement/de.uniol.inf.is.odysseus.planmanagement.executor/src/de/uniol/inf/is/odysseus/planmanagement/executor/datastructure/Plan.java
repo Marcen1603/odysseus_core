@@ -123,6 +123,7 @@ public class Plan implements IEditablePlan {
 		synchronized (this.reoptimizeRule) {
 			if (!this.reoptimizeRule.contains(reoptimizeRule)) {
 				this.reoptimizeRule.add(reoptimizeRule);
+				reoptimizeRule.addReoptimieRequester(this);
 			}
 		}
 	}
@@ -134,6 +135,7 @@ public class Plan implements IEditablePlan {
 	public void removeReoptimzeRule(AbstractPlanReoptimizeRule reoptimizeRule) {
 		synchronized (this.reoptimizeRule) {
 			this.reoptimizeRule.remove(reoptimizeRule);
+			reoptimizeRule.deinitialize();
 		}
 	}
 

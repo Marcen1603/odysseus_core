@@ -250,5 +250,15 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	List<IMonitoringData<?>> getSourceDatarates() {
 		return sourceDatarates;
 	}
+	
+	@Override
+	public IExecutionPlan reoptimize(IOptimizable sender,
+			IEditableExecutionPlan executionPlan)
+			throws QueryOptimizationException {
+		for (IEditableQuery query : sender.getRegisteredQueries()) {
+			reoptimize(sender, query, executionPlan);
+		}
+		return executionPlan;
+	}
 
 }

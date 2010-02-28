@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -83,12 +84,14 @@ public class OptimizationTestConsole implements
 
 			this.executor.getOptimizerConfiguration().set(
 					new SettingMaxConcurrentOptimizations(1));
-			try {
+			/*try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 			}
 			System.out.println("reoptimize...");
-			query.reoptimize();
+			query.reoptimize();*/
+			
+			this.executor.getSealedPlan().addReoptimzeRule(new ReoptimizeTimer(10000));
 
 			/*
 			 * while (true) { try { Thread.sleep(2000); } catch

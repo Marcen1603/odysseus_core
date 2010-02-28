@@ -1,45 +1,35 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.AbstractPlanReoptimizeRule;
+import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 
 /**
  * ReoptimizeTimer is a reoptimze rule. After a defined time an reoptimize
  * request is send.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Tobias Witt
  * 
  */
 public class ReoptimizeTimer extends AbstractPlanReoptimizeRule implements
 		Runnable {
 
-	/**
-	 * Is the timer thread running.
-	 */
-	private boolean running = true;
+	private long period;
+	private Thread thread;
 
 	/**
-	 * Current time stamp.
-	 */
-	private float curTime = 0;
-
-	/**
-	 * Stop time which defines when a request is send.
-	 */
-	private float stopTime = 0;
-
-	/**
-	 * Creates a new time rule with a specific time stamp.
+	 * Creates a new time rule with a specific time period.
 	 * 
-	 * @param time
-	 *            Time which defines when a request is send.
+	 * @param period
+	 *            Period which defines after which time a reoptimization is
+	 *            fired.
 	 */
-	public ReoptimizeTimer(float time) {
-		this.stopTime = time;
-		Thread thread = new Thread(this);
-		thread.start();
+	public ReoptimizeTimer(long time) {
+		this.period = time;
+		this.reoptimizable = new ArrayList<IPlan>();
+		this.thread = new Thread(this);
+		this.thread.start();
 	}
 
 	/*
@@ -49,24 +39,18 @@ public class ReoptimizeTimer extends AbstractPlanReoptimizeRule implements
 	 */
 	@Override
 	public void run() {
-		
-		// TODO: KEIN BUISY-WAIT!!!
-		
-		// while this Thread is running
-		while (this.running) {
-			this.curTime++;
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			// if current tim greater the stop time send request
-			if (curTime >= this.stopTime) {
+		try {
+			while (true) {
+				Thread.sleep(this.period);
 				fireReoptimizeEvent();
-				// begin anew
-				curTime = 0;
 			}
+		} catch (InterruptedException e) {
+			//end
 		}
+	}
+
+	@Override
+	public void deinitialize() {
+		this.thread.interrupt();
 	}
 }
