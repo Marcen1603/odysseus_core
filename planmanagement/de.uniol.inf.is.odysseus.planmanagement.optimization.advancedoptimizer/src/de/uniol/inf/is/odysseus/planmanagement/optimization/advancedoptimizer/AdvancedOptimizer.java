@@ -192,9 +192,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			}
 			// pick near optimal plan with acceptable migration cost
 			PlanMigration optimalMigration = this.migrationCostModel.getCostCalculator().pickBest(migrationCandidates);
-			IPhysicalOperator newPlan = optimalMigration.getNewPlan();
-			context.setRoot(newPlan);
-			context.setLogicalPlan(alternatives.get(newPlan));
+			context.setRoot(optimalMigration.getNewPlan());
+			context.setLogicalPlan(alternatives.get(optimalMigration.getNewPlan()));
 			
 			// stop scheduling
 			this.logger.debug("Pause query.");
@@ -202,7 +201,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			
 			// start migration to new plan 
 			this.logger.info("Start migration to new physical plan (query ID "+query.getID()+")");
-			optimalMigration.getStrategy().migrateQuery(this, query, newPlan);
+			optimalMigration.getStrategy().migrateQuery(this, query, optimalMigration.getNewPlan());
 			
 			// wait for migration end callback
 			this.logger.info("Plan migration running (query ID "+query.getID()+")");
