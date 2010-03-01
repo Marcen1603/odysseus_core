@@ -30,11 +30,12 @@ public class IdeaalScenarioActuator {
 	public bindKNXService(IFS20KNXService service){
 		//FIXME binding in osgi inf definieren, sobald bundle zur verfügung steht
 		this.knxService = service;
-	}
+	}*/
 	
 	@ActuatorAdapterSchema(show = true, provide = true)
-	public void personWentToBed(){
-		if (personLyingBed){
+	public void personWentToBed(double w1, double w2, double w3, double w4){
+		System.out.println(w1+" "+w2+" "+w3+" "+w4);
+		/*if (personLyingBed){
 			//person already in bed, do nothing
 			return;
 		}
@@ -78,12 +79,13 @@ public class IdeaalScenarioActuator {
 			
 			knxService.switchKNXDevice(LIGHT_BELOW_BED, false);
 		}
-		
+		*/
 	}
 	
 
 	@ActuatorAdapterSchema(show = true, provide = true)
 	public void personStoodUp(){
+		/*
 		personLyingBed = false;
 		personStoodUp = true;
 		
@@ -94,7 +96,7 @@ public class IdeaalScenarioActuator {
 		Thread.sleep(2 * 1000);
 		
 		knxService.dimKNXDevice(LIGHT_BATHROOM_DIM, DIM_VAL);
+		*/
 	}
-	*/
 
 }
