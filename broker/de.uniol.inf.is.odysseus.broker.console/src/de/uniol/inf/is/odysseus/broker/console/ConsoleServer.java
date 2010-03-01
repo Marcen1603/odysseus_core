@@ -7,37 +7,41 @@ import javax.jws.soap.SOAPBinding.Style;
 import org.eclipse.swt.widgets.Display;
 
 @WebService
-@SOAPBinding(style=Style.RPC)
+@SOAPBinding(style = Style.RPC)
 public class ConsoleServer {
-	
+
 	private int port;
-	public void givenPortDelegate(int port){
+
+	public void givenPortDelegate(int port) {
 		this.port = port;
 	}
-	
-	public int registerView(final String[] attributes){				
-		Display.getDefault().syncExec( new Runnable() {  
+
+	public int registerView(final String[] attributes) {
+		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				if(!ViewController.getInstance().getViews().isEmpty()){
-				int givenPort = ViewController.getInstance().createNewView(attributes);
-				givenPortDelegate(givenPort);
-				ViewController.getInstance().refreshAll();
-				}else{
+				if (!ViewController.getInstance().getViews().isEmpty()) {
+					int givenPort = ViewController.getInstance().createNewView(
+							attributes);
+					givenPortDelegate(givenPort);
+					ViewController.getInstance().refreshAll();
+				} else {
 					givenPortDelegate(-1);
 				}
 			}
 		});
 		return port;
 	}
-		
-	public void sendTuple(final int port, final String[] values){		
-		Display.getDefault().syncExec( new Runnable() {  
+
+	public void sendTuple(final int port, final String[] values) {
+		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				ViewController.getInstance().getContentProvider(port).addValue(values);
-				ViewController.getInstance().refreshAll();
+				if (ViewController.getInstance().isQueryViewTabOpen(port)) {
+					ViewController.getInstance().getContentProvider(port).addValue(values);
+					ViewController.getInstance().refreshAll();
+				}
 			}
 		});
-		
+
 	}
 
 }

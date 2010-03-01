@@ -43,7 +43,7 @@ public class EclipseConsoleSink extends AbstractSink<Object> {
 	}
 
 	@Override
-	protected void process_next(Object object, int port, boolean isReadOnly) {	
+	protected void process_next(Object object, int port, boolean isReadOnly) {			
 		StringArray values = new StringArray();
 		// hack because unable to access to relationaltuple...
 		String objStr = object.toString();

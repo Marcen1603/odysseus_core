@@ -141,4 +141,13 @@ public class OutputView extends ViewPart {
 			tabView.refreshViewer();
 		}
 	}
+	
+	public void dispose(){
+		super.dispose();
+		this.closeConnection();
+	}
+
+	public void closeConnection() {		
+		ViewController.getInstance().removeView(this);
+	}
 }
