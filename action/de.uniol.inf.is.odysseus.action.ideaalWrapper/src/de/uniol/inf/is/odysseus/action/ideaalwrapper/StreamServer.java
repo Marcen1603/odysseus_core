@@ -35,7 +35,7 @@ public class StreamServer extends Thread {
 		serverChannel.configureBlocking(true);
 		
 		this.sensorClient = new SocketSensorClient(sensor.getIp(), sensor.getPort(), 
-				sensor.getInterval(), sensor.getMessage(), Sensor.getSchema(sensor));
+				sensor.getInterval(), sensor.getMessages(), Sensor.getSchema(sensor));
 			
 		this.logger = LoggerFactory.getLogger( StreamServer.class );
 	}

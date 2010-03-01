@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.action.ideaalwrapper;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -14,19 +16,19 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  *
  */
 public enum Sensor {
-	BedBalance("192.168.0.56", 99, 1000, "b");
+	BedBalance("192.168.0.56", 99, 1000, new String []{"8", "9", "a", "b"});
 	
 	private String ip;
 	private int port;
 	private long interval;
-	private String message;
+	private List<String> messages;
 	private static Map<Sensor, SDFAttributeList> schema;
 	
-	Sensor(String ip, int port, long interval, String message){
+	Sensor(String ip, int port, long interval, String[] messages){
 		this.ip = ip;
 		this.port = port;
 		this.interval = interval;
-		this.message = message;
+		this.messages = Arrays.asList(messages);
 	}
 	
 	public String getIp() {
@@ -50,8 +52,8 @@ public enum Sensor {
 	 * data retrieval
 	 * @return
 	 */
-	public String getMessage() {
-		return this.message;
+	public List<String> getMessages() {
+		return this.messages;
 	}
 	
 	public static SDFAttributeList getSchema(Sensor sensor) {
@@ -60,8 +62,13 @@ public enum Sensor {
 			
 			//BedBalance
 			SDFAttributeList schema = new SDFAttributeList();
-			String[] identifiers = {"timestamp", "weight"};
-			SDFDatatype[] types = {SDFDatatypeFactory.getDatatype("Long"), SDFDatatypeFactory.getDatatype("Double")};
+			String[] identifiers = {"timestamp", "weight0", "weight1", "weight2", "weight3"};
+			SDFDatatype[] types = {
+					SDFDatatypeFactory.getDatatype("Long"),
+					SDFDatatypeFactory.getDatatype("Double"),
+					SDFDatatypeFactory.getDatatype("Double"),
+					SDFDatatypeFactory.getDatatype("Double"),
+					SDFDatatypeFactory.getDatatype("Double")};
 			
 			for (int i=0; i<identifiers.length; i++){
 				SDFAttribute attribute = new SDFAttribute(identifiers[i]);

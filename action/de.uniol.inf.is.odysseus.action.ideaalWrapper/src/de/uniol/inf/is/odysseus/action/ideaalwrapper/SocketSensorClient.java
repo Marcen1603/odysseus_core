@@ -1,17 +1,22 @@
 package de.uniol.inf.is.odysseus.action.ideaalwrapper;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * Client responsible for fetching values 
@@ -22,16 +27,18 @@ public class SocketSensorClient extends Thread {
 	private long interval;
 	private Socket socket;	
 	private List<StreamClient> clients;
-	private String message;
+	private List<String> messages;
 	private SDFAttributeList schema;
+	private Logger logger;
 	
 
-	public SocketSensorClient(String ip, int port, long interval, String message, SDFAttributeList schema) throws UnknownHostException, IOException {
+	public SocketSensorClient(String ip, int port, long interval, List<String> messages, SDFAttributeList schema) throws UnknownHostException, IOException {
 		this.interval = interval;
 		this.socket = new Socket(ip, port);
 		this.clients = new ArrayList<StreamClient>();
-		this.message = message;
+		this.messages = messages;
 		this.schema = schema;
+		this.logger = LoggerFactory.getLogger(SocketSensorClient.class);
 	}
 	
 	public void addClient(StreamClient streamClient) {
@@ -44,40 +51,114 @@ public class SocketSensorClient extends Thread {
 	public void run() {
 		while (true){
 			try {
-				//send request to sensor
-				PrintWriter outputStream = new PrintWriter(this.socket.getOutputStream(), true);
-				outputStream.write(message);
-				
-				//receive result
-				BufferedReader reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-				String input = "";
-				
-				String inputLine = reader.readLine();
-				while (inputLine != null){
-					input = input.concat(inputLine);
-					inputLine = reader.readLine();
-				}
-				
-				RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(this.schema.size()+1);
+				RelationalTuple<ITimeInterval> tuple = new 
+					RelationalTuple<ITimeInterval>(this.schema.size());
 				tuple.setAttribute(0, System.currentTimeMillis());
-				//TODO datenformat => tupel entsprechend aufbauen
+				
+				//send request to sensor
+				OutputStream outputStream = this.socket.getOutputStream();
+				int index = 1;
+				for (String message : messages){
+				
+					outputStream.flush();
+					outputStream.write(message.getBytes());
+					outputStream.flush();
+				
+					//receive result
+					String input = readFromSensor(this.socket.getInputStream());
+					if (input != null & input.length() >0){
+						SDFAttribute attribute = schema.getAttribute(index);
+						Object val = this.extractFromInputString(
+								attribute.getDatatype(), input);
+						if (val != null){
+							tuple.setAttribute(index, val);
+							index++;
+						}else {
+							throw new InternalException("Irregular value from sensor: "+input);
+						}
+					}else {
+						throw new InternalException("Value from Sensor is empty");
+					}
+					
+					//wait shortly until next val is fetched
+					try {
+						sleep(this.interval);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 				
 				//send tuple to clients
-				for (StreamClient client : this.clients){
-					client.writeObject(tuple);
+				synchronized (clients) {
+					for (StreamClient client : this.clients){
+						client.writeObject(tuple);
+					}
 				}
-				
-				try {
-					//sleep for interval duration
-					sleep(this.interval);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				this.logger.debug("Send tuple with "+tuple.getAttributeCount()+" values");
 			} catch (IOException e) {
 				this.closeSocket();
+				e.printStackTrace();
 				break;
+			} catch (InternalException e) {
+				this.logger.error(e.getMessage());
+				this.logger.error("Skipping tuple");
+
+				//wait till next fetch
+				try {
+					sleep(this.interval);
+				} catch (InterruptedException e2) {
+					e.printStackTrace();
+				}
+			} catch (Exception e){
+				e.printStackTrace();
 			}
 		}
+	}
+
+	private Object extractFromInputString(SDFDatatype datatype, String val) {
+		String qualName = datatype.getQualName();
+		qualName = qualName.toLowerCase();
+		if (qualName.equals("double")){
+			return Double.valueOf(val);
+		}else if (qualName.equals("float")){
+			return Float.valueOf(val);
+		}else if (qualName.equals("long")){
+			return Long.valueOf(val);
+		}else if (qualName.equals("int")){
+			return Integer.valueOf(val);
+		}else if (qualName.equals("short")){
+			return Short.valueOf(val);
+		}else if (qualName.equals("byte")){
+			return Byte.valueOf(val);
+		}else if (qualName.equals("char")){
+			return val.charAt(0);
+		}else if (qualName.equals("boolean")){
+			return Boolean.valueOf(val);
+		}else if (qualName.equals("string")){
+			return val;
+		}
+		return null;
+			
+	}
+
+	private String readFromSensor(InputStream stream) {
+		String message ="";
+		char[] buffer = new char[255];
+		
+		InputStreamReader reader = new InputStreamReader(stream);
+		try {
+			if (reader.ready()){
+				reader.read(buffer, 0, stream.available());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+		
+		
+		message = new String(buffer);
+		
+		return message.trim();
 	}
 
 	public void closeSocket() {
@@ -96,6 +177,20 @@ public class SocketSensorClient extends Thread {
 	
 	public SDFAttributeList getSchema() {
 		return schema;
+	}
+	
+	class InternalException extends Exception{
+
+		public InternalException(String string) {
+			super(string);
+		}
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3281636761706013319L;
+		
+		
 	}
 
 }
