@@ -30,14 +30,18 @@ public class SocketSensorClient extends Thread {
 	private List<String> messages;
 	private SDFAttributeList schema;
 	private Logger logger;
+	private Sensor sensor;
 	
 
-	public SocketSensorClient(String ip, int port, long interval, List<String> messages, SDFAttributeList schema) throws UnknownHostException, IOException {
-		this.interval = interval;
-		this.socket = new Socket(ip, port);
+	public SocketSensorClient(Sensor sensor) throws UnknownHostException, IOException {
+		this.interval = sensor.getInterval();
+		this.messages = sensor.getMessages();
+		this.schema = Sensor.getSchema(sensor);
+		this.sensor = sensor;
+		
+		this.socket = new Socket(sensor.getIp(), sensor.getPort());
 		this.clients = new ArrayList<StreamClient>();
-		this.messages = messages;
-		this.schema = schema;
+		
 		this.logger = LoggerFactory.getLogger(SocketSensorClient.class);
 	}
 	
@@ -67,6 +71,9 @@ public class SocketSensorClient extends Thread {
 					//receive result
 					String input = readFromSensor(this.socket.getInputStream());
 					if (input != null & input.length() >0){
+						//add functions to val if necessary
+						input = Sensor.calcRealValue(this.sensor, message, input);
+						
 						SDFAttribute attribute = schema.getAttribute(index);
 						Object val = this.extractFromInputString(
 								attribute.getDatatype(), input);
