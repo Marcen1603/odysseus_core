@@ -1,12 +1,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
@@ -30,8 +26,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		@Override
 		protected void setInputPortCount(int ports) {
 			super.setInputPortCount(ports);
-			inputExclusive = new boolean[ports];
-			Arrays.fill(inputExclusive, false);
+//			inputExclusive = new boolean[ports];
+//			Arrays.fill(inputExclusive, false);
 		}
 
 		@Override
@@ -59,7 +55,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	abstract protected void process_next(R object, int port);
 
-	private boolean[] inputExclusive;
+//	private boolean[] inputExclusive;
 
 	public AbstractPipe(){};
 	
@@ -89,10 +85,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// MUST override this method (else there will be a ClassCastException)
 	@SuppressWarnings("unchecked")
 	protected R cloneIfNessessary(R object, boolean exclusive, int port) {
-		if (getOutputMode() == OutputMode.MODIFIED_INPUT
-				&& !isInputExclusive(port)) {
+		// boolean exclusive??
+		if (getOutputMode() == OutputMode.MODIFIED_INPUT) {
 			object = (R) ((IClone) object).clone();
-			setInputExclusive(true, port);
+			//setInputExclusive(true, port);
 		}
 		return object;
 	}
@@ -109,16 +105,16 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		default: // MODIFIED_INPUT und INPUT
 			// Wenn einer der Eingänge nicht exclusive ist
 			// das Ergebnis auch nicht exclusive
-			for (int i = 0; i < inputExclusive.length && ret; i++) {
-				ret = ret && inputExclusive[i];
-			}
-			return ret;
+//			for (int i = 0; i < inputExclusive.length && ret; i++) {
+//				ret = ret && inputExclusive[i];
+//			}
+			return false;
 		}
 	}
 
 	@Override
 	public void process(R object, int port, boolean exclusive) {		
-		setInputExclusive(exclusive, port);
+		//setInputExclusive(exclusive, port);
 		this.delegateSink.process(object, port, exclusive);
 	}
 
@@ -126,13 +122,13 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		process_next(cloneIfNessessary(object, exclusive, port), port);
 	}
 
-	private void setInputExclusive(boolean exclusive, int port) {
-		this.inputExclusive[port] = exclusive;
-	}
-
-	private boolean isInputExclusive(int port) {
-		return inputExclusive[port];
-	}
+//	private void setInputExclusive(boolean exclusive, int port) {
+//		this.inputExclusive[port] = exclusive;
+//	}
+//
+//	private boolean isInputExclusive(int port) {
+//		return inputExclusive[port];
+//	}
 
 	@Override
 	public void process(Collection<? extends R> object, int port,
