@@ -39,8 +39,8 @@ class OpenAuction {
 
 	// public static int MAXAUCTIONLEN_MS = 24*60*60*1000; // 24 hours
 	// public static int MINAUCTIONLEN_MS = 2*60*60*1000; // 2 hours
-	public static int MAXAUCTIONLEN_MS = 30000; // 30 Sekunden
-	public static int MINAUCTIONLEN_MS = 1000; // 1 Sekunde
+	public static int MAXAUCTIONLEN_MS = 30000; // 30 seconds
+	public static int MINAUCTIONLEN_MS = 1000; // 1 seconds
 
 	private int currPrice; // price in dollars
 	private boolean closed = false;

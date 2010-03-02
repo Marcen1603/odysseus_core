@@ -25,7 +25,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		logger.debug("NexMark started ");
-		// Anm. im Moment nur ein einfacher Parametersatz
+		// Right now, just a simple set of parameters
 		
 		String[] args = new String[3];
 		args[0] = "-pr"; 
@@ -68,9 +68,9 @@ public class Activator implements BundleActivator {
 			// Windows
 			br = new BufferedReader(new InputStreamReader(input.openStream()));
 
-			String zeile = null;
-			while ((zeile = br.readLine()) != null) {
-				text += zeile.trim();
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				text += line.trim();
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

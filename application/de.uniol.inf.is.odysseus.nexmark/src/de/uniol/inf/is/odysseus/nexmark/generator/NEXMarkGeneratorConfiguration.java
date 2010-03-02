@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Kapselt die Konfigurationsdaten fuer den {@link NEXMarkGenerator}.
+ * Wrapper for configuration of {@link NEXMarkGenerator}.
  */
 public class NEXMarkGeneratorConfiguration {
 	private static final String PROPERTIES_FILE = "/de/uniol/inf/is/odysseus/nexmark/generator/NEXMarkGeneratorConfiguration.properties";
@@ -27,8 +27,8 @@ public class NEXMarkGeneratorConfiguration {
 	public NEXMarkBurstConfiguration burstConfig;
 
 	/**
-	 * Liest die Konfiguration fuer den Generator aus dem PROPERTIES_FILE ein.
-	 * @throws IOException wenn Properties file nicht gelesen werden kann
+	 * Reads configuration of generator from PROPERTIES_FILE.
+	 * @throws IOException if property file cannot be read.
 	 */
 	public NEXMarkGeneratorConfiguration() throws IOException {
 		Properties properties = readProperties();

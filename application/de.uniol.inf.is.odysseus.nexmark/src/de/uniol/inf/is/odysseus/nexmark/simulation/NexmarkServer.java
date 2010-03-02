@@ -9,14 +9,14 @@ import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 
 /**
- * Server fuer den NEXMark Benchmark.
+ * Server for NEXMark Benchmark.
  * <p>
- * Verwaltet eingehende Verbindungen zu den zu erzeugenden Streams: person,
- * auction, bid, category. Jeder Stream besitzt einen Port auf dem sich zu dem
- * Server verbunden werden kann, um die Benchmark Daten zu empfangen.
+ * Manages incoming connection for the streams: person,
+ * auction, bid, category. Each stream has a port which can be
+ * used to connect and get the data of the benchmark.
  * <p>
- * Die {@link #start()} Methode startet den Server. Die {@link #stop()} Methode
- * stoppt den Server und alle entfernt alle noch verbundenen Clients.
+ * The {@link #start()} method starts server. 
+ * The {@link #stop()} method stops the server and removes all connected clients.
  * 
  * @author Bernd Hochschulz
  */
@@ -32,23 +32,18 @@ public class NexmarkServer {
 	private NEXMarkStreamServer categoryServer;
 
 	/**
-	 * Erzeugt einen neuen {@link NexmarkServer}, um eingehende Benchmark
-	 * Anfragen zu bearbeiten.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
 	 * 
 	 * @param personPort
-	 *            - port auf dem eingehende Verbindungen als personen Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as person stream
 	 * @param auctionPort
-	 *            - port auf dem eingehende Verbindungen als auction Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as auction stream
 	 * @param bidPort
-	 *            - port auf dem eingehende Verbindungen als bid Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as bid stream
 	 * @param categoryPort
-	 *            - port auf dem eingehende Verbindungen als category Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as category stream
 	 * @throws IOException
-	 *             wenn auf einem Port kein Socket erstellt werden kann
+	 *            - if no connection cannot be established on a port
 	 */
 	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort, boolean useNIO)
 			throws IOException {
@@ -59,26 +54,20 @@ public class NexmarkServer {
 	}
 
 	/**
-	 * Erzeugt einen neuen {@link NexmarkServer}, um eingehende Benchmark
-	 * Anfragen zu bearbeiten.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
 	 * 
 	 * @param personPort
-	 *            - port auf dem eingehende Verbindungen als personen Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as person stream
 	 * @param auctionPort
-	 *            - port auf dem eingehende Verbindungen als auction Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as auction stream
 	 * @param bidPort
-	 *            - port auf dem eingehende Verbindungen als bid Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as bid stream
 	 * @param categoryPort
-	 *            - port auf dem eingehende Verbindungen als category Stream
-	 *            interpretiert wird
+	 *            - connections on this port are interpreted as category stream
 	 * @param elementLimit
-	 *            - gibt an wieviele Elemente pro Verbindung erstellt werden
-	 *            sollen.
+	 *            - how many elements per connections should be created
 	 * @throws IOException
-	 *             wenn auf einem Port kein Socket erstellt werden kann
+	 *            - if no connection cannot be established on a port
 	 */
 	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort,
 			int elementLimit, boolean useNIO) throws IOException {
@@ -91,14 +80,13 @@ public class NexmarkServer {
 	}
 
 	/**
-	 * Erzeugt einen neuen {@link NexmarkServer}, um eingehende Benchmark
-	 * Anfragen zu bearbeiten.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
 	 * 
 	 * @param startPort
-	 *            - gibt den startPort an. personPort = startPort, auctionPort =
+	 *            - specifies startPort. personPort = startPort, auctionPort =
 	 *            startPort+1, bidPort = startPort+2, categoryPort = startPort+3
 	 * @throws IOException
-	 *             wenn auf einem Port kein Socket erstellt werden kann
+	 *            - if no connection cannot be established on a port
 	 */
 	public NexmarkServer(int startPort, boolean useNIO) throws IOException {
 		personServer = new NEXMarkStreamServer(startPort, this, NEXMarkStreamType.PERSON, useNIO);
@@ -108,18 +96,17 @@ public class NexmarkServer {
 	}
 	
 	/**
-	 * Erzeugt einen neuen {@link NexmarkServer}, um eingehende Benchmark
-	 * Anfragen zu bearbeiten.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
 	 * 
 	 * @param startPort
-	 *            - gibt den startPort an. personPort = startPort, auctionPort =
+	 *            - specifies startPort. personPort = startPort, auctionPort =
 	 *            startPort+1, bidPort = startPort+2, categoryPort = startPort+3
 	 * @param elementLimit
-	 *            - gibt an wieviele Elemente pro Verbindung erstellt werden
-	 *            sollen
+	 *            - how many elements per connections should be created
 	 * @throws IOException
-	 *             wenn auf einem Port kein Socket erstellt werden kann
+	 *            - if no connection cannot be established on a port
 	 */
+
 	public NexmarkServer(int startPort, int elementLimit, boolean useNIO) throws IOException {
 		personServer = new NEXMarkStreamServer(startPort, this, NEXMarkStreamType.PERSON, useNIO);
 		auctionServer = new NEXMarkStreamServer(++startPort, this, NEXMarkStreamType.AUCTION, useNIO);
@@ -130,22 +117,21 @@ public class NexmarkServer {
 	}	
 
 	/**
-	 * Entfernt einen ClientHandler aus der Liste der ClientHandler. Kommt
-	 * erneut eine Anfrage von dieser IP wird sie nun neu behandlet.
+	 * Removes a ClientHandler from the list of ClientHandler. 
+	 * If a new query comes in from that IP it will be processed as new.
 	 * 
 	 * @param key
-	 *            - IP der Verbindung
+	 *            - IP of connection
 	 * @param nexmarkStreamClientHandler
 	 */
 	public void removeClientHandler(InetAddress key, NexmarkStreamClientHandler clientHandler) {
 		synchronized (activeClientHandler) {
-			// Tue nichts falls zu dieser Ip kein Handler registriert ist
+			// Do nothing if no IP is registered for this handler
 			if (!activeClientHandler.containsKey(key))
 				return;
 
-			// entferne den ClientHandler nur wenn es auch der richtige ist. Es
-			// kann vorkommen, dass bereits ein neuer ClientHandler zu dieser Ip
-			// registriert ist, der noch aktiv ist.
+			// remove ClientHandler only if it is the rigt one. It could be that a new, still active ClientHandler is already
+			// registered for that IP.
 			NexmarkStreamClientHandler currentClientHandler = activeClientHandler.get(key);
 			if (currentClientHandler == clientHandler) {
 				activeClientHandler.remove(key);
@@ -163,8 +149,7 @@ public class NexmarkServer {
 	// }
 	//
 	/**
-	 * Startet den Server. Ab jetzt kann auf die festgelegten Ports verbunden
-	 * werden, um die Benchmarkdaten zu empfangen.
+	 * Starts the server. After that, only the specified ports can be used for connections.
 	 */
 	public void start() {
 		personServer.start();
@@ -174,8 +159,7 @@ public class NexmarkServer {
 	}
 
 	/**
-	 * Stoppt den Server. Es werden keine neuen Verbindungen angenommen. Noch
-	 * verbundene Clients werden abgebrochen.
+	 * Stops the server. No new connections are accepted. Connected clients are stopped.
 	 */
 	public synchronized void stop() {
 		personServer.close();

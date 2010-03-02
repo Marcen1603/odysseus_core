@@ -10,9 +10,9 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
- * Der NEXMarkGenerator erzeugt eine Simulation der Streams person, auction und
- * bid. Er sendet ueber einen Stream {@link TupleContainer} die das Tupel und
- * den Typ des Tupels enthalten.
+ * The NEXMarkGenerator creates a simulation of the streams person, auction
+ * and bid. It sends a stream {@link TupleContainer} that contains the tuple and 
+ * the type of the tuple.
  * 
  * @author Bernd Hochschulz
  * 
@@ -37,16 +37,15 @@ public class NEXMarkGenerator extends Thread {
 	private NEXMarkBurstGenerator burstGenerator;;
 
 	/**
-	 * Erzeugt einen {@link NEXMarkGenerator}. Mittels getInputStream kann auf
-	 * den Stream zugegriffen werden aus dem die Tupel gelesen werden koennen.
-	 * Der Generator erstellt anhand der uebergebenen Konfiguration die Tupel.
+	 * Creates a {@link NEXMarkGenerator}. 
+	 * Tuples from the stream can be read using getInputStream.
+	 * The generator creates tuples according to the parameter configuration.
 	 * 
 	 * @param configuration
-	 *            - {@link NEXMarkGeneratorConfiguration} nach dem die Tupel
-	 *            erzeugt werden sollen.
+	 *            - {@link NEXMarkGeneratorConfiguration} that specifies the tuples to be created
 	 * @throws IOException
-	 *             wenn die Streams zum senden der Tupel nicht erzeugt werden
-	 *             koennen
+	 *             if the streams that are used to send the tuples cannot be created
+	 *             
 	 */
 	public NEXMarkGenerator(NEXMarkGeneratorConfiguration configuration,
 			boolean deterministic) throws IOException {
@@ -67,8 +66,7 @@ public class NEXMarkGenerator extends Thread {
 	}
 
 	/**
-	 * Bestimmt das naechste Tupel das gesendet werden soll. Das heisst das
-	 * Tupel mit dem kleinsten Zeitstempel.
+	 * determines the next tuple to be sent by using the smallest timestamp 
 	 */
 	private void setCurrentTuple() {
 		currentTuple = personTuple;
@@ -78,7 +76,7 @@ public class NEXMarkGenerator extends Thread {
 			currentTuple = auctionTuple;
 		}
 
-		// falls kein Gebot erzeugt werden konnte, ignorieren
+		// ignore if no bid could be created
 		if ((Long) bidTuple.getAttribute(0) < (Long) currentTuple
 				.getAttribute(0)) {
 			currentTuple = bidTuple;
@@ -87,10 +85,9 @@ public class NEXMarkGenerator extends Thread {
 	}
 
 	/**
-	 * Gibt zurueck wie lange gewartet werden muss, bis das naechste Tupel
-	 * gesendet werden soll.
+	 * Returns the time to wait until the next tuple to be sent
 	 * 
-	 * @return wie lange gewartet werden muss.
+	 * @return time to wait
 	 */
 	private long getTimeToWait() {
 		long timeToWait = ((Long) currentTuple.getAttribute(0) / configuration.accelerationFactor)
@@ -99,15 +96,13 @@ public class NEXMarkGenerator extends Thread {
 	}
 
 	/**
-	 * Wrappt das zu sendene Tupel in einen {@link TupleContainer} ein.
+	 * Wraps the tuple to be sent into a {@link TupleContainer}.
 	 * 
-	 * @return TupleContainer mit Tupel und Typ
+	 * @return TupleContainer with tuple and type
 	 * @throws CouldNotCreateAuction
-	 *             wenn keine Auction erstellt werden konnte (kein Nutzer
-	 *             vorhanden)
+	 *             no auction could be created (no person present)
 	 * @throws CouldNotCreateBid
-	 *             wenn ein Gebot nicht erzeugt werden konnte (kein Nutzer oder
-	 *             Auktion vorhanden)
+	 *             no bid could be created (no person or auction present)
 	 */
 	private synchronized TupleContainer createTupleContainer()
 			throws CouldNotCreateAuction, CouldNotCreateBid {
@@ -117,7 +112,7 @@ public class NEXMarkGenerator extends Thread {
 		// " "+bidTuple);
 		synchronized (generator) {
 
-			// fuelle das Tupel von dem Typ was gesendet werden soll
+			// fill tuple of the type to be sent
 			if (currentTuple == personTuple) {
 				generator.fillPersonTuple(personTuple);
 				container = new TupleContainer(personTuple,
@@ -125,7 +120,7 @@ public class NEXMarkGenerator extends Thread {
 				personTuple = generator.generateRawPersonTuple();
 
 			} else if (currentTuple == auctionTuple) {
-				// Es kann passieren, dass noch kein Nutzer registriert ist
+				// check if person is registered yet
 				try {
 					generator.fillAuctionTuple(auctionTuple);
 				} catch (CouldNotGetExistingPersonId e) {
@@ -136,8 +131,7 @@ public class NEXMarkGenerator extends Thread {
 				auctionTuple = generator.generateRawAuctionTuple();
 
 			} else if (currentTuple == bidTuple) {
-				// es kann passieren dass ein Gebot nicht erzeugt werden
-				// kann. Z.B. ist keine Auktion offen.
+				// check if bid can be created (only of auction is open yet)
 				try {
 					generator.fillBidTuple(bidTuple);
 				} catch (CouldNotGetExistingAuctionIdException e) {
@@ -148,7 +142,7 @@ public class NEXMarkGenerator extends Thread {
 				container = new TupleContainer(bidTuple, NEXMarkStreamType.BID);
 				bidTuple = generator.generateRawBidTuple();
 			} else {
-				// sollte nie passieren
+				// should not happen
 				// TODO exception?
 			}
 		}
@@ -156,8 +150,7 @@ public class NEXMarkGenerator extends Thread {
 	}
 
 	/**
-	 * Generiert person, auction und bid Tupel und sendet sie den Zeitstempeln
-	 * entsprechend ueber den Stream.
+	 * Generates person, auction and bid tuples and sends them according to the timestamps over the stream
 	 */
 	@Override
 	public void run() {
@@ -169,10 +162,10 @@ public class NEXMarkGenerator extends Thread {
 			burstGenerator = null;
 		}
 
-		// generiere die ersten Tupel
+		// generate first tuples
 		synchronized (generator) {
-			// == erstmal raus ==
-			// Sicherstellen, dass es mindestens eine Person gibt
+			// == removed ==
+			// Make sure that there is at least one person
 			// personTuple = generator.generateFirstRawPersonTuple();
 			// ==================
 			personTuple = generator.generateRawPersonTuple();
@@ -182,16 +175,16 @@ public class NEXMarkGenerator extends Thread {
 
 		setCurrentTuple();
 
-		// generiere solange Tupel bis der Generator interrupted wird
+		// generate tuples until the generator is interrupted
 		try {
 			while (!interrupted()) { // && counter < limit
-				// Wartezeit bestimmen
+				// determine time to wait
 				long timeToWait = 0;
 				synchronized (this) {
 					timeToWait = getTimeToWait();
 				}
 
-				// und dem entsprechend warten
+				// wait according to time to wait
 				if (timeToWait > 0) {
 					long curTime = System.currentTimeMillis();
 					long expectedTme = curTime + timeToWait;
@@ -208,23 +201,20 @@ public class NEXMarkGenerator extends Thread {
 				}
 
 				synchronized (this) {
-					// falls ein Burst aufgetreten ist ignoriere was zu letzt
-					// als zu sendendes Tupel angesehen wurde und bestimme
-					// Wartezeit neu
+					// if there is a burst, ignore last tuple and determine new time to wait
 					if (burst) {
 						burst = false;
 						// System.out.println("BURST");
 						continue;
 					}
 
-					// fuelle zu sendendes Tupel
+					// fill tuple to be sent
 					TupleContainer container = null;
 					try {
 						container = createTupleContainer();
 					} catch (CouldNotCreateBid e) {
 //						e.printStackTrace();
-						// falls kein Gebot erzeugt worden konnte versuche es
-						// naechstes mal erneut
+						// if no bid could be created, try again next time
 						synchronized (generator) {
 							bidTuple = generator.generateRawBidTuple();
 						}
@@ -233,8 +223,7 @@ public class NEXMarkGenerator extends Thread {
 						continue;
 					} catch (CouldNotCreateAuction e) {
 //						e.printStackTrace();
-						// falls keine Auktion erzeugt worden konnte versuche es
-						// naechstes mal erneut
+						// if no auction could be created, try again next time
 						synchronized (generator) {
 							auctionTuple = generator.generateRawAuctionTuple();
 						}
@@ -243,11 +232,11 @@ public class NEXMarkGenerator extends Thread {
 						continue;
 					}
 
-					// sende Tupel
+					// send tuple
 					outputStream.writeObject(container);
 					outputStream.flush();
 
-					// bestimme naechstes Tupel
+					// determine next tuple
 					setCurrentTuple();
 				}
 			}
@@ -273,14 +262,14 @@ public class NEXMarkGenerator extends Thread {
 	}
 
 	/**
-	 * Aufrufen um dem Generator mitzuteilen, dass ein Burst eingetreten ist.
-	 * Wird vom {@link NEXMarkBurstGenerator} aufgerufen.
+	 * Call to tell the generator that a burst happens
+	 * Is called from {@link NEXMarkBurstGenerator}
 	 * 
 	 * @param time
-	 *            - Zeit zu der der Burst eingetreten ist
+	 *            - time when burst happens
 	 */
 	public void startBurst(long time) {
-		// Um sofort neue Tupel im Burst zu senden, erstelle neue Tupel.
+		// To send new tuples in the burst immediately, create new tuples
 		synchronized (this) {
 			synchronized (generator) {
 				generator.startBurst(time);
@@ -290,8 +279,7 @@ public class NEXMarkGenerator extends Thread {
 			}
 
 			setCurrentTuple();
-			// Wenn der Generator gerade darauf wartet neue Tupel zu senden,
-			// wecke ihn auf.
+			// if generator waits to send new tuples, wake it up
 			if (this.getState() == Thread.State.TIMED_WAITING) {
 				burst = true;
 				this.notify();
@@ -300,8 +288,8 @@ public class NEXMarkGenerator extends Thread {
 	}
 
 	/**
-	 * Aufrufen um dem Generator mitzuteilen, dass ein Burst beendet wurde. Wird
-	 * vom {@link NEXMarkBurstGenerator} aufgerufen.
+	 * Call to tell generator to stop a burst.
+	 * Called from {@link NEXMarkBurstGenerator}.
 	 * 
 	 */
 	public void stopBurst() {

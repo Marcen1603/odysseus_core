@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
 
 /**
- * Ein NEXMarkClient kapselt die Daten fuer eine Anfrage. Das sind Socket der
- * Verbindung, der dazugehoerige OutputStream und der Streamname *
+ * A NEXMarkClient wraps the data for a query: socket of connection, the 
+ * OutputStream and the Streamname 
  */
 public class NEXMarkClient {
 	private static final Logger logger = LoggerFactory.getLogger( NEXMarkClient.class );
@@ -49,20 +49,19 @@ public class NEXMarkClient {
 //	}
 
 	/**
-	 * Erstellt einen neuen {@link NEXMarkClient}. Dieser holt sich ueber den
-	 * Socket den zu simulierenden Streamnamen.
+	 * Creates a new {@link NEXMarkClient}, which gets the stream name to be simulated over the socket
 	 * 
 	 * @param connection
-	 *            Socket der Verbindung
+	 *            Socket of connection
 	 * @throws IOException
-	 *             wenn Verbindung ueber den Socket nicht hergestellt werden kann
+	 *             if connection cannot be established
 	 * @throws WrongStreamNameException
 	 */
 	public NEXMarkClient(Socket connection, NEXMarkStreamType type, boolean useNIO) throws IOException {
 		this.useNIO = useNIO;
 		this.streamType = type; 
 		this.connection = connection;
-		// erzeuge client zugehoerigen Stream
+		// create stream for client
 		if (!useNIO){
 			this.objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
 		}
