@@ -19,4 +19,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.pnapproach.base,
  de.uniol.inf.is.odysseus.pnapproach.base.metadata,
  de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator,
- de.uniol.inf.is.odysseus.pnapproach.base.sweeparea
+ de.uniol.inf.is.odysseus.pnapproach.base.sweeparea,
+ de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window

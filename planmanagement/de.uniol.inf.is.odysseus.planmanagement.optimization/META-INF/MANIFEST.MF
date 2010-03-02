@@ -17,6 +17,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component,
  de.uniol.inf.is.odysseus.intervalapproach.window,
+ de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization,

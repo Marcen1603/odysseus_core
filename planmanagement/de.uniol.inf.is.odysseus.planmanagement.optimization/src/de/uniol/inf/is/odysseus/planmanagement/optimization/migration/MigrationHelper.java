@@ -11,6 +11,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.AbstractNonBlockingWindowPNPO;
+import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.SlidingElementWindowPNPO;
+import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.SlidingPeriodicWindowPNPO;
 
 /**
  * 
@@ -26,7 +29,7 @@ public class MigrationHelper {
 	}
 	
 	private static void getPseudoSources(List<ISource<?>> sources, IPhysicalOperator op) {
-		if (isPseudoSource(op)) {
+		if (isPseudoSource(op)) { // FIXME: letztes Fenster vor Quelle, nicht erstes gefundenes
 			sources.add((ISource<?>)op);
 			return;
 		}
@@ -53,7 +56,11 @@ public class MigrationHelper {
 	}
 	
 	private static boolean isPseudoSource(IPhysicalOperator op) {
-		return !op.isSink() || op instanceof MetadataCreationPO<?, ?>;
+		return !op.isSink() || op instanceof MetadataCreationPO<?, ?> 
+			|| op instanceof AbstractWindowTIPO<?>
+			|| op instanceof AbstractNonBlockingWindowPNPO<?,?>
+			|| op instanceof SlidingElementWindowPNPO<?>
+			|| op instanceof SlidingPeriodicWindowPNPO<?>;
 	}
 	
 	public static long getLongestWindowSize(IPhysicalOperator root) {
