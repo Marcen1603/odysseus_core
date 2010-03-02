@@ -1,16 +1,17 @@
 package de.uniol.inf.is.odysseus.action.benchmark;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ActuatorBenchmark implements IActuatorBenchmark{
 	private Map<String, Integer> tupleNo;
 	private Map<String, Long> timestamps;
-	private FileWriter file;
+	private static PrintWriter file;
 	
 	private static String fileLoc = System.getProperty("user.home");
 	
@@ -20,44 +21,50 @@ public class ActuatorBenchmark implements IActuatorBenchmark{
 	}
 	
 	@Override
-	public long notifyEnd(String identifier) {
+	public long notifyEnd(String identifier, String id, Operation op) {
 		long end = System.currentTimeMillis();
-		long start = this.timestamps.remove(identifier);
+		long start = this.timestamps.remove(identifier+id+op.toString());
 		long timeInterval = end-start;
 		
 		//write to file
-		if (this.file == null){
-			try {
-				this.file = new FileWriter(
-						fileLoc+
-						File.separator+
-						"odyLog"+System.currentTimeMillis()%100+
-						".log");
-				this.file.append("identifier; time\n");
-			} catch (IOException e) {
-				e.printStackTrace();
+		synchronized (file) {
+			if (file == null){
+				try {
+					this.file = new PrintWriter(new BufferedWriter(new FileWriter(
+							fileLoc+
+							File.separator+
+							"odyLog"+System.currentTimeMillis()%100+
+							".csv")));
+					this.file.println("Identifier; ID; Operation; TimeConsumed");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+			file.println(identifier+";"+id+";"+op.toString()+timeInterval);
 		}
-		try {
-			this.file.append(identifier+";"+timeInterval);
-			this.file.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return timeInterval;
+			return timeInterval;
 	}
 
 	@Override
-	public String notifyStart(String identifier) {
+	public String notifyStart(String identifier, Operation op) {
 		long timestamp = System.currentTimeMillis();
 		Integer tupleNo = this.tupleNo.get(identifier);
 		if (tupleNo == null){
 			tupleNo = -1;
 		}
 		tupleNo++;
-		String newIdentifier = identifier+tupleNo;
+		String newIdentifier = identifier+tupleNo+op.toString();
 		this.timestamps.put(newIdentifier, timestamp);
 		this.tupleNo.put(identifier, tupleNo);
-		return newIdentifier;
+		return tupleNo.toString();
+	}
+	
+	public static void closeWrite(){
+		synchronized (file) {
+			if (file != null){
+				file.close();
+			}
+		}
+		
 	}
 }
