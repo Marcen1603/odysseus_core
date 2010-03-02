@@ -38,7 +38,6 @@ public class SocketSensorClient extends ISourceClient {
 	private Logger logger;
 	
 	private boolean benchmarking = false;
-	private String benchMarkIdentifier;
 	
 
 	public SocketSensorClient(Sensor sensor) {
@@ -46,9 +45,7 @@ public class SocketSensorClient extends ISourceClient {
 		this.messages = sensor.getMessages();
 		this.schema = Sensor.getSchema(sensor);
 		this.sensor = sensor;
-		
-		this.benchMarkIdentifier = this.sensor.name()+"_Odysseus";
-		
+				
 		this.logger = LoggerFactory.getLogger(SocketSensorClient.class);
 	}	
 	
@@ -61,6 +58,7 @@ public class SocketSensorClient extends ISourceClient {
 	@Override
 	public boolean processData()  {
 		try {
+			String debugInfo = "";
 			if (this.socket == null){
 				//create socket if it isnt opened yet
 				this.socket = new Socket(sensor.getIp(), sensor.getPort());
@@ -69,13 +67,10 @@ public class SocketSensorClient extends ISourceClient {
 			RelationalTuple tuple = null;
 			
 			//send notification if benchmarking is avaiable
-			String benchMarkNo = null;
 			if (this.benchmarking){
-				benchMarkNo = benchmark.notifyStart(
-						this.sensor.name()+"_Odysseus",
-						IActuatorBenchmark.Operation.DATAEXTRACTION);
-				tuple = new RelationalTuple<BenchmarkData>(this.schema.size());			
-	
+				tuple = new RelationalTuple<BenchmarkData>(this.schema.size());		
+				BenchmarkData data = new BenchmarkData(benchmark.getNextID(this.sensor.name()+"_Odysseus"));
+				tuple.setMetadata(data);
 			}else {
 				tuple = new	RelationalTuple<ITimeInterval>(this.schema.size());
 			}
@@ -102,6 +97,7 @@ public class SocketSensorClient extends ISourceClient {
 							attribute.getDatatype(), input);
 					if (val != null){
 						tuple.setAttribute(index, val);
+						debugInfo += val+" ";
 						index++;
 					}else {
 						throw new InternalException("Irregular value from sensor: "+input);
@@ -118,9 +114,8 @@ public class SocketSensorClient extends ISourceClient {
 				}
 			}
 			
-			//add fields, if benchmarking is avaiable
 			if (this.benchmarking){
-				tuple.setMetadata(new BenchmarkData(this.benchMarkIdentifier, benchMarkNo));
+				((BenchmarkData)tuple.getMetadata()).addOutputTime(IActuatorBenchmark.Operation.DATAEXTRACTION.name());
 			}
 			
 			//send tuple to clients
@@ -130,15 +125,7 @@ public class SocketSensorClient extends ISourceClient {
 				}
 			}
 			
-			if (this.benchmarking){
-				benchmark.notifyEnd(benchMarkIdentifier, 
-						benchMarkNo, IActuatorBenchmark.Operation.DATAEXTRACTION);
-
-				benchmark.notifyStart(benchMarkIdentifier,
-						IActuatorBenchmark.Operation.QUERYPROCESSING);
-			}
-			
-			this.logger.debug("Send tuple with "+tuple.getAttributeCount()+" values");
+			this.logger.debug("Sent tuple: "+debugInfo);
 		} catch (IOException e) {
 			//socket not avaiable retry or terminate
 			this.retries--;
