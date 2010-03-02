@@ -53,4 +53,12 @@ public class Action {
 	public void executeMethod(Object[] params) throws ActuatorException{
 		this.actuator.executeMethod(this.methodName, this.method.getParameterTypes(), params);
 	}
+	
+	public IActuator getActuator() {
+		return actuator;
+	}
+	
+	public ActionMethod getMethod() {
+		return method;
+	}
 }

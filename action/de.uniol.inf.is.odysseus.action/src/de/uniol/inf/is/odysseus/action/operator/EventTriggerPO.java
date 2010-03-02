@@ -75,16 +75,11 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		//extract parameters
-		String bmNo = null;
-		String bmIdentifier = null;
+		BenchmarkData metaData = null;
 		if (benchmark != null){
 			try {
-				Object metaData = ((IMetaAttributeContainer)object).getMetadata();
-				bmIdentifier =((BenchmarkData)metaData).getIdentifier();
-				bmNo = ((BenchmarkData)metaData).getNo();
-				
-				benchmark.notifyEnd(bmIdentifier, bmNo, IActuatorBenchmark.Operation.QUERYPROCESSING);
-				benchmark.notifyStart(bmIdentifier,IActuatorBenchmark.Operation.ACTIONEXECTION);
+				metaData = (BenchmarkData)((IMetaAttributeContainer)object).getMetadata();
+				metaData.addOutputTime(IActuatorBenchmark.Operation.QUERYPROCESSING.name());
 			}catch(ClassCastException e){
 				//ignore benchmarking
 			}
@@ -111,14 +106,22 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 				index++;
 			}
 			try {
-				entry.getKey().executeMethod(parameters);
+				Action action = entry.getKey();
+				action.executeMethod(parameters);
+				
+				//add benchmarking information
+				if (metaData != null){
+					metaData.addOutputTime(IActuatorBenchmark.Operation.ACTIONEXECTION.name()+
+							action.getActuator().getClass().getName()+"."+
+							action.getMethod().getName());
+				}
 			} catch (ActuatorException e) {
 				//Shouldnt happen, because method & parameters are checked during creation of action
 				this.logger.error("Method execution failed: "+e.getMessage());
 			}
 		}
-		if (bmNo != null && bmIdentifier != null){
-			benchmark.notifyEnd(bmIdentifier, bmNo, IActuatorBenchmark.Operation.QUERYPROCESSING);
+		if (benchmark != null){
+			benchmark.addBenchmarkData(metaData);
 		}
 	}
 }
