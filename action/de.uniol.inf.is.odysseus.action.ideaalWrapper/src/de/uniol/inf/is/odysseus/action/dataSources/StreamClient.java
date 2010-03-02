@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.ideaalwrapper;
+package de.uniol.inf.is.odysseus.action.dataSources;
 
 import java.io.IOException;
 import java.net.Socket;

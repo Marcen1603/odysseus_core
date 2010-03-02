@@ -1,12 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IdeaalWrapper
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.ideaalWrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.dataSources
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.action.ideaalwrapper.Activator
-Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
+Bundle-Activator: de.uniol.inf.is.odysseus.action.dataSources.Activator
+Import-Package: de.uniol.inf.is.odysseus.action.benchmark,
+ de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/socketSensorClient.xml

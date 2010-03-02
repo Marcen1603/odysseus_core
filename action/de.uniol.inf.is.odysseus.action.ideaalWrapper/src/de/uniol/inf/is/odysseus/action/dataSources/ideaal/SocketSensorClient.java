@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.ideaalwrapper;
+package de.uniol.inf.is.odysseus.action.dataSources.ideaal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
+import de.uniol.inf.is.odysseus.action.dataSources.StreamClient;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -24,6 +26,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  *
  */
 public class SocketSensorClient extends Thread {
+	private static IActuatorBenchmark benchmark;
 	private long interval;
 	private Socket socket;	
 	private List<StreamClient> clients;
@@ -51,12 +54,27 @@ public class SocketSensorClient extends Thread {
 		}
 	}
 	
+	public void bindBenchmark(IActuatorBenchmark benchmark){
+		SocketSensorClient.benchmark = benchmark;
+	}
+	
 	@Override
 	public void run() {
 		while (true){
 			try {
-				RelationalTuple<ITimeInterval> tuple = new 
+				RelationalTuple<ITimeInterval> tuple = null;
+				String benchMarkID = null;
+				if (benchmark != null){
+					benchMarkID = benchmark.notifyStart(
+							this.sensor.name()+"_Odysseus",
+							IActuatorBenchmark.Operation.DATAEXTRACTION);
+					tuple = new 
+					RelationalTuple<ITimeInterval>(this.schema.size()+2);
+				}else {
+					tuple = new 
 					RelationalTuple<ITimeInterval>(this.schema.size());
+				}
+				
 				tuple.setAttribute(0, System.currentTimeMillis());
 				
 				//send request to sensor
@@ -100,6 +118,13 @@ public class SocketSensorClient extends Thread {
 					for (StreamClient client : this.clients){
 						client.writeObject(tuple);
 					}
+				}
+				if (benchMarkID != null){
+					benchmark.notifyEnd(this.sensor.name()+"_Odysseus", 
+							benchMarkID, IActuatorBenchmark.Operation.DATAEXTRACTION);
+					//better would be a notify from scheduler, but i dont wanna mess in that code...
+					benchmark.notifyStart(this.sensor.name()+"_Odysseus",
+							IActuatorBenchmark.Operation.QUERYPROCESSING);
 				}
 				this.logger.debug("Send tuple with "+tuple.getAttributeCount()+" values");
 			} catch (IOException e) {

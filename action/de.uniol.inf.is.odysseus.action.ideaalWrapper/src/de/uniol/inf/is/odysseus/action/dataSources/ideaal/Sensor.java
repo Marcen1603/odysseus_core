@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.ideaalwrapper;
+package de.uniol.inf.is.odysseus.action.dataSources.ideaal;
 
 import java.util.Arrays;
 import java.util.HashMap;

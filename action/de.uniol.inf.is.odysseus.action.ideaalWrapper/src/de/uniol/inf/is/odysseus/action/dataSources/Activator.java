@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.action.ideaalwrapper;
+package de.uniol.inf.is.odysseus.action.dataSources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.action.dataSources.ideaal.Sensor;
 
 public class Activator implements BundleActivator {
 	private int startPort = 55555;
