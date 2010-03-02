@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.action.benchmark.BenchmarkData;
 import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
 import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
 import de.uniol.inf.is.odysseus.action.dataSources.StreamClient;
@@ -56,6 +57,7 @@ public class SocketSensorClient extends ISourceClient {
 		this.benchmarking = true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean processData()  {
 		try {
@@ -64,20 +66,18 @@ public class SocketSensorClient extends ISourceClient {
 				this.socket = new Socket(sensor.getIp(), sensor.getPort());
 			}
 			
-			RelationalTuple<ITimeInterval> tuple = null;
+			RelationalTuple tuple = null;
 			
 			//send notification if benchmarking is avaiable
-			String benchMarkID = null;
+			String benchMarkNo = null;
 			if (this.benchmarking){
-				benchMarkID = benchmark.notifyStart(
+				benchMarkNo = benchmark.notifyStart(
 						this.sensor.name()+"_Odysseus",
 						IActuatorBenchmark.Operation.DATAEXTRACTION);
-								
-				tuple = new RelationalTuple<ITimeInterval>(this.schema.size()+2);
-				
+				tuple = new RelationalTuple<BenchmarkData>(this.schema.size());			
+	
 			}else {
-				tuple = new 
-				RelationalTuple<ITimeInterval>(this.schema.size());
+				tuple = new	RelationalTuple<ITimeInterval>(this.schema.size());
 			}
 			
 			tuple.setAttribute(0, System.currentTimeMillis());
@@ -120,30 +120,19 @@ public class SocketSensorClient extends ISourceClient {
 			
 			//add fields, if benchmarking is avaiable
 			if (this.benchmarking){
-				int attrC = tuple.getAttributeCount();
-				tuple.setAttribute(attrC-2, benchMarkID);
-				tuple.setAttribute(attrC-1, benchMarkIdentifier);
+				tuple.setMetadata(new BenchmarkData(this.benchMarkIdentifier, benchMarkNo));
 			}
 			
 			//send tuple to clients
 			synchronized (clients) {
 				for (StreamClient client : this.clients){
-					try {
-						client.writeObject(tuple);
-					}catch (Exception e) {
-						if (e instanceof IOException){
-							throw (IOException)e;
-						}
-						//benchmarking fault?
-						//try next tuple without benchmarking
-						this.benchmarking = false;
-					}
+					client.writeObject(tuple);
 				}
 			}
 			
 			if (this.benchmarking){
 				benchmark.notifyEnd(benchMarkIdentifier, 
-						benchMarkID, IActuatorBenchmark.Operation.DATAEXTRACTION);
+						benchMarkNo, IActuatorBenchmark.Operation.DATAEXTRACTION);
 
 				benchmark.notifyStart(benchMarkIdentifier,
 						IActuatorBenchmark.Operation.QUERYPROCESSING);
