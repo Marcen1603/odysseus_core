@@ -7,12 +7,14 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.action.benchmark.BenchmarkData;
 import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
 import de.uniol.inf.is.odysseus.action.services.dataExtraction.IDataExtractor;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
 /**
@@ -69,18 +71,21 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 		return actions;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		//extract parameters
-		Object bmID = null;
-		Object bmIdentifier = null;
+		String bmNo = null;
+		String bmIdentifier = null;
 		if (benchmark != null){
-			try{
-				bmID = dataExtractor.extractAttribute(object, IActuatorBenchmark.ID, this.type);
-				bmIdentifier = dataExtractor.extractAttribute(object, IActuatorBenchmark.Identifier, this.type);
-				benchmark.notifyEnd((String)bmIdentifier, (String)bmID, IActuatorBenchmark.Operation.QUERYPROCESSING);
-				benchmark.notifyStart((String)bmIdentifier,IActuatorBenchmark.Operation.ACTIONEXECTION);
-			}catch(Exception e){
+			try {
+				Object metaData = ((IMetaAttributeContainer)object).getMetadata();
+				bmIdentifier =((BenchmarkData)metaData).getIdentifier();
+				bmNo = ((BenchmarkData)metaData).getNo();
+				
+				benchmark.notifyEnd(bmIdentifier, bmNo, IActuatorBenchmark.Operation.QUERYPROCESSING);
+				benchmark.notifyStart(bmIdentifier,IActuatorBenchmark.Operation.ACTIONEXECTION);
+			}catch(ClassCastException e){
 				//ignore benchmarking
 			}
 		}
@@ -112,8 +117,8 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 				this.logger.error("Method execution failed: "+e.getMessage());
 			}
 		}
-		if (bmID != null && bmIdentifier != null){
-			benchmark.notifyEnd((String)bmIdentifier, (String)bmID, IActuatorBenchmark.Operation.QUERYPROCESSING);
+		if (bmNo != null && bmIdentifier != null){
+			benchmark.notifyEnd(bmIdentifier, bmNo, IActuatorBenchmark.Operation.QUERYPROCESSING);
 		}
 	}
 }
