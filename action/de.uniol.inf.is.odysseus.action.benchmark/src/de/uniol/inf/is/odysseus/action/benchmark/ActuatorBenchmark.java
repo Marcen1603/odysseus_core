@@ -1,70 +1,70 @@
 package de.uniol.inf.is.odysseus.action.benchmark;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class ActuatorBenchmark implements IActuatorBenchmark{
 	private Map<String, Integer> tupleNo;
-	private Map<String, Long> timestamps;
-	private static PrintWriter file;
+	private List<BenchmarkData> bmData;
 	
+	private static PrintWriter file;
 	private static String fileLoc = System.getProperty("user.home");
 	
 	public ActuatorBenchmark(){
 		this.tupleNo = new HashMap<String, Integer>();
-		this.timestamps = new HashMap<String, Long>();
+		this.bmData = new ArrayList<BenchmarkData>();
 	}
 	
 	@Override
-	public long notifyEnd(String identifier, String id, Operation op) {
-		long end = System.currentTimeMillis();
-		long start = this.timestamps.remove(identifier+id+op.toString());
-		long timeInterval = end-start;
-		
-		//write to file
-		synchronized (file) {
-			if (file == null){
-				try {
-					this.file = new PrintWriter(new BufferedWriter(new FileWriter(
-							fileLoc+
-							File.separator+
-							"odyLog"+System.currentTimeMillis()%100+
-							".csv")));
-					this.file.println("Identifier; ID; Operation; TimeConsumed");
-				} catch (IOException e) {
-					e.printStackTrace();
+	public void addBenchmarkData(BenchmarkData data) {
+		this.bmData.add(data);
+	}
+
+	public void writeResultsToFile(){
+		try {
+			file = new PrintWriter(new BufferedWriter(new FileWriter(fileLoc+"bm"+System.currentTimeMillis()+".csv")));
+			//write header
+			file.println("Identifier; OutputID; CreationTime;OutputTime;TakenTime");
+			for (BenchmarkData data : bmData){
+				for (Entry<String, Long> entry : data.getOutputTimes().entrySet()){
+					long cTime = data.getCreationTime();
+					long oTime = entry.getValue();
+					long tTime = oTime-cTime;
+					file.println(
+							data.getIdentifier()+";"+
+							entry.getKey()+";"+
+							cTime+";"+
+							oTime+";"+
+							tTime);
 				}
 			}
-			file.println(identifier+";"+id+";"+op.toString()+timeInterval);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-			return timeInterval;
+		
 	}
 
 	@Override
-	public String notifyStart(String identifier, Operation op) {
-		long timestamp = System.currentTimeMillis();
-		Integer tupleNo = this.tupleNo.get(identifier);
-		if (tupleNo == null){
-			tupleNo = -1;
+	public String getNextID(String identifier) {
+		Integer no = this.tupleNo.get(identifier);
+		if (no == null){
+			no = -1;
 		}
-		tupleNo++;
-		String newIdentifier = identifier+tupleNo+op.toString();
-		this.timestamps.put(newIdentifier, timestamp);
-		this.tupleNo.put(identifier, tupleNo);
-		return tupleNo.toString();
+		no++;
+		this.tupleNo.put(identifier, no);
+		return identifier+no;
 	}
+
+
+
+
 	
-	public static void closeWrite(){
-		synchronized (file) {
-			if (file != null){
-				file.close();
-			}
-		}
-		
-	}
 }

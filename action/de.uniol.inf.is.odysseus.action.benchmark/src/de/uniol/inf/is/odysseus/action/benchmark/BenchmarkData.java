@@ -1,15 +1,20 @@
 package de.uniol.inf.is.odysseus.action.benchmark;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 
 public class BenchmarkData implements IMetaAttribute {
 	private String identifier;
-	private String no;
+	private long creationTime;
+	private Map<String, Long> outputTimes;
 	
-	public BenchmarkData(String identifier, String no){
+	public BenchmarkData(String identifier){
 		this.identifier = identifier;
-		this.no = no;
+		this.creationTime = System.nanoTime();
+		this.outputTimes = new HashMap<String, Long>();
 	}
 	
 	/**
@@ -18,7 +23,12 @@ public class BenchmarkData implements IMetaAttribute {
 	 */
 	public BenchmarkData(BenchmarkData benchmarkData) {
 		this.identifier = benchmarkData.identifier;
-		this.no = benchmarkData.no;
+		this.creationTime = benchmarkData.creationTime;
+		this.outputTimes = new HashMap<String, Long>(benchmarkData.outputTimes);
+	}
+	
+	public void addOutputTime(String id){
+		this.outputTimes.put(id, System.nanoTime());
 	}
 
 	@Override
@@ -30,8 +40,15 @@ public class BenchmarkData implements IMetaAttribute {
 		return identifier;
 	}
 	
-	public String getNo() {
-		return no;
+	public long getCreationTime() {
+		return creationTime;
 	}
+	
+	public Map<String, Long> getOutputTimes() {
+		return outputTimes;
+	}
+	
+	
+
 
 }

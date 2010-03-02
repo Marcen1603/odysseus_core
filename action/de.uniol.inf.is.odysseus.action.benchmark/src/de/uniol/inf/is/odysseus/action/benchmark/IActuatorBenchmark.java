@@ -4,10 +4,9 @@ package de.uniol.inf.is.odysseus.action.benchmark;
 public interface IActuatorBenchmark {
 	
 	public enum Operation{DATAEXTRACTION, QUERYPROCESSING, ACTIONEXECTION};
-
 	
-	public String notifyStart(String identifier, Operation op);
+	public void addBenchmarkData(BenchmarkData data);
 	
-	public long notifyEnd(String identifier, String id, Operation op);
+	public String getNextID(String identifier);
 
 }
