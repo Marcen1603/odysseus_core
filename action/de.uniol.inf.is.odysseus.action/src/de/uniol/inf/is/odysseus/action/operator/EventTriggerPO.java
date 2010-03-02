@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
@@ -25,6 +26,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	private String type;
 	private Logger logger;
 	private static IDataExtractor dataExtractor;
+	private static IActuatorBenchmark benchmark;
 
 	/**
 	 * Public Constructor used by OSGI
@@ -43,6 +45,10 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 		this.actions = actions;
 		this.type = type;
 		this.logger = LoggerFactory.getLogger(EventTriggerPO.class);
+	}
+	
+	public void bindBenchmark(IActuatorBenchmark bm){
+		EventTriggerPO.benchmark = bm;
 	}
 	
 	/**
@@ -66,6 +72,18 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		//extract parameters
+		Object bmID = null;
+		Object bmIdentifier = null;
+		if (benchmark != null){
+			try{
+				bmID = dataExtractor.extractAttribute(object, IActuatorBenchmark.ID, this.type);
+				bmIdentifier = dataExtractor.extractAttribute(object, IActuatorBenchmark.Identifier, this.type);
+				benchmark.notifyEnd((String)bmIdentifier, (String)bmID, IActuatorBenchmark.Operation.QUERYPROCESSING);
+				benchmark.notifyStart((String)bmIdentifier,IActuatorBenchmark.Operation.ACTIONEXECTION);
+			}catch(Exception e){
+				//ignore benchmarking
+			}
+		}
 		for (Entry<Action, List<IActionParameter>> entry : actions.entrySet()){
 			List<IActionParameter> parameterList = entry.getValue();
 			Object[] parameters = new Object[parameterList.size()];
@@ -93,6 +111,9 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 				//Shouldnt happen, because method & parameters are checked during creation of action
 				this.logger.error("Method execution failed: "+e.getMessage());
 			}
+		}
+		if (bmID != null && bmIdentifier != null){
+			benchmark.notifyEnd((String)bmIdentifier, (String)bmID, IActuatorBenchmark.Operation.QUERYPROCESSING);
 		}
 	}
 }

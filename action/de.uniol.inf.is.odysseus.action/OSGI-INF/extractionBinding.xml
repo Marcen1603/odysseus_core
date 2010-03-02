@@ -2,4 +2,5 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.action.po">
    <implementation class="de.uniol.inf.is.odysseus.action.operator.EventTriggerPO"/>
    <reference bind="bindDataExtractor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.action.services.dataExtraction.IDataExtractor" name="IDataExtractor" policy="dynamic"/>
+   <reference bind="bindBenchmark" cardinality="0..1" interface="de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark" name="IActuatorBenchmark" policy="dynamic"/>
 </scr:component>
