@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rewrite.drools;
+package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +6,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
-import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 
 public class RestructHelper {
 	public static Collection<ILogicalOperator> removeOperator(

@@ -77,7 +77,7 @@ public class DroolsRewrite implements IRewrite {
 		if (logger.isInfoEnabled()) {
 			logger.debug("pre rewrite: "
 					+ AbstractTreeWalker.prefixWalk(top,
-							new AlgebraPlanToStringVisitor()));
+							new AlgebraPlanToStringVisitor(true)));
 		}
 
 //		WorkingMemoryConsoleLogger lg = new WorkingMemoryConsoleLogger(session);
@@ -91,7 +91,7 @@ public class DroolsRewrite implements IRewrite {
 		if (logger.isInfoEnabled()) {
 			logger.debug("post rewrite:"
 					+ AbstractTreeWalker.prefixWalk(top,
-							new AlgebraPlanToStringVisitor()));
+							new AlgebraPlanToStringVisitor(true)));
 
 		}
 		LogicalSubscription sub = top.getSubscribedToSource(0);
@@ -101,7 +101,7 @@ public class DroolsRewrite implements IRewrite {
 		if (logger.isInfoEnabled()) {
 			logger.debug("post rewrite:"
 					+ AbstractTreeWalker.prefixWalk(ret,
-							new AlgebraPlanToStringVisitor()));
+							new AlgebraPlanToStringVisitor(true)));
 
 		}
 		return ret;

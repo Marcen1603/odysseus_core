@@ -63,7 +63,7 @@ public class OptimizationTestConsole implements
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
 //							"SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction",
-							"SELECT bid.price FROM nexmark:bid2 AS bid WHERE bid.price > 1",
+							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
 //							"SELECT bid.price FROM nexmark:bid2 AS bid",
 							parser(), new ParameterDefaultRoot(
 									new OptimizationTestSink(false)),

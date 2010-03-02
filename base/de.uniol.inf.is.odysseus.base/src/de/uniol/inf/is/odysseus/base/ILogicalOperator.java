@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.base;
 
 import java.util.Collection;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -10,6 +11,7 @@ public interface ILogicalOperator extends IOwnedOperator,
 	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>{
 
 	public ILogicalOperator clone() throws CloneNotSupportedException;
+	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced);
 	public SDFAttributeList getOutputSchema();
 	public SDFAttributeList getInputSchema(int pos);
 	

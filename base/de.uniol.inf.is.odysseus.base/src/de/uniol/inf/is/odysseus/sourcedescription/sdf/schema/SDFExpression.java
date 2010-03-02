@@ -18,6 +18,7 @@ import org.nfunk.jep.Node;
 import org.nfunk.jep.ParseException;
 import org.nfunk.jep.Variable;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.CustomFunction;
 
 /**
@@ -117,7 +118,11 @@ public class SDFExpression implements Serializable {
 		this.variables = new HashMap<String, Variable>();
 		this.attributes = new ArrayList<SDFAttribute>();
 		this.attribute = null;
-		this.attributeResolver = attributeResolver;
+		try {
+			this.attributeResolver = attributeResolver.clone();
+		} catch (CloneNotSupportedException e1) {
+			throw new RuntimeException(e1);
+		}
 
 		myParser = new JEP();
 		myParser.addStandardConstants();
@@ -247,7 +252,7 @@ public class SDFExpression implements Serializable {
 			myParser.addVariable(varName, null);
 			var = myParser.getVar(varName);
 			this.variableArrayList.add(var);
-			this.attributes.add(attribute);
+			this.attributes.add(attribute.clone());
 			this.variables.put(aliasName, var);
 		}
 
@@ -350,6 +355,10 @@ public class SDFExpression implements Serializable {
 		} else if (!expression.equals(other.expression))
 			return false;
 		return true;
+	}
+
+	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
+		attributeResolver.updateAfterClone(updated);
 	}
 
 }

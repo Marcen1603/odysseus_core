@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.base.CopyLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.UpdateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
@@ -160,8 +161,10 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
 
 		// create working copy of plan
-		ILogicalOperator logicalPlanCopy = AbstractTreeWalker.prefixWalk(query.getSealedLogicalPlan(), 
-				new CopyLogicalPlanVisitor());
+		CopyLogicalPlanVisitor v = new CopyLogicalPlanVisitor();
+		ILogicalOperator logicalPlanCopy = AbstractTreeWalker.prefixWalk(query.getSealedLogicalPlan(),v);
+		AbstractTreeWalker.prefixWalk(logicalPlanCopy, new UpdateLogicalPlanVisitor(v.getReplaced()));
+
 		
 		ILogicalOperator newLogicalAlgebra = null;
 		if (restruct != null && restruct == ParameterDoRestruct.TRUE) {

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 
+import de.uniol.inf.is.odysseus.base.CopyLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
@@ -13,8 +14,10 @@ import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
+import de.uniol.inf.is.odysseus.base.UpdateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * The StandardCompiler is a standard implementation for {@link ICompiler}. It
@@ -186,8 +189,11 @@ public class StandardCompiler implements ICompiler {
 	public IPhysicalOperator transform(ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException {
-		return this.transformation.transform(logicalPlan,
-				transformationConfiguration);
+		// create working copy of plan
+		CopyLogicalPlanVisitor v = new CopyLogicalPlanVisitor();
+		ILogicalOperator cPlan = AbstractTreeWalker.prefixWalk(logicalPlan,v);
+		AbstractTreeWalker.prefixWalk(cPlan, new UpdateLogicalPlanVisitor(v.getReplaced()));
+		return this.transformation.transform(cPlan, transformationConfiguration);
 	}
 
 	/* (non-Javadoc)

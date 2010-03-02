@@ -83,7 +83,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	private Object createJoin(String alias, Object data) {
-		final AbstractLogicalOperator source = this.attributeResolver
+		final ILogicalOperator source = this.attributeResolver
 				.getSource(alias);
 
 		if (data == null) {

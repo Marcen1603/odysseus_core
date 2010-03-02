@@ -20,6 +20,11 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable{
 		outputSchema = po.getOutputSchema();
 	}
 	
+	public RenameAO(RenameAO ao){
+		super(ao);
+		outputSchema = new SDFAttributeList(ao.outputSchema);
+	}
+	
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		this.outputSchema = outputSchema.clone();
@@ -28,6 +33,10 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable{
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
+	}
+	
+	public AbstractLogicalOperator clone() throws CloneNotSupportedException {
+		return new RenameAO(this);
 	}
 	
 

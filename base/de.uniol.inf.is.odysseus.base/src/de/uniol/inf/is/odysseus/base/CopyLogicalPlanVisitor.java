@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.base;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ public class CopyLogicalPlanVisitor	implements
 	private Stack<ILogicalOperator> last;
 	private Stack<ILogicalOperator> lastOld;
 	private boolean errorsOccured;
+	private Map<ILogicalOperator, ILogicalOperator> replaced = new HashMap<ILogicalOperator, ILogicalOperator>();
 
 	public CopyLogicalPlanVisitor() {
 		this.logger = LoggerFactory.getLogger(CopyLogicalPlanVisitor.class);
@@ -29,6 +32,10 @@ public class CopyLogicalPlanVisitor	implements
 		this.last = new Stack<ILogicalOperator>();
 		this.lastOld = new Stack<ILogicalOperator>();
 		this.errorsOccured = false;
+	}
+	
+	public Map<ILogicalOperator, ILogicalOperator> getReplaced() {
+		return replaced;
 	}
 
 	@Override
@@ -73,6 +80,7 @@ public class CopyLogicalPlanVisitor	implements
 			if (this.root == null) {
 				this.root = op2;
 			}
+			replaced.put(op, op2);
 			this.last.push(op2);
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

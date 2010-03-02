@@ -7,9 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
@@ -19,26 +17,27 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 public class AttributeResolver implements IAttributeResolver {
 	private static final long serialVersionUID = -6960117786021105217L;
 
-	private Map<String, AbstractLogicalOperator> sources;
+	private Map<String, ILogicalOperator> sources;
 
+	
 	private Set<SDFAttribute> attributes;
 
 	public AttributeResolver() {
-		this.sources = new HashMap<String, AbstractLogicalOperator>();
+		this.sources = new HashMap<String, ILogicalOperator>();
 		this.attributes = new HashSet<SDFAttribute>();
 	}
 
 	public AttributeResolver(AttributeResolver attributeResolver) {
-		this.sources = new HashMap<String, AbstractLogicalOperator>(attributeResolver.sources);
+		this.sources = new HashMap<String, ILogicalOperator>(attributeResolver.sources);
 		this.attributes = new HashSet<SDFAttribute>(
 				attributeResolver.attributes);
 	}
 
-	public AbstractLogicalOperator getSource(String name) {
+	public ILogicalOperator getSource(String name) {
 		return this.sources.get(name);
 	}
 
-	public void addSource(String name, AbstractLogicalOperator op) {
+	public void addSource(String name, ILogicalOperator op) {
 		if (this.sources.containsKey(name)) {
 			throw new IllegalArgumentException("ambigiuous identifier: " + name);
 		}
@@ -70,24 +69,23 @@ public class AttributeResolver implements IAttributeResolver {
 		if (parts.length == 1 || name.contains("(")) {
 			for (ILogicalOperator source : this.sources.values()) {
 				for (SDFAttribute curAttribute : source.getOutputSchema()) {
-					SDFAttribute SDFAttribute = (SDFAttribute) curAttribute;
-					if (SDFAttribute.getAttributeName().equals(name)) {
+					if (curAttribute.getAttributeName().equals(name)) {
 						if (result != null) {
 							throw new IllegalArgumentException(
 									"ambigiuous identifier: " + name);
 						} else {
-							result = SDFAttribute;
+							result = curAttribute;
 						}
 					}
 				}
 			}
-			for (SDFAttribute SDFAttribute : this.attributes) {
-				if (SDFAttribute.getAttributeName().equals(name)) {
+			for (SDFAttribute curAttribute : this.attributes) {
+				if (curAttribute.getAttributeName().equals(name)) {
 					if (result != null) {
 						throw new IllegalArgumentException(
 								"ambigiuous identifier: " + name);
 					} else {
-						result = SDFAttribute;
+						result = curAttribute;
 					}
 				}
 			}
@@ -99,7 +97,7 @@ public class AttributeResolver implements IAttributeResolver {
 	}
 
 	private SDFAttribute getAttribute(String sourceName, String attributeName) {
-		ILogicalOperator source = this.sources.get(sourceName);
+		ILogicalOperator source= this.sources.get(sourceName);
 		if (source == null) {
 			throw new IllegalArgumentException("no such source: " + sourceName);
 		}
@@ -133,5 +131,21 @@ public class AttributeResolver implements IAttributeResolver {
 	@Override
 	public String toString() {
 		return "Sources "+sources+" attributes"+attributes;
+	}
+	
+	public AttributeResolver clone() throws CloneNotSupportedException {
+		return new AttributeResolver(this);
+	}
+	
+	@Override
+	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
+		Set<String> sourceNames = this.sources.keySet();
+		for (String sourceName : sourceNames){
+			ILogicalOperator source = sources.get(sourceName);
+			ILogicalOperator newSource = updated.get(source);
+			if (newSource != null){
+				sources.put(sourceName, newSource);
+			}
+		}
 	}
 }

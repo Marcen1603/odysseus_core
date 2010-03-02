@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -25,6 +29,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	// should be called on the left or on the right input tuple
 	private boolean[] fromRightChannel;
 
+	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
+
 	public RelationalPredicate(SDFExpression expression) {
 		this.expression = expression;
 	}
@@ -37,34 +43,54 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 
 		int i = 0;
 		for (SDFAttribute curAttribute : neededAttributes) {
-			SDFAttribute cqlAttr = (SDFAttribute) curAttribute;
-			int pos = indexOf(leftSchema, cqlAttr);
+
+			int pos = indexOf(leftSchema, curAttribute);
 			if (pos == -1) {
+				if (rightSchema == null){
+					throw new IllegalArgumentException("Attribute "+curAttribute+" not in "+leftSchema+" and rightSchema is null!");
+				}
 				// if you get here, there is an attribute
 				// in the predicate that does not exist
 				// in the left schema, so there must also be
 				// a right schema
-				pos = indexOf(rightSchema, cqlAttr);
+				pos = indexOf(rightSchema, curAttribute);
+				if (pos == -1){
+					throw new IllegalArgumentException("Attribute "+curAttribute+" not in "+rightSchema);
+				}
 				this.fromRightChannel[i] = true;
 			}
 			this.attributePositions[i++] = pos;
 		}
 	}
 
-	private int indexOf(SDFAttributeList schema, SDFAttribute cqlAttr) {
+	private int indexOf(SDFAttributeList schema, SDFAttribute attr) {
+		SDFAttribute cqlAttr = getReplacement(attr);
 		Iterator<SDFAttribute> it = schema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {
-			if (cqlAttr.equalsCQL((SDFAttribute) it.next())) {
+			SDFAttribute a = it.next();
+			if (cqlAttr.equalsCQL(a)) {
 				return i;
 			}
 		}
 		return -1;
+	}
+	
+	
+
+	private SDFAttribute getReplacement(SDFAttribute a) {
+		SDFAttribute ret = a;
+		SDFAttribute tmp = null;
+		while ((tmp=replacementMap.get(ret))!=null){
+			ret = tmp;
+		}
+		return ret;
 	}
 
 	public RelationalPredicate(RelationalPredicate predicate) {
 		this.attributePositions = predicate.attributePositions == null ? null:predicate.attributePositions.clone();
 		this.fromRightChannel = predicate.fromRightChannel == null ? null:predicate.fromRightChannel.clone();
 		this.expression = predicate.expression == null ? null:predicate.expression.clone();
+		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
 	}
 
 	public boolean evaluate(RelationalTuple<?> input) {
@@ -97,7 +123,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	}
 
 	public List<SDFAttribute> getAttributes() {
-		return this.expression.getAllAttributes();
+		return Collections.unmodifiableList(this.expression.getAllAttributes());
 	}
 	
 	public boolean isSetOperator(String symbol) {
@@ -115,5 +141,15 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	
 	public int hashCode(){
 		return 23 * this.expression.hashCode();
+	}
+	
+	@Override
+	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
+		expression.updateAfterClone(updated);
+	}
+
+	@Override
+	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
+		replacementMap.put(curAttr, newAttr);
 	}
 }

@@ -38,7 +38,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private String name = null;
 
 	@SuppressWarnings("unchecked")
-	private IPredicate predicate = null;;
+	private IPredicate predicate = null;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		// Subscriptions gehoeren eigentlich nicht zum Operator?
@@ -80,6 +80,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 //		}
 	}
 
+	@Override
+	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced) {
+		if (predicate != null){
+			predicate.updateAfterClone(replaced);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -18,13 +18,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.RestructHelper;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
@@ -280,12 +280,14 @@ public class RelationalRestructHelper {
 								.getAttributes();
 						List<SDFAttribute> tmp = new ArrayList<SDFAttribute>(
 								attributes);
-						attributes.clear();
+						
+						//attributes.clear();
 						for (SDFAttribute curAttr : tmp) {
 							int index = ren.getOutputSchema().indexOf(curAttr);
 							SDFAttribute newAttr = select.getInputSchema().get(
 									index);
-							attributes.add(newAttr);
+							//attributes.add(newAttr);
+							((IRelationalPredicate)curPred).replaceAttribute(curAttr, newAttr);
 						}
 					}
 				});

@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
+import de.uniol.inf.is.odysseus.logicaloperator.base.RestructHelper;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
@@ -20,7 +21,6 @@ import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
-import de.uniol.inf.is.odysseus.rewrite.drools.RestructHelper;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class OnePlanPerOperator extends

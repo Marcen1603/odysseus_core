@@ -108,7 +108,7 @@ public abstract class SDFElement implements Serializable {
 		return qualName;
 	}
 
-	public void setQualName(String name) {
+	protected void setQualName(String name) {
 		this.qualName = name;
 	}
 
@@ -116,7 +116,7 @@ public abstract class SDFElement implements Serializable {
 		return uRIWithoutQualName;
 	}
 
-	public void setURIWithoutQualName(String name) {
+	protected void setURIWithoutQualName(String name) {
 		uRIWithoutQualName = name;
 	}
 

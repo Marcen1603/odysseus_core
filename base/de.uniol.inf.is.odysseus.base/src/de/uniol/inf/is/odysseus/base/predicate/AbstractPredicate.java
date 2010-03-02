@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.base.predicate;
 
 import java.io.Serializable;
+import java.util.Map;
+
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 
 /**
  * This is an abstract superclass for all predicates, that provides an empty init method.
@@ -14,14 +17,23 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 
 	public void init(){
 	}
+
+
+	public AbstractPredicate() {
+	}
+
+	public AbstractPredicate(AbstractPredicate<T> pred) {
+	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public AbstractPredicate<T> clone(){
-		try{
-			return (AbstractPredicate<T>)super.clone();
-		}catch(CloneNotSupportedException e){
-			throw new RuntimeException(e);
-		}
+//		try{
+//			return (AbstractPredicate<T>)super.clone();
+//		}catch(CloneNotSupportedException e){
+			throw new RuntimeException("Clone not supported");
+//		}
 	}
+	
+	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
 }

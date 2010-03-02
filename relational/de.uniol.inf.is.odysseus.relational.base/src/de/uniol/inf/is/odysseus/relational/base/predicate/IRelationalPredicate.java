@@ -11,4 +11,5 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public interface IRelationalPredicate {
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema);
 	public List<SDFAttribute> getAttributes();
+	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr);
 }
