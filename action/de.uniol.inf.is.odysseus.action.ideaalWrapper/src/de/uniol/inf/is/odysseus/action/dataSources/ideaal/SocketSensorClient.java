@@ -5,14 +5,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
+import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
 import de.uniol.inf.is.odysseus.action.dataSources.StreamClient;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -25,126 +24,153 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Simon Flandergan
  *
  */
-public class SocketSensorClient extends Thread {
+public class SocketSensorClient extends ISourceClient {
 	private static IActuatorBenchmark benchmark;
 	private long interval;
 	private Socket socket;	
-	private List<StreamClient> clients;
+	private int retries = 5;
+	
 	private List<String> messages;
 	private SDFAttributeList schema;
-	private Logger logger;
 	private Sensor sensor;
 	
+	private Logger logger;
+	
+	private boolean benchmarking = false;
+	private String benchMarkIdentifier;
+	
 
-	public SocketSensorClient(Sensor sensor) throws UnknownHostException, IOException {
+	public SocketSensorClient(Sensor sensor) {
 		this.interval = sensor.getInterval();
 		this.messages = sensor.getMessages();
 		this.schema = Sensor.getSchema(sensor);
 		this.sensor = sensor;
 		
-		this.socket = new Socket(sensor.getIp(), sensor.getPort());
-		this.clients = new ArrayList<StreamClient>();
+		this.benchMarkIdentifier = this.sensor.name()+"_Odysseus";
 		
 		this.logger = LoggerFactory.getLogger(SocketSensorClient.class);
-	}
-	
-	public void addClient(StreamClient streamClient) {
-		synchronized (this.clients) {
-			this.clients.add(streamClient);
-		}
-	}
+	}	
 	
 	public void bindBenchmark(IActuatorBenchmark benchmark){
 		SocketSensorClient.benchmark = benchmark;
+		this.benchmarking = true;
 	}
 	
 	@Override
-	public void run() {
-		while (true){
-			try {
-				RelationalTuple<ITimeInterval> tuple = null;
-				String benchMarkID = null;
-				if (benchmark != null){
-					benchMarkID = benchmark.notifyStart(
-							this.sensor.name()+"_Odysseus",
-							IActuatorBenchmark.Operation.DATAEXTRACTION);
-					tuple = new 
-					RelationalTuple<ITimeInterval>(this.schema.size()+2);
-				}else {
-					tuple = new 
-					RelationalTuple<ITimeInterval>(this.schema.size());
-				}
+	public boolean processData()  {
+		try {
+			if (this.socket == null){
+				//create socket if it isnt opened yet
+				this.socket = new Socket(sensor.getIp(), sensor.getPort());
+			}
+			
+			RelationalTuple<ITimeInterval> tuple = null;
+			
+			//send notification if benchmarking is avaiable
+			String benchMarkID = null;
+			if (this.benchmarking){
+				benchMarkID = benchmark.notifyStart(
+						this.sensor.name()+"_Odysseus",
+						IActuatorBenchmark.Operation.DATAEXTRACTION);
+								
+				tuple = new RelationalTuple<ITimeInterval>(this.schema.size()+2);
 				
-				tuple.setAttribute(0, System.currentTimeMillis());
-				
-				//send request to sensor
-				OutputStream outputStream = this.socket.getOutputStream();
-				int index = 1;
-				for (String message : messages){
-				
-					outputStream.flush();
-					outputStream.write(message.getBytes());
-					outputStream.flush();
-				
-					//receive result
-					String input = readFromSensor(this.socket.getInputStream());
-					if (input != null & input.length() >0){
-						//add functions to val if necessary
-						input = Sensor.calcRealValue(this.sensor, message, input);
-						
-						SDFAttribute attribute = schema.getAttribute(index);
-						Object val = this.extractFromInputString(
-								attribute.getDatatype(), input);
-						if (val != null){
-							tuple.setAttribute(index, val);
-							index++;
-						}else {
-							throw new InternalException("Irregular value from sensor: "+input);
-						}
-					}else {
-						throw new InternalException("Value from Sensor is empty");
-					}
+			}else {
+				tuple = new 
+				RelationalTuple<ITimeInterval>(this.schema.size());
+			}
+			
+			tuple.setAttribute(0, System.currentTimeMillis());
+			
+			//send request to sensor
+			OutputStream outputStream = this.socket.getOutputStream();
+			int index = 1;
+			for (String message : messages){
+			
+				outputStream.flush();
+				outputStream.write(message.getBytes());
+				outputStream.flush();
+			
+				//receive result
+				String input = readFromSensor(this.socket.getInputStream());
+				if (input != null & input.length() >0){
+					//add functions to val if necessary
+					input = Sensor.calcRealValue(this.sensor, message, input);
 					
-					//wait shortly until next val is fetched
-					try {
-						sleep(this.interval);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					SDFAttribute attribute = schema.getAttribute(index);
+					Object val = this.extractFromInputString(
+							attribute.getDatatype(), input);
+					if (val != null){
+						tuple.setAttribute(index, val);
+						index++;
+					}else {
+						throw new InternalException("Irregular value from sensor: "+input);
 					}
+				}else {
+					throw new InternalException("Value from Sensor is empty");
 				}
 				
-				//send tuple to clients
-				synchronized (clients) {
-					for (StreamClient client : this.clients){
-						client.writeObject(tuple);
-					}
-				}
-				if (benchMarkID != null){
-					benchmark.notifyEnd(this.sensor.name()+"_Odysseus", 
-							benchMarkID, IActuatorBenchmark.Operation.DATAEXTRACTION);
-					//better would be a notify from scheduler, but i dont wanna mess in that code...
-					benchmark.notifyStart(this.sensor.name()+"_Odysseus",
-							IActuatorBenchmark.Operation.QUERYPROCESSING);
-				}
-				this.logger.debug("Send tuple with "+tuple.getAttributeCount()+" values");
-			} catch (IOException e) {
-				this.closeSocket();
-				e.printStackTrace();
-				break;
-			} catch (InternalException e) {
-				this.logger.error(e.getMessage());
-				this.logger.error("Skipping tuple");
-
-				//wait till next fetch
+				//wait shortly until next val is fetched
 				try {
 					sleep(this.interval);
-				} catch (InterruptedException e2) {
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			} catch (Exception e){
+			}
+			
+			//add fields, if benchmarking is avaiable
+			if (this.benchmarking){
+				int attrC = tuple.getAttributeCount();
+				tuple.setAttribute(attrC-2, benchMarkID);
+				tuple.setAttribute(attrC-1, benchMarkIdentifier);
+			}
+			
+			//send tuple to clients
+			synchronized (clients) {
+				for (StreamClient client : this.clients){
+					try {
+						client.writeObject(tuple);
+					}catch (Exception e) {
+						if (e instanceof IOException){
+							throw (IOException)e;
+						}
+						//benchmarking fault?
+						//try next tuple without benchmarking
+						this.benchmarking = false;
+					}
+				}
+			}
+			
+			if (this.benchmarking){
+				benchmark.notifyEnd(benchMarkIdentifier, 
+						benchMarkID, IActuatorBenchmark.Operation.DATAEXTRACTION);
+
+				benchmark.notifyStart(benchMarkIdentifier,
+						IActuatorBenchmark.Operation.QUERYPROCESSING);
+			}
+			
+			this.logger.debug("Send tuple with "+tuple.getAttributeCount()+" values");
+		} catch (IOException e) {
+			//socket not avaiable retry or terminate
+			this.retries--;
+			if (this.retries<1){
+				this.logger.error("Sensor or Client not avaiable. Stopping server");
+				return false;
+			}else {
+				this.logger.error("Sensor or Client not avaiable. Retrying ...("+this.retries+" retries left)");
+			}
+		} catch (InternalException e) {
+			this.logger.error(e.getMessage());
+			this.logger.error("Skipping tuple");
+
+			//wait till next fetch
+			try {
+				sleep(this.interval);
+			} catch (InterruptedException e2) {
 				e.printStackTrace();
 			}
 		}
+		return true;
 	}
 
 	private Object extractFromInputString(SDFDatatype datatype, String val) {
@@ -193,9 +219,11 @@ public class SocketSensorClient extends Thread {
 		return message.trim();
 	}
 
-	public void closeSocket() {
+	@Override
+	public void cleanUp() {
 		if (this.socket != null && !this.socket.isClosed()){
 			try {
+				this.retries = 0;
 				this.socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -211,6 +239,11 @@ public class SocketSensorClient extends Thread {
 		return schema;
 	}
 	
+	/**
+	 * Internal exception
+	 * @author Simon Flandergan
+	 *
+	 */
 	class InternalException extends Exception{
 
 		public InternalException(String string) {

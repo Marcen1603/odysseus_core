@@ -9,9 +9,6 @@ import java.nio.channels.ServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.action.dataSources.ideaal.Sensor;
-import de.uniol.inf.is.odysseus.action.dataSources.ideaal.SocketSensorClient;
-
 
 /**
  * Server providing a Stream by fetching values from a
@@ -22,7 +19,7 @@ import de.uniol.inf.is.odysseus.action.dataSources.ideaal.SocketSensorClient;
 public class StreamServer extends Thread {
 
 	private ServerSocket socket;
-	private SocketSensorClient sensorClient;
+	private ISourceClient sourceClient;
 	private Logger logger;
 	
 	/**
@@ -31,13 +28,13 @@ public class StreamServer extends Thread {
 	 * @param port 
 	 * @throws IOException
 	 */
-	public StreamServer (Sensor sensor, int port) throws IOException{
+	public StreamServer (ISourceClient client, int port) throws IOException{
 		ServerSocketChannel serverChannel = ServerSocketChannel.open();
 		this.socket = serverChannel.socket();
 		this.socket.bind(new InetSocketAddress(port));
 		serverChannel.configureBlocking(true);
 		
-		this.sensorClient = new SocketSensorClient(sensor);
+		this.sourceClient = client;
 			
 		this.logger = LoggerFactory.getLogger( StreamServer.class );
 	}
@@ -59,17 +56,14 @@ public class StreamServer extends Thread {
 
 			// Handle client connection
 			try {
-				synchronized (this.sensorClient){
+				synchronized (this.sourceClient){
 					//start sensor client if it's not yet running
-					if (!this.sensorClient.isAlive()){
-						this.sensorClient.start();
+					if (!this.sourceClient.isAlive()){
+						this.sourceClient.start();
 					}
 				}
 				
-				this.sensorClient.addClient(new StreamClient(connection, this.sensorClient.getSchema()));
-				
-				//increase client count
-				
+				this.sourceClient.addClient(new StreamClient(connection, this.sourceClient.getSchema()));
 			} catch (IOException e) {
 				logger.error("Client with ip: " + connection.getInetAddress()
 						+ " could not be handled.");
@@ -89,8 +83,8 @@ public class StreamServer extends Thread {
 				this.socket.close();
 			}
 			
-			if (this.sensorClient != null && this.sensorClient.isAlive()){
-				this.sensorClient.closeSocket();
+			if (this.sourceClient != null && this.sourceClient.isAlive()){
+				this.sourceClient.cleanUp();
 			}
 		}catch (IOException e){
 			e.printStackTrace();

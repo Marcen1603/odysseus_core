@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  *
  */
 public enum Sensor {
-	BedBalance("192.168.0.56", 99, 1000, new String []{"0", "1", "2", "3"});
+	BedBalance("192.168.0.56", 99, 100, new String []{"0", "1", "2", "3"});
 	
 	private String ip;
 	private int port;
