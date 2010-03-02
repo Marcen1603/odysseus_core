@@ -9,11 +9,13 @@
             id="de.uniol.inf.is.odysseus.broker.console">
       </category>
       <view
+            allowMultiple="false"
             category="de.uniol.inf.is.odysseus.broker.console"
             class="de.uniol.inf.is.odysseus.broker.console.views.OutputView"
             icon="icons/sample.gif"
             id="de.uniol.inf.is.odysseus.broker.console.views.OutputView"
-            name="Odysseus Output View">
+            name="Odysseus Output View"
+            restorable="false">
       </view>
    </extension>
    <extension

@@ -8,6 +8,11 @@ import org.eclipse.jface.viewers.Viewer;
 public class OutputContentProvider implements IStructuredContentProvider{
 	 
 	private Object[] values = new Object[0];
+	private String[] attributenames;
+		
+	public OutputContentProvider(String[] attrubuteNames){
+		this.attributenames = attrubuteNames;
+	}
 	
 	public void addValue(Object newValue){
 		Object[] newValues = Arrays.copyOf(values, values.length+1);
@@ -41,7 +46,13 @@ public class OutputContentProvider implements IStructuredContentProvider{
 		
 	}
 
-
+	public void setAttributeNames(String[] names){
+		this.attributenames = names;
+	}
+	
+	public String[] getAttributeNames(){
+		return this.attributenames;
+	}
 	
 	
 }

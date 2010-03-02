@@ -907,7 +907,7 @@ public class ExecutorConsole implements CommandProvider,
 
 			} else if (args[args.length - 1].toUpperCase().equals("<E>")) {
 				q.append(args[args.length - 2]).append(" ");
-				this.addQueryWithEclipseConsoleOutput(q.toString(), ci);
+				this.addQueryWithEclipseConsoleOutput(q.toString());
 			} else {
 				q.append(args[args.length - 2]).append(" ");
 				q.append(args[args.length - 1]).append(" ");
@@ -919,7 +919,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@Help(parameter = "<query string> [S] [true|false] \"[rule name](\",\"<rule name>)*\" ", description = "add query [with console-output-sink] "
+	@Help(parameter = "<query string> [S|E] [true|false] \"[rule name](\",\"<rule name>)*\" ", description = "add query [with console-output-sink|eclipse-outputsink] "
 			+ "[with|without restructuring the query plan, default true] \n"
 			+ "and specify the rules to use for restructuring. If no rules are specified, all available rules are used. \n"
 			+ "\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
@@ -1009,6 +1009,8 @@ public class ExecutorConsole implements CommandProvider,
 				this.executor.addQuery(args[0], parser(),
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
+			} else if (args[1].equalsIgnoreCase("E")){
+				this.addQueryWithEclipseConsoleOutput(args[0]);
 			} else if (args[1].equalsIgnoreCase("TRUE")) {
 				this.executor
 						.addQuery(args[0], parser(), this.trafoConfigParam);
@@ -1606,8 +1608,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	private void addQueryWithEclipseConsoleOutput(String query,
-			CommandInterpreter ci) {
+	private void addQueryWithEclipseConsoleOutput(String query) {
 		try {
 
 			Class<?> eclipseConsoleSink = Class
@@ -1618,10 +1619,10 @@ public class ExecutorConsole implements CommandProvider,
 			this.executor.addQuery(query, parser(), new ParameterDefaultRoot(
 					ecSink), this.trafoConfigParam);
 		}catch(ClassNotFoundException e){
-			ci.println("Eclipse Console Plugin is missing!");
+			System.err.println("Eclipse Console Plugin is missing!");
 		}
 		catch (Exception e) {
-			ci.println(e.getMessage());
+			System.err.println(e.getMessage());
 		}
 
 	}

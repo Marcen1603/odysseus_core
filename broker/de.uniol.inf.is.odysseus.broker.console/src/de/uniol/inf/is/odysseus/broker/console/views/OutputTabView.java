@@ -7,7 +7,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.broker.console.ViewController;
 
@@ -33,12 +32,7 @@ public class OutputTabView{
 		viewer.setContentProvider(ViewController.getInstance()
 				.getContentProvider(port));
 		viewer.setLabelProvider(new ViewLabelProvider());	
-		viewer.setInput(parentView.getViewSite());					
-		
-		// Create the help context id for the viewer's control
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(),
-				"de.uniol.inf.is.odysseus.broker.console.viewer");
-		
+		viewer.setInput(parentView.getViewSite());										
 		return composite;
 										
 	}
@@ -69,6 +63,10 @@ public class OutputTabView{
 		ViewController.getInstance()
 		.getContentProvider(port).clear();
 		
+	}
+	
+	public int getPort(){
+		return this.port;
 	}
 	
 	

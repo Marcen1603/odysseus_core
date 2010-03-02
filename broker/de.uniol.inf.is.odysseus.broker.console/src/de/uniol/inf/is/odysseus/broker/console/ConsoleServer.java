@@ -19,14 +19,9 @@ public class ConsoleServer {
 	public int registerView(final String[] attributes) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				if (!ViewController.getInstance().getViews().isEmpty()) {
-					int givenPort = ViewController.getInstance().createNewView(
-							attributes);
-					givenPortDelegate(givenPort);
-					ViewController.getInstance().refreshAll();
-				} else {
-					givenPortDelegate(-1);
-				}
+				int givenPort = ViewController.getInstance().createNewView(
+						attributes);
+				givenPortDelegate(givenPort);
 			}
 		});
 		return port;
@@ -35,10 +30,7 @@ public class ConsoleServer {
 	public void sendTuple(final int port, final String[] values) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				if (ViewController.getInstance().isQueryViewTabOpen(port)) {
-					ViewController.getInstance().getContentProvider(port).addValue(values);
-					ViewController.getInstance().refreshAll();
-				}
+				ViewController.getInstance().sendTuple(port, values);
 			}
 		});
 
