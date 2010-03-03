@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stream_characteristics
+Bundle-SymbolicName: de.uniol.is.odysseus.new_transformation.stream_characteristics
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.is.odysseus.new_transformation.stream_characteristics.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openrdf,
+ org.osgi.framework;version="1.3.0"
+Export-Package: de.uniol.inf.is.odysseus.new_transformation.stream_characteristics
+Require-Bundle: org.openrdf;bundle-version="1.0.0"
