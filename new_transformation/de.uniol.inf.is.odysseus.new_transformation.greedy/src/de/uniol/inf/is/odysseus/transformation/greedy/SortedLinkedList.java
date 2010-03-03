@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
 
 /**
  * A {@link LinkedList} sorted by the Priority of the {@link IPOTransformator}s

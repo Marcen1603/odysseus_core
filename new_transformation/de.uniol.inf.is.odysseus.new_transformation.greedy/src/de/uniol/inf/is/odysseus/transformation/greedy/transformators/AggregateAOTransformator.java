@@ -5,11 +5,11 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
-import de.uniol.inf.is.odysseus.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalTupleGroupingHelper;
 
 public class AggregateAOTransformator implements IPOTransformator<AggregateAO> {

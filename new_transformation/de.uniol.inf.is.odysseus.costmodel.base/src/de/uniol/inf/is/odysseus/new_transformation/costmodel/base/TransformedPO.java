@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.costmodel.base;
+package de.uniol.inf.is.odysseus.new_transformation.costmodel.base;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;

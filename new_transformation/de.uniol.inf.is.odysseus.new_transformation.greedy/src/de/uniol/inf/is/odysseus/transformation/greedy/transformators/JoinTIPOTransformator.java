@@ -6,8 +6,6 @@ import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
-import de.uniol.inf.is.odysseus.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
@@ -16,6 +14,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 
 public class JoinTIPOTransformator implements IPOTransformator<JoinAO> {

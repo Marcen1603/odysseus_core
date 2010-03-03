@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.costmodel.mockup;
+package de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup;
 
-import de.uniol.inf.is.odysseus.costmodel.base.ICost;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICost;
 
 public class MockupCost implements ICost {
 	private final int cost;

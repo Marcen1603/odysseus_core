@@ -5,11 +5,11 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
-import de.uniol.inf.is.odysseus.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingPeriodicWindowTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataUpdatePO;
 
 public class SlidingPeriodicWindowTIPOTransformator implements IPOTransformator<WindowAO> {

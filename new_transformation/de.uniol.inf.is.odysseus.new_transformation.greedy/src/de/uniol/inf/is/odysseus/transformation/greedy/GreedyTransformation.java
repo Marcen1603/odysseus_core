@@ -18,12 +18,12 @@ import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.Subscription;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.costmodel.base.ICost;
-import de.uniol.inf.is.odysseus.costmodel.base.ICostModel;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
-import de.uniol.inf.is.odysseus.costmodel.base.TransformedPO;
-import de.uniol.inf.is.odysseus.costmodel.streamCharacteristic.StreamCharacteristicCollection;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICost;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostModel;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
+import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
@@ -126,14 +126,22 @@ public class GreedyTransformation implements ITransformation {
 		// transformiere den Operator und platziere den erstellten physischen
 		// Operator in dem physischen Baum anstelle des logischen Operators
 		TransformedPO transformedPO = transformator.transform(logicalOperator, config, this);
-		replace(logicalOperator, transformedPO.getSink());
-		replace(logicalOperator, transformedPO.getSource());
+
+		// Wenn ein Transformator keinen PO erzeugt (null), loesche den AO im
+		// Anfrageplan. Dies ist z.B. im Fall des unbounded Windows so.
+		// Wenn ein PO erzeugt wurde, setze in in den Plan ein.
+		if (transformedPO == null) {
+			replace(logicalOperator, logicalOperator.getPhysInputPOs().iterator().next());
+		} else {
+			replace(logicalOperator, transformedPO.getSink());
+			replace(logicalOperator, transformedPO.getSource());
+		}
 
 		// update die Metadaten vom Strom, indem die Metadaten der Kinder
 		// gemerged werden
 		List<StreamCharacteristicCollection> incomingStreamCharacteristics = getIncomingStreamCharacteristics(logicalOperator);
 		StreamCharacteristicCollection outgoingStreamCharacteristics = costModel.mergeStreamMetadata(transformator,
-				incomingStreamCharacteristics);
+				logicalOperator,incomingStreamCharacteristics);
 		streamMetadata.put(logicalOperator, outgoingStreamCharacteristics);
 	}
 
@@ -168,7 +176,8 @@ public class GreedyTransformation implements ITransformation {
 		if (physical == null)
 			return;
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
-			physical.subscribeToSource((ISource) psub.getTarget(), psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
+			physical.subscribeToSource((ISource) psub.getTarget(), psub.getSinkInPort(), psub.getSourceOutPort(), psub
+					.getSchema());
 		}
 	}
 
@@ -209,7 +218,10 @@ public class GreedyTransformation implements ITransformation {
 				break;
 			}
 		}
+
+		// es gibt nichtmal einen, der ausgefuehrt werden kann
 		if (bestTransformator == null) {
+			logger.error("No Transformation Found for: " + logicalOperator);
 			throw new TransformationException("No Transformation Found for: " + logicalOperator);
 		}
 

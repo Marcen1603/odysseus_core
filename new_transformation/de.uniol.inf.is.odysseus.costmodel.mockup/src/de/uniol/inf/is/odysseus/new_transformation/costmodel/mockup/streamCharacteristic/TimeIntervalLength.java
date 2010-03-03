@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.costmodel.mockup.streamCharacteristic;
+package de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.streamCharacteristic;
 
-import de.uniol.inf.is.odysseus.costmodel.streamCharacteristic.IStreamCharacteristic;
+import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.IStreamCharacteristic;
 
 public class TimeIntervalLength implements IStreamCharacteristic {
 	private final double timeIntevalLength;

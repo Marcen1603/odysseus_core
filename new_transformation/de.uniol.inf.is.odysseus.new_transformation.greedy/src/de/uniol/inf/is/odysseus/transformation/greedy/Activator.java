@@ -13,30 +13,39 @@ import de.uniol.inf.is.odysseus.transformation.greedy.transformators.JoinTIPOTra
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.SelectAOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO.AccessAOViewTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO.ExistingAccessAO;
+import de.uniol.inf.is.odysseus.transformation.greedy.transformators.windowAO.RelationalElementWindowAOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.windowAO.SlidingAdvanceTimeWindowTIPOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.windowAO.SlidingElementWindowTIPOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.windowAO.SlidingPeriodicWindowTIPOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.windowAO.SlidingTimeWindowTIPOTransformator;
+import de.uniol.inf.is.odysseus.transformation.greedy.transformators.windowAO.UnboundedWindowOnAttributeTransformator;
+import de.uniol.inf.is.odysseus.transformation.greedy.transformators.windowAO.UnboundedWindowTransformator;
 
 public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void start(BundleContext context) throws Exception {
 		TransformationDatabase db = TransformationDatabase.getInstance();
-		
+
 		// AccesAO
 		db.registerTransformator(AccessAO.class, new AccessAOViewTransformator());
 		db.registerTransformator(AccessAO.class, new ExistingAccessAO());
-		
+
 		// windowAO
 		db.registerTransformator(WindowAO.class, new SlidingAdvanceTimeWindowTIPOTransformator());
 		db.registerTransformator(WindowAO.class, new SlidingElementWindowTIPOTransformator());
 		db.registerTransformator(WindowAO.class, new SlidingPeriodicWindowTIPOTransformator());
 		db.registerTransformator(WindowAO.class, new SlidingTimeWindowTIPOTransformator());
-		
+		db.registerTransformator(WindowAO.class, new RelationalElementWindowAOTransformator());
+		db.registerTransformator(WindowAO.class, new UnboundedWindowOnAttributeTransformator());
+		db.registerTransformator(WindowAO.class, new UnboundedWindowTransformator());
+
 		db.registerTransformator(SelectAO.class, new SelectAOTransformator());
 		db.registerTransformator(JoinAO.class, new JoinTIPOTransformator());
 		db.registerTransformator(AggregateAO.class, new AggregateAOTransformator());
@@ -44,7 +53,9 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 	}

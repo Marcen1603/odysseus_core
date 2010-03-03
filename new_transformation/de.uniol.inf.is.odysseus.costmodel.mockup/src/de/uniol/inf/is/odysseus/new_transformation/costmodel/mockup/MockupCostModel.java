@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.costmodel.mockup;
+package de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.costmodel.base.ICost;
-import de.uniol.inf.is.odysseus.costmodel.base.ICostCalculator;
-import de.uniol.inf.is.odysseus.costmodel.base.ICostModel;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
-import de.uniol.inf.is.odysseus.costmodel.mockup.costcalcuation.AccessAOCostCalculator;
-import de.uniol.inf.is.odysseus.costmodel.mockup.costcalcuation.JoinAOCostCalculator;
-import de.uniol.inf.is.odysseus.costmodel.streamCharacteristic.StreamCharacteristicCollection;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICost;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostCalculator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostModel;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.costcalcuation.AccessAOCostCalculator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.costcalcuation.JoinAOCostCalculator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.AtomicDataInputStreamAccessPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.ByteBufferRecieverPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.FixedSetPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.InputStreamAccessPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.JoinTIPOTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO.AccessAOViewTransformator;
 import de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO.ExistingAccessAO;
@@ -58,18 +58,40 @@ public class MockupCostModel implements ICostModel {
 
 	@Override
 	public StreamCharacteristicCollection mergeStreamMetadata(
-			IPOTransformator<? extends ILogicalOperator> transformator,
+			IPOTransformator<? extends ILogicalOperator> transformator, ILogicalOperator logicalOperator,
 			List<StreamCharacteristicCollection> incomingStreamMetadata) throws TransformationException {
 		ICostCalculator costCalculator = costCalculators.get(transformator.getClass());
-		
+
 		if (costCalculator == null) {
 			StreamCharacteristicCollection collection = incomingStreamMetadata.get(0);
 			logger.info(collection.toString());
 			return collection;
 		}
 
-		StreamCharacteristicCollection mergedStreamMetadata = costCalculator.mergeStreamMetadata(incomingStreamMetadata);
+		StreamCharacteristicCollection mergedStreamMetadata = costCalculator.mergeStreamMetadata(
+				incomingStreamMetadata, logicalOperator);
 		logger.info(mergedStreamMetadata.toString());
 		return mergedStreamMetadata;
 	}
+
+	// @Override
+	// public StreamCharacteristicCollection mergeStreamMetadata(
+	// IPOTransformator<? extends ILogicalOperator> transformator,
+	// List<StreamCharacteristicCollection> incomingStreamMetadata) throws
+	// TransformationException {
+	// ICostCalculator costCalculator =
+	// costCalculators.get(transformator.getClass());
+	//		
+	// if (costCalculator == null) {
+	// StreamCharacteristicCollection collection =
+	// incomingStreamMetadata.get(0);
+	// logger.info(collection.toString());
+	// return collection;
+	// }
+	//
+	// StreamCharacteristicCollection mergedStreamMetadata =
+	// costCalculator.mergeStreamMetadata(incomingStreamMetadata);
+	// logger.info(mergedStreamMetadata.toString());
+	// return mergedStreamMetadata;
+	// }
 }

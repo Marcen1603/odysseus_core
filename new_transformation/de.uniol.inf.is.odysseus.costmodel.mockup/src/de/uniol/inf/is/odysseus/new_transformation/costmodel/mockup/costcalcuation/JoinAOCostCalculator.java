@@ -1,13 +1,14 @@
-package de.uniol.inf.is.odysseus.costmodel.mockup.costcalcuation;
+package de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.costcalcuation;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.costmodel.base.ICost;
-import de.uniol.inf.is.odysseus.costmodel.base.ICostCalculator;
-import de.uniol.inf.is.odysseus.costmodel.mockup.MockupCost;
-import de.uniol.inf.is.odysseus.costmodel.mockup.streamCharacteristic.TimeDistance;
-import de.uniol.inf.is.odysseus.costmodel.mockup.streamCharacteristic.TimeIntervalLength;
-import de.uniol.inf.is.odysseus.costmodel.streamCharacteristic.StreamCharacteristicCollection;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICost;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostCalculator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.MockupCost;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.streamCharacteristic.TimeDistance;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.streamCharacteristic.TimeIntervalLength;
+import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
 
 public class JoinAOCostCalculator implements ICostCalculator {
 	@Override
@@ -17,7 +18,7 @@ public class JoinAOCostCalculator implements ICostCalculator {
 
 	@Override
 	public StreamCharacteristicCollection mergeStreamMetadata(
-			List<StreamCharacteristicCollection> incomingStreamMetadata) {
+			List<StreamCharacteristicCollection> incomingStreamMetadata, ILogicalOperator ao) {
 
 		StreamCharacteristicCollection leftStream = incomingStreamMetadata.get(0);
 		StreamCharacteristicCollection rightStream = incomingStreamMetadata.get(1);

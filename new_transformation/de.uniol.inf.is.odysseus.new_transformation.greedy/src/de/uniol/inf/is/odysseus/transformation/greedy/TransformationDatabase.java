@@ -2,18 +2,19 @@ package de.uniol.inf.is.odysseus.transformation.greedy;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
 
 public class TransformationDatabase {
 	private static TransformationDatabase instance = null;
 
 	private final Map<Class<? extends ILogicalOperator>, SortedLinkedList> database = new HashMap<Class<? extends ILogicalOperator>, SortedLinkedList>();
-	private final Lock lock = new ReentrantLock();
+	private final Logger logger = LoggerFactory.getLogger(TransformationDatabase.class);
 
 	private TransformationDatabase() {
 	}
@@ -39,7 +40,6 @@ public class TransformationDatabase {
 	public <T extends ILogicalOperator> void registerTransformator(Class<T> logicalOperatorClass,
 			IPOTransformator<T> transformator) {
 
-		lock.lock();
 		SortedLinkedList transformatorList = database.get(logicalOperatorClass);
 
 		if (transformatorList == null) {
@@ -47,7 +47,7 @@ public class TransformationDatabase {
 			database.put(logicalOperatorClass, transformatorList);
 		}
 		transformatorList.addPrioritised((IPOTransformator<ILogicalOperator>) transformator);
-		lock.unlock();
+		logger.info("Transformator <" + transformator + "> added");
 	}
 
 	/**
@@ -64,7 +64,6 @@ public class TransformationDatabase {
 	public <T extends ILogicalOperator> void unregisterTransformator(Class<T> logicalOperatorClass,
 			IPOTransformator<T> transformator) {
 
-		lock.lock();
 		SortedLinkedList transformatorList = database.get(logicalOperatorClass);
 
 		if (transformatorList == null) {
@@ -74,7 +73,6 @@ public class TransformationDatabase {
 		if (transformatorList.isEmpty()) {
 			database.remove(logicalOperatorClass);
 		}
-		lock.unlock();
 	}
 
 	public SortedLinkedList getOperatorTransformations(ILogicalOperator logicalOperator,

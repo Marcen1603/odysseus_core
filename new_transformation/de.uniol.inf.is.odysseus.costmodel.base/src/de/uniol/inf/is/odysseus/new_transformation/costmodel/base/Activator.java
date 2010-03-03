@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.costmodel.base;
+package de.uniol.inf.is.odysseus.new_transformation.costmodel.base;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.costmodel.base;
+package de.uniol.inf.is.odysseus.new_transformation.costmodel.base;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.costmodel.streamCharacteristic.StreamCharacteristicCollection;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
 
 public interface ICostCalculator {
 	public ICost calculateCost(List<StreamCharacteristicCollection> incomingStreamCharacteristics);
@@ -15,8 +16,10 @@ public interface ICostCalculator {
 	 * @param incomingStreamMetadata
 	 *            - the {@link List} of the incoming
 	 *            {@link StreamCharacteristicCollection}
+	 * @param logicalOperator
+	 *            - the transformed operator
 	 * @return the outgoing {@link StreamCharacteristicCollection}
 	 */
 	public StreamCharacteristicCollection mergeStreamMetadata(
-			List<StreamCharacteristicCollection> incomingStreamMetadata);
+			List<StreamCharacteristicCollection> incomingStreamMetadata, ILogicalOperator logicalOperator);
 }

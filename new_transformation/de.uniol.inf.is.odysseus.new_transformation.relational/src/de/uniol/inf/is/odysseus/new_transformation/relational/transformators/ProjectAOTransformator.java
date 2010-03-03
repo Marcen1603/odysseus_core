@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.new_transformation.relational.transformators;
 import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.costmodel.base.IPOTransformator;
-import de.uniol.inf.is.odysseus.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 
 public class ProjectAOTransformator implements IPOTransformator<ProjectAO> {
