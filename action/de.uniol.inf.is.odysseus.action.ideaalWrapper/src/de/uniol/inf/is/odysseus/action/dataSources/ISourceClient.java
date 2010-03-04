@@ -1,8 +1,14 @@
 package de.uniol.inf.is.odysseus.action.dataSources;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -13,6 +19,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class ISourceClient extends Thread{
 	protected List<StreamClient> clients;
+	protected Logger logger;
 	
 	public ISourceClient(){
 		clients = new ArrayList<StreamClient>();
@@ -59,6 +66,22 @@ public abstract class ISourceClient extends Thread{
 	 * @return
 	 */
 	public abstract SDFAttributeList getSchema();
+
+	public void sendTupleToClients(RelationalTuple<IMetaAttribute> tuple) {
+		//send tuple to clients
+		synchronized (clients) {
+			Iterator<StreamClient> iterator = this.clients.iterator();
+			while(iterator.hasNext()){
+				try {
+					iterator.next().writeObject(tuple);
+				}catch (IOException e){
+					this.logger.error("Client exited: ");
+					this.logger.error(e.getMessage());
+					iterator.remove();
+				}
+			}
+		}
+	}
 
 	
 	

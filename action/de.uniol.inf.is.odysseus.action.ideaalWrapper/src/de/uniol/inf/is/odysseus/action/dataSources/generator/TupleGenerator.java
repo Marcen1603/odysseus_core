@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.action.dataSources.generator;
 
+import de.uniol.inf.is.odysseus.action.benchmark.BenchmarkData;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -10,6 +11,10 @@ public class TupleGenerator {
 	private SDFAttributeList schema;
 	private GeneratorType genTyp;
 	private GeneratorConfig config;
+	
+	private static int factoryNo = 0;
+	private static int machineNo = 0;
+	private static int toolNo = 0;
 	
 	public enum GeneratorType{Factory, Machine, Install_Pure, Install_DB, Usage};
 
@@ -140,33 +145,39 @@ public class TupleGenerator {
 	}
 
 	private RelationalTuple<IMetaAttribute> generateUsageTuple() {
-		// TODO Auto-generated method stub
+		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
 		return null;
 	}
 
 	private RelationalTuple<IMetaAttribute> generateInstallPureTuple() {
-		// TODO Auto-generated method stub
+		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
 		return null;
 	}
 
 	private RelationalTuple<IMetaAttribute> generateMachineTuple() {
-		// TODO Auto-generated method stub
+		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
 		return null;
 	}
 
 	private RelationalTuple<IMetaAttribute> generateInstallDBTuple() {
-		// TODO Auto-generated method stub
+		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
 		return null;
 	}
 
 	private RelationalTuple<IMetaAttribute> generateFactoryTuple() {
-		// TODO Auto-generated method stub
-		return null;
+		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
+		BenchmarkData data = new BenchmarkData("MachineMaintenanceFactory");
+		tuple.setMetadata(data);
+		
+		tuple.setAttribute(0, System.nanoTime());
+		tuple.setAttribute(1, factoryNo);
+		tuple.setAttribute(2, "Machine"+factoryNo);
+		++factoryNo;
+		
+		return tuple;
 	}
 
 	public SDFAttributeList getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.schema;
 	}
-
 }

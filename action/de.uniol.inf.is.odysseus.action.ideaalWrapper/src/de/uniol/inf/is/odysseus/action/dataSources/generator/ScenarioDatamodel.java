@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ScenarioDatamodel {
 	private int highestToolID;
@@ -11,6 +12,8 @@ public class ScenarioDatamodel {
 	
 	private Map<Integer, Tool> tools;
 	private List<Integer> freeTools;
+	
+	private Random randomGen;
 	
 	private static ScenarioDatamodel instance = null;
 
@@ -22,6 +25,8 @@ public class ScenarioDatamodel {
 		//both data structures hold <numberOfMachines> tools at max!
 		this.tools = new HashMap<Integer, Tool>(config.getNumberOfMachines()+1, 1.0f);
 		this.freeTools = new ArrayList<Integer>(config.getNumberOfMachines()+1);
+		
+		this.randomGen = new Random();
 	}
 	
 	/**
@@ -35,20 +40,40 @@ public class ScenarioDatamodel {
 	}
 	
 	/**
-	 * Generate a new tool
-	 * @param toolID
-	 * @param MachineID
+	 * Returns a random tool which is not yet used by a machine.
+	 * In addition this tool is removed from free tools list
+	 * @return
 	 */
-	public int generateTool(int limit1, int limit2){
+	public Tool installFreeTool(){
+		int toolID = this.randomGen.nextInt(this.freeTools.size());
+		//remove from free list
+		this.freeTools.remove(toolID);
+		
+		return this.tools.get(toolID);
+	}
+	
+	
+	/**
+	 * Generates a new tool
+	 * @param limit1
+	 * @param limit2
+	 * @return
+	 */
+	public Tool generateTool(int limit1, int limit2){
 		Tool tool = new Tool(limit1, limit2);
 		this.highestToolID++;
+		
+		if(this.highestToolID > this.maxToolID){
+			return null;
+		}
+		
 		synchronized (this.tools) {
 			this.tools.put(this.highestToolID, tool);
 		}
 		synchronized(this.freeTools){
 			this.freeTools.add(this.highestToolID);
 		}
-		return this.highestToolID;
+		return tool;
 	}
 	
 	/**
@@ -59,6 +84,18 @@ public class ScenarioDatamodel {
 		synchronized (this.tools) {
 			this.tools.remove(toolID);
 		}
+	}
+	
+	/**
+	 * Use a tool and return if it can be used again
+	 * @param toolID
+	 * @param usageRate
+	 * @return
+	 */
+	public boolean useTool(int toolID, double usageRate){
+		Tool tool = this.tools.get(toolID);
+		tool.increaseUsageRate(usageRate);
+		return !tool.isLimit2Hit();
 	}
 	
 	/**

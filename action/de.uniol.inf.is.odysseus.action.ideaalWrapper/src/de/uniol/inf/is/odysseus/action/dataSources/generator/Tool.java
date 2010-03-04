@@ -6,7 +6,29 @@ public class Tool {
 	private double usageRate;
 
 	public Tool(int limit1, int limit2) {
-		// TODO Auto-generated constructor stub
+		this.limit1 = limit1;
+		this.limit2 = limit2;
+		this.usageRate = 0.0d;
 	}
+	
+	public void increaseUsageRate(double value){
+		this.usageRate += value;
+	}
+	
+	public double getUsageRate() {
+		return usageRate;
+	}
+	
+	public boolean isLimit1Hit(){
+		return this.usageRate >= this.limit1;
+	}
+	
+	public boolean isLimit2Hit(){
+		return this.usageRate >= this.limit2;
+	}
+	
+	
+	
+	
 
 }

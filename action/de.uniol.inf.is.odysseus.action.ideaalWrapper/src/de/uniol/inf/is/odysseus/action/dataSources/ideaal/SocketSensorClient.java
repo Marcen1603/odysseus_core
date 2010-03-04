@@ -7,13 +7,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.action.benchmark.BenchmarkData;
 import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
 import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
-import de.uniol.inf.is.odysseus.action.dataSources.StreamClient;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -35,8 +33,6 @@ public class SocketSensorClient extends ISourceClient {
 	private SDFAttributeList schema;
 	private Sensor sensor;
 	
-	private Logger logger;
-	
 	private boolean benchmarking = false;
 	
 
@@ -46,7 +42,7 @@ public class SocketSensorClient extends ISourceClient {
 		this.schema = Sensor.getSchema(sensor);
 		this.sensor = sensor;
 				
-		this.logger = LoggerFactory.getLogger(SocketSensorClient.class);
+		super.logger = LoggerFactory.getLogger(SocketSensorClient.class);
 	}	
 	
 	public void bindBenchmark(IActuatorBenchmark benchmark){
@@ -71,7 +67,7 @@ public class SocketSensorClient extends ISourceClient {
 				tuple.setMetadata(data);
 			}
 			
-			tuple.setAttribute(0, System.currentTimeMillis());
+			tuple.setAttribute(0, System.nanoTime());
 			
 			//send request to sensor
 			OutputStream outputStream = this.socket.getOutputStream();
@@ -114,26 +110,21 @@ public class SocketSensorClient extends ISourceClient {
 				((BenchmarkData)tuple.getMetadata()).addOutputTime(IActuatorBenchmark.Operation.DATAEXTRACTION.name());
 			}
 			
-			//send tuple to clients
-			synchronized (clients) {
-				for (StreamClient client : this.clients){
-					client.writeObject(tuple);
-				}
-			}
+			super.sendTupleToClients(tuple);
 			
-			this.logger.debug("Sent tuple: "+debugInfo);
+			super.logger.debug("Sent tuple: "+debugInfo);
 		} catch (IOException e) {
 			//socket not avaiable retry or terminate
 			this.retries--;
 			if (this.retries<1){
-				this.logger.error("Sensor or Client not avaiable. Stopping server");
+				this.logger.error("Sensor not avaiable. Stopping server");
 				return false;
 			}else {
-				this.logger.error("Sensor or Client not avaiable. Retrying ...("+this.retries+" retries left)");
+				this.logger.error("Sensor not avaiable. Retrying ...("+this.retries+" retries left)");
 			}
 		} catch (InternalException e) {
-			this.logger.error(e.getMessage());
-			this.logger.error("Skipping tuple");
+			super.logger.error(e.getMessage());
+			super.logger.error("Skipping tuple");
 
 			//wait till next fetch
 			try {
