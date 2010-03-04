@@ -25,19 +25,25 @@ public class GeneratorConfig {
 	public GeneratorConfig(Properties props){
 		this.frequencyOfUpdates = Double.valueOf(props.getProperty("frequencyOfUpdates"));
 		this.accelerationFactor = Double.valueOf(props.getProperty("accelerationFactor"));
+		
 		this.numberOfBuildings = Integer.valueOf(props.getProperty("numberOfBuildings"));
 		this.numberOfMachines = Integer.valueOf(props.getProperty("numberOfMachines"));
 		this.numberOfTools = Integer.valueOf(props.getProperty("numberOfTools"));
 		this.minNumberOfMachinesPerBuilding = Integer.valueOf(props.getProperty("minNumberOfMachinesPerBuilding"));
+		
+		this.minTimeOfUsageInOneMachine = Integer.valueOf(props.getProperty("minTimeOfUsageInOneMachine"));
 		this.maxTimeOfUsageInOneMachine = Integer.valueOf(props.getProperty("maxTimeOfUsageInOneMachine"));
+		
 		this.minUsageRate = Double.valueOf(props.getProperty("minUsageRate"));
 		this.maxUsageRate = Double.valueOf(props.getProperty("maxUsageRate"));
 		this.minLimit1 = Integer.valueOf(props.getProperty("minLimit1"));
 		this.maxLimit1 = Integer.valueOf(props.getProperty("maxLimit1"));
 		this.minLimit2 = Integer.valueOf(props.getProperty("minLimit2"));
 		this.maxLimit2 = Integer.valueOf(props.getProperty("maxLimit2"));
+		
 		this.minMachineDowntime = Integer.valueOf(props.getProperty("minMachineDowntime"));
 		this.maxMachineDowntime = Integer.valueOf(props.getProperty("maxMachineDowntime"));
+		
 		this.simulateDB = Boolean.valueOf(props.getProperty("simulateDB"));
 	}
 

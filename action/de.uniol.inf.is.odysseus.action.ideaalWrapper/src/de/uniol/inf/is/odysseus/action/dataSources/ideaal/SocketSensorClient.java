@@ -67,7 +67,7 @@ public class SocketSensorClient extends ISourceClient {
 				tuple.setMetadata(data);
 			}
 			
-			tuple.setAttribute(0, System.nanoTime());
+			tuple.setAttribute(0, System.currentTimeMillis());
 			
 			//send request to sensor
 			OutputStream outputStream = this.socket.getOutputStream();

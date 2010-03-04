@@ -40,14 +40,22 @@ public abstract class ISourceClient extends Thread{
 		boolean run = true;
 		while (run) {
 			run  = this.processData();
+			
+			//break if all clients disconnected
+			if (this.clients.size() < 1){
+				break;
+			}
 		};
 		cleanUp();
 		
 		//clean up for clients
-		for (StreamClient client : clients){
-			client.closeSocket();
+		synchronized (clients) {
+			for (StreamClient client : clients){
+				client.closeSocket();
+			}
+			this.clients.clear();
 		}
-		this.clients.clear();
+		
 	}
 	
 	/**

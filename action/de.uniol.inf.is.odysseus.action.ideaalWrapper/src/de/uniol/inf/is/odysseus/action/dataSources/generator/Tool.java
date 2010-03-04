@@ -4,10 +4,13 @@ public class Tool {
 	private int limit1;
 	private int limit2;
 	private double usageRate;
+	private int id;
 
-	public Tool(int limit1, int limit2) {
+	public Tool(int limit1, int limit2, int toolID) {
 		this.limit1 = limit1;
 		this.limit2 = limit2;
+		this.id = toolID;
+		
 		this.usageRate = 0.0d;
 	}
 	
@@ -27,7 +30,9 @@ public class Tool {
 		return this.usageRate >= this.limit2;
 	}
 	
-	
+	public int getId() {
+		return id;
+	}
 	
 	
 
