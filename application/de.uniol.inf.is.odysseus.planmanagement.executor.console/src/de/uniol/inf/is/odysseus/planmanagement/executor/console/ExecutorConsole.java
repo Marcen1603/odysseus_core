@@ -847,6 +847,7 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Object fusion configuration is "
 				+ (useObjectFusionConfig ? "activated" : "deactivated"));
 	}
+	
 
 	private boolean toBoolean(String string) {
 		if (string.equalsIgnoreCase("true")) {

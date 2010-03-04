@@ -28,61 +28,62 @@ public interface NewSQLParserTreeConstants
   public int JJTVOID = 22;
   public int JJTATTRIBUTETYPE = 23;
   public int JJTCOVARIANCEROW = 24;
-  public int JJTSETOPERATOR = 25;
-  public int JJTSELECTCLAUSE = 26;
-  public int JJTPROJECTIONMATRIX = 27;
-  public int JJTPROJECTIONVECTOR = 28;
-  public int JJTFROMCLAUSE = 29;
-  public int JJTWHERECLAUSE = 30;
-  public int JJTGROUPBYCLAUSE = 31;
-  public int JJTHAVINGCLAUSE = 32;
-  public int JJTSELECTALL = 33;
-  public int JJTRENAMEDEXPRESSION = 34;
-  public int JJTMATRIXEXPRESSION = 35;
-  public int JJTPREDICATE = 36;
-  public int JJTSIMPLEPREDICATE = 37;
-  public int JJTBASICPREDICATE = 38;
-  public int JJTSPATIALPREDICATE = 39;
-  public int JJTPROBABILITYPREDICATE = 40;
-  public int JJTPRIORITY = 41;
-  public int JJTORPREDICATE = 42;
-  public int JJTANDPREDICATE = 43;
-  public int JJTNOTPREDICATE = 44;
-  public int JJTQUANTIFICATIONPREDICATE = 45;
-  public int JJTANYPREDICATE = 46;
-  public int JJTALLPREDICATE = 47;
-  public int JJTINPREDICATE = 48;
-  public int JJTEXISTS = 49;
-  public int JJTELEMENTPRIORITIES = 50;
-  public int JJTELEMENTPRIORITY = 51;
-  public int JJTDEFAULTPRIORITY = 52;
-  public int JJTTUPLE = 53;
-  public int JJTTUPLESET = 54;
-  public int JJTQUANTIFICATIONOPERATOR = 55;
-  public int JJTEXPRESSION = 56;
-  public int JJTSIMPLETOKEN = 57;
-  public int JJTFUNCTIONEXPRESSION = 58;
-  public int JJTFUNCTIONNAME = 59;
-  public int JJTAGGREGATEEXPRESSION = 60;
-  public int JJTAGGREGATEFUNCTION = 61;
-  public int JJTDISTINCTEXPRESSION = 62;
-  public int JJTSIMPLESOURCE = 63;
-  public int JJTSUBSELECT = 64;
-  public int JJTOLDWINDOW = 65;
-  public int JJTSTREAMSQLWINDOW = 66;
-  public int JJTPARTITION = 67;
-  public int JJTADVANCE = 68;
-  public int JJTSLIDE = 69;
-  public int JJTIDENTIFIER = 70;
-  public int JJTINTEGER = 71;
-  public int JJTNUMBER = 72;
-  public int JJTSTRING = 73;
-  public int JJTCOMPAREOPERATOR = 74;
-  public int JJTSPATIALCOMPAREOPERATOR = 75;
-  public int JJTOSGI = 76;
-  public int JJTCREATEBROKER = 77;
-  public int JJTBROKERSOURCE = 78;
-  public int JJTBROKERSELECTINTO = 79;
+  public int JJTDATEFORMAT = 25;
+  public int JJTSETOPERATOR = 26;
+  public int JJTSELECTCLAUSE = 27;
+  public int JJTPROJECTIONMATRIX = 28;
+  public int JJTPROJECTIONVECTOR = 29;
+  public int JJTFROMCLAUSE = 30;
+  public int JJTWHERECLAUSE = 31;
+  public int JJTGROUPBYCLAUSE = 32;
+  public int JJTHAVINGCLAUSE = 33;
+  public int JJTSELECTALL = 34;
+  public int JJTRENAMEDEXPRESSION = 35;
+  public int JJTMATRIXEXPRESSION = 36;
+  public int JJTPREDICATE = 37;
+  public int JJTSIMPLEPREDICATE = 38;
+  public int JJTBASICPREDICATE = 39;
+  public int JJTSPATIALPREDICATE = 40;
+  public int JJTPROBABILITYPREDICATE = 41;
+  public int JJTPRIORITY = 42;
+  public int JJTORPREDICATE = 43;
+  public int JJTANDPREDICATE = 44;
+  public int JJTNOTPREDICATE = 45;
+  public int JJTQUANTIFICATIONPREDICATE = 46;
+  public int JJTANYPREDICATE = 47;
+  public int JJTALLPREDICATE = 48;
+  public int JJTINPREDICATE = 49;
+  public int JJTEXISTS = 50;
+  public int JJTELEMENTPRIORITIES = 51;
+  public int JJTELEMENTPRIORITY = 52;
+  public int JJTDEFAULTPRIORITY = 53;
+  public int JJTTUPLE = 54;
+  public int JJTTUPLESET = 55;
+  public int JJTQUANTIFICATIONOPERATOR = 56;
+  public int JJTEXPRESSION = 57;
+  public int JJTSIMPLETOKEN = 58;
+  public int JJTFUNCTIONEXPRESSION = 59;
+  public int JJTFUNCTIONNAME = 60;
+  public int JJTAGGREGATEEXPRESSION = 61;
+  public int JJTAGGREGATEFUNCTION = 62;
+  public int JJTDISTINCTEXPRESSION = 63;
+  public int JJTSIMPLESOURCE = 64;
+  public int JJTSUBSELECT = 65;
+  public int JJTOLDWINDOW = 66;
+  public int JJTSTREAMSQLWINDOW = 67;
+  public int JJTPARTITION = 68;
+  public int JJTADVANCE = 69;
+  public int JJTSLIDE = 70;
+  public int JJTIDENTIFIER = 71;
+  public int JJTINTEGER = 72;
+  public int JJTNUMBER = 73;
+  public int JJTSTRING = 74;
+  public int JJTCOMPAREOPERATOR = 75;
+  public int JJTSPATIALCOMPAREOPERATOR = 76;
+  public int JJTOSGI = 77;
+  public int JJTCREATEBROKER = 78;
+  public int JJTBROKERSOURCE = 79;
+  public int JJTBROKERSELECTINTO = 80;
 
 
   public String[] jjtNodeName = {
@@ -111,6 +112,7 @@ public interface NewSQLParserTreeConstants
     "void",
     "AttributeType",
     "CovarianceRow",
+    "DateFormat",
     "SetOperator",
     "SelectClause",
     "ProjectionMatrix",
@@ -168,4 +170,4 @@ public interface NewSQLParserTreeConstants
     "BrokerSelectInto",
   };
 }
-/* JavaCC - OriginalChecksum=d167272248632a484aff915506fb09c1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1f9af608172e319c3b784ae9408c3a4f (do not edit this line) */

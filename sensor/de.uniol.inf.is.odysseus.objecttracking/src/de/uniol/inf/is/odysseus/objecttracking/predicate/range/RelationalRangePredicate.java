@@ -170,10 +170,13 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	}
 
 	public RelationalRangePredicate(RelationalRangePredicate predicate) {
-		throw new UnsupportedOperationException();
-//		this.attributePositions = predicate.attributePositions.clone();
-//		this.fromRightChannel = predicate.fromRightChannel.clone();
-//		this.expressions = predicate.expressions.clone();
+//		throw new UnsupportedOperationException();
+		this.attributePositions = new HashMap<IPredicate, int[]>(predicate.attributePositions);
+		this.fromRightChannel = new HashMap<IPredicate, boolean[]>(predicate.fromRightChannel);
+		this.solutions = new ArrayList<ComparablePair<IPredicate, ISolution>>();
+		for(int i = 0; i < predicate.solutions.size(); i++){
+			this.solutions.add((ComparablePair<IPredicate, ISolution>)predicate.solutions.get(i));
+		}
 	}
 	
 	

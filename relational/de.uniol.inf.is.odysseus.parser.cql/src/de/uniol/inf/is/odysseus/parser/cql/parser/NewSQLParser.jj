@@ -618,7 +618,12 @@
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/  {    jjtn000.setType("MV");    jjtn000.setRow(covList);  }/*@bgen(jjtree)*/
+/*@egen*/  {    jjtn000.setType("MV");    jjtn000.setRow(covList);  }| < K_DATE > format = DateFormat()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/  {    jjtn000.setType("Date");    jjtn000.setDateFormat(format);  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -638,7 +643,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/  /*| < K_DATE > format = DateFormat()  {    jjtThis.setType("Date");    jjtThis.setDateFormat(format);  }| < S_POINT >  {    jjtThis.setType("Point3D");  }| < S_SEGMENT >  {    jjtThis.setType("Segment3D");  }| < S_LINE >  {    jjtThis.setType("Line3D");  }| < S_FACET >  {    jjtThis.setType("Facet3D");  }| < S_SOLID >  {    jjtThis.setType("Solid3D");  }*/}ArrayList CovarianceRow() :{/*@bgen(jjtree) CovarianceRow */
+/*@egen*//*| < S_POINT >  {    jjtThis.setType("Point3D");  }| < S_SEGMENT >  {    jjtThis.setType("Segment3D");  }| < S_LINE >  {    jjtThis.setType("Line3D");  }| < S_FACET >  {    jjtThis.setType("Facet3D");  }| < S_SOLID >  {    jjtThis.setType("Solid3D");  }*/}ArrayList CovarianceRow() :{/*@bgen(jjtree) CovarianceRow */
   ASTCovarianceRow jjtn000 = new ASTCovarianceRow(JJTCOVARIANCEROW);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -655,7 +660,24 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}/*String DateFormat() :{  String ret;  Token t;}{  // permitted: <Year Expression> <Time Expression>  // or <Year Expression>  // or <Time Expression>  t = < IDENTIFIER >  {    ret = t.image;  }  // evtl. noch ein Identifier f\u00ef\u00bf\u00bdr die Zeit  (t = < IDENTIFIER >  {    ret += " "+ t.image;  }  )?  {    return ret;  }}*/void SetOperator() :{/*@bgen(jjtree) SetOperator */
+/*@egen*/}String DateFormat() :{/*@bgen(jjtree) DateFormat */
+  ASTDateFormat jjtn000 = new ASTDateFormat(JJTDATEFORMAT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/  String ret;  Token t;}{/*@bgen(jjtree) DateFormat */
+  try {
+/*@egen*/  // permitted: <Year Expression> <Time Expression>  // or <Year Expression>  // or <Time Expression>  t = < IDENTIFIER >  {    ret = t.image;  }  // evtl. noch ein Identifier f\u00ef\u00bf\u00bdr die Zeit  (t = < IDENTIFIER >  {    ret += " "+ t.image;  }  )?/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/  {    return ret;  }/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void SetOperator() :{/*@bgen(jjtree) SetOperator */
   ASTSetOperator jjtn000 = new ASTSetOperator(JJTSETOPERATOR);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import matlab.MatLab;
 
@@ -78,6 +80,10 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	 * multivariate distributions
 	 */
 	boolean calcMarginalDist;
+	
+	
+	/* I think, this will not be used. */
+	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
 	public ProbabilityPredicate(String leftSource, double[][] leftMatrix,
 			double[] leftVector, double[] xLow, double[] xUp, double prob,
@@ -444,6 +450,12 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	@Override
 	public List<SDFAttribute> getAttributes() {
 		return SDFAttributeList.union(leftSchema, rightSchema);
+	}
+
+	@Override
+	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
+		this.replacementMap.put(curAttr , newAttr);
+		
 	}
 
 }

@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
@@ -29,6 +31,9 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 	
 	private int[] leftMVpos;
 	private int[] rightMVpos;
+	
+	/* I think, this will not be used. */
+	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 	
 	/**
 	 * 
@@ -123,6 +128,21 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		}
 		
 		
+	}
+
+	@Override
+	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
+		this.replacementMap.put(curAttr, newAttr);
+		
+	}
+	
+	private SDFAttribute getReplacement(SDFAttribute a) {
+		SDFAttribute ret = a;
+		SDFAttribute tmp = null;
+		while ((tmp=replacementMap.get(ret))!=null){
+			ret = tmp;
+		}
+		return ret;
 	}
 
 }

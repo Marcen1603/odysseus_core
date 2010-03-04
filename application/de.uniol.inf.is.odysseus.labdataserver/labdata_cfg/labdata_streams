@@ -37,29 +37,6 @@ CREATE STREAM linearMove(
 ) SOCKET MV localhost : 55570
 
 
-CREATE STREAM fas:EnviroFusion1(
-	timestamp LONG,
-	id INTEGER,
-	position POINT3D,
-	trajectory LINE3D,
-	boundingBox SOLID3D
-) SOCKET TUPLE localhost : 55544
-
-CREATE STREAM fas:EnviroFusion2(
-	timestamp LONG,
-	id INTEGER,
-	position POINT3D,
-	boundingBox SOLID3D
-) SOCKET TUPLE localhost : 55545
-
-CREATE STREAM fas:EgoFusion(
-	timestamp LONG,
-	speed INTEGER,
-	position POINT3D,
-	trajectory LINE3D,
-	boundingBox SOLID3D
-) SOCKET TUPLE localhost : 55546
-
 CREATE STREAM test:labdata (
 	timestamp LONG,
 	epoch INTEGER,

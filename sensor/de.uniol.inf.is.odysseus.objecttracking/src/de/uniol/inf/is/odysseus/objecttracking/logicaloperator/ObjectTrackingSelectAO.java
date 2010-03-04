@@ -102,9 +102,9 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 		for(Entry<IPredicate, IRangePredicate> entry: ((Map<IPredicate, IRangePredicate>)po.rangePredicates).entrySet()){
 			this.rangePredicates.put(entry.getKey().clone(), entry.getValue().clone());
 		}
-		this.defaultRangePredicate = po.defaultRangePredicate.clone();
+		this.defaultRangePredicate = po.defaultRangePredicate != null ? po.defaultRangePredicate.clone() : null;
 		this.logger = LoggerFactory.getLogger(this.getClass());
-		this.initialized = false;
+		this.initialized = po.initialized;
 	}
 
 	public ObjectTrackingSelectAO(IPredicate predicate) {

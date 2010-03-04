@@ -28,6 +28,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTSimpleTuple node, Object data);
   public Object visit(ASTAttributeType node, Object data);
   public Object visit(ASTCovarianceRow node, Object data);
+  public Object visit(ASTDateFormat node, Object data);
   public Object visit(ASTSetOperator node, Object data);
   public Object visit(ASTSelectClause node, Object data);
   public Object visit(ASTProjectionMatrix node, Object data);
@@ -84,4 +85,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTBrokerSource node, Object data);
   public Object visit(ASTBrokerSelectInto node, Object data);
 }
-/* JavaCC - OriginalChecksum=c781e4240088f0bced46476ae4452240 (do not edit this line) */
+/* JavaCC - OriginalChecksum=85d23dcaae831c1fabecb2d311bac083 (do not edit this line) */

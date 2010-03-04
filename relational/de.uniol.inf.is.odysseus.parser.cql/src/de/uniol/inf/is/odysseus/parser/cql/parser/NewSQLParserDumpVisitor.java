@@ -416,4 +416,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
+	@Override
+	public Object visit(ASTDateFormat node, Object data) {
+		// TODO Auto-generated method stub
+		return pvisit(node);
+	}
+
 }
