@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.action.benchmark.BenchmarkData;
 import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
 import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
 import de.uniol.inf.is.odysseus.action.dataSources.StreamClient;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -54,7 +54,6 @@ public class SocketSensorClient extends ISourceClient {
 		this.benchmarking = true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean processData()  {
 		try {
@@ -64,15 +63,12 @@ public class SocketSensorClient extends ISourceClient {
 				this.socket = new Socket(sensor.getIp(), sensor.getPort());
 			}
 			
-			RelationalTuple tuple = null;
+			RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
 			
 			//send notification if benchmarking is avaiable
 			if (this.benchmarking){
-				tuple = new RelationalTuple<BenchmarkData>(this.schema.size());		
 				BenchmarkData data = new BenchmarkData(benchmark.getNextID(this.sensor.name()+"_Odysseus"));
 				tuple.setMetadata(data);
-			}else {
-				tuple = new	RelationalTuple<ITimeInterval>(this.schema.size());
 			}
 			
 			tuple.setAttribute(0, System.currentTimeMillis());
@@ -205,10 +201,6 @@ public class SocketSensorClient extends ISourceClient {
 				e.printStackTrace();
 			}
 		}
-		for (StreamClient client : clients){
-			client.closeSocket();
-		}
-		this.clients.clear();
 	}
 	
 	public SDFAttributeList getSchema() {

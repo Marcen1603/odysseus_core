@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.dataSources
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.action.dataSources.Activator
 Import-Package: de.uniol.inf.is.odysseus.action.benchmark,
+ de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.relational.base,

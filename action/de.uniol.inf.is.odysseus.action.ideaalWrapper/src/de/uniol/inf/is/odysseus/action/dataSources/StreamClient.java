@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -18,17 +18,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class StreamClient {
 
-	private RelationalTupleObjectHandler<ITimeInterval> objectHandler;
+	private RelationalTupleObjectHandler<IMetaAttribute> objectHandler;
 	private Socket connection;
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 
 	public StreamClient(Socket connection, SDFAttributeList schema) throws IOException{
 		this.connection = connection;
 		
-		this.objectHandler = new RelationalTupleObjectHandler<ITimeInterval>(schema);
+		this.objectHandler = new RelationalTupleObjectHandler<IMetaAttribute>(schema);
 	}
 	
-	public void writeObject(RelationalTuple<ITimeInterval> tuple) throws IOException {
+	public void writeObject(RelationalTuple<IMetaAttribute> tuple) throws IOException {
 		if (tuple != null){
 			objectHandler.put(tuple);
 			ByteBuffer buffer = objectHandler.getByteBuffer();

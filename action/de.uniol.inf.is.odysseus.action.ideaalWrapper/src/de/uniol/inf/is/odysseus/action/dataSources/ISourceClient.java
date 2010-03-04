@@ -35,6 +35,12 @@ public abstract class ISourceClient extends Thread{
 			run  = this.processData();
 		};
 		cleanUp();
+		
+		//clean up for clients
+		for (StreamClient client : clients){
+			client.closeSocket();
+		}
+		this.clients.clear();
 	}
 	
 	/**
