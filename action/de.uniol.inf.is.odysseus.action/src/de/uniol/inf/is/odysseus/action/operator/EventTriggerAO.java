@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.action.operator;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,14 @@ public class EventTriggerAO extends AbstractLogicalOperator {
 	}
 
 	/**
+	 * Copy constructor
+	 * @param eventTriggerAO
+	 */
+	public EventTriggerAO(EventTriggerAO eventTriggerAO) {
+		this.actions = new HashMap<Action, List<IActionParameter>>(eventTriggerAO.actions);
+	}
+
+	/**
 	 * Return actions, which should be executed
 	 * @return
 	 */
@@ -33,6 +42,11 @@ public class EventTriggerAO extends AbstractLogicalOperator {
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return getInputSchema(0);
+	}
+	
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new EventTriggerAO(this);
 	}
 
 }

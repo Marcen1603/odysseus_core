@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.action.operator;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,6 +50,17 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 		this.logger = LoggerFactory.getLogger(EventTriggerPO.class);
 	}
 	
+	/**
+	 * Copy constructor
+	 * @param po
+	 */
+	public EventTriggerPO(EventTriggerPO<T> po){
+		super();
+		this.actions = new HashMap<Action, List<IActionParameter>>(po.actions);
+		this.type = po.type;
+		this.logger = LoggerFactory.getLogger(EventTriggerPO.class);
+	}
+	
 	public void bindBenchmark(IActuatorBenchmark bm){
 		EventTriggerPO.benchmark = bm;
 	}
@@ -63,8 +75,8 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 
 
 	@Override
-	public EventTriggerPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public EventTriggerPO<T> clone() {
+		return new EventTriggerPO<T>(this);
 	}
 	
 	public Map<Action, List<IActionParameter>> getActions() {
