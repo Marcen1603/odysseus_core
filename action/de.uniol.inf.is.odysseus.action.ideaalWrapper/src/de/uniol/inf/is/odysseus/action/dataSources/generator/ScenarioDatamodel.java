@@ -15,10 +15,8 @@ import java.util.Vector;
 public class ScenarioDatamodel {
 	private GeneratorConfig config;
 	
-	private int nextToolID;
-	
 	private int currentFactory;
-	private int machinesAssociatedToFactory;	
+	private int machinesToAssociatToFactory;	
 	private int machinesLeft;
 	private List<Integer> unassociatedFactories;
 	
@@ -49,12 +47,11 @@ public class ScenarioDatamodel {
 	}
 	
 	private ScenarioDatamodel(GeneratorConfig config) {
-		this.nextToolID = 0;
 		this.config = config;
 			
 		this.unassociatedFactories = new ArrayList<Integer>(config.getNumberOfBuildings()+1);
 		this.machinesLeft = config.getNumberOfMachines();
-		this.machinesAssociatedToFactory = 0;
+		this.machinesToAssociatToFactory = 0;
 		
 		this.freeMachines = new Vector<Integer>(config.getNumberOfMachines()+1);
 		this.machineReleaseTimes = Collections.synchronizedMap(
@@ -66,12 +63,13 @@ public class ScenarioDatamodel {
 		this.toolsInUse = Collections.synchronizedSortedMap(
 				new TreeMap<Integer, Integer>());
 		
+		this.randomGen = new Random();
+		
 		//fill tools	
-		for (int i=0; i<this.tools.size(); i++){
-			this.tools.add(this.generateTool());
+		for (int i=0; i<config.getNumberOfTools(); i++){
+			this.tools.add(this.generateTool(i));
 		}
 		
-		this.randomGen = new Random();
 	}
 	
 	/**
@@ -95,21 +93,28 @@ public class ScenarioDatamodel {
 	 * @param minMachines minimum number of machines per factory
 	 * @return factoryID
 	 */
-	public int associateMachineToFactory(int minMachines){
-		if (this.machinesAssociatedToFactory < 1){
+	public Integer associateMachineToFactory(int minMachines){
+		if (this.unassociatedFactories.size() < 1){
+			//no factories generated yet
+			return null;
+		}
+		
+		if (this.machinesToAssociatToFactory < 1){
 			//remove factory from unassociated list
 			this.currentFactory = this.unassociatedFactories.remove(this.unassociatedFactories.size()-1);
 			
 			if (this.unassociatedFactories.size() > 1){
 				//determine a random number of machines to associate
-				this.machinesAssociatedToFactory = this.randomGen.nextInt(
-						this.machinesLeft - (minMachines * this.unassociatedFactories.size()) );
+				this.machinesToAssociatToFactory = this.randomGen.nextInt(
+						this.machinesLeft - (minMachines * this.unassociatedFactories.size()) )
+						+minMachines;
 			}else {
 				//last factory distribute rest of machines
-				this.machinesAssociatedToFactory = this.machinesLeft;
+				this.machinesToAssociatToFactory = this.machinesLeft;
 			}
 		}
 		
+		this.machinesToAssociatToFactory--;
 		return this.currentFactory;
 		
 	}
@@ -120,20 +125,13 @@ public class ScenarioDatamodel {
 	 * @param limit2
 	 * @return
 	 */
-	private Tool generateTool(){
-		if(this.nextToolID >= this.config.getNumberOfTools()){
-			return null;
-		}
-		
+	private Tool generateTool(int id){
 		int limit1 = this.randomGen.nextInt((this.config.getMaxLimit1() - this.config.getMinLimit1()))
 			+this.config.getMinLimit1();
 		int limit2 = this.randomGen.nextInt((this.config.getMaxLimit2() - this.config.getMinLimit2()))
 			+this.config.getMinLimit2();
 		
-		Tool tool = new Tool(limit1, limit2, this.nextToolID);
-		this.tools.add(tool);
-			
-		this.nextToolID++;
+		Tool tool = new Tool(limit1, limit2, id);
 		return tool;
 	}
 	
@@ -146,10 +144,13 @@ public class ScenarioDatamodel {
 				this.randomGen.nextInt(this.freeMachines.size()));
 	}
 	
-	public Integer getOccupiedMachine(){
+	public Integer getOccupiedMachine() throws GeneratorException{
+		if (this.tools.size() < 1){
+			throw new GeneratorException("All tools used.");
+		}
+		
 		if(this.toolsInUse.size() > 1){
-			return this.toolsInUse.get(
-					randomGen.nextInt(this.toolsInUse.size()));
+			return randomGen.nextInt(this.toolsInUse.size());
 		}else {
 			return null;
 		}
@@ -216,13 +217,13 @@ public class ScenarioDatamodel {
 			Iterator<Long> iterator = times.iterator();
 			while(iterator.hasNext()){
 				long time = iterator.next();
-				if (time <= System.currentTimeMillis()){
-					//remove entry
-					iterator.remove();
-					
+				if (time <= System.currentTimeMillis()){	
 					//uninstall tool
 					int machineID =	this.machineReleaseTimes.get(time);
 					this.uninstallTool(machineID, time);
+					
+					//remove entry
+					iterator.remove();
 				}
 			}
 		}
@@ -234,11 +235,11 @@ public class ScenarioDatamodel {
 			while(iterator.hasNext()){
 				long time = iterator.next();
 				if (time <= System.currentTimeMillis()){
-					//remove entry
-					iterator.remove();
-					
 					//machine is ready again
 					this.freeMachines.add(this.machineDownTimes.get(time));
+					
+					//remove entry
+					iterator.remove();
 				}
 			}
 		}

@@ -39,12 +39,16 @@ public class MachineMaintenaceClient extends ISourceClient {
 		try {
 			tuple = this.tupleGenerator.generateTuple();
 		} catch (GeneratorException e) {
-			super.logger.info("TupleGenerator stopped ...");
+			super.logger.info("TupleGenerator <"+ this.tupleGenerator.getGenTyp().name() +">stopped ...");
 			super.logger.info(e.getMessage());
 			
 			return false;
 		}
-		super.sendTupleToClients(tuple);
+		
+		if (tuple != null){
+			super.sendTupleToClients(tuple);
+		}
+		
 		try {
 			//wait for next update
 			sleep(this.frequency);

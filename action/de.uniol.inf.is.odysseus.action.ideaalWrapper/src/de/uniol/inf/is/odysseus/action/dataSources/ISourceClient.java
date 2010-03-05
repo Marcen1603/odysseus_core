@@ -37,6 +37,7 @@ public abstract class ISourceClient extends Thread{
 	
 	@Override
 	public void run() {
+		this.logger.info("Started producing tuples ...");
 		boolean run = true;
 		while (run) {
 			run  = this.processData();
@@ -47,6 +48,8 @@ public abstract class ISourceClient extends Thread{
 			}
 		};
 		cleanUp();
+		
+		this.logger.info("Stopped producing tuples ...");
 		
 		//clean up for clients
 		synchronized (clients) {

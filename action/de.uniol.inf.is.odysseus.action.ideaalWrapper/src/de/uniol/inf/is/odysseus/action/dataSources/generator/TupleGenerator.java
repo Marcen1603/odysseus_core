@@ -137,7 +137,7 @@ public class TupleGenerator {
 		}
 	}
 
-	private RelationalTuple<IMetaAttribute> generateUsageTuple() {
+	private RelationalTuple<IMetaAttribute> generateUsageTuple() throws GeneratorException {
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
 		BenchmarkData data = new BenchmarkData("MachineMaintenance_Usage");
 		tuple.setMetadata(data);
@@ -207,7 +207,14 @@ public class TupleGenerator {
 		//timestamp, id, factoryID, name
 		tuple.setAttribute(0, System.currentTimeMillis());
 		tuple.setAttribute(1, machineNo);
-		tuple.setAttribute(2, this.datamodel.associateMachineToFactory(this.config.getMinNumberOfMachinesPerBuilding()));
+		
+		Integer factoryID = this.datamodel.associateMachineToFactory(this.config.getMinNumberOfMachinesPerBuilding());
+		if (factoryID == null){
+			//no factory created yet, skip
+			return null;
+		}
+		
+		tuple.setAttribute(2, factoryID);
 		tuple.setAttribute(3, "Machine"+machineNo);
 		
 		this.datamodel.addMachine(machineNo);
@@ -267,5 +274,9 @@ public class TupleGenerator {
 
 	public SDFAttributeList getSchema() {
 		return this.schema;
+	}
+	
+	public GeneratorType getGenTyp() {
+		return genTyp;
 	}
 }
