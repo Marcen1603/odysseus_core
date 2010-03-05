@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 /**
  * Extension for the Equinox OSGI Console providing commands to access
@@ -81,6 +82,52 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 			}
 		}else {
 			ci.println("<"+managerName+"> does not exist.");
+		}
+	}
+	
+	public void _mmsdb(CommandInterpreter ci){
+		List<String> queries = new ArrayList<String>();
+		queries.add("CREATE STREAM machineMaintenance:factory (" +
+				"timestamp Long, id Integer, name String)" +
+				"CHANNEL localhost : 55556");
+		queries.add("CREATE STREAM machineMaintenance:machine (" +
+				"timestamp Long, id Integer, factoryId Integer, name String)" +
+				"CHANNEL localhost : 55557");
+		queries.add("CREATE STREAM machineMaintenance:install (" +
+				"timestamp Long, id Integer, machineId Integer, limit1 Double, limit2 Double, pastUsageTime Double)" +
+				"CHANNEL localhost : 55558");
+		queries.add("CREATE STREAM machineMaintenance:usage (" +
+				"timestamp Long, machineId Integer, rate Double)" +
+				"CHANNEL localhost : 55559");
+		for (String query : queries){
+			try {
+				this.executer.addQuery(query, "CQL");
+			} catch (PlanManagementException e) {
+				ci.println(e.getMessage());
+			}
+		}
+	}
+	
+	public void _mmsp(CommandInterpreter ci){
+		List<String> queries = new ArrayList<String>();
+		queries.add("CREATE STREAM machineMaintenance:factory (" +
+				"timestamp Long, id Integer, name String)" +
+				"CHANNEL localhost : 55556");
+		queries.add("CREATE STREAM machineMaintenance:machine (" +
+				"timestamp Long, id Integer, factoryId Integer, name String)" +
+				"CHANNEL localhost : 55557");
+		queries.add("CREATE STREAM machineMaintenance:install (" +
+				"timestamp Long, id Integer, machineId Integer, limit1 Double, limit2 Double)" +
+				"CHANNEL localhost : 55558");
+		queries.add("CREATE STREAM machineMaintenance:usage (" +
+				"timestamp Long, machineId Integer, rate Double)" +
+				"CHANNEL localhost : 55559");
+		for (String query : queries){
+			try {
+				this.executer.addQuery(query, "CQL");
+			} catch (PlanManagementException e) {
+				ci.println(e.getMessage());
+			}
 		}
 	}
 	
@@ -165,7 +212,12 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"	removeactuator <managerName> <actuatorName> - triggers specified " +
 				"manager to remove declared actuator\n" +
 				"	showschema <managerName> <actuatorName> - shows all methods provided by" +
-				"the specified actuator\n";
+				"the specified actuator\n" +
+				"\n---Datagenerator-Functions---\n" +
+				"	mmsdb - installs sources for MachineMaintenance scenario _with_ tupleUsage information." +
+				" Make sure that the generatorConfig flag is set to <simulateDB>true</simulateDB>\n" +
+				"	mmsp - installs sources for MachineMaintenance scenario _without_ tupleUsage information." +
+				" Make sure that the generatorConfig flag is set to <simulateDB>false</simulateDB>\n";
 	}
 
 }
