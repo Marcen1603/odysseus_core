@@ -135,18 +135,41 @@ public class ScenarioDatamodel {
 	}
 	
 	public Integer getFreeMachine(){
+		if(this.freeMachines.size() < 1){
+			return null;
+		}
+		
 		return this.freeMachines.remove(
 				this.randomGen.nextInt(this.freeMachines.size()));
-		
+	}
+	
+	public Integer getOccupiedMachine(){
+		if(this.toolsInUse.size() > 1){
+			return this.toolsInUse.get(
+					randomGen.nextInt(this.toolsInUse.size()));
+		}else {
+			return null;
+		}
 	}
 	
 	/**
 	 * Returns a random tool which is not yet used by a machine.
 	 * In addition this tool is removed from free tools list
 	 * @return
+	 * @throws GeneratorException 
 	 */
-	public Tool installFreeTool(int machineNo){
+	public Tool installFreeTool(int machineNo) throws GeneratorException{
 		int toolAmount = this.tools.size();
+		
+		if (toolAmount < 1){
+			throw new GeneratorException("No more tools avaialable");
+		}
+		
+		if (toolAmount <= this.toolsInUse.size()){
+			//all tools in use
+			return null;
+		}
+		
 		int toolID = this.randomGen.nextInt(toolAmount);
 		
 		//if tool is in use iterate until an unused is found
@@ -212,10 +235,10 @@ public class ScenarioDatamodel {
 	
 	/**
 	 * Uninstalls a tool from a machine
-	 * @param toolID
+	 * @param machineID
 	 */
-	public void uninstallTool(Integer toolID){
-		this.toolsInUse.remove(toolID);
+	public Integer uninstallTool(Integer machineID){
+		return this.toolsInUse.remove(machineID);
 		//sort not necessary
 	}
 	
@@ -225,9 +248,11 @@ public class ScenarioDatamodel {
 	 * @param usageRate
 	 * @return
 	 */
-	public boolean useTool(Tool tool, double usageRate){
+	public boolean useTool(int machineNo, double usageRate){
+		Tool tool = this.tools.get(this.toolsInUse.get(machineNo));
 		tool.increaseUsageRate(usageRate);
 		return !tool.isLimit2Hit();
+		
 	}
 
 }

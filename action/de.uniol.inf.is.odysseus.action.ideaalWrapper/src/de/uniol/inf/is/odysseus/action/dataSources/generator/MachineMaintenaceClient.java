@@ -33,7 +33,13 @@ public class MachineMaintenaceClient extends ISourceClient {
 
 	@Override
 	public boolean processData() {
-		RelationalTuple<IMetaAttribute> tuple = this.tupleGenerator.generateTuple();
+		RelationalTuple<IMetaAttribute> tuple;
+		try {
+			tuple = this.tupleGenerator.generateTuple();
+		} catch (GeneratorException e) {
+			e.printStackTrace();
+			return false;
+		}
 		super.sendTupleToClients(tuple);
 		return true;
 	}

@@ -46,7 +46,7 @@ public class TupleGenerator {
 			break;
 			
 		case Machine:
-			attribute = new SDFAttribute("ID");
+			attribute = new SDFAttribute("ToolID");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
@@ -61,7 +61,7 @@ public class TupleGenerator {
 			break;
 			
 		case Install_Pure:
-			attribute = new SDFAttribute("ID");
+			attribute = new SDFAttribute("ToolID");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
@@ -118,7 +118,7 @@ public class TupleGenerator {
 		
 	}
 	
-	public RelationalTuple<IMetaAttribute> generateTuple() {
+	public RelationalTuple<IMetaAttribute> generateTuple() throws GeneratorException {
 		this.datamodel.releaseResources();
 		
 		switch(this.genTyp){
@@ -139,12 +139,59 @@ public class TupleGenerator {
 
 	private RelationalTuple<IMetaAttribute> generateUsageTuple() {
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		return null;
+		BenchmarkData data = new BenchmarkData("MachineMaintenance_Usage");
+		tuple.setMetadata(data);
+		
+		//timestamp, machineID, rate
+		tuple.setAttribute(0, System.currentTimeMillis());
+		
+		Integer machineNo = this.datamodel.getOccupiedMachine();
+		
+		if (machineNo == null){
+			//no machine has a tool installed
+			return null;
+		}
+		tuple.setAttribute(1, machineNo);
+		
+		double usageRate = Math.random() * (this.config.getMaxUsageRate() - this.config.getMinUsageRate());
+		usageRate += this.config.getMinUsageRate();
+		boolean useAgain = this.datamodel.useTool(machineNo, usageRate);
+		
+		if(!useAgain){
+			//unintall and remove
+			int toolID = this.datamodel.uninstallTool(machineNo);
+			this.datamodel.removeTool(toolID);
+		}
+		
+		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateInstallPureTuple() {
+	private RelationalTuple<IMetaAttribute> generateInstallPureTuple() throws GeneratorException {
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		return null;
+		BenchmarkData data = new BenchmarkData("MachineMaintenance_Install_Pure");
+		tuple.setMetadata(data);
+		
+		//timestamp, id, machineID, limit1, limit2
+		tuple.setAttribute(0, System.currentTimeMillis());
+		
+		Integer machineNo = this.datamodel.getFreeMachine();
+		if (machineNo == null){
+			//no free machine avaiable, do not install
+			return null;
+		}	
+		tuple.setAttribute(2, machineNo);
+		
+		Tool tool = this.datamodel.installFreeTool(machineNo);
+		if (tool == null){
+			return null;
+		}
+		tuple.setAttribute(1, tool.getId());
+		
+		
+		tuple.setAttribute(3, tool.getLimit1());
+		tuple.setAttribute(4,tool.getLimit2());
+		
+		return tuple;
 	}
 
 	private RelationalTuple<IMetaAttribute> generateMachineTuple() {
@@ -157,7 +204,7 @@ public class TupleGenerator {
 		BenchmarkData data = new BenchmarkData("MachineMaintenance_Machine");
 		tuple.setMetadata(data);
 		
-		//id, factoryID, name
+		//timestamp, id, factoryID, name
 		tuple.setAttribute(0, System.currentTimeMillis());
 		tuple.setAttribute(1, machineNo);
 		tuple.setAttribute(2, this.datamodel.associateMachineToFactory(this.config.getMinNumberOfMachinesPerBuilding()));
@@ -169,15 +216,31 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateInstallDBTuple() {
+	private RelationalTuple<IMetaAttribute> generateInstallDBTuple() throws GeneratorException {
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		BenchmarkData data = new BenchmarkData("MachineMaintenance_InstallDB");
+		BenchmarkData data = new BenchmarkData("MachineMaintenance_Install_DB");
 		tuple.setMetadata(data);
 		
-		//id, machineID, limit1, limit2, pastUsageTime
+		//timestamp, id, machineID, limit1, limit2, pastUsageTime
 		tuple.setAttribute(0, System.currentTimeMillis());
-		tuple.setAttribute(1, this.datamodel.getFreeMachine());
-	
+		
+		Integer machineNo = this.datamodel.getFreeMachine();
+		if (machineNo == null){
+			//no free machine avaiable, do not install
+			return null;
+		}	
+		tuple.setAttribute(2, machineNo);
+		
+		Tool tool = this.datamodel.installFreeTool(machineNo);
+		if (tool == null){
+			return null;
+		}
+		tuple.setAttribute(1, tool.getId());
+		
+		tuple.setAttribute(3, tool.getLimit1());
+		tuple.setAttribute(4,tool.getLimit2());
+		tuple.setAttribute(5, tool.getUsageRate());
+		
 		return tuple;
 	}
 
@@ -191,7 +254,7 @@ public class TupleGenerator {
 		BenchmarkData data = new BenchmarkData("MachineMaintenance_Factory");
 		tuple.setMetadata(data);
 		
-		//id, name
+		//timestamp, id, name
 		tuple.setAttribute(0, System.currentTimeMillis());
 		tuple.setAttribute(1, factoryNo);
 		tuple.setAttribute(2, "Factory"+factoryNo);

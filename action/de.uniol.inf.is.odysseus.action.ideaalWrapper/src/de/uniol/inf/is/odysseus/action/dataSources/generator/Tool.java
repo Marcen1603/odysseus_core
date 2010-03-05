@@ -34,6 +34,11 @@ public class Tool {
 		return id;
 	}
 	
+	public int getLimit1() {
+		return limit1;
+	}
 	
-
+	public int getLimit2() {
+		return limit2;
+	}
 }
