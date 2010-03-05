@@ -9,6 +9,8 @@ import java.nio.channels.ServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+
 
 /**
  * Server providing a Stream by fetching values from a
@@ -41,9 +43,13 @@ public class StreamServer extends Thread {
 	
 	@Override
 	public void run() {
+		String schema = "";
+		for (SDFAttribute attr : this.sourceClient.getSchema()){
+			schema += attr.getAttributeName()+":"+attr.getDatatype().getQualName()+" ";
+		}
+		logger.info("\nServer with schema: ( "+schema+")\n listening on port: "+this.socket.getLocalPort());
 		while (true) {
 			// Wait for Client connection
-			logger.debug("waiting for connection on port: " + this.socket.getLocalPort());
 			Socket connection = null;
 			try {
 				connection = socket.accept();

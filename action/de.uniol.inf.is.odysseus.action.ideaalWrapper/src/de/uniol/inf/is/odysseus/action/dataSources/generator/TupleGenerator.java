@@ -35,7 +35,7 @@ public class TupleGenerator {
 		
 		switch(type){
 		case Factory:
-			attribute = new SDFAttribute("ID");
+			attribute = new SDFAttribute("id");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
@@ -46,11 +46,11 @@ public class TupleGenerator {
 			break;
 			
 		case Machine:
-			attribute = new SDFAttribute("ToolID");
+			attribute = new SDFAttribute("id");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("FactoryID");
+			attribute = new SDFAttribute("factoryId");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
@@ -61,53 +61,53 @@ public class TupleGenerator {
 			break;
 			
 		case Install_Pure:
-			attribute = new SDFAttribute("ToolID");
+			attribute = new SDFAttribute("id");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("MachineID");
+			attribute = new SDFAttribute("machineId");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("Limit1");
+			attribute = new SDFAttribute("limit1");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("Limit2");
+			attribute = new SDFAttribute("limit2");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			break;
 			
 		case Install_DB:
-			attribute = new SDFAttribute("ID");
+			attribute = new SDFAttribute("id");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("MachineID");
+			attribute = new SDFAttribute("machineId");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("Limit1");
+			attribute = new SDFAttribute("limit1");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("Limit2");
+			attribute = new SDFAttribute("limit2");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("PastUsageTime");
+			attribute = new SDFAttribute("pastUsageTime");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			this.schema.add(attribute);
 			
 			break;
 			
 		case Usage:
-			attribute = new SDFAttribute("MachineID");
+			attribute = new SDFAttribute("machineId");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 			this.schema.add(attribute);
 			
-			attribute = new SDFAttribute("Rate");
+			attribute = new SDFAttribute("rate");
 			attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 			this.schema.add(attribute);
 			
@@ -159,7 +159,7 @@ public class TupleGenerator {
 		
 		if(!useAgain){
 			//unintall and remove
-			int toolID = this.datamodel.uninstallTool(machineNo);
+			int toolID = this.datamodel.uninstallTool(machineNo, System.currentTimeMillis());
 			this.datamodel.removeTool(toolID);
 		}
 		
@@ -194,10 +194,10 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateMachineTuple() {
+	private RelationalTuple<IMetaAttribute> generateMachineTuple() throws GeneratorException {
 		//stop condition
 		if (machineNo >= this.config.getNumberOfMachines()){
-			return null;
+			throw new GeneratorException("No more machines to generate");
 		}
 		
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
@@ -244,10 +244,10 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateFactoryTuple()  {
+	private RelationalTuple<IMetaAttribute> generateFactoryTuple() throws GeneratorException  {
 		//stop condition
 		if (factoryNo >= this.config.getNumberOfBuildings()){
-			return null;
+			throw new GeneratorException("No more factories to generate");
 		}
 		
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());

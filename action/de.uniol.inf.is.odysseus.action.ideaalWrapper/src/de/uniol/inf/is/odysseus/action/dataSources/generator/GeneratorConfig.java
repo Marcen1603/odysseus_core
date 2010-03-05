@@ -4,7 +4,7 @@ import java.util.Properties;
 
 public class GeneratorConfig {
 
-	private double frequencyOfUpdates;
+	private long frequencyOfUpdates;
 	private double accelerationFactor;
 	private int numberOfBuildings;
 	private int numberOfMachines;
@@ -23,7 +23,7 @@ public class GeneratorConfig {
 	private boolean simulateDB;
 
 	public GeneratorConfig(Properties props){
-		this.frequencyOfUpdates = Double.valueOf(props.getProperty("frequencyOfUpdates"));
+		this.frequencyOfUpdates = Long.valueOf(props.getProperty("frequencyOfUpdates"));
 		this.accelerationFactor = Double.valueOf(props.getProperty("accelerationFactor"));
 		
 		this.numberOfBuildings = Integer.valueOf(props.getProperty("numberOfBuildings"));
@@ -47,11 +47,11 @@ public class GeneratorConfig {
 		this.simulateDB = Boolean.valueOf(props.getProperty("simulateDB"));
 	}
 
-	public double getFrequencyOfUpdates() {
+	public long getFrequencyOfUpdates() {
 		return frequencyOfUpdates;
 	}
 
-	public void setFrequencyOfUpdates(double frequencyOfUpdates) {
+	public void setFrequencyOfUpdates(long frequencyOfUpdates) {
 		this.frequencyOfUpdates = frequencyOfUpdates;
 	}
 

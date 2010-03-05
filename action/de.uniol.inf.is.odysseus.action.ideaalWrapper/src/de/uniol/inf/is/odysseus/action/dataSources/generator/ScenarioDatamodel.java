@@ -28,6 +28,7 @@ public class ScenarioDatamodel {
 	private List<Integer> freeMachines;
 	
 	private Map<Long, Integer> machineReleaseTimes;
+	private Map<Long, Integer> machineDownTimes;
 	
 	private Random randomGen;
 	
@@ -57,6 +58,8 @@ public class ScenarioDatamodel {
 		
 		this.freeMachines = new Vector<Integer>(config.getNumberOfMachines()+1);
 		this.machineReleaseTimes = Collections.synchronizedMap(
+				new HashMap<Long, Integer>(config.getNumberOfMachines()+1));
+		this.machineDownTimes = Collections.synchronizedMap(
 				new HashMap<Long, Integer>(config.getNumberOfMachines()+1));
 		
 		this.tools = new Vector<Tool>(config.getNumberOfTools()+1);
@@ -196,7 +199,7 @@ public class ScenarioDatamodel {
 	 * Initialize instance for singleton interface
 	 * @param config
 	 */
-	public void initiDataModel(GeneratorConfig config){
+	public static void initiDataModel(GeneratorConfig config){
 		if (instance == null){
 			instance = new ScenarioDatamodel(config);
 		}
@@ -207,6 +210,7 @@ public class ScenarioDatamodel {
 	 * Uninstall tools and free ressources when usageTime is exceeded
 	 */
 	public void releaseResources(){
+		//check for tools that must be installed
 		Set<Long> times = this.machineReleaseTimes.keySet();
 		synchronized (times) {
 			Iterator<Long> iterator = times.iterator();
@@ -216,10 +220,25 @@ public class ScenarioDatamodel {
 					//remove entry
 					iterator.remove();
 					
-					//release machine and tool
+					//uninstall tool
 					int machineID =	this.machineReleaseTimes.get(time);
-					this.toolsInUse.remove(machineID);
-					this.freeMachines.add(machineID);
+					this.uninstallTool(machineID, time);
+				}
+			}
+		}
+		
+		//check for machines that can be used again (downTime over)
+		times = this.machineDownTimes.keySet();
+		synchronized (times) {
+			Iterator<Long> iterator = times.iterator();
+			while(iterator.hasNext()){
+				long time = iterator.next();
+				if (time <= System.currentTimeMillis()){
+					//remove entry
+					iterator.remove();
+					
+					//machine is ready again
+					this.freeMachines.add(this.machineDownTimes.get(time));
 				}
 			}
 		}
@@ -237,9 +256,15 @@ public class ScenarioDatamodel {
 	 * Uninstalls a tool from a machine
 	 * @param machineID
 	 */
-	public Integer uninstallTool(Integer machineID){
+	public Integer uninstallTool(Integer machineID, long uninstallTimeStamp){
+		//set machine to down status
+		int minTime = this.config.getMinMachineDowntime();
+		int maxTime = this.config.getMaxMachineDowntime();
+		
+		int time = this.randomGen.nextInt(maxTime-minTime)+minTime;
+		this.machineDownTimes.put(uninstallTimeStamp+time, machineID);
+		
 		return this.toolsInUse.remove(machineID);
-		//sort not necessary
 	}
 	
 	/**

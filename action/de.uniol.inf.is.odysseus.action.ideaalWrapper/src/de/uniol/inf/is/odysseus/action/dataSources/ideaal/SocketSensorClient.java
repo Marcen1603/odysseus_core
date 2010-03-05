@@ -53,7 +53,6 @@ public class SocketSensorClient extends ISourceClient {
 	@Override
 	public boolean processData()  {
 		try {
-			String debugInfo = "";
 			if (this.socket == null){
 				//create socket if it isnt opened yet
 				this.socket = new Socket(sensor.getIp(), sensor.getPort());
@@ -89,7 +88,6 @@ public class SocketSensorClient extends ISourceClient {
 							attribute.getDatatype(), input);
 					if (val != null){
 						tuple.setAttribute(index, val);
-						debugInfo += val+" ";
 						index++;
 					}else {
 						throw new InternalException("Irregular value from sensor: "+input);
@@ -112,7 +110,6 @@ public class SocketSensorClient extends ISourceClient {
 			
 			super.sendTupleToClients(tuple);
 			
-			super.logger.debug("Sent tuple: "+debugInfo);
 		} catch (IOException e) {
 			//socket not avaiable retry or terminate
 			this.retries--;

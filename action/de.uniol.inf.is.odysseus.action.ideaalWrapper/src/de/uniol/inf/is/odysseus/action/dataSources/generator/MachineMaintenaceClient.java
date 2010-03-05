@@ -9,12 +9,14 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class MachineMaintenaceClient extends ISourceClient {
-	private GeneratorConfig generatorConfig;
+	private long frequency;
+	private double acceleration;
 	
 	private TupleGenerator tupleGenerator;
 
 	public MachineMaintenaceClient(GeneratorConfig generatorConfig, GeneratorType type) throws GeneratorException{
-		this.generatorConfig = generatorConfig;
+		this.frequency = generatorConfig.getFrequencyOfUpdates();
+		this.acceleration = generatorConfig.getAccelerationFactor();
 		
 		this.tupleGenerator = new TupleGenerator(generatorConfig, type);
 		
@@ -41,6 +43,15 @@ public class MachineMaintenaceClient extends ISourceClient {
 			return false;
 		}
 		super.sendTupleToClients(tuple);
+		try {
+			//wait for next update
+			sleep(this.frequency);
+			
+			//accelerate
+			this.frequency *= (1 / this.acceleration);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 

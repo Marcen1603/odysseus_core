@@ -77,6 +77,7 @@ public abstract class ISourceClient extends Thread{
 
 	public void sendTupleToClients(RelationalTuple<IMetaAttribute> tuple) {
 		//send tuple to clients
+		this.logger.debug("Sent tuple :"+tuple.toString());
 		synchronized (clients) {
 			Iterator<StreamClient> iterator = this.clients.iterator();
 			while(iterator.hasNext()){
