@@ -153,14 +153,12 @@ public class TupleGenerator {
 		}
 		tuple.setAttribute(1, machineNo);
 		
-		double usageRate = Math.random() * (this.config.getMaxUsageRate() - this.config.getMinUsageRate());
-		usageRate += this.config.getMinUsageRate();
-		boolean useAgain = this.datamodel.useTool(machineNo, usageRate);
+		Double usageRate = this.datamodel.useTool(machineNo);
 		
-		if(!useAgain){
-			//unintall and remove
-			int toolID = this.datamodel.uninstallTool(machineNo, System.currentTimeMillis());
-			this.datamodel.removeTool(toolID);
+		if (usageRate == null){
+			return null;
+		}else{
+			tuple.setAttribute(2, usageRate);
 		}
 		
 		return tuple;

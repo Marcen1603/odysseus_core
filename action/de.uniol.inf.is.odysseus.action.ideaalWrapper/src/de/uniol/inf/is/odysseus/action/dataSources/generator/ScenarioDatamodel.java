@@ -18,6 +18,7 @@ public class ScenarioDatamodel {
 	private int currentFactory;
 	private int machinesToAssociatToFactory;	
 	private int machinesLeft;
+	private int factoryCounter;
 	private List<Integer> unassociatedFactories;
 	
 	private List<Tool> tools;
@@ -27,6 +28,8 @@ public class ScenarioDatamodel {
 	
 	private Map<Long, Integer> machineReleaseTimes;
 	private Map<Long, Integer> machineDownTimes;
+	
+	private Boolean noFactoryProducedYet;
 	
 	private Random randomGen;
 	
@@ -54,8 +57,7 @@ public class ScenarioDatamodel {
 		this.machinesToAssociatToFactory = 0;
 		
 		this.freeMachines = new Vector<Integer>(config.getNumberOfMachines()+1);
-		this.machineReleaseTimes = Collections.synchronizedMap(
-				new HashMap<Long, Integer>(config.getNumberOfMachines()+1));
+		this.machineReleaseTimes =	new HashMap<Long, Integer>(config.getNumberOfMachines()+1);
 		this.machineDownTimes = Collections.synchronizedMap(
 				new HashMap<Long, Integer>(config.getNumberOfMachines()+1));
 		
@@ -70,6 +72,9 @@ public class ScenarioDatamodel {
 			this.tools.add(this.generateTool(i));
 		}
 		
+		this.noFactoryProducedYet = true;
+		this.factoryCounter = config.getNumberOfBuildings();
+		
 	}
 	
 	/**
@@ -77,6 +82,9 @@ public class ScenarioDatamodel {
 	 * @param machineID
 	 */
 	public void addFactory(int factoryID){
+		synchronized (this.noFactoryProducedYet) {
+			this.noFactoryProducedYet = false;
+		}
 		this.unassociatedFactories.add(factoryID);
 	}
 	
@@ -94,27 +102,24 @@ public class ScenarioDatamodel {
 	 * @return factoryID
 	 */
 	public Integer associateMachineToFactory(int minMachines){
-		if (this.unassociatedFactories.size() < 1){
-			//no factories generated yet
-			return null;
-		}
-		
-		if (this.machinesToAssociatToFactory < 1){
-			//remove factory from unassociated list
-			this.currentFactory = this.unassociatedFactories.remove(this.unassociatedFactories.size()-1);
-			
-			if (this.unassociatedFactories.size() > 1){
-				//determine a random number of machines to associate
-				this.machinesToAssociatToFactory = this.randomGen.nextInt(
-						this.machinesLeft - (minMachines * this.unassociatedFactories.size()) )
-						+minMachines;
-			}else {
-				//last factory distribute rest of machines
-				this.machinesToAssociatToFactory = this.machinesLeft;
+		synchronized (this.noFactoryProducedYet) {
+			if (this.noFactoryProducedYet){
+				//no factories generated yet
+				return null;
 			}
 		}
 		
+		if (this.machinesToAssociatToFactory < 1 && this.unassociatedFactories.size() > 0){
+			//remove factory from unassociated list
+			this.currentFactory = this.unassociatedFactories.remove(this.unassociatedFactories.size()-1);
+			
+			//determine a random number of machines to associate
+			this.machinesToAssociatToFactory = this.randomGen.nextInt(this.machinesLeft - (minMachines * factoryCounter)) 
+					+minMachines;
+			this.factoryCounter--;
+		}
 		this.machinesToAssociatToFactory--;
+		this.machinesLeft--;
 		return this.currentFactory;
 		
 	}
@@ -193,7 +198,10 @@ public class ScenarioDatamodel {
 		int maxTime = this.config.getMaxTimeOfUsageInOneMachine();
 		
 		int time = this.randomGen.nextInt(maxTime-minTime)+minTime;
-		this.machineReleaseTimes.put(System.currentTimeMillis()+time, machineNo);
+		
+		synchronized (this.machineReleaseTimes) {
+			this.machineReleaseTimes.put(System.currentTimeMillis()+time, machineNo);
+		}
 	}
 
 	/**
@@ -212,8 +220,8 @@ public class ScenarioDatamodel {
 	 */
 	public void releaseResources(){
 		//check for tools that must be installed
-		Set<Long> times = this.machineReleaseTimes.keySet();
-		synchronized (times) {
+		synchronized (this.machineReleaseTimes) {
+			Set<Long> times = this.machineReleaseTimes.keySet();
 			Iterator<Long> iterator = times.iterator();
 			while(iterator.hasNext()){
 				long time = iterator.next();
@@ -226,11 +234,12 @@ public class ScenarioDatamodel {
 					iterator.remove();
 				}
 			}
+			
 		}
 		
 		//check for machines that can be used again (downTime over)
-		times = this.machineDownTimes.keySet();
-		synchronized (times) {
+		synchronized (this.machineReleaseTimes) {
+			Set<Long> times = this.machineDownTimes.keySet();
 			Iterator<Long> iterator = times.iterator();
 			while(iterator.hasNext()){
 				long time = iterator.next();
@@ -245,13 +254,6 @@ public class ScenarioDatamodel {
 		}
 	}
 	
-	/**
-	 * Remove a tool which has reached its limit 
-	 * @param toolID
-	 */
-	public void removeTool(int toolID){
-		this.tools.remove(toolID);
-	}
 	
 	/**
 	 * Uninstalls a tool from a machine
@@ -269,16 +271,40 @@ public class ScenarioDatamodel {
 	}
 	
 	/**
-	 * Use a tool and return if it can be used again
+	 * Use a tool. Uninstalls/Deletes tool if necessary
 	 * @param toolID
-	 * @param usageRate
 	 * @return
 	 */
-	public boolean useTool(int machineNo, double usageRate){
-		Tool tool = this.tools.get(this.toolsInUse.get(machineNo));
-		tool.increaseUsageRate(usageRate);
-		return !tool.isLimit2Hit();
-		
+	public Double useTool(int machineNo){
+		//block uninstallation of tool
+		synchronized (this.toolsInUse) {
+			Integer index = this.toolsInUse.get(machineNo);
+			
+			if (index != null){
+				double usageRate = Math.random() * (this.config.getMaxUsageRate() - this.config.getMinUsageRate());
+				usageRate += this.config.getMinUsageRate();
+				
+				Tool tool = this.tools.get(index);
+				tool.increaseUsageRate(usageRate);
+				
+				//check if tool must be uninstalled and removed
+				if (tool.isLimit2Hit()){
+					this.uninstallTool(machineNo, System.currentTimeMillis());
+					this.tools.remove(index);
+				}
+				return usageRate;
+			}else {
+				
+				//can happen if tool was released during execution 
+				return null;
+			}
+		}
+	}
+	
+	public void setNoFactoryProducedYet(Boolean lastFactory) {
+		synchronized (lastFactory) {
+			this.noFactoryProducedYet = lastFactory;
+		}
 	}
 
 }
