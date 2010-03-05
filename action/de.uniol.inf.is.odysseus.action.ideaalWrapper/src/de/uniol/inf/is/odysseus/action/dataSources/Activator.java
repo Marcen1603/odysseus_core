@@ -69,7 +69,7 @@ public class Activator implements BundleActivator {
 					e.printStackTrace();
 				}
 				
-			}		
+			}
 		}
 		
 		if (useIdealSensor){
