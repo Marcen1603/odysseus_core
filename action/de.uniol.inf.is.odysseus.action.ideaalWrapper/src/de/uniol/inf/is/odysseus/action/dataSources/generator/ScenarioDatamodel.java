@@ -21,7 +21,7 @@ public class ScenarioDatamodel {
 	private int factoryCounter;
 	private List<Integer> unassociatedFactories;
 	
-	private List<Tool> tools;
+	private Map<Integer, Tool> tools;
 	private SortedMap<Integer, Integer> toolsInUse;
 	
 	private List<Integer> freeMachines;
@@ -61,7 +61,7 @@ public class ScenarioDatamodel {
 		this.machineDownTimes = Collections.synchronizedMap(
 				new HashMap<Long, Integer>(config.getNumberOfMachines()+1));
 		
-		this.tools = new Vector<Tool>(config.getNumberOfTools()+1);
+		this.tools = Collections.synchronizedMap(new HashMap<Integer, Tool>(config.getNumberOfTools()+1));
 		this.toolsInUse = Collections.synchronizedSortedMap(
 				new TreeMap<Integer, Integer>());
 		
@@ -69,7 +69,7 @@ public class ScenarioDatamodel {
 		
 		//fill tools	
 		for (int i=0; i<config.getNumberOfTools(); i++){
-			this.tools.add(this.generateTool(i));
+			this.tools.put(i, this.generateTool(i));
 		}
 		
 		this.noFactoryProducedYet = true;
@@ -285,14 +285,19 @@ public class ScenarioDatamodel {
 				usageRate += this.config.getMinUsageRate();
 				
 				Tool tool = this.tools.get(index);
-				tool.increaseUsageRate(usageRate);
-				
-				//check if tool must be uninstalled and removed
-				if (tool.isLimit2Hit()){
-					this.uninstallTool(machineNo, System.currentTimeMillis());
-					this.tools.remove(index);
+				if (tool != null){
+					tool.increaseUsageRate(usageRate);
+					
+					//check if tool must be uninstalled and removed
+					if (tool.isLimit2Hit()){
+						this.uninstallTool(machineNo, System.currentTimeMillis());
+						this.tools.remove(index);
+					}
+	
+					return usageRate;
+				}else {
+					return null;
 				}
-				return usageRate;
 			}else {
 				
 				//can happen if tool was released during execution 
