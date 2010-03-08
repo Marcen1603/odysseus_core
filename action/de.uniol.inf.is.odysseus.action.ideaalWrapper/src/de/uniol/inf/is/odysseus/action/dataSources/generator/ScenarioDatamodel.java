@@ -7,9 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.Vector;
 
 public class ScenarioDatamodel {
@@ -22,12 +19,12 @@ public class ScenarioDatamodel {
 	private List<Integer> unassociatedFactories;
 	
 	private Map<Integer, Tool> tools;
-	private SortedMap<Integer, Integer> toolsInUse;
+	private Map<Integer, Integer> toolsInUse;
 	
 	private List<Integer> freeMachines;
 	
-	private Map<Long, Integer> machineReleaseTimes;
-	private Map<Long, Integer> machineDownTimes;
+	private Map<Integer, Long> machineReleaseTimes;
+	private Map<Integer, Long> machineDownTimes;
 	
 	private Boolean noFactoryProducedYet;
 	
@@ -57,13 +54,12 @@ public class ScenarioDatamodel {
 		this.machinesToAssociatToFactory = 0;
 		
 		this.freeMachines = new Vector<Integer>(config.getNumberOfMachines()+1);
-		this.machineReleaseTimes =	new HashMap<Long, Integer>(config.getNumberOfMachines()+1);
-		this.machineDownTimes = Collections.synchronizedMap(
-				new HashMap<Long, Integer>(config.getNumberOfMachines()+1));
+		this.machineReleaseTimes =	new HashMap<Integer, Long>(config.getNumberOfMachines()+1);
+		this.machineDownTimes = new HashMap<Integer, Long>(config.getNumberOfMachines()+1);
 		
 		this.tools = Collections.synchronizedMap(new HashMap<Integer, Tool>(config.getNumberOfTools()+1));
-		this.toolsInUse = Collections.synchronizedSortedMap(
-				new TreeMap<Integer, Integer>());
+		this.toolsInUse = Collections.synchronizedMap(
+				new HashMap<Integer, Integer>());
 		
 		this.randomGen = new Random();
 		
@@ -175,22 +171,32 @@ public class ScenarioDatamodel {
 		}
 		
 		if (toolAmount <= this.toolsInUse.size()){
-			//all tools in use
+			//all tools in use, free machine again
+			this.freeMachines.add(machineNo);
 			return null;
 		}
+			
+		int toolID = this.randomGen.nextInt(this.config.getNumberOfTools());
 		
-		int toolID = this.randomGen.nextInt(toolAmount);
-		
-		//if tool is in use iterate until an unused is found
-		while (this.toolsInUse.containsValue(toolID) || this.tools.get(toolID) == null){
-			toolID += 1;
-			toolID %= toolAmount;
+		Tool tool = this.tools.get(toolID);
+		if (tool == null || this.toolsInUse.containsValue(toolID)) {
+			//random tool not avaiable, iterate to next avaiable tool
+			Iterator<Tool> iterator = this.tools.values().iterator();
+			synchronized (this.tools) {
+				while (iterator.hasNext()){
+					tool = iterator.next();
+					if (!this.toolsInUse.containsKey(tool.getId())){
+						break;
+					}
+				}
+			}
 		}
 		
-		this.toolsInUse.put(machineNo, toolID);
+		
+		this.toolsInUse.put(machineNo, tool.getId());
 		this.setTimeForRelease(machineNo);
 		
-		return this.tools.get(toolID);
+		return tool;
 	}
 	
 	private void setTimeForRelease(int machineNo) {
@@ -200,7 +206,7 @@ public class ScenarioDatamodel {
 		int time = this.randomGen.nextInt(maxTime-minTime)+minTime;
 		
 		synchronized (this.machineReleaseTimes) {
-			this.machineReleaseTimes.put(System.currentTimeMillis()+time, machineNo);
+			this.machineReleaseTimes.put(machineNo, System.currentTimeMillis()+time);
 		}
 	}
 
@@ -221,13 +227,12 @@ public class ScenarioDatamodel {
 	public void releaseResources(){
 		//check for tools that must be installed
 		synchronized (this.machineReleaseTimes) {
-			Set<Long> times = this.machineReleaseTimes.keySet();
-			Iterator<Long> iterator = times.iterator();
+			Iterator<Integer> iterator = this.machineReleaseTimes.keySet().iterator();
 			while(iterator.hasNext()){
-				long time = iterator.next();
+				int machineID = iterator.next();
+				long time = this.machineReleaseTimes.get(machineID);
 				if (time <= System.currentTimeMillis()){	
 					//uninstall tool
-					int machineID =	this.machineReleaseTimes.get(time);
 					this.uninstallTool(machineID, time);
 					
 					//remove entry
@@ -238,17 +243,19 @@ public class ScenarioDatamodel {
 		}
 		
 		//check for machines that can be used again (downTime over)
-		synchronized (this.machineReleaseTimes) {
-			Set<Long> times = this.machineDownTimes.keySet();
-			Iterator<Long> iterator = times.iterator();
+		synchronized (this.machineDownTimes) {
+			Iterator<Integer> iterator = this.machineDownTimes.keySet().iterator();
 			while(iterator.hasNext()){
-				long time = iterator.next();
+				int machineID = iterator.next();
+				long time = this.machineDownTimes.get(machineID);
 				if (time <= System.currentTimeMillis()){
 					//machine is ready again
-					this.freeMachines.add(this.machineDownTimes.get(time));
 					
-					//remove entry
-					iterator.remove();
+				this.freeMachines.add(machineID);
+				//remove entry
+				iterator.remove();
+
+	
 				}
 			}
 		}
@@ -265,7 +272,9 @@ public class ScenarioDatamodel {
 		int maxTime = this.config.getMaxMachineDowntime();
 		
 		int time = this.randomGen.nextInt(maxTime-minTime)+minTime;
-		this.machineDownTimes.put(uninstallTimeStamp+time, machineID);
+		synchronized (machineDownTimes) {
+			this.machineDownTimes.put(machineID, uninstallTimeStamp+time);
+		}
 		
 		return this.toolsInUse.remove(machineID);
 	}
@@ -276,8 +285,7 @@ public class ScenarioDatamodel {
 	 * @return
 	 */
 	public Double useTool(int machineNo){
-		//block uninstallation of tool
-		synchronized (this.toolsInUse) {
+
 			Integer index = this.toolsInUse.get(machineNo);
 			
 			if (index != null){
@@ -290,7 +298,11 @@ public class ScenarioDatamodel {
 					
 					//check if tool must be uninstalled and removed
 					if (tool.isLimit2Hit()){
-						this.uninstallTool(machineNo, System.currentTimeMillis());
+						synchronized (this.machineReleaseTimes) {
+							this.machineReleaseTimes.remove(machineNo);
+							this.uninstallTool(machineNo, System.currentTimeMillis());
+						}
+						
 						this.tools.remove(index);
 					}
 	
@@ -299,11 +311,10 @@ public class ScenarioDatamodel {
 					return null;
 				}
 			}else {
-				
 				//can happen if tool was released during execution 
 				return null;
 			}
-		}
+
 	}
 	
 	public void setNoFactoryProducedYet(Boolean lastFactory) {
