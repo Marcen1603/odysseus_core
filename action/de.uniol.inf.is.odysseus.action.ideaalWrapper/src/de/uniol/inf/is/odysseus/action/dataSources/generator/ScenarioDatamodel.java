@@ -20,6 +20,7 @@ public class ScenarioDatamodel {
 	
 	private Map<Integer, Tool> tools;
 	private Map<Integer, Integer> toolsInUse;
+	private List<Integer> avaiableToolIDs;
 	
 	private List<Integer> freeMachines;
 	
@@ -59,13 +60,15 @@ public class ScenarioDatamodel {
 		
 		this.tools = Collections.synchronizedMap(new HashMap<Integer, Tool>(config.getNumberOfTools()+1));
 		this.toolsInUse = Collections.synchronizedMap(
-				new HashMap<Integer, Integer>());
+				new HashMap<Integer, Integer>(config.getNumberOfMachines()+1));
+		this.avaiableToolIDs = new Vector<Integer>(this.tools.size());
 		
 		this.randomGen = new Random();
 		
 		//fill tools	
 		for (int i=0; i<config.getNumberOfTools(); i++){
 			this.tools.put(i, this.generateTool(i));
+			this.avaiableToolIDs.add(i);
 		}
 		
 		this.noFactoryProducedYet = true;
@@ -176,20 +179,12 @@ public class ScenarioDatamodel {
 			return null;
 		}
 			
-		int toolID = this.randomGen.nextInt(this.config.getNumberOfTools());
+		int index = this.randomGen.nextInt(this.avaiableToolIDs.size());
 		
-		Tool tool = this.tools.get(toolID);
-		if (tool == null || this.toolsInUse.containsValue(toolID)) {
-			//random tool not avaiable, iterate to next avaiable tool
-			Iterator<Tool> iterator = this.tools.values().iterator();
-			synchronized (this.tools) {
-				while (iterator.hasNext()){
-					tool = iterator.next();
-					if (!this.toolsInUse.containsKey(tool.getId())){
-						break;
-					}
-				}
-			}
+		Tool tool = this.tools.get(this.avaiableToolIDs.get(index));
+		if (tool == null || this.toolsInUse.containsValue(tool.getId())) {
+			index = (index +1)%this.avaiableToolIDs.size();
+			tool = this.tools.get(this.avaiableToolIDs.get(index));
 		}
 		
 		
@@ -303,6 +298,7 @@ public class ScenarioDatamodel {
 							this.uninstallTool(machineNo, System.currentTimeMillis());
 						}
 						
+						this.avaiableToolIDs.remove(index);
 						this.tools.remove(index);
 					}
 	
