@@ -116,7 +116,16 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 			this.executer.addQuery("select * from machineMaintenance:factory", "CQL");
 			this.executer.addQuery("select * from machineMaintenance:machine", "CQL");
 			this.executer.addQuery("select * from machineMaintenance:install", "CQL");
+			
+			this.actuatorFactory.createActuator("a1", "de.uniol.inf.is.odysseus.action.actuator." +
+					"impl.TestActuator(name:String)", "ActuatorAdapterManager");
+			this.executer.addQuery("ON(select * from machineMaintenance:install) " +
+					"DO ActuatorAdapterManager.a1.getName()", "ECA");
+			
 		} catch (PlanManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ActuatorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
