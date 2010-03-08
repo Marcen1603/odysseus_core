@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.action.dataSources.benchmarkBinding">
-   <implementation class="de.uniol.inf.is.odysseus.action.dataSources.ideaal.SocketSensorClient"/>
-   <reference bind="bindBenchmark" cardinality="0..1" interface="de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark" name="IActuatorBenchmark" policy="dynamic"/>
-</scr:component>

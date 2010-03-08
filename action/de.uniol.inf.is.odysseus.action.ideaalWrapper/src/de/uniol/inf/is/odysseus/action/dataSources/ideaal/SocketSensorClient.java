@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  *
  */
 public class SocketSensorClient extends ISourceClient {
-	private static IActuatorBenchmark benchmark;
 	private long interval;
 	private Socket socket;	
 	private int retries = 5;
@@ -34,21 +33,19 @@ public class SocketSensorClient extends ISourceClient {
 	private Sensor sensor;
 	
 	private boolean benchmarking = false;
+	private static int tupleNo = 0;
 	
 
-	public SocketSensorClient(Sensor sensor) {
+	public SocketSensorClient(Sensor sensor, boolean benchmark) {
 		this.interval = sensor.getInterval();
 		this.messages = sensor.getMessages();
 		this.schema = Sensor.getSchema(sensor);
 		this.sensor = sensor;
+		
+		this.benchmarking = benchmark;
 				
 		super.logger = LoggerFactory.getLogger(SocketSensorClient.class);
 	}	
-	
-	public void bindBenchmark(IActuatorBenchmark benchmark){
-		SocketSensorClient.benchmark = benchmark;
-		this.benchmarking = true;
-	}
 	
 	@Override
 	public boolean processData()  {
@@ -62,7 +59,7 @@ public class SocketSensorClient extends ISourceClient {
 			
 			//send notification if benchmarking is avaiable
 			if (this.benchmarking){
-				BenchmarkData data = new BenchmarkData(benchmark.getNextID(this.sensor.name()+"_Odysseus"));
+				BenchmarkData data = new BenchmarkData(this.sensor.name()+"_Odysseus_"+ (++tupleNo));
 				tuple.setMetadata(data);
 			}
 			
