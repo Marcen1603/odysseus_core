@@ -6,7 +6,5 @@ public interface IActuatorBenchmark {
 	public enum Operation{DATAEXTRACTION, QUERYPROCESSING, ACTIONEXECTION};
 	
 	public void addBenchmarkData(BenchmarkData data);
-	
-	public String getNextID(String identifier);
-
+		
 }

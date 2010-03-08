@@ -13,7 +13,7 @@ public class BenchmarkData implements IMetaAttribute {
 	
 	public BenchmarkData(String identifier){
 		this.identifier = identifier;
-		this.creationTime = System.currentTimeMillis();
+		this.creationTime = System.nanoTime();
 		this.outputTimes = new HashMap<String, Long>();
 	}
 	
@@ -28,7 +28,7 @@ public class BenchmarkData implements IMetaAttribute {
 	}
 	
 	public void addOutputTime(String id){
-		this.outputTimes.put(id, System.currentTimeMillis());
+		this.outputTimes.put(id, System.nanoTime());
 	}
 
 	@Override
