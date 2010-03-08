@@ -154,7 +154,7 @@ public class ScenarioDatamodel {
 			throw new GeneratorException("All tools used.");
 		}
 		
-		if(this.toolsInUse.size() > 1){
+		if(this.toolsInUse.size() > 0){
 			return randomGen.nextInt(this.toolsInUse.size());
 		}else {
 			return null;
@@ -182,7 +182,7 @@ public class ScenarioDatamodel {
 		int toolID = this.randomGen.nextInt(toolAmount);
 		
 		//if tool is in use iterate until an unused is found
-		while (this.toolsInUse.containsKey(toolID)){
+		while (this.toolsInUse.containsValue(toolID) || this.tools.get(toolID) == null){
 			toolID += 1;
 			toolID %= toolAmount;
 		}
