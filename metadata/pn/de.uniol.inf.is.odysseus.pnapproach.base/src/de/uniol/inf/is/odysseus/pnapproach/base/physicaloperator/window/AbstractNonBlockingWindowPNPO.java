@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 
 import java.util.Iterator;
 
+import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -13,7 +14,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.helper.IDataFactory;
 
 public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>>
-		extends AbstractPipe<T, T> {
+		extends AbstractPipe<T, T> implements IWindow {
 
 	long windowSize;
 	long windowAdvance;
@@ -71,6 +72,7 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		this.transfer(object);
 	}
 	
+	@Override
 	public long getWindowSize(){
 		return this.windowSize;
 	}

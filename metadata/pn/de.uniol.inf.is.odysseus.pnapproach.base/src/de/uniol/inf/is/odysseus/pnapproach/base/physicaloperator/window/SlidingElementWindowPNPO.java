@@ -3,12 +3,13 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
 public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>>
-		extends AbstractPipe<T, T> {
+		extends AbstractPipe<T, T> implements IWindow {
 
 	List<T> buffer = null;
 	boolean forceElement = true;
@@ -50,6 +51,11 @@ public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>
 	@Override
 	public SlidingElementWindowPNPO<T> clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
+	}
+
+	@Override
+	public long getWindowSize() {
+		return this.windowSize;
 	}
 
 }

@@ -11,6 +11,7 @@ package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window;
 
 import java.util.Iterator;
 
+import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.sweeparea.DefaultPNSweepArea;
  * 
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
  */
-public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPipe<R, R>{
+public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? extends IPosNeg>> extends AbstractPipe<R, R> implements IWindow {
     
 	/**
 	 * This operator needs a sweeparea if the pos-neg approach
@@ -143,5 +144,10 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
     
     public final void process_close(){
     }
+
+	@Override
+	public long getWindowSize() {
+		return this.windowSize;
+	}
 
 }

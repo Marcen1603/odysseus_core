@@ -58,6 +58,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(oldPlanRoot);
 		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(newPlanRoot);
 		
+		
 		// get last operators before output sink
 		IPhysicalOperator lastOperatorOldPlan;
 		if (oldPlanRoot.isSource()) {
@@ -187,7 +188,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
 		// push data from buffers into plan
 		this.logger.debug("Pushing data from BlockingBuffers.");
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
-			// TODO: wie in MigrationHelper volllaufen von Puffern?
 			for (int i=0; i<buffer.size(); i++) {
 				buffer.transferNext();
 			}

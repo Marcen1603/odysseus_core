@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.intervalapproach.window.AbstractWindowTIPO;
+import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.AbstractNonBlockingWindowPNPO;
-import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.SlidingElementWindowPNPO;
-import de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator.window.SlidingPeriodicWindowPNPO;
 
 /**
  * 
@@ -57,10 +54,7 @@ public class MigrationHelper {
 	
 	private static boolean isPseudoSource(IPhysicalOperator op) {
 		return !op.isSink() || op instanceof MetadataCreationPO<?, ?> 
-			|| op instanceof AbstractWindowTIPO<?>
-			|| op instanceof AbstractNonBlockingWindowPNPO<?,?>
-			|| op instanceof SlidingElementWindowPNPO<?>
-			|| op instanceof SlidingPeriodicWindowPNPO<?>;
+			|| op instanceof IWindow;
 	}
 	
 	public static long getLongestWindowSize(IPhysicalOperator root) {
@@ -68,8 +62,8 @@ public class MigrationHelper {
 			return 0L;
 		}
 		long wMax = 0L;
-		if (root instanceof AbstractWindowTIPO) {
-			wMax = ((AbstractWindowTIPO)root).getWindowSize();
+		if (root instanceof IWindow) {
+			wMax = ((IWindow)root).getWindowSize(); // TODO: alle Fenstertypen unterstuetzen
 		}
 		for (PhysicalSubscription<?> sub : ((ISink<?>)root).getSubscribedToSource()) {
 			long w = getLongestWindowSize((IPhysicalOperator)sub.getTarget());
@@ -91,7 +85,6 @@ public class MigrationHelper {
 				while (iterableSource.hasNext()) {
 					iterableSource.transferNext();
 				}
-				// TODO: Was passiert, wenn Puffer im Plan volllaufen?
 			}
 		}
 	}
