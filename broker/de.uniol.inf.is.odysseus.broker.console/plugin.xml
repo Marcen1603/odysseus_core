@@ -15,7 +15,7 @@
             icon="icons/sample.gif"
             id="de.uniol.inf.is.odysseus.broker.console.views.OutputView"
             name="Odysseus Output View"
-            restorable="false">
+            restorable="true">
       </view>
    </extension>
    <extension

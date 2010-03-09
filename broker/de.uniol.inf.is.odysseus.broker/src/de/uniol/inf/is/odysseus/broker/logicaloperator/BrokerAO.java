@@ -21,7 +21,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 		super(original);
 		this.outputSchema = original.outputSchema.clone();
 		this.identifier = original.identifier;
-		this.generatedTime = System.currentTimeMillis();
+		this.generatedTime = original.generatedTime;
 	}
 	
 	public ILogicalOperator getInput(int number){
@@ -99,5 +99,20 @@ public class BrokerAO extends AbstractLogicalOperator{
 	
 	public void setGeneratedTime(long newTime){
 		this.generatedTime = newTime;
+	}
+	
+	@Override 
+	public BrokerAO clone() throws CloneNotSupportedException {	
+		BrokerAO clone = new BrokerAO(this);		
+		return clone;
+	}
+	
+	@Override
+	public boolean isAllPhysicalInputSet() {
+		if(this.subscribedToSource.isEmpty()){
+			return true;
+		}else{
+			return super.isAllPhysicalInputSet();
+		}
 	}
 }
