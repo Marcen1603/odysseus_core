@@ -64,16 +64,16 @@ abstract public class AbstractExecListSchedulingStrategy extends
 	abstract protected List<IIterableSource<?>> calculateExecutionList(
 			IPartialPlan operators);
 
-	protected Iterator<IIterableSource<?>> getExecutionListIterator() {
+	protected synchronized Iterator<IIterableSource<?>> getExecutionListIterator() {
 		return executionList.iterator();
 	}
 	
-	protected boolean executionListHasElements(){
+	protected synchronized boolean executionListHasElements(){
 		return !executionList.isEmpty();
 	}
 	
 	@Override
-	public IIterableSource<?> nextSource() {
+	public synchronized IIterableSource<?> nextSource() {
 		if (useIter){
 			return nextSourceIter();
 		}else{

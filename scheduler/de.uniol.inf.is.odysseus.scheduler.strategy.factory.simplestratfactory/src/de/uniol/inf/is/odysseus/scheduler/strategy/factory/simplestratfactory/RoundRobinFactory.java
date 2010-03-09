@@ -28,8 +28,10 @@ public class RoundRobinFactory extends AbstractSchedulingStrategyFactory {
 	@SuppressWarnings("unchecked")
 	protected void activate(ComponentContext context){
 		super.activate(context);
-		Dictionary properties = context.getProperties();
-		useIter = (Boolean) properties.get("execlist.useIter");	
+		// TODO: Warum ist das hier so?
+		//Dictionary properties = context.getProperties();
+		//useIter = (Boolean) properties.get("execlist.useIter");	
+		useIter = true;
 	}
 
 	@Override
