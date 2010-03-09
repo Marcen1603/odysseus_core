@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 
@@ -32,7 +34,7 @@ public class RestructHelper {
 			ret.add(child.getTarget());
 		}
 		for (LogicalSubscription a : child.getTarget().getSubscriptions()) {
-			System.out.println("NEW SUBPLAN AFTER REMOVE: " + a.getTarget());
+			LoggerFactory.getLogger(RestructHelper.class).debug("New subplan after remove: " + a.getTarget());
 		}
 		return ret;
 	}
