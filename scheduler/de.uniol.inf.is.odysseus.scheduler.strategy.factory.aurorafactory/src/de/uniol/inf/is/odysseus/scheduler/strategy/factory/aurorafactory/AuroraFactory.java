@@ -52,9 +52,9 @@ public class AuroraFactory extends AbstractSchedulingStrategyFactory {
 	public ISchedulingStrategy createStrategy(IPartialPlan plan, int priority) {
 		switch(strategy){
 		case MIN_LATENCY:
-			return new AuroraMinLatency(plan, useIter);
+			return new AuroraMinLatency(plan);
 		case MIN_COST:
-			return new AuroraMinCost(plan, useIter);
+			return new AuroraMinCost(plan);
 		case MIN_MEM:
 			//return new AuroraMinMemory(plan);
 			throw new RuntimeException("Not implemented");
@@ -65,7 +65,7 @@ public class AuroraFactory extends AbstractSchedulingStrategyFactory {
 
 	@Override
 	public String toString() {
-		return this.getClass().getName()+" iter="+useIter+" strategy="+strategy;
+		return this.getClass().getName()+" strategy="+strategy;
 	}
 
 }

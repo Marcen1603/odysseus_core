@@ -10,8 +10,8 @@ import de.uniol.inf.is.odysseus.priority.PriorityPO;
 
 public class SimplePriorityMinLatency extends AbstractPriorityMinLatency{
 
-	public SimplePriorityMinLatency(IPartialPlan plan, boolean useIter) {
-		super(plan, useIter);
+	public SimplePriorityMinLatency(IPartialPlan plan) {
+		super(plan);
 	}
 
 	@SuppressWarnings("unchecked")

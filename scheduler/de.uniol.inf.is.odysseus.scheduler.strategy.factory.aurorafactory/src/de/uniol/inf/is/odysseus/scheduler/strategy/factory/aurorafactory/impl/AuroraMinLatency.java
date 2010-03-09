@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
 public class AuroraMinLatency extends AbstractExecListSchedulingStrategy {
 
-	public AuroraMinLatency(IPartialPlan plan, boolean useIter) {
-		super(plan, true);
+	public AuroraMinLatency(IPartialPlan plan) {
+		super(plan);
 	}
 	
 	@Override

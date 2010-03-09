@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStr
 public class StaticRandomStrategy extends AbstractExecListSchedulingStrategy {
 
 	public StaticRandomStrategy(IPartialPlan plan) {
-		super(plan, true);
+		super(plan);
 	}
 
 	@Override

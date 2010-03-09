@@ -19,8 +19,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
 public class ChainStrategy extends AbstractExecListSchedulingStrategy {
 
-	public ChainStrategy(IPartialPlan plan, boolean useIter) {
-		super(plan, useIter);
+	public ChainStrategy(IPartialPlan plan) {
+		super(plan);
 	}
 	
 	@Override

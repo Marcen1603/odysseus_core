@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 
 public class PriorityMinLatency extends AbstractPriorityMinLatency{
 
-	public PriorityMinLatency(IPartialPlan plan, boolean useIter) {
-		super(plan, useIter);
+	public PriorityMinLatency(IPartialPlan plan) {
+		super(plan);
 	}
 
 	@Override

@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStr
 
 public class GreedyStrategy extends AbstractExecListSchedulingStrategy {
 
-	public GreedyStrategy(IPartialPlan plan, boolean useIter) {
-		super(plan, useIter);
+	public GreedyStrategy(IPartialPlan plan) {
+		super(plan);
 	}
 
 	/**

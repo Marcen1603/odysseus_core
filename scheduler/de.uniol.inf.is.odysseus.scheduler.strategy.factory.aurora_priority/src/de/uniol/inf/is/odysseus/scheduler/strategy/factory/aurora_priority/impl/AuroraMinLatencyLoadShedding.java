@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
 public class AuroraMinLatencyLoadShedding extends AbstractPriorityMinLatency{
 
-	public AuroraMinLatencyLoadShedding(IPartialPlan plan, boolean useIter) {
-		super(plan, useIter);
+	public AuroraMinLatencyLoadShedding(IPartialPlan plan) {
+		super(plan);
 	}
 	
 	@Override

@@ -35,8 +35,8 @@ public class AuroraMinMemory extends AbstractExecListSchedulingStrategy {
 //	}
 	
 	
-	public AuroraMinMemory(IPartialPlan plan, boolean useIter) {
-		super(plan, useIter);
+	public AuroraMinMemory(IPartialPlan plan) {
+		super(plan);
 	}
 
 	@Override

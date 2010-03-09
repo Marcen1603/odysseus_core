@@ -27,22 +27,17 @@ abstract public class AbstractExecListSchedulingStrategy extends
 	protected Iterator<IIterableSource<?>> iterator;
 	private IIterableSource<?> curSource = null;
 
-	private boolean useIter;
-
-	public AbstractExecListSchedulingStrategy(IPartialPlan plan, boolean iterate) {
+	public AbstractExecListSchedulingStrategy(IPartialPlan plan) {
 		super(plan);
 		executionList = calculateExecutionList(plan);
 		// Nur die Operatoren im Plan d�rfen gescheduled werden (in den abgeleiten Methoden Aufruf entfernen)
 		executionList.retainAll(plan.getIterableSource());
 		iterator = executionList.iterator();
-		this.useIter = iterate;
 	}
 
 	@Override
 	public void sourceDone(IIterableSource<?> source) {
-		if (!useIter){
-			executionList.remove(source);			
-		}else if (curSource == source) {
+		if (curSource == source) {
 			synchronized (iterator) {
 				iterator.remove();
 			}
@@ -74,11 +69,7 @@ abstract public class AbstractExecListSchedulingStrategy extends
 	
 	@Override
 	public synchronized IIterableSource<?> nextSource() {
-		if (useIter){
-			return nextSourceIter();
-		}else{
-			return nextSourceStart();
-		}
+		return nextSourceIter();
 	}
 	
 	private IIterableSource<?> nextSourceIter() {
@@ -96,22 +87,6 @@ abstract public class AbstractExecListSchedulingStrategy extends
 		}
 	}
 	
-	private IIterableSource<?> nextSourceStart() {
-		Iterator<IIterableSource<?>> iter = getExecutionListIterator();
-		while(executionListHasElements()){
-			if (iter.hasNext()){
-				IIterableSource<?> s = iter.next();
-				// QUATSCH!!!
-				//if (s.hasNext()) return s;
-				return s;
-			}else{
-				iter = getExecutionListIterator();
-			}
-		}
-		return null;
-	}
-
-
 	protected double calcPathCost(List<ISource<?>> p) {
 		double selProd = 1;
 		double cAvg = 0;

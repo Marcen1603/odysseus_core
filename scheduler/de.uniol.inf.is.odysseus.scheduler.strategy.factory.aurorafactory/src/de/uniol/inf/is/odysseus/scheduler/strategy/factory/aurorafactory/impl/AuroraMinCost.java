@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
 public class AuroraMinCost extends AbstractExecListSchedulingStrategy {
 
-	public AuroraMinCost(IPartialPlan plan, boolean useIter) {
-		super(plan, true);
+	public AuroraMinCost(IPartialPlan plan) {
+		super(plan);
 	}
 
 	@Override

@@ -19,8 +19,8 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStr
 public abstract class AbstractPriorityMinLatency extends
 		AbstractExecListSchedulingStrategy {
 
-	public AbstractPriorityMinLatency(IPartialPlan plan, boolean useIter) {
-		super(plan, true);
+	public AbstractPriorityMinLatency(IPartialPlan plan) {
+		super(plan);
 	}
 
 	protected void initMetadata(List<ISource<?>> opPath) {

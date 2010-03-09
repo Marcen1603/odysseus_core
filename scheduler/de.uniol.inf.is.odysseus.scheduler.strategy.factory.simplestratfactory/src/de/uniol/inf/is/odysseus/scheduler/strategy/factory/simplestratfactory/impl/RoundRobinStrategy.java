@@ -13,8 +13,8 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStr
  */
 public class RoundRobinStrategy extends AbstractExecListSchedulingStrategy {
 
-	public RoundRobinStrategy(IPartialPlan operators, boolean useIter) {
-		super(operators, useIter);
+	public RoundRobinStrategy(IPartialPlan operators) {
+		super(operators);
 	}
 
 	@Override

@@ -11,24 +11,21 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.impl.Cha
 
 public class ChainStrategyFactory extends AbstractSchedulingStrategyFactory {
 	
-	private boolean useIter = true;
 
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void activate(ComponentContext context){
 		super.activate(context);
-		Dictionary properties = context.getProperties();
-		this.useIter = (Boolean)properties.get("execlist.useIter");
 	}
 
 	@Override
 	public ISchedulingStrategy createStrategy(IPartialPlan plan, int priority) {
-		return new ChainStrategy(plan, useIter);
+		return new ChainStrategy(plan);
 	}
 
 	@Override
 	public String toString() {
-		return this.getClass().getName()+" iter="+useIter;
+		return this.getClass().getName();
 	}
 	
 }
