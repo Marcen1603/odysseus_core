@@ -38,7 +38,6 @@ public class Activator implements BundleActivator {
 		
 		boolean useIdealSensor = Boolean.valueOf(serverProps.getProperty("useIdealSensor"));
 		boolean useGenerator = Boolean.valueOf(serverProps.getProperty("useGenerator"));
-		boolean benchmark = Boolean.valueOf(serverProps.getProperty("benchmark"));
 		stream.close();
 
 		this.servers = new ArrayList<StreamServer>();
@@ -62,7 +61,7 @@ public class Activator implements BundleActivator {
 							(type.equals(GeneratorType.Install_DB) && !generatorConfig.isSimulateDB()  ) ){
 						continue;
 					}
-					MachineMaintenaceClient client = new MachineMaintenaceClient(generatorConfig, type, benchmark);
+					MachineMaintenaceClient client = new MachineMaintenaceClient(generatorConfig, type);
 					StreamServer server = new StreamServer(client, ++startPort);
 					server.start();
 					this.servers.add(server);
@@ -77,7 +76,7 @@ public class Activator implements BundleActivator {
 			logger.info("Starting wrapper servers ...");
 			for (Sensor sensor : Sensor.values()){
 				try {
-					StreamServer server = new StreamServer(new SocketSensorClient(sensor, benchmark ), ++startPort);
+					StreamServer server = new StreamServer(new SocketSensorClient(sensor ), ++startPort);
 					server.start();
 					servers.add(server);
 				}catch (Exception e){

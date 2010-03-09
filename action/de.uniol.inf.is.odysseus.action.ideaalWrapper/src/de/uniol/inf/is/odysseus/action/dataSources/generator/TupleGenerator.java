@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.action.dataSources.generator;
 
-import de.uniol.inf.is.odysseus.action.benchmark.BenchmarkData;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -15,19 +13,16 @@ public class TupleGenerator {
 	
 	private ScenarioDatamodel datamodel;
 	
-	private boolean benchmark;
-	
+		
 	private static int factoryNo = 0;
 	private static int machineNo = 0;
-	private static int tupleNo = 0;
 	
 	public enum GeneratorType{Factory, Machine, Install_Pure, Install_DB, Usage};
 
-	public TupleGenerator(GeneratorConfig config, GeneratorType type, boolean benchmark) throws GeneratorException{
+	public TupleGenerator(GeneratorConfig config, GeneratorType type) throws GeneratorException{
 		this.schema = new SDFAttributeList();
 		this.genTyp = type;
 		this.config = config;
-		this.benchmark = benchmark;
 		
 		this.datamodel = ScenarioDatamodel.getInstance();
 				
@@ -143,14 +138,7 @@ public class TupleGenerator {
 	}
 
 	private RelationalTuple<IMetaAttribute> generateUsageTuple() throws GeneratorException {
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		if (this.benchmark){
-			BenchmarkData data = new BenchmarkData("MachineMaintenance_Usage_"+(tupleNo++));
-			tuple.setMetadata(data);
-		}else {
-			tuple.setMetadata(new TimeInterval());
-		}
-		
+		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());	
 		
 		//timestamp, machineID, rate
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -175,14 +163,7 @@ public class TupleGenerator {
 	}
 
 	private RelationalTuple<IMetaAttribute> generateInstallPureTuple() throws GeneratorException {
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		if (this.benchmark){
-			BenchmarkData data = new BenchmarkData("MachineMaintenance_InstallPure_"+(tupleNo++));
-			tuple.setMetadata(data);
-		}else {
-			tuple.setMetadata(new TimeInterval());
-		}
-		
+		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());		
 		//timestamp, id, machineID, limit1, limit2
 		tuple.setAttribute(0, System.currentTimeMillis());
 		
@@ -213,13 +194,7 @@ public class TupleGenerator {
 		}
 		
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		if (this.benchmark){
-			BenchmarkData data = new BenchmarkData("MachineMaintenance_Machine_"+(tupleNo++));
-			tuple.setMetadata(data);
-		}else {
-			tuple.setMetadata(new TimeInterval());
-		}
-		
+
 		//timestamp, id, factoryID, name
 		tuple.setAttribute(0, System.currentTimeMillis());
 		tuple.setAttribute(1, machineNo);
@@ -241,12 +216,6 @@ public class TupleGenerator {
 
 	private RelationalTuple<IMetaAttribute> generateInstallDBTuple() throws GeneratorException {
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		if (this.benchmark){
-			BenchmarkData data = new BenchmarkData("MachineMaintenance_InstallDB_"+(tupleNo++));
-			tuple.setMetadata(data);
-		}else {
-			tuple.setMetadata(new TimeInterval());
-		}
 		
 		//timestamp, id, machineID, limit1, limit2, pastUsageTime
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -278,12 +247,6 @@ public class TupleGenerator {
 		}
 		
 		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-		if (this.benchmark){
-			BenchmarkData data = new BenchmarkData("MachineMaintenance_Factory_"+(tupleNo++));
-			tuple.setMetadata(data);
-		}else {
-			tuple.setMetadata(new TimeInterval());
-		}
 		
 		//timestamp, id, name
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -302,9 +265,5 @@ public class TupleGenerator {
 	
 	public GeneratorType getGenTyp() {
 		return genTyp;
-	}
-	
-	public boolean isBenchmark() {
-		return benchmark;
 	}
 }

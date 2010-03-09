@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.action.benchmark.BenchmarkData;
-import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
 import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -32,17 +30,12 @@ public class SocketSensorClient extends ISourceClient {
 	private SDFAttributeList schema;
 	private Sensor sensor;
 	
-	private boolean benchmarking = false;
-	private static int tupleNo = 0;
-	
 
-	public SocketSensorClient(Sensor sensor, boolean benchmark) {
+	public SocketSensorClient(Sensor sensor) {
 		this.interval = sensor.getInterval();
 		this.messages = sensor.getMessages();
 		this.schema = Sensor.getSchema(sensor);
 		this.sensor = sensor;
-		
-		this.benchmarking = benchmark;
 				
 		super.logger = LoggerFactory.getLogger(SocketSensorClient.class);
 	}	
@@ -55,15 +48,8 @@ public class SocketSensorClient extends ISourceClient {
 				this.socket = new Socket(sensor.getIp(), sensor.getPort());
 			}
 			
-			RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
-			
-			//send notification if benchmarking is avaiable
-			if (this.benchmarking){
-				BenchmarkData data = new BenchmarkData(this.sensor.name()+"_Odysseus_"+ (++tupleNo));
-				tuple.setMetadata(data);
-			}
-			
-			tuple.setAttribute(0, System.currentTimeMillis());
+			RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());	
+			tuple.setAttribute(0, System.nanoTime());
 			
 			//send request to sensor
 			OutputStream outputStream = this.socket.getOutputStream();
@@ -99,10 +85,6 @@ public class SocketSensorClient extends ISourceClient {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			}
-			
-			if (this.benchmarking){
-				((BenchmarkData)tuple.getMetadata()).addOutputTime(IActuatorBenchmark.Operation.DATAEXTRACTION.name());
 			}
 			
 			super.sendTupleToClients(tuple);
