@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.broker.parser.cql;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
+import de.uniol.inf.is.odysseus.broker.transaction.GraphUtils;
+import de.uniol.inf.is.odysseus.broker.transaction.TransactionType;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
@@ -34,25 +37,20 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		CQLParser v = new CQLParser();
 		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
 				childNode, null);
-
-		// get existing broker or generate a new one
-		//BrokerAO broker = new BrokerAO(name);
+		
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
 		broker.setOutputSchema(result.getOutputSchema());
 		if (!BrokerDictionary.getInstance().brokerExists(name)) {
-			BrokerDictionary.getInstance().addBroker(name, broker);
-		} else {
-			broker = BrokerDictionary.getInstance().getBroker(name);
+			BrokerDictionary.getInstance().addBroker(name, broker.getOutputSchema());
 		}
 
 		// connect the source to broker
-		broker.subscribeTo(result, result.getOutputSchema());
+		int inPort = BrokerDictionary.getInstance().addNewWriteTransaction(name, TransactionType.Write.Continuous);
+		broker.subscribeToSource(result, inPort, 0, result.getOutputSchema());		
 		// make it accessible like a normal source
 		DataDictionary.getInstance().sourceTypeMap.put(name, "brokerStreaming");
-		SDFEntity entity = new SDFEntity(name);
-		//SDFAttributeList attributes = new SDFAttributeList();
-		entity.setAttributes(broker.getOutputSchema());
-		
+		SDFEntity entity = new SDFEntity(name);		
+		entity.setAttributes(broker.getOutputSchema());		
 		DataDictionary.getInstance().entityMap.put(name, entity);
 		return broker;
 	}
@@ -62,7 +60,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		if (BrokerDictionary.getInstance().brokerExists(brokerName)) {					
 			
 			BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);			
-			broker.setOutputSchema(BrokerDictionary.getInstance().getBroker(brokerName).getOutputSchema());
+			broker.setOutputSchema(BrokerDictionary.getInstance().getOutputSchema(brokerName));
 			return broker;
 		}else{
 			throw new RuntimeException("Broker "+brokerName+" not exists");
@@ -90,17 +88,23 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 				statement, null);
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		// add the outputschema from existing one
-		if(BrokerDictionary.getInstance().getBroker(brokerName)==null){
+		if(!BrokerDictionary.getInstance().brokerExists(brokerName)){
 			throw new RuntimeException("Broker with name \""+brokerName+"\" not found. You have to create one first.");
 		}
-		broker.setOutputSchema(BrokerDictionary.getInstance().getBroker(brokerName).getOutputSchema());
+		broker.setOutputSchema(BrokerDictionary.getInstance().getOutputSchema(brokerName));
 		// check, if broker and top of select have the same attributelist		
 		if(schemaEquals(topOfSelectStatementOperator.getOutputSchema(),broker.getOutputSchema())){
-			broker.subscribeToSource(topOfSelectStatementOperator, 0, 0, topOfSelectStatementOperator.getOutputSchema());		
+			// determine transaction type			
+			TransactionType.Write transType = TransactionType.Write.Continuous;
+			if(GraphUtils.isCyclic(topOfSelectStatementOperator, broker.getIdentifier())){
+				transType = TransactionType.Write.Cyclic;
+			}
+			int inPort = BrokerDictionary.getInstance().addNewWriteTransaction(brokerName, transType);			
+			broker.subscribeToSource(topOfSelectStatementOperator, inPort, 0, topOfSelectStatementOperator.getOutputSchema());
 		}else{			
 			String message = "Schema to insert: "+topOfSelectStatementOperator.getOutputSchema().toString()+"\n";
 			message = message + "Schema of Broker: "+broker.getOutputSchema().toString();
-			throw new RuntimeException("Statement and broker have not the same schema.\n"+message);
+			throw new RuntimeException("Statement and broker do not have the same schema.\n"+message);
 		}
 		return broker;
 		
@@ -142,7 +146,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		//create the broker
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		broker.setOutputSchema(attributes);
-		BrokerDictionary.getInstance().addBroker(brokerName, broker);
+		BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema());
 		return broker;
 	}
 	
@@ -157,5 +161,5 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			}
 			return true;
 		}
-	}
+	}			
 }

@@ -10,7 +10,9 @@ public class BrokerAO extends AbstractLogicalOperator{
 	private static final long serialVersionUID = 6441896379097181325L;	
 	private String identifier;
 	private SDFAttributeList outputSchema = null;
-	private long generatedTime;
+	private long generatedTime;	
+	
+	
 	
 	public BrokerAO(String identifier){
 		this.identifier = identifier;
@@ -27,14 +29,6 @@ public class BrokerAO extends AbstractLogicalOperator{
 	public ILogicalOperator getInput(int number){
 		return getSubscribedToSource(number).getTarget();
 	}
-	
-	
-	public void subscribeTo(ILogicalOperator source, SDFAttributeList inputSchema){
-		int nextPort = this.getNumberOfInputs();
-		System.out.println("Adding operator ("+source.toString()+") to Broker "+this.identifier+" on Port "+nextPort);
-		subscribeToSource(source, nextPort, 0, inputSchema);
-	}
-	
 	
 	@Override	
 	public synchronized SDFAttributeList getOutputSchema() {
