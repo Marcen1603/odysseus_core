@@ -7,4 +7,5 @@ Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.broker.logicaloperator,
  de.uniol.inf.is.odysseus.broker.physicaloperator,
+ de.uniol.inf.is.odysseus.broker.transaction,
  de.uniol.inf.is.odysseus.intervalapproach

@@ -37,8 +37,16 @@ public class BrokerDictionary {
 		return this.brokerlist.get(brokername).addNewWriteTransaction(type);		
 	}
 	
-	public TransactionType.Write getTypeForPort(String brokername, int port){
+	public TransactionType.Write getWriteTypeForPort(String brokername, int port){
 		return this.brokerlist.get(brokername).getWriteType(port);
+	}
+	
+	public int addNewReadTransaction(String brokername, TransactionType.Read type){		
+		return this.brokerlist.get(brokername).addNewReadTransaction(type);		
+	}
+	
+	public TransactionType.Read getReadTypeForPort(String brokername, int port){
+		return this.brokerlist.get(brokername).getReadType(port);
 	}
 	
 	public SDFAttributeList getOutputSchema(String brokername){

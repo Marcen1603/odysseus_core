@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -26,14 +25,10 @@ public class BrokerAO extends AbstractLogicalOperator{
 		this.generatedTime = original.generatedTime;
 	}
 	
-	public ILogicalOperator getInput(int number){
-		return getSubscribedToSource(number).getTarget();
-	}
-	
 	@Override	
-	public synchronized SDFAttributeList getOutputSchema() {
+	public synchronized SDFAttributeList getOutputSchema() {		
 		return this.outputSchema;		
-	}
+	}	
 
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		//this.outputSchema = outputSchema.clone();

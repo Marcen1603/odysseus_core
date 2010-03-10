@@ -12,6 +12,7 @@ public class BrokerDictionaryEntry {
 	private String brokerName;
 	
 	private TransactionType.Write[] writingTypes = new TransactionType.Write[0];
+	private TransactionType.Read[] readingTypes = new TransactionType.Read[0];
 	
 	
 	public BrokerDictionaryEntry(String brokername){
@@ -36,6 +37,17 @@ public class BrokerDictionaryEntry {
 		return writingTypes[port];
 	}
 
+	public int addNewReadTransaction(TransactionType.Read type){
+		int addedToPort = readingTypes.length;
+		readingTypes = Arrays.copyOf(readingTypes, readingTypes.length+1);
+		readingTypes[addedToPort] = type;
+		return addedToPort;
+	}
+	
+	public TransactionType.Read getReadType(int port){
+		return readingTypes[port];
+	}
+	
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
