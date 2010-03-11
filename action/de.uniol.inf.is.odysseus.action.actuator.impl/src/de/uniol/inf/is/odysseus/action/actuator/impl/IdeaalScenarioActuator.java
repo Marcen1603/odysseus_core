@@ -1,5 +1,12 @@
 package de.uniol.inf.is.odysseus.action.actuator.impl;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+
+import de.offis.gal.bus.fs20knxdataservice.IFS20KNXDataListener;
+import de.offis.gal.bus.fs20knxdataservice.IFS20KNXService;
+import de.uniol.inf.is.odysseus.action.services.Activator;
 import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapterSchema;
 
 /**
@@ -11,8 +18,9 @@ public class IdeaalScenarioActuator {
 	private boolean personLyingBed = false;
 	private boolean personStoodUp = false;
 	
-/*	FIXME auskommentiert bis bundle zur verfuegung gestellt wird	
   	IFS20KNXService knxService;
+	private ServiceTracker data;
+	protected IFS20KNXDataListener knxListener;
 	
 	private static final String LIGHT_BELOW_BED = "10/0/9";
 	private static final String LIGHT_NIGHTTABLE = "10/0/6";
@@ -26,16 +34,31 @@ public class IdeaalScenarioActuator {
 	
 	private static final int DIM_VAL = 40;
 	
-	@ActuatorAdapterSchema(provide = false)
-	public bindKNXService(IFS20KNXService service){
-		//FIXME binding in osgi inf definieren, sobald bundle zur verfügung steht
-		this.knxService = service;
-	}*/
+	public IdeaalScenarioActuator(){
+		final BundleContext bc = Activator.getContext();
+		data = new ServiceTracker(bc, IFS20KNXService.class.getName(), null) {
+		    public Object addingService(ServiceReference ref)   {   	
+		    	if(knxService == null) 	{
+		    		knxService = (IFS20KNXService) bc.getService(ref);
+		    		knxService.addListener(knxListener);
+		    	}
+		    	return bc.getService(ref);
+		    }
+		    
+			public void removedService(ServiceReference ref, Object service) {
+				knxService.removeListener(knxListener);
+				bc.ungetService(ref);
+				knxService = null;
+			    super.removedService(ref,service);
+			}           
+		};
+		data.open();
+	}
 	
 	@ActuatorAdapterSchema(show = true, provide = true)
-	public void personWentToBed(double w1, double w2, double w3, double w4){
+	public void personWentToBed(double w1, double w2, double w3, double w4) throws InterruptedException{
 		System.out.println(w1+" "+w2+" "+w3+" "+w4);
-		/*if (personLyingBed){
+		if (personLyingBed){
 			//person already in bed, do nothing
 			return;
 		}
@@ -79,13 +102,13 @@ public class IdeaalScenarioActuator {
 			
 			knxService.switchKNXDevice(LIGHT_BELOW_BED, false);
 		}
-		*/
+		
 	}
 	
 
 	@ActuatorAdapterSchema(show = true, provide = true)
-	public void personStoodUp(){
-		/*
+	public void personStoodUp() throws InterruptedException{
+	
 		personLyingBed = false;
 		personStoodUp = true;
 		
@@ -96,7 +119,6 @@ public class IdeaalScenarioActuator {
 		Thread.sleep(2 * 1000);
 		
 		knxService.dimKNXDevice(LIGHT_BATHROOM_DIM, DIM_VAL);
-		*/
 	}
 
 }

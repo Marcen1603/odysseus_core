@@ -6,5 +6,7 @@ Bundle-Version: 1.0.1
 Fragment-Host: de.uniol.inf.is.odysseus.action.services;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.action.actuator.impl
-Import-Package: de.uniol.inf.is.odysseus.action.demoapp
-Service-Component: OSGI-INF/knxService.xml
+Import-Package: de.offis.gal.bus.fs20knxdataservice;version="1.0.0.SNAPSHOT",
+ de.uniol.inf.is.odysseus.action.demoapp,
+ org.osgi.util.tracker;version="1.4.0",
+ org.ws4d.osami.deviceIntegration;version="1.0.0"
