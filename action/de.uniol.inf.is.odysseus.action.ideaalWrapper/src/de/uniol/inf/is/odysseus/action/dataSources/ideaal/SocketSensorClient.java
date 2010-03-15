@@ -49,7 +49,7 @@ public class SocketSensorClient extends ISourceClient {
 			}
 			
 			RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());	
-			tuple.setAttribute(0, System.nanoTime());
+			tuple.setAttribute(0, System.currentTimeMillis());
 			
 			//send request to sensor
 			OutputStream outputStream = this.socket.getOutputStream();
