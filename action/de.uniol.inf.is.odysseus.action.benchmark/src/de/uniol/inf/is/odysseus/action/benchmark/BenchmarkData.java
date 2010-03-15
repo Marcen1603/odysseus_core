@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.action.benchmark;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-
 public class BenchmarkData {
 	private long creationTime;
 	private Map<String, Long> outputTimes;
@@ -15,13 +13,17 @@ public class BenchmarkData {
 	}
 	
 	
-	public BenchmarkData(ITimeInterval object) {
-		this.creationTime = object.getStart().getMainPoint();
+	public BenchmarkData(long creationTime) {
+		this.creationTime = creationTime;
 		this.outputTimes = new HashMap<String, Long>();
 	}
 
 	public void addOutputTime(String id){
 		this.outputTimes.put(id, System.currentTimeMillis());
+	}
+	
+	public void addOutputTime(String id, long timestamp){
+		this.outputTimes.put(id, timestamp);
 	}
 	
 	public long getCreationTime() {
