@@ -88,15 +88,23 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		//extract parameters
-		BenchmarkData metaData = null;
+		BenchmarkData bmData = null;
 		if (benchmark != null){
 			try {
-				metaData = new BenchmarkData(
-						(ITimeInterval)
-						((IMetaAttributeContainer)object).getMetadata() );
-				metaData.addOutputTime(IActuatorBenchmark.Operation.QUERYPROCESSING.name());
-			}catch(ClassCastException e){
+				//start timestamp = tupleTimestamp
+				bmData = new BenchmarkData( 
+						((Number)(dataExtractor.extractAttribute(object, 0, type))).longValue());
+
+				//dataextraction until metadata was created
+				ITimeInterval metaData = (ITimeInterval)((IMetaAttributeContainer)object).getMetadata();
+				bmData.addOutputTime(IActuatorBenchmark.Operation.DATAEXTRACTION.name(), 
+					metaData.getStart().getMainPoint());
+				
+				//current time is time for queryprocessing
+				bmData.addOutputTime(IActuatorBenchmark.Operation.QUERYPROCESSING.name());
+			}catch(Exception e){
 				//ignore benchmarking
+				bmData = null;
 			}
 		}
 		for (Entry<Action, List<IActionParameter>> entry : actions.entrySet()){
@@ -125,8 +133,8 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 				action.executeMethod(parameters);
 				
 				//add benchmarking information
-				if (metaData != null){
-					metaData.addOutputTime(IActuatorBenchmark.Operation.ACTIONEXECTION.name()+
+				if (bmData != null){
+					bmData.addOutputTime(IActuatorBenchmark.Operation.ACTIONEXECTION.name()+
 							action.getActuator().getClass().getName()+"."+
 							action.getMethod().getName());
 				}
@@ -135,8 +143,8 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 				this.logger.error("Method execution failed: "+e.getMessage());
 			}
 		}
-		if (benchmark != null){
-			benchmark.addBenchmarkData(metaData);
+		if (bmData != null){
+			benchmark.addBenchmarkData(bmData);
 		}
 	}
 }
