@@ -89,6 +89,10 @@ public class ActuatorBenchmark implements IActuatorBenchmark, CommandProvider{
 		}
 
 	}
+	
+	public void _stopbenchmark(CommandInterpreter ci){
+		this.stop();
+	}
 
 	@Override
 	public void addBenchmarkData(BenchmarkData data) {
