@@ -4,7 +4,8 @@ Bundle-Name: EclipseConsole
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.eclipseConsole
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.action.eclipseconsole.Activator
-Import-Package: de.uniol.inf.is.odysseus.action.services.actuator,
+Import-Package: de.uniol.inf.is.odysseus.action.benchmark,
+ de.uniol.inf.is.odysseus.action.services.actuator,
  de.uniol.inf.is.odysseus.action.services.exception,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.planmanagement.executor,

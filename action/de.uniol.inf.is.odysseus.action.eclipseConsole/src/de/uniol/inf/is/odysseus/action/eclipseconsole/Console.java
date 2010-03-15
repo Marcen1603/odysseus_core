@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
+import de.uniol.inf.is.odysseus.action.benchmark.IActuatorBenchmark;
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionMethod;
 import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
@@ -23,6 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 public class Console implements	org.eclipse.osgi.framework.console.CommandProvider {
 	private IAdvancedExecutor executer;
 	private IActuatorFactory actuatorFactory;
+	private IActuatorBenchmark benchmark;
 
 	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
@@ -181,12 +183,39 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 	}
 	
+	public void _testmm(CommandInterpreter ci){
+		this._mmsdb(ci);
+		
+		try {
+			executer.addQuery("select * from machineMaintenance:usage", "CQL");
+			executer.addQuery("select * from machineMaintenance:factory", "CQL");
+			executer.addQuery("select * from machineMaintenance:machine", "CQL");
+			
+			actuatorFactory.createActuator("a1", "de.uniol.inf.is.odysseus.action.actuator." +
+					"impl.TestActuator(name:String)", "ActuatorAdapterManager");
+			
+			executer.addQuery("ON(select * from machineMaintenance:install) " +
+					"DO ActuatorAdapterManager.a1.getName()", "ECA");
+			
+			this.benchmark.run();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void bindActuatorFactory(IActuatorFactory factory){
 		this.actuatorFactory = factory;
 	}
 	
 	public void bindExecutor(IAdvancedExecutor executer){
 		this.executer = executer;
+	}
+	
+	public void bindBenchmark(IActuatorBenchmark bm){
+		this.benchmark = bm;
 	}
 	
 	
