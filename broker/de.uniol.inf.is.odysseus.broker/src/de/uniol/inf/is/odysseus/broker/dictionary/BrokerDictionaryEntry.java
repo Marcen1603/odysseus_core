@@ -31,6 +31,8 @@ public class BrokerDictionaryEntry {
 		int addedToPort = writingTypes.length;
 		writingTypes = Arrays.copyOf(writingTypes, writingTypes.length+2);
 		writingTypes[addedToPort] = type;
+		//odd port is for timestamps
+		writingTypes[addedToPort+1] = WriteTransaction.Timestamp;
 		return addedToPort;
 	}
 	
