@@ -23,12 +23,22 @@ public class BrokerTransformationHelper {
 			liste.add(sub);
 		}
 		BrokerDictionary.getInstance().removeAllReadingPorts(broker.getIdentifier());
-		ArrayList<PhysicalSubscription<?>> kopie = (ArrayList<PhysicalSubscription<?>>) liste.clone();
+		ArrayList<PhysicalSubscription<?>> kopie = (ArrayList<PhysicalSubscription<?>>) liste.clone();		
 		for(PhysicalSubscription<?> sub: kopie){			
 			int nextPort = BrokerDictionary.getInstance().getNextReadPort(broker.getIdentifier());
-			System.err.println("Remap port of "+sub.getTarget()+" from "+sub.getSourceOutPort()+" to "+nextPort);
-			((ISink)sub.getTarget()).unsubscribeFromSource(broker, sub.getSinkInPort(), sub.getSourceOutPort(), broker.getOutputSchema());
-			((ISink)sub.getTarget()).subscribeToSource(broker, sub.getSinkInPort(), nextPort, broker.getOutputSchema());			
+			System.err.println("Remap port of "+sub.getTarget()+" from "+sub.getSourceOutPort()+" to "+nextPort+" (Out:"+sub.getSinkInPort()+")");
+			for(PhysicalSubscription<?> sub2: broker.getSubscriptions()){
+				System.err.println("START: "+sub2);
+			}			
+			broker.unsubscribeSink((ISink)sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+			for(PhysicalSubscription<?> sub2: broker.getSubscriptions()){
+				System.err.println("MITTE: "+sub2);
+			}
+			broker.subscribeSink((ISink)sub.getTarget(), sub.getSinkInPort(), nextPort, sub.getSchema());
+			
+			for(PhysicalSubscription<?> sub2: broker.getSubscriptions()){
+				System.err.println("ENDE: "+sub2);
+			}
 		}
 	}
 	
