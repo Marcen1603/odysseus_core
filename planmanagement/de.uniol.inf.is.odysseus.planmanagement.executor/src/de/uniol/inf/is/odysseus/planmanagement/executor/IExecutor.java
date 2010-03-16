@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandl
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Query;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -71,6 +72,21 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
 
+	
+	
+	/**
+	 * addQuery fügt Odysseus eine Anfrage hinzu, die bereits als Query
+	 * vorliegt. Es kann sein, dass die Anfrage nicht direkt der Auführung
+	 * hinzugefügt wird (bspw. bei interner asychronen Optimierung). Die
+	 * zurückgebegen ID ist daher nur vorläufig. Erst beim Empfangen des
+	 * Hinzufüen-Events kann davon ausgegangen werden, dass die Anfrage
+	 * hinzugefügt wurde.
+	 * 
+	 * @param query die query
+	 * @return vorläufige ID der neuen Anfrage
+	 * @throws PlanManagementException
+	 */	
+	public int addQuery(Query query) throws PlanManagementException;
 	/**
 	 * addQuery fÃ¼gt Odysseus eine Anfrage hinzu, die als Zeichenkette vorliegt.
 	 * Es kann sein, dass die Anfrage nicht direkt der AufÃ¼hrung hinzugefÃ¼gt

@@ -18,56 +18,53 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
  * TODO: sollte von Jonas oder Marco dokumentiert werden.
  * 
  * @author Wolf Bauer
- *
+ * 
  */
-public abstract class AbstractBufferPlacementStrategy implements
-		IBufferPlacementStrategy {
+public abstract class AbstractBufferPlacementStrategy implements IBufferPlacementStrategy {
 
 	/**
 	 * Name of this strategy
 	 */
 	private String name = null;
-	
-	protected void activate(ComponentContext context){
+
+	protected void activate(ComponentContext context) {
 		setName(context.getProperties());
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	protected void setName(Dictionary properties){
-		name = ((String)properties.get("component.readableName"));
-		if (name == null){
-			name = ((String)properties.get("component.name"));
+	protected void setName(Dictionary properties) {
+		name = ((String) properties.get("component.readableName"));
+		if (name == null) {
+			name = ((String) properties.get("component.name"));
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan.isSink() && !plan.isSource()) {
-			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
-					.getSubscribedToSource()) {
+			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan).getSubscribedToSource()) {
 				addBuffers(s.getTarget());
 			}
 		}
-		if (plan.isSource()){
+		if (plan.isSource()) {
 			addBuffers((ISource) plan);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
-			PhysicalSubscription<? extends ISource<?>> s) {
+	protected void placeBuffer(IBuffer buffer, ISink<?> sink, PhysicalSubscription<? extends ISource<?>> s) {
 		// TODO Warnings
-		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(),0, s.getSchema());
-		buffer.subscribeSink(sink, s.getSinkInPort(),0, s.getSchema());
-		s.getTarget().subscribeSink(buffer, 0,0, s.getSchema());
+		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+		buffer.subscribeSink(sink, s.getSinkInPort(), 0, s.getSchema());
+		s.getTarget().subscribeSink(buffer, 0, s.getSourceOutPort(), s.getSchema());
 		initBuffer(buffer);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected abstract void initBuffer(IBuffer buffer);
 
@@ -81,8 +78,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 		while (!sinks.isEmpty()) {
 			ISink<?> sink = sinks.pop();
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions = sink
-					.getSubscribedToSource();
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions = sink.getSubscribedToSource();
 			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
 				if (s.getTarget().isSink()) {
 					if (s.getTarget() instanceof IBuffer) {
@@ -108,8 +104,6 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 	abstract protected IBuffer<?> createNewBuffer();
 
-	abstract protected boolean bufferNeeded(
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
-			ISink<?> childSink);
+	abstract protected boolean bufferNeeded(Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions, ISink<?> childSink);
 
 }
