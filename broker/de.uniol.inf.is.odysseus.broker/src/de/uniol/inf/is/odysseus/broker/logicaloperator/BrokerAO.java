@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -44,8 +49,17 @@ public class BrokerAO extends AbstractLogicalOperator{
 	}
 	
 	public String getIdentifier(){
-		return this.identifier;
+		return this.identifier;		
 	}
+	
+	public List<ILogicalOperator> getAllChildren(){
+		List<ILogicalOperator> childs = new ArrayList<ILogicalOperator>();
+		for(LogicalSubscription sub : super.getSubscriptions()){
+			System.err.println("AO-Sub: "+sub.getTarget()+" ("+this+")");
+			childs.add(sub.getTarget());
+		}		
+		return childs;
+	}		
 	
 	public void setIdentifier(String identifier){
 		this.identifier = identifier;

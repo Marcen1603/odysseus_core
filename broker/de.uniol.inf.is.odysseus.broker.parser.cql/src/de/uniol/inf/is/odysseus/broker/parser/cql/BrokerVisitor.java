@@ -4,8 +4,6 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
-import de.uniol.inf.is.odysseus.broker.transaction.GraphUtils;
-import de.uniol.inf.is.odysseus.broker.transaction.TransactionType;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
@@ -45,7 +43,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// connect the source to broker
-		int inPort = BrokerDictionary.getInstance().addNewWriteTransaction(name, TransactionType.Write.Continuous);
+		int inPort = BrokerDictionary.getInstance().getNextWritePort(name);
 		broker.subscribeToSource(result, inPort, 0, result.getOutputSchema());		
 		// make it accessible like a normal source
 		DataDictionary.getInstance().sourceTypeMap.put(name, "brokerStreaming");
@@ -60,7 +58,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		if (BrokerDictionary.getInstance().brokerExists(brokerName)) {					
 			
 			BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);			
-			broker.setOutputSchema(BrokerDictionary.getInstance().getOutputSchema(brokerName));
+			broker.setOutputSchema(BrokerDictionary.getInstance().getOutputSchema(brokerName));			
 			return broker;
 		}else{
 			throw new RuntimeException("Broker "+brokerName+" not exists");
@@ -93,13 +91,8 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 		broker.setOutputSchema(BrokerDictionary.getInstance().getOutputSchema(brokerName));
 		// check, if broker and top of select have the same attributelist		
-		if(schemaEquals(topOfSelectStatementOperator.getOutputSchema(),broker.getOutputSchema())){
-			// determine transaction type			
-			TransactionType.Write transType = TransactionType.Write.Continuous;
-			if(GraphUtils.isCyclic(topOfSelectStatementOperator, broker.getIdentifier())){
-				transType = TransactionType.Write.Cyclic;
-			}
-			int inPort = BrokerDictionary.getInstance().addNewWriteTransaction(brokerName, transType);			
+		if(schemaEquals(topOfSelectStatementOperator.getOutputSchema(),broker.getOutputSchema())){								
+			int inPort = BrokerDictionary.getInstance().getNextWritePort(brokerName);			
 			broker.subscribeToSource(topOfSelectStatementOperator, inPort, 0, topOfSelectStatementOperator.getOutputSchema());
 		}else{			
 			String message = "Schema to insert: "+topOfSelectStatementOperator.getOutputSchema().toString()+"\n";
