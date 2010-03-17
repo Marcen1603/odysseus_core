@@ -49,7 +49,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * Referenz auf eine eventReader Implementierung zum
 	 * datenmodellunabhaengigen Auslesen von Events.
 	 */
-	private Map<Integer, IEventReader<R, ?>> eventReader = new HashMap<Integer, IEventReader<R, ?>>();
+	private Map<Integer, IEventReader<R, R>> eventReader = new HashMap<Integer, IEventReader<R, R>>();
 	
 	/**
 	 * Input-Puffer zur Sortierung
@@ -104,7 +104,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 *             Invarianten einhält.
 	 */
 	public CepOperator(StateMachine<R> stateMachine,
-			Map<Integer, IEventReader<R, ?>> eventReader,
+			Map<Integer, IEventReader<R, R>> eventReader,
 			IComplexEventFactory<R, W> complexEventFactory, boolean validate)
 			throws Exception {
 		super();
@@ -324,22 +324,21 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	private boolean updateVariables(R object, StateMachineInstance<R> instance,
 			Transition transition, int port) {
-		for (String varName : transition.getCondition().getVarNames()) {
-			String name = CepVariable.getAttributeName(varName);
+		for (CepVariable varName : transition.getCondition().getVarNames()) {
 
 			Object newValue = null;
-			if (CepVariable.isActEventName(varName)) {
-				newValue = this.eventReader.get(port).getValue(name, object);
+			if (varName.isActEventName()) {
+				newValue = this.eventReader.get(port).getValue(varName.getVariableName(), object);
 				if (newValue == null) {
 					return false;
 				}
 			} else { // historic
 				newValue = getValue(port, instance, varName);
 			}
+			// Set Value in Expression to evaluate
 			transition.getCondition().setValue(varName, newValue);
 			if (logger.isDebugEnabled()) {
-				logger.debug(varName + " = " + newValue + " from (" + name
-						+ ") " + object);
+				logger.debug(varName + " = " + newValue +" from " + object);
 			}
 		}
 		return true;
@@ -373,7 +372,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				for (IOutputSchemeEntry entry : this.stateMachine
 						.getOutputScheme().getEntries()) {
 
-					for (String varName : entry.getVarNames()) {
+					for (CepVariable varName : entry.getVarNames()) {
 						Object value = getValue(-1, instance, varName);
 						entry.setValue(varName, value);
 					}
@@ -400,24 +399,24 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	}
 
 	private Object getValue(int port, StateMachineInstance<R> instance,
-			String varName) {
+			CepVariable varName) {
 		/*
 		 * Two Cases: Var is in symbol table Var is from consumed event
 		 */
 
 		Object value = instance.getSymTab().getValue(varName);
 		if (value == null) {
-			String[] split = varName.split(CepVariable.getSeperator());
-			int index = split[2].isEmpty() ? -1 : Integer.parseInt(split[2]);
+			//String[] split = varName.split(CepVariable.getSeperator());
+			//int index = split[2].isEmpty() ? -1 : Integer.parseInt(split[2]);
 			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(
-					split[1], index);
+					varName.getStateIdentifier(), varName.getIndex());
 			if (event != null) {
 				IEventReader<R, ?> eventR = this.eventReader.get(port);
 				if (port > 0) {
 					eventR = this.eventReader.get(port);
 				} else {
 					// For final Results ... find Event-Reader
-					String type = stateMachine.getState(split[1]).getType();
+					String type = stateMachine.getState(varName.getStateIdentifier()).getType();
 					for (IEventReader<R, ?> r : eventReader.values()) {
 						if (r.getType().equals(type)) {
 							eventR = r;
@@ -425,7 +424,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						}
 					}
 				}
-				value = eventR.getValue(split[3], event.getEvent());
+				value = eventR.getValue(varName.getAttribute(), event.getEvent());
 			}
 		}
 		return value;
@@ -457,7 +456,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * 
 	 * @return Das Event-Reader-Objekt.
 	 */
-	public Map<Integer, IEventReader<R, ?>> getEventReader() {
+	public Map<Integer, IEventReader<R, R>> getEventReader() {
 		return eventReader;
 	}
 
@@ -468,7 +467,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * @param eventReader
 	 *            Das neue Event-Reader-Objekt, nicht null.
 	 */
-	public void setEventReader(IEventReader<R, ?> eventReader, int port) {
+	public void setEventReader(IEventReader<R, R> eventReader, int port) {
 		this.eventReader.put(port, eventReader);
 	}
 

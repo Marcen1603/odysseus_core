@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
 
-class ElementPartialAggregate<T extends Comparable<T>> implements IPartialAggregate<T> {
+public class ElementPartialAggregate<T> implements IPartialAggregate<T> {
 	T elem;
 	
 	public ElementPartialAggregate(T elem) {

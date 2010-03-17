@@ -1,32 +1,27 @@
 package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
 
 public class SymbolTableOperationFactory {
 
-	@SuppressWarnings("unchecked")
-	public static AbstractSymbolTableOperation getOperation(String name) {
-		if (name == null || name.length() == 0){
-			return null;
+	static ISymbolTableOperationFactory fac = null;
+	
+	static public void setSymbolTableOperationFactory(ISymbolTableOperationFactory factory) {
+		if (fac == null){
+			fac = factory;
+		}else{
+			throw new RuntimeException("Multiple Symbole Table Operation Factories set");
 		}
-		if (Write.class.getSimpleName().equalsIgnoreCase(name)){
-			return new Write();
-		}
-		if (Count.class.getSimpleName().equalsIgnoreCase(name)){
-			return new Count();
-		}
-		if (Max.class.getSimpleName().equalsIgnoreCase(name)){
-			return new Max();
-		}
-		if (Min.class.getSimpleName().equalsIgnoreCase(name)){
-			return new Min();
-		}
-		if (Sum.class.getSimpleName().equalsIgnoreCase(name)){
-			return new Sum();
-		}
-		
-		throw new IllegalArgumentException("No operation "+ name +" defined!");
 	}
 	
+	static public void unsetSymbolTableOperationFactory() {
+		fac = null;
+	}
+
 	
+	static public IAggregateFunction getOperation(String name) {
+		IAggregateFunction op = fac.getOperation(name);
+		return op;
+	}
 
 }

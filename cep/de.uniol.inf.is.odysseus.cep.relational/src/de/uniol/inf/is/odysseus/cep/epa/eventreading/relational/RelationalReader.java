@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class RelationalReader extends AbstractEventReader<RelationalTuple<? extends ITimeInterval>> {
+public class RelationalReader extends AbstractEventReader<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>> {
 
 	HashMap<String, Integer> scheme;
 	
@@ -43,7 +43,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<? exte
 	 *            vom Typ {@link RelationalTuple} sein!
 	 */
 	@Override
-	protected Object getValue_internal(String id, RelationalTuple<? extends ITimeInterval> event) {
+	public RelationalTuple<? extends ITimeInterval> getValue(String id, RelationalTuple<? extends ITimeInterval> event) {
 		if (id.isEmpty())
 			return null;//Leere Attribut id bei bstimmten Aggregationen (z.B. Count)
 		
@@ -58,9 +58,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<? exte
 			}
 		}
 		if (pos != null){
-			RelationalTuple<?> tuple = (RelationalTuple<?>) event;
-			Object ret = tuple.getAttribute(pos);
-			return ret;
+			return event.restrict(pos, true);
 		}else{
 			return null;
 		}

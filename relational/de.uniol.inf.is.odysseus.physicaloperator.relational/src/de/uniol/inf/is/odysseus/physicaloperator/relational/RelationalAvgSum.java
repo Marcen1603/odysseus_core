@@ -1,19 +1,18 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.AvgSum;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 @SuppressWarnings("unchecked")
-public class RelationalAvgSum implements IAggregateFunction<RelationalTuple<?>>{
+public class RelationalAvgSum extends AvgSum<RelationalTuple<?>>{
 
 	private int pos;
-	boolean isAvg;
 	
 	public RelationalAvgSum(int pos, boolean isAvg){
+		super(isAvg);
 		this.pos = pos;
-		this.isAvg = isAvg;
 	}
 	
 	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple in) {
@@ -44,7 +43,7 @@ public class RelationalAvgSum implements IAggregateFunction<RelationalTuple<?>>{
 	public RelationalTuple evaluate(IPartialAggregate p) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
 		RelationalTuple r = new RelationalTuple(1);
-		if (isAvg){
+		if (isAvg()){
 			r.setAttribute(0, new Double(pa.getAggValue().doubleValue()/pa.getCount()));
 		}else{
 			r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));

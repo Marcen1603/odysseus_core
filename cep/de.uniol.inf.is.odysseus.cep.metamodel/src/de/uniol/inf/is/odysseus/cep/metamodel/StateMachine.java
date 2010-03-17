@@ -157,9 +157,8 @@ public class StateMachine<E> {
 			//System.out.println("State "+s.getId());
 			for (Transition t: s.getTransitions()){
 				//System.out.println("Transition "+t.getId());
-				for (String v: t.getCondition().getVarNames()){
+				for (CepVariable var: t.getCondition().getVarNames()){
 			//		System.out.println("Variable "+v);
-					CepVariable var = new CepVariable(v);
 //					if (var.getStateIdentifier() == null){
 //						var.setStateIdentifier(s.getId());
 //					}

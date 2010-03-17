@@ -13,4 +13,6 @@ Export-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.metamodel.xml
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions,
+ de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema

@@ -1,38 +1,31 @@
 package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.AbstractAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.ElementPartialAggregate;
 
-/**
- * Symboltabellen-Operator, der den Wert einer Variable in der Symboltabelle
- * setzt.
- * 
- * @author Thomas Vogelgesang
- * 
- */
-public class Write extends AbstractSymbolTableOperation<Object, Object> {
-
-	public Write() {
-		super();
-	}
-
-	/**
-	 * Implementiert die Schnittstelle zum Ausführen der Operation auf der
-	 * Symboltabelle.
-	 * 
-	 * @param oldValue
-	 *            Der alte Wert aus der Symboltabelle. (Wird ignoriert)
-	 * @param eventValue
-	 *            Der Attributwert aus dem Event.
-	 * @return Gibt den Wert von eventValue zurück.
-	 */
-	@Override
-	public Object execute(Object oldValue, Object eventValue) {
-		return eventValue;
-	}
+public class Write<R> extends AbstractAggregateFunction<R> {
 	
-	@Override
-	public String toString(String indent) {
-		String str = indent + "Set: " + this.hashCode();
-		indent += "  ";
-		return str;
+	public Write() {
+		super("WRITE");
 	}
+
+	@Override
+	public IPartialAggregate<R> init(R in) {
+		return new ElementPartialAggregate<R>(in);
+	}
+
+	@Override
+	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge,
+			boolean createNew) {
+		((ElementPartialAggregate<R>)p).setElem(toMerge);
+		return p;
+	}
+
+	@Override
+	public R evaluate(IPartialAggregate<R> p) {
+		return ((ElementPartialAggregate<R>)p).getElem();
+	}
+
+	
 }

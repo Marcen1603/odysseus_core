@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
-
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
 /**
  * Instanzen dieser Klasse stellen die Symboltabelle einer AutomatenInstanz dar.
@@ -17,12 +17,12 @@ import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
  * @author Thomas Vogelgesang
  * 
  */
-public class SymbolTable {
+public class SymbolTable<T> {
 
 	/**
 	 * Liste mit allen Einträgen der Symboltabelle
 	 */
-	private Map<String, Object> entries = new HashMap<String, Object>();
+	private Map<String, IPartialAggregate<T>> entries = new HashMap<String, IPartialAggregate<T>>();
 	private Map<String, CepVariable> vars = new HashMap<String, CepVariable>();
 
 	/**
@@ -45,12 +45,12 @@ public class SymbolTable {
 		}		
 	}
 
-	public SymbolTable(SymbolTable symbolTable) {
-		this.entries = new HashMap<String, Object>(symbolTable.entries);
+	public SymbolTable(SymbolTable<T> symbolTable) {
+		this.entries = new HashMap<String, IPartialAggregate<T>>(symbolTable.entries);
 		this.vars = new HashMap<String, CepVariable>(symbolTable.vars);
 	}
 
-	public Map<String, Object> getEntries() {
+	public Map<String, IPartialAggregate<T>> getEntries() {
 		return entries;
 	}
 
@@ -69,36 +69,41 @@ public class SymbolTable {
 	 * @return Den aktuellen Wert der Variablen oder null falls ein Fehler
 	 *         auftritt.
 	 */
-	public Object getValue(String name) {
-		return entries.get(name);
-	}
+//	public Object getValue(String name) {
+//		return entries.get(name);
+//	}
 
 	public Object getValue(CepVariable name) {
+		// name.getOperation().evaluate(entries.get(name.getVariableName()));
 		return entries.get(name.getVariableName());
 	}
 
-	private void setValue(CepVariable variable, Object value) {
-		entries.put(variable.getVariableName(), value);
+	public void updateValue(CepVariable variable, T value) {
+		IPartialAggregate<T> e = entries.get(variable.getVariableName());
+		if (e==null){
+			// e = variable.getOperation().init(value);
+		}else{
+			IPartialAggregate<T> e_new = null;
+			// e_new = variable.getOperation().merge(e, value);
+			e = e_new;
+		}
+		entries.put(variable.getVariableName(), e);
 	}
+
 	
 	@Override
 	public String toString() {
 		String str = "Symbol table (#: " + this.entries.size() + "): [";
-		for (Entry<String, Object> entry : this.entries.entrySet()) {
+		for (Entry<String, IPartialAggregate<T>> entry : this.entries.entrySet()) {
 			if (entry.getValue()!=null) str += " " + entry.getKey()+"="+entry.getValue();
 		}
 		return str+"]";
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void executeOperation(CepVariable variable, Object value) {
-		Object newValue = variable.getOperation().execute(getValue(variable), value);
-		setValue(variable, newValue);
-	}
 
 	@Override
-	public SymbolTable clone() {
-		return new SymbolTable(this);
+	public SymbolTable<T> clone() {
+		return new SymbolTable<T>(this);
 	}
 
 }

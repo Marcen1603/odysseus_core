@@ -452,6 +452,7 @@ attributeTerm[List<PathAttribute> attribs]
       | MAX
       | SUM
       | COUNT
+      | AVG
     )
     var=NAME
    )

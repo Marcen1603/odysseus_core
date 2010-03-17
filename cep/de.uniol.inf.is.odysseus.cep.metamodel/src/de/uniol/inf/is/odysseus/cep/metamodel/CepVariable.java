@@ -1,19 +1,16 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperation;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
-import de.uniol.inf.is.odysseus.cep.metamodel.xml.adapter.SymbolTableOperationAdapter;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
 
 /**
  * Cep-Varible mit Moeglichkeiten zur Konvertierung in einem String.
  * 
  * 
  * Die internen Variablennamen sind nach folgendem Muster aufgebaut:
- * <OperationName>#<StateID>#<Index>#<AttributName>
+ * <OperationName>_<StateID>_<Index>_<AttributName>
  * 
- * wobei das hier dargestellte Trennzeichen # hier definiert werden kann
+ * wobei das hier dargestellte Trennzeichen _ hier definiert werden kann
  * 
  * OperationName: Name der Symboltabellenoperation. Bezieht sich der
  * Variablenname auf das aktuelle Event, so ist OperationName leer.
@@ -44,18 +41,19 @@ public class CepVariable {
 	 * Index des Elements im StateBuffer. Negativ, wenn das oberste Element
 	 * referenziert werden soll.
 	 */
-	private int index;
+	private Integer index;
 	/**
 	 * ID des Attributs. Muss von der verwendeten Implementierung von @link
 	 * {@link AbstractEventReader} aufgelöst werden können.
 	 */
+	// TODO: Hier sollte man nicht einen Attributenamen, sondern eine Expression
+	// erlauben. Dann k�nnte man auch sum(i[1]-i[1]) oder so etwas machen ...
 	private String attributename;
 	/**
 	 * Definiert die Operation, die bei der Aktualisierung der Symboltabelle
 	 * ausgeführt werden soll.
 	 */
-	@SuppressWarnings("unchecked")
-	private ISymbolTableOperation operation;
+	private IAggregateFunction operation;
 
 	/**
 	 * Erzeugt einen Eintrag-Objekt für das Symboltabellenschema
@@ -71,7 +69,7 @@ public class CepVariable {
 	 *            werden soll
 	 */
 	@SuppressWarnings("unchecked")
-	public CepVariable(String stateIdentifier, int index, String attribute, ISymbolTableOperation operation) {
+	public CepVariable(String stateIdentifier, Integer index, String attribute, IAggregateFunction operation) {
 		this.stateIdentifier = stateIdentifier;
 		this.index = index;
 		this.attributename = attribute;
@@ -126,7 +124,7 @@ public class CepVariable {
 	 *            nicht null.
 	 */
 	@SuppressWarnings("unchecked")
-	public void setOperation(ISymbolTableOperation operation) {
+	public void setOperation(IAggregateFunction operation) {
 		this.operation = operation;
 	}
 
@@ -136,8 +134,7 @@ public class CepVariable {
 	 * @return Die Symboltabellenoperation des Eintrags.
 	 */
 	@SuppressWarnings("unchecked")
-	@XmlJavaTypeAdapter(SymbolTableOperationAdapter.class)
-	public ISymbolTableOperation getOperation() {
+	public IAggregateFunction getOperation() {
 		return operation;
 	}
 
@@ -175,7 +172,7 @@ public class CepVariable {
 	 *         oberste Element des {@link StateBuffer} gemeint ist, ansonsten
 	 *         positiv.
 	 */
-	public int getIndex() {
+	public Integer getIndex() {
 		return index;
 	}
 
@@ -187,7 +184,7 @@ public class CepVariable {
 	 *            Der neue Index. Negative wenn das oberste Element des
 	 *            {@link StateBuffer} referenziert werden soll.
 	 */
-	public void setIndex(int index) {
+	public void setIndex(Integer index) {
 		this.index = index;
 	}
 
@@ -267,6 +264,10 @@ public class CepVariable {
 	public static String getStringFor(String operation, String stateIdentifier, String index, String attribute) {
 		return operation+getSeperator()+stateIdentifier+getSeperator()+(index!=null?index:"")+getSeperator()+attribute;
 		
+	}
+
+	public boolean isActEventName() {
+		return this.stateIdentifier == null && this.index == null && this.operation == null;
 	}
 
 }

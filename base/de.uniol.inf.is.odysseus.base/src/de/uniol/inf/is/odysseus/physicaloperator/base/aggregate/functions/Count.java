@@ -1,10 +1,14 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class Count<T> implements IAggregateFunction<T> {
-
+abstract public class Count<T> extends AbstractAggregateFunction<T> {
+	
+	public Count() {
+		super("COUNT");
+	}
+	
 	public IPartialAggregate<T> init(T in) {
 		IPartialAggregate<T> pa = new CountPartialAggregate<T>(1); 
 		return pa;

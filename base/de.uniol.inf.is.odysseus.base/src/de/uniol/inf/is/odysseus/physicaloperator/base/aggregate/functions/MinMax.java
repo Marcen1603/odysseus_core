@@ -1,15 +1,17 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
-public class MinMax<T extends Comparable<T>> implements IAggregateFunction<T>{
+public class MinMax<T extends Comparable<T>> extends AbstractAggregateFunction<T>{
 	
 	boolean isMax = true;
 	
 	public MinMax(boolean isMax) {
+		super (isMax?"MAX":"MIN");
 		this.isMax = isMax;
 	}
+		
 	
 	public IPartialAggregate<T> init(T in) {
 		return new ElementPartialAggregate<T>(in);

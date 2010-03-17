@@ -165,18 +165,14 @@ attributeTerm: aggregation |
 	;
 	
 aggregation
-	:	 saveaggop LBRACKET var=NAME BBRACKETLEFT POINT POINT name=NAME MINUS number=NUMBER BBRACKETRIGHT POINT member=NAME RBRACKET {$name.getText().equalsIgnoreCase("I") && Integer.parseInt($number.getText()) == 1}?
-		 -> ^(AGGREGATION saveaggop $var $member )
-		 | AVG LBRACKET var=NAME BBRACKETLEFT POINT POINT name=NAME MINUS number=NUMBER BBRACKETRIGHT POINT member=NAME RBRACKET   {$name.getText().equalsIgnoreCase("I") && Integer.parseInt($number.getText()) == 1}?
-		 -> ^(DIVISION ^(AGGREGATION SUM $var $member) ^(AGGREGATION COUNT $var $member) ) 
-		 |saveaggop LBRACKET var=NAME BBRACKETLEFT BBRACKETRIGHT (POINT member=NAME)? RBRACKET 
-		 -> ^(AGGREGATION saveaggop $var $member?)
-		 | AVG LBRACKET var=NAME BBRACKETLEFT BBRACKETRIGHT (POINT member=NAME)? RBRACKET 
-		 -> ^(DIVISION ^(AGGREGATION SUM $var $member?) ^(AGGREGATION COUNT $var $member?) )     
+	:	 aggop LBRACKET var=NAME BBRACKETLEFT POINT POINT name=NAME MINUS number=NUMBER BBRACKETRIGHT POINT member=NAME RBRACKET {$name.getText().equalsIgnoreCase("I") && Integer.parseInt($number.getText()) == 1}?
+		 -> ^(AGGREGATION aggop $var $member )
+		 |aggop LBRACKET var=NAME BBRACKETLEFT BBRACKETRIGHT (POINT member=NAME)? RBRACKET 
+		 -> ^(AGGREGATION aggop $var $member?)
 		 ; 
 
-saveaggop 
-	: MIN|MAX|SUM|COUNT	
+aggop 
+	: MIN|MAX|SUM|COUNT|AVG
 	;
 	
 value 	:	 NUMBER | STRING_LITERAL;

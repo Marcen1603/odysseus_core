@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.cep.metamodel.AbstractOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
@@ -200,7 +201,7 @@ public class Validator<R> {
 							/*
 							 * Invariante 17
 							 */
-							for (String name : (Set<String>) transition
+							for (CepVariable name :  transition
 									.getCondition().getVarNames()) {
 								if (!this.checkActualVarName(name)
 										&& !this.checkHistoricalVarName(name)) {
@@ -367,8 +368,8 @@ public class Validator<R> {
 		} else {
 			for (AbstractOutputSchemeEntry entry : stateMachine.getOutputScheme()
 					.getEntries()) {
-				Set<String> varNames = entry.getVarNames();
-				for (String name : varNames) {
+				Set<CepVariable> varNames = entry.getVarNames();
+				for (CepVariable name : varNames) {
 					if (!this.checkActualVarName(name)
 							&& !this.checkHistoricalVarName(name)) {
 						InvalidVariableNameError e = new InvalidVariableNameError();
@@ -396,37 +397,39 @@ public class Validator<R> {
 	 * @return true, wenn der Variablenname der Konvention entspricht, ansonsten
 	 *         false.
 	 */
-	private boolean checkHistoricalVarName(String varName) {
+	private boolean checkHistoricalVarName(CepVariable varName) {
 		if (varName == null) {
 			return false;
-		} else {
-			String[] split = varName.split(CepVariable.getSeperator());
-			if (split.length == 4) {
-				if (!this.checkName(split[0]) || !this.checkName(split[1]))
-					return false;
-				if (!this.checkName(split[3]) && !split[3].isEmpty())
-					return false;
-				if (!split[2].isEmpty()) {
-					try {
-						Integer.parseInt(split[2]);
-					} catch (NumberFormatException e) {
-						return false;
-					}
-				}
-			} else if (split.length == 2) {
-				if (!this.checkName(split[0]) || !this.checkName(split[1]))
-					return false;
-				if (!varName.endsWith(CepVariable.getSeperator() + CepVariable.getSeperator()))
-					return false;
-				
-			} else {
-				return false;
-			}
-			// for (int i = 0; i < split[1].length(); i++) {
+		}
+		// TODO: Anpassen
+//		} else {
+//			String[] split = varName.split(CepVariable.getSeperator());
+//			if (split.length == 4) {
+//				if (!this.checkName(split[0]) || !this.checkName(split[1]))
+//					return false;
+//				if (!this.checkName(split[3]) && !split[3].isEmpty())
+//					return false;
+//				if (!split[2].isEmpty()) {
+//					try {
+//						Integer.parseInt(split[2]);
+//					} catch (NumberFormatException e) {
+//						return false;
+//					}
+//				}
+//			} else if (split.length == 2) {
+//				if (!this.checkName(split[0]) || !this.checkName(split[1]))
+//					return false;
+//				if (!varName.endsWith(CepVariable.getSeperator() + CepVariable.getSeperator()))
+//					return false;
+//				
+//			} else {
+//				return false;
+//			}
+//			// for (int i = 0; i < split[1].length(); i++) {
 			// if (!Character.isDigit(split[i].charAt(i)))
 			// return false;
 			// }
-		}
+		//}
 		return true;
 	}
 
@@ -440,17 +443,10 @@ public class Validator<R> {
 	 * @return true, wenn der Variablenname der Konvention entspricht, ansonsten
 	 *         false.
 	 */
-	private boolean checkActualVarName(String name) {
+	private boolean checkActualVarName(CepVariable name) {
 		if (name == null)
 			return false;
-		String[] split = name.split(CepVariable.getSeperator());
-		for (int i = 0; i < 3; i++) {
-			if (!split[i].isEmpty())
-				return false;
-		}
-		//if (!this.checkName(Agent.getAttributeName(name)))
-		if (!this.checkName(CepVariable.getAttributeName(name)))
-			return false;
+		// TODO: Anpassen an neue Struktur
 		return true;
 	}
 

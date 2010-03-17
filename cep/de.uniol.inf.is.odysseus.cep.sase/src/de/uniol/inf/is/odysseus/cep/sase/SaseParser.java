@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2010-03-02 10:55:08
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2010-03-17 16:33:59
  
 	package de.uniol.inf.is.odysseus.cep.sase; 
 
@@ -253,7 +253,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: queryStmt, NAME
+            // elements: NAME, queryStmt
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -410,7 +410,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: withinPart, wherePart, returnPart, patternPart
+            // elements: returnPart, patternPart, withinPart, wherePart
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -535,7 +535,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: NUMBER, timeunit, WITHIN
+            // elements: timeunit, NUMBER, WITHIN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -737,7 +737,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: whereExpressions, skipPart, WHERE
+                    // elements: skipPart, WHERE, whereExpressions
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -781,7 +781,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: WHERE, whereExpressions
+                    // elements: whereExpressions, WHERE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1283,7 +1283,7 @@ public class SaseParser extends Parser {
 
 
             // AST REWRITE
-            // elements: SEQ, stateDef
+            // elements: stateDef, SEQ
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1597,7 +1597,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: NOTSIGN, typeDefinition
+                    // elements: typeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1669,7 +1669,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: ktypeDefinition, NOTSIGN
+                    // elements: NOTSIGN, ktypeDefinition
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3805,7 +3805,7 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "aggregation"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:1: aggregation : ( saveaggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION saveaggop $var $member) | AVG LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( DIVISION ^( AGGREGATION SUM $var $member) ^( AGGREGATION COUNT $var $member) ) | saveaggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION saveaggop $var ( $member)? ) | AVG LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( DIVISION ^( AGGREGATION SUM $var ( $member)? ) ^( AGGREGATION COUNT $var ( $member)? ) ) );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:1: aggregation : ( aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION aggop $var $member) | aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION aggop $var ( $member)? ) );
     public final SaseParser.aggregation_return aggregation() throws RecognitionException {
         SaseParser.aggregation_return retval = new SaseParser.aggregation_return();
         retval.start = input.LT(1);
@@ -3824,29 +3824,14 @@ public class SaseParser extends Parser {
         Token BBRACKETRIGHT115=null;
         Token POINT116=null;
         Token RBRACKET117=null;
-        Token AVG118=null;
         Token LBRACKET119=null;
         Token BBRACKETLEFT120=null;
-        Token POINT121=null;
+        Token BBRACKETRIGHT121=null;
         Token POINT122=null;
-        Token MINUS123=null;
-        Token BBRACKETRIGHT124=null;
-        Token POINT125=null;
-        Token RBRACKET126=null;
-        Token LBRACKET128=null;
-        Token BBRACKETLEFT129=null;
-        Token BBRACKETRIGHT130=null;
-        Token POINT131=null;
-        Token RBRACKET132=null;
-        Token AVG133=null;
-        Token LBRACKET134=null;
-        Token BBRACKETLEFT135=null;
-        Token BBRACKETRIGHT136=null;
-        Token POINT137=null;
-        Token RBRACKET138=null;
-        SaseParser.saveaggop_return saveaggop109 = null;
+        Token RBRACKET123=null;
+        SaseParser.aggop_return aggop109 = null;
 
-        SaseParser.saveaggop_return saveaggop127 = null;
+        SaseParser.aggop_return aggop118 = null;
 
 
         CommonTree var_tree=null;
@@ -3861,50 +3846,92 @@ public class SaseParser extends Parser {
         CommonTree BBRACKETRIGHT115_tree=null;
         CommonTree POINT116_tree=null;
         CommonTree RBRACKET117_tree=null;
-        CommonTree AVG118_tree=null;
         CommonTree LBRACKET119_tree=null;
         CommonTree BBRACKETLEFT120_tree=null;
-        CommonTree POINT121_tree=null;
+        CommonTree BBRACKETRIGHT121_tree=null;
         CommonTree POINT122_tree=null;
-        CommonTree MINUS123_tree=null;
-        CommonTree BBRACKETRIGHT124_tree=null;
-        CommonTree POINT125_tree=null;
-        CommonTree RBRACKET126_tree=null;
-        CommonTree LBRACKET128_tree=null;
-        CommonTree BBRACKETLEFT129_tree=null;
-        CommonTree BBRACKETRIGHT130_tree=null;
-        CommonTree POINT131_tree=null;
-        CommonTree RBRACKET132_tree=null;
-        CommonTree AVG133_tree=null;
-        CommonTree LBRACKET134_tree=null;
-        CommonTree BBRACKETLEFT135_tree=null;
-        CommonTree BBRACKETRIGHT136_tree=null;
-        CommonTree POINT137_tree=null;
-        CommonTree RBRACKET138_tree=null;
+        CommonTree RBRACKET123_tree=null;
         RewriteRuleTokenStream stream_LBRACKET=new RewriteRuleTokenStream(adaptor,"token LBRACKET");
         RewriteRuleTokenStream stream_NAME=new RewriteRuleTokenStream(adaptor,"token NAME");
         RewriteRuleTokenStream stream_MINUS=new RewriteRuleTokenStream(adaptor,"token MINUS");
         RewriteRuleTokenStream stream_RBRACKET=new RewriteRuleTokenStream(adaptor,"token RBRACKET");
         RewriteRuleTokenStream stream_BBRACKETLEFT=new RewriteRuleTokenStream(adaptor,"token BBRACKETLEFT");
         RewriteRuleTokenStream stream_POINT=new RewriteRuleTokenStream(adaptor,"token POINT");
-        RewriteRuleTokenStream stream_AVG=new RewriteRuleTokenStream(adaptor,"token AVG");
         RewriteRuleTokenStream stream_BBRACKETRIGHT=new RewriteRuleTokenStream(adaptor,"token BBRACKETRIGHT");
         RewriteRuleTokenStream stream_NUMBER=new RewriteRuleTokenStream(adaptor,"token NUMBER");
-        RewriteRuleSubtreeStream stream_saveaggop=new RewriteRuleSubtreeStream(adaptor,"rule saveaggop");
+        RewriteRuleSubtreeStream stream_aggop=new RewriteRuleSubtreeStream(adaptor,"rule aggop");
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:168:2: ( saveaggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION saveaggop $var $member) | AVG LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( DIVISION ^( AGGREGATION SUM $var $member) ^( AGGREGATION COUNT $var $member) ) | saveaggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION saveaggop $var ( $member)? ) | AVG LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( DIVISION ^( AGGREGATION SUM $var ( $member)? ) ^( AGGREGATION COUNT $var ( $member)? ) ) )
-            int alt28=4;
-            alt28 = dfa28.predict(input);
-            switch (alt28) {
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:168:2: ( aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION aggop $var $member) | aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION aggop $var ( $member)? ) )
+            int alt27=2;
+            int LA27_0 = input.LA(1);
+
+            if ( ((LA27_0>=AVG && LA27_0<=COUNT)) ) {
+                int LA27_1 = input.LA(2);
+
+                if ( (LA27_1==LBRACKET) ) {
+                    int LA27_2 = input.LA(3);
+
+                    if ( (LA27_2==NAME) ) {
+                        int LA27_3 = input.LA(4);
+
+                        if ( (LA27_3==BBRACKETLEFT) ) {
+                            int LA27_4 = input.LA(5);
+
+                            if ( (LA27_4==BBRACKETRIGHT) ) {
+                                alt27=2;
+                            }
+                            else if ( (LA27_4==POINT) ) {
+                                alt27=1;
+                            }
+                            else {
+                                if (state.backtracking>0) {state.failed=true; return retval;}
+                                NoViableAltException nvae =
+                                    new NoViableAltException("", 27, 4, input);
+
+                                throw nvae;
+                            }
+                        }
+                        else {
+                            if (state.backtracking>0) {state.failed=true; return retval;}
+                            NoViableAltException nvae =
+                                new NoViableAltException("", 27, 3, input);
+
+                            throw nvae;
+                        }
+                    }
+                    else {
+                        if (state.backtracking>0) {state.failed=true; return retval;}
+                        NoViableAltException nvae =
+                            new NoViableAltException("", 27, 2, input);
+
+                        throw nvae;
+                    }
+                }
+                else {
+                    if (state.backtracking>0) {state.failed=true; return retval;}
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 27, 1, input);
+
+                    throw nvae;
+                }
+            }
+            else {
+                if (state.backtracking>0) {state.failed=true; return retval;}
+                NoViableAltException nvae =
+                    new NoViableAltException("", 27, 0, input);
+
+                throw nvae;
+            }
+            switch (alt27) {
                 case 1 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:168:5: saveaggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}?
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:168:5: aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}?
                     {
-                    pushFollow(FOLLOW_saveaggop_in_aggregation1088);
-                    saveaggop109=saveaggop();
+                    pushFollow(FOLLOW_aggop_in_aggregation1088);
+                    aggop109=aggop();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_saveaggop.add(saveaggop109.getTree());
+                    if ( state.backtracking==0 ) stream_aggop.add(aggop109.getTree());
                     LBRACKET110=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1090); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LBRACKET.add(LBRACKET110);
 
@@ -3948,7 +3975,7 @@ public class SaseParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: member, saveaggop, var
+                    // elements: var, member, aggop
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -3961,14 +3988,14 @@ public class SaseParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (CommonTree)adaptor.nil();
-                    // 169:4: -> ^( AGGREGATION saveaggop $var $member)
+                    // 169:4: -> ^( AGGREGATION aggop $var $member)
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:169:7: ^( AGGREGATION saveaggop $var $member)
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:169:7: ^( AGGREGATION aggop $var $member)
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(AGGREGATION, "AGGREGATION"), root_1);
 
-                        adaptor.addChild(root_1, stream_saveaggop.nextTree());
+                        adaptor.addChild(root_1, stream_aggop.nextTree());
                         adaptor.addChild(root_1, stream_var.nextNode());
                         adaptor.addChild(root_1, stream_member.nextNode());
 
@@ -3981,127 +4008,27 @@ public class SaseParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:170:6: AVG LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}?
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:170:5: aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET
                     {
-                    AVG118=(Token)match(input,AVG,FOLLOW_AVG_in_aggregation1147); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_AVG.add(AVG118);
-
-                    LBRACKET119=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1149); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_LBRACKET.add(LBRACKET119);
-
-                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1153); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_NAME.add(var);
-
-                    BBRACKETLEFT120=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1155); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT120);
-
-                    POINT121=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1157); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_POINT.add(POINT121);
-
-                    POINT122=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1159); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_POINT.add(POINT122);
-
-                    name=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1163); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_NAME.add(name);
-
-                    MINUS123=(Token)match(input,MINUS,FOLLOW_MINUS_in_aggregation1165); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_MINUS.add(MINUS123);
-
-                    number=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_aggregation1169); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_NUMBER.add(number);
-
-                    BBRACKETRIGHT124=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1171); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT124);
-
-                    POINT125=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1173); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_POINT.add(POINT125);
-
-                    member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1177); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_NAME.add(member);
-
-                    RBRACKET126=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1179); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_RBRACKET.add(RBRACKET126);
-
-                    if ( !((name.getText().equalsIgnoreCase("I") && Integer.parseInt(number.getText()) == 1)) ) {
-                        if (state.backtracking>0) {state.failed=true; return retval;}
-                        throw new FailedPredicateException(input, "aggregation", "$name.getText().equalsIgnoreCase(\"I\") && Integer.parseInt($number.getText()) == 1");
-                    }
-
-
-                    // AST REWRITE
-                    // elements: var, member, var, member
-                    // token labels: member, var
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    if ( state.backtracking==0 ) {
-                    retval.tree = root_0;
-                    RewriteRuleTokenStream stream_member=new RewriteRuleTokenStream(adaptor,"token member",member);
-                    RewriteRuleTokenStream stream_var=new RewriteRuleTokenStream(adaptor,"token var",var);
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
-                    root_0 = (CommonTree)adaptor.nil();
-                    // 171:4: -> ^( DIVISION ^( AGGREGATION SUM $var $member) ^( AGGREGATION COUNT $var $member) )
-                    {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:7: ^( DIVISION ^( AGGREGATION SUM $var $member) ^( AGGREGATION COUNT $var $member) )
-                        {
-                        CommonTree root_1 = (CommonTree)adaptor.nil();
-                        root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(DIVISION, "DIVISION"), root_1);
-
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:18: ^( AGGREGATION SUM $var $member)
-                        {
-                        CommonTree root_2 = (CommonTree)adaptor.nil();
-                        root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(AGGREGATION, "AGGREGATION"), root_2);
-
-                        adaptor.addChild(root_2, (CommonTree)adaptor.create(SUM, "SUM"));
-                        adaptor.addChild(root_2, stream_var.nextNode());
-                        adaptor.addChild(root_2, stream_member.nextNode());
-
-                        adaptor.addChild(root_1, root_2);
-                        }
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:50: ^( AGGREGATION COUNT $var $member)
-                        {
-                        CommonTree root_2 = (CommonTree)adaptor.nil();
-                        root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(AGGREGATION, "AGGREGATION"), root_2);
-
-                        adaptor.addChild(root_2, (CommonTree)adaptor.create(COUNT, "COUNT"));
-                        adaptor.addChild(root_2, stream_var.nextNode());
-                        adaptor.addChild(root_2, stream_member.nextNode());
-
-                        adaptor.addChild(root_1, root_2);
-                        }
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;}
-                    }
-                    break;
-                case 3 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:5: saveaggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET
-                    {
-                    pushFollow(FOLLOW_saveaggop_in_aggregation1224);
-                    saveaggop127=saveaggop();
+                    pushFollow(FOLLOW_aggop_in_aggregation1146);
+                    aggop118=aggop();
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    if ( state.backtracking==0 ) stream_saveaggop.add(saveaggop127.getTree());
-                    LBRACKET128=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1226); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_LBRACKET.add(LBRACKET128);
+                    if ( state.backtracking==0 ) stream_aggop.add(aggop118.getTree());
+                    LBRACKET119=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1148); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_LBRACKET.add(LBRACKET119);
 
-                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1230); if (state.failed) return retval; 
+                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1152); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(var);
 
-                    BBRACKETLEFT129=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1232); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT129);
+                    BBRACKETLEFT120=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1154); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT120);
 
-                    BBRACKETRIGHT130=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1234); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT130);
+                    BBRACKETRIGHT121=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1156); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT121);
 
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:60: ( POINT member= NAME )?
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:170:56: ( POINT member= NAME )?
                     int alt26=2;
                     int LA26_0 = input.LA(1);
 
@@ -4110,12 +4037,12 @@ public class SaseParser extends Parser {
                     }
                     switch (alt26) {
                         case 1 :
-                            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:61: POINT member= NAME
+                            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:170:57: POINT member= NAME
                             {
-                            POINT131=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1237); if (state.failed) return retval; 
-                            if ( state.backtracking==0 ) stream_POINT.add(POINT131);
+                            POINT122=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1159); if (state.failed) return retval; 
+                            if ( state.backtracking==0 ) stream_POINT.add(POINT122);
 
-                            member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1241); if (state.failed) return retval; 
+                            member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1163); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_NAME.add(member);
 
 
@@ -4124,13 +4051,13 @@ public class SaseParser extends Parser {
 
                     }
 
-                    RBRACKET132=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1245); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_RBRACKET.add(RBRACKET132);
+                    RBRACKET123=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1167); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_RBRACKET.add(RBRACKET123);
 
 
 
                     // AST REWRITE
-                    // elements: saveaggop, member, var
+                    // elements: var, member, aggop
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4143,129 +4070,21 @@ public class SaseParser extends Parser {
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
                     root_0 = (CommonTree)adaptor.nil();
-                    // 173:4: -> ^( AGGREGATION saveaggop $var ( $member)? )
+                    // 171:4: -> ^( AGGREGATION aggop $var ( $member)? )
                     {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:173:7: ^( AGGREGATION saveaggop $var ( $member)? )
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:7: ^( AGGREGATION aggop $var ( $member)? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(AGGREGATION, "AGGREGATION"), root_1);
 
-                        adaptor.addChild(root_1, stream_saveaggop.nextTree());
+                        adaptor.addChild(root_1, stream_aggop.nextTree());
                         adaptor.addChild(root_1, stream_var.nextNode());
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:173:36: ( $member)?
+                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:32: ( $member)?
                         if ( stream_member.hasNext() ) {
                             adaptor.addChild(root_1, stream_member.nextNode());
 
                         }
                         stream_member.reset();
-
-                        adaptor.addChild(root_0, root_1);
-                        }
-
-                    }
-
-                    retval.tree = root_0;}
-                    }
-                    break;
-                case 4 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:174:6: AVG LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET
-                    {
-                    AVG133=(Token)match(input,AVG,FOLLOW_AVG_in_aggregation1271); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_AVG.add(AVG133);
-
-                    LBRACKET134=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1273); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_LBRACKET.add(LBRACKET134);
-
-                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1277); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_NAME.add(var);
-
-                    BBRACKETLEFT135=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1279); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT135);
-
-                    BBRACKETRIGHT136=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1281); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT136);
-
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:174:55: ( POINT member= NAME )?
-                    int alt27=2;
-                    int LA27_0 = input.LA(1);
-
-                    if ( (LA27_0==POINT) ) {
-                        alt27=1;
-                    }
-                    switch (alt27) {
-                        case 1 :
-                            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:174:56: POINT member= NAME
-                            {
-                            POINT137=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1284); if (state.failed) return retval; 
-                            if ( state.backtracking==0 ) stream_POINT.add(POINT137);
-
-                            member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1288); if (state.failed) return retval; 
-                            if ( state.backtracking==0 ) stream_NAME.add(member);
-
-
-                            }
-                            break;
-
-                    }
-
-                    RBRACKET138=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1292); if (state.failed) return retval; 
-                    if ( state.backtracking==0 ) stream_RBRACKET.add(RBRACKET138);
-
-
-
-                    // AST REWRITE
-                    // elements: var, member, member, var
-                    // token labels: member, var
-                    // rule labels: retval
-                    // token list labels: 
-                    // rule list labels: 
-                    // wildcard labels: 
-                    if ( state.backtracking==0 ) {
-                    retval.tree = root_0;
-                    RewriteRuleTokenStream stream_member=new RewriteRuleTokenStream(adaptor,"token member",member);
-                    RewriteRuleTokenStream stream_var=new RewriteRuleTokenStream(adaptor,"token var",var);
-                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
-                    root_0 = (CommonTree)adaptor.nil();
-                    // 175:4: -> ^( DIVISION ^( AGGREGATION SUM $var ( $member)? ) ^( AGGREGATION COUNT $var ( $member)? ) )
-                    {
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:7: ^( DIVISION ^( AGGREGATION SUM $var ( $member)? ) ^( AGGREGATION COUNT $var ( $member)? ) )
-                        {
-                        CommonTree root_1 = (CommonTree)adaptor.nil();
-                        root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(DIVISION, "DIVISION"), root_1);
-
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:18: ^( AGGREGATION SUM $var ( $member)? )
-                        {
-                        CommonTree root_2 = (CommonTree)adaptor.nil();
-                        root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(AGGREGATION, "AGGREGATION"), root_2);
-
-                        adaptor.addChild(root_2, (CommonTree)adaptor.create(SUM, "SUM"));
-                        adaptor.addChild(root_2, stream_var.nextNode());
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:41: ( $member)?
-                        if ( stream_member.hasNext() ) {
-                            adaptor.addChild(root_2, stream_member.nextNode());
-
-                        }
-                        stream_member.reset();
-
-                        adaptor.addChild(root_1, root_2);
-                        }
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:51: ^( AGGREGATION COUNT $var ( $member)? )
-                        {
-                        CommonTree root_2 = (CommonTree)adaptor.nil();
-                        root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(AGGREGATION, "AGGREGATION"), root_2);
-
-                        adaptor.addChild(root_2, (CommonTree)adaptor.create(COUNT, "COUNT"));
-                        adaptor.addChild(root_2, stream_var.nextNode());
-                        // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:76: ( $member)?
-                        if ( stream_member.hasNext() ) {
-                            adaptor.addChild(root_2, stream_member.nextNode());
-
-                        }
-                        stream_member.reset();
-
-                        adaptor.addChild(root_1, root_2);
-                        }
 
                         adaptor.addChild(root_0, root_1);
                         }
@@ -4297,33 +4116,33 @@ public class SaseParser extends Parser {
     }
     // $ANTLR end "aggregation"
 
-    public static class saveaggop_return extends ParserRuleReturnScope {
+    public static class aggop_return extends ParserRuleReturnScope {
         CommonTree tree;
         public Object getTree() { return tree; }
     };
 
-    // $ANTLR start "saveaggop"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:178:1: saveaggop : ( MIN | MAX | SUM | COUNT );
-    public final SaseParser.saveaggop_return saveaggop() throws RecognitionException {
-        SaseParser.saveaggop_return retval = new SaseParser.saveaggop_return();
+    // $ANTLR start "aggop"
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:174:1: aggop : ( MIN | MAX | SUM | COUNT | AVG );
+    public final SaseParser.aggop_return aggop() throws RecognitionException {
+        SaseParser.aggop_return retval = new SaseParser.aggop_return();
         retval.start = input.LT(1);
 
         CommonTree root_0 = null;
 
-        Token set139=null;
+        Token set124=null;
 
-        CommonTree set139_tree=null;
+        CommonTree set124_tree=null;
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:179:2: ( MIN | MAX | SUM | COUNT )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:2: ( MIN | MAX | SUM | COUNT | AVG )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
-            set139=(Token)input.LT(1);
-            if ( (input.LA(1)>=MIN && input.LA(1)<=COUNT) ) {
+            set124=(Token)input.LT(1);
+            if ( (input.LA(1)>=AVG && input.LA(1)<=COUNT) ) {
                 input.consume();
-                if ( state.backtracking==0 ) adaptor.addChild(root_0, (CommonTree)adaptor.create(set139));
+                if ( state.backtracking==0 ) adaptor.addChild(root_0, (CommonTree)adaptor.create(set124));
                 state.errorRecovery=false;state.failed=false;
             }
             else {
@@ -4353,7 +4172,7 @@ public class SaseParser extends Parser {
         }
         return retval;
     }
-    // $ANTLR end "saveaggop"
+    // $ANTLR end "aggop"
 
     public static class value_return extends ParserRuleReturnScope {
         CommonTree tree;
@@ -4361,27 +4180,27 @@ public class SaseParser extends Parser {
     };
 
     // $ANTLR start "value"
-    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:182:1: value : ( NUMBER | STRING_LITERAL );
+    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:178:1: value : ( NUMBER | STRING_LITERAL );
     public final SaseParser.value_return value() throws RecognitionException {
         SaseParser.value_return retval = new SaseParser.value_return();
         retval.start = input.LT(1);
 
         CommonTree root_0 = null;
 
-        Token set140=null;
+        Token set125=null;
 
-        CommonTree set140_tree=null;
+        CommonTree set125_tree=null;
 
         try {
-            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:182:8: ( NUMBER | STRING_LITERAL )
+            // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:178:8: ( NUMBER | STRING_LITERAL )
             // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
-            set140=(Token)input.LT(1);
+            set125=(Token)input.LT(1);
             if ( input.LA(1)==NUMBER||input.LA(1)==STRING_LITERAL ) {
                 input.consume();
-                if ( state.backtracking==0 ) adaptor.addChild(root_0, (CommonTree)adaptor.create(set140));
+                if ( state.backtracking==0 ) adaptor.addChild(root_0, (CommonTree)adaptor.create(set125));
                 state.errorRecovery=false;state.failed=false;
             }
             else {
@@ -4416,68 +4235,6 @@ public class SaseParser extends Parser {
     // Delegated rules
 
 
-    protected DFA28 dfa28 = new DFA28(this);
-    static final String DFA28_eotS =
-        "\15\uffff";
-    static final String DFA28_eofS =
-        "\15\uffff";
-    static final String DFA28_minS =
-        "\1\33\2\52\2\61\2\17\2\20\4\uffff";
-    static final String DFA28_maxS =
-        "\1\37\2\52\2\61\2\17\2\42\4\uffff";
-    static final String DFA28_acceptS =
-        "\11\uffff\1\3\1\1\1\2\1\4";
-    static final String DFA28_specialS =
-        "\15\uffff}>";
-    static final String[] DFA28_transitionS = {
-            "\1\2\4\1",
-            "\1\3",
-            "\1\4",
-            "\1\5",
-            "\1\6",
-            "\1\7",
-            "\1\10",
-            "\1\11\21\uffff\1\12",
-            "\1\14\21\uffff\1\13",
-            "",
-            "",
-            "",
-            ""
-    };
-
-    static final short[] DFA28_eot = DFA.unpackEncodedString(DFA28_eotS);
-    static final short[] DFA28_eof = DFA.unpackEncodedString(DFA28_eofS);
-    static final char[] DFA28_min = DFA.unpackEncodedStringToUnsignedChars(DFA28_minS);
-    static final char[] DFA28_max = DFA.unpackEncodedStringToUnsignedChars(DFA28_maxS);
-    static final short[] DFA28_accept = DFA.unpackEncodedString(DFA28_acceptS);
-    static final short[] DFA28_special = DFA.unpackEncodedString(DFA28_specialS);
-    static final short[][] DFA28_transition;
-
-    static {
-        int numStates = DFA28_transitionS.length;
-        DFA28_transition = new short[numStates][];
-        for (int i=0; i<numStates; i++) {
-            DFA28_transition[i] = DFA.unpackEncodedString(DFA28_transitionS[i]);
-        }
-    }
-
-    class DFA28 extends DFA {
-
-        public DFA28(BaseRecognizer recognizer) {
-            this.recognizer = recognizer;
-            this.decisionNumber = 28;
-            this.eot = DFA28_eot;
-            this.eof = DFA28_eof;
-            this.min = DFA28_min;
-            this.max = DFA28_max;
-            this.accept = DFA28_accept;
-            this.special = DFA28_special;
-            this.transition = DFA28_transition;
-        }
-        public String getDescription() {
-            return "167:1: aggregation : ( saveaggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION saveaggop $var $member) | AVG LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( DIVISION ^( AGGREGATION SUM $var $member) ^( AGGREGATION COUNT $var $member) ) | saveaggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION saveaggop $var ( $member)? ) | AVG LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( DIVISION ^( AGGREGATION SUM $var ( $member)? ) ^( AGGREGATION COUNT $var ( $member)? ) ) );";
-        }
-    }
  
 
     public static final BitSet FOLLOW_createStmt_in_start146 = new BitSet(new long[]{0x0000000000000002L});
@@ -4598,7 +4355,7 @@ public class SaseParser extends Parser {
     public static final BitSet FOLLOW_NAME_in_attributeTerm1057 = new BitSet(new long[]{0x0000000400000000L});
     public static final BitSet FOLLOW_POINT_in_attributeTerm1059 = new BitSet(new long[]{0x0002000000000000L});
     public static final BitSet FOLLOW_NAME_in_attributeTerm1063 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_saveaggop_in_aggregation1088 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_aggop_in_aggregation1088 = new BitSet(new long[]{0x0000040000000000L});
     public static final BitSet FOLLOW_LBRACKET_in_aggregation1090 = new BitSet(new long[]{0x0002000000000000L});
     public static final BitSet FOLLOW_NAME_in_aggregation1094 = new BitSet(new long[]{0x0000000000008000L});
     public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1096 = new BitSet(new long[]{0x0000000400000000L});
@@ -4611,36 +4368,15 @@ public class SaseParser extends Parser {
     public static final BitSet FOLLOW_POINT_in_aggregation1114 = new BitSet(new long[]{0x0002000000000000L});
     public static final BitSet FOLLOW_NAME_in_aggregation1118 = new BitSet(new long[]{0x0000080000000000L});
     public static final BitSet FOLLOW_RBRACKET_in_aggregation1120 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_AVG_in_aggregation1147 = new BitSet(new long[]{0x0000040000000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation1149 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1153 = new BitSet(new long[]{0x0000000000008000L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1155 = new BitSet(new long[]{0x0000000400000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1157 = new BitSet(new long[]{0x0000000400000000L});
+    public static final BitSet FOLLOW_aggop_in_aggregation1146 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_aggregation1148 = new BitSet(new long[]{0x0002000000000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1152 = new BitSet(new long[]{0x0000000000008000L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1154 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1156 = new BitSet(new long[]{0x0000080400000000L});
     public static final BitSet FOLLOW_POINT_in_aggregation1159 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1163 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_MINUS_in_aggregation1165 = new BitSet(new long[]{0x0000400000000000L});
-    public static final BitSet FOLLOW_NUMBER_in_aggregation1169 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1171 = new BitSet(new long[]{0x0000000400000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1173 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1177 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_aggregation1179 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_saveaggop_in_aggregation1224 = new BitSet(new long[]{0x0000040000000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation1226 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1230 = new BitSet(new long[]{0x0000000000008000L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1232 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1234 = new BitSet(new long[]{0x0000080400000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1237 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1241 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_aggregation1245 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_AVG_in_aggregation1271 = new BitSet(new long[]{0x0000040000000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation1273 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1277 = new BitSet(new long[]{0x0000000000008000L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1279 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1281 = new BitSet(new long[]{0x0000080400000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1284 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1288 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_aggregation1292 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_saveaggop0 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1163 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_RBRACKET_in_aggregation1167 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_aggop0 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_value0 = new BitSet(new long[]{0x0000000000000002L});
 
 }

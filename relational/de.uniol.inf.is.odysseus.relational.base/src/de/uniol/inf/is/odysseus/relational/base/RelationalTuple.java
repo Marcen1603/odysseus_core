@@ -172,9 +172,19 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		for (int i = 0; i < attrList.length; i++) {
 			newAttrs[i] = this.attributes[attrList[i]];
 		}
-		
+		return restrictCreation(createNew, newAttrs);
+	}
+	
+	public RelationalTuple<T> restrict(int attr, boolean createNew) {
+		Object[] newAttrs = new Object[1];
+		newAttrs[0] = this.attributes[attr];
+		return restrictCreation(createNew, newAttrs);
+	}
+
+	private RelationalTuple<T> restrictCreation(boolean createNew,
+			Object[] newAttrs) {
 		if(createNew){
-			RelationalTuple<T> newTuple = new RelationalTuple<T>(attrList.length);
+			RelationalTuple<T> newTuple = new RelationalTuple<T>(newAttrs.length);
 			newTuple.setAttributes(newAttrs);
 			newTuple.setMetadata((T)this.getMetadata().clone());
 			return newTuple;
@@ -184,6 +194,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			return this;
 		}
 	}
+	
 	
 	/**
 	 * Sets the attribute values of this tuple to the specified

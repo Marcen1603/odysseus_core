@@ -25,7 +25,7 @@ public class StateMachineInstance<R> {
 	/**
 	 * Referenz auf die Symboltabelle der Automateninstanz
 	 */
-	private SymbolTable symTab;
+	private SymbolTable<R> symTab;
 	/**
 	 * Referenz auf den Puffer für bereits konsumierte Events
 	 */
@@ -42,7 +42,7 @@ public class StateMachineInstance<R> {
 	public StateMachineInstance(StateMachine<R> stateMachine, long startTimestamp) {
 		this.currentState = stateMachine.getInitialState();
 		this.matchingTrace = new MatchingTrace<R>(stateMachine.getStates());
-		this.symTab = new SymbolTable(stateMachine.getSymTabScheme(true));
+		this.symTab = new SymbolTable<R>(stateMachine.getSymTabScheme(true));
 		this.startTimestamp = startTimestamp;
 	}
 
@@ -77,7 +77,7 @@ public class StateMachineInstance<R> {
 	 * 
 	 * @return Die Symboltabelle der Automateninstanz.
 	 */
-	public SymbolTable getSymTab() {
+	public SymbolTable<R> getSymTab() {
 		return symTab;
 	}
 
@@ -102,7 +102,7 @@ public class StateMachineInstance<R> {
 	 *             Wenn die auszuführende Aktion nicht definiert ist.
 	 */
 	public void executeAction(EAction action, R event,
-			IEventReader<R,?> eventReader) throws UndefinedActionException {
+			IEventReader<R,R> eventReader) throws UndefinedActionException {
 		if (action == EAction.consumeBufferWrite || action == EAction.consumeNoBufferWrite) {
 			if (action == EAction.consumeBufferWrite){
 				this.matchingTrace.addEvent(event, this.currentState, this);
@@ -115,7 +115,7 @@ public class StateMachineInstance<R> {
 					// TODO: Warum die Unterscheidung??
 //					if (entry.getIndex() == this.matchingTrace
 //							.getStateBufferSize(this.currentState)-1) {
-						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));
+						symTab.updateValue(entry, eventReader.getValue(entry.getAttribute(), event));
 //					} else if (entry.getIndex() < 0) {
 //						symTab.executeOperation(entry, eventReader.getValue(entry.getAttribute(), event));
 //					}

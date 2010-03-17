@@ -16,7 +16,7 @@ public class JEPCondition extends AbstractCondition {
 	 * Referenz auf den Ausdruck der Transitionsbedingung
 	 */
 	private JEP expression;
-	private Map<String, String> symbolTable = new HashMap<String, String>();
+	private Map<CepVariable, String> symbolTable = new HashMap<CepVariable, String>();
 	private boolean negate = false;
 
 	/**
@@ -60,11 +60,12 @@ public class JEPCondition extends AbstractCondition {
 		return str.replace("]", "ü");
 	}
 
-	private String transformToOutVar(String out) {
+	private CepVariable transformToOutVar(String out) {
 		String str = out.replace("ä", CepVariable.getSeperator());
 		str = str.replace("ß", "-");
 		str = str.replace("ö", "[");
-		return str.replace("ü", "]");
+		str.replace("ü", "]");
+		return new CepVariable(str);
 	}
 
 	public String toString(String indent) {
@@ -76,7 +77,7 @@ public class JEPCondition extends AbstractCondition {
 		return str;
 	}
 
-	public Set<String> getVarNames() {
+	public Set<CepVariable> getVarNames() {
 		return symbolTable.keySet();
 	}
 
@@ -92,7 +93,7 @@ public class JEPCondition extends AbstractCondition {
 		return expression.getErrorInfo();
 	}
 
-	public void setValue(String varName, Object newValue) {
+	public void setValue(CepVariable varName, Object newValue) {
 		expression.getVar(symbolTable.get(varName)).setValue(newValue);
 	}
 
@@ -112,7 +113,7 @@ public class JEPCondition extends AbstractCondition {
 				conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
 			} else {
 
-				for (String v : getVarNames()) {
+				for (CepVariable v : getVarNames()) {
 					System.err.println("Variable " + v + " "
 							+ expression.getVar(symbolTable.get(v)).getValue());
 				}
