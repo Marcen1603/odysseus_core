@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.AggregatePO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -31,12 +31,12 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	class _Point implements Comparable<_Point> {
 		public PointInTime p;
 		boolean startP;
-		PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg;
+		PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> element_agg;
 
 		public _Point(
 				PointInTime p,
 				boolean startP,
-				PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg) {
+				PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> element_agg) {
 			this.p = p;
 			this.startP = startP;
 			this.element_agg = element_agg;
@@ -123,9 +123,9 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht
 	// korrekt. Deswegen eigene Version
 	protected synchronized void updateSA(
-			DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> sa,
+			DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R element) {
-		Iterator<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> qualifies = sa
+		Iterator<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
 				.queryOverlaps(element.getMetadata());
 		// System.out.println("updateSA MinTS: "+sa.getMinTs()+"  Size:"+sa.size()+" mit "+element);
 		R e_probe = element;
@@ -139,7 +139,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			SortedSet<_Point> pl = new TreeSet<_Point>();
 			// Erst die Elemente der SweepArea
 			while (qualifies.hasNext()) {
-				PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> element_agg = qualifies
+				PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 						.next();
 				sa.remove(element_agg);
 				ITimeInterval t_agg = element_agg.getMetadata();
@@ -158,7 +158,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			if (iter.hasNext()) {
 				p1 = iter.next();
 			}
-			PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> curr_agg = p1.element_agg;
+			PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> curr_agg = p1.element_agg;
 			while (iter.hasNext()) {
 				p2 = iter.next();
 				if (p1.p.before(p2.p)) { // Ansonsten w�re das ein leeres
@@ -293,9 +293,9 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 	}
 
-	private PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> saInsert(
-			DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q>> sa,
-			PairMap<SDFAttribute, AggregateFunction, PartialAggregate<R>, Q> elem,
+	private PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> saInsert(
+			DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q> elem,
 			Q t) {
 		// System.out.println("SA Insert "+elem);
 		elem.setMetadata(t);

@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
 
-public class AvgSumPartialAggregate<R> implements PartialAggregate<R> {
+public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 	Double aggValue;
 	int aggCount;
 	

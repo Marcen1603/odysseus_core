@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Evaluator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Initializer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Merger;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
-public class MinMax<T extends Comparable<T>> implements Initializer<T>, Merger<T>, Evaluator<T>{
+public class MinMax<T extends Comparable<T>> implements IAggregateFunction<T>{
 	
 	boolean isMax = true;
 	
@@ -13,11 +11,11 @@ public class MinMax<T extends Comparable<T>> implements Initializer<T>, Merger<T
 		this.isMax = isMax;
 	}
 	
-	public PartialAggregate<T> init(T in) {
+	public IPartialAggregate<T> init(T in) {
 		return new ElementPartialAggregate<T>(in);
 	}
 
-	public PartialAggregate<T> merge(PartialAggregate<T> p, T toMerge, boolean createNew) {
+	public IPartialAggregate<T> merge(IPartialAggregate<T> p, T toMerge, boolean createNew) {
 		ElementPartialAggregate<T> pa = null;
 		if (createNew){
 			pa = new ElementPartialAggregate<T>(p);
@@ -36,7 +34,7 @@ public class MinMax<T extends Comparable<T>> implements Initializer<T>, Merger<T
 		return pa;
 	}
 
-	public T evaluate(PartialAggregate<T> p) {
+	public T evaluate(IPartialAggregate<T> p) {
 		ElementPartialAggregate<T> pa = (ElementPartialAggregate<T>) p;
 		return pa.getElem();
 	}

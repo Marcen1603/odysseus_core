@@ -1,18 +1,16 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Evaluator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Initializer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Merger;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class Count<T> implements Initializer<T>, Merger<T>, Evaluator<T> {
+abstract public class Count<T> implements IAggregateFunction<T> {
 
-	public PartialAggregate<T> init(T in) {
-		PartialAggregate<T> pa = new CountPartialAggregate<T>(1); 
+	public IPartialAggregate<T> init(T in) {
+		IPartialAggregate<T> pa = new CountPartialAggregate<T>(1); 
 		return pa;
 	}
 
-	public synchronized PartialAggregate<T> merge(PartialAggregate<T> p, T toMerge, boolean createNew) {
+	public synchronized IPartialAggregate<T> merge(IPartialAggregate<T> p, T toMerge, boolean createNew) {
 		CountPartialAggregate<T> pa = null;
 		if (createNew){
 			pa = new CountPartialAggregate<T>(((CountPartialAggregate<T>) p).getCount());

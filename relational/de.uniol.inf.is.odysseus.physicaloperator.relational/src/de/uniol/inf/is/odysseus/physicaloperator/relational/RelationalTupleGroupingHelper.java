@@ -10,9 +10,9 @@ import de.uniol.inf.is.odysseus.base.FESortedPair;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.GroupingHelper;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Evaluator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Initializer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.Merger;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IEvaluator;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IInitializer;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IMerger;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -34,7 +34,7 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	// reicht hier eine Map
 	//TODO lieber eine factory uebergeben, die e.g. immer die selben instanzen liefert, dann kann auf einiges
 	//gecaste verzichtet werden, weil die typinformationen vorhanden sind
-	static private Map<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple<?>>> fMap = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, Evaluator<RelationalTuple<?>>>();
+	static private Map<FESortedPair<SDFAttribute, AggregateFunction>, IEvaluator<RelationalTuple<?>>> fMap = new HashMap<FESortedPair<SDFAttribute, AggregateFunction>, IEvaluator<RelationalTuple<?>>>();
 
 	public RelationalTupleGroupingHelper(SDFAttributeList inputSchema, SDFAttributeList outputSchema, List<SDFAttribute> groupingAttributes, Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super();
@@ -124,9 +124,9 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		return returnTuple;
 	}
 
-	private Evaluator<RelationalTuple<?>> createAggFunction(AggregateFunction key,
+	private IEvaluator<RelationalTuple<?>> createAggFunction(AggregateFunction key,
 			int pos) {
-		Evaluator<RelationalTuple<?>> aggFunc = null;
+		IEvaluator<RelationalTuple<?>> aggFunc = null;
 		switch (key) {
 		case AVG:
 			aggFunc = new RelationalAvgSum(pos, true);
@@ -151,28 +151,28 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Evaluator<RelationalTuple<T>> getEvaluatorAggFunction(
+	public IEvaluator<RelationalTuple<T>> getEvaluatorAggFunction(
 			FESortedPair<SDFAttribute, AggregateFunction> p) {
-		Evaluator<RelationalTuple<?>> eval = fMap.get(p);
+		IEvaluator<RelationalTuple<?>> eval = fMap.get(p);
 		if (eval == null) {
 			eval = createAggFunction(p.getE2(), inputSchema.indexOf(p.getE1()));
 			fMap.put(p, eval);
 		}
-		return (Evaluator<RelationalTuple<T>>) (Evaluator) eval;
+		return (IEvaluator<RelationalTuple<T>>) (IEvaluator) eval;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Initializer<RelationalTuple<T>> getInitAggFunction(
+	public IInitializer<RelationalTuple<T>> getInitAggFunction(
 			FESortedPair<SDFAttribute, AggregateFunction> p) {
 		// Zur Zeit keine unterschiedlichen Aggregationsfunktionen
-		return (Initializer<RelationalTuple<T>>) getEvaluatorAggFunction(p);
+		return (IInitializer<RelationalTuple<T>>) getEvaluatorAggFunction(p);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Merger<RelationalTuple<T>> getMergerAggFunction(
+	public IMerger<RelationalTuple<T>> getMergerAggFunction(
 			FESortedPair<SDFAttribute, AggregateFunction> p) {
-		return (Merger<RelationalTuple<T>>) (Merger) getEvaluatorAggFunction(p);
+		return (IMerger<RelationalTuple<T>>) (IMerger) getEvaluatorAggFunction(p);
 	}
 }

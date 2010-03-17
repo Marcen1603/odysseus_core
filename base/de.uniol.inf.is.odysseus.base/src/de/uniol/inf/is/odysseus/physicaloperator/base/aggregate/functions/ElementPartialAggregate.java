@@ -1,16 +1,16 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions;
 
-import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.PartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IPartialAggregate;
 
 
-class ElementPartialAggregate<T extends Comparable<T>> implements PartialAggregate<T> {
+class ElementPartialAggregate<T extends Comparable<T>> implements IPartialAggregate<T> {
 	T elem;
 	
 	public ElementPartialAggregate(T elem) {
 		setElem(elem);
 	}
 	
-	public ElementPartialAggregate(PartialAggregate<T> p) {
+	public ElementPartialAggregate(IPartialAggregate<T> p) {
 		setElem(((ElementPartialAggregate<T>)p).getElem());
 	}
 
