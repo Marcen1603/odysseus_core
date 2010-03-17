@@ -1,45 +1,67 @@
 package de.uniol.inf.is.odysseus.broker.dictionary;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * Represents the knowledge for a broker.  
+ * 
+ * @author Dennis Geesen
+ */
 public class BrokerDictionaryEntry {
-	private SDFAttributeList outputSchema;
-	private SDFAttributeList tupleInputSchema;
-	private SDFAttributeList tsInputSchema;
-	private String brokerName;
+	private SDFAttributeList schema = new SDFAttributeList();
+	private SDFAttributeList queueSchema = new SDFAttributeList();
+	private String brokerName;	
 	
 	private WriteTransaction[] writingTypes = new WriteTransaction[0];
 	private ReadTransaction[] readingTypes = new ReadTransaction[0];
+	private List<QueuePortMapping> portMappings = new ArrayList<QueuePortMapping>();
 	
 	
+	/**
+	 * Creates a new instance for the given name
+	 * @param brokername Name of the broker
+	 */
 	public BrokerDictionaryEntry(String brokername){
-		this.brokerName = brokername;			
+		this.brokerName = brokername;		
 	}
 	
-	public BrokerDictionaryEntry(String brokername, SDFAttributeList outputSchema, SDFAttributeList tupleInputSchema, SDFAttributeList tsInputSchema){
+	/**
+	 * Creates a new instance for the given name and schemas
+	 * @param brokername Name of the broker
+	 * @param schema Output and input schema of the broker
+	 * @param queueSchema Schema of the queue 
+	 */
+	public BrokerDictionaryEntry(String brokername, SDFAttributeList schema, SDFAttributeList queueSchema){
 		this.brokerName = brokername;
-		this.outputSchema = outputSchema;
-		this.tupleInputSchema = tupleInputSchema;
-		this.tsInputSchema = tsInputSchema;		
+		this.schema = schema;		
+		this.queueSchema = queueSchema;		
 	}
 	
+	/**
+	 * Adds a new writing transaction to the broker
+	 * @param type The type of the transaction
+	 * @return the assigned incoming port
+	 */
 	public int addNewWriteTransaction(WriteTransaction type){
 		int addedToPort = writingTypes.length;
 		writingTypes = Arrays.copyOf(writingTypes, writingTypes.length+2);
-		writingTypes[addedToPort] = type;
-		//odd port is for timestamps
+		writingTypes[addedToPort] = type;				
 		writingTypes[addedToPort+1] = WriteTransaction.Timestamp;
-		return addedToPort;
+		return addedToPort;		
 	}
 	
-	public WriteTransaction getWriteType(int port){
-		return writingTypes[port];
-	}
-
+	/**
+	 * Adds a new reading transaction to the broker
+	 * @param type The type of the transaction
+	 * @return the assigned outgoing port
+	 */
 	public int addNewReadTransaction(ReadTransaction type){
 		int addedToPort = readingTypes.length;
 		readingTypes = Arrays.copyOf(readingTypes, readingTypes.length+1);
@@ -47,59 +69,94 @@ public class BrokerDictionaryEntry {
 		return addedToPort;
 	}
 	
+	/**
+	 * Gets the assigned type of the writing transaction for a given port 
+	 * @param port The port
+	 * @return Type of the Transaction
+	 */
+	public WriteTransaction getWriteType(int port){
+		return writingTypes[port];
+	}
+
+	/**
+	 * Gets the assigned type of the reading transaction for a given port	
+	 * @param port The port
+	 * @return Type of the Transaction
+	 */
 	public ReadTransaction getReadType(int port){
 		return readingTypes[port];
-	}
-	
-	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
+	}		
+
+	/**
+	 * Gets the data output and input schema
+	 * @return The schema
+	 */
+	public SDFAttributeList getSchema() {
+		return schema;
 	}
 
-	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema;
+	/**
+	 * Gets the queue input schema
+	 * @return The schema
+	 */
+	public SDFAttributeList getQueueSchema() {
+		return queueSchema;
 	}
 
-	public SDFAttributeList getTupleInputSchema() {
-		return tupleInputSchema;
-	}
-
-	public void setTupleInputSchema(SDFAttributeList tupleInputSchema) {
-		this.tupleInputSchema = tupleInputSchema;
-	}
-
-	public SDFAttributeList getTsInputSchema() {
-		return tsInputSchema;
-	}
-
-	public void setTsInputSchema(SDFAttributeList tsInputSchema) {
-		this.tsInputSchema = tsInputSchema;
-	}
-
+	/**
+	 * Gets the name of the broker
+	 * @return The given name
+	 */
 	public String getBrokerName() {
 		return brokerName;
 	}
 
+	/**
+	 * Sets the type for a writing transaction
+	 * @param port The existing port
+	 * @param type The new type of the transaction 
+	 */
 	public void setWriteType(int port, WriteTransaction type) {
 		this.writingTypes[port] = type;		
 	}
 	
+	/**
+	 * Sets the type for a reading transaction
+	 * @param port The existing port
+	 * @param type The new type of the transaction
+	 */
 	public void setReadType(int port, ReadTransaction type) {
 		this.readingTypes[port] = type;		
 	}
-
-	public void resetAllWritingPorts(WriteTransaction type) {
-		Arrays.fill(this.writingTypes, type);		
-	}
-
-	public void resetAllReadingPorts(ReadTransaction type) {
-		Arrays.fill(this.readingTypes, type);		
-	}
-
-	public ReadTransaction[] getReadingPorts() {
+	
+	/**
+	 * Returns all reading Transactions
+	 * @return The transactions
+	 */
+	public ReadTransaction[] getReadingTransactions() {
 		return this.readingTypes;
 	}	
 	
+	/**
+	 * Remove all reading Transactions
+	 */
 	public void removeAllReadingPorts(){		
 		this.readingTypes = new ReadTransaction[0];
+	}
+	
+	/**
+	 * Adds a new port mapping
+	 * @param portMapping The mapping
+	 */
+	public void addPortMapping(QueuePortMapping portMapping){
+		this.portMappings.add(portMapping);
+	}
+	
+	/**
+	 * Delivers all port mappings
+	 * @return The port mappings
+	 */
+	public List<QueuePortMapping> getPortMappings(){
+		return this.portMappings;
 	}
 }

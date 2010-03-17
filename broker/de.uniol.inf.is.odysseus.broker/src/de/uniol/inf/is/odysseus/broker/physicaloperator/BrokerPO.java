@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.transaction.CycleSubscription;
+import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
@@ -26,13 +27,22 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private Logger logger = LoggerFactory.getLogger("BrokerPO");
 	private String identifier;	
 	private DefaultTISweepArea<T> sweepArea = new DefaultTISweepArea<T>();
-	private PriorityQueue<TransactionTS> timestampList = new PriorityQueue<TransactionTS>();
+	private PriorityQueue<TransactionTS> timestampList = new PriorityQueue<TransactionTS>();	
+	private SDFAttributeList queueSchema;
 	private List<CycleSubscription> cycles = new ArrayList<CycleSubscription>();
 	
 	public BrokerPO(BrokerPO<T> po){
 		this.identifier = po.getIdentifier();
 	}
 
+	public void setQueueSchema(SDFAttributeList queueSchema){
+		this.queueSchema = queueSchema;
+	}
+	
+	public SDFAttributeList getQueueSchema(){
+		return this.queueSchema;
+	}
+	
 	public String getIdentifier() {
 		return this.identifier;
 	}
@@ -46,17 +56,16 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	protected void process_next(T object, int port) {		
 		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
 		System.err.println("Process from "+port+" "+type+": "+object.toString()+"  ("+this+")");
-		//if(type==WriteTransaction.Timestamp){		
-		if(port==4){
-			PointInTime time = PointInTime.currentPointInTime();
-			TransactionTS trans = new TransactionTS(getOutgoingPortForIncoming(port-2), time); // nromal: port-1
+		if(type==WriteTransaction.Timestamp){				
+			PointInTime time = object.getMetadata().getStart();
+			TransactionTS trans = new TransactionTS(getOutgoingPortForIncoming(port), time);
 			timestampList.offer(trans);			
 		}else{							
 			sweepArea.purgeElements(object, Order.LeftRight);
 			sweepArea.insert(object);
 		}
 		//System.out.println(sweepArea.getSweepAreaAsString(PointInTime.currentPointInTime()));
-		int to = BrokerDictionary.getInstance().getAllReadingPorts(identifier).length;
+		int to = BrokerDictionary.getInstance().getReadingTransactions(identifier).length;
 		T nextObject = sweepArea.peek();
 		int nextPort = -1;
 		if(!timestampList.isEmpty()){				
@@ -104,23 +113,19 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}	
 	
 	public void reorganizeTransactions(List<CycleSubscription> cycles){
-		// change all to continuous 
 		LoggerFactory.getLogger("BrokerPO - reorganize").debug("Setting transaction types");		
-		BrokerDictionary.getInstance().resetAllReadingPorts(this.identifier, ReadTransaction.Continuous);
-		BrokerDictionary.getInstance().resetAllWritingPorts(this.identifier, WriteTransaction.Continuous);
 		for(CycleSubscription cycle : cycles){
 			LoggerFactory.getLogger("BrokerPO - reorganize").debug(cycle.toString()+" - change transaction type to cyclic");
 			BrokerDictionary.getInstance().setReadTypeForPort(this.identifier, cycle.getOutgoingPort(), ReadTransaction.Cyclic);
 			BrokerDictionary.getInstance().setWriteTypeForPort(this.identifier, cycle.getIncomingPort(), WriteTransaction.Cyclic);
 		}				
-		this.cycles = cycles;
+		this.cycles  = cycles;
 	}
 	
 	public int getOutgoingPortForIncoming(int income){
-		for(CycleSubscription sub: this.cycles){
-			if(sub.getIncomingPort()==income){
-				return sub.getOutgoingPort();
-			}
+		for(QueuePortMapping mapping: BrokerDictionary.getInstance().getQueuePortMappings(this.identifier))
+		if(mapping.getQueueWritingPort()==income){
+			return mapping.getDataReadingPort();
 		}
 		logger.warn("There is no cycle with incoming port "+income);
 		return 0;

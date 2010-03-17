@@ -14,17 +14,17 @@ public class BrokerTransformationHelper {
 	@SuppressWarnings("unchecked")
 	public static void remapReadingPorts(BrokerPO<?> broker){			
 		// make a copy to avoid concurrent modification exception
-		ArrayList<PhysicalSubscription<?>> liste = new ArrayList<PhysicalSubscription<?>>();
-		for(PhysicalSubscription<?> sub: broker.getSubscriptions()){
-			liste.add(sub);
-		}
-		BrokerDictionary.getInstance().removeAllReadingPorts(broker.getIdentifier());
-		ArrayList<PhysicalSubscription<?>> kopie = (ArrayList<PhysicalSubscription<?>>) liste.clone();		
-		for(PhysicalSubscription<?> sub: kopie){			
-			int nextPort = BrokerDictionary.getInstance().getNextReadPort(broker.getIdentifier());						
-			broker.unsubscribeSink((ISink)sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());			
-			broker.subscribeSink((ISink)sub.getTarget(), sub.getSinkInPort(), nextPort, sub.getSchema());			
-		}
+//		ArrayList<PhysicalSubscription<?>> liste = new ArrayList<PhysicalSubscription<?>>();
+//		for(PhysicalSubscription<?> sub: broker.getSubscriptions()){
+//			liste.add(sub);
+//		}
+//		BrokerDictionary.getInstance().removeAllReadingPorts(broker.getIdentifier());
+//		ArrayList<PhysicalSubscription<?>> kopie = (ArrayList<PhysicalSubscription<?>>) liste.clone();		
+//		for(PhysicalSubscription<?> sub: kopie){			
+//			int nextPort = BrokerDictionary.getInstance().getNextReadPort(broker.getIdentifier());						
+//			broker.unsubscribeSink((ISink)sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());			
+//			broker.subscribeSink((ISink)sub.getTarget(), sub.getSinkInPort(), nextPort, sub.getSchema());			
+//		}
 	}
 	
 	

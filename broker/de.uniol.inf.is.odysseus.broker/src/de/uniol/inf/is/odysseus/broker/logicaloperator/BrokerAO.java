@@ -1,10 +1,5 @@
 package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -13,30 +8,33 @@ public class BrokerAO extends AbstractLogicalOperator{
 	
 	private static final long serialVersionUID = 6441896379097181325L;	
 	private String identifier;
-	private SDFAttributeList outputSchema = null;
-	private long generatedTime;	
-	
-	
-	
-	public BrokerAO(String identifier){
+	private SDFAttributeList schema = null;
+	private long generatedTime;
+	private SDFAttributeList queueSchema = new SDFAttributeList();	
+		
+	protected BrokerAO(String identifier){
 		this.identifier = identifier;
 		this.generatedTime = System.currentTimeMillis();
 	}
 	
-	public BrokerAO(BrokerAO original){
+	
+
+	protected BrokerAO(BrokerAO original){
 		super(original);
-		this.outputSchema = original.outputSchema.clone();
+		this.schema = original.schema.clone();
 		this.identifier = original.identifier;
 		this.generatedTime = original.generatedTime;
+		this.queueSchema = original.queueSchema.clone();			
 	}
 	
+	
+
 	@Override	
 	public synchronized SDFAttributeList getOutputSchema() {		
-		return this.outputSchema;		
-	}	
+		return this.schema;		
+	}		
 
-	public void setOutputSchema(SDFAttributeList outputSchema) {
-		//this.outputSchema = outputSchema.clone();
+	public void setSchema(SDFAttributeList outputSchema) {		
 		//create alias schema
 		SDFAttributeList aliasSchema = new SDFAttributeList();
 		for(SDFAttribute attribute : outputSchema){
@@ -44,21 +42,19 @@ public class BrokerAO extends AbstractLogicalOperator{
 			newAttribute.setSourceName(null);
 			aliasSchema.add(newAttribute);
 		}
-		this.outputSchema = aliasSchema;
-		
+		this.schema = aliasSchema;		
+	}
+	
+	public SDFAttributeList getQueueSchema() {
+		return this.queueSchema;
+	}
+	
+	public void setQueueSchema(SDFAttributeList schema){
+		this.queueSchema = schema;
 	}
 	
 	public String getIdentifier(){
 		return this.identifier;		
-	}
-	
-	public List<ILogicalOperator> getAllChildren(){
-		List<ILogicalOperator> childs = new ArrayList<ILogicalOperator>();
-		for(LogicalSubscription sub : super.getSubscriptions()){
-			System.err.println("AO-Sub: "+sub.getTarget()+" ("+this+")");
-			childs.add(sub.getTarget());
-		}		
-		return childs;
 	}		
 	
 	public void setIdentifier(String identifier){

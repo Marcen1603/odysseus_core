@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -92,7 +91,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 		AbstractLogicalOperator leftSource = (AbstractLogicalOperator) data;
 		JoinAO join = new JoinAO();
-
+		
 		join.subscribeToSource(leftSource, 0, 0, leftSource.getOutputSchema());
 		join.subscribeToSource(source, 1, 0, source.getOutputSchema());
 		return join;

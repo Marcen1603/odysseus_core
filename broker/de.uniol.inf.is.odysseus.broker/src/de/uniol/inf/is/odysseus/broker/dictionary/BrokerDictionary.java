@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.broker.dictionary;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -26,57 +28,56 @@ public class BrokerDictionary {
 		return brokerlist.keySet().contains(name);		
 	}	
 			
-	public void addBroker(String name, SDFAttributeList outputSchema){
+	public void addBroker(String name, SDFAttributeList schema, SDFAttributeList queueSchema){
 		if(!brokerExists(name)){			
-			//TODO: outputschma ist momentan noch gleich mit den anderen beiden 
-			BrokerDictionaryEntry entry = new BrokerDictionaryEntry(name, outputSchema,outputSchema,outputSchema);
+			BrokerDictionaryEntry entry = new BrokerDictionaryEntry(name, schema, queueSchema);
 			this.brokerlist.put(name, entry);
 		}
 	}
 		
-	public int getNextWritePort(String brokername){
-		//normal transactions are continuous
-		return this.brokerlist.get(brokername).addNewWriteTransaction(WriteTransaction.Continuous);
+	public void addNewTransactionMapping(String brokername, int readingPort, int queueWritingPort){
+		this.brokerlist.get(brokername).addPortMapping(new QueuePortMapping(readingPort, queueWritingPort));
 	}
 	
-	public WriteTransaction getWriteTypeForPort(String brokername, int port){
+	public int addNewTransaction(String brokername, WriteTransaction type){
+		return this.brokerlist.get(brokername).addNewWriteTransaction(type);
+	}
+	
+	public int addNewTransaction(String brokername, ReadTransaction type){
+		return this.brokerlist.get(brokername).addNewReadTransaction(type);
+	}
+
+	public SDFAttributeList getSchema(String brokername) {		
+		return this.brokerlist.get(brokername).getSchema();
+	}
+	
+	public SDFAttributeList getQueueSchema(String brokername){
+		return this.brokerlist.get(brokername).getQueueSchema();
+	}
+
+	public WriteTransaction getWriteTypeForPort(String brokername, int port) {		
 		return this.brokerlist.get(brokername).getWriteType(port);
 	}
 	
-	public void setWriteTypeForPort(String brokername, int port, WriteTransaction type){
-		this.brokerlist.get(brokername).setWriteType(port, type);
-	}
-	
-	public int getNextReadPort(String brokername){		
-		return this.brokerlist.get(brokername).addNewReadTransaction(ReadTransaction.Continuous);
-	}
-	
-	public void resetAllWritingPorts(String brokername, WriteTransaction type){
-		this.brokerlist.get(brokername).resetAllWritingPorts(type);
-	}
-	
-	public ReadTransaction getReadTypeForPort(String brokername, int port){
+	public ReadTransaction getReadTypeForPort(String brokername, int port) {		
 		return this.brokerlist.get(brokername).getReadType(port);
 	}
+
+	public ReadTransaction[] getReadingTransactions(String brokername) {
+		return this.brokerlist.get(brokername).getReadingTransactions();
+	}
 	
-	public SDFAttributeList getOutputSchema(String brokername){
-		return this.brokerlist.get(brokername).getOutputSchema();
+	public List<QueuePortMapping> getQueuePortMappings(String brokername){
+		return this.brokerlist.get(brokername).getPortMappings();
 	}
 
-	public void setReadTypeForPort(String brokername, int port, ReadTransaction type) {
-		this.brokerlist.get(brokername).setReadType(port, type);		
+	public void setReadTypeForPort(String brokername, int outgoingPort, ReadTransaction type) {
+		this.brokerlist.get(brokername).setReadType(outgoingPort, type);
+		
 	}
-	
-	public void resetAllReadingPorts(String brokername, ReadTransaction type){
-		this.brokerlist.get(brokername).resetAllReadingPorts(type);
-	}
-	
-	public ReadTransaction[] getAllReadingPorts(String brokername){
-		return this.brokerlist.get(brokername).getReadingPorts();
-	}
-	
-	public void removeAllReadingPorts(String brokername){
-		this.brokerlist.get(brokername).removeAllReadingPorts();
+
+	public void setWriteTypeForPort(String brokername, int incomingPort, WriteTransaction type) {
+		this.brokerlist.get(brokername).setWriteType(incomingPort, type); 		
 	}
 
 }
