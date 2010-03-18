@@ -36,7 +36,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
 
-			return this.planMigrationStrategie.migratePlan(sender,
+			return this.planMigrationStrategy.migratePlan(sender,
 					newExecutionPlan);
 		}
 		return sender.getEditableExecutionPlan();
@@ -58,7 +58,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 					.optimizePlan(sender, parameter, newPlan);
 
-			return this.planMigrationStrategie.migratePlan(sender,
+			return this.planMigrationStrategy.migratePlan(sender,
 					newExecutionPlan);
 			
 		}
@@ -77,7 +77,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 				.optimizePlan(sender, parameter, newPlan);
 
-		return this.planMigrationStrategie
+		return this.planMigrationStrategy
 				.migratePlan(sender, newExecutionPlan);
 	}
 

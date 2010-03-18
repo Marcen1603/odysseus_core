@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
  * class stores a list of {@link IQueryParser} services, a
  * {@link ITransformation} and a {@link IRewrite} service.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Tobias Witt
  * 
  */
 public class StandardCompiler implements ICompiler {
@@ -202,5 +203,30 @@ public class StandardCompiler implements ICompiler {
 	@Override
 	public Set<String> getSupportedQueryParser() {
 		return Collections.unmodifiableSet(this.parserList.keySet());
+	}
+
+	@Override
+	public List<ILogicalOperator> createAlternativePlans(
+			ILogicalOperator logicalPlan, Set<String> rulesToUse) {
+		// TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
+		// werden, z.B. durch Join-Vertauschungen
+		ILogicalOperator p = restructPlan(logicalPlan);
+		List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
+		list.add(p);
+		return list;
+	}
+
+	@Override
+	public List<IPhysicalOperator> transformWithAlternatives(
+			ILogicalOperator logicalPlan,
+			TransformationConfiguration transformationConfiguration)
+			throws TransformationException {
+		// TODO mehrere Alternativen muessen generiert werden, z.B. durch
+		// verschiedene Join-Implementationen
+		IPhysicalOperator p = transform(logicalPlan,
+				transformationConfiguration);
+		List<IPhysicalOperator> list = new ArrayList<IPhysicalOperator>(1);
+		list.add(p);
+		return list;
 	}
 }

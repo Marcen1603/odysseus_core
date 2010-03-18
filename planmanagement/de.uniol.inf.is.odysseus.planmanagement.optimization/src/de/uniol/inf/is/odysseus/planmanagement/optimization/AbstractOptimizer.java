@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 
 /**
@@ -61,7 +61,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	/**
 	 * Registered plan migration service.
 	 */
-	protected IPlanMigrationStrategie planMigrationStrategie;
+	protected IPlanMigrationStrategy planMigrationStrategy;
 
 	// protected IBufferPlacementStrategy bufferPlacementStrategy;
 
@@ -150,24 +150,24 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	/**
-	 * Method to bind a {@link IPlanMigrationStrategie}. Used by OSGi.
+	 * Method to bind a {@link IPlanMigrationStrategy}. Used by OSGi.
 	 * 
-	 * @param planMigrationStrategie new {@link IPlanMigrationStrategie} service
+	 * @param planMigrationStrategy new {@link IPlanMigrationStrategy} service
 	 */
-	public void bindPlanMigrationStrategie(
-			IPlanMigrationStrategie planMigrationStrategie) {
-		this.planMigrationStrategie = planMigrationStrategie;
+	public void bindPlanMigrationStrategy(
+			IPlanMigrationStrategy planMigrationStrategy) {
+		this.planMigrationStrategy = planMigrationStrategy;
 	}
 
 	/**
-	 * Method to unbind a {@link IPlanMigrationStrategie}. Used by OSGi.
+	 * Method to unbind a {@link IPlanMigrationStrategy}. Used by OSGi.
 	 * 
-	 * @param planMigrationStrategie {@link IPlanMigrationStrategie} service to unbind
+	 * @param planMigrationStrategy {@link IPlanMigrationStrategy} service to unbind
 	 */
-	public void unbindPlanMigrationStrategie(
-			IPlanMigrationStrategie planMigrationStrategie) {
-		if (this.planMigrationStrategie == planMigrationStrategie) {
-			this.planMigrationStrategie = null;
+	public void unbindPlanMigrationStrategy(
+			IPlanMigrationStrategy planMigrationStrategy) {
+		if (this.planMigrationStrategy == planMigrationStrategy) {
+			this.planMigrationStrategy = null;
 		}
 	}
 
@@ -308,7 +308,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 		infos += "</BufferPlacementStrategy>";
 
-		infos += getInfoString(this.planMigrationStrategie,
+		infos += getInfoString(this.planMigrationStrategy,
 				"PlanMigrationStrategie");
 		infos += getInfoString(this.planOptimizer, "PlanOptimizer");
 		infos += getInfoString(this.queryOptimizer, "QueryOptimizer");

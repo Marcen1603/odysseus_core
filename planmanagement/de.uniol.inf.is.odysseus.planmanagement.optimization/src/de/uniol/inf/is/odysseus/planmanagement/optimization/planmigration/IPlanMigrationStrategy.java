@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
  * @author Wolf Bauer, Tobias Witt
  * 
  */
-public interface IPlanMigrationStrategie {
+public interface IPlanMigrationStrategy {
 	/**
 	 * Migrates an old and a new execution plan.
 	 * 

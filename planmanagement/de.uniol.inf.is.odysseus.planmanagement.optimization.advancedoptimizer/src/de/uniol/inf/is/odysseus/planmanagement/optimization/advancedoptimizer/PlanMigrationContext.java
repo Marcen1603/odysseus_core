@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 
 /**
  * Holds context data for a plan migration. Used by {@link AdvancedOptimizer} to
@@ -17,7 +17,7 @@ class PlanMigrationContext {
 	private IPhysicalOperator root;
 	private ILogicalOperator logicalPlan;
 	private IEditableQuery query;
-	private IPlanMigrationStrategie strategie;
+	private IPlanMigrationStrategy strategy;
 
 	public PlanMigrationContext(IEditableQuery query) {
 		this.query = query;
@@ -47,12 +47,12 @@ class PlanMigrationContext {
 		this.query = query;
 	}
 
-	void setStrategie(IPlanMigrationStrategie strategie) {
-		this.strategie = strategie;
+	void setStrategie(IPlanMigrationStrategy strategy) {
+		this.strategy = strategy;
 	}
 
-	IPlanMigrationStrategie getStrategie() {
-		return strategie;
+	IPlanMigrationStrategy getStrategy() {
+		return strategy;
 	}
 
 }

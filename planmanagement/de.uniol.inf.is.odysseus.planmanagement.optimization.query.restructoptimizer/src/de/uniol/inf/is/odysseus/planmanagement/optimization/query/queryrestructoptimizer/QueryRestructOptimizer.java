@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query.queryrestructoptimizer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -145,13 +146,12 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<IPhysicalOperator,ILogicalOperator> createAlternativePlans(
 			IQueryOptimizable sender, IEditableQuery query,
 			OptimizeParameter parameters, Set<String> rulesToUse)
 			throws QueryOptimizationException {
-		// TODO nur angepasste Logik von optimizeQuery, muss aber verschiedene 
-		// Plaene liefern, die z.B. durch Vertauschen von Joins erzeugt werden
 		
 		ICompiler compiler = sender.getCompiler();
 		if (compiler == null) {
@@ -159,52 +159,51 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		}
 
 		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
+		if (restruct == null || restruct != ParameterDoRestruct.TRUE) {
+			// no restruct allowed
+			return new HashMap<IPhysicalOperator, ILogicalOperator>(0);
+		}
 
 		// create working copy of plan
 		CopyLogicalPlanVisitor v = new CopyLogicalPlanVisitor();
 		ILogicalOperator logicalPlanCopy = AbstractTreeWalker.prefixWalk(query.getSealedLogicalPlan(),v);
 		AbstractTreeWalker.prefixWalk(logicalPlanCopy, new UpdateLogicalPlanVisitor(v.getReplaced()));
-
 		
-		ILogicalOperator newLogicalAlgebra = null;
-		if (restruct != null && restruct == ParameterDoRestruct.TRUE) {
-			if (rulesToUse==null) {
-				newLogicalAlgebra = compiler.restructPlan(logicalPlanCopy);
-			} else {
-				newLogicalAlgebra = compiler.restructPlan(logicalPlanCopy,rulesToUse);
-			}
-		}
+		// create logical alternatives
+		List<ILogicalOperator> logicalAlternatives = compiler.createAlternativePlans(logicalPlanCopy,
+				rulesToUse);
 
-		if ((restruct != null && restruct == ParameterDoRestruct.TRUE)){
 		try {
-				// create the physical plan
-				IPhysicalOperator physicalPlan = compiler.transform(newLogicalAlgebra,
+			Map<IPhysicalOperator,ILogicalOperator> alternatives = new HashMap<IPhysicalOperator,ILogicalOperator>();
+			
+			for (ILogicalOperator logicalPlan : logicalAlternatives) {
+				// create alternative physical plans
+				List<IPhysicalOperator> physicalPlans = compiler.transformWithAlternatives(logicalPlan,
 						query.getBuildParameter().getTransformationConfiguration());	
+	
+				for (IPhysicalOperator physicalPlan : physicalPlans) {
+					addBuffers(query, physicalPlan);
+					
+					// put last sink on top
+					IPhysicalOperator oldRoot = query.getRoot();
+					if (oldRoot.isSource()) {
+						throw new QueryOptimizationException(
+								"Migration needs a sink only as operator root.");
+					}
+					IPhysicalOperator newRoot = oldRoot.clone();
+					((ISink)newRoot).subscribeToSource(physicalPlan, 0, 0, physicalPlan.getOutputSchema());
+					physicalPlan = newRoot;
 
-				addBuffers(query, physicalPlan);
-				
-				// put last sink on top
-				IPhysicalOperator oldRoot = query.getRoot();
-				if (oldRoot.isSource()) {
-					throw new QueryOptimizationException(
-							"Migration needs a sink only as operator root.");
+					alternatives.put(physicalPlan, logicalPlan);
 				}
-				IPhysicalOperator newRoot = oldRoot.clone();
-				((ISink)newRoot).subscribeToSource(physicalPlan, 0, 0, physicalPlan.getOutputSchema());
-				physicalPlan = newRoot;
-				
-				Map<IPhysicalOperator,ILogicalOperator> alternatives = new HashMap<IPhysicalOperator, ILogicalOperator>(1);
-				alternatives.put(physicalPlan, newLogicalAlgebra);
-				
-				return alternatives;
-
-			} catch (Throwable e) {
-				throw new QueryOptimizationException(
-						"Exeception while initialize query.", e);
 			}
+			
+			return alternatives;
+
+		} catch (Throwable e) {
+			throw new QueryOptimizationException(
+					"Exeception while initialize query.", e);
 		}
-		
-		return new HashMap<IPhysicalOperator, ILogicalOperator>(0);
 	}
 
 }

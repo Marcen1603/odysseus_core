@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.TransformationException;
  * combine transforming, rewriting and translating of queries. Used for
  * OSGi-services.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Tobias Witt
  * 
  */
 public interface ICompiler extends IInfoProvider {
@@ -53,6 +53,18 @@ public interface ICompiler extends IInfoProvider {
 	 * @return rewrited logical plan.
 	 */
 	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan, Set<String> rulesToUse);
+	
+	/**
+	 * Creates semantically equivalent alternative plans.
+	 * 
+	 * @param logicalPlan
+	 *            logical plan for which alternatives should be generated.
+	 * @param rules
+	 *            Contains the name of the rules to use. Other rules will not be
+	 *            used.
+	 * @return list of possible alternatives, excluding the given plan.
+	 */
+	public List<ILogicalOperator> createAlternativePlans(ILogicalOperator logicalPlan, Set<String> rulesToUse);
 
 	/**
 	 * Transforms a logical plan into a physical representation.
@@ -68,6 +80,23 @@ public interface ICompiler extends IInfoProvider {
 	 *             query.
 	 */
 	public IPhysicalOperator transform(ILogicalOperator logicalPlan,
+			TransformationConfiguration transformationConfiguration)
+			throws TransformationException;
+	
+	/**
+	 * Transforms a logical plan into several semantically equivalent physical representations.
+	 * 
+	 * @param logicalPlan
+	 *            logical plan which should be transformed.
+	 * @param transformationConfiguration
+	 *            {@link TransformationConfiguration} for the transformation
+	 *            module.
+	 * @return list of physical representations for the logical plan.
+	 * @throws TransformationException
+	 *             An {@link Exception} which occurs during transformation the
+	 *             query.
+	 */
+	public List<IPhysicalOperator> transformWithAlternatives(ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException;
 

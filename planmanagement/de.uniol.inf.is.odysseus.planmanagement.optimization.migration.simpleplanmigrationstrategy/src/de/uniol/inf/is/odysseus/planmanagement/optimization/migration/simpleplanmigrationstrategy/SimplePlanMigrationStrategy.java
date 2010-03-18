@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
  * @author Tobias Witt
  *
  */
-public class SimplePlanMigrationStrategy implements IPlanMigrationStrategie {
+public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	
 	private Logger logger;
 	

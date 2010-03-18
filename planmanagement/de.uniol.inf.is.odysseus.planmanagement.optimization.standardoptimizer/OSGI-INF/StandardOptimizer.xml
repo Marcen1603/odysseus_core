@@ -4,7 +4,7 @@
    <reference bind="bindBufferPlacementStrategy" cardinality="1..1" interface="de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy" name="IBufferPlacementStrategy" policy="dynamic" unbind="unbindBufferPlacementStrategy"/>
    <reference bind="bindPlanOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer" name="IPlanOptimizer" policy="dynamic" unbind="unbindPlanOptimizer"/>
    <reference bind="bindQueryOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer" name="IQueryOptimizer" policy="dynamic" unbind="unbindQueryOptimizer"/>
-   <reference bind="bindPlanMigrationStrategie" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie" name="IPlanMigrationStrategie" policy="dynamic" unbind="unbindPlanMigrationStrategie"/>
+   <reference bind="bindPlanMigrationStrategy" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy" name="IPlanMigrationStrategy" policy="dynamic" unbind="unbindPlanMigrationStrategy"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer"/>
    </service>

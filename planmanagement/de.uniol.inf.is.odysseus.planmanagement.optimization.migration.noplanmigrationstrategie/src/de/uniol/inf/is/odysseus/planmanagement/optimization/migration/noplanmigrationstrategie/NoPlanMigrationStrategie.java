@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 
 /**
  * This is the standard plan migration strategy. No migration is performed. The
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanM
  * @author Wolf Bauer
  * 
  */
-public class NoPlanMigrationStrategie implements IPlanMigrationStrategie {
+public class NoPlanMigrationStrategie implements IPlanMigrationStrategy {
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie#migratePlan(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)

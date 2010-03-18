@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
@@ -38,7 +38,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	
 	private IPlanExecutionCostModel executionCostModel;
 	private IPlanMigrationCostModel migrationCostModel;
-	private List<IPlanMigrationStrategie> planMigrationStrategies;
+	private List<IPlanMigrationStrategy> planMigrationStrategies;
 	
 	private Map<Integer, PlanMigrationContext> optimizationContext;
 	private List<IMonitoringData<?>> sourceDatarates;
@@ -47,7 +47,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	public AdvancedOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 		this.sourceDatarates = new ArrayList<IMonitoringData<?>>();
-		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategie>();
+		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategy>();
 		this.pendingRequests = new LinkedList<IEditableQuery>();
 	}
 	
@@ -68,13 +68,13 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	}
 	
 	@Override
-	public void bindPlanMigrationStrategie(IPlanMigrationStrategie planMigrationStrategie) {
-		this.planMigrationStrategies.add(planMigrationStrategie);
+	public void bindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
+		this.planMigrationStrategies.add(planMigrationStrategy);
 	}
 	
 	@Override
-	public void unbindPlanMigrationStrategie(IPlanMigrationStrategie planMigrationStrategie) {
-		this.planMigrationStrategies.remove(planMigrationStrategie);
+	public void unbindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
+		this.planMigrationStrategies.remove(planMigrationStrategy);
 	}
 
 	@Override
@@ -147,6 +147,11 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			throws QueryOptimizationException {
 		this.logger.info("Start reoptimize query ID "+query.getID());
 		
+		if (this.planMigrationStrategies.isEmpty()) {
+			this.logger.warn("No plan migration strategies available. Aborting.");
+			return executionPlan;
+		}
+		
 		// optimization lock on query
 		if (this.optimizationContext.containsKey(query.getID())) {
 			this.logger.warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
@@ -186,7 +191,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// calculate migration overhead with every registered strategy
 			List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
 			for (IPhysicalOperator cPlan : candidates) {
-				for (IPlanMigrationStrategie strategy : this.planMigrationStrategies) {
+				for (IPlanMigrationStrategy strategy : this.planMigrationStrategies) {
 					migrationCandidates.add(new PlanMigration(query.getRoot(), cPlan, strategy));
 				}
 			}

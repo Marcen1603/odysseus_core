@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 
 /**
  * PlanMigration identifies a combination of old and new physical plans and a
@@ -15,10 +15,10 @@ public class PlanMigration {
 
 	private IPhysicalOperator oldPlan;
 	private IPhysicalOperator newPlan;
-	private IPlanMigrationStrategie strategy;
+	private IPlanMigrationStrategy strategy;
 
 	public PlanMigration(IPhysicalOperator oldPlan, IPhysicalOperator newPlan,
-			IPlanMigrationStrategie strategy) {
+			IPlanMigrationStrategy strategy) {
 		this.newPlan = newPlan;
 		this.oldPlan = oldPlan;
 		this.strategy = strategy;
@@ -40,11 +40,11 @@ public class PlanMigration {
 		this.newPlan = newPlan;
 	}
 
-	public IPlanMigrationStrategie getStrategy() {
+	public IPlanMigrationStrategy getStrategy() {
 		return strategy;
 	}
 
-	public void setStrategy(IPlanMigrationStrategie strategy) {
+	public void setStrategy(IPlanMigrationStrategy strategy) {
 		this.strategy = strategy;
 	}
 
