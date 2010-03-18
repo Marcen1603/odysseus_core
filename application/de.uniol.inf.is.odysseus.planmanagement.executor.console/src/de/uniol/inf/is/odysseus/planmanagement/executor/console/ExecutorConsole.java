@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class ExecutorConsole implements CommandProvider,
@@ -89,6 +90,8 @@ public class ExecutorConsole implements CommandProvider,
 
 	private Map<String, List<Command>> macros = new HashMap<String, List<Command>>();
 	private String currentMacro = null;
+	
+	private ReoptimizeTimer reoptimizeTimer = null;
 
 	private static class DelegateCommandInterpreter implements
 			CommandInterpreter {
@@ -1626,6 +1629,56 @@ public class ExecutorConsole implements CommandProvider,
 			System.err.println(e.getMessage());
 		}
 
+	}
+	
+	@Help(parameter = "<period>", description = "activate timebased reoptimization of the execution plan every <period> milliseconds")
+	public void _startreoptimizetimer(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		if (args.length != 1) {
+			_man(ci);
+			return;
+		}
+		addCommand(args);
+		Long period;
+		try {
+			period = Long.parseLong(args[0]);
+		} catch (NumberFormatException e1) {
+			ci.println("Period could not be parsed. Use an integer.");
+			return;
+		}
+		if (period <= 0) {
+			ci.println("Period should be positive.");
+			return;
+		}
+
+		try {
+			if (this.reoptimizeTimer != null) {
+				this.executor.getSealedPlan().removeReoptimzeRule(this.reoptimizeTimer);
+				ci.println("Old ReoptimizeTimer removed.");
+			}
+			this.reoptimizeTimer = new ReoptimizeTimer(period);
+			this.executor.getSealedPlan().addReoptimzeRule(this.reoptimizeTimer);
+			ci.println("ReoptimizeTimer with "+period+" ms period started.");
+		} catch (PlanManagementException e) {
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	@Help(description = "deactivate timebased reoptimization of the execution plan")
+	public void _stopreoptimizetimer(CommandInterpreter ci) {
+		addCommand();
+
+		if (this.reoptimizeTimer == null) {
+			ci.println("There is no active ReoptimizeTimer.");
+			return;
+		}
+		try {
+			this.executor.getSealedPlan().removeReoptimzeRule(this.reoptimizeTimer);
+			this.reoptimizeTimer = null;
+			ci.println("ReoptimizeTimer removed.");
+		} catch (PlanManagementException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 }
