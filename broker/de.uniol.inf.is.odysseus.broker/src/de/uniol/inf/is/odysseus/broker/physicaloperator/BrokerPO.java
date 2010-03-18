@@ -20,16 +20,18 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractPipe<T, T> {
 	private Logger logger = LoggerFactory.getLogger("BrokerPO");
 	private String identifier;	
-	private DefaultTISweepArea<T> sweepArea = new DefaultTISweepArea<T>();
+	private DefaultTISweepArea<T> sweepArea = new DefaultTISweepArea<T>();	
 	private PriorityQueue<TransactionTS> timestampList = new PriorityQueue<TransactionTS>();	
 	private SDFAttributeList queueSchema;
 	private List<CycleSubscription> cycles = new ArrayList<CycleSubscription>();
+	
+	private List<T> dataContainer  = new ArrayList<T>();
 	
 	public BrokerPO(BrokerPO<T> po){
 		this.identifier = po.getIdentifier();
@@ -60,20 +62,24 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			PointInTime time = object.getMetadata().getStart();
 			TransactionTS trans = new TransactionTS(getOutgoingPortForIncoming(port), time);
 			timestampList.offer(trans);			
-		}else{							
-			sweepArea.purgeElements(object, Order.LeftRight);
-			sweepArea.insert(object);
+		}else{					
+			//sweepArea.purgeElements(object, Order.LeftRight);
+			//sweepArea.insert(object);
+			insertInDC(object);
 		}
 		//System.out.println(sweepArea.getSweepAreaAsString(PointInTime.currentPointInTime()));
 		int to = BrokerDictionary.getInstance().getReadingTransactions(identifier).length;
-		T nextObject = sweepArea.peek();
+		//T nextObject = sweepArea.poll();		
 		int nextPort = -1;
 		if(!timestampList.isEmpty()){				
 			nextPort = timestampList.poll().getOutgoingPort();
 		}
 		for(int i=0;i<to;i++){
-			if(i==nextPort||BrokerDictionary.getInstance().getReadTypeForPort(identifier, i)==ReadTransaction.Continuous)
-			transfer(nextObject, i);		
+			if(i==nextPort||BrokerDictionary.getInstance().getReadTypeForPort(identifier, i)==ReadTransaction.Continuous){
+				for(T nextTuple: this.dataContainer){
+					transfer(nextTuple, i);
+				}
+			}
 		}
 	}
 	
@@ -129,5 +135,25 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		}
 		logger.warn("There is no cycle with incoming port "+income);
 		return 0;
+	}
+	
+	
+	public void insertInDC(T object){
+		RelationalTuple<ITimeInterval> tuple = (RelationalTuple<ITimeInterval>)object;
+		int id = ((Integer)tuple.getAttribute(1)).intValue();
+		T found = null;
+		for(T t : this.dataContainer){
+			RelationalTuple<ITimeInterval> relTuple = (RelationalTuple<ITimeInterval>)t;
+			int tId = ((Integer)relTuple.getAttribute(1)).intValue();
+			if(tId==id){
+				found = t;
+				break;
+			}
+		}
+		if(found!=null){
+			// if there is one, remove it first
+			this.dataContainer.remove(found);			
+		}
+		this.dataContainer.add(object);
 	}
 }

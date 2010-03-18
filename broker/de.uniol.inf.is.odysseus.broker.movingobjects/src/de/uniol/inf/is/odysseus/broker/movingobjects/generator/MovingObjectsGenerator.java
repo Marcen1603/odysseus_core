@@ -15,13 +15,13 @@ public class MovingObjectsGenerator extends Thread {
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
 	private long currentTime = 0;
-	private VehicleGenerator vehicleGenerator = VehicleGenerator.getInstance();
+	private VehicleGenerator vehicleGenerator;
 	
 	public MovingObjectsGenerator() throws IOException{
 		PipedInputStream pIn = new PipedInputStream();
 		PipedOutputStream pOut = new PipedOutputStream();
 		pIn.connect(pOut);
-
+		vehicleGenerator = new VehicleGenerator();
 		outputStream = new ObjectOutputStream(pOut);
 		inputStream = new ObjectInputStream(pIn);
 	}
