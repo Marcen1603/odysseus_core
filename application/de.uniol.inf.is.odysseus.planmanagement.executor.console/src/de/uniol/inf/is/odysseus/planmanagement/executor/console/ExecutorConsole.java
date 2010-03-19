@@ -228,6 +228,8 @@ public class ExecutorConsole implements CommandProvider,
 
 	private String outputputFilename;
 
+	private boolean useBrokerConfig = false;
+
 	public void bindExecutor(IAdvancedExecutor executor) {
 		System.out.println("executor gebunden");
 
@@ -851,7 +853,28 @@ public class ExecutorConsole implements CommandProvider,
 				+ (useObjectFusionConfig ? "activated" : "deactivated"));
 	}
 	
-
+	
+	@Help(parameter = "<on|off>", description = "turn usage of broker configuration on|off")
+	public void _useBrokerConfig(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		try {
+			if (args.length == 1) {
+				useBrokerConfig = toBoolean(args[0]);				
+				if (useBrokerConfig) {
+					this.trafoConfigParam.getValue().setOption("IBrokerInterval", true);					
+				} else {					
+					this.trafoConfigParam.getValue().removeOption("IBrokerInterval");
+				}				
+			}
+		} catch (IllegalArgumentException e) {
+			ci.println(e.getMessage());
+		}
+		ci.println("Broker configuration is "
+				+ (useBrokerConfig ? "activated" : "deactivated"));
+	}
+	
+	
 	private boolean toBoolean(String string) {
 		if (string.equalsIgnoreCase("true")) {
 			return true;
