@@ -3,6 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Console Client
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.console.client
 Bundle-Version: 1.0.0.qualifier
-Fragment-Host: de.uniol.inf.is.odysseus.broker.executor;bundle-version="1.0.0.0"
+Fragment-Host: de.uniol.inf.is.odysseus.planmanagement.executor.console;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
+Export-Package: de.uniol.inf.is.odysseus.broker.console,
+ de.uniol.inf.is.odysseus.broker.console.client
