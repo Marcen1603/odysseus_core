@@ -6,120 +6,74 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
+import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
+import de.uniol.inf.is.odysseus.broker.transaction.GraphUtils;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Query;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 public class ExecutorBinder implements CommandProvider{
 		
-	private List<Query> currentTranslatedPlans = new ArrayList<Query>();
-	private List<Query> currentRestructuredPlans = new ArrayList<Query>();
-	private List<Query> currentTransformedPlans = new ArrayList<Query>();
-	private Map<String, QueryBuildParameter> queries = new HashMap<String, QueryBuildParameter>();
+	
 	private Logger logger = LoggerFactory.getLogger("Broker Executor");
-	private IAdvancedExecutor executor;
-	private ICompiler compiler;
-	private String currentParser;
-	private TransformationConfiguration transformationConfiguration = new TransformationConfiguration("relational", ITimeInterval.class.getName());
+	private IAdvancedExecutor executor;	
+		
 	
+	public void _brokerPrintPorts(CommandInterpreter ci){
+		List<String> args = this.getArgs(ci);
+		if(args.size()==0){
+			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
+				ci.println("******** Ports for broker \""+broker.getIdentifier()+"\" ********");
+				ci.println(printPorts(broker));				
+			}
+		}else{
+			BrokerPO<?> broker = BrokerWrapperPlanFactory.getPlan(args.get(0));
+			ci.println("Ports for broker: "+broker.getIdentifier());
+			ci.println(printPorts(broker));			
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private String printPorts(BrokerPO<?> broker){
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append("Reading Ports:\n");
+		builder.append("--------------\n");
+		for(PhysicalSubscription<? extends ISink> sub : broker.getSubscriptions()){
+			builder.append(sub.getSourceOutPort()+" ("+sub.getTarget()+")\n");
+		}
+		builder.append("\n");
+		builder.append("Writing Ports:\n");
+		builder.append("--------------\n");
+		for(PhysicalSubscription<? extends ISource> sub : broker.getSubscribedToSource()){
+			builder.append(sub.getSinkInPort()+" ("+sub.getTarget()+")\n");
+		}
+		return builder.toString();
+	}
 
-	/**
-	 * USAGE: "addonce SELECT ... ; [<S>|<E>]"
-	 * @param ci
-	 * @throws Exception 
-	 */
-	public void _addonce(CommandInterpreter ci) throws Exception{
-				
-		String command = getArgsAsString(ci);
-		String[] queriesInput = command.split(";");
-		
-		QueryBuildParameter parameters = new QueryBuildParameter();
-		parameters.set(new ParameterTransformationConfiguration(this.transformationConfiguration));		
-		int count = queriesInput.length;
-		for(int i=0;i<count;i++){			
-			queriesInput[i] = queriesInput[i].trim();
-		}		
-		if(queriesInput[queriesInput.length-1].endsWith("<S>")){
-			parameters.set(new ParameterDefaultRoot(new ConsoleSink()));
-			queriesInput[queriesInput.length-1] = queriesInput[queriesInput.length-1].substring(0,queriesInput[queriesInput.length-1].length()-3).trim();
-		}else if(queriesInput[queriesInput.length-1].endsWith("<E>")){
-			parameters.set(new ParameterDefaultRoot(getEclipseConsoleOutput()));
-			queriesInput[queriesInput.length-1] = queriesInput[queriesInput.length-1].substring(0,queriesInput[queriesInput.length-1].length()-3).trim();
+	public void _brokerPrintPlan(CommandInterpreter ci){
+		List<String> args = this.getArgs(ci);
+		if(args.size()==0){
+			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
+				ci.println("******** BROKER: "+broker.getIdentifier()+" ********");
+				ci.println(GraphUtils.planToString(broker, ""));				
+			}
+		}else{
+			String brokerPOName = args.get(0);
+			BrokerPO<?> broker = BrokerWrapperPlanFactory.getPlan(brokerPOName);
+			ci.println(GraphUtils.planToString(broker, ""));
 		}
-						
-		for(int i=0;i<count;i++){			
-			String queryString = queriesInput[i];
-			queries.put(queryString, parameters);
-		}		
-		logger.info(count+" queries added");
 	}
-			
-	public void _translate(CommandInterpreter ci) throws QueryParseException, Exception{
-		logger.debug("Translating queries...");
-		for(Entry<String, QueryBuildParameter> query: this.queries.entrySet()){
-			logger.debug("Translating with "+getCurrentParser()+": \""+query.getKey()+"\"...");
-			List<ILogicalOperator> tops = this.compiler.translateQuery(query.getKey(), getCurrentParser());
-			logger.debug("Translating done.");
-			for(ILogicalOperator top : tops){
-				Query newOne = new Query(top, query.getValue());
-				currentTranslatedPlans.add(newOne);
-			}						
-		}
-		logger.debug("All queries translated");
-		this.queries.clear();
-	}
-	
-	public void _restruct(CommandInterpreter ci){
-		logger.debug("Restructuring translated queries...");
-		for(Query op: this.currentTranslatedPlans){						
-			ILogicalOperator restructOp = this.compiler.restructPlan(op.getLogicalPlan());
-			op.setLogicalPlan(restructOp);
-			currentRestructuredPlans.add(op);
-		}
-		logger.debug("Restructuring done.");
-		this.currentTranslatedPlans.clear();
-	}
-	
-	public void _transform(CommandInterpreter ci) throws TransformationException, PlanManagementException{
-		logger.debug("Transforming restructured queries...");
-		
-		for(Query top : this.currentRestructuredPlans){						
-			IPhysicalOperator phyOp = this.compiler.transform(top.getLogicalPlan(), top.getBuildParameter().getTransformationConfiguration());
-			top.initializePhysicalPlan(phyOp);
-			this.currentTransformedPlans.add(top);
-		}
-		logger.debug("Transformation done.");
-		this.currentRestructuredPlans.clear();
-	}
-	
-	public void _execute(CommandInterpreter ci) throws PlanManagementException{		
-		logger.debug("Executing transformed queries...");		
-		for(Query physicalPlan : this.currentTransformedPlans){
-			int id = this.executor.addQuery(physicalPlan);
-			logger.debug("Query "+id+" executed");
-		}		
-	}
+
 		
 	public void _runfile(CommandInterpreter ci) {
 		String args = this.getArgsAsString(ci);						
@@ -160,14 +114,7 @@ public class ExecutorBinder implements CommandProvider{
 		this.executor = null;		
 	}
 	
-	public void bindCompiler(ICompiler compiler){
-		this.compiler = compiler;
-		logger.debug("Compiler bound");
-	}
 	
-	public void unbindCompiler(ICompiler compiler){
-		this.compiler = null;
-	}
 		
 	@Override
 	public String getHelp() {		
@@ -199,38 +146,8 @@ public class ExecutorBinder implements CommandProvider{
 		}
 		return builder.toString();
 	}
-	
-	private String getCurrentParser() throws Exception {
-		if (this.currentParser != null && this.currentParser.length() > 0) {
-			return currentParser;
-		}
 
-		Iterator<String> parsers = this.executor.getSupportedQueryParser()
-				.iterator();
-		if (parsers != null && parsers.hasNext()) {
-			this.currentParser = parsers.next();
-			return this.currentParser;
-		}
-		throw new Exception("No parser found");
-	}
 	
-	
-	private IPhysicalOperator getEclipseConsoleOutput() {
-		try {
-
-			Class<?> eclipseConsoleSink = Class
-					.forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
-			Object ecs = eclipseConsoleSink.newInstance();
-			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
-			return ecSink;
-		}catch(ClassNotFoundException e){
-			logger.error("Eclipse Console Plugin is missing!");
-		}
-		catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return null;
-	}
 	
 	
 		

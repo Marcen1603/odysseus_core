@@ -60,7 +60,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 	public void setIdentifier(String identifier){
 		this.identifier = identifier;
 	}
-
+			
 	@Override
 	public int hashCode() {
 		final int prime = 31;

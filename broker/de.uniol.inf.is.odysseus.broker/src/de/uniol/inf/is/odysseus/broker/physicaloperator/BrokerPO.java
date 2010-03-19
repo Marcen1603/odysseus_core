@@ -74,7 +74,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		if(!timestampList.isEmpty()){				
 			nextPort = timestampList.poll().getOutgoingPort();
 		}
-		for(int i=0;i<to;i++){
+		for(int i=0;i<to;i++){			
 			if(i==nextPort||BrokerDictionary.getInstance().getReadTypeForPort(identifier, i)==ReadTransaction.Continuous){
 				for(T nextTuple: this.dataContainer){
 					transfer(nextTuple, i);

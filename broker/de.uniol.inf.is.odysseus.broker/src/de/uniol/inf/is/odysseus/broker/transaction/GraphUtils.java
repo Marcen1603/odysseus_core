@@ -60,5 +60,36 @@ public class GraphUtils {
 			}
 		}		
 	}
+	
+	public static String planToString(IPhysicalOperator physicalPO, String indent) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(indent);		
+		builder.append(planToString(physicalPO, indent,
+				new ArrayList<IPhysicalOperator>()));
+		return builder.toString();
+	}
+
+	private static String planToString(IPhysicalOperator physicalPO, String indent,
+			List<IPhysicalOperator> visited) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(indent);
+		if (!visited.contains(physicalPO)) {
+			visited.add(physicalPO);
+			builder.append(physicalPO);
+			builder.append('\n');
+			if (physicalPO.isSink()) {
+				for (PhysicalSubscription<?> sub : ((ISink<?>) physicalPO)
+						.getSubscribedToSource()) {
+					builder.append(planToString((IPhysicalOperator) sub
+							.getTarget(), "  " + indent, visited));
+				}
+			}
+		}else{
+			builder.append(physicalPO);
+			builder.append('\n');
+			builder.append(indent+"  [see above for following operators]\n");
+		}
+		return builder.toString();
+	}
 
 }

@@ -79,5 +79,9 @@ public class BrokerDictionary {
 	public void setWriteTypeForPort(String brokername, int incomingPort, WriteTransaction type) {
 		this.brokerlist.get(brokername).setWriteType(incomingPort, type); 		
 	}
+	
+	public void clearAllReadingPorts(String brokername){
+		this.brokerlist.get(brokername).removeAllReadingPorts();
+	}
 
 }
