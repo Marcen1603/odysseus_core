@@ -15,7 +15,7 @@ public class TransformationConfiguration {
 	public TransformationConfiguration(String dataType, String... metaTypes) {
 		this.dataType = dataType;
 		this.metaTypes = toSet(metaTypes);
-		this.options = new HashMap<String, Object>();
+		this.options = new HashMap<String, Object>();		
 	}
 
 	public TransformationConfiguration(final String dataType,
@@ -72,5 +72,9 @@ public class TransformationConfiguration {
 	@SuppressWarnings("unchecked")
 	public <T> T getOption(String key) {
 		return (T) this.options.get(key);
+	}
+	
+	public void removeOption(String key){
+		this.options.remove(key);
 	}
 }

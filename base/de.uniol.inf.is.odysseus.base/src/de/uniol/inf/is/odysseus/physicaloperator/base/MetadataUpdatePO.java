@@ -31,6 +31,10 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 	public MetadataUpdatePO<M, T> clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
 	}
+	
+	public String toString(){
+		return super.toString() + " updateFac: " + this.metadataFactory.getClass();
+	}
 
 
 }

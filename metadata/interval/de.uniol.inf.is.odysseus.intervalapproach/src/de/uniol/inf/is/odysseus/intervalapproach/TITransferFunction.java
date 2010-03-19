@@ -14,10 +14,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		implements ITransferFunction<T> {
 
-	final private ITimeInterval[] minTs;
+	final protected ITimeInterval[] minTs;
 	protected AbstractSource<T> po;
 	// Initiale Groesse da Comperator uebergeben werden muss
-	final private PriorityQueue<T> out = new PriorityQueue<T>(11,
+	final protected PriorityQueue<T> out = new PriorityQueue<T>(11,
 			new MetadataComparator<ITimeInterval>());
 
 	public TITransferFunction() {

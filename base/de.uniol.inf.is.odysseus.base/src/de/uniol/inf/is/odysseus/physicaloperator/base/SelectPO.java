@@ -81,6 +81,10 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 	@Override
 	public void processPunctuation(PointInTime timestamp) {
 		sendPunctuation(timestamp);
-	}		
+	}
+	
+	public String toString(){
+		return super.toString() + " predicate: " + this.getPredicate().toString(); 
+	}
 
 }
