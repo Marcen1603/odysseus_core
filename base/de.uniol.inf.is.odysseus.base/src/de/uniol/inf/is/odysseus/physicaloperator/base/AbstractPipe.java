@@ -17,6 +17,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		IPipe<R, W> {
 	protected class DelegateSink extends AbstractSink<R> {
+		
+		@Override
+		public void unsubscribeFromSource(
+				PhysicalSubscription<ISource<? extends R>> subscription) {
+			if (this.subscribedTo.remove(subscription)) {
+				subscription.getTarget().unsubscribeSink(this.getInstance(),
+						subscription.getSinkInPort(), subscription.getSourceOutPort(),
+						subscription.getSchema());		
+			}
+		}
 
 		@Override
 		protected void process_next(R object, int port, boolean exclusive) {

@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.DelegateSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -198,7 +199,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void unsubscribeSink(PhysicalSubscription<ISink<? super T>> subscription) {
 		synchronized (this.subscriptions) {
-			if (this.subscriptions.remove(subscription)) {
+//			System.out.print(subscriptions+" remove "+subscription);
+			boolean subContained = this.subscriptions.remove(subscription);
+//			System.out.println("--> "+subContained);
+			if (subContained) {
 				subscription.getTarget().unsubscribeFromSource(this,subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			}
 		}	

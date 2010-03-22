@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.DelegateSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -175,11 +176,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	final public List<PhysicalSubscription<ISource<? extends T>>> getSubscribedToSource() {
-		return (List<PhysicalSubscription<ISource<? extends T>>>) this.subscribedTo
-				.clone();
+		return Collections.unmodifiableList(this.subscribedTo);
 	}
 
 	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(
@@ -226,10 +225,17 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends T>> subscription) {
+		System.out.println("AbstractSink:unsubscribeFromSource ("+this+")"+subscription+" from "+subscribedTo);
 		if (this.subscribedTo.remove(subscription)) {
-			subscription.getTarget().unsubscribeSink(this,
-					subscription.getSinkInPort(), subscription.getSourceOutPort(),
-					subscription.getSchema());
+//			if (this instanceof DelegateSink){ // DAS IST HÄSSLICH
+//				subscription.getTarget().unsubscribeSink(this.getInstance(),
+//						subscription.getSinkInPort(), subscription.getSourceOutPort(),
+//						subscription.getSchema());				
+//			}else{
+				subscription.getTarget().unsubscribeSink(this,
+						subscription.getSinkInPort(), subscription.getSourceOutPort(),
+						subscription.getSchema());
+//			}
 		}
 
 	}
