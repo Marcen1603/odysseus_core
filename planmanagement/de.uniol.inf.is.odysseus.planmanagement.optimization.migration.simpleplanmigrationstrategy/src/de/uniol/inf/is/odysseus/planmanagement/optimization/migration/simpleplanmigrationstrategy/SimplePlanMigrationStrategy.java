@@ -156,17 +156,19 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		PhysicalRestructHelper.removeSubscription(context.getUnion(), context.getLastOperatorOldPlan());
 		PhysicalRestructHelper.removeSubscription(context.getUnion(), context.getSelect());
 		PhysicalRestructHelper.removeSubscription(context.getSelect(), context.getLastOperatorNewPlan());
-		
+			
 		// remove connection from buffers to old plan
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions().toArray(new PhysicalSubscription<?>[buffer.getSubscriptions().size()])) {
 				ISink<?> sink = (ISink<?>) sub.getTarget();
-				if (context.getOldPlanOperatorsBeforeSources().contains(sink)) {
+				// have to test '==', because equals is overwritten
+				int ind = context.getOldPlanOperatorsBeforeSources().indexOf(sink);
+				if (ind != -1 && context.getOldPlanOperatorsBeforeSources().get(ind) == sink ) {
 					PhysicalRestructHelper.removeSubscription(sink, buffer);
 				}
 			}
 		}
-	
+
 		// push data from buffers into plan
 		this.logger.debug("Pushing data from BlockingBuffers.");
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
