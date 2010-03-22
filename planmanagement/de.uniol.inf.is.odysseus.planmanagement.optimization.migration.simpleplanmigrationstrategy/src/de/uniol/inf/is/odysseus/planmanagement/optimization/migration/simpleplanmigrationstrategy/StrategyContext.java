@@ -21,6 +21,11 @@ class StrategyContext {
 	private long ms;
 	private List<BlockingBuffer<?>> blockingBuffers;
 	private List<IPhysicalOperator> oldPlanOperatorsBeforeSources;
+	
+	private IPhysicalOperator union;
+	private IPhysicalOperator select;
+	private IPhysicalOperator lastOperatorOldPlan;
+	private IPhysicalOperator lastOperatorNewPlan;
 
 	public StrategyContext(IOptimizer optimizer, IEditableQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
@@ -77,6 +82,38 @@ class StrategyContext {
 
 	public List<IPhysicalOperator> getOldPlanOperatorsBeforeSources() {
 		return oldPlanOperatorsBeforeSources;
+	}
+
+	public IPhysicalOperator getUnion() {
+		return union;
+	}
+
+	public void setUnion(IPhysicalOperator union) {
+		this.union = union;
+	}
+
+	public IPhysicalOperator getSelect() {
+		return select;
+	}
+
+	public void setSelect(IPhysicalOperator select) {
+		this.select = select;
+	}
+
+	public IPhysicalOperator getLastOperatorOldPlan() {
+		return lastOperatorOldPlan;
+	}
+
+	public void setLastOperatorOldPlan(IPhysicalOperator lastOperatorOldPlan) {
+		this.lastOperatorOldPlan = lastOperatorOldPlan;
+	}
+
+	public IPhysicalOperator getLastOperatorNewPlan() {
+		return lastOperatorNewPlan;
+	}
+
+	public void setLastOperatorNewPlan(IPhysicalOperator lastOperatorNewPlan) {
+		this.lastOperatorNewPlan = lastOperatorNewPlan;
 	}
 
 }

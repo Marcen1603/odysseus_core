@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalPlanToStringVisitor;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
@@ -58,7 +59,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(oldPlanRoot);
 		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(newPlanRoot);
 		
-		
 		// get last operators before output sink
 		IPhysicalOperator lastOperatorOldPlan;
 		if (oldPlanRoot.isSource()) {
@@ -76,11 +76,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		
 		StrategyContext context = new StrategyContext(sender, runningQuery, newPlanRoot);
 		context.setOldPlanOperatorsBeforeSources(oldPlanOperatorsBeforeSources);
+		context.setLastOperatorNewPlan(lastOperatorNewPlan);
+		context.setLastOperatorOldPlan(lastOperatorOldPlan);
 		
 		this.logger.debug("Preparing plan for parallel execution.");
 		// insert buffers before sources
 		for (ISource<?> source : oldPlanSources) {
-			IPipe buffer = new BlockingBuffer();
+			IPipe<?,?> buffer = new BlockingBuffer();
 			buffer.setOutputSchema(source.getOutputSchema());
 			context.getBlockingBuffers().add((BlockingBuffer<?>)buffer);
 			
@@ -93,34 +95,27 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				}
 			}
 			for (PhysicalSubscription<?> sub : unSubList) {
-				ISink o = (ISink) sub.getTarget();
 				// remove subscription to source and subscribe to buffer
-				((ISource)source).unsubscribeSink(sub);
-				((ISink)o).subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
+				PhysicalRestructHelper.replaceChild((IPhysicalOperator)sub.getTarget(), source, buffer);
 			}
 			
 			// subscribe buffer to source
-			buffer.subscribeToSource(source, 0, 0, source.getOutputSchema());
+			PhysicalRestructHelper.appendOperator(buffer, source);
 		}
 		
 		// 'merge' operator at top, discarding tuples of new plan
 		// realized with base operators union and select with falsepredicate
-		PhysicalSubscription<?> oldPlanRootSub = ((ISink<?>)oldPlanRoot).getSubscribedToSource(0);
-		((ISink)oldPlanRoot).unsubscribeFromSource(oldPlanRootSub);
-		PhysicalSubscription<?> newPlanRootSub = ((ISink<?>)newPlanRoot).getSubscribedToSource(0);
-		((ISink)newPlanRoot).unsubscribeFromSource(newPlanRootSub);
-		IPipe union = new UnionPO(new TITransferFunction());	// FIXME: migration strategy only for Interval approach?
-		union.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
-		IPipe select = new SelectPO(new FalsePredicate());
+		IPipe<?,?> select = new SelectPO(new FalsePredicate());
 		select.setOutputSchema(lastOperatorNewPlan.getOutputSchema());
+		IPipe<?,?> union = new UnionPO(new TITransferFunction()); // FIXME: migration strategy only for Interval approach?
+		union.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
+		context.setSelect(select);
+		context.setUnion(union);
 		
-		((ISink)newPlanRoot).subscribeToSource(union, newPlanRootSub.getSinkInPort(), 
-				newPlanRootSub.getSourceOutPort(), union.getOutputSchema());
-		union.subscribeToSource(lastOperatorOldPlan, 0, 
-				oldPlanRootSub.getSourceOutPort(), lastOperatorOldPlan.getOutputSchema());
-		union.subscribeToSource(select, 1, 0, select.getOutputSchema());
-		select.subscribeToSource(lastOperatorNewPlan, 0, 
-				newPlanRootSub.getSourceOutPort(), lastOperatorNewPlan.getOutputSchema());
+		PhysicalRestructHelper.removeSubscription(oldPlanRoot, lastOperatorOldPlan);
+		PhysicalRestructHelper.replaceChild(newPlanRoot, lastOperatorNewPlan, union);
+		PhysicalRestructHelper.appendOperator(select, lastOperatorNewPlan);
+		PhysicalRestructHelper.appendBinaryOperator(union, lastOperatorOldPlan, select);
 		
 		this.logger.debug("Result:\n"+AbstractTreeWalker.prefixWalk2(newPlanRoot, new PhysicalPlanToStringVisitor()));
 		
@@ -157,34 +152,21 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// TODO: muessen owner entfernt/hinzugefuegt werden?
 		// top operators
 		this.logger.debug("Deinitializing parallel execution plan.");
-		ISink<?> newPlanRoot = (ISink<?>)context.getNewPlanRoot();
-		PhysicalSubscription newRootSubscription = newPlanRoot.getSubscribedToSource(0);
-		newPlanRoot.unsubscribeFromSource(newRootSubscription);
-		
-		ISink<?> union = (ISink<?>)newRootSubscription.getTarget();
-		union.unsubscribeFromSource((PhysicalSubscription)union.getSubscribedToSource(0));
-		PhysicalSubscription unionSubscription = union.getSubscribedToSource(0);
-		union.unsubscribeFromSource(unionSubscription);
-		
-		ISink<?> select = (ISink<?>)unionSubscription.getTarget();
-		PhysicalSubscription selectSubscription = select.getSubscribedToSource(0);
-		select.unsubscribeFromSource(selectSubscription);
-		
-		IPipe lastOperator = (IPipe)selectSubscription.getTarget();
-		newPlanRoot.subscribeToSource(lastOperator, newRootSubscription.getSinkInPort(), 
-				selectSubscription.getSourceOutPort(), lastOperator.getOutputSchema());
+		PhysicalRestructHelper.replaceChild(context.getNewPlanRoot(), context.getUnion(), context.getLastOperatorNewPlan());
+		PhysicalRestructHelper.removeSubscription(context.getUnion(), context.getLastOperatorOldPlan());
+		PhysicalRestructHelper.removeSubscription(context.getUnion(), context.getSelect());
+		PhysicalRestructHelper.removeSubscription(context.getSelect(), context.getLastOperatorNewPlan());
 		
 		// remove connection from buffers to old plan
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
-			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions().toArray(new PhysicalSubscription<?>[buffer.getSubscriptions().size()])) {
-				ISink sink = (ISink<?>) sub.getTarget();
+				ISink<?> sink = (ISink<?>) sub.getTarget();
 				if (context.getOldPlanOperatorsBeforeSources().contains(sink)) {
-					((ISource)buffer).unsubscribeSink(sub);
+					PhysicalRestructHelper.removeSubscription(sink, buffer);
 				}
 			}
 		}
-		
+	
 		// push data from buffers into plan
 		this.logger.debug("Pushing data from BlockingBuffers.");
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
@@ -198,15 +180,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
 			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions().toArray(new PhysicalSubscription<?>[buffer.getSubscriptions().size()])) {
-				ISink sink = (ISink<?>) sub.getTarget();
-				((ISource)buffer).unsubscribeSink(sub);
-				sink.subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), source.getOutputSchema());
+				ISink<?> sink = (ISink<?>) sub.getTarget();
+				PhysicalRestructHelper.replaceChild(sink, buffer, source);
 			}
 		}
 		
 		// new plan is ready to be initialized
 		this.logger.debug("Planmigration finished. Result:"
-				+ AbstractTreeWalker.prefixWalk2(newPlanRoot, new PhysicalPlanToStringVisitor()));
+				+ AbstractTreeWalker.prefixWalk2(context.getNewPlanRoot(), new PhysicalPlanToStringVisitor()));
 		context.getOptimizer().handleFinishedMigration(context.getRunningQuery());
 	}
 
