@@ -13,4 +13,9 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
 		return true;
 	}
 
+	@Override
+	public AbstractPredicate<T> clone() {
+		return new TruePredicate<T>();
+	}
+	
 }
