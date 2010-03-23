@@ -122,7 +122,7 @@ public class WorkflowClient implements IActuator {
 	}
 
 	private HashMap<String, Class<?>> createInputMessageParts(BindingMessageInfo inputMessageInfo, Message message) throws InstantiationException, IllegalAccessException, IntrospectionException, ActuatorException {       
-		HashMap<String, Class<?>> parameters = null;
+		HashMap<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
 		for (MessagePartInfo partInfo : inputMessageInfo.getMessageInfo().getMessageParts()){
             Class<?> partClass = partInfo.getTypeClass();
             
@@ -137,10 +137,9 @@ public class WorkflowClient implements IActuator {
             if (partClass.isPrimitive() || Number.class.isAssignableFrom(partClass) || String.class == partClass){
             	messagePart.setPrimitve(true);
             	
-            	parameters = new LinkedHashMap<String, Class<?>>();
             	parameters.put(partInfo.getName().getLocalPart(), partClass);
             }else {
-            	parameters = this.createProperties(messagePart, partClass, correlation);
+            	parameters.putAll(this.createProperties(messagePart, partClass, correlation));
             }
             
             
@@ -231,18 +230,18 @@ public class WorkflowClient implements IActuator {
 						throw new ActuatorException("Cannot send message: CorrelationID is missing");
 					}
 				}else {
-					int endIndex = startIndex+part.getNumberOfProperties();
 					try {
 						if (part.isPrimitve()){
 							part.setInputObject(params[startIndex]);
 							startIndex++;
 						}else {
+							int endIndex = startIndex+part.getNumberOfProperties();
 							part.setValsForProperties(Arrays.copyOfRange(params, startIndex, endIndex));
+							startIndex = endIndex;
 						}
 					}catch (Exception e) {
 						throw new ActuatorException(e.getMessage());
 					}
-					startIndex = endIndex;
 				}
 				
 				inputs[inputIndex] = part.getInputObject();
