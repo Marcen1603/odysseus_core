@@ -261,9 +261,10 @@ public class ECAParser implements IQueryParser{
 								for (int i=0; i<schema.getAttributeCount(); i++){
 									SDFAttribute attribute = schema.get(i);
 									//check for uri since it is unique
-									if (attribute.getPointURI().equals(completeParam)){
+									String uri = attribute.getPointURI();
+									if (uri.equals(completeParam)){
 										try {
-											actionParameters.add(new StreamAttributeParameter(attribute.getDatatype(), i));
+											actionParameters.add(new StreamAttributeParameter(attribute.getDatatype(), uri ));
 										} catch (AttributeParsingException e) {
 											throw new QueryParseException(e.getMessage());
 										}
@@ -277,9 +278,10 @@ public class ECAParser implements IQueryParser{
 								if (!attributeFound){
 									//check there is only 1 possible match
 									if (possibleMatches.size() == 1){
-										int index = possibleMatches.get(0);
+										SDFAttribute matchingAttribute = schema.get(possibleMatches.get(0));
 										try {
-											actionParameters.add(new StreamAttributeParameter(schema.get(index).getDatatype(), index));
+											actionParameters.add(new StreamAttributeParameter(matchingAttribute.getDatatype(),
+													matchingAttribute));
 										} catch (AttributeParsingException e) {
 											throw new QueryParseException(e.getMessage());
 										}
