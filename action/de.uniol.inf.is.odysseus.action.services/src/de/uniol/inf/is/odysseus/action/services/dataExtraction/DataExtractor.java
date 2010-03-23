@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
 /**
@@ -27,7 +28,19 @@ public class DataExtractor implements IDataExtractor{
 		this.extractors.put(extractor.getName(), extractor);
 	}
 	
-	public Object extractAttribute(Object element, Object attributeIdentifier, String type) throws DataextractionException{
+	public Object extractAttribute(Object element, Object attributeIdentifier, String type, SDFAttributeList schema) throws DataextractionException{
+		IAttributeExtractor extractor = this.extractors.get(type);
+		if (extractor == null){
+			throw new DataextractionException("No Service for extraction of datatype: "+ type+ " found.");
+		}
+		
+		Object result = extractor.extractAttribute(attributeIdentifier, element, schema);
+		return result;
+	}
+	
+	@Override
+	public Object extractAttribute(Object element, Object attributeIdentifier,
+			String type) throws DataextractionException {
 		IAttributeExtractor extractor = this.extractors.get(type);
 		if (extractor == null){
 			throw new DataextractionException("No Service for extraction of datatype: "+ type+ " found.");
@@ -45,5 +58,7 @@ public class DataExtractor implements IDataExtractor{
 	public void unbindAttributeExtractor (IAttributeExtractor extractor){
 		this.extractors.remove(extractor.getName());
 	}
+
+	
 
 }

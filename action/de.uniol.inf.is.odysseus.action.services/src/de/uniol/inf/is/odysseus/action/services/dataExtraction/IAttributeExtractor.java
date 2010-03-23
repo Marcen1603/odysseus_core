@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.action.services.dataExtraction;
 
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * OSGI Service Interface for Extractors
@@ -24,4 +25,14 @@ public interface IAttributeExtractor {
 	 * @return
 	 */
 	public String getName();
+
+	/**
+	 * Extracts the value from a data stream element's attribute with the use of the schema
+	 * @param attributeIdentifier
+	 * @param element
+	 * @param schema
+	 * @return
+	 */
+	public Object extractAttribute(Object attributeIdentifier, Object element,
+			SDFAttributeList schema) throws DataextractionException;
 }
