@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Physical Operator calling a list of Actions when an Object is processed
@@ -29,6 +30,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	private Map<Action, List<IActionParameter>> actions;
 	private String type;
 	private Logger logger;
+	private SDFAttributeList schema;
 	private static IDataExtractor dataExtractor;
 	private static IActuatorBenchmark benchmark;
 
@@ -44,11 +46,12 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	 * @param actions
 	 * @param type
 	 */
-	public EventTriggerPO(Map<Action, List<IActionParameter>> actions, String type) {
+	public EventTriggerPO(Map<Action, List<IActionParameter>> actions, String type, SDFAttributeList schema) {
 		super();
 		this.actions = actions;
 		this.type = type;
 		this.logger = LoggerFactory.getLogger(EventTriggerPO.class);
+		this.schema = schema;
 	}
 	
 	/**
@@ -59,7 +62,8 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 		super();
 		this.actions = new HashMap<Action, List<IActionParameter>>(po.actions);
 		this.type = po.type;
-		this.logger = LoggerFactory.getLogger(EventTriggerPO.class);
+		this.logger = po.logger;
+		this.schema = po.schema;
 	}
 	
 	public void bindBenchmark(IActuatorBenchmark bm){
@@ -93,7 +97,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 			try {
 				//start timestamp = tupleTimestamp
 				bmData = new BenchmarkData( 
-						((Number)(dataExtractor.extractAttribute(object, 0, type))).longValue());
+						((Number)(dataExtractor.extractAttribute(object, 0, type, this.schema))).longValue());
 
 				//dataextraction until metadata was created
 				ITimeInterval metaData = (ITimeInterval)((IMetaAttributeContainer)object).getMetadata();
@@ -119,7 +123,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 					//value must be extracted from attribute
 					Object identifier = param.getValue();
 					try {
-						parameters[index] = dataExtractor.extractAttribute(object, identifier, this.type);
+						parameters[index] = dataExtractor.extractAttribute(object, identifier, this.type, this.schema);
 					} catch (Exception e) {
 						this.logger.error("Attribute: "+identifier+" wasn't extracted. \n" +
 								"Reason: "+ e.getMessage());
