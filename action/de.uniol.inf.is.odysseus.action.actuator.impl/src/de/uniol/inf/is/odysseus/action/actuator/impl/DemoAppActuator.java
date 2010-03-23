@@ -14,7 +14,10 @@ import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapter
  */
 public class DemoAppActuator{
 	
-	@ActuatorAdapterSchema(show = true)
+	@ActuatorAdapterSchema(
+			show = true,
+			paramNames = {"id", "itemName", "timestamp"}
+			)
 	public void newAuction(int id, String itemName, long timeStamp) {
 		AuctionMonitor.getInstance().updateData(
 				new String[] {
