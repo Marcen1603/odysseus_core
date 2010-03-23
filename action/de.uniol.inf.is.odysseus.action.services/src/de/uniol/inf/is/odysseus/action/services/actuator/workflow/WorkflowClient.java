@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,18 +78,33 @@ public class WorkflowClient implements IActuator {
 	        	
 	        	Message message = new Message(methodName);
 	
-	        	if (inputMessageInfo != null){
-	        		this.createInputMessageParts(inputMessageInfo, message);
+	        	try {
+	        		HashMap<String, Class<?>> parameters = null;
+					if (inputMessageInfo != null){
+		        		parameters = this.createInputMessageParts(inputMessageInfo, message);
+		        	}
+		        	if (outputMessageInfo != null){
+		        		this.createOutputMessageParts(outputMessageInfo, message);
+		        	}
+		        	
+		        	//create method for schema
+	            	ActionMethod method = new ActionMethod(message.getMessageName().getLocalPart(),
+	                			parameters.values().toArray(new Class<?>[parameters.size()]), 
+	                			parameters.keySet().toArray(new String[parameters.size()]), true);
+	            	
+	            	//add message to mapping
+		        	this.methodMessageMapping.put(methodName.getLocalPart(), message);
+		        	
+	            	this.methods.add(method);
+	        	}catch (Exception e){
+	        		this.logger.error(e.getMessage());
+	        		continue;
 	        	}
-	        	if (outputMessageInfo != null){
-	        		this.createOutputMessageParts(outputMessageInfo, message);
-	        	}
-	        	
-	        	//add message to mapping
-	        	this.methodMessageMapping.put(methodName.getLocalPart(), message);
-	            
-   
 	        }
+	        
+        	if (this.methodMessageMapping.size() == 0){
+        		throw new ActuatorException("Couldnt parse any method correctly");
+        	}
 		}catch (Exception e){
 			throw new ActuatorException(e.getMessage());
 		}
@@ -105,11 +121,9 @@ public class WorkflowClient implements IActuator {
 		this.correlationID = correlationID;
 	}
 
-	private void createInputMessageParts(BindingMessageInfo inputMessageInfo, Message message) throws InstantiationException, IllegalAccessException, IntrospectionException {
-    	List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
-        List<String> parameterNames = new ArrayList<String>();
-        
-    	for (MessagePartInfo partInfo : inputMessageInfo.getMessageInfo().getMessageParts()){
+	private HashMap<String, Class<?>> createInputMessageParts(BindingMessageInfo inputMessageInfo, Message message) throws InstantiationException, IllegalAccessException, IntrospectionException, ActuatorException {       
+		HashMap<String, Class<?>> parameters = null;
+		for (MessagePartInfo partInfo : inputMessageInfo.getMessageInfo().getMessageParts()){
             Class<?> partClass = partInfo.getTypeClass();
             
             //check if this part is a correlation
@@ -117,33 +131,62 @@ public class WorkflowClient implements IActuator {
             if (partClass.getName().toLowerCase().contains(correlationName)){
             	correlation = true;
             }
-            MessagePart messagePart = new MessagePart(partClass.newInstance(), correlation);
+            MessagePart messagePart = new MessagePart(partClass, correlation);
             
-            //addPropertyDescriptors for each field and remember field type as parameter
-            for (Field field : partClass.getDeclaredFields()){
-            	String fieldName = field.getName();
-            	messagePart.addPropertyDescriptor(fieldName);
+            //check if input object is primitive
+            if (partClass.isPrimitive() || Number.class.isAssignableFrom(partClass) || String.class == partClass){
+            	messagePart.setPrimitve(true);
             	
-            	//only add if messagePart is not the correlation!
-            	if (!correlation){
-            		parameterTypes.add(field.getType());
-            		parameterNames.add(fieldName);
-            	}
+            	parameters = new LinkedHashMap<String, Class<?>>();
+            	parameters.put(partInfo.getName().getLocalPart(), partClass);
+            }else {
+            	parameters = this.createProperties(messagePart, partClass, correlation);
             }
+            
             
             //add messagepart to message
             message.addInputMessagePart(messagePart);    
     	}
     	
-    	//create method for schema
-    	ActionMethod method = new ActionMethod(message.getMessageName().getLocalPart(),
-        			parameterTypes.toArray(new Class<?>[parameterTypes.size()]), 
-        			parameterNames.toArray(new String[parameterNames.size()]), true);
-    	this.methods.add(method);
+    	return parameters;
 	}
 	
+	private HashMap<String, Class<?>> createProperties(MessagePart messagePart, Class<?> partClass, boolean correlation) throws IntrospectionException, ActuatorException {
+		HashMap<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
+		//addPropertyDescriptors for each field and remember field type as parameter
+		for (Field field : partClass.getDeclaredFields()){
+			//set property descriptor if field is a standard java object
+	    	Class<?> fieldClass = field.getType();
+	    	if (fieldClass.isPrimitive() || Number.class.isAssignableFrom(fieldClass) || String.class == fieldClass){
+	    		String fieldName = field.getName();
+	    		messagePart.addPropertyDescriptor(fieldName);
+	    	}else {
+	    		Object input = null;
+				try {
+					input = fieldClass.newInstance();
+				} catch (InstantiationException e) {
+					throw new ActuatorException("Error parsing Messagepart: "+e.getMessage());
+				} catch (IllegalAccessException e) {
+					throw new ActuatorException("Error parsing Messagepart: "+e.getMessage());
+				}
+				
+	    		parameters.putAll(
+	    				this.createProperties(new MessagePart(input.getClass(), false)
+	    				, fieldClass, false));
+	    	}
+			
+			
+			//only add if messagePart is not the correlation!
+        	if (!correlation){
+        		parameters.put(field.getName(), field.getType());
+        	}
+        }
+        
+		return parameters;
+	}
+
 	private void createOutputMessageParts(BindingMessageInfo outputMessageInfo,
-			Message message) throws InstantiationException, IllegalAccessException, IntrospectionException {
+			Message message) throws InstantiationException, IllegalAccessException, IntrospectionException, ActuatorException {
 		for (MessagePartInfo partInfo : outputMessageInfo.getMessageInfo().getMessageParts()){
             Class<?> partClass = partInfo.getTypeClass();
             
@@ -152,13 +195,15 @@ public class WorkflowClient implements IActuator {
             if (partClass.getName().toLowerCase().contains(correlationName)){
             	correlation = true;
             }
-            MessagePart messagePart = new MessagePart(partClass.newInstance(), correlation);
+            MessagePart messagePart = new MessagePart(partClass, correlation);
             
-            //addPropertyDescriptors for each field and remember field type as parameter
-            for (Field field : partClass.getDeclaredFields()){
-            	String fieldName = field.getName();
-            	messagePart.addPropertyDescriptor(fieldName);
+            //check if input object is primitive
+            if (partClass.isPrimitive() || Number.class.isAssignableFrom(partClass) || String.class == partClass){
+            	messagePart.setPrimitve(true);
+            }else {
+            	this.createProperties(messagePart, partClass, correlation);
             }
+            
             
             //add messagepart to message
             message.addOutputMessagePart(messagePart);    
@@ -187,7 +232,16 @@ public class WorkflowClient implements IActuator {
 					}
 				}else {
 					int endIndex = startIndex+part.getNumberOfProperties();
-					part.setValsForProperties(Arrays.copyOfRange(params, startIndex, endIndex));
+					try {
+						if (part.isPrimitve()){
+							part.setInputObject(params[startIndex]);
+							startIndex++;
+						}else {
+							part.setValsForProperties(Arrays.copyOfRange(params, startIndex, endIndex));
+						}
+					}catch (Exception e) {
+						throw new ActuatorException(e.getMessage());
+					}
 					startIndex = endIndex;
 				}
 				
@@ -262,5 +316,4 @@ public class WorkflowClient implements IActuator {
 			}
 		}
 	}
-
 }
