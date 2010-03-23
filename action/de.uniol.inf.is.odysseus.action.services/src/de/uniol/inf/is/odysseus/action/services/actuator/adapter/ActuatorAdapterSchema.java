@@ -19,4 +19,5 @@ import java.lang.annotation.Target;
 public @interface ActuatorAdapterSchema {
 	boolean provide() default true;
 	boolean show() default true;
+	String[] paramNames() default {};
 }
