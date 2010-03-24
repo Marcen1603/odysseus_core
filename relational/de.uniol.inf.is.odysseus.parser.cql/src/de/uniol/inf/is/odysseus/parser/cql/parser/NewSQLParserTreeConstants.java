@@ -83,7 +83,10 @@ public interface NewSQLParserTreeConstants
   public int JJTOSGI = 77;
   public int JJTCREATEBROKER = 78;
   public int JJTBROKERSOURCE = 79;
-  public int JJTBROKERSELECTINTO = 80;
+  public int JJTBROKERASSOURCE = 80;
+  public int JJTBROKERSELECTINTO = 81;
+  public int JJTBROKERSIMPLESOURCE = 82;
+  public int JJTBROKERQUEUE = 83;
 
 
   public String[] jjtNodeName = {
@@ -167,7 +170,10 @@ public interface NewSQLParserTreeConstants
     "OSGI",
     "CreateBroker",
     "BrokerSource",
+    "BrokerAsSource",
     "BrokerSelectInto",
+    "BrokerSimpleSource",
+    "BrokerQueue",
   };
 }
-/* JavaCC - OriginalChecksum=1f9af608172e319c3b784ae9408c3a4f (do not edit this line) */
+/* JavaCC - OriginalChecksum=25c93894aef2b27dbd4ce6a39c755309 (do not edit this line) */

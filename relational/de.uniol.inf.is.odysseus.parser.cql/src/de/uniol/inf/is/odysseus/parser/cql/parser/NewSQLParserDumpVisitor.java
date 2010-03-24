@@ -418,7 +418,21 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTDateFormat node, Object data) {
-		// TODO Auto-generated method stub
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTBrokerAsSource node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTBrokerSimpleSource node, Object data) {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTBrokerQueue node, Object data) {
 		return pvisit(node);
 	}
 

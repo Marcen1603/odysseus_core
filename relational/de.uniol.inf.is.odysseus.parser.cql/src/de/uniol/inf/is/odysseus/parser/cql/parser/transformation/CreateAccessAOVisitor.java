@@ -270,19 +270,20 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 					ASTBrokerSource.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);
-
-			ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
+			Node child = node.jjtGetChild(0);
+			ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren()-1);
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);			
 		}catch (ClassNotFoundException ex){
 			throw new RuntimeException("Brokerplugin is missing in CQL parser.", ex.getCause());
 		}catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("Error while accessing broker as source.",e.getCause());
 		}
 
 		return null;
 	}
-
+		
 	private Object brokerStreamingSource(ASTSimpleSource node, Object data) {
 		try {
 			Class<?> brokerSourceVisitor = Class

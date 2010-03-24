@@ -28,7 +28,10 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBasicPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerAsSource;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerQueue;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCSVSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
@@ -686,7 +689,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -709,6 +711,21 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				throw new RuntimeException("Error while parsing the SELECT INTO statement", e.getCause());
 			}			
 		}
+
+	@Override
+	public Object visit(ASTBrokerAsSource node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTBrokerSimpleSource node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTBrokerQueue node, Object data) {
+		return null;
+	}
 	
 
 }

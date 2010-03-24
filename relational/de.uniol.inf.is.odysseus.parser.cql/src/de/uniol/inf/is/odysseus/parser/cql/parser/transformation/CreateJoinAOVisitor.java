@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -394,8 +395,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	@Override	
 	public Object visit(ASTBrokerSource node, Object data) {
 		// same thing like simple-source
-		ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
-		String name = ident.getName();		
+		Node child = node.jjtGetChild(0);
+		ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren()-1);
+		String name = ident.getName();			
 		return createJoin(name, data);			
 	}
 
