@@ -3,13 +3,19 @@ package de.uniol.inf.is.odysseus.dbIntegration.simpleCache.service;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class ParamKey {
+/**
+ * ResultKey ist eine Klasse, welche zum Erstellen von identifizierenden Objekten dient.
+ * Dazu wird aus einem RelationalTupel und einer Datenbankanfrage ein Hashwert erzeugt.
+ * @author crolfes
+ *
+ */
+public class ResultKey {
 
 	private RelationalTuple<?> inputStreamHash;
 	private DBQuery queryHash;
 	
 	
-	public ParamKey(RelationalTuple<?> relevantStreamElement, DBQuery query) {
+	public ResultKey(RelationalTuple<?> relevantStreamElement, DBQuery query) {
 		super();
 		this.inputStreamHash = relevantStreamElement;
 		this.queryHash = query;
@@ -46,7 +52,7 @@ public class ParamKey {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ParamKey other = (ParamKey) obj;
+		ResultKey other = (ResultKey) obj;
 		if (inputStreamHash == null) {
 			if (other.inputStreamHash != null)
 				return false;
