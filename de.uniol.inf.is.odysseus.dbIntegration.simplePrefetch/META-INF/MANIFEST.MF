@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SimplePrefetch
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.dbIntegration.simplePrefetch
+Bundle-Version: 1.0.0.qualifier
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.dbIntegration.exceptions,
+ de.uniol.inf.is.odysseus.dbIntegration.model,
+ de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ org.osgi.service.component,
+ weka.classifiers.bayes,
+ weka.core
+Service-Component: OSGI-INF/component.xml
