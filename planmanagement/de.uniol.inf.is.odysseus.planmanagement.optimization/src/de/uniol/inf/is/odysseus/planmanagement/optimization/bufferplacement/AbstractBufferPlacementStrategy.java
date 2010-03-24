@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Stack;
 
@@ -78,7 +80,13 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 
 		while (!sinks.isEmpty()) {
 			ISink<?> sink = sinks.pop();
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions = sink.getSubscribedToSource();
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptionsOriginal = sink.getSubscribedToSource();
+			Collection<PhysicalSubscription<? extends ISource<?>>> subscriptions = new ArrayList<PhysicalSubscription<? extends ISource<?>>>();
+			
+			for( PhysicalSubscription<? extends ISource<?>> s : subscriptionsOriginal){
+				subscriptions.add(s);			
+			}
+						
 			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
 				if (s.getTarget().isSink()) {
 					if (s.getTarget() instanceof IBuffer) {
