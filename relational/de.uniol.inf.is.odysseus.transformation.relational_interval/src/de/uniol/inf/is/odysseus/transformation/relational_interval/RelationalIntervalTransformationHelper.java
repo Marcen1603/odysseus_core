@@ -10,8 +10,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class RelationalIntervalTransformationHelper {
 	
 	@SuppressWarnings("unchecked")
-	public static MetadataUpdatePO initWindowOn(AbstractWindowTIPO windowPO){
-		int attrPos = windowPO.getWindowAO().getInputSchema().indexOf(
+	public static MetadataUpdatePO initWindowOn(AbstractWindowTIPO windowPO){		
+		int attrPos = windowPO.getOutputSchema().indexOf(
 				windowPO.getWindowAO().getWindowOn());
 		
 		IMetadataUpdater mFac = new RelationalTimestampAttributeTimeIntervalMFactory(
