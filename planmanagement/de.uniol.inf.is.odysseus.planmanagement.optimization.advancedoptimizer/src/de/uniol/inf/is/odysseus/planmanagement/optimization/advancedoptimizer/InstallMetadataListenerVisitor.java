@@ -16,12 +16,6 @@ import de.uniol.inf.is.odysseus.util.INodeVisitor;
  *
  */
 public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOperator, Object> {
-	
-	private AdvancedOptimizer optimizer;
-	
-	public InstallMetadataListenerVisitor(AdvancedOptimizer optimizer) {
-		this.optimizer = optimizer;
-	}
 
 	@Override
 	public void ascend(IPhysicalOperator to) {
@@ -43,7 +37,9 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 			ISource<?> source = (ISource<?>) op;
 			IMonitoringData<?> mData = MonitoringDataTypes.createMetadata(MonitoringDataTypes.DATARATE.name, source);
 			source.subscribe((POEventListener)mData, POEventType.PushDone);
-			this.optimizer.getSourceDatarates().add(mData);
+			// activate periodical datarate update
+			mData = source.getMonitoringData(MonitoringDataTypes.DATARATE.name, AdvancedOptimizer.MONITORING_PERIOD);
+			source.subscribe((POEventListener)mData, POEventType.PushDone);
 		}
 		// install selectivity listener on every pipe operator
 		if (op.isPipe() && !((IPipe<?,?>)op).getProvidedMonitoringData().contains(MonitoringDataTypes.SELECTIVITY.name)) {

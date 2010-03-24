@@ -46,7 +46,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double> implement
 		synchronized (this.value) {
 			long currentTime = System.currentTimeMillis();
 			
-			System.out.println("datarate update");
+			//System.out.println("datarate update");
 			this.value = (double) writeCount
 					/ (currentTime - lastTimestamp);
 			notifySubscribers(value);

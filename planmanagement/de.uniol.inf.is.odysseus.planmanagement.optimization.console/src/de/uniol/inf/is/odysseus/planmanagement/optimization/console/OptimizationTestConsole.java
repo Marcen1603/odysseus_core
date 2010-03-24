@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingRefuseOptimizationAtMemoryLoad;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -77,6 +78,8 @@ public class OptimizationTestConsole implements
 
 			this.executor.getOptimizerConfiguration().set(
 					new SettingMaxConcurrentOptimizations(1));
+			this.executor.getOptimizerConfiguration().set(
+					new SettingRefuseOptimizationAtMemoryLoad(70.0));
 			
 			try {
 				Thread.sleep(2000);

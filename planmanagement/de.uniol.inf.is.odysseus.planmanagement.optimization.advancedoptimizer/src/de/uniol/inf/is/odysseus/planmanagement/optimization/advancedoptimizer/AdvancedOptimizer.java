@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.Datarate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
@@ -39,10 +40,13 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	private IPlanExecutionCostModel executionCostModel;
 	private IPlanMigrationCostModel migrationCostModel;
 	private List<IPlanMigrationStrategy> planMigrationStrategies;
+	private ISystemMonitor systemMonitor;
 	
 	private Map<Integer, PlanMigrationContext> optimizationContext;
 	private List<IMonitoringData<?>> sourceDatarates;
 	private Queue<IEditableQuery> pendingRequests;
+	
+	public static final long MONITORING_PERIOD = 30000;
 	
 	public AdvancedOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
@@ -75,6 +79,22 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	@Override
 	public void unbindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
 		this.planMigrationStrategies.remove(planMigrationStrategy);
+	}
+	
+	public void bindSystemMonitor(ISystemMonitor systemMonitor) {
+		this.systemMonitor = systemMonitor;
+	}
+	
+	public void unbindSystemMonitor(ISystemMonitor systemMonitor) {
+		this.systemMonitor = null;
+	}
+	
+	@Override
+	public void activate() {
+		super.activate();
+		if (this.systemMonitor != null) {
+			this.systemMonitor.initialize(MONITORING_PERIOD);
+		}
 	}
 
 	@Override
@@ -138,7 +158,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	}
 	
 	private void updateMetadataListener(IEditableQuery editableQuery) {
-		AbstractTreeWalker.prefixWalk2(editableQuery.getRoot(), new InstallMetadataListenerVisitor(this));
+		AbstractTreeWalker.prefixWalk2(editableQuery.getRoot(), new InstallMetadataListenerVisitor());
 	}
 	
 	@Override
@@ -152,15 +172,26 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			return executionPlan;
 		}
 		
+		// high system load test
+		if (this.systemMonitor != null) {
+			double cpuLoad = this.systemMonitor.getAverageCPULoad();
+			double memLoad = this.systemMonitor.getHeapMemoryUsage();
+			if (cpuLoad >= this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()) {
+				queueRequest(query, "System CPU load is currently too high ("+cpuLoad+").");
+				return executionPlan;
+			}
+			if (memLoad >= this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()) {
+				queueRequest(query, "System memory load is currently too high ("+memLoad+").");
+				return executionPlan;
+			}
+		}
+		
 		// optimization lock on query
 		if (this.optimizationContext.containsKey(query.getID())) {
 			this.logger.warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
 			return executionPlan;
 		} else if (this.optimizationContext.size() >= this.configuration.getSettingMaxConcurrentOptimizations().getValue()) {
-			this.logger.warn("Reoptimization request queued. There are currently "+this.optimizationContext.size()+" optimizations running.");
-			if (!this.pendingRequests.contains(query)) {
-				this.pendingRequests.offer(query);
-			}
+			queueRequest(query, "There are currently "+this.optimizationContext.size()+" optimizations running.");
 			return executionPlan;
 		}
 		PlanMigrationContext context = new PlanMigrationContext(query);
@@ -248,6 +279,13 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// this.optimizationContext.remove(sender.getID());
 			this.logger.warn("Reoptimization failed. (query ID "
 					+ query.getID() + ")", e);
+		}
+	}
+	
+	private void queueRequest(IEditableQuery query, String reason) {
+		this.logger.warn("Reoptimization request queued. "+reason);
+		if (!this.pendingRequests.contains(query)) {
+			this.pendingRequests.offer(query);
 		}
 	}
 

@@ -13,5 +13,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel,
  de.uniol.inf.is.odysseus.util,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer,
  org.slf4j
 Service-Component: OSGI-INF/component.xml

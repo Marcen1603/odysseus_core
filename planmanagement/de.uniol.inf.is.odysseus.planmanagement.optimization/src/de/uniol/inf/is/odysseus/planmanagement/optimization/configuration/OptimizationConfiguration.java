@@ -28,5 +28,19 @@ public class OptimizationConfiguration extends AbstractTypeSafeMap<AbstractOptim
 		}
 		return (SettingComparePlanCandidates) this.get(SettingComparePlanCandidates.class);
 	}
+	
+	public SettingRefuseOptimizationAtCpuLoad getSettingRefuseOptimizationAtCpuLoad() {
+		if (!this.contains(SettingRefuseOptimizationAtCpuLoad.class)) {
+			set(new SettingRefuseOptimizationAtCpuLoad(85.0));
+		}
+		return (SettingRefuseOptimizationAtCpuLoad) this.get(SettingRefuseOptimizationAtCpuLoad.class);
+	}
+	
+	public SettingRefuseOptimizationAtMemoryLoad getSettingRefuseOptimizationAtMemoryLoad() {
+		if (!this.contains(SettingRefuseOptimizationAtMemoryLoad.class)) {
+			set(new SettingRefuseOptimizationAtMemoryLoad(80.0));
+		}
+		return (SettingRefuseOptimizationAtMemoryLoad) this.get(SettingRefuseOptimizationAtMemoryLoad.class);
+	}
 
 }
