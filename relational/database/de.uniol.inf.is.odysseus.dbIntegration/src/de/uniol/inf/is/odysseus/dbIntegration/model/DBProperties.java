@@ -1,26 +1,34 @@
 package de.uniol.inf.is.odysseus.dbIntegration.model;
 
-
+/**
+ * Buendelt Informationen zum Zugriff auf Datenbanken.
+ * @author crolfes
+ *
+ */
 public class DBProperties {
 
+	//das Schema der Datenbank. 
 	private String database;
+	
+	//in der Form: jdbc:mysql://localhost:3306/auction
 	private String url;
+	
+	//bspw: com.mysql.jdbc.Driver
 	private String driverClass;
+	
 	private String user;
 	private String password;
-	private String schema;
 	
 	
 
 	
 	public DBProperties(String database, String url, String driverClass,
-			String user, String password, String schema) {
+			String user, String password) {
 		this.database = database;
 		this.url = url;
 		this.driverClass = driverClass;
 		this.user = user;
 		this.password = password;
-		this.schema = schema;
 	}
 	
 	
@@ -53,12 +61,6 @@ public class DBProperties {
 	}
 	public void setDriverClass(String driverClass) {
 		this.driverClass = driverClass;
-	}
-	public String getSchema() {
-		return schema;
-	}
-	public void setSchema(String schema) {
-		this.schema = schema;
 	}
 	
 	

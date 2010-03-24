@@ -10,11 +10,19 @@ import org.osgi.service.prefs.PreferencesService;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBProperties;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData;
 
+
+/**
+ * Diese Klasse implementiert das Interface IConnectionData und stellt 
+ * den ConnectionDataService bereit. Mit Hilfe dieses Services koennen Informationen zu
+ * Datenbanken persistent im System gespeichert werden.
+ * 
+ * @author crolfes
+ *
+ */
 public class ConnectionData implements IConnectionData {
 	
 	private PreferencesService preferencesService;
 	private final String url = "URL";
-	private final String schema = "SCHEMA";
 	private final String user = "USER";
 	private final String password = "PASSWORD";
 	private final String driver = "DRIVER";
@@ -23,36 +31,22 @@ public class ConnectionData implements IConnectionData {
 
 
 	@Override
-	public void addConnection(DBProperties properties) {
+	public void addConnection(DBProperties properties) throws BackingStoreException {
 		@SuppressWarnings("unused")
 		Preferences test = preferencesService.getSystemPreferences();
 		Preferences preferences = preferencesService.getSystemPreferences().node("DATABASE");
 		
-			
-			try {
-				if(!preferences.nodeExists(properties.getDatabase())) {
-					Preferences tmp = preferences.node(properties.getDatabase());
-					tmp.put(db, properties.getDatabase());
-					tmp.put(driver, properties.getDriverClass());
-					tmp.put(schema, properties.getSchema());
-					tmp.put(url, properties.getUrl());
-					tmp.put(user, properties.getUser());
-					tmp.put(password, properties.getPassword());
-					preferences.flush();
-				} else  {
-					//TODO 
-					System.out.println("verbindung existiert");
-				}
-			} catch (BackingStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
-			
-		
-		
-
+		if(!preferences.nodeExists(properties.getDatabase())) {
+			Preferences tmp = preferences.node(properties.getDatabase());
+			tmp.put(db, properties.getDatabase());
+			tmp.put(driver, properties.getDriverClass());
+			tmp.put(url, properties.getUrl());
+			tmp.put(user, properties.getUser());
+			tmp.put(password, properties.getPassword());
+			preferences.flush();
+		} else  {
+			System.out.println("verbindung existiert");
+		}
 	}
 
 	@Override
@@ -82,8 +76,7 @@ public class ConnectionData implements IConnectionData {
 					tmpPref.get(url, ""),
 					tmpPref.get(driver, ""),
 					tmpPref.get(user, ""),
-					tmpPref.get(password, ""),
-					tmpPref.get(schema, "")
+					tmpPref.get(password, "")
 			));
 		}
 		return props;
@@ -101,18 +94,23 @@ public class ConnectionData implements IConnectionData {
 				tmpPref.get(url, ""),
 				tmpPref.get(driver, ""),
 				tmpPref.get(user, ""),
-				tmpPref.get(password, ""),
-				tmpPref.get(schema, "")
+				tmpPref.get(password, "")
 				)
 		;
 		return prop;
 	}
 
 	@Override
-	public void updateConnection(DBProperties properties) {
+	public void updateConnection(DBProperties properties) throws BackingStoreException {
 		Preferences preferences = preferencesService.getSystemPreferences().node("DATABASE");
 		Preferences tmp = preferences.node(properties.getDatabase());
-		//TODO: update connection implementieren
+		tmp.put(db, properties.getDatabase());
+		tmp.put(driver, properties.getDriverClass());
+		tmp.put(url, properties.getUrl());
+		tmp.put(user, properties.getUser());
+		tmp.put(password, properties.getPassword());
+		preferences.flush();
+		
 
 	}
 	

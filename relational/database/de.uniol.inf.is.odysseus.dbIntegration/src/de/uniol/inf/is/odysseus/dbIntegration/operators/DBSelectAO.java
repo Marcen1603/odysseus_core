@@ -9,6 +9,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * Dieser logische Operator DBSelectAO wird zur Erstellung eines logischen
+ * Anfrageplans mit integrierten Datenbankanfragen benoetigt.
+ * 
+ * @author crolfes
+ *
+ */
 public class DBSelectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9088151794536927866L;
@@ -18,27 +25,27 @@ public class DBSelectAO extends UnaryLogicalOp {
 	private List<String> options;
 	private Controller dbController;
 	private String alias;
-//	private SDFAttributeList outputSchema;
 	
 	
 	public DBSelectAO() {
 		super();
 	}
 	
-	
-	
-//	public DBSelectAO(String sql, String database, List<String> options, Controller controller) {
-//		super();
-//		this.options = options;
-//		this.query = new DBQuery(database, sql, false);
-//		this.dbController = controller;
-//	}
-
-
 	public DBSelectAO(DBSelectAO po) {
 		super(po);
 	}
 	
+	/**
+	 * Der endgueltige Operator, welcher bei der Transformation 
+	 * zu einem physischen Operator umgewandelt wird.
+	 * 
+	 * @param query - die Datenbankanfrage und der Verweis auf die angesprochene Datenbank.
+	 * @param options - eine Liste mit Optionen, welche Einstellungen bezueglich Controller, 
+	 * Cache und Prefetchkomponente ermoeglicht.
+	 * @param dbController - der Controller
+	 * @param alias - der Alias, durch den uebergeordnete Operatoren auf die Attribute der 
+	 * Datenbankanfrage zugreifen koennen.
+	 */
 	public DBSelectAO(DBQuery query, List<String> options, Controller dbController, String alias) {
 		super();
 		this.alias = alias;
@@ -48,6 +55,15 @@ public class DBSelectAO extends UnaryLogicalOp {
 		
 	}
 	
+	
+	/**
+	 * Dieser Konstruktor wird waehrend der Anfrageverarbeitung in den Visitorklassen genutzt. 
+	 * 
+	 * @param query - die Datenbankanfrage und der Verweis auf die angesprochene Datenbank.
+	 * @param dbController - der Controller
+	 * @param alias - der Alias, durch den uebergeordnete Operatoren auf die Attribute der 
+	 * Datenbankanfrage zugreifen koennen.
+	 */
 	public DBSelectAO(DBQuery query, Controller dbController, String alias) {
 		super();
 		this.alias = alias;
@@ -99,7 +115,7 @@ public class DBSelectAO extends UnaryLogicalOp {
 	}
 
 
-
+	
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		
@@ -117,18 +133,9 @@ public class DBSelectAO extends UnaryLogicalOp {
 		} else {
 			outputSchema = new SDFAttributeList(outAttrs);
 		}
-		
-//		SDFAttributeList outputSchema;
-		
-		
-//		outputSchema = new SDFAttributeList(outAttrs);
-//		if (getInputSchema() != null) {
-//			SDFAttributeList input = getInputSchema();
-//			outputSchema.addAll(getInputSchema());
-//		}
-		
 		return outputSchema;
 	}
+	
 	public String getAlias() {
 		return alias;
 	}

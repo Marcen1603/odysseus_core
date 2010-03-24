@@ -14,10 +14,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.dbIntegration.Activator;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBProperties;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
+import de.uniol.inf.is.odysseus.dbIntegration.model.DBResult;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IConnectionData;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IDataAccess;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -25,10 +28,21 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeReso
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+
+
+/**
+ * Die Klasse DataAccess implementiert das Interface IDataAccess und stellt damit 
+ * die Datenbankverbindung des Datenbankframeworks dar.
+ * 
+ * @author crolfes
+ *
+ */
 public class DataAccess implements IDataAccess {
 
 	private DBQuery dbQuery;
 	private SDFAttributeList inputSchema;
+	private SDFAttributeList prefetchSchema;
+	private SDFAttributeList cacheSchema;
 	private IConnectionData connectionData;
 	private Connection connection;
 	private LinkedList<String> refStreamAttributes;
@@ -36,12 +50,15 @@ public class DataAccess implements IDataAccess {
 	private PreparedStatement prepCacheQuery;
 	private PreparedStatement prepPrefetchQuery;
 	private ConnectionDataServiceTracker connectionDataTracker;
-	
+	protected Logger logger = LoggerFactory.getLogger(DataAccess.class);
+	private List<String> outputSchema;
 	
 	public DataAccess(DBQuery dbQuery, SDFAttributeList inputSchema) {
+		
 		this(dbQuery);
 		this.inputSchema = inputSchema;
 		refStreamAttributes = findDataStreamAttr(dbQuery.getQuery());
+		System.out.println("db constructor");
 	}
 	
 	public DataAccess(DBQuery query) {
@@ -53,72 +70,100 @@ public class DataAccess implements IDataAccess {
 
 
 	@Override
-	public List<RelationalTuple<?>> executeBaseQuery (RelationalTuple<?> tuple) {
-		return executeQuery(sortInput(tuple, inputSchema, refStreamAttributes), prepBaseQuery);
+	public DBResult executeBaseQuery (RelationalTuple<?>tuple) {
+		return executeQuery(prepBaseQuery, inputSchema, tuple);
 	}
 	
 	@Override
-	public List<RelationalTuple<?>> executeCacheQuery(RelationalTuple<?> tuple) {
-		return executeQuery(tuple, prepCacheQuery);
+	public DBResult executeCacheQuery(RelationalTuple<?> tuple) {
+		return executeQuery(prepCacheQuery, cacheSchema, tuple);
 	}
 
 	@Override
-	public List<RelationalTuple<?>> executePrefetchQuery(RelationalTuple<?> tuple) {
-		return executeQuery(tuple, prepPrefetchQuery);
+	public DBResult executePrefetchQuery(RelationalTuple<?> tuple) {
+		return executeQuery(prepPrefetchQuery, prefetchSchema, tuple);
 	}
 
 	@Override
-	public void setCacheQuery(DBQuery dbQuery) {
+	public void setCacheQuery(DBQuery dbQuery, SDFAttributeList schema) {
 		prepCacheQuery = prepareStatement(dbQuery);
-
+		if (schema == null) {
+			this.cacheSchema = inputSchema;
+		} else {
+			this.cacheSchema = schema;
+		}
 	}
 
 	@Override
-	public void setPrefetchQuery(DBQuery dbQuery) {
+	public void setPrefetchQuery(DBQuery dbQuery, SDFAttributeList schema) {
 		prepCacheQuery = prepareStatement(dbQuery);
+		if (schema == null) {
+			this.prefetchSchema = inputSchema;
+		} else {
+			this.prefetchSchema = schema;
+		}
+		
+		
 	}
 	
-	
-	
-	private List<RelationalTuple<?>> executeQuery(RelationalTuple<?> tuple, PreparedStatement prst) {
-		
-		List<RelationalTuple<?>> list = new LinkedList<RelationalTuple<?>>() ;
-		ResultSet rs = null;
-		
+	/**
+	 * In dieser Methode werden die Datenbankanfragen ausgefuehrt.
+	 * 
+	 * @param prst - das auszufuehrende PreparedStatement
+	 * @param schema - das genutzte Eingabeschema
+	 * @param tuple - das Eingabetupel, das in die Anfrage eingefuegt werden soll
+	 * @return ein DBResult-Objekt. Falls es sich bei der Anfrage jedoch um eine manipulierende
+	 * Anfrage handelt, wird null zurueckgegeben.
+	 */
+	private DBResult executeQuery(PreparedStatement prst, SDFAttributeList schema, RelationalTuple<?> tuple) {
+		DBResult result;
 		try {
-			if (connection.isClosed()) {
-				openConnection(dbQuery);
-			}
 			
+			List<RelationalTuple<?>> resultTuples; 
+			RelationalTuple<?> resultTuple = sortInput(tuple, schema, refStreamAttributes);
 			
-			for (int i = 0; i < tuple.getAttributeCount(); i++) {
-				String input = tuple.getAttribute(i).toString();
-				prst.setString(i+1, input);
+			for (int j = 0; j < resultTuple.getAttributeCount(); j++) {
+				String input = resultTuple.getAttribute(j).toString();
+				prst.setString(j+1, input);
 			}
 			
 			if (dbQuery.isUpdate()) {
 				prst.execute();
+				result = null;
 			} else {
-				rs = prst.executeQuery();
+				resultTuples = new LinkedList<RelationalTuple<?>>();
+				ResultSet rs = prst.executeQuery();
 				ResultSetMetaData meta = rs.getMetaData();
 				while (rs.next()) {
 					Object [] tempTuple = new Object[meta.getColumnCount()];
-					for(int i = 0; i < meta.getColumnCount(); i++) {
-						tempTuple[i] = rs.getObject(i+1);
+					for(int j = 0; j < meta.getColumnCount(); j++) {
+						tempTuple[j] = rs.getObject(j+1);
 					}
-					list.add(new RelationalTuple(tempTuple));
+					resultTuples.add(new RelationalTuple(tempTuple));
 				}
-			}
-			
+				result = new DBResult(resultTuples, tuple);
+			}	
+			return result;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 		}
+		return null;
 		
-		return list;
 	}
 	
 	
+	
+	
+	
+	
+	/**
+	 * Hiermit werden zum uebergebenen Anfrage-Objekt die Verbindungsdaten 
+	 * zur Datenbank ausgelesen und die Verbindung zur Datenbank hergestellt.
+	 * 
+	 * @param dbQuery die Datenbankanfrage und die Datenbankbezeichnung
+	 * @throws SQLException falls keine Verbindung hergestellt werden kann.
+	 */
 	private void openConnection(DBQuery dbQuery) throws SQLException {
 		DBProperties properties;
 		try {
@@ -134,26 +179,32 @@ public class DataAccess implements IDataAccess {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
+				} catch (NullPointerException e) {
+					logger.error("No settings for database? Before creating a query, you have to edit your databasesettings!");
+					throw new NullPointerException();
 				}
+				
+				
+				
 				
 				connection = DriverManager.getConnection(
 						properties.getUrl(), 
 						properties.getUser(), 
 						properties.getPassword());
+				
 			}
 		} catch (BackingStoreException e1) {
 			e1.printStackTrace();
-		}
-		
+		}		
 	}
 	
-	
-	private void closeConnection() throws SQLException {
-		if(connection != null) {
-			connection.close();
-		}
-	}
-	
+
+	/**
+	 * Erzeugt fuer eine uebergebene Datenbankanfrage ein PreparedStatement-Objekt.
+	 * 
+	 * @param dbQuery - die umzuwandelnde Datenbankanfrage
+	 * @return das PreparedStatement-Objekt
+	 */
 	private PreparedStatement prepareStatement(DBQuery dbQuery) {
 		PreparedStatement prst = null;
 		try {
@@ -167,7 +218,7 @@ public class DataAccess implements IDataAccess {
 			String [] list = sql.split(" ");
 			LinkedList<String> prefList = new LinkedList<String>();
 			for (String string : list) {
-				if (string.startsWith("$")) {
+				if (string.startsWith("#")) {
 					prefList.add(string);
 				}
 			}
@@ -175,6 +226,7 @@ public class DataAccess implements IDataAccess {
 				prepSql = prepSql.replace(string, "?");
 			
 			}
+			
 			prst = connection.prepareStatement(escape(prepSql));
 			
 		} catch (SQLException e) {
@@ -184,26 +236,32 @@ public class DataAccess implements IDataAccess {
 	}
 	
 	@Override
-	public List<String> getOutAttributeSchema(DBQuery dbQuery) {
-		List<String> out = new ArrayList<String>();
-		try {
-			ResultSetMetaData meta = prepareStatement(dbQuery).getMetaData();
-			for (int i = 0; i < meta.getColumnCount(); i++) {
-				
-				out.add(meta.getColumnName(i+1));
-				
+	public List<String> getSqlOutputSchema(DBQuery dbQuery) {
+		if (outputSchema == null) {
+			outputSchema = new ArrayList<String>();
+			try {
+				ResultSetMetaData meta = prepareStatement(dbQuery).getMetaData();
+				for (int i = 0; i < meta.getColumnCount(); i++) {
+					meta.getColumnType(1);
+					outputSchema.add(meta.getColumnName(i+1));
+					
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
-		
-		return out;
+		return outputSchema;
 	}
 	
 	
 	
 	
-	
+	/**
+	 * Escaped die SQL-Anweisung.
+	 * 
+	 * @param sql - die SQL-Anweisung
+	 * @return die bereinigte Anweisung
+	 */
 	private String escape(String sql) {
 		if (sql == null) {
 			return null;
@@ -216,14 +274,13 @@ public class DataAccess implements IDataAccess {
 	
 	/**
 	 * Bringt die Elemente eines DS-Tupels in die Reihenfolge, wie sie auch
-	 * fuer eine Datenbankanweisung benötigt werden.
+	 * fuer eine Datenbankanweisung benoetigt werden.
 	 * @param streamInputTuple Tupel vom phys. Operator
 	 * @param inputSchemaList Liste der Attributsnamen aus dem Datenstrom
 	 * @param refDBAttributes Liste der referenzierten Attribute in 
 	 * 			der DB-Anweisung
 	 * @return Liste der DS-Werte in DB-korrekter Reihenfolge
 	 */
-	@SuppressWarnings("unchecked")
 	private RelationalTuple<?> sortInput(RelationalTuple<?> streamInputTuple, 
 			SDFAttributeList inputSchemaList, List<String> refDBAttributes) {
 		
@@ -232,29 +289,30 @@ public class DataAccess implements IDataAccess {
 		DirectAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchemaList);
 		
 		
-		for (int i = 0; i < refDBAttributes.size(); i++) {
-			SDFAttribute refAttr = attributeResolver.getAttribute(refDBAttributes.get(i));
-			
-			for (int j = 0; j < inputSchemaList.size(); j++) {
+		try {
+			for (int i = 0; i < refDBAttributes.size(); i++) {
+				SDFAttribute refAttr = attributeResolver.getAttribute(refDBAttributes.get(i));
 				
-				SDFAttribute inputSchemaAttr = ((SDFAttribute) inputSchemaList.getAttribute(j));
-				
-				if (refAttr.equals(inputSchemaAttr)) {
-					objects[i] = streamInputTuple.getAttribute(j).toString();
-					break;
+				for (int j = 0; j < inputSchemaList.size(); j++) {
+					
+					SDFAttribute inputSchemaAttr = ((SDFAttribute) inputSchemaList.getAttribute(j));
+					
+					if (refAttr.equals(inputSchemaAttr)) {
+						objects[i] = streamInputTuple.getAttribute(j).toString();
+						break;
+					}
 				}
 			}
+		} catch (Exception e) {
+			
+			e.printStackTrace();
 		}
 		return new RelationalTuple(objects);
 	}
 	
-	/**
-	 * Sucht aus einem uebergebenen SQL-Statement alle Referenzen
-	 * zur Datenstromanfrage heraus. Diese beginnen mit "$".
-	 * @param sql
-	 * @return eine Liste der Referenzen
-	 */
-	private LinkedList<String> findDataStreamAttr(String sql) {
+	
+	@Override
+	public LinkedList<String> findDataStreamAttr(String sql) {
 		
 		sql = sql.replace("(", " ");
 		sql = sql.replace(")", " ");
@@ -263,29 +321,32 @@ public class DataAccess implements IDataAccess {
 		String [] list = sql.split(" ");
 		LinkedList<String> prefList = new LinkedList<String>();
 		for (String string : list) {
-			if (string.startsWith("$")) {
-				prefList.add(string.replace("$", ""));
+			if (string.startsWith("#")) {
+				prefList.add(string.replace("#", ""));
 			}
 		}
 		return prefList;
 	}
 	
-//	private void filterSQLCommands(String sql) {
-//		String[] queries = sql.split(";");
-//		for (String string : queries) {
-//			if (string.startsWith("drop")) {
-//			}
-//		}
-//	}
 	
 	
 	@Override
-	public RelationalTuple<?> getRelevantParams(RelationalTuple<?> tuple) {
-		RelationalTuple<?> param = sortInput(tuple, inputSchema, refStreamAttributes);
+	public RelationalTuple<?> getRelevantSQLObjects(RelationalTuple<?> tuple, SDFAttributeList schema) {
+		if (schema == null) {
+			schema = inputSchema;
+		}
+		RelationalTuple<?> param = sortInput(tuple, schema, refStreamAttributes);
 		return param;
 	}
 	
-	
+	/**
+	 * Die Klasse ConnectionDataServiceTracker dient der Einbindung des ConnectionDataServices.
+	 * Meldet sich der ConnectionData-Service an der OSGi-Service-Registry an, wird dieser 
+	 * dem jeweiligen der Datenbankanbindung uebergeben.
+	 * 
+	 * @author crolfes
+	 *
+	 */
 	class ConnectionDataServiceTracker extends ServiceTracker {
 
 		public ConnectionDataServiceTracker(BundleContext bundleContext) {

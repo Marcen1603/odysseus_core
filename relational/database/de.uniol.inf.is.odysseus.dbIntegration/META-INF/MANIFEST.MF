@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.dbIntegration
 Bundle-Version: 1.0.0
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,

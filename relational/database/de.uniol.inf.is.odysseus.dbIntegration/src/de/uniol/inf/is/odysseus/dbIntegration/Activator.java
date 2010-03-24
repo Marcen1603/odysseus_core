@@ -10,7 +10,6 @@ public class Activator implements BundleActivator {
 	
 	public void start(BundleContext context) throws Exception {
 		Activator.setContext(context);
-		
 	}
 
 
@@ -23,6 +22,6 @@ public class Activator implements BundleActivator {
 
 	private static void setContext(BundleContext context) {
 		Activator.context = context;
-		
 	}
+
 }

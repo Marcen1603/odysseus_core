@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.dbIntegration.control;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.osgi.framework.BundleContext;
@@ -13,25 +14,41 @@ import de.uniol.inf.is.odysseus.dbIntegration.dataAccess.DataAccess;
 import de.uniol.inf.is.odysseus.dbIntegration.exceptions.CacheMissException;
 import de.uniol.inf.is.odysseus.dbIntegration.exceptions.PrefetchException;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
+import de.uniol.inf.is.odysseus.dbIntegration.model.DBResult;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.ICache;
 import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IPrefetch;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+
+/**
+ * Der Controller ist das zentrale Element des Datenbankframeworks. Hier werden fuer den
+ * entsprechenden Datenbankoperator ein Datenbankobjekt, Cache und Prefetching initialisiert
+ * und gesteuert.
+ * 
+ * @author crolfes
+ *
+ */
 public class Controller {
 
+	//sollen Caching / Prefetching benutzt werden.
 	private boolean caching = false;
 	private boolean prefetching = false;
+	
+	//koennen Caching / Prefetching benutzt werden
+	//falls Services nicht vorhanden -> false
+	private boolean cacheAvailable;
+	private boolean prefetchAvailable;
 	
 	private ICache cache;
 	private IPrefetch prefetch;
 	
 	private DBQuery query;
-	private List<String> cachePrefs;
-	private List<String> prefetchPrefs;
-	private List<String> queryPrefs;
+	private List<String> cachePrefs = new LinkedList<String>();
+	private List<String> prefetchPrefs = new LinkedList<String>();
+	private List<String> dbOptions;
 	
-	private DataAccess dal;
+	private DataAccess dataAccesss;
 	private SDFAttributeList inputSchema;
 	
 	final static String CACHE = "cache";
@@ -40,37 +57,57 @@ public class Controller {
 	
 	private CacheServiceTracker cacheServiceTracker;
 	private PrefetchServiceTracker prefetchServiceTracker;
-	private boolean cacheAvailable;
-	private boolean prefetchAvailable;
 	
 	
 	
+	/**
+	 * StandardController
+	 * 
+	 * @param query - die Datenbankanfrage
+	 */
 	public Controller(DBQuery query) {
 		this.query = query;
 	}
+	
+	/**
+	 * Controller fuer manipulierende Anfragen.
+	 * 
+	 * @param query - die Datenbankanfrage
+	 * @param inputSchema - das anliegende Schema des untergeordneten Operators
+	 */
 	public Controller(DBQuery query, SDFAttributeList inputSchema) {
 		this.query = query;
 		this.inputSchema = inputSchema;
 		init();
-		
 	}
 
-	public Controller(DBQuery query, List<String> queryPrefs, SDFAttributeList inputSchema) {
+	/**
+	 * Controller fuer Select-Anfragen.
+	 * 
+	 * @param query - die Datenbankanfrage
+	 * @param dbOptions - eine Liste mit moeglichen Optionen zur Steuerung des Controllers (Cache/Prefetching)
+	 * und der Caching- bzw. Prefetchingkomponenten. Um Caching zu ermoeglichen muss 'ctrl cache' uebergeben werden.
+	 * Soll weiterhin Prefetching moeglich sein, muss anstelle von 'ctrl cache' der String 'ctrl both' uebergeben
+	 * werden. Sollen Optionen fuer eine Cachingkomponente gesetzt werden, Beginn des Strings mit 'ca'. Fuer Prefetching 
+	 * 'pr'.
+	 * @param inputSchema - das anliegende Schema des untergeordneten Operators.
+	 */
+	public Controller(DBQuery query, List<String> dbOptions, SDFAttributeList inputSchema) {
 		this.query = query;
-		this.queryPrefs = queryPrefs;
+		this.dbOptions = dbOptions;
 		this.inputSchema = inputSchema;
 		init();
 		
 	}
 	
-	
+	/**
+	 * Die init-Methode initialisiert den Datenbankzugriff und setzt falls ueber
+	 * die dbOptions vom Benutzer gewuenscht, die Tracker fuer Caching und Prefetching.
+	 */
 	private void init() {
-		
-		
-		
-		dal = new DataAccess(query, inputSchema);
+		dataAccesss = new DataAccess(query, inputSchema);
 		if (!query.isUpdate()) {
-			for (String string : queryPrefs) {
+			for (String string : dbOptions) {
 				if (string.startsWith("ctrl"))  {
 					string = string.replaceFirst("ctrl", "").trim();
 					if (string.equals(NONE)) {
@@ -79,52 +116,92 @@ public class Controller {
 					} else if (string.equals(CACHE)) {
 						caching = true;
 						prefetching = false;
-					} if (string.equals(BOTH)) {
+					} else if (string.equals(BOTH)) {
 						caching = true;
 						prefetching = true;
-					} 
+					}
 				} else if (string.startsWith("ca ")) {
 					cachePrefs.add(string.replaceFirst("ca ", "").trim());
 				} else if (string.startsWith("pr ")) {
 					prefetchPrefs.add(string.replaceFirst("pr ", "").trim());
 				}
 			}
-		}	
-		cacheServiceTracker = new CacheServiceTracker(Activator.getContext());
-		cacheServiceTracker.open();
-		
-		prefetchServiceTracker = new PrefetchServiceTracker(Activator.getContext());
-		prefetchServiceTracker.open();
-	}
-	
-	
-	
-	
-	public List<RelationalTuple<?>> getData(Object object) {
-		RelationalTuple<?> tuple = (RelationalTuple<?>) object; 
-		
-		if (cacheAvailable) {
-			try {
-				return cache.getCachedData(tuple, query);
-			} catch (CacheMissException e) {
-				if (prefetchAvailable) {
-					try {
-						List<RelationalTuple<?>> result = prefetch.getCachedData(tuple, query);
-						cache.addData(result, query);
-						return result;
-					} catch (PrefetchException e1) {
-					} 
+			if (caching) {
+				cacheServiceTracker = new CacheServiceTracker(Activator.getContext());
+				cacheServiceTracker.open();
+				if (prefetching) {
+					prefetchServiceTracker = new PrefetchServiceTracker(Activator.getContext());
+					prefetchServiceTracker.open();
 				}
 			}
-		}
-		return dal.executeBaseQuery(tuple);
+		}	
 	}
 	
 	
+	
+	/**
+	 * Diese Methode liefert dem aufrufenden Operator zu dem uebergebenen Datenstromtupel 
+	 * eine Liste von Ergebnissen in Form von RelationalTuple-Objekten zurueck.
+	 * 
+	 * @param object - Das eingehende Datenstromtupel.
+	 * @return die Liste mit Ergebnissen oder null, falls keine Ergebnisse geladen worden konnten.
+	 */
+	public List<RelationalTuple<?>> getData(Object object) {
+		RelationalTuple<?> tuple = (RelationalTuple<?>) object; 
+		List<RelationalTuple<?>> result = null;
+		try {
+			if (cacheAvailable) {
+				if (prefetchAvailable) {
+					prefetch.addDataStreamTuple(query, tuple);
+				}
+				result = cache.getCachedData(tuple, query);
+				
+			}
+		} catch (CacheMissException cacheMiss) {
+			if (prefetchAvailable) {
+				try {
+					result = prefetch.getData(tuple, query);
+					if (result != null) {
+						cache.addData(tuple, result, query);
+					}
+				} catch (PrefetchException pe) {
+				} 
+			}
+		} finally {
+			if (result == null) {
+				DBResult results = dataAccesss.executeBaseQuery(tuple);
+				
+				if (results != null) {
+					if (results.getResult() != null) {
+						if (cacheAvailable) {
+							cache.addData(tuple, results.getResult(), query);
+						}
+					}
+				}
+				
+//				if (results != null) {
+//					if (results.get(0) != null) {
+//						result = results.get(0).getResult();
+//						if (cacheAvailable) {
+//							cache.addData(tuple, result, query);
+//						}
+//					}
+//				} else {
+//					return null;
+//				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * closeQuery schließt moegliche angeschlossene Queries in Cache oder Prefetching
+	 * Komponenten.
+	 */
 	public void closeQuery() {
-		if (caching) {
+		if (cacheAvailable) {
 			cache.closeQuery(query);
-			if (prefetching) {
+			if (prefetchAvailable) {
 				prefetch.closeQuery(query);
 			}
 		}
@@ -137,19 +214,31 @@ public class Controller {
 	
 
 	
-	
+	/**
+	 * Liefert eine Liste von Strings. Diese Liste enthaelt die Attributsnamen
+	 * des Ausgabeschemas.
+	 * 
+	 * @return das Ausgabeschema der Datenbankanfrage.
+	 */
 	public List<String> getOutAttributeSchema() {
-		if (dal == null) {
+		if (dataAccesss == null) {
 			DataAccess tempDal = new DataAccess(query);
-			return tempDal.getOutAttributeSchema(query);
+			return tempDal.getSqlOutputSchema(query);
 		}
-		return dal.getOutAttributeSchema(query);
+		return dataAccesss.getSqlOutputSchema(query);
 	}
 	
 	
 	
 	
-	
+	/**
+	 * Die Klasse CacheServiceTracker dient der Einbindung von CacheServices.
+	 * Meldet sich ein Cache-Service an der OSGi-Service-Registry an, wird dieser 
+	 * dem jeweiligen Controller uebergeben.
+	 * 
+	 * @author crolfes
+	 *
+	 */
 	class CacheServiceTracker extends ServiceTracker {
 
 		public CacheServiceTracker(BundleContext bundleContext) {
@@ -163,7 +252,7 @@ public class Controller {
 			
 			if (cacheService != null && caching) {
 				cache = cacheService;
-				cache.addQuery(query, cachePrefs, dal);
+				cache.addQuery(query, cachePrefs, dataAccesss);
 				cacheAvailable = true;
 				
 			} else {
@@ -179,7 +268,15 @@ public class Controller {
 	}
 	
 	
-	
+
+	/**
+	 * Die Klasse PrefetchServiceTracker dient der Einbindung von PrefetchServices.
+	 * Meldet sich ein Prefetch-Service an der OSGi-Service-Registry an, wird dieser 
+	 * dem jeweiligen Controller uebergeben.
+	 * 
+	 * @author crolfes
+	 *
+	 */
 	class PrefetchServiceTracker extends ServiceTracker {
 
 		public PrefetchServiceTracker(BundleContext bundleContext) {
@@ -190,8 +287,9 @@ public class Controller {
 			IPrefetch prefetchService = (IPrefetch) context
 			    .getService(reference);
 			
-			if (prefetchService != null && prefetching) {
-				prefetch.addQuery(query, prefetchPrefs, dal);
+			if (prefetchService != null && prefetching && cache != null) {
+				prefetch = prefetchService;
+				prefetch.addQuery(query, prefetchPrefs, dataAccesss, inputSchema, cache);
 				prefetchAvailable = true;
 				
 			} else {

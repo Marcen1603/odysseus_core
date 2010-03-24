@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.dbIntegration.model;
 
+/**
+ * Die Klasse DBQuery kapselt Informationen zu einer Datenbankanfrage.
+ * @author crolfes
+ *
+ */
 public class DBQuery {
 
 	
