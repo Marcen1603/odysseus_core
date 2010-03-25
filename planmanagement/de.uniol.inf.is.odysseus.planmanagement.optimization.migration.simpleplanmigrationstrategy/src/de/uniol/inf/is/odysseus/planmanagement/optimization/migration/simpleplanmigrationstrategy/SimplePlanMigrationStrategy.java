@@ -29,9 +29,15 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanM
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
+ * SimplePlanMigrationStrategy transfers a currently running physical plan into
+ * a new given plan that has empty operator states. Therefore, both plans are
+ * running parallel, while only the old plan does the output. When all states in
+ * the new plan are filled, the old one is removed and the new plan continues
+ * query processing. This strategy is based on the "Generalized Parallel Track"
+ * strategy by ZHU, Yali ; RUNDENSTEINER, Elke A. ; HEINEMAN, George T..
  * 
  * @author Tobias Witt
- *
+ * 
  */
 public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	
@@ -48,6 +54,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		return newExecutionPlan;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery,
 			IPhysicalOperator newPlanRoot) throws QueryOptimizationException {
@@ -107,7 +114,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// realized with base operators union and select with falsepredicate
 		IPipe<?,?> select = new SelectPO(new FalsePredicate());
 		select.setOutputSchema(lastOperatorNewPlan.getOutputSchema());
-		IPipe<?,?> union = new UnionPO(new TITransferFunction()); // FIXME: migration strategy only for Interval approach?
+		IPipe<?,?> union = null;
+		// only interval approach like in TUnionTIPO.drl supported
+		if (runningQuery.getBuildParameter().getTransformationConfiguration()
+				.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")) {
+			union = new UnionPO(new TITransferFunction());
+		} else {
+			throw new QueryOptimizationException("Approach for UnionPO not supported.");
+		}
 		union.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
 		context.setSelect(select);
 		context.setUnion(union);

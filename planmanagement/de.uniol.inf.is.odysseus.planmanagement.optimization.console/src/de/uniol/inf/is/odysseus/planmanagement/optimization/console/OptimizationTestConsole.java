@@ -85,6 +85,7 @@ public class OptimizationTestConsole implements
 					new SettingRefuseOptimizationAtMemoryLoad(65.0));
 			
 			try {
+				// Datenraten sind erst nach 30 Sekunden verfuegbar, sonst sind Kosten NaN
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {}
 			System.out.println("reoptimize...");
