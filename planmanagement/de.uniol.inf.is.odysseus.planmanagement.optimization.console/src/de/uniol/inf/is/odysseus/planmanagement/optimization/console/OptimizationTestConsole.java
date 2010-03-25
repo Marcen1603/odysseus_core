@@ -15,6 +15,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingRefuseOptimizationAtMemoryLoad;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -63,6 +65,7 @@ public class OptimizationTestConsole implements
 			nmsn(ci);
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
+//							"SELECT bid.price FROM nexmark:bid2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS bid, nexmark:auction2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS auction WHERE auction.id=bid.auction",
 //							"SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction",
 							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
 //							"SELECT bid.price FROM nexmark:bid2 AS bid",
@@ -79,19 +82,89 @@ public class OptimizationTestConsole implements
 			this.executor.getOptimizerConfiguration().set(
 					new SettingMaxConcurrentOptimizations(1));
 			this.executor.getOptimizerConfiguration().set(
-					new SettingRefuseOptimizationAtMemoryLoad(70.0));
+					new SettingRefuseOptimizationAtMemoryLoad(65.0));
 			
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {}
 			System.out.println("reoptimize...");
 			query.reoptimize();
-			
-			//this.executor.getSealedPlan().addReoptimzeRule(new ReoptimizeTimer(10000));
 
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void _testReoptimizationRules(CommandInterpreter ci) {
+		try {
+			nmsn(ci);
+			Collection<Integer> queryIds = this.executor
+					.addQuery("SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
+							parser(), new ParameterDefaultRoot(
+									new OptimizationTestSink(false)),
+							this.trafoConfigParam);
+			this.executor.startExecution();
+			
+			System.out.println("---------------------------------------------");
+			System.out.println("test firing optimization at 20% memory usage");
+			System.out.println("---------------------------------------------");
+			SystemLoadListener loadListener = new SystemLoadListener(this.executor.newSystemMonitor(3000L), 80.0, 20.0);
+			this.executor.getSealedPlan().addReoptimzeRule(loadListener);
+			Thread.sleep(4000);
+			try {
+				int[] i = new int[6000000];
+				Thread.sleep(3000);
+				i = null;
+				System.gc();
+			} catch (InterruptedException e) {}
+			this.executor.getSealedPlan().removeReoptimzeRule(loadListener);
+			
+			
+			System.out.println("---------------------------------------------");
+			System.out.println("test firing optimization every 3 seconds");
+			System.out.println("---------------------------------------------");
+			ReoptimizeTimer optTimer = new ReoptimizeTimer(3000);
+			this.executor.getSealedPlan().addReoptimzeRule(optTimer);
+			Thread.sleep(3500);
+			this.executor.getSealedPlan().removeReoptimzeRule(optTimer);
+			
+
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void _testAdvancedOptimizerRequestHandling(CommandInterpreter ci) {
+		try {
+			nmsn(ci);
+			Collection<Integer> queryIds = this.executor
+					.addQuery("SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
+							parser(), new ParameterDefaultRoot(
+									new OptimizationTestSink(false)),
+							this.trafoConfigParam);
+			this.executor.startExecution();
+			
+			System.out.println("---------------------------------------------");
+			System.out.println("test request queuing and resuming at high load");
+			System.out.println("---------------------------------------------");
+			this.executor.getOptimizerConfiguration().set(
+					new SettingRefuseOptimizationAtMemoryLoad(20.0));
+			try {
+				int[] i = new int[6000000];
+				Thread.sleep(1000);
+				this.executor.getSealedPlan().getQuery(queryIds.iterator().next()).reoptimize();
+				Thread.sleep(8000);
+				i = null;
+				System.gc();
+			} catch (InterruptedException e) {}
+			System.out.println("end high mem usage");
+			
+
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		} 
 	}
 
 	private String parser() {

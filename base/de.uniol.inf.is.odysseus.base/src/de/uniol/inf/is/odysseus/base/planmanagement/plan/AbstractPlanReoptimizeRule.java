@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.base.planmanagement.plan;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRule;
 
@@ -18,7 +20,7 @@ public abstract class AbstractPlanReoptimizeRule
 	/**
 	 * List of global plans which are informed if this rule is valid.
 	 */
-	protected ArrayList<IPlan> reoptimizable;
+	protected List<IPlan> reoptimizable = Collections.synchronizedList(new ArrayList<IPlan>());
 	
 	/**
 	 * Informs all registered global plans that this rule is valid.

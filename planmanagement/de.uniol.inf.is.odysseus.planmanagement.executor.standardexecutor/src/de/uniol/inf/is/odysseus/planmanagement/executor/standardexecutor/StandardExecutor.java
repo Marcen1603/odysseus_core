@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Ab
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
@@ -46,7 +48,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecuti
  * - adding new queries - control scheduling, optimization and query processing
  * - send events of intern changes - providing execution informations
  * 
- * @author Wolf Bauer, Jonas Jacobi
+ * @author Wolf Bauer, Jonas Jacobi, Tobias Witt
  */
 public class StandardExecutor extends AbstractExecutor implements IAdvancedExecutor {
 
@@ -63,6 +65,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 			this.configuration.set(new SettingBufferPlacementStrategy(iter.next()));
 		} else {
 			this.configuration.set(new SettingBufferPlacementStrategy(null));
+		}
+		
+		// initialize default system monitor
+		if (this.systemMonitorFactory != null) {
+			this.defaultSystemMonitor = this.systemMonitorFactory.newSystemMonitor();
+			this.defaultSystemMonitor.initialize(30000L);
 		}
 	}
 
@@ -768,5 +776,23 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	@Override
 	public OptimizationConfiguration getOptimizerConfiguration() throws NoOptimizerLoadedException {
 		return this.optimizer().getConfiguration();
+	}
+	
+	@Override
+	public ISystemMonitor getDefaultSystemMonitor() throws NoSystemMonitorLoadedException {
+		if (this.systemMonitorFactory==null) {
+			throw new NoSystemMonitorLoadedException();
+		}
+		return this.defaultSystemMonitor;
+	}
+	
+	@Override
+	public ISystemMonitor newSystemMonitor(long period) throws NoSystemMonitorLoadedException {
+		if (this.systemMonitorFactory==null) {
+			throw new NoSystemMonitorLoadedException();
+		}
+		ISystemMonitor monitor = this.systemMonitorFactory.newSystemMonitor();
+		monitor.initialize(period);
+		return monitor;
 	}
 }

@@ -3,12 +3,14 @@ package de.uniol.inf.is.odysseus.monitoring.standardsystemmonitor;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
 import java.lang.management.ThreadMXBean;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
+import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorListener;
 
 /**
  * 
@@ -23,6 +25,7 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	private double avgLoad;
 	private LoadUpdater loadUpdater;
 	private Thread loadUpdaterThread;
+	private List<ISystemMonitorListener> listeners;
 	
 	private class LoadRunnable implements Runnable {
 		private boolean run = true;
@@ -52,6 +55,10 @@ public class StandardSystemMonitor implements ISystemMonitor {
 				} catch (InterruptedException e) {}
 			}
 		}
+	}
+	
+	public StandardSystemMonitor() {
+		this.listeners = Collections.synchronizedList(new ArrayList<ISystemMonitorListener>());
 	}
 	
 	public void initialize() {
@@ -102,13 +109,19 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	private void update() {
 		long sum = getLoadForLastPeriod();
 		this.avgLoad = (double)sum * 100.0 / (double)this.maxLoad;
+		for (ISystemMonitorListener listener:this.listeners) {
+			listener.updateOccured();
+		}
 	}
 	
 	private long getLoadForLastPeriod() {
 		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 		long[] ids = bean.getAllThreadIds();
 		long sum = 0L;
-		List<Long> remove = Arrays.asList(this.last.keySet().toArray(new Long[this.last.keySet().size()]));
+		List<Long> remove = new ArrayList<Long>(ids.length);
+		for (long id:ids) {
+			remove.add(id);
+		}
 		for (long id:ids) {
 			long time = bean.getThreadCpuTime(id);
 			Long lastTime = this.last.get(id);
@@ -129,5 +142,13 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	public double getHeapMemoryUsage() {
 		MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 		return (double)usage.getUsed() * 100.0 / (double)usage.getMax();
+	}
+	
+	public void addListener(ISystemMonitorListener listener) {
+		this.listeners.add(listener);
+	}
+	
+	public void removeListener(ISystemMonitorListener listener) {
+		this.listeners.remove(listener);
 	}
 }

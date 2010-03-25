@@ -31,5 +31,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
-Require-Bundle: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel
+Require-Bundle: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel,
+ de.uniol.inf.is.odysseus.planmanagement.executor
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer

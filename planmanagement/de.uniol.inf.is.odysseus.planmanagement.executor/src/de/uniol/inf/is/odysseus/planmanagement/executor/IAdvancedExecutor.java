@@ -4,7 +4,9 @@ import java.util.Set;
 
 import javax.security.auth.login.Configuration;
 
+import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 
@@ -15,7 +17,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
  * the buffer placement strategy, the scheduling strategy factory and the
  * scheduler factory which should be used.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Tobias Witt
  * 
  */
 public interface IAdvancedExecutor extends IExecutor {
@@ -87,4 +89,23 @@ public interface IAdvancedExecutor extends IExecutor {
 	 */
 	public OptimizationConfiguration getOptimizerConfiguration()
 			throws NoOptimizerLoadedException;
+	
+	/**
+	 * Returns the default System Monitor with an fixed measure period.
+	 * @return {@link ISystemMonitor}
+	 * 
+	 * @throws NoSystemMonitorLoadedException
+	 */
+	public ISystemMonitor getDefaultSystemMonitor()
+			throws NoSystemMonitorLoadedException;
+	
+	/**
+	 * Creates a new System Monitor with the specified period.
+	 * @param period measure period.
+	 * @return {@link ISystemMonitor}
+	 * 
+	 * @throws NoSystemMonitorLoadedException
+	 */
+	public ISystemMonitor newSystemMonitor(long period)
+			throws NoSystemMonitorLoadedException;
 }

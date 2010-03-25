@@ -16,6 +16,8 @@ import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
+import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
+import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
@@ -104,6 +106,16 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * Lock for synchronizing execution plan changes.
 	 */
 	protected ReentrantLock executionPlanLock = new ReentrantLock();
+	
+	/**
+	 * The default System Monitor.
+	 */
+	protected ISystemMonitor defaultSystemMonitor = null;
+	
+	/**
+	 * System Monitor Komponente
+	 */
+	protected ISystemMonitorFactory systemMonitorFactory = null;
 
 	/**
 	 * setExecutionPlan setzt den aktuellen Ausführungsplan und aktualisiert das
@@ -529,6 +541,18 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
 				"Executor exception (with inner error). "
 						+ eventArgs.getMessage()));
+	}
+	
+	public void bindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
+		this.systemMonitorFactory = systemMonitorFactory;
+	}
+	
+	public void unbindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
+		this.systemMonitorFactory = null;
+		if (this.defaultSystemMonitor != null) {
+			this.defaultSystemMonitor.stop();
+			this.defaultSystemMonitor = null;
+		}
 	}
 
 }

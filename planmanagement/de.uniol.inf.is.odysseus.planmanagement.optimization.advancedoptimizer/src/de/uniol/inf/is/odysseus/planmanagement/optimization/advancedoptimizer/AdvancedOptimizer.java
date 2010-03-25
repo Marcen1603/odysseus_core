@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.Datarate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
@@ -40,7 +42,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	private IPlanExecutionCostModel executionCostModel;
 	private IPlanMigrationCostModel migrationCostModel;
 	private List<IPlanMigrationStrategy> planMigrationStrategies;
-	private ISystemMonitor systemMonitor;
 	
 	private Map<Integer, PlanMigrationContext> optimizationContext;
 	private List<IMonitoringData<?>> sourceDatarates;
@@ -79,22 +80,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	@Override
 	public void unbindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
 		this.planMigrationStrategies.remove(planMigrationStrategy);
-	}
-	
-	public void bindSystemMonitor(ISystemMonitor systemMonitor) {
-		this.systemMonitor = systemMonitor;
-	}
-	
-	public void unbindSystemMonitor(ISystemMonitor systemMonitor) {
-		this.systemMonitor = null;
-	}
-	
-	@Override
-	public void activate() {
-		super.activate();
-		if (this.systemMonitor != null) {
-			this.systemMonitor.initialize(MONITORING_PERIOD);
-		}
 	}
 
 	@Override
@@ -173,18 +158,25 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		}
 		
 		// high system load test
-		if (this.systemMonitor != null) {
-			double cpuLoad = this.systemMonitor.getAverageCPULoad();
-			double memLoad = this.systemMonitor.getHeapMemoryUsage();
+		try {
+			ISystemMonitor monitor = ((IAdvancedExecutor)sender).getDefaultSystemMonitor();
+			double cpuLoad = monitor.getAverageCPULoad();
+			double memLoad = monitor.getHeapMemoryUsage();
 			if (cpuLoad >= this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()) {
 				queueRequest(query, "System CPU load is currently too high ("+cpuLoad+").");
+				new LowSystemLoadWaiter(((IAdvancedExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
+						this, this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()*0.8,
+						this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()*0.8);
 				return executionPlan;
 			}
 			if (memLoad >= this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()) {
 				queueRequest(query, "System memory load is currently too high ("+memLoad+").");
+				new LowSystemLoadWaiter(((IAdvancedExecutor)sender).newSystemMonitor(MONITORING_PERIOD),
+						this, this.configuration.getSettingRefuseOptimizationAtCpuLoad().getValue()*0.8,
+						this.configuration.getSettingRefuseOptimizationAtMemoryLoad().getValue()*0.8);
 				return executionPlan;
 			}
-		}
+		} catch (NoSystemMonitorLoadedException e1) {}
 		
 		// optimization lock on query
 		if (this.optimizationContext.containsKey(query.getID())) {
@@ -271,9 +263,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 					+ query.getID() + ")");
 			
 			// handle pending requests
-			if (!this.pendingRequests.isEmpty()) {
-				this.pendingRequests.poll().reoptimize();
-			}
+			processPendingRequests();
 
 		} catch (Exception e) {
 			// this.optimizationContext.remove(sender.getID());
@@ -301,6 +291,12 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			reoptimize(sender, query, executionPlan);
 		}
 		return executionPlan;
+	}
+	
+	void processPendingRequests() {
+		if (!this.pendingRequests.isEmpty()) {
+			this.pendingRequests.poll().reoptimize();
+		}
 	}
 
 }

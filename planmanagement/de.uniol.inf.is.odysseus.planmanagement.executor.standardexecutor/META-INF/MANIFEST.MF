@@ -33,6 +33,7 @@ Import-Package:
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/StandardExecutor.xml
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor
+Require-Bundle: de.uniol.inf.is.odysseus.base
 
 
 
