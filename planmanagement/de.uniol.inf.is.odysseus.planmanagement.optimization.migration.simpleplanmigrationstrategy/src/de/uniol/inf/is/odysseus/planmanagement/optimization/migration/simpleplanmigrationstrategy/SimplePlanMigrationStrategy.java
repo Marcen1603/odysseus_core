@@ -163,7 +163,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		MigrationHelper.drainTuples(context.getRunningQuery().getRoot());
 		
 		// remove old plan, keep buffers
-		// TODO: muessen owner entfernt/hinzugefuegt werden?
 		// top operators
 		this.logger.debug("Deinitializing parallel execution plan.");
 		PhysicalRestructHelper.replaceChild(context.getNewPlanRoot(), context.getUnion(), context.getLastOperatorNewPlan());
@@ -200,6 +199,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				PhysicalRestructHelper.replaceChild(sink, buffer, source);
 			}
 		}
+		
+		// remove any metadata on old plan operators
+		AbstractTreeWalker.prefixWalk2(context.getLastOperatorOldPlan(), new CleanOperatorsVisitor());
+		
+		// clean up, removing ownership of every operator
+		// will be restored for new plan operators on initialization
+		context.getRunningQuery().removeOwnerschip();
 		
 		// new plan is ready to be initialized
 		this.logger.debug("Planmigration finished. Result:"

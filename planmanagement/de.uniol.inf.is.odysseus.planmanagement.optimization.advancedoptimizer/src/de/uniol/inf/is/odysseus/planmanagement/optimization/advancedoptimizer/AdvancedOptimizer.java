@@ -251,7 +251,11 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			query.setLogicalPlan(context.getLogicalPlan());
 
 			// set and initialize new physical plan
+			// adds query as operator owner, too
 			query.initializePhysicalPlan(context.getRoot());
+			
+			// reinstall metadata listener
+			updateMetadataListener(query);
 
 			// continue scheduling
 			this.logger.debug("Resume query.");
