@@ -57,5 +57,10 @@ public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>
 	public long getWindowSize() {
 		return this.windowSize;
 	}
+	
+	@Override
+	public Type getWindowType() {
+		return Type.ELEMENT_BASED;
+	}
 
 }

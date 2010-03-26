@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.intervalapproach.window;
 import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
@@ -36,5 +35,22 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 	
 	public WindowAO getWindowAO() {
 		return windowAO;
+	}
+	
+	@Override
+	public Type getWindowType() {
+		switch (this.windowAO.getWindowType()) {
+		case PERIODIC_TIME_WINDOW:
+		case SLIDING_TIME_WINDOW:
+		case JUMPING_TIME_WINDOW:
+		case FIXED_TIME_WINDOW:
+			return Type.TIME_BASED;
+		case PERIODIC_TUPLE_WINDOW:
+		case SLIDING_TUPLE_WINDOW:
+		case JUMPING_TUPLE_WINDOW:
+			return Type.ELEMENT_BASED;
+		default:
+			return Type.OTHER;
+		}
 	}
 }

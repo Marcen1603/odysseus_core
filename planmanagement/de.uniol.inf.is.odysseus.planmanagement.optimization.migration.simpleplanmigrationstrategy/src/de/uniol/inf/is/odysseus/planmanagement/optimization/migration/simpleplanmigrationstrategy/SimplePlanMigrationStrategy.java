@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.IWindow.Type;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
@@ -63,8 +65,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// install both plans for parallel execution
 		IPhysicalOperator oldPlanRoot = runningQuery.getRoot();
 		List<ISource<?>> oldPlanSources = MigrationHelper.getPseudoSources(oldPlanRoot);
-		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(oldPlanRoot);
-		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(newPlanRoot);
+		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(oldPlanRoot, oldPlanSources);
+		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper.getOperatorsBeforeSources(newPlanRoot, oldPlanSources);
 		
 		// get last operators before output sink
 		IPhysicalOperator lastOperatorOldPlan;
@@ -81,10 +83,17 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			lastOperatorNewPlan = ((ISink<?>)newPlanRoot).getSubscribedToSource(0).getTarget();
 		}
 		
+		// get longest window
+		IWindow wMax = MigrationHelper.getLongestWindow(lastOperatorNewPlan);
+		if (wMax != null && wMax.getWindowType() != Type.TIME_BASED) {
+			throw new QueryOptimizationException("Only time based windows are supported.");
+		}
+		
 		StrategyContext context = new StrategyContext(sender, runningQuery, newPlanRoot);
 		context.setOldPlanOperatorsBeforeSources(oldPlanOperatorsBeforeSources);
 		context.setLastOperatorNewPlan(lastOperatorNewPlan);
 		context.setLastOperatorOldPlan(lastOperatorOldPlan);
+		context.setwMax(wMax);
 		
 		this.logger.debug("Preparing plan for parallel execution.");
 		// insert buffers before sources
@@ -134,8 +143,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		this.logger.debug("Result:\n"+AbstractTreeWalker.prefixWalk2(newPlanRoot, new PhysicalPlanToStringVisitor()));
 		
 		// execute plans for at least 'w_max' (longest window duration)
-		long wMax = MigrationHelper.getLongestWindowSize(lastOperatorNewPlan);
-		context.setMs(wMax);
 		this.logger.debug("Initializing parallel execution plan.");
 		try {
 			runningQuery.initializePhysicalPlan(newPlanRoot);
@@ -144,9 +151,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 		runningQuery.start();
 		this.logger.debug("Parallel execution started.");
-		new Thread(new ParallelExecutionWaiter(this, context)).start();
-		this.logger.debug("ParallelExecutionWaiter started with "+wMax+"ms waiting period.");
-		
+		if (wMax == null) {
+			this.logger.debug("No windows, can finish parallel execution instantly.");
+			finishedParallelExecution(context);
+		} else if (wMax.getWindowType() == Type.TIME_BASED) {
+			new Thread(new ParallelExecutionWaiter(this, context)).start();
+			this.logger.debug("ParallelExecutionWaiter started with "+wMax.getWindowSize()+"ms waiting period.");
+		}
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
