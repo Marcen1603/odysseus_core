@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cep.epa.symboltable;
+package de.uniol.inf.is.odysseus.cep.epa.symboltable.relational;
 
 import java.util.HashMap;
 import java.util.Map;

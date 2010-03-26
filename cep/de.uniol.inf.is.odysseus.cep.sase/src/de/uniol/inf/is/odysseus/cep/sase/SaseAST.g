@@ -28,7 +28,7 @@ options {
 	import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPCondition;
 	import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPOutputSchemeEntry;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
-	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
+	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 }
 
 @members {
@@ -36,6 +36,7 @@ options {
 	List<String> kleeneState = null;
 	Map<String, String> simpleAttributeState = null;
 	Map<String, String> kleeneAttributeState = null;
+	ISymbolTableOperationFactory symTableOpFac = null;
 	
 	// TODO: Hierfuer eine bessere Loesung finden
 	 private String tranformAttributesToMetamodell(CompareExpression ce, State s) {
@@ -441,7 +442,7 @@ attributeTerm[List<PathAttribute> attribs]
    )
   { 
     PathAttribute p = new PathAttribute(var.getText(),"[i-1]",member.getText(),
-        SymbolTableOperationFactory.getOperation(op.getText()).getName());
+        symTableOpFac.getOperation(op.getText()).getName());
     attribs.add(p);
    }
   |
@@ -458,7 +459,7 @@ attributeTerm[List<PathAttribute> attribs]
    )
   { 
     PathAttribute p = new PathAttribute(var.getText(),"[i-1]","",
-        SymbolTableOperationFactory.getOperation(op.getText()).getName());
+        symTableOpFac.getOperation(op.getText()).getName());
     attribs.add(p);
    }
   ;

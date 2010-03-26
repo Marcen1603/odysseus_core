@@ -19,7 +19,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
- de.uniol.inf.is.odysseus.cep.epa.eventreading.relational
+ de.uniol.inf.is.odysseus.cep.epa.eventreading.relational,
+ de.uniol.inf.is.odysseus.cep.epa.symboltable.relational
 Require-Bundle: de.uniol.inf.is.odysseus.cep
-Bundle-ActivationPolicy: lazy
-Bundle-Activator: de.uniol.inf.is.odysseus.cep.epa.Activator

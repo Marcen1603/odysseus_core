@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
-import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableOperationFactory;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IAggregateFunction;
 
 /**
@@ -31,6 +31,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IA
  */
 public class CepVariable {
 
+	private static ISymbolTableOperationFactory symTabOpFac = null;
+	
+	static public void setSymbolTableOperationFactory(ISymbolTableOperationFactory symTabOpFactory) {
+		symTabOpFac = symTabOpFactory;
+	}
+	
 	/**
 	 * ID eines Events / Zustands. Darf nur aus Buchstaben und Ziffern bestehen,
 	 * wobei das erste Zeichen ein Buchstabe sein muss. Darf nicht null oder
@@ -78,7 +84,7 @@ public class CepVariable {
 
 	public CepVariable(String varName) {
 		String[] split = varName.split(getSeperator());
-		this.operation = SymbolTableOperationFactory.getOperation(split[0]);
+		this.operation = symTabOpFac.getOperation(split[0]);
 		this.stateIdentifier = split[1];
 		if (split[2].length() > 0){
 			this.index = Integer.parseInt(split[2]);

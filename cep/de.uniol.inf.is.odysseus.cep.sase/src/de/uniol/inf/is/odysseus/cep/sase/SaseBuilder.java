@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.cep.CepAO;
+import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolTableOperationFactory;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -29,7 +31,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 
 	@Override
 	public String getLanguage() {
-		return "SASE";
+		return "SASE Relational";
 	}
 
 	@Override
@@ -84,6 +86,11 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 		printTree(tree, 2);
 		CommonTreeNodeStream nodes = new CommonTreeNodeStream(tree);
 		SaseAST walker = new SaseAST(nodes);
+
+		// Relational ... ggf. auslagern ?
+		walker.symTableOpFac = new RelationalSymbolTableOperationFactory();
+		CepVariable.setSymbolTableOperationFactory(walker.symTableOpFac);
+
 		try {
 			retList.add(walker.start());
 		} catch (RecognitionException e) {
