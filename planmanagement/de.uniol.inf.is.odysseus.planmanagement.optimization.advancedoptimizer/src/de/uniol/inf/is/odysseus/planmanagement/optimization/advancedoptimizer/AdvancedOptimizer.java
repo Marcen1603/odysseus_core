@@ -223,10 +223,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			context.setRoot(optimalMigration.getNewPlan());
 			context.setLogicalPlan(alternatives.get(optimalMigration.getNewPlan()));
 			
-			// stop scheduling
-			this.logger.debug("Pause query.");
-			query.stop();
-			
 			// start migration to new plan 
 			this.logger.info("Start migration to new physical plan (query ID "+query.getID()+")");
 			optimalMigration.getStrategy().migrateQuery(this, query, optimalMigration.getNewPlan());
@@ -249,17 +245,9 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		try {
 			// set new logical plan
 			query.setLogicalPlan(context.getLogicalPlan());
-
-			// set and initialize new physical plan
-			// adds query as operator owner, too
-			query.initializePhysicalPlan(context.getRoot());
 			
 			// reinstall metadata listener
 			updateMetadataListener(query);
-
-			// continue scheduling
-			this.logger.debug("Resume query.");
-			query.start();
 
 			// remove lock and context
 			this.optimizationContext.remove(query.getID());

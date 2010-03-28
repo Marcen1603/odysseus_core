@@ -137,7 +137,7 @@ public class MigrationHelper {
 		}
 		for (PhysicalSubscription<?> sub : ((ISink<?>)op).getSubscribedToSource()) {
 			drainTuples((IPhysicalOperator) sub.getTarget());
-			if (op instanceof IIterableSource<?>) {
+			if (op instanceof IIterableSource<?> && !(op instanceof BlockingBuffer<?>) && op.isSink()) {
 				IIterableSource<?> iterableSource = (IIterableSource<?>) op;
 				while (iterableSource.hasNext()) {
 					iterableSource.transferNext();

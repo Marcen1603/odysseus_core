@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import java.util.Collection;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.ISubscribable;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Interface for data sources in a query graph.
@@ -15,7 +17,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
  * Subscriptions can be added/removed at any time (before or after
  * {@link #open()} was called).
  * 
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Tobias Witt
  */
 public interface ISource<T> extends IPhysicalOperator, ISubscribable<ISink<? super T>, PhysicalSubscription<ISink<? super T>>>{
 	/**
@@ -50,5 +52,46 @@ public interface ISource<T> extends IPhysicalOperator, ISubscribable<ISink<? sup
 
 	public void sendPunctuation(PointInTime punctuation);
 	
+	/**
+	 * Removes several subscriptions in remove list to this source and
+	 * subscribes a sink in one 'atomic' step, so that no transfer() can be
+	 * executed between these steps.
+	 * 
+	 * @param remove
+	 *            {@link List} of {@link PhysicalSubscription}s to remove.
+	 * @param sink
+	 *            new {@link ISink} to subscribe.
+	 * @param sinkInPort
+	 *            sinkInPort.
+	 * @param sourceOutPort
+	 *            sourceOutPort.
+	 * @param schema
+	 *            Output schema of source.
+	 */
+	public void atomicReplaceSink(
+			List<PhysicalSubscription<ISink<? super T>>> remove,
+			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
+			SDFAttributeList schema);
+
+	/**
+	 * Removes a subscription to this source and subscribes several sinks in the
+	 * sinks list in one 'atomic' step, so that no transfer() can be executed
+	 * between these steps.
+	 * 
+	 * @param remove
+	 *            {@link PhysicalSubscription} to remove.
+	 * @param sink
+	 *            {@link List} of new {@link ISink}s to subscribe.
+	 * @param sinkInPort
+	 *            sinkInPort.
+	 * @param sourceOutPort
+	 *            sourceOutPort.
+	 * @param schema
+	 *            Output schema of source.
+	 */
+	public void atomicReplaceSink(
+			PhysicalSubscription<ISink<? super T>> remove,
+			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
+			SDFAttributeList schema);
 
 }

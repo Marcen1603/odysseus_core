@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 
 /**
@@ -33,6 +35,14 @@ public class PhysicalRestructHelper {
 		PhysicalSubscription<?> sub = removeSubscription(parent, child);
 		((ISink<?>)parent).subscribeToSource((ISource)newChild, sub.getSinkInPort(), sub.getSourceOutPort(),
 				newChild.getOutputSchema());
+	}
+	
+	public static void atomicReplaceSink(ISource<?> source, List<PhysicalSubscription<?>> remove, ISink<?> sink) {
+		((ISource)source).atomicReplaceSink(remove, sink, 0, 0, source.getOutputSchema());
+	}
+	
+	public static void atomicReplaceSink(ISource<?> source, PhysicalSubscription<?> remove, List<ISink<?>> sinks) {
+		((ISource)source).atomicReplaceSink(remove, sinks, 0, 0, source.getOutputSchema());
 	}
 	
 }

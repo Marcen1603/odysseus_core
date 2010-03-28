@@ -98,8 +98,10 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		this.logger.debug("Preparing plan for parallel execution.");
 		// insert buffers before sources
 		for (ISource<?> source : oldPlanSources) {
-			IPipe<?,?> buffer = new BlockingBuffer();
+			BlockingBuffer buffer = new BlockingBuffer();
 			buffer.setOutputSchema(source.getOutputSchema());
+			// pause execution by blocking output of buffer
+			buffer.block();
 			context.getBlockingBuffers().add((BlockingBuffer<?>)buffer);
 			
 			List<PhysicalSubscription<?>> unSubList = new ArrayList<PhysicalSubscription<?>>();
@@ -108,15 +110,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				if (oldPlanOperatorsBeforeSources.contains(o) || newPlanOperatorsBeforeSources.contains(o)) {
 					// operator has to belong to this query
 					unSubList.add(sub);
+					// subscribe first operators to buffer
+					PhysicalRestructHelper.appendOperator(o, buffer);
 				}
 			}
-			for (PhysicalSubscription<?> sub : unSubList) {
-				// remove subscription to source and subscribe to buffer
-				PhysicalRestructHelper.replaceChild((IPhysicalOperator)sub.getTarget(), source, buffer);
-			}
 			
-			// subscribe buffer to source
-			PhysicalRestructHelper.appendOperator(buffer, source);
+			// replace direct connection to source with connection to buffer in one atomic step
+			PhysicalRestructHelper.atomicReplaceSink(source, unSubList, buffer);
 		}
 		
 		// 'merge' operator at top, discarding tuples of new plan
@@ -149,7 +149,10 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		} catch (OpenFailedException e) {
 			throw new QueryOptimizationException("Failed to initialize parallel execution plan.", e);
 		}
-		runningQuery.start();
+		// resume by unblocking buffers
+		for (BlockingBuffer<?> buffer:context.getBlockingBuffers()) {
+			buffer.unblock();
+		}
 		this.logger.debug("Parallel execution started.");
 		if (wMax == null) {
 			this.logger.debug("No windows, can finish parallel execution instantly.");
@@ -170,7 +173,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		
 		// drain all tuples out of plans
 		this.logger.debug("Draining tuples out of plans.");
-		context.getRunningQuery().stop();
 		MigrationHelper.drainTuples(context.getRunningQuery().getRoot());
 		
 		// remove old plan, keep buffers
@@ -192,6 +194,10 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				}
 			}
 		}
+		
+		// clean up, removing ownership of every operator
+		// remove any metadata on old plan operators
+		AbstractTreeWalker.prefixWalk2(context.getLastOperatorOldPlan(), new CleanOperatorsVisitor(context.getRunningQuery()));
 
 		// push data from buffers into plan
 		this.logger.debug("Pushing data from BlockingBuffers.");
@@ -201,24 +207,31 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 		}
 		
-		// remove buffers
+		// set and initialize new physical plan
+		// adds query as operator owner, too
+		try {
+			context.getRunningQuery().initializePhysicalPlan(context.getRunningQuery().getRoot());
+		} catch (OpenFailedException e) {
+			this.logger.error("Failed to initialize new execution plan.", e);
+		}
+		
+		// remove buffers, thereby resuming query processing
 		this.logger.debug("Removing buffers.");
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
 			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
+			List<ISink<?>> sinks = new ArrayList<ISink<?>>();
+			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
+				sinks.add((ISink<?>) sub.getTarget());
+			}
+			PhysicalRestructHelper.atomicReplaceSink(source, buffer.getSubscribedToSource(0), sinks);
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions().toArray(new PhysicalSubscription<?>[buffer.getSubscriptions().size()])) {
 				ISink<?> sink = (ISink<?>) sub.getTarget();
-				PhysicalRestructHelper.replaceChild(sink, buffer, source);
+				PhysicalRestructHelper.removeSubscription(sink, buffer);
 			}
+			buffer.removeOwner(context.getRunningQuery());
 		}
 		
-		// remove any metadata on old plan operators
-		AbstractTreeWalker.prefixWalk2(context.getLastOperatorOldPlan(), new CleanOperatorsVisitor());
-		
-		// clean up, removing ownership of every operator
-		// will be restored for new plan operators on initialization
-		context.getRunningQuery().removeOwnerschip();
-		
-		// new plan is ready to be initialized
+		// new plan is ready and running
 		this.logger.debug("Planmigration finished. Result:"
 				+ AbstractTreeWalker.prefixWalk2(context.getNewPlanRoot(), new PhysicalPlanToStringVisitor()));
 		context.getOptimizer().handleFinishedMigration(context.getRunningQuery());

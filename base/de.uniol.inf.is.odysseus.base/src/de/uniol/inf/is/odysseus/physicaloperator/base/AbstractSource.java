@@ -9,22 +9,18 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.DelegateSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Tobias Witt
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
@@ -208,6 +204,27 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}	
 	}
 	
+	@Override
+	public void atomicReplaceSink(List<PhysicalSubscription<ISink<? super T>>> remove, ISink<? super T> sink,
+			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		synchronized (this.subscriptions) {
+			for (PhysicalSubscription<ISink<? super T>> sub : remove) {
+				unsubscribeSink(sub);
+			}
+			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		}
+	}
+	
+	@Override
+	public void atomicReplaceSink(PhysicalSubscription<ISink<? super T>> remove, List<ISink<? super T>> sinks,
+			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		synchronized (this.subscriptions) {
+			unsubscribeSink(remove);
+			for (ISink<? super T> sink : sinks) {
+				subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+			}
+		}
+	}
 
 	@Override
 	final public List<PhysicalSubscription<ISink<? super T>>> getSubscriptions() {
