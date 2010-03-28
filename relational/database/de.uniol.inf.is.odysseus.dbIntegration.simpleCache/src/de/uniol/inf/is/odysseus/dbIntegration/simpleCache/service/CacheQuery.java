@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces.IDataAccess;
 
 /**
  * Stellt eine Datenstromanfrage innerhalb des Caches dar. Zu dieser werden das 
- * Datenbankobjekt und deine Liste mit den Hashwerten von Ergebnissen gespeichert.
+ * Datenbankobjekt und eine Liste mit den Hashwerten von Ergebnissen gespeichert.
  * Die Ergebnisse selbst liegen in der CacheService-Klasse. Des Weiteren wird zu jeder 
  * Query vermerkt, wie lange sie im Cache verbleiben kann und wie groß die zugehoerigen 
  * Ein- und Ausgabetupel sind. Diese Groessenwerte haengen von der Methode memSize der Klasse

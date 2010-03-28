@@ -58,7 +58,6 @@ public class DataAccess implements IDataAccess {
 		this(dbQuery);
 		this.inputSchema = inputSchema;
 		refStreamAttributes = findDataStreamAttr(dbQuery.getQuery());
-		System.out.println("db constructor");
 	}
 	
 	public DataAccess(DBQuery query) {
@@ -96,7 +95,7 @@ public class DataAccess implements IDataAccess {
 
 	@Override
 	public void setPrefetchQuery(DBQuery dbQuery, SDFAttributeList schema) {
-		prepCacheQuery = prepareStatement(dbQuery);
+		prepPrefetchQuery = prepareStatement(dbQuery);
 		if (schema == null) {
 			this.prefetchSchema = inputSchema;
 		} else {

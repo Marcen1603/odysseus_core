@@ -85,7 +85,7 @@ public class CachingService implements ICache {
 
 		while (currentObjects > maxObjects) {
 			Integer replaceHash = resultOrder.removeLast();
-			QueryResult replaceParam = dbResults.get(replaceHash);
+			QueryResult replaceParam = dbResults.remove(replaceHash);
 			CacheQuery replaceQuery = queries.get(replaceParam.getQueryHash());
 			this.currentObjects = currentObjects - (replaceQuery.getTupelSize() + replaceParam.getResults().size() * replaceQuery.getResultTupleSize());
 			replaceQuery.removeResultHash(replaceHash);		
@@ -94,7 +94,6 @@ public class CachingService implements ICache {
 		dbResults.put(resultHash, newResult);
 		query.addParam(resultHash);
 		resultOrder.addFirst(resultHash);
-		logger.debug("Tuple cached");
 	}
 
 	

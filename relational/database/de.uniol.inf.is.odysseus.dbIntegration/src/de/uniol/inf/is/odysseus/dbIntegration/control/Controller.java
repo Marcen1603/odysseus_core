@@ -173,22 +173,12 @@ public class Controller {
 				
 				if (results != null) {
 					if (results.getResult() != null) {
+						result = results.getResult();
 						if (cacheAvailable) {
 							cache.addData(tuple, results.getResult(), query);
 						}
 					}
 				}
-				
-//				if (results != null) {
-//					if (results.get(0) != null) {
-//						result = results.get(0).getResult();
-//						if (cacheAvailable) {
-//							cache.addData(tuple, result, query);
-//						}
-//					}
-//				} else {
-//					return null;
-//				}
 			}
 		}
 		return result;

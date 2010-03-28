@@ -93,16 +93,17 @@ public class PrefetchService implements IPrefetch {
 			return null;
 		}
 		
-		DBResult resultTuples = query.getDataAccess().executeBaseQuery(tuples.remove(0));
 		query.getCache().addData(streamTuple, tuples, dbQuery);
 		
 		CacheInserter insertCache = new CacheInserter(dbQuery, tuples, query.getCache(), query.getDataAccess());
 		insertCache.start();
+		DBResult result = query.getDataAccess().executeCacheQuery(streamTuple);
+		query.getCache().addData(streamTuple, result.getResult(), dbQuery);
 		
-		if (resultTuples == null) {
+		if (result == null) {
 			return null;
 		} else {
-			return resultTuples.getResult();
+			return result.getResult();
 		}
 	}
 	

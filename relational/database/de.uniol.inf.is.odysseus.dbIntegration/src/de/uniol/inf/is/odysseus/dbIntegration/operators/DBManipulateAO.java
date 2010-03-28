@@ -23,6 +23,7 @@ public class DBManipulateAO extends UnaryLogicalOp {
 
 	public DBManipulateAO(DBManipulateAO po) {
 		super(po);
+		query = po.getQuery();
 	}
 	
 	public DBManipulateAO clone() {

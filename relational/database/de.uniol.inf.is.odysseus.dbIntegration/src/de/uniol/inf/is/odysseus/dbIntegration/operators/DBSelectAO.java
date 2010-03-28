@@ -33,6 +33,10 @@ public class DBSelectAO extends UnaryLogicalOp {
 	
 	public DBSelectAO(DBSelectAO po) {
 		super(po);
+		query = po.getQuery();
+		options = po.getOptions();
+		dbController = po.getController();
+		alias = po.getAlias();
 	}
 	
 	/**

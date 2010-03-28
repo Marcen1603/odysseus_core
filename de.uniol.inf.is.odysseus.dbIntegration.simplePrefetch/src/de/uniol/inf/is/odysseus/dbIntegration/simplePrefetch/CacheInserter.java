@@ -34,7 +34,7 @@ public class CacheInserter extends Thread {
 				cache.addData(result.getInputTuple(), result.getResult(), dbQuery);
 			}
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 	

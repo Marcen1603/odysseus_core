@@ -18,14 +18,14 @@ db_execute(auction, [[INSERT INTO auction (id, itemname, description, initialbid
 
 
 Testanfrage1: 
-SELECT db.name, db.city, db.state, db.id, a.id FROM nexmark:person2 UNBOUNDED AS a, DATABASE(auction, [[SELECT * FROM person WHERE #a.id = person.id]]) AS db 
+SELECT db.name, db.city, db.state, db.id, a.id FROM nexmark:person2 [UNBOUNDED] AS a, DATABASE(auction, [[SELECT * FROM person WHERE #a.id = person.id]]) AS db 
 
 
 
 Testanfrage mit Cache, Speicher: 100 MB; Verweilzeit: 10000ms: 
-SELECT db.name, db.city, db.state, db.id, a.id FROM nexmark:person2 UNBOUNDED AS a, DATABASE(auction, 'ctrl cache', 'ca maxUsedMB 100', 'ca timeInCache 10000', [[SELECT * FROM person WHERE #a.id = person.id]]) AS db 
+SELECT db.name, db.city, db.state, db.id, a.id FROM nexmark:person2 [UNBOUNDED] AS a, DATABASE(auction, 'ctrl cache', 'ca maxUsedMB 100', 'ca timeInCache 10000', [[SELECT * FROM person WHERE #a.id = person.id]]) AS db 
 
 
 
 Testanfrage3 mit Cache und Prefetching: 
-SELECT db.name, db.city, db.state, db.id, a.id FROM nexmark:person2 UNBOUNDED AS a, DATABASE(auction, 'ctrl both', 'pr maxClassifyingObjs 111', 'pr previsionWidth 2', 'pr previsionDepth 3', [[SELECT * FROM person WHERE #a.id = person.id]]) AS db 
+SELECT db.name, db.city, db.state, db.id, a.id FROM nexmark:person2 [UNBOUNDED] AS a, DATABASE(auction, 'ctrl both', 'pr maxClassifyingObjs 111', 'pr previsionWidth 2', 'pr previsionDepth 3', [[SELECT * FROM person WHERE #a.id = person.id]]) AS db 
