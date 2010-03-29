@@ -10,13 +10,16 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
  *
  */
 public class StandardPlanMigrationCostCalculator extends AbstractCostCalculator<PlanMigration> {
+	
+	private StandardPlanMigrationCostModel model;
+	
+	public StandardPlanMigrationCostCalculator(StandardPlanMigrationCostModel model) {
+		this.model = model;
+	}
 
 	@Override
 	public ICost<PlanMigration> calculateCost(PlanMigration candidate) {
-		// TODO Vergleich erst sinnvoll, wenn mehrere Planmigrationsstrategien verfuegbar sind.
-		ICost<PlanMigration> cost = new StandardPlanMigrationCost();
-		cost.setScore(100);
-		return cost;
+		return this.model.getCost(candidate);
 	}
 
 }

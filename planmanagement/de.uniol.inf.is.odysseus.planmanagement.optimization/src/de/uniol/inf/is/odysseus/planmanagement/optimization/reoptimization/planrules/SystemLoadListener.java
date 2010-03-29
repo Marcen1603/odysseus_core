@@ -29,6 +29,7 @@ public class SystemLoadListener extends AbstractPlanReoptimizeRule implements IS
 
 	@Override
 	public void deinitialize() {
+		this.systemMonitor.removeListener(this);
 	}
 
 	@Override

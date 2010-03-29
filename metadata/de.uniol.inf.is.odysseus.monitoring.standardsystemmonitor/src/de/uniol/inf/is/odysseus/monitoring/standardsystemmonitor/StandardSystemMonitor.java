@@ -150,5 +150,8 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	
 	public void removeListener(ISystemMonitorListener listener) {
 		this.listeners.remove(listener);
+		if (this.listeners.isEmpty()) {
+			stop();
+		}
 	}
 }

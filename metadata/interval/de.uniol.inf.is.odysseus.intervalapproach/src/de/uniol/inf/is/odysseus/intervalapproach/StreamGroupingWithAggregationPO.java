@@ -264,5 +264,13 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	public StreamGroupingWithAggregationPO<Q, R> clone() throws CloneNotSupportedException {
 		return new StreamGroupingWithAggregationPO<Q, R>(this);
 	}
+	
+	/**
+	 * For an IPlanMigrationStrategy that directly manipulates the operator states.
+	 * @return State of {@link StreamGroupingWithAggregationPO}.
+	 */
+	public Map<Integer, DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
+		return this.groups;
+	}
 
 }

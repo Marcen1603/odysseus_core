@@ -13,7 +13,19 @@ public class StandardPlanMigrationCostModel implements IPlanMigrationCostModel {
 
 	@Override
 	public ICostCalculator<PlanMigration> getCostCalculator() {
-		return new StandardPlanMigrationCostCalculator();
+		return new StandardPlanMigrationCostCalculator(this);
+	}
+	
+	StandardPlanMigrationCost getCost(PlanMigration migration) {
+		// TODO Vergleich erst sinnvoll, wenn mehrere Planmigrationsstrategien verfuegbar sind.
+		StandardPlanMigrationCost cost = new StandardPlanMigrationCost();
+		if (migration.getStrategy().getClass().getSimpleName().equals("SimplePlanMigrationStrategy")) {
+			cost.setScore(100);
+		} else {
+			// unknown
+			cost.setScore(-1);
+		}
+		return cost;
 	}
 
 }

@@ -12,9 +12,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
-import de.uniol.inf.is.odysseus.monitoring.physicaloperator.Datarate;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -44,14 +42,12 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	private List<IPlanMigrationStrategy> planMigrationStrategies;
 	
 	private Map<Integer, PlanMigrationContext> optimizationContext;
-	private List<IMonitoringData<?>> sourceDatarates;
 	private Queue<IEditableQuery> pendingRequests;
 	
 	public static final long MONITORING_PERIOD = 30000;
 	
 	public AdvancedOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
-		this.sourceDatarates = new ArrayList<IMonitoringData<?>>();
 		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategy>();
 		this.pendingRequests = new LinkedList<IEditableQuery>();
 	}
@@ -196,12 +192,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 					sender, query, 
 					new OptimizeParameter(ParameterDoRestruct.TRUE), null);
 			
-			// prepare metadata usage
-			this.logger.debug("Comparing plan execution cost and plan migration cost.");
-			for (IMonitoringData<?> rates : this.sourceDatarates) {
-				((Datarate)rates).run();
-			}
-			
 			// pick out optimal plan by cost analysis
 			List<IPhysicalOperator> candidates = this.executionCostModel.getCostCalculator().pickBest(
 					alternatives.keySet(), this.configuration.getSettingComparePlanCandidates().getValue());
@@ -269,10 +259,6 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		if (!this.pendingRequests.contains(query)) {
 			this.pendingRequests.offer(query);
 		}
-	}
-
-	List<IMonitoringData<?>> getSourceDatarates() {
-		return sourceDatarates;
 	}
 	
 	@Override
