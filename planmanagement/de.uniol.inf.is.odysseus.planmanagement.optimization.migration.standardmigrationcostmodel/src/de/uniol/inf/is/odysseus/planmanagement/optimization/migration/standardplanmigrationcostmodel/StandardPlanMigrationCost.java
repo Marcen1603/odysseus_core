@@ -9,23 +9,22 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
  *
  */
 public class StandardPlanMigrationCost implements ICost<PlanMigration> {
+	
+	private int score;
 
 	@Override
 	public int getScore() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.score;
 	}
 
 	@Override
 	public void setScore(int score) {
-		// TODO Auto-generated method stub
-		
+		this.score = score;
 	}
 
 	@Override
 	public int compareTo(ICost<PlanMigration> o) {
-		// TODO Auto-generated method stub
-		return 0;
+		return o.getScore() - this.getScore();
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingTimeWindowTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.ByteBufferReceiverPO;
@@ -24,6 +25,8 @@ public class StandardPlanExecutionCostModel implements IPlanExecutionCostModel {
 	public StandardPlanExecutionCostModel() {
 		this.operatorCost = new HashMap<Class<?>, StandardPlanExecutionCost>();
 		
+		// TODO: Fein-Tuning von score Werten erfordert Evaluation, welche Plaene mit welchen Daten wieviel Kosten verursachen.
+		
 		// base
 		this.operatorCost.put(SelectPO.class, 				new StandardPlanExecutionCost(1, 20, 1, 1));
 		this.operatorCost.put(MetadataCreationPO.class, 	new StandardPlanExecutionCost(1, 5, 1, 1));
@@ -31,6 +34,7 @@ public class StandardPlanExecutionCostModel implements IPlanExecutionCostModel {
 		this.operatorCost.put(ByteBufferReceiverPO.class, 	new StandardPlanExecutionCost(1, 6, 1, 1));
 		// intervalapproach
 		this.operatorCost.put(JoinTIPO.class, 				new StandardPlanExecutionCost(1, 30, 10, 1));
+		this.operatorCost.put(SlidingTimeWindowTIPO.class, 	new StandardPlanExecutionCost(10, 6, 2, 1));
 		// relational
 		this.operatorCost.put(RelationalProjectPO.class, 	new StandardPlanExecutionCost(1, 2, 1, 1));
 	}

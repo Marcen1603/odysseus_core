@@ -13,8 +13,10 @@ public class StandardPlanMigrationCostCalculator extends AbstractCostCalculator<
 
 	@Override
 	public ICost<PlanMigration> calculateCost(PlanMigration candidate) {
-		// TODO 
-		return new StandardPlanMigrationCost();
+		// TODO Vergleich erst sinnvoll, wenn mehrere Planmigrationsstrategien verfuegbar sind.
+		ICost<PlanMigration> cost = new StandardPlanMigrationCost();
+		cost.setScore(100);
+		return cost;
 	}
 
 }
