@@ -28,7 +28,6 @@ public class ObjectFactory {
     private final static QName _ActuatorReference_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuatorReference");
     private final static QName _Fault_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "fault");
     private final static QName _QueryID_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "queryID");
-    private final static QName _SourceSchema_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "sourceSchema");
     private final static QName _Actuator_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "actuator");
     private final static QName _Query_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "query");
     private final static QName _Source_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/OdysseusWS/", "source");
@@ -45,27 +44,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SchemaElementType }
+     * Create an instance of {@link ActuatorInformation }
      * 
      */
-    public SchemaElementType createSchemaElementType() {
-        return new SchemaElementType();
+    public ActuatorInformation createActuatorInformation() {
+        return new ActuatorInformation();
     }
 
     /**
-     * Create an instance of {@link QueryType }
+     * Create an instance of {@link ActuatorReducedInformation }
      * 
      */
-    public QueryType createQueryType() {
-        return new QueryType();
+    public ActuatorReducedInformation createActuatorReducedInformation() {
+        return new ActuatorReducedInformation();
     }
 
     /**
-     * Create an instance of {@link Channel }
+     * Create an instance of {@link SchemaArray }
      * 
      */
-    public Channel createChannel() {
-        return new Channel();
+    public SchemaArray createSchemaArray() {
+        return new SchemaArray();
     }
 
     /**
@@ -85,11 +84,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ActuatorReducedInformation }
+     * Create an instance of {@link QueryType }
      * 
      */
-    public ActuatorReducedInformation createActuatorReducedInformation() {
-        return new ActuatorReducedInformation();
+    public QueryType createQueryType() {
+        return new QueryType();
+    }
+
+    /**
+     * Create an instance of {@link Fault }
+     * 
+     */
+    public Fault createFault() {
+        return new Fault();
+    }
+
+    /**
+     * Create an instance of {@link SourceDescription }
+     * 
+     */
+    public SourceDescription createSourceDescription() {
+        return new SourceDescription();
     }
 
     /**
@@ -109,27 +124,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SchemaArray }
+     * Create an instance of {@link SchemaElementType }
      * 
      */
-    public SchemaArray createSchemaArray() {
-        return new SchemaArray();
+    public SchemaElementType createSchemaElementType() {
+        return new SchemaElementType();
     }
 
     /**
-     * Create an instance of {@link Fault }
+     * Create an instance of {@link Channel }
      * 
      */
-    public Fault createFault() {
-        return new Fault();
-    }
-
-    /**
-     * Create an instance of {@link ActuatorInformation }
-     * 
-     */
-    public ActuatorInformation createActuatorInformation() {
-        return new ActuatorInformation();
+    public Channel createChannel() {
+        return new Channel();
     }
 
     /**
@@ -160,15 +167,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SourceSchema }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "sourceSchema")
-    public JAXBElement<SourceSchema> createSourceSchema(SourceSchema value) {
-        return new JAXBElement<SourceSchema>(_SourceSchema_QNAME, SourceSchema.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ActuatorInformation }{@code >}}
      * 
      */
@@ -187,12 +185,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link SourceDescription }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/", name = "source")
-    public JAXBElement<String> createSource(String value) {
-        return new JAXBElement<String>(_Source_QNAME, String.class, null, value);
+    public JAXBElement<SourceDescription> createSource(SourceDescription value) {
+        return new JAXBElement<SourceDescription>(_Source_QNAME, SourceDescription.class, null, value);
     }
 
     /**

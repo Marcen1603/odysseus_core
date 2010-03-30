@@ -90,24 +90,29 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSource(de.uniol.inf.is.odysseus.webservice.SourceSchema  sourceDescription )*
      */
-    public java.lang.String createSource(SourceSchema sourceDescription) throws CreateSourceFault    { 
+    public java.lang.String createSource(SourceDescription sourceDescription) throws CreateSourceFault    { 
     	try {
-    		//build string from information
-    		String query = "CREATE STREAM ";
-    		query = query.concat(sourceDescription.getStreamName()+" (");
-    	
-    		for (SchemaElementType elem : sourceDescription.getAttributeSchema().getSchemaElement()){
-    			query = query.concat(elem.getIdentifier()+" ");
-    			query = query.concat(elem.getType()+",");
+    		SourceSchema schema = sourceDescription.getSourceSchema();
+    		String query = null;
+    		if (schema != null){
+	    		//build string from information
+	    		query = "CREATE STREAM ";
+	    		query = query.concat(schema.getStreamName()+" (");
+	    	
+	    		for (SchemaElementType elem : schema.getAttributeSchema().getSchemaElement()){
+	    			query = query.concat(elem.getIdentifier()+" ");
+	    			query = query.concat(elem.getType()+",");
+	    		}
+	    		//replace last ',' by ')'
+	    		query = query.substring(0, query.length() -1);
+	    		query = query.concat(") CHANNEL ");
+	    		
+	    		Channel chan = schema.getChannel();
+	    		query = query.concat(chan.getAdress()+ " ");
+	    		query = query.concat(chan.getPort());
+    		}else {
+    			query = sourceDescription.getSourceString();
     		}
-    		//replace last ',' by ')'
-    		query = query.substring(0, query.length() -1);
-    		query = query.concat(") CHANNEL ");
-    		
-    		Channel chan = sourceDescription.getChannel();
-    		query = query.concat(chan.getAdress()+ " ");
-    		query = query.concat(chan.getPort());
-    		
     		executor.addQuery(query, "CQL");
     		return "";
     	}catch (Exception e){
@@ -116,23 +121,6 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	fault.setReason(e.getMessage());
         	throw new CreateSourceFault(e.getMessage(), fault);
     	}
-    }
-    
-    /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSourceString(java.lang.String  sourceDescription )*
-     */
-    public java.lang.String createSourceString(java.lang.String sourceDescription) throws CreateSourceStringFault    { 
-		try {
-			executor.addQuery(sourceDescription, "CQL");
-			return "";
-		}catch (Exception e){
-			ObjectFactory factory = new ObjectFactory();
-        	Fault fault = factory.createFault();
-        	fault.setReason(e.getMessage());
-        	throw new CreateSourceStringFault(e.getMessage(), fault);
-		}
-    	
-        //
     }
 
 
