@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -134,7 +135,10 @@ public class WorkflowClient implements IActuator {
             MessagePart messagePart = new MessagePart(partClass, correlation);
             
             //check if input object is primitive
-            if (partClass.isPrimitive() || Number.class.isAssignableFrom(partClass) || String.class == partClass){
+            if (partClass.isPrimitive() || 
+	    			Number.class.isAssignableFrom(partClass) || 
+	    			Collection.class.isAssignableFrom(partClass) ||
+	    			String.class == partClass){
             	messagePart.setPrimitve(true);
             	
             	parameters.put(partInfo.getName().getLocalPart(), partClass);
@@ -156,9 +160,17 @@ public class WorkflowClient implements IActuator {
 		for (Field field : partClass.getDeclaredFields()){
 			//set property descriptor if field is a standard java object
 	    	Class<?> fieldClass = field.getType();
-	    	if (fieldClass.isPrimitive() || Number.class.isAssignableFrom(fieldClass) || String.class == fieldClass){
+	    	
+	    	//check if field is a complex object or a primitive/String/collection
+	    	if (fieldClass.isPrimitive() || 
+	    			Number.class.isAssignableFrom(fieldClass) || 
+	    			Collection.class.isAssignableFrom(fieldClass) ||
+	    			String.class == fieldClass){
+	    		
 	    		String fieldName = field.getName();
+	    		System.out.println(field.getDeclaringClass());
 	    		messagePart.addPropertyDescriptor(fieldName);
+	    		
 	    	}else {
 	    		Object input = null;
 				try {
@@ -197,7 +209,10 @@ public class WorkflowClient implements IActuator {
             MessagePart messagePart = new MessagePart(partClass, correlation);
             
             //check if input object is primitive
-            if (partClass.isPrimitive() || Number.class.isAssignableFrom(partClass) || String.class == partClass){
+            if (partClass.isPrimitive() || 
+	    			Number.class.isAssignableFrom(partClass) || 
+	    			Collection.class.isAssignableFrom(partClass) ||
+	    			String.class == partClass){
             	messagePart.setPrimitve(true);
             }else {
             	this.createProperties(messagePart, partClass, correlation);

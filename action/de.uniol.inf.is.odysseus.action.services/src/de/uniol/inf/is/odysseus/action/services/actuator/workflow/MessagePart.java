@@ -177,5 +177,7 @@ public class MessagePart {
 	public void setInputObject(Object inputObject) {
 		this.inputObject = inputObject;
 	}
+
+	
 	
 }
