@@ -52,7 +52,7 @@ public class ECAParserTest implements CommandProvider {
 			}
 			//create actuator
 			this.actuatorFactory.createActuator("ecatest1", 
-					"de.uniol.inf.is.odysseus.action.services.actuator.impl.TestActuator(name)", 
+					"de.uniol.inf.is.odysseus.action.actuator.impl.TestActuator(name)", 
 					"ActuatorAdapterManager");
 			
 			//1st testsuite
@@ -82,7 +82,7 @@ public class ECAParserTest implements CommandProvider {
 			
 			//3rd testsuite
 			ArrayList<IActionParameter> parameters2 = new ArrayList<IActionParameter>();
-			parameters2.add(new StreamAttributeParameter(String.class, 2)); //2 == attributeIndex
+			parameters2.add(new StreamAttributeParameter(String.class, "nexmark:person2.name")); 
 			parameters2.add(new StaticParameter((byte)33));
 			ci.println("--Testsuite3, Query:" +
 					"ON(Select p.timestamp, p.id, p.name from nexmark:person2 as p)" +
