@@ -281,7 +281,7 @@ public class ECAParser implements IQueryParser{
 										SDFAttribute matchingAttribute = schema.get(possibleMatches.get(0));
 										try {
 											actionParameters.add(new StreamAttributeParameter(matchingAttribute.getDatatype(),
-													matchingAttribute));
+													matchingAttribute.getPointURI()));
 										} catch (AttributeParsingException e) {
 											throw new QueryParseException(e.getMessage());
 										}
