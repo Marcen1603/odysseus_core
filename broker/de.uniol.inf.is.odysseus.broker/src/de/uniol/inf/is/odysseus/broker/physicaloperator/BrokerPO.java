@@ -68,19 +68,34 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			insertInDC(object);
 		}
 		//System.out.println(sweepArea.getSweepAreaAsString(PointInTime.currentPointInTime()));
-		int to = BrokerDictionary.getInstance().getReadingTransactions(identifier).length;
-		//T nextObject = sweepArea.poll();		
-		int nextPort = -1;
+		List<PhysicalSubscription<ISink<? super T>>> continuousDestinations = getWritingToSinks();
+		//T nextObject = sweepArea.poll();				
 		if(!timestampList.isEmpty()){				
-			nextPort = timestampList.poll().getOutgoingPort();
+			int nextPort = timestampList.poll().getOutgoingPort();
+			transferAll(nextPort);
 		}
-		for(int i=0;i<to;i++){			
-			if(i==nextPort||BrokerDictionary.getInstance().getReadTypeForPort(identifier, i)==ReadTransaction.Continuous){
-				for(T nextTuple: this.dataContainer){
-					transfer(nextTuple, i);
-				}
-			}
+		
+		// and to all continuous
+		for(PhysicalSubscription<ISink<? super T>> sub :continuousDestinations){			
+			transferAll(sub.getSourceOutPort());
 		}
+	}
+	
+	public void transferAll(int port){
+		for(T nextTuple: this.dataContainer){
+			transfer(nextTuple, port);
+		}
+	}
+	
+	
+	public List<PhysicalSubscription<ISink<? super T>>> getWritingToSinks(){
+		List<PhysicalSubscription<ISink<? super T>>> destinations = new ArrayList<PhysicalSubscription<ISink<? super T>>>();
+		for(PhysicalSubscription<ISink<? super T>> sub : this.getSubscriptions()){
+			if(BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), sub.getSourceOutPort())==ReadTransaction.Continuous){
+				destinations.add(sub);
+			}			
+		}
+		return destinations;
 	}
 	
 	protected void process_transfer(T object, int sourceOutPort) {
@@ -137,8 +152,11 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		return 0;
 	}
 	
-	
 	public void insertInDC(T object){
+		this.dataContainer.clear();
+		this.dataContainer.add(object);
+	}
+	public void insertInDCNormal(T object){
 		RelationalTuple<ITimeInterval> tuple = (RelationalTuple<ITimeInterval>)object;
 		int id = ((Integer)tuple.getAttribute(1)).intValue();
 		T found = null;

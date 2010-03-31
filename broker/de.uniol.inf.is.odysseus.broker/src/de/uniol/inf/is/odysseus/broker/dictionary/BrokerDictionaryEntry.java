@@ -20,7 +20,7 @@ public class BrokerDictionaryEntry {
 	private String brokerName;	
 	
 	private WriteTransaction[] writingTypes = new WriteTransaction[0];
-	private ReadTransaction[] readingTypes = new ReadTransaction[1];
+	private ReadTransaction[] readingTypes = new ReadTransaction[0];
 	private List<QueuePortMapping> portMappings = new ArrayList<QueuePortMapping>();
 	
 	
@@ -29,8 +29,7 @@ public class BrokerDictionaryEntry {
 	 * @param brokername Name of the broker
 	 */
 	public BrokerDictionaryEntry(String brokername){
-		this.brokerName = brokername;	
-		this.readingTypes[0] = ReadTransaction.Continuous;
+		this.brokerName = brokername;			
 	}
 	
 	/**
@@ -42,8 +41,7 @@ public class BrokerDictionaryEntry {
 	public BrokerDictionaryEntry(String brokername, SDFAttributeList schema, SDFAttributeList queueSchema){
 		this.brokerName = brokername;
 		this.schema = schema;		
-		this.queueSchema = queueSchema;
-		this.readingTypes[0] = ReadTransaction.Continuous;
+		this.queueSchema = queueSchema;	
 	}
 	
 	/**
@@ -53,9 +51,8 @@ public class BrokerDictionaryEntry {
 	 */
 	public int addNewWriteTransaction(WriteTransaction type){
 		int addedToPort = writingTypes.length;
-		writingTypes = Arrays.copyOf(writingTypes, writingTypes.length+2);
-		writingTypes[addedToPort] = type;				
-		writingTypes[addedToPort+1] = WriteTransaction.Timestamp;
+		writingTypes = Arrays.copyOf(writingTypes, writingTypes.length+1);
+		writingTypes[addedToPort] = type;						
 		return addedToPort;		
 	}
 	

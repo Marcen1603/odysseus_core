@@ -13,6 +13,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
 import de.uniol.inf.is.odysseus.broker.transaction.GraphUtils;
@@ -28,7 +29,7 @@ public class ExecutorBinder implements CommandProvider{
 	private IAdvancedExecutor executor;	
 		
 	
-	public void _brokerPrintPorts(CommandInterpreter ci){
+	public void _brokerPorts(CommandInterpreter ci){
 		List<String> args = this.getArgs(ci);
 		if(args.size()==0){
 			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
@@ -48,19 +49,21 @@ public class ExecutorBinder implements CommandProvider{
 		StringBuilder builder = new StringBuilder();
 		builder.append("Reading Ports:\n");
 		builder.append("--------------\n");
-		for(PhysicalSubscription<? extends ISink> sub : broker.getSubscriptions()){
-			builder.append(sub.getSourceOutPort()+" ("+sub.getTarget()+")\n");
+		for(PhysicalSubscription<? extends ISink> sub : broker.getSubscriptions()){			
+			String type = BrokerDictionary.getInstance().getReadTypeForPort(broker.getIdentifier(), sub.getSourceOutPort()).toString();
+			builder.append(sub.getSourceOutPort()+" ("+sub.getTarget()+") - ["+type+"]\n");
 		}
 		builder.append("\n");
 		builder.append("Writing Ports:\n");
 		builder.append("--------------\n");
 		for(PhysicalSubscription<? extends ISource> sub : broker.getSubscribedToSource()){
-			builder.append(sub.getSinkInPort()+" ("+sub.getTarget()+")\n");
+			String type = BrokerDictionary.getInstance().getWriteTypeForPort(broker.getIdentifier(), sub.getSinkInPort()).toString();
+			builder.append(sub.getSinkInPort()+" ("+sub.getTarget()+") - ["+type+"]\n");
 		}
 		return builder.toString();
 	}
 
-	public void _brokerPrintPlan(CommandInterpreter ci){
+	public void _brokerPlan(CommandInterpreter ci){
 		List<String> args = this.getArgs(ci);
 		if(args.size()==0){
 			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){

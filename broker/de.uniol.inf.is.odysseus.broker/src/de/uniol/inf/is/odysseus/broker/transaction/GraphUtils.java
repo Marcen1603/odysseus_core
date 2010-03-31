@@ -20,10 +20,10 @@ public class GraphUtils {
 	}
 
 	private static void findCycles(IPhysicalOperator current, List<IPhysicalOperator> visited, List<IPhysicalOperator> finished, List<CycleSubscription> cycles, int currentOutgoingPort, int currentIncomingPort) {
-		if (finished.contains(current)) {
+		if (contains(finished, current)) {
 			return;
 		}
-		if (visited.contains(current)) {
+		if (contains(visited, current)) {
 			// cycle found
 			CycleSubscription cycle = new CycleSubscription(currentOutgoingPort, currentIncomingPort);
 			cycles.add(cycle);
@@ -50,7 +50,7 @@ public class GraphUtils {
 	}
 	
 	private static void getReadingFromBrokers(ILogicalOperator current, List<ILogicalOperator> visited, List<BrokerAO> readingFrom) {		
-		if (!visited.contains(current)) {
+		if (!contains(visited, current)) {
 			visited.add(current);
 			if (current instanceof BrokerAO) {					
 				readingFrom.add((BrokerAO)current);					
@@ -73,7 +73,7 @@ public class GraphUtils {
 			List<IPhysicalOperator> visited) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
-		if (!visited.contains(physicalPO)) {
+		if (!contains(visited,physicalPO)) {
 			visited.add(physicalPO);
 			builder.append(physicalPO);
 			builder.append('\n');
@@ -90,6 +90,15 @@ public class GraphUtils {
 			builder.append(indent+"  [see above for following operators]\n");
 		}
 		return builder.toString();
+	}
+	
+	private static boolean contains(List<?> list, Object op){
+		for(Object other : list){
+			if(other==op){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

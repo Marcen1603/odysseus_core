@@ -71,6 +71,10 @@ public class BrokerDictionary {
 		return this.brokerlist.get(brokername).getPortMappings();
 	}
 
+	public void addQueuePortMapping(String brokername, QueuePortMapping map){
+		this.brokerlist.get(brokername).addPortMapping(map);
+	}
+	
 	public void setReadTypeForPort(String brokername, int outgoingPort, ReadTransaction type) {
 		this.brokerlist.get(brokername).setReadType(outgoingPort, type);
 		

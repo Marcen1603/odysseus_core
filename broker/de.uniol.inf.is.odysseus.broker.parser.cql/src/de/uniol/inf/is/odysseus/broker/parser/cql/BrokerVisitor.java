@@ -1,15 +1,9 @@
 package de.uniol.inf.is.odysseus.broker.parser.cql;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
-import de.uniol.inf.is.odysseus.broker.transaction.GraphUtils;
-import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
-import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
@@ -44,10 +38,16 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 		if (node.jjtGetChild(1) != null) {
 			if (node.jjtGetChild(1) instanceof ASTBrokerQueue) {
-				// TODO add queue
+				ASTComplexSelectStatement statement = (ASTComplexSelectStatement) node.jjtGetChild(1).jjtGetChild(0); 
+				CQLParser parser = new CQLParser();
+				AbstractLogicalOperator topOfQueue = (AbstractLogicalOperator) parser.visit(statement, null);
+				if(readFromBroker!=null){			
+					// queue - writing is always on port 1
+					readFromBroker.subscribeToSource(topOfQueue, 1, 0, topOfQueue.getOutputSchema());
+				}
 			}
 		}
-
+		
 		return readFromBroker;
 
 	}
@@ -73,9 +73,8 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			BrokerDictionary.getInstance().addBroker(name, broker.getOutputSchema(), broker.getQueueSchema());
 		}
 
-		// connect the source to broker		
-		int dataPort = BrokerDictionary.getInstance().addNewTransaction(name, WriteTransaction.Continuous);
-		broker.subscribeToSource(result, dataPort, 0, result.getOutputSchema());
+		// connect the source to broker				
+		broker.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		// make it accessible like a normal source
 		DataDictionary.getInstance().sourceTypeMap.put(name, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(name);
@@ -129,51 +128,14 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		broker.setSchema(BrokerDictionary.getInstance().getSchema(brokerName));
 		broker.setQueueSchema(BrokerDictionary.getInstance().getQueueSchema(brokerName));
 
-		boolean readingFromOwnBroker = false;
-
-		List<BrokerAO> readingFromBrokers = GraphUtils.getReadingFromBrokers(topOfSelectStatementOperator);
-
-		for (BrokerAO b : readingFromBrokers) {
-			if (b.getIdentifier().equals(broker.getIdentifier())) {
-				readingFromOwnBroker = true;
-			}
-		}
-
-		// a normal writing transaction is continuous
-		WriteTransaction dataWritingType = WriteTransaction.Continuous;
-		// if i read from my own operator, it is a cyclic transaction
-		if (readingFromOwnBroker) {
-			dataWritingType = WriteTransaction.Cyclic;
-		}
-		// remap all reading ports so that everyone has its own one
-		for (BrokerAO readFromBroker : readingFromBrokers) {
-			ReadTransaction dataReadTransaction = ReadTransaction.Continuous;
-			// if i read from my own one -> it is cyclic
-			if (readFromBroker.getIdentifier().equals(brokerName)) {
-				dataReadTransaction = ReadTransaction.Cyclic;
-			}
-			// this is a SELECT INTO statement, so that there is automatically a
-			// writing transaction
-			// if there would not be a writing transaction, then it is necessary
-			// to distinguish between
-			// reading without and with queue (=> OneTime Read instead of cyclic
-			// read)
-			int nextPort = BrokerDictionary.getInstance().addNewTransaction(readFromBroker.getIdentifier(), dataReadTransaction);
-			for (LogicalSubscription sub : readFromBroker.getSubscriptions()) {
-				broker.unsubscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-				broker.subscribeSink(sub.getTarget(), sub.getSinkInPort(), nextPort, sub.getSchema());
-			}
-		}
-
 		// check schemas
 		if (!schemaEquals(topOfSelectStatementOperator.getOutputSchema(), broker.getOutputSchema())) {
 			String message = "Schema to insert: " + topOfSelectStatementOperator.getOutputSchema().toString() + "\n";
 			message = message + "Schema of Broker: " + broker.getOutputSchema().toString();
 			throw new RuntimeException("Statement and broker do not have the same schema.\n" + message);
 		}
-		// connect the nested statement into the broker
-		int dataPort = BrokerDictionary.getInstance().addNewTransaction(brokerName, dataWritingType);
-		broker.subscribeToSource(topOfSelectStatementOperator, dataPort, 0, topOfSelectStatementOperator.getOutputSchema());
+		// connect the nested statement into the broker		
+		broker.subscribeToSource(topOfSelectStatementOperator, 0, 0, topOfSelectStatementOperator.getOutputSchema());
 		return broker;
 
 	}
