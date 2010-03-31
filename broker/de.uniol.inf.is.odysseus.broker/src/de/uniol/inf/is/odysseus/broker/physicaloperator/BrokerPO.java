@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractPipe<T, T> {
@@ -35,7 +34,6 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private List<CycleSubscription> cycles = new ArrayList<CycleSubscription>();
 	private volatile boolean waiting = false;
 	private int waitingForPort = -1;
-	private List<T> dataContainer = new ArrayList<T>();
 	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IMetaAttributeContainer<ITimeInterval>>());
 
 	public BrokerPO(String identifier) {
@@ -82,10 +80,13 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 					sweepArea.purgeElements(object, Order.LeftRight);
 					sweepArea.insert(object);
 					while (!this.waitingBuffer.isEmpty()) {
-						// in den hauptspeicher schieben.
+						// TODO: vom puffer in den hauptspeicher schieben.
 						// jedoch nur solche, wo man weiß, dass keine jüngeren
 						// mehr kommen
 						// also ein min-TS für jeden merken
+						T element = this.waitingBuffer.poll();
+						sweepArea.purgeElements(element, Order.LeftRight);
+						sweepArea.insert(element);
 					}
 					waiting = false;
 				} else {
@@ -141,38 +142,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		return null;
 	}
 
-	protected void process_nextOLD(T object, int port) {
-		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
-		System.err.println("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
-		if (type == WriteTransaction.Timestamp) {
-			PointInTime time = object.getMetadata().getStart();
-			TransactionTS trans = new TransactionTS(getOutgoingPortForIncoming(port), time);
-			timestampList.offer(trans);
-		} else {
-			// sweepArea.purgeElements(object, Order.LeftRight);
-			// sweepArea.insert(object);
-			insertInDC(object);
-		}
-		// System.out.println(sweepArea.getSweepAreaAsString(PointInTime.currentPointInTime()));
-		List<PhysicalSubscription<ISink<? super T>>> continuousDestinations = getWritingToSinks();
-		// T nextObject = sweepArea.poll();
-		if (!timestampList.isEmpty()) {
-			int nextPort = timestampList.poll().getOutgoingPort();
-			transferAll(nextPort);
-		}
-
-		// and to all continuous
-		for (PhysicalSubscription<ISink<? super T>> sub : continuousDestinations) {
-			transferAll(sub.getSourceOutPort());
-		}
-	}
-
-	public void transferAll(int port) {
-		for (T nextTuple : this.dataContainer) {
-			transfer(nextTuple, port);
-		}
-	}
-
+	
 	public List<PhysicalSubscription<ISink<? super T>>> getWritingToSinks() {
 		List<PhysicalSubscription<ISink<? super T>>> destinations = new ArrayList<PhysicalSubscription<ISink<? super T>>>();
 		for (PhysicalSubscription<ISink<? super T>> sub : this.getSubscriptions()) {
@@ -232,24 +202,5 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			}
 		logger.warn("There is no cycle with incoming port " + income);
 		return 0;
-	}
-
-	public void insertInDC(T object) {
-		RelationalTuple<ITimeInterval> tuple = (RelationalTuple<ITimeInterval>) object;
-		int id = ((Integer) tuple.getAttribute(1)).intValue();
-		T found = null;
-		for (T t : this.dataContainer) {
-			RelationalTuple<ITimeInterval> relTuple = (RelationalTuple<ITimeInterval>) t;
-			int tId = ((Integer) relTuple.getAttribute(1)).intValue();
-			if (tId == id) {
-				found = t;
-				break;
-			}
-		}
-		if (found != null) {
-			// if there is one, remove it first
-			this.dataContainer.remove(found);
-		}
-		this.dataContainer.add(object);
 	}
 }
