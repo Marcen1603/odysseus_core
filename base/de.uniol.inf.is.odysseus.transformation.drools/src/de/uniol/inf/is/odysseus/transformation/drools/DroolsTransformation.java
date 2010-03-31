@@ -97,7 +97,7 @@ public class DroolsTransformation implements ITransformation {
 //		 lg.clearFilters();
 //		 session.addEventListener( new DebugAgendaEventListener() );
 //		 session.addEventListener( new DebugWorkingMemoryEventListener() );
-		 
+		
 		try {
 			session.fireAllRules();
 		} catch (Exception e1) {
@@ -118,7 +118,7 @@ public class DroolsTransformation implements ITransformation {
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
 			LoggerHelper.getInstance(LOGGER_NAME).debug(
 					"transformation result: \n" + planToString(physicalPO, ""));
-		}
+		}		
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 		return physicalPO;
 	}
@@ -149,7 +149,7 @@ public class DroolsTransformation implements ITransformation {
 			List<IPhysicalOperator> visited) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
-		if (!visited.contains(physicalPO)) {
+		if (!contains(visited,physicalPO)) {
 			visited.add(physicalPO);
 			builder.append(physicalPO);
 			builder.append('\n');
@@ -166,6 +166,15 @@ public class DroolsTransformation implements ITransformation {
 			builder.append(indent+"  [see above for following operators]\n");
 		}
 		return builder.toString();
+	}
+	
+	private boolean contains(List<IPhysicalOperator> list, IPhysicalOperator op){
+		for(IPhysicalOperator other : list){
+			if(op==other){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
