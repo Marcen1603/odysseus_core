@@ -203,4 +203,9 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		logger.warn("There is no cycle with incoming port " + income);
 		return 0;
 	}
+	
+	public String getContent(){
+		return this.sweepArea.getSweepAreaAsString(PointInTime.getZeroTime());
+	}
+	
 }

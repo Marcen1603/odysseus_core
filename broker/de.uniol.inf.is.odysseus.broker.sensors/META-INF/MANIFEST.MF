@@ -1,16 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: MovingObjects
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.movingobjects
+Bundle-Name: Sensors
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.sensors
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.broker.movingobjects.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.broker.sensors.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.relational.base,
- de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,

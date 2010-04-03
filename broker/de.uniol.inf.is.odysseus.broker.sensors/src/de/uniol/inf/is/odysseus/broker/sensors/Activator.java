@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.broker.movingobjects;
+package de.uniol.inf.is.odysseus.broker.sensors;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.broker.movingobjects.simulation.MovingObjectsServer;
+import de.uniol.inf.is.odysseus.broker.sensors.generator.StreamType;
+import de.uniol.inf.is.odysseus.broker.sensors.server.StreamServer;
 
 public class Activator implements BundleActivator {
 
@@ -12,8 +13,8 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		System.out.println("Running server...");
-		MovingObjectsServer.main(null);		
+		StreamServer.startNew(65056, StreamType.LIDAR);
+		StreamServer.startNew(65057, StreamType.RADAR);
 	}
 
 	/*

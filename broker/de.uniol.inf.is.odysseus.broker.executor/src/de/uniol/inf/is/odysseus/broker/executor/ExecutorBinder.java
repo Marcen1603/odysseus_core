@@ -26,9 +26,6 @@ public class ExecutorBinder implements CommandProvider{
 		
 	
 	private Logger logger = LoggerFactory.getLogger("Broker Executor");
-	private IAdvancedExecutor executor;	
-		
-	
 	public void _brokerPorts(CommandInterpreter ci){
 		List<String> args = this.getArgs(ci);
 		if(args.size()==0){
@@ -76,6 +73,22 @@ public class ExecutorBinder implements CommandProvider{
 			ci.println(GraphUtils.planToString(broker, ""));
 		}
 	}
+	
+	public void _brokerContent(CommandInterpreter ci){
+		List<String> args = this.getArgs(ci);
+		if(args.size()==0){
+			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
+				ci.println("******** BROKER: "+broker.getIdentifier()+" ********");
+				ci.println(broker.getContent());
+				ci.println("");				
+			}
+		}else{
+			String brokerPOName = args.get(0);
+			BrokerPO<?> broker = BrokerWrapperPlanFactory.getPlan(brokerPOName);
+			ci.println(broker.getContent());
+			ci.println("");
+		}
+	}
 
 		
 	public void _runfile(CommandInterpreter ci) {
@@ -109,12 +122,10 @@ public class ExecutorBinder implements CommandProvider{
 	 ******************************/
 	
 	public void bindExecutor(IAdvancedExecutor executor) {		
-		this.executor = executor;
 		logger.info("Broker Executor bound");
 	}
 	
-	public void unbindExecutor(IAdvancedExecutor executor) {
-		this.executor = null;		
+	public void unbindExecutor(IAdvancedExecutor executor) {		
 	}
 	
 	
