@@ -168,6 +168,36 @@ public class OptimizationTestConsole implements
 			e.printStackTrace();
 		} 
 	}
+	
+	public void _testMigrationWithJoin(CommandInterpreter ci) {
+		try {
+			// TODO: nullpointer in TITransferFunction.java:64 nach paralleler ausfuehrung
+			nmsn(ci);
+			Collection<Integer> queryIds = this.executor
+					.addQuery(
+							"SELECT bid.price FROM nexmark:bid2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS bid, nexmark:auction2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS auction WHERE auction.id=bid.auction",
+//							"SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction",
+//							"SELECT bid.price FROM nexmark:bid2 [SIZE 1 SECONDS ADVANCE 1 TIME] AS bid WHERE bid.price > 1",
+//							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
+//							"SELECT bid.price FROM nexmark:bid2 AS bid",
+							parser(), new ParameterDefaultRoot(
+									new OptimizationTestSink(false)),
+							this.trafoConfigParam);
+			this.executor.startExecution();
+
+			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
+			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
+			
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {}
+			System.out.println("reoptimize...");
+			query.reoptimize();
+
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private String parser() {
 		return "CQL";
