@@ -226,7 +226,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 			}
 			
 			if (!HTTP_INTERFACE_ADDRESS.equals("")){
-				manager.getConfigurator().setTcpInterfaceAddress(HTTP_INTERFACE_ADDRESS);
+				manager.getConfigurator().setHttpInterfaceAddress(HTTP_INTERFACE_ADDRESS);
 			}
 			
 		} catch (IOException e1) {
