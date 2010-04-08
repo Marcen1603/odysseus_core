@@ -21,7 +21,7 @@ import java.util.List;
                       serviceName = "bpelService",
                       portName = "bpelServiceSOAP",
                       targetNamespace = "http://de.uni.ol.inf.is.odysseus/bpelService/",
-                      wsdlLocation = "file:bpelService.wsdl",
+                      wsdlLocation = "resources/bpelService.wsdl",
                       endpointInterface = "de.uniol.inf.is.odysseus.bpel.service.BpelService")
                       
 public class BpelServiceImpl implements BpelService {
