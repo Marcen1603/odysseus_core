@@ -1,17 +1,17 @@
-package de.uniol.inf.is.odysseus.bpel.correlationservice;
+package de.uniol.inf.is.odysseus.bpel.service;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
-	private CorrelationService_CorrelationServiceSOAP_Server server;
+	private BpelService_BpelServiceSOAP_Server server;
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		this.server = new CorrelationService_CorrelationServiceSOAP_Server();
+		this.server = new BpelService_BpelServiceSOAP_Server();
 	}
 
 	/*

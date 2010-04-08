@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CorrelationService
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.bpel.correlationService
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.bpel.service
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.bpel.correlationservice.Activator
 Bundle-ActivationPolicy: lazy
