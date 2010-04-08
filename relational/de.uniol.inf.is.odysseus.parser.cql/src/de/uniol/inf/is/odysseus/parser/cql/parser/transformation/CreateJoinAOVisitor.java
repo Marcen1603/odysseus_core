@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHavingClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPredicate;
@@ -75,6 +77,19 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		}
 
 		return createJoin(name, data);
+	}
+	
+	@Override
+	public Object visit(ASTGroupByClause node, Object data) {
+		return data;
+	}
+	
+	@Override
+	public Object visit(ASTHavingClause node, Object data) {
+		//don't visit having clause and ensure that the correct return value is returned.
+		//TODO inside the having clause some astelements can return null on visit instead of data
+		//as this is consistent in the abstractdefaultvisitor
+		return data;
 	}
 
 	@Override
