@@ -96,7 +96,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"timestamp Long, id Integer, factoryId Integer, name String)" +
 				"CHANNEL localhost : 55557");
 		queries.add("CREATE STREAM machineMaintenance:install (" +
-				"timestamp Long, id Integer, machineId Integer, limit1 Double, limit2 Double, pastUsageTime Double)" +
+				"timestamp Long, id Integer, machineId Integer, limit1 Double, limit2 Double, pastUsageRate Double)" +
 				"CHANNEL localhost : 55558");
 		queries.add("CREATE STREAM machineMaintenance:usage (" +
 				"timestamp Long, machineId Integer, rate Double)" +
