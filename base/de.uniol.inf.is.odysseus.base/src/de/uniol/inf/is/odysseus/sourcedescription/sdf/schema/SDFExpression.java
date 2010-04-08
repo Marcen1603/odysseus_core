@@ -149,7 +149,7 @@ public class SDFExpression implements Serializable {
 		}
 		result += value.substring(start);
 
-		Matcher m = variablePattern.matcher(value);
+		Matcher m = variablePattern.matcher(result);
 		String totalResult = "";
 		start = 0;
 		while (m.find()) {
@@ -158,6 +158,16 @@ public class SDFExpression implements Serializable {
 					|| group.toUpperCase().equals("OR")
 					|| group.toUpperCase().equals("NOT")) {
 				continue;
+			}
+			//make sure it is not variable introduced for aggregate functions (__V<number>)
+			if (group.startsWith("V")) {
+				int vstart = m.start(1);
+				if (vstart > 1) {
+					String vstr = result.substring(vstart - 2, vstart);
+					if (vstr.equals("__")) {
+						continue;
+					}
+				}
 			}
 			Variable variable = toVariable(group);
 			totalResult += result.substring(start, m.start(1));
