@@ -57,7 +57,7 @@ public class ECAParser implements IQueryParser{
 			String actuator = "\\w+";
 			String manager = "\\w+";
 			String actionConstruct = manager+"\\."+actuator+"\\."+method+"\\(.*\\)";
-			ecaPattern = Pattern.compile("(ON\\s*\\()[^\\(\\)]*(\\)\\s*DO\\s+"+actionConstruct+"[\\s*\\,"+actionConstruct+"]*)", Pattern.CASE_INSENSITIVE);		
+			ecaPattern = Pattern.compile("(ON\\s*\\().*(\\)\\s*DO\\s+"+actionConstruct+"[\\s*\\,"+actionConstruct+"]*)", Pattern.CASE_INSENSITIVE);		
 		}
 	}
 	
