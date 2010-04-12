@@ -35,7 +35,7 @@ public class IdeaalScenarioActuator {
 	private static final int DIM_VAL = 40;
 	
 	public IdeaalScenarioActuator(){
-		final BundleContext bc = Activator.getContext();
+		/*final BundleContext bc = Activator.getContext();
 		data = new ServiceTracker(bc, IFS20KNXService.class.getName(), null) {
 		    public Object addingService(ServiceReference ref)   {   	
 		    	if(knxService == null) 	{
@@ -52,12 +52,12 @@ public class IdeaalScenarioActuator {
 			    super.removedService(ref,service);
 			}           
 		};
-		data.open();
+		data.open();*/
 	}
 	
 	@ActuatorAdapterSchema(show = true, provide = true)
 	public void personWentToBed(double w1, double w2, double w3, double w4) throws InterruptedException{
-		System.out.println(w1+" "+w2+" "+w3+" "+w4);
+		/*System.out.println(w1+" "+w2+" "+w3+" "+w4);
 		if (personLyingBed){
 			//person already in bed, do nothing
 			return;
@@ -102,7 +102,9 @@ public class IdeaalScenarioActuator {
 			
 			knxService.switchKNXDevice(LIGHT_BELOW_BED, false);
 		}
-		
+		*/
+		System.out.println("Person went to bed");
+		//Thread.sleep(500);
 	}
 	
 
