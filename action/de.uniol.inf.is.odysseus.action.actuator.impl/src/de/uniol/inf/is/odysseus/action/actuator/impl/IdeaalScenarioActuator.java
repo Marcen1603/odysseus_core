@@ -2,15 +2,17 @@ package de.uniol.inf.is.odysseus.action.actuator.impl;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
+/*import org.osgi.util.tracker.ServiceTracker;
 
 import de.offis.gal.bus.fs20knxdataservice.IFS20KNXDataListener;
 import de.offis.gal.bus.fs20knxdataservice.IFS20KNXService;
+*/
 import de.uniol.inf.is.odysseus.action.services.Activator;
 import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapterSchema;
 
 /**
  * Actuator switching KNX devices of IdeAAL room
+ * Birger Martens kontaktieren für notwendige Bundles etc.
  * @author Simon Flandergan
  *
  */
@@ -18,9 +20,11 @@ public class IdeaalScenarioActuator {
 	private boolean personLyingBed = false;
 	private boolean personStoodUp = false;
 	
+	/*
   	IFS20KNXService knxService;
 	private ServiceTracker data;
 	protected IFS20KNXDataListener knxListener;
+	*/
 	
 	private static final String LIGHT_BELOW_BED = "10/0/9";
 	private static final String LIGHT_NIGHTTABLE = "10/0/6";
@@ -114,13 +118,14 @@ public class IdeaalScenarioActuator {
 		personLyingBed = false;
 		personStoodUp = true;
 		
-		knxService.switchKNXDevice(LIGHT_BELOW_BED, true);
+		/*knxService.switchKNXDevice(LIGHT_BELOW_BED, true);
 		Thread.sleep(2 * 1000);
 		
 		knxService.dimKNXDevice(LIGHT_HALL, DIM_VAL);
 		Thread.sleep(2 * 1000);
 		
 		knxService.dimKNXDevice(LIGHT_BATHROOM_DIM, DIM_VAL);
+		*/
 	}
 
 }
