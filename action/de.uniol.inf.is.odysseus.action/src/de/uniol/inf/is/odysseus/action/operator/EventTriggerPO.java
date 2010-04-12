@@ -97,7 +97,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 			try {
 				//start timestamp = tupleTimestamp
 				bmData = new BenchmarkData( 
-						((Number)(dataExtractor.extractAttribute(object, 0, type, this.schema))).longValue());
+						((Number)(dataExtractor.extractAttribute(object, 0, type))).longValue());
 
 				//dataextraction until metadata was created
 				ITimeInterval metaData = (ITimeInterval)((IMetaAttributeContainer)object).getMetadata();
