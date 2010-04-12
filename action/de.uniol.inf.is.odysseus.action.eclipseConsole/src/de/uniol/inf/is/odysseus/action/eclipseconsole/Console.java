@@ -60,6 +60,32 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 	}
 	
+	public void _ideaalsources(CommandInterpreter ci){
+		List<String> queries = new ArrayList<String>();
+		queries.add("CREATE STREAM ideaal:bett4in1 (" +
+				"timestamp Long, id Integer, weight0 Double, weight1 Double, weight2 Double, weight3 Double)" +
+				"CHANNEL localhost : 55560");
+		queries.add("CREATE STREAM ideaal:bett1 (" +
+				"timestamp Long, id Integer, weight0 Double)" +
+				"CHANNEL localhost : 55561");
+		queries.add("CREATE STREAM ideaal:bett2 (" +
+				"timestamp Long, id Integer, weight0 Double)" +
+				"CHANNEL localhost : 55562");
+		queries.add("CREATE STREAM ideaal:bett3 (" +
+				"timestamp Long, id Integer, weight0 Double)" +
+				"CHANNEL localhost : 55563");
+		queries.add("CREATE STREAM ideaal:bett4 (" +
+				"timestamp Long, id Integer, weight0 Double)" +
+				"CHANNEL localhost : 55564");
+		for (String query : queries){
+			try {
+				this.executer.addQuery(query, "CQL");
+			} catch (PlanManagementException e) {
+				ci.println(e.getMessage());
+			}
+		}
+	}
+	
 	
 	public void _lsactuatormanager(CommandInterpreter ci) {
 		ci.println("--Registered ActuatorManager--");
