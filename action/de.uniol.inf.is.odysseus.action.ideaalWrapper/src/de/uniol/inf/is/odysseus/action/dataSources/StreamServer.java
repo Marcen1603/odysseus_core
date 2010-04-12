@@ -22,6 +22,7 @@ public class StreamServer extends Thread {
 
 	private ServerSocket socket;
 	private ISourceClient sourceClient;
+	private Thread sourceClientThread;
 	private Logger logger;
 	
 	/**
@@ -37,6 +38,7 @@ public class StreamServer extends Thread {
 		serverChannel.configureBlocking(true);
 		
 		this.sourceClient = client;
+		this.sourceClientThread = new Thread(this.sourceClient);
 			
 		this.logger = LoggerFactory.getLogger( StreamServer.class );
 	}
@@ -62,10 +64,11 @@ public class StreamServer extends Thread {
 
 			// Handle client connection
 			try {
-				synchronized (this.sourceClient){
+				synchronized (this.sourceClientThread){
 					//start sensor client if it's not yet running
-					if (!this.sourceClient.isAlive()){
-						this.sourceClient.start();
+					if (!this.sourceClientThread.isAlive()){
+						this.sourceClientThread = new Thread(this.sourceClient);
+						this.sourceClientThread.start();
 					}
 				}
 				
@@ -89,7 +92,12 @@ public class StreamServer extends Thread {
 				this.socket.close();
 			}
 			
-			if (this.sourceClient != null && this.sourceClient.isAlive()){
+			if (this.sourceClientThread.isAlive()){
+				this.sourceClientThread.interrupt();
+				this.sourceClientThread = null;
+			}
+			
+			if (this.sourceClient != null){
 				this.sourceClient.cleanUp();
 			}
 		}catch (IOException e){

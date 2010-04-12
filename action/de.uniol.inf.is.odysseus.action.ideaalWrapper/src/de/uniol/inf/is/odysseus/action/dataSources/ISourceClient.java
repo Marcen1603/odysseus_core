@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Simon Flandergan
  *
  */
-public abstract class ISourceClient extends Thread{
+public abstract class ISourceClient implements Runnable{
 	protected List<StreamClient> clients;
 	protected Logger logger;
 	

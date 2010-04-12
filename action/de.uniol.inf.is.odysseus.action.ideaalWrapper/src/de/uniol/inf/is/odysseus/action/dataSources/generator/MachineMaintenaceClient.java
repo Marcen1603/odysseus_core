@@ -52,7 +52,7 @@ public class MachineMaintenaceClient extends ISourceClient {
 		
 		try {
 			//wait for next update
-			sleep(this.frequency);
+			Thread.sleep(this.frequency);
 			
 			//accelerate
 			this.frequency *= (1 / this.acceleration);

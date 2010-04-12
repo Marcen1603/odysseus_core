@@ -30,6 +30,8 @@ public class SocketSensorClient extends ISourceClient {
 	private SDFAttributeList schema;
 	private Sensor sensor;
 	
+	private int tupleID = 0;
+	
 
 	public SocketSensorClient(Sensor sensor) {
 		this.interval = sensor.getInterval();
@@ -51,9 +53,12 @@ public class SocketSensorClient extends ISourceClient {
 			RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());	
 			tuple.setAttribute(0, System.currentTimeMillis());
 			
+			tuple.setAttribute(1, tupleID);
+			this.tupleID++;
+			
 			//send request to sensor
 			OutputStream outputStream = this.socket.getOutputStream();
-			int index = 1;
+			int index = 2;
 			for (String message : messages){
 			
 				outputStream.flush();
@@ -64,7 +69,11 @@ public class SocketSensorClient extends ISourceClient {
 				String input = readFromSensor(this.socket.getInputStream());
 				if (input != null & input.length() >0){
 					//add functions to val if necessary
-					input = Sensor.calcRealValue(this.sensor, message, input);
+					try {
+						input = Sensor.calcRealValue(this.sensor, message, input);
+					}catch (Exception e){
+						throw new InternalException(e.getMessage());
+					}
 					
 					SDFAttribute attribute = schema.getAttribute(index);
 					Object val = this.extractFromInputString(
@@ -81,7 +90,7 @@ public class SocketSensorClient extends ISourceClient {
 				
 				//wait shortly until next val is fetched
 				try {
-					sleep(this.interval);
+					Thread.sleep(this.interval);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -104,7 +113,7 @@ public class SocketSensorClient extends ISourceClient {
 
 			//wait till next fetch
 			try {
-				sleep(this.interval);
+				Thread.sleep(this.interval);
 			} catch (InterruptedException e2) {
 				e.printStackTrace();
 			}
@@ -164,6 +173,7 @@ public class SocketSensorClient extends ISourceClient {
 			try {
 				this.retries = 0;
 				this.socket.close();
+				this.socket = null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
