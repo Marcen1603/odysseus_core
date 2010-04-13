@@ -8,7 +8,7 @@ public class BenchmarkData {
 	private Map<String, Long> outputTimes;
 	
 	public BenchmarkData(String identifier){
-		this.creationTime = System.nanoTime();
+		this.creationTime = System.currentTimeMillis();
 		this.outputTimes = new HashMap<String, Long>();
 	}
 	
