@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddExcept
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecutionPlan;
 
@@ -794,5 +795,19 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		ISystemMonitor monitor = this.systemMonitorFactory.newSystemMonitor();
 		monitor.initialize(period);
 		return monitor;
+	}
+	
+	@Override
+	public void updateExecutionPlan() throws NoOptimizerLoadedException, QueryOptimizationException {
+		this.logger.debug("Update Execution Plan.");
+		// synchronize the process
+		this.executionPlanLock.lock();
+		try {
+			setExecutionPlan(this.optimizer().preQueryMigrateOptimization(this, new OptimizeParameter(ParameterDoRestruct.FALSE)));
+		} finally {
+			// end synchronize of the process
+			this.executionPlanLock.unlock();
+		}
+		this.logger.debug("Finished updating Execution Plan.");
 	}
 }

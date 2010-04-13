@@ -112,6 +112,7 @@ public class EditableExecutionPlan implements IEditableExecutionPlan {
 			for (IPhysicalOperator r : roots) {
 				r.open();
 			}
+			this.open = true;
 		}
 	}
 

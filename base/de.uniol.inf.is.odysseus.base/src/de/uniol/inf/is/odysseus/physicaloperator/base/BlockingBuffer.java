@@ -11,11 +11,11 @@ import de.uniol.inf.is.odysseus.base.IClone;
 public class BlockingBuffer<T extends IClone> extends BufferedPipe<T> {
 	
 	private boolean blocked = false;
-
+	
 	@Override
-	public boolean isEmpty() {
+	final public boolean hasNext() {
 		// pretend being empty, so that hasNext() is false, if blocked
-		return isBlocked() ? true : super.isEmpty();
+		return isBlocked() ? false : super.hasNext();
 	}
 	
 	public boolean isBlocked() {

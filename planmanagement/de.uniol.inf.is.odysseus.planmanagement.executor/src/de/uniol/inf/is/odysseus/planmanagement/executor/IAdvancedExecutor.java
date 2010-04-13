@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoa
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 
 /**
  * IAdvancedExecutor describes an advanced {@link IExecutor}. IAdvancedExecutor
@@ -108,4 +109,14 @@ public interface IAdvancedExecutor extends IExecutor {
 	 */
 	public ISystemMonitor newSystemMonitor(long period)
 			throws NoSystemMonitorLoadedException;
+	
+	/**
+	 * Updates the execution plan to find new iterable sources, if the plan 
+	 * has changed.
+	 * 
+	 * @throws NoOptimizerLoadedException
+	 * @throws QueryOptimizationException
+	 */
+	public void updateExecutionPlan() throws NoOptimizerLoadedException,
+			QueryOptimizationException;
 }

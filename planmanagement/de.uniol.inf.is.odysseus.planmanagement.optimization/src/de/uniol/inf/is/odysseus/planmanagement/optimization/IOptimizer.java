@@ -241,4 +241,18 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @return configuration of current {@link IOptimizer}
 	 */
 	public OptimizationConfiguration getConfiguration();
+	
+	/**
+	 * Initializes an optimization if queries should be migrated.
+	 * 
+	 * @param sender
+	 *            Optimization request sender, which provides informations for
+	 *            the optimization.
+	 * @param parameter
+	 *            Parameter for the optimization.
+	 * @return New optimized execution plan.
+	 * @throws QueryOptimizationException
+	 */
+	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
+			OptimizeParameter parameter) throws QueryOptimizationException;
 }

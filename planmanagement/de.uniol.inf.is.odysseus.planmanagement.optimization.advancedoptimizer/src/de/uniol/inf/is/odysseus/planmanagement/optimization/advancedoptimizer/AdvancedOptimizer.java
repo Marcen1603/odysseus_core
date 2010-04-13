@@ -143,6 +143,16 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 	}
 	
 	@Override
+	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
+			OptimizeParameter parameter) throws QueryOptimizationException {
+		ArrayList<IEditableQuery> newPlan = new ArrayList<IEditableQuery>(
+				sender.getRegisteredQueries());
+		IEditableExecutionPlan newExecutionPlan = this.planOptimizer
+			.optimizePlan(sender, parameter, newPlan);
+		return newExecutionPlan;
+	}
+	
+	@Override
 	public IExecutionPlan reoptimize(IOptimizable sender, IEditableQuery query,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
@@ -216,6 +226,8 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			// start migration to new plan 
 			this.logger.info("Start migration to new physical plan (query ID "+query.getID()+")");
 			optimalMigration.getStrategy().migrateQuery(this, query, optimalMigration.getNewPlan());
+			
+			((IAdvancedExecutor)sender).updateExecutionPlan();
 			
 			// wait for migration end callback
 			this.logger.info("Plan migration running (query ID "+query.getID()+")");

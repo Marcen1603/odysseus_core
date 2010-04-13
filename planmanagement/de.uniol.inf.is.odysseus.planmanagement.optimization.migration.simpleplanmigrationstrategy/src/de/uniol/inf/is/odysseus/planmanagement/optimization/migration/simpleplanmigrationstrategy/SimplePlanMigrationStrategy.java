@@ -140,12 +140,17 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		PhysicalRestructHelper.appendOperator(select, lastOperatorNewPlan);
 		PhysicalRestructHelper.appendBinaryOperator(union, lastOperatorOldPlan, select);
 		
+		// FIXME Workaround, weil UnionPO nicht funktioniert. Es wird fuer die Zeit 
+		// der parallelen Ausfuehrung noch der alte Ausgabeoperator benutzt. Sobald
+		// Union geht, muss nur diese Zeile entfernt werden.
+		PhysicalRestructHelper.appendOperator(oldPlanRoot, lastOperatorOldPlan);
+		
 		this.logger.debug("Result:\n"+AbstractTreeWalker.prefixWalk2(newPlanRoot, new PhysicalPlanToStringVisitor()));
 		
 		// execute plans for at least 'w_max' (longest window duration)
 		this.logger.debug("Initializing parallel execution plan.");
 		try {
-			runningQuery.initializePhysicalPlan(newPlanRoot);
+			runningQuery.initializePhysicalPlan(newPlanRoot);			
 		} catch (OpenFailedException e) {
 			throw new QueryOptimizationException("Failed to initialize parallel execution plan.", e);
 		}
@@ -153,6 +158,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		for (BlockingBuffer<?> buffer:context.getBlockingBuffers()) {
 			buffer.unblock();
 		}
+		
 		this.logger.debug("Parallel execution started.");
 		if (wMax == null) {
 			this.logger.debug("No windows, can finish parallel execution instantly.");

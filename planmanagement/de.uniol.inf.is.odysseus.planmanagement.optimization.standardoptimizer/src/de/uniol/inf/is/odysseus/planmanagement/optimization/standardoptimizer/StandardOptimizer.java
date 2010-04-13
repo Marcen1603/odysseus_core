@@ -87,4 +87,11 @@ public class StandardOptimizer extends AbstractOptimizer {
 		
 	}
 
+	@Override
+	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
+			OptimizeParameter parameter) throws QueryOptimizationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

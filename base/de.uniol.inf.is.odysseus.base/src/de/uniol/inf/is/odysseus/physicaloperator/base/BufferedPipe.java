@@ -42,7 +42,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	}
 
 	@Override
-	final public boolean hasNext() {
+	public boolean hasNext() {
 		if (!isOpen())
 			return false;
 		return !buffer.isEmpty();
