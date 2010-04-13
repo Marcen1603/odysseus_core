@@ -21,6 +21,7 @@ public class ScenarioDatamodel {
 	private Map<Integer, Tool> tools;
 	private Map<Integer, Integer> toolsInUse;
 	private List<Integer> avaiableToolIDs;
+	private Vector<Integer> occupiedMachines;
 	
 	private List<Integer> freeMachines;
 	
@@ -30,6 +31,8 @@ public class ScenarioDatamodel {
 	private Boolean noFactoryProducedYet;
 	
 	private Random randomGen;
+
+	
 	
 	private static ScenarioDatamodel instance = null;
 
@@ -58,10 +61,12 @@ public class ScenarioDatamodel {
 		this.machineReleaseTimes =	new HashMap<Integer, Long>(config.getNumberOfMachines()+1);
 		this.machineDownTimes = new HashMap<Integer, Long>(config.getNumberOfMachines()+1);
 		
-		this.tools = Collections.synchronizedMap(new HashMap<Integer, Tool>(config.getNumberOfTools()+1));
+		this.tools = Collections.synchronizedMap(
+				new HashMap<Integer, Tool>(config.getNumberOfTools()+1));
 		this.toolsInUse = Collections.synchronizedMap(
 				new HashMap<Integer, Integer>(config.getNumberOfMachines()+1));
 		this.avaiableToolIDs = new Vector<Integer>(this.tools.size());
+		this.occupiedMachines = new Vector<Integer>(this.tools.size());
 		
 		this.randomGen = new Random();
 		
@@ -153,8 +158,8 @@ public class ScenarioDatamodel {
 			throw new GeneratorException("All tools used.");
 		}
 		
-		if(this.toolsInUse.size() > 0){
-			return randomGen.nextInt(this.toolsInUse.size());
+		if(this.occupiedMachines.size() > 0){
+			return this.occupiedMachines.get(randomGen.nextInt(this.occupiedMachines.size()));
 		}else {
 			return null;
 		}
@@ -167,13 +172,14 @@ public class ScenarioDatamodel {
 	 * @throws GeneratorException 
 	 */
 	public Tool installFreeTool(int machineNo) throws GeneratorException{
+		
 		int toolAmount = this.tools.size();
 		
 		if (toolAmount < 1){
 			throw new GeneratorException("No more tools avaialable");
 		}
 		
-		if (toolAmount <= this.toolsInUse.size()){
+		if (toolAmount <= this.occupiedMachines.size()){
 			//all tools in use, free machine again
 			this.freeMachines.add(machineNo);
 			return null;
@@ -181,14 +187,11 @@ public class ScenarioDatamodel {
 			
 		int index = this.randomGen.nextInt(this.avaiableToolIDs.size());
 		
-		Tool tool = this.tools.get(this.avaiableToolIDs.get(index));
-		if (tool == null || this.toolsInUse.containsValue(tool.getId())) {
-			index = (index +1)%this.avaiableToolIDs.size();
-			tool = this.tools.get(this.avaiableToolIDs.get(index));
-		}
+		Tool tool = this.tools.get(this.avaiableToolIDs.remove(index));
 		
-		
+		this.occupiedMachines.add(machineNo);
 		this.toolsInUse.put(machineNo, tool.getId());
+		
 		this.setTimeForRelease(machineNo);
 		
 		return tool;
@@ -270,8 +273,12 @@ public class ScenarioDatamodel {
 		synchronized (machineDownTimes) {
 			this.machineDownTimes.put(machineID, uninstallTimeStamp+time);
 		}
+
+		this.occupiedMachines.remove(machineID);
+		Tool tool = this.tools.get(this.toolsInUse.remove(machineID));
+		this.avaiableToolIDs.add(tool.getId());
 		
-		return this.toolsInUse.remove(machineID);
+		return tool.getId();
 	}
 	
 	/**
