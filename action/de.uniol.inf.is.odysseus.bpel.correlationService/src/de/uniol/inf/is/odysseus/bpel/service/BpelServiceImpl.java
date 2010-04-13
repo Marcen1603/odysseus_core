@@ -6,8 +6,8 @@
 
 package de.uniol.inf.is.odysseus.bpel.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -25,10 +25,10 @@ import java.util.List;
                       endpointInterface = "de.uniol.inf.is.odysseus.bpel.service.BpelService")
                       
 public class BpelServiceImpl implements BpelService {
-	private List<Integer> maintainedMachines;
+	private Map<Integer, Integer> maintainedMachines;
     
 	public BpelServiceImpl(){
-		this.maintainedMachines = new ArrayList<Integer>();
+		this.maintainedMachines = new HashMap<Integer, Integer>();
 	}
 	
 	/* (non-Javadoc)
@@ -41,13 +41,14 @@ public class BpelServiceImpl implements BpelService {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.bpel.service.BpelService#checkIfMachineIsMaintained(int  tool )*
      */
-    public boolean checkIfMachineIsMaintained(int tool) { 
-        if (this.maintainedMachines.contains(tool)){
-        	return true;
+    public int checkIfMachineIsMaintained(int tool) { 
+        Integer maintainedBy = this.maintainedMachines.get(tool);
+        if (maintainedBy == null){
+        	this.maintainedMachines.put(tool, 1);
+        	return 0;
         }else {
-        	this.maintainedMachines.add(tool);
+        	return maintainedBy;
         }
-        return false;
     }
 
 }

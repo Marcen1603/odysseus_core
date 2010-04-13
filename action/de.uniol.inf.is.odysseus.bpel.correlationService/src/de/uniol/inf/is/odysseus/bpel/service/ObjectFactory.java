@@ -55,12 +55,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/bpelService/", name = "maintained")
-    public JAXBElement<Boolean> createMaintained(Boolean value) {
-        return new JAXBElement<Boolean>(_Maintained_QNAME, Boolean.class, null, value);
+    public JAXBElement<Integer> createMaintained(Integer value) {
+        return new JAXBElement<Integer>(_Maintained_QNAME, Integer.class, null, value);
     }
 
     /**
