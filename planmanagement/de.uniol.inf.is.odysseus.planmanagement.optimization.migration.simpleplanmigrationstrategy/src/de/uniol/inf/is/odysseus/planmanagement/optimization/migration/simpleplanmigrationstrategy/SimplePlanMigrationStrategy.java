@@ -150,7 +150,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// execute plans for at least 'w_max' (longest window duration)
 		this.logger.debug("Initializing parallel execution plan.");
 		try {
-			runningQuery.initializePhysicalPlan(newPlanRoot);			
+			runningQuery.initializePhysicalPlan(newPlanRoot);
 		} catch (OpenFailedException e) {
 			throw new QueryOptimizationException("Failed to initialize parallel execution plan.", e);
 		}

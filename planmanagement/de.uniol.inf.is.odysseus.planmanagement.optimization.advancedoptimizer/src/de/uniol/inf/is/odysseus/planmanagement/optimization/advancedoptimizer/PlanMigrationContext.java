@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 
 /**
@@ -18,6 +19,7 @@ class PlanMigrationContext {
 	private ILogicalOperator logicalPlan;
 	private IEditableQuery query;
 	private IPlanMigrationStrategy strategy;
+	private IOptimizable sender;
 
 	public PlanMigrationContext(IEditableQuery query) {
 		this.query = query;
@@ -53,6 +55,14 @@ class PlanMigrationContext {
 
 	IPlanMigrationStrategy getStrategy() {
 		return strategy;
+	}
+
+	public void setSender(IOptimizable sender) {
+		this.sender = sender;
+	}
+
+	public IOptimizable getSender() {
+		return sender;
 	}
 
 }

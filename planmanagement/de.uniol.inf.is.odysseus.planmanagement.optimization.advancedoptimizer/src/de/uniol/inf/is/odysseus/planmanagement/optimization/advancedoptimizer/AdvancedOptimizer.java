@@ -222,6 +222,7 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 			PlanMigration optimalMigration = this.migrationCostModel.getCostCalculator().pickBest(migrationCandidates);
 			context.setRoot(optimalMigration.getNewPlan());
 			context.setLogicalPlan(alternatives.get(optimalMigration.getNewPlan()));
+			context.setSender(sender);
 			
 			// start migration to new plan 
 			this.logger.info("Start migration to new physical plan (query ID "+query.getID()+")");
@@ -247,6 +248,9 @@ public class AdvancedOptimizer extends AbstractOptimizer {
 		try {
 			// set new logical plan
 			query.setLogicalPlan(context.getLogicalPlan());
+			
+			// update execution plan
+			((IAdvancedExecutor)context.getSender()).updateExecutionPlan();
 			
 			// reinstall metadata listener
 			updateMetadataListener(query);
