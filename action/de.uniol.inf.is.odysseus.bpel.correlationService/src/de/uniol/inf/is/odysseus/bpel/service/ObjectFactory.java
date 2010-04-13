@@ -27,7 +27,9 @@ public class ObjectFactory {
     private final static QName _Correlation_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/bpelService/", "correlation");
     private final static QName _In_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/bpelService/", "in");
     private final static QName _Maintained_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/bpelService/", "maintained");
-    private final static QName _Tool_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/bpelService/", "tool");
+    private final static QName _Machine_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/bpelService/", "machine");
+    private final static QName _Out_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/bpelService/", "out");
+    private final static QName _MaintainedMachine_QNAME = new QName("http://de.uni.ol.inf.is.odysseus/bpelService/", "maintainedMachine");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.uniol.inf.is.odysseus.bpel.service
@@ -67,9 +69,27 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/bpelService/", name = "tool")
-    public JAXBElement<Integer> createTool(Integer value) {
-        return new JAXBElement<Integer>(_Tool_QNAME, Integer.class, null, value);
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/bpelService/", name = "machine")
+    public JAXBElement<Integer> createMachine(Integer value) {
+        return new JAXBElement<Integer>(_Machine_QNAME, Integer.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/bpelService/", name = "out")
+    public JAXBElement<String> createOut(String value) {
+        return new JAXBElement<String>(_Out_QNAME, String.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://de.uni.ol.inf.is.odysseus/bpelService/", name = "maintainedMachine")
+    public JAXBElement<Integer> createMaintainedMachine(Integer value) {
+        return new JAXBElement<Integer>(_MaintainedMachine_QNAME, Integer.class, null, value);
     }
 
 }

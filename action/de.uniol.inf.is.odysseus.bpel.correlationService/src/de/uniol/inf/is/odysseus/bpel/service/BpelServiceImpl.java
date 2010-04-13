@@ -41,14 +41,23 @@ public class BpelServiceImpl implements BpelService {
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.bpel.service.BpelService#checkIfMachineIsMaintained(int  tool )*
      */
-    public int checkIfMachineIsMaintained(int tool) { 
-        Integer maintainedBy = this.maintainedMachines.get(tool);
+    public int checkIfMachineIsMaintained(int machine) { 
+        Integer maintainedBy = this.maintainedMachines.get(machine);
         if (maintainedBy == null){
-        	this.maintainedMachines.put(tool, 1);
+        	this.maintainedMachines.put(machine, 1);
         	return 0;
         }else {
         	return maintainedBy;
         }
     }
+
+	@Override
+	public void machineSuccessfullyMaintained(int maintainedMachine) {
+		Integer maintainedBy = this.maintainedMachines.get(maintainedMachine);
+	    if (maintainedBy != null){
+	    	maintainedBy--;
+	    	this.maintainedMachines.put(maintainedMachine, maintainedBy);
+	    }
+	}
 
 }
