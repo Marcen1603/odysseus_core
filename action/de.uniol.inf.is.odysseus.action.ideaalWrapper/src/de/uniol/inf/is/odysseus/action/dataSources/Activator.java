@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.action.dataSources.generator.GeneratorConfig;
 import de.uniol.inf.is.odysseus.action.dataSources.generator.MachineMaintenaceClient;
-import de.uniol.inf.is.odysseus.action.dataSources.generator.ScenarioDatamodel;
 import de.uniol.inf.is.odysseus.action.dataSources.generator.TupleGenerator.GeneratorType;
 import de.uniol.inf.is.odysseus.action.dataSources.ideaal.Sensor;
 import de.uniol.inf.is.odysseus.action.dataSources.ideaal.SocketSensorClient;
@@ -54,7 +53,6 @@ public class Activator implements BundleActivator {
 			
 			logger.info("Starting MachineMaintenance generators ...");
 			
-			ScenarioDatamodel.initiDataModel(generatorConfig);
 			for (GeneratorType type : GeneratorType.values()){
 				try {
 					if ( 	(type.equals(GeneratorType.Install_Pure) && generatorConfig.isSimulateDB() ) ||

@@ -319,10 +319,10 @@ public class ScenarioDatamodel {
 			}
 
 	}
-	
-	public void setNoFactoryProducedYet(Boolean lastFactory) {
-		synchronized (lastFactory) {
-			this.noFactoryProducedYet = lastFactory;
+		
+	public static void reset() {
+		synchronized (instance) {
+			instance = new ScenarioDatamodel(instance.config);
 		}
 	}
 

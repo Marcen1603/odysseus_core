@@ -18,8 +18,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  */
 public abstract class ISourceClient implements Runnable{
-	protected List<StreamClient> clients;
 	protected Logger logger;
+	
+	private List<StreamClient> clients;
+	private long tupleCount = 0;
 	
 	public ISourceClient(){
 		clients = new ArrayList<StreamClient>();
@@ -38,6 +40,8 @@ public abstract class ISourceClient implements Runnable{
 	@Override
 	public void run() {
 		this.logger.info("Started producing tuples ...");
+
+		long start = System.currentTimeMillis();
 		boolean run = true;
 		while (run) {
 			run  = this.processData();
@@ -50,6 +54,23 @@ public abstract class ISourceClient implements Runnable{
 		cleanUp();
 		
 		this.logger.info("Stopped producing tuples ...");
+		
+		long runtime = System.currentTimeMillis()-start;
+		
+		long hours = runtime / (60 * 60* 1000);
+		long balance = runtime % (60 * 60* 1000);
+		
+		long mins = balance / (60 * 1000);
+		balance %= (60*1000);
+		
+		long secs = balance / 1000;
+		
+		this.logger.info("Generator run for: "+
+				hours+ "h "+
+				mins+"min "+
+				secs+"sec ...");
+		
+		this.logger.info("... And produced "+this.tupleCount+" tuples");
 		
 		//clean up for clients
 		synchronized (clients) {
@@ -65,12 +86,12 @@ public abstract class ISourceClient implements Runnable{
 	 * Method called by thread. Should implement processing logic.
 	 * @return true if thread should continue, false if it should end
 	 */
-	public abstract boolean processData();
+	protected abstract boolean processData();
 	
 	/**
 	 * Cleanup method. Called when thread ends
 	 */
-	public abstract void cleanUp();
+	protected abstract void cleanUp();
 
 	/**
 	 * Returns schema of tuples sent by server
@@ -78,9 +99,10 @@ public abstract class ISourceClient implements Runnable{
 	 */
 	public abstract SDFAttributeList getSchema();
 
-	public void sendTupleToClients(RelationalTuple<IMetaAttribute> tuple) {
+	protected void sendTupleToClients(RelationalTuple<IMetaAttribute> tuple) {
 		//send tuple to clients
 		this.logger.debug("Sent tuple :"+tuple.toString());
+		this.tupleCount++;
 		synchronized (clients) {
 			Iterator<StreamClient> iterator = this.clients.iterator();
 			while(iterator.hasNext()){

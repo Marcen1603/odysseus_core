@@ -16,6 +16,8 @@ public class MachineMaintenaceClient extends ISourceClient {
 
 	public MachineMaintenaceClient(GeneratorConfig generatorConfig, GeneratorType type) 
 			throws GeneratorException{
+		ScenarioDatamodel.initiDataModel(generatorConfig);
+		
 		this.frequency = generatorConfig.getFrequencyOfUpdates();
 		this.acceleration = generatorConfig.getAccelerationFactor();
 		
@@ -26,7 +28,8 @@ public class MachineMaintenaceClient extends ISourceClient {
 	
 	@Override
 	public void cleanUp() {
-		//not necessary
+		//reset model for new clients
+		ScenarioDatamodel.reset();
 	}
 
 	@Override
