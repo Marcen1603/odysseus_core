@@ -264,7 +264,7 @@ public class ScenarioDatamodel {
 	 * Uninstalls a tool from a machine
 	 * @param machineID
 	 */
-	public Integer uninstallTool(Integer machineID, long uninstallTimeStamp){
+	public void uninstallTool(Integer machineID, long uninstallTimeStamp){
 		//set machine to down status
 		int minTime = this.config.getMinMachineDowntime();
 		int maxTime = this.config.getMaxMachineDowntime();
@@ -277,11 +277,11 @@ public class ScenarioDatamodel {
 		this.occupiedMachines.remove(machineID);
 		Tool tool = this.tools.get(this.toolsInUse.remove(machineID));
 	
-		//tool could be removed by releaseResources
+		//tool could have been removed by other thread
 		if (tool != null){
-			this.avaiableToolIDs.add(tool.getId());
+			this.avaiableToolIDs.add(tool.getId());	
 		}
-		return tool.getId();
+		
 	}
 	
 	/**
