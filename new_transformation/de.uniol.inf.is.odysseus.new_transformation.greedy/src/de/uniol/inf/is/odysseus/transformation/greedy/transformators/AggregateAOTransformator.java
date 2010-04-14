@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalTupleGroupingHelper;
 
@@ -39,5 +40,11 @@ public class AggregateAOTransformator implements IPOTransformator<AggregateAO> {
 	@Override
 	public int getPriority() {
 		return 0;
+	}
+
+	@Override
+	public TempTransformationOperator createTempOperator() {
+		TempTransformationOperator to = new TempTransformationOperator("AggregateAO");
+		return to;
 	}
 }

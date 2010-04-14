@@ -31,24 +31,29 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	public void start(BundleContext context) throws Exception {
-		TransformationDatabase db = TransformationDatabase.getInstance();
+		try {
+			TransformationDatabase db = TransformationDatabase.getInstance();
 
-		// AccesAO
-		db.registerTransformator(AccessAO.class, new AccessAOViewTransformator());
-		db.registerTransformator(AccessAO.class, new ExistingAccessAO());
+			// AccesAO
+			db.registerTransformator(AccessAO.class, new AccessAOViewTransformator());
+			db.registerTransformator(AccessAO.class, new ExistingAccessAO());
 
-		// windowAO
-		db.registerTransformator(WindowAO.class, new SlidingAdvanceTimeWindowTIPOTransformator());
-		db.registerTransformator(WindowAO.class, new SlidingElementWindowTIPOTransformator());
-		db.registerTransformator(WindowAO.class, new SlidingPeriodicWindowTIPOTransformator());
-		db.registerTransformator(WindowAO.class, new SlidingTimeWindowTIPOTransformator());
-		db.registerTransformator(WindowAO.class, new RelationalElementWindowAOTransformator());
-		db.registerTransformator(WindowAO.class, new UnboundedWindowOnAttributeTransformator());
-		db.registerTransformator(WindowAO.class, new UnboundedWindowTransformator());
+			// windowAO
+			db.registerTransformator(WindowAO.class, new SlidingAdvanceTimeWindowTIPOTransformator());
+			db.registerTransformator(WindowAO.class, new SlidingElementWindowTIPOTransformator());
+			db.registerTransformator(WindowAO.class, new SlidingPeriodicWindowTIPOTransformator());
+			db.registerTransformator(WindowAO.class, new SlidingTimeWindowTIPOTransformator());
+			db.registerTransformator(WindowAO.class, new RelationalElementWindowAOTransformator());
+			db.registerTransformator(WindowAO.class, new UnboundedWindowOnAttributeTransformator());
+			db.registerTransformator(WindowAO.class, new UnboundedWindowTransformator());
 
-		db.registerTransformator(SelectAO.class, new SelectAOTransformator());
-		db.registerTransformator(JoinAO.class, new JoinTIPOTransformator());
-		db.registerTransformator(AggregateAO.class, new AggregateAOTransformator());
+			db.registerTransformator(SelectAO.class, new SelectAOTransformator());
+			db.registerTransformator(JoinAO.class, new JoinTIPOTransformator());
+			db.registerTransformator(AggregateAO.class, new AggregateAOTransformator());
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*

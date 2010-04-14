@@ -5,6 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICost;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostCalculator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.MockupCost;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.streamCharacteristic.TimeDistance;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.streamCharacteristic.TimeIntervalLength;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.Stream
 
 public class JoinAOCostCalculator implements ICostCalculator {
 	@Override
-	public ICost calculateCost(List<StreamCharacteristicCollection> incomingStreamCharacteristics) {
+	public ICost calculateCost(TempTransformationOperator operator) {
 		return new MockupCost(0);
 	}
 

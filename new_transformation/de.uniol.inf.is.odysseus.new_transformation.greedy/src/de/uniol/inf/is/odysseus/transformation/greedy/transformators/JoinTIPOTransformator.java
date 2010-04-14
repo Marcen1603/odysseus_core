@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMerge
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 
@@ -65,5 +66,11 @@ public class JoinTIPOTransformator implements IPOTransformator<JoinAO> {
 	@Override
 	public int getPriority() {
 		return 0;
+	}
+
+	@Override
+	public TempTransformationOperator createTempOperator() {
+		TempTransformationOperator to = new TempTransformationOperator("JoinTIPO");
+		return to;
 	}
 }

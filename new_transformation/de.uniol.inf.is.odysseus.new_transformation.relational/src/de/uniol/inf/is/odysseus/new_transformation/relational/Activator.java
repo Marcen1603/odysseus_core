@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.MapAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.AtomicDataInputStreamAccessPOTransformator;
-import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.ByteBufferRecieverPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.ByteBufferReceiverPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.FixedSetPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.InputStreamAccessPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.relational.transformators.MapAOTransformator;
@@ -28,7 +28,7 @@ public class Activator implements BundleActivator {
 
 		// AccesAO
 		db.registerTransformator(AccessAO.class, new AtomicDataInputStreamAccessPOTransformator());
-		db.registerTransformator(AccessAO.class, new ByteBufferRecieverPOTransformator());
+		db.registerTransformator(AccessAO.class, new ByteBufferReceiverPOTransformator());
 		db.registerTransformator(AccessAO.class, new FixedSetPOTransformator());
 		db.registerTransformator(AccessAO.class, new InputStreamAccessPOTransformator());
 		

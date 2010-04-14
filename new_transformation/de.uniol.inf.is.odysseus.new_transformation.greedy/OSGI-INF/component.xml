@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.base.ITransformation"/>
    </service>
-   <reference bind="bindCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.base.ICostModel" name="ICostModel" policy="static" unbind="unbindCostModel"/>
+   <reference bind="bindCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.new_transformation.costmodel.base.ICostModel" name="ICostModel" policy="static" unbind="unbindCostModel"/>
 </scr:component>

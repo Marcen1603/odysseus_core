@@ -7,9 +7,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
 
+/**
+ * This class contains all transformations from {@link ILogicalOperator}s to
+ * {@link IPhysicalOperator}s. They are stored in a list sorted by their
+ * priority.
+ * 
+ */
 public class TransformationDatabase {
 	private static TransformationDatabase instance = null;
 

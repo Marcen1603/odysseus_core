@@ -24,7 +24,7 @@ public class StreamCharacteristicDatabase {
 	private final Repository repository;
 
 	public StreamCharacteristicDatabase() throws RepositoryException {
-		File dataDir = new File("./sesame/");
+		File dataDir = new File(System.getProperty("user.home") + "/sesame/");
 		repository = new SailRepository(new NativeStore(dataDir));
 		repository.initialize();
 	}

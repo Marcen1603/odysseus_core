@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
+import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 
@@ -24,5 +25,11 @@ public class SelectAOTransformator implements IPOTransformator<SelectAO> {
 	@Override
 	public int getPriority() {
 		return 0;
+	}
+
+	@Override
+	public TempTransformationOperator createTempOperator() {
+		TempTransformationOperator to = new TempTransformationOperator("SelectPO");
+		return to;
 	}
 }

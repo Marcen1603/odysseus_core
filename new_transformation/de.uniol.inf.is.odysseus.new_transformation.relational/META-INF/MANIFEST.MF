@@ -10,6 +10,7 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.new_transformation.costmodel.base,
+ de.uniol.inf.is.odysseus.new_transformation.stream_characteristics,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.base.access,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
@@ -20,4 +21,3 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"
-Export-Package: de.uniol.inf.is.odysseus.new_transformation.relational.transformators

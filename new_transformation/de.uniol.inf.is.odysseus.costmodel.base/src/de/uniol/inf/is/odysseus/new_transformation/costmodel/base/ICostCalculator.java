@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
 
 public interface ICostCalculator {
-	public ICost calculateCost(List<StreamCharacteristicCollection> incomingStreamCharacteristics);
+	public ICost calculateCost(TempTransformationOperator operator);
 
 	/**
 	 * Merges the {@link StreamCharacteristicCollection}s of the incoming
