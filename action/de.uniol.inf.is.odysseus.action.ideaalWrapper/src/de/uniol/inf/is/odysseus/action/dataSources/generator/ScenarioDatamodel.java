@@ -276,8 +276,11 @@ public class ScenarioDatamodel {
 
 		this.occupiedMachines.remove(machineID);
 		Tool tool = this.tools.get(this.toolsInUse.remove(machineID));
-		this.avaiableToolIDs.add(tool.getId());
-		
+	
+		//tool could be removed by releaseResources
+		if (tool != null){
+			this.avaiableToolIDs.add(tool.getId());
+		}
 		return tool.getId();
 	}
 	
@@ -302,8 +305,9 @@ public class ScenarioDatamodel {
 					if (tool.isLimit2Hit()){
 						synchronized (this.machineReleaseTimes) {
 							this.machineReleaseTimes.remove(machineNo);
-							this.uninstallTool(machineNo, System.currentTimeMillis());
 						}
+						this.uninstallTool(machineNo, System.currentTimeMillis());
+						
 						
 						this.avaiableToolIDs.remove(index);
 						this.tools.remove(index);
