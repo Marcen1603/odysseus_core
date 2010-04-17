@@ -179,7 +179,7 @@ public class ScenarioDatamodel {
 					throw new GeneratorException("No more tools avaialable");
 				}
 				
-				if (this.tools.size() <= this.occupiedMachines.size()){
+				if (this.avaiableToolIDs.size()<1){
 					//all tools in use, free machine again
 					this.freeMachines.add(machineNo);
 					return null;
@@ -311,10 +311,8 @@ public class ScenarioDatamodel {
 						}
 						this.uninstallTool(machineNo, System.currentTimeMillis());
 						
-						synchronized (this.tools) {
-							this.avaiableToolIDs.remove(index);
-							this.tools.remove(index);
-						}
+						this.avaiableToolIDs.remove(index);
+						this.tools.remove(index);
 						
 					}
 	
