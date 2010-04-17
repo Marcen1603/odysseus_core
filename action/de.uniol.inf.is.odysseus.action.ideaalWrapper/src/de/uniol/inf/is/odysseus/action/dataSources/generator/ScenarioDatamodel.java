@@ -172,22 +172,25 @@ public class ScenarioDatamodel {
 	 * @throws GeneratorException 
 	 */
 	public Tool installFreeTool(int machineNo) throws GeneratorException{
-		
-		int toolAmount = this.tools.size();
-		
-		if (toolAmount < 1){
-			throw new GeneratorException("No more tools avaialable");
+		Tool tool = null;
+		synchronized (this.tools) {
+			synchronized (this.avaiableToolIDs) {
+				if (this.tools.size() < 1){
+					throw new GeneratorException("No more tools avaialable");
+				}
+				
+				if (this.tools.size() <= this.occupiedMachines.size()){
+					//all tools in use, free machine again
+					this.freeMachines.add(machineNo);
+					return null;
+				}
+					
+				int index = this.randomGen.nextInt(this.avaiableToolIDs.size());
+				
+				tool = this.tools.get(this.avaiableToolIDs.remove(index));
+			}
 		}
 		
-		if (toolAmount <= this.occupiedMachines.size()){
-			//all tools in use, free machine again
-			this.freeMachines.add(machineNo);
-			return null;
-		}
-			
-		int index = this.randomGen.nextInt(this.avaiableToolIDs.size());
-		
-		Tool tool = this.tools.get(this.avaiableToolIDs.remove(index));
 		
 		this.occupiedMachines.add(machineNo);
 		this.toolsInUse.put(machineNo, tool.getId());
@@ -308,9 +311,11 @@ public class ScenarioDatamodel {
 						}
 						this.uninstallTool(machineNo, System.currentTimeMillis());
 						
+						synchronized (this.tools) {
+							this.avaiableToolIDs.remove(index);
+							this.tools.remove(index);
+						}
 						
-						this.avaiableToolIDs.remove(index);
-						this.tools.remove(index);
 					}
 	
 					return usageRate;
