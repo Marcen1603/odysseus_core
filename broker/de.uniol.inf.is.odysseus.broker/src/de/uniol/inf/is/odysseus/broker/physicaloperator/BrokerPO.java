@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.broker.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -36,6 +37,12 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private int waitingForPort = -1;
 	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IMetaAttributeContainer<ITimeInterval>>());
 
+	private int maxWaitingCount = 5;
+	private PointInTime tsmin[] = new PointInTime[0];
+	private PointInTime min = null;
+
+	private boolean printDebug = true;
+
 	public BrokerPO(String identifier) {
 		this.identifier = identifier;
 		init();
@@ -65,40 +72,45 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	protected void process_next(T object, int port) {
-		// DEBUG
+		this.setMinTS(port, object.getMetadata().getStart());		
+		this.min = getMinimum();
+		printDebug("Minimun time is " + this.min);
 		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
-		System.err.println("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
-		// DEBUG
+		printDebug("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
 		if (type == WriteTransaction.Timestamp) {
 			PointInTime time = object.getMetadata().getStart();
 			TransactionTS trans = new TransactionTS(getOutgoingPortForIncoming(port), time);
 			timestampList.offer(trans);
+			if (timestampList.size() >= this.maxWaitingCount) {
+				printDebug("Cyclic - timeout afer " + this.maxWaitingCount + " in queue");
+				waiting = false;
+			}
 		} else {
 			if (waiting) {
 				if (port == waitingForPort) {
-					System.out.println("Cyclic - received...");
-					sweepArea.purgeElements(object, Order.LeftRight);
-					sweepArea.insert(object);
-					while (!this.waitingBuffer.isEmpty()) {
-						// TODO: vom puffer in den hauptspeicher schieben.
-						// jedoch nur solche, wo man weiß, dass keine jüngeren
-						// mehr kommen
-						// also ein min-TS für jeden merken
-						T element = this.waitingBuffer.poll();
-						sweepArea.purgeElements(element, Order.LeftRight);
-						sweepArea.insert(element);
-					}
+					printDebug("Cyclic - received...");
 					waiting = false;
-				} else {
-					this.waitingBuffer.add(object);
 				}
-			} else {
-				sweepArea.purgeElements(object, Order.LeftRight);
-				sweepArea.insert(object);
 			}
+			waitingBuffer.add(object);
 		}
-		System.out.println(this.sweepArea.getSweepAreaAsString(PointInTime.getZeroTime()));
 		if (!waiting) {
+			if (min != null) {
+				printDebug("Get all from waiting buffer <= " + min);
+				while (!waitingBuffer.isEmpty()) {
+					T o = waitingBuffer.peek();					
+					if (o.getMetadata().getStart().beforeOrEquals(min)) {
+						printDebug("From buffer to SA: "+o);
+						T toInsert = waitingBuffer.poll();
+						sweepArea.purgeElements(toInsert, Order.LeftRight);
+						sweepArea.insert(toInsert);
+						System.out.println(sweepArea.getSweepAreaAsString(PointInTime.getZeroTime()));
+					} else {
+						break;
+					}
+				}
+			}
+			// get all subscriptions for output
 			List<PhysicalSubscription<ISink<? super T>>> destinations = getWritingToSinks();
 			if (!timestampList.isEmpty()) {
 				int nextPort = timestampList.poll().getOutgoingPort();
@@ -108,19 +120,25 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 				}
 			}
 
-			for (PhysicalSubscription<ISink<? super T>> toSub : destinations) {
-				int toPort = toSub.getSourceOutPort();
-				for (T element : this.sweepArea) {
-					transfer(element, toPort);
-				}
-				if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.Cyclic) {
-					this.waitingForPort = getInPortForCycleOutPort(toPort);
-					this.waiting = true;
-					System.out.println("Cyclic - waiting...");
-					return;
+			// print to output (first ones are continuous)
+			if (!this.sweepArea.isEmpty()) {
+				for (PhysicalSubscription<ISink<? super T>> toSub : destinations) {
+					int toPort = toSub.getSourceOutPort();
+					for (T element : this.sweepArea) {
+						transfer(element, toPort);
+					}
+					// if (last) one is cycle -> stop and wait
+					if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.Cyclic) {
+						this.waitingForPort = getInPortForCycleOutPort(toPort);
+						this.waiting = true;
+						System.out.println("Cyclic - waiting for port " + waitingForPort + "...");
+						return;
+					}
 				}
 			}
+
 		}
+
 	}
 
 	private int getInPortForCycleOutPort(int port) {
@@ -142,7 +160,6 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		return null;
 	}
 
-	
 	public List<PhysicalSubscription<ISink<? super T>>> getWritingToSinks() {
 		List<PhysicalSubscription<ISink<? super T>>> destinations = new ArrayList<PhysicalSubscription<ISink<? super T>>>();
 		for (PhysicalSubscription<ISink<? super T>> sub : this.getSubscriptions()) {
@@ -203,9 +220,59 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		logger.warn("There is no cycle with incoming port " + income);
 		return 0;
 	}
-	
-	public String getContent(){
+
+	public String getContent() {
 		return this.sweepArea.getSweepAreaAsString(PointInTime.getZeroTime());
 	}
-	
+
+	public void printDebug(String message) {
+		if (this.printDebug) {
+			System.err.println(message);
+		}
+	}
+
+	public PointInTime getMinimum() {
+		if (ensureTimes()) {
+			PointInTime min = null;
+			for (int i = 0; i < tsmin.length; i++) {
+				if (tsmin[i] == null) {
+					continue;
+				}
+				if (min == null || tsmin[i].before(min)) {
+					min = tsmin[i];
+				}
+			}
+			return min;
+		} else {
+			return null;
+		}
+	}
+
+	public boolean ensureTimes() {
+		for (PhysicalSubscription<ISource<? extends T>> sub : super.getSubscribedToSource()) {
+			int port = sub.getSinkInPort();
+			if (getMinTS(port) == null && (BrokerDictionary.getInstance().getWriteTypeForPort(this.getIdentifier(), port) != WriteTransaction.Cyclic)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private PointInTime getMinTS(int port) {
+		if(port < this.tsmin.length){
+			return this.tsmin[port];
+		}
+		return null;
+	}
+
+	public void setMinTS(int port, PointInTime time) {
+		if(this.tsmin.length<=port){
+			this.tsmin = Arrays.copyOf(this.tsmin, port+1);		
+		}
+		if(BrokerDictionary.getInstance().getWriteTypeForPort(this.getIdentifier(), port) != WriteTransaction.Cyclic){
+			this.tsmin[port] = time;
+		}else{
+			this.tsmin[port] = null;
+		}
+	}
 }
