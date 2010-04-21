@@ -46,7 +46,7 @@ public abstract class AbstractPunctuationPipe<W extends IMetaAttributeContainer<
 			IMetaAttributeContainer<?> current);
 
 	@Override
-	public void processPunctuation(PointInTime timestamp) {
+	public void processPunctuation(PointInTime timestamp, int port) {
 		storage.storePunctuation(timestamp);
 	}
 

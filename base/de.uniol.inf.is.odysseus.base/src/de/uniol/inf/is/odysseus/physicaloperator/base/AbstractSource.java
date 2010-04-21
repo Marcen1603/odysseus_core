@@ -314,7 +314,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void sendPunctuation(PointInTime punctuation) {
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<? extends ISink<?>> sub : this.subscriptions) {
-				sub.getTarget().processPunctuation(punctuation);
+				sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
 			}
 		}
 	}

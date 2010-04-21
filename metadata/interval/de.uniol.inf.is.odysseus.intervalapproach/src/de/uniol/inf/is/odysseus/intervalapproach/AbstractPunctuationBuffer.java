@@ -40,7 +40,7 @@ abstract public class AbstractPunctuationBuffer<W extends IMetaAttributeContaine
 	abstract public boolean cleanInternalStates(PointInTime punctuation, IMetaAttributeContainer<?> current);
 	
 	@Override
-	public void processPunctuation(PointInTime timestamp) {
+	public void processPunctuation(PointInTime timestamp, int port) {
 		storage.subscribePort(1);
 		storage.storePunctuation(timestamp);
 	}	

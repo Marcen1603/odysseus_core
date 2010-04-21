@@ -38,7 +38,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IMetaAttributeContainer<ITimeInterval>>());
 
 	private int maxWaitingCount = 5;
-	private PointInTime tsmin[] = new PointInTime[0];
+	private PointInTime tsmin[] = new PointInTime[0];	
 	private PointInTime min = null;
 
 	private boolean printDebug = true;
@@ -188,11 +188,6 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	};
 
 	@Override
-	public void subscribeToSource(ISource<? extends T> source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
-		super.subscribeToSource(source, sinkInPort, sourceOutPort, schema);
-	};
-
-	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
@@ -274,5 +269,11 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		}else{
 			this.tsmin[port] = null;
 		}
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		System.out.println("Process Punctuation in Broker: "+timestamp+" from "+port);
+		//super.processPunctuation(timestamp, port);
 	}
 }

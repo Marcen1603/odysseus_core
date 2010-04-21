@@ -35,6 +35,4 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 	public String toString(){
 		return super.toString() + " updateFac: " + this.metadataFactory.getClass();
 	}
-
-
 }

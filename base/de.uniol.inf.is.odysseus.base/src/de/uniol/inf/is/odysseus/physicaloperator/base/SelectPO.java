@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 
 /**
@@ -77,12 +76,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 			return false;
 		return true;
 	}
-	
-	@Override
-	public void processPunctuation(PointInTime timestamp) {
-		sendPunctuation(timestamp);
-	}
-	
+
 	public String toString(){
 		return super.toString() + " predicate: " + this.getPredicate().toString(); 
 	}

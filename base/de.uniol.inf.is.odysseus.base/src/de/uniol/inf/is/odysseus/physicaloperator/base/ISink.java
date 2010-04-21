@@ -46,6 +46,6 @@ public interface ISink<T> extends IPhysicalOperator, ISubscriber<ISource<? exten
 	 */
 	public void done(int port);
 
-	public void processPunctuation(PointInTime timestamp);
+	public void processPunctuation(PointInTime timestamp, int port);
 
 }

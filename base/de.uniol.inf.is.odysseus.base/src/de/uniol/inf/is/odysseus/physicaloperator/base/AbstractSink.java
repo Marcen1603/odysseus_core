@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.DelegateSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
@@ -281,7 +280,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp) {
+	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
 	@Override

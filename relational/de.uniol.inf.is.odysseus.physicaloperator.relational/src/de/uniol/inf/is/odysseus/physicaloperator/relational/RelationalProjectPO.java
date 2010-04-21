@@ -48,7 +48,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	}
 	
 	@Override
-	public void processPunctuation(PointInTime timestamp) {
+	public void processPunctuation(PointInTime timestamp, int port) {
 		sendPunctuation(timestamp);
 	}	
 	

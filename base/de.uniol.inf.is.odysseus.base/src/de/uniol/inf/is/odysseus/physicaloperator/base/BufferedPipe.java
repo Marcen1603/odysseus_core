@@ -34,7 +34,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 		
 	}
-
+	
 	@Override
 	final protected void process_open() throws OpenFailedException {
 		super.process_open();
@@ -124,7 +124,6 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	@Override
 	public BufferedPipe<T> clone() throws CloneNotSupportedException {
 		return new BufferedPipe<T>(this);
-	}
-
+	}		
 	
 }
