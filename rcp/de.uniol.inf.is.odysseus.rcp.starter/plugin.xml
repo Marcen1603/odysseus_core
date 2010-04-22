@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="de.uniol.inf.is.odysseus.rcp.application.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Perspective"
+            class="de.uniol.inf.is.odysseus.rcp.application.Perspective"
+            id="de.uniol.inf.is.odysseus.rcp.application.perspective">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.uniol.inf.is.odysseus.rcp.application.application"
+            name="Odysseus Product">
+         <property
+               name="appName"
+               value="Odysseus Product">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="product1"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.uniol.inf.is.odysseus.rcp.starter.application"
+            name="Odysseus Product">
+         <property
+               name="appName"
+               value="Odysseus Product">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
