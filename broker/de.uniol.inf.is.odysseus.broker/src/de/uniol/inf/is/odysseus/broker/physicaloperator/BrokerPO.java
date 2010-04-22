@@ -37,8 +37,8 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private int waitingForPort = -1;
 	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IMetaAttributeContainer<ITimeInterval>>());
 
-	private int maxWaitingCount = 5;
-	private PointInTime tsmin[] = new PointInTime[0];	
+	private int incomingCounter = 0;
+	private PointInTime tsmin[] = new PointInTime[0];
 	private PointInTime min = null;
 
 	private boolean printDebug = true;
@@ -72,24 +72,25 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	protected void process_next(T object, int port) {
-		this.setMinTS(port, object.getMetadata().getStart());		
+		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
+		this.setMinTS(port, object.getMetadata().getStart());
 		this.min = getMinimum();
 		printDebug("Minimun time is " + this.min);
-		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
 		printDebug("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
 		if (type == WriteTransaction.Timestamp) {
 			PointInTime time = object.getMetadata().getStart();
 			TransactionTS trans = new TransactionTS(getOutgoingPortForIncoming(port), time);
 			timestampList.offer(trans);
-			if (timestampList.size() >= this.maxWaitingCount) {
-				printDebug("Cyclic - timeout afer " + this.maxWaitingCount + " in queue");
-				waiting = false;
-			}
 		} else {
 			if (waiting) {
 				if (port == waitingForPort) {
 					printDebug("Cyclic - received...");
-					waiting = false;
+					incomingCounter++;
+					if (incomingCounter == 10) {
+						waiting = false;
+						incomingCounter = 0;
+						printDebug("Cyclic - everything back...");
+					}
 				}
 			}
 			waitingBuffer.add(object);
@@ -98,13 +99,13 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			if (min != null) {
 				printDebug("Get all from waiting buffer <= " + min);
 				while (!waitingBuffer.isEmpty()) {
-					T o = waitingBuffer.peek();					
+					T o = waitingBuffer.peek();
 					if (o.getMetadata().getStart().beforeOrEquals(min)) {
-						printDebug("From buffer to SA: "+o);
+						// printDebug("From buffer to SA: " + o);
 						T toInsert = waitingBuffer.poll();
 						sweepArea.purgeElements(toInsert, Order.LeftRight);
 						sweepArea.insert(toInsert);
-						System.out.println(sweepArea.getSweepAreaAsString(PointInTime.getZeroTime()));
+						// System.out.println(sweepArea.getSweepAreaAsString(PointInTime.getZeroTime()));
 					} else {
 						break;
 					}
@@ -113,10 +114,13 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			// get all subscriptions for output
 			List<PhysicalSubscription<ISink<? super T>>> destinations = getWritingToSinks();
 			if (!timestampList.isEmpty()) {
-				int nextPort = timestampList.poll().getOutgoingPort();
-				PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
-				if (nextSub != null) {
-					destinations.add(nextSub);
+				TransactionTS nextTs = timestampList.peek();
+				if (nextTs.getPointInTime().beforeOrEquals(min)) {
+					int nextPort = timestampList.poll().getOutgoingPort();
+					PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
+					if (nextSub != null) {
+						destinations.add(nextSub);
+					}
 				}
 			}
 
@@ -254,26 +258,27 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	private PointInTime getMinTS(int port) {
-		if(port < this.tsmin.length){
+		if (port < this.tsmin.length) {
 			return this.tsmin[port];
 		}
 		return null;
 	}
 
 	public void setMinTS(int port, PointInTime time) {
-		if(this.tsmin.length<=port){
-			this.tsmin = Arrays.copyOf(this.tsmin, port+1);		
+		if (this.tsmin.length <= port) {
+			this.tsmin = Arrays.copyOf(this.tsmin, port + 1);
 		}
-		if(BrokerDictionary.getInstance().getWriteTypeForPort(this.getIdentifier(), port) != WriteTransaction.Cyclic){
+		if (BrokerDictionary.getInstance().getWriteTypeForPort(this.getIdentifier(), port) != WriteTransaction.Cyclic) {
 			this.tsmin[port] = time;
-		}else{
+		} else {
 			this.tsmin[port] = null;
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		System.out.println("Process Punctuation in Broker: "+timestamp+" from "+port);
-		//super.processPunctuation(timestamp, port);
+		System.out.println("Process Punctuation in Broker: " + timestamp + " from " + port);
+		setMinTS(port, timestamp);
+		// super.processPunctuation(timestamp, port);
 	}
 }
