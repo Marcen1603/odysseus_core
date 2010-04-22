@@ -15,6 +15,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		StreamServer.startNew(65056, StreamType.LIDAR);
 		StreamServer.startNew(65057, StreamType.RADAR);
+		StreamServer.startNew(65058, StreamType.VIDEO);
 	}
 
 	/*

@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.broker.sensors.generator;
 
 import java.util.Random;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -17,6 +19,8 @@ public class SensorObject implements IStreamType{
 	private double currentPosY;
 	private String type;
 	private long waitingMillis = 1000;
+	private int maxItems = Integer.MAX_VALUE;
+	private boolean punctuationEnabled;	
 	
 	public SensorObject(String type){
 		Random rand = new Random();
@@ -30,6 +34,14 @@ public class SensorObject implements IStreamType{
 	public SensorObject(String type, long waitingMillis){
 		this(type);
 		this.waitingMillis = waitingMillis;
+		this.punctuationEnabled = false;
+		this.maxItems = Integer.MAX_VALUE;
+	}
+	
+	public SensorObject(String type, long waitingMillis, int maxItems, boolean punctuation){
+		this(type, waitingMillis);
+		this.maxItems = maxItems;
+		this.punctuationEnabled = punctuation;
 	}
 	
 	@Override
@@ -57,15 +69,14 @@ public class SensorObject implements IStreamType{
 	}
 
 	@Override
-	public RelationalTuple<ITimeInterval> getNextTuple() {
-		
-		tuple.setAttribute(0, System.currentTimeMillis());
+	public RelationalTuple<ITimeInterval> getNextTuple(long currentTime) {	
+		tuple.setAttribute(0, run);
 		tuple.setAttribute(1, currentId);
 		tuple.setAttribute(2, run);
 		tuple.setAttribute(3, this.type);
 		tuple.setAttribute(4, currentPosX);
 		tuple.setAttribute(5, currentPosY);
-		
+		tuple.setMetadata(new TimeInterval(new PointInTime(run)));		
 		currentId = (currentId+1)%10;
 		currentPosX = currentPosX+1.0d;
 		currentPosY = currentPosY+1.0d;
@@ -80,5 +91,26 @@ public class SensorObject implements IStreamType{
 		return this.waitingMillis;
 	}
 
+	@Override
+	public int getMaxItems() {
+		return this.maxItems;
+	}
+
+	@Override
+	public boolean isPunctuationEnabled() {
+		return punctuationEnabled;
+	}
+
+	@Override
+	public String getName() {
+		return this.type;
+	}	
+
+	@Override
+	public long getNextPunctuation(long currentTime) {		
+		long result = run;
+		run++;
+		return result;
+	}
 	
 }
