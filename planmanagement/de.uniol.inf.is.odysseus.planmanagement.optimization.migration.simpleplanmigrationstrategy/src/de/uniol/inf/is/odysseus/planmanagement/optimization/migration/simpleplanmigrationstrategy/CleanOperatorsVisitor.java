@@ -34,10 +34,14 @@ public class CleanOperatorsVisitor implements INodeVisitor<IPhysicalOperator, Ob
 
 	@Override
 	public void node(IPhysicalOperator op) {
-		for (String data : op.getProvidedMonitoringData()) {
-			op.removeMonitoringData(data);
-		}
 		op.removeOwner((IOperatorOwner) this.query);
+		if (!op.hasOwner()) {
+			for (String data : op.getProvidedMonitoringData()) {
+				// TODO: removeMonitoringData sollte auch die metadata listener aus der eventListener Map entfernen 
+				op.removeMonitoringData(data);
+			}
+			op.close();
+		}
 	}
 
 }

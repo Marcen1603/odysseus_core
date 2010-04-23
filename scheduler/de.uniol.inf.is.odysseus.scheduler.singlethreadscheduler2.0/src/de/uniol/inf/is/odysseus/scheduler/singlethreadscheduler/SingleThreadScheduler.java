@@ -209,8 +209,8 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 					this.parts.put(partialPlan, strategy);
 				}
 			}
-			// 
-			if (isRunning() && (execThread==null || !execThread.isAlive())) {
+			// restart ExecutorThread, if terminated before
+			if (isRunning() && !this.parts.isEmpty() && (execThread==null || !execThread.isAlive())) {
 				execThread = new ExecutorThread();
 				execThread.setUncaughtExceptionHandler(this);
 				execThread.setPriority(Thread.NORM_PRIORITY);

@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * @author Jonas Jacobi
  */
 public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> implements IRelationalPredicate {
+
 	private static final long serialVersionUID = 1222104352250883947L;
 
 	private SDFExpression expression;
@@ -151,5 +152,10 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	@Override
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
 		replacementMap.put(curAttr, newAttr);
+	}
+	
+	// nur testweise zum Evaluieren
+	public SDFExpression getExpression() {
+		return expression;
 	}
 }

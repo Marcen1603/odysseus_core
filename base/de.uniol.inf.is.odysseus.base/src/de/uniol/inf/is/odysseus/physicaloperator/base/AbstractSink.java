@@ -314,7 +314,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
-		this.owners.remove(owner);
+		// remove all occurrences
+		while (this.owners.remove(owner)) {
+		}
 	}
 
 	@Override

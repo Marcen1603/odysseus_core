@@ -134,16 +134,19 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		union.setOutputSchema(lastOperatorOldPlan.getOutputSchema());
 		context.setSelect(select);
 		context.setUnion(union);
+		context.setOldPlanRoot(oldPlanRoot);
 		
 		PhysicalRestructHelper.removeSubscription(oldPlanRoot, lastOperatorOldPlan);
 		PhysicalRestructHelper.replaceChild(newPlanRoot, lastOperatorNewPlan, union);
 		PhysicalRestructHelper.appendOperator(select, lastOperatorNewPlan);
 		PhysicalRestructHelper.appendBinaryOperator(union, lastOperatorOldPlan, select);
 		
-		// FIXME Workaround, weil UnionPO nicht funktioniert. Es wird fuer die Zeit 
+		// TODO Workaround, weil UnionPO nicht funktioniert. Es wird fuer die Zeit 
 		// der parallelen Ausfuehrung noch der alte Ausgabeoperator benutzt. Sobald
-		// Union geht, muss nur diese Zeile entfernt werden.
+		// Union geht, muss nur diese Zeile und in finishedParallelExecution markierte
+		// Zeilen entfernt werden.
 		PhysicalRestructHelper.appendOperator(oldPlanRoot, lastOperatorOldPlan);
+		// Workaround Ende
 		
 		this.logger.debug("Result:\n"+AbstractTreeWalker.prefixWalk2(newPlanRoot, new PhysicalPlanToStringVisitor()));
 		
@@ -188,6 +191,17 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		PhysicalRestructHelper.removeSubscription(context.getUnion(), context.getLastOperatorOldPlan());
 		PhysicalRestructHelper.removeSubscription(context.getUnion(), context.getSelect());
 		PhysicalRestructHelper.removeSubscription(context.getSelect(), context.getLastOperatorNewPlan());
+		
+		// TODO Workaround s.o.
+		PhysicalRestructHelper.removeSubscription(context.getOldPlanRoot(), context.getLastOperatorOldPlan());
+		PhysicalRestructHelper.removeSubscription(context.getNewPlanRoot(), context.getLastOperatorNewPlan());
+		PhysicalRestructHelper.appendOperator(context.getOldPlanRoot(), context.getLastOperatorNewPlan());
+		try {
+			context.getRunningQuery().setRoot(context.getOldPlanRoot());
+		} catch (OpenFailedException e1) {
+			e1.printStackTrace();
+		}
+		// Workaround Ende
 			
 		// remove connection from buffers to old plan
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
@@ -229,7 +243,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
 				sinks.add((ISink<?>) sub.getTarget());
 			}
-			PhysicalRestructHelper.atomicReplaceSink(source, buffer.getSubscribedToSource(0), sinks);
+			PhysicalRestructHelper.atomicReplaceSink(source, buffer, sinks);
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions().toArray(new PhysicalSubscription<?>[buffer.getSubscriptions().size()])) {
 				ISink<?> sink = (ISink<?>) sub.getTarget();
 				PhysicalRestructHelper.removeSubscription(sink, buffer);
@@ -239,7 +253,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		
 		// new plan is ready and running
 		this.logger.debug("Planmigration finished. Result:"
-				+ AbstractTreeWalker.prefixWalk2(context.getNewPlanRoot(), new PhysicalPlanToStringVisitor()));
+				+ AbstractTreeWalker.prefixWalk2(context.getRunningQuery().getRoot(), new PhysicalPlanToStringVisitor()));
 		context.getOptimizer().handleFinishedMigration(context.getRunningQuery());
 	}
 

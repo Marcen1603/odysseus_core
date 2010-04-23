@@ -1,25 +1,31 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.console;
 
-import java.util.Date;
-
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class OptimizationTestSink extends AbstractSink<Object> {
 	
 	public enum OutputMode {
 		NONE,
 		NORMAL,
-		COUNT
+		COUNT,
+		HASH
 	}
 	
 	private OutputMode mode;
 	private int count;
 	private long nextOut;
+	private int outputHash;
 	
 	public OptimizationTestSink(OutputMode mode) {
 		this.mode = mode;
-		this.nextOut = System.currentTimeMillis() + 1000;
-		this.count = 0;
+		reset();
+	}
+	
+	public OptimizationTestSink(OptimizationTestSink oSink) {
+		this.mode = oSink.mode;
+		this.count = oSink.count;
+		this.nextOut = oSink.nextOut;
 	}
 
 	@Override
@@ -32,10 +38,12 @@ public class OptimizationTestSink extends AbstractSink<Object> {
 			break;
 		case COUNT:
 			this.count++;
-			if (System.currentTimeMillis() > this.nextOut) {
-				System.out.println("Port:" + port + ", "+count+" Objects");
-				this.nextOut = System.currentTimeMillis() + 1000;
-				this.count = 0;
+			break;
+		case HASH:
+			RelationalTuple<?> t = (RelationalTuple<?>)object;
+			this.outputHash += t.getAttribute(0).toString().hashCode();
+			if (++this.count % 50 == 0) {
+				System.out.println("Output-Hash after "+this.count+" Objects: "+this.outputHash);
 			}
 			break;
 
@@ -46,7 +54,22 @@ public class OptimizationTestSink extends AbstractSink<Object> {
 
 	@Override
 	public OptimizationTestSink clone() throws CloneNotSupportedException {
-		return new OptimizationTestSink(mode);
+		return new OptimizationTestSink(this);
+	}
+	
+	public void reset() {
+		this.nextOut = System.currentTimeMillis() + 1000;
+		this.count = 0;
+		this.outputHash = 1;
+	}
+	
+	public void doPendingOutput() {
+		System.out.println("Sink: "+count+" Objects");
+		this.nextOut = System.currentTimeMillis() + 1000;
+	}
+
+	public int getCount() {
+		return count;
 	}
 	
 }

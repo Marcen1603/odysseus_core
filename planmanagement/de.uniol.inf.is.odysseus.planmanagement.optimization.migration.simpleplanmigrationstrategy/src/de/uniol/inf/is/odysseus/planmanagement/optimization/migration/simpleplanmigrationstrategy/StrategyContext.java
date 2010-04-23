@@ -19,6 +19,7 @@ class StrategyContext {
 	private IOptimizer optimizer;
 	private IEditableQuery runningQuery;
 	private IPhysicalOperator newPlanRoot;
+	private IPhysicalOperator oldPlanRoot;
 	private IWindow wMax;
 	private List<BlockingBuffer<?>> blockingBuffers;
 	private List<IPhysicalOperator> oldPlanOperatorsBeforeSources;
@@ -115,6 +116,14 @@ class StrategyContext {
 
 	public IWindow getwMax() {
 		return wMax;
+	}
+
+	public void setOldPlanRoot(IPhysicalOperator oldPlanRoot) {
+		this.oldPlanRoot = oldPlanRoot;
+	}
+
+	public IPhysicalOperator getOldPlanRoot() {
+		return oldPlanRoot;
 	}
 
 }

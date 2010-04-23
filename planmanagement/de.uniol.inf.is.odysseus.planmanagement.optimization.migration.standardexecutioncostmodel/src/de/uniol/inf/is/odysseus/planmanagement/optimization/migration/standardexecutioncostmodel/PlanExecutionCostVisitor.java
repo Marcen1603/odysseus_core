@@ -88,8 +88,8 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 	public void node(IPhysicalOperator op) {
 		// get input datarate from source
 		if (!op.isSink()) {
-			IMonitoringData<Double> datarate = op.getMonitoringData(MonitoringDataTypes.DATARATE.name, AdvancedOptimizer.MONITORING_PERIOD);
-			if (datarate!=null) {
+			if (op.getProvidedMonitoringData().contains(MonitoringDataTypes.DATARATE.name)) {
+				IMonitoringData<Double> datarate = op.getMonitoringData(MonitoringDataTypes.DATARATE.name, AdvancedOptimizer.MONITORING_PERIOD);
 				StandardPlanExecutionCost opCost = this.model.getCost(op);
 				if (opCost!=null) {
 					opCost.scaleWithDatarate(datarate.getValue().floatValue());
