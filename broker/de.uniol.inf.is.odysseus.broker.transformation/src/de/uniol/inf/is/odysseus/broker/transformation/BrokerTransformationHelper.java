@@ -14,17 +14,14 @@ import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 public class BrokerTransformationHelper {
 
 
 	@SuppressWarnings("unchecked")
 	public static Collection<ILogicalOperator> replace(ILogicalOperator logical, BrokerPO<?> physical) {
-		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
-		int dataPort = -1;
+		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();		
 		int queuePort = -1;
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {		
 			int newPort = psub.getSinkInPort();
