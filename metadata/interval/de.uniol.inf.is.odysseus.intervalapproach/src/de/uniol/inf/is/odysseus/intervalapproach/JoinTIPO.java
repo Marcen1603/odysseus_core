@@ -183,7 +183,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		
 	}
 
-	private T merge(T left, T right, Order order) {
+	protected T merge(T left, T right, Order order) {
 		// if (logger.isTraceEnabled()) {
 		// logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
 		// + " AND " + right);

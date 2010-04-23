@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.broker.physicaloperator;
+package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;

@@ -37,9 +37,10 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private int waitingForPort = -1;
 	private PriorityQueue<T> waitingBuffer = new PriorityQueue<T>(1, new TimeIntervalComparator<IMetaAttributeContainer<ITimeInterval>>());
 
-	private int incomingCounter = 0;
 	private PointInTime tsmin[] = new PointInTime[0];
 	private PointInTime min = null;
+
+	private TransactionTS lastTransactionTS = null;
 
 	private boolean printDebug = true;
 
@@ -75,7 +76,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
 		this.setMinTS(port, object.getMetadata().getStart());
 		this.min = getMinimum();
-		printDebug("Minimun time is " + this.min);
+		// printDebug("Minimun time is " + this.min);
 		printDebug("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
 		if (type == WriteTransaction.Timestamp) {
 			PointInTime time = object.getMetadata().getStart();
@@ -85,11 +86,23 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			if (waiting) {
 				if (port == waitingForPort) {
 					printDebug("Cyclic - received...");
-					incomingCounter++;
-					if (incomingCounter == 10) {
+					// für jeden der reinkommt, nehme ich einen TS aus der liste
+					// weg
+					TransactionTS peek = timestampList.peek();
+					if (peek.isPortAndTimeEqual(lastTransactionTS)) {
+						if (getInPortForCycleOutPort(peek.getOutgoingPort()) == port) {
+							TransactionTS toRemove = timestampList.poll();
+							printDebug("Removed timestamp " + toRemove + " from list - waited for: " + port);
+							printDebug(getNextCyclicTransactionList());
+							// next one as well => still wait else break waiting up
+							if(!timestampList.peek().isPortAndTimeEqual(lastTransactionTS)){
+								waiting = false;
+								printDebug("Cyclic - everything back...");
+							}
+						}
+					} else {
 						waiting = false;
-						incomingCounter = 0;
-						printDebug("Cyclic - everything back...");
+						printDebug("Cyclic - everything should be back - because there are no more timestamp i am waiting for...");
 					}
 				}
 			}
@@ -115,15 +128,19 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			List<PhysicalSubscription<ISink<? super T>>> destinations = getWritingToSinks();
 			if (!timestampList.isEmpty()) {
 				TransactionTS nextTs = timestampList.peek();
-				if (nextTs.getPointInTime().beforeOrEquals(min)) {
-					int nextPort = timestampList.poll().getOutgoingPort();
+				if (min != null && nextTs.getPointInTime().beforeOrEquals(min)) {
+					// test: erst weg, wenn antwort da!
+					// TransactionTS tts = timestampList.poll();
+					TransactionTS tts = timestampList.peek();
+					int nextPort = tts.getOutgoingPort();
 					PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
 					if (nextSub != null) {
 						destinations.add(nextSub);
+						this.lastTransactionTS = tts;
 					}
 				}
 			}
-
+			printDebug("Next cyclic output: " + getNextCyclicTransactionList());
 			// print to output (first ones are continuous)
 			if (!this.sweepArea.isEmpty()) {
 				for (PhysicalSubscription<ISink<? super T>> toSub : destinations) {
@@ -277,8 +294,14 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		System.out.println("Process Punctuation in Broker: " + timestamp + " from " + port);
+		// System.out.println("Process Punctuation in Broker: " + timestamp +
+		// " from " + port);
 		setMinTS(port, timestamp);
-		// super.processPunctuation(timestamp, port);
+	}
+
+	public String getNextCyclicTransactionList() {
+		String result = "Time(Port): ";
+		result = result + " " + timestampList.toString();
+		return result;
 	}
 }
