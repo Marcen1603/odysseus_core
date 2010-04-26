@@ -37,3 +37,4 @@ Export-Package: de.uniol.inf.is.odysseus.viewer,
  de.uniol.inf.is.odysseus.viewer.view.position,
  de.uniol.inf.is.odysseus.viewer.view.symbol
 Bundle-Activator: de.uniol.inf.is.odysseus.viewer.Activator
+Bundle-ActivationPolicy: lazy

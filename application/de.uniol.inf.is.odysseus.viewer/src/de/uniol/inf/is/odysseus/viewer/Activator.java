@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.viewer.swt.resource.SWTResourceManager;
 
-public class Activator implements BundleActivator{
+public class Activator implements BundleActivator {
 
 	static BundleContext context;
 	public static final String XSD_RESOURCES_FILE = "viewer_cfg/resourcesSchema.xsd";
@@ -26,9 +26,8 @@ public class Activator implements BundleActivator{
 	public void start(final BundleContext bc) throws Exception {
 		context = bc;
 		SWTResourceManager.resourceBundle = bc.getBundle();
-		String uViewer = System.getenv("useViewer");
-		if ("true".equalsIgnoreCase(uViewer)) {
-			logger.debug("Starte den Viewer");
+
+		logger.debug("Starte den Viewer");
 			// TODO config aus properties service lesen
 			// do initialization inside a thread, so bundle startup
 			// isn't blocked by execTracker.waitForService(0)
@@ -60,7 +59,6 @@ public class Activator implements BundleActivator{
 			// even if waitForService(0) is blocking
 			t.setDaemon(true);
 			t.start();
-		}
 	}
 
 	@Override
@@ -77,6 +75,5 @@ public class Activator implements BundleActivator{
 	public static BundleContext getContext() {
 		return context;
 	}
-
 
 }
