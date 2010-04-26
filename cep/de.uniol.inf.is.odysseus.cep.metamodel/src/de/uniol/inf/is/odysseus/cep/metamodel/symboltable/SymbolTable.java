@@ -74,17 +74,17 @@ public class SymbolTable<T> {
 //	}
 
 	public Object getValue(CepVariable name) {
-		// name.getOperation().evaluate(entries.get(name.getVariableName()));
+		name.getOperation().evaluate(entries.get(name.getVariableName()));
 		return entries.get(name.getVariableName());
 	}
 
 	public void updateValue(CepVariable variable, T value) {
 		IPartialAggregate<T> e = entries.get(variable.getVariableName());
 		if (e==null){
-			// e = variable.getOperation().init(value);
+			e = variable.getOperation().init(value);
 		}else{
 			IPartialAggregate<T> e_new = null;
-			// e_new = variable.getOperation().merge(e, value);
+			e_new = variable.getOperation().merge(e, value, true);
 			e = e_new;
 		}
 		entries.put(variable.getVariableName(), e);
@@ -95,7 +95,7 @@ public class SymbolTable<T> {
 	public String toString() {
 		String str = "Symbol table (#: " + this.entries.size() + "): [";
 		for (Entry<String, IPartialAggregate<T>> entry : this.entries.entrySet()) {
-			if (entry.getValue()!=null) str += " " + entry.getKey()+"="+entry.getValue();
+			str += " " + entry.getKey()+"="+entry.getValue();
 		}
 		return str+"]";
 	}

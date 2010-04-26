@@ -273,7 +273,7 @@ public class CepVariable {
 	}
 
 	public boolean isActEventName() {
-		return this.stateIdentifier == null && this.index == null && this.operation == null;
+		return (this.stateIdentifier == null || stateIdentifier.equals("")) && (this.index == null || this.index <0) && (this.operation == null);
 	}
 
 }

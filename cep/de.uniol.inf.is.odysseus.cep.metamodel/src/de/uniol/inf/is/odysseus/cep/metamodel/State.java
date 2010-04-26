@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,7 +64,6 @@ public class State {
 	public State() {
 	}
 	
-
 
 	/**
 	 * Gibt die automatenweit eindeutige ID des Zustands zurück.

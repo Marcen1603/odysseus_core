@@ -17,6 +17,14 @@ public class CepAO<T> extends AbstractLogicalOperator implements OutputSchemaSet
 	private Map<Integer, String> portNames = new HashMap<Integer, String>();
 	
 
+	public CepAO(CepAO<T> cepAO) {
+		this.stateMachine = cepAO.stateMachine;
+		this.outSchema = cepAO.outSchema == null? null: new SDFAttributeList(cepAO.outSchema);
+		this.portNames = new HashMap<Integer, String>(cepAO.portNames);
+	}
+	
+	public CepAO() {}
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outSchema;
@@ -39,5 +47,9 @@ public class CepAO<T> extends AbstractLogicalOperator implements OutputSchemaSet
 		return portNames.get(port);
 	}
 
+	@Override
+	public AbstractLogicalOperator clone() throws CloneNotSupportedException {
+		return new CepAO<T>(this);
+	}
 
 }

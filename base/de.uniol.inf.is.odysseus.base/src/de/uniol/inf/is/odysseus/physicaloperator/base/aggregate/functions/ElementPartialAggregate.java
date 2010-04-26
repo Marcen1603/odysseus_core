@@ -22,4 +22,8 @@ public class ElementPartialAggregate<T> implements IPartialAggregate<T> {
 		this.elem = elem;
 	}
 
+	@Override
+	public String toString() {
+		return ""+elem;
+	}
 }

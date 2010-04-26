@@ -31,7 +31,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 
 	@Override
 	public String getLanguage() {
-		return "SASE Relational";
+		return "SASE_Relational";
 	}
 
 	@Override

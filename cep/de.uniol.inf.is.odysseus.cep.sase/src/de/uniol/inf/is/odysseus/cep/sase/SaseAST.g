@@ -136,7 +136,7 @@ query returns [ILogicalOperator op]
     kleeneState = new ArrayList<String>();
     simpleAttributeState = new HashMap<String, String>();
     kleeneAttributeState = new HashMap<String, String>();
-    Set<String> sourceNames = new TreeSet<String>();
+    List<String> sourceNames = new ArrayList<String>();
 }
   :
   ^(QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo])
@@ -146,6 +146,7 @@ query returns [ILogicalOperator op]
     // Set Inputs for cepAO;
     int port = 0;
     for (String sn : sourceNames) {
+      System.out.println("Bind "+sn+" to Port "+port);      
       ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
       if (ao != null) {
         cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
@@ -160,7 +161,7 @@ query returns [ILogicalOperator op]
    }
   ;
 
-patternPart[CepAO cepAo, Set<String> sourceNames]
+patternPart[CepAO cepAo, List<String> sourceNames]
 @init {
 List<State> states = new LinkedList<State>();
 }
@@ -171,7 +172,7 @@ List<State> states = new LinkedList<State>();
       states.add(new State("<ACCEPTING>", "", null, true));
       StateMachine sm = cepAo.getStateMachine();
       sm.setStates(states);
-      sm.setInitialState(states.get(0));
+      sm.setInitialState(states.get(0).getId());
       // Calculate transistions
       for (int i = 0; i < states.size() - 1; i++) {
          State source = states.get(i);
@@ -206,7 +207,7 @@ List<State> states = new LinkedList<State>();
   }
   ;
 
-state[List<State> states, Set<String> sourceNames]
+state[List<State> states, List<String> sourceNames]
   :
   ^(STATE statename=NAME attrName=NAME not=NOTSIGN?)
   {

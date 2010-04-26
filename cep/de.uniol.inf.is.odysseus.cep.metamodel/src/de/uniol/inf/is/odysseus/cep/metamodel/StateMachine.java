@@ -33,7 +33,7 @@ public class StateMachine<E> {
 	 * muss bei der Verarbeitung durch den EPA in states enthalten sein. Darf
 	 * bei der Verarbeitung durch den EPA nicht null sein.
 	 */
-	private State initialState;
+	private String initialStateId;
 	/**
 	 * Definiert das Schema der Symboltabelle, das für die Ausführung des
 	 * Automaten durch den EPA erfroderlich ist. Darf zur Verarbeitungszeit null
@@ -75,9 +75,9 @@ public class StateMachine<E> {
 	 * @param outputScheme
 	 *            AusgabeSchema
 	 */
-	public StateMachine(List<State> states, State initialState, OutputScheme outputScheme, long windowSize) {
+	public StateMachine(List<State> states, String initialStateId, OutputScheme outputScheme, long windowSize) {
 		this.states = states;
-		this.initialState = initialState;
+		this.initialStateId = initialStateId;
 		this.outputScheme = outputScheme;
 	}
 
@@ -115,9 +115,8 @@ public class StateMachine<E> {
 	 * 
 	 * @return Der Startzustand des Automaten.
 	 */
-	@XmlIDREF
 	public State getInitialState() {
-		return initialState;
+		return getState(initialStateId);
 	}
 
 	public State getState(String id) {
@@ -127,6 +126,7 @@ public class StateMachine<E> {
 		}
 		return null;
 	}
+	
 
 	/**
 	 * Setzt den Startzustand des Automaten.
@@ -134,8 +134,8 @@ public class StateMachine<E> {
 	 * @param initialState
 	 *            Der neue Startzustand des Automaten, nicht null.
 	 */
-	public void setInitialState(State initialState) {
-		this.initialState = initialState;
+	public void setInitialState(String initialStateId) {
+		this.initialStateId = initialStateId;
 	}
 
 	/**
@@ -225,11 +225,7 @@ public class StateMachine<E> {
 	public String toString() {
 		String str = "StateMachine: " + this.hashCode() + " ";
 		str += states;
-		str += " Initial State: ";
-		if (initialState != null) {
-			str += this.initialState.getId() + "("
-					+ this.initialState.hashCode() + ")";
-		}
+		str += " Initial State: "+initialStateId;
 		str += this.symTabScheme;
 
 		str += this.outputScheme;
@@ -240,7 +236,7 @@ public class StateMachine<E> {
 	public String prettyPrint() {
 		String str = "StateMachine:(" + this.hashCode() + ")\n";
 		for (State s : states) {
-			if (initialState != null && s.getId() == initialState.getId()) {
+			if (s.getId().equals(initialStateId)) {
 				str += "Initial-";
 			}
 			str += s.prettyPrint();
@@ -291,7 +287,7 @@ public class StateMachine<E> {
 	}
 
 	private void getAllStatesBefore(State state, List<State> states) {
-		if (initialState.getId() != state.getId()) {
+		if (!initialStateId.equals(state.getId())) {
 			List<State> s = getSourceStates(state);
 			// Endlosschleife vermeiden (alle Elemente aus s entfernen, die
 			// bereits verarbeitet wurden
@@ -302,6 +298,12 @@ public class StateMachine<E> {
 
 			}
 		}
+	}
+	
+	public StateMachine<E> clone() throws CloneNotSupportedException {
+		// Eine StateMachine zu clonen macht keinen Sinn! Probleme sind die Transitionen die
+		// wieder States haben und dann nicht zu den hier geclonten passen w�rden.
+		throw new CloneNotSupportedException(); 
 	}
 
 }
