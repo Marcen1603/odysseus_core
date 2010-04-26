@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.access;
 
 import java.io.EOFException;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
@@ -30,6 +32,17 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 				this.iStream = new ObjectInputStream(s.getInputStream());
 			} catch (Exception e) {
 				throw new OpenFailedException(e.getMessage());
+			}
+		}
+	}
+	
+	@Override
+	protected void process_close() throws CloseFailedException {
+		if (this.iStream != null){
+			try {
+				iStream.close();
+			} catch (IOException e) {
+				throw new CloseFailedException(e);
 			}
 		}
 	}

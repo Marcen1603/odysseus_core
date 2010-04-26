@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 
@@ -48,6 +49,17 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 				opened = true;
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
+			}
+		}
+	}
+	
+	@Override
+	protected void process_close() throws CloseFailedException{
+		if (opened){
+			try {
+				router.disconnectFromServer(this);
+			} catch (IOException e) {
+				throw new CloseFailedException(e);
 			}
 		}
 	}

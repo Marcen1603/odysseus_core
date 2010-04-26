@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -85,6 +86,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected abstract void process_open() throws OpenFailedException;
+	
+	protected void process_close() throws CloseFailedException{}
 
 	/**
 	 * If a source needs to propagate done to other elements in the operator,

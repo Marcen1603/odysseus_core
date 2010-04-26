@@ -7,18 +7,19 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.Pair;
 
 public class Router extends Thread {
 
 	private ByteBuffer buffer = ByteBuffer.allocate(1024);
-	// private Map<SocketChannel, ISink<ByteBuffer>> clientMap = new
-	// HashMap<SocketChannel, ISink<ByteBuffer>>();
 	Selector selector = null;
 	static Router instance = null;
+	private Map<IRouterReceiver,SocketChannel> routerReceiverMap = new HashMap<IRouterReceiver, SocketChannel>();
 	private LinkedList<Pair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<Pair<SocketChannel, IRouterReceiver>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
@@ -132,11 +133,21 @@ public class Router extends Thread {
 		deferedRegister(sc, sink);
 		selector.wakeup();
 	}
+	
+	public void disconnectFromServer(IRouterReceiver sink) throws IOException{
+		synchronized(routerReceiverMap){
+			SocketChannel s = routerReceiverMap.remove(sink);
+			s.close();
+		}
+	}
 
 	private void deferedRegister(SocketChannel sc, IRouterReceiver sink) {
 		synchronized (deferredList) {
 			deferredList.add(new Pair<SocketChannel, IRouterReceiver>(
 					sc, sink));
+			synchronized(routerReceiverMap){
+				routerReceiverMap.put(sink, sc);
+			}
 			registerAction = true;
 		}
 	}
