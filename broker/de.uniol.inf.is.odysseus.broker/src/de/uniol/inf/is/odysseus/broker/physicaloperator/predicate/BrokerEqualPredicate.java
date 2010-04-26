@@ -5,25 +5,50 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
+/**
+ * The BrokerEqualPredicate evaluates to elements of type <T>.
+ * Two elements are equal if either a given attribute (if a position were given) 
+ * or the whole element is equal to another element.
+ * 
+ * @author Dennis Geesen
+ *
+ * @param <T> the type of an element
+ */
 public class BrokerEqualPredicate<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractPredicate<T> {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3464913151655062309L;
 
+	/** The position of the attribute. */
 	private int position;
 
+	/**
+	 * Instantiates a new predicate which will evaluate the whole element.
+	 */
 	public BrokerEqualPredicate() {
 		this.position = -1;
 	}
 
+	/**
+	 * Instantiates a new predicate which will only evaluate the attribute of a given position.
+	 *
+	 * @param position the position
+	 */
 	public BrokerEqualPredicate(int position) {
 		this.position = position;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.predicate.IPredicate#evaluate(java.lang.Object)
+	 */
 	@Override
 	public boolean evaluate(T input) {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.base.predicate.IPredicate#evaluate(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public boolean evaluate(T left, T right) {
 		if (this.position == -1) {

@@ -6,24 +6,68 @@ import java.nio.ByteBuffer;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.ByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.IRouterReceiver;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
 
+/**
+ * The BrokerByteBufferReceiverPO is a physical source which is able to receive elements of type W.
+ * It works like {@link ByteBufferReceiverPO}, but it differs between normal elements and punctuations. 
+ * The first four bytes (an integer) represents the type of the following bytes:
+ * - 0 = normal element 
+ * - 1 = punctuation 
+ * - 2 = done
+ * 
+ * A normal element consists of 4 bytes for an integer which indicates the size and multiple bytes for the raw data.
+ * The punctuation consists of 8 bytes for a long which represents the timestamp.
+ * Done means that a source has no more elements.
+ *
+ * @param <W> the generic type
+ */
 public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements IRouterReceiver {
 
+	/** The handler which wraps e.g. into an relational tuple. */
 	private IObjectHandler<W> handler;
+	
+	/** The size of the following element. */
 	private int size = -1;
+	
+	/** The type of the following element. */
 	private int type = 0;
+	
+	/** The size buffer. */
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
+	
+	/** The type buffer. */
 	private ByteBuffer typeBuffer = ByteBuffer.allocate(4);
+	
+	/** The time buffer. */
 	private ByteBuffer timeBuffer = ByteBuffer.allocate(8);
+	
+	/** The current size. */
 	private int currentSize = 0;
+	
+	/** The router. */
 	private Router router;
+	
+	/** The host. */
 	private String host;
+	
+	/** The port. */
 	private int port;
+	
+	/** Determines if connection is open. */
 	boolean opened;
 
+	/**
+	 * Instantiates a new BrokerByteBufferReceiverPO.
+	 *
+	 * @param handler the handler which wraps an element
+	 * @param host the host
+	 * @param port the port
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public BrokerByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port) throws IOException {
 		super();
 		this.handler = handler;
@@ -33,6 +77,11 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 		this.opened = false;
 	}
 
+	/**
+	 * Instantiates a new BrokerByteBufferReceiverPO.
+	 *
+	 * @param byteBufferReceiverPO the original to copy from
+	 */
 	@SuppressWarnings("unchecked")
 	public BrokerByteBufferReceiverPO(BrokerByteBufferReceiverPO<W> byteBufferReceiverPO) {
 		super();
@@ -45,6 +94,9 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 		opened = byteBufferReceiverPO.opened;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource#process_open()
+	 */
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		if (!opened) {
@@ -57,11 +109,17 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.access.IRouterReceiver#done()
+	 */
 	@Override
 	public void done() {
 		propagateDone();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.access.IRouterReceiver#process(java.nio.ByteBuffer)
+	 */
 	public void process(ByteBuffer buffer) {
 		try {
 
@@ -132,6 +190,12 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	// sendPunctuation(PointInTime.currentPointInTime());
 	// }
 
+	/**
+	 * Transfers a tuple from handler to subscribed sinks.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ClassNotFoundException Signals that a class could not be found
+	 */
 	private synchronized void transfer() throws IOException, ClassNotFoundException {
 		W toTrans = handler.create();
 		transfer(toTrans);
@@ -141,11 +205,17 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 		currentSize = 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource#clone()
+	 */
 	@Override
 	public BrokerByteBufferReceiverPO<W> clone() {
 		return new BrokerByteBufferReceiverPO<W>(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource#toString()
+	 */
 	@Override
 	public String toString() {
 		return super.toString() + " " + host + " " + port;

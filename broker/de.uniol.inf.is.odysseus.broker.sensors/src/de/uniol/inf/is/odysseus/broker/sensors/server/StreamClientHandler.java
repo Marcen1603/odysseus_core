@@ -14,20 +14,43 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
+/**
+ * Handles a client connection for a stream to allow to distinguish between several clients.
+ * 
+ * @author Dennis Geesen
+ */
 public class StreamClientHandler extends Thread {
 
+	/** The relational tuple handler. */
 	private RelationalTupleObjectHandler<ITimeInterval> relationalTupleHandler;	
+	
+	/** The channel. */
 	private SocketChannel channel;
+	
+	/** The tuple buffer. */
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
+	
+	/** The type of the provided stream. */
 	private IStreamType streamType;
+	
+	/** The count of items which has been sent. */
 	private int itemCount = 0;
 
+	/**
+	 * Instantiates a new stream client handler.
+	 *
+	 * @param channel the channel
+	 * @param type the type
+	 */
 	public StreamClientHandler(SocketChannel channel, StreamType type) {
 		this.channel = channel;
 		this.streamType = StreamTypeFactory.createNewRun(type);
 		this.relationalTupleHandler = new RelationalTupleObjectHandler<ITimeInterval>(this.streamType.getSchema());		
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run() {
 		while (true) {
 			long currentTime =  System.currentTimeMillis();
@@ -68,11 +91,22 @@ public class StreamClientHandler extends Thread {
 		}
 	}
 	
+	/**
+	 * Prints a message
+	 *
+	 * @param message the message
+	 */
 	public void println(String message){
 		System.out.println(this.streamType.getName()+":\t "+message);
 	}
 	
 	
+	/**
+	 * Transfer a tuple to the client.
+	 *
+	 * @param currentTime the current time
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void transferTuple(long currentTime) throws IOException{
 		RelationalTuple<ITimeInterval> tuple = this.streamType.getNextTuple(currentTime);
 		this.relationalTupleHandler.put(tuple);
@@ -88,6 +122,12 @@ public class StreamClientHandler extends Thread {
 		this.println("Object written - " + tuple);
 	}
 	
+	/**
+	 * Transfers a punctuation to the client.
+	 *
+	 * @param currentTime the current time
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void transferPunctuation(long currentTime) throws IOException{		
 		long time = this.streamType.getNextPunctuation(currentTime);		
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -106,6 +146,11 @@ public class StreamClientHandler extends Thread {
 	}
 	
 	
+	/**
+	 * Gets the punctuation schema.
+	 *
+	 * @return the punctuation schema
+	 */
 	public SDFAttributeList getPunctuationSchema() {
 		SDFAttributeList schema = new SDFAttributeList();
 		SDFAttribute a = new SDFAttribute("timestamp");
@@ -114,6 +159,15 @@ public class StreamClientHandler extends Thread {
 		return schema;
 	}
 	
+	/**
+	 * Send the type of the tuple.
+	 * 0 = normal element
+	 * 1 = punctuation
+	 * 2 = done
+	 *
+	 * @param type the type
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void sendType(int type) throws IOException{
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
 		buffer.clear();

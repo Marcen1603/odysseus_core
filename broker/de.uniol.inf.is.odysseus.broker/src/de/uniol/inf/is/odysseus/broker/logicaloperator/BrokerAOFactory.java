@@ -2,17 +2,32 @@ package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 
+/**
+ * A factory for creating BrokerAO objects.
+ * 
+ * @author Dennis Geesen
+ */
 public class BrokerAOFactory {
 
+	/** The factory. */
 	private static BrokerAOFactory factory;
 		
+	/** The last value which has been given to a broker. */
 	private long lastValue;
 	
 	
+	/**
+	 * Instantiates a new factory.
+	 */
 	private BrokerAOFactory() {
 		this.lastValue = System.currentTimeMillis();
 	}
 	
+	/**
+	 * Gets the factory.
+	 *
+	 * @return the factory
+	 */
 	public static synchronized BrokerAOFactory getFactory(){
 		if(factory==null){
 			factory = new BrokerAOFactory();			
@@ -20,6 +35,14 @@ public class BrokerAOFactory {
 		return factory;
 	}
 	
+	/**
+	 * Creates a new {@link BrokerAO}.
+	 * Assures that each created {@link BrokerAO} (including with same identifier) has a unique value.
+	 *
+	 *
+	 * @param identifier the identifier
+	 * @return the created broker
+	 */
 	public BrokerAO createBrokerAO(String identifier){
 		// create a really unique identifier
 		long currentTime = System.currentTimeMillis();

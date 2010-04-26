@@ -7,10 +7,31 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
+
+/**
+ * BrokerJoinTIPO is a special case of JoinTIPO for the broker. 
+ * It is important on which port the broker is connected. Therefore the broker has to be on the left input (port 0). 
+ * The difference is the merge function for the metadata {@link BrokerMetadataMergeFunction} 
+ * and the behavior of the SweepArea.
+ * The merge function will not set the new timestamp of a merged object to the intersection, 
+ * but set it to the timestamp of the object coming from the right input.
+ * The SweepArea of the left input will be cleared after two objects have been successfully merged 
+ * and the merged object will be removed from the right SweepArea as well. Thus this Join estimates 
+ * the whole broker content for each new object coming from the right input.
+ *
+ * @author Dennis Geesen
+ *
+ * @param <K> the type of the metadata (based on a time interval)
+ * @param <T> the type of the tuple
+ */
 public class BrokerJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends JoinTIPO<K,T> {
 
+	/** The otherport. */
 	private int otherport = 0;
 	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO#process_next(de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer, int)
+	 */
 	@Override
 	protected void process_next(T object, int port) {	
 		storage.setCurrentPort(port);

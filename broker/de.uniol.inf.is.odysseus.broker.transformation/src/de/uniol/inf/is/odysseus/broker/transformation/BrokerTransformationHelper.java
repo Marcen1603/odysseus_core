@@ -16,9 +16,26 @@ import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
+/**
+ * A helper class which provides some transformation utilities.
+ * 
+ * @author Dennis Geesen
+ */
 public class BrokerTransformationHelper {
 
 
+	/**
+	 * Replace a logical operator with a physical broker operator.
+	 * During this, the method will set the transaction types:
+	 * Writing subscriptions will be set to continuously or queue writing transaction and 
+	 * the reading subscriptions will be set to one-time or continuously reading transactions.
+	 * 
+	 * (Note: cycles can only be identified after the transformation. Therefore it will be done by a further method)
+	 *
+	 * @param logical the logical
+	 * @param physical the physical
+	 * @return the collection
+	 */
 	@SuppressWarnings("unchecked")
 	public static Collection<ILogicalOperator> replace(ILogicalOperator logical, BrokerPO<?> physical) {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();		

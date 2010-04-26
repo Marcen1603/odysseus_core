@@ -9,17 +9,36 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 
+/**
+ * The BrokerSweepArea allows to save the current valid content for the broker.
+ * 
+ * @author Dennis Geesen
+ *
+ * @param <T> the type of a tuple
+ */
 public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeInterval>> extends SweepArea<T>{
+	
+	/**
+	 * Instantiates a new SweepArea.
+	 */
 	public BrokerSweepArea() {
 		super(new MetadataComparator<ITimeInterval>());		
 	}
 	
+	/**
+	 * Instantiates a new BrokerSweepArea from an old one.
+	 *
+	 * @param brokerTISweepArea the old one
+	 */
 	public BrokerSweepArea(BrokerSweepArea<T> brokerTISweepArea){
 		super(brokerTISweepArea);
 	}
 
 	
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea#purgeElements(de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer, de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order)
+	 */
 	@Override
 	public void purgeElements(T element, Order order) {
 		synchronized(elements){
@@ -37,6 +56,9 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea#extractElements(de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer, de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order)
+	 */
 	@Override
 	public Iterator<T> extractElements(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
@@ -56,6 +78,12 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	}
 
 	
+	/**
+	 * Gets the SweepArea as string.
+	 *
+	 * @param baseTime the base time
+	 * @return the SweepArea as string
+	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
 		StringBuffer buf = new StringBuffer("SweepArea " + elements.size()
 				+ " Elems \n");
@@ -69,6 +97,9 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	
 	
 	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea#clone()
+	 */
 	@Override
 	public BrokerSweepArea<T> clone() throws CloneNotSupportedException {
 		return new BrokerSweepArea<T>(this);

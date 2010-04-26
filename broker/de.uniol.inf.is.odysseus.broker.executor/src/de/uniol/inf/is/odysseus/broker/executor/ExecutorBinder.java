@@ -22,10 +22,22 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
+/**
+ * The ExecutorBinder extends the console to provide some commands for the broker.
+ * 
+ * @author Dennis Geesen
+ */
 public class ExecutorBinder implements CommandProvider{
 		
 	
+	/** The logger. */
 	private Logger logger = LoggerFactory.getLogger("Broker Executor");
+	
+	/**
+	 * Prints all ports and transactions for all brokers or a specific broker
+	 *
+	 * @param ci the CommandInterpreter of the console
+	 */
 	public void _brokerPorts(CommandInterpreter ci){
 		List<String> args = this.getArgs(ci);
 		if(args.size()==0){
@@ -40,6 +52,12 @@ public class ExecutorBinder implements CommandProvider{
 		}
 	}
 	
+	/**
+	 * Prints the ports for a given broker.
+	 *
+	 * @param broker the broker
+	 * @return the result string
+	 */
 	@SuppressWarnings("unchecked")
 	private String printPorts(BrokerPO<?> broker){
 		
@@ -60,6 +78,11 @@ public class ExecutorBinder implements CommandProvider{
 		return builder.toString();
 	}
 
+	/**
+	 * Prints the physical plan for all or a specific broker.
+	 *
+	 * @param ci the CommandInterpreter of the console
+	 */
 	public void _brokerPlan(CommandInterpreter ci){
 		List<String> args = this.getArgs(ci);
 		if(args.size()==0){
@@ -74,6 +97,11 @@ public class ExecutorBinder implements CommandProvider{
 		}
 	}
 	
+	/**
+	 * Prints the current content of all or a specific broker.
+	 *
+	 * @param ci the ci
+	 */
 	public void _brokerContent(CommandInterpreter ci){
 		List<String> args = this.getArgs(ci);
 		if(args.size()==0){
@@ -91,6 +119,11 @@ public class ExecutorBinder implements CommandProvider{
 	}
 
 		
+	/**
+	 * Reads a file from the current working directory and executes each line as if it comes from the console
+	 *
+	 * @param ci the CommandInterpreter of the console
+	 */
 	public void _runfile(CommandInterpreter ci) {
 		String args = this.getArgsAsString(ci);						
 		File file = new File(args);
@@ -117,28 +150,50 @@ public class ExecutorBinder implements CommandProvider{
 		
 	}
 			
-	/******************************
-	 * SERVICE BINDINGS
-	 ******************************/
+	/**
+	 * Binds the executor
+	 *
+	 * @param executor the executor to bind
+	 */
 	
 	public void bindExecutor(IAdvancedExecutor executor) {		
 		logger.info("Broker Executor bound");
 	}
 	
+	/**
+	 * Unbinds the executor.
+	 *
+	 * @param executor the executor to unbind
+	 */
 	public void unbindExecutor(IAdvancedExecutor executor) {		
 	}
 	
 	
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.osgi.framework.console.CommandProvider#getHelp()
+	 */
 	@Override
 	public String getHelp() {		
-		return "";
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("\tbrokerContent [name] - returns the current content of each broker or only of the broker with the given name\n");
+		buffer.append("\tbrokerPlan [name] - returns the current physical plan of each broker or only of the broker with the given name\n");
+		buffer.append("\tbrokerPorts [name] - returns the current ports and transaction types of each broker or only of the broker with the given name\n");
+		buffer.append("\trunfile f - reads the file f from the current working directory and executes each line as if it has came from the console\n");		
+		return buffer.toString();
+
 	}
 	
 	
 	/************************
 	 * HELPERS
-	 ************************/
+	 ***********************/
+	
+	/**
+	 * Converts specified arguments of a CommandInterpretor into a list of strings
+	 * @param ci the CommandInterpreter
+	 * @return a list of arguments
+	 */
 	
 	private List<String> getArgs(CommandInterpreter ci){
 		List<String> args = new ArrayList<String>();
@@ -149,10 +204,23 @@ public class ExecutorBinder implements CommandProvider{
 		}
 		return args;
 	}
+	
+	/**
+	 * Converts all specified arguments to a single string
+	 *
+	 * @param ci the CommandInterpreter
+	 * @return the result string
+	 */
 	private String getArgsAsString(CommandInterpreter ci){
 		return getArgsAsString(getArgs(ci));
 	}
 	
+	/**
+	 * Converts a list of arguments to a single string
+	 *
+	 * @param args a list of arguments
+	 * @return the a single string
+	 */
 	private String getArgsAsString(List<String> args){
 		StringBuilder builder = new StringBuilder();
 		for(String arg: args){

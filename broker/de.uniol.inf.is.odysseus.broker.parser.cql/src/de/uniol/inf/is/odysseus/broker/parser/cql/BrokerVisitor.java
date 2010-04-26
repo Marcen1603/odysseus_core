@@ -26,8 +26,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
+/**
+ * The BrokerVisitor provides the implementation of the broker related parts from the translation.
+ * This encapsulate the general translation from the broker specific translation to avoid dependencies.
+ * 
+ * @author Dennis Geesen
+ */
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource, java.lang.Object)
+	 */
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) {
 		BrokerAO readFromBroker = null;
@@ -52,11 +61,17 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSimpleSource, java.lang.Object)
+	 */
 	@Override
 	public Object visit(ASTBrokerSimpleSource node, Object data) {
 		return getSimpleSource(node, data);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerAsSource, java.lang.Object)
+	 */
 	@Override
 	public Object visit(ASTBrokerAsSource node, Object data) {
 		ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(1);
@@ -84,11 +99,21 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource, java.lang.Object)
+	 */
 	public Object visit(ASTSimpleSource node, Object data) {
 		return getSimpleSource(node, data);
 
 	}
 
+	/**
+	 * Gets a Broker as a simple source.
+	 *
+	 * @param node the node
+	 * @param data the data
+	 * @return the simple source
+	 */
 	private Object getSimpleSource(Node node, Object data) {
 		String brokerName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		if (BrokerDictionary.getInstance().brokerExists(brokerName)) {
@@ -99,6 +124,9 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto, java.lang.Object)
+	 */
 	public Object visit(ASTBrokerSelectInto node, Object data) {
 		ASTSelectStatement statement = new ASTSelectStatement(0);
 		int number = 0;
@@ -140,6 +168,9 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker, java.lang.Object)
+	 */
 	public Object visit(ASTCreateBroker node, Object data) {
 		String brokerName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		// check first if name already exists
@@ -200,6 +231,14 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		return broker;
 	}
 
+	/**
+	 * Checks whether two schema are equal.
+	 * This is only based on the attribute names and not on the assigned source names as well.
+	 *
+	 * @param left the left
+	 * @param right the right
+	 * @return true, if successful
+	 */
 	private boolean schemaEquals(SDFAttributeList left, SDFAttributeList right) {
 		if (left.size() != right.size()) {
 			return false;

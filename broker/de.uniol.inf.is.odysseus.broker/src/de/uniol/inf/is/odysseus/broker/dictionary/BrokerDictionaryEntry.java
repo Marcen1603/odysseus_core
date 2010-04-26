@@ -15,17 +15,29 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen
  */
 public class BrokerDictionaryEntry {
+	
+	/** The data schema. */
 	private SDFAttributeList schema = new SDFAttributeList();
+	
+	/** The queue schema. */
 	private SDFAttributeList queueSchema = new SDFAttributeList();
+	
+	/** The broker name. */
 	private String brokerName;	
 	
+	/** The writing types. */
 	private WriteTransaction[] writingTypes = new WriteTransaction[0];
+	
+	/** The reading types. */
 	private ReadTransaction[] readingTypes = new ReadTransaction[0];
+	
+	/** The port mappings. */
 	private List<QueuePortMapping> portMappings = new ArrayList<QueuePortMapping>();
 	
 	
 	/**
-	 * Creates a new instance for the given name
+	 * Creates a new instance for the given name.
+	 *
 	 * @param brokername Name of the broker
 	 */
 	public BrokerDictionaryEntry(String brokername){
@@ -33,10 +45,11 @@ public class BrokerDictionaryEntry {
 	}
 	
 	/**
-	 * Creates a new instance for the given name and schemas
+	 * Creates a new instance for the given name and schemas.
+	 *
 	 * @param brokername Name of the broker
 	 * @param schema Output and input schema of the broker
-	 * @param queueSchema Schema of the queue 
+	 * @param queueSchema Schema of the queue
 	 */
 	public BrokerDictionaryEntry(String brokername, SDFAttributeList schema, SDFAttributeList queueSchema){
 		this.brokerName = brokername;
@@ -45,7 +58,8 @@ public class BrokerDictionaryEntry {
 	}
 	
 	/**
-	 * Adds a new writing transaction to the broker
+	 * Adds a new writing transaction to the broker.
+	 *
 	 * @param type The type of the transaction
 	 * @return the assigned incoming port
 	 */
@@ -57,7 +71,8 @@ public class BrokerDictionaryEntry {
 	}
 	
 	/**
-	 * Adds a new reading transaction to the broker
+	 * Adds a new reading transaction to the broker.
+	 *
 	 * @param type The type of the transaction
 	 * @return the assigned outgoing port
 	 */
@@ -69,7 +84,8 @@ public class BrokerDictionaryEntry {
 	}
 	
 	/**
-	 * Gets the assigned type of the writing transaction for a given port 
+	 * Gets the assigned type of the writing transaction for a given port.
+	 *
 	 * @param port The port
 	 * @return Type of the Transaction
 	 */
@@ -78,7 +94,8 @@ public class BrokerDictionaryEntry {
 	}
 
 	/**
-	 * Gets the assigned type of the reading transaction for a given port	
+	 * Gets the assigned type of the reading transaction for a given port.
+	 *
 	 * @param port The port
 	 * @return Type of the Transaction
 	 */
@@ -87,7 +104,8 @@ public class BrokerDictionaryEntry {
 	}		
 
 	/**
-	 * Gets the data output and input schema
+	 * Gets the data output and input schema.
+	 *
 	 * @return The schema
 	 */
 	public SDFAttributeList getSchema() {
@@ -95,7 +113,8 @@ public class BrokerDictionaryEntry {
 	}
 
 	/**
-	 * Gets the queue input schema
+	 * Gets the queue input schema.
+	 *
 	 * @return The schema
 	 */
 	public SDFAttributeList getQueueSchema() {
@@ -103,7 +122,8 @@ public class BrokerDictionaryEntry {
 	}
 
 	/**
-	 * Gets the name of the broker
+	 * Gets the name of the broker.
+	 *
 	 * @return The given name
 	 */
 	public String getBrokerName() {
@@ -111,16 +131,18 @@ public class BrokerDictionaryEntry {
 	}
 
 	/**
-	 * Sets the type for a writing transaction
+	 * Sets the type for a writing transaction.
+	 *
 	 * @param port The existing port
-	 * @param type The new type of the transaction 
+	 * @param type The new type of the transaction
 	 */
 	public void setWriteType(int port, WriteTransaction type) {
 		this.writingTypes[port] = type;		
 	}
 	
 	/**
-	 * Sets the type for a reading transaction
+	 * Sets the type for a reading transaction.
+	 *
 	 * @param port The existing port
 	 * @param type The new type of the transaction
 	 */
@@ -129,7 +151,8 @@ public class BrokerDictionaryEntry {
 	}
 	
 	/**
-	 * Returns all reading Transactions
+	 * Returns all reading Transactions.
+	 *
 	 * @return The transactions
 	 */
 	public ReadTransaction[] getReadingTransactions() {
@@ -137,14 +160,15 @@ public class BrokerDictionaryEntry {
 	}	
 	
 	/**
-	 * Remove all reading Transactions
+	 * Remove all reading Transactions.
 	 */
 	public void removeAllReadingPorts(){		
 		this.readingTypes = new ReadTransaction[0];
 	}
 	
 	/**
-	 * Adds a new port mapping
+	 * Adds a new port mapping.
+	 *
 	 * @param portMapping The mapping
 	 */
 	public void addPortMapping(QueuePortMapping portMapping){
@@ -152,7 +176,8 @@ public class BrokerDictionaryEntry {
 	}
 	
 	/**
-	 * Delivers all port mappings
+	 * Delivers all port mappings.
+	 *
 	 * @return The port mappings
 	 */
 	public List<QueuePortMapping> getPortMappings(){
