@@ -34,6 +34,43 @@ public class ExecutorBinder implements CommandProvider{
 	private Logger logger = LoggerFactory.getLogger("Broker Executor");
 	
 	/**
+	 * Switching one or all brokers into debug mode
+	 * 
+	 * @param ci the CommandInterpreter
+	 */
+	public void _brokerDebug(CommandInterpreter ci){
+		List<String> args = this.getArgs(ci);
+		if(args.size()==0){
+			ci.println("No value (on | off) given");
+			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
+				ci.println("******** Switching debug mode for all brokers ********");
+				broker.setPrintDebug(!broker.isPrintDebug());
+				ci.println("Switched debug mode of \""+broker.getIdentifier()+"\" to "+broker.isPrintDebug());				
+			}
+		}else{
+			if(args.size()>=1){				
+				try{
+					boolean switchTo = toBoolean(args.get(0));
+					if(args.size()==2){
+						BrokerPO<?> broker = BrokerWrapperPlanFactory.getPlan(args.get(1));			
+						broker.setPrintDebug(switchTo);
+						ci.println("Switched debug mode of \""+broker.getIdentifier()+"\" to "+broker.isPrintDebug());
+					}else{
+						for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
+							ci.println("******** Switching debug mode for all brokers to "+switchTo+" ********");
+							broker.setPrintDebug(switchTo);
+							ci.println("Switched debug mode of \""+broker.getIdentifier()+"\" to "+broker.isPrintDebug());				
+						}
+					}
+				}catch(Exception e){
+					ci.println(e.getMessage());
+				}
+			}
+						
+		}
+	}
+	
+	/**
 	 * Prints all ports and transactions for all brokers or a specific broker
 	 *
 	 * @param ci the CommandInterpreter of the console
@@ -176,7 +213,9 @@ public class ExecutorBinder implements CommandProvider{
 	@Override
 	public String getHelp() {		
 		StringBuffer buffer = new StringBuffer();
+		buffer.append("---Odysseus Broker Commands---");
 		buffer.append("\tbrokerContent [name] - returns the current content of each broker or only of the broker with the given name\n");
+		buffer.append("\tbrokerDebug [on|off] [name] - switch one broker or all brokers into debug mode if they are not in or vice versa.\n");		
 		buffer.append("\tbrokerPlan [name] - returns the current physical plan of each broker or only of the broker with the given name\n");
 		buffer.append("\tbrokerPorts [name] - returns the current ports and transaction types of each broker or only of the broker with the given name\n");
 		buffer.append("\trunfile f - reads the file f from the current working directory and executes each line as if it has came from the console\n");		
@@ -229,8 +268,35 @@ public class ExecutorBinder implements CommandProvider{
 		return builder.toString();
 	}
 
-	
-	
+	/**
+	 * Converts a string to boolean
+	 * Valid values are: true, on, 1, false, off, 0
+	 * 
+	 * @param string the string to convert
+	 * @return true, if string represents a true value
+	 */
+	private boolean toBoolean(String string) {
+		if (string.equalsIgnoreCase("true")) {
+			return true;
+		}
+		if (string.equalsIgnoreCase("on")) {
+			return true;
+		}
+		if (string.equalsIgnoreCase("1")) {
+			return true;
+		}
+		if (string.equalsIgnoreCase("false")) {
+			return false;
+		}
+		if (string.equalsIgnoreCase("off")) {
+			return false;
+		}
+		if (string.equalsIgnoreCase("0")) {
+			return false;
+		}
+		throw new IllegalArgumentException("can't convert '" + string
+				+ "' to boolean value");
+	}
 	
 		
 }

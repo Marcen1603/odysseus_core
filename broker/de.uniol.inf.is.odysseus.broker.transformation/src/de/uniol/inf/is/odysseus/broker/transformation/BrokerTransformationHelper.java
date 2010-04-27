@@ -64,7 +64,7 @@ public class BrokerTransformationHelper {
 			if(queuePort!=-1){
 				newReadingPort = BrokerDictionary.getInstance().addNewTransaction(physical.getIdentifier(), ReadTransaction.OneTime);
 				QueuePortMapping mapping = new QueuePortMapping(newReadingPort, queuePort);
-				BrokerDictionary.getInstance().addQueuePortMapping(physical.getIdentifier(), mapping);
+				BrokerDictionary.getInstance().addQueuePortMapping(physical.getIdentifier(), mapping);				
 			}else{
 				newReadingPort = BrokerDictionary.getInstance().addNewTransaction(physical.getIdentifier(), ReadTransaction.Continuous);
 			}

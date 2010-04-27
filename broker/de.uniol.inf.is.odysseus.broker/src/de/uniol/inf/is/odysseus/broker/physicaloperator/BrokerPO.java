@@ -27,10 +27,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * BrokerPO represents the physical implementation of the broker operator. 
+ * BrokerPO represents the physical implementation of the broker operator.
  *
- * @author Dennis Geesen
  * @param <T> the reading and writing type of a tuple
+ * @author Dennis Geesen
  */
 public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends AbstractPipe<T, T> {
 	
@@ -71,7 +71,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private TransactionTS lastTransactionTS = null;
 
 	/** Sets debug outputs on or off. */
-	private boolean printDebug = true;
+	private boolean printDebug = false;
 
 	/**
 	 * Instantiates a new BrokerPO.
@@ -94,7 +94,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	/**
-	 * Initiates the Broker 
+	 * Initiates the Broker.
 	 */
 	private void init() {
 		// set to position 1 -> evaluate attribute "id"
@@ -211,7 +211,9 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 					PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
 					if (nextSub != null) {
 						destinations.add(nextSub);
-						this.lastTransactionTS = tts;
+						if(BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), nextPort)==ReadTransaction.Cyclic){
+							this.lastTransactionTS = tts;
+						}
 					}
 				}
 			}
@@ -230,8 +232,12 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 						this.waitingForPort = getInPortForCycleOutPort(toPort);
 						// switch to waiting mode
 						this.waiting = true;
-						System.out.println("Cyclic - waiting for port " + waitingForPort + "...");
+						printDebug("Cyclic - waiting for port " + waitingForPort + "...");
 						return;
+					}else if(BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort)== ReadTransaction.OneTime){
+						// broker don't have to wait, because it is one time reading. 
+						// therefore the timestamp can directly removed
+						this.timestampList.poll();
 					}
 				}
 			}
@@ -272,7 +278,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	/**
-	 * Gets all continuously reading subscriptions
+	 * Gets all continuously reading subscriptions.
 	 *
 	 * @return the sinks to write to
 	 */
@@ -287,7 +293,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	/**
-	 * Transfers the given object to the subscription on the given port 
+	 * Transfers the given object to the subscription on the given port.
 	 *
 	 * @param object the object to transfer
 	 * @param sourceOutPort the port of the destination
@@ -308,7 +314,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	@Override
 	public void transfer(T object, int sourceOutPort) {
 		ReadTransaction type = BrokerDictionary.getInstance().getReadTypeForPort(this.identifier, sourceOutPort);
-		System.err.println("Transfer to " + sourceOutPort + " " + type + ": " + object.toString() + "  (" + this + ")");
+		printDebug("Transfer to " + sourceOutPort + " " + type + ": " + object.toString() + "  (" + this + ")");
 		process_transfer(object, sourceOutPort);
 	};
 
@@ -404,8 +410,8 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	/**
-	 * Ensures that each writing stream has sent at least one timestamp (element or punctuation) 
-	 * except for cyclic transactions
+	 * Ensures that each writing stream has sent at least one timestamp (element or punctuation)
+	 * except for cyclic transactions.
 	 *
 	 * @return true, if successful
 	 */
@@ -420,7 +426,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	}
 
 	/**
-	 * Gets the minimum timestamp for a given port
+	 * Gets the minimum timestamp for a given port.
 	 *
 	 * @param port the port
 	 * @return the minimum timestamp
@@ -467,4 +473,25 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		result = result + " " + timestampList.toString();
 		return result;
 	}
+
+	
+	/**
+	 * Checks if broker is in debug mode.
+	 *
+	 * @return true, if debug mode is enabled
+	 */
+	public boolean isPrintDebug() {
+		return printDebug;
+	}
+
+	/**
+	 * Sets the debug mode on or off
+	 *
+	 * @param printDebug true for on or false for off
+	 */
+	public void setPrintDebug(boolean printDebug) {
+		this.printDebug = printDebug;
+	}
+	
+	
 }

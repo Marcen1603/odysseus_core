@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.broker.sensors.generator;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -44,6 +45,9 @@ public class SensorObject implements IStreamType{
 	/** The punctuation enabled. */
 	private boolean punctuationEnabled;	
 	
+	/** The number of unique objects. */
+	private int numberOfObjects = 4;
+	
 	/**
 	 * Instantiates a new sensor object.
 	 *
@@ -53,8 +57,12 @@ public class SensorObject implements IStreamType{
 		Random rand = new Random();
 		this.currentId = 0;
 		this.run = 0;
-		this.currentPosX = rand.nextDouble();
-		this.currentPosY = rand.nextDouble();	
+//		this.currentPosX = rand.nextDouble();		
+//		this.currentPosX = round(this.currentPosX, 3);
+//		this.currentPosY = rand.nextDouble();
+//		this.currentPosY = round(this.currentPosY, 3);
+		this.currentPosX = 0.012d;
+		this.currentPosY = 0.036d;
 		this.type = type;
 	}
 	
@@ -127,8 +135,8 @@ public class SensorObject implements IStreamType{
 		tuple.setAttribute(3, this.type);
 		tuple.setAttribute(4, currentPosX);
 		tuple.setAttribute(5, currentPosY);
-		tuple.setMetadata(new TimeInterval(new PointInTime(run)));		
-		currentId = (currentId+1)%10;
+		tuple.setMetadata(new TimeInterval(new PointInTime(currentTime)));		
+		currentId = (currentId+1)%numberOfObjects;
 		currentPosX = currentPosX+1.0d;
 		currentPosY = currentPosY+1.0d;
 		if(currentId==0){
@@ -177,6 +185,19 @@ public class SensorObject implements IStreamType{
 		long result = run;
 		run++;
 		return result;
+	}
+	
+	/**
+	 * Rounds a number to given decimal places
+	 * 
+	 * @param in the number to round
+	 * @param number the number of decimal places
+	 * @return the rounded number
+	 */
+	private double round(double in, int number){
+		BigDecimal bigD = new BigDecimal(in);
+		bigD = bigD.setScale(number, BigDecimal.ROUND_HALF_UP);
+		return bigD.doubleValue();		
 	}
 	
 }
