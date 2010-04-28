@@ -56,10 +56,10 @@ public interface IScheduler extends IErrorEventHandler {
 	 */
 	public void setPartialPlans(List<IPartialPlan> partialPlans);
 
-	/**
-	 * Get the partial plans for scheduling (pipes and roots).
-	 * 
-	 * @return Registered partial plans for scheduling (pipes and roots).
-	 */
-	public List<IPartialPlan> getPartialPlans();
+//	/**
+//	 * Get the partial plans for scheduling (pipes and roots).
+//	 * 
+//	 * @return Registered partial plans for scheduling (pipes and roots).
+//	 */
+//	public List<IPartialPlan> getPartialPlans();
 }

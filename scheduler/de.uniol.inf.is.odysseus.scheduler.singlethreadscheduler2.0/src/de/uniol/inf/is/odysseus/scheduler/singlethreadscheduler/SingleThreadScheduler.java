@@ -251,20 +251,20 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#getPartialPlans()
-	 */
-	@Override
-	public List<IPartialPlan> getPartialPlans() {
-		// TODO: Recalc only if change occured
-		List<IPartialPlan> ret = new ArrayList<IPartialPlan>(parts.size());
-		for (ISchedulingStrategy s: parts){
-			ret.add(s.getPlan());
-		}
-		return ret;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see de.uniol.inf.is.odysseus.scheduler.IScheduler#getPartialPlans()
+//	 */
+//	@Override
+//	public List<IPartialPlan> getPartialPlans() {
+//		// TODO: Recalc only if change occured
+//		List<IPartialPlan> ret = new ArrayList<IPartialPlan>(parts.size());
+//		for (ISchedulingStrategy s: parts){
+//			ret.add(s.getPlan());
+//		}
+//		return ret;
+//	}
 
 	/*
 	 * (non-Javadoc)
