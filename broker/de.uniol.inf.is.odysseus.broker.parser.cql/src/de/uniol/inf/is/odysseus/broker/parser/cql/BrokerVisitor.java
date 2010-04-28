@@ -1,10 +1,17 @@
 package de.uniol.inf.is.odysseus.broker.parser.cql;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
+import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
@@ -17,6 +24,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMetric;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
@@ -230,6 +238,17 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema(), broker.getQueueSchema());
 		return broker;
 	}
+	
+	
+	@Override
+	public Object visit(ASTMetric node, Object data) {
+		String attribute = ((ASTIdentifier) node.jjtGetChild(0)).getName();	
+		AbstractLogicalOperator topOp = (AbstractLogicalOperator)data;
+		MetricMeasureAO metricOp = new MetricMeasureAO(attribute);
+		metricOp.setOutputSchema(topOp.getOutputSchema());
+		topOp.subscribeSink(metricOp, 0, 0, topOp.getOutputSchema());		
+		return metricOp;
+	}
 
 	/**
 	 * Checks whether two schema are equal.
@@ -251,4 +270,43 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			return true;
 		}
 	}	
+	
+	private List<ILogicalOperator> findSources(ILogicalOperator top){
+		List<ILogicalOperator> found = new ArrayList<ILogicalOperator>();
+		findSources(top, new ArrayList<ILogicalOperator>(), found);
+		return found;
+	}
+	
+	private void findSources(ILogicalOperator current, List<ILogicalOperator> visited, List<ILogicalOperator> found){
+		if(contains(visited, current)){
+			return;
+		}
+		visited.add(current);
+		if(current instanceof AccessAO){
+			found.add(current);
+		}
+		for (LogicalSubscription sub : current.getSubscribedToSource()) {				
+			findSources(sub.getTarget(), visited, found);				
+		}
+		
+	}
+	
+	/**
+	 * Proves if an object is part of the given list.
+	 * In contrast to the normal method contains which is based on equal, 
+	 * this method will prove if it is really the same object by using ==. 
+	 *
+	 * @param list the list
+	 * @param op the object to prove
+	 * @return true, if successful
+	 */
+	private static boolean contains(List<?> list, Object op){
+		for(Object other : list){
+			if(other==op){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

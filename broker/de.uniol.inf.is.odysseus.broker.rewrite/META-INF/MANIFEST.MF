@@ -6,4 +6,5 @@ Bundle-Version: 1.0.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools;bundle-version="1.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.broker.logicaloperator,
+ de.uniol.inf.is.odysseus.broker.metric,
  de.uniol.inf.is.odysseus.broker.physicaloperator
