@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.broker.physicaloperator.predicate.AttributeTimeIntervalComparator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
@@ -22,7 +23,8 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	 * Instantiates a new SweepArea.
 	 */
 	public BrokerSweepArea() {
-		super(new MetadataComparator<ITimeInterval>());		
+		//super(new MetadataComparator<ITimeInterval>());		
+		super(new AttributeTimeIntervalComparator());
 	}
 	
 	/**

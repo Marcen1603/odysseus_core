@@ -173,17 +173,5 @@ public class BrokerAO extends AbstractLogicalOperator{
 	public BrokerAO clone() throws CloneNotSupportedException {	
 		BrokerAO clone = new BrokerAO(this);		
 		return clone;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator#isAllPhysicalInputSet()
-	 */
-	@Override
-	public boolean isAllPhysicalInputSet() {
-		if(this.subscribedToSource.isEmpty()){
-			return true;
-		}else{
-			return super.isAllPhysicalInputSet();
-		}
-	}
+	}	
 }

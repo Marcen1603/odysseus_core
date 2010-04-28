@@ -40,7 +40,7 @@ public class MetricMeasureAO extends AbstractLogicalOperator{
 				}
 			}
 		}
-		return -1;
+		return -1;		
 	}			
 		
 	@Override

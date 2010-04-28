@@ -48,16 +48,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private PriorityQueue<TransactionTS> timestampList = new PriorityQueue<TransactionTS>();
 
 	/** The queue schema. */
-	private SDFAttributeList queueSchema;
-
-	/** The cycles detected for this broker. */
-	private List<CycleSubscription> cycles = new ArrayList<CycleSubscription>();
-
-	/** Determines if the broker is waiting or not. */
-	private volatile boolean waiting = false;
-
-	/** The port the broker is waiting for (usually a writing port of a cycle). */
-	private int waitingForPort = -1;
+	private SDFAttributeList queueSchema;	
 
 	/**
 	 * The waiting buffer caches all elements before it is their chronological
@@ -73,9 +64,6 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * streams.
 	 */
 	private PointInTime min = null;
-
-	/** The last {@link TransactionTS} which has been delivered. */
-	private TransactionTS lastTransactionTS = null;
 
 	/** Sets debug outputs on or off. */
 	private boolean printDebug = false;
@@ -166,49 +154,13 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			PointInTime time = object.getMetadata().getStart();
 			TransactionTS trans = new TransactionTS(getOutgoingPortForIncoming(port), time);
 			timestampList.offer(trans);
-		} else {
-			// ... if not from timestamp tuple, check whether the broker is in
-			// waiting mode
-			if (waiting) {
-				// if the current port is equal to port the broker is waiting
-				// for
-				if (port == waitingForPort) {
-					printDebug("Cyclic - received...");
-					// check if the last request in the timestamp list is equal
-					// to the last one the broker executed
-					TransactionTS peek = timestampList.peek();
-					if (peek.isPortAndTimeEqual(lastTransactionTS)) {
-						// check if it comes from the cycle the broker waited
-						// for.
-						if (getInPortForCycleOutPort(peek.getOutgoingPort()) == port) {
-							// remove the request from timestamp list, because
-							// the answer arrived
-							TransactionTS toRemove = timestampList.poll();
-							printDebug("Removed timestamp " + toRemove + " from list - waited for: " + port);
-							printDebug(getNextCyclicTransactionList());
-							// if the next one does not belong to the current
-							// request, everything is back and the broker can
-							// leave the waiting mode
-							if (!timestampList.peek().isPortAndTimeEqual(lastTransactionTS)) {
-								waiting = false;
-								printDebug("Cyclic - everything back...");
-							}
-						}
-					} else {
-						// if the last request is not equal to the last one,
-						// there should be all back, because there are no more
-						// according requests
-						waiting = false;
-						printDebug("Cyclic - everything should be back - because there are no more timestamp i am waiting for...");
-					}
-				}
-			}
+			printDebug("Added to list: "+getNextCyclicTransactionList());
+		} else {			
 			// each incoming object will be put into the waiting buffer
 			waitingBuffer.add(object);
 		}
 		contentChanged = false;
-		// if the broker is not in waiting mode...
-		if (!waiting) {
+		// if the broker is not in waiting mode...		
 			// ... and there is a valid minimum (each writing transaction has at
 			// least one valid tuple or punctuation)
 			if (min != null) {
@@ -242,14 +194,11 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 				// equal this minimum
 				if (min != null && nextTs.getPointInTime().beforeOrEquals(min)) {
 					// add the next timestamp transaction to the destinations
-					TransactionTS tts = timestampList.peek();
+					TransactionTS tts = timestampList.poll();
 					int nextPort = tts.getOutgoingPort();
 					PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
 					if (nextSub != null) {
-						destinations.add(nextSub);
-						if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), nextPort) == ReadTransaction.Cyclic) {
-							this.lastTransactionTS = tts;
-						}
+						destinations.add(nextSub);						
 					}
 				}
 			}
@@ -265,11 +214,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 					}
 					// if (last) one is cycle then stop and wait
 					if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.Cyclic) {
-						// determine the port the broker has to wait for
-						this.waitingForPort = getInPortForCycleOutPort(toPort);
-						// switch to waiting mode
-						this.waiting = true;
-						printDebug("Cyclic - waiting for port " + waitingForPort + "...");
+						// determine the port the broker has to wait for					
 						return;
 					} else if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.OneTime) {
 						// broker don't have to wait, because it is one time
@@ -280,27 +225,8 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 				}
 			}
 
-		}
+		
 
-	}
-
-	/**
-	 * Gets the writing port (end of a cycle) for cyclic reading port (start of
-	 * a cycle).
-	 * 
-	 * @param port
-	 *            the port to look for.
-	 * @return the writing port or -1 if there is no cycle for the given reading
-	 *         port
-	 */
-	private int getInPortForCycleOutPort(int port) {
-		for (CycleSubscription cs : this.cycles) {
-			if (cs.getOutgoingPort() == port) {
-				return cs.getIncomingPort();
-			}
-		}
-		logger.warn("There is no cycle with outgoing port " + port);
-		return -1;
 	}
 
 	/**
@@ -401,8 +327,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			LoggerFactory.getLogger("BrokerPO - reorganize").debug(cycle.toString() + " - change transaction type to cyclic");
 			BrokerDictionary.getInstance().setReadTypeForPort(this.identifier, cycle.getOutgoingPort(), ReadTransaction.Cyclic);
 			BrokerDictionary.getInstance().setWriteTypeForPort(this.identifier, cycle.getIncomingPort(), WriteTransaction.Cyclic);
-		}
-		this.cycles = cycles;
+		}		
 	}
 
 	/**

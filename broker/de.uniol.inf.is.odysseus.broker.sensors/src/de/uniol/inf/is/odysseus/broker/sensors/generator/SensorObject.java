@@ -129,7 +129,7 @@ public class SensorObject implements IStreamType{
 	 */
 	@Override
 	public RelationalTuple<ITimeInterval> getNextTuple(long currentTime) {	
-		tuple.setAttribute(0, run);
+		tuple.setAttribute(0, System.currentTimeMillis());
 		tuple.setAttribute(1, currentId);
 		tuple.setAttribute(2, run);
 		tuple.setAttribute(3, this.type);
@@ -185,19 +185,6 @@ public class SensorObject implements IStreamType{
 		long result = run;
 		run++;
 		return result;
-	}
-	
-	/**
-	 * Rounds a number to given decimal places
-	 * 
-	 * @param in the number to round
-	 * @param number the number of decimal places
-	 * @return the rounded number
-	 */
-	private double round(double in, int number){
-		BigDecimal bigD = new BigDecimal(in);
-		bigD = bigD.setScale(number, BigDecimal.ROUND_HALF_UP);
-		return bigD.doubleValue();		
-	}
+	}	
 	
 }
