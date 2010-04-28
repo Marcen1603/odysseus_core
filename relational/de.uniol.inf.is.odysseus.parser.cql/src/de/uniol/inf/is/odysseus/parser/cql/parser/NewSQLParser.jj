@@ -2,7 +2,7 @@
 /*@egen*/options{  IGNORE_CASE = true;                                                                                                                                                                //DEBUG_PARSER = true;  //DEBUG_TOKEN_MANAGER = false;}PARSER_BEGIN(NewSQLParser)package de.uniol.inf.is.odysseus.parser.cql.parser;import java.util.ArrayList;import de.uniol.inf.is.odysseus.base.PointInTime;import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;import de.uniol.inf.is.odysseus.base.AggregateFunction;@ SuppressWarnings("all") public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected static JJTNewSQLParserState jjtree = new JJTNewSQLParserState();
 
-/*@egen*/}PARSER_END(NewSQLParser)SKIP :{  " " | "\r"| "\n"| "\t"}TOKEN :{  < K_ALL : "ALL" >| < K_ADVANCE : "ADVANCE" >| < K_ALWAYS : "ALWAYS" >| < K_AND : "AND" >| < K_ANY : "ANY" >| < K_AS : "AS" >| < K_AVG : "AVG" >| < K_BROKER : "BROKER" >| < K_BY : "BY" >| < K_CHANNEL : "CHANNEL" >| < K_COMMENT : "COMMENT" >| < K_COUNT : "COUNT" >| < K_CREATE : "CREATE" >| < K_CSV : "CSV" >| < K_DATE : "DATE" >| < K_DAY : "DAY" ("S")? >| < K_DB_EXECUTE : "DB_EXECUTE" >| < K_DB_SELECT : "DATABASE" >| < K_DB_SCHEMA : "SCHEMA" >| < K_DEFAULT : "DEFAULT" >| < K_DISTINCT : "DISTINCT" >| < K_DOUBLE : "DOUBLE" >| < K_EXISTS : "EXISTS" >| < K_FROM : "FROM" >| < K_GROUP : "GROUP" >| < K_HAVING : "HAVING" >| < K_HOUR : "HOUR" ("S")? >| < K_IN : "IN" >| < K_INFTY : "INFTY" >| < K_INTEGER : "INTEGER" >| < K_INTERSECTION : "INTERSECT" >| < K_INTO : "INTO" >| < K_IS : "IS" >| < K_JOIN : "JOIN" >| < K_LIKE : "LIKE" >| < K_LONG : "LONG" >| < K_MATRIX : "MATRIX" >| < K_MAX : "MAX" >| < K_MIN : "MIN" >| < K_MINUS : "MINUS" >| < K_MINUTE : "MINUTE" ("S")? >| < K_MV : "MV" >| < K_NATURAL : "NATURAL" >| < K_NOT : "NOT" >| < K_NULL : "NULL" >| < K_OF : "OF" >| < K_OFFSET : "OFFSET" >| < K_ON : "ON" >| < K_OR : "OR" >| < K_OSGI : "OSGI" >| < K_OUTPUT : "OUTPUT" >| < K_PARTITION : "PARTITION" >| < K_PRIORITY : "PRIORITY" >| < K_PROB : "PROB" >| < K_QUEUE : "QUEUE" >| < K_RANGE : "RANGE" >| < K_REAL : "REAL" >| < K_RELATION : "RELATION" >| < K_ROWS : "ROWS" >| < K_SECOND : "SECOND" ("S")? >| < K_SELECT : "SELECT" >| < K_SET : "SET" >| < K_SILAB : "SILAB" >| < K_SIZE : "SIZE" >| < K_SLIDE : "SLIDE" >| < K_SOCKET : "SOCKET" >| < K_STREAM : "STREAM" >| < K_STRING : "STRING" >| < K_SUM : "SUM" >| < K_TIME : "TIME" >| < K_TIMEOUT : "TIMEOUT" >| < K_TUPLE : "TUPLE" >| < K_UNBOUNDED : "UNBOUNDED" >| < K_UNION : "UNION" >| < K_VALID : "VALID" >| < K_WEEK : "WEEK" ("S")? >| < K_WHERE : "WHERE" >| < K_WITH : "WITH" >}TOKEN : /* spatial token */{  < S_DISTANCE : "SPATIAL_DISTANCE" >| < S_COMPARE :    "SPATIAL_INSIDE"  | "SPATIAL_INTERSECTS"  | "SPATIAL_MEETS"  | "SPATIAL_ON"  | "SPATIAL_OVERLAPS"  | "SPATIAL_IN"  | "SPATIAL_OUT" >| < S_POINT : "POINT3D" >| < S_SEGMENT : "SEGMENT3D" >| < S_LINE : "LINE3D" >| < S_FACET : "FACET3D" >| < S_SOLID : "SOLID3D" >}TOKEN : /* Numeric Constants */{  //  <NUMBER:<FLOAT>  //  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>  //  | <#FLOAT:<INTEGER>  //  | <INTEGER>("."<INTEGER>)?  //  | "."<INTEGER>>  < FLOAT :    ("-")?    (      < INTEGER > "." < INTEGER >    | "." < INTEGER >    ) >| < INTEGER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >}SPECIAL_TOKEN :{  < LINE_COMMENT : "--" (~[ "\r", "\n" ])* >| < MULTI_LINE_COMMENT :    "/*" (~[ "*" ])* "*"    (      "*"    |      (        ~[ "*", "/" ] (~[ "*" ])* "*"      )    )*    "/" >}TOKEN :{  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    ":"  | "_"  | "." >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )* >| < SQL_STRING :    "[[" (~[ "[", "]" ])* "]]"    (      "[[" (~[ "[", "]" ])* "]]"    )* >| < QUOTED_IDENTIFIER : "\"" (~[ "\n", "\r", "\"" ])* "\"" >| < COMPARE_OPERATOR :    "="  | "<>"  | ">"  | "<"  | "<="  | ">=" >| < REGEXP :    "/" ("^")?    (      < LETTER >    | < DIGIT >    | "\\"    | "+"    | "."    | "*"    | "?"    | "$"    )+    "/" >}ASTStatement Statement() :{/*@bgen(jjtree) Statement */
+/*@egen*/}PARSER_END(NewSQLParser)SKIP :{  " " | "\r"| "\n"| "\t"}TOKEN :{  < K_ALL : "ALL" >| < K_ADVANCE : "ADVANCE" >| < K_ALWAYS : "ALWAYS" >| < K_AND : "AND" >| < K_ANY : "ANY" >| < K_AS : "AS" >| < K_AVG : "AVG" >| < K_BROKER : "BROKER" >| < K_BY : "BY" >| < K_CHANNEL : "CHANNEL" >| < K_COMMENT : "COMMENT" >| < K_COUNT : "COUNT" >| < K_CREATE : "CREATE" >| < K_CSV : "CSV" >| < K_DATE : "DATE" >| < K_DAY : "DAY" ("S")? >| < K_DB_EXECUTE : "DB_EXECUTE" >| < K_DB_SELECT : "DATABASE" >| < K_DB_SCHEMA : "SCHEMA" >| < K_DEFAULT : "DEFAULT" >| < K_DISTINCT : "DISTINCT" >| < K_DOUBLE : "DOUBLE" >| < K_EXISTS : "EXISTS" >| < K_FROM : "FROM" >| < K_GROUP : "GROUP" >| < K_HAVING : "HAVING" >| < K_HOUR : "HOUR" ("S")? >| < K_IN : "IN" >| < K_INFTY : "INFTY" >| < K_INTEGER : "INTEGER" >| < K_INTERSECTION : "INTERSECT" >| < K_INTO : "INTO" >| < K_IS : "IS" >| < K_JOIN : "JOIN" >| < K_LIKE : "LIKE" >| < K_LONG : "LONG" >| < K_MATRIX : "MATRIX" >| < K_MAX : "MAX" >| < K_METRIC : "METRIC" >| < K_MIN : "MIN" >| < K_MINUS : "MINUS" >| < K_MINUTE : "MINUTE" ("S")? >| < K_MV : "MV" >| < K_NATURAL : "NATURAL" >| < K_NOT : "NOT" >| < K_NULL : "NULL" >| < K_OF : "OF" >| < K_OFFSET : "OFFSET" >| < K_ON : "ON" >| < K_OR : "OR" >| < K_OSGI : "OSGI" >| < K_OUTPUT : "OUTPUT" >| < K_PARTITION : "PARTITION" >| < K_PRIORITY : "PRIORITY" >| < K_PROB : "PROB" >| < K_QUEUE : "QUEUE" >| < K_RANGE : "RANGE" >| < K_REAL : "REAL" >| < K_RELATION : "RELATION" >| < K_RELATIVE : "RELATIVE" >| < K_ROWS : "ROWS" >| < K_SECOND : "SECOND" ("S")? >| < K_SELECT : "SELECT" >| < K_SET : "SET" >| < K_SILAB : "SILAB" >| < K_SIZE : "SIZE" >| < K_SLIDE : "SLIDE" >| < K_SOCKET : "SOCKET" >| < K_STREAM : "STREAM" >| < K_STRING : "STRING" >| < K_SUM : "SUM" >| < K_TIME : "TIME" >| < K_TIMEOUT : "TIMEOUT" >| < K_TO : "TO" >| < K_TUPLE : "TUPLE" >| < K_UNBOUNDED : "UNBOUNDED" >| < K_UNION : "UNION" >| < K_VALID : "VALID" >| < K_WEEK : "WEEK" ("S")? >| < K_WHERE : "WHERE" >| < K_WITH : "WITH" >}TOKEN : /* spatial token */{  < S_DISTANCE : "SPATIAL_DISTANCE" >| < S_COMPARE :    "SPATIAL_INSIDE"  | "SPATIAL_INTERSECTS"  | "SPATIAL_MEETS"  | "SPATIAL_ON"  | "SPATIAL_OVERLAPS"  | "SPATIAL_IN"  | "SPATIAL_OUT" >| < S_POINT : "POINT3D" >| < S_SEGMENT : "SEGMENT3D" >| < S_LINE : "LINE3D" >| < S_FACET : "FACET3D" >| < S_SOLID : "SOLID3D" >}TOKEN : /* Numeric Constants */{  //  <NUMBER:<FLOAT>  //  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>  //  | <#FLOAT:<INTEGER>  //  | <INTEGER>("."<INTEGER>)?  //  | "."<INTEGER>>  < FLOAT :    ("-")?    (      < INTEGER > "." < INTEGER >    | "." < INTEGER >    ) >| < INTEGER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >| < IPADDRESS : < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? "." < DIGIT > (< DIGIT >)? (< DIGIT >)? >}SPECIAL_TOKEN :{  < LINE_COMMENT : "--" (~[ "\r", "\n" ])* >| < MULTI_LINE_COMMENT :    "/*" (~[ "*" ])* "*"    (      "*"    |      (        ~[ "*", "/" ] (~[ "*" ])* "*"      )    )*    "/" >}TOKEN :{  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    ":"  | "_"  | "." >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )* >| < SQL_STRING :    "[[" (~[ "[", "]" ])* "]]"    (      "[[" (~[ "[", "]" ])* "]]"    )* >| < QUOTED_IDENTIFIER : "\"" (~[ "\n", "\r", "\"" ])* "\"" >| < COMPARE_OPERATOR :    "="  | "<>"  | ">"  | "<"  | "<="  | ">=" >| < REGEXP :    "/" ("^")?    (      < LETTER >    | < DIGIT >    | "\\"    | "+"    | "."    | "*"    | "?"    | "$"    )+    "/" >}ASTStatement Statement() :{/*@bgen(jjtree) Statement */
   ASTStatement jjtn000 = new ASTStatement(JJTSTATEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -216,7 +216,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) PriorizedStatement */
   try {
-/*@egen*/  [ DBExecuteStatement() ] ComplexSelectStatement() [ Priority() ]/*@bgen(jjtree)*/
+/*@egen*/  [ DBExecuteStatement() ] ComplexSelectStatement() [ Priority() ] [Metric()]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2176,4 +2176,30 @@
             jjtree.closeNodeScope(jjtn000, true);
           }
         }
-/*@egen*/}
+/*@egen*/}void Metric() : {/*@bgen(jjtree) Metric */
+  ASTMetric jjtn000 = new ASTMetric(JJTMETRIC);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) Metric */
+  try {
+/*@egen*/   < K_METRIC > <K_ON > Identifier()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}

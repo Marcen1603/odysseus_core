@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMetric;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOSGI;
@@ -568,6 +569,11 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTBrokerQueue node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTMetric node, Object data) {
 		return null;
 	}
 }

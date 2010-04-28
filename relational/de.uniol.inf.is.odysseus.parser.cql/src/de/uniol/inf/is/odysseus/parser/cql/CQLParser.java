@@ -61,6 +61,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMetric;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOSGI;
@@ -201,7 +202,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this,
 					data);
 			if (node.jjtGetNumChildren() == 2) {
+				if(node.jjtGetChild(1) instanceof ASTPriority){
 				priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
+				}else{
+					if(node.jjtGetChild(1) instanceof ASTMetric){
+						op = (AbstractLogicalOperator) node.jjtGetChild(1).jjtAccept(this, op);
+					}
+				}
 			}
 		}
 		this.priorities.add(priority);
@@ -725,6 +732,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTBrokerQueue node, Object data) {
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTMetric node, Object data) {		
+		try {
+			Class<?> brokerSourceVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Object bsv = brokerSourceVisitor.newInstance();
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+					ASTMetric.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+					.invoke(bsv, node, data);			
+			return sourceOp;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
+		} catch (Exception e) {
+			throw new RuntimeException("Error while parsing the METRIC clause", e.getCause());
+		}							
 	}
 	
 

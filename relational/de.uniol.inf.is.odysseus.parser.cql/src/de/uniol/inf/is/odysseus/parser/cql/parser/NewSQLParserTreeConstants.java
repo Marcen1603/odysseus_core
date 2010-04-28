@@ -87,6 +87,7 @@ public interface NewSQLParserTreeConstants
   public int JJTBROKERSELECTINTO = 81;
   public int JJTBROKERSIMPLESOURCE = 82;
   public int JJTBROKERQUEUE = 83;
+  public int JJTMETRIC = 84;
 
 
   public String[] jjtNodeName = {
@@ -174,6 +175,7 @@ public interface NewSQLParserTreeConstants
     "BrokerSelectInto",
     "BrokerSimpleSource",
     "BrokerQueue",
+    "Metric",
   };
 }
-/* JavaCC - OriginalChecksum=25c93894aef2b27dbd4ce6a39c755309 (do not edit this line) */
+/* JavaCC - OriginalChecksum=2dd3097e6d5140b0a8de313997db46b1 (do not edit this line) */
