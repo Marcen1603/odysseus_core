@@ -88,8 +88,11 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			terminate = false;
 			// Collection<ISchedulingStrategy> values = parts.values();
 			try {
-				synchronized (parts) {
-					while (!isInterrupted() && !parts.isEmpty() && !terminate) {
+				while (!isInterrupted() && !terminate) {
+					synchronized (parts) {
+						if (parts.isEmpty()) {
+							break;
+						}
 						Iterator<ISchedulingStrategy> part = parts.iterator();
 						while (part.hasNext()) {
 							if (part.next().schedule(timeSlicePerStrategy)) {// part

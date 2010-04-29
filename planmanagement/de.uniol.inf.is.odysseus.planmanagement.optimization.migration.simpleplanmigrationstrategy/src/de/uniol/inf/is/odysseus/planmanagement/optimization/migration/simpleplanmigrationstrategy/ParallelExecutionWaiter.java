@@ -18,7 +18,8 @@ class ParallelExecutionWaiter implements Runnable {
 	@Override
 	public void run() {
 		try {
-			Thread.sleep(this.context.getwMax().getWindowSize());
+			// plus 1 second safety for scheduling
+			Thread.sleep(this.context.getwMax().getWindowSize() + 1000L);
 		} catch (InterruptedException e) {}
 		this.sender.finishedParallelExecution(context);
 	}
