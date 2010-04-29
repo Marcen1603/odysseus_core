@@ -19,7 +19,7 @@ public class BiggestQueueStrategy extends AbstractDynamicSchedulingStrategy {
 
 	@Override
 	public IIterableSource<?> nextSource() {
-		int maxSize = 0; // Tread only Sources with at least one Element
+		int maxSize = 0; // Treat only Sources with at least one Element
 		IIterableSource<?> currentSource = null;
 		for (IIterableSource<?> curSource : operators) {
 			int curSize = ((IBuffer<?>) curSource).size();
@@ -30,5 +30,10 @@ public class BiggestQueueStrategy extends AbstractDynamicSchedulingStrategy {
 		}
 		return currentSource;
 	}	
+	
+	@Override
+	public void applyChangedPlan() {
+		// Nothing to do
+	}
 
 }

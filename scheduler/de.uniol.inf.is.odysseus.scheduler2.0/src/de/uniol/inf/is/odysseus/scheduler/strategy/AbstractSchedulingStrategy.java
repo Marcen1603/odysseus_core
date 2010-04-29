@@ -25,9 +25,7 @@ public abstract class AbstractSchedulingStrategy implements ISchedulingStrategy 
 		this.isPlanChanged = true;
 	}
 	
-	public void applyChangedPlan()
-	{
-	}
+	abstract public void applyChangedPlan();
 
 	@Override
 	/** Returns true if nothing more to schedule
@@ -39,7 +37,7 @@ public abstract class AbstractSchedulingStrategy implements ISchedulingStrategy 
 //			throw new IllegalArgumentException("maxTime must be greater 0");
 //		}
 		
-		// if the underlying plan has changed, we nee to call
+		// if the underlying plan has changed, we need to call
 		// the update-method before starting the scheduling:
 		if (this.isPlanChanged) {
 			this.applyChangedPlan();

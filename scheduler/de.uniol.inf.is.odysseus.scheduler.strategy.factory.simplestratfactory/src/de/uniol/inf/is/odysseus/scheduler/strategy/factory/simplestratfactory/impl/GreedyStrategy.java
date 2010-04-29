@@ -67,6 +67,11 @@ public class GreedyStrategy extends AbstractExecListSchedulingStrategy {
 		return execList;
 	}
 
+	@Override
+	public void applyChangedPlan() {
+		calculateExecutionList(getPlan());
+	}
+
 }
 
 class Helper{

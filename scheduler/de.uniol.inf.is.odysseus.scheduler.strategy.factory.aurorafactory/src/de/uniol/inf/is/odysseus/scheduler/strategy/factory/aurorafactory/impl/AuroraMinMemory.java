@@ -45,5 +45,10 @@ public class AuroraMinMemory extends AbstractExecListSchedulingStrategy {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void applyChangedPlan() {
+		calculateExecutionList(getPlan());
+	}
 
 }

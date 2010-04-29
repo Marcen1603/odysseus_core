@@ -119,6 +119,11 @@ public class ChainStrategy extends AbstractExecListSchedulingStrategy {
 		}
 	}
 
+	@Override
+	public void applyChangedPlan() {
+		calculateExecutionList(getPlan());
+	}
+	
 	private void calculateLowerEnvelopes(List<List<IIterableSource<?>>> pathes,
 			Map<List<IIterableSource<?>>, OperatorPoint[]> progressCharts) {
 		
