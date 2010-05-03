@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.application;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -10,6 +11,8 @@ import org.osgi.framework.Constants;
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
+
+	public static final Logger LOGGER = Logger.getRootLogger();
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.application";
