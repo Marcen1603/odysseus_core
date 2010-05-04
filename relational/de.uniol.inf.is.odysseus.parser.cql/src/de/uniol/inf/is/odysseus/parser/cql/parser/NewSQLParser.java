@@ -3983,11 +3983,6 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
     finally { jj_save(24, xla); }
   }
 
-  static private boolean jj_3R_210() {
-    if (jj_3R_220()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_197() {
     if (jj_scan_token(K_INFTY)) return true;
     return false;
@@ -5742,6 +5737,11 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
     if (jj_scan_token(K_PARTITION)) return true;
     if (jj_scan_token(K_BY)) return true;
     if (jj_3R_205()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_210() {
+    if (jj_3R_220()) return true;
     return false;
   }
 
