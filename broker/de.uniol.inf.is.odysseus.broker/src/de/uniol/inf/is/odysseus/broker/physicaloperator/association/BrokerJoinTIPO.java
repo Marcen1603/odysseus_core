@@ -66,7 +66,8 @@ public class BrokerJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeCon
 			getAreas()[port].remove(object);
 			getAreas()[otherport].remove(next);			
 			T newElement = merge(object, next, order);
-			transferFunction.transfer(newElement);			
+			transfer(newElement);
+			//transferFunction.transfer(newElement);			
 			// i don't need elements from broker anymore
 			getAreas()[0].clear();
 			

@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.predicate.AttributeTimeIntervalComparator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 
 /**
@@ -22,8 +21,8 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	/**
 	 * Instantiates a new SweepArea.
 	 */
+	@SuppressWarnings("unchecked")
 	public BrokerSweepArea() {
-		//super(new MetadataComparator<ITimeInterval>());		
 		super(new AttributeTimeIntervalComparator());
 	}
 	

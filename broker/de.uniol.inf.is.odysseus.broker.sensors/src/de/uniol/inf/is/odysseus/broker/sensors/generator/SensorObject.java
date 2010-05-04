@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.broker.sensors.generator;
 
-import java.math.BigDecimal;
-import java.util.Random;
-
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
@@ -54,7 +51,7 @@ public class SensorObject implements IStreamType{
 	 * @param type the type
 	 */
 	public SensorObject(String type){
-		Random rand = new Random();
+//		Random rand = new Random();
 		this.currentId = 0;
 		this.run = 0;
 //		this.currentPosX = rand.nextDouble();		
@@ -182,9 +179,10 @@ public class SensorObject implements IStreamType{
 	 */
 	@Override
 	public long getNextPunctuation(long currentTime) {		
-		long result = run;
-		run++;
-		return result;
+//		long result = run;
+//		run++;
+//		return result;
+		return currentTime;
 	}	
 	
 }

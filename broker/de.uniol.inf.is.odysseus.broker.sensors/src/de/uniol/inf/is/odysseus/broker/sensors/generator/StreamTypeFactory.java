@@ -18,10 +18,11 @@ public class StreamTypeFactory {
 		case LIDAR:
 			return new SensorObject("LIDAR", 1000);
 		case RADAR:
-			return new SensorObject("RADAR", 4000);
+			return new SensorObject("RADAR", 1000);				
 		case VIDEO:
 			return new SensorObject("VIDEO", 1000, 4, true);
-		}		
-		return null;
+		default:
+			return new SensorObject(type.toString(), 1000);
+		}				
 	}
 }
