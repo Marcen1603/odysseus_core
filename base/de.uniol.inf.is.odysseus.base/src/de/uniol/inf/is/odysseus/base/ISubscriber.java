@@ -30,6 +30,8 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	 */
 	public void unsubscribeFromSource(S subscription);
 	
+	public void unsubscribeFromAllSources();
+	
 	/**
 	 * Removes a subscription installed by {@link ISubscriber#subscribeTo(Object, int, int)}.
 	 */

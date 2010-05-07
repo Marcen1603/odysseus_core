@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
@@ -21,20 +23,20 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractLogicalOperator implements Serializable,
 		ILogicalOperator {
-	
+
 	private static final long serialVersionUID = -4425148851059140851L;
 
 	private ArrayList<IOperatorOwner> owner = new ArrayList<IOperatorOwner>();
-	
+
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
 	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
-	
+
 	protected boolean recalcOutputSchemata = false;
-	
+
 	private Map<Integer, Subscription<ISource<?>>> physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>();
 	// cache access to bounded physOperators
 	private Map<Integer, ISource<?>> physInputOperators = new HashMap<Integer, ISource<?>>();
-	
+
 	private String name = null;
 
 	@SuppressWarnings("unchecked")
@@ -42,12 +44,15 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		// Subscriptions gehoeren eigentlich nicht zum Operator?
-//		this.subscribedToSource = new HashMap<Integer, LogicalSubscription>(op.subscribedToSource);
-//		this.subscriptions = new Vector<LogicalSubscription>(op.subscriptions);
-		predicate =   (op.predicate == null)?null:op.predicate.clone();
+		// this.subscribedToSource = new HashMap<Integer,
+		// LogicalSubscription>(op.subscribedToSource);
+		// this.subscriptions = new
+		// Vector<LogicalSubscription>(op.subscriptions);
+		predicate = (op.predicate == null) ? null : op.predicate.clone();
 		setName(op.getName());
-//		physSubscriptionTo = op.physSubscriptionTo == null ? null
-//				: new HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
+		// physSubscriptionTo = op.physSubscriptionTo == null ? null
+		// : new
+		// HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
 	}
 
 	public AbstractLogicalOperator() {
@@ -60,33 +65,37 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#clone()
 	 */
 	@Override
-	public AbstractLogicalOperator clone() throws CloneNotSupportedException{
+	public AbstractLogicalOperator clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
-//		AbstractLogicalOperator clone;
-//		try {
-//			clone = (AbstractLogicalOperator) super.clone();
-//			clone.subscribedToSource = new HashMap<Integer, LogicalSubscription>(this.subscribedToSource);
-//			clone.subscriptions = new Vector<LogicalSubscription>(this.subscriptions);
-//			clone.physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>(
-//					this.physSubscriptionTo);
-//			clone.name = this.name;
-//			if (this.predicate != null)
-//				clone.predicate = this.predicate.clone();
-//
-//			// TODO ueberall kopien von anlegen
-//			return clone;
-//		} catch (CloneNotSupportedException e) {
-//			return null;
-//		}
+		// AbstractLogicalOperator clone;
+		// try {
+		// clone = (AbstractLogicalOperator) super.clone();
+		// clone.subscribedToSource = new HashMap<Integer,
+		// LogicalSubscription>(this.subscribedToSource);
+		// clone.subscriptions = new
+		// Vector<LogicalSubscription>(this.subscriptions);
+		// clone.physSubscriptionTo = new HashMap<Integer,
+		// Subscription<ISource<?>>>(
+		// this.physSubscriptionTo);
+		// clone.name = this.name;
+		// if (this.predicate != null)
+		// clone.predicate = this.predicate.clone();
+		//
+		// // TODO ueberall kopien von anlegen
+		// return clone;
+		// } catch (CloneNotSupportedException e) {
+		// return null;
+		// }
 	}
 
 	@Override
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced) {
-		if (predicate != null){
+	public void updateAfterClone(
+			Map<ILogicalOperator, ILogicalOperator> replaced) {
+		if (predicate != null) {
 			predicate.updateAfterClone(replaced);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,8 +130,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public SDFAttributeList getInputSchema(int pos) {
 		LogicalSubscription s = subscribedToSource.get(pos);
 		SDFAttributeList ret = null;
-		if (s!=null){
-			ret =  s.getSchema();
+		if (s != null) {
+			ret = s.getSchema();
 			if (ret == null) {
 				ILogicalOperator op = s.getTarget();
 				if (op != null) {
@@ -141,10 +150,10 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * (int,
 	 * de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
 	 */
-//	public void setInputSchema(int pos, SDFAttributeList schema) {
-//		subscribedTo.get(pos).setInputSchema(schema);
-//		recalcOutputSchemata = true;
-//	}
+	// public void setInputSchema(int pos, SDFAttributeList schema) {
+	// subscribedTo.get(pos).setInputSchema(schema);
+	// recalcOutputSchemata = true;
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -163,14 +172,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	public boolean isAllPhysicalInputSet() {
-		for(Integer i : this.subscribedToSource.keySet()){
-			if (this.physInputOperators.get(i) == null ) {
+		for (Integer i : this.subscribedToSource.keySet()) {
+			if (this.physInputOperators.get(i) == null) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -191,14 +200,17 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
+		this.physInputOperators.put(subscription.getSinkInPort(), subscription
+				.getTarget());
 	}
-	
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFAttributeList schema){
-		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort, sourceOutPort, schema));
+
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort,
+				sourceOutPort, schema));
 	}
-	
-	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo(){
+
+	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo() {
 		return physSubscriptionTo.values();
 	}
 
@@ -206,7 +218,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public Collection<ISource<?>> getPhysInputPOs() {
 		return physInputOperators.values();
 	}
-	
 
 	/*
 	 * (non-Javadoc)
@@ -244,88 +255,118 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return this.owner;
 	}
 
-	//"delegatable this", used for the delegate sink
+	// "delegatable this", used for the delegate sink
 	protected ILogicalOperator getInstance() {
 		return this;
 	}
-	
-	
+
 	@Override
 	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
-			int sourceOutPort, SDFAttributeList inputSchema) {	
-		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort, sourceOutPort, inputSchema);
+			int sourceOutPort, SDFAttributeList inputSchema) {
+		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort,
+				sourceOutPort, inputSchema);
 		synchronized (this.subscribedToSource) {
 			if (!this.subscribedToSource.containsKey(sinkInPort)) {
 				this.subscribedToSource.put(sinkInPort, sub);
-				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort, inputSchema);
+				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
+						inputSchema);
 				recalcOutputSchemata = true;
 			}
 		}
-		
+
 	}
-	
+
 	@Override
-	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
 		if (this.subscribedToSource.remove(sinkInPort) != null) {
 			recalcOutputSchemata = true;
 			source.unsubscribeSink(this, sinkInPort, sourceOutPort, schema);
 		}
 	}
-	
+
+	@Override
+	public void unsubscribeFromAllSources() {
+		synchronized (this.subscribedToSource) {
+			Iterator<Entry<Integer, LogicalSubscription>> it = this.subscribedToSource
+					.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<Integer, LogicalSubscription> next = it.next();
+				it.remove();
+				LogicalSubscription subscription = next.getValue();
+				subscription.getTarget().unsubscribeSink(this,
+						subscription.getsinkInPort(),
+						subscription.getsourceOutPort(),
+						subscription.getSchema());
+			}
+			recalcOutputSchemata = true;
+		}
+	}
+
 	@Override
 	public void unsubscribeFromSource(LogicalSubscription subscription) {
-		unsubscribeFromSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+		unsubscribeFromSource(subscription.getTarget(), subscription
+				.getSinkInPort(), subscription.getSourceOutPort(), subscription
+				.getSchema());
 	}
-		
+
 	@Override
 	final public Collection<LogicalSubscription> getSubscribedToSource() {
 		return this.subscribedToSource.values();
 	}
-	
+
 	@Override
 	public LogicalSubscription getSubscribedToSource(int i) {
 		return this.subscribedToSource.get(i);
 	}
-	
+
 	@Override
-	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a) {
+	public Collection<LogicalSubscription> getSubscribedToSource(
+			ILogicalOperator a) {
 		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
-		for(LogicalSubscription l:subscribedToSource.values()){
-			if (l.getTarget() == a){
+		for (LogicalSubscription l : subscribedToSource.values()) {
+			if (l.getTarget() == a) {
 				subs.add(l);
 			}
 		}
 		return subs;
 	}
-	
+
 	@Override
-	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList inputSchema) {
-		LogicalSubscription sub = new LogicalSubscription(
-				sink, sinkInPort, sourceOutPort, inputSchema);
-				if (!this.subscriptions.contains(sub)){
-					this.subscriptions.add(sub);
-					sink.subscribeToSource(this, sinkInPort, sourceOutPort, inputSchema);
-					recalcOutputSchemata = true;
-				}
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList inputSchema) {
+		LogicalSubscription sub = new LogicalSubscription(sink, sinkInPort,
+				sourceOutPort, inputSchema);
+		if (!this.subscriptions.contains(sub)) {
+			this.subscriptions.add(sub);
+			sink
+					.subscribeToSource(this, sinkInPort, sourceOutPort,
+							inputSchema);
+			recalcOutputSchemata = true;
+		}
 	}
-	
-	
+
 	@Override
-	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
-		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
+	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		unsubscribeSink(new LogicalSubscription(sink, sinkInPort,
+				sourceOutPort, schema));
 	}
-	
+
 	@Override
 	public void unsubscribeSink(LogicalSubscription subscription) {
 		if (this.subscriptions.remove(subscription)) {
-			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+			subscription.getTarget().unsubscribeFromSource(this,
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(), subscription.getSchema());
 			recalcOutputSchemata = true;
 		}
 	}
 
 	@Override
 	final public Collection<LogicalSubscription> getSubscriptions() {
-		//TODO: Unterscheiden, ob mit der Liste Änderungen durchgeführt werden sollen, oder ob nur
+		// TODO: Unterscheiden, ob mit der Liste Änderungen durchgeführt werden
+		// sollen, oder ob nur
 		// gelesen werden soll.
 		return new Vector<LogicalSubscription>(this.subscriptions);
 	}
@@ -333,25 +374,25 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a) {
 		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
-		synchronized(subscriptions){
-			for(LogicalSubscription l:subscriptions){
-				if (l.getTarget() == a){
-					subs.add(l);	
+		synchronized (subscriptions) {
+			for (LogicalSubscription l : subscriptions) {
+				if (l.getTarget() == a) {
+					subs.add(l);
 				}
 			}
 		}
 		return subs;
 	}
-	
+
 	@Override
 	public int getNumberOfInputs() {
 		return this.subscribedToSource.size();
 	}
-	
+
 	@Override
 	public void clearPhysicalSubscriptions() {
 		this.physInputOperators.clear();
 		this.physSubscriptionTo.clear();
 	}
-		
+
 }

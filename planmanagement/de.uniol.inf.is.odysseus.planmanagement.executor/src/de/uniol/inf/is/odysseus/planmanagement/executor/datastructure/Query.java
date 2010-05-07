@@ -348,6 +348,12 @@ public class Query implements IEditableQuery {
 	public void removeOwnerschip() {
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 			physicalOperator.removeOwner(this);
+			if (!physicalOperator.hasOwner()) {
+				if (physicalOperator.isSink()) {
+					ISink<?> sink = (ISink<?>) physicalOperator;
+					sink.unsubscribeFromAllSources();
+				}
+			}
 		}
 	}
 

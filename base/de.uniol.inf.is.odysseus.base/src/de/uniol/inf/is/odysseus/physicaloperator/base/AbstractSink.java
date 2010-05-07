@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -180,6 +181,23 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return Collections.unmodifiableList(this.subscribedTo);
 	}
 
+	@Override
+	public void unsubscribeFromAllSources() {
+		synchronized (this.subscribedTo) {
+			Iterator<PhysicalSubscription<ISource<? extends T>>> it = this.subscribedTo
+					.iterator();
+			while (it.hasNext()) {
+				PhysicalSubscription<ISource<? extends T>> subscription = it
+						.next();
+				it.remove();
+				subscription.getTarget().unsubscribeSink(this,
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
+						subscription.getSchema());
+			}
+		}
+	}
+
 	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(
 			int port) {
 		return this.subscribedTo.get(port);
@@ -224,17 +242,18 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends T>> subscription) {
-		System.out.println("AbstractSink:unsubscribeFromSource ("+this+")"+subscription+" from "+subscribedTo);
+//		System.out.println("AbstractSink:unsubscribeFromSource (" + this + ")"
+//				+ subscription + " from " + subscribedTo);
 		if (this.subscribedTo.remove(subscription)) {
-//			if (this instanceof DelegateSink){ // DAS IST HÄSSLICH
-//				subscription.getTarget().unsubscribeSink(this.getInstance(),
-//						subscription.getSinkInPort(), subscription.getSourceOutPort(),
-//						subscription.getSchema());				
-//			}else{
-				subscription.getTarget().unsubscribeSink(this,
-						subscription.getSinkInPort(), subscription.getSourceOutPort(),
-						subscription.getSchema());
-//			}
+			// if (this instanceof DelegateSink){ // DAS IST HÄSSLICH
+			// subscription.getTarget().unsubscribeSink(this.getInstance(),
+			// subscription.getSinkInPort(), subscription.getSourceOutPort(),
+			// subscription.getSchema());
+			// }else{
+			subscription.getTarget().unsubscribeSink(this,
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(), subscription.getSchema());
+			// }
 		}
 
 	}
@@ -259,7 +278,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	final protected void fire(POEvent event) {
-		ArrayList<POEventListener> list = this.eventListener.get(event.getPOEventType());
+		ArrayList<POEventListener> list = this.eventListener.get(event
+				.getPOEventType());
 		if (list != null) {
 			synchronized (list) {
 				for (POEventListener listener : list) {
