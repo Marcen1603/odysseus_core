@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 
+import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,11 +8,9 @@ import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.IAtomicDataHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.IntegerHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.LongHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.base.access.StringHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.AbstractAtomicByteDataHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleByteHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.StringByteHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -23,10 +22,10 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	
 	final private String hostName;
 	final private int port;
-	private ObjectInputStream channel;
+	private BufferedInputStream channel;
 	private boolean isOpen;
 	private RelationalTuple<M> buffer;
-	private IAtomicDataHandler[] dataReader;
+	private AbstractAtomicByteDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
 	private SDFAttributeList outputSchema;
@@ -52,22 +51,22 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	}
 	
 	private void createDataReader(SDFAttributeList schema) {
-		this.dataReader = new IAtomicDataHandler[schema.size()];
+		this.dataReader = new AbstractAtomicByteDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			if (uri.equals("Integer")) {
+			/*if (uri.equals("Integer")) {
 				this.dataReader[i++] = new IntegerHandler();
 			} else if (uri.equals("Long")) {
 				this.dataReader[i++] = new LongHandler();
-			}
+			}*/
 			// double values and measurement values can
 			// be read the same way since measurement values
 			// are also double values.
-			else if (uri.equals("Double") || uri.equals("MV")) {
-				this.dataReader[i++] = new DoubleHandler();
+			if (uri.equals("Double") || uri.equals("MV")) {
+				this.dataReader[i++] = new DoubleByteHandler();
 			} else if (uri.equals("String")) {
-				this.dataReader[i++] = new StringHandler();
+				this.dataReader[i++] = new StringByteHandler();
 			} else {
 				throw new RuntimeException("illegal datatype");
 			}
@@ -88,11 +87,11 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			}
 			try {
 				Socket socket = new Socket(this.hostName, this.port);
-				this.channel = new ObjectInputStream(socket.getInputStream());
+				this.channel = new BufferedInputStream(socket.getInputStream());
 			} catch (IOException e) {
 				throw new OpenFailedException(e.getMessage());
 			}
-			for (IAtomicDataHandler reader : this.dataReader) {
+			for (AbstractAtomicByteDataHandler reader : this.dataReader) {
 				reader.setStream(this.channel);
 			}
 			this.isOpen = true;
@@ -112,7 +111,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 				while (true) {
 					try {
 						s = new Socket(this.hostName, this.port);
-						this.channel = new ObjectInputStream(s.getInputStream());
+						this.channel = new BufferedInputStream(s.getInputStream());
 					} catch (Exception e) {
 						// throw new OpenFailedException(e.getMessage());
 						System.err.println("Konnte Quelle nicht öffnen");
