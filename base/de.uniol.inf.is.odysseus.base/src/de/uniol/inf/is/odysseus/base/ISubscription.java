@@ -18,4 +18,8 @@ public interface ISubscription<K> {
 	public int getsourceOutPort();
 	public int getSourceOutPort();
 	public SDFAttributeList getSchema();
+	
+	public boolean isEnabled();
+	public void enable();
+	public void disable();
 }
