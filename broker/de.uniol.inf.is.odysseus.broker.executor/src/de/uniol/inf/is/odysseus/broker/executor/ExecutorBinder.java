@@ -213,7 +213,7 @@ public class ExecutorBinder implements CommandProvider{
 	@Override
 	public String getHelp() {		
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("---Odysseus Broker Commands---");
+		buffer.append("\n---Odysseus Broker Commands---\n");
 		buffer.append("\tbrokerContent [name] - returns the current content of each broker or only of the broker with the given name\n");
 		buffer.append("\tbrokerDebug [on|off] [name] - switch one broker or all brokers into debug mode if they are not in or vice versa.\n");		
 		buffer.append("\tbrokerPlan [name] - returns the current physical plan of each broker or only of the broker with the given name\n");

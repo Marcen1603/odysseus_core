@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
@@ -1568,10 +1567,9 @@ public class ExecutorConsole implements CommandProvider,
 
 	@Override
 	public String getHelp() {
-		String info = AppEnv.LINE_SEPARATOR
-				+ "----------------------------------";
-		info += "Executor Console";
-		info += "man - show all executor commands";
+		
+		String info = "\n---Odysseus Executor Console---\n";					
+		info += "\tman - show all executor commands\n";
 		return info;
 	}
 
