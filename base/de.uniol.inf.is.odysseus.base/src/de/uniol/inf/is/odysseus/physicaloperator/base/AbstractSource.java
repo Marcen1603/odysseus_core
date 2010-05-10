@@ -72,6 +72,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	public void close() {
+		try {
+			this.process_close();
+		} catch (CloseFailedException e) {
+			//TODO @MG: close failed macht wenig sinn oder? man kann nicht reagieren
+			e.printStackTrace();
+		}
 		open.set(false);
 	};
 
