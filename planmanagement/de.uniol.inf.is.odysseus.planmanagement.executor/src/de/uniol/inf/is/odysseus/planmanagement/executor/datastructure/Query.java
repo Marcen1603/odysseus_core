@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.AbstractQueryReoptimiz
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -349,12 +350,14 @@ public class Query implements IEditableQuery {
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 			physicalOperator.removeOwner(this);
 			if (!physicalOperator.hasOwner()) {
+				physicalOperator.close();
 				if (physicalOperator.isSink()) {
 					ISink<?> sink = (ISink<?>) physicalOperator;
 					sink.unsubscribeFromAllSources();
 				}
 			}
 		}
+		WrapperPlanFactory.removeClosedSources();
 	}
 
 	/*

@@ -5,7 +5,9 @@
 package de.uniol.inf.is.odysseus.base.wrapper;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -43,6 +45,16 @@ public class WrapperPlanFactory {
 
 	public synchronized static void clearSources() {
 		sources.clear();
+	}
+
+	public static void removeClosedSources() {
+		Iterator<Entry<String, ISource<?>>> it = sources.entrySet().iterator();
+		while(it.hasNext()) {
+			Entry<String, ISource<?>> curEntry = it.next();
+			if (!curEntry.getValue().hasOwner()) {
+				it.remove();
+			}
+		}
 	}
 
 }
