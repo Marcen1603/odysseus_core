@@ -29,15 +29,21 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
- * The BrokerVisitor provides the implementation of the broker related parts from the translation.
- * This encapsulate the general translation from the broker specific translation to avoid dependencies.
+ * The BrokerVisitor provides the implementation of the broker related parts
+ * from the translation. This encapsulate the general translation from the
+ * broker specific translation to avoid dependencies.
  * 
  * @author Dennis Geesen
  */
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.parser.cql.parser.transformation.
+	 * AbstractDefaultVisitor
+	 * #visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource,
+	 * java.lang.Object)
 	 */
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) {
@@ -47,32 +53,43 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		} else if (node.jjtGetChild(0) instanceof ASTBrokerAsSource) {
 			readFromBroker = (BrokerAO) visit((ASTBrokerAsSource) node.jjtGetChild(0), data);
 		}
-		if (node.jjtGetChild(1) != null) {
-			if (node.jjtGetChild(1) instanceof ASTBrokerQueue) {
-				ASTComplexSelectStatement statement = (ASTComplexSelectStatement) node.jjtGetChild(1).jjtGetChild(0); 
-				CQLParser parser = new CQLParser();
-				AbstractLogicalOperator topOfQueue = (AbstractLogicalOperator) parser.visit(statement, null);
-				if(readFromBroker!=null){			
-					// queue - writing is always on port 1
-					readFromBroker.subscribeToSource(topOfQueue, 1, 0, topOfQueue.getOutputSchema());
+		if (node.jjtGetNumChildren() > 1) {
+			if (node.jjtGetChild(1) != null) {
+				if (node.jjtGetChild(1) instanceof ASTBrokerQueue) {
+					ASTComplexSelectStatement statement = (ASTComplexSelectStatement) node.jjtGetChild(1).jjtGetChild(0);
+					CQLParser parser = new CQLParser();
+					AbstractLogicalOperator topOfQueue = (AbstractLogicalOperator) parser.visit(statement, null);
+					if (readFromBroker != null) {
+						// queue - writing is always on port 1
+						readFromBroker.subscribeToSource(topOfQueue, 1, 0, topOfQueue.getOutputSchema());
+					}
 				}
 			}
 		}
-		
 		return readFromBroker;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSimpleSource, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.parser.cql.parser.transformation.
+	 * AbstractDefaultVisitor
+	 * #visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSimpleSource,
+	 * java.lang.Object)
 	 */
 	@Override
 	public Object visit(ASTBrokerSimpleSource node, Object data) {
 		return getSimpleSource(node, data);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerAsSource, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.parser.cql.parser.transformation.
+	 * AbstractDefaultVisitor
+	 * #visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerAsSource,
+	 * java.lang.Object)
 	 */
 	@Override
 	public Object visit(ASTBrokerAsSource node, Object data) {
@@ -90,7 +107,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			BrokerDictionary.getInstance().addBroker(name, broker.getOutputSchema(), broker.getQueueSchema());
 		}
 
-		// connect the source to broker				
+		// connect the source to broker
 		broker.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		// make it accessible like a normal source
 		DataDictionary.getInstance().sourceTypeMap.put(name, "brokerStreaming");
@@ -101,8 +118,13 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.parser.cql.parser.transformation.
+	 * AbstractDefaultVisitor
+	 * #visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource,
+	 * java.lang.Object)
 	 */
 	public Object visit(ASTSimpleSource node, Object data) {
 		return getSimpleSource(node, data);
@@ -111,9 +133,11 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	/**
 	 * Gets a Broker as a simple source.
-	 *
-	 * @param node the node
-	 * @param data the data
+	 * 
+	 * @param node
+	 *            the node
+	 * @param data
+	 *            the data
 	 * @return the simple source
 	 */
 	private Object getSimpleSource(Node node, Object data) {
@@ -126,8 +150,13 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.parser.cql.parser.transformation.
+	 * AbstractDefaultVisitor
+	 * #visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSelectInto,
+	 * java.lang.Object)
 	 */
 	public Object visit(ASTBrokerSelectInto node, Object data) {
 		ASTSelectStatement statement = new ASTSelectStatement(0);
@@ -141,7 +170,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 		// add rest from select except of the last one if it's a complex
 		// statement
-		int numChilds = node.jjtGetNumChildren();	
+		int numChilds = node.jjtGetNumChildren();
 		for (int i = 2; i < numChilds; i++) {
 			statement.jjtAddChild(node.jjtGetChild(i), number);
 			number++;
@@ -164,14 +193,19 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			message = message + "Schema of Broker: " + broker.getOutputSchema().toString();
 			throw new RuntimeException("Statement and broker do not have the same schema.\n" + message);
 		}
-		// connect the nested statement into the broker		
+		// connect the nested statement into the broker
 		broker.subscribeToSource(topOfSelectStatementOperator, 0, 0, topOfSelectStatementOperator.getOutputSchema());
 		return broker;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.parser.cql.parser.transformation.
+	 * AbstractDefaultVisitor
+	 * #visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker,
+	 * java.lang.Object)
 	 */
 	public Object visit(ASTCreateBroker node, Object data) {
 		String brokerName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
@@ -198,20 +232,22 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 		// parse meta attributes
 		SDFAttributeList metaAttributes = new SDFAttributeList();
-		if (node.jjtGetChild(2) != null) {
+		if (node.jjtGetNumChildren() > 2) {
+			if (node.jjtGetChild(2) != null) {
 
-			ASTAttributeDefinitions metaAttributeDe = (ASTAttributeDefinitions) node.jjtGetChild(2);
-			for (int i = 0; i < metaAttributeDe.jjtGetNumChildren(); i++) {
-				ASTAttributeDefinition attrNode = (ASTAttributeDefinition) metaAttributeDe.jjtGetChild(i);
-				String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
-				SDFAttribute attribute = new SDFAttribute(brokerName, attrName);
-				ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
-				attribute.setDatatype(astAttrType.getType());
-				if (SDFDatatypes.isDate(attribute.getDatatype())) {
-					attribute.addDtConstraint("format", astAttrType.getDateFormat());
+				ASTAttributeDefinitions metaAttributeDe = (ASTAttributeDefinitions) node.jjtGetChild(2);
+				for (int i = 0; i < metaAttributeDe.jjtGetNumChildren(); i++) {
+					ASTAttributeDefinition attrNode = (ASTAttributeDefinition) metaAttributeDe.jjtGetChild(i);
+					String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
+					SDFAttribute attribute = new SDFAttribute(brokerName, attrName);
+					ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
+					attribute.setDatatype(astAttrType.getType());
+					if (SDFDatatypes.isDate(attribute.getDatatype())) {
+						attribute.addDtConstraint("format", astAttrType.getDateFormat());
+					}
+					attribute.setCovariance(astAttrType.getRow());
+					metaAttributes.add(attribute);
 				}
-				attribute.setCovariance(astAttrType.getRow());
-				metaAttributes.add(attribute);
 			}
 		}
 
@@ -232,24 +268,25 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema(), broker.getQueueSchema());
 		return broker;
 	}
-	
-	
+
 	@Override
 	public Object visit(ASTMetric node, Object data) {
-		String attribute = ((ASTIdentifier) node.jjtGetChild(0)).getName();	
-		AbstractLogicalOperator topOp = (AbstractLogicalOperator)data;
+		String attribute = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		AbstractLogicalOperator topOp = (AbstractLogicalOperator) data;
 		MetricMeasureAO metricOp = new MetricMeasureAO(attribute);
 		metricOp.setOutputSchema(topOp.getOutputSchema());
-		topOp.subscribeSink(metricOp, 0, 0, topOp.getOutputSchema());		
+		topOp.subscribeSink(metricOp, 0, 0, topOp.getOutputSchema());
 		return metricOp;
 	}
 
 	/**
-	 * Checks whether two schema are equal.
-	 * This is only based on the attribute names and not on the assigned source names as well.
-	 *
-	 * @param left the left
-	 * @param right the right
+	 * Checks whether two schema are equal. This is only based on the attribute
+	 * names and not on the assigned source names as well.
+	 * 
+	 * @param left
+	 *            the left
+	 * @param right
+	 *            the right
 	 * @return true, if successful
 	 */
 	private boolean schemaEquals(SDFAttributeList left, SDFAttributeList right) {
@@ -263,5 +300,5 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			}
 			return true;
 		}
-	}				
+	}
 }

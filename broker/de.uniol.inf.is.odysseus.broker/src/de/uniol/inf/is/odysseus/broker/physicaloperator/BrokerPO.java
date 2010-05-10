@@ -449,6 +449,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 */
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
+		printDebug("Process punctuation: "+timestamp+" on port "+port);
 		setMinTS(port, timestamp);
 	}
 

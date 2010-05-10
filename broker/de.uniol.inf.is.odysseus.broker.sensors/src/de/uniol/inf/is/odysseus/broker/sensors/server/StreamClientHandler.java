@@ -34,7 +34,7 @@ public class StreamClientHandler extends Thread {
 	private IStreamType streamType;
 	
 	/** The count of items which has been sent. */
-	private int itemCount = 0;
+	private int itemCount = 0;	
 
 	/**
 	 * Instantiates a new stream client handler.
@@ -43,7 +43,7 @@ public class StreamClientHandler extends Thread {
 	 * @param type the type
 	 */
 	public StreamClientHandler(SocketChannel channel, StreamType type) {
-		this.channel = channel;
+		this.channel = channel;		
 		this.streamType = StreamTypeFactory.createNewRun(type);
 		this.relationalTupleHandler = new RelationalTupleObjectHandler<ITimeInterval>(this.streamType.getSchema());		
 	}
@@ -108,7 +108,7 @@ public class StreamClientHandler extends Thread {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void transferTuple(long currentTime) throws IOException{
-		RelationalTuple<ITimeInterval> tuple = this.streamType.getNextTuple(currentTime);
+		RelationalTuple<ITimeInterval> tuple = this.streamType.getNextTuple(currentTime);		
 		this.relationalTupleHandler.put(tuple);
 		ByteBuffer buffer = this.relationalTupleHandler.getByteBuffer();		
 		synchronized (gbuffer) {		

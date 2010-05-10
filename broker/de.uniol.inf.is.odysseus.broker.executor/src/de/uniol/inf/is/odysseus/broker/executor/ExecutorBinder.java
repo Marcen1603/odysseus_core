@@ -33,24 +33,6 @@ public class ExecutorBinder implements CommandProvider{
 	/** The logger. */
 	private Logger logger = LoggerFactory.getLogger("Broker Executor");
 	
-	
-	
-	public void _cycleTest(CommandInterpreter ci){
-		ci.execute("useBrokerConfig on");
-		ci.execute("CREATE STREAM video(timestamp LONG, id INTEGER, interval INTEGER, type STRING, posx DOUBLE, posy DOUBLE) CHANNEL localhost : 65058;");
-		ci.execute("CREATE BROKER zyklus(timestamp LONG, id INTEGER, interval INTEGER, type STRING, posx DOUBLE, posy DOUBLE) QUEUE (timestamp LONG)");
-		ci.execute("SELECT * INTO zyklus FROM video[SIZE 2 ADVANCE 1 ON interval] WHERE interval=0;");		
-		int anzahl = Integer.parseInt(getArgs(ci).get(0));
-		for(int number = 1;number<=anzahl;number++){		
-			String stream = "CREATE STREAM stream"+number+"(timestamp LONG, id INTEGER, interval INTEGER, type STRING, posx DOUBLE, posy DOUBLE) CHANNEL localhost : 65056;";		
-			String anfrage  = "SELECT stream"+number+".timestamp, stream"+number+".id, stream"+number+".interval, stream"+number+".type, stream"+number+".posx, stream"+number+".posy INTO zyklus FROM BROKER zyklus QUEUE BY (SELECT interval FROM stream"+number+" [SIZE 2 ADVANCE 1 ON interval] WHERE interval>0), stream"+number+" [SIZE 2 ADVANCE 1 ON interval] WHERE zyklus.id=stream"+number+".id AND stream"+number+".interval>0";
-			ci.execute(stream);
-			ci.execute(anfrage);
-		}
-		ci.execute("SELECT * FROM zyklus METRIC ON timestamp");
-		ci.execute("schedule");
-	}
-	
 	/**
 	 * Switching one or all brokers into debug mode
 	 * 
@@ -191,7 +173,7 @@ public class ExecutorBinder implements CommandProvider{
 			String zeile = null;
 			while ((zeile = in.readLine()) != null) {
 				zeile = zeile.trim();
-				if(!zeile.isEmpty()){
+				if(!zeile.isEmpty() && (!zeile.startsWith("//"))){
 					logger.debug("Running command: " + zeile);
 					ci.execute(zeile);					
 				}

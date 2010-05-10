@@ -54,7 +54,7 @@ public class StreamServer extends Thread {
 			while (true) {
 				SocketChannel clientChannel = serverChannel.accept();
 				System.out.println("Connection from " + clientChannel.socket().getInetAddress());
-				StreamClientHandler handler = new StreamClientHandler(clientChannel, type);
+				StreamClientHandler handler = new StreamClientHandler(clientChannel, type);				
 				handler.start();
 			}
 		} catch (Exception e) {
