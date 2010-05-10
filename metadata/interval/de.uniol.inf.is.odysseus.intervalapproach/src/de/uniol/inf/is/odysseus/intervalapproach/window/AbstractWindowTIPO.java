@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.base.IWindow;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -52,5 +53,10 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 		default:
 			return Type.OTHER;
 		}
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {	
+		sendPunctuation(timestamp);
 	}
 }

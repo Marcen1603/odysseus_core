@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
@@ -42,6 +43,11 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 	@Override
 	public MetadataCreationPO<M, In> clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {	
+		sendPunctuation(timestamp);
 	}
 
 }

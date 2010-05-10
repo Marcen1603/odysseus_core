@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 
 /**
@@ -125,5 +126,10 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	public BufferedPipe<T> clone() throws CloneNotSupportedException {
 		return new BufferedPipe<T>(this);
 	}		
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {	
+		sendPunctuation(timestamp);
+	}
 	
 }

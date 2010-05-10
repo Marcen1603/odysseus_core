@@ -263,10 +263,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// bei verwendung der delegateSink wird es nicht immer verberbt - daher
-		// direkt, da es das selbe ist
-		// this.delegateSink.processPunctuation(timestamp, port);
-		this.sendPunctuation(timestamp);
+		this.delegateSink.processPunctuation(timestamp, port);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -62,6 +63,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	@Override
 	public RelationalMapPO<T> clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {	
+		sendPunctuation(timestamp);
 	}
 
 }

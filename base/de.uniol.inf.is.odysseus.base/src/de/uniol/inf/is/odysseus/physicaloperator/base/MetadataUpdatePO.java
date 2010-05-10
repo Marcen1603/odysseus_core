@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 
@@ -34,5 +35,10 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 	
 	public String toString(){
 		return super.toString() + " updateFac: " + this.metadataFactory.getClass();
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {	
+		sendPunctuation(timestamp);
 	}
 }
