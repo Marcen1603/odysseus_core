@@ -84,7 +84,12 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 					
 					if(merged.getMetadata().getStart().after(t_tilde)){
 						@SuppressWarnings("unchecked")
-						T leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
+						T leftUnbound = null;
+						try {
+							leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
+						} catch (CloneNotSupportedException e) {
+							throw new RuntimeException("Clone not Supported!");
+						}
 						
 						leftUnbound.getMetadata().setStart(t_tilde);
 						leftUnbound.getMetadata().setEnd(merged.getMetadata().getStart());
@@ -98,7 +103,12 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 				PointInTime ts_max_right = this.areas[otherport].getMaxTs();
 				if(ts_max_right != null && ts_max_right.after(t_tilde)){
 					@SuppressWarnings("unchecked")
-					T leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
+					T leftUnbound = null;
+					try {
+						leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
+					} catch (CloneNotSupportedException e) {
+						throw new RuntimeException("Clone not Supported!");
+					}
 					leftUnbound.getMetadata().setStart(t_tilde);
 					PointInTime t_end = PointInTime.min(ts_max_right, object.getMetadata().getEnd());
 					leftUnbound.getMetadata().setEnd(t_end);
@@ -127,7 +137,12 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			PointInTime invalid_t_tilde = this.left_t_tilde.get(invalid);
 			if(invalid_t_tilde.before(invalid.getMetadata().getEnd())){
 				@SuppressWarnings("unchecked")
-				T leftUnbound = this.dataMerge.createLeftFilledUp((T)invalid.clone());
+				T leftUnbound = null;
+				try {
+					leftUnbound = this.dataMerge.createLeftFilledUp((T)invalid.clone());
+				} catch (CloneNotSupportedException e) {
+					throw new RuntimeException("Clone not Supported!");
+				}
 				leftUnbound.getMetadata().setStart(invalid_t_tilde);
 				transferFunction.transfer(leftUnbound);
 			}
@@ -140,7 +155,12 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			T merged = this.merge(e_hat, object, leftRight);
 			if(merged.getMetadata().getStart().after(e_hat_t_tilde)){
 				@SuppressWarnings("unchecked")
-				T leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat.clone());
+				T leftUnbound = null;
+				try {
+					leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat.clone());
+				} catch (CloneNotSupportedException e) {
+					throw new RuntimeException("Clone not Supported!");
+				}
 				leftUnbound.getMetadata().setStart(e_hat_t_tilde);
 				leftUnbound.getMetadata().setEnd(merged.getMetadata().getStart());
 				this.transferFunction.transfer(leftUnbound);

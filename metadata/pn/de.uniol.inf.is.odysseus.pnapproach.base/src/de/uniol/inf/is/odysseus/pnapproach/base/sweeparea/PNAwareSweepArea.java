@@ -20,7 +20,7 @@ public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNe
 	
 	public PNAwareSweepArea(){};
 	
-	public PNAwareSweepArea(PNAwareSweepArea<T> pnAwareSweepArea) {
+	public PNAwareSweepArea(PNAwareSweepArea<T> pnAwareSweepArea) throws CloneNotSupportedException {
 		super(pnAwareSweepArea);
 	}
 
@@ -46,7 +46,7 @@ public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNe
 		return count;
 	}
 	
-	public PNAwareSweepArea<T> clone(){
+	public PNAwareSweepArea<T> clone() throws CloneNotSupportedException{
 		return new PNAwareSweepArea<T>(this);
 	}
 }

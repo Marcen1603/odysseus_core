@@ -33,7 +33,13 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 		
 		item = this.metaDataItem.get(type);
 		if (item != null && item instanceof IPeriodicalMonitoringData){
-			IPeriodicalMonitoringData<T> pitem = (IPeriodicalMonitoringData<T>) item.clone();
+			IPeriodicalMonitoringData<T> pitem = null;
+			try {
+				pitem = (IPeriodicalMonitoringData<T>) item.clone();
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			pitem.reset();
 			this.metaDataItem.put(key, pitem);
 							

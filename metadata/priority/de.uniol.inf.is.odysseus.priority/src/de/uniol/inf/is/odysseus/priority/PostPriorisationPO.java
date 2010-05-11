@@ -124,7 +124,11 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	@Override
 	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
 		setActive(true);
-		functionality.getPriorisationIntervals().add(time.clone());
+		try {
+			functionality.getPriorisationIntervals().add(time.clone());
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("No clone method");
+		}
 	}
 	
 	@Override

@@ -13,6 +13,6 @@ public interface ITimeInterval extends IMetaAttribute, Comparable<ITimeInterval>
 	public void setStart(PointInTime point);
 	public void setEnd(PointInTime point);
 	public boolean isValid();
-	public ITimeInterval clone();
+	public ITimeInterval clone() throws CloneNotSupportedException;
 	public String toString(PointInTime baseTime);
 }

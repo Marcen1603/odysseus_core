@@ -60,7 +60,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		this.predFct = new LinearProbabilityPredictionFunction();
 	}
 	
-	public IntervalProbabilityLatencyPrediction(IntervalProbabilityLatencyPrediction copy){
+	public IntervalProbabilityLatencyPrediction(IntervalProbabilityLatencyPrediction copy) throws CloneNotSupportedException{
 		super(copy);
 		this.prob = (IProbability)copy.prob.clone();
 		this.latency = (ILatency)copy.latency.clone();
@@ -79,7 +79,11 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		// if there is no prediction function, return
 		// return the original schema
 		if(this.predFct == null){
-			return (T)object.clone();
+			try {
+				return (T)object.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("Clone not Supported!");
+			}
 		}
 		
 		return this.predFct.predictData(schema, object, t);
@@ -89,7 +93,11 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		// if there is no prediction function,
 		// return the original metadata
 		if(this.predFct == null){
-			return (M)object.getMetadata().clone();
+			try {
+				return (M)object.getMetadata().clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("Clone not Supported!");
+			}
 		}
 		
 		return this.predFct.predictMetadata(schema, object, t);
@@ -175,7 +183,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	}
 	
 	@Override
-	public IntervalProbabilityLatencyPrediction clone(){
+	public IntervalProbabilityLatencyPrediction clone() throws CloneNotSupportedException{
 		return new IntervalProbabilityLatencyPrediction(this);
 	}
 

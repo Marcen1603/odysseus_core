@@ -31,7 +31,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		super.setRemovePredicate(TotallyBeforePredicate.getInstance());
 	}
 	
-	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea){
+	public DefaultTISweepArea(DefaultTISweepArea<T> defaultTISweepArea) throws CloneNotSupportedException{
 		super(defaultTISweepArea);
 	}
 

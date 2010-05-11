@@ -25,16 +25,20 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	public AbstractPredicate(AbstractPredicate<T> pred) {
 	}
 	
-	@Override
-	//@SuppressWarnings("unchecked")
-	public AbstractPredicate<T> clone(){
-		// TODO Auskommentierung wieder entfernt, damit getestet werden kann
-		try{
-			return (AbstractPredicate<T>)super.clone();
-		}catch(CloneNotSupportedException e){
-			throw new RuntimeException("Clone not supported");
-		}
-	}
+		
+//	@Override
+//	//@SuppressWarnings("unchecked")
+//	public AbstractPredicate<T> clone(){
+//		// TODO Auskommentierung wieder entfernt, damit getestet werden kann
+//		try{
+//			return (AbstractPredicate<T>)super.clone();
+//		}catch(CloneNotSupportedException e){
+//			throw new RuntimeException("Clone not supported");
+//		}
+//	}
+//	
+	
+	abstract public AbstractPredicate<T> clone() throws CloneNotSupportedException;
 	
 	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
 }

@@ -60,7 +60,12 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		Iterator<T> negs = this.sa.extractElements(object, Order.LeftRight);
 		while(negs.hasNext()){
 			@SuppressWarnings("unchecked")
-			T neg = (T)negs.next().clone();
+			T neg;
+			try {
+				neg = (T)negs.next().clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("No clone method");
+			}
 			T modifiedElem = this.dFac.createData(neg);
 			neg.getMetadata().setTimestamp(this.calcWindowEnd(neg.getMetadata().getTimestamp()));
 			neg.getMetadata().setElementType(ElementType.NEGATIVE);
@@ -96,7 +101,12 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		Iterator<T> negs = this.sa.iterator();
 		while(negs.hasNext()){
 			@SuppressWarnings("unchecked")
-			T neg = (T)negs.next().clone();
+			T neg;
+			try {
+				neg = (T)negs.next().clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("No clone method");
+			}
 			T modifiedElem = this.dFac.createData(neg);
 			neg.getMetadata().setTimestamp(this.calcWindowEnd(neg.getMetadata().getTimestamp()));
 			neg.getMetadata().setElementType(ElementType.NEGATIVE);

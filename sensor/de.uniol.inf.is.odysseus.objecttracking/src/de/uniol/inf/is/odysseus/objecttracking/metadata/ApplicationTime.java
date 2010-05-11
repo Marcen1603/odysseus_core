@@ -27,14 +27,14 @@ public class ApplicationTime implements IApplicationTime{
 		}
 	}
 	
-	public ApplicationTime(ApplicationTime original){
+	public ApplicationTime(ApplicationTime original) throws CloneNotSupportedException{
 		this.intervals = new ArrayList<ITimeInterval>();
 		for(ITimeInterval interval : original.intervals){
 			this.intervals.add(interval.clone());
 		}
 	}
 	
-	public ApplicationTime clone(){
+	public ApplicationTime clone()throws CloneNotSupportedException{
 		return new ApplicationTime(this);
 	}
 	

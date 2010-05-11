@@ -126,6 +126,11 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		this.compareOperator = compareOperator;
 	}
 
+	public ProbabilityPredicate(ProbabilityPredicate<T> probabilityPredicate) throws CloneNotSupportedException {
+		// TODO Implement Copy Constructor
+		throw new CloneNotSupportedException();
+	}
+
 	public SDFAttributeList getLeftSchema() {
 		return leftSchema;
 	}
@@ -456,6 +461,12 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
 		this.replacementMap.put(curAttr , newAttr);
 		
+	}
+	
+	@Override
+	public ProbabilityPredicate<T> clone()
+			throws CloneNotSupportedException {
+		return new ProbabilityPredicate<T>(this);
 	}
 
 }

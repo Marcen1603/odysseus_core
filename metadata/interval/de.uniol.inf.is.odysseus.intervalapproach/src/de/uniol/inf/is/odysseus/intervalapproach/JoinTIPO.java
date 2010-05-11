@@ -271,8 +271,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 					if (creationFunction.hasMetadata(element)
 							&& element.getMetadata().getStart().equals(
 									punctuation)) {
-						IMetaAttributeContainer<?> purgeInterval = creationFunction
-								.createMetadata((T) element.clone());
+						IMetaAttributeContainer<?> purgeInterval;
+						try {
+							purgeInterval = creationFunction
+									.createMetadata((T) element.clone());
+						} catch (CloneNotSupportedException e) {
+							throw new RuntimeException("Clone not Supported!");
+						}
 						synchronized (areas[storage.getCurrentPort() ^ 1]) {
 								areas[storage.getCurrentPort() ^ 1].purgeElements(
 									(T) purgeInterval, order);

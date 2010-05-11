@@ -205,7 +205,11 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		// if the expressions are null
 		// return the original object
 		if(this.expressions == null){
-			return object.clone();
+			try {
+				return object.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("No clone method");		
+			}
 		}
 		
 //		this.variables = this.getVariables(schema);
@@ -273,7 +277,12 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 				
 				
 			}			
-			M newMetadata = (M)object.getMetadata().clone();
+			M newMetadata = null;
+			try {
+				newMetadata = (M)object.getMetadata().clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("Clone not Supported!");
+			}
 			
 			MVRelationalTuple<M> outputVal = new MVRelationalTuple<M>(tempValues);
 			outputVal.setMetadata(newMetadata);
@@ -302,7 +311,11 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		// if there has no covariance been specified
 		// in a stream
 		if(this.expressions == null || object.getMetadata().getCovariance() == null){
-			return (M)object.getMetadata().clone();
+			try {
+				return (M)object.getMetadata().clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("Clone not Supported!");
+			}
 		}
 		
 //		this.variables = this.getVariables(schema);
@@ -435,7 +448,12 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		long end = System.currentTimeMillis();
 		durationMData += (end - start);
 		
-		M newMetadata = (M)metadata.clone();
+		M newMetadata = null;
+		try {
+			newMetadata = (M)metadata.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Clone not Supported!");	
+		}
 		newMetadata.setCovariance(tempCov2);
 		
 		return newMetadata;

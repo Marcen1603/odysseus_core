@@ -38,5 +38,5 @@ public interface IPredictionFunction<T extends MetaAttributeContainer<M>, M exte
 	
 	public void initVariables();
 	
-	public IPredictionFunction<T, M> clone();
+	public IPredictionFunction<T, M> clone() throws CloneNotSupportedException;
 }

@@ -48,7 +48,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		// LogicalSubscription>(op.subscribedToSource);
 		// this.subscriptions = new
 		// Vector<LogicalSubscription>(op.subscriptions);
-		predicate = (op.predicate == null) ? null : op.predicate.clone();
+		try {
+			predicate = (op.predicate == null) ? null : op.predicate.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Clone not Supported!");
+		}
 		setName(op.getName());
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new

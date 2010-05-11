@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.objecttracking.util;
 
-import java.util.LinkedList;
-
 import de.uniol.inf.is.odysseus.base.IClone;
 
 public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Comparable<ComparablePair>{
@@ -17,7 +15,7 @@ public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Com
 		this.priority = 0;
 	}
 	
-	private ComparablePair(ComparablePair<T1, T2> original){
+	private ComparablePair(ComparablePair<T1, T2> original) throws CloneNotSupportedException{
 		this.key = (T1)original.key.clone();
 		this.value = (T2)original.value.clone();
 	}
@@ -34,7 +32,7 @@ public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Com
 		return 0;
 	}
 	
-	public ComparablePair<T1, T2> clone(){
+	public ComparablePair<T1, T2> clone() throws CloneNotSupportedException{
 		return new ComparablePair<T1, T2>(this);
 	}
 	

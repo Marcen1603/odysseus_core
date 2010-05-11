@@ -91,7 +91,11 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		
 		for(Entry<IPredicate, IPredictionFunction> entry : predFcts.entrySet()){
 			IPredictionFunction newPredFct = this.getNewPredictionFunction(inputSchema, outAttributes, entry.getValue().getExpressions());			
-			newPredFcts.put(entry.getKey().clone(), newPredFct);
+			try {
+				newPredFcts.put(entry.getKey().clone(), newPredFct);
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("Clone not Supported!");
+			}
 		}
 		
 		newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);

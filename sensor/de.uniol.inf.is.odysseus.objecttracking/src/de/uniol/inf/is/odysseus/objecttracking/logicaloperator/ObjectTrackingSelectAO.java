@@ -100,7 +100,11 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 		super(po);
 		this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
 		for(Entry<IPredicate, IRangePredicate> entry: ((Map<IPredicate, IRangePredicate>)po.rangePredicates).entrySet()){
-			this.rangePredicates.put(entry.getKey().clone(), entry.getValue().clone());
+			try {
+				this.rangePredicates.put(entry.getKey().clone(), entry.getValue().clone());
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("Clone not Supported!");
+			}
 		}
 		this.defaultRangePredicate = po.defaultRangePredicate != null ? po.defaultRangePredicate.clone() : null;
 		this.logger = LoggerFactory.getLogger(this.getClass());

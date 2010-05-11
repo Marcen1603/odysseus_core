@@ -28,7 +28,7 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 		this.predictionFunctions = predictionAO.getPredictionFunctions();
 	}
 	
-	private ObjectTrackingPredictionAssignPO(ObjectTrackingPredictionAssignPO<T, M> predictionPO){
+	private ObjectTrackingPredictionAssignPO(ObjectTrackingPredictionAssignPO<T, M> predictionPO) throws CloneNotSupportedException{
 		super();
 		this.predictionFunctions = new HashMap<IPredicate<? super T>, IPredictionFunction>();
 		for(Entry<IPredicate<? super T>, IPredictionFunction> entry : predictionFunctions.entrySet()){
@@ -37,7 +37,7 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 	}
 	
 	@Override
-	public ObjectTrackingPredictionAssignPO<T, M> clone(){
+	public ObjectTrackingPredictionAssignPO<T, M> clone() throws CloneNotSupportedException{
 		return new ObjectTrackingPredictionAssignPO(this);
 	}
 

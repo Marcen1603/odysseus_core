@@ -42,7 +42,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	// static Hilfsmethoden
 	// -----------------------------------------------------------------
 	@Override
-	public RelationalTuple<T> clone() {
+	public RelationalTuple<T> clone() throws CloneNotSupportedException {
 		RelationalTuple<T> t = new RelationalTuple<T>(this);
 		return t;
 	}
@@ -186,7 +186,11 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		if(createNew){
 			RelationalTuple<T> newTuple = new RelationalTuple<T>(newAttrs.length);
 			newTuple.setAttributes(newAttrs);
-			newTuple.setMetadata((T)this.getMetadata().clone());
+			try {
+				newTuple.setMetadata((T)this.getMetadata().clone());
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("No clone method");
+			}
 			return newTuple;
 		}
 		else{
@@ -369,7 +373,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		this.attributes = new Object[attributeCount];
 	}
 
-	public RelationalTuple(RelationalTuple<T> copy) {
+	public RelationalTuple(RelationalTuple<T> copy) throws CloneNotSupportedException {
 		super(copy);
 		int attributeLength = copy.attributes.length;
 		this.attributes = new Object[attributeLength];

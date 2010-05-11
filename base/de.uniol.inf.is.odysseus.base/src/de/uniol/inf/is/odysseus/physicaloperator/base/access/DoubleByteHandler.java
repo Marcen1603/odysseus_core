@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base.access;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 

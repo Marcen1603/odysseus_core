@@ -29,7 +29,7 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency, I
 		setLatencyStart(start);
 	}
 	
-	public IntervalLatencyPriority(IntervalLatencyPriority original) {
+	public IntervalLatencyPriority(IntervalLatencyPriority original) throws CloneNotSupportedException {
 		super(original);
 		
 		this.latency = (ILatency)original.latency.clone();
@@ -61,7 +61,7 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency, I
 		this.latency.setLatencyStart(timestamp);
 	}
 	@Override
-	public IntervalLatencyPriority clone() {
+	public IntervalLatencyPriority clone() throws CloneNotSupportedException {
 		return new IntervalLatencyPriority(this);
 	}
 	

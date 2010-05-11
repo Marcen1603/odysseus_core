@@ -15,11 +15,11 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 		return predicate;
 	}
 
-	public SelectPO(IPredicate<? super T> predicate) {
+	public SelectPO(IPredicate<? super T> predicate) throws CloneNotSupportedException {
 		this.predicate = predicate.clone();
 	}
 	
-	public SelectPO(SelectPO<T> po){
+	public SelectPO(SelectPO<T> po) throws CloneNotSupportedException{
 		this.predicate = po.predicate.clone();		
 	}
 

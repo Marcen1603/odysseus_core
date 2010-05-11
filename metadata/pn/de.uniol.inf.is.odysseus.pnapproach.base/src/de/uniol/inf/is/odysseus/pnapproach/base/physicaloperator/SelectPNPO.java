@@ -21,7 +21,7 @@ public class SelectPNPO<T extends IMetaAttributeContainer<? extends IPosNeg>> ex
 
 	private IPredicate<? super T> predicate;
 
-	public SelectPNPO(IPredicate<? super T> predicate) {
+	public SelectPNPO(IPredicate<? super T> predicate) throws CloneNotSupportedException {
 		this.predicate = predicate.clone();
 	}
 

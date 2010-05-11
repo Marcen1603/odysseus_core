@@ -62,7 +62,12 @@ public class PNIDMetadataMergeFunction implements IPNMetadataMergeFunction<IPosN
 	}
 	
 	public IPosNeg createNegativeResult(IPosNeg mdata, Order order){
-		IPosNeg clone = (IPosNeg)mdata.clone();
+		IPosNeg clone;
+		try {
+			clone = (IPosNeg)mdata.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("No clone method");
+		}
 		/**
 		 * Das Element stammt aus dem linken Eingabedatenstrom
 		 */

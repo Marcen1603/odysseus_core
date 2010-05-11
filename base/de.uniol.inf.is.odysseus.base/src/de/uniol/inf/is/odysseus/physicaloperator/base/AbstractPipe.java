@@ -120,7 +120,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// etc.)
 	// MUST override this method (else there will be a ClassCastException)
 	@SuppressWarnings("unchecked")
-	protected R cloneIfNessessary(R object, boolean exclusive, int port) {
+	protected R cloneIfNessessary(R object, boolean exclusive, int port) throws CloneNotSupportedException {
 		// boolean exclusive??
 		if (getOutputMode() == OutputMode.MODIFIED_INPUT) {
 			object = (R) ((IClone) object).clone();
@@ -155,7 +155,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	private void delegatedProcess(R object, int port, boolean exclusive) {
-		process_next(cloneIfNessessary(object, exclusive, port), port);
+		try {
+			process_next(cloneIfNessessary(object, exclusive, port), port);
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Illegal Objekttype for processing used. Must support clone!");
+		}
 	}
 
 	// private void setInputExclusive(boolean exclusive, int port) {

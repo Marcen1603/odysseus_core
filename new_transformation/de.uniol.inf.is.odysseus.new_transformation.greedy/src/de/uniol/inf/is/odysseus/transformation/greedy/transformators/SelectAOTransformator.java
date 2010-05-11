@@ -17,7 +17,12 @@ public class SelectAOTransformator implements IPOTransformator<SelectAO> {
 	@Override
 	public TransformedPO transform(SelectAO selectAO, TransformationConfiguration config,
 			ITransformation transformation) {
-		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
+		SelectPO<?> selectPO = null;
+		try {
+			selectPO = new SelectPO(selectAO.getPredicate());
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Clone not Supported!");
+		}
 		selectPO.setOutputSchema(selectAO.getOutputSchema());
 		return new TransformedPO(selectPO);
 	}

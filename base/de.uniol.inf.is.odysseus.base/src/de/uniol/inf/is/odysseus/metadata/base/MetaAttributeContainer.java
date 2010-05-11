@@ -19,7 +19,7 @@ public class MetaAttributeContainer<T extends IMetaAttribute> implements IMetaAt
 	}
 
 	@SuppressWarnings("unchecked")
-	public MetaAttributeContainer(MetaAttributeContainer<T> copy) {
+	public MetaAttributeContainer(MetaAttributeContainer<T> copy) throws CloneNotSupportedException {
 		if (copy.metadata != null) {
 			this.metadata = (T) copy.metadata.clone();
 		}
@@ -35,7 +35,7 @@ public class MetaAttributeContainer<T extends IMetaAttribute> implements IMetaAt
 	}
 
 	@Override
-	public MetaAttributeContainer<T> clone() {
+	public MetaAttributeContainer<T> clone() throws CloneNotSupportedException{
 		return new MetaAttributeContainer<T>(this);
 	}
 

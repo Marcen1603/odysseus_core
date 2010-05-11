@@ -24,5 +24,5 @@ public interface IApplicationTime extends IMetaAttribute, IClone{
 	
 	// other
 	public boolean isApplictionTimeValid();
-	public IApplicationTime clone();
+	public IApplicationTime clone() throws CloneNotSupportedException;
 }

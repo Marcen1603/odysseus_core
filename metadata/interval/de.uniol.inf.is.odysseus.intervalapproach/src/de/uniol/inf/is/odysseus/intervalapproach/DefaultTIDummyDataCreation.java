@@ -15,7 +15,11 @@ public class DefaultTIDummyDataCreation implements IDummyDataCreationFunction<IT
 	@Override
 	public IMetaAttributeContainer<ITimeInterval> createMetadata(
 			IMetaAttributeContainer<ITimeInterval> source) {
-		return (IMetaAttributeContainer<ITimeInterval>) source.clone();
+		try {
+			return (IMetaAttributeContainer<ITimeInterval>) source.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Missing Clone Method");
+		}
 	}
 
 	@Override

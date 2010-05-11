@@ -16,7 +16,7 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 		super(leftPredicate, rightPredicate);
 	}
 
-	public AndPredicate(AndPredicate<T> pred) {
+	public AndPredicate(AndPredicate<T> pred) throws CloneNotSupportedException {
 		super(pred);
 	}
 
@@ -30,7 +30,7 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 	}
 
 	@Override
-	public AndPredicate<T> clone() {
+	public AndPredicate<T> clone() throws CloneNotSupportedException {
 		return new AndPredicate<T>(this);
 	}
 	
@@ -39,6 +39,7 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 		return "(" + getLeft().toString() + ") AND (" + getRight().toString() + ")";
 	}
 	
+	@SuppressWarnings("unchecked")
 	public boolean equals(Object other){
 		if(!(other instanceof AndPredicate)){
 			return false;

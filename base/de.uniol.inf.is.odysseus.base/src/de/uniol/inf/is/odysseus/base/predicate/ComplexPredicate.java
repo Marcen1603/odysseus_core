@@ -20,7 +20,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.right = right;
 	}
 
-	public ComplexPredicate(ComplexPredicate<T> pred) {
+	public ComplexPredicate(ComplexPredicate<T> pred) throws CloneNotSupportedException {
 		this.left = pred.left.clone();
 		this.right = pred.right.clone();
 	}
@@ -41,14 +41,14 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.right = right;
 	}
 
-	@Override
-	public ComplexPredicate<T> clone() {
-		ComplexPredicate<T> newPred;
-		newPred = (ComplexPredicate<T>) super.clone();
-		newPred.left = this.left.clone();
-		newPred.right = this.right.clone();
-		return newPred;
-	}
+//	@Override
+//	public ComplexPredicate<T> clone() {
+//		ComplexPredicate<T> newPred;
+//		newPred = (ComplexPredicate<T>) super.clone();
+//		newPred.left = this.left.clone();
+//		newPred.right = this.right.clone();
+//		return newPred;
+//	}
 	
 	@Override
 	public void init(){
@@ -56,6 +56,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.right.init();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object other){
 		if(!(other instanceof ComplexPredicate)){

@@ -105,7 +105,12 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
 			// write the negative elements
 			while(iter_remove.hasNext()){
 				// the element has to be copied, because it will be edited
-				R retval = (R)iter_remove.next().clone();
+				R retval;
+				try {
+					retval = (R)iter_remove.next().clone();
+				} catch (CloneNotSupportedException e) {
+					throw new RuntimeException("No clone method");
+				}
 				retval.getMetadata().setElementType(ElementType.NEGATIVE);
 				// edit the timeinterval
 				retval.getMetadata().setTimestamp(new PointInTime(remove_t_start));
@@ -130,7 +135,12 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
 			// must be an element from the sweep area.
 			Iterator<IMetaAttributeContainer<? extends IPosNeg>> iter = this.sa.query(null, Order.RightLeft);
 			while(iter.hasNext()){
-				R retval = (R) iter.next().clone();
+				R retval;
+				try {
+					retval = (R) iter.next().clone();
+				} catch (CloneNotSupportedException e) {
+					throw new RuntimeException("No clone method");
+				}
 				retval.getMetadata().setElementType(ElementType.POSITIVE);
 				// edit the time interval
 				retval.getMetadata().setTimestamp(p_start);

@@ -133,7 +133,11 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override
 	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
 		setActive(true);
-		functionality.getPriorisationIntervals().add(time.clone());
+		try {
+			functionality.getPriorisationIntervals().add(time.clone());
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("No clone method");
+		}
 		
 		Iterator<T> it = buffer.iterator();
 

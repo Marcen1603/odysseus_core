@@ -108,8 +108,13 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 			Iterator<IMetaAttributeContainer<? extends ITimeInterval>> iter = this.sa
 					.query(compElem, Order.LeftRight);
 			while (iter.hasNext()) {
-				IMetaAttributeContainer<? extends ITimeInterval> retval = (IMetaAttributeContainer<? extends ITimeInterval>) iter
-						.next().clone();
+				IMetaAttributeContainer<? extends ITimeInterval> retval;
+				try {
+					retval = (IMetaAttributeContainer<? extends ITimeInterval>) iter
+							.next().clone();
+				} catch (CloneNotSupportedException e) {
+					throw new RuntimeException("Clone not Supported!");
+				}
 				// edit the time interval
 				retval.getMetadata().setStart(p_start);
 				// the end time stamp must be ( actual / delta )

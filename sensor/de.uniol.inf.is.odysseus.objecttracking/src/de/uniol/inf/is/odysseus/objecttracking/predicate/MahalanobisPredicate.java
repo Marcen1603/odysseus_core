@@ -25,6 +25,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  */
 public class MahalanobisPredicate<T extends IProbability> extends AbstractPredicate<MVRelationalTuple<T>> implements IRelationalPredicate{
 
+
+	private static final long serialVersionUID = 9146263764814383957L;
+
 	private double threshold;
 	
 	private String operator;
@@ -44,6 +47,11 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		this.operator = operator;
 	}
 	
+	public MahalanobisPredicate(MahalanobisPredicate<T> mahalanobisPredicate) {
+		this.threshold = mahalanobisPredicate.threshold;
+		this.operator = mahalanobisPredicate.operator;
+	}
+
 	@Override
 	public List<SDFAttribute> getAttributes() {
 		// TODO Auto-generated method stub
@@ -145,4 +153,9 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		return ret;
 	}
 
+	@Override
+	public MahalanobisPredicate<T> clone()
+			throws CloneNotSupportedException {
+		return new MahalanobisPredicate<T>(this);
+	}
 }

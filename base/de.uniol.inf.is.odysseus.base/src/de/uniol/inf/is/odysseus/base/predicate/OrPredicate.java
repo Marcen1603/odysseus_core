@@ -15,7 +15,7 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 		super(leftPredicate, rightPredicate);
 	}
 
-	public OrPredicate(OrPredicate<T> pred) {
+	public OrPredicate(OrPredicate<T> pred) throws CloneNotSupportedException {
 		super(pred);
 	}
 
@@ -29,7 +29,7 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 	}
 
 	@Override
-	public OrPredicate<T> clone() {
+	public OrPredicate<T> clone() throws CloneNotSupportedException {
 		return new OrPredicate<T>(this);
 	}
 
@@ -39,6 +39,7 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 				+ ")";
 	}
 	
+	@SuppressWarnings("unchecked")
 	public boolean equals(Object other){
 		if(!(other instanceof OrPredicate)){
 			return false;

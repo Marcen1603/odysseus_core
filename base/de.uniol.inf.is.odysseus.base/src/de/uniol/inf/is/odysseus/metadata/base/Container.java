@@ -17,13 +17,13 @@ public class Container<Type, MetaType extends IMetaAttribute> extends MetaAttrib
 		this.setMetadata(metadata);
 	}
 
-	public Container(Container<Type, MetaType> name) {
+	public Container(Container<Type, MetaType> name) throws CloneNotSupportedException {
 		super(name);
 		this.cargo = name.cargo;
 	}
 
 	@Override
-	public Container<Type, MetaType> clone() {
+	public Container<Type, MetaType> clone() throws CloneNotSupportedException {
 		return new Container<Type, MetaType>(this);
 	}
 	

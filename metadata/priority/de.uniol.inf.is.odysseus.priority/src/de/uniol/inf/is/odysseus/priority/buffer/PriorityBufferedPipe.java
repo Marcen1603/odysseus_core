@@ -26,7 +26,11 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 		}
 		
 		if (isReadOnly) {
-			object = (T) object.clone();
+			try {
+				object = (T) object.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException("No clone method");
+			}
 		}
 
 		if (prio > 0) {

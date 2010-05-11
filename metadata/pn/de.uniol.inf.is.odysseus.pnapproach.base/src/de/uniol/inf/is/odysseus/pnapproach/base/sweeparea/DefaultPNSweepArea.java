@@ -24,7 +24,7 @@ public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPos
 		super(new MetadataComparator<IPosNeg>());
 	}
 
-	public DefaultPNSweepArea(DefaultPNSweepArea<T> defaultPNSweepArea) {
+	public DefaultPNSweepArea(DefaultPNSweepArea<T> defaultPNSweepArea) throws CloneNotSupportedException {
 		super(defaultPNSweepArea);
 	}
 

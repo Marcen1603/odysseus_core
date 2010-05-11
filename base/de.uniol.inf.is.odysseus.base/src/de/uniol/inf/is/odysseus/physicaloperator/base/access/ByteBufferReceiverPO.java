@@ -30,7 +30,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
+	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) throws CloneNotSupportedException {
 		super();
 		handler = (IObjectHandler<W>) byteBufferReceiverPO.handler.clone();
 		size = byteBufferReceiverPO.size;
@@ -123,7 +123,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public ByteBufferReceiverPO<W> clone() {
+	public ByteBufferReceiverPO<W> clone() throws CloneNotSupportedException {
 		return new ByteBufferReceiverPO<W>(this);
 	}
 

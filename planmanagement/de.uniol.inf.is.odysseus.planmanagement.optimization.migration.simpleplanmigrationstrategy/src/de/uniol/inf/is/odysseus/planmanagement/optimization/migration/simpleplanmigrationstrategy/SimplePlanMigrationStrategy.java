@@ -121,7 +121,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		
 		// 'merge' operator at top, discarding tuples of new plan
 		// realized with base operators union and select with falsepredicate
-		IPipe<?,?> select = new SelectPO(new FalsePredicate());
+		IPipe<?, ?> select = null;
+		try {
+			select = new SelectPO(new FalsePredicate());
+		} catch (CloneNotSupportedException e1) {
+			throw new RuntimeException("No clone method");
+		}
 		select.setOutputSchema(lastOperatorNewPlan.getOutputSchema());
 		IPipe<?,?> union = null;
 		// only interval approach like in TUnionTIPO.drl supported
