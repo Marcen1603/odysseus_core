@@ -14,22 +14,10 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Perspective"
-            class="de.uniol.inf.is.odysseus.rcp.application.Perspective"
-            id="de.uniol.inf.is.odysseus.rcp.application.perspective">
+            name="Viewer"
+            class="de.uniol.inf.is.odysseus.rcp.application.ViewerPerspective"
+            id="de.uniol.inf.is.odysseus.rcp.application.perspective.viewer">
       </perspective>
-   </extension>
-   <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="de.uniol.inf.is.odysseus.rcp.application.application"
-            name="Odysseus Product">
-         <property
-               name="appName"
-               value="Odysseus Product">
-         </property>
-      </product>
    </extension>
    <extension
          id="product1"

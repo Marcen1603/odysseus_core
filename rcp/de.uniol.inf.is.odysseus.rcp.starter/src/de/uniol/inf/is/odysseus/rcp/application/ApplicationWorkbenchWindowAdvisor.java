@@ -21,8 +21,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setInitialSize(new Point(600, 600));
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);
-		configurer.setTitle("Odysseus");
+		configurer.setTitle("Odysseus RCP");
 		configurer.setShowProgressIndicator(true);
+		configurer.setShowPerspectiveBar(true);
 	}
 
 }
