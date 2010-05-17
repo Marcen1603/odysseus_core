@@ -8,7 +8,9 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoinAO;
@@ -38,6 +40,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalProjectionOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
@@ -83,7 +88,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ObjectTrackingProjectAO projection = new ObjectTrackingProjectAO();
 		// first the output schema is empty, it will be 
 		// filled by the projection attributes
-		projection.setOutputSchema(new SDFAttributeList());
+		projection.setOutputSchema(new SDFAttributeListExtended());
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
@@ -105,6 +110,53 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			outAttributes.add(attr);			
 		}
 		projection.setOutAttributes(outAttributes);
+		
+//		// the restrict list must be set
+//		int[] restrictList = new int[projection.getOutputSchema().getAttributeCount()];
+//		for(int i = 0; i<projection.getOutputSchema().getAttributeCount(); i++){
+//			SDFAttribute outAttr = projection.getOutputSchema().getAttribute(i);
+//			for(int u = 0; u<projection.getInputSchema().getAttributeCount(); u++){
+//				
+//				SDFAttribute inAttr = projection.getInputSchema().getAttribute(u);
+//				if(outAttr.compareTo(inAttr) == 0){
+//					restrictList[i] = u;
+//				}
+//			}
+//		}
+//		
+//		projection.setRestrictList(restrictList);
+		
+		((ArrayList)data).add(projection);
+		
+		return data;
+	}
+	
+	@Override
+	public Object visit(ASTRelationalProjectionOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
+		
+		ProjectAO projection = new ProjectAO();
+		
+		// pass only the attribute resolver to the children
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+		
+		// the first child is the input operator
+		AbstractLogicalOperator inputForProjection = 
+			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		
+		projection.subscribeTo(inputForProjection, inputForProjection.getOutputSchema());
+		
+		// the further children are the identifiers
+		SDFAttributeList outAttributes = new SDFAttributeList();
+		for(int i = 1; i<node.jjtGetNumChildren(); i++){
+			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier)node.jjtGetChild(i);			
+			String attrString = ((ASTIdentifier)attrIdentifier.jjtGetChild(0)).getName();
+			SDFAttribute attr = attrRes.getAttribute(attrString);
+			
+			outAttributes.add(attr);			
+		}
+		projection.setOutputSchema(outAttributes);
 		
 //		// the restrict list must be set
 //		int[] restrictList = new int[projection.getOutputSchema().getAttributeCount()];
@@ -559,6 +611,68 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	public Object visit(ASTFunctionName node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Object visit(ASTRelationalSelectionOp node, Object data) {
+		SelectAO selection = new SelectAO();
+		
+		// pass only the attribute resolver to the children
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList)data).get(0));
+		
+		// the first child is the input operator
+		AbstractLogicalOperator inputForSelection =
+			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		selection.subscribeTo(inputForSelection, inputForSelection.getOutputSchema());
+		
+		newData = new ArrayList();
+		newData.add(((ArrayList)data).get(0));
+		
+		// the second child is a predicate
+		IPredicate predicate = (IPredicate)((ArrayList)node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
+		initPredicate(predicate, selection.getInputSchema(), null);
+		
+		selection.setPredicate(predicate);
+		
+		((ArrayList)data).add(selection);
+		
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTRelationalJoinOp node, Object data) {
+		// TODO Auto-generated method stub
+		JoinAO join = new JoinAO();
+		
+		
+		// pass only the attribute resolver to the children
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList)data).get(0));
+		
+		// in both following lines the index 1 in the get method
+		// can be used, since in both lines the collection
+		// only contains the attribute resolver
+		AbstractLogicalOperator leftIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		
+		newData = new ArrayList();
+		newData.add(((ArrayList)data).get(0));
+		AbstractLogicalOperator rightIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
+			
+		join.subscribeToSource(leftIn, 0, 0, leftIn.getOutputSchema());
+		join.subscribeToSource(rightIn, 1, 0, rightIn.getOutputSchema());
+		
+		// setting the predicate and initializing the operator
+		newData.clear();
+		newData.add(((ArrayList)data).get(0));
+		IPredicate predicate = (IPredicate)((ArrayList)node.jjtGetChild(2).jjtAccept(this, newData)).get(1);
+		initPredicate(predicate, join.getInputSchema(0), join.getInputSchema(1));
+		
+		join.setPredicate(predicate);
+		
+		((ArrayList)data).add(join);
+		
+		return data;
 	}
 
 }

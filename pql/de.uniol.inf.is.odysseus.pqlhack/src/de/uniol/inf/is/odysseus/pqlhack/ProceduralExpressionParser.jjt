@@ -48,6 +48,9 @@ TOKEN : /* Keywords */ {
 |	<K_ON: "ON">
 |	<K_PLAN: "PLAN">
 |	<K_PROJECTION: "PROJECTION">
+|   <K_RELATIONAL_PROJECTION: "RPROJECTION">
+|   <K_RELATIONAL_SELECTION: "RSELECTION">
+|   <K_RELATIONAL_JOIN: "RJOIN">
 |	<K_SELECTION: "SELECTION">
 |	<K_SET_PREDICTION: "SET-PREDICTION">
 |	<K_SIZE: "SIZE">
@@ -98,8 +101,8 @@ ASTLogicalPlan LogicalPlan():{}{
 
 void AlgebraOp():{}{
 	ProjectionOp() |
-	SelectionOp() |
-	JoinOp() |
+	SelectionOp() | RelationalSelectionOp() |
+	JoinOp() | RelationalJoinOp() |
 	WindowOp() |
 	AccessOp() |
 	PredictionOp()
@@ -109,6 +112,10 @@ void ProjectionOp(): {}{
 	<K_PROJECTION>"(" AlgebraOp() ","  (Identifier()#ProjectionIdentifier)*")"
 }
 
+void RelationalProjectionOp(): {}{
+	<K_RELATIONAL_PROJECTION>"(" AlgebraOp() ","  (Identifier()#ProjectionIdentifier)*")"
+}
+
 /*void TumblingWindow(): {}{
 	<K_TUMBLING_TIME_WINDOW>"(" AlgebraOp() "," Number()#WindowSize "," Number()#WindowAdvance ")"
 }*/
@@ -116,7 +123,23 @@ void ProjectionOp(): {}{
 void SelectionOp(): {
 	Token windowSize;
 }{
+    // window size is a hack for evaluation of range predicates
 	<K_SELECTION>"(" AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
+}
+
+void RelationalSelectionOp():{
+	Token windowSize;
+}{
+	<K_RELATIONAL_SELECTION>"(" AlgebraOp() "," Predicate() ")"
+}
+
+void RelationalJoinOp(): {
+	Token windowSize;
+
+}{
+	// Here no join predicate will be set
+	// this will be done by the restructuring component
+	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"
 }
 
 void JoinOp(): {
@@ -125,7 +148,8 @@ void JoinOp(): {
 }{
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
+	// window size is a hack for evaluation of window size
+	<K_RELATIONAL_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
 }
 
 void WindowOp():{}{
