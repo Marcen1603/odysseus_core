@@ -52,6 +52,9 @@ TOKEN : /* Keywords */ {
 |	<K_ON: "ON">
 |	<K_PLAN: "PLAN">
 |	<K_PROJECTION: "PROJECTION">
+|   <K_RELATIONAL_PROJECTION: "RPROJECTION">
+|   <K_RELATIONAL_SELECTION: "RSELECTION">
+|   <K_RELATIONAL_JOIN: "RJOIN">
 |	<K_SELECTION: "SELECTION">
 |	<K_SET_PREDICTION: "SET-PREDICTION">
 |	<K_SIZE: "SIZE">
@@ -139,8 +142,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
         try {
 /*@egen*/
 	ProjectionOp() |
-	SelectionOp() |
-	JoinOp() |
+	SelectionOp() | RelationalSelectionOp() |
+	JoinOp() | RelationalJoinOp() |
 	WindowOp() |
 	AccessOp() |
 	PredictionOp()/*@bgen(jjtree)*/
@@ -223,6 +226,63 @@ void ProjectionOp(): {/*@bgen(jjtree) ProjectionOp */
 /*@egen*/
 }
 
+void RelationalProjectionOp(): {/*@bgen(jjtree) RelationalProjectionOp */
+  ASTRelationalProjectionOp jjtn000 = new ASTRelationalProjectionOp(JJTRELATIONALPROJECTIONOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) RelationalProjectionOp */
+        try {
+/*@egen*/
+	<K_RELATIONAL_PROJECTION>"(" AlgebraOp() ","  (/*@bgen(jjtree) ProjectionIdentifier */
+                                                       {
+                                                         ASTProjectionIdentifier jjtn001 = new ASTProjectionIdentifier(JJTPROJECTIONIDENTIFIER);
+                                                         boolean jjtc001 = true;
+                                                         jjtree.openNodeScope(jjtn001);
+                                                       }
+                                                       try {
+/*@egen*/Identifier()/*@bgen(jjtree)*/
+                                                       } catch (Throwable jjte001) {
+                                                         if (jjtc001) {
+                                                           jjtree.clearNodeScope(jjtn001);
+                                                           jjtc001 = false;
+                                                         } else {
+                                                           jjtree.popNode();
+                                                         }
+                                                         if (jjte001 instanceof RuntimeException) {
+                                                           throw (RuntimeException)jjte001;
+                                                         }
+                                                         if (jjte001 instanceof ParseException) {
+                                                           throw (ParseException)jjte001;
+                                                         }
+                                                         throw (Error)jjte001;
+                                                       } finally {
+                                                         if (jjtc001) {
+                                                           jjtree.closeNodeScope(jjtn001, true);
+                                                         }
+                                                       }
+/*@egen*/                     )*")"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
 /*void TumblingWindow(): {}{
 	<K_TUMBLING_TIME_WINDOW>"(" AlgebraOp() "," Number()#WindowSize "," Number()#WindowAdvance ")"
 }*/
@@ -236,7 +296,75 @@ void SelectionOp(): {/*@bgen(jjtree) SelectionOp */
 }{/*@bgen(jjtree) SelectionOp */
         try {
 /*@egen*/
+    // window size is a hack for evaluation of range predicates
 	<K_SELECTION>"(" AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void RelationalSelectionOp():{/*@bgen(jjtree) RelationalSelectionOp */
+        ASTRelationalSelectionOp jjtn000 = new ASTRelationalSelectionOp(JJTRELATIONALSELECTIONOP);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	Token windowSize;
+}{/*@bgen(jjtree) RelationalSelectionOp */
+        try {
+/*@egen*/
+	<K_RELATIONAL_SELECTION>"(" AlgebraOp() "," Predicate() ")"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void RelationalJoinOp(): {/*@bgen(jjtree) RelationalJoinOp */
+        ASTRelationalJoinOp jjtn000 = new ASTRelationalJoinOp(JJTRELATIONALJOINOP);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	Token windowSize;
+
+}{/*@bgen(jjtree) RelationalJoinOp */
+        try {
+/*@egen*/
+	// Here no join predicate will be set
+	// this will be done by the restructuring component
+	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -271,7 +399,8 @@ void JoinOp(): {/*@bgen(jjtree) JoinOp */
 /*@egen*/
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
+	// window size is a hack for evaluation of window size
+	<K_RELATIONAL_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

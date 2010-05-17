@@ -7,31 +7,34 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTALGEBRAOP = 1;
   public int JJTPROJECTIONOP = 2;
   public int JJTPROJECTIONIDENTIFIER = 3;
-  public int JJTSELECTIONOP = 4;
-  public int JJTJOINOP = 5;
-  public int JJTWINDOWOP = 6;
-  public int JJTSLIDINGTIMEWINDOW = 7;
-  public int JJTTIMESTAMPATTRIBUTE = 8;
-  public int JJTACCESSOP = 9;
-  public int JJTPREDICTIONOP = 10;
-  public int JJTPREDICATE = 11;
-  public int JJTSIMPLEPREDICATE = 12;
-  public int JJTBASICPREDICATE = 13;
-  public int JJTORPREDICATE = 14;
-  public int JJTANDPREDICATE = 15;
-  public int JJTNOTPREDICATE = 16;
-  public int JJTEXPRESSION = 17;
-  public int JJTSIMPLETOKEN = 18;
-  public int JJTFUNCTIONEXPRESSION = 19;
-  public int JJTFUNCTIONNAME = 20;
-  public int JJTNUMBER = 21;
-  public int JJTSTRING = 22;
-  public int JJTVOID = 23;
-  public int JJTIDENTIFIER = 24;
-  public int JJTCOMPAREOPERATOR = 25;
-  public int JJTPREDICTIONDEFINITION = 26;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 27;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 28;
+  public int JJTRELATIONALPROJECTIONOP = 4;
+  public int JJTSELECTIONOP = 5;
+  public int JJTRELATIONALSELECTIONOP = 6;
+  public int JJTRELATIONALJOINOP = 7;
+  public int JJTJOINOP = 8;
+  public int JJTWINDOWOP = 9;
+  public int JJTSLIDINGTIMEWINDOW = 10;
+  public int JJTTIMESTAMPATTRIBUTE = 11;
+  public int JJTACCESSOP = 12;
+  public int JJTPREDICTIONOP = 13;
+  public int JJTPREDICATE = 14;
+  public int JJTSIMPLEPREDICATE = 15;
+  public int JJTBASICPREDICATE = 16;
+  public int JJTORPREDICATE = 17;
+  public int JJTANDPREDICATE = 18;
+  public int JJTNOTPREDICATE = 19;
+  public int JJTEXPRESSION = 20;
+  public int JJTSIMPLETOKEN = 21;
+  public int JJTFUNCTIONEXPRESSION = 22;
+  public int JJTFUNCTIONNAME = 23;
+  public int JJTNUMBER = 24;
+  public int JJTSTRING = 25;
+  public int JJTVOID = 26;
+  public int JJTIDENTIFIER = 27;
+  public int JJTCOMPAREOPERATOR = 28;
+  public int JJTPREDICTIONDEFINITION = 29;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 30;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 31;
 
 
   public String[] jjtNodeName = {
@@ -39,7 +42,10 @@ public interface ProceduralExpressionParserTreeConstants
     "AlgebraOp",
     "ProjectionOp",
     "ProjectionIdentifier",
+    "RelationalProjectionOp",
     "SelectionOp",
+    "RelationalSelectionOp",
+    "RelationalJoinOp",
     "JoinOp",
     "WindowOp",
     "SlidingTimeWindow",
@@ -66,4 +72,4 @@ public interface ProceduralExpressionParserTreeConstants
     "PredictionFunctionDefinition",
   };
 }
-/* JavaCC - OriginalChecksum=cb494ce0bd23fa7b43153096a5501d8a (do not edit this line) */
+/* JavaCC - OriginalChecksum=f57fe09ba230cd2874f60fa0ef13f4f3 (do not edit this line) */

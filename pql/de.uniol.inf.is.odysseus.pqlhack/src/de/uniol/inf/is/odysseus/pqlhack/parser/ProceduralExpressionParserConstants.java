@@ -41,43 +41,49 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_PROJECTION = 19;
   /** RegularExpression Id. */
-  int K_SELECTION = 20;
+  int K_RELATIONAL_PROJECTION = 20;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 21;
+  int K_RELATIONAL_SELECTION = 21;
   /** RegularExpression Id. */
-  int K_SIZE = 22;
+  int K_RELATIONAL_JOIN = 22;
   /** RegularExpression Id. */
-  int K_SLIDE = 23;
+  int K_SELECTION = 23;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 24;
+  int K_SET_PREDICTION = 24;
   /** RegularExpression Id. */
-  int K_SUM = 25;
+  int K_SIZE = 25;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 26;
+  int K_SLIDE = 26;
   /** RegularExpression Id. */
-  int K_WHERE = 27;
+  int K_SLDING_TIME_WINDOW = 27;
   /** RegularExpression Id. */
-  int IDENTIFIER = 28;
+  int K_SUM = 28;
   /** RegularExpression Id. */
-  int LETTER = 29;
+  int K_TUMBLING_TIME_WINDOW = 29;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 30;
+  int K_WHERE = 30;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 31;
+  int IDENTIFIER = 31;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 32;
+  int LETTER = 32;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 33;
+  int SPECIAL_CHARS = 33;
   /** RegularExpression Id. */
-  int REGEXP = 34;
+  int CHAR_LITERAL = 34;
   /** RegularExpression Id. */
-  int FLOAT = 35;
+  int QUOTED_IDENTIFIER = 35;
   /** RegularExpression Id. */
-  int INTEGER = 36;
+  int COMPARE_OPERATOR = 36;
   /** RegularExpression Id. */
-  int DIGIT = 37;
+  int REGEXP = 37;
   /** RegularExpression Id. */
-  int IPADDRESS = 38;
+  int FLOAT = 38;
+  /** RegularExpression Id. */
+  int INTEGER = 39;
+  /** RegularExpression Id. */
+  int DIGIT = 40;
+  /** RegularExpression Id. */
+  int IPADDRESS = 41;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -104,6 +110,9 @@ public interface ProceduralExpressionParserConstants {
     "\"ON\"",
     "\"PLAN\"",
     "\"PROJECTION\"",
+    "\"RPROJECTION\"",
+    "\"RSELECTION\"",
+    "\"RJOIN\"",
     "\"SELECTION\"",
     "\"SET-PREDICTION\"",
     "\"SIZE\"",
