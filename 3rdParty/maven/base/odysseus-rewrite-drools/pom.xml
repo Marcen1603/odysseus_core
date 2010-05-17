@@ -8,23 +8,22 @@
     <artifactId>odysseus-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>odysseus-base</artifactId>
+  <artifactId>odysseus-rewrite-drools</artifactId>
   <packaging>bundle</packaging>
-  <name>Odysseus :: Base</name>
+  <name>Odysseus :: Rewrite Drools</name>
   <properties>
     <odysseus.osgi.import>
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.*;version=${project.version}
+      de.uniol.inf.is.odysseus.rewrite.drools*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
   </properties>
 
   <build>
-    <defaultGoal>compile</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -34,28 +33,6 @@
 	<groupId>org.apache.felix</groupId>
 	<artifactId>maven-bundle-plugin</artifactId>
 	<extensions>true</extensions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install-jep</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>${project.basedir}/lib/JepModified.jar</file>
-              <groupId>org.nfunk</groupId>
-              <artifactId>jep-modified</artifactId>
-              <version>2.4.0</version>
-              <packaging>jar</packaging>
-              <createChecksum>true</createChecksum>
-              <generatePom>true</generatePom>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
 	<groupId>org.ops4j</groupId>
@@ -68,33 +45,59 @@
       </plugin>
     </plugins>
   </build>
-
+  
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-base</artifactId>
+      <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
+   <dependency>
+     <groupId>${project.groupId}</groupId>
+     <artifactId>odysseus-logicaloperator-base</artifactId>
+     <version>${project.version}</version>
+   </dependency>
+   <dependency>
+     <groupId>${project.groupId}</groupId>
+     <artifactId>drools-ruleagent</artifactId>
+     <version>${project.version}</version>
+   </dependency>
+   <dependency>
+     <groupId>org.osgi</groupId>
+     <artifactId>org.osgi.compendium</artifactId>
+   </dependency>
+   <dependency>
+     <groupId>org.drools</groupId>
+     <artifactId>drools-core</artifactId>
+     <version>4.0.7</version>
+   </dependency>
+   <dependency>
+     <groupId>org.slf4j</groupId>
+     <artifactId>slf4j-api</artifactId>
+     <scope>provided</scope>
+   </dependency>
+   <dependency>
+     <groupId>org.slf4j</groupId>
+     <artifactId>slf4j-log4j12</artifactId>
+     <scope>provided</scope>
+   </dependency>
+   <dependency>
+     <groupId>org.slf4j</groupId>
         <artifactId>jcl104-over-slf4j</artifactId>
         <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.nfunk</groupId>
-      <artifactId>jep-modified</artifactId>
-      <version>2.4.0</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>1.0.0</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>jboss</id>
+      <url>http://repository.jboss.com/maven2</url>
+    </repository>
+  </repositories> 
 </project>
