@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.relational.base;
 import java.io.Serializable;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -406,7 +407,8 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		}
 
 //		this.schema = schema;
-		this.attributes = attributes.clone();
+		this.attributes = Arrays.copyOf(attributes, attributes.length);
+//		this.attributes = attributes.clone();
 		//calcSize();
 	}
 	
