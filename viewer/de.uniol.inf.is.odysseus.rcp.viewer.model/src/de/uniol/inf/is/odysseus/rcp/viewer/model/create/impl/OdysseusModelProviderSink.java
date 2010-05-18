@@ -1,10 +1,17 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
@@ -12,10 +19,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.DefaultConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.DefaultGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusNodeModel;
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 /**
  * Klasse, welcher ausgehend von einer gegebenen Senke den physischen Ablaufplan 
@@ -54,6 +57,10 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 		logger.info( "reading operator-tree from ODYSSEUS" );
 		parse( sink, graphModel, null, false);
 		logger.info( "reading operator-tree finished successfully!" );
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
+		graphModel.setName("Graph [" + time + "]");
 	}
 	
 	

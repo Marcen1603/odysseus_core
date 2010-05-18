@@ -24,6 +24,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 	private final Collection<IGraphModelChangeListener<C>> listeners = new ArrayList<IGraphModelChangeListener<C>>();
 	private final Collection<INodeModel<C>> nodes = new ArrayList<INodeModel<C>>();
 	private final Collection<IConnectionModel<C>> connections = new ArrayList<IConnectionModel<C>>();
+	private String name = "";
 	
 	@Override
 	public Collection<IConnectionModel<C>> getConnections() {
@@ -86,6 +87,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 			connections.add( connection );
 			addConnectionToNode(connection.getEndNode(), connection);
 			addConnectionToNode(connection.getStartNode(), connection);
+			notifyGraphModelChangeListener();
 		}
 	}
 	
@@ -94,6 +96,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 		// TODO: Was ist, wenn node == null ist?
 		if( !nodes.contains( node )) {
 			nodes.add(node);
+			notifyGraphModelChangeListener();
 		}
 	}
 	
@@ -103,6 +106,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 			connections.remove( connection );
 			removeConnectionFromNode(connection.getEndNode(), connection);
 			removeConnectionFromNode(connection.getStartNode(), connection);
+			notifyGraphModelChangeListener();
 		}
 	}
 	
@@ -111,6 +115,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 		nodes.remove( node );
 		for( IConnectionModel<C> conn : node.getConnections().toArray(new IConnectionModel[0]) ) {
 			removeConnection( conn );
+			notifyGraphModelChangeListener();
 		}
 	}
 
@@ -148,6 +153,22 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 			allConnections.remove( connection );
 			node.getConnectionsAsEndNode().remove( connection );
 			node.getConnectionsAsStartNode().remove( connection );
+		}
+	}
+
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+
+	@Override
+	public void setName(String nameOfGraph) {
+		if( nameOfGraph == null ) return;
+		if( !nameOfGraph.equals(name)) {
+			name = nameOfGraph;
+			notifyGraphModelChangeListener();
 		}
 	}
 

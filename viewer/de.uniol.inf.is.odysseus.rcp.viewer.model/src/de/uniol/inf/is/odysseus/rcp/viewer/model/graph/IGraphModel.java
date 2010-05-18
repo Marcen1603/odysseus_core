@@ -87,4 +87,18 @@ public interface IGraphModel<C> {
 	 */
 	public void notifyGraphModelChangeListener();
 
+	/**
+	 * Setzt einen Namen/Bezeichnung des Graphen fest. Dieser muss nicht zu
+	 * anderen Namen von Graphen verschieden sein. 
+	 * 
+	 * @param nameOfGraph Name des Graphen
+	 */
+	public void setName( String nameOfGraph );
+	
+	/**
+	 * Liefert den Namen des Graphen zurück.
+	 * 
+	 * @return Name des Graphen
+	 */
+	public String getName();
 }

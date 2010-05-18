@@ -18,7 +18,10 @@ public class ModelLabelProvider implements ILabelProvider  {
 	@Override
 	public String getText(Object element) {
 		if( element instanceof IModelManager<?>) return "ModelManager";
-		if( element instanceof IGraphModel<?>) return "Graph";
+		if( element instanceof IGraphModel<?>) { 
+			IGraphModel<?> graph = (IGraphModel<?>)element;
+			return graph.getName();
+		}
 		if( element instanceof IOdysseusNodeModel) return ((IOdysseusNodeModel)element).getName();
 		return null;
 	}
