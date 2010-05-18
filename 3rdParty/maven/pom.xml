@@ -19,5 +19,6 @@
 <module>pql</module>
 <module>relational</module>
 <module>scheduler</module>
+<module>resources</module>
   </modules>
 </project>
