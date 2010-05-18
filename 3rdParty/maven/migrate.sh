@@ -1,7 +1,9 @@
 #!/bin/sh
 
 folders="base metadata metadata/pn metadata/interval metadata/priority planmanagement pql relational scheduler"
-
+createGlobalPom=0
+if [ ! -f pom.xml ]; then
+    createGlobalPom=1
     cat > pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
@@ -15,16 +17,20 @@ folders="base metadata metadata/pn metadata/interval metadata/priority planmanag
   </parent>
   <artifactId>odysseus-parent</artifactId>
   <packaging>pom</packaging>
-  <name>Odysseus :: $f</name>
+  <name>Odysseus</name>
 
   <modules>
 EOF
+fi
 
 for f in $folders; do
     mkdir -p $f
     module=$(echo $f | tr "/" "-")
-    echo "<module>$module</module>" >> pom.xml
-    cat > $f/pom.xml <<EOF
+    createLocalPom=0
+    if [ ! -f $f/pom.xml ]; then
+	createLocalPom=1
+	echo "<module>$module</module>" >> pom.xml
+	cat > $f/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -41,6 +47,7 @@ for f in $folders; do
 
   <modules>
 EOF
+    fi
     for s in $(find ../../$f -mindepth 1 -maxdepth 1 -type d); do
 	basename=${s##*/}
 	echo "Processing $basename"
@@ -48,13 +55,13 @@ EOF
 	artifactId=$(echo $artifactId | tr "." "-")
 	artifactId=$(echo $artifactId | tr "/" "-")
 	if [ -d $s/src ]; then
-	    echo "<module>odysseus-$artifactId</module>" >> $f/pom.xml
 	    mkdir -p $f/odysseus-$artifactId/src/main/java
 	    mkdir -p $f/odysseus-$artifactId/src/main/resources
 	    mkdir -p $f/odysseus-$artifactId/src/test/java
 	    mkdir -p $f/odysseus-$artifactId/src/test/resources
 	    cp -uR $s/src/* $f/odysseus-$artifactId/src/main/java/
 	    if [ ! -f $f/odysseus-$artifactId/pom.xml ]; then
+		echo "<module>odysseus-$artifactId</module>" >> $f/pom.xml
 		cat > $f/odysseus-$artifactId/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
@@ -141,12 +148,16 @@ EOF
 	    fi
 	fi
     done
+    if [ createLocalPom = 1 ]; then
     cat >> $f/pom.xml <<EOF
   </modules>
 </project>
 EOF
+    fi
 done
+if [ createGlobalPom = 1 ]; then
     cat >> pom.xml <<EOF
   </modules>
 </project>
 EOF
+fi

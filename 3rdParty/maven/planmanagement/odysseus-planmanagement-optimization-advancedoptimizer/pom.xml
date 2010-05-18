@@ -52,6 +52,21 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-planmanagement-executor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-planmanagement-optimization</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-planmanagement-optimization-migration-costmodel</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
     </dependency>

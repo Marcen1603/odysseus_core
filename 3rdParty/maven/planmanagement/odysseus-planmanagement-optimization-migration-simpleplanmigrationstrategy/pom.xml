@@ -52,6 +52,16 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-intervalapproach</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-planmanagement-optimization</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
     </dependency>

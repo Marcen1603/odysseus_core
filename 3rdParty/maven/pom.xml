@@ -15,9 +15,6 @@
   <modules>
 <module>base</module>
 <module>metadata</module>
-<module>metadata-pn</module>
-<module>metadata-interval</module>
-<module>metadata-priority</module>
 <module>planmanagement</module>
 <module>pql</module>
 <module>relational</module>

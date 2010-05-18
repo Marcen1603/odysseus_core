@@ -13,10 +13,10 @@
   <name>Odysseus :: scheduler</name>
 
   <modules>
-<module>odysseus-scheduler2-0</module>
+<module>odysseus-scheduler</module>
 <module>odysseus-scheduler-strategy-factory-chainfactory</module>
 <module>odysseus-scheduler-strategy-factory-aurorafactory</module>
-<module>odysseus-scheduler-singlethreadscheduler2-0</module>
+<module>odysseus-scheduler-singlethreadscheduler</module>
 <module>odysseus-scheduler-strategy-factory-aurora_priority</module>
 <module>odysseus-schedulermanager-singleschedulermanager</module>
 <module>odysseus-scheduler-strategy-factory-simplestratfactory</module>
