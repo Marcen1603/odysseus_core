@@ -8,16 +8,16 @@
     <artifactId>odysseus-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>odysseus-logicaloperator-relational</artifactId>
+  <artifactId>odysseus-intervalapproach</artifactId>
   <packaging>bundle</packaging>
-  <name>Odysseus :: logicaloperator-relational</name>
+  <name>Odysseus :: intervalapproach</name>
   <properties>
     <odysseus.osgi.import>
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.logicaloperator.relational*;version=${project.version}
+      de.uniol.inf.is.odysseus.intervalapproach*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>

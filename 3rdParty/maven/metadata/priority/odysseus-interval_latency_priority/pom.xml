@@ -8,16 +8,16 @@
     <artifactId>odysseus-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>odysseus-logicaloperator-relational</artifactId>
+  <artifactId>odysseus-interval_latency_priority</artifactId>
   <packaging>bundle</packaging>
-  <name>Odysseus :: logicaloperator-relational</name>
+  <name>Odysseus :: interval_latency_priority</name>
   <properties>
     <odysseus.osgi.import>
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.logicaloperator.relational*;version=${project.version}
+      de.uniol.inf.is.odysseus.interval_latency_priority*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
@@ -53,7 +53,17 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>odysseus-logicaloperator-base</artifactId>
+      <artifactId>odysseus-intervalapproach</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-latency</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-priority</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

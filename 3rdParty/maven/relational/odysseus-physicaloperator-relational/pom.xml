@@ -53,6 +53,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-logicaloperator-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>odysseus-relational-base</artifactId>
       <version>${project.version}</version>
     </dependency>

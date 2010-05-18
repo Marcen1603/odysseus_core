@@ -1,6 +1,6 @@
 #!/bin/sh
 
-folders="base metadata planmanagement pql relational scheduler"
+folders="base metadata metadata/pn metadata/interval metadata/priority planmanagement pql relational scheduler"
 
     cat > pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -21,7 +21,9 @@ folders="base metadata planmanagement pql relational scheduler"
 EOF
 
 for f in $folders; do
-    echo "<module>$f</module>" >> pom.xml
+    mkdir -p $f
+    module=$(echo $f | tr "/" "-")
+    echo "<module>$module</module>" >> pom.xml
     cat > $f/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
@@ -33,7 +35,7 @@ for f in $folders; do
     <artifactId>odysseus-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>odysseus-$f-parent</artifactId>
+  <artifactId>odysseus-$module-parent</artifactId>
   <packaging>pom</packaging>
   <name>Odysseus :: $f</name>
 
@@ -44,6 +46,7 @@ EOF
 	echo "Processing $basename"
 	artifactId=${basename#*de.uniol.inf.is.odysseus.}
 	artifactId=$(echo $artifactId | tr "." "-")
+	artifactId=$(echo $artifactId | tr "/" "-")
 	if [ -d $s/src ]; then
 	    echo "<module>odysseus-$artifactId</module>" >> $f/pom.xml
 	    mkdir -p $f/odysseus-$artifactId/src/main/java
