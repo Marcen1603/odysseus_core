@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.views;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
@@ -12,9 +15,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.Model;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelManagerListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.commands.CallGraphEditor;
 
 public class ModelManagerViewPart extends ViewPart implements IModelManagerListener<IPhysicalOperator> {
 
+	public static final String VIEW_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view.ModelManagerView";
+	
 	private TreeViewer treeViewer;
 	private Display display;
 	
@@ -33,7 +39,23 @@ public class ModelManagerViewPart extends ViewPart implements IModelManagerListe
 		treeViewer.setLabelProvider(new ModelLabelProvider());
 		treeViewer.setInput(Model.getInstance().getModelManager());
 		
+		getSite().setSelectionProvider(treeViewer);
+		
 		Model.getInstance().getModelManager().addListener(this);
+		
+		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				
+				try {
+					handlerService.executeCommand(CallGraphEditor.COMMAND_ID, null);
+				} catch( Exception ex ) {
+					ex.printStackTrace();
+				}
+			}			
+		});
 	}
 
 	@Override
@@ -63,6 +85,10 @@ public class ModelManagerViewPart extends ViewPart implements IModelManagerListe
 				}				
 			});
 		}
+	}
+	
+	public TreeViewer getTreeViewer() {
+		return treeViewer;
 	}
 
 }

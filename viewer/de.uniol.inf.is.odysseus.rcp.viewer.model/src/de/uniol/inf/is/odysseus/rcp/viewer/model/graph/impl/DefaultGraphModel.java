@@ -40,15 +40,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		
-		// Knoten auflisten
-		for( INodeModel<C> n : getNodes() ) {
-			sb.append( n.toString() );
-			sb.append( "\n" );
-		}
-		
-		return sb.toString();
+		return name;
 	}
 	
 	@Override

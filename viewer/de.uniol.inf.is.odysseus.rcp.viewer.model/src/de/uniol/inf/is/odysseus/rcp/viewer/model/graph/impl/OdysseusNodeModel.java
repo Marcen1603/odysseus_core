@@ -117,4 +117,8 @@ public class OdysseusNodeModel extends DefaultNodeModel<IPhysicalOperator>
 		}
 	}
 
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

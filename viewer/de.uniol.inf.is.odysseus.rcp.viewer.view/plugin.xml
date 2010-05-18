@@ -28,6 +28,23 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditor"
+            default="false"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor"
+            name="Graph Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.CallGraphEditor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor"
+            name="Call Graph Editor">
+      </command>
+   </extension>
 
 
 </plugin>

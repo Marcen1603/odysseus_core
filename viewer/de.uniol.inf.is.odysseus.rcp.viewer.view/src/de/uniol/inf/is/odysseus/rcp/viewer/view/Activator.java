@@ -4,20 +4,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-/**
- * The activator class controls the plug-in life cycle
- */
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.SWTResourceManager;
+
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view";
-
-	// The shared instance
-	private static Activator plugin;
 	
-	/**
-	 * The constructor
-	 */
+	private static Activator plugin;
+	private static BundleContext bundleContext;
+	
 	public Activator() {
 	}
 
@@ -28,6 +23,8 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		bundleContext = context;
+		SWTResourceManager.resourceBundle = context.getBundle();
 	}
 
 	/*
@@ -57,5 +54,9 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	public static BundleContext getContext() {
+		return bundleContext;
 	}
 }

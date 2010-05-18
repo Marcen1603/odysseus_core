@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="resourcesSchema.xsd">
+
+	<Image source="viewer_cfg/pause.png" name="pause"/>
+	<Image source="viewer_cfg/play.png" name="play" />
+	<Image source="viewer_cfg/lock.png" name="lock" />
+	<Image source="viewer_cfg/unlock.png" name="unlock" />
+	<Image source="viewer_cfg/reset.png" name="reset" />
+	<Image source="viewer_cfg/exit.png" name="exit" />
+	<Image source="viewer_cfg/position.png" name="position" />
+	<Image source="viewer_cfg/zoomIn.png" name="zoomIn" />
+	<Image source="viewer_cfg/zoomOut.png" name="zoomOut" />
+	<Image source="viewer_cfg/pin.png" name="pin" />
+	<Image source="viewer_cfg/pinned.png" name="pinned" />
+	<Image source="viewer_cfg/visible.png" name="visible" />
+	<Image source="viewer_cfg/invisibleNode.png" name="invisibleNode" />
+	<Image source="viewer_cfg/hide.png" name="hide" />
+	<Image source="viewer_cfg/show.png" name="show" />
+	
+	<Image source="viewer_cfg/bufferedPipe.png" name="bufferedPipe" />
+	<Image source="viewer_cfg/benchmarkPO.png" name="benchmarkPO" />
+	<Image source="viewer_cfg/latency.png" name="latency" />
+	<Image source="viewer_cfg/sink.png" name="sink" />
+	<Image source="viewer_cfg/source.png" name="source" />
+	<Image source="viewer_cfg/pipe.png" name="pipe" />
+	<Image source="viewer_cfg/selectPO.png" name="selectPO" />
+	<Image source="viewer_cfg/projectPO.png" name="projectPO" />
+	<Image source="viewer_cfg/joinPO.png" name="joinPO" />
+	<Image source="viewer_cfg/metadataPO.png" name="metadataPO" />
+	<Image source="viewer_cfg/accessPO.png" name="accessPO" />
+	<Image source="viewer_cfg/pipe.png" name="aggrGroup" />
+	
+	<Image source="viewer_cfg/prioBuffer.png" name="prioBuffer" />
+	<Image source="viewer_cfg/directInterlinkBuffer.png" name="directInterlinkBuffer" />
+	<Image source="viewer_cfg/renamePO.png" name="renamePO" />
+	<Image source="viewer_cfg/intersectPO.png" name="intersectPO" />
+	<Image source="viewer_cfg/unionPO.png" name="unionPO" />
+	<Image source="viewer_cfg/differencePO.png" name="differencePO" />
+	<Image source="viewer_cfg/p2paccessPO.png" name="p2paccessPO" />
+	<Image source="viewer_cfg/p2ppipePO.png" name="p2ppipePO" />
+	<Image source="viewer_cfg/filterPO.png" name="filterPO" />
+	<Image source="viewer_cfg/associatePO.png" name="associatePO" />
+	<Image source="viewer_cfg/mapPO.png" name="mapPO" />
+	<Image source="viewer_cfg/predictionPO.png" name="predictionPO" />
+	<Image source="viewer_cfg/splitPO.png" name="splitPO" />
+	<Image source="viewer_cfg/priorityPO.png" name="priorityPO" />
+	<Image source="viewer_cfg/fixedsetPO.png" name="fixedSetPO" />
+
+	<Image source="viewer_cfg/select.png" name="select" />
+	<Image source="viewer_cfg/metaNew.png" name="metaNew" />
+	<Image source="viewer_cfg/metaRemove.png" name="metaRemove" />
+	<Image source="viewer_cfg/metaReset.png" name="metaReset" />
+	<Image source="viewer_cfg/metaReload.png" name="metaReload" />
+
+</Resources>
+

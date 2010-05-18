@@ -10,6 +10,11 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.rcp.viewer.model,
  de.uniol.inf.is.odysseus.rcp.viewer.model.create,
- de.uniol.inf.is.odysseus.rcp.viewer.model.graph
+ de.uniol.inf.is.odysseus.rcp.viewer.model.ctrl,
+ de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
+ de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
+ de.uniol.inf.is.odysseus.relational.base,
+ org.slf4j;version="1.5.6"
