@@ -10,8 +10,10 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
-public class Perspective implements IPerspectiveFactory {
+public class ViewerPerspective implements IPerspectiveFactory {
 
+	public static final String PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.application.perspective.viewer";
+	
 	public void createInitialLayout(IPageLayout layout) {
 
 		// Log4j-Ausgaben in Console umleiten
