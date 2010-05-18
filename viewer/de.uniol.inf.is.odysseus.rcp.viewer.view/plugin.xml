@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            allowMultiple="false"
             class="de.uniol.inf.is.odysseus.rcp.viewer.view.views.ModelManagerViewPart"
             id="de.uniol.inf.is.odysseus.rcp.viewer.view.ModelManagerView"
             name="ModelManager View"
@@ -23,7 +24,7 @@
                relationship="stack"
                relative="org.eclipse.ui.console.ConsoleView"
                showTitle="true"
-               standalone="true"
+               standalone="false"
                visible="true">
          </view>
       </perspectiveExtension>
@@ -44,6 +45,31 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor"
             name="Call Graph Editor">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.AddQuery"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.addQuery"
+            name="Add Query">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.ShowQueryDialog"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.showQueryDialog"
+            name="Query Dialog">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="osgiMenu"
+               label="OSGi-Commands">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.showQueryDialog"
+                  label="Add Query..."
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
 
 

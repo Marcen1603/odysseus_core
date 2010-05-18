@@ -55,11 +55,7 @@ public class GraphViewEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-//		GridLayout layout = new GridLayout();
-//		layout.numColumns = 2;
-//		parent.setLayout(layout);
-//		Label label1 = new Label(parent, SWT.BORDER);
-//		label1.setText("Graph: ");
+
 		Composite canvasComposite = new Composite(parent, SWT.BORDER);
 		canvasComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		canvasComposite.setLayout(new FillLayout());
@@ -67,6 +63,8 @@ public class GraphViewEditor extends EditorPart {
 		renderManager = new SWTRenderManager<IPhysicalOperator>(canvasComposite, new SugiyamaPositioner(SYMBOL_FACTORY));
 		renderManager.setDisplayedGraph(this.input);
 		renderManager.resetPositions();
+		
+		
 	}
 
 	@Override
