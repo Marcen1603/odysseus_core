@@ -408,6 +408,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 
 //		this.schema = schema;
 		this.attributes = Arrays.copyOf(attributes, attributes.length);
+
 //		this.attributes = attributes.clone();
 		//calcSize();
 	}
