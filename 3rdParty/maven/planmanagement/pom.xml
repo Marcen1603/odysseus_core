@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-planmanagement-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: planmanagement</name>
+
+  <modules>
+<module>odysseus-planmanagement-optimization-migration-costmodel</module>
+<module>odysseus-planmanagement-optimization-console</module>
+<module>odysseus-planmanagement-optimization-migration-simpleplanmigrationstrategy</module>
+<module>odysseus-planmanagement-optimization-plan-standardplanoptimizer</module>
+<module>odysseus-planmanagement-optimization</module>
+<module>odysseus-planmanagement-optimization-query-restructoptimizer</module>
+<module>odysseus-planmanagement-optimization-migration-standardmigrationcostmodel</module>
+<module>odysseus-planmanagement-executor-standardexecutor</module>
+<module>odysseus-planmanagement-optimization-advancedoptimizer</module>
+<module>odysseus-planmanagement-optimization-standardoptimizer</module>
+<module>odysseus-planmanagement-executor</module>
+<module>odysseus-planmanagement-optimization-bufferplacement-standardbufferplacementstrategy</module>
+<module>odysseus-planmanagement-compiler-standardcompiler</module>
+<module>odysseus-planmanagement-optimization-bufferplacement-nobuffers</module>
+<module>odysseus-planmanagement-optimization-migration-standardexecutioncostmodel</module>
+<module>odysseus-planmanagement-optimization-migration-noplanmigrationstrategie</module>
+  </modules>
+</project>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-scheduler-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: scheduler</name>
+
+  <modules>
+<module>odysseus-scheduler2-0</module>
+<module>odysseus-scheduler-strategy-factory-chainfactory</module>
+<module>odysseus-scheduler-strategy-factory-aurorafactory</module>
+<module>odysseus-scheduler-singlethreadscheduler2-0</module>
+<module>odysseus-scheduler-strategy-factory-aurora_priority</module>
+<module>odysseus-schedulermanager-singleschedulermanager</module>
+<module>odysseus-scheduler-strategy-factory-simplestratfactory</module>
+  </modules>
+</project>
