@@ -88,8 +88,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>> i
 	}
 
 	public RelationalPredicate(RelationalPredicate predicate) {
-		this.attributePositions = predicate.attributePositions == null ? null:predicate.attributePositions.clone();
-		this.fromRightChannel = predicate.fromRightChannel == null ? null:predicate.fromRightChannel.clone();
+	    this.attributePositions = predicate.attributePositions == null ? null:(int[])predicate.attributePositions.clone();
+	    this.fromRightChannel = predicate.fromRightChannel == null ? null:(boolean[])predicate.fromRightChannel.clone();
 		this.expression = predicate.expression == null ? null:predicate.expression.clone();
 		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
 	}

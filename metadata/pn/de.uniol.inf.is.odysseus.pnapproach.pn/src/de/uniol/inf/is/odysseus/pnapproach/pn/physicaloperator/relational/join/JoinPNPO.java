@@ -74,8 +74,8 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 		this.dataMerge = joinPNPO.dataMerge.clone();
 		this.metadataMerge = joinPNPO.metadataMerge.clone();
 		this.transferFunction = joinPNPO.transferFunction.clone();
-		this.areas = joinPNPO.areas.clone();
-		this.nareas = joinPNPO.nareas.clone();
+		this.areas = (DefaultPNSweepArea<T>[])joinPNPO.areas.clone();
+		this.nareas = (DefaultPNSweepArea<T>[])joinPNPO.nareas.clone();
 		this.lookahead = joinPNPO.lookahead;
 		
 		this.preareas = new PNAwareSweepArea[2];

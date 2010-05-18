@@ -67,7 +67,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	
 	public JoinTIPO(JoinTIPO<K,T> join) throws CloneNotSupportedException {
 		super(join);
-		this.areas = join.areas.clone();
+		this.areas = (ISweepArea<T>[])join.areas.clone();
 		int i=0;
 		for (ISweepArea<T> ja: join.areas){
 			this.areas[i] = ja.clone();
