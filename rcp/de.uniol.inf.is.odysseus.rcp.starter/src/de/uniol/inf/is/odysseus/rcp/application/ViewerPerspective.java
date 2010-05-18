@@ -39,7 +39,9 @@ public class ViewerPerspective implements IPerspectiveFactory {
 		layout.setEditorAreaVisible(true);
 		layout.setFixed(false);
 
-		layout.addStandaloneView(IConsoleConstants.ID_CONSOLE_VIEW, true, IPageLayout.BOTTOM, 1.0f, editorArea);
+		layout.addView(IConsoleConstants.ID_CONSOLE_VIEW, IPageLayout.BOTTOM, 1.0f, editorArea);
+		
+		layout.addPerspectiveShortcut(PERSPECTIVE_ID);
 	}
 
 }
