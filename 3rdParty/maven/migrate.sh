@@ -47,7 +47,7 @@ for f in $folders; do
 #
 #  <modules>
 #EOF
-    fi
+#    fi
     for s in $(find ../../$f -mindepth 1 -maxdepth 1 -type d); do
 	basename=${s##*/}
 	echo "Processing $basename"
@@ -166,3 +166,9 @@ done
  mkdir -p resources/drools-ruleagent/src/test/java
  mkdir -p resources/drools-ruleagent/src/test/resources
  cp -uR ../../resources/de.uniol.inf.is.drools.osgi_rule_agent/src/* resources/drools-ruleagent/src/main/java/
+
+ mkdir -p resources/drools/src/main/java
+ mkdir -p resources/drools/src/main/resources
+ mkdir -p resources/drools/src/test/java
+ mkdir -p resources/drools/src/test/resources
+ cp -uR ../../resources/de.uniol.org.drools/src/* resources/drools/src/main/java/
