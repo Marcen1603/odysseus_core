@@ -60,41 +60,15 @@
       <plugin>
 	<groupId>org.ops4j</groupId>
 	<artifactId>maven-pax-plugin</artifactId>
-	<configuration>
-	  <provision>
-	    <param>--platform=equinox</param>
-	  </provision>
-	</configuration>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl104-over-slf4j</artifactId>
-        <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.nfunk</groupId>
       <artifactId>jep-modified</artifactId>
       <version>2.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>1.0.0</version>
     </dependency>
   </dependencies>
 </project>

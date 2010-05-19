@@ -37,11 +37,6 @@
       <plugin>
         <groupId>org.ops4j</groupId>
         <artifactId>maven-pax-plugin</artifactId>
-        <configuration>
-          <provision>
-            <param>--platform=equinox</param>
-          </provision>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -72,39 +67,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse</groupId>
-      <artifactId>osgi</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl104-over-slf4j</artifactId>
-        <scope>provided</scope>
+      <groupId>org.eclipse.equinox</groupId>
+      <artifactId>org.eclipse.osgi</artifactId>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>jboss</id>
-      <url>http://repository.jboss.org/maven2</url>
-    </repository>
-    <repository>
-      <id>codehouse</id>
-      <url>http://repository.codehouse.org</url>
-    </repository>
-  </repositories>
 </project>

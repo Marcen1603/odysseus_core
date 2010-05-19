@@ -51,27 +51,43 @@
   </scm>
   
   <properties>
+    <odysseus.isLog4j>true</odysseus.isLog4j>
+    <odysseus.log4j.config>${basedir}/runtime/etc/log4j.properties</odysseus.log4j.config>
     <!-- Common runtime dependencies -->
     <commons-logging-version>1.1.1</commons-logging-version>
-    <slf4j.version>1.5.8</slf4j.version>
+    <slf4j.version>1.5.6</slf4j.version>
     <log4j.version>1.2.14</log4j.version>
     <!-- For testing -->
     <easymock-version>2.4</easymock-version>
     <junit-version>4.5</junit-version>
-
+    <java.util.logging.config.file>${basedir}/runtime/etc/logging.properties</java.util.logging.config.file>
+    <!-- Eclipse stuff for compiling -->
+    <eclipse.core.runtime.version>[3.4.0,)</eclipse.core.runtime.version>
+    <eclipse.core.expressions.version>[3.3.0,)</eclipse.core.expressions.version>
+    <eclipse.core.contenttype.version>[3.2.100,)</eclipse.core.contenttype.version>
+    <eclipse.core.jobs.version>[3.4.100,)</eclipse.core.jobs.version>
+    <eclipse.core.resources.version>[3.3.0,)</eclipse.core.resources.version>
+    <eclipse.equinox.app.version>[1.0.0,)</eclipse.equinox.app.version>
+    <eclipse.equinox.common.version>[3.3.0,)</eclipse.equinox.common.version>
+    <eclipse.equinox.registry.version>[3.4.100,)</eclipse.equinox.registry.version>
+    <eclipse.equinox.osgi.version>[3.5.2,)</eclipse.equinox.osgi.version>
+    <eclipse.equinox.preferences.version>[3.2.100,)</eclipse.equinox.preferences.version>
+    <eclipse.jdt.core.version>3.5.0.v_963</eclipse.jdt.core.version>
+    
     <odysseus.osgi.export>${odysseus.osgi.export.pkg}*;version=${project.version}</odysseus.osgi.export>
     <odysseus.osgi.export.pkg>de.uniol.inf.is.odysseus</odysseus.osgi.export.pkg>
     <odysseus.osgi.import>*</odysseus.osgi.import>
     <!-- by default, only java.* packages are available from the JRE - this adds the other ones -->
-    <odysseus.osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</odysseus.osgi.dynamic.import>
+    <odysseus.osgi.dynamic.import>com.sun.tools.*,javax.*,org.w3c.*,org.xml.*</odysseus.osgi.dynamic.import>
     <odysseus.osgi.private />
     <odysseus.osgi.bundles />
+    <odysseus.osgi.embed />
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <com.sun.management.jmxremote.ssl>false</com.sun.management.jmxremote.ssl>
     <com.sun.management.jmxremote.port>8689</com.sun.management.jmxremote.port>
-    <com.sun.management.jmxremote.password.file>${basedit}/runtime/etc/jmxremote.password</com.sun.management.jmxremote.password.file>
+    <com.sun.management.jmxremote.password.file>${basedir}/runtime/etc/jmxremote.password</com.sun.management.jmxremote.password.file>
     <org.osgi.service.http.port>8080</org.osgi.service.http.port>
     <org.osgi.service.http.port.secure>8443</org.osgi.service.http.port.secure>
     <org.osgi.framework.startlevel.beginning>6</org.osgi.framework.startlevel.beginning>
@@ -101,27 +117,23 @@
       </dependency>
       <dependency>
 	<groupId>org.slf4j</groupId>
-	<artifactId>slf4j-api</artifactId>
+	<artifactId>com.springsource.slf4j.api</artifactId>
 	<version>${slf4j.version}</version>
-	<scope>provided</scope>
       </dependency>
       <dependency>
 	<groupId>org.slf4j</groupId>
-	<artifactId>slf4j-log4j12</artifactId>
+	<artifactId>com.springsource.slf4j.jcl</artifactId>
 	<version>${slf4j.version}</version>
-	<scope>provided</scope>
       </dependency>
       <dependency>
 	<groupId>org.slf4j</groupId>
-	<artifactId>jcl104-over-slf4j</artifactId>
+	<artifactId>com.springsource.slf4j.log4j</artifactId>
 	<version>${slf4j.version}</version>
-	<scope>provided</scope>
       </dependency>
       <dependency>
 	<groupId>log4j</groupId>
 	<artifactId>log4j</artifactId>
 	<version>${log4j.version}</version>
-	<scope>provided</scope>
       </dependency>
       
       <dependency>
@@ -141,23 +153,83 @@
       <dependency>
 	<groupId>org.osgi</groupId>
 	<artifactId>org.osgi.compendium</artifactId>
-	<version>4.0.1</version>
-	<scope>compile</scope>
+	<version>4.2.0</version>
 	<optional>true</optional>
       </dependency>
       
       <dependency>
 	<groupId>org.osgi</groupId>
 	<artifactId>org.osgi.core</artifactId>
-	<version>4.0.1</version>
-	<scope>test</scope>
+	<version>4.2.0</version>
       </dependency>
       
       <dependency>
-        <groupId>org.eclipse</groupId>
-        <artifactId>osgi</artifactId>
-        <version>3.4.3.R34x_v20081215-1030</version>
+        <groupId>org.eclipse.equinox</groupId>
+        <artifactId>org.eclipse.osgi</artifactId>
+        <version>${eclipse.equinox.osgi.version}</version>
       </dependency>
+      <dependency>
+	<groupId>org.eclipse.equinox</groupId>
+	<artifactId>org.eclipse.osgi.util</artifactId>
+	<version>${eclipse.equinox.osgi.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.equinox</groupId>
+	<artifactId>org.eclipse.osgi.services</artifactId>
+	<version>${eclipse.equinox.osgi.version}</version>
+      </dependency>
+     <dependency>
+	<groupId>org.eclipse.equinox</groupId>
+	<artifactId>org.eclipse.equinox.preferences</artifactId>
+	<version>${eclipse.equinox.preferences.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.equinox</groupId>
+	<artifactId>org.eclipse.equinox.registry</artifactId>
+	<version>${eclipse.equinox.registry.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.equinox</groupId>
+	<artifactId>org.eclipse.equinox.common</artifactId>
+	<version>${eclipse.equinox.common.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.equinox</groupId>
+	<artifactId>org.eclipse.equinox.app</artifactId>
+	<version>${eclipse.equinox.app.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.resources</artifactId>
+	<version>${eclipse.core.resources.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.expressions</artifactId>
+	<version>${eclipse.core.expressions.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.contenttype</artifactId>
+	<version>${eclipse.core.contenttype.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.runtime</artifactId>
+	<version>${eclipse.core.runtime.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.core</groupId>
+	<artifactId>org.eclipse.core.jobs</artifactId>
+	<version>${eclipse.core.jobs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>org.eclipse.jdt.core</artifactId>
+        <version>${eclipse.jdt.core.version}</version>
+      </dependency>
+
 
       <dependency>
 	<groupId>org.apache.felix</groupId>
@@ -170,11 +242,59 @@
 	<artifactId>org.apache.felix.scr.annotations</artifactId>
 	<version>1.2.0</version>
       </dependency>
-
-  
     </dependencies>
   </dependencyManagement>
-  
+
+  <dependencies>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>4.2.0</version>
+      <optional>true</optional>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>4.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>com.springsource.slf4j.api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>com.springsource.slf4j.jcl</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>com.springsource.slf4j.log4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.scr</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.scr.annotations</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+  </dependencies>  
   <build>
     <defaultGoal>install</defaultGoal>
     <resources>
@@ -298,6 +418,7 @@
 	    <Private-Package>${odysseus.osgi.private}</Private-Package>
 	    <Require-Bundle>${odysseus.osgi.bundles}</Require-Bundle>
 	    <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
+	    <Embed-Dependency>${odysseus.osgi.embed}</Embed-Dependency>
 	  </instructions>
 	  <supportedProjectTypes>
 	    <supportedProjectType>jar</supportedProjectType>
@@ -516,4 +637,29 @@
       </build>
     </profile>
   </profiles>
+
+  <repositories>
+    <repository>
+      <id>dynamicjava</id>
+      <url>http://maven.dynamicjava.org/</url>
+    </repository>
+    <repository>
+      <id>jboss</id>
+      <url>http://repository.jboss.com/maven2</url>
+    </repository>
+    <repository>
+      <id>oaw-releases</id>
+      <url>http://www.openarchitectureware.org/m2</url>
+    </repository>
+    <repository>  
+      <id>com.springsource.repository.bundles.release</id>  
+      <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name> 
+      <url>http://repository.springsource.com/maven/bundles/release</url> 
+    </repository>
+    <repository> 
+      <id>com.springsource.repository.bundles.external</id> 
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name> 
+      <url>http://repository.springsource.com/maven/bundles/external</url> 
+    </repository> 
+  </repositories>
 </project>
