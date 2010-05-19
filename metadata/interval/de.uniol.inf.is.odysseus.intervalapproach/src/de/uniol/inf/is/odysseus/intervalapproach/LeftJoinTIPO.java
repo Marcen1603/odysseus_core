@@ -85,11 +85,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 					if(merged.getMetadata().getStart().after(t_tilde)){
 						@SuppressWarnings("unchecked")
 						T leftUnbound = null;
-						try {
-							leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
-						} catch (CloneNotSupportedException e) {
-							throw new RuntimeException("Clone not Supported!");
-						}
+						leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
 						
 						leftUnbound.getMetadata().setStart(t_tilde);
 						leftUnbound.getMetadata().setEnd(merged.getMetadata().getStart());
@@ -104,11 +100,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 				if(ts_max_right != null && ts_max_right.after(t_tilde)){
 					@SuppressWarnings("unchecked")
 					T leftUnbound = null;
-					try {
-						leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
-					} catch (CloneNotSupportedException e) {
-						throw new RuntimeException("Clone not Supported!");
-					}
+					leftUnbound = this.dataMerge.createLeftFilledUp((T)object.clone());
 					leftUnbound.getMetadata().setStart(t_tilde);
 					PointInTime t_end = PointInTime.min(ts_max_right, object.getMetadata().getEnd());
 					leftUnbound.getMetadata().setEnd(t_end);
@@ -138,11 +130,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			if(invalid_t_tilde.before(invalid.getMetadata().getEnd())){
 				@SuppressWarnings("unchecked")
 				T leftUnbound = null;
-				try {
-					leftUnbound = this.dataMerge.createLeftFilledUp((T)invalid.clone());
-				} catch (CloneNotSupportedException e) {
-					throw new RuntimeException("Clone not Supported!");
-				}
+				leftUnbound = this.dataMerge.createLeftFilledUp((T)invalid.clone());
 				leftUnbound.getMetadata().setStart(invalid_t_tilde);
 				transferFunction.transfer(leftUnbound);
 			}
@@ -156,11 +144,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 			if(merged.getMetadata().getStart().after(e_hat_t_tilde)){
 				@SuppressWarnings("unchecked")
 				T leftUnbound = null;
-				try {
-					leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat.clone());
-				} catch (CloneNotSupportedException e) {
-					throw new RuntimeException("Clone not Supported!");
-				}
+				leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat.clone());
 				leftUnbound.getMetadata().setStart(e_hat_t_tilde);
 				leftUnbound.getMetadata().setEnd(merged.getMetadata().getStart());
 				this.transferFunction.transfer(leftUnbound);

@@ -281,15 +281,11 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	}
 
 	public static TimeInterval forever() {
-		try {
-			return forever.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Clone not Supported!");
-		}
+		return forever.clone();
 	}
 
 	@Override
-	public TimeInterval clone() throws CloneNotSupportedException{
+	public TimeInterval clone() {
 		return new TimeInterval(this);
 	}
 

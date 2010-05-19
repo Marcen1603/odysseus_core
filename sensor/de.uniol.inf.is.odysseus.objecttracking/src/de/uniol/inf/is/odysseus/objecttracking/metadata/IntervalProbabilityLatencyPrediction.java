@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+
 @SuppressWarnings("unchecked")
 /**
  * This is a metadata item, that implements TimeInterval, IProbability and IPredictionFunction.
@@ -18,18 +19,21 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * functions in the operators.
  */
 @Deprecated
-public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContainer<M>, M extends IProbability> extends TimeInterval implements IProbabilityPredictionFunction<T, M>, IProbability, ILatency{
+public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContainer<M>, M extends IProbability>
+		extends TimeInterval implements IProbabilityPredictionFunction<T, M>,
+		IProbability, ILatency {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8162178186554923626L;
-	/** Since we use probabilities in this metadata,
-	 * the prediction function should also consider
-	 * the probabilities.
+	/**
+	 * Since we use probabilities in this metadata, the prediction function
+	 * should also consider the probabilities.
 	 * 
 	 */
 	private IProbabilityPredictionFunction<T, M> predFct;
+
 	public IPredictionFunction<T, M> getPredFct() {
 		return predFct;
 	}
@@ -48,8 +52,8 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 
 	private IProbability prob;
 	private ILatency latency;
-	
-	public IntervalProbabilityLatencyPrediction(){
+
+	public IntervalProbabilityLatencyPrediction() {
 		this.prob = new Probability();
 		this.latency = new Latency();
 		// TODO prüfen, ob diese eine Klasse ausreicht
@@ -59,51 +63,45 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		// erzeugt wird
 		this.predFct = new LinearProbabilityPredictionFunction();
 	}
-	
-	public IntervalProbabilityLatencyPrediction(IntervalProbabilityLatencyPrediction copy) throws CloneNotSupportedException{
+
+	public IntervalProbabilityLatencyPrediction(
+			IntervalProbabilityLatencyPrediction copy) {
 		super(copy);
-		this.prob = (IProbability)copy.prob.clone();
-		this.latency = (ILatency)copy.latency.clone();
-		this.predFct = (IProbabilityPredictionFunction)copy.predFct.clone();
+		this.prob = (IProbability) copy.prob.clone();
+		this.latency = (ILatency) copy.latency.clone();
+		this.predFct = (IProbabilityPredictionFunction) copy.predFct.clone();
 	}
-	
-	public IntervalProbabilityLatencyPrediction(IProbabilityPredictionFunction<T, M> predFct, IProbability prob, ILatency latency){
+
+	public IntervalProbabilityLatencyPrediction(
+			IProbabilityPredictionFunction<T, M> predFct, IProbability prob,
+			ILatency latency) {
 		this.predFct = predFct;
 		this.prob = prob;
 		this.latency = latency;
 	}
-	
+
 	@Override
-	public T predictData(SDFAttributeList schema,
-			T object, PointInTime t) {
+	public T predictData(SDFAttributeList schema, T object, PointInTime t) {
 		// if there is no prediction function, return
 		// return the original schema
-		if(this.predFct == null){
-			try {
-				return (T)object.clone();
-			} catch (CloneNotSupportedException e) {
-				throw new RuntimeException("Clone not Supported!");
-			}
+		if (this.predFct == null) {
+			return (T) object.clone();
 		}
-		
+
 		return this.predFct.predictData(schema, object, t);
 	}
-	
-	public M predictMetadata(SDFAttributeList schema, T object, PointInTime t){
+
+	public M predictMetadata(SDFAttributeList schema, T object, PointInTime t) {
 		// if there is no prediction function,
 		// return the original metadata
-		if(this.predFct == null){
-			try {
-				return (M)object.getMetadata().clone();
-			} catch (CloneNotSupportedException e) {
-				throw new RuntimeException("Clone not Supported!");
-			}
+		if (this.predFct == null) {
+			return (M) object.getMetadata().clone();
 		}
-		
+
 		return this.predFct.predictMetadata(schema, object, t);
 	}
-	
-	public T predictAll(SDFAttributeList schema, T object, PointInTime t){
+
+	public T predictAll(SDFAttributeList schema, T object, PointInTime t) {
 		return this.predFct.predictAll(schema, object, t);
 	}
 
@@ -143,29 +141,29 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	@Override
 	public void setLatencyStart(long timestamp) {
 		this.latency.setLatencyStart(timestamp);
-		
+
 	}
 
 	@Override
 	public SDFExpression[] getExpressions() {
 		// TODO Auto-generated method stub
-		if(this.predFct == null){
+		if (this.predFct == null) {
 			return null;
 		}
 		return this.predFct.getExpressions();
 	}
-	
+
 	@Override
-	public int[][] getVariables(){
-		if(this.predFct != null){
+	public int[][] getVariables() {
+		if (this.predFct != null) {
 			return this.predFct.getVariables();
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void setVariables(int[][] vars){
-		if(this.predFct != null){
+	public void setVariables(int[][] vars) {
+		if (this.predFct != null) {
 			this.predFct.setVariables(vars);
 		}
 	}
@@ -173,39 +171,39 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	@Override
 	public void setExpressions(SDFExpression[] expressions) {
 		this.predFct.setExpressions(expressions);
-		
+
 	}
 
 	@Override
 	public void setTimeInterval(ITimeInterval timeInterval) {
 		this.predFct.setTimeInterval(timeInterval);
-		
+
 	}
-	
+
 	@Override
-	public IntervalProbabilityLatencyPrediction clone() throws CloneNotSupportedException{
+	public IntervalProbabilityLatencyPrediction clone() {
 		return new IntervalProbabilityLatencyPrediction(this);
 	}
 
 	@Override
 	public void initVariables() {
-		if(this.predFct != null){
+		if (this.predFct != null) {
 			this.predFct.initVariables();
 		}
-		
+
 	}
 
 	@Override
 	public void setNoiseMatrix(double[][] noiseMatrix) {
-		if(this.predFct != null){
+		if (this.predFct != null) {
 			this.predFct.setNoiseMatrix(noiseMatrix);
 		}
-		
+
 	}
 
 	@Override
 	public void setRestrictList(int[] restrictList) {
-		if(this.predFct != null){
+		if (this.predFct != null) {
 			this.predFct.setRestrictList(restrictList);
 		}
 	}

@@ -44,22 +44,12 @@ public class BatchProducer extends
 					nonprio.setMetadata(ilp);
 					
 					IntervalLatencyPriority ilp2 = null;
-					try {
-						ilp2 = ilp.clone();
-					} catch (CloneNotSupportedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					ilp2 = ilp.clone();
 					ilp2.setPriority((byte) 1);
 					prio.setMetadata(ilp2);
 					for (int i = 0; i < count; ++i) {
-						try {
-							transfer((i % jedeswievielteelementprio == 0 ? prio
-									: nonprio).clone());
-						} catch (CloneNotSupportedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						transfer((i % jedeswievielteelementprio == 0 ? prio
+								: nonprio).clone());
 					}
 				}
 				propagateDone();

@@ -10,13 +10,13 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 	public AndPredicate() {
 		super();
 	}
-	
+
 	public AndPredicate(IPredicate<? super T> leftPredicate,
 			IPredicate<? super T> rightPredicate) {
 		super(leftPredicate, rightPredicate);
 	}
 
-	public AndPredicate(AndPredicate<T> pred) throws CloneNotSupportedException {
+	public AndPredicate(AndPredicate<T> pred) {
 		super(pred);
 	}
 
@@ -30,26 +30,28 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
 	}
 
 	@Override
-	public AndPredicate<T> clone() throws CloneNotSupportedException {
+	public AndPredicate<T> clone() {
 		return new AndPredicate<T>(this);
 	}
-	
+
 	@Override
 	public String toString() {
-		return "(" + getLeft().toString() + ") AND (" + getRight().toString() + ")";
+		return "(" + getLeft().toString() + ") AND (" + getRight().toString()
+				+ ")";
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public boolean equals(Object other){
-		if(!(other instanceof AndPredicate)){
+	public boolean equals(Object other) {
+		if (!(other instanceof AndPredicate)) {
 			return false;
-		}
-		else{
-			return this.getLeft().equals(((AndPredicate)other).getLeft()) && this.getRight().equals(((AndPredicate)other).getRight());
+		} else {
+			return this.getLeft().equals(((AndPredicate) other).getLeft())
+					&& this.getRight()
+							.equals(((AndPredicate) other).getRight());
 		}
 	}
-	
-	public int hashCode(){
+
+	public int hashCode() {
 		return 17 * this.getLeft().hashCode() * 19 * this.getRight().hashCode();
 	}
 

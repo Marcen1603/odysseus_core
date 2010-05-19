@@ -144,11 +144,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			for(Entry<IPredicate, IPredictionFunction> leftEntry: leftFcts.entrySet()){
 				for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
 					AndPredicate newPredicate;
-					try {
-						newPredicate = new AndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
-					} catch (CloneNotSupportedException e) {
-						throw new RuntimeException("Clone not Supported!");
-					}
+					newPredicate = new AndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
 					IPredictionFunction newFunction = new LinearProbabilityPredictionFunction();
 					
 					IPredictionFunction leftFct = leftEntry.getValue();

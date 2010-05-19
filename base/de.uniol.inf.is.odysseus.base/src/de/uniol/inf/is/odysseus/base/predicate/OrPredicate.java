@@ -15,7 +15,7 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 		super(leftPredicate, rightPredicate);
 	}
 
-	public OrPredicate(OrPredicate<T> pred) throws CloneNotSupportedException {
+	public OrPredicate(OrPredicate<T> pred) {
 		super(pred);
 	}
 
@@ -29,7 +29,7 @@ public class OrPredicate<T> extends ComplexPredicate<T> {
 	}
 
 	@Override
-	public OrPredicate<T> clone() throws CloneNotSupportedException {
+	public OrPredicate<T> clone() {
 		return new OrPredicate<T>(this);
 	}
 

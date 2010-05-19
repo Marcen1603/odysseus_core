@@ -38,7 +38,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 //	}
 //	
 	
-	abstract public AbstractPredicate<T> clone() throws CloneNotSupportedException;
+	abstract public AbstractPredicate<T> clone();
 	
 	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
 }

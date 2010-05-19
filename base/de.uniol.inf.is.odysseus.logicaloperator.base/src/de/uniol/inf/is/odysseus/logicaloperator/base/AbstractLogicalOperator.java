@@ -43,16 +43,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	private IPredicate predicate = null;
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
-		// Subscriptions gehoeren eigentlich nicht zum Operator?
-		// this.subscribedToSource = new HashMap<Integer,
-		// LogicalSubscription>(op.subscribedToSource);
-		// this.subscriptions = new
-		// Vector<LogicalSubscription>(op.subscriptions);
-		try {
-			predicate = (op.predicate == null) ? null : op.predicate.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Clone not Supported!");
-		}
+		predicate = (op.predicate == null) ? null : op.predicate.clone();
 		setName(op.getName());
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new

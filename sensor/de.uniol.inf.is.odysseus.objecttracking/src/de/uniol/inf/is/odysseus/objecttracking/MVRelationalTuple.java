@@ -364,11 +364,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 				newAttrs[i] = this.attributes[restrictList[i]];
 			}
 			newTuple.setAttributes(newAttrs);
-			try {
-				newTuple.setMetadata((T)this.getMetadata().clone());
-			} catch (CloneNotSupportedException e) {
-				throw new RuntimeException("Clone not Supported!");
-			}
+			newTuple.setMetadata((T)this.getMetadata().clone());
 			
 			/**
 			 * If no measurement attributes are in the output schema, the restrictMatrix will be null.

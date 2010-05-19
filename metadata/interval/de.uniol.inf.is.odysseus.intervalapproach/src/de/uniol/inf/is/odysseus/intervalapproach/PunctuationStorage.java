@@ -9,19 +9,17 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
- * Stores temporally punctuations for later processing, when they get out of date.
+ * Stores temporally punctuations for later processing, when they get out of
+ * date.
+ * 
  * @author jan steinke
- *
+ * 
  * @param <W>
  * @param <R>
  */
 public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 
 	private List<List<PointInTime>> storage = new ArrayList<List<PointInTime>>();
-
-	public List<List<PointInTime>> getStorage() {
-		return storage;
-	}
 
 	private int currentPort = 0;
 
@@ -49,28 +47,26 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 	 */
 	public void updatePunctuationData(W object) {
 
-		if (storage.size() > 0) {
+		if (!storage.isEmpty()) {
 			ITimeInterval time = (ITimeInterval) object.getMetadata();
 			PointInTime start = time.getStart();
 
-			Iterator<PointInTime> i = storage.get(currentPort).iterator();
+			Iterator<PointInTime> it = storage.get(currentPort).iterator();
 
-			// Hiermit werden Duplikate von Punctuations beseitigt
 			PointInTime lastPoint = null;
 
-			while (i.hasNext()) {
-
-				PointInTime curPoint = i.next();
-				if (lastPoint == null || !curPoint.equals(lastPoint)) {
-					if (start.afterOrEquals(curPoint)) {
-						if (pipe.cleanInternalStates(curPoint, object)) {
-							pipe.sendPunctuation(curPoint);
-							i.remove();
-						}
-					}
+			while (it.hasNext()) {
+				PointInTime curPoint = it.next();
+				if (start.before(curPoint)) {
+					break;
 				} else {
-					i.remove();
+					lastPoint = curPoint;
+					it.remove();
 				}
+			}
+
+			if (lastPoint != null) {
+				pipe.sendPunctuation(lastPoint);
 			}
 		}
 	}
@@ -87,7 +83,7 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 
 	public int size() {
 		int size = 0;
-		for(List<PointInTime> each : storage) {
+		for (List<PointInTime> each : storage) {
 			size += each.size();
 		}
 		return size;

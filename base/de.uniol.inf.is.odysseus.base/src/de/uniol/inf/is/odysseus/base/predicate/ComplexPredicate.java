@@ -20,7 +20,7 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
 		this.right = right;
 	}
 
-	public ComplexPredicate(ComplexPredicate<T> pred) throws CloneNotSupportedException {
+	public ComplexPredicate(ComplexPredicate<T> pred) {
 		this.left = pred.left.clone();
 		this.right = pred.right.clone();
 	}

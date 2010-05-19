@@ -60,7 +60,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 		// is important, but in interval based mode, also the end time stamp
 		// would be considered and this would lead to an errornous output.
 		this.sa.setQueryPredicate(LiesInPredicate.getInstance());
-		this.slideNo = 0;
+		this.slideNo = 1;
 	}
 
 	public SlidingPeriodicWindowTIPO(SlidingPeriodicWindowTIPO<R> original) {
@@ -109,12 +109,8 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 					.query(compElem, Order.LeftRight);
 			while (iter.hasNext()) {
 				IMetaAttributeContainer<? extends ITimeInterval> retval;
-				try {
-					retval = (IMetaAttributeContainer<? extends ITimeInterval>) iter
-							.next().clone();
-				} catch (CloneNotSupportedException e) {
-					throw new RuntimeException("Clone not Supported!");
-				}
+				retval = (IMetaAttributeContainer<? extends ITimeInterval>) iter
+						.next().clone();
 				// edit the time interval
 				retval.getMetadata().setStart(p_start);
 				// the end time stamp must be ( actual / delta )

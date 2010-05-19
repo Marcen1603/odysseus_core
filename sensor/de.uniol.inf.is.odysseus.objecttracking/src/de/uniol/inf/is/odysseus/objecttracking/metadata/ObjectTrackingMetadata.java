@@ -23,7 +23,7 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 		this.appTime = new ApplicationTime();
 	}
 	
-	public ObjectTrackingMetadata(ObjectTrackingMetadata<K> copy) throws CloneNotSupportedException{
+	public ObjectTrackingMetadata(ObjectTrackingMetadata<K> copy) {
 		super(copy);
 		this.predFctKey = (IPredictionFunctionKey)copy.predFctKey.clone();
 		this.prob = (IProbability)copy.prob.clone();
@@ -88,7 +88,7 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 		
 	}
 	
-	public ObjectTrackingMetadata<K> clone() throws CloneNotSupportedException{
+	public ObjectTrackingMetadata<K> clone() {
 		return new ObjectTrackingMetadata<K>(this);
 	}
 	

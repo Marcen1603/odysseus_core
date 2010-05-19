@@ -17,7 +17,7 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	}
 	
 
-	public IntervalLatency(IntervalLatency clone) throws CloneNotSupportedException {
+	public IntervalLatency(IntervalLatency clone) {
 		super(clone);
 		this.latency = clone.latency.clone();
 	}
@@ -48,7 +48,7 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	}
 
 	@Override
-	public IntervalLatency clone() throws CloneNotSupportedException {
+	public IntervalLatency clone() {
 		return new IntervalLatency(this);
 	}
 

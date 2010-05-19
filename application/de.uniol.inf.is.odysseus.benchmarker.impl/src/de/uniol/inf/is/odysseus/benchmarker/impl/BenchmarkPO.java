@@ -45,11 +45,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractP
 			waitProcessingTime(end);
 			while (toProduce-- > 0) {
 				if (toProduce > 1) {
-					try {
-						object = (R) object.clone();
-					} catch (CloneNotSupportedException e) {
-						throw new RuntimeException("Illegal Objekttype for processing used. Must support clone!");
-					}
+					object = (R) object.clone();
 				}
 				transfer(object);
 			}

@@ -178,6 +178,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 		
 		synchronized (this.areas) {
+			//TODO fatal, kann zu falschen informationen fuehren, weil vorher schon neuere elemente versand wurden
 			storage.updatePunctuationData(object);
 		}
 		
@@ -272,12 +273,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 							&& element.getMetadata().getStart().equals(
 									punctuation)) {
 						IMetaAttributeContainer<?> purgeInterval;
-						try {
-							purgeInterval = creationFunction
-									.createMetadata((T) element.clone());
-						} catch (CloneNotSupportedException e) {
-							throw new RuntimeException("Clone not Supported!");
-						}
+						purgeInterval = creationFunction
+								.createMetadata((T) element.clone());
 						synchronized (areas[storage.getCurrentPort() ^ 1]) {
 								areas[storage.getCurrentPort() ^ 1].purgeElements(
 									(T) purgeInterval, order);
