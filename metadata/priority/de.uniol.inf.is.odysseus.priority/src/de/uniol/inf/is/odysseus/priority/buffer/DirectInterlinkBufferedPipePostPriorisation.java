@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.priority.PriorityPO;
 public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttributeContainer<? extends IPriority>>
 		extends AbstractPunctuationBuffer<T, T> implements
 		IPostPriorisationPipe<IMetaAttributeContainer<? extends IPriority>> {
-	
+
 	Lock directLinkLock = new ReentrantLock();
 	@SuppressWarnings("unchecked")
 	private IPostPriorisationFunctionality functionality;
@@ -27,12 +27,14 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	private boolean active;
 	private POEvent finished = new POEvent(this, POEventType.PostPriorisation);
 
-	public DirectInterlinkBufferedPipePostPriorisation(){};
-	
+	public DirectInterlinkBufferedPipePostPriorisation() {
+	};
+
 	public DirectInterlinkBufferedPipePostPriorisation(
 			DirectInterlinkBufferedPipePostPriorisation<T> directInterlinkBufferedPipePostPriorisation) {
 		super(directInterlinkBufferedPipePostPriorisation);
-		functionality = directInterlinkBufferedPipePostPriorisation.functionality.clone();
+		functionality = directInterlinkBufferedPipePostPriorisation.functionality
+				.clone();
 		postPriorisationRoot = directInterlinkBufferedPipePostPriorisation.postPriorisationRoot;
 		active = directInterlinkBufferedPipePostPriorisation.active;
 	}
@@ -48,21 +50,20 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(T object, int port) {
-		
+
 		storage.setCurrentPort(port);
-		
-		if(active && functionality != null) {
+
+		if (active && functionality != null) {
 			functionality.executePostPriorisation(object);
 		}
 
 		sendElement(object);
 	}
-	
+
 	public void sendElement(T object) {
 		byte prio = object.getMetadata().getPriority();
 
@@ -98,18 +99,19 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 			IMetaAttributeContainer<? extends IPriority> next,
 			boolean deactivate, boolean matchPredicate) {
 
-		// TODO Punctuations nur senden, sobald sie auch im Gesamtsystem aktiviert sind
-		//ITimeInterval time = (ITimeInterval) next.getMetadata();
-		//sendPunctuation(time.getStart());
+		// TODO Punctuations nur senden, sobald sie auch im Gesamtsystem
+		// aktiviert sind
+		// ITimeInterval time = (ITimeInterval) next.getMetadata();
+		// sendPunctuation(time.getStart());
 
 		if (deactivate) {
 			this.setActive(false);
 		}
-		
+
 		if (matchPredicate) {
 			fire(finished);
 		}
-		
+
 	}
 
 	@Override
@@ -120,7 +122,7 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	@Override
 	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO) {
 		this.postPriorisationRoot = priorityPO;
-		
+
 	}
 
 	@Override
@@ -131,14 +133,10 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
+	public void addTimeInterval(IMetaAttributeContainer<?> time) {
 		setActive(true);
-		try {
-			functionality.getPriorisationIntervals().add(time.clone());
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("No clone method");
-		}
-		
+		functionality.getPriorisationIntervals().add(time.clone());
+
 		Iterator<T> it = buffer.iterator();
 
 		// Puffer bei jeder potenziellen Nachpriorisierung nachpriorisieren
@@ -149,8 +147,8 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 				sendElement(object);
 				it.remove();
 			}
-		}		
-		
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -164,8 +162,8 @@ public class DirectInterlinkBufferedPipePostPriorisation<T extends IMetaAttribut
 	public void setJoinFragment(List fragment) {
 		functionality.setJoinFragment(fragment);
 	}
-	
-	public DirectInterlinkBufferedPipePostPriorisation<T> clone(){
+
+	public DirectInterlinkBufferedPipePostPriorisation<T> clone() {
 		return new DirectInterlinkBufferedPipePostPriorisation<T>(this);
 	}
 }

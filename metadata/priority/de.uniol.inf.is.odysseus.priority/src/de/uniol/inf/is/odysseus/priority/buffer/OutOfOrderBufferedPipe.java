@@ -12,19 +12,16 @@ public class OutOfOrderBufferedPipe<T extends IMetaAttributeContainer<? extends 
 	}
 
 	@SuppressWarnings("unchecked")
-	protected synchronized void process_next(T object, int port, boolean isReadOnly) {
+	protected synchronized void process_next(T object, int port,
+			boolean isReadOnly) {
 		byte prio = object.getMetadata().getPriority();
-		
+
 		// Load Shedding
-		if (prio < 0){
+		if (prio < 0) {
 			return;
 		}
 		if (isReadOnly) {
-			try {
-				object = (T) object.clone();
-			} catch (CloneNotSupportedException e) {
-				throw new RuntimeException("No clone method");
-			}
+			object = (T) object.clone();
 		}
 
 		if (prio > 0) {
@@ -49,8 +46,8 @@ public class OutOfOrderBufferedPipe<T extends IMetaAttributeContainer<? extends 
 	public Byte getTopElementPrio() {
 		return this.buffer.element().getMetadata().getPriority();
 	}
-	
-	public OutOfOrderBufferedPipe<T> clone(){
+
+	public OutOfOrderBufferedPipe<T> clone() {
 		return new OutOfOrderBufferedPipe<T>(this);
 	}
 

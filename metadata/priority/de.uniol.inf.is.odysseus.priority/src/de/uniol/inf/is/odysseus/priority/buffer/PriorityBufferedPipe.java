@@ -19,18 +19,14 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 	@SuppressWarnings("unchecked")
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		byte prio = object.getMetadata().getPriority();
-		
+
 		// Load Shedding
-		if (prio < 0){
+		if (prio < 0) {
 			return;
 		}
-		
+
 		if (isReadOnly) {
-			try {
-				object = (T) object.clone();
-			} catch (CloneNotSupportedException e) {
-				throw new RuntimeException("No clone method");
-			}
+			object = (T) object.clone();
 		}
 
 		if (prio > 0) {
@@ -62,10 +58,9 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 		T obj = this.buffer.peek();
 		return obj.getMetadata().getPriority();
 	}
-	
-	public PriorityBufferedPipe<T> clone(){
+
+	public PriorityBufferedPipe<T> clone() {
 		return new PriorityBufferedPipe<T>(this);
 	}
 
 }
-

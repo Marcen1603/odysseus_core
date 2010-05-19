@@ -8,51 +8,50 @@ import de.uniol.inf.is.odysseus.intervalapproach.AbstractPunctuationPipe;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPriority>>
-extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
- 
+		extends AbstractPunctuationPipe<T, T> implements
+		IPostPriorisationPipe<T> {
+
 	private boolean isActive = true;
 	private PriorityPO<?> priorisationOwner = null;
-	
 
 	@SuppressWarnings("unchecked")
 	private IPostPriorisationFunctionality functionality;
 	@SuppressWarnings("unchecked")
 	private List predicates;
 
-	
 	@SuppressWarnings("unchecked")
 	public IPostPriorisationFunctionality getPostPriorisationFunctionality() {
 		return functionality;
 	}
-	
+
 	public PostPriorisationPO(PostPriorisationAO<T> postAO) {
 		super();
 		this.isActive = postAO.isActive();
 		this.predicates = postAO.getPredicates();
-	}	
-	
+	}
+
 	public PostPriorisationPO(PostPriorisationPO<T> postPriorisationPO) {
 		super(postPriorisationPO);
 		// TODO: Jonas!
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setPostPriorisationFunctionality(IPostPriorisationFunctionality functionality) {
+	public void setPostPriorisationFunctionality(
+			IPostPriorisationFunctionality functionality) {
 		this.functionality = functionality;
 		setJoinFragment(predicates);
 	}
-	
-	@Override	
+
+	@Override
 	public boolean isActive() {
 		return isActive;
 	}
-	
-	@Override	
+
+	@Override
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
-	}	
-	
-	
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -62,15 +61,16 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	protected void process_next(T next, int port) {
 		transfer(next);
 	}
-	
-	@Override	
+
+	@Override
 	public void handlePostPriorisation(T next, boolean deactivate,
 			boolean matchPredicate) {
-		// TODO Punctuations nur senden, sobald sie auch im Gesamtsystem aktiviert sind
-		//ITimeInterval time = (ITimeInterval) next.getMetadata();
-		//sendPunctuation(time.getStart());
-		
-		if(deactivate) {
+		// TODO Punctuations nur senden, sobald sie auch im Gesamtsystem
+		// aktiviert sind
+		// ITimeInterval time = (ITimeInterval) next.getMetadata();
+		// sendPunctuation(time.getStart());
+
+		if (deactivate) {
 			this.setActive(false);
 		}
 	}
@@ -81,18 +81,16 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 		return true;
 	}
 
-
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void transfer(T object) {
-		if(isActive) {
+		if (isActive) {
 			functionality.executePostPriorisation(object);
 		}
-		
-		transfer(object,0);
-		
-		if(isActive) {		
+
+		transfer(object, 0);
+
+		if (isActive) {
 			updatePunctuationData(object);
 		}
 	}
@@ -111,7 +109,7 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 	@Override
 	public void setPhysicalPostPriorisationRoot(PriorityPO<?> priorityPO) {
 		priorisationOwner = priorityPO;
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -122,20 +120,14 @@ extends AbstractPunctuationPipe<T,T> implements IPostPriorisationPipe<T>{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addTimeInterval(IMetaAttributeContainer<?>  time) {
+	public void addTimeInterval(IMetaAttributeContainer<?> time) {
 		setActive(true);
-		try {
-			functionality.getPriorisationIntervals().add(time.clone());
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("No clone method");
-		}
+		functionality.getPriorisationIntervals().add(time.clone());
 	}
-	
+
 	@Override
 	public PostPriorisationPO<T> clone() throws CloneNotSupportedException {
 		return new PostPriorisationPO<T>(this);
 	}
-
-
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -73,6 +74,11 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 		transfer(next);
 
 		return;
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 	public boolean isPunctuationActive() {
