@@ -53,4 +53,12 @@ public class BrokerQueryPredicate<T extends IMetaAttributeContainer<ITimeInterva
 		return brokerEqualPredicate.evaluate(left, right);		
 	}
 
+
+	@Override
+	public BrokerQueryPredicate<T> clone() {
+		BrokerQueryPredicate<T> clone = new  BrokerQueryPredicate<T>();
+		clone.brokerEqualPredicate = this.brokerEqualPredicate.clone();
+		return clone;
+	}
+
 }

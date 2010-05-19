@@ -59,5 +59,12 @@ public class BrokerRemovePredicate<T extends IMetaAttributeContainer<ITimeInterv
 		return false;
 	}
 
+	@Override
+	public BrokerRemovePredicate<T> clone() {
+		BrokerRemovePredicate<T> clone = new BrokerRemovePredicate<T>();
+		clone.brokerEqualPredicate = this.brokerEqualPredicate.clone();
+		return clone;
+	}
+
 	
 }

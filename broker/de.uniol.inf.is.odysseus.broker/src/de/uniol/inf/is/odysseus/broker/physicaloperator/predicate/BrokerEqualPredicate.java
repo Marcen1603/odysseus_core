@@ -64,4 +64,9 @@ public class BrokerEqualPredicate<T extends IMetaAttributeContainer<ITimeInterva
 		}
 	}
 
+	@Override
+	public BrokerEqualPredicate<T> clone() {
+		return new BrokerEqualPredicate<T>(this.position);
+	}
+
 }
