@@ -205,11 +205,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		// if the expressions are null
 		// return the original object
 		if(this.expressions == null){
-			try {
-				return object.clone();
-			} catch (CloneNotSupportedException e) {
-				throw new RuntimeException("No clone method");		
-			}
+			return object.clone();
 		}
 		
 //		this.variables = this.getVariables(schema);

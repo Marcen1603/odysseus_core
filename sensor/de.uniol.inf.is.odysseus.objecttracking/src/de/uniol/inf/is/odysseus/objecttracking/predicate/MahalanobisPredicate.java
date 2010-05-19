@@ -154,8 +154,7 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 	}
 
 	@Override
-	public MahalanobisPredicate<T> clone()
-			throws CloneNotSupportedException {
+	public MahalanobisPredicate<T> clone(){
 		return new MahalanobisPredicate<T>(this);
 	}
 }

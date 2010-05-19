@@ -126,9 +126,9 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		this.compareOperator = compareOperator;
 	}
 
-	public ProbabilityPredicate(ProbabilityPredicate<T> probabilityPredicate) throws CloneNotSupportedException {
+	public ProbabilityPredicate(ProbabilityPredicate<T> probabilityPredicate) {
 		// TODO Implement Copy Constructor
-		throw new CloneNotSupportedException();
+		throw new RuntimeException("No copy constructor for ProbabiltyPredicate defined.");
 	}
 
 	public SDFAttributeList getLeftSchema() {
@@ -464,8 +464,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	}
 	
 	@Override
-	public ProbabilityPredicate<T> clone()
-			throws CloneNotSupportedException {
+	public ProbabilityPredicate<T> clone(){
 		return new ProbabilityPredicate<T>(this);
 	}
 

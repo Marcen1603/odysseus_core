@@ -73,7 +73,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		super(attributeCount);
 	}
 
-	public MVRelationalTuple(MVRelationalTuple copy) throws CloneNotSupportedException {
+	public MVRelationalTuple(MVRelationalTuple copy) {
 		super(copy);
 //		if(this.getAttribute(3).equals(19.3906)){
 //			try{
@@ -384,7 +384,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	}
 	
 	@Override
-	public MVRelationalTuple<T> clone() throws CloneNotSupportedException {
+	public MVRelationalTuple<T> clone() {
 		return new MVRelationalTuple<T>(this);
 	}
 	
