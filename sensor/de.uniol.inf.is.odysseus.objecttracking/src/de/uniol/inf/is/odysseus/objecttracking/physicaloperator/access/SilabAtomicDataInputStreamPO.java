@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.AbstractAtomicByteDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleByteHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.StringByteHandler;
@@ -29,6 +29,8 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	private Object[] attributeData;
 	private boolean isDone;
 	private SDFAttributeList outputSchema;
+	private int typeAttribute;
+	private int timestampAttribute;
 
 	private boolean p2p = false;
 	public boolean connectToPipe = false;
@@ -48,6 +50,8 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 		this.attributeData = new Object[schema.size()];
 		createDataReader(schema);
 		this.outputSchema = schema;
+//		this.typeAttribute = ;
+//		this.timestampAttribute = ;
 	}
 	
 	private void createDataReader(SDFAttributeList schema) {
@@ -140,9 +144,14 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			// TODO wie mit diesem fehler umgehen?
 			return false;
 		}
-		this.buffer = new RelationalTuple<M>(this.attributeData);
-		// this.buffer.setMetadata(this.metadataFactory.createMetadata());
-
+//		if(!this.attributeData[this.typeAttribute].equals("punctuation")){
+			this.buffer = new RelationalTuple<M>(this.attributeData);
+			// this.buffer.setMetadata(this.metadataFactory.createMetadata());
+//		}
+//		else{
+//			this.sendPunctuation(new PointInTime(((Integer)this.attributeData[this.timestampAttribute]).intValue()));
+//		}
+		
 		return true;
 	}
 
@@ -153,7 +162,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 
 	@Override
 	public void transferNext() {
-		System.out.println("TRANSFER BUFFER: " + this.buffer);
+//		System.out.println("TRANSFER BUFFER: " + this.buffer);
 		transfer(this.buffer);
 		this.buffer = null;
 	}
