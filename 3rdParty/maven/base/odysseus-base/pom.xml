@@ -21,6 +21,7 @@
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
+    <odysseus.osgi.activator>de.uniol.inf.is.odysseus.base.Activator</odysseus.osgi.activator>
   </properties>
 
   <build>
@@ -60,6 +61,10 @@
       <plugin>
 	<groupId>org.ops4j</groupId>
 	<artifactId>maven-pax-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-scr-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

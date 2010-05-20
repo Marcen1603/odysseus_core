@@ -62,11 +62,11 @@
     <junit-version>4.5</junit-version>
     <java.util.logging.config.file>${basedir}/runtime/etc/logging.properties</java.util.logging.config.file>
     <!-- Eclipse stuff for compiling -->
-    <eclipse.core.runtime.version>[3.4.0,)</eclipse.core.runtime.version>
+    <eclipse.core.runtime.version>3.5.0.v20090525</eclipse.core.runtime.version>
     <eclipse.core.expressions.version>[3.3.0,)</eclipse.core.expressions.version>
     <eclipse.core.contenttype.version>[3.2.100,)</eclipse.core.contenttype.version>
-    <eclipse.core.jobs.version>[3.4.100,)</eclipse.core.jobs.version>
-    <eclipse.core.resources.version>[3.3.0,)</eclipse.core.resources.version>
+    <eclipse.core.jobs.version>3.4.100.v20090429-1800</eclipse.core.jobs.version>
+    <eclipse.core.resources.version>3.5.0.v20090512</eclipse.core.resources.version>
     <eclipse.equinox.app.version>[1.0.0,)</eclipse.equinox.app.version>
     <eclipse.equinox.common.version>[3.3.0,)</eclipse.equinox.common.version>
     <eclipse.equinox.registry.version>[3.4.100,)</eclipse.equinox.registry.version>
@@ -82,6 +82,7 @@
     <odysseus.osgi.private />
     <odysseus.osgi.bundles />
     <odysseus.osgi.embed />
+    <odysseus.osgi.activator />
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -412,6 +413,7 @@
 	  <instructions>
 	    <Bundle-Name>${project.name}</Bundle-Name>
 	    <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+	    <Bundle-Activator>${odysseus.osgi.activator}</Bundle-Activator>
 	    <Export-Package>${odysseus.osgi.export}</Export-Package>
 	    <Import-Package>${odysseus.osgi.import}</Import-Package>
 	    <DynamicImport-Package>${odysseus.osgi.dynamic.import}</DynamicImport-Package>
