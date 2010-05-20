@@ -51,6 +51,8 @@ TOKEN : /* Keywords */ {
 |   <K_RELATIONAL_PROJECTION: "RPROJECTION">
 |   <K_RELATIONAL_SELECTION: "RSELECTION">
 |   <K_RELATIONAL_JOIN: "RJOIN">
+|   <K_RELATIONAL_NEST: "RNEST">
+|   <K_RELATIONAL_UNNEST: "RUNNEST">
 |	<K_SELECTION: "SELECTION">
 |	<K_SET_PREDICTION: "SET-PREDICTION">
 |	<K_SIZE: "SIZE">
@@ -103,6 +105,8 @@ void AlgebraOp():{}{
 	ProjectionOp() |
 	SelectionOp() | RelationalSelectionOp() |
 	JoinOp() | RelationalJoinOp() |
+	RelationalNestOp() |
+	RelationalUnnestOp() |
 	WindowOp() |
 	AccessOp() |
 	PredictionOp()
@@ -140,6 +144,18 @@ void RelationalJoinOp(): {
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
 	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"
+}
+
+void RelationalNestOp(): {
+}{
+	// NEST stream, a, b AS z, z is the attribute name of the nesting. 
+	<K_RELATIONAL_NEST>"(" AlgebraOp() "," Identifier() "," (Identifier())* ")"
+}
+
+void RelationalUnnestOp(): {
+}{
+	// NEST stream, a, b AS z, z is the attribute name of the nesting. 
+	<K_RELATIONAL_UNNEST>"(" AlgebraOp() "," Identifier() ")"
 }
 
 void JoinOp(): {

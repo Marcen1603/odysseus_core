@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
@@ -41,8 +42,10 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalNestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalSelectionOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalUnnestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
@@ -673,6 +676,44 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		((ArrayList)data).add(join);
 		
 		return data;
+	}
+
+	@Override
+	public Object visit(ASTRelationalNestOp node, Object data) {
+		Class<?> visitorClass;
+		try {
+			visitorClass = Class
+					.forName("de.uniol.inf.is.odysseus.objectrelational.parser.Visitor");
+			Object visitorInstance = visitorClass.newInstance();
+			Method m = visitorClass.getDeclaredMethod("visit",
+					ASTRelationalNestOp.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+				.invoke(visitorInstance, node, data);	
+			return sourceOp;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Objectrelational Plugin is missing in parser.", e.getCause());
+		} catch (Exception e) {
+			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
+		}
+	}
+
+	@Override
+	public Object visit(ASTRelationalUnnestOp node, Object data) {
+		Class<?> visitorClass;
+		try {
+			visitorClass = Class
+					.forName("de.uniol.inf.is.odysseus.objectrelational.parser.Visitor");
+			Object visitorInstance = visitorClass.newInstance();
+			Method m = visitorClass.getDeclaredMethod("visit",
+					ASTRelationalNestOp.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+				.invoke(visitorInstance, node, data);	
+			return sourceOp;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Objectrelational Plugin is missing in parser.", e.getCause());
+		} catch (Exception e) {
+			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
+		}
 	}
 
 }

@@ -47,43 +47,47 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_RELATIONAL_JOIN = 22;
   /** RegularExpression Id. */
-  int K_SELECTION = 23;
+  int K_RELATIONAL_NEST = 23;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 24;
+  int K_RELATIONAL_UNNEST = 24;
   /** RegularExpression Id. */
-  int K_SIZE = 25;
+  int K_SELECTION = 25;
   /** RegularExpression Id. */
-  int K_SLIDE = 26;
+  int K_SET_PREDICTION = 26;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 27;
+  int K_SIZE = 27;
   /** RegularExpression Id. */
-  int K_SUM = 28;
+  int K_SLIDE = 28;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 29;
+  int K_SLDING_TIME_WINDOW = 29;
   /** RegularExpression Id. */
-  int K_WHERE = 30;
+  int K_SUM = 30;
   /** RegularExpression Id. */
-  int IDENTIFIER = 31;
+  int K_TUMBLING_TIME_WINDOW = 31;
   /** RegularExpression Id. */
-  int LETTER = 32;
+  int K_WHERE = 32;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 33;
+  int IDENTIFIER = 33;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 34;
+  int LETTER = 34;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 35;
+  int SPECIAL_CHARS = 35;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 36;
+  int CHAR_LITERAL = 36;
   /** RegularExpression Id. */
-  int REGEXP = 37;
+  int QUOTED_IDENTIFIER = 37;
   /** RegularExpression Id. */
-  int FLOAT = 38;
+  int COMPARE_OPERATOR = 38;
   /** RegularExpression Id. */
-  int INTEGER = 39;
+  int REGEXP = 39;
   /** RegularExpression Id. */
-  int DIGIT = 40;
+  int FLOAT = 40;
   /** RegularExpression Id. */
-  int IPADDRESS = 41;
+  int INTEGER = 41;
+  /** RegularExpression Id. */
+  int DIGIT = 42;
+  /** RegularExpression Id. */
+  int IPADDRESS = 43;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -113,6 +117,8 @@ public interface ProceduralExpressionParserConstants {
     "\"RPROJECTION\"",
     "\"RSELECTION\"",
     "\"RJOIN\"",
+    "\"RNEST\"",
+    "\"RUNNEST\"",
     "\"SELECTION\"",
     "\"SET-PREDICTION\"",
     "\"SIZE\"",
