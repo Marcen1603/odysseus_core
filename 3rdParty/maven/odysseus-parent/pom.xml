@@ -62,16 +62,18 @@
     <junit-version>4.5</junit-version>
     <java.util.logging.config.file>${basedir}/runtime/etc/logging.properties</java.util.logging.config.file>
     <!-- Eclipse stuff for compiling -->
-    <eclipse.core.runtime.version>3.5.0.v20090525</eclipse.core.runtime.version>
-    <eclipse.core.expressions.version>[3.3.0,)</eclipse.core.expressions.version>
-    <eclipse.core.contenttype.version>[3.2.100,)</eclipse.core.contenttype.version>
-    <eclipse.core.jobs.version>3.4.100.v20090429-1800</eclipse.core.jobs.version>
-    <eclipse.core.resources.version>3.5.0.v20090512</eclipse.core.resources.version>
+    <eclipse.core.runtime.version>3.3.100-v20070530</eclipse.core.runtime.version>
+    <eclipse.core.expressions.version>3.3.0-v20070606-0010</eclipse.core.expressions.version>
+    <eclipse.core.contenttype.version>3.2.100-v20070319</eclipse.core.contenttype.version>
+    <eclipse.core.jobs.version>3.3.0-v20070423</eclipse.core.jobs.version>
+    <eclipse.core.resources.version>3.3.0-v20070604</eclipse.core.resources.version>
     <eclipse.equinox.app.version>[1.0.0,)</eclipse.equinox.app.version>
     <eclipse.equinox.common.version>[3.3.0,)</eclipse.equinox.common.version>
     <eclipse.equinox.registry.version>[3.4.100,)</eclipse.equinox.registry.version>
-    <eclipse.equinox.osgi.version>[3.5.2,)</eclipse.equinox.osgi.version>
-    <eclipse.equinox.preferences.version>[3.2.100,)</eclipse.equinox.preferences.version>
+    <eclipse.equinox.osgi.version>3.5.0.v20090520</eclipse.equinox.osgi.version>
+    <eclipse.equinox.osgi.util.version>3.1.200-v20070605</eclipse.equinox.osgi.util.version>
+    <eclipse.equinox.osgi.services.version>3.1.200-v20070605</eclipse.equinox.osgi.services.version>
+    <eclipse.equinox.preferences.version>3.2.100-v20070522</eclipse.equinox.preferences.version>
     <eclipse.jdt.core.version>3.5.0.v_963</eclipse.jdt.core.version>
     
     <odysseus.osgi.export>${odysseus.osgi.export.pkg}*;version=${project.version}</odysseus.osgi.export>
@@ -165,63 +167,63 @@
       </dependency>
       
       <dependency>
-        <groupId>org.eclipse.equinox</groupId>
-        <artifactId>org.eclipse.osgi</artifactId>
+        <groupId>org.eclipse</groupId>
+        <artifactId>osgi</artifactId>
         <version>${eclipse.equinox.osgi.version}</version>
       </dependency>
       <dependency>
-	<groupId>org.eclipse.equinox</groupId>
-	<artifactId>org.eclipse.osgi.util</artifactId>
-	<version>${eclipse.equinox.osgi.version}</version>
+	<groupId>org.eclipse.osgi</groupId>
+	<artifactId>util</artifactId>
+	<version>${eclipse.equinox.osgi.util.version}</version>
       </dependency>
       <dependency>
-	<groupId>org.eclipse.equinox</groupId>
-	<artifactId>org.eclipse.osgi.services</artifactId>
-	<version>${eclipse.equinox.osgi.version}</version>
+	<groupId>org.eclipse.osgi</groupId>
+	<artifactId>services</artifactId>
+	<version>${eclipse.equinox.osgi.services.version}</version>
       </dependency>
      <dependency>
 	<groupId>org.eclipse.equinox</groupId>
-	<artifactId>org.eclipse.equinox.preferences</artifactId>
+	<artifactId>preferences</artifactId>
 	<version>${eclipse.equinox.preferences.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.equinox</groupId>
-	<artifactId>org.eclipse.equinox.registry</artifactId>
+	<artifactId>registry</artifactId>
 	<version>${eclipse.equinox.registry.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.equinox</groupId>
-	<artifactId>org.eclipse.equinox.common</artifactId>
+	<artifactId>common</artifactId>
 	<version>${eclipse.equinox.common.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.equinox</groupId>
-	<artifactId>org.eclipse.equinox.app</artifactId>
+	<artifactId>app</artifactId>
 	<version>${eclipse.equinox.app.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.core</groupId>
-	<artifactId>org.eclipse.core.resources</artifactId>
+	<artifactId>resources</artifactId>
 	<version>${eclipse.core.resources.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.core</groupId>
-	<artifactId>org.eclipse.core.expressions</artifactId>
+	<artifactId>expressions</artifactId>
 	<version>${eclipse.core.expressions.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.core</groupId>
-	<artifactId>org.eclipse.core.contenttype</artifactId>
+	<artifactId>contenttype</artifactId>
 	<version>${eclipse.core.contenttype.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.core</groupId>
-	<artifactId>org.eclipse.core.runtime</artifactId>
+	<artifactId>runtime</artifactId>
 	<version>${eclipse.core.runtime.version}</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.core</groupId>
-	<artifactId>org.eclipse.core.jobs</artifactId>
+	<artifactId>jobs</artifactId>
 	<version>${eclipse.core.jobs.version}</version>
       </dependency>
 

@@ -25,40 +25,40 @@
   <dependencies>
     <dependency>
       <groupId>org.eclipse.core</groupId>
-      <artifactId>org.eclipse.core.resources</artifactId>
+      <artifactId>resources</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.core</groupId>
-      <artifactId>org.eclipse.core.runtime</artifactId>
+      <artifactId>runtime</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.core</groupId>
-      <artifactId>org.eclipse.core.jobs</artifactId>
+      <artifactId>jobs</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.core</groupId>
-      <artifactId>org.eclipse.core.expressions</artifactId>
+      <artifactId>expressions</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.core</groupId>
-      <artifactId>org.eclipse.core.contenttype</artifactId>
+      <artifactId>contenttype</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.equinox</groupId>
-      <artifactId>org.eclipse.osgi</artifactId>
+      <groupId>org.eclipse</groupId>
+      <artifactId>osgi</artifactId>
     </dependency>
    <dependency>
       <groupId>org.eclipse.equinox</groupId>
-      <artifactId>org.eclipse.equinox.preferences</artifactId>
+      <artifactId>preferences</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.equinox</groupId>
-      <artifactId>org.eclipse.equinox.registry</artifactId>
+      <artifactId>registry</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.equinox</groupId>
-      <artifactId>org.eclipse.equinox.common</artifactId>
+      <artifactId>common</artifactId>
     </dependency>
   </dependencies>
 
