@@ -66,6 +66,7 @@
     <eclipse.core.expressions.version>3.3.0-v20070606-0010</eclipse.core.expressions.version>
     <eclipse.core.contenttype.version>3.2.100-v20070319</eclipse.core.contenttype.version>
     <eclipse.core.filesystem.version>1.1.0-v20070606</eclipse.core.filesystem.version>
+    <eclipse.core.commands.version>3.3.0-I20070605-0010</eclipse.core.commands.version>
     <eclipse.core.jobs.version>3.3.0-v20070423</eclipse.core.jobs.version>
     <eclipse.core.resources.version>3.3.0-v20070604</eclipse.core.resources.version>
     <eclipse.equinox.app.version>1.0.0-v20070606</eclipse.equinox.app.version>
@@ -214,6 +215,11 @@
       </dependency>
       <dependency>
 	<groupId>org.eclipse.core</groupId>
+	<artifactId>commands</artifactId>
+	<version>${eclipse.core.commands.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.eclipse.core</groupId>
 	<artifactId>expressions</artifactId>
 	<version>${eclipse.core.expressions.version}</version>
       </dependency>
@@ -243,7 +249,6 @@
         <artifactId>org.eclipse.jdt.core</artifactId>
         <version>${eclipse.jdt.core.version}</version>
       </dependency>
-
 
       <dependency>
 	<groupId>org.apache.felix</groupId>
