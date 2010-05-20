@@ -21,39 +21,8 @@ public class DoubleByteHandler extends AbstractAtomicByteDataHandler {
 
 		while ((c = (char) this.getStream().read()) != '\n')
 			out = out + String.valueOf(c);
-
-
+		c = (char) this.getStream().read();
 		return Double.parseDouble(out);
-		/*double receivedDouble;
-		data = new byte[1280];
-		buff = new byte[8];
-		String dbl = "";
-		
-		int numbytes;
-		int i;
-		
-		int totalbytes = 0;
-
-		//while (totalbytes < 8) {
-			numbytes = getStream().read(data);
-			// copy the bytes into the result buffer
-			for (i = totalbytes; i < 8; i++)
-				dbl += data[i - totalbytes];
-
-			totalbytes += numbytes;
-		//}
-		numbytes = getStream().read(data);
-		// now we must convert bytes to double
-
-		ByteArrayInputStream bytestream;
-		DataInputStream instream;
-
-		bytestream = new ByteArrayInputStream(data);
-		instream = new DataInputStream(bytestream);
-
-		receivedDouble = instream.readDouble();
-
-		return receivedDouble;*/
 	}
 
 	@Override

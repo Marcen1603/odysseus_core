@@ -17,7 +17,7 @@ public class StringByteHandler extends AbstractAtomicByteDataHandler {
 
 		while ((c = (char) this.getStream().read()) != '\n')
 			out = out + String.valueOf(c);
-
+		c = (char) this.getStream().read();
 
 		return "" + out;
 	}
