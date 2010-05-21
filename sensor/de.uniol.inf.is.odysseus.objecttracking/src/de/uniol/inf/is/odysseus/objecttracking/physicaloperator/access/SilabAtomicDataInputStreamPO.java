@@ -7,9 +7,9 @@ import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.AbstractAtomicByteDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.DoubleByteHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.IntegerByteHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.StringByteHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -59,15 +59,15 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			/*if (uri.equals("Integer")) {
-				this.dataReader[i++] = new IntegerHandler();
-			} else if (uri.equals("Long")) {
+			if (uri.equals("Integer")) {
+				this.dataReader[i++] = new IntegerByteHandler();
+			}/* else if (uri.equals("Long")) {
 				this.dataReader[i++] = new LongHandler();
 			}*/
 			// double values and measurement values can
 			// be read the same way since measurement values
 			// are also double values.
-			if (uri.equals("Double") || uri.equals("MV")) {
+			else if (uri.equals("Double") || uri.equals("MV")) {
 				this.dataReader[i++] = new DoubleByteHandler();
 			} else if (uri.equals("String")) {
 				this.dataReader[i++] = new StringByteHandler();
