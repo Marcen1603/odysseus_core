@@ -220,7 +220,7 @@ git add pom.xml
 echo "Migration processed. Ready to merge? (y/n)"
 read yesno
 if [ $yesno = "y" ]; then
-    git commit -m
+    git commit
     git checkout next
     git merge migration
 else
