@@ -206,7 +206,7 @@ git add scheduler/odysseus-scheduler-singlethreadscheduler/pom.xml
 EOF
 git add resources/pom.xml
 
-for s in $(find $f -mindepth 1 -maxdepth 1 -type f -name 'pom.xml'); do
+for s in $(find . -mindepth 1 -maxdepth 1 -type f -name 'pom.xml'); do
     basename=${s%/*}
     echo "<module>$basename</module>" >> pom.xml
 done
@@ -219,7 +219,7 @@ git add pom.xml
 
 echo "Migration processed. Ready to merge? (y/n)"
 read yesno
-if [ "$yesno" == "y" ]; then
+if [ $yesno = "y" ]; then
     git commit -m
     git checkout next
     git merge migration
