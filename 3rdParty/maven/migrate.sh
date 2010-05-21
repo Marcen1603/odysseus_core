@@ -3,7 +3,7 @@
 
 echo "Are we in odysseus root directory? (y/n)"
 read yesno
-if [ yesno != "y" ]; then
+if [ $yesno != "y" ]; then
     exit 1
 fi
 
@@ -219,11 +219,11 @@ git add pom.xml
 
 echo "Migration processed. Ready to merge? (y/n)"
 read yesno
-if [ $yesno = "y" ]; then
+if [ "$yesno" == "y" ]; then
     git commit -m
     git checkout next
     git merge migration
 else
     git checkout master
-    git branch -d migration
+    git branch -D migration
 fi
