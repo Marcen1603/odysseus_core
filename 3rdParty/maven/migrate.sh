@@ -58,29 +58,29 @@ for f in $folders; do
   <modules>
 EOF
     for s in $(find $f -mindepth 1 -maxdepth 1 -type d -name 'de.uniol*'); do
-	basename=${s##*/}
-	isin=0
-	for i in $folders; do
-	    if [ $i = $basename ]; then
-		isin=1
-	    fi
-	done
-	if [ $isin = 0 ]; then
-	    echo "Processing $basename"
-	    artifactId=${basename#*de.uniol.inf.is.odysseus.}
-	    artifactId=$(echo $artifactId | tr "." "-")
-	    artifactId=$(echo $artifactId | tr "/" "-")
-	    if [ -d $s/src ]; then
-		echo "<module>odysseus-$artifactId</module>" >> $f/pom.xml
-		mkdir -p $f/odysseus-$artifactId/src/main/java
-		mkdir -p $f/odysseus-$artifactId/src/main/resources
-		mkdir -p $f/odysseus-$artifactId/src/test/java
-		mkdir -p $f/odysseus-$artifactId/src/test/resources
-		if [ -d $partyDir/$f/odysseus-$artifactId ]; then
-		    cp -u $partyDir/$f/odysseus-$artifactId/pom.xml $f/odysseus-$artifactId/
-		else
-		    echo "Generate pom"
-		    cat > $f/odysseus-$artifactId/pom.xml <<EOF
+	    basename=${s##*/}
+	    isin=0
+	    for i in $folders; do
+	        if [ $i = $basename ]; then
+		        isin=1
+	        fi
+	    done
+	    if [ $isin = 0 ]; then
+	        echo "Processing $basename"
+	        artifactId=${basename#*de.uniol.inf.is.odysseus.}
+	        artifactId=$(echo $artifactId | tr "." "-")
+	        artifactId=$(echo $artifactId | tr "/" "-")
+	        if [ -d $s/src ]; then
+		        echo "<module>odysseus-$artifactId</module>" >> $f/pom.xml
+		        mkdir -p $f/odysseus-$artifactId/src/main/java
+		        mkdir -p $f/odysseus-$artifactId/src/main/resources
+		        mkdir -p $f/odysseus-$artifactId/src/test/java
+		        mkdir -p $f/odysseus-$artifactId/src/test/resources
+		        if [ -d $partyDir/$f/odysseus-$artifactId ]; then
+		            cp -u $partyDir/$f/odysseus-$artifactId/pom.xml $f/odysseus-$artifactId/
+		        else
+		            echo "Generate pom"
+		            cat > $f/odysseus-$artifactId/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -127,7 +127,7 @@ EOF
       </plugin>
     </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>\${project.groupId}</groupId>
@@ -137,13 +137,14 @@ EOF
   </dependencies>
 </project>
 EOF
-		fi
-		git add $f/odysseus-$artifactId/pom.xml
-		git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
-		git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
-		git mv -kf $s/src/* $f/odysseus-$artifactId/src/main/java/
+		        fi
+		        git add $f/odysseus-$artifactId/pom.xml
+		        git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
+		        git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
+                git mv -kf $s/resources/* $f/odysseus-$artifactId/src/main/resources/
+		        git mv -kf $s/src/* $f/odysseus-$artifactId/src/main/java/
+	        fi
 	    fi
-	fi
     done
     cat >> $f/pom.xml <<EOF
   </modules>
@@ -151,11 +152,12 @@ EOF
 EOF
     git add $f/pom.xml
 done
+
 mkdir -p resources/drools-pathscanner/src/main/java
 mkdir -p resources/drools-pathscanner/src/main/resources
 mkdir -p resources/drools-pathscanner/src/test/java
 mkdir -p resources/drools-pathscanner/src/test/resources
-git mv -kf resources/de.uniol.inf.is.drools.osgi_path_scanner/src/org resources/drools-pathscanner/src/main/java/
+git mv -kf resources/de.uniol.inf.is.drools.osgi_path_scanner/src/* resources/drools-pathscanner/src/main/java/
 cp -u $partyDir/resources/drools-pathscanner/pom.xml resources/drools-pathscanner/
 git add resources/drools-pathscanner/pom.xml
 
@@ -163,7 +165,7 @@ mkdir -p resources/drools-ruleagent/src/main/java
 mkdir -p resources/drools-ruleagent/src/main/resources
 mkdir -p resources/drools-ruleagent/src/test/java
 mkdir -p resources/drools-ruleagent/src/test/resources
-git mv -kf resources/de.uniol.inf.is.drools.osgi_rule_agent/src/de resources/drools-ruleagent/src/main/java/
+git mv -kf resources/de.uniol.inf.is.drools.osgi_rule_agent/src/* resources/drools-ruleagent/src/main/java/
 cp -u $partyDir/resources/drools-ruleagent/pom.xml resources/drools-ruleagent/
 git add resources/drools-ruleagent/pom.xml
 
@@ -182,7 +184,7 @@ cp $partyDir/scheduler/odysseus-scheduler-singlethreadscheduler/pom.xml schedule
 git add scheduler/odysseus-scheduler/pom.xml
 git add scheduler/odysseus-scheduler-singlethreadscheduler/pom.xml
 
-    cat > resources/pom.xml <<EOF
+cat > resources/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
