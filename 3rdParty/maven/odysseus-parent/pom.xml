@@ -75,6 +75,7 @@
     <eclipse.equinox.common.version>3.5.1.R35x_v20090807-1100</eclipse.equinox.common.version>
     <eclipse.equinox.registry.version>3.4.100.v20090520-1800</eclipse.equinox.registry.version>
     <eclipse.equinox.util.version>1.0.100.v20090520-1800</eclipse.equinox.util.version>
+    <eclipse.equinox.cm.version>1.0.100.v20090520-1800.</eclipse.equinox.cm.version>
     <eclipse.equinox.ds.version>1.1.1.R35x_v20090806</eclipse.equinox.ds.version>
     <eclipse.osgi.osgi.version>3.5.2.R35x_v20100126</eclipse.osgi.osgi.version>
     <eclipse.osgi.util.version>3.2.0.v20090520-1800</eclipse.osgi.util.version>
@@ -198,6 +199,11 @@
 	   <artifactId>preferences</artifactId>
 	   <version>${eclipse.equinox.preferences.version}</version>
      </dependency>
+      <dependency>
+        <groupId>org.eclipse.equinox</groupId>
+        <artifactId>cm</artifactId>
+        <version>${eclipse.equinox.cm.version}</version>
+      </dependency>
      <dependency>
 	   <groupId>org.eclipse.equinox</groupId>
 	   <artifactId>registry</artifactId>
