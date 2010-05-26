@@ -155,7 +155,7 @@ mkdir -p resources/drools-pathscanner/src/main/java
 mkdir -p resources/drools-pathscanner/src/main/resources
 mkdir -p resources/drools-pathscanner/src/test/java
 mkdir -p resources/drools-pathscanner/src/test/resources
-git mv -kf resources/de.uniol.inf.is.drools.osgi_path_scanner/src/de resources/drools-pathscanner/src/main/java/
+git mv -kf resources/de.uniol.inf.is.drools.osgi_path_scanner/src/org resources/drools-pathscanner/src/main/java/
 cp -u $partyDir/resources/drools-pathscanner/pom.xml resources/drools-pathscanner/
 git add resources/drools-pathscanner/pom.xml
 
