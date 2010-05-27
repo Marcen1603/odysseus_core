@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.prediction;
 
 import javax.vecmath.Vector3d;
 
-public class DefaultPredictionAlgorithmus implements IPredictionalgorithmus{
+public class DefaultPredictionAlgorithmus implements IPredictionAlgorithmus{
 
 	TestObject brokerObject;
 	double sourceObjectTimeStamp;

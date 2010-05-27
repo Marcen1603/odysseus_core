@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.prediction;
 
-public interface IPredictionalgorithmus {
+public interface IPredictionAlgorithmus {
 	
 	public Object executePredAlgorithmus();
 
