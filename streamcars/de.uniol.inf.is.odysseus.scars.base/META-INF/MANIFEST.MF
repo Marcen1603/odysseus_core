@@ -14,3 +14,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
+Bundle-ClassPath: lib/commons-math-2.1.jar,
+ .
+Export-Package: org.apache.commons.math
