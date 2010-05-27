@@ -61,6 +61,7 @@ TOKEN : /* Keywords */ {
 |	<K_SUM: "SUM">
 |	<K_TUMBLING_TIME_WINDOW: "TUMBLING-TIME-WINDOW">
 |	<K_WHERE: "WHERE">
+|   <K_TEST: "TESTOP">
 }
 
 TOKEN:{
@@ -109,7 +110,12 @@ void AlgebraOp():{}{
 	RelationalUnnestOp() |
 	WindowOp() |
 	AccessOp() |
-	PredictionOp()
+	PredictionOp() |
+	TestOp()
+}
+
+void TestOp(): {}{
+    <K_TEST>"(" AlgebraOp() ")"
 }
 
 void ProjectionOp(): {}{
