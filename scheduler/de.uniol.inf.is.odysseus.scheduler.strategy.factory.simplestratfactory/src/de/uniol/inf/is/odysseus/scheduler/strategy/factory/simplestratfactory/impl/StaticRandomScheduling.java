@@ -6,16 +6,16 @@ import java.util.Random;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 /**
  * Calculates an intial random strategy
  * @author Marco Grawunder
  *
  */
 
-public class StaticRandomStrategy extends AbstractExecListSchedulingStrategy {
+public class StaticRandomScheduling extends AbstractExecListScheduling {
 
-	public StaticRandomStrategy(IPartialPlan plan) {
+	public StaticRandomScheduling(IPartialPlan plan) {
 		super(plan);
 	}
 

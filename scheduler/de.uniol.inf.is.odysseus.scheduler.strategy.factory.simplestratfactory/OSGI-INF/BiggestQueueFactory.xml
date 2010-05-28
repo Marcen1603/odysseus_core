@@ -3,6 +3,6 @@
    <property name="component.readableName" type="String" value="Biggest Queue"/>
    <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.BiggestQueueFactory"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory"/>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory"/>
    </service>
 </scr:component>

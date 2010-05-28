@@ -14,10 +14,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 
 public abstract class AbstractPriorityMinLatency extends
-		AbstractExecListSchedulingStrategy {
+		AbstractExecListScheduling {
 
 	public AbstractPriorityMinLatency(IPartialPlan plan) {
 		super(plan);

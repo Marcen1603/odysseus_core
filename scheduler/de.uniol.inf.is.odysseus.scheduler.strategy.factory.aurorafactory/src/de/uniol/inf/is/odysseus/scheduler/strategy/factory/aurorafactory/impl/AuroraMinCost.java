@@ -7,10 +7,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
-public class AuroraMinCost extends AbstractExecListSchedulingStrategy {
+public class AuroraMinCost extends AbstractExecListScheduling {
 
 	public AuroraMinCost(IPartialPlan plan) {
 		super(plan);

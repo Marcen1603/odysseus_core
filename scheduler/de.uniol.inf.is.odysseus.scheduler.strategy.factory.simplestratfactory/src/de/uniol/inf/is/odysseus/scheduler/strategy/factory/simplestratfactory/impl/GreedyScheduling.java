@@ -13,11 +13,11 @@ import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 
-public class GreedyStrategy extends AbstractExecListSchedulingStrategy {
+public class GreedyScheduling extends AbstractExecListScheduling {
 
-	public GreedyStrategy(IPartialPlan plan) {
+	public GreedyScheduling(IPartialPlan plan) {
 		super(plan);
 	}
 

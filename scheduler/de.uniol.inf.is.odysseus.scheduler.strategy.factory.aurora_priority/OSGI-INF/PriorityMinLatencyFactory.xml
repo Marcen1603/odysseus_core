@@ -5,6 +5,6 @@
    <property name="aurora_priority.strategy" type="String" value="PO_MIN_LATENCY_PUNCTUATION"/>
    <property name="execlist.useIter" type="Boolean" value="true"/>
     <service>
-      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory"/>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory"/>
    </service>
 </scr:component>

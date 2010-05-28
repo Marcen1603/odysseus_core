@@ -11,8 +11,8 @@ import org.osgi.service.component.ComponentContext;
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractSchedulingStrategyFactory implements
-		ISchedulingStrategyFactory {
+public abstract class AbstractSchedulingFactory implements
+		ISchedulingFactory {
 	/**
 	 * Name for this factory. Should be unique.
 	 */
@@ -46,7 +46,7 @@ public abstract class AbstractSchedulingStrategyFactory implements
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory#getName()
+	 * @see de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory#getName()
 	 */
 	@Override
 	public String getName() {

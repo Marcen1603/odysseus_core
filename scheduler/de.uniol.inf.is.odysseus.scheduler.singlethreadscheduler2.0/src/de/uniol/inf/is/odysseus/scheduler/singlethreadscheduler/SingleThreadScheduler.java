@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.AbstractScheduler;
 import de.uniol.inf.is.odysseus.scheduler.exception.SchedulingException;
-import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * SingleThreadScheduler is a scheduler which uses two threads for execution the
@@ -35,7 +35,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 *            partial plan which should be scheduled.
 	 */
 	public SingleThreadScheduler(
-			ISchedulingStrategyFactory schedulingStrategieFactory) {
+			ISchedulingFactory schedulingStrategieFactory) {
 		super(schedulingStrategieFactory);
 	}
 
@@ -50,7 +50,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 */
 	// final private Map<IPartialPlan, ISchedulingStrategy> parts = new
 	// HashMap<IPartialPlan, ISchedulingStrategy>();
-	final private List<ISchedulingStrategy> parts = new LinkedList<ISchedulingStrategy>();
+	final private List<IScheduling> parts = new LinkedList<IScheduling>();
 
 	/**
 	 * Runnable for execution the global sources.
@@ -93,7 +93,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 						if (parts.isEmpty()) {
 							break;
 						}
-						Iterator<ISchedulingStrategy> part = parts.iterator();
+						Iterator<IScheduling> part = parts.iterator();
 						while (part.hasNext()) {
 							if (part.next().schedule(timeSlicePerStrategy)) {// part
 								// is
@@ -205,7 +205,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 				// Create for each partial plan an own scheduling strategy.
 				// These strategies are used for scheduling partial plans.
 				for (IPartialPlan partialPlan : partialPlans) {
-					final ISchedulingStrategy strategy = schedulingStrategieFactory
+					final IScheduling strategy = schedulingStrategieFactory
 							.createStrategy(partialPlan, partialPlan
 									.getPriority());
 					//this.parts.put(partialPlan, strategy);

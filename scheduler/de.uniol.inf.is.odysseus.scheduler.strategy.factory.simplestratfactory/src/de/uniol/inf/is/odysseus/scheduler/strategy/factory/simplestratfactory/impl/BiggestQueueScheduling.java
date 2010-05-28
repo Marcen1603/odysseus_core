@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.i
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicScheduling;
 
 /**
  * Schedules only <code>IIterableSource</code>s. It will always
@@ -11,9 +11,9 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicSchedulingStra
  * @author Jonas Jacobi, Marco Grawunder
  */
 
-public class BiggestQueueStrategy extends AbstractDynamicSchedulingStrategy {
+public class BiggestQueueScheduling extends AbstractDynamicScheduling {
 	
-	public BiggestQueueStrategy(IPartialPlan plan) {
+	public BiggestQueueScheduling(IPartialPlan plan) {
 		super(plan);
 	}
 

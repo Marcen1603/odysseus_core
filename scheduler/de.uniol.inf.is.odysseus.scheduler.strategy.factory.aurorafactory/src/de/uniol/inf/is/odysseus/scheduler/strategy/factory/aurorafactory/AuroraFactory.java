@@ -5,13 +5,13 @@ import java.util.Dictionary;
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingStrategyFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinCost;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinLatency;
 
 
-public class AuroraFactory extends AbstractSchedulingStrategyFactory {
+public class AuroraFactory extends AbstractSchedulingFactory {
 
 	static public enum AuroraStrategy{MIN_LATENCY, MIN_COST, MIN_MEM}
 
@@ -49,7 +49,7 @@ public class AuroraFactory extends AbstractSchedulingStrategyFactory {
 	}
 	
 	@Override
-	public ISchedulingStrategy createStrategy(IPartialPlan plan, int priority) {
+	public IScheduling createStrategy(IPartialPlan plan, int priority) {
 		switch(strategy){
 		case MIN_LATENCY:
 			return new AuroraMinLatency(plan);

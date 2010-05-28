@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * AbstractSchedulerManager is a base implementation for scheduling manager. It
@@ -44,10 +44,10 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 			.synchronizedMap(new HashMap<String, ISchedulerFactory>());
 
 	/**
-	 * Map of all registered {@link ISchedulingStrategyFactory}.
+	 * Map of all registered {@link ISchedulingFactory}.
 	 */
-	private Map<String, ISchedulingStrategyFactory> schedulingStrategyFactoryMap = Collections
-			.synchronizedMap(new HashMap<String, ISchedulingStrategyFactory>());
+	private Map<String, ISchedulingFactory> schedulingStrategyFactoryMap = Collections
+			.synchronizedMap(new HashMap<String, ISchedulingFactory>());
 
 	/**
 	 * List of all objects which are informed if an exception occurs.
@@ -147,13 +147,13 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	}
 
 	/**
-	 * Method to bind a {@link ISchedulingStrategyFactory}. Used by OSGi.
+	 * Method to bind a {@link ISchedulingFactory}. Used by OSGi.
 	 * 
 	 * @param schedulingStrategyFactory
-	 *            new {@link ISchedulingStrategyFactory} service
+	 *            new {@link ISchedulingFactory} service
 	 */
 	public void bindSchedulingStrategyFactory(
-			ISchedulingStrategyFactory schedulingStrategyFactory) {
+			ISchedulingFactory schedulingStrategyFactory) {
 		String stratName = schedulingStrategyFactory.getName();
 		logger.info("activate " + stratName);
 		if (this.schedulingStrategyFactoryMap.get(stratName) == null) {
@@ -166,13 +166,13 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	}
 
 	/**
-	 * Method to unbind a {@link ISchedulingStrategyFactory}. Used by OSGi.
+	 * Method to unbind a {@link ISchedulingFactory}. Used by OSGi.
 	 * 
 	 * @param schedulingStrategyFactory
-	 *            {@link ISchedulingStrategyFactory} service to unbind
+	 *            {@link ISchedulingFactory} service to unbind
 	 */
 	public void unbindSchedulingStrategyFactory(
-			ISchedulingStrategyFactory schedulingStrategyFactory) {
+			ISchedulingFactory schedulingStrategyFactory) {
 		this.schedulingStrategyFactoryMap.remove(schedulingStrategyFactory
 				.getName());
 	}
@@ -276,7 +276,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 			String schedulingStrategy) {
 		// get the factories
 		ISchedulerFactory sf = schedulerFactoryMap.get(scheduler);
-		ISchedulingStrategyFactory ssf = schedulingStrategyFactoryMap
+		ISchedulingFactory ssf = schedulingStrategyFactoryMap
 				.get(schedulingStrategy);
 		if (sf != null && ssf != null) {
 			// create the new scheduler

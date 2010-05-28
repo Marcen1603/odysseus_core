@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
-public class AuroraMinMemory extends AbstractExecListSchedulingStrategy {
+public class AuroraMinMemory extends AbstractExecListScheduling {
 
 
 //	private float calculateMemoryReductionRate( op) {

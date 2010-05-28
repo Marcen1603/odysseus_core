@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * Base class for scheduler. Contains Methodes for setting the scheduling state
@@ -25,10 +25,10 @@ public abstract class AbstractScheduler implements IScheduler {
 	protected volatile long timeSlicePerStrategy = 10;
 
 	/**
-	 * The {@link ISchedulingStrategyFactory} which will be used for scheduling.
+	 * The {@link ISchedulingFactory} which will be used for scheduling.
 	 * Each PartialPlan will be initialized with a new strategy instance.
 	 */
-	protected ISchedulingStrategyFactory schedulingStrategieFactory;
+	protected ISchedulingFactory schedulingStrategieFactory;
 
 	/**
 	 * Object which will be informed if an error will occure.
@@ -39,12 +39,12 @@ public abstract class AbstractScheduler implements IScheduler {
 	 * Creates a new scheduler.
 	 * 
 	 * @param schedulingStrategieFactory
-	 *            {@link ISchedulingStrategyFactory} which will be used for
+	 *            {@link ISchedulingFactory} which will be used for
 	 *            scheduling. Each PartialPlan will be initialized with a new
 	 *            strategy instance.
 	 */
 	public AbstractScheduler(
-			ISchedulingStrategyFactory schedulingStrategieFactory) {
+			ISchedulingFactory schedulingStrategieFactory) {
 		this.schedulingStrategieFactory = schedulingStrategieFactory;
 	}
 

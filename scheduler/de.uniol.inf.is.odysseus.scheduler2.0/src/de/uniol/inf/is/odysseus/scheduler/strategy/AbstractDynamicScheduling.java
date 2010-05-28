@@ -6,12 +6,12 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
-abstract public class AbstractDynamicSchedulingStrategy extends
-		AbstractSchedulingStrategy {
+abstract public class AbstractDynamicScheduling extends
+		AbstractScheduling {
 
 	protected List<IIterableSource<?>> operators;
 	
-	public AbstractDynamicSchedulingStrategy(IPartialPlan plan) {
+	public AbstractDynamicScheduling(IPartialPlan plan) {
 		super(plan);
 		operators = new LinkedList<IIterableSource<?>>(plan.getIterableSource());
 	}

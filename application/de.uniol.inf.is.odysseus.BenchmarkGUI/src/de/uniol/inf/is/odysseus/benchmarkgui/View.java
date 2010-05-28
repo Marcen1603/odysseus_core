@@ -18,13 +18,13 @@ import org.osgi.framework.ServiceReference;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 public class View extends ViewPart implements ServiceListener {
 	public static final String ID = "de.uniol.inf.is.odysseus.BenchmarkGUI.view";
 
 	private static String SCHEDULER_NAME = ISchedulerFactory.class.getName();
-	private static String SCHEDULING_STRATEGY_NAME = ISchedulingStrategyFactory.class
+	private static String SCHEDULING_STRATEGY_NAME = ISchedulingFactory.class
 			.getName();
 	private static String BUFFER_PLACEMENT_NAME = IBufferPlacementStrategy.class
 			.getName();
@@ -123,7 +123,7 @@ public class View extends ViewPart implements ServiceListener {
 			}
 
 			refs = bundleContext.getAllServiceReferences(
-					ISchedulingStrategyFactory.class.getName(), null);
+					ISchedulingFactory.class.getName(), null);
 			if (refs != null) {
 				for (ServiceReference ref : refs) {
 					createMenu(ref, this.widget.getTreeSchedulingStrategies(),

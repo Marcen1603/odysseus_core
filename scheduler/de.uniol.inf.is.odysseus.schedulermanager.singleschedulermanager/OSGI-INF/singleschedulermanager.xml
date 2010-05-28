@@ -5,5 +5,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager"/>
    </service>
-   <reference bind="bindSchedulingStrategyFactory" cardinality="1..n" interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory" name="ISchedulingStrategyFactory" policy="dynamic" unbind="unbindSchedulingStrategyFactory"/>
+   <reference bind="bindSchedulingStrategyFactory" cardinality="1..n" interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory" name="ISchedulingFactory" policy="dynamic" unbind="unbindSchedulingStrategyFactory"/>
 </scr:component>

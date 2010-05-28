@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
-abstract public class AbstractExecListSchedulingStrategy extends
-		AbstractSchedulingStrategy {
+abstract public class AbstractExecListScheduling extends
+		AbstractScheduling {
 
 	/**
 	 * contains all operators to schedule, Strategy stops if no more operators
@@ -27,7 +27,7 @@ abstract public class AbstractExecListSchedulingStrategy extends
 	protected Iterator<IIterableSource<?>> iterator;
 	private IIterableSource<?> curSource = null;
 
-	public AbstractExecListSchedulingStrategy(IPartialPlan plan) {
+	public AbstractExecListScheduling(IPartialPlan plan) {
 		super(plan);
 		executionList = calculateExecutionList(plan);
 		// Nur die Operatoren im Plan d�rfen gescheduled werden (in den abgeleiten Methoden Aufruf entfernen)

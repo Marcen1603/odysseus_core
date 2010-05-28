@@ -3,14 +3,14 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory;
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingStrategyFactory;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl.BiggestQueueStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl.BiggestQueueScheduling;
 
 /**
  * @author Jonas Jacobi
  */
-public class BiggestQueueFactory extends AbstractSchedulingStrategyFactory {
+public class BiggestQueueFactory extends AbstractSchedulingFactory {
 
 	@Override
 	protected void activate(ComponentContext context){
@@ -18,8 +18,8 @@ public class BiggestQueueFactory extends AbstractSchedulingStrategyFactory {
 	}
 
 	@Override
-	public ISchedulingStrategy createStrategy(IPartialPlan plan, int priority) {
-		return new BiggestQueueStrategy(plan);
+	public IScheduling createStrategy(IPartialPlan plan, int priority) {
+		return new BiggestQueueScheduling(plan);
 	}
 	
 	@Override

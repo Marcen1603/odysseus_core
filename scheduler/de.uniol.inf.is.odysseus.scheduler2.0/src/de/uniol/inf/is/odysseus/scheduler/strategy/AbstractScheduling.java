@@ -11,12 +11,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
  * 
  * @author Jonas Jacobi, Marco Grawunder
  */
-public abstract class AbstractSchedulingStrategy implements ISchedulingStrategy {
+public abstract class AbstractScheduling implements IScheduling {
 	
 	private IPartialPlan plan = null;
 	protected boolean isPlanChanged = true;
 
-	public AbstractSchedulingStrategy(IPartialPlan plan) {
+	public AbstractScheduling(IPartialPlan plan) {
 		this.plan = plan;
 	}
 	

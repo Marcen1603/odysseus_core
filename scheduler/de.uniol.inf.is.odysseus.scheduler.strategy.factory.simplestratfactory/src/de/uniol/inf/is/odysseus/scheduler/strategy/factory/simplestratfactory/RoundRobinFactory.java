@@ -5,12 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingStrategyFactory;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl.RoundRobinStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl.RoundRobinScheduling;
 
 
-public class RoundRobinFactory extends AbstractSchedulingStrategyFactory {
+public class RoundRobinFactory extends AbstractSchedulingFactory {
 
 	protected Logger logger;
 	
@@ -25,8 +25,8 @@ public class RoundRobinFactory extends AbstractSchedulingStrategyFactory {
 	}
 
 	@Override
-	public ISchedulingStrategy createStrategy(IPartialPlan plan, int priority) {
-		return new RoundRobinStrategy(plan);
+	public IScheduling createStrategy(IPartialPlan plan, int priority) {
+		return new RoundRobinScheduling(plan);
 	}
 	
 	@Override

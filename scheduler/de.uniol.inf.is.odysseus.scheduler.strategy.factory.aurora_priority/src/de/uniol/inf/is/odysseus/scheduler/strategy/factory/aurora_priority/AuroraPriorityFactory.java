@@ -5,14 +5,14 @@ import java.util.Dictionary;
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.ISchedulingStrategy;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingStrategyFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.impl.AuroraMinLatencyLoadShedding;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.impl.PriorityMinLatency;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority.impl.SimplePriorityMinLatency;
 
 
-public class AuroraPriorityFactory extends AbstractSchedulingStrategyFactory {
+public class AuroraPriorityFactory extends AbstractSchedulingFactory {
 
 	static public enum AuroraPriorityStrategy{MIN_LATENCY_PUNCTUATION, PO_MIN_LATENCY_PUNCTUATION,MIN_LATENCY_LOAD_SHEDDING}
 
@@ -40,7 +40,7 @@ public class AuroraPriorityFactory extends AbstractSchedulingStrategyFactory {
 	}
 	
 	@Override
-	public ISchedulingStrategy createStrategy(IPartialPlan plan, int priority) {
+	public IScheduling createStrategy(IPartialPlan plan, int priority) {
 		switch(strategy){
 		case MIN_LATENCY_PUNCTUATION:
 			return new SimplePriorityMinLatency(plan);

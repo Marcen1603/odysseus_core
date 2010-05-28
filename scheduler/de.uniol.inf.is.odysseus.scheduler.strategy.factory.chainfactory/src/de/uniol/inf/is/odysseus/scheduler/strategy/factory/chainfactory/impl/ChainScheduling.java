@@ -14,12 +14,12 @@ import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
-public class ChainStrategy extends AbstractExecListSchedulingStrategy {
+public class ChainScheduling extends AbstractExecListScheduling {
 
-	public ChainStrategy(IPartialPlan plan) {
+	public ChainScheduling(IPartialPlan plan) {
 		super(plan);
 	}
 	

@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 
-public class AuroraMinLatency extends AbstractExecListSchedulingStrategy {
+public class AuroraMinLatency extends AbstractExecListScheduling {
 
 	public AuroraMinLatency(IPartialPlan plan) {
 		super(plan);

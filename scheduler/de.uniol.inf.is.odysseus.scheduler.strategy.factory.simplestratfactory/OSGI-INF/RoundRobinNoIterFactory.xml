@@ -4,6 +4,6 @@
    <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.RoundRobinFactory"/>
    <property name="execlist.useIter" type="Boolean" value="false"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory"/>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory"/>
    </service>
 </scr:component>

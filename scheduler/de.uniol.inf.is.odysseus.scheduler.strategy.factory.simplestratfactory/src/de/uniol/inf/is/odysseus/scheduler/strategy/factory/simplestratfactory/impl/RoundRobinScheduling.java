@@ -5,15 +5,15 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListSchedulingStrategy;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 
 /**
  * Implements round robin scheduling of operators.
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RoundRobinStrategy extends AbstractExecListSchedulingStrategy {
+public class RoundRobinScheduling extends AbstractExecListScheduling {
 
-	public RoundRobinStrategy(IPartialPlan operators) {
+	public RoundRobinScheduling(IPartialPlan operators) {
 		super(operators);
 	}
 

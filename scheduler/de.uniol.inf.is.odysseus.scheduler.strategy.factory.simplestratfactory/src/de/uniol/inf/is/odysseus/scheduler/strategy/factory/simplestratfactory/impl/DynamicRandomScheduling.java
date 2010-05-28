@@ -5,7 +5,7 @@ import java.util.Random;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicSchedulingStrategy;;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicScheduling;;
 
 /**
  * Selects in every run a random ISource from all sources
@@ -13,12 +13,12 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicSchedulingStra
  *
  */
 
-public class DynamicRandomStrategy extends AbstractDynamicSchedulingStrategy {
+public class DynamicRandomScheduling extends AbstractDynamicScheduling {
 
 	static private Random rnd = new Random(System.currentTimeMillis());
 	private IPartialPlan plan;
 		
-	public DynamicRandomStrategy(IPartialPlan plan) {
+	public DynamicRandomScheduling(IPartialPlan plan) {
 		super(plan);	
 		this.plan = plan;
 	}

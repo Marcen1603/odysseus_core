@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.ChainIterFactory">
    <property name="component.readableName" type="String" value="Chain (Iter)"/>
-   <property name="execlist.useIter" type="Boolean" value="true"/>
-   <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.ChainStrategyFactory"/>
+   <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.ChainScheduling"/>
     <service>
-      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory"/>
+      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory"/>
    </service>
 </scr:component>

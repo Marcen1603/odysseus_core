@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.scheduler;
 
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFactory;
+import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * Describes an object which creates specific {@link IScheduler}. Each
- * {@link IScheduler} is initialized with a {@link ISchedulingStrategyFactory}.
+ * {@link IScheduler} is initialized with a {@link ISchedulingFactory}.
  * A factory can be identified by a name. This name should be unique.
  * 
  * @author Wolf Bauer
@@ -13,15 +13,15 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingStrategyFa
 public interface ISchedulerFactory {
 	/**
 	 * Creates a specific {@link IScheduler}. Each {@link IScheduler} is
-	 * initialized with a {@link ISchedulingStrategyFactory}.
+	 * initialized with a {@link ISchedulingFactory}.
 	 * 
 	 * @param schedulingStrategy
-	 *            {@link ISchedulingStrategyFactory} which will be used for
+	 *            {@link ISchedulingFactory} which will be used for
 	 *            creating new {@link IScheduler}.
 	 * @return A new specific {@link IScheduler} instance.
 	 */
 	public IScheduler createScheduler(
-			ISchedulingStrategyFactory schedulingStrategy);
+			ISchedulingFactory schedulingStrategy);
 
 	/**
 	 * Returns a name for this factory. This name should be unique.
