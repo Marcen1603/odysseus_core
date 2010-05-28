@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Test_PO
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.operator.test.po
 Bundle-Version: 1.0.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.scars.operator.test.po.Activator
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
