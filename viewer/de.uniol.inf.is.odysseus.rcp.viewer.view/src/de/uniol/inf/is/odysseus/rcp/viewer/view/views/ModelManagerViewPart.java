@@ -91,4 +91,18 @@ public class ModelManagerViewPart extends ViewPart implements IModelManagerListe
 		return treeViewer;
 	}
 
+	@Override
+	public void activeModelChanged(IModelManager<IPhysicalOperator> sender,
+			IGraphModel<IPhysicalOperator> activeModel) {
+		System.out.println("Active MODEL CHANGED " + activeModel.getName());
+		if( treeViewer != null ) {
+			display.asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					treeViewer.refresh();
+				}			
+			});
+		}		
+	}
+
 }

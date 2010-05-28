@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -21,7 +22,15 @@ public class ModelContentProvider implements ITreeContentProvider{
 	public Object[] getChildren(Object parentElement) {
 		if( parentElement instanceof IModelManager<?>) {
 			IModelManager<IPhysicalOperator> manager = (IModelManager<IPhysicalOperator>)parentElement;
-			return manager.getModels().toArray();
+			
+			ArrayList<IGraphModel<IPhysicalOperator>> graphs = new ArrayList<IGraphModel<IPhysicalOperator>>();
+			for( IGraphModel<IPhysicalOperator> g :  Model.getInstance().getModelManager().getModels() ) {
+				graphs.add(g);
+			}
+			if( manager.getActiveModel() != null ) 
+				graphs.add(manager.getActiveModel());
+			
+			return graphs.toArray();
 		}
 		
 		if( parentElement instanceof IGraphModel<?>) {

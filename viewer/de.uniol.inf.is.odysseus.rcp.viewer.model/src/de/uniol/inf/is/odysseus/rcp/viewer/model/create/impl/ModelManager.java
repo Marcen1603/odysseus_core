@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 public class ModelManager<C> implements IModelManager<C> {
 
 	private List<IGraphModel<C>> models = new ArrayList<IGraphModel<C>>();
+	private IGraphModel<C> activeModel = null;
 	private List<IModelManagerListener<C>> listeners = new ArrayList<IModelManagerListener<C>>();
 	
 	private static final Logger logger = LoggerFactory.getLogger( ModelManager.class );
@@ -25,7 +26,7 @@ public class ModelManager<C> implements IModelManager<C> {
 			if( !models.contains(model)) {
 				models.add(model);
 				fireModelAddedEvent(model);
-				logger.info("New ModelProvider added: " + model.toString());
+				logger.info("New Model added: " + model.toString());
 			}
 		}
 	}
@@ -36,7 +37,7 @@ public class ModelManager<C> implements IModelManager<C> {
 			if( models.contains(model)) {
 				models.remove(model);
 				fireModelRemovedEvent(model);
-				logger.info("ModelProvider removed: " + model.toString());
+				logger.info("Model removed: " + model.toString());
 			}
 		}
 	}
@@ -92,6 +93,34 @@ public class ModelManager<C> implements IModelManager<C> {
 					}
 				}
 			}
+		}
+	}
+	
+	private void fireActiveModelChangedEvent( IGraphModel<C> provider ) {
+		synchronized( listeners ) {
+			for( IModelManagerListener<C> l : listeners ) {
+				if( l != null ) {
+					try {
+						l.activeModelChanged(this, provider);
+					} catch( Exception ex ) {
+						logger.error("Fehler in Listener", ex);
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	public IGraphModel<C> getActiveModel() {
+		return activeModel;
+	}
+
+	@Override
+	public void setActiveModel(IGraphModel<C> model) {
+		if( model != activeModel ) {
+			activeModel = model;
+			activeModel.setName("Active Graph");
+			fireActiveModelChangedEvent(model);
 		}
 	}
 

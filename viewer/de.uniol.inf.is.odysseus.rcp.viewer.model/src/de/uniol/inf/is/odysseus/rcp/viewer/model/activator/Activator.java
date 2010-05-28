@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.rcp.viewer.model.Model;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl.OdysseusModelProviderSink;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl.OdysseusModelProviderSinkOneWay;
 
 public class Activator implements BundleActivator, IPlanModificationListener  {
 
@@ -81,9 +82,11 @@ public class Activator implements BundleActivator, IPlanModificationListener  {
 				lastRoot = li.previous();
 			} while (li.hasPrevious() && lastRoot == null);
 			if (lastRoot != null && lastRoot instanceof ISink<?>) {
-				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSink((ISink<?>) lastRoot);
+				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay((ISink<?>) lastRoot);
+				IModelProvider<IPhysicalOperator> providerActiveModel = new OdysseusModelProviderSink((ISink<?>) lastRoot);
 				
 				Model.getInstance().getModelManager().addModel(provider.get());
+				Model.getInstance().getModelManager().setActiveModel(providerActiveModel.get());
 			}
 		}
 	}

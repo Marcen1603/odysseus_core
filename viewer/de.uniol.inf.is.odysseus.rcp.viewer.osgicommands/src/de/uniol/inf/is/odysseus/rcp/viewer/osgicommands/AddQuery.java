@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.osgicommands;
 
-import java.util.Iterator;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -38,20 +36,20 @@ public class AddQuery extends AbstractHandler implements IHandler {
 
 		return null;
 	}
-
-	private String parser(IAdvancedExecutor executor) {
-		Iterator<String> parsers;
-		try {
-			parsers = executor.getSupportedQueryParser().iterator();
-		} catch (PlanManagementException e) {
-			return null;
-		}
-		
-		String parser = "";
-		if (parsers != null && parsers.hasNext()) {
-			parser = parsers.next();
-			return parser;
-		}
-		return null;
-	}
+//
+//	private String parser(IAdvancedExecutor executor) {
+//		Iterator<String> parsers;
+//		try {
+//			parsers = executor.getSupportedQueryParser().iterator();
+//		} catch (PlanManagementException e) {
+//			return null;
+//		}
+//		
+//		String parser = "";
+//		if (parsers != null && parsers.hasNext()) {
+//			parser = parsers.next();
+//			return parser;
+//		}
+//		return null;
+//	}
 }

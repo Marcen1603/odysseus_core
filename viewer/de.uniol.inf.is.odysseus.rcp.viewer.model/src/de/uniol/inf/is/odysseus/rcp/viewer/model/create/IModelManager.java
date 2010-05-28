@@ -11,6 +11,9 @@ public interface IModelManager<C> {
 	public void removeAllModels();
 	public List<IGraphModel<C>> getModels();
 	
+	public void setActiveModel( IGraphModel<C> model );
+	public IGraphModel<C> getActiveModel();
+		
 	public void addListener( IModelManagerListener<C> listener );
 	public void removeListener( IModelManagerListener<C> listener );
 	
