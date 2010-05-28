@@ -2,7 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.ChainNoIterFactory">
    <property name="component.readableName" type="String" value="Chain"/>
    <property name="execlist.useIter" type="Boolean" value="false"/>
-   <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.ChainStrategyFactory"/>
+   <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.ChainSchedulingFactory"/>
     <service>
       <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory"/>
    </service>
