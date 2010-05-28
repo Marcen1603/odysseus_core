@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.priority.postpriorisation.event;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.priority.PostPriorisationPO;
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 
-public class PostPriorisationEventListener implements POEventListener {
+public class PostPriorisationEventListener implements IPOEventListener {
 
 	private PostPriorisationPO<?> postPriorisationPO;
 	

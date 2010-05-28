@@ -16,7 +16,7 @@ public class ChainSchedulingFactory extends AbstractSchedulingFactory {
 	}
 
 	@Override
-	public IScheduling createStrategy(IPartialPlan plan, int priority) {
+	public IScheduling create(IPartialPlan plan, int priority) {
 		return new ChainScheduling(plan);
 	}
 

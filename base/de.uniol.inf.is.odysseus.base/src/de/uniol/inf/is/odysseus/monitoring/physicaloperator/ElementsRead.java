@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 
-public class ElementsRead extends AbstractMonitoringData<Long> implements POEventListener{
+public class ElementsRead extends AbstractMonitoringData<Long> implements IPOEventListener{
 
 	private long readCount;
 	

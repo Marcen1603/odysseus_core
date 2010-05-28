@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
 	final protected Vector<PhysicalSubscription<ISource<? extends T>>> subscribedTo = new Vector<PhysicalSubscription<ISource<? extends T>>>();
-	final protected Map<POEventType, ArrayList<POEventListener>> eventListener = new HashMap<POEventType, ArrayList<POEventListener>>();
-	final protected ArrayList<POEventListener> genericEventListener = new ArrayList<POEventListener>();;
+	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
+	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();;
 
 	final private POEvent openInitEvent = new POEvent(this,
 			POEventType.OpenInit);
@@ -207,16 +207,16 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	 * One listener can have multiple subscriptions to the same event sender and
 	 * the same event type
 	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribe(de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventListener,
+	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribe(de.uniol.inf.is.odysseus.IPOEventListener.queryexecution.event.POEventListener,
 	 *      de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventType)
 	 */
 	@Override
-	public void subscribe(POEventListener listener, POEventType type) {
+	public void subscribe(IPOEventListener listener, POEventType type) {
 		synchronized (this.eventListener) {
-			ArrayList<POEventListener> curEventListener = this.eventListener
+			ArrayList<IPOEventListener> curEventListener = this.eventListener
 					.get(type);
 			if (curEventListener == null) {
-				curEventListener = new ArrayList<POEventListener>();
+				curEventListener = new ArrayList<IPOEventListener>();
 				this.eventListener.put(type, curEventListener);
 			}
 			curEventListener.add(listener);
@@ -224,9 +224,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void unsubscribe(POEventListener listener, POEventType type) {
+	public void unsubscribe(IPOEventListener listener, POEventType type) {
 		synchronized (this.eventListener) {
-			ArrayList<POEventListener> curEventListener = this.eventListener
+			ArrayList<IPOEventListener> curEventListener = this.eventListener
 					.get(type);
 			curEventListener.remove(listener);
 		}
@@ -261,34 +261,34 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	/**
 	 * One listener can have multiple subscriptions to the same event sender
 	 * 
-	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribeToAll(de.uniol.inf.is.odysseus.monitor.queryexecution.event.POEventListener)
+	 * @see de.uniol.inf.is.odysseus.queryexecution.po.base.operators.IPhysicalOperator#subscribeToAll(de.uniol.inf.is.odysseus.IPOEventListener.queryexecution.event.POEventListener)
 	 */
 	@Override
-	public void subscribeToAll(POEventListener listener) {
+	public void subscribeToAll(IPOEventListener listener) {
 		synchronized (this.genericEventListener) {
 			this.genericEventListener.add(listener);
 		}
 	}
 
 	@Override
-	public void unSubscribeFromAll(POEventListener listener) {
+	public void unSubscribeFromAll(IPOEventListener listener) {
 		synchronized (this.genericEventListener) {
 			this.genericEventListener.remove(listener);
 		}
 	}
 
 	final protected void fire(POEvent event) {
-		ArrayList<POEventListener> list = this.eventListener.get(event
+		ArrayList<IPOEventListener> list = this.eventListener.get(event
 				.getPOEventType());
 		if (list != null) {
 			synchronized (list) {
-				for (POEventListener listener : list) {
+				for (IPOEventListener listener : list) {
 					listener.poEventOccured(event);
 				}
 			}
 		}
 		synchronized (this.eventListener) {
-			for (POEventListener listener : this.genericEventListener) {
+			for (IPOEventListener listener : this.genericEventListener) {
 				listener.poEventOccured(event);
 			}
 		}

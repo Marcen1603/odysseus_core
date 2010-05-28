@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractScheduler implements IScheduler {
+public abstract class AbstractScheduler implements IScheduler, ISchedulingEventListener{
 	/**
 	 * Indicates if the scheduling is started.
 	 */
@@ -28,7 +28,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	 * The {@link ISchedulingFactory} which will be used for scheduling.
 	 * Each PartialPlan will be initialized with a new strategy instance.
 	 */
-	protected ISchedulingFactory schedulingStrategieFactory;
+	protected ISchedulingFactory schedulingFactory;
 
 	/**
 	 * Object which will be informed if an error will occure.
@@ -38,14 +38,14 @@ public abstract class AbstractScheduler implements IScheduler {
 	/**
 	 * Creates a new scheduler.
 	 * 
-	 * @param schedulingStrategieFactory
+	 * @param schedulingFactory
 	 *            {@link ISchedulingFactory} which will be used for
 	 *            scheduling. Each PartialPlan will be initialized with a new
 	 *            strategy instance.
 	 */
 	public AbstractScheduler(
-			ISchedulingFactory schedulingStrategieFactory) {
-		this.schedulingStrategieFactory = schedulingStrategieFactory;
+			ISchedulingFactory schedulingFactory) {
+		this.schedulingFactory = schedulingFactory;
 	}
 
 	/**

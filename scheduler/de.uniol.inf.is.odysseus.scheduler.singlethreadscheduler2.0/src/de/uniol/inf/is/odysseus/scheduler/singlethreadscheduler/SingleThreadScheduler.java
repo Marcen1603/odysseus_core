@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,22 +39,12 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	}
 
 	/**
-	 * All global sources which should be executed.
+	 * All schedulings.
 	 */
-	// final private ArrayList<IIterableSource<?>> sourcesToSchedule = new
-	// ArrayList<IIterableSource<?>>();
-
-	/**
-	 * All registered partial plans with their scheduling strategy.
-	 */
-	// final private Map<IPartialPlan, ISchedulingStrategy> parts = new
-	// HashMap<IPartialPlan, ISchedulingStrategy>();
 	final private List<IScheduling> parts = new LinkedList<IScheduling>();
+	final private List<IScheduling> pausedParts = new LinkedList<IScheduling>();
 
-	/**
-	 * Runnable for execution the global sources.
-	 */
-	// private final List<SourceExecutor sourceExecutor = new SourceExecutor();
+	
 
 	/**
 	 * Thread for execution the registered partial plans.
@@ -65,14 +54,13 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	/**
 	 * Thread for execution the global sources.
 	 */
-	// private Thread sourceThread;
 	private List<SingleSourceExecutor> sourceThreads = new Vector<SingleSourceExecutor>();
 
 	/**
 	 * Thread for execution the registered partial plans. Based on scheduling
 	 * strategies.
 	 * 
-	 * @author Wolf Bauer
+	 * @author Wolf Bauer, Marco Grawunder
 	 * 
 	 */
 	private class ExecutorThread extends Thread {
@@ -86,7 +74,6 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		@Override
 		public void run() {
 			terminate = false;
-			// Collection<ISchedulingStrategy> values = parts.values();
 			try {
 				while (!isInterrupted() && !terminate) {
 					synchronized (parts) {
@@ -95,9 +82,11 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 						}
 						Iterator<IScheduling> part = parts.iterator();
 						while (part.hasNext()) {
-							if (part.next().schedule(timeSlicePerStrategy)) {// part
-								// is
-								// done
+							while (parts.size() == pausedParts.size()){								
+								wait(100);
+							}
+							if (part.next().schedule(timeSlicePerStrategy)) {
+								// part is done
 								part.remove();
 							}
 						}
@@ -205,11 +194,11 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 				// Create for each partial plan an own scheduling strategy.
 				// These strategies are used for scheduling partial plans.
 				for (IPartialPlan partialPlan : partialPlans) {
-					final IScheduling strategy = schedulingStrategieFactory
-							.createStrategy(partialPlan, partialPlan
+					final IScheduling scheduling = schedulingFactory
+							.create(partialPlan, partialPlan
 									.getPriority());
-					//this.parts.put(partialPlan, strategy);
-					this.parts.add(strategy);
+					scheduling.addSchedulingEventListener(this);
+					this.parts.add(scheduling);
 				}
 			}
 			// restart ExecutorThread, if terminated before
@@ -288,4 +277,23 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		// send an ErrorEvent to all listenern
 		fireErrorEvent(new ErrorEvent(this, "", new Exception(e.getMessage())));
 	}
+
+	@Override
+	public void nothingToSchedule(IScheduling sched) {
+		System.out.println("TEST: Die Strategy "+sched+" hat keine Daten");
+		synchronized (pausedParts) {
+			pausedParts.add(sched);	
+		}
+	}
+
+	@Override
+	public void scheddulingPossible(IScheduling sched) {
+		System.out.println("TEST: Die Strategy "+sched+" hat wieder Daten");
+		synchronized (pausedParts) {
+			pausedParts.remove(sched);	
+		}
+		notifyAll();
+		
+	}
+
 }

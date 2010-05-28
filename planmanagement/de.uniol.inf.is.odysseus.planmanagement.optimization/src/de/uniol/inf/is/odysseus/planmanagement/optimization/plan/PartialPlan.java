@@ -79,6 +79,18 @@ public class PartialPlan implements IPartialPlan {
 		return iterableSource;
 	}
 
+	@Override
+	public IIterableSource<?> getIterableSource(int id) {
+		return iterableSource.get(id);
+	}
+	
+	@Override
+	public int getSourceId(IIterableSource<?> source) {
+		return iterableSource.indexOf(source);
+	}
+
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 

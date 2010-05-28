@@ -6,10 +6,10 @@ import de.uniol.inf.is.odysseus.monitoring.ISubscriber;
 import de.uniol.inf.is.odysseus.monitoring.MonitoringDataScheduler;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 
-public class Datarate extends AbstractPeriodicalMonitoringData<Double> implements POEventListener {
+public class Datarate extends AbstractPeriodicalMonitoringData<Double> implements IPOEventListener {
 
 	private Integer writeCount;
 	private long lastTimestamp;

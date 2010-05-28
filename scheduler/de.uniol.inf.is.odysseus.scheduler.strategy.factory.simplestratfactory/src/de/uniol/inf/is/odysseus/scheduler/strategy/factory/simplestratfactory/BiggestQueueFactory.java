@@ -18,7 +18,7 @@ public class BiggestQueueFactory extends AbstractSchedulingFactory {
 	}
 
 	@Override
-	public IScheduling createStrategy(IPartialPlan plan, int priority) {
+	public IScheduling create(IPartialPlan plan, int priority) {
 		return new BiggestQueueScheduling(plan);
 	}
 	

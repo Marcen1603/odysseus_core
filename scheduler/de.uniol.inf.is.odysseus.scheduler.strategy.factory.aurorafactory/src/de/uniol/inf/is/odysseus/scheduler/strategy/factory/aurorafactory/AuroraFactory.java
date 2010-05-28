@@ -49,7 +49,7 @@ public class AuroraFactory extends AbstractSchedulingFactory {
 	}
 	
 	@Override
-	public IScheduling createStrategy(IPartialPlan plan, int priority) {
+	public IScheduling create(IPartialPlan plan, int priority) {
 		switch(strategy){
 		case MIN_LATENCY:
 			return new AuroraMinLatency(plan);

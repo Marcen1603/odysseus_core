@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.base;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -24,13 +24,13 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	 */
 	public void close();
 
-	public void subscribe(POEventListener listener, POEventType type);
+	public void subscribe(IPOEventListener listener, POEventType type);
 
-	public void unsubscribe(POEventListener listener, POEventType type);
+	public void unsubscribe(IPOEventListener listener, POEventType type);
 
-	public void subscribeToAll(POEventListener listener);
+	public void subscribeToAll(IPOEventListener listener);
 
-	public void unSubscribeFromAll(POEventListener listener);
+	public void unSubscribeFromAll(IPOEventListener listener);
 	
 	/**
 	 * Name for Operator (Visual Identification) 

@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -271,7 +271,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void subscribe(POEventListener listener, POEventType type) {
+	public void subscribe(IPOEventListener listener, POEventType type) {
 		super.subscribe(listener, type);
 		switch (type) {
 		case ProcessInit:
@@ -283,20 +283,20 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void subscribeToAll(POEventListener listener) {
+	public void subscribeToAll(IPOEventListener listener) {
 		super.subscribeToAll(listener);
 		this.delegateSink.subscribe(listener, POEventType.ProcessInit);
 		this.delegateSink.subscribe(listener, POEventType.ProcessDone);
 	}
 
 	@Override
-	public void unsubscribe(POEventListener listener, POEventType type) {
+	public void unsubscribe(IPOEventListener listener, POEventType type) {
 		super.unsubscribe(listener, type);
 		this.delegateSink.unsubscribe(listener, type);
 	}
 
 	@Override
-	public void unSubscribeFromAll(POEventListener listener) {
+	public void unSubscribeFromAll(IPOEventListener listener) {
 		super.unSubscribeFromAll(listener);
 		this.delegateSink.unSubscribeFromAll(listener);
 	}

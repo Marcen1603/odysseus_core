@@ -21,7 +21,7 @@ public interface ISchedulingFactory {
 	 *            Priority with which physical plan which should be scheduled.
 	 * @return New created a specific {@link IScheduling}.
 	 */
-	public IScheduling createStrategy(IPartialPlan plan, int priority);
+	public IScheduling create(IPartialPlan plan, int priority);
 
 	/**
 	 * ID of this factory. Should be unique.

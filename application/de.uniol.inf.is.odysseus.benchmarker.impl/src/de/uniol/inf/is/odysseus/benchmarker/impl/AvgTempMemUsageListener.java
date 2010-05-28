@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.PunctuationStorage;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 
 /**
  * Collects memory usage for a given operator using SweepAreas.
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventListener;
  * @author Jan Steinke
  * 
  */
-public class AvgTempMemUsageListener implements POEventListener {
+public class AvgTempMemUsageListener implements IPOEventListener {
 
 	private Object value;
 	
