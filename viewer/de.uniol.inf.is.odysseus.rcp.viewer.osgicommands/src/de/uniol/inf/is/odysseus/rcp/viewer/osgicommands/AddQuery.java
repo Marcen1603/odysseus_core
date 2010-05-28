@@ -16,17 +16,16 @@ import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 public class AddQuery extends AbstractHandler implements IHandler {
 
 	public static String queryToExecute = "";
+	public static String parserToUse = "";
 	
 	public static final String COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.AddQuery";
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String queryString = queryToExecute;
-			
 		try {
 			IAdvancedExecutor executor = Activator.getExecutor();
 			if (executor != null) {
-				String parser = parser(executor);
-				executor.addQuery(queryString, parser, new ParameterDefaultRoot(new MySink()));
+//				String parser = parser(executor);
+				executor.addQuery(queryToExecute, parserToUse, new ParameterDefaultRoot(new MySink()));
 				
 			} else {
 				System.out.println("Kein ExecutorService gefunden");
