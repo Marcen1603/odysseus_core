@@ -235,7 +235,7 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 	@Override
 	public Object visit(ASTTestOp node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 }

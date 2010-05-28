@@ -112,7 +112,7 @@ public class LabdataServer {
 
 		ObjectInputStream iStream = null;
 		if (limit > 0) {
-			System.out.println("Begin caching of " + limit + " values from file: " + inputFileURL);
+//			System.out.println("Begin caching of " + limit + " values from file: " + inputFileURL);
 			if (!useCSV) {
 				
 				iStream = new ObjectInputStream(inputFileURL.openStream());

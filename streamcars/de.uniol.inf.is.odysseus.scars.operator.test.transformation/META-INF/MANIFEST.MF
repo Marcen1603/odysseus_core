@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TransformationTest
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.operator.test.transformation
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Timo Michelsen
+Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.9"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.scars.operator.test.ao,
+ de.uniol.inf.is.odysseus.scars.operator.test.po
