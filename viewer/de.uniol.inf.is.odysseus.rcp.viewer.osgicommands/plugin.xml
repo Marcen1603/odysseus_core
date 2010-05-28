@@ -23,6 +23,11 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopScheduler"
             name="Stop Scheduler">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.NMSN"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.NMSN"
+            name="NMSN">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -43,6 +48,15 @@
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopScheduler"
                   label="Stop Scheduler"
+                  style="push">
+            </command>
+            <separator
+                  name="Seperator"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.NMSN"
+                  label="Nexmark Example Sources"
                   style="push">
             </command>
          </menu>
