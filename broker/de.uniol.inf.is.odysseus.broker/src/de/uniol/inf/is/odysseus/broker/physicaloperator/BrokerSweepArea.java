@@ -30,8 +30,9 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	 * Instantiates a new BrokerSweepArea from an old one.
 	 *
 	 * @param brokerTISweepArea the old one
+	 * @throws CloneNotSupportedException 
 	 */
-	public BrokerSweepArea(BrokerSweepArea<T> brokerTISweepArea){
+	public BrokerSweepArea(BrokerSweepArea<T> brokerTISweepArea) throws CloneNotSupportedException{
 		super(brokerTISweepArea);
 	}
 

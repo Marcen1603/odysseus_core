@@ -81,9 +81,10 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	 * Instantiates a new BrokerByteBufferReceiverPO.
 	 *
 	 * @param byteBufferReceiverPO the original to copy from
+	 * @throws CloneNotSupportedException 
 	 */
 	@SuppressWarnings("unchecked")
-	public BrokerByteBufferReceiverPO(BrokerByteBufferReceiverPO<W> byteBufferReceiverPO) {
+	public BrokerByteBufferReceiverPO(BrokerByteBufferReceiverPO<W> byteBufferReceiverPO) throws CloneNotSupportedException {
 		super();
 		handler = (IObjectHandler<W>) byteBufferReceiverPO.handler.clone();
 		size = byteBufferReceiverPO.size;
@@ -209,7 +210,7 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource#clone()
 	 */
 	@Override
-	public BrokerByteBufferReceiverPO<W> clone() {
+	public BrokerByteBufferReceiverPO<W> clone() throws CloneNotSupportedException {
 		return new BrokerByteBufferReceiverPO<W>(this);
 	}
 

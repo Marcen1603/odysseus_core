@@ -23,7 +23,7 @@ public class BrokerMetadataMergeFunction implements IMetadataMergeFunction<ITime
 	 */
 	@Override
 	public ITimeInterval mergeMetadata(ITimeInterval left, ITimeInterval right) {		
-		return right.clone();		
+			return right.clone();
 	}
 
 	/* (non-Javadoc)

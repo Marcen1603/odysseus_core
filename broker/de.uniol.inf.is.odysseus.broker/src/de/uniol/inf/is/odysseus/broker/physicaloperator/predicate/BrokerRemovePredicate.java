@@ -36,6 +36,10 @@ public class BrokerRemovePredicate<T extends IMetaAttributeContainer<ITimeInterv
 		this.brokerEqualPredicate = new BrokerEqualPredicate<T>(position);
 	}
 	
+	public BrokerRemovePredicate(BrokerRemovePredicate<T> brokerRemovePredicate) {
+		this.brokerEqualPredicate = brokerRemovePredicate.brokerEqualPredicate.clone();
+	}
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.base.predicate.IPredicate#evaluate(java.lang.Object)
 	 */
@@ -58,13 +62,18 @@ public class BrokerRemovePredicate<T extends IMetaAttributeContainer<ITimeInterv
 		}
 		return false;
 	}
-
+	
 	@Override
-	public BrokerRemovePredicate<T> clone() {
-		BrokerRemovePredicate<T> clone = new BrokerRemovePredicate<T>();
-		clone.brokerEqualPredicate = this.brokerEqualPredicate.clone();
-		return clone;
+	public BrokerRemovePredicate<T> clone(){
+		return new BrokerRemovePredicate<T>(this);
 	}
+
+//	@Override
+//	public BrokerRemovePredicate<T> clone() {
+//		BrokerRemovePredicate<T> clone = new BrokerRemovePredicate<T>();
+//		clone.brokerEqualPredicate = this.brokerEqualPredicate.clone();
+//		return clone;
+//	}
 
 	
 }

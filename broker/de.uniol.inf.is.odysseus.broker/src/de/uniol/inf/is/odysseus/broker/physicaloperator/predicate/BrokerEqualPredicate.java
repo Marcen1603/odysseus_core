@@ -38,6 +38,10 @@ public class BrokerEqualPredicate<T extends IMetaAttributeContainer<ITimeInterva
 		this.position = position;
 	}
 
+	public BrokerEqualPredicate(BrokerEqualPredicate<T> brokerEqualPredicate) {
+		this.position = brokerEqualPredicate.position;
+	}
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.base.predicate.IPredicate#evaluate(java.lang.Object)
 	 */
@@ -63,10 +67,11 @@ public class BrokerEqualPredicate<T extends IMetaAttributeContainer<ITimeInterva
 			}
 		}
 	}
-
+	
 	@Override
 	public BrokerEqualPredicate<T> clone() {
-		return new BrokerEqualPredicate<T>(this.position);
+		return new BrokerEqualPredicate<T>(this);
 	}
+
 
 }
