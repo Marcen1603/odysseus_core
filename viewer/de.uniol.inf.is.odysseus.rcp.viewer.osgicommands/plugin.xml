@@ -13,6 +13,16 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
             name="Show Query Dialog">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartScheduler"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartScheduler"
+            name="Start Scheduler">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopScheduler"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopScheduler"
+            name="Stop Scheduler">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -23,6 +33,16 @@
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
                   label="Add Query..."
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartScheduler"
+                  label="Start Scheduler"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopScheduler"
+                  label="Stop Scheduler"
                   style="push">
             </command>
          </menu>
