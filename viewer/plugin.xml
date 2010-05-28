@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.AddQuery"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.AddQuery"
+            name="Add Query">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
+            name="Show Query Dialog">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="OSGi Commands">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
+                  label="Add Query..."
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.toolbar1">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
+                  label="Add Query"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+
+</plugin>
