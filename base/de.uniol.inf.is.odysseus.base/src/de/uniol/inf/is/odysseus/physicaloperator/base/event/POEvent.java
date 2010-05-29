@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.event;
 
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.ToString;
 
 /**
  * @author Marco Grawunder, Jonas Jacobi
@@ -24,11 +25,13 @@ public class POEvent {
 	
 	@Override
 	public String toString() {
-		return this.getClass().getName();
+		return this.type+" from "+source.getName();
 	}
 
 	public POEventType getPOEventType(){
 		return type;
 	}
+	
+	
 
 }

@@ -45,6 +45,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final private POEvent pushDoneEvent = new POEvent(this,
 			POEventType.PushDone);
 
+	private boolean blocked = false;
+	
+	POEvent blockedEvent = new POEvent(this, POEventType.Blocked);
+	POEvent unblockedEvent = new POEvent(this, POEventType.Unblocked);
+	
 	protected List<IOperatorOwner> owners = new Vector<IOperatorOwner>();
 
 	public AbstractSource() {
@@ -404,5 +409,19 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public AbstractSource<T> clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
 	}
+	
+	public boolean isBlocked() {
+		return blocked;
+	}
 
+	public void block() {
+		this.blocked = true;
+		fire(blockedEvent);
+	}
+	
+	public void unblock() {
+		this.blocked = false;
+		fire(unblockedEvent);
+	}
+	
 }

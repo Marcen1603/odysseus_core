@@ -4,42 +4,65 @@ import java.util.List;
 import java.util.Vector;
 
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public abstract class AbstractIterableSource<T> extends AbstractSource<T>
 		implements IIterableSource<T> {
 
 	protected List<IOperatorOwner> deactivateRequestControls = new Vector<IOperatorOwner>();
-	
-	public AbstractIterableSource(){
+
+	final private POEvent activatedEvent = new POEvent(this,
+			POEventType.Activated);
+	final private POEvent deActivatedEvent = new POEvent(this,
+			POEventType.Deactivated);
+	boolean activated = true;
+
+	public AbstractIterableSource() {
 
 	}
-	
-	public AbstractIterableSource(AbstractIterableSource<T> source){
+
+	public AbstractIterableSource(AbstractIterableSource<T> source) {
 		super(source);
 	}
-	
+
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
 		super.removeOwner(owner);
 		this.deactivateRequestControls.remove(owner);
+		fireEvents();
 	}
-	
+
+	private void fireEvents() {
+		if (!isActive() && activated == true) {
+			activated = false;
+			fire(deActivatedEvent);
+		} else if (isActive() && activated == false) {
+			activated = true;
+			fire(activatedEvent);
+		}
+	}
+
 	@Override
 	public void activateRequest(IOperatorOwner operatorControl) {
-			this.deactivateRequestControls.remove(operatorControl);
+		this.deactivateRequestControls.remove(operatorControl);
+		fireEvents();
 	}
 
 	@Override
 	public void deactivateRequest(IOperatorOwner operatorControl) {
-			this.deactivateRequestControls.add(operatorControl);
+		this.deactivateRequestControls.add(operatorControl);
+		fireEvents();
 	}
 
 	@Override
 	public boolean deactivateRequestedBy(IOperatorOwner operatorControl) {
-			return this.deactivateRequestControls.contains(operatorControl);
+		boolean ret = this.deactivateRequestControls.contains(operatorControl);
+		fireEvents();
+		return ret;
 	}
 
 	@Override

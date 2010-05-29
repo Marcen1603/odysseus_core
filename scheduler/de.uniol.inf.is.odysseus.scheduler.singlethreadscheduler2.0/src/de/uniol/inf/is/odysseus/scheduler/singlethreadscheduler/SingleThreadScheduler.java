@@ -102,18 +102,19 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 
 		@Override
 		public void nothingToSchedule(IScheduling sched) {
-			System.out.println("TEST: Die Strategy " + sched
-					+ " hat keine Daten");
 			synchronized (pausedParts) {
+
+			//			System.out.println("TEST: Die Strategy " + sched
+//					+ " hat keine Daten");
 				pausedParts.add(sched);
 			}
 		}
 
 		@Override
 		public void scheddulingPossible(IScheduling sched) {
-			System.out.println("TEST: Die Strategy " + sched
-					+ " hat wieder Daten");
 			synchronized (pausedParts) {
+//			System.out.println("TEST: Die Strategy " + sched
+//					+ " hat wieder Daten");
 				pausedParts.remove(sched);
 				
 			}

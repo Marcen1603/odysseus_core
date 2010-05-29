@@ -44,6 +44,8 @@ public abstract class AbstractScheduling implements IScheduling,
 	protected void processSources() {
 		for (int bitIndex = 0;bitIndex < plan.getIterableSource().size(); bitIndex++){
 			plan.getIterableSource(bitIndex).subscribe(this, POEventType.ProcessDone);
+			plan.getIterableSource(bitIndex).subscribe(this, POEventType.Activated);
+			plan.getIterableSource(bitIndex).subscribe(this, POEventType.Unblocked);			
 			schedulable.set(bitIndex,true);
 		}
 	}
@@ -67,23 +69,18 @@ public abstract class AbstractScheduling implements IScheduling,
 
 		long endTime = System.currentTimeMillis() + maxTime;
 		IIterableSource<?> nextSource = nextSource();
+		boolean interrupt = false;
 		synchronized (schedulingEventListener) {
-			while (nextSource != null && System.currentTimeMillis() < endTime) {
+			while (!interrupt && nextSource != null && System.currentTimeMillis() < endTime) {
 				// System.out.println("Process ISource "+nextSource);
 				if (nextSource.isDone()) {
 					sourceDone(nextSource);
+				}else if (nextSource.isBlocked()){
+					interrupt = updateSchedulable(nextSource); 
 				} else if (nextSource.hasNext() && nextSource.isActive()) {
 					nextSource.transferNext();
 				} else {
-					schedulable.set(plan.getSourceId(nextSource), false);
-					if (schedulable.cardinality() == 0) {
-						schedulingPaused = true;
-						for (ISchedulingEventListener l : schedulingEventListener) {
-							l.nothingToSchedule(this);
-						}
-						break;
-					}
-
+					interrupt = updateSchedulable(nextSource);
 				}
 				nextSource = nextSource();
 			}
@@ -91,6 +88,23 @@ public abstract class AbstractScheduling implements IScheduling,
 		}
 	}
 
+	private boolean updateSchedulable(IIterableSource<?> nextSource) {
+		boolean interrupt;
+		schedulable.set(plan.getSourceId(nextSource), false);
+		if (schedulable.cardinality() == 0) {
+			schedulingPaused = true;
+			for (ISchedulingEventListener l : schedulingEventListener) {
+				l.nothingToSchedule(this);
+			}
+			interrupt = true;
+		}else{
+			interrupt = false;
+		}
+		return interrupt;
+	}
+
+	
+	
 	public abstract IIterableSource<?> nextSource();
 
 	public abstract void sourceDone(IIterableSource<?> source);
@@ -119,9 +133,11 @@ public abstract class AbstractScheduling implements IScheduling,
 
 	@Override
 	public void poEventOccured(POEvent poEvent) {
+		//System.out.println(poEvent);
 		synchronized (schedulingEventListener) {
-			schedulable.set(plan.getSourceId(((IIterableSource<?>) poEvent.getSource())),true);
-			if (schedulingPaused){
+			IIterableSource<?> s = (IIterableSource<?>) poEvent.getSource();
+			schedulable.set(plan.getSourceId(s),true);
+			if (schedulingPaused && s.isActive() && !s.isBlocked()){
 				schedulingPaused = false;
 				for (ISchedulingEventListener l : schedulingEventListener) {
 					l.scheddulingPossible(this);

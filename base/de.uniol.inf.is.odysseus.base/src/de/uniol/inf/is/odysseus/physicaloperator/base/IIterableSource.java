@@ -59,4 +59,21 @@ public interface IIterableSource<T> extends ISource<T> {
 	 * @return TRUE: operator is currently active. FALSE: else
 	 */
 	public boolean isActive();
+	
+	/**
+	 * Indicates if the operator is currently blocked (i.e. does not produce elements)
+	 * @return
+	 */
+	public boolean isBlocked();
+
+	/**
+	 * Block operator
+	 */
+	public void block();
+	
+	/**
+	 * unblock operator
+	 */
+	public void unblock();
 }
+

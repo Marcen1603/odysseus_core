@@ -19,5 +19,5 @@ public enum POEventType {
 	PostPriorisation,
 	ProcessInit, ProcessDone, ProcessInitNeg, ProcessDoneNeg,
 	PushInit, PushDone, PushInitNeg, PushDoneNeg,
-	Done
+	Done, Activated, Deactivated, Blocked, Unblocked
 }
