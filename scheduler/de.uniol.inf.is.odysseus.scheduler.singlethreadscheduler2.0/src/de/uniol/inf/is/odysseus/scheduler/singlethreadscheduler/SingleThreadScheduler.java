@@ -292,7 +292,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		synchronized (pausedParts) {
 			pausedParts.remove(sched);	
 		}
-		notifyAll();
+		execThread.notifyAll();
 		
 	}
 
