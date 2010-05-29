@@ -26,6 +26,7 @@ public abstract class AbstractScheduling implements IScheduling,
 	private IPartialPlan plan = null;
 	protected boolean isPlanChanged = true;
 	BitSet schedulable = new BitSet();
+	boolean schedulingPaused = false;
 
 	public AbstractScheduling(IPartialPlan plan) {
 		this.plan = plan;
@@ -76,6 +77,7 @@ public abstract class AbstractScheduling implements IScheduling,
 				} else {
 					schedulable.set(plan.getSourceId(nextSource), false);
 					if (schedulable.cardinality() == 0) {
+						schedulingPaused = true;
 						for (ISchedulingEventListener l : schedulingEventListener) {
 							l.nothingToSchedule(this);
 						}
@@ -118,10 +120,13 @@ public abstract class AbstractScheduling implements IScheduling,
 	@Override
 	public void poEventOccured(POEvent poEvent) {
 		synchronized (schedulingEventListener) {
-			for (ISchedulingEventListener l : schedulingEventListener) {
-				l.scheddulingPossible(this);
-			}
 			schedulable.set(plan.getSourceId(((IIterableSource<?>) poEvent.getSource())),true);
+			if (schedulingPaused){
+				schedulingPaused = false;
+				for (ISchedulingEventListener l : schedulingEventListener) {
+					l.scheddulingPossible(this);
+				}
+			}
 		}
 	}
 }

@@ -25,7 +25,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
-	//private static final Logger logger = LoggerFactory.getLogger(ISource.class);
+	// private static final Logger logger =
+	// LoggerFactory.getLogger(ISource.class);
 	final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
 	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();
@@ -46,12 +47,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	protected List<IOperatorOwner> owners = new Vector<IOperatorOwner>();
 
-	public AbstractSource(){};
-			
+	public AbstractSource() {
+	};
+
 	public AbstractSource(AbstractSource<T> source) {
 		this.outputSchema = source.outputSchema;
 	}
-	
+
 	@Override
 	public boolean isSink() {
 		return false;
@@ -75,7 +77,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		try {
 			this.process_close();
 		} catch (CloseFailedException e) {
-			//TODO @MG: close failed macht wenig sinn oder? man kann nicht reagieren
+			// TODO @MG: close failed macht wenig sinn oder? man kann nicht
+			// reagieren
 			e.printStackTrace();
 		}
 		open.set(false);
@@ -92,8 +95,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected abstract void process_open() throws OpenFailedException;
-	
-	protected void process_close() throws CloseFailedException{}
+
+	protected void process_close() throws CloseFailedException {
+	}
 
 	/**
 	 * If a source needs to propagate done to other elements in the operator,
@@ -120,9 +124,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// }
 		fire(this.pushDoneEvent);
 	}
-	
+
 	public void transfer(T object) {
-		transfer(object,0);
+		transfer(object, 0);
 	};
 
 	@Override
@@ -131,16 +135,17 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// transferbatchevent
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
-				if (sink.getSourceOutPort() == sourceOutPort){
-					sink.getTarget().process(object, sink.getSinkInPort(), isTransferExclusive());
+				if (sink.getSourceOutPort() == sourceOutPort) {
+					sink.getTarget().process(object, sink.getSinkInPort(),
+							isTransferExclusive());
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	public void transfer(Collection<T> object) {
-		transfer(object,0);
+		transfer(object, 0);
 	}
 
 	/**
@@ -152,8 +157,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected boolean isTransferExclusive() {
 		return hasSingleConsumer();
 	}
-	
-	protected boolean hasSingleConsumer(){
+
+	protected boolean hasSingleConsumer() {
 		return this.subscriptions.size() == 1;
 	}
 
@@ -177,17 +182,19 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected void process_transfer(T object) {
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
-				//if (sink.getTarget().isActive() ?? hasOwner??){
-				if (sink.isEnabled()){
-					sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer());
+				// if (sink.getTarget().isActive() ?? hasOwner??){
+				if (sink.isEnabled()) {
+					sink.getTarget().process(object, sink.getSinkInPort(),
+							!this.hasSingleConsumer());
 				}
-				//}
+				// }
 			}
 		}
 	}
-	
+
 	@Override
-	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		synchronized (this.subscriptions) {
@@ -199,25 +206,33 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
-		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(	sink, sinkInPort, sourceOutPort, schema));
+	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort,
+			int sourceOutPort, SDFAttributeList schema) {
+		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(sink,
+				sinkInPort, sourceOutPort, schema));
 	}
-	
+
 	@Override
-	public void unsubscribeSink(PhysicalSubscription<ISink<? super T>> subscription) {
+	public void unsubscribeSink(
+			PhysicalSubscription<ISink<? super T>> subscription) {
 		synchronized (this.subscriptions) {
-//			System.out.print(subscriptions+" remove "+subscription);
+			// System.out.print(subscriptions+" remove "+subscription);
 			boolean subContained = this.subscriptions.remove(subscription);
-//			System.out.println("--> "+subContained);
+			// System.out.println("--> "+subContained);
 			if (subContained) {
-				subscription.getTarget().unsubscribeFromSource(this,subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				subscription.getTarget().unsubscribeFromSource(this,
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
+						subscription.getSchema());
 			}
-		}	
+		}
 	}
-	
+
 	@Override
-	public void atomicReplaceSink(List<PhysicalSubscription<ISink<? super T>>> remove, ISink<? super T> sink,
-			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public void atomicReplaceSink(
+			List<PhysicalSubscription<ISink<? super T>>> remove,
+			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
+			SDFAttributeList schema) {
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sub : remove) {
 				unsubscribeSink(sub);
@@ -225,10 +240,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		}
 	}
-	
+
 	@Override
-	public void atomicReplaceSink(PhysicalSubscription<ISink<? super T>> remove, List<ISink<? super T>> sinks,
-			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public void atomicReplaceSink(
+			PhysicalSubscription<ISink<? super T>> remove,
+			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
+			SDFAttributeList schema) {
 		synchronized (this.subscriptions) {
 			unsubscribeSink(remove);
 			for (ISink<? super T> sink : sinks) {
@@ -239,7 +256,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public List<PhysicalSubscription<ISink<? super T>>> getSubscriptions() {
-			return Collections.unmodifiableList(this.subscriptions);
+		return Collections.unmodifiableList(this.subscriptions);
 	}
 
 	final protected void propagateDone() {
@@ -277,13 +294,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// es kann z.B. sein, dass ein MetadataItem f�r zwei Events
 			// registriert wird, aber nat�rlich trotzdem nur einmal
 			// als MetadataItem registriert sein muss
-			
+
 			// TODO: Die Loesung mit der Exception war nicht schoen ...
 			// Jetzt wird es einfach ignoriert
-			//try {
-				this.addMonitoringData(mItem.getType(), mItem);
-//			} catch (IllegalArgumentException e) {
-//			}
+			// try {
+			this.addMonitoringData(mItem.getType(), mItem);
+			// } catch (IllegalArgumentException e) {
+			// }
 		}
 	}
 
@@ -315,7 +332,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
@@ -325,7 +341,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void sendPunctuation(PointInTime punctuation) {
 		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<? extends ISink<?>> sub : this.subscriptions) {
-				sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
+				sub.getTarget().processPunctuation(punctuation,
+						sub.getSinkInPort());
 			}
 		}
 	}
@@ -348,12 +365,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}
-	
+
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = outputSchema;	
+		this.outputSchema = outputSchema;
 	}
-	
+
 	@Override
 	public void addOwner(IOperatorOwner owner) {
 		this.owners.add(owner);
@@ -383,11 +400,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public List<IOperatorOwner> getOwner() {
 		return Collections.unmodifiableList(this.owners);
 	}
-	
-	
-	public AbstractSource<T> clone() throws CloneNotSupportedException{
+
+	public AbstractSource<T> clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
 	}
 
-	
 }

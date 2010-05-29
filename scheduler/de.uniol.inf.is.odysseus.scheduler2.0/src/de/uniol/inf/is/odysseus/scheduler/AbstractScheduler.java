@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractScheduler implements IScheduler, ISchedulingEventListener{
+public abstract class AbstractScheduler implements IScheduler{
 	/**
 	 * Indicates if the scheduling is started.
 	 */
