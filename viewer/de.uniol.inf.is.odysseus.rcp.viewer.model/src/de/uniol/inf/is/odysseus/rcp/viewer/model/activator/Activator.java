@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.Model;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl.OdysseusModelProviderSink;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl.OdysseusModelProviderMultipleSink;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl.OdysseusModelProviderSinkOneWay;
 
 public class Activator implements BundleActivator, IPlanModificationListener  {
@@ -83,7 +83,11 @@ public class Activator implements BundleActivator, IPlanModificationListener  {
 			} while (li.hasPrevious() && lastRoot == null);
 			if (lastRoot != null && lastRoot instanceof ISink<?>) {
 				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay((ISink<?>) lastRoot);
-				IModelProvider<IPhysicalOperator> providerActiveModel = new OdysseusModelProviderSink((ISink<?>) lastRoot);
+				
+				ArrayList<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
+				for(IPhysicalOperator po : roots ) 
+					sinkRoots.add((ISink<?>)po);
+				IModelProvider<IPhysicalOperator> providerActiveModel = new OdysseusModelProviderMultipleSink(sinkRoots);
 				
 				Model.getInstance().getModelManager().addModel(provider.get());
 				Model.getInstance().getModelManager().setActiveModel(providerActiveModel.get());
