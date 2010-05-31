@@ -10,32 +10,24 @@ public class JDVCDataInputStreamAccessMVPO <M extends IProbability> extends Abst
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		
 		return null;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isDone() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void transferNext() {
-		// TODO Auto-generated method stub
-		
 	}
-
 }
