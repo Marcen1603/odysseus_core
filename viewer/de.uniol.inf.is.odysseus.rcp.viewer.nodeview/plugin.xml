@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.application.perspective.viewer">
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeViewPart"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView"
+            name="Node View"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
