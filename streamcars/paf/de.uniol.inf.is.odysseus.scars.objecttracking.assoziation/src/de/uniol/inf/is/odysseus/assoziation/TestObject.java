@@ -1,7 +1,6 @@
-package de.uniol.inf.is.odysseus.prediction;
+package de.uniol.inf.is.odysseus.assoziation;
 
 import org.apache.commons.math.geometry.Vector3D;
-
 
 public class TestObject {
 	

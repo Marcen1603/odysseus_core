@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.prediction;
 
-import javax.vecmath.Vector3d;
+import org.apache.commons.math.geometry.Vector3D;
 
 public class DefaultPredictionAlgorithmus implements IPredictionAlgorithmus{
 
@@ -22,12 +22,12 @@ public class DefaultPredictionAlgorithmus implements IPredictionAlgorithmus{
 		return newTestObject;
 	}
 	
-	private Vector3d calcNewPos() {
+	private Vector3D calcNewPos() {
 		double passedTime = sourceObjectTimeStamp-brokerObject.getTimeStamp();
-		Vector3d newPos = new Vector3d();
+		Vector3D newPos = new Vector3D();
 		newPos = brokerObject.getDirection();
-		newPos.scale(passedTime*brokerObject.getSpeed());
-		newPos.add(brokerObject.getPosition());
+		newPos = newPos.scalarMultiply(passedTime*brokerObject.getSpeed());
+		newPos = newPos.add(brokerObject.getPosition());
 		return newPos;
 	}
 }
