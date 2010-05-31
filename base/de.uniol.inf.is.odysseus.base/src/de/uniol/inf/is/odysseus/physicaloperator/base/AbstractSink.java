@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -14,8 +13,8 @@ import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -183,29 +182,30 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
+	public void unsubscribeFromSource(
+			PhysicalSubscription<ISource<? extends T>> subscription) {
+		synchronized (this.subscribedTo) {
+			if (this.subscribedTo.remove(subscription)) {
+				subscription.getTarget().unsubscribeSink(this.getInstance(),
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
+						subscription.getSchema());
+			}
+		}
+	}
+
+	@Override
 	public void unsubscribeFromAllSources() {
 		synchronized (this.subscribedTo) {
-			
-			while (subscribedTo.size()>0){
-				PhysicalSubscription<ISource<? extends T>> subscription = subscribedTo.remove(0);
-				subscription.getTarget().unsubscribeSink(this,
+			while (!subscribedTo.isEmpty()) {
+				PhysicalSubscription<ISource<? extends T>> subscription = subscribedTo
+						.remove(0);
+				subscription.getTarget().unsubscribeSink(this.getInstance(),
 						subscription.getSinkInPort(),
 						subscription.getSourceOutPort(),
 						subscription.getSchema());
 				
 			}
-			
-//			Iterator<PhysicalSubscription<ISource<? extends T>>> it = this.subscribedTo
-//					.iterator();
-//			while (it.hasNext()) {
-//				PhysicalSubscription<ISource<? extends T>> subscription = it
-//						.next();
-//				it.remove();
-//				subscription.getTarget().unsubscribeSink(this,
-//						subscription.getSinkInPort(),
-//						subscription.getSourceOutPort(),
-//						subscription.getSchema());
-//			}
 		}
 	}
 
@@ -248,29 +248,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
 		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
 				source, sinkInPort, sourceOutPort, schema));
-	}
-
-	@Override
-	public void unsubscribeFromSource(
-			PhysicalSubscription<ISource<? extends T>> subscription) {
-		// System.out.println("AbstractSink:unsubscribeFromSource (" + this +
-		// ")"
-		// + subscription + " from " + subscribedTo);
-		synchronized (this.subscribedTo) {
-			if (this.subscribedTo.remove(subscription)) {
-				// if (this instanceof DelegateSink){ // DAS IST HÄSSLICH
-				// subscription.getTarget().unsubscribeSink(this.getInstance(),
-				// subscription.getSinkInPort(),
-				// subscription.getSourceOutPort(),
-				// subscription.getSchema());
-				// }else{
-				subscription.getTarget().unsubscribeSink(this,
-						subscription.getSinkInPort(),
-						subscription.getSourceOutPort(),
-						subscription.getSchema());
-				// }
-			}
-		}
 	}
 
 	/**

@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.CloseFailedException;
@@ -19,44 +18,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		IPipe<R, W> {
 	protected class DelegateSink extends AbstractSink<R> {
-
-		@Override
-		public void unsubscribeFromSource(
-				PhysicalSubscription<ISource<? extends R>> subscription) {
-			synchronized (this.subscribedTo) {
-				if (this.subscribedTo.remove(subscription)) {
-					subscription.getTarget().unsubscribeSink(
-							this.getInstance(), subscription.getSinkInPort(),
-							subscription.getSourceOutPort(),
-							subscription.getSchema());
-				}
-			}
-		}
-
-		@Override
-		public void unsubscribeFromAllSources() {
-			synchronized (this.subscribedTo) {
-				while (subscribedTo.size()>0){
-					PhysicalSubscription<ISource<? extends R>> subscription = subscribedTo.remove(0);
-					subscription.getTarget().unsubscribeSink(this.getInstance(),
-							subscription.getSinkInPort(),
-							subscription.getSourceOutPort(),
-							subscription.getSchema());
-					
-				}
-//				Iterator<PhysicalSubscription<ISource<? extends R>>> it = this.subscribedTo
-//						.iterator();
-//				while (it.hasNext()) {
-//					PhysicalSubscription<ISource<? extends R>> subscription = it
-//							.next();
-//					it.remove();
-//					subscription.getTarget().unsubscribeSink(this.getInstance(),
-//							subscription.getSinkInPort(),
-//							subscription.getSourceOutPort(),
-//							subscription.getSchema());
-//				}
-			}
-		}
 
 		@Override
 		protected void process_next(R object, int port, boolean exclusive) {
@@ -128,7 +89,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// etc.)
 	// MUST override this method (else there will be a ClassCastException)
 	@SuppressWarnings("unchecked")
-	protected R cloneIfNessessary(R object, boolean exclusive, int port) throws CloneNotSupportedException {
+	protected R cloneIfNessessary(R object, boolean exclusive, int port)
+			throws CloneNotSupportedException {
 		// boolean exclusive??
 		if (getOutputMode() == OutputMode.MODIFIED_INPUT) {
 			object = (R) ((IClone) object).clone();
@@ -166,7 +128,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		try {
 			process_next(cloneIfNessessary(object, exclusive, port), port);
 		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Illegal Objekttype for processing used. Must support clone!");
+			throw new RuntimeException(
+					"Illegal Objekttype for processing used. Must support clone!");
 		}
 	}
 
