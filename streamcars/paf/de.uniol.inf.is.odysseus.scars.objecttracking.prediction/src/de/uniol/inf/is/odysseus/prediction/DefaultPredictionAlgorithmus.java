@@ -1,33 +1,42 @@
 package de.uniol.inf.is.odysseus.prediction;
 
+import java.util.ArrayList;
+
 import org.apache.commons.math.geometry.Vector3D;
+
+import de.uniol.inf.is.odysseus.scars.objecttracking.MeasurementObject;
 
 public class DefaultPredictionAlgorithmus implements IPredictionAlgorithmus{
 
-	TestObject brokerObject;
+	ArrayList<MeasurementObject> oldObjects;
 	double sourceObjectTimeStamp;
 	
-	public DefaultPredictionAlgorithmus(TestObject brokerObject, long sourceObjectTimeStamp) {
-		this.brokerObject = brokerObject;
+	public DefaultPredictionAlgorithmus(ArrayList<MeasurementObject> oldObjects, long sourceObjectTimeStamp) {
+		this.oldObjects = oldObjects;
 		this.sourceObjectTimeStamp = sourceObjectTimeStamp;
 	}
-
+	
 	@Override
-	public TestObject executePredAlgorithmus() {
-		TestObject newTestObject = new TestObject();
-		newTestObject.setDirection(this.brokerObject.getDirection());
-		newTestObject.setSpeed(this.brokerObject.getSpeed());
-		newTestObject.setTimeStamp(this.brokerObject.getTimeStamp());
-		newTestObject.setPosition(calcNewPos());
-		return newTestObject;
+	public ArrayList<MeasurementObject> executePredAlgorithmus() {
+		ArrayList<MeasurementObject> predictedObjects = new ArrayList<MeasurementObject>();
+		for (MeasurementObject obj : this.oldObjects) {
+			MeasurementObject newObject = new MeasurementObject();
+			newObject.setDirection(obj.getDirection());
+			newObject.setSpeed(obj.getSpeed());
+			newObject.setTimeStamp(obj.getTimeStamp());
+			newObject.setPosition(calcNewPos(obj));
+			predictedObjects.add(newObject);
+		}
+		
+		return predictedObjects;
 	}
 	
-	private Vector3D calcNewPos() {
-		double passedTime = sourceObjectTimeStamp-brokerObject.getTimeStamp();
+	private Vector3D calcNewPos(MeasurementObject obj) {
+		double passedTime = sourceObjectTimeStamp-obj.getTimeStamp();
 		Vector3D newPos = new Vector3D();
-		newPos = brokerObject.getDirection();
-		newPos = newPos.scalarMultiply(passedTime*brokerObject.getSpeed());
-		newPos = newPos.add(brokerObject.getPosition());
+		newPos = obj.getDirection();
+		newPos = newPos.scalarMultiply(passedTime*obj.getSpeed());
+		newPos = newPos.add(obj.getPosition());
 		return newPos;
 	}
 }
