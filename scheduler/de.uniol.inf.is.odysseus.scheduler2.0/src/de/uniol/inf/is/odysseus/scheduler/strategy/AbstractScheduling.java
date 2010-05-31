@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
@@ -21,16 +24,36 @@ import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
  */
 public abstract class AbstractScheduling implements IScheduling,
 		IPOEventListener {
+	
+	static private Logger logger = LoggerFactory.getLogger(AbstractScheduling.class);
 
 	private List<ISchedulingEventListener> schedulingEventListener = new ArrayList<ISchedulingEventListener>();
 	private IPartialPlan plan = null;
 	protected boolean isPlanChanged = true;
+	/**
+	 * BitVector for every source, is set to false, if no data is available
+	 * Changed on ProcessDone
+	 */
 	BitSet schedulable = new BitSet();
+	/**
+	 * if scheduling currently paused because nothing to schedule, need
+	 * to send event if scheduling can be continued 
+	 */
 	boolean schedulingPaused = false;
+	/**
+	 * BitVector for every source, is set to false, if source in manually blocked
+	 * Changed by Blocked and Unblocked Events
+	 */
+	BitSet notBlocked = new BitSet();
+	/**
+	 * if all schedulable operators are blocked, is set to true, 
+	 * need to send event that scheduling is possible again
+	 */
+	boolean blocked = false;
 
 	public AbstractScheduling(IPartialPlan plan) {
 		this.plan = plan;
-		processSources();
+		prepareSources();
 	}
 
 	public void planChanged() {
@@ -38,28 +61,28 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	public void applyChangedPlan() {
-		processSources();
+		prepareSources();
 	}
 
-	protected void processSources() {
-		for (int bitIndex = 0;bitIndex < plan.getIterableSource().size(); bitIndex++){
-			plan.getIterableSource(bitIndex).subscribe(this, POEventType.ProcessDone);
-			plan.getIterableSource(bitIndex).subscribe(this, POEventType.Activated);
-			plan.getIterableSource(bitIndex).subscribe(this, POEventType.Unblocked);			
-			schedulable.set(bitIndex,true);
+	protected void prepareSources() {
+		logger.debug("Prepare Sources "+plan.getIterableSource());
+
+		for (int bitIndex = 0; bitIndex < plan.getIterableSource().size(); bitIndex++) {
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.ProcessDone);
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.Unblocked);
+			plan.getIterableSource(bitIndex).subscribe(this,
+					POEventType.Blocked);
+			schedulable.set(bitIndex, true);
+			notBlocked.set(bitIndex, true);
 		}
 	}
 
 	@Override
-	/** Returns true if nothing more to schedule
+	/** Returns true partial plan is done (== nothing more to schedule)
 	 */
 	public boolean schedule(long maxTime) {
-		// Testen ob die Zeit richtig gesetzt ist (ansonsten wuerde die Schleife
-		// in transferNext() aufrufen. Evtl. den Test weiter nach oben schieben?
-		// if (maxTime <= 0){
-		// throw new IllegalArgumentException("maxTime must be greater 0");
-		// }
-
 		// if the underlying plan has changed, we need to call
 		// the update-method before starting the scheduling:
 		if (this.isPlanChanged) {
@@ -67,20 +90,22 @@ public abstract class AbstractScheduling implements IScheduling,
 			this.isPlanChanged = false;
 		}
 
+//		System.out.println("Scheduling "+plan.getIterableSource());
 		long endTime = System.currentTimeMillis() + maxTime;
 		IIterableSource<?> nextSource = nextSource();
-		boolean interrupt = false;
 		synchronized (schedulingEventListener) {
-			while (!interrupt && nextSource != null && System.currentTimeMillis() < endTime) {
-				// System.out.println("Process ISource "+nextSource);
+			while (!this.blocked && !this.schedulingPaused && nextSource != null
+					&& System.currentTimeMillis() < endTime) {
+//				System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" a="
+//						+nextSource.isActive()+" n="+nextSource.hasNext());
 				if (nextSource.isDone()) {
 					sourceDone(nextSource);
-				}else if (nextSource.isBlocked()){
-					interrupt = updateSchedulable(nextSource); 
+				} else if (nextSource.isBlocked()) {
+					updateBlocked(plan.getSourceId(nextSource));
 				} else if (nextSource.hasNext() && nextSource.isActive()) {
 					nextSource.transferNext();
 				} else {
-					interrupt = updateSchedulable(nextSource);
+					updateSchedulable(nextSource);
 				}
 				nextSource = nextSource();
 			}
@@ -88,23 +113,32 @@ public abstract class AbstractScheduling implements IScheduling,
 		}
 	}
 
-	private boolean updateSchedulable(IIterableSource<?> nextSource) {
-		boolean interrupt;
+	private void updateSchedulable(IIterableSource<?> nextSource) {
 		schedulable.set(plan.getSourceId(nextSource), false);
 		if (schedulable.cardinality() == 0) {
-			schedulingPaused = true;
-			for (ISchedulingEventListener l : schedulingEventListener) {
-				l.nothingToSchedule(this);
+			if (schedulingPaused == false){
+				schedulingPaused = true;
+				logger.debug("Scheduling paused, nothing to schedule");
+				for (ISchedulingEventListener l : schedulingEventListener) {
+					l.nothingToSchedule(this);
+				}
 			}
-			interrupt = true;
-		}else{
-			interrupt = false;
 		}
-		return interrupt;
+	}
+	
+	private void updateBlocked(int index) {
+		notBlocked.set(index, false);
+		if (notBlocked.cardinality() == 0){
+			if (blocked == false){
+				blocked = true;
+				logger.debug("Processing blocked because of blocked operators");
+				for (ISchedulingEventListener l : schedulingEventListener) {
+					l.nothingToSchedule(this);
+				}
+			}
+		}
 	}
 
-	
-	
 	public abstract IIterableSource<?> nextSource();
 
 	public abstract void sourceDone(IIterableSource<?> source);
@@ -133,16 +167,37 @@ public abstract class AbstractScheduling implements IScheduling,
 
 	@Override
 	public void poEventOccured(POEvent poEvent) {
-		//System.out.println(poEvent);
-		synchronized (schedulingEventListener) {
-			IIterableSource<?> s = (IIterableSource<?>) poEvent.getSource();
-			schedulable.set(plan.getSourceId(s),true);
-			if (schedulingPaused && s.isActive() && !s.isBlocked()){
-				schedulingPaused = false;
-				for (ISchedulingEventListener l : schedulingEventListener) {
-					l.scheddulingPossible(this);
+		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSource();
+		int index = plan.getSourceId(s);
+		synchronized (notBlocked){
+			if (poEvent.getPOEventType() == POEventType.Blocked) {
+//				System.out.println(poEvent);
+				updateBlocked(index);
+				return;
+			} else if (poEvent.getPOEventType() == POEventType.Unblocked) {
+//				System.out.println(poEvent);
+				notBlocked.set(index, true);
+				if (blocked){
+					for (ISchedulingEventListener l : schedulingEventListener) {
+						l.scheddulingPossible(this);
+					}
+				}
+			}
+		}
+		// Ignore ProcessDone Events if Source is blocked
+		if (notBlocked.get(index)){
+//			System.out.println(poEvent);
+			synchronized (schedulingEventListener) {			
+				schedulable.set(index, true);
+				if (schedulingPaused && s.isActive() && !s.isBlocked()) {
+					schedulingPaused = false;
+					for (ISchedulingEventListener l : schedulingEventListener) {
+						l.scheddulingPossible(this);
+					}
 				}
 			}
 		}
 	}
+
+
 }

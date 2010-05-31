@@ -57,6 +57,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	public AbstractSource(AbstractSource<T> source) {
 		this.outputSchema = source.outputSchema;
+		this.blocked = source.blocked;
+		// TODO: Other Members to copy??
 	}
 
 	@Override
@@ -339,7 +341,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
+		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")"+(blocked?"b":"");
 	}
 
 	@Override
@@ -414,12 +416,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return blocked;
 	}
 
-	public void block() {
+	public synchronized void block() {
 		this.blocked = true;
 		fire(blockedEvent);
 	}
 	
-	public void unblock() {
+	public synchronized void unblock() {
 		this.blocked = false;
 		fire(unblockedEvent);
 	}

@@ -14,9 +14,13 @@
 <mapEntry key="pr" value="65440"/>
 <mapEntry key="useNIO" value="true"/>
 </mapAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+</listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true -Xms1000M -Xmx1000M"/>
 <stringAttribute key="org.ops4j.pax.cursor.logLevel" value="INFO"/>
 <booleanAttribute key="org.ops4j.pax.cursor.overwrite" value="false"/>
 <booleanAttribute key="org.ops4j.pax.cursor.overwriteSystemBundles" value="false"/>
@@ -27,11 +31,10 @@
 <listEntry value="--overwriteSystemBundles=false"/>
 <listEntry value="--log=INFO"/>
 </listAttribute>
-<stringAttribute key="osgi_framework_id" value="--platform=felix --version=2.0.1"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <booleanAttribute key="show_selected_only" value="false"/>
-<stringAttribute key="target_bundles" value="org.eclipse.osgi.services@default:default,javax.activation*1.1.0.v200906290531@default:default,org.eclipse.osgi@-1:true,javax.servlet@default:default,org.eclipse.persistence.jpa.equinox.weaving@default:false,org.eclipse.equinox.util@default:default,javax.mail*1.4.0.v200905040518@default:default,javax.transaction@default:false,org.eclipse.equinox.ds@default:true,org.eclipse.net4j.jms.api@default:default"/>
+<stringAttribute key="target_bundles" value="javax.servlet@default:default,org.eclipse.persistence.jpa.equinox.weaving@default:false,org.eclipse.osgi@-1:true,org.eclipse.equinox.util@default:default,javax.activation*1.1.0.v200906290531@default:default,org.eclipse.equinox.ds@default:true,org.eclipse.net4j.jms.api@default:default,javax.mail*1.4.0.v200905040518@default:default,javax.transaction@default:false,org.eclipse.osgi.services@default:default"/>
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="de.uniol.inf.is.odysseus.intervalapproach@default:default,com.springsource.slf4j.log4j@default:false,de.uniol.inf.is.odysseus.nexmark@default:default,JepModified@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,de.uniol.inf.is.odysseus.logicaloperator.base@default:default,com.springsource.slf4j.api@default:default,de.uniol.inf.is.odysseus.base@default:default,log4jproperties@default:false,com.springsource.org.apache.log4j@default:default"/>
+<stringAttribute key="workspace_bundles" value="de.uniol.inf.is.odysseus.intervalapproach@default:default,com.springsource.slf4j.log4j@default:false,de.uniol.inf.is.odysseus.logicaloperator.base@default:default,JepModified@default:default,log4jproperties@default:false,de.uniol.inf.is.odysseus.base@default:default,com.springsource.org.apache.log4j@default:default,com.springsource.slf4j.api@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,de.uniol.inf.is.odysseus.nexmark@default:default"/>
 </launchConfiguration>

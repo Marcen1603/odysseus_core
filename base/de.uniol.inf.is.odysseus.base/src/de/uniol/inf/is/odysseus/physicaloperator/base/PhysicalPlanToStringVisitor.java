@@ -44,7 +44,8 @@ public class PhysicalPlanToStringVisitor implements INodeVisitor<IPhysicalOperat
 		for (int i=0; i<this.depth; i++) {
 			this.builder.append("  ");
 		}
-		this.builder.append(op.getName());
+		//this.builder.append(op.getName());
+		this.builder.append(op.toString());
 		if(showSchema) {
 			this.builder.append("["+op.getOutputSchema()+"]");
 		}

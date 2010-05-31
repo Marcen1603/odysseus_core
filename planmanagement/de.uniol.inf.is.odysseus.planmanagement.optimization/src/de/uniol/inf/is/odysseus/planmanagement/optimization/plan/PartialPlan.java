@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
@@ -14,7 +16,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
  * sinks, iterable sources and a priority. These objects are used for scheduling
  * the execution plan.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Marco Grawunder
  * 
  */
 public class PartialPlan implements IPartialPlan {
@@ -34,6 +36,11 @@ public class PartialPlan implements IPartialPlan {
 	private int priority;
 
 	/**
+	 *  Cache Ids for Sources to speed up getSourceID
+	 */
+	private Map<IIterableSource<?>, Integer> sourceIds;
+
+	/**
 	 * Creates a new PartialPlan.
 	 * 
 	 * @param iterableSource
@@ -46,6 +53,10 @@ public class PartialPlan implements IPartialPlan {
 	public PartialPlan(List<IIterableSource<?>> iterableSource,
 			List<ISink<?>> roots, int priority) {
 		this.iterableSource = new ArrayList<IIterableSource<?>>(iterableSource);
+		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
+		for (int i=0;i<iterableSource.size();i++){
+			sourceIds.put(iterableSource.get(i), i); // Iterator does not garantee order ... (?)
+		}
 		this.roots = roots;
 		this.priority = priority;
 	}
@@ -86,7 +97,7 @@ public class PartialPlan implements IPartialPlan {
 	
 	@Override
 	public int getSourceId(IIterableSource<?> source) {
-		return iterableSource.indexOf(source);
+		return sourceIds.get(source);
 	}
 
 	

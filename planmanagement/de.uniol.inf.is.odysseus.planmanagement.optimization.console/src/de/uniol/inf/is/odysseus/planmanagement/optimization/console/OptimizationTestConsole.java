@@ -19,18 +19,17 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
+import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingRefuseOptimizationAtMemoryLoad;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.console.OptimizationTestSink.OutputMode;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -104,7 +103,8 @@ public class OptimizationTestConsole implements
 			System.out.println("reoptimize...");
 			query.reoptimize();
 			waitFor(6000);
-			System.out.println(AbstractTreeWalker.prefixWalk2(query.getRoot(), new PhysicalPlanToStringVisitor()));
+			//System.out.println(AbstractTreeWalker.prefixWalk2(query.getRoot(), new PhysicalPlanToStringVisitor()));
+			System.out.println("done...");
 
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -186,11 +186,22 @@ public class OptimizationTestConsole implements
 	private enum EvalQuery {GOOD,BAD,MIG};
 	
 	public void _evalMigration(CommandInterpreter ci) {
-		EvalQuery evalQuery = EvalQuery.MIG;
+		nmsn(ci);
+//		e(EvalQuery.MIG);
+//		e(EvalQuery.BAD);
+		e(EvalQuery.GOOD, 10);
+//		this.executor.getConfiguration().set(
+//				new SettingBufferPlacementStrategy("Standard Buffer Placement"));
+//		e(EvalQuery.GOOD);
+	}
+	public void e(EvalQuery evalQuery, int seconds) {
+		String newline = System.getProperty("line.separator");
+		String sep = ";";
 		try {
-			FileWriter fw = new FileWriter("eval"+evalQuery+System.currentTimeMillis()+".csv");
+
+			// TODO: Filenamen anpassen
+			FileWriter fw = new FileWriter("c:/development/eval"+evalQuery+System.currentTimeMillis()+".csv");
 			
-			nmsn(ci);
 			OptimizationTestSink sink = new OptimizationTestSink(OutputMode.COUNT);
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
@@ -239,19 +250,22 @@ public class OptimizationTestConsole implements
 			
 			MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
 			ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+			if (!threadBean.isThreadCpuTimeSupported()){
+				System.err.println("Messung nicht möglich!!!");
+			}
 			Map<Long, Long> lastTime = new HashMap<Long, Long>();
 			
 			waitFor(1000);
 			this.executor.startExecution();
 			long startTime = System.currentTimeMillis();
 			System.out.println("----------Evaluation Start------------------------------");
-			fw.write("time_elapsed,tuples_passed,cpu_load,memory_usage\n");
+			fw.write("time_elapsed"+sep+"tuples_passed "+evalQuery+sep+"cpu_load "+evalQuery+sep+"memory_usage "+evalQuery+newline);
 			// first time minus old cpu load
 			for (long id : threadBean.getAllThreadIds()) {
 				long t = threadBean.getThreadCpuTime(id);
 				lastTime.put(id, t);
 			}
-			for (int i=0; i<60; i++) {
+			for (int i=0; i<seconds; i++) {
 				waitFor(1000);
 				long cputime = 0L;
 				for (long id : threadBean.getAllThreadIds()) {
@@ -266,10 +280,10 @@ public class OptimizationTestConsole implements
 					cputime += t;
 				}
 				fw.write((System.currentTimeMillis()-startTime)
-						+","+sink.getCount()
-						+","+cputime
-						+","+memBean.getHeapMemoryUsage().getUsed()
-						+"\n");
+						+sep+sink.getCount()
+						+sep+cputime
+						+sep+memBean.getHeapMemoryUsage().getUsed()
+						+newline);
 				if (evalQuery == EvalQuery.MIG && i==50) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
@@ -284,6 +298,7 @@ public class OptimizationTestConsole implements
 			System.out.println("----------Evaluation End--------------------------------");
 			
 			fw.close();
+			executor.removeQuery(query.getID());
 
 		} catch (Exception e) {
 			e.printStackTrace();

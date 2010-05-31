@@ -178,9 +178,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
-		this.logger.debug("ParallelExecutionWaiter terminated.");
-		// activate blocking buffers
-		this.logger.debug("Blocking input buffers.");
+		if (logger.isDebugEnabled()){
+			this.logger.debug("ParallelExecutionWaiter terminated.");
+			// activate blocking buffers
+			this.logger.debug("Blocking "+context.getBlockingBuffers().size()+" input buffers.");
+		}
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
 			buffer.block();
 		}

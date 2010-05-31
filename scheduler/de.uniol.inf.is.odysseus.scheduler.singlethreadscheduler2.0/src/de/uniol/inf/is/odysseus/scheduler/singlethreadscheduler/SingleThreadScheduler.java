@@ -53,6 +53,12 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 * Thread for execution the global sources.
 	 */
 	private List<SingleSourceExecutor> sourceThreads = new Vector<SingleSourceExecutor>();
+	
+	/**
+	 * Marker that the plan has changed, needed because plan can change while
+	 * scheduling is paused
+	 */
+	private boolean planChanged;
 
 	/**
 	 * Thread for execution the registered partial plans. Based on scheduling
@@ -83,10 +89,16 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 						while (part.hasNext()) {
 							while (parts.size() == pausedParts.size()) {
 								try {
-									parts.wait(100);
+									parts.wait(1000);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
+							}
+							// While scheduling is paused, the plan can be changed
+							// so a new iterator is necessary
+							if (planChanged){
+								planChanged = false;
+								break;
 							}
 							if (part.next().schedule(timeSlicePerStrategy)) {
 								// part is done
@@ -103,9 +115,6 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		@Override
 		public void nothingToSchedule(IScheduling sched) {
 			synchronized (pausedParts) {
-
-			//			System.out.println("TEST: Die Strategy " + sched
-//					+ " hat keine Daten");
 				pausedParts.add(sched);
 			}
 		}
@@ -113,8 +122,6 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		@Override
 		public void scheddulingPossible(IScheduling sched) {
 			synchronized (pausedParts) {
-//			System.out.println("TEST: Die Strategy " + sched
-//					+ " hat wieder Daten");
 				pausedParts.remove(sched);
 				
 			}
@@ -216,6 +223,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	public void setPartialPlans(List<IPartialPlan> partialPlans) {
 		if (partialPlans != null) {
 			synchronized (this.parts) {
+				planChanged = true;
 				this.parts.clear();
 
 				// Create for each partial plan an own scheduling strategy.
