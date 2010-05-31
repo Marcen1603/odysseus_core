@@ -92,9 +92,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			process_open();
 			fire(openDoneEvent);
 			this.isOpen.set(true);
-			// FIXME subscribedTo richtig locken
-			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
-				sub.getTarget().open();
+			synchronized (this.subscribedTo) {
+				// FIXME subscribedTo richtig locken
+				for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
+					sub.getTarget().open();
+				}
 			}
 		}
 	}
@@ -242,20 +244,24 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends T>> subscription) {
-//		System.out.println("AbstractSink:unsubscribeFromSource (" + this + ")"
-//				+ subscription + " from " + subscribedTo);
-		if (this.subscribedTo.remove(subscription)) {
-			// if (this instanceof DelegateSink){ // DAS IST HÄSSLICH
-			// subscription.getTarget().unsubscribeSink(this.getInstance(),
-			// subscription.getSinkInPort(), subscription.getSourceOutPort(),
-			// subscription.getSchema());
-			// }else{
-			subscription.getTarget().unsubscribeSink(this,
-					subscription.getSinkInPort(),
-					subscription.getSourceOutPort(), subscription.getSchema());
-			// }
+		// System.out.println("AbstractSink:unsubscribeFromSource (" + this +
+		// ")"
+		// + subscription + " from " + subscribedTo);
+		synchronized (this.subscribedTo) {
+			if (this.subscribedTo.remove(subscription)) {
+				// if (this instanceof DelegateSink){ // DAS IST HÄSSLICH
+				// subscription.getTarget().unsubscribeSink(this.getInstance(),
+				// subscription.getSinkInPort(),
+				// subscription.getSourceOutPort(),
+				// subscription.getSchema());
+				// }else{
+				subscription.getTarget().unsubscribeSink(this,
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
+						subscription.getSchema());
+				// }
+			}
 		}
-
 	}
 
 	/**
