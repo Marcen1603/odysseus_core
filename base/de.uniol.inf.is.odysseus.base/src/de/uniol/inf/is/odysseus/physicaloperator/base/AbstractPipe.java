@@ -36,17 +36,25 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		@Override
 		public void unsubscribeFromAllSources() {
 			synchronized (this.subscribedTo) {
-				Iterator<PhysicalSubscription<ISource<? extends R>>> it = this.subscribedTo
-						.iterator();
-				while (it.hasNext()) {
-					PhysicalSubscription<ISource<? extends R>> subscription = it
-							.next();
-					it.remove();
+				while (subscribedTo.size()>0){
+					PhysicalSubscription<ISource<? extends R>> subscription = subscribedTo.remove(0);
 					subscription.getTarget().unsubscribeSink(this.getInstance(),
 							subscription.getSinkInPort(),
 							subscription.getSourceOutPort(),
 							subscription.getSchema());
+					
 				}
+//				Iterator<PhysicalSubscription<ISource<? extends R>>> it = this.subscribedTo
+//						.iterator();
+//				while (it.hasNext()) {
+//					PhysicalSubscription<ISource<? extends R>> subscription = it
+//							.next();
+//					it.remove();
+//					subscription.getTarget().unsubscribeSink(this.getInstance(),
+//							subscription.getSinkInPort(),
+//							subscription.getSourceOutPort(),
+//							subscription.getSchema());
+//				}
 			}
 		}
 

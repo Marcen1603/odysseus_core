@@ -93,7 +93,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			fire(openDoneEvent);
 			this.isOpen.set(true);
 			synchronized (this.subscribedTo) {
-				// FIXME subscribedTo richtig locken
 				for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
 					sub.getTarget().open();
 				}
@@ -186,17 +185,27 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void unsubscribeFromAllSources() {
 		synchronized (this.subscribedTo) {
-			Iterator<PhysicalSubscription<ISource<? extends T>>> it = this.subscribedTo
-					.iterator();
-			while (it.hasNext()) {
-				PhysicalSubscription<ISource<? extends T>> subscription = it
-						.next();
-				it.remove();
+			
+			while (subscribedTo.size()>0){
+				PhysicalSubscription<ISource<? extends T>> subscription = subscribedTo.remove(0);
 				subscription.getTarget().unsubscribeSink(this,
 						subscription.getSinkInPort(),
 						subscription.getSourceOutPort(),
 						subscription.getSchema());
+				
 			}
+			
+//			Iterator<PhysicalSubscription<ISource<? extends T>>> it = this.subscribedTo
+//					.iterator();
+//			while (it.hasNext()) {
+//				PhysicalSubscription<ISource<? extends T>> subscription = it
+//						.next();
+//				it.remove();
+//				subscription.getTarget().unsubscribeSink(this,
+//						subscription.getSinkInPort(),
+//						subscription.getSourceOutPort(),
+//						subscription.getSchema());
+//			}
 		}
 	}
 
