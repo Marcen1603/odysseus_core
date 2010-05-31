@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.graph;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 
 public class DefaultGraphView<C> implements IGraphView<C> {
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.position;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.position.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,12 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.DefaultConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.OdysseusNodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.DefaultConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.OdysseusNodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.SymbolElementInfo;

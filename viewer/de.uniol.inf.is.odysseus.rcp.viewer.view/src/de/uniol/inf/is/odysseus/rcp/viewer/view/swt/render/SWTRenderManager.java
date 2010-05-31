@@ -29,8 +29,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.position.INodePositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.render.IRenderManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.render.RenderRange;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.select.GraphSelector;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl.RenderRange;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.select.impl.GraphSelector;
 
 public final class SWTRenderManager<C> implements PaintListener, MouseListener, MouseMoveListener, MouseWheelListener, IRenderManager<C> {
 		

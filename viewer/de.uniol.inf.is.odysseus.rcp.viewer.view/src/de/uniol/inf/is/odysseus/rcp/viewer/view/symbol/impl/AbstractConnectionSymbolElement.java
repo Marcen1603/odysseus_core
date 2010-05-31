@@ -1,6 +1,7 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
 
 public abstract class AbstractConnectionSymbolElement<C> implements IConnectionSymbolElement<C> {
 

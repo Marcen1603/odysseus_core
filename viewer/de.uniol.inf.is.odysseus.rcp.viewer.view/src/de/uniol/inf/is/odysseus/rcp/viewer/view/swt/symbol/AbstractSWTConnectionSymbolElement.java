@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
 
 import org.eclipse.swt.graphics.GC;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.AbstractConnectionSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.AbstractConnectionSymbolElement;
 
 public abstract class AbstractSWTConnectionSymbolElement<C> extends AbstractConnectionSymbolElement<C> {
 

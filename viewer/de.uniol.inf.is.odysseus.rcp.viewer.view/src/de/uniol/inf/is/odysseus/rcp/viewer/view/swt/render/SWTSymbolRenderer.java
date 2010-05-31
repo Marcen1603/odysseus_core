@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.render.RenderRange;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.render.SimpleSymbolRenderer;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl.RenderRange;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl.SimpleSymbolRenderer;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.AbstractSWTConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.AbstractSWTSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSelectionSymbolElement;
@@ -30,7 +30,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 	
 	
 	public SWTSymbolRenderer() {
-		selectionSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_GREEN )) );
+		selectionSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_RED )) );
 		logger.info( "SWTSymbolRenderer created" );
 	}
 	
@@ -42,8 +42,6 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 		if( graph == null )
 			return;
 				
-		render( graph, zoomFactor, renderRange, shift );
-		
 		// Auswahl rendern
 		
 		for( INodeView<C> node : graph.getViewedNodes() ) {
@@ -54,6 +52,8 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 				renderSymbol( selectionSymbol,  pos, width, height, zoomFactor );
 			}
 		}
+		
+		render( graph, zoomFactor, renderRange, shift );
 	}
 	
 	// Muss überschrieben werden, da SWT mit GC arbeitet. Die Symbole

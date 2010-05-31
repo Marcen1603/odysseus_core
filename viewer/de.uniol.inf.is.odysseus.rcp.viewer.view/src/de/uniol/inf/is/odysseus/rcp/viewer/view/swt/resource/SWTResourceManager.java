@@ -14,8 +14,6 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.Activator;
-
 /**
  * Verwaltet die Resourcen wie Bilder und Farben, die vom SWT angefordert wurden.
  * Jedes Bild und jede Farbe, welches verwendet werden soll, sollte über diese 
@@ -110,6 +108,9 @@ public class SWTResourceManager {
 			
 		if( configuration == null ) 
 			throw new IllegalArgumentException("configuration is null!");
+		
+		if( configuration.getBundle() == null ) 
+			throw new IllegalArgumentException("bundle is null!");
 			
 		// Zu ladende Resourcen besorgen
 		Map<String, String> resources = configuration.getResources();
@@ -143,7 +144,7 @@ public class SWTResourceManager {
 			}
 			
 			// Bild laden und ggfs. abspeichern
-			Image img = loadImage(device, fileToLoad);
+			Image img = loadImage(device, configuration.getBundle(), fileToLoad);
 			if( img != null )
 				loadedImages.put( key, img );
 		}	
@@ -255,9 +256,9 @@ public class SWTResourceManager {
 	
 	// Läd eine Bilddatei in den Speicher. Liefert null, wenn etwas
 	// schief gegangen ist.
-	private static Image loadImage( Device device, String filename ) {
+	private static Image loadImage( Device device, Bundle bundle, String filename ) {
 		try {
-			URL imageURL = Activator.getContext().getBundle().getEntry(filename);
+			URL imageURL = bundle.getEntry(filename);
 //			URL imageURL = resourceBundle.getEntry(filename);
 			
 			Image image = new Image(device, imageURL.openStream());

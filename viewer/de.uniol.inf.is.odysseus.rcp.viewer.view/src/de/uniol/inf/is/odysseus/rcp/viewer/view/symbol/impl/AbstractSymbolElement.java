@@ -1,6 +1,7 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElement;
 
 public abstract class AbstractSymbolElement<C> implements ISymbolElement<C> {
 

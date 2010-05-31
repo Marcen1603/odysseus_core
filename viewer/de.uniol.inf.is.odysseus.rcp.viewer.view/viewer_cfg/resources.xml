@@ -10,12 +10,8 @@
 	<Image source="viewer_cfg/position.png" name="position" />
 	<Image source="viewer_cfg/zoomIn.png" name="zoomIn" />
 	<Image source="viewer_cfg/zoomOut.png" name="zoomOut" />
-	<Image source="viewer_cfg/pin.png" name="pin" />
-	<Image source="viewer_cfg/pinned.png" name="pinned" />
 	<Image source="viewer_cfg/visible.png" name="visible" />
 	<Image source="viewer_cfg/invisibleNode.png" name="invisibleNode" />
-	<Image source="viewer_cfg/hide.png" name="hide" />
-	<Image source="viewer_cfg/show.png" name="show" />
 	
 	<Image source="viewer_cfg/bufferedPipe.png" name="bufferedPipe" />
 	<Image source="viewer_cfg/benchmarkPO.png" name="benchmarkPO" />
@@ -45,12 +41,6 @@
 	<Image source="viewer_cfg/splitPO.png" name="splitPO" />
 	<Image source="viewer_cfg/priorityPO.png" name="priorityPO" />
 	<Image source="viewer_cfg/fixedsetPO.png" name="fixedSetPO" />
-
-	<Image source="viewer_cfg/select.png" name="select" />
-	<Image source="viewer_cfg/metaNew.png" name="metaNew" />
-	<Image source="viewer_cfg/metaRemove.png" name="metaRemove" />
-	<Image source="viewer_cfg/metaReset.png" name="metaReset" />
-	<Image source="viewer_cfg/metaReload.png" name="metaReload" />
 
 </Resources>
 

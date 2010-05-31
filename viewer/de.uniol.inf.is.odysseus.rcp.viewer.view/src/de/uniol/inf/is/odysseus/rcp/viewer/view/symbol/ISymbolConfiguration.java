@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 
+
 public interface ISymbolConfiguration {
 
 	public Map<String, Collection<SymbolElementInfo>> getMap();

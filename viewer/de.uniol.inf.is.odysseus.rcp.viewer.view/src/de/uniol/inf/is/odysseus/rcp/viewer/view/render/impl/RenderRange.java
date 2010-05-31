@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.render;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 

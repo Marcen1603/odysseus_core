@@ -22,8 +22,8 @@ public class SWTSelectionSymbolElement<C> extends AbstractUnfreezableSWTSymbolEl
 		if( gc == null )
 			return;
 		
-		gc.setForeground( borderColor );
-		gc.drawRectangle( pos.getX() - 3, pos.getY() - 3, width + 6, height + 6);
+		gc.setBackground( borderColor );
+		gc.fillRectangle( pos.getX() - 3, pos.getY() - 3, width + 6, height + 6);
 		
 	}
 

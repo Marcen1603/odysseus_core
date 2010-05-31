@@ -1,9 +1,12 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.graph;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.SymbolElementContainer;
 

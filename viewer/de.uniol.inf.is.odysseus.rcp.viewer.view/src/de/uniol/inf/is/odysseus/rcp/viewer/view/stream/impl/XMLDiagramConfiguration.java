@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.stream;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.stream.impl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,6 +25,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import de.uniol.inf.is.odysseus.rcp.viewer.view.stream.IDiagramConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.stream.Parameters;
 
 public class XMLDiagramConfiguration implements IDiagramConfiguration {
 

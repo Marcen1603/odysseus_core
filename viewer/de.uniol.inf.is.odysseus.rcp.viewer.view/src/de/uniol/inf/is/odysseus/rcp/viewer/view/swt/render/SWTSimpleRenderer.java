@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.render.RenderRange;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.render.SimpleSymbolRenderer;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl.RenderRange;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl.SimpleSymbolRenderer;
 
 public class SWTSimpleRenderer<C> extends SimpleSymbolRenderer<C> {
 

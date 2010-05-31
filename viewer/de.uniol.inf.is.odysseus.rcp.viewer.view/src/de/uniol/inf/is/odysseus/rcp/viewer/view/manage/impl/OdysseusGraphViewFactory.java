@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.manage;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.manage.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,13 +12,14 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.DefaultConnectionView;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.DefaultGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.OdysseusNodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.DefaultConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.DefaultGraphView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.OdysseusNodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.manage.IGraphViewFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElement;
@@ -149,11 +150,11 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 				INodeView<IPhysicalOperator> endNode = findFirstNodeDisplay(graphDisplay, connModel.getEndNode());
 				
 				if( startNode == null ) {
-					logger.error("StartNode für die Verbindung " + connModel.toString() + " nicht gefunden");
+					logger.error("StartNode fï¿½r die Verbindung " + connModel.toString() + " nicht gefunden");
 					continue;
 				}
 				if( endNode == null ) {
-					logger.error("EndNode für die Verbindung " + connModel.toString() + " nicht gefunden");
+					logger.error("EndNode fï¿½r die Verbindung " + connModel.toString() + " nicht gefunden");
 					continue;
 				}
 				

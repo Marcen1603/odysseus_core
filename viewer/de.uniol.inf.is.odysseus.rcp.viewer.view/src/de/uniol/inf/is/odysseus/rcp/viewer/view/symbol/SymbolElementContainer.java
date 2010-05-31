@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 
+
 public final class SymbolElementContainer<C> implements Iterable< ISymbolElement<C> >{
 
 	private Collection<ISymbolElement<C>> symbols = new ArrayList<ISymbolElement<C>>();

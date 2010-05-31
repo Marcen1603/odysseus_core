@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.manage;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.manage.impl;
 
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.model.ctrl.IController;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.manage.IView;
 
 public abstract class AbstractView<C> implements IView<C> {
 

@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.stream;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.stream.impl;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.view.stream.Parameters;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 

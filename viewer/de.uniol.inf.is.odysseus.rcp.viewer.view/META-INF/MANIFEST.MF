@@ -18,3 +18,11 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
  de.uniol.inf.is.odysseus.relational.base,
  org.slf4j;version="1.5.6"
+Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.view.graph,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.manage,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.position,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.render,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.select,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.stream,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.symbol

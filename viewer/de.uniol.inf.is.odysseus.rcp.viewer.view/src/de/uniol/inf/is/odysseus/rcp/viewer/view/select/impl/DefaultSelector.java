@@ -1,9 +1,12 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.select;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.select.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.rcp.viewer.view.select.ISelectListener;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.select.ISelector;
 
 public class DefaultSelector<T> implements ISelector<T> {
 	

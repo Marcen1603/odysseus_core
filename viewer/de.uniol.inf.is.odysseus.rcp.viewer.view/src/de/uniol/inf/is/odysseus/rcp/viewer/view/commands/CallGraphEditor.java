@@ -23,11 +23,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditorInputFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.IResourceConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.SWTResourceManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.XMLResourceConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.impl.XMLResourceConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.XMLSymbolConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.XMLSymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.views.ModelManagerViewPart;
 
 public class CallGraphEditor extends AbstractHandler implements IHandler {
@@ -42,7 +42,7 @@ public class CallGraphEditor extends AbstractHandler implements IHandler {
 	
 	public CallGraphEditor() {
 		try {
-			RESOURCE_CONFIGURATION = new XMLResourceConfiguration(Activator.getContext().getBundle().getEntry("viewer_cfg/resources.xml"), Activator.getContext().getBundle().getEntry("viewer_cfg/resourcesSchema.xsd"));
+			RESOURCE_CONFIGURATION = new XMLResourceConfiguration(Activator.getContext().getBundle().getEntry("viewer_cfg/resources.xml"), Activator.getContext().getBundle().getEntry("viewer_cfg/resourcesSchema.xsd"), Activator.getContext().getBundle());
 			SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(Activator.getContext().getBundle().getEntry("viewer_cfg/symbol.xml"), Activator.getContext().getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
 			SYMBOL_FACTORY = new SWTSymbolElementFactory<IPhysicalOperator>();
 			GRAPH_VIEW_FACTORY = new GraphViewEditorInputFactory();
@@ -80,7 +80,7 @@ public class CallGraphEditor extends AbstractHandler implements IHandler {
 				return null;
 			}
 			
-			// schauen, ob Editor für den Graphen schon offen ist
+			// schauen, ob Editor fï¿½r den Graphen schon offen ist
 			for( IEditorReference editorRef : page.getEditorReferences() ) {
 				try {
 					IEditorInput i = editorRef.getEditorInput();

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.impl;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -25,13 +26,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.IResourceConfiguration;
+
 public class XMLResourceConfiguration implements IResourceConfiguration {
 
-		private static final Logger logger = LoggerFactory.getLogger( XMLResourceConfiguration.class );
+	private static final Logger logger = LoggerFactory.getLogger( XMLResourceConfiguration.class );
 	
 	private Map<String, String> resources = new HashMap<String, String>();
+	private final Bundle bundle;
 	
-	public XMLResourceConfiguration( URL xmlFile, URL xsd ) {
+	public XMLResourceConfiguration( URL xmlFile, URL xsd, Bundle bundle ) {
+		
+		this.bundle = bundle;
 		
 		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
 		
@@ -107,5 +113,10 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 				return item.getNodeValue();
 		}
 		return "";
+	}
+
+	@Override
+	public Bundle getBundle() {
+		return bundle;
 	}
 }

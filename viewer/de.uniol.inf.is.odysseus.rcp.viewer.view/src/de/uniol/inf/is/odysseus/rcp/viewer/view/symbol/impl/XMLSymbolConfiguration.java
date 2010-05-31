@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,6 +26,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.SymbolElementInfo;
 
 public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 

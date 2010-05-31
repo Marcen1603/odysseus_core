@@ -12,12 +12,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.DefaultConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.OdysseusNodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.DefaultConnectionView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.OdysseusNodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.manage.IGraphViewFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
@@ -149,11 +149,11 @@ public class GraphViewEditorInputFactory implements IGraphViewFactory<IPhysicalO
 				INodeView<IPhysicalOperator> endNode = findFirstNodeDisplay(graphDisplay, connModel.getEndNode());
 				
 				if( startNode == null ) {
-					logger.error("StartNode für die Verbindung " + connModel.toString() + " nicht gefunden");
+					logger.error("StartNode fï¿½r die Verbindung " + connModel.toString() + " nicht gefunden");
 					continue;
 				}
 				if( endNode == null ) {
-					logger.error("EndNode für die Verbindung " + connModel.toString() + " nicht gefunden");
+					logger.error("EndNode fï¿½r die Verbindung " + connModel.toString() + " nicht gefunden");
 					continue;
 				}
 				

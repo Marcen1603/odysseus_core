@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 
+
 public final class ConnectionSymbolElementContainer<C> implements Iterable< IConnectionSymbolElement<C> >{
 
 	private Collection<IConnectionSymbolElement<C>> symbols = new ArrayList<IConnectionSymbolElement<C>>();

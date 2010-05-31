@@ -2,11 +2,14 @@ package de.uniol.inf.is.odysseus.rcp.viewer.view.views;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
@@ -17,7 +20,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelManagerListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.commands.CallGraphEditor;
 
-public class ModelManagerViewPart extends ViewPart implements IModelManagerListener<IPhysicalOperator> {
+public class ModelManagerViewPart extends ViewPart implements IModelManagerListener<IPhysicalOperator>, ISelectionListener {
 
 	public static final String VIEW_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view.ModelManagerView";
 	
@@ -34,12 +37,13 @@ public class ModelManagerViewPart extends ViewPart implements IModelManagerListe
 		Composite composite = new Composite(parent, SWT.None);
 		composite.setLayout(new FillLayout());
 		
-		treeViewer = new TreeViewer(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
+		treeViewer = new TreeViewer(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
 		treeViewer.setContentProvider(new ModelContentProvider());
 		treeViewer.setLabelProvider(new ModelLabelProvider());
 		treeViewer.setInput(Model.getInstance().getModelManager());
 		
 		getSite().setSelectionProvider(treeViewer);
+		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		
 		Model.getInstance().getModelManager().addListener(this);
 		
@@ -56,6 +60,13 @@ public class ModelManagerViewPart extends ViewPart implements IModelManagerListe
 				}
 			}			
 		});
+	}
+	
+	@Override
+	public void dispose() {
+		getSite().setSelectionProvider(null);
+		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+		super.dispose();
 	}
 
 	@Override
@@ -94,7 +105,6 @@ public class ModelManagerViewPart extends ViewPart implements IModelManagerListe
 	@Override
 	public void activeModelChanged(IModelManager<IPhysicalOperator> sender,
 			IGraphModel<IPhysicalOperator> activeModel) {
-		System.out.println("Active MODEL CHANGED " + activeModel.getName());
 		if( treeViewer != null ) {
 			display.asyncExec(new Runnable() {
 				@Override
@@ -103,6 +113,13 @@ public class ModelManagerViewPart extends ViewPart implements IModelManagerListe
 				}			
 			});
 		}		
+	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if( part != this ) {
+			treeViewer.setSelection(selection);
+		}
 	}
 
 }

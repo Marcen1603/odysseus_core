@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.render;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.render.IRenderer;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ConnectionSymbolElementContainer;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElement;

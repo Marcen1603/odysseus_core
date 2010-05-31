@@ -1,4 +1,7 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.stream;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.stream.impl;
+
+import de.uniol.inf.is.odysseus.rcp.viewer.view.stream.IStreamElementConverter;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.stream.Parameters;
 
 
 
