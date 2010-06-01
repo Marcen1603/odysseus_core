@@ -2,34 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            class="de.uniol.inf.is.odysseus.rcp.viewer.view.views.ModelManagerViewPart"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.view.ModelManagerView"
-            name="ModelManager View"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.application.perspective.viewer">
-         <view
-               closeable="true"
-               id="de.uniol.inf.is.odysseus.rcp.viewer.view.ModelManagerView"
-               minimized="false"
-               moveable="true"
-               ratio="0.95f"
-               relationship="stack"
-               relative="org.eclipse.ui.console.ConsoleView"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.ui.editors">
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditor"

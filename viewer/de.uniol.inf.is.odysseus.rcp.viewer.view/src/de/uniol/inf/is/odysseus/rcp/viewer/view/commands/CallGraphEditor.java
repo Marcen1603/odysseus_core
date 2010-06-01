@@ -5,7 +5,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
@@ -28,7 +27,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElementFacto
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.XMLSymbolConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.views.ModelManagerViewPart;
 
 public class CallGraphEditor extends AbstractHandler implements IHandler {
 
@@ -56,26 +54,24 @@ public class CallGraphEditor extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+		if( !resLoaded ) {
+			ResourceManager.getInstance().load(window.getShell().getDisplay(), RESOURCE_CONFIGURATION);
+			resLoaded = true;
+		}
+
 		IWorkbenchPage page = window.getActivePage();
-		ModelManagerViewPart view = (ModelManagerViewPart) page.findView(ModelManagerViewPart.VIEW_ID);
-	
-		ISelection selection = view.getSite().getSelectionProvider().getSelection();
+		
+		ISelection selection = window.getSelectionService().getSelection();
 		if( selection instanceof ITreeSelection ) {
 			ITreeSelection treeSelection = (ITreeSelection)selection;
 			Object obj = treeSelection.getFirstElement();
-			
-			if( !resLoaded ) {
-				ResourceManager.getInstance().load(window.getShell().getDisplay(), RESOURCE_CONFIGURATION);
-				resLoaded = true;
-			}
-			
+						
 			// Auswahl holen
 			IGraphModel<IPhysicalOperator> graph;
 			if( obj instanceof IGraphModel<?>)
 				graph = (IGraphModel<IPhysicalOperator>)obj;
 			else if( obj instanceof IOdysseusNodeModel) {
-				Object o = ((ITreeContentProvider)view.getTreeViewer().getContentProvider()).getParent(obj);
-				graph = (IGraphModel<IPhysicalOperator>)o;
+				return null;
 			} else {
 				return null;
 			}
