@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.prediction;
+package de.uniol.inf.is.odysseus.scars.objecttracking.prediction;
 
 import java.util.ArrayList;
 

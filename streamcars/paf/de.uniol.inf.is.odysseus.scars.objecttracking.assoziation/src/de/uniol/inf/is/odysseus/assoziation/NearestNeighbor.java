@@ -1,27 +1,29 @@
 package de.uniol.inf.is.odysseus.assoziation;
 
-import de.uniol.inf.is.odysseus.assoziation.TestObject;
+import java.util.ArrayList;
+
+import de.uniol.inf.is.odysseus.scars.objecttracking.MeasurementObject;
 
 public class NearestNeighbor implements IAssoziationAlgorithmus {
 	
-	TestObjectList brokerObjects;
-	TestObject newObject;
+	ArrayList<MeasurementObject> brokerObjects;
+	ArrayList<MeasurementObject> newObjects;
 	
-	public NearestNeighbor(TestObject newObject, TestObjectList brokerObjects) {
+	public NearestNeighbor(ArrayList<MeasurementObject> newObjects, ArrayList<MeasurementObject> brokerObjects) {
 		this.brokerObjects = brokerObjects;
-		this.newObject = newObject;
+		this.newObjects = newObjects;
 	}
 
 	@Override
 	public Object executeAssoAlgorithmus() {
-		TestObject obj = new TestObject();
-		for (TestObject brokerObj : brokerObjects.getObjectList()) {
+		MeasurementObject obj = new MeasurementObject();
+		for (MeasurementObject brokerObj : brokerObjects) {
 			
 		}
 		return null;
 	}
 	
-	private double calcDistance(TestObject obj1, TestObject obj2) {
+	private double calcDistance(MeasurementObject obj1, MeasurementObject obj2) {
 		
 		return 0;
 	}

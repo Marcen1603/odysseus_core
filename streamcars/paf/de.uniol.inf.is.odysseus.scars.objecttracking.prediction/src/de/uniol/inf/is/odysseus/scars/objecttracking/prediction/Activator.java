@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.prediction;
+package de.uniol.inf.is.odysseus.scars.objecttracking.prediction;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

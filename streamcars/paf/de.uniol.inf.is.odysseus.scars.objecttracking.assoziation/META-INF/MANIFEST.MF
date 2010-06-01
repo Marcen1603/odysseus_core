@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.assoziation.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.commons.math,
+Import-Package: de.uniol.inf.is.odysseus.scars.objecttracking,
+ org.apache.commons.math,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: Commons.Math;bundle-version="1.0.0"
