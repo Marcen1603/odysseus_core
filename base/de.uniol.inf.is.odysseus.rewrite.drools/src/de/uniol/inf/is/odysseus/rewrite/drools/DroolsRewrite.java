@@ -9,13 +9,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.drools.RuleBase;
-import org.drools.RuleBaseFactory;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
-import org.drools.audit.WorkingMemoryConsoleLogger;
-import org.drools.event.DebugAgendaEventListener;
-import org.drools.event.DebugRuleFlowEventListener;
-import org.drools.event.DebugWorkingMemoryEventListener;
 import org.drools.rule.Package;
 import org.drools.rule.Rule;
 import org.osgi.framework.BundleContext;

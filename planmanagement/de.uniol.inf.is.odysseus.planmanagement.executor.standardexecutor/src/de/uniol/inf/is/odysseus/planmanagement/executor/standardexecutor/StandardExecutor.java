@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
@@ -53,6 +56,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecuti
  */
 public class StandardExecutor extends AbstractExecutor implements IAdvancedExecutor {
 
+	private Logger logger = LoggerFactory.getLogger(StandardExecutor.class);
+	
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
 	 * constructor and bind-methods). This method can be used to configure this
@@ -261,6 +266,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 			this.executionPlanLock.unlock();
 		}
 
+		this.logger.info("Before adding these new Queries "+newQueries);
+		
 		// store optimized queries
 		for (IEditableQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
@@ -507,16 +514,18 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	public void removeQuery(int queryID) throws PlanManagementException {
 		this.logger.info("Start remove a query (ID: " + queryID + ").");
 
-		Query removedQuery = (Query) this.plan.getQuery(queryID);
+		Query queryToRemove = (Query) this.plan.getQuery(queryID);
 
-		if (removedQuery != null && optimizer() != null) {
+		if (queryToRemove != null && optimizer() != null) {
 			try {
 				executionPlanLock.lock();
-				setExecutionPlan(optimizer().preQueryRemoveOptimization(this, removedQuery, this.executionPlan));
-				this.plan.removeQuery(removedQuery.getID());
-				removedQuery.removeOwnerschip();
-				this.logger.debug("Query " + removedQuery.getID() + " removed.");
-				firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_REMOVE, removedQuery));
+				setExecutionPlan(optimizer().preQueryRemoveOptimization(this, queryToRemove, this.executionPlan));
+				this.logger.info("Removing Query "+queryToRemove.getID());
+				this.plan.removeQuery(queryToRemove.getID());
+				this.logger.info("Removing Ownership "+queryToRemove.getID());				
+				queryToRemove.removeOwnerschip();
+				this.logger.debug("Query " + queryToRemove.getID() + " removed.");
+				firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_REMOVE, queryToRemove));
 			} catch (QueryOptimizationException e) {
 				this.logger.warn("Query not removed. An Error while optimizing occurd (ID: " + queryID + ").");
 				throw new PlanManagementException(e);

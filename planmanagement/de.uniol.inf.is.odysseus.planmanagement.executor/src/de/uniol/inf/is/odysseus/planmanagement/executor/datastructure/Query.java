@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
@@ -31,6 +34,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
  * 
  */
 public class Query implements IEditableQuery {
+	
+	protected Logger logger = LoggerFactory.getLogger(Query.class);
+
 	/**
 	 * Counter for ID creation.
 	 */
@@ -347,11 +353,15 @@ public class Query implements IEditableQuery {
 	 */
 	@Override
 	public void removeOwnerschip() {
+		logger.debug("Remove ownership start");
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
+			logger.debug("Remove Ownership for "+physicalOperator);
 			physicalOperator.removeOwner(this);
 			if (!physicalOperator.hasOwner()) {
+				logger.debug("No more owners. Closing "+physicalOperator);
 				physicalOperator.close();
 				if (physicalOperator.isSink()) {
+					logger.debug("Sink unsubscribe from all sources "+physicalOperator);
 					ISink<?> sink = (ISink<?>) physicalOperator;
 					sink.unsubscribeFromAllSources();
 				}

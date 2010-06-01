@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access;
 
 import java.io.*;
 import java.net.*;
-import java.awt.*;
 
 public class Client 
 {

@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
-import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingRefuseOptimizationAtMemoryLoad;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.console.OptimizationTestSink.OutputMode;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
@@ -79,10 +78,10 @@ public class OptimizationTestConsole implements
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
 							"SELECT bid.price FROM nexmark:bid2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS bid, nexmark:auction2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS auction WHERE auction.id=bid.auction",
-//							"SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction",
-//							"SELECT bid.price FROM nexmark:bid2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS bid WHERE bid.price > 1",
-//							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
-//							"SELECT bid.price FROM nexmark:bid2 AS bid",
+							// "SELECT bid.price FROM nexmark:bid2 AS bid, nexmark:auction2 AS auction WHERE auction.id=bid.auction",
+							// "SELECT bid.price FROM nexmark:bid2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS bid WHERE bid.price > 1",
+							// "SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
+							// "SELECT bid.price FROM nexmark:bid2 AS bid",
 							parser(), new ParameterDefaultRoot(
 									new OptimizationTestSink(OutputMode.HASH)),
 							this.trafoConfigParam);
@@ -97,34 +96,38 @@ public class OptimizationTestConsole implements
 					new SettingMaxConcurrentOptimizations(1));
 			this.executor.getOptimizerConfiguration().set(
 					new SettingRefuseOptimizationAtMemoryLoad(65.0));
-			
-			// Datenraten sind erst nach 30 Sekunden verfuegbar, sonst sind Kosten NaN
+
+			// Datenraten sind erst nach 30 Sekunden verfuegbar, sonst sind
+			// Kosten NaN
 			waitFor(35000);
 			System.out.println("reoptimize...");
 			query.reoptimize();
 			waitFor(6000);
-			//System.out.println(AbstractTreeWalker.prefixWalk2(query.getRoot(), new PhysicalPlanToStringVisitor()));
+			// System.out.println(AbstractTreeWalker.prefixWalk2(query.getRoot(),
+			// new PhysicalPlanToStringVisitor()));
 			System.out.println("done...");
 
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void _testReoptimizationRules(CommandInterpreter ci) {
 		try {
 			nmsn(ci);
 			Collection<Integer> queryIds = this.executor
-					.addQuery("SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
+					.addQuery(
+							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
 							parser(), new ParameterDefaultRoot(
 									new OptimizationTestSink(OutputMode.NONE)),
 							this.trafoConfigParam);
 			this.executor.startExecution();
-			
+
 			System.out.println("---------------------------------------------");
 			System.out.println("test firing optimization at 20% memory usage");
 			System.out.println("---------------------------------------------");
-			SystemLoadListener loadListener = new SystemLoadListener(this.executor.newSystemMonitor(3000L), 80.0, 20.0);
+			SystemLoadListener loadListener = new SystemLoadListener(
+					this.executor.newSystemMonitor(3000L), 80.0, 20.0);
 			this.executor.getSealedPlan().addReoptimzeRule(loadListener);
 			Thread.sleep(4000);
 			try {
@@ -132,10 +135,10 @@ public class OptimizationTestConsole implements
 				Thread.sleep(3000);
 				i = null;
 				System.gc();
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
 			this.executor.getSealedPlan().removeReoptimzeRule(loadListener);
-			
-			
+
 			System.out.println("---------------------------------------------");
 			System.out.println("test firing optimization every 3 seconds");
 			System.out.println("---------------------------------------------");
@@ -143,7 +146,6 @@ public class OptimizationTestConsole implements
 			this.executor.getSealedPlan().addReoptimzeRule(optTimer);
 			Thread.sleep(3500);
 			this.executor.getSealedPlan().removeReoptimzeRule(optTimer);
-			
 
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -151,58 +153,88 @@ public class OptimizationTestConsole implements
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void _testAdvancedOptimizerRequestHandling(CommandInterpreter ci) {
 		try {
 			nmsn(ci);
 			Collection<Integer> queryIds = this.executor
-					.addQuery("SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
+					.addQuery(
+							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
 							parser(), new ParameterDefaultRoot(
 									new OptimizationTestSink(OutputMode.NONE)),
 							this.trafoConfigParam);
 			this.executor.startExecution();
-			
+
 			System.out.println("---------------------------------------------");
-			System.out.println("test request queuing and resuming at high load");
+			System.out
+					.println("test request queuing and resuming at high load");
 			System.out.println("---------------------------------------------");
 			this.executor.getOptimizerConfiguration().set(
 					new SettingRefuseOptimizationAtMemoryLoad(20.0));
 			try {
 				int[] i = new int[6000000];
 				Thread.sleep(1000);
-				this.executor.getSealedPlan().getQuery(queryIds.iterator().next()).reoptimize();
+				this.executor.getSealedPlan().getQuery(
+						queryIds.iterator().next()).reoptimize();
 				Thread.sleep(8000);
 				i = null;
 				System.gc();
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
 			System.out.println("end high mem usage");
-			
 
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
-		} 
+		}
 	}
-	
-	private enum EvalQuery {GOOD,BAD,MIG};
-	
+
+	private enum EvalQuery {
+		GOOD, BAD, MIG
+	};
+
 	public void _evalMigration(CommandInterpreter ci) {
-		nmsn(ci);
-//		e(EvalQuery.MIG);
-//		e(EvalQuery.BAD);
-		e(EvalQuery.GOOD, 10);
-//		this.executor.getConfiguration().set(
-//				new SettingBufferPlacementStrategy("Standard Buffer Placement"));
-//		e(EvalQuery.GOOD);
+		_e(ci);
 	}
-	public void e(EvalQuery evalQuery, int seconds) {
+
+	public void _eb(CommandInterpreter ci) {
+		nmsn(ci);
+		e(EvalQuery.BAD, 120, "_singlerun");
+	}
+
+	public void _eg(CommandInterpreter ci) {
+		nmsn(ci);
+		e(EvalQuery.GOOD, 120, "_singlerun");
+	}
+
+	public void _em(CommandInterpreter ci) {
+		nmsn(ci);
+		e(EvalQuery.MIG, 120, "_singlerun");
+	}
+
+	public void _e(CommandInterpreter ci) {
+		nmsn(ci);
+		for (EvalQuery eq : EvalQuery.values()) {
+			for (int i = 0; i < 5; i++) {
+				e(eq, 100, "_run_" + i);
+			}
+		}
+		// this.executor.getConfiguration().set(
+		// new SettingBufferPlacementStrategy("Standard Buffer Placement"));
+		// e(EvalQuery.GOOD, 10);
+	}
+
+	public void e(EvalQuery evalQuery, int seconds, String fileAppend) {
+		System.out.println(evalQuery + " " + seconds + " " + fileAppend);
 		String newline = System.getProperty("line.separator");
 		String sep = ";";
 		try {
 
 			// TODO: Filenamen anpassen
-			FileWriter fw = new FileWriter("c:/development/eval"+evalQuery+System.currentTimeMillis()+".csv");
-			
-			OptimizationTestSink sink = new OptimizationTestSink(OutputMode.COUNT);
+			FileWriter fw = new FileWriter("c:/development/eval" + evalQuery
+					+ System.currentTimeMillis() + fileAppend + ".csv");
+
+			OptimizationTestSink sink = new OptimizationTestSink(
+					OutputMode.COUNT);
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
 							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
@@ -210,36 +242,46 @@ public class OptimizationTestConsole implements
 							this.trafoConfigParam);
 			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
 			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
-			
+
 			// manipulate: push select to top
 			if (evalQuery == EvalQuery.BAD || evalQuery == EvalQuery.MIG) {
+				System.out.println("Rebuilding Query to Bad Query");
 				IPhysicalOperator root = query.getRoot();
 				System.out.println(root.getName());
-				IPhysicalOperator project = ((ISink<?>)root).getSubscribedToSource(0).getTarget();
+				IPhysicalOperator project = ((ISink<?>) root)
+						.getSubscribedToSource(0).getTarget();
 				System.out.println(project.getName());
-				IPhysicalOperator lastJoin = ((ISink<?>)project).getSubscribedToSource(0).getTarget();
+				IPhysicalOperator lastJoin = ((ISink<?>) project)
+						.getSubscribedToSource(0).getTarget();
 				System.out.println(lastJoin.getName());
-				IPhysicalOperator secondJoin = ((ISink<?>)lastJoin).getSubscribedToSource(0).getTarget();
+				IPhysicalOperator secondJoin = ((ISink<?>) lastJoin)
+						.getSubscribedToSource(0).getTarget();
 				System.out.println(secondJoin.getName());
-				IPhysicalOperator firstJoin = ((ISink<?>)secondJoin).getSubscribedToSource(0).getTarget();
+				IPhysicalOperator firstJoin = ((ISink<?>) secondJoin)
+						.getSubscribedToSource(0).getTarget();
 				System.out.println(firstJoin.getName());
-				IPhysicalOperator window = ((ISink<?>)firstJoin).getSubscribedToSource(1).getTarget();
+				IPhysicalOperator window = ((ISink<?>) firstJoin)
+						.getSubscribedToSource(1).getTarget();
 				System.out.println(window.getName());
-				IPhysicalOperator select = ((ISink<?>)window).getSubscribedToSource(0).getTarget();
+				IPhysicalOperator select = ((ISink<?>) window)
+						.getSubscribedToSource(0).getTarget();
 				System.out.println(select.getName());
-				IPhysicalOperator meta = ((ISink<?>)select).getSubscribedToSource(0).getTarget();
+				IPhysicalOperator meta = ((ISink<?>) select)
+						.getSubscribedToSource(0).getTarget();
 				System.out.println(meta.getName());
-				
+
 				// remove select before join
 				PhysicalRestructHelper.removeSubscription(window, select);
 				PhysicalRestructHelper.removeSubscription(select, meta);
 				PhysicalRestructHelper.appendOperator(window, meta);
-				
+
 				// put select after join
 				PhysicalRestructHelper.removeSubscription(project, lastJoin);
-				RelationalPredicate predicate = (RelationalPredicate) ((SelectPO<?>)select).getPredicate();
-				RelationalPredicate newPredicate = new RelationalPredicate(predicate.getExpression());
-				newPredicate.init(lastJoin.getOutputSchema(),null);
+				RelationalPredicate predicate = (RelationalPredicate) ((SelectPO<?>) select)
+						.getPredicate();
+				RelationalPredicate newPredicate = new RelationalPredicate(
+						predicate.getExpression());
+				newPredicate.init(lastJoin.getOutputSchema(), null);
 				SelectPO<?> newSelect = new SelectPO(newPredicate);
 				newSelect.setOutputSchema(lastJoin.getOutputSchema().clone());
 				PhysicalRestructHelper.appendOperator(newSelect, lastJoin);
@@ -247,25 +289,28 @@ public class OptimizationTestConsole implements
 				query.initializePhysicalPlan(root);
 				this.executor.updateExecutionPlan();
 			}
-			
+
 			MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
 			ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
-			if (!threadBean.isThreadCpuTimeSupported()){
+			if (!threadBean.isThreadCpuTimeSupported()) {
 				System.err.println("Messung nicht möglich!!!");
 			}
 			Map<Long, Long> lastTime = new HashMap<Long, Long>();
-			
+
 			waitFor(1000);
 			this.executor.startExecution();
 			long startTime = System.currentTimeMillis();
-			System.out.println("----------Evaluation Start------------------------------");
-			fw.write("time_elapsed"+sep+"tuples_passed "+evalQuery+sep+"cpu_load "+evalQuery+sep+"memory_usage "+evalQuery+newline);
+			System.out
+					.println("----------Evaluation Start------------------------------");
+			fw.write("time_elapsed" + sep + "tuples_passed " + evalQuery + sep
+					+ "cpu_load " + evalQuery + sep + "memory_usage "
+					+ evalQuery + newline);
 			// first time minus old cpu load
 			for (long id : threadBean.getAllThreadIds()) {
 				long t = threadBean.getThreadCpuTime(id);
 				lastTime.put(id, t);
 			}
-			for (int i=0; i<seconds; i++) {
+			for (int i = 0; i < seconds; i++) {
 				waitFor(1000);
 				long cputime = 0L;
 				for (long id : threadBean.getAllThreadIds()) {
@@ -279,12 +324,10 @@ public class OptimizationTestConsole implements
 					}
 					cputime += t;
 				}
-				fw.write((System.currentTimeMillis()-startTime)
-						+sep+sink.getCount()
-						+sep+cputime
-						+sep+memBean.getHeapMemoryUsage().getUsed()
-						+newline);
-				if (evalQuery == EvalQuery.MIG && i==50) {
+				fw.write((System.currentTimeMillis() - startTime) + sep
+						+ sink.getCount() + sep + cputime + sep
+						+ memBean.getHeapMemoryUsage().getUsed() + newline);
+				if (evalQuery == EvalQuery.MIG && i == 50) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
 						@Override
@@ -295,51 +338,68 @@ public class OptimizationTestConsole implements
 					new Thread(reopt).start();
 				}
 			}
-			System.out.println("----------Evaluation End--------------------------------");
-			
+			System.out
+					.println("----------Evaluation End--------------------------------");
+
 			fw.close();
 			executor.removeQuery(query.getID());
+			lsqueries();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public void lsqueries() {
+		try {
+			System.out
+					.println("Current registered queries (ID | STARTED | PARSERID):");
+			for (IQuery query : this.executor.getSealedPlan().getQueries()) {
+				System.out.println(query.getID() + " | " + query.isRunning()
+						+ " | " + query.getParserId());
+			}
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void _nexmarkDatarate(CommandInterpreter ci) {
 		try {
 			nmsn(ci);
-			OptimizationTestSink sinkAuction = new OptimizationTestSink(OutputMode.COUNT);
-			OptimizationTestSink sinkBid = new OptimizationTestSink(OutputMode.COUNT);
-			OptimizationTestSink sinkPerson = new OptimizationTestSink(OutputMode.COUNT);
-			this.executor.addQuery(
-					"SELECT * FROM nexmark:auction2",
-					parser(), new ParameterDefaultRoot(sinkAuction),
+			OptimizationTestSink sinkAuction = new OptimizationTestSink(
+					OutputMode.COUNT);
+			OptimizationTestSink sinkBid = new OptimizationTestSink(
+					OutputMode.COUNT);
+			OptimizationTestSink sinkPerson = new OptimizationTestSink(
+					OutputMode.COUNT);
+			this.executor.addQuery("SELECT * FROM nexmark:auction2", parser(),
+					new ParameterDefaultRoot(sinkAuction),
 					this.trafoConfigParam);
-			this.executor.addQuery(
-					"SELECT * FROM nexmark:bid2",
-					parser(), new ParameterDefaultRoot(sinkBid),
-					this.trafoConfigParam);
-			this.executor.addQuery(
-					"SELECT * FROM nexmark:person2",
-					parser(), new ParameterDefaultRoot(sinkPerson),
-					this.trafoConfigParam);
-			
+			this.executor.addQuery("SELECT * FROM nexmark:bid2", parser(),
+					new ParameterDefaultRoot(sinkBid), this.trafoConfigParam);
+			this.executor
+					.addQuery("SELECT * FROM nexmark:person2", parser(),
+							new ParameterDefaultRoot(sinkPerson),
+							this.trafoConfigParam);
+
 			this.executor.startExecution();
 			while (true) {
 				waitFor(1000);
-				System.out.println("sinkAuction tuples/sec: "+sinkAuction.getCount());
-				System.out.println("sinkBid tuples/sec: "+sinkBid.getCount());
-				System.out.println("sinkPerson tuples/sec: "+sinkPerson.getCount());
+				System.out.println("sinkAuction tuples/sec: "
+						+ sinkAuction.getCount());
+				System.out.println("sinkBid tuples/sec: " + sinkBid.getCount());
+				System.out.println("sinkPerson tuples/sec: "
+						+ sinkPerson.getCount());
 				sinkAuction.reset();
 				sinkBid.reset();
 				sinkPerson.reset();
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void waitFor(long ms) {
 		try {
 			Thread.sleep(ms);

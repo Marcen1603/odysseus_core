@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineExcep
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.ValidationResult;
 import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 

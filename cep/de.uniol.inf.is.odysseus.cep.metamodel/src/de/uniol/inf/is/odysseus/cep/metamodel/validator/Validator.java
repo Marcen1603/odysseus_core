@@ -4,7 +4,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.cep.metamodel.AbstractOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;

@@ -7,9 +7,6 @@ import java.util.NoSuchElementException;
 import org.drools.RuleBase;
 import org.drools.StatefulSession;
 import org.drools.agent.RuleAgent;
-import org.drools.audit.WorkingMemoryConsoleLogger;
-import org.drools.event.DebugAgendaEventListener;
-import org.drools.event.DebugWorkingMemoryEventListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 

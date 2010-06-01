@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.List;
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;

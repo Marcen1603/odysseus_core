@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -24,6 +27,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
+	
+	private static Logger logger = null;
+	
+	private static Logger getLogger(){
+		if (logger == null){
+			logger = LoggerFactory.getLogger(AbstractSink.class);
+		}
+		return logger;
+	}
+	
 	final protected Vector<PhysicalSubscription<ISource<? extends T>>> subscribedTo = new Vector<PhysicalSubscription<ISource<? extends T>>>();
 	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
 	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();;
@@ -200,10 +213,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			while (!subscribedTo.isEmpty()) {
 				PhysicalSubscription<ISource<? extends T>> subscription = subscribedTo
 						.remove(0);
+				getLogger().debug("Unsubscribe from Source "+subscription.getTarget());
 				subscription.getTarget().unsubscribeSink(this.getInstance(),
 						subscription.getSinkInPort(),
 						subscription.getSourceOutPort(),
 						subscription.getSchema());
+				getLogger().debug("Unsubscribe from Source "+subscription.getTarget()+" done.");				
 				
 			}
 		}

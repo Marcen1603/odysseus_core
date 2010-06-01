@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
@@ -25,8 +28,15 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
-	// private static final Logger logger =
-	// LoggerFactory.getLogger(ISource.class);
+	
+	private static Logger logger = null;
+	
+	private static Logger getLogger(){
+		if (logger == null){
+			logger = LoggerFactory.getLogger(AbstractSource.class);
+		}
+		return logger;
+	}
 	final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
 	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();
@@ -223,9 +233,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void unsubscribeSink(
 			PhysicalSubscription<ISink<? super T>> subscription) {
 		synchronized (this.subscriptions) {
-			// System.out.print(subscriptions+" remove "+subscription);
+			getLogger().debug("Unsubscribe from Sink "+subscription.getTarget());
 			boolean subContained = this.subscriptions.remove(subscription);
-			// System.out.println("--> "+subContained);
 			if (subContained) {
 				subscription.getTarget().unsubscribeFromSource(this,
 						subscription.getSinkInPort(),

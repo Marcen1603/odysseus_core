@@ -1,17 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p.jxta;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.jxta.protocol.PeerAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Query;
-import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 
 public class QueryJxtaImpl extends Query{
 	

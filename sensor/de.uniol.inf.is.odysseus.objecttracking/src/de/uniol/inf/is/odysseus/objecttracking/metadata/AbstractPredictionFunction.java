@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;

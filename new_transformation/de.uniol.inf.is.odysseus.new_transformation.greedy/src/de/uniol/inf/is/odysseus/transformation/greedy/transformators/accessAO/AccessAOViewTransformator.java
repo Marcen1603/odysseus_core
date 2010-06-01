@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.transformation.greedy.transformators.accessAO;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.ITransformation;
@@ -12,7 +10,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
-import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 public class AccessAOViewTransformator implements IPOTransformator<AccessAO> {

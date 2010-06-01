@@ -1,22 +1,10 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
 
-import java.lang.management.MemoryUsage;
-import java.util.Iterator;
-
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
 /**

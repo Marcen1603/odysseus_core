@@ -52,7 +52,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	/**
 	 * Logger zum Ausgeben von Systemmeldungen
 	 */
-	protected Logger logger;
+	private Logger logger;
 
 	/**
 	 * Alle in Odysseus gespeicherten Anfragen

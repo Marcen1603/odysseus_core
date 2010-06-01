@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.event;
 
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.function.ToString;
 
 /**
  * @author Marco Grawunder, Jonas Jacobi

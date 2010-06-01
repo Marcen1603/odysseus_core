@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.messagehandler;
 
 import java.util.HashMap;
-import java.util.List;
-
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;

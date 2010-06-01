@@ -1,12 +1,9 @@
 package de.uniol.inf.is.odysseus.new_transformation.costmodel.base;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.StreamCharacteristicCollection;
 
 public interface IPOTransformator<T extends ILogicalOperator> {
 	/**

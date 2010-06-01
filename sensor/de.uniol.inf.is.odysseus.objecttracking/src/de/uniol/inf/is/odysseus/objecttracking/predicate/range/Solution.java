@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
-import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**

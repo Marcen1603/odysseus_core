@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Stack;
 

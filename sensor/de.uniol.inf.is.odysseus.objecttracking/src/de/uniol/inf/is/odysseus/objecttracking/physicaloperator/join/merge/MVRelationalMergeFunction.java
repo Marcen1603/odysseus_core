@@ -4,7 +4,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMergeFunction;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class MVRelationalMergeFunction<M extends IProbability> extends AbstractRelationalMergeFunction<MVRelationalTuple<M>, M> implements IDataMergeFunction<MVRelationalTuple<M>> {
 

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanop
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
