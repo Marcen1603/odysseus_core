@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -51,6 +52,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTimestampAttribute;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
@@ -58,6 +60,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -715,4 +718,20 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
 		}
 	}
+
+	@Override
+	public Object visit(ASTTestOp node, Object data) {
+		TestAO op = new TestAO();
+		
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList)data).get(0));
+		
+		AbstractLogicalOperator inputForSelection = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		op.subscribeTo(inputForSelection, inputForSelection.getOutputSchema());
+		
+		((ArrayList)data).add(op);
+
+		return data;
+	}
+
 }
