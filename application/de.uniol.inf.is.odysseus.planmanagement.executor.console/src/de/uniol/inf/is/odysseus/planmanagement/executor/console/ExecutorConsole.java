@@ -278,7 +278,7 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	/**
-	 * _ExecutorInfo schreibt Informationen über die Ausführungsumgebung in die
+	 * _ExecutorInfo schreibt Informationen ï¿½ber die Ausfï¿½hrungsumgebung in die
 	 * Konsole. Kann in der OSGi-Konsole verwendet werden.
 	 */
 	@Help(description = "show internal information about the executor")
@@ -1575,17 +1575,14 @@ public class ExecutorConsole implements CommandProvider,
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		System.out.println("Modification Event: " + eventArgs.getID());
 	}
 
 	@Override
 	public void planExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
-		System.out.println("Execution Event: " + eventArgs.getID());
 	}
 
 	@Override
 	public void sendErrorEvent(ErrorEvent eventArgs) {
-		System.out.println("Error Event: " + eventArgs.getMessage());
 	}
 
 	public void bindPreferences(PreferencesService preferences) {
