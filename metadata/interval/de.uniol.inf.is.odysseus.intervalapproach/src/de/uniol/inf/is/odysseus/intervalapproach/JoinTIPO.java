@@ -224,10 +224,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected boolean isDone() {
-		if (getSubscribedToSource(0).isDone()) {
-			return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
-		} else {
-			return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+		try{
+			if (getSubscribedToSource(0).isDone()) {
+				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
+			} else {
+				return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+			}
+		}catch (ArrayIndexOutOfBoundsException e) {
+			// Can happen if sources are unsubscribed while asking for done
+			// Ignore
+			return true;
 		}
 	}
 

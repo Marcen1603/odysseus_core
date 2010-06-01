@@ -117,9 +117,10 @@ public class Router extends Thread {
 					// }
 
 				}
+			}catch (java.nio.channels.CancelledKeyException e1){
+				// Ignore
 			} catch (Exception e) {
 				e.printStackTrace();
-
 			}
 		}
 	}

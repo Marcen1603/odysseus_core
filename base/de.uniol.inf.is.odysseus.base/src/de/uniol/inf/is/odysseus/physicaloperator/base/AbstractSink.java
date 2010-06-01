@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -27,17 +28,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
-	
+
 	private static Logger logger = null;
-	
-	private static Logger getLogger(){
-		if (logger == null){
+
+	private static Logger getLogger() {
+		if (logger == null) {
 			logger = LoggerFactory.getLogger(AbstractSink.class);
 		}
 		return logger;
 	}
-	
-	final protected Vector<PhysicalSubscription<ISource<? extends T>>> subscribedTo = new Vector<PhysicalSubscription<ISource<? extends T>>>();
+
+	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
 	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
 	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();;
 
@@ -104,12 +105,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			process_open();
 			fire(openDoneEvent);
 			this.isOpen.set(true);
-			synchronized (this.subscribedTo) {
-				for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
+//			synchronized (this.subscribedToSource) {
+				for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 					sub.getTarget().open();
 				}
 			}
-		}
+//		}
 	}
 
 	final public boolean isOpen() {
@@ -148,9 +149,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void done(int port) {
 		process_done(port);
-		synchronized (this.subscribedTo) {
+//		synchronized (this.subscribedToSource) {
 			this.allInputsDone = true;
-			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedTo) {
+			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 				if (sub.getSinkInPort() == port) {
 					sub.setDone(true);
 				}
@@ -158,13 +159,13 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 					this.allInputsDone = false;
 				}
 			}
-		}
+//		}
 	}
 
 	final public boolean isDone() {
-		synchronized (this.subscribedTo) {
+//		synchronized (this.subscribedToSource) {
 			return this.allInputsDone;
-		}
+//		}
 	}
 
 	@Override
@@ -175,13 +176,13 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 		PhysicalSubscription<ISource<? extends T>> sub = new PhysicalSubscription<ISource<? extends T>>(
 				source, sinkInPort, sourceOutPort, schema);
-		synchronized (this.subscribedTo) {
-			if (!this.subscribedTo.contains(sub)) {
-				this.subscribedTo.add(sub);
+//		synchronized (this.subscribedToSource) {
+			if (!this.subscribedToSource.contains(sub)) {
+				this.subscribedToSource.add(sub);
 				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 						schema);
 			}
-		}
+//		}
 	}
 
 	// "delegatable this", used for the delegate sink
@@ -191,42 +192,47 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public List<PhysicalSubscription<ISource<? extends T>>> getSubscribedToSource() {
-		return Collections.unmodifiableList(this.subscribedTo);
+		return Collections.unmodifiableList(this.subscribedToSource);
 	}
 
 	@Override
 	public void unsubscribeFromSource(
 			PhysicalSubscription<ISource<? extends T>> subscription) {
-		synchronized (this.subscribedTo) {
-			if (this.subscribedTo.remove(subscription)) {
+		getLogger()
+				.debug("Unsubscribe from Source " + subscription.getTarget());
+//		synchronized (this.subscribedToSource) {
+			if (this.subscribedToSource.remove(subscription)) {
 				subscription.getTarget().unsubscribeSink(this.getInstance(),
 						subscription.getSinkInPort(),
 						subscription.getSourceOutPort(),
 						subscription.getSchema());
 			}
-		}
+//		}
 	}
 
 	@Override
 	public void unsubscribeFromAllSources() {
-		synchronized (this.subscribedTo) {
-			while (!subscribedTo.isEmpty()) {
-				PhysicalSubscription<ISource<? extends T>> subscription = subscribedTo
+//		synchronized (this.subscribedToSource) {
+			while (!subscribedToSource.isEmpty()) {
+				PhysicalSubscription<ISource<? extends T>> subscription = subscribedToSource
 						.remove(0);
-				getLogger().debug("Unsubscribe from Source "+subscription.getTarget());
+				getLogger().debug(
+						"Unsubscribe from Source " + subscription.getTarget());
 				subscription.getTarget().unsubscribeSink(this.getInstance(),
 						subscription.getSinkInPort(),
 						subscription.getSourceOutPort(),
 						subscription.getSchema());
-				getLogger().debug("Unsubscribe from Source "+subscription.getTarget()+" done.");				
-				
+				getLogger().debug(
+						"Unsubscribe from Source " + subscription.getTarget()
+								+ " done.");
+
 			}
-		}
+//		}
 	}
 
 	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(
 			int port) {
-		return this.subscribedTo.get(port);
+		return this.subscribedToSource.get(port);
 	}
 
 	/**

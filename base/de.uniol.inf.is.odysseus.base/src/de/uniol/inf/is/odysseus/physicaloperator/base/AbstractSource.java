@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -37,7 +38,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		return logger;
 	}
-	final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
+	//final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
+	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
 	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();
 	private AtomicBoolean open = new AtomicBoolean(false);
@@ -150,14 +152,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void transfer(Collection<T> object, int sourceOutPort) {
 		// TODO events erzeugen und verschicken, bzw. ein spezielles
 		// transferbatchevent
-		synchronized (this.subscriptions) {
-			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
+//		synchronized (this.subscriptions) {
+			for (PhysicalSubscription<ISink<? super T>> sink : this.sinkSubscriptions) {
 				if (sink.getSourceOutPort() == sourceOutPort) {
 					sink.getTarget().process(object, sink.getSinkInPort(),
 							isTransferExclusive());
 				}
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -176,7 +178,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected boolean hasSingleConsumer() {
-		return this.subscriptions.size() == 1;
+		return this.sinkSubscriptions.size() == 1;
 	}
 
 	final protected void fire(POEvent event) {
@@ -197,8 +199,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected void process_transfer(T object) {
-		synchronized (this.subscriptions) {
-			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
+//		synchronized (this.subscriptions) {
+			for (PhysicalSubscription<ISink<? super T>> sink : this.sinkSubscriptions) {
 				// if (sink.getTarget().isActive() ?? hasOwner??){
 				if (sink.isEnabled()) {
 					sink.getTarget().process(object, sink.getSinkInPort(),
@@ -206,7 +208,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				}
 				// }
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -214,12 +216,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			int sourceOutPort, SDFAttributeList schema) {
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
-		synchronized (this.subscriptions) {
-			if (!this.subscriptions.contains(sub)) {
-				this.subscriptions.add(sub);
+//		synchronized (this.subscriptions) {
+			if (!this.sinkSubscriptions.contains(sub)) {
+				this.sinkSubscriptions.add(sub);
 				sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -232,16 +234,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void unsubscribeSink(
 			PhysicalSubscription<ISink<? super T>> subscription) {
-		synchronized (this.subscriptions) {
+//		synchronized (this.subscriptions) {
 			getLogger().debug("Unsubscribe from Sink "+subscription.getTarget());
-			boolean subContained = this.subscriptions.remove(subscription);
+			boolean subContained = this.sinkSubscriptions.remove(subscription);
 			if (subContained) {
 				subscription.getTarget().unsubscribeFromSource(this,
 						subscription.getSinkInPort(),
 						subscription.getSourceOutPort(),
 						subscription.getSchema());
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -249,12 +251,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			List<PhysicalSubscription<ISink<? super T>>> remove,
 			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
 			SDFAttributeList schema) {
-		synchronized (this.subscriptions) {
+//		synchronized (this.subscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sub : remove) {
 				unsubscribeSink(sub);
 			}
 			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		}
+//		}
 	}
 
 	@Override
@@ -262,27 +264,27 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			PhysicalSubscription<ISink<? super T>> remove,
 			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
 			SDFAttributeList schema) {
-		synchronized (this.subscriptions) {
+//		synchronized (this.subscriptions) {
 			unsubscribeSink(remove);
 			for (ISink<? super T> sink : sinks) {
 				subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 			}
-		}
+//		}
 	}
 
 	@Override
 	final public List<PhysicalSubscription<ISink<? super T>>> getSubscriptions() {
-		return Collections.unmodifiableList(this.subscriptions);
+		return Collections.unmodifiableList(this.sinkSubscriptions);
 	}
 
 	final protected void propagateDone() {
 		fire(this.doneEvent);
 		this.process_done();
-		synchronized (subscriptions) {
-			for (PhysicalSubscription<ISink<? super T>> sub : subscriptions) {
+//		synchronized (subscriptions) {
+			for (PhysicalSubscription<ISink<? super T>> sub : sinkSubscriptions) {
 				sub.getTarget().done(sub.getSinkInPort());
 			}
-		}
+//		}
 	}
 
 	/**
@@ -355,12 +357,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void sendPunctuation(PointInTime punctuation) {
-		synchronized (this.subscriptions) {
-			for (PhysicalSubscription<? extends ISink<?>> sub : this.subscriptions) {
+//		synchronized (this.subscriptions) {
+			for (PhysicalSubscription<? extends ISink<?>> sub : this.sinkSubscriptions) {
 				sub.getTarget().processPunctuation(punctuation,
 						sub.getSinkInPort());
 			}
-		}
+//		}
 	}
 
 	@Override

@@ -237,7 +237,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * @return the sink subscription for port
 	 */
 	private PhysicalSubscription<ISink<? super T>> getSinkSubscriptionForPort(int port) {
-		for (PhysicalSubscription<ISink<? super T>> sub : this.subscriptions) {
+		for (PhysicalSubscription<ISink<? super T>> sub : this.getSubscriptions()) {
 			if (sub.getSourceOutPort() == port) {
 				return sub;
 			}
@@ -269,13 +269,13 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 *            the port of the destination
 	 */
 	protected void process_transfer(T object, int sourceOutPort) {
-		synchronized (this.subscriptions) {
-			for (PhysicalSubscription<ISink<? super T>> sink : this.subscriptions) {
+//		synchronized (this.getSubscriptions()) {
+			for (PhysicalSubscription<ISink<? super T>> sink : this.getSubscriptions()) {
 				if (sink.getSourceOutPort() == sourceOutPort) {
 					sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer());
 				}
 			}
-		}
+//		}
 	}
 
 	/*

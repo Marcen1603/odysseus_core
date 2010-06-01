@@ -274,9 +274,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void sendPunctuation(PointInTime punctuation) {
-		synchronized (this.subscriptions) {
+//		synchronized (this.sinkSubscriptions) {
 			super.sendPunctuation(punctuation);
-		}
+//		}
 	}
 
 	@Override
