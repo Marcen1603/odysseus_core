@@ -15,15 +15,15 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.rcp.resource.IResourceConfiguration;
+import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditorInputFactory;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.IResourceConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.SWTResourceManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.impl.XMLResourceConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.XMLResourceConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
@@ -65,7 +65,7 @@ public class CallGraphEditor extends AbstractHandler implements IHandler {
 			Object obj = treeSelection.getFirstElement();
 			
 			if( !resLoaded ) {
-				SWTResourceManager.getInstance().load(window.getShell().getDisplay(), RESOURCE_CONFIGURATION);
+				ResourceManager.getInstance().load(window.getShell().getDisplay(), RESOURCE_CONFIGURATION);
 				resLoaded = true;
 			}
 			

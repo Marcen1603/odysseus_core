@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.impl;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,18 +26,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.IResourceConfiguration;
+import de.uniol.inf.is.odysseus.rcp.resource.IResourceConfiguration;
 
 public class XMLResourceConfiguration implements IResourceConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger( XMLResourceConfiguration.class );
 	
-	private Map<String, String> resources = new HashMap<String, String>();
-	private final Bundle bundle;
+	private Map<String, URL> resources = new HashMap<String, URL>();
 	
 	public XMLResourceConfiguration( URL xmlFile, URL xsd, Bundle bundle ) {
-		
-		this.bundle = bundle;
 		
 		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
 		
@@ -86,7 +83,7 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 				final String name = getAttributeValue(node, "name");
 				final String src= getAttributeValue(node, "source");
 				logger.debug( "Inserting resourceInfo " + src + " --> " + name );
-				resources.put( name, src  );
+				resources.put( name, bundle.getEntry(src)  );
 			}
 			
 			logger.info( "Paring resourceConfigurationfile successful" );
@@ -99,7 +96,7 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 	}
 	
 	@Override
-	public Map< String, String > getResources() {
+	public Map< String, URL > getResources() {
 		return resources;
 	}
 
@@ -115,8 +112,4 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 		return "";
 	}
 
-	@Override
-	public Bundle getBundle() {
-		return bundle;
-	}
 }

@@ -27,18 +27,6 @@
                standalone="false"
                visible="true">
          </view>
-         <view
-               closeable="true"
-               id="de.uniol.inf.is.odysseus.rcp.viewer.view.NodeInfoView"
-               minimized="false"
-               moveable="true"
-               ratio="0.95f"
-               relationship="stack"
-               relative="de.uniol.inf.is.odysseus.rcp.viewer.view.ModelManagerView"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
       </perspectiveExtension>
    </extension>
    <extension

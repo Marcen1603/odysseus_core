@@ -14,8 +14,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.SWTResourceManager;
 
 public class NodeViewPart extends ViewPart implements ISelectionListener {
 	
@@ -36,7 +36,7 @@ public class NodeViewPart extends ViewPart implements ISelectionListener {
 
 		// Bilder laden
 		if( !imagesLoaded ) {
-				SWTResourceManager.getInstance().load(parent.getDisplay(), new ResourceConfiguration(Activator.getDefault().getBundle()));
+				ResourceManager.getInstance().load(parent.getDisplay(), new ResourceConfiguration(Activator.getDefault().getBundle()));
 				imagesLoaded = true;
 		}
 	}

@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.SWTResourceManager;
 
 public class SWTImageSymbolElement<C> extends AbstractUnfreezableSWTSymbolElement<C> {
 
@@ -43,7 +43,7 @@ public class SWTImageSymbolElement<C> extends AbstractUnfreezableSWTSymbolElemen
 	private void loadImage() {
 		if( image == null || image.isDisposed() ) {
 			// Bild neu holen
-			image = SWTResourceManager.getInstance().getImage( imageName );
+			image = ResourceManager.getInstance().getImage( imageName );
 			if( image != null ) {
 				imageWidth = image.getBounds().width;
 				imageHeight = image.getBounds().height;

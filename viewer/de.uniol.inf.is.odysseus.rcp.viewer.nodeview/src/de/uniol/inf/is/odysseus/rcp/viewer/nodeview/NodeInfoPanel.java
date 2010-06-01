@@ -26,12 +26,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModelChangeListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.meta.IMetadataChangeListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.meta.IMetadataModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.SWTResourceManager;
 
 
 public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator>, IMetadataChangeListener<IMonitoringData<?>> {
@@ -117,12 +117,12 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 		
 		// Sichtbarkeitsbutton
 		final Button visibleButton = new Button( buttonList, SWT.TOGGLE );
-		visibleButton.setImage( SWTResourceManager.getInstance().getImage( "hide" ) );
+		visibleButton.setImage( ResourceManager.getInstance().getImage( "hide" ) );
 		visibleButton.setToolTipText( "Shrink" );
 		
 		// Pinbutton
 		final Button pinButton = new Button( buttonList, SWT.TOGGLE );
-		pinButton.setImage( SWTResourceManager.getInstance().getImage( "pin" ) );
+		pinButton.setImage( ResourceManager.getInstance().getImage( "pin" ) );
 		pinButton.setToolTipText( "Not fixed" );
 		pinButton.addSelectionListener( new SelectionAdapter() {
 			@Override
@@ -130,16 +130,16 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 				pinned = pinButton.getSelection();
 				if( pinned ) {
 					pinButton.setToolTipText( "Fixed" );
-					pinButton.setImage( SWTResourceManager.getInstance().getImage( "pinned" ) );
+					pinButton.setImage( ResourceManager.getInstance().getImage( "pinned" ) );
 				} else {
 					pinButton.setToolTipText( "Not fixed" );
-					pinButton.setImage( SWTResourceManager.getInstance().getImage( "pin" ) );
+					pinButton.setImage( ResourceManager.getInstance().getImage( "pin" ) );
 				}
 			}
 		});
 		
 		final Button selectButton = new Button( buttonList, SWT.PUSH );
-		selectButton.setImage( SWTResourceManager.getInstance().getImage( "select" ));
+		selectButton.setImage( ResourceManager.getInstance().getImage( "select" ));
 		selectButton.setToolTipText( "Select node in editor" );
 		selectButton.addSelectionListener( new SelectionAdapter() {
 			@Override
@@ -163,7 +163,7 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 					content.setVisible( true );
 					contentGridData.widthHint = oldWidth;
 					contentGridData.heightHint = oldHeight;
-					visibleButton.setImage(SWTResourceManager.getInstance().getImage( "hide" ) );
+					visibleButton.setImage(ResourceManager.getInstance().getImage( "hide" ) );
 					visibleButton.setToolTipText( "Shrink" );
 					parent.layout();
 				} else {
@@ -172,7 +172,7 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 					oldHeight = content.getSize().y;
 					contentGridData.widthHint = 0;
 					contentGridData.heightHint = 0;
-					visibleButton.setImage(SWTResourceManager.getInstance().getImage( "show" ) );
+					visibleButton.setImage(ResourceManager.getInstance().getImage( "show" ) );
 					visibleButton.setToolTipText( "Grow" );
 					parent.layout();
 				}
@@ -226,7 +226,7 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 		tableEditContent.setLayoutData( tabelEditGridData );
 		
 		Button addMetadataButton = new Button( tableEditContent, SWT.PUSH );
-		addMetadataButton.setImage( SWTResourceManager.getInstance().getImage( "metaNew" ) );
+		addMetadataButton.setImage( ResourceManager.getInstance().getImage( "metaNew" ) );
 		addMetadataButton.setToolTipText( "Add metadata" );
 		addMetadataButton.addSelectionListener( new SelectionAdapter() {
 			@Override
@@ -237,7 +237,7 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 		});
 		
 		Button removeMetadataButton = new Button( tableEditContent, SWT.PUSH );
-		removeMetadataButton.setImage( SWTResourceManager.getInstance().getImage( "metaRemove" ) );
+		removeMetadataButton.setImage( ResourceManager.getInstance().getImage( "metaRemove" ) );
 		removeMetadataButton.setToolTipText( "Remove metadata" );
 		removeMetadataButton.addSelectionListener( new SelectionAdapter() {
 			@Override
@@ -259,7 +259,7 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 		});
 		
 		Button resetMetadataButton = new Button( tableEditContent, SWT.PUSH );
-		resetMetadataButton.setImage( SWTResourceManager.getInstance().getImage( "metaReset" ) );
+		resetMetadataButton.setImage( ResourceManager.getInstance().getImage( "metaReset" ) );
 		resetMetadataButton.setToolTipText( "Reset metadata" );
 		resetMetadataButton.addSelectionListener( new SelectionAdapter() {
 			@Override
@@ -274,7 +274,7 @@ public class NodeInfoPanel implements INodeModelChangeListener<IPhysicalOperator
 		});
 		
 		Button refreshMetadataButton = new Button( tableEditContent, SWT.PUSH );
-		refreshMetadataButton.setImage( SWTResourceManager.getInstance().getImage( "metaReload" ) );
+		refreshMetadataButton.setImage( ResourceManager.getInstance().getImage( "metaReload" ) );
 		refreshMetadataButton.setToolTipText( "Update metadata" );
 		refreshMetadataButton.addSelectionListener( new SelectionAdapter() {
 			@Override

@@ -1,41 +1,32 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.osgi.framework.Bundle;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.IResourceConfiguration;
+import de.uniol.inf.is.odysseus.rcp.resource.IResourceConfiguration;
 
 public class ResourceConfiguration implements IResourceConfiguration {
 
-	private static final Map<String, String> resources = new HashMap<String, String>();
-	private final Bundle bundle;
-	
-	static {
-		resources.put("hide", "images/hide.png");
-		resources.put("pin", "images/pin.png");
-		resources.put("pinned", "images/pinned.png");
-		resources.put("select", "images/select.png");
-		resources.put("show", "images/show.png");
-		resources.put("metaNew", "images/metaNew.png");
-		resources.put("metaRemove", "images/metaRemove.png");
-		resources.put("metaReset", "images/metaReset.png");
-		resources.put("metaReload", "images/metaReload.png");
-	}
+	private final Map<String, URL> resources = new HashMap<String, URL>();
 	
 	public ResourceConfiguration( Bundle bundle ) {
-		this.bundle = bundle;
+		resources.put("hide", bundle.getEntry("images/hide.png"));
+		resources.put("pin", bundle.getEntry("images/pin.png"));
+		resources.put("pinned", bundle.getEntry("images/pinned.png"));
+		resources.put("select", bundle.getEntry("images/select.png"));
+		resources.put("show", bundle.getEntry("images/show.png"));
+		resources.put("metaNew", bundle.getEntry("images/metaNew.png"));
+		resources.put("metaRemove", bundle.getEntry("images/metaRemove.png"));
+		resources.put("metaReset", bundle.getEntry("images/metaReset.png"));
+		resources.put("metaReload", bundle.getEntry("images/metaReload.png"));
 	}
 	
 	@Override
-	public Map<String, String> getResources() {
+	public Map<String, URL> getResources() {
 		return resources;
-	}
-
-	@Override
-	public Bundle getBundle() {
-		return bundle;
 	}
 
 }
