@@ -67,29 +67,27 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_WHERE = 32;
   /** RegularExpression Id. */
-  int K_TEST = 33;
+  int IDENTIFIER = 33;
   /** RegularExpression Id. */
-  int IDENTIFIER = 34;
+  int LETTER = 34;
   /** RegularExpression Id. */
-  int LETTER = 35;
+  int SPECIAL_CHARS = 35;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 36;
+  int CHAR_LITERAL = 36;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 37;
+  int QUOTED_IDENTIFIER = 37;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 38;
+  int COMPARE_OPERATOR = 38;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 39;
+  int REGEXP = 39;
   /** RegularExpression Id. */
-  int REGEXP = 40;
+  int FLOAT = 40;
   /** RegularExpression Id. */
-  int FLOAT = 41;
+  int INTEGER = 41;
   /** RegularExpression Id. */
-  int INTEGER = 42;
+  int DIGIT = 42;
   /** RegularExpression Id. */
-  int DIGIT = 43;
-  /** RegularExpression Id. */
-  int IPADDRESS = 44;
+  int IPADDRESS = 43;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -129,7 +127,6 @@ public interface ProceduralExpressionParserConstants {
     "\"SUM\"",
     "\"TUMBLING-TIME-WINDOW\"",
     "\"WHERE\"",
-    "\"TESTOP\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",
@@ -143,8 +140,8 @@ public interface ProceduralExpressionParserConstants {
     "<IPADDRESS>",
     "\":\"",
     "\"(\"",
-    "\")\"",
     "\",\"",
+    "\")\"",
     "\"*\"",
     "\"+\"",
     "\"-\"",
