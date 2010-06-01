@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
@@ -19,6 +22,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.Op
  * @author Wolf Bauer, Jonas Jacobi
  */
 public class StandardOptimizer extends AbstractOptimizer {
+	
+	private Logger logger = LoggerFactory.getLogger(StandardOptimizer.class);
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
@@ -70,13 +75,17 @@ public class StandardOptimizer extends AbstractOptimizer {
 			T sender, IQuery removedQuery,
 			IEditableExecutionPlan executionPlan, OptimizeParameter parameter)
 			throws QueryOptimizationException {
+		logger.debug("preQueryRemoveOptimization");
 		ArrayList<IEditableQuery> newPlan = new ArrayList<IEditableQuery>(
 				sender.getRegisteredQueries());
 		newPlan.remove(removedQuery);
+		logger.debug("preQueryRemoveOptimization optimize Plan");
 
 		IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 				.optimizePlan(sender, parameter, newPlan);
 
+		logger.debug("preQueryRemoveOptimization migrate");
+		
 		return this.planMigrationStrategy
 				.migratePlan(sender, newExecutionPlan);
 	}

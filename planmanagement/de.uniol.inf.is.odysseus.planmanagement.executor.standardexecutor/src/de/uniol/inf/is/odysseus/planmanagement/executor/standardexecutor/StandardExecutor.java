@@ -518,7 +518,9 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 
 		if (queryToRemove != null && optimizer() != null) {
 			try {
+				this.logger.info("Try to aquire executionPlanLock (Currently " + executionPlanLock.getHoldCount() + ").");	
 				executionPlanLock.lock();
+				this.logger.info("Try to aquire executionPlanLock (Currently " + executionPlanLock.getHoldCount() + "). done");	
 				setExecutionPlan(optimizer().preQueryRemoveOptimization(this, queryToRemove, this.executionPlan));
 				this.logger.info("Removing Query "+queryToRemove.getID());
 				this.plan.removeQuery(queryToRemove.getID());

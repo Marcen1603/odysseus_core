@@ -210,6 +210,13 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		e(EvalQuery.MIG, 120, "_singlerun");
 	}
+	
+	public void _em10(CommandInterpreter ci) {
+		nmsn(ci);
+		for (int i=0;i<10;i++){
+			e(EvalQuery.MIG, 120, "_run_"+i);
+		}
+	}
 
 	public void _e(CommandInterpreter ci) {
 		nmsn(ci);

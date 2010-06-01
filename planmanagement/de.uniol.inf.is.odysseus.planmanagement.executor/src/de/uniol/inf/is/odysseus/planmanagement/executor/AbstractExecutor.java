@@ -125,16 +125,18 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 *            neuer Ausführungsplan
 	 */
 	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
+
 		if (newExecutionPlan != null && !newExecutionPlan.equals(this.executionPlan)) {
 			try {
+				executionPlanLock.lock();
 				this.logger.info("Set execution plan.");
 				// Init current execution plan with newExecutionPlan
 				this.executionPlan.initWith(newExecutionPlan);
-
 				if (isRunning()) {
+					this.logger.info("Set execution plan. Open");
 					this.executionPlan.open();
 				}
-
+				this.logger.info("Set execution plan. Refresh Scheduling");
 				schedulerManager().refreshScheduling(this);
 				this.logger.info("New execution plan set.");
 			} catch (Exception e) {
@@ -144,6 +146,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
 						"Error while setting new execution plan. "
 								+ e.getMessage()));
+			}finally{
+				executionPlanLock.unlock();
 			}
 		}
 	}

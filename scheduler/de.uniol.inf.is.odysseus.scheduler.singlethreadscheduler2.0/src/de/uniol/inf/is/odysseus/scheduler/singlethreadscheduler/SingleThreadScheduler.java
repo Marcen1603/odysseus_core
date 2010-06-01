@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
@@ -26,6 +30,8 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  */
 public class SingleThreadScheduler extends AbstractScheduler implements
 		UncaughtExceptionHandler {
+	
+	Logger logger = LoggerFactory.getLogger(SingleThreadScheduler.class);
 
 	/**
 	 * Creates a new SingleThreadScheduler.
@@ -41,7 +47,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	/**
 	 * All schedulings.
 	 */
-	final private List<IScheduling> parts = new LinkedList<IScheduling>();
+	final private List<IScheduling> parts = new CopyOnWriteArrayList<IScheduling>();
 	final private List<IScheduling> pausedParts = new LinkedList<IScheduling>();
 
 	/**
@@ -81,15 +87,15 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			terminate = false;
 			try {
 				while (!isInterrupted() && !terminate) {
-					synchronized (parts) {
+					synchronized (pausedParts) {
 						if (parts.isEmpty()) {
 							break;
 						}
 						Iterator<IScheduling> part = parts.iterator();
-						while (part.hasNext()) {
-							while (parts.size() == pausedParts.size()) {
+						while (part.hasNext() && !terminate && !isInterrupted()) {
+							while (parts.size() == pausedParts.size() && !terminate && !isInterrupted()) {
 								try {
-									parts.wait(1000);
+									pausedParts.wait(100);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -122,13 +128,9 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 		@Override
 		public void scheddulingPossible(IScheduling sched) {
 			synchronized (pausedParts) {
-				pausedParts.remove(sched);
-				
-			}
-			synchronized(parts){
-				parts.notifyAll();
-			}
-			
+				pausedParts.remove(sched);	
+				pausedParts.notifyAll();
+			}			
 		}
 	}
 
@@ -221,28 +223,34 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 	 */
 	@Override
 	public void setPartialPlans(List<IPartialPlan> partialPlans) {
+		logger.debug("setPartialPlans");
 		if (partialPlans != null) {
-			synchronized (this.parts) {
+//			synchronized (this.parts) {
 				planChanged = true;
+				logger.debug("setPartialPlans clear");
 				this.parts.clear();
 
 				// Create for each partial plan an own scheduling strategy.
 				// These strategies are used for scheduling partial plans.
+				logger.debug("setPartialPlans create new Parts");
 				for (IPartialPlan partialPlan : partialPlans) {
 					final IScheduling scheduling = schedulingFactory.create(
 							partialPlan, partialPlan.getPriority());
 					this.parts.add(scheduling);
 				}
-			}
+//			}
 			// restart ExecutorThread, if terminated before
 			if (isRunning() && !this.parts.isEmpty()
 					&& (execThread == null || !execThread.isAlive())) {
+				execThread.terminate();
 				initExecThread();
 			}
 		}
+		logger.debug("setPartialPlans done");
 	}
 
 	private void initExecThread() {
+		logger.debug("initExecThread");
 		execThread = new ExecutorThread();
 		execThread.setUncaughtExceptionHandler(this);
 		execThread.setPriority(Thread.NORM_PRIORITY);
@@ -250,7 +258,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 			scheduling.addSchedulingEventListener(execThread);
 		}
 		execThread.start();
-
+		logger.debug("initExecThread done");
 	}
 
 	/*
