@@ -335,7 +335,7 @@ public class OptimizationTestConsole implements
 					.println("----------Evaluation Start------------------------------");
 			System.out.println("time_elapsed" + sep + "tuples_passed "
 					+ evalQuery + sep + "cpu_load " + evalQuery + sep
-					+ "memory_usage " + evalQuery + newline);
+					+ "memory_usage " + evalQuery);
 			// first time minus old cpu load
 			for (long id : threadBean.getAllThreadIds()) {
 				long t = threadBean.getThreadCpuTime(id);
@@ -356,11 +356,10 @@ public class OptimizationTestConsole implements
 					}
 					cputime += t;
 				}
-				Measure m = new Measure((currentTime - startTime), sink.getCount(), cputime, memBean.getHeapMemoryUsage().getUsed());
+				Measure m = new Measure((long)Math.floor(((currentTime - startTime)/1000)), sink.getCount(), cputime, memBean.getHeapMemoryUsage().getUsed());
 				measures.add(m);
 				System.out.println(m.time_elapsed+ sep + m.tuples_passed + sep
-						+ m.cpu_load+ sep + m.memory_usage
-						+ newline);				
+						+ m.cpu_load+ sep + m.memory_usage);				
 				if (evalQuery == EvalQuery.MIG && i == 50) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
