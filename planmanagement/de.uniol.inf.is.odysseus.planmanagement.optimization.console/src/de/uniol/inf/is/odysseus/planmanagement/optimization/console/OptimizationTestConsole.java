@@ -33,8 +33,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planr
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
-
 /**
  * custom OSGi console to test planoptimization scenarios
  * 
