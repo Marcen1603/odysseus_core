@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.console;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -29,6 +32,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.console.Optimization
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+
+import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -196,49 +201,70 @@ public class OptimizationTestConsole implements
 		_e(ci);
 	}
 
-	public void _eb(CommandInterpreter ci) {
-		nmsn(ci);
-		e(EvalQuery.BAD, 120, "_singlerun");
-	}
-
-	public void _eg(CommandInterpreter ci) {
-		nmsn(ci);
-		e(EvalQuery.GOOD, 120, "_singlerun");
-	}
-
-	public void _em(CommandInterpreter ci) {
-		nmsn(ci);
-		e(EvalQuery.MIG, 120, "_singlerun");
-	}
-	
-	public void _em10(CommandInterpreter ci) {
-		nmsn(ci);
-		for (int i=0;i<10;i++){
-			e(EvalQuery.MIG, 120, "_run_"+i);
-		}
-	}
-
 	public void _e(CommandInterpreter ci) {
 		nmsn(ci);
 		for (EvalQuery eq : EvalQuery.values()) {
-			for (int i = 0; i < 5; i++) {
-				e(eq, 100, "_run_" + i);
+			try {
+				eval(eq,180,5,""+System.currentTimeMillis());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		// this.executor.getConfiguration().set(
-		// new SettingBufferPlacementStrategy("Standard Buffer Placement"));
-		// e(EvalQuery.GOOD, 10);
+	}
+	
+	public void eval(EvalQuery evalQuery, int secondsPerRun, int runs, String filename) throws IOException{
+		String newline = System.getProperty("line.separator");
+		String sep = ";";
+		
+		List<List<Measure>> r = new ArrayList<List<Measure>>(runs);
+		
+		for (int i = 0; i < runs; i++) {
+			r.add(e(evalQuery, secondsPerRun));
+		}
+		
+		// TODO: Filenamen anpassen
+		FileWriter fw = new FileWriter("c:/development/eval" 
+				+ filename +  ".csv");
+		for (int i=0;i<runs;i++){
+			fw.write("time_elapsed_"+i + sep + "tuples_passed_"+i + evalQuery + sep
+					+ "cpu_load_"+i + evalQuery + sep + "memory_usage_"+i
+					+ evalQuery + sep + sep);
+		}
+		fw.write("MEDIAN(time_elapsed)" + sep + "MEDIAN(tuples_passed) " + evalQuery + sep
+				+ "MEDIAN(cpu_load) " + evalQuery + sep + "MEDIAN(memory_usage) "
+				+ evalQuery + newline);
+		for (int s = 0; s < secondsPerRun; s++) {
+			// Median berechnen
+			long m_time_elapsed = -1;
+			DescriptiveStatistics m_tuples_passed = new DescriptiveStatistics();;
+			DescriptiveStatistics m_cpu_load = new DescriptiveStatistics();;
+			DescriptiveStatistics m_memory_usage = new DescriptiveStatistics();;
+			for (int i = 0; i < runs; i++) {
+				Measure m = r.get(i).get(s);
+				m_time_elapsed = m.time_elapsed;
+				m_tuples_passed.addValue(m.tuples_passed);
+				m_cpu_load.addValue(m.cpu_load);
+				m_memory_usage.addValue(m.memory_usage);
+				fw.write(m.time_elapsed + sep + m.tuples_passed + sep
+						+ m.cpu_load + sep + m.memory_usage
+						+ sep + sep);				
+			}
+			// Median für jeden Messpunkt ausgeben
+			fw.write(m_time_elapsed + sep + m_tuples_passed.getPercentile(50) + sep
+					+ m_cpu_load.getPercentile(50) + sep + m_memory_usage.getPercentile(50)
+					+ newline);				
+
+		}
+		fw.close();
 	}
 
-	public void e(EvalQuery evalQuery, int seconds, String fileAppend) {
-		System.out.println(evalQuery + " " + seconds + " " + fileAppend);
+	public List<Measure> e(EvalQuery evalQuery, int seconds) {
+		List<Measure> measures = new ArrayList<Measure>(seconds);
+		System.out.println(evalQuery + " " + seconds);
 		String newline = System.getProperty("line.separator");
 		String sep = ";";
 		try {
-
-			// TODO: Filenamen anpassen
-			FileWriter fw = new FileWriter("c:/development/eval" + evalQuery
-					+ System.currentTimeMillis() + fileAppend + ".csv");
 
 			OptimizationTestSink sink = new OptimizationTestSink(
 					OutputMode.COUNT);
@@ -309,9 +335,9 @@ public class OptimizationTestConsole implements
 			long startTime = System.currentTimeMillis();
 			System.out
 					.println("----------Evaluation Start------------------------------");
-			fw.write("time_elapsed" + sep + "tuples_passed " + evalQuery + sep
-					+ "cpu_load " + evalQuery + sep + "memory_usage "
-					+ evalQuery + newline);
+			System.out.println("time_elapsed" + sep + "tuples_passed "
+					+ evalQuery + sep + "cpu_load " + evalQuery + sep
+					+ "memory_usage " + evalQuery + newline);
 			// first time minus old cpu load
 			for (long id : threadBean.getAllThreadIds()) {
 				long t = threadBean.getThreadCpuTime(id);
@@ -320,6 +346,7 @@ public class OptimizationTestConsole implements
 			for (int i = 0; i < seconds; i++) {
 				waitFor(1000);
 				long cputime = 0L;
+				long currentTime = System.currentTimeMillis();
 				for (long id : threadBean.getAllThreadIds()) {
 					long t = threadBean.getThreadCpuTime(id);
 					if (lastTime.containsKey(id)) {
@@ -331,9 +358,11 @@ public class OptimizationTestConsole implements
 					}
 					cputime += t;
 				}
-				fw.write((System.currentTimeMillis() - startTime) + sep
-						+ sink.getCount() + sep + cputime + sep
-						+ memBean.getHeapMemoryUsage().getUsed() + newline);
+				Measure m = new Measure((currentTime - startTime), sink.getCount(), cputime, memBean.getHeapMemoryUsage().getUsed());
+				measures.add(m);
+				System.out.println(m.time_elapsed+ sep + m.tuples_passed + sep
+						+ m.cpu_load+ sep + m.memory_usage
+						+ newline);				
 				if (evalQuery == EvalQuery.MIG && i == 50) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
@@ -348,13 +377,14 @@ public class OptimizationTestConsole implements
 			System.out
 					.println("----------Evaluation End--------------------------------");
 
-			fw.close();
 			executor.removeQuery(query.getID());
 			lsqueries();
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return measures;
 	}
 
 	public void lsqueries() {
@@ -367,6 +397,12 @@ public class OptimizationTestConsole implements
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void _ntest(CommandInterpreter ci) {
+		for (int i = 0; i < 10; i++) {
+			_nexmarkDatarate(ci);
 		}
 	}
 
@@ -390,7 +426,7 @@ public class OptimizationTestConsole implements
 							this.trafoConfigParam);
 
 			this.executor.startExecution();
-			while (true) {
+			for (int i = 0; i < 120; i++) {
 				waitFor(1000);
 				System.out.println("sinkAuction tuples/sec: "
 						+ sinkAuction.getCount());
@@ -417,6 +453,22 @@ public class OptimizationTestConsole implements
 
 	private String parser() {
 		return "CQL";
+	}
+
+}
+
+class Measure {
+	public long time_elapsed;
+	public long tuples_passed;
+	public long cpu_load;
+	public long memory_usage;
+
+	public Measure(long timeElapsed, long tuplesPassed, long cpuLoad,
+			long memoryUsage) {
+		time_elapsed = timeElapsed;
+		tuples_passed = tuplesPassed;
+		cpu_load = cpuLoad;
+		memory_usage = memoryUsage;
 	}
 
 }
