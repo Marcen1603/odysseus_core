@@ -11,18 +11,21 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.console.MySink;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 
-public class AddQuery extends AbstractHandler implements IHandler {
+public class AddQueryCommand extends AbstractHandler implements IHandler {
 
-	public static String queryToExecute = "";
-	public static String parserToUse = "";
-	
 	public static final String COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.AddQuery";
+	public static final String QUERY_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.QueryParameter";
+	public static final String PARSER_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ParserParameter";
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		
+		final String queryToExecute = event.getParameter(QUERY_PARAMETER_ID);
+		final String parserToUse = event.getParameter(PARSER_PARAMETER_ID);
+		
 		try {
 			IAdvancedExecutor executor = Activator.getExecutor();
 			if (executor != null) {
-//				String parser = parser(executor);
 				executor.addQuery(queryToExecute, parserToUse, new ParameterDefaultRoot(new MySink()));
 				
 			} else {
@@ -36,20 +39,5 @@ public class AddQuery extends AbstractHandler implements IHandler {
 
 		return null;
 	}
-//
-//	private String parser(IAdvancedExecutor executor) {
-//		Iterator<String> parsers;
-//		try {
-//			parsers = executor.getSupportedQueryParser().iterator();
-//		} catch (PlanManagementException e) {
-//			return null;
-//		}
-//		
-//		String parser = "";
-//		if (parsers != null && parsers.hasNext()) {
-//			parser = parsers.next();
-//			return parser;
-//		}
-//		return null;
-//	}
+
 }

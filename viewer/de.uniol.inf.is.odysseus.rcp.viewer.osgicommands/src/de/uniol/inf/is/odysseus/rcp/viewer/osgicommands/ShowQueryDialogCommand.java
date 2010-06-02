@@ -1,9 +1,14 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.osgicommands;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -15,6 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 
@@ -22,11 +28,14 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 
-public class ShowQueryDialog extends AbstractHandler implements IHandler {
+public class ShowQueryDialogCommand extends AbstractHandler implements IHandler {
 
+	public static final String START_QUERY_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartQueryParameter";
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
+		final String startQuery = event.getParameter(START_QUERY_PARAMETER_ID);
 		
 		final Shell dialogShell = new Shell(parent);
 		dialogShell.setSize(500,120);
@@ -39,9 +48,9 @@ public class ShowQueryDialog extends AbstractHandler implements IHandler {
 		final Label queryLabel = new Label(dialogShell, SWT.None );
 		queryLabel.setText("Query");
 
-		final Text textField = new Text(dialogShell, SWT.BORDER | SWT.MULTI);
-		textField.setLayoutData(new GridData(GridData.FILL_BOTH));
-//		textField.setText("SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 [UNBOUNDED] AS b");
+		final Text queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI);
+		queryTextField.setLayoutData(new GridData(GridData.FILL_BOTH));
+		queryTextField.setText(startQuery != null ? startQuery : "");
 					
 		final Label parserLabel = new Label(dialogShell, SWT.None );
 		parserLabel.setText("Parser");
@@ -54,14 +63,18 @@ public class ShowQueryDialog extends AbstractHandler implements IHandler {
 		okButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String query = textField.getText();
 				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 				
 				try {
-					// BAD HACK
-					AddQuery.queryToExecute = query;
-					AddQuery.parserToUse = parserCombo.getText();
-					handlerService.executeCommand(AddQuery.COMMAND_ID, null);
+					Map<String,String> map = new HashMap<String, String>();
+					map.put(AddQueryCommand.PARSER_PARAMETER_ID, parserCombo.getText());
+					map.put(AddQueryCommand.QUERY_PARAMETER_ID, queryTextField.getText());
+
+					ICommandService cS = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
+					Command cmd = cS.getCommand(AddQueryCommand.COMMAND_ID);
+					ParameterizedCommand parCmd = ParameterizedCommand.generateCommand(cmd, map);
+					handlerService.executeCommand(parCmd, null);
+					
 				} catch( Exception ex ) {
 					ex.printStackTrace();
 				}

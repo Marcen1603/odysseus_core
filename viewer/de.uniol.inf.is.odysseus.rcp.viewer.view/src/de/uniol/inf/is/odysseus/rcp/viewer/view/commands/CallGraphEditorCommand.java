@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.XMLSymbolConfiguration;
 
-public class CallGraphEditor extends AbstractHandler implements IHandler {
+public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
 
 	public static final String COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor";
 	private static GraphViewEditorInputFactory GRAPH_VIEW_FACTORY;
@@ -38,7 +38,7 @@ public class CallGraphEditor extends AbstractHandler implements IHandler {
 	private static ISymbolConfiguration SYMBOL_CONFIGURATION = null;
 	private static ISymbolElementFactory<IPhysicalOperator> SYMBOL_FACTORY = null;
 	
-	public CallGraphEditor() {
+	public CallGraphEditorCommand() {
 		try {
 			RESOURCE_CONFIGURATION = new XMLResourceConfiguration(Activator.getContext().getBundle().getEntry("viewer_cfg/resources.xml"), Activator.getContext().getBundle().getEntry("viewer_cfg/resourcesSchema.xsd"), Activator.getContext().getBundle());
 			SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(Activator.getContext().getBundle().getEntry("viewer_cfg/symbol.xml"), Activator.getContext().getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));

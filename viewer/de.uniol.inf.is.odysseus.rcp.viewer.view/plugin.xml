@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.CallGraphEditor"
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.CallGraphEditorCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor"
             name="Call Graph Editor">
       </command>
