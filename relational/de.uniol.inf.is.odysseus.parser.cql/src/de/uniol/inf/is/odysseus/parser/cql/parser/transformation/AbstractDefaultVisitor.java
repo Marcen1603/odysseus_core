@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateFunction;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
@@ -22,6 +23,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCovarianceRow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateSensor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
@@ -43,10 +45,12 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTListDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMetric;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNumber;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOSGI;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOldWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOrPredicate;
@@ -59,6 +63,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionMatrix;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionVector;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordDefinition;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordEntryDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRenamedExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSQL;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
@@ -574,6 +580,42 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTMetric node, Object data) {
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTCreateSensor node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTORSchemaDefinition node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTRecordDefinition node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTRecordEntryDefinition node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTListDefinition node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTAttrDefinition node, Object data) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
