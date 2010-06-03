@@ -33,7 +33,6 @@ public class NearestNeighbor implements IAssoziationAlgorithmus {
 				pair.setRightObject(brokerObject);
 				distanceList.put(pair, calcDistance(newObj, brokerObject));
 			}
-			pair = new MeasurementPair();
 			for (MeasurementPair measurementPair : distanceList.keySet()) {
 				if(distance == 0) {
 					distance = distanceList.get(measurementPair);

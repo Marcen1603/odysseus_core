@@ -62,6 +62,54 @@ public class AssoziationTest extends TestCase{
 		NearestNeighbor assoAlgo = new NearestNeighbor(newlist, brokerlist);
 		
 		ArrayList<MeasurementPair> pairs = assoAlgo.executeAssoAlgorithmus();
+		int i = 0;
+		for (MeasurementPair measurementPair : pairs) {
+			switch (i) {
+			case 0:
+				assertEquals(20.0, measurementPair.getLeftObject().getPosition().getX());
+				assertEquals(5.0, measurementPair.getLeftObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getLeftObject().getPosition().getZ());
+				
+				assertEquals(20.0, measurementPair.getRightObject().getPosition().getX());
+				assertEquals(4.0, measurementPair.getRightObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getRightObject().getPosition().getZ());
+				break;
+				
+			case 1:
+				assertEquals(10.0, measurementPair.getLeftObject().getPosition().getX());
+				assertEquals(3.0, measurementPair.getLeftObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getLeftObject().getPosition().getZ());
+				
+				assertEquals(10.0, measurementPair.getRightObject().getPosition().getX());
+				assertEquals(1.0, measurementPair.getRightObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getRightObject().getPosition().getZ());
+				break;
+				
+			case 2:
+				assertEquals(5.0, measurementPair.getLeftObject().getPosition().getX());
+				assertEquals(7.0, measurementPair.getLeftObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getLeftObject().getPosition().getZ());
+				
+				assertEquals(6.0, measurementPair.getRightObject().getPosition().getX());
+				assertEquals(3.0, measurementPair.getRightObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getRightObject().getPosition().getZ());
+				break;
+				
+			case 3:
+				assertEquals(20.0, measurementPair.getLeftObject().getPosition().getX());
+				assertEquals(1.0, measurementPair.getLeftObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getLeftObject().getPosition().getZ());
+				
+				assertEquals(20.0, measurementPair.getRightObject().getPosition().getX());
+				assertEquals(4.0, measurementPair.getRightObject().getPosition().getY());
+				assertEquals(0.0, measurementPair.getRightObject().getPosition().getZ());
+				break;
+
+			default:
+				break;
+			}
+			i++;
+		}
 
 	}
 
