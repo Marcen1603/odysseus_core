@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.assoziation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.apache.commons.math.geometry.Vector3D;
 
 import de.uniol.inf.is.odysseus.scars.objecttracking.MeasurementObject;
+import de.uniol.inf.is.odysseus.scars.objecttracking.MeasurementPair;
 
 public class NearestNeighbor implements IAssoziationAlgorithmus {
 	
@@ -15,16 +19,37 @@ public class NearestNeighbor implements IAssoziationAlgorithmus {
 	}
 
 	@Override
-	public Object executeAssoAlgorithmus() {
-		MeasurementObject obj = new MeasurementObject();
-		for (MeasurementObject brokerObj : brokerObjects) {
-			
+	public ArrayList<MeasurementPair> executeAssoAlgorithmus() {
+		ArrayList<MeasurementPair> calculatedPairs = new ArrayList<MeasurementPair>();
+		MeasurementPair pair = new MeasurementPair();
+		HashMap<MeasurementPair, Double> distanceList = new HashMap<MeasurementPair, Double>();
+		double distance = 0;
+		for (MeasurementObject newObj : newObjects) {
+			distance = 0;
+			distanceList = new HashMap<MeasurementPair, Double>();
+			for (MeasurementObject brokerObject : brokerObjects) {
+				pair = new MeasurementPair();
+				pair.setLeftObject(newObj);
+				pair.setRightObject(brokerObject);
+				distanceList.put(pair, calcDistance(newObj, brokerObject));
+			}
+			pair = new MeasurementPair();
+			for (MeasurementPair measurementPair : distanceList.keySet()) {
+				if(distance == 0) {
+					distance = distanceList.get(measurementPair);
+				}else if(distanceList.get(measurementPair) < distance) {
+					distance = distanceList.get(measurementPair);
+					pair = measurementPair;
+				}
+			}
+			calculatedPairs.add(pair);
 		}
-		return null;
+		return calculatedPairs;
 	}
 	
-	private double calcDistance(MeasurementObject obj1, MeasurementObject obj2) {
-		
-		return 0;
+	private double calcDistance(MeasurementObject newObj, MeasurementObject brokerObj) {
+		Vector3D distanceVector = newObj.getPosition().subtract(brokerObj.getPosition());
+		double distance = Math.sqrt(distanceVector.getX()*distanceVector.getX() + distanceVector.getY()*distanceVector.getY() + distanceVector.getZ()*distanceVector.getZ());
+		return distance;
 	}
 }
