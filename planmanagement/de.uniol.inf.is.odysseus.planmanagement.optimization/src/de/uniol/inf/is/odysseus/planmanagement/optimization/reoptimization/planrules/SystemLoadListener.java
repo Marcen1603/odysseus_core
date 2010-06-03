@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorListener;
 
 /**
+ * Default implementation of {@link ISystemMonitorListener}.
  * 
  * @author Tobias Witt
  *

@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.ICost;
 
 /**
+ * Execution cost of a physical plan, partial plan or single operator.
  * 
  * @author Tobias Witt
  *

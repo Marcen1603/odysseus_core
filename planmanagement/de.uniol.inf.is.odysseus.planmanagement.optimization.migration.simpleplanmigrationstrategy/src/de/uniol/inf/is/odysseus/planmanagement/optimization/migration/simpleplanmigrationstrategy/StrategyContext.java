@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 
 /**
  * 
+ * Context of a plan migration.
+ * 
  * @author Tobias Witt
  *
  */

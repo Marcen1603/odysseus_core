@@ -72,12 +72,6 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		} else {
 			this.configuration.set(new SettingBufferPlacementStrategy(null));
 		}
-		
-		// initialize default system monitor
-		if (this.systemMonitorFactory != null) {
-			this.defaultSystemMonitor = this.systemMonitorFactory.newSystemMonitor();
-			this.defaultSystemMonitor.initialize(30000L);
-		}
 	}
 
 	/*
@@ -625,6 +619,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 				return;
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			this.logger.warn("Query not reoptimized. An Error while optimizing occurd (ID: " + sender.getID() + ").");
 			return;
 		} finally {

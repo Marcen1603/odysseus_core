@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 
 /**
+ * Sets the number of candidate plans that should be compared.
  * 
  * @author Tobias Witt
  *

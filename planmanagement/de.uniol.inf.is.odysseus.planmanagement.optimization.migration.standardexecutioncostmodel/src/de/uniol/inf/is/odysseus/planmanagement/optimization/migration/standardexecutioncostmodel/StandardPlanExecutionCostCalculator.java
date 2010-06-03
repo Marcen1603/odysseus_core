@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
+ * Cost calculator for plan execution cost.
  * 
  * @author Tobias Witt
  *

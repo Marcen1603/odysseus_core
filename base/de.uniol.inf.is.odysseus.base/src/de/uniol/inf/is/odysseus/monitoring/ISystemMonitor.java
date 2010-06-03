@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.monitoring;
 
 /**
+ * System Monitor that provides information about CPU and Heap-memory loads.
  * 
  * @author Tobias Witt
  *

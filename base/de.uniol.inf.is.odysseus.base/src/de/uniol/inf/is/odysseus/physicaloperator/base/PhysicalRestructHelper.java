@@ -5,9 +5,11 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 
 /**
+ * {@link PhysicalRestructHelper} provides methods to append, remove and replace
+ * {@link IPhysicalOperator}s in a physical plan.
  * 
  * @author Tobias Witt
- *
+ * 
  */
 @SuppressWarnings("unchecked")
 public class PhysicalRestructHelper {

@@ -31,9 +31,12 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanM
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
+ * The {@link AdvancedOptimizer} installs monitoring points in physical plans.
+ * On reoptimize requests, the optimizer initiates a plan migration to a more
+ * effient plan.
  * 
  * @author Tobias Witt
- *
+ * 
  */
 public class AdvancedOptimizer extends AbstractOptimizer {
 	

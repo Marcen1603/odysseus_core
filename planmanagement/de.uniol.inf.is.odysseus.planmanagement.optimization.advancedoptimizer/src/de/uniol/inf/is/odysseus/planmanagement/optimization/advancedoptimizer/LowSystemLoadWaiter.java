@@ -4,9 +4,11 @@ import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorListener;
 
 /**
+ * Helper class, that informs the {@link AdvancedOptimizer}, when the system
+ * load is below a certain limit.
  * 
  * @author Tobias Witt
- *
+ * 
  */
 public class LowSystemLoadWaiter implements ISystemMonitorListener {
 	

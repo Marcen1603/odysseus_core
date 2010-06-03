@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 
 /**
+ * Calculates the cost of a plan migration.
  * 
  * @author Tobias Witt
  *

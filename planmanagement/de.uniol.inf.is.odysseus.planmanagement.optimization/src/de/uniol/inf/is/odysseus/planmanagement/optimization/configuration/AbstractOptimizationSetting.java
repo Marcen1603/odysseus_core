@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.configuration;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.IMapValue;
 
 /**
+ * Setting for the AdvancedOptimizer.
  * 
  * @author Tobias Witt
  *

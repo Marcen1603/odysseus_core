@@ -549,6 +549,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	
 	public void bindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
 		this.systemMonitorFactory = systemMonitorFactory;
+		// initialize default system monitor
+		this.defaultSystemMonitor = this.systemMonitorFactory.newSystemMonitor();
+		this.defaultSystemMonitor.initialize(30000L);
 	}
 	
 	public void unbindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {

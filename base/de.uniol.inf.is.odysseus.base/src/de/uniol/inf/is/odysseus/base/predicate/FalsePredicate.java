@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.base.predicate;
 
 /**
+ * Predicate that evaluates to FALSE.
  * 
  * @author Tobias Witt
  * 

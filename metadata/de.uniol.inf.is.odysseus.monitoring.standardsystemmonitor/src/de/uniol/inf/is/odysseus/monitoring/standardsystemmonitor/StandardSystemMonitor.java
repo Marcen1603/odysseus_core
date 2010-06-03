@@ -13,9 +13,11 @@ import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorListener;
 
 /**
+ * Default implementation of {@link ISystemMonitor}. Uses measuring methods of
+ * the Java API.
  * 
  * @author Tobias Witt
- *
+ * 
  */
 public class StandardSystemMonitor implements ISystemMonitor {
 	

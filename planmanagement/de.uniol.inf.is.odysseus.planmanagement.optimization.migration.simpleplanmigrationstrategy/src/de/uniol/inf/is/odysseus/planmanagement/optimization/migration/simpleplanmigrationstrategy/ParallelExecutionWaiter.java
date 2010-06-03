@@ -2,8 +2,11 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simplepla
 
 /**
  * 
+ * Helper class, that informs the {@link SimplePlanMigrationStrategy}, when a
+ * specified period has ended.
+ * 
  * @author Tobias Witt
- *
+ * 
  */
 class ParallelExecutionWaiter implements Runnable {
 	

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel;
 
 /**
+ * Defines execution cost of physical operators.
  * 
  * @author Tobias Witt
  *

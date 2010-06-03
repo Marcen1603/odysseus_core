@@ -15,9 +15,12 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer.Ad
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
+ * The {@link PlanExecutionCostVisitor} traverses a plan and calculates it's
+ * execution cost. Uses the {@link StandardPlanExecutionCostModel} and
+ * monitoring data to determine the cost of an {@link IPhysicalOperator}.
  * 
  * @author Tobias Witt
- *
+ * 
  */
 public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator, StandardPlanExecutionCost> {
 	

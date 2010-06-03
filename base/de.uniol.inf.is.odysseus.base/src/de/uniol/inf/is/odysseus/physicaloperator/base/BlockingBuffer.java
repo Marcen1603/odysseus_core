@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 import de.uniol.inf.is.odysseus.base.IClone;
 
 /**
+ * Buffer used for planmigration.
  * 
  * @author Tobias Witt, Marco Grawunder
  *
