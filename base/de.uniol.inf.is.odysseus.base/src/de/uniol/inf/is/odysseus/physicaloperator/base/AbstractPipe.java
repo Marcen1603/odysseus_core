@@ -272,14 +272,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		this.delegateSink.unSubscribeFromAll(listener);
 	}
 
-	@Override
-	public void sendPunctuation(PointInTime punctuation) {
-//		synchronized (this.sinkSubscriptions) {
-			super.sendPunctuation(punctuation);
-//		}
-	}
-
-	@Override
 	public AbstractPipe<R, W> clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
 	}
