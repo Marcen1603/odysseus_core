@@ -57,7 +57,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	final private POEvent pushDoneEvent = new POEvent(this,
 			POEventType.PushDone);
 
-	private boolean blocked = false;
+	private AtomicBoolean blocked = new AtomicBoolean(false);
 	
 	POEvent blockedEvent = new POEvent(this, POEventType.Blocked);
 	POEvent unblockedEvent = new POEvent(this, POEventType.Unblocked);
@@ -352,7 +352,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")"+(blocked?"b":"");
+		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")"+(blocked.get()?"b":"");
 	}
 
 	@Override
@@ -424,17 +424,23 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 	
 	public boolean isBlocked() {
-		return blocked;
+		return blocked.get();
 	}
 
-	public synchronized void block() {
-		this.blocked = true;
-		fire(blockedEvent);
+	public void block() {
+		synchronized(blocked){
+			this.blocked.set(true);
+			logger.debug("Operator "+this.toString()+" blocked");
+			fire(blockedEvent);
+		}
 	}
 	
-	public synchronized void unblock() {
-		this.blocked = false;
-		fire(unblockedEvent);
+	public void unblock() {
+		synchronized (blocked) {
+			this.blocked.set(false);
+			logger.debug("Operator "+this.toString()+" unblocked");
+			fire(unblockedEvent);			
+		}
 	}
 	
 }
