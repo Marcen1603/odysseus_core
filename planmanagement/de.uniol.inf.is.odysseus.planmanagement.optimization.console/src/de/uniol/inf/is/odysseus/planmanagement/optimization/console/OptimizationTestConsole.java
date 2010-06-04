@@ -44,6 +44,13 @@ public class OptimizationTestConsole implements
 
 	private IAdvancedExecutor executor;
 
+	private static ConsoleFunctions support = new ConsoleFunctions();
+
+	/**
+	 * This is the basebath to files. This path can be set by command setPath.
+	 */
+	private String basepath;
+
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration("relational", ITimeInterval.class));
@@ -51,6 +58,19 @@ public class OptimizationTestConsole implements
 	public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
 		System.out.println("executor gebunden");
+	}
+
+	public void _setPath(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+
+		if (args == null || args.length == 0) {
+			ci.println("No path defined.");
+			return;
+		}
+
+		this.basepath = args[0].endsWith("/") ? args[0] : args[0] + "/";
+
+		ci.println("Path has been set. New path: " + this.basepath);
 	}
 
 	@Override
@@ -199,45 +219,65 @@ public class OptimizationTestConsole implements
 		_e(ci);
 	}
 
+	public void _em(CommandInterpreter ci) {
+		// TODO: Hack zum einfachen Testen ;-)
+		basepath = "c:/development/";
+		nmsn(ci);
+		EvalQuery eq = EvalQuery.MIG;
+		try {
+			eval(eq, 120, 5, "" + System.currentTimeMillis());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	public void _e(CommandInterpreter ci) {
+		// TODO: Hack zum einfachen Testen ;-)
+		basepath = "c:/development/";
 		nmsn(ci);
 		for (EvalQuery eq : EvalQuery.values()) {
 			try {
-				eval(eq,180,5,""+System.currentTimeMillis());
+				eval(eq, 120, 5, "" + System.currentTimeMillis());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	public void eval(EvalQuery evalQuery, int secondsPerRun, int runs, String filename) throws IOException{
+
+	public void eval(EvalQuery evalQuery, int secondsPerRun, int runs,
+			String filename) throws IOException {
 		String newline = System.getProperty("line.separator");
 		String sep = ";";
-		
+
 		List<List<Measure>> r = new ArrayList<List<Measure>>(runs);
-		
+
 		for (int i = 0; i < runs; i++) {
 			r.add(e(evalQuery, secondsPerRun));
+			waitFor(10000); // Zwischen zwei Aufrufen warten --> Quellenconnect
+							// etc.
 		}
-		
-		// TODO: Filenamen anpassen
-		FileWriter fw = new FileWriter("c:/development/eval" 
-				+ filename +  ".csv");
-		for (int i=0;i<runs;i++){
-			fw.write("time_elapsed_"+i + sep + "tuples_passed_"+i + evalQuery + sep
-					+ "cpu_load_"+i + evalQuery + sep + "memory_usage_"+i
-					+ evalQuery + sep + sep);
+
+		FileWriter fw = new FileWriter(basepath + "" + filename + ".csv");
+		for (int i = 0; i < runs; i++) {
+			fw.write("time_elapsed_" + i + sep + "tuples_passed_" + i
+					+ evalQuery + sep + "cpu_load_" + i + evalQuery + sep
+					+ "memory_usage_" + i + evalQuery + sep + sep);
 		}
-		fw.write("MEDIAN(time_elapsed)" + sep + "MEDIAN(tuples_passed) " + evalQuery + sep
-				+ "MEDIAN(cpu_load) " + evalQuery + sep + "MEDIAN(memory_usage) "
-				+ evalQuery + newline);
+		fw.write("MEDIAN(time_elapsed)" + sep + "MEDIAN(tuples_passed) "
+				+ evalQuery + sep + "MEDIAN(cpu_load) " + evalQuery + sep
+				+ "MEDIAN(memory_usage) " + evalQuery + newline);
 		for (int s = 0; s < secondsPerRun; s++) {
 			// Median berechnen
 			long m_time_elapsed = -1;
-			DescriptiveStatistics m_tuples_passed = new DescriptiveStatistics();;
-			DescriptiveStatistics m_cpu_load = new DescriptiveStatistics();;
-			DescriptiveStatistics m_memory_usage = new DescriptiveStatistics();;
+			DescriptiveStatistics m_tuples_passed = new DescriptiveStatistics();
+			;
+			DescriptiveStatistics m_cpu_load = new DescriptiveStatistics();
+			;
+			DescriptiveStatistics m_memory_usage = new DescriptiveStatistics();
+			;
 			for (int i = 0; i < runs; i++) {
 				Measure m = r.get(i).get(s);
 				m_time_elapsed = m.time_elapsed;
@@ -245,13 +285,14 @@ public class OptimizationTestConsole implements
 				m_cpu_load.addValue(m.cpu_load);
 				m_memory_usage.addValue(m.memory_usage);
 				fw.write(m.time_elapsed + sep + m.tuples_passed + sep
-						+ m.cpu_load + sep + m.memory_usage
-						+ sep + sep);				
+						+ m.cpu_load + sep + m.memory_usage + sep + sep);
 			}
 			// Median für jeden Messpunkt ausgeben
-			fw.write(m_time_elapsed + sep + m_tuples_passed.getPercentile(50) + sep
-					+ m_cpu_load.getPercentile(50) + sep + m_memory_usage.getPercentile(50)
-					+ newline);				
+			fw.write(m_time_elapsed + sep
+					+ (long) Math.round(m_tuples_passed.getPercentile(50))
+					+ sep + (long) Math.round(m_cpu_load.getPercentile(50))
+					+ sep + (long) Math.round(m_memory_usage.getPercentile(50))
+					+ newline);
 
 		}
 		fw.close();
@@ -356,10 +397,13 @@ public class OptimizationTestConsole implements
 					}
 					cputime += t;
 				}
-				Measure m = new Measure((long)Math.floor(((currentTime - startTime)/1000)), sink.getCount(), cputime, memBean.getHeapMemoryUsage().getUsed());
+				Measure m = new Measure((long) Math
+						.floor(((currentTime - startTime) / 1000)), sink
+						.getCount(), cputime, memBean.getHeapMemoryUsage()
+						.getUsed());
 				measures.add(m);
-				System.out.println(m.time_elapsed+ sep + m.tuples_passed + sep
-						+ m.cpu_load+ sep + m.memory_usage);				
+				System.out.println(m.time_elapsed + sep + m.tuples_passed + sep
+						+ m.cpu_load + sep + m.memory_usage);
 				if (evalQuery == EvalQuery.MIG && i == 50) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
@@ -376,7 +420,6 @@ public class OptimizationTestConsole implements
 
 			executor.removeQuery(query.getID());
 			lsqueries();
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
