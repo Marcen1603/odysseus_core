@@ -8,20 +8,23 @@
     <artifactId>odysseus-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>odysseus-priority_interval</artifactId>
+  <artifactId>odysseus-rewrite-relational_priority</artifactId>
   <packaging>bundle</packaging>
-  <name>Odysseus :: priority_interval</name>
+  <name>Odysseus :: rewrite-relational_priority</name>
   <properties>
     <odysseus.osgi.import>
+de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.priority,
+ de.uniol.inf.is.odysseus.rewrite.relational,
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.priority_interval*;version=${project.version}
+      de.uniol.inf.is.odysseus.rewrite.relational_priority*;version=${project.version},
+      rewrite*
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
-<odysseus.osgi.activator>de.uniol.inf.is.odysseus.priority_interval.Activator</odysseus.osgi.activator>
   </properties>
 
   <build>
@@ -34,6 +37,12 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
+    <configuration>
+      <instructions>
+        <Fragment-Host>odysseus-rewrite-drools;bundle-version=1.0.0.SNAPSHOT</Fragment-Host>
+<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>      
+</instructions>
+    </configuration>
       </plugin>
       <plugin>
         <groupId>org.ops4j</groupId>
@@ -49,12 +58,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>odysseus-intervalapproach</artifactId>
+      <artifactId>odysseus-relational-base</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+   <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>odysseus-priority</artifactId>
+      <artifactId>odysseus-rewrite-relational</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

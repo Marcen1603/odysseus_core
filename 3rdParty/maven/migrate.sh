@@ -70,17 +70,16 @@ EOF
 	        artifactId=${basename#*de.uniol.inf.is.odysseus.}
 	        artifactId=$(echo $artifactId | tr "." "-")
 	        artifactId=$(echo $artifactId | tr "/" "-")
-	        if [ -d $s/src ]; then
-		        echo "<module>odysseus-$artifactId</module>" >> $f/pom.xml
-		        mkdir -p $f/odysseus-$artifactId/src/main/java
-		        mkdir -p $f/odysseus-$artifactId/src/main/resources
-		        mkdir -p $f/odysseus-$artifactId/src/test/java
-		        mkdir -p $f/odysseus-$artifactId/src/test/resources
-		        if [ -d $partyDir/$f/odysseus-$artifactId ]; then
-		            cp -u $partyDir/$f/odysseus-$artifactId/pom.xml $f/odysseus-$artifactId/
-		        else
-		            echo "Generate pom"
-		            cat > $f/odysseus-$artifactId/pom.xml <<EOF
+		    echo "<module>odysseus-$artifactId</module>" >> $f/pom.xml
+		    mkdir -p $f/odysseus-$artifactId/src/main/java
+		    mkdir -p $f/odysseus-$artifactId/src/main/resources
+		    mkdir -p $f/odysseus-$artifactId/src/test/java
+		    mkdir -p $f/odysseus-$artifactId/src/test/resources
+		    if [ -d $partyDir/$f/odysseus-$artifactId ]; then
+		        cp -u $partyDir/$f/odysseus-$artifactId/pom.xml $f/odysseus-$artifactId/
+		    else
+		        echo "Generate pom"
+		        cat > $f/odysseus-$artifactId/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -137,13 +136,12 @@ EOF
   </dependencies>
 </project>
 EOF
-		        fi
-		        git add $f/odysseus-$artifactId/pom.xml
-		        git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
-		        git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
-                git mv -kf $s/resources/* $f/odysseus-$artifactId/src/main/resources/
-		        git mv -kf $s/src/* $f/odysseus-$artifactId/src/main/java/
-	        fi
+		    fi
+		    git add $f/odysseus-$artifactId/pom.xml
+		    git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
+		    git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
+            git mv -kf $s/resources/* $f/odysseus-$artifactId/src/main/resources/
+		    git mv -kf $s/src/* $f/odysseus-$artifactId/src/main/java/
 	    fi
     done
     cat >> $f/pom.xml <<EOF

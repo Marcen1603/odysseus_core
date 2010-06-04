@@ -8,20 +8,33 @@
     <artifactId>odysseus-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>odysseus-priority_interval</artifactId>
+  <artifactId>odysseus-transformation-interval</artifactId>
   <packaging>bundle</packaging>
-  <name>Odysseus :: priority_interval</name>
+  <name>Odysseus :: transformation-interval</name>
   <properties>
     <odysseus.osgi.import>
+de.uniol.inf.is.odysseus.base,
+de.uniol.inf.is.odysseus.base.planmanagement,
+de.uniol.inf.is.odysseus.base.predicate,
+de.uniol.inf.is.odysseus.intervalapproach,
+de.uniol.inf.is.odysseus.intervalapproach.window,
+de.uniol.inf.is.odysseus.logicaloperator.base,
+de.uniol.inf.is.odysseus.metadata.base,
+de.uniol.inf.is.odysseus.monitoring,
+de.uniol.inf.is.odysseus.physicaloperator.base,
+de.uniol.inf.is.odysseus.physicaloperator.base.aggregate,
+de.uniol.inf.is.odysseus.relational.base,
+de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
+de.uniol.inf.is.odysseus.transformation.drools,
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.priority_interval*;version=${project.version}
+      de.uniol.inf.is.odysseus.transformation.interval*;version=${project.version},
+transformation.rules*
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
-<odysseus.osgi.activator>de.uniol.inf.is.odysseus.priority_interval.Activator</odysseus.osgi.activator>
   </properties>
 
   <build>
@@ -34,6 +47,11 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
+    <configuration>
+      <instructions>
+        <Fragment-Host>odysseus-transformation-drools;bundle-version=1.0.0.SNAPSHOT</Fragment-Host>
+</instructions>
+    </configuration>
       </plugin>
       <plugin>
         <groupId>org.ops4j</groupId>
@@ -54,8 +72,9 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>odysseus-priority</artifactId>
+      <artifactId>odysseus-transformation-drools</artifactId>
       <version>${project.version}</version>
     </dependency>
+
   </dependencies>
 </project>

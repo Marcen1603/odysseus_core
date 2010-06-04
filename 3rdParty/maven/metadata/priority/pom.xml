@@ -10,14 +10,18 @@
   </parent>
   <artifactId>odysseus-metadata-priority-parent</artifactId>
   <packaging>pom</packaging>
-  <name>Odysseus :: metadata/priority</name>
+  <name>Odysseus :: metadata-priority</name>
 
   <modules>
 <module>odysseus-interval_latency_priority</module>
 <module>odysseus-priority_relational</module>
 <module>odysseus-rewrite-priority</module>
+<module>odysseus-rewrite-relational_priority</module>
 <module>odysseus-priority_interval</module>
 <module>odysseus-loadshedding</module>
 <module>odysseus-priority</module>
+<module>odysseus-transformation-priority</module>
+<module>odysseus-transformation-relational_priority</module>
+<module>odysseus-transformation-priority_interval</module>
   </modules>
 </project>

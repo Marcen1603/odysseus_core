@@ -13,14 +13,21 @@
   <name>Odysseus :: Rewrite Drools</name>
   <properties>
     <odysseus.osgi.import>
-      !org.drools.ruleflow.common.instance*,
+de.uniol.inf.is.drools,
+ de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.util,
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.rewrite.drools*;version=${project.version}
+      de.uniol.inf.is.odysseus.rewrite.drools*;version=${project.version},
+      rewrite*
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
+drools,
+odysseus-base
     </odysseus.osgi.bundles>
   </properties>
 

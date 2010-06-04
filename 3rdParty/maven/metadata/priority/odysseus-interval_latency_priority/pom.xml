@@ -21,6 +21,7 @@
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
+<odysseus.osgi.activator>de.uniol.inf.is.odysseus.interval_latency_priority.Activator</odysseus.osgi.activator>
   </properties>
 
   <build>

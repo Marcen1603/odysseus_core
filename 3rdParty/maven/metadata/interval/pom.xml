@@ -10,10 +10,10 @@
   </parent>
   <artifactId>odysseus-metadata-interval-parent</artifactId>
   <packaging>pom</packaging>
-  <name>Odysseus :: metadata/interval</name>
+  <name>Odysseus :: metadata-interval</name>
 
   <modules>
 <module>odysseus-intervalapproach</module>
-<module>odysseus-interval_latency</module>
+<module>odysseus-transformation-interval</module>
   </modules>
 </project>

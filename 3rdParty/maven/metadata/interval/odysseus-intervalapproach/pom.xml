@@ -13,14 +13,24 @@
   <name>Odysseus :: intervalapproach</name>
   <properties>
     <odysseus.osgi.import>
+de.uniol.inf.is.odysseus.base,
+de.uniol.inf.is.odysseus.base.predicate,
+de.uniol.inf.is.odysseus.logicaloperator.base,
+de.uniol.inf.is.odysseus.metadata.base,
+de.uniol.inf.is.odysseus.monitoring,
+de.uniol.inf.is.odysseus.physicaloperator.base,
+de.uniol.inf.is.odysseus.physicaloperator.base.aggregate,
+de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions,
+de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.intervalapproach*;version=${project.version}
+      de.uniol.inf.is.odysseus.intervalapproach*;version=${project.version},
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
+<odysseus.osgi.activator>de.uniol.inf.is.odysseus.intervalapproach.Activator</odysseus.osgi.activator>
   </properties>
 
   <build>

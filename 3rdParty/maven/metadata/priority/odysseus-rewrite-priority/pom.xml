@@ -13,6 +13,12 @@
   <name>Odysseus :: rewrite-priority</name>
   <properties>
     <odysseus.osgi.import>
+de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.predicate,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.priority,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
       sun.misc;resolution:=optional,
       *
     </odysseus.osgi.import>
@@ -33,6 +39,12 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
+    <configuration>
+      <instructions>
+        <Fragment-Host>odysseus-rewrite-drools;bundle-version=1.0.0.SNAPSHOT</Fragment-Host>
+<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>      
+</instructions>
+    </configuration>
       </plugin>
       <plugin>
         <groupId>org.ops4j</groupId>
