@@ -229,6 +229,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 				planChanged = true;
 				logger.debug("setPartialPlans clear");
 				this.parts.clear();
+				this.pausedParts.clear();
 
 				// Create for each partial plan an own scheduling strategy.
 				// These strategies are used for scheduling partial plans.
