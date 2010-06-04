@@ -26,4 +26,11 @@ abstract public class AbstractPeriodicalMonitoringData<T> extends AbstractPublis
 		ret.target = this.target;
 		return ret;
 	}
+	
+	public void cancelMonitoring() {
+		synchronized (this.subscribers) {
+			this.subscribers.clear();
+		}
+		MonitoringDataScheduler.getInstance().cancelPeriodicalMetadataItem(this);
+	}
 }

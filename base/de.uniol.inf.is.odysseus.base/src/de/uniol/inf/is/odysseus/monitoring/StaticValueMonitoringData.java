@@ -50,4 +50,8 @@ public class StaticValueMonitoringData<T> implements IMonitoringData<T> {
 		// Value does not change, so not reset necessary!	
 	}
 	
+	@Override
+	public void cancelMonitoring() {
+	}
+	
 }

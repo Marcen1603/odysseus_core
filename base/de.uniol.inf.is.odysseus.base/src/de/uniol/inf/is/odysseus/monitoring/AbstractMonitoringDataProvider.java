@@ -73,4 +73,11 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 		this.metaDataItem.remove(type);
 	}
 	
+	protected void stopMonitoring() {
+		for (IMonitoringData<?> m : metaDataItem.values()) {
+			m.cancelMonitoring();
+		}
+		metaDataItem.clear();
+	}
+	
 }

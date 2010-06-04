@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class AbstractPublisher<T> implements IPublisher<T> {
 
-	List<ISubscriber<T>> subscribers = new ArrayList<ISubscriber<T>>();
+	protected List<ISubscriber<T>> subscribers = new ArrayList<ISubscriber<T>>();
 
 	public void subscribe(ISubscriber<T> subscriber) {
 		synchronized (this.subscribers) {
@@ -20,8 +20,10 @@ public abstract class AbstractPublisher<T> implements IPublisher<T> {
 	}
 
 	public void notifySubscribers(T value) {
-		for (ISubscriber<T> subscriber : this.subscribers) {
-			subscriber.update(this, value);
+		synchronized (subscribers) {
+			for (ISubscriber<T> subscriber : this.subscribers) {
+				subscriber.update(this, value);
+			}	
 		}
 	}
 

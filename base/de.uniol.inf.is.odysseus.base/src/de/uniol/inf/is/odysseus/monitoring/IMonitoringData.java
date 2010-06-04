@@ -10,4 +10,5 @@ public interface IMonitoringData<T> extends IClone{
 	public T getValue();
 	public void reset();	
 	
+	public void cancelMonitoring();
 }

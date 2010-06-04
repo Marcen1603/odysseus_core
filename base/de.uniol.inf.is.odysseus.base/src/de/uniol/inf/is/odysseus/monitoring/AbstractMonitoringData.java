@@ -27,5 +27,8 @@ public abstract class AbstractMonitoringData<T>
 		ret.target = this.target;
 		return ret;
 	}
-	
+
+	@Override
+	public void cancelMonitoring() {
+	}
 }

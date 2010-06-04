@@ -101,6 +101,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			e.printStackTrace();
 		}
 		open.set(false);
+		stopMonitoring();
 	};
 
 	@Override
