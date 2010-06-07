@@ -24,7 +24,7 @@ public class TestPO<T> extends AbstractPipe<T, T>{
 	}
 
 	@Override
-	public AbstractPipe<T, T> clone() throws CloneNotSupportedException {
+	public AbstractPipe<T, T> clone() {
 		return new TestPO<T>(this);
 	}
 }
