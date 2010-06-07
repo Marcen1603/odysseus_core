@@ -18,7 +18,7 @@ public class PQLParserTest implements BundleActivator {
 		try{
 		PQLParser.addOperatorBuilder("muh", new MuhBuilder());
 		String queryString = "a = muh()\nb=muh()\nc=muh(a,b)\n" +
-				"OUT: muh({[x=1,[y=2]], z='a>b']}, c)";
+				"OUT: muh({ [x=1,[y=2]], z='a>b']}, c)";
 		PQLParser parser = new PQLParser();
 		List<ILogicalOperator> ops = parser.parse(queryString);
 		System.out.println(ops.get(0));

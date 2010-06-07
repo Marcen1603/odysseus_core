@@ -28,8 +28,12 @@ public class PQLParser implements IQueryParser {
 	public synchronized List<ILogicalOperator> parse(Reader reader)
 			throws QueryParseException {
 		try {
-			if (parser == null) {
-				parser = new PQLParserImpl(reader);
+			if (this.parser == null) {
+				try {
+					this.parser = new PQLParserImpl(reader);
+				} catch (Error e) {
+					PQLParserImpl.ReInit(reader);
+				}
 			} else {
 				PQLParserImpl.ReInit(reader);
 			}
@@ -39,13 +43,14 @@ public class PQLParser implements IQueryParser {
 			throw new QueryParseException(e);
 		}
 	}
-	
-	 public static void addOperatorBuilder(String identifier, IOperatorBuilder builder) {
-		 PQLParserImpl.addOperatorBuilder(identifier, builder);
-	 }
-	 
-	 public static void removeOperatorBuilder(String identifier) {
-		 PQLParserImpl.removeOperatorBuilder(identifier);
-	 }
+
+	public static void addOperatorBuilder(String identifier,
+			IOperatorBuilder builder) {
+		PQLParserImpl.addOperatorBuilder(identifier, builder);
+	}
+
+	public static void removeOperatorBuilder(String identifier) {
+		PQLParserImpl.removeOperatorBuilder(identifier);
+	}
 
 }
