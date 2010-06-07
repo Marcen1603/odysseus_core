@@ -45,8 +45,8 @@ public final class FixedSetPO<T extends IMetaAttributeContainer<? extends IClone
 	}
 
 	@Override
-	public FixedSetPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public FixedSetPO<T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 }

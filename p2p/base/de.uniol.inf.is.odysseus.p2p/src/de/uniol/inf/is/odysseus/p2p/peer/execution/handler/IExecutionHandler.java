@@ -10,7 +10,7 @@ public interface IExecutionHandler<P,F> extends Runnable {
 	public IExecutionListenerCallback getExecutionListenerCallback();
 	public Thread startHandler();
 	public String getName();
-	public IExecutionHandler<P,F> clone() throws CloneNotSupportedException;
+	public IExecutionHandler<P,F> clone() ;
 	public void setFunction(F function);
 	public F getFunction();
 	public void setPeer(P peer);

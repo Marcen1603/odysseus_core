@@ -14,6 +14,6 @@ public interface IAttributeResolver extends Serializable {
 
 	public SDFAttribute getAttribute(String name);
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated);
-	public IAttributeResolver clone() throws CloneNotSupportedException;
+	public IAttributeResolver clone() ;
 	
 }

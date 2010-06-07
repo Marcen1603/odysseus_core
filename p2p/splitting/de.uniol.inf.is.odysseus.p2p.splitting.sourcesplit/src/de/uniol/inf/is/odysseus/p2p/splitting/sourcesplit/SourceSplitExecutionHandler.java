@@ -20,7 +20,7 @@ public class SourceSplitExecutionHandler<P extends AbstractPeer,F extends Abstra
 	
 	
 	@Override
-	public IExecutionHandler<P, F> clone() throws CloneNotSupportedException {
+	public IExecutionHandler<P, F> clone()  {
 		IExecutionHandler<P, F> handler = new SourceSplitExecutionHandler<P, F>();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());

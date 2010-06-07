@@ -21,7 +21,7 @@ public class PriorityIntervalMergeFunction implements
 	}
 
 	@Override
-	public PriorityIntervalMergeFunction clone() throws CloneNotSupportedException {
+	public PriorityIntervalMergeFunction clone()  {
 		return new PriorityIntervalMergeFunction();
 	}
 	

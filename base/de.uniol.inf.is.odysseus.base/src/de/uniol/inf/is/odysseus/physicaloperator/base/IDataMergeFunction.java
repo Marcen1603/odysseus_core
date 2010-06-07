@@ -6,5 +6,5 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 public interface IDataMergeFunction<T> {
 	public T merge(T left, T right);
 	public void init();
-	public IDataMergeFunction<T> clone() throws CloneNotSupportedException;
+	public IDataMergeFunction<T> clone();
 }

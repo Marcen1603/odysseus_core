@@ -14,14 +14,25 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 
 	private List<IPredicate<? super T>> predicates;
 
-	public SplitPO(List<IPredicate<? super T>> predicates) throws CloneNotSupportedException {
+	public SplitPO(List<IPredicate<? super T>> predicates)  {
 		super();
+		initPredicates(predicates);
+	}
+
+	public SplitPO(SplitPO<T> splitPO) {
+		super();
+		initPredicates(splitPO.predicates);
+	}
+	
+	private void initPredicates(List<IPredicate<? super T>> predicates) {
 		this.predicates = new ArrayList<IPredicate<? super T>>(predicates.size());
 		for (IPredicate<? super T> p: predicates){
 			this.predicates.add(p.clone());
 		}
 	}
 	
+
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
@@ -72,8 +83,8 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 	}
 	
 	@Override
-	public SplitPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public SplitPO<T> clone() {
+		return new SplitPO(this);
 	}
 
 

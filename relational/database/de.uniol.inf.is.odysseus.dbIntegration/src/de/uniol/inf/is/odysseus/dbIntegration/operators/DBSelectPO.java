@@ -34,6 +34,13 @@ public class DBSelectPO extends AbstractPipe<Object, Object> {
 	}
 	
 	
+	public DBSelectPO(DBSelectPO dbSelectPO) {
+		super();
+		// TODO: Muss der Controller gecloned werden?
+		this.controller = dbSelectPO.controller; 
+		this.outputSchema = dbSelectPO.outputSchema.clone();
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -67,8 +74,8 @@ public class DBSelectPO extends AbstractPipe<Object, Object> {
 	}
 	
 	@Override
-	public DBSelectPO clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public DBSelectPO clone() {
+		return new DBSelectPO(this);
 	}
 
 	

@@ -163,8 +163,8 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 	}
 
 	@Override
-	public P2PSinkPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public P2PSinkPO<T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

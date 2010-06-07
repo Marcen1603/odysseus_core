@@ -31,7 +31,7 @@ public abstract class LeftMergeFunction<T extends IClone> implements  IDataMerge
 	
 	public abstract T createLeftFilledUp(T left);
 	
-	public LeftMergeFunction<T> clone() throws CloneNotSupportedException{
-		throw new CloneNotSupportedException();
+	public LeftMergeFunction<T> clone() {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 }

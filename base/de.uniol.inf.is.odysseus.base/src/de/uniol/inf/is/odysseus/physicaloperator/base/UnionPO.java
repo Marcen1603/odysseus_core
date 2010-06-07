@@ -10,13 +10,13 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 		this.transferFunction = transferFunction;
 	}
 
-	public UnionPO(UnionPO<R> unionPO) throws CloneNotSupportedException {
+	public UnionPO(UnionPO<R> unionPO){
 		this.transferFunction = unionPO.transferFunction.clone();
 		transferFunction.setSourcePo(this);
 	}
 
 	@Override
-	public UnionPO<R> clone() throws CloneNotSupportedException {
+	public UnionPO<R> clone(){
 		return new UnionPO<R>(this);
 	}
 

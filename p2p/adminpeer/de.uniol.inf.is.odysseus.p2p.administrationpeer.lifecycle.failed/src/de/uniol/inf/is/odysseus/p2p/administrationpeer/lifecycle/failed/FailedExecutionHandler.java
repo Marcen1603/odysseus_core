@@ -16,7 +16,7 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<Abstract
 	}
 	
 	@Override
-	public IExecutionHandler<AbstractPeer,F> clone() throws CloneNotSupportedException {
+	public IExecutionHandler<AbstractPeer,F> clone()  {
 		IExecutionHandler<AbstractPeer,F> handler = new FailedExecutionHandler<F>();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());

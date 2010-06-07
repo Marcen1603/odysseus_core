@@ -60,8 +60,8 @@ public class BatchProducer extends
 	}
 	
 	@Override
-	public BatchProducer clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public BatchProducer clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

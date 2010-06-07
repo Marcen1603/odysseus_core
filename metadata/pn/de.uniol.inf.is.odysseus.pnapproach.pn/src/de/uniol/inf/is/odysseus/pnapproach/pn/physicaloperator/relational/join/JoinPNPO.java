@@ -68,7 +68,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 	}
 
 	@SuppressWarnings("unchecked")
-	public JoinPNPO(JoinPNPO<M, T> joinPNPO) throws CloneNotSupportedException {
+	public JoinPNPO(JoinPNPO<M, T> joinPNPO) {
 		super(joinPNPO); 
 		
 		this.dataMerge = joinPNPO.dataMerge.clone();
@@ -481,7 +481,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>> e
 //	}
 	
 	@Override
-	public JoinPNPO<M, T> clone() throws CloneNotSupportedException {
+	public JoinPNPO<M, T> clone(){
 		return new JoinPNPO<M, T>(this);
 	}
 

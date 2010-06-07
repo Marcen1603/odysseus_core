@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
+import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
@@ -9,7 +10,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
  *
  * @param <T> Datentyp der Elemente, die Verarbeitet werden sollen.
  */
-public interface ITransferFunction<T extends IMetaAttributeContainer<?>> {
+public interface ITransferFunction<T extends IMetaAttributeContainer<?>> extends IClone {
 	
 	/**
 	 * Anhand eines neuen Elementes, welches typischerweise aktuell aus dem
@@ -34,6 +35,6 @@ public interface ITransferFunction<T extends IMetaAttributeContainer<?>> {
 
 	public int size();
 
-	public ITransferFunction<T> clone() throws CloneNotSupportedException;
+	public ITransferFunction<T> clone();
 	
 }

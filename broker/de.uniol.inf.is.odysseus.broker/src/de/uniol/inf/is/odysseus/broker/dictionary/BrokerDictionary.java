@@ -47,8 +47,8 @@ public class BrokerDictionary {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	public Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public Object clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 	/**

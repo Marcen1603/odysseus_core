@@ -47,7 +47,7 @@ public class PNMetaMergeFunction implements IMetadataMergeFunction<IPosNeg> {
 	}
 
 	@Override
-	public PNMetaMergeFunction clone() throws CloneNotSupportedException {
+	public PNMetaMergeFunction clone()  {
 		return new PNMetaMergeFunction(this);
 	}
 }

@@ -84,7 +84,7 @@ public class EclipseConsoleSink extends AbstractSink<Object> {
 	}
 
 	@Override
-	public EclipseConsoleSink clone() throws CloneNotSupportedException {
+	public EclipseConsoleSink clone()  {
 		EclipseConsoleSink newSink = new EclipseConsoleSink();
 		return newSink;
 	}

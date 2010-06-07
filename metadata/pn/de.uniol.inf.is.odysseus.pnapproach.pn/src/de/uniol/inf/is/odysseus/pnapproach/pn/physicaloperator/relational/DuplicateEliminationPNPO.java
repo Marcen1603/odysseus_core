@@ -120,8 +120,8 @@ public class DuplicateEliminationPNPO<T extends IMetaAttributeContainer<? extend
 	}
 	
 	@Override
-	public DuplicateEliminationPNPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public DuplicateEliminationPNPO<T> clone(){
+		throw new RuntimeException();
 	}
 
 }

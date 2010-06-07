@@ -79,8 +79,8 @@ class BenchmarkSink<M extends ILatency> extends
 	}
 	
 	@Override
-	public BenchmarkSink<M> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public BenchmarkSink<M> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

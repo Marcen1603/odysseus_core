@@ -44,7 +44,7 @@ public class MetricMeasureAO extends AbstractLogicalOperator{
 	}			
 		
 	@Override
-	public MetricMeasureAO clone() throws CloneNotSupportedException {	
+	public MetricMeasureAO clone() {	
 		return new MetricMeasureAO(this);
 	}
 }

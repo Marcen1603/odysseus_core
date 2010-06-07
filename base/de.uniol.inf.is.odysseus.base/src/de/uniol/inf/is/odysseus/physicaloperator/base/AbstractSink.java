@@ -369,8 +369,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public AbstractSink<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
-	}
+	abstract public AbstractSink<T> clone();
 
 }

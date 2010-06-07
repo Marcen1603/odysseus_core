@@ -71,7 +71,7 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 	}
 	
 	@Override
-	public ObjectTrackingSelectPO<T, M> clone() throws CloneNotSupportedException{
+	public ObjectTrackingSelectPO<T, M> clone() {
 		return new ObjectTrackingSelectPO<T, M>(this);
 	}
 	

@@ -126,7 +126,7 @@ public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPri
 	}
 
 	@Override
-	public PostPriorisationPO<T> clone() throws CloneNotSupportedException {
+	public PostPriorisationPO<T> clone()  {
 		return new PostPriorisationPO<T>(this);
 	}
 

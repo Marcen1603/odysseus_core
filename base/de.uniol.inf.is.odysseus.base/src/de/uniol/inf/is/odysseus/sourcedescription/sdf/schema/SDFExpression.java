@@ -118,11 +118,7 @@ public class SDFExpression implements Serializable {
 		this.variables = new HashMap<String, Variable>();
 		this.attributes = new ArrayList<SDFAttribute>();
 		this.attribute = null;
-		try {
-			this.attributeResolver = attributeResolver.clone();
-		} catch (CloneNotSupportedException e1) {
-			throw new RuntimeException(e1);
-		}
+		this.attributeResolver = attributeResolver.clone();
 
 		myParser = new JEP();
 		myParser.addStandardConstants();
@@ -159,7 +155,8 @@ public class SDFExpression implements Serializable {
 					|| group.toUpperCase().equals("NOT")) {
 				continue;
 			}
-			//make sure it is not variable introduced for aggregate functions (__V<number>)
+			// make sure it is not variable introduced for aggregate functions
+			// (__V<number>)
 			if (group.startsWith("V")) {
 				int vstart = m.start(1);
 				if (vstart > 1) {
@@ -220,9 +217,9 @@ public class SDFExpression implements Serializable {
 		} else {
 			init(expression.attribute);
 		}
-		if (expression.attributePositions != null){
+		if (expression.attributePositions != null) {
 			this.attributePositions = new int[expression.attributePositions.length];
-			for(int i = 0; i<expression.attributePositions.length; i++){
+			for (int i = 0; i < expression.attributePositions.length; i++) {
 				this.attributePositions[i] = expression.attributePositions[i];
 			}
 		}
@@ -333,7 +330,7 @@ public class SDFExpression implements Serializable {
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 19;

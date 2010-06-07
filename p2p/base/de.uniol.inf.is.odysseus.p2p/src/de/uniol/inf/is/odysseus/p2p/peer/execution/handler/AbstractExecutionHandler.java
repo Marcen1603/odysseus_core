@@ -7,7 +7,7 @@ public abstract class AbstractExecutionHandler<P, F> implements IExecutionHandle
 {
 	
 	@Override
-	public abstract IExecutionHandler<P,F> clone() throws CloneNotSupportedException;
+	public abstract IExecutionHandler<P,F> clone() ;
 
 	@Override
 	public void setProvidedLifecycle(Lifecycle lifecycle) {

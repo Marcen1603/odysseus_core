@@ -83,8 +83,8 @@ public class LinearRoadSource extends
 	}
 	
 	@Override
-	public LinearRoadSource clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public LinearRoadSource clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

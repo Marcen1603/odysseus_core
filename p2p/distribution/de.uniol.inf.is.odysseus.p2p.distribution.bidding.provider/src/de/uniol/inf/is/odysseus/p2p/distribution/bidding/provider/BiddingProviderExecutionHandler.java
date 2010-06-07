@@ -36,7 +36,7 @@ public class BiddingProviderExecutionHandler extends AbstractExecutionHandler<Ab
 
 	@Override
 	public synchronized IExecutionHandler clone()
-			throws CloneNotSupportedException {
+			 {
 		IExecutionHandler handler = new BiddingProviderExecutionHandler(getProvidedLifecycle(), getFunction(), getPeer());
 		handler.setExecutionListenerCallback(getExecutionListenerCallback());
 		return handler;

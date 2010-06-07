@@ -123,7 +123,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	}
 
 	@Override
-	public BufferedPipe<T> clone() throws CloneNotSupportedException {
+	public BufferedPipe<T> clone() {
 		return new BufferedPipe<T>(this);
 	}		
 	

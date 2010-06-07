@@ -124,6 +124,10 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		}
 	}
 
+	public CepOperator(CepOperator<R, W> cepOperator) {
+		throw new RuntimeException(this.getClass()+" Copy Constructor not yet implemented");
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -603,8 +607,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	}
 
 	@Override
-	public CepOperator<R, W> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public CepOperator<R, W> clone() {
+		return new CepOperator(this);
 	}
 
 }

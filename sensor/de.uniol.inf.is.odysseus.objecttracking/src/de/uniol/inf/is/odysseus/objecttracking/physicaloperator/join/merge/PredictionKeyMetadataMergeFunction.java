@@ -25,7 +25,7 @@ public class PredictionKeyMetadataMergeFunction<M extends IPredictionFunctionKey
 		super();
 	}
 	
-	public PredictionKeyMetadataMergeFunction<M> clone() throws CloneNotSupportedException{
+	public PredictionKeyMetadataMergeFunction<M> clone() {
 		return new PredictionKeyMetadataMergeFunction<M>(this);
 	}
 

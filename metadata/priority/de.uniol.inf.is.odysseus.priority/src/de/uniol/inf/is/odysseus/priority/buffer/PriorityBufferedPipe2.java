@@ -147,8 +147,8 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 	}
 
 	@Override
-	public PriorityBufferedPipe2<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public PriorityBufferedPipe2<T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

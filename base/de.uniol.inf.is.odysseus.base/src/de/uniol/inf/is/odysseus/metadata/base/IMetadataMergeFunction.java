@@ -6,5 +6,5 @@ public interface IMetadataMergeFunction<T> {
 	
 	public void init();
 
-	public IMetadataMergeFunction<T> clone() throws CloneNotSupportedException;
+	public IMetadataMergeFunction<T> clone();
 }

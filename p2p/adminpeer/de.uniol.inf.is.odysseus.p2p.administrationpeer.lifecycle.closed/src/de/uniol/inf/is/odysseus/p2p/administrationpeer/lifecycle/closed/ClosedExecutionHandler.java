@@ -12,7 +12,7 @@ public class ClosedExecutionHandler<F> extends AbstractExecutionHandler<Abstract
 		setProvidedLifecycle(Lifecycle.TERMINATED);
 	}
 	
-	public IExecutionHandler<AbstractPeer,F> clone() throws CloneNotSupportedException {
+	public IExecutionHandler<AbstractPeer,F> clone()  {
 		IExecutionHandler<AbstractPeer,F> handler = new ClosedExecutionHandler<F>();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());

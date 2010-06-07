@@ -317,7 +317,7 @@ public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepAr
 		this.removePredicate.init();
 	}
 	
-	public SweepArea<T> clone() throws CloneNotSupportedException{
+	public SweepArea<T> clone() {
 		return new SweepArea<T>(this);
 	}
 

@@ -8,17 +8,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface ILogicalOperator extends IOwnedOperator, 
-	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>{
+	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone{
 
-	public ILogicalOperator clone() throws CloneNotSupportedException;
+	public ILogicalOperator clone();
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced);
 	public SDFAttributeList getOutputSchema();
-	public SDFAttributeList getInputSchema(int pos);
-	
-//	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
-//			int sourceOutPort, SDFAttributeList inputSchema);
-//	public void subscribeSink(ILogicalOperator sink, int sinkInPort, 
-//			int sourceOutPort, SDFAttributeList inputSchema);	
+	public SDFAttributeList getInputSchema(int pos);	
 	
 	@SuppressWarnings("unchecked")
 	public IPredicate getPredicate();

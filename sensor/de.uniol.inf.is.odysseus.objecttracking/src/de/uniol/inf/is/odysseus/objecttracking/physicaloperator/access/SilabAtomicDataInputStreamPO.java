@@ -173,8 +173,8 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	}
 	
 	@Override
-	public SilabAtomicDataInputStreamPO<M> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public SilabAtomicDataInputStreamPO<M> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 }

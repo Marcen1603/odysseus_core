@@ -22,6 +22,12 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 		this.port = port;
 	}
 
+	public InputStreamAccessPO(InputStreamAccessPO<In, Out> inputStreamAccessPO) {
+		super(inputStreamAccessPO.transformation);
+		this.host = inputStreamAccessPO.host;
+		this.port = inputStreamAccessPO.port;
+	}
+
 	@Override
 	final protected void process_open() throws OpenFailedException {
 		done = false;
@@ -74,8 +80,8 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 	}
 
 	@Override
-	public InputStreamAccessPO<In, Out> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public InputStreamAccessPO<In, Out> clone(){
+		return new InputStreamAccessPO<In, Out>(this);
 	}
 
 

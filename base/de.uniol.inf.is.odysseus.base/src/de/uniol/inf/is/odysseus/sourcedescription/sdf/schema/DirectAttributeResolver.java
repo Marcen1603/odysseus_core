@@ -45,7 +45,7 @@ public class DirectAttributeResolver implements IAttributeResolver {
 		return found;
 	}
 
-	public  DirectAttributeResolver clone() throws CloneNotSupportedException {
+	public  DirectAttributeResolver clone()  {
 		return new DirectAttributeResolver(this);
 	}
 

@@ -22,7 +22,7 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 	}
 	
 	@Override
-	public IExecutionHandler<AbstractPeer, IAdvancedExecutor> clone() throws CloneNotSupportedException {
+	public IExecutionHandler<AbstractPeer, IAdvancedExecutor> clone()  {
 		IExecutionHandler<AbstractPeer, IAdvancedExecutor> handler = new RunningExecutionHandler();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());

@@ -37,8 +37,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 
 		@Override
-		public AbstractSink<R> clone() throws CloneNotSupportedException {
-			throw new CloneNotSupportedException();
+		public AbstractSink<R> clone() {
+			// TODO: Hier was anderes möglich??
+			throw new RuntimeException("Clone Not Supported");
 		}
 
 	};
@@ -89,8 +90,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// etc.)
 	// MUST override this method (else there will be a ClassCastException)
 	@SuppressWarnings("unchecked")
-	protected R cloneIfNessessary(R object, boolean exclusive, int port)
-			throws CloneNotSupportedException {
+	protected R cloneIfNessessary(R object, boolean exclusive, int port) {
 		// boolean exclusive??
 		if (getOutputMode() == OutputMode.MODIFIED_INPUT) {
 			object = (R) ((IClone) object).clone();
@@ -125,12 +125,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	private void delegatedProcess(R object, int port, boolean exclusive) {
-		try {
-			process_next(cloneIfNessessary(object, exclusive, port), port);
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(
-					"Illegal Objekttype for processing used. Must support clone!");
-		}
+		process_next(cloneIfNessessary(object, exclusive, port), port);
 	}
 
 	// private void setInputExclusive(boolean exclusive, int port) {
@@ -196,7 +191,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	public void subscribeToSource(ISource<? extends R> source, int sinkInPort,
 			int sourceOutPort, SDFAttributeList schema) {
-		// TODO vernuenftig synchronosieren
 		this.delegateSink.subscribeToSource(source, sinkInPort, sourceOutPort,
 				schema);
 	}
@@ -272,8 +266,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		this.delegateSink.unSubscribeFromAll(listener);
 	}
 
-	public AbstractPipe<R, W> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
-	}
-
+	@Override
+	abstract public AbstractPipe<R, W> clone();
 }

@@ -126,8 +126,8 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 	}
 	
 	@Override
-	public DuplicateEliminationTIPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public DuplicateEliminationTIPO<T> clone() {
+		return new DuplicateEliminationTIPO(this);
 	}
 
 }

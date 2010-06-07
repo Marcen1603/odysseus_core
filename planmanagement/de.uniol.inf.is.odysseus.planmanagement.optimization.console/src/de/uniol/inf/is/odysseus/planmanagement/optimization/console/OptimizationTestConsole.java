@@ -225,7 +225,7 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.MIG;
 		try {
-			eval(eq, 120, 5, "" + System.currentTimeMillis());
+			eval(eq, 120, 5, "" + System.currentTimeMillis()+eq);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -239,7 +239,7 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		for (EvalQuery eq : EvalQuery.values()) {
 			try {
-				eval(eq, 120, 5, "" + System.currentTimeMillis());
+				eval(eq, 120, 5, "" + System.currentTimeMillis()+eq);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -139,8 +139,8 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	}
 	
 	@Override
-	public P2PInputStreamAccessPO<In, Out> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public P2PInputStreamAccessPO<In, Out> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

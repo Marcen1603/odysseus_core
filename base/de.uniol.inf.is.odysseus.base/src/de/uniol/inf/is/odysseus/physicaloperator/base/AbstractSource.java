@@ -420,9 +420,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return Collections.unmodifiableList(this.owners);
 	}
 
-	public AbstractSource<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
-	}
+	abstract public AbstractSource<T> clone();
 	
 	public boolean isBlocked() {
 		return blocked.get();

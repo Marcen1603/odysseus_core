@@ -37,7 +37,7 @@ public class MetricMeasurePO<T extends IMetaAttribute> extends AbstractPipe<Rela
 	}
 
 	@Override
-	public MetricMeasurePO<T> clone() throws CloneNotSupportedException {
+	public MetricMeasurePO<T> clone(){
 		return new MetricMeasurePO<T>(this);
 	}
 

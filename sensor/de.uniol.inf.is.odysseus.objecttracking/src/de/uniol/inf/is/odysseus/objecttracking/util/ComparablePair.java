@@ -15,7 +15,7 @@ public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Com
 		this.priority = 0;
 	}
 	
-	private ComparablePair(ComparablePair<T1, T2> original) throws CloneNotSupportedException{
+	private ComparablePair(ComparablePair<T1, T2> original) {
 		this.key = (T1)original.key.clone();
 		this.value = (T2)original.value.clone();
 	}
@@ -32,7 +32,7 @@ public class ComparablePair<T1 extends IClone, T2 extends IClone> implements Com
 		return 0;
 	}
 	
-	public ComparablePair<T1, T2> clone() throws CloneNotSupportedException{
+	public ComparablePair<T1, T2> clone() {
 		return new ComparablePair<T1, T2>(this);
 	}
 	

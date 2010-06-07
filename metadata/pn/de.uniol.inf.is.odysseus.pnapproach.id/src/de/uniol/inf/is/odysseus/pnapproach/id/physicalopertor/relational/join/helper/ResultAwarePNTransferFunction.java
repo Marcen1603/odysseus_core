@@ -24,7 +24,7 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 	}
 	
 	public ResultAwarePNTransferFunction(
-			ResultAwarePNTransferFunction<M, T> resultAwarePNTransferFunction) throws CloneNotSupportedException {
+			ResultAwarePNTransferFunction<M, T> resultAwarePNTransferFunction)  {
 		minTs = new PointInTime[2];
 		minTs[0] = resultAwarePNTransferFunction.minTs[0].clone();
 		minTs[1] = resultAwarePNTransferFunction.minTs[1].clone();
@@ -96,7 +96,7 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 		return sweepArea.size();
 	}
 	
-	public ResultAwarePNTransferFunction<M,T> clone() throws CloneNotSupportedException{
+	public ResultAwarePNTransferFunction<M,T> clone() {
 		return new ResultAwarePNTransferFunction<M,T>(this);
 	}
 }

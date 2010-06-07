@@ -49,8 +49,8 @@ public class SlidingElementWindowPNPO<T extends IMetaAttributeContainer<IPosNeg>
 	}
 
 	@Override
-	public SlidingElementWindowPNPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public SlidingElementWindowPNPO<T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 	@Override

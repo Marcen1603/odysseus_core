@@ -48,7 +48,7 @@ public class CepAO<T> extends AbstractLogicalOperator implements OutputSchemaSet
 	}
 
 	@Override
-	public AbstractLogicalOperator clone() throws CloneNotSupportedException {
+	public AbstractLogicalOperator clone() {
 		return new CepAO<T>(this);
 	}
 

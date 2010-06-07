@@ -60,28 +60,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.logicaloperator.base.ILogicalOperator#clone()
 	 */
 	@Override
-	public AbstractLogicalOperator clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
-		// AbstractLogicalOperator clone;
-		// try {
-		// clone = (AbstractLogicalOperator) super.clone();
-		// clone.subscribedToSource = new HashMap<Integer,
-		// LogicalSubscription>(this.subscribedToSource);
-		// clone.subscriptions = new
-		// Vector<LogicalSubscription>(this.subscriptions);
-		// clone.physSubscriptionTo = new HashMap<Integer,
-		// Subscription<ISource<?>>>(
-		// this.physSubscriptionTo);
-		// clone.name = this.name;
-		// if (this.predicate != null)
-		// clone.predicate = this.predicate.clone();
-		//
-		// // TODO ueberall kopien von anlegen
-		// return clone;
-		// } catch (CloneNotSupportedException e) {
-		// return null;
-		// }
-	}
+	abstract public AbstractLogicalOperator clone();
 
 	@Override
 	public void updateAfterClone(
@@ -90,7 +69,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			predicate.updateAfterClone(replaced);
 		}
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -21,7 +21,7 @@ public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer,
 	}
 	
 	@Override
-	public IExecutionHandler<AbstractPeer, ICompiler> clone() throws CloneNotSupportedException {
+	public IExecutionHandler<AbstractPeer, ICompiler> clone()  {
 		IExecutionHandler<AbstractPeer, ICompiler> handler = new OpenExecutionHandler();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());

@@ -30,7 +30,7 @@ public class BrokerMetadataMergeFunction implements IMetadataMergeFunction<ITime
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public BrokerMetadataMergeFunction clone() throws CloneNotSupportedException{
+	public BrokerMetadataMergeFunction clone() {
 		return new BrokerMetadataMergeFunction();
 	}
 

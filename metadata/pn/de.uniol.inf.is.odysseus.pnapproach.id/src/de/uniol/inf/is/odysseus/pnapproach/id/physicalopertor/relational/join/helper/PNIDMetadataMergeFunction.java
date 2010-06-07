@@ -89,7 +89,7 @@ public class PNIDMetadataMergeFunction implements IPNMetadataMergeFunction<IPosN
 	public void init(){
 	}
 	
-	public PNIDMetadataMergeFunction clone() throws CloneNotSupportedException{
+	public PNIDMetadataMergeFunction clone() {
 		return new PNIDMetadataMergeFunction(this);
 	}
 

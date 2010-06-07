@@ -24,7 +24,7 @@ public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITim
 		minTs = new ITimeInterval[2];
 	}
 
-	public TITransferFunction(TITransferFunction<T> tiTransferFunction) throws CloneNotSupportedException {
+	public TITransferFunction(TITransferFunction<T> tiTransferFunction)  {
 		minTs = new ITimeInterval[2];
 		minTs[0] = tiTransferFunction.minTs[0].clone();
 		minTs[1] = tiTransferFunction.minTs[1].clone();
@@ -88,7 +88,7 @@ public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITim
 		return out.size();
 	}
 	
-	public TITransferFunction<T> clone() throws CloneNotSupportedException{
+	public TITransferFunction<T> clone() {
 		return new TITransferFunction<T>(this);
 	}
 

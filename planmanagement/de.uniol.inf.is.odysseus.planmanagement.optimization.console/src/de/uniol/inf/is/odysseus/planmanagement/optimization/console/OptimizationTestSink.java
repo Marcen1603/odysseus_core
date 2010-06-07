@@ -53,7 +53,7 @@ public class OptimizationTestSink extends AbstractSink<Object> {
 	}
 
 	@Override
-	public OptimizationTestSink clone() throws CloneNotSupportedException {
+	public OptimizationTestSink clone()  {
 		return new OptimizationTestSink(this);
 	}
 	

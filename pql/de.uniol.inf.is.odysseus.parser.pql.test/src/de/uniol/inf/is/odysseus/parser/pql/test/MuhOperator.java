@@ -10,6 +10,14 @@ public class MuhOperator extends AbstractLogicalOperator {
 	
 	SDFAttributeList outputSchema = null;
 	
+	public MuhOperator() {
+		
+	}
+	
+	public MuhOperator(MuhOperator muhOperator) {
+		this.outputSchema = muhOperator.outputSchema.clone();
+	}
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		// The Sum of all InputSchema
@@ -30,6 +38,11 @@ public class MuhOperator extends AbstractLogicalOperator {
 			set = set && (getPhysSubscriptionTo(i) != null);
 		}
 		return set;
+	}
+	
+	@Override
+	public MuhOperator clone() {
+		return new MuhOperator(this);
 	}
 	
 }

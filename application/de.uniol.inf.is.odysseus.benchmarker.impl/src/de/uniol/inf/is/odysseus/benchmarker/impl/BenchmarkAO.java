@@ -12,8 +12,10 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	private int processingTimeInns;
 	private double selectivity;
 	
-	public BenchmarkAO() {
+	public BenchmarkAO(BenchmarkAO benchmarkAO) {
 		super();
+		this.processingTimeInns = benchmarkAO.processingTimeInns;
+		this.selectivity = benchmarkAO.selectivity;
 	}
 	
 	public BenchmarkAO(int processingTimeInns, double selectivity) {
@@ -49,5 +51,10 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 			set = set && (getPhysSubscriptionTo(i) != null);
 		}
 		return set;
+	}
+	
+	@Override
+	public BenchmarkAO clone() {
+		return new BenchmarkAO(this);
 	}
 }

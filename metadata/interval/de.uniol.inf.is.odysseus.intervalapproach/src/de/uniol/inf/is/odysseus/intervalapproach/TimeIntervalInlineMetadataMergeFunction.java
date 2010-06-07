@@ -22,7 +22,7 @@ public class TimeIntervalInlineMetadataMergeFunction implements
 	}
 
 	@Override
-	public TimeIntervalInlineMetadataMergeFunction clone() throws CloneNotSupportedException {
+	public TimeIntervalInlineMetadataMergeFunction clone()  {
 		return new TimeIntervalInlineMetadataMergeFunction(this);
 	}
 	

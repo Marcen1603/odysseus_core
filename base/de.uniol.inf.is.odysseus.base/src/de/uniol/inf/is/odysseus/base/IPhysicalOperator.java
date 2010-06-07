@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Marco Grawunder, Jonas Jacobi
  */
 public interface IPhysicalOperator extends IOwnedOperator,
-		IMonitoringDataProvider {
+		IMonitoringDataProvider, IClone {
 
 	boolean isSource();
 
@@ -40,5 +40,5 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public SDFAttributeList getOutputSchema();
 	public void setOutputSchema(SDFAttributeList outputSchema);
 	
-	public IPhysicalOperator clone() throws CloneNotSupportedException;
+	public IPhysicalOperator clone();
 }

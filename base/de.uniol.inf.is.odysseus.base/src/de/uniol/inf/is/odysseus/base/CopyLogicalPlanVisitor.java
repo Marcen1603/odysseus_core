@@ -74,7 +74,6 @@ public class CopyLogicalPlanVisitor	implements
 		ILogicalOperator op = (ILogicalOperator) node;
 		this.logger.debug("copy " + op.getName());
 		ILogicalOperator op2 = null;
-		try {
 			op2 = op.clone();
 			op2.clearPhysicalSubscriptions();
 			if (this.root == null) {
@@ -82,11 +81,6 @@ public class CopyLogicalPlanVisitor	implements
 			}
 			replaced.put(op, op2);
 			this.last.push(op2);
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-			this.errorsOccured = true;
-			this.last.push(null);
-		}
 		this.lastOld.push(op);
 	}
 

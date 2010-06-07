@@ -5,6 +5,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
 public class LatencyCalculationPipe<T extends IMetaAttributeContainer<? extends ILatency>> extends AbstractPipe<T, T>{
 
+	public LatencyCalculationPipe(){}
+	
+	public LatencyCalculationPipe(
+			LatencyCalculationPipe<T> latencyCalculationPipe) {	
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -18,8 +24,8 @@ public class LatencyCalculationPipe<T extends IMetaAttributeContainer<? extends 
 	}
 	
 	@Override
-	public LatencyCalculationPipe<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public LatencyCalculationPipe<T> clone(){
+		return new LatencyCalculationPipe<T>(this);
 	}
 
 

@@ -318,8 +318,8 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 	}
 	
 	@Override
-	public ObjectTrackingJoinPO<K, T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public ObjectTrackingJoinPO<K, T> clone(){
+		throw new RuntimeException();
 	}
 
 }

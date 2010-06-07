@@ -319,8 +319,8 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //	}
 	
 	@Override
-	public PredictionJoinTIPO<K,T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public PredictionJoinTIPO<K,T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 }

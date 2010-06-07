@@ -299,10 +299,10 @@ public class StateMachine<E> {
 		}
 	}
 	
-	public StateMachine<E> clone() throws CloneNotSupportedException {
+	public StateMachine<E> clone()  {
 		// Eine StateMachine zu clonen macht keinen Sinn! Probleme sind die Transitionen die
 		// wieder States haben und dann nicht zu den hier geclonten passen würden.
-		throw new CloneNotSupportedException(); 
+		throw new RuntimeException("Clone Not implemented yet"); 
 	}
 
 }

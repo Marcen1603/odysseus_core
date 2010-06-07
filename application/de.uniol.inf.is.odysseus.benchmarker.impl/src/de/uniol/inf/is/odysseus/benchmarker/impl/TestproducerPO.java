@@ -56,8 +56,8 @@ public class TestproducerPO extends
 	}
 	
 	@Override
-	public TestproducerPO clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public TestproducerPO clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 	

@@ -10,19 +10,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 
 public class SelectAOTransformator implements IPOTransformator<SelectAO> {
 	@Override
-	public boolean canExecute(SelectAO logicalOperator, TransformationConfiguration config) {
+	public boolean canExecute(SelectAO logicalOperator,
+			TransformationConfiguration config) {
 		return true;
 	}
 
 	@Override
-	public TransformedPO transform(SelectAO selectAO, TransformationConfiguration config,
-			ITransformation transformation) {
+	public TransformedPO transform(SelectAO selectAO,
+			TransformationConfiguration config, ITransformation transformation) {
 		SelectPO<?> selectPO = null;
-		try {
-			selectPO = new SelectPO(selectAO.getPredicate());
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Clone not Supported!");
-		}
+		selectPO = new SelectPO(selectAO.getPredicate());
 		selectPO.setOutputSchema(selectAO.getOutputSchema());
 		return new TransformedPO(selectPO);
 	}
@@ -34,7 +31,8 @@ public class SelectAOTransformator implements IPOTransformator<SelectAO> {
 
 	@Override
 	public TempTransformationOperator createTempOperator() {
-		TempTransformationOperator to = new TempTransformationOperator("SelectPO");
+		TempTransformationOperator to = new TempTransformationOperator(
+				"SelectPO");
 		return to;
 	}
 }

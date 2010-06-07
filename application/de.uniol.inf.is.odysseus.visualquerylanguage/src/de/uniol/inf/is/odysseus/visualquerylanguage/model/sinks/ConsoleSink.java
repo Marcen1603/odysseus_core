@@ -11,8 +11,8 @@ public class ConsoleSink extends AbstractSink{
 	}
 	
 	@Override
-	public ConsoleSink clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public ConsoleSink clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 }

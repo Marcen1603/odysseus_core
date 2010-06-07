@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.p2p.splitting.base.AbstractSplittingStrategy;
 public class NoSplittingExecutionHandler extends AbstractExecutionHandler<AbstractPeer, AbstractSplittingStrategy>{
 
 	@Override
-	public IExecutionHandler<AbstractPeer, AbstractSplittingStrategy> clone() throws CloneNotSupportedException {
+	public IExecutionHandler<AbstractPeer, AbstractSplittingStrategy> clone()  {
 		IExecutionHandler<AbstractPeer, AbstractSplittingStrategy> handler = new NoSplittingExecutionHandler();
 		handler.setFunction(getFunction());
 		handler.setPeer(getPeer());

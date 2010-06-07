@@ -22,6 +22,10 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 		this.metadataFactory = mFac;
 	}
 
+	public MetadataUpdatePO(MetadataUpdatePO<M, T> metadataUpdatePO) {
+		this.metadataFactory = metadataUpdatePO.metadataFactory;
+	}
+
 	@Override
 	protected void process_next(T object, int port) {
 		this.metadataFactory.updateMetadata(object);
@@ -29,8 +33,8 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 	}
 	
 	@Override
-	public MetadataUpdatePO<M, T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public MetadataUpdatePO<M, T> clone() {
+		return new MetadataUpdatePO(this);
 	}
 	
 	public String toString(){

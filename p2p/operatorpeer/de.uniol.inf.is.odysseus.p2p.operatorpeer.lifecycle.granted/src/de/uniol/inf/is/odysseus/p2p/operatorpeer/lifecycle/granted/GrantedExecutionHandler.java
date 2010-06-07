@@ -22,7 +22,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<AbstractPe
 	}
 
 	@SuppressWarnings("unchecked")
-	public IExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> clone() throws CloneNotSupportedException {
+	public IExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> clone()  {
 		IExecutionHandler<AbstractPeer, MessageSender<PeerGroup,Message,PipeAdvertisement>> handler = new GrantedExecutionHandler();
 		handler.setFunction((MessageSender<PeerGroup, Message, PipeAdvertisement>) getPeer().getMessageSender());
 		handler.setPeer(getPeer());

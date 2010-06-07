@@ -22,7 +22,7 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 		this.counter = 0;
 	}
 
-	public PNTransferFunction(PNTransferFunction<T> pnTransferFunction) throws CloneNotSupportedException {
+	public PNTransferFunction(PNTransferFunction<T> pnTransferFunction) {
 		minTs = new PointInTime[2];
 		this.minTs[0] = pnTransferFunction.minTs[0].clone();
 		this.minTs[1] = pnTransferFunction.minTs[1].clone();
@@ -79,7 +79,7 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 		return sweepArea.size();
 	}
 	
-	public PNTransferFunction<T> clone() throws CloneNotSupportedException{
+	public PNTransferFunction<T> clone() {
 		return new PNTransferFunction<T>(this);
 	}
 

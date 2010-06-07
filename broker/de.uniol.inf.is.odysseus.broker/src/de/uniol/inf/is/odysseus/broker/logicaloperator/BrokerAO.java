@@ -170,7 +170,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 	 * @see de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator#clone()
 	 */
 	@Override 
-	public BrokerAO clone() throws CloneNotSupportedException {	
+	public BrokerAO clone() {	
 		BrokerAO clone = new BrokerAO(this);		
 		return clone;
 	}	

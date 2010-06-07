@@ -100,7 +100,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	public StreamGroupingWithAggregationPO(
-			StreamGroupingWithAggregationPO<Q, R> agg) throws CloneNotSupportedException {
+			StreamGroupingWithAggregationPO<Q, R> agg){
 		super(agg);
 		g = agg.g.clone();
 		q = agg.q.clone();
@@ -261,7 +261,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	public StreamGroupingWithAggregationPO<Q, R> clone() throws CloneNotSupportedException {
+	public StreamGroupingWithAggregationPO<Q, R> clone(){
 		return new StreamGroupingWithAggregationPO<Q, R>(this);
 	}
 	

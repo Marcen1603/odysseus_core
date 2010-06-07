@@ -26,6 +26,11 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractP
 		this.selectivity = selectivity;
 	};
 
+	public BenchmarkPO(BenchmarkPO<R> benchmarkPO) {
+		this.processingTime = benchmarkPO.processingTime;
+		this.selectivity = benchmarkPO.selectivity;
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	protected final void process_next(R object, int port) {
@@ -85,8 +90,8 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractP
 	}
 
 	@Override
-	public BenchmarkPO<R> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public BenchmarkPO<R> clone(){
+		return new BenchmarkPO(this);
 	}
 
 }

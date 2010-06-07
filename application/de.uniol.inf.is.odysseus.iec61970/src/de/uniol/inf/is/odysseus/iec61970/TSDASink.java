@@ -53,8 +53,8 @@ public class TSDASink<T extends IClone>  extends AbstractSink<T> {
 	}
 	
 	@Override
-	public TSDASink<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public TSDASink<T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

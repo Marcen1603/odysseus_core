@@ -20,7 +20,7 @@ public class P2PSinkAO extends P2PAO{
 	}
 	
 	@Override
-	public AbstractLogicalOperator clone() throws CloneNotSupportedException {
+	public AbstractLogicalOperator clone() {
 		return new P2PSinkAO(this.adv);
 	}
 

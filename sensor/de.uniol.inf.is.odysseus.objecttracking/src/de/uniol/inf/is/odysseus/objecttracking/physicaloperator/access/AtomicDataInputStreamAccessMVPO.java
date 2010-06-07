@@ -192,8 +192,8 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	// }
 	
 	@Override
-	public AtomicDataInputStreamAccessMVPO<M> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public AtomicDataInputStreamAccessMVPO<M> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

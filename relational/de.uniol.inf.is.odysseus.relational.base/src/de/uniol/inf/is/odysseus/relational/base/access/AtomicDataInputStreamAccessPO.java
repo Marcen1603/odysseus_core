@@ -181,8 +181,8 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	// }
 
 	@Override
-	public AtomicDataInputStreamAccessPO<M> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public AtomicDataInputStreamAccessPO<M> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 }

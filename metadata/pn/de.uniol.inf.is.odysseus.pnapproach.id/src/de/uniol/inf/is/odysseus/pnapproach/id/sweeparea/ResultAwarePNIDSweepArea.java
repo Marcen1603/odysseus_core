@@ -119,7 +119,7 @@ public class ResultAwarePNIDSweepArea<T extends IMetaAttributeContainer<? extend
 	}
 	
 	@Override
-	public ResultAwarePNIDSweepArea<T> clone() throws CloneNotSupportedException {
+	public ResultAwarePNIDSweepArea<T> clone()  {
 		return new ResultAwarePNIDSweepArea<T>(this);
 	}
 }

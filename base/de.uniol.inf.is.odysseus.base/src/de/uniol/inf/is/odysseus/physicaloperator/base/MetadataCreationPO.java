@@ -16,6 +16,10 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		this.type = type;
 	}
 
+	public MetadataCreationPO(MetadataCreationPO<M, In> metadataCreationPO) {
+		this.type = metadataCreationPO.type;
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -41,8 +45,8 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 	}
 	
 	@Override
-	public MetadataCreationPO<M, In> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public MetadataCreationPO<M, In> clone()  {
+		return new MetadataCreationPO(this);
 	}
 	
 	@Override

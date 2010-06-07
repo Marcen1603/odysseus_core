@@ -90,8 +90,8 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 	}
 	
 	@Override
-	public PriorityPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public PriorityPO<T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 

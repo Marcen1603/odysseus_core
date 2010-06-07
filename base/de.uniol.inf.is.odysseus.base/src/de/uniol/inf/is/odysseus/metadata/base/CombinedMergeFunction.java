@@ -16,7 +16,7 @@ public class CombinedMergeFunction<T extends IClone> implements
 	public CombinedMergeFunction() {
 	}
 
-	public CombinedMergeFunction(CombinedMergeFunction<T> cmf) throws CloneNotSupportedException {
+	public CombinedMergeFunction(CombinedMergeFunction<T> cmf)  {
 		for (IInlineMetadataMergeFunction<? super T> mf : cmf.mergeFunctions) {
 			this.mergeFunctions.add(mf.clone());
 		}
@@ -48,7 +48,7 @@ public class CombinedMergeFunction<T extends IClone> implements
 	}
 
 	@Override
-	public CombinedMergeFunction<T> clone() throws CloneNotSupportedException{
+	public CombinedMergeFunction<T> clone() {
 		return new CombinedMergeFunction<T>(this);
 	}
 

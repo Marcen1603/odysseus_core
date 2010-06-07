@@ -482,5 +482,10 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	public void setPrintDebug(boolean printDebug) {
 		this.printDebug = printDebug;
 	}
+	
+	@Override
+	public BrokerPO<T> clone() {
+		return new BrokerPO(this);
+	}
 
 }

@@ -16,10 +16,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class RelationalMapPO<T extends IMetaAttribute> extends
 		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
-	final private int[][] variables;
-	final private SDFExpression[] expressions;
+	private int[][] variables;
+	private SDFExpression[] expressions;
+	private SDFAttributeList schema;
 
 	public RelationalMapPO(SDFAttributeList schema, SDFExpression[] expressions) {
+		this.schema = schema;
+		init(schema, expressions);
+	}
+
+	private void init(SDFAttributeList schema, SDFExpression[] expressions) {
 		this.expressions = new SDFExpression[expressions.length];
 		for (int i = 0; i < expressions.length; ++i) {
 			this.expressions[i] = expressions[i].clone();
@@ -35,6 +41,10 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				newArray[j++] = schema.indexOf(curAttribute);
 			}
 		}
+	}
+
+	public RelationalMapPO(RelationalMapPO<T> relationalMapPO) {
+		init(relationalMapPO.schema ,relationalMapPO.expressions);
 	}
 
 	@Override
@@ -61,8 +71,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	}
 
 	@Override
-	public RelationalMapPO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public RelationalMapPO<T> clone() {
+		return new RelationalMapPO(this);
 	}
 	
 	@Override

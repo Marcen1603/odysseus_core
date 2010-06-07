@@ -41,8 +41,8 @@ public class DBManipulatePO<T> extends AbstractSink<T> {
 	}
 
 	@Override
-	public DBManipulatePO<T> clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
+	public DBManipulatePO<T> clone()  {
+		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 }

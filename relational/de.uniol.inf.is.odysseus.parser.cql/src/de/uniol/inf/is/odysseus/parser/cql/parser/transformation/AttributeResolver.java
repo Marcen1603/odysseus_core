@@ -133,7 +133,7 @@ public class AttributeResolver implements IAttributeResolver {
 		return "Sources "+sources+" attributes"+attributes;
 	}
 	
-	public AttributeResolver clone() throws CloneNotSupportedException {
+	public AttributeResolver clone()  {
 		return new AttributeResolver(this);
 	}
 	

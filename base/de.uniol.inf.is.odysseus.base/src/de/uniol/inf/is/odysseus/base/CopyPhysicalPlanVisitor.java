@@ -24,7 +24,7 @@ public class CopyPhysicalPlanVisitor implements
 	private Stack<IPhysicalOperator> lastOld;
 	private boolean errorsOccured;
 	private IPhysicalOperator root;
-	
+
 	private Logger logger;
 
 	public CopyPhysicalPlanVisitor() {
@@ -70,13 +70,7 @@ public class CopyPhysicalPlanVisitor implements
 	@Override
 	public void node(IPhysicalOperator op) {
 		this.logger.debug("copy " + op.getName());
-		try {
-			this.last.push(op.clone());
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-			this.last.push(null);
-			errorsOccured = true;
-		}
+		this.last.push(op.clone());
 		if (this.root == null) {
 			this.root = this.last.peek();
 		}

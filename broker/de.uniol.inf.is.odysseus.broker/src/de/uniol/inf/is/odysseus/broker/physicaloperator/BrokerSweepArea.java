@@ -30,9 +30,9 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	 * Instantiates a new BrokerSweepArea from an old one.
 	 *
 	 * @param brokerTISweepArea the old one
-	 * @throws CloneNotSupportedException 
+	 * @ 
 	 */
-	public BrokerSweepArea(BrokerSweepArea<T> brokerTISweepArea) throws CloneNotSupportedException{
+	public BrokerSweepArea(BrokerSweepArea<T> brokerTISweepArea) {
 		super(brokerTISweepArea);
 	}
 
@@ -103,7 +103,7 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea#clone()
 	 */
 	@Override
-	public BrokerSweepArea<T> clone() throws CloneNotSupportedException {
+	public BrokerSweepArea<T> clone()  {
 		return new BrokerSweepArea<T>(this);
 	}
 

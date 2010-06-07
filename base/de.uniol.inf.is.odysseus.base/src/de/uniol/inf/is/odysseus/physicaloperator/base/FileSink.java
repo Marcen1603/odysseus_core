@@ -15,6 +15,10 @@ public class FileSink extends AbstractSink<Object> {
 		this.filename = filename;
 	}
 
+	public FileSink(FileSink fileSink) {
+		this.filename = fileSink.filename;
+	}
+
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
@@ -57,6 +61,11 @@ public class FileSink extends AbstractSink<Object> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public FileSink clone() {
+		return new FileSink(this);
 	}
 
 }
