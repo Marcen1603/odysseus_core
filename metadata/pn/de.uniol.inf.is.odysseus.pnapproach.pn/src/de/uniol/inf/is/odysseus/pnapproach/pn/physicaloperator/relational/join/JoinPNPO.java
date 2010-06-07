@@ -526,4 +526,10 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>>
 		return new JoinPNPO<M, T>(this);
 	}
 
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

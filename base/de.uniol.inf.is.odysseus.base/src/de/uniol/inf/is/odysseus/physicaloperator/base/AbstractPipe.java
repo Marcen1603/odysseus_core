@@ -27,8 +27,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		@Override
 		protected void setInputPortCount(int ports) {
 			super.setInputPortCount(ports);
-			// inputExclusive = new boolean[ports];
-			// Arrays.fill(inputExclusive, false);
 		}
 
 		@Override
@@ -38,8 +36,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 		@Override
 		public AbstractSink<R> clone() {
-			// TODO: Hier was anderes möglich??
 			throw new RuntimeException("Clone Not Supported");
+		}
+
+		@Override
+		public void processPunctuation(PointInTime timestamp, int port) {
 		}
 
 	};
@@ -228,11 +229,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
-	}
-
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		this.delegateSink.processPunctuation(timestamp, port);
 	}
 
 	@Override

@@ -157,4 +157,9 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
 		return WindowType.TIME_BASED;
 	}
 
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		//TODO punctuation kann genutzt werden ...
+	}
+
 }

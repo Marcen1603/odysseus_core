@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -41,6 +42,11 @@ public class SelectPNPO<T extends IMetaAttributeContainer<? extends IPosNeg>> ex
 	@Override
 	public SelectPNPO<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 

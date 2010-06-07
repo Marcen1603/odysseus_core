@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.iec61970.dataaccessclient.CallBack;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.IFacade;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.ISession;
@@ -222,6 +223,12 @@ public class IEC61970DataAccessPO<W extends IClone> extends AbstractPipe<ByteBuf
 //			}
 		unsubscribe();
 		router.stopRouting();
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

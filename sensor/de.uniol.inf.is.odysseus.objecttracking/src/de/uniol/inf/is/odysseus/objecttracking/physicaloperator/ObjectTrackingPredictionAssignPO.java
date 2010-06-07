@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -73,5 +74,10 @@ public class ObjectTrackingPredictionAssignPO<T extends IMetaAttributeContainer<
 
 	@Override
 	public void process_done(){
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 }

@@ -38,4 +38,9 @@ public class SlidingAdvanceTimeWindowPNPO<M extends IPosNeg, T extends IMetaAttr
 		return new SlidingAdvanceTimeWindowPNPO<M,T>(this);
 	}
 
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
+	}
+
 }

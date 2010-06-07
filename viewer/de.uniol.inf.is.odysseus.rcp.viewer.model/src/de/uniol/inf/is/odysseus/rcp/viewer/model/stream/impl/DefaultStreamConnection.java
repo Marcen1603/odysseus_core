@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamConnection;
@@ -145,6 +147,12 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 	@Override
 	public DefaultStreamConnection<In> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

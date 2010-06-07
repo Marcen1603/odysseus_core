@@ -510,4 +510,10 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

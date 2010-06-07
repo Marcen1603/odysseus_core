@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.table.TableModel;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.iec61970.library.serializable.HSDAObject;
 import de.uniol.inf.is.odysseus.iec61970.library.serializable.TSDAObject;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.IFacade;
@@ -55,6 +56,11 @@ public class TSDASink<T extends IClone>  extends AbstractSink<T> {
 	@Override
 	public TSDASink<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

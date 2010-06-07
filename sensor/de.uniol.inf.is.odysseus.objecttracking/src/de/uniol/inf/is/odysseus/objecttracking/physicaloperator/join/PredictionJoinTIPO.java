@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
@@ -321,6 +322,12 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 	@Override
 	public PredictionJoinTIPO<K,T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

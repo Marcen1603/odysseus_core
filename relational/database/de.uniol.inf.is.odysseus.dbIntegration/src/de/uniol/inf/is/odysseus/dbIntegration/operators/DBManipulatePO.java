@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.dbIntegration.operators;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.dbIntegration.control.Controller;
 import de.uniol.inf.is.odysseus.dbIntegration.model.DBQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
@@ -43,6 +44,10 @@ public class DBManipulatePO<T> extends AbstractSink<T> {
 	@Override
 	public DBManipulatePO<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
 }

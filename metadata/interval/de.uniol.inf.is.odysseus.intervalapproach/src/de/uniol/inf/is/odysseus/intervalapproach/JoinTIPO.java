@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
@@ -248,6 +249,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	@Override
 	public JoinTIPO<K, T> clone() {
 		return new JoinTIPO<K, T>(this);
+	}
+
+	@Override
+	public synchronized void processPunctuation(PointInTime timestamp, int port) {
+		this.areas[port^1].purgeElementsBefore(timestamp);
+		this.transferFunction.newHeartbeat(timestamp, port);
 	}
 
 }

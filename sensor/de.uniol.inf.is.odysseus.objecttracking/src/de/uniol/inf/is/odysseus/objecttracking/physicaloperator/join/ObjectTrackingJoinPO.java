@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
@@ -320,6 +321,12 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 	@Override
 	public ObjectTrackingJoinPO<K, T> clone(){
 		throw new RuntimeException();
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.dbIntegration.control.Controller;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
@@ -76,6 +77,11 @@ public class DBSelectPO extends AbstractPipe<Object, Object> {
 	@Override
 	public DBSelectPO clone() {
 		return new DBSelectPO(this);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 	

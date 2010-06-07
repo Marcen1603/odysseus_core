@@ -126,7 +126,12 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 	
 	@Override
 	public DuplicateEliminationTIPO<T> clone() {
-		return new DuplicateEliminationTIPO(this);
+		return new DuplicateEliminationTIPO<T>(this);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 }

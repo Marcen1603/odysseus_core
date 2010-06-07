@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 
 public class FileSink extends AbstractSink<Object> {
 	
@@ -66,6 +67,10 @@ public class FileSink extends AbstractSink<Object> {
 	@Override
 	public FileSink clone() {
 		return new FileSink(this);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
 }

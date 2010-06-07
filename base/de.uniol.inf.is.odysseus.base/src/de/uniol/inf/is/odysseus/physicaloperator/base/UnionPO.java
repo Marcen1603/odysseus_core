@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<R, R> {
@@ -36,6 +37,11 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 	@Override
 	protected synchronized void process_next(R object, int port) {
 		transferFunction.newElement(object, port);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		transferFunction.newHeartbeat(timestamp, port);
 	}
 	
 }

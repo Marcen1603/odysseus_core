@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import javax.swing.table.TableModel;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.iec61970.library.serializable.HSDAObject;
 import de.uniol.inf.is.odysseus.iec61970.library.server.service.IFacade;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
@@ -52,6 +53,11 @@ public class HSDASink<T extends IClone>  extends AbstractSink<T> {
 	@Override
 	public HSDASink<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

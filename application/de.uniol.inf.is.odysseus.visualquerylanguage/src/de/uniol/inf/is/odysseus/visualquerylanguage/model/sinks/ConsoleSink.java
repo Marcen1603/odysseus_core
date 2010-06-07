@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.visualquerylanguage.model.sinks;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
 @SuppressWarnings("unchecked")
@@ -14,5 +15,10 @@ public class ConsoleSink extends AbstractSink{
 	public ConsoleSink clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+	}
+
 
 }

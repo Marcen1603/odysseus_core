@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 
 /**
@@ -85,6 +86,11 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 	@Override
 	public SplitPO<T> clone() {
 		return new SplitPO(this);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 

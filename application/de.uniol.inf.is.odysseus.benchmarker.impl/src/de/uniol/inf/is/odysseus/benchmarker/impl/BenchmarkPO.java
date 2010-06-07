@@ -1,12 +1,14 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 
 /**
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<R, R> {
+public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
+		AbstractPipe<R, R> {
 
 	final double selectivity;
 	double oldVal = 0;
@@ -90,8 +92,13 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends AbstractP
 	}
 
 	@Override
-	public BenchmarkPO<R> clone(){
+	public BenchmarkPO<R> clone() {
 		return new BenchmarkPO(this);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 }

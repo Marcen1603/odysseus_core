@@ -9,6 +9,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
@@ -81,6 +82,10 @@ class BenchmarkSink<M extends ILatency> extends
 	@Override
 	public BenchmarkSink<M> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
 

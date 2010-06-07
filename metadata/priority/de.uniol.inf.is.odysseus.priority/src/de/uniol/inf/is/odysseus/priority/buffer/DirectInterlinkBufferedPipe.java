@@ -3,13 +3,12 @@ package de.uniol.inf.is.odysseus.priority.buffer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.intervalapproach.AbstractPunctuationBuffer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>
-		extends AbstractPunctuationBuffer<T,T> {
+		extends BufferedPipe<T> {
 	Lock directLinkLock = new ReentrantLock();
 
 	public DirectInterlinkBufferedPipe(
@@ -17,7 +16,8 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 		super(directInterlinkBufferedPipe);
 	}
 
-	public DirectInterlinkBufferedPipe() {}
+	public DirectInterlinkBufferedPipe() {
+	}
 
 	@Override
 	public void transferNext() {
@@ -30,19 +30,11 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
+
 	@Override
 	final protected synchronized void process_next(T object, int port) {
-		
-		storage.setCurrentPort(port);
-		
 		byte prio = object.getMetadata().getPriority();
-		
-		// Load Shedding
-		if (prio < 0){
-			return;
-		}
-		
+
 		if (prio > 0) {
 			directLinkLock.lock();
 			transfer(object);
@@ -54,13 +46,7 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 		}
 	}
 
-	@Override
-	public boolean cleanInternalStates(PointInTime punctuation,
-			IMetaAttributeContainer<?> current) {
-		return true;
-	}
-	
-	public DirectInterlinkBufferedPipe<T> clone(){
+	public DirectInterlinkBufferedPipe<T> clone() {
 		return new DirectInterlinkBufferedPipe<T>(this);
 	}
 

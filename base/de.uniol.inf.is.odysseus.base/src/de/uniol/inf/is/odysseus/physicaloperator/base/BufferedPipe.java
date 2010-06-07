@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.base;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,6 +20,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 
 	protected LinkedList<T> buffer = new LinkedList<T>();
 	private Lock transferLock = new ReentrantLock();
+	protected AtomicReference<PointInTime> heartbeat = new AtomicReference<PointInTime>();
 
 	public BufferedPipe() {
 		super();
@@ -33,9 +35,9 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		final BufferedPipe<T> t = this;
 		this.addMonitoringData("selectivity",
 				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
-		
+
 	}
-	
+
 	@Override
 	final protected void process_open() throws OpenFailedException {
 		super.process_open();
@@ -46,21 +48,25 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	public boolean hasNext() {
 		if (!isOpen())
 			return false;
-		return !buffer.isEmpty();
+		return !buffer.isEmpty() || this.heartbeat.get() != null;
 	}
 
 	@Override
 	public void transferNext() {
 		transferLock.lock();
-		T element;
-		// the transfer might take some time, so pop element first and release
-		// lock on buffer instead of transfer(buffer.pop())
-		synchronized (this.buffer) {
-			element = buffer.pop();
-		}
-		transfer(element);
-		if (isDone()) {
-			propagateDone();
+		if (!this.buffer.isEmpty()) {
+			// the transfer might take some time, so pop element first and
+			// release lock on buffer instead of transfer(buffer.pop())
+			T element;
+			synchronized (this.buffer) {
+				element = buffer.pop();
+			}
+			transfer(element);
+			if (isDone()) {
+				propagateDone();
+			}
+		} else {
+			sendPunctuation(heartbeat.getAndSet(null));
 		}
 		transferLock.unlock();
 	}
@@ -85,6 +91,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	protected synchronized void process_next(T object, int port) {
 		synchronized (this.buffer) {
 			this.buffer.add(object);
+			this.heartbeat.set(null);
 		}
 	}
 
@@ -100,7 +107,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	@Override
 	public void transferNextBatch(int count) {
 		List<T> out;
-		//FIXME fehler, weil ueber falsches objekt synchronisiert wird
+		// FIXME fehler, weil ueber falsches objekt synchronisiert wird
 		synchronized (this.buffer) {
 			if (count == this.buffer.size()) {
 				out = this.buffer;
@@ -125,11 +132,11 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	@Override
 	public BufferedPipe<T> clone() {
 		return new BufferedPipe<T>(this);
-	}		
-	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {	
-		sendPunctuation(timestamp);
 	}
-	
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		this.heartbeat.set(timestamp);
+	}
+
 }

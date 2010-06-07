@@ -125,7 +125,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	}
 
 	public CepOperator(CepOperator<R, W> cepOperator) {
-		throw new RuntimeException(this.getClass()+" Copy Constructor not yet implemented");
+		throw new RuntimeException(this.getClass()
+				+ " Copy Constructor not yet implemented");
 	}
 
 	@Override
@@ -185,8 +186,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 */
 	@Override
 	protected void process_next(R event, int port) {
-//		if (logger.isDebugEnabled())
-//			logger.debug("read "+ event + " "+port);		
+		// if (logger.isDebugEnabled())
+		// logger.debug("read "+ event + " "+port);
 		insertIntoInputBuffer(event, port);
 	}
 
@@ -194,7 +195,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 		if (logger.isDebugEnabled())
 			logger.debug("INIT with (" + eventReader.get(port).getType() + ") "
-					+ event + " "+port);
+					+ event + " " + port);
 		if (logger.isDebugEnabled())
 			logger.debug(this.getStats());
 
@@ -609,6 +610,10 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	@Override
 	public CepOperator<R, W> clone() {
 		return new CepOperator(this);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
 }

@@ -211,7 +211,13 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// Das neue Element s in die SweepArea einf�gen
 		updateSA(sa, s);
 		// System.out.println("SGA: SA "+sa);
+		PointInTime startTimestamp = s.getMetadata().getStart();
+		createOutput(startTimestamp);
+	}
 
+	private void createOutput(PointInTime startTimestamp) {
+		Integer groupID;
+		DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 		PointInTime minTs = null;
 		while (!g.isEmpty()) {
 			// Die Gruppe mit den �ltesten Elementen heraussuchen
@@ -230,10 +236,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 			minTs = e_dach.getMetadata().getStart();
 
-			if (minTs.before(s.getMetadata().getStart())) {
+			if (minTs.before(startTimestamp)) {
 				g.removeLastMin();
 				Iterator<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> results = sa
-						.extractElementsBefore(s.getMetadata().getStart());
+						.extractElementsBefore(startTimestamp);
 				produceResults(results, groupID);
 				// Falls noch nicht alle Elemente der SweepArea verarbeitet
 				// wurden
@@ -271,6 +277,11 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	 */
 	public Map<Integer, DefaultTISweepArea<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
 		return this.groups;
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		createOutput(timestamp);
 	}
 
 }

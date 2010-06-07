@@ -20,11 +20,6 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		byte prio = object.getMetadata().getPriority();
 
-		// Load Shedding
-		if (prio < 0) {
-			return;
-		}
-
 		if (isReadOnly) {
 			object = (T) object.clone();
 		}

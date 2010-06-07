@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
@@ -89,6 +90,11 @@ public class ObjectTrackingSelectPO<T extends IMetaAttributeContainer<M>, M exte
 		
 		System.out.println("elements transfered: " + this.transfered);
 		System.out.println("elements per second: " + 1e9 * this.counter / (this.duration - additionalEvaluationDuration));
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 }

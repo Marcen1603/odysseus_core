@@ -130,4 +130,17 @@ public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPri
 		return new PostPriorisationPO<T>(this);
 	}
 
+	@Override
+	public void setPostPriorisationFunctionality(
+			IPostPriorisationFunctionality<T> functionality) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractIterablePipe;
@@ -149,6 +150,11 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 	@Override
 	public PriorityBufferedPipe2<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		throw new RuntimeException("not implemented...");
 	}
 
 
