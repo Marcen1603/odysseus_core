@@ -22,7 +22,7 @@ public class TestAO extends UnaryLogicalOp{
 	}
 	
 	@Override
-	public AbstractLogicalOperator clone() throws CloneNotSupportedException {
+	public AbstractLogicalOperator clone() {
 		return new TestAO(this);
 	}
 
