@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.IWindow.Type;
+import de.uniol.inf.is.odysseus.base.IWindow.WindowType;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
@@ -93,7 +93,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// get longest window
 		IWindow wMax = MigrationHelper.getLongestWindow(lastOperatorNewPlan);
-		if (wMax != null && wMax.getWindowType() != Type.TIME_BASED) {
+		if (wMax != null && wMax.getWindowType() != WindowType.TIME_BASED) {
 			throw new QueryOptimizationException(
 					"Only time based windows are supported.");
 		}
@@ -108,10 +108,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		this.logger.debug("Preparing plan for parallel execution.");
 		// insert buffers before sources
 		for (ISource<?> source : oldPlanSources) {
-			BlockingBuffer buffer = new BlockingBuffer();
+			this.logger.debug("Insert Blocking-Buffer after source " +source);
+			BlockingBuffer buffer = new BlockingBuffer(true);
 			buffer.setOutputSchema(source.getOutputSchema());
 			// pause execution by blocking output of buffer
-			buffer.block();
+			this.logger.debug("Insert Blocking-Buffer after source ... done");
 			context.getBlockingBuffers().add((BlockingBuffer<?>) buffer);
 
 			List<PhysicalSubscription<?>> unSubList = new ArrayList<PhysicalSubscription<?>>();
@@ -131,6 +132,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			PhysicalRestructHelper.atomicReplaceSink(source, unSubList, buffer);
 		}
 
+		this.logger.debug("Adding False Select to new Plan " );
 		// 'merge' operator at top, discarding tuples of new plan
 		// realized with base operators union and select with falsepredicate
 		IPipe<?, ?> select = null;
@@ -154,6 +156,17 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		context.setUnion(union);
 		context.setOldPlanRoot(oldPlanRoot);
 
+		// open auf dem neuen Plan aufrufen
+		this.logger.debug("Calling open on new Plan " );
+		try {
+			union.open();
+		} catch (OpenFailedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		this.logger.debug("Merging Plans " );
+
 		PhysicalRestructHelper.removeSubscription(oldPlanRoot,
 				lastOperatorOldPlan);
 		PhysicalRestructHelper.replaceChild(newPlanRoot, lastOperatorNewPlan,
@@ -169,7 +182,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// Union geht, muss nur diese Zeile und in finishedParallelExecution
 		// markierte
 		// Zeilen entfernt werden.
-		PhysicalRestructHelper.appendOperator(oldPlanRoot, lastOperatorOldPlan);
+	//	PhysicalRestructHelper.appendOperator(oldPlanRoot, lastOperatorOldPlan);
 		// Workaround Ende
 
 		this.logger.debug("Result:\n"
@@ -194,7 +207,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			this.logger
 					.debug("No windows, can finish parallel execution instantly.");
 			finishedParallelExecution(context);
-		} else if (wMax.getWindowType() == Type.TIME_BASED) {
+		} else if (wMax.getWindowType() == WindowType.TIME_BASED) {
 			new Thread(new ParallelExecutionWaiter(this, context)).start();
 			this.logger.debug("ParallelExecutionWaiter started with "
 					+ wMax.getWindowSize() + "ms waiting period.");
@@ -229,17 +242,17 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				.getLastOperatorNewPlan());
 
 		// TODO Workaround s.o.
-		PhysicalRestructHelper.removeSubscription(context.getOldPlanRoot(),
-				context.getLastOperatorOldPlan());
-		PhysicalRestructHelper.removeSubscription(context.getNewPlanRoot(),
-				context.getLastOperatorNewPlan());
-		PhysicalRestructHelper.appendOperator(context.getOldPlanRoot(), context
-				.getLastOperatorNewPlan());
-		try {
-			context.getRunningQuery().setRoot(context.getOldPlanRoot());
-		} catch (OpenFailedException e1) {
-			e1.printStackTrace();
-		}
+//		PhysicalRestructHelper.removeSubscription(context.getOldPlanRoot(),
+//				context.getLastOperatorOldPlan());
+//		PhysicalRestructHelper.removeSubscription(context.getNewPlanRoot(),
+//				context.getLastOperatorNewPlan());
+//		PhysicalRestructHelper.appendOperator(context.getOldPlanRoot(), context
+//				.getLastOperatorNewPlan());
+//		try {
+//			context.getRunningQuery().setRoot(context.getOldPlanRoot());
+//		} catch (OpenFailedException e1) {
+//			e1.printStackTrace();
+//		}
 		// Workaround Ende
 
 		// remove connection from buffers to old plan
@@ -272,6 +285,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			}
 		}
 
+		// TODO: Warum dies? Die Anfrage ist doch schon drin, oder?
+		
 		// set and initialize new physical plan
 		// adds query as operator owner, too
 		try {

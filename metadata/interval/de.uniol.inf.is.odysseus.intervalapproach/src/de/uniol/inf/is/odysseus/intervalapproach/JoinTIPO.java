@@ -125,6 +125,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	public void setTransferFunction(ITransferFunction<T> transferFunction) {
 		this.transferFunction = transferFunction;
+		transferFunction.init(this);
 	}
 
 	@Override

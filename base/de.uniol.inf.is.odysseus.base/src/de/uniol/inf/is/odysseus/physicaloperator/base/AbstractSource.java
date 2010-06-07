@@ -93,6 +93,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	public void close() {
+		logger.debug("Closing "+this);
 		try {
 			this.process_close();
 		} catch (CloseFailedException e) {

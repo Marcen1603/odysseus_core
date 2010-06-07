@@ -7,11 +7,11 @@ package de.uniol.inf.is.odysseus.base;
  *
  */
 public interface IWindow {
-	public enum Type {
+	public enum WindowType {
 		ELEMENT_BASED,
 		TIME_BASED,
 		OTHER
 	};
 	public long getWindowSize();
-	public Type getWindowType();
+	public WindowType getWindowType();
 }

@@ -118,7 +118,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		if (schedulable.cardinality() == 0) {
 			if (schedulingPaused == false){
 				schedulingPaused = true;
-				logger.debug("Scheduling paused, nothing to schedule");
+				//logger.debug("Scheduling paused, nothing to schedule");
 				for (ISchedulingEventListener l : schedulingEventListener) {
 					l.nothingToSchedule(this);
 				}
@@ -187,12 +187,15 @@ public abstract class AbstractScheduling implements IScheduling,
 		// Ignore ProcessDone Events if Source is blocked
 		if (notBlocked.get(index)){
 //			System.out.println(poEvent);
-			synchronized (schedulingEventListener) {			
-				schedulable.set(index, true);
-				if (schedulingPaused && s.isActive() && !s.isBlocked()) {
-					schedulingPaused = false;
-					for (ISchedulingEventListener l : schedulingEventListener) {
-						l.scheddulingPossible(this);
+			if (poEvent.getPOEventType() == POEventType.ProcessDone){
+				synchronized (schedulingEventListener) {			
+					schedulable.set(index, true);
+					if (schedulingPaused && s.isActive() && !s.isBlocked()) {
+						schedulingPaused = false;
+						//logger.debug("Scheduling reactivated");
+						for (ISchedulingEventListener l : schedulingEventListener) {
+							l.scheddulingPossible(this);
+						}
 					}
 				}
 			}

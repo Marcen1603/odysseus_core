@@ -153,8 +153,8 @@ public class SlidingPeriodicWindowPNPO<R extends IMetaAttributeContainer<? exten
 	}
 	
 	@Override
-	public Type getWindowType() {
-		return Type.TIME_BASED;
+	public WindowType getWindowType() {
+		return WindowType.TIME_BASED;
 	}
 
 }

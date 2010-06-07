@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
@@ -12,6 +15,8 @@ import de.uniol.inf.is.odysseus.util.INodeVisitor;
  *
  */
 public class CleanOperatorsVisitor implements INodeVisitor<IPhysicalOperator, Object> {
+	
+	Logger logger = LoggerFactory.getLogger(CleanOperatorsVisitor.class);
 	
 	private IQuery query;
 	
@@ -34,6 +39,7 @@ public class CleanOperatorsVisitor implements INodeVisitor<IPhysicalOperator, Ob
 
 	@Override
 	public void node(IPhysicalOperator op) {
+		logger.debug("Remove Owner "+this.query+" from "+op);
 		op.removeOwner((IOperatorOwner) this.query);
 		if (!op.hasOwner()) {
 			for (String data : op.getProvidedMonitoringData()) {

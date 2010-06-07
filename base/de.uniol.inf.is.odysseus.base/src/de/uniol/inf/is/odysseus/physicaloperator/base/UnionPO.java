@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<R, R> {
@@ -8,6 +9,7 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 	
 	public UnionPO(ITransferFunction<R> transferFunction) {
 		this.transferFunction = transferFunction;
+		transferFunction.init(this);
 	}
 
 	public UnionPO(UnionPO<R> unionPO){
@@ -23,6 +25,12 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
+	}
+	
+	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+		transferFunction.init(this);
 	}
 	
 	@Override

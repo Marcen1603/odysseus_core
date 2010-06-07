@@ -18,6 +18,7 @@ class ParallelExecutionWaiter implements Runnable {
 		this.context = context;
 	}
 
+	// TODO: Fehler! So ist das nicht erlaubt!! Zeitfortschritt kann nur im Strom gemessen werden!
 	@Override
 	public void run() {
 		try {

@@ -39,19 +39,19 @@ public abstract class AbstractWindowTIPO<T extends IMetaAttributeContainer<? ext
 	}
 	
 	@Override
-	public Type getWindowType() {
+	public WindowType getWindowType() {
 		switch (this.windowAO.getWindowType()) {
 		case PERIODIC_TIME_WINDOW:
 		case SLIDING_TIME_WINDOW:
 		case JUMPING_TIME_WINDOW:
 		case FIXED_TIME_WINDOW:
-			return Type.TIME_BASED;
+			return WindowType.TIME_BASED;
 		case PERIODIC_TUPLE_WINDOW:
 		case SLIDING_TUPLE_WINDOW:
 		case JUMPING_TUPLE_WINDOW:
-			return Type.ELEMENT_BASED;
+			return WindowType.ELEMENT_BASED;
 		default:
-			return Type.OTHER;
+			return WindowType.OTHER;
 		}
 	}
 	

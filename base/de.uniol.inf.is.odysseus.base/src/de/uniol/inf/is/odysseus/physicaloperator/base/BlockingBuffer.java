@@ -11,7 +11,12 @@ import de.uniol.inf.is.odysseus.base.IClone;
  */
 public class BlockingBuffer<T extends IClone> extends BufferedPipe<T> {
 
-	public BlockingBuffer() {
+	public BlockingBuffer(boolean block) {
+		if (block){
+			block();
+		}else{
+			unblock();
+		}
 	}
 	
 	
