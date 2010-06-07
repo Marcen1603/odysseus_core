@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 /**
  * @author Jonas Jacobi
  */
-public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepArea<T> {
+public abstract class SweepArea<T extends IMetaAttributeContainer<?>> implements ITemporalSweepArea<T> {
 	// elements get stored in a linked list instead of a priority queue
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because
@@ -184,23 +184,6 @@ public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepAr
 		return result.iterator();
 	}
 
-	/**
-	 * Returns and removes all elements from the sweep area
-	 * 
-	 * @return All elements currently in the sweep area
-	 * @deprecated (@Andre) warum nicht einfach die elemente auslesen und clear
-	 *             aufrufen?
-	 */
-	public Iterator<T> extractAllElements() {
-		LinkedList<T> result = new LinkedList<T>();
-		Iterator<T> it = this.elements.iterator();
-		while (it.hasNext()) {
-			result.add(it.next());
-		}
-		this.elements.clear();
-		return result.iterator();
-	}
-
 	public void purgeElements(T element, Order order) {
 		Iterator<T> it = this.elements.iterator();
 		switch (order) {
@@ -317,8 +300,21 @@ public class SweepArea<T extends IMetaAttributeContainer<?>> implements ISweepAr
 		this.removePredicate.init();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public SweepArea<T> clone() {
-		return new SweepArea<T>(this);
+		SweepArea<T> sa;
+		try {
+			sa = (SweepArea<T>) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+		
+		sa.elements = new LinkedList<T>(this.elements);
+		sa.comparator = this.comparator;
+		sa.queryPredicate = this.queryPredicate.clone();
+		sa.removePredicate = this.removePredicate.clone();
+		
+		return sa;
 	}
 
 }

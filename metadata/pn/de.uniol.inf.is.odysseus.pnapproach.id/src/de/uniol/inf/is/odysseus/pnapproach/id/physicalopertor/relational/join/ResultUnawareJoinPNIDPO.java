@@ -1,15 +1,16 @@
 package de.uniol.inf.is.odysseus.pnapproach.id.physicalopertor.relational.join;
 
+import java.lang.management.MemoryUsage;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -215,7 +216,7 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 		// verarbeitet werden.
 		synchronized(this.nareas){
 			synchronized(this.areas){
-				Iterator<T> negatives = this.nareas[otherport].extractElements(new PointInTime(object.getMetadata().getTimestamp().getMainPoint() + 1));
+				Iterator<T> negatives = this.nareas[otherport].extractElementsBefore(new PointInTime(object.getMetadata().getTimestamp().getMainPoint() + 1));
 				while(negatives.hasNext()){
 					T neg = negatives.next();
 					areas[otherport].insert(neg, null);

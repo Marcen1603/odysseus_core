@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -102,7 +102,7 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		return this.rangePredicates;
 	}
 	
-	public ISweepArea<T>[] getAreas() {
+	public ITemporalSweepArea<T>[] getAreas() {
 		return areas;
 	}
 	
@@ -111,7 +111,7 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 	 * @param port 0 returns the left area, 1 returns the right one
 	 * @return the SweepArea for the specified port
 	 */
-	public ISweepArea<T> getArea(int port){
+	public ITemporalSweepArea<T> getArea(int port){
 		return areas[port];
 	}
 	

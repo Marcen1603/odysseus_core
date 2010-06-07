@@ -343,7 +343,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	@Override
 	public void initialize() throws ExecutorInitializeException {
-		this.logger.info("Start initializing Executor.");
+		this.logger.debug("Start initializing Executor.");
 
 		initializeIntern(configuration);
 
@@ -359,7 +359,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 		this.configuration.addValueChangeListener(this);
 
-		this.logger.info("Stop initializing Executor.");
+		this.logger.debug("Stop initializing Executor.");
 	}
 
 	/* (non-Javadoc)

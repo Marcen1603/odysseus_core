@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.HashMap;
 import java.util.Iterator;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;

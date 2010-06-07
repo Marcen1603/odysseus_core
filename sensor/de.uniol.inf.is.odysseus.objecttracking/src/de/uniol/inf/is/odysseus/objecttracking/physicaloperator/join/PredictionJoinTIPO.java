@@ -81,7 +81,7 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //		this.joinPredicate = joinPred;
 //	}
 //	
-//	public ISweepArea<T>[] getAreas() {
+//	public ITemporalSweepArea<T>[] getAreas() {
 //		return areas;
 //	}
 //	
@@ -90,7 +90,7 @@ public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredic
 //	 * @param port 0 returns the left area, 1 returns the right one
 //	 * @return the SweepArea for the specified port
 //	 */
-//	public ISweepArea<T> getArea(int port){
+//	public ITemporalSweepArea<T> getArea(int port){
 //		return areas[port];
 //	}
 //	

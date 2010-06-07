@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.base;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
@@ -37,4 +38,5 @@ public interface ITransferFunction<T extends IMetaAttributeContainer<?>> extends
 
 	public ITransferFunction<T> clone();
 	
+	public void newHeartbeat(PointInTime heartbeat, int port);
 }

@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.LiesInPredicate;
@@ -51,7 +52,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 	public SlidingPeriodicWindowTIPO(WindowAO logical) {
 		super(logical);
 
-		this.sa = new SweepArea<IMetaAttributeContainer<? extends ITimeInterval>>();
+		this.sa = new DefaultTISweepArea<IMetaAttributeContainer<? extends ITimeInterval>>();
 		this.deliveryList = new LinkedList<IMetaAttributeContainer<? extends ITimeInterval>>();
 
 		this.sa.setRemovePredicate(StartsBeforePredicate.getInstance());

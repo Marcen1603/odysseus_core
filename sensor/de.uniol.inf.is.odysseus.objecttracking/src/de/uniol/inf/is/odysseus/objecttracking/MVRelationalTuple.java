@@ -17,12 +17,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * A class for multivariate stream processing.
+ * 
  * @author Andre Bolles
- *
+ * 
  */
 @SuppressWarnings("unchecked")
-public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T> implements Serializable {
-	
+public class MVRelationalTuple<T extends IProbability> extends
+		RelationalTuple<T> implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -39,15 +41,16 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * @param noOfAttribs
 	 *            enthaelt die Anzahl der Attribute (Effizienzgr�nde)
 	 */
-	public MVRelationalTuple(SDFAttributeList schema, String line, char delimiter) {
+	public MVRelationalTuple(SDFAttributeList schema, String line,
+			char delimiter) {
 		super(schema, line, delimiter);
-//		if(this.getAttribute(3).equals(19.3906)){
-//			try{
-//				throw new Exception("Doppelt.");
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//		}
+		// if(this.getAttribute(3).equals(19.3906)){
+		// try{
+		// throw new Exception("Doppelt.");
+		// }catch(Exception e){
+		// e.printStackTrace();
+		// }
+		// }
 		this.findMeasurementValuePositions(schema);
 	}
 
@@ -75,17 +78,17 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 
 	public MVRelationalTuple(MVRelationalTuple copy) {
 		super(copy);
-//		if(this.getAttribute(3).equals(19.3906)){
-//			try{
-//				throw new Exception("Doppelt.");
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//		}
-		if(copy.measurementValuePositions != null){
+		// if(this.getAttribute(3).equals(19.3906)){
+		// try{
+		// throw new Exception("Doppelt.");
+		// }catch(Exception e){
+		// e.printStackTrace();
+		// }
+		// }
+		if (copy.measurementValuePositions != null) {
 			this.measurementValuePositions = new int[copy.measurementValuePositions.length];
-			System.arraycopy(copy.measurementValuePositions, 0, 
-					this.measurementValuePositions, 0, 
+			System.arraycopy(copy.measurementValuePositions, 0,
+					this.measurementValuePositions, 0,
 					copy.measurementValuePositions.length);
 		}
 	}
@@ -100,30 +103,30 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * @param attributes
 	 *            Attributbelegungen des neuen Tuples
 	 */
-//	@Deprecated
-//	public MVRelationalTuple(SDFAttributeList schema, Object... attributes) {
-//		if (schema.size() != attributes.length) {
-//			throw new IllegalArgumentException("listsize doesn't match schema");
-//		}
-//
-//		for (int i = 0; i < schema.size(); ++i) {
-//			if (!checkDataType(attributes[i], schema.get(i))) {
-//				throw new IllegalArgumentException("attribute " + i
-//						+ " has an invalid type");
-//			}
-//		}
-//
-////		this.schema = schema;
-//		this.attributes = attributes.clone();
-////		if(this.getAttribute(3).equals(19.3906)){
-////			try{
-////				throw new Exception("Doppelt.");
-////			}catch(Exception e){
-////				e.printStackTrace();
-////			}
-////		}
-//		this.findMeasurementValuePositions(schema);
-//	}
+	// @Deprecated
+	// public MVRelationalTuple(SDFAttributeList schema, Object... attributes) {
+	// if (schema.size() != attributes.length) {
+	// throw new IllegalArgumentException("listsize doesn't match schema");
+	// }
+	//
+	// for (int i = 0; i < schema.size(); ++i) {
+	// if (!checkDataType(attributes[i], schema.get(i))) {
+	// throw new IllegalArgumentException("attribute " + i
+	// + " has an invalid type");
+	// }
+	// }
+	//
+	// // this.schema = schema;
+	// this.attributes = attributes.clone();
+	// // if(this.getAttribute(3).equals(19.3906)){
+	// // try{
+	// // throw new Exception("Doppelt.");
+	// // }catch(Exception e){
+	// // e.printStackTrace();
+	// // }
+	// // }
+	// this.findMeasurementValuePositions(schema);
+	// }
 
 	/**
 	 * Erzeugt ein neues Tuple mit Attributen und ohne Schemainformationen
@@ -133,42 +136,42 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 */
 	public MVRelationalTuple(Object[] attributes) {
 		super(attributes);
-//		if(this.getAttribute(3).equals(19.3906)){
-//			try{
-//				throw new Exception("Doppelt.");
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//		}
+		// if(this.getAttribute(3).equals(19.3906)){
+		// try{
+		// throw new Exception("Doppelt.");
+		// }catch(Exception e){
+		// e.printStackTrace();
+		// }
+		// }
 	}
 
 	/**
-	 * Creates a new tuple with the passed attributes. The schema
-	 * will NOT be stored in the tuple, but it will be used
-	 * to find the measurement value positions.
+	 * Creates a new tuple with the passed attributes. The schema will NOT be
+	 * stored in the tuple, but it will be used to find the measurement value
+	 * positions.
 	 * 
 	 * @param attributes
 	 *            Attributbelegung des neuen Tuples
 	 */
 	public MVRelationalTuple(Object[] attributes, SDFAttributeList schema) {
 		super(attributes);
-//		if(this.getAttribute(3).equals(19.3906)){
-//			try{
-//				throw new Exception("Doppelt.");
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//		}
+		// if(this.getAttribute(3).equals(19.3906)){
+		// try{
+		// throw new Exception("Doppelt.");
+		// }catch(Exception e){
+		// e.printStackTrace();
+		// }
+		// }
 		this.findMeasurementValuePositions(schema);
 	}
-	
+
 	private boolean checkDataType(Object object, SDFAttribute attribute) {
 		if (object instanceof String) {
 			return SDFDatatypes.isString(attribute.getDatatype());
 		}
-		
+
 		if (object instanceof Integer) {
-			if(attribute.getDatatype().equals("Integer")){
+			if (attribute.getDatatype().equals("Integer")) {
 				return true;
 			}
 			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
@@ -181,20 +184,24 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 			}
 			return false;
 		}
-		if(object instanceof Long){
-			if(attribute.getDatatype().equals("Long") || attribute.getDatatype().equals("Date")){
+		if (object instanceof Long) {
+			if (attribute.getDatatype().equals("Long")
+					|| attribute.getDatatype().equals("Date")) {
 				return true;
 			}
 		}
 		if (object instanceof Double) {
-			if(attribute.getDatatype().equals("Double") || SDFDatatypes.isMeasurementValue(attribute.getDatatype())){
+			if (attribute.getDatatype().equals("Double")
+					|| SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
 				return true;
 			}
 			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
 					.iterator();
 			while (i.hasNext()) {
 				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isRational(constraint) || SDFDatatypeConstraints.isMeasurementValue(constraint)) {
+				if (SDFDatatypeConstraints.isRational(constraint)
+						|| SDFDatatypeConstraints
+								.isMeasurementValue(constraint)) {
 					return true;
 				}
 			}
@@ -202,45 +209,49 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		}
 		return false;
 	}
-	
+
 	/**
 	 * This method should be called by an operator after creating a new tuple.
 	 * 
-	 * @param schema By this schema it can be found out which attributes are measurement values.
-	 * @deprecated This can be done before query runtime. Use setMeasurementValuePositions instead.
+	 * @param schema
+	 *            By this schema it can be found out which attributes are
+	 *            measurement values.
+	 * @deprecated This can be done before query runtime. Use
+	 *             setMeasurementValuePositions instead.
 	 */
 	@Deprecated
-	public void findMeasurementValuePositions(SDFAttributeList schema){
+	public void findMeasurementValuePositions(SDFAttributeList schema) {
 		ArrayList<Integer> list = new ArrayList<Integer>();
-		for(int i = 0; i<schema.size(); i++){
+		for (int i = 0; i < schema.size(); i++) {
 			SDFAttribute attr = schema.get(i);
-			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
-				list.add(new Integer(i));	
+			if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
+				list.add(new Integer(i));
 			}
 		}
-		
+
 		this.measurementValuePositions = new int[list.size()];
-		for(int i = 0; i<this.measurementValuePositions.length; i++){
+		for (int i = 0; i < this.measurementValuePositions.length; i++) {
 			this.measurementValuePositions[i] = list.get(i);
 		}
 	}
-	
+
 	public int[] getMeasurementValuePositions() {
 		return measurementValuePositions;
 	}
-	
-	public void setMeasurementValuePositions(int[] mvPos){
+
+	public void setMeasurementValuePositions(int[] mvPos) {
 		this.measurementValuePositions = mvPos;
 	}
-	
-	public double[] getMeasurementValues(){
+
+	public double[] getMeasurementValues() {
 		double[] mvs = new double[this.measurementValuePositions.length];
-		for(int i = 0; i<this.measurementValuePositions.length; i++){
-			mvs[i] = ((Double)this.attributes[this.measurementValuePositions[i]]).doubleValue();
+		for (int i = 0; i < this.measurementValuePositions.length; i++) {
+			mvs[i] = ((Double) this.attributes[this.measurementValuePositions[i]])
+					.doubleValue();
 		}
 		return mvs;
 	}
-	
+
 	/**
 	 * erzeugen eines neuen Objektes, in dem nur die Attribute betrachtet
 	 * werden, die in der attrList uebergeben werden, die Reihenfolge des neuen
@@ -253,54 +264,63 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * value or not.
 	 * 
 	 * The matrix matrix and vector b must agree to the number of measurement
-	 * values and to the number of measurement attributes in attrList.
-	 * If not matrix is passed a normal relational projection will be done. If
-	 * no vector b is passed but a matrix the vector b will be handled as zero
+	 * values and to the number of measurement attributes in attrList. If not
+	 * matrix is passed a normal relational projection will be done. If no
+	 * vector b is passed but a matrix the vector b will be handled as zero
 	 * vector.
 	 * 
 	 * @param attrList
 	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
 	 *            attrList enth�lt
-	 * @param matrix projection matrix for the measurement values
-	 * @param b a vector for moving the projected measurement values matrix * mv + b
-	 * @param originalSchema will be used to determine wether an attribute is a measurement value or not.
-	 * @deprecated I don't a real application for this method. I think, simply reducing to the values
-	 * in the restrict list should be adequate.
+	 * @param matrix
+	 *            projection matrix for the measurement values
+	 * @param b
+	 *            a vector for moving the projected measurement values matrix *
+	 *            mv + b
+	 * @param originalSchema
+	 *            will be used to determine wether an attribute is a measurement
+	 *            value or not.
+	 * @deprecated I don't a real application for this method. I think, simply
+	 *             reducing to the values in the restrict list should be
+	 *             adequate.
 	 */
 	@Deprecated
-	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix, RealMatrix b, SDFAttributeList overwriteSchema, SDFAttributeList originalSchema) {
-		
+	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix,
+			RealMatrix b, SDFAttributeList overwriteSchema,
+			SDFAttributeList originalSchema) {
+
 		MVRelationalTuple newAttrList = null;
-		
-//		SDFAttributeList newSchema = overwriteSchema;
-//		if (overwriteSchema == null){
-//			// Schema anpassen		
-//			if (schema != null){
-//				newSchema = new SDFAttributeList();
-//				for (int i: attrList) {
-//					newSchema.add(getSchema().get(i));
-//				}
-//			}
-//		}
-		
+
+		// SDFAttributeList newSchema = overwriteSchema;
+		// if (overwriteSchema == null){
+		// // Schema anpassen
+		// if (schema != null){
+		// newSchema = new SDFAttributeList();
+		// for (int i: attrList) {
+		// newSchema.add(getSchema().get(i));
+		// }
+		// }
+		// }
+
 		// first, project the measurment values
 		RealMatrix result = null;
 		// only process matrix projection if a matrix is given
-		if(matrix != null){
+		if (matrix != null) {
 			double[] mv = new double[this.measurementValuePositions.length];
-			for(int i = 0; i< this.measurementValuePositions.length; i++){
-				mv[i] = (Double)this.getAttribute(this.measurementValuePositions[i]);
+			for (int i = 0; i < this.measurementValuePositions.length; i++) {
+				mv[i] = (Double) this
+						.getAttribute(this.measurementValuePositions[i]);
 			}
 			RealMatrix m = new RealMatrixImpl(mv);
-			
+
 			result = matrix.multiply(m);
 			// if no vector be is given, do not process
 			// an addition operation.
-			if(b != null){
+			if (b != null) {
 				result = result.add(b);
 			}
 		}
-		
+
 		newAttrList = new MVRelationalTuple(attrList.length);
 
 		int mvCounter = 0;
@@ -309,15 +329,14 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 			boolean isMV = false;
 			SDFAttribute attr = originalSchema.get(i);
 			isMV = SDFDatatypes.isMeasurementValue(attr.getDatatype());
-			
+
 			Object curAttribute = null;
 			// if no matrix is given the original
 			// measurement value can be taken from
 			// the schema.
-			if(!isMV || matrix == null){
+			if (!isMV || matrix == null) {
 				curAttribute = this.attributes[attrList[i]];
-			}
-			else{
+			} else {
 				// select the current measurementValue from
 				// the result matrix and increment the counter
 				// So the next time the next MV will be selected.
@@ -326,66 +345,76 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 			}
 			newAttrList.setAttribute(i, curAttribute);
 		}
-		
+
 		newAttrList.measurementValuePositions = new int[mvPos.size()];
-		for(int i = 0; i<mvPos.size(); i++){
+		for (int i = 0; i < mvPos.size(); i++) {
 			newAttrList.measurementValuePositions[i] = mvPos.get(i);
 		}
-		
+
 		return newAttrList;
 	}
-	
+
 	/**
 	 * 
-	 * @param restrictList This list is used to identify the original attribute positions
-	 * @param restrictMatrix This matrix has been calculated out of the restrict list and the measurement
-	 * value positions. It is used to transform the covariance matrix of this tuple.
-	 * @param createNew If true, a new tuple will be created, else this one will be modified.
+	 * @param restrictList
+	 *            This list is used to identify the original attribute positions
+	 * @param restrictMatrix
+	 *            This matrix has been calculated out of the restrict list and
+	 *            the measurement value positions. It is used to transform the
+	 *            covariance matrix of this tuple.
+	 * @param createNew
+	 *            If true, a new tuple will be created, else this one will be
+	 *            modified.
 	 * @return
 	 */
-	public MVRelationalTuple<T> restrict(int[] restrictList, RealMatrix restrictMatrix, boolean createNew){
-		if(!createNew){
-			MVRelationalTuple<T> modifiedAttrs = (MVRelationalTuple<T>)super.restrict(restrictList, createNew);
+	public MVRelationalTuple<T> restrict(int[] restrictList,
+			RealMatrix restrictMatrix, boolean createNew) {
+		if (!createNew) {
+			MVRelationalTuple<T> modifiedAttrs = (MVRelationalTuple<T>) super
+					.restrict(restrictList, createNew);
 			/**
-			 * If no measurement attributes are in the output schema, the restrictMatrix will be null.
-			 * In this case nothing has to be done.
+			 * If no measurement attributes are in the output schema, the
+			 * restrictMatrix will be null. In this case nothing has to be done.
 			 */
-			if(restrictMatrix != null){
-				double[][] modifiedCovariance = restrictMatrix.multiply(new RealMatrixImpl(modifiedAttrs.getMetadata().getCovariance())).multiply(restrictMatrix.transpose()).getData();
+			if (restrictMatrix != null) {
+				double[][] modifiedCovariance = restrictMatrix.multiply(
+						new RealMatrixImpl(modifiedAttrs.getMetadata()
+								.getCovariance())).multiply(
+						restrictMatrix.transpose()).getData();
 				modifiedAttrs.getMetadata().setCovariance(modifiedCovariance);
 			}
 			return modifiedAttrs;
-		}
-		else{
-			MVRelationalTuple<T> newTuple = new MVRelationalTuple<T>(restrictList.length);
+		} else {
+			MVRelationalTuple<T> newTuple = new MVRelationalTuple<T>(
+					restrictList.length);
 			Object[] newAttrs = new Object[restrictList.length];
-			
+
 			for (int i = 0; i < restrictList.length; i++) {
 				newAttrs[i] = this.attributes[restrictList[i]];
 			}
 			newTuple.setAttributes(newAttrs);
-			newTuple.setMetadata((T)this.getMetadata().clone());
-			
+			newTuple.setMetadata((T) this.getMetadata().clone());
+
 			/**
-			 * If no measurement attributes are in the output schema, the restrictMatrix will be null.
-			 * In this case nothing has to be done.
+			 * If no measurement attributes are in the output schema, the
+			 * restrictMatrix will be null. In this case nothing has to be done.
 			 */
-			if(restrictMatrix != null){
+			if (restrictMatrix != null) {
 				double[][] modifiedCovariance = restrictMatrix.multiply(
-						new RealMatrixImpl(this.getMetadata().getCovariance())).
-						multiply(restrictMatrix.transpose()).getData();
-				
+						new RealMatrixImpl(this.getMetadata().getCovariance()))
+						.multiply(restrictMatrix.transpose()).getData();
+
 				newTuple.getMetadata().setCovariance(modifiedCovariance);
 			}
-			
+
 			return newTuple;
-			
+
 		}
 	}
-	
+
 	@Override
 	public MVRelationalTuple<T> clone() {
 		return new MVRelationalTuple<T>(this);
 	}
-	
+
 }

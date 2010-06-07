@@ -59,7 +59,7 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 			minimum = PointInTime.before(minTs[0], minTs[1]) ? minTs[0] : minTs[1];
 		}
 		synchronized (this.sweepArea) {
-			Iterator<T> elements = this.sweepArea.extractElements(minimum);
+			Iterator<T> elements = this.sweepArea.extractElementsBefore(minimum);
 			while (elements.hasNext()) {
 				po.transfer(elements.next());
 			}
@@ -98,5 +98,11 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 	
 	public ResultAwarePNTransferFunction<M,T> clone() {
 		return new ResultAwarePNTransferFunction<M,T>(this);
+	}
+
+	@Override
+	public void newHeartbeat(PointInTime heartbeat, int port) {
+		// TODO Auto-generated method stub
+		
 	}
 }

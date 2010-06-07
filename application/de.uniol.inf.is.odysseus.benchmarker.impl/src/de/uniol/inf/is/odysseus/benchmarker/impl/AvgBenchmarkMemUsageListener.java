@@ -111,9 +111,9 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 				listeners.add(listener);
 				op.subscribe(listener, POEventType.PushDone);
 				
-				AvgTempMemUsageListener listenerStorage = new AvgTempMemUsageListener(((JoinTIPO) op).getStorage());
-				listenersPuncJoin.add(listenerStorage);
-				op.subscribe(listenerStorage, POEventType.PushDone);
+//				AvgTempMemUsageListener listenerStorage = new AvgTempMemUsageListener(((JoinTIPO) op).getStorage());
+//				listenersPuncJoin.add(listenerStorage);
+//				op.subscribe(listenerStorage, POEventType.PushDone);
 				
 				hash.put(op.hashCode(), op);
 			}

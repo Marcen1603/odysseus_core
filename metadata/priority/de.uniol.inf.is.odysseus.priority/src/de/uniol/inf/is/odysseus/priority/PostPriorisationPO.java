@@ -4,12 +4,12 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.AbstractPunctuationPipe;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPriority>>
-		extends AbstractPunctuationPipe<T, T> implements
-		IPostPriorisationPipe<T> {
+		extends AbstractPipe<T, T> implements IPostPriorisationPipe<T> {
 
 	private boolean isActive = true;
 	private PriorityPO<?> priorisationOwner = null;

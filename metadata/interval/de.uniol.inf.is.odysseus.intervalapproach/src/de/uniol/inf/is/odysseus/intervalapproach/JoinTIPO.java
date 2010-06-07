@@ -2,16 +2,13 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -30,10 +27,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *            Datentyp
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
-		extends AbstractPunctuationPipe<T, T> {
+		extends AbstractPipe<T, T> {
 	// private static final Logger logger = LoggerFactory
 	// .getLogger(JoinTIPO.class);
-	private ISweepArea<T>[] areas;
+	private ITemporalSweepArea<T>[] areas;
 	private IPredicate<? super T> joinPredicate;
 
 	protected IDataMergeFunction<T> dataMerge;
@@ -54,7 +51,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	public JoinTIPO(IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
-			ITransferFunction<T> transferFunction, ISweepArea<T>[] areas) {
+			ITransferFunction<T> transferFunction, ITemporalSweepArea<T>[] areas) {
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
@@ -64,16 +61,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public JoinTIPO() {
 
 	}
-	
-	public JoinTIPO(JoinTIPO<K,T> join){
+
+	public JoinTIPO(JoinTIPO<K, T> join) {
 		super(join);
-		this.areas = (ISweepArea<T>[])join.areas.clone();
-		int i=0;
-		for (ISweepArea<T> ja: join.areas){
+		this.areas = (ITemporalSweepArea<T>[]) join.areas.clone();
+		int i = 0;
+		for (ITemporalSweepArea<T> ja : join.areas) {
 			this.areas[i] = ja.clone();
 			i++;
 		}
-		
+
 		this.joinPredicate = join.joinPredicate.clone();
 		this.dataMerge = join.dataMerge.clone();
 		dataMerge.init();
@@ -84,7 +81,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		this.transferFunction.init(this);
 		this.outputSchema = join.outputSchema.clone();
 		this.creationFunction = join.creationFunction.clone();
-		
+
 	}
 
 	public IDataMergeFunction<T> getDataMerge() {
@@ -103,7 +100,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		this.metadataMerge = metadataMerge;
 	}
 
-	public void setAreas(ISweepArea<T>[] areas) {
+	public void setAreas(ITemporalSweepArea<T>[] areas) {
 		this.areas = areas;
 		if (this.joinPredicate != null) {
 			areas[0].setQueryPredicate(this.joinPredicate);
@@ -135,8 +132,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
-		
-		storage.setCurrentPort(port);
+
 		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
 			// JJ: weil man schon fertig sein
@@ -177,12 +173,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			T newElement = merge(object, next, order);
 			transferFunction.transfer(newElement);
 		}
-		
-		synchronized (this.areas) {
-			//TODO fatal, kann zu falschen informationen fuehren, weil vorher schon neuere elemente versand wurden
-			storage.updatePunctuationData(object);
-		}
-		
 	}
 
 	protected T merge(T left, T right, Order order) {
@@ -225,20 +215,20 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected boolean isDone() {
-		try{
+		try {
 			if (getSubscribedToSource(0).isDone()) {
 				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 			} else {
 				return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 			}
-		}catch (ArrayIndexOutOfBoundsException e) {
+		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
 			// Ignore
 			return true;
 		}
 	}
 
-	public ISweepArea<T>[] getAreas() {
+	public ITemporalSweepArea<T>[] getAreas() {
 		return areas;
 	}
 
@@ -255,49 +245,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		this.creationFunction = creationFunction;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public boolean cleanInternalStates(PointInTime punctuation,
-			IMetaAttributeContainer<?> current) {
-
-		Order order = Order.fromOrdinal(storage.getCurrentPort());
-
-		synchronized (areas[storage.getCurrentPort()]) {
-
-			Iterator<T> priorities = areas[storage.getCurrentPort()].iterator();
-
-			if (creationFunction != null) {
-				// Kann die Punctuation keinem priorisierten Element mehr
-				// zugeordnet
-				// werden, braucht man sie nicht
-				// mehr fuers Join.
-				boolean finished = true;
-
-				while (priorities.hasNext()) {
-					T element = priorities.next();
-
-					if (creationFunction.hasMetadata(element)
-							&& element.getMetadata().getStart().equals(
-									punctuation)) {
-						IMetaAttributeContainer<?> purgeInterval;
-						purgeInterval = creationFunction
-								.createMetadata((T) element.clone());
-						synchronized (areas[storage.getCurrentPort() ^ 1]) {
-								areas[storage.getCurrentPort() ^ 1].purgeElements(
-									(T) purgeInterval, order);
-							finished = false;
-						}
-					}
-				}
-				return finished;
-			}
-		}
-		return false;
-
-	}
-
-	@Override
-	public JoinTIPO<K, T> clone(){
+	public JoinTIPO<K, T> clone() {
 		return new JoinTIPO<K, T>(this);
 	}
 

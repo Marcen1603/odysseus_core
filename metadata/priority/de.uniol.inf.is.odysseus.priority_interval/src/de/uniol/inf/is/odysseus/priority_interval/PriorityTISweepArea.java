@@ -21,7 +21,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 	@Override
 	public void insert(T s) {
 		synchronized (this.elements) {
-			if (((IPriority)s.getMetadata()).getPriority() == 0) {
+			if (((IPriority) s.getMetadata()).getPriority() == 0) {
 				this.elements.addLast(s);
 			} else {
 				this.elements.addFirst(s);
@@ -31,7 +31,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 
 	@Override
 	public void purgeElements(T element, Order order) {
-		if (((IPriority)element.getMetadata()).getPriority() > 0) {
+		if (((IPriority) element.getMetadata()).getPriority() > 0) {
 			return;
 		}
 		Iterator<T> it = this.elements.iterator();
@@ -40,7 +40,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 			if (getRemovePredicate().evaluate(next, element)) {
 				it.remove();
 			} else {
-				if (((IPriority)next.getMetadata()).getPriority() == 0) {
+				if (((IPriority) next.getMetadata()).getPriority() == 0) {
 					return;
 				}
 			}
@@ -91,7 +91,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 	 * @return
 	 */
 	@Override
-	public Iterator<T> extractElements(PointInTime validity) {
+	public Iterator<T> extractElementsBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		Iterator<T> li = elements.iterator();
 		while (li.hasNext()) {
@@ -102,7 +102,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 				retval.add(s_hat);
 				li.remove();
 			} else {
-				if (((IPriority)s_hat.getMetadata()).getPriority() == 0) {
+				if (((IPriority) s_hat.getMetadata()).getPriority() == 0) {
 					break;
 				}
 			}
@@ -122,7 +122,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 				}
 				if (TimeInterval.totallyAfter(next.getMetadata(), element
 						.getMetadata())) {
-					if (((IPriority)next.getMetadata()).getPriority() == 0) {
+					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
 					} else {
 						continue;
@@ -141,7 +141,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 				}
 				if (TimeInterval.totallyAfter(next.getMetadata(), element
 						.getMetadata())) {
-					if (((IPriority)next.getMetadata()).getPriority() == 0) {
+					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
 					} else {
 						continue;
@@ -154,5 +154,22 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 			break;
 		}
 		return result.iterator();
+	}
+
+	@Override
+	public void purgeElementsBefore(PointInTime time) {
+		Iterator<T> li = elements.iterator();
+		while (li.hasNext()) {
+			T s_hat = li.next();
+			// Alle Elemente entfernen, die nicht mehr verschnitten werden
+			// k�nnen (also davor liegen)
+			if (TimeInterval.totallyBefore(s_hat.getMetadata(), time)) {
+				li.remove();
+			} else {
+				if (((IPriority) s_hat.getMetadata()).getPriority() == 0) {
+					break;
+				}
+			}
+		}
 	}
 }

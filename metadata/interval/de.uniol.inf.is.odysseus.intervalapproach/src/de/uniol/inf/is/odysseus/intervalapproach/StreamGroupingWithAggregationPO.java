@@ -233,7 +233,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			if (minTs.before(s.getMetadata().getStart())) {
 				g.removeLastMin();
 				Iterator<PairMap<SDFAttribute, AggregateFunction, IPartialAggregate<R>, Q>> results = sa
-						.extractElements(s.getMetadata().getStart());
+						.extractElementsBefore(s.getMetadata().getStart());
 				produceResults(results, groupID);
 				// Falls noch nicht alle Elemente der SweepArea verarbeitet
 				// wurden

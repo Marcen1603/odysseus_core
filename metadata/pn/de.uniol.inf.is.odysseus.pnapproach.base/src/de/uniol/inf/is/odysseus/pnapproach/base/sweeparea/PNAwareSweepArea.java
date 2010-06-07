@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.pnapproach.base.sweeparea;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
@@ -48,5 +52,34 @@ public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNe
 	
 	public PNAwareSweepArea<T> clone(){
 		return new PNAwareSweepArea<T>(this);
+	}
+
+	@Override
+	public Iterator<T> extractElementsBefore(PointInTime time) {
+		LinkedList<T> result = new LinkedList<T>();
+		Iterator<T> it = this.elements.iterator();
+		while(it.hasNext()){
+			T next = it.next();
+			if (next.getMetadata().getTimestamp().before(time)){
+				result.add(next);
+				it.remove();
+			} else {
+				break;
+			}
+		}
+		return result.iterator();
+	}
+
+	@Override
+	public void purgeElementsBefore(PointInTime time) {
+		Iterator<T> it = this.elements.iterator();
+		while(it.hasNext()){
+			T next = it.next();
+			if (next.getMetadata().getTimestamp().before(time)){
+				it.remove();
+			} else {
+				break;
+			}
+		}
 	}
 }

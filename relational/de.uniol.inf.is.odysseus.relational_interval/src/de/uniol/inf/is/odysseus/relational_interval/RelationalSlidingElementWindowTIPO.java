@@ -23,7 +23,6 @@ public class RelationalSlidingElementWindowTIPO extends
 	private Map<Integer, List<RelationalTuple<ITimeInterval>>> buffers = null;
 	private DefaultTISweepArea<RelationalTuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<RelationalTuple<ITimeInterval>>();
 
-
 	public RelationalSlidingElementWindowTIPO(
 			SlidingElementWindowTIPO<RelationalTuple<ITimeInterval>> po) {
 		super(po);
@@ -34,7 +33,7 @@ public class RelationalSlidingElementWindowTIPO extends
 		super(ao);
 		init();
 	}
-	
+
 	@Override
 	public void process_open() {
 		init();
@@ -56,20 +55,20 @@ public class RelationalSlidingElementWindowTIPO extends
 	@Override
 	protected synchronized void process_next(
 			RelationalTuple<ITimeInterval> object, int port) {
-		if (windowAO.isPartitioned()){
+		if (windowAO.isPartitioned()) {
 			int bufferId = getGroupID(object);
 			List<RelationalTuple<ITimeInterval>> buffer = buffers.get(bufferId);
-			if (buffer == null){
+			if (buffer == null) {
 				buffer = new LinkedList<RelationalTuple<ITimeInterval>>();
 				buffers.put(bufferId, buffer);
 			}
 			buffer.add(object);
 			processBuffer(buffer, object);
-		}else{
+		} else {
 			super.process_next(object, port);
 		}
 	}
-	
+
 	public int getGroupID(RelationalTuple<ITimeInterval> elem) {
 		// Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
 		if (gRestrict == null || gRestrict.length == 0)
@@ -85,29 +84,30 @@ public class RelationalSlidingElementWindowTIPO extends
 		}
 		return id;
 	}
-	
+
 	@Override
 	public void transfer(RelationalTuple<ITimeInterval> object) {
-		
+
 		outputQueue.insert(object);
 		PointInTime minTS = getMinTS();
-		Iterator<RelationalTuple<ITimeInterval>> out = outputQueue.extractElements(minTS);
-		while (out.hasNext()){
+		Iterator<RelationalTuple<ITimeInterval>> out = outputQueue
+				.extractElementsBefore(minTS);
+		while (out.hasNext()) {
 			super.transfer(out.next());
 		}
 	}
-	
-	private PointInTime getMinTS(){
+
+	private PointInTime getMinTS() {
 		PointInTime minTS = new PointInTime();
-		for (List<RelationalTuple<ITimeInterval>> b: buffers.values()){
+		for (List<RelationalTuple<ITimeInterval>> b : buffers.values()) {
 			// an der obersten Stelle eines jeden Puffers steht das pro
 			// partition aelteste Element
 			PointInTime p = b.get(0).getMetadata().getStart();
-			if (p.before(minTS)){
+			if (p.before(minTS)) {
 				minTS = p;
 			}
 		}
 		return minTS;
 	}
-	
+
 }

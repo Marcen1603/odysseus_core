@@ -63,8 +63,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * constructor and bind-methods). This method can be used to configure this
 	 * object.
 	 */
-	@SuppressWarnings("unused")
-	private void activate() {
+	public void activate() {
 		// store buffer placement strategy in the configuration
 		Iterator<String> iter;
 		if (getRegisteredBufferPlacementStrategies() != null && (iter = getRegisteredBufferPlacementStrategies().iterator()).hasNext()) {

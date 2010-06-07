@@ -49,7 +49,7 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 			minimum = PointInTime.before(minTs[0], minTs[1]) ? minTs[0] : minTs[1];
 		}
 		synchronized (this.sweepArea) {
-			Iterator<T> elements = this.sweepArea.extractElements(minimum);
+			Iterator<T> elements = this.sweepArea.extractElementsBefore(minimum);
 			while (elements.hasNext()) {
 				po.transfer(elements.next());
 			}
@@ -81,6 +81,11 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 	
 	public PNTransferFunction<T> clone() {
 		return new PNTransferFunction<T>(this);
+	}
+
+	@Override
+	public void newHeartbeat(PointInTime heartbeat, int port) {
+		
 	}
 
 }
