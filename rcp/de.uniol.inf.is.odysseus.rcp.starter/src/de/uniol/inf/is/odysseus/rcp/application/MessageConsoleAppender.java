@@ -43,10 +43,10 @@ public class MessageConsoleAppender extends AppenderSkeleton
 
         String text = this.layout.format(event);
         String trace[];
-        messageConsoleStream.println(text);
+        messageConsoleStream.print(text);
         if ((trace = event.getThrowableStrRep()) != null)
         {
-            for (int i = 0; i < trace.length; i++)
+            for (int i = 0; i < trace.length && trace.length > 0; i++)
             {
             	 messageConsoleStream.println(trace[i]);
             }
