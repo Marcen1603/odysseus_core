@@ -1,15 +1,15 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 
-public class SWTCircleSymbolElement<C> extends AbstractUnfreezableSWTSymbolElement<C> {
+public class SWTFillCircleSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 	private final Color color;
 	
-	public SWTCircleSymbolElement( Color color ) {
+	public SWTFillCircleSymbolElement(  Color color ) {
 		this.color = color;
 	}
 	
@@ -19,13 +19,13 @@ public class SWTCircleSymbolElement<C> extends AbstractUnfreezableSWTSymbolEleme
 		// Kreis zeichnen
 		GC gc = getActualGC();
 		
-		
 		if( gc == null )
 			return;
 
-		gc.setForeground( color );
+		gc.setBackground( color );
 			
-		gc.drawOval( pos.getX(), pos.getY(), width, height );
+		gc.fillOval( pos.getX(), pos.getY(), width, height );
+		
 	}
 
 }

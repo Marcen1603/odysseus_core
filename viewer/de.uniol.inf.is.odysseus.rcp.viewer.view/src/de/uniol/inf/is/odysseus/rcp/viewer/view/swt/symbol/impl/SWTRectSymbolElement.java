@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 
-public class SWTRectSymbolElement<C> extends AbstractUnfreezableSWTSymbolElement<C> {
+public class SWTRectSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 	private final Color borderColor;
 	

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.editor;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +22,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.IGraphViewEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.position.impl.SugiyamaPositioner;
@@ -32,7 +34,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.render.SWTRenderManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
 
-public class GraphViewEditor extends EditorPart implements ISelectListener<INodeView<IPhysicalOperator>>, ISelectionProvider, ISelectionListener {
+public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISelectListener<INodeView<IPhysicalOperator>>, ISelectionProvider, ISelectionListener {
 
 	public static final String EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor";
 
@@ -139,12 +141,12 @@ public class GraphViewEditor extends EditorPart implements ISelectListener<INode
 
 	private ISelection createSelection() {
 		Collection<INodeView<IPhysicalOperator>> selected = renderManager.getSelector().getSelected();
-		Collection<IOdysseusNodeModel> nodes = new ArrayList<IOdysseusNodeModel>();
-		for (INodeView<IPhysicalOperator> s : selected) {
-			nodes.add((IOdysseusNodeModel)s.getModelNode());
-		}
+//		Collection<IOdysseusNodeModel> nodes = new ArrayList<IOdysseusNodeModel>();
+//		for (INodeView<IPhysicalOperator> s : selected) {
+//			nodes.add((IOdysseusNodeModel)s.getModelNode());
+//		}
 
-		return new StructuredSelection(nodes.toArray());
+		return new StructuredSelection(selected.toArray());
 	}
 
 	@Override
@@ -156,13 +158,9 @@ public class GraphViewEditor extends EditorPart implements ISelectListener<INode
 				List<?> selectedObjects = structSelection.toList();
 				Collection<IOdysseusNodeView> selectedNodes = new ArrayList<IOdysseusNodeView>();
 				for( Object obj : selectedObjects ) {
-					if( obj instanceof IOdysseusNodeModel ) {
-						IOdysseusNodeModel nodeModel = (IOdysseusNodeModel)obj;
-						
-						for( INodeView<IPhysicalOperator> nodeView : renderManager.getDisplayedGraph().getViewedNodes() ) {
-							if( nodeView.getModelNode() == nodeModel )
-								selectedNodes.add((IOdysseusNodeView)nodeView);
-						}
+					if( obj instanceof IOdysseusNodeView ) {
+						IOdysseusNodeView nodeView = (IOdysseusNodeView)obj;
+						selectedNodes.add(nodeView);
 					}
 				}
 				renderManager.getSelector().unselectAll();
@@ -170,4 +168,15 @@ public class GraphViewEditor extends EditorPart implements ISelectListener<INode
 			}
 		}
 	}
+
+	@Override
+	public IGraphModel<IPhysicalOperator> getGraphModel() {
+		return input.getModelGraph();
+	}
+
+	@Override
+	public IGraphView<IPhysicalOperator> getGraphView() {
+		return renderManager.getDisplayedGraph();
+	}
+
 }

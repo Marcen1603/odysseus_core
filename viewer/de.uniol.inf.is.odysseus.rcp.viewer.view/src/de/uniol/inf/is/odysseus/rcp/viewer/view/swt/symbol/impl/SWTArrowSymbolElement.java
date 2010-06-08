@@ -1,12 +1,13 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTConnectionSymbolElement;
 
-public class SWTArrowSymbolElement<C> extends AbstractSWTConnectionSymbolElement<C> {
+public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
 	private static final int ARROW_SIZE = 20;
 	private Color color;

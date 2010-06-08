@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -7,9 +7,10 @@ import org.eclipse.swt.widgets.Display;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.meta.IMetadataModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElement;
 
 
-public class SWTSelectivitySymbolElement<C> extends AbstractSWTSymbolElement<C> {
+public class SWTSelectivitySymbolElement<C> extends SWTSymbolElement<C> {
 
 	private double value = 0.0;
 	

@@ -67,31 +67,31 @@ public class Activator implements BundleActivator, IPlanModificationListener  {
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		try {
 			ArrayList<IPhysicalOperator> roots = eventArgs.getSender().getSealedPlan().getRoots();
-			updateModel(roots);
+			
+			eventArgs.getSender().getSealedPlan();
+			if (!roots.isEmpty()) {
+				
+				ListIterator<IPhysicalOperator> li = roots.listIterator(roots.size());
+				IPhysicalOperator lastRoot = null;
+				do {
+					lastRoot = li.previous();
+				} while (li.hasPrevious() && lastRoot == null);
+				
+				if (lastRoot != null && lastRoot instanceof ISink<?>) {
+					IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay((ISink<?>) lastRoot);
+					
+					ArrayList<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
+					for(IPhysicalOperator po : roots ) 
+						sinkRoots.add((ISink<?>)po);
+					IModelProvider<IPhysicalOperator> providerActiveModel = new OdysseusModelProviderMultipleSink(sinkRoots);
+					
+					Model.getInstance().getModelManager().addModel(provider.get());
+					Model.getInstance().getModelManager().setActiveModel(providerActiveModel.get());
+				}
+			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void updateModel(ArrayList<IPhysicalOperator> roots) {
-		if (!roots.isEmpty()) {
-			
-			ListIterator<IPhysicalOperator> li = roots.listIterator(roots.size());
-			IPhysicalOperator lastRoot = null;
-			do {
-				lastRoot = li.previous();
-			} while (li.hasPrevious() && lastRoot == null);
-			if (lastRoot != null && lastRoot instanceof ISink<?>) {
-				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay((ISink<?>) lastRoot);
-				
-				ArrayList<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
-				for(IPhysicalOperator po : roots ) 
-					sinkRoots.add((ISink<?>)po);
-				IModelProvider<IPhysicalOperator> providerActiveModel = new OdysseusModelProviderMultipleSink(sinkRoots);
-				
-				Model.getInstance().getModelManager().addModel(provider.get());
-				Model.getInstance().getModelManager().setActiveModel(providerActiveModel.get());
-			}
-		}
-	}
 }

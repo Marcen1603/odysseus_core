@@ -1,28 +1,19 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
 
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.AbstractConnectionSymbolElement;
 
-public class SWTConnectionSymbolElement<C> extends AbstractSWTConnectionSymbolElement<C> {
+public abstract class SWTConnectionSymbolElement<C> extends AbstractConnectionSymbolElement<C> {
 
-	private Color color;
+	private GC gc;
 	
-	public SWTConnectionSymbolElement( Color lineColor ) {
-		color = lineColor;
-	}
-
-	@Override
-	public void draw(Vector start, Vector end, float zoomFactor ) {
-		
-		if( getActualGC() == null ) {
-			return;
-		}
-	
-		getActualGC().setForeground( color );
-		getActualGC().drawLine( start.getX(), start.getY(), end.getX(), end.getY() );
+	public void setActualGC( GC gc ) {
+		this.gc = gc;
 	}
 	
-	@Override
-	public void update(  ) {}
+	public GC getActualGC() {
+		return gc;
+	}
+
 }

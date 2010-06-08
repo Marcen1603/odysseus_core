@@ -9,6 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTArrowSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTCircleSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTLineConnectionSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTFillCircleSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTFillRectSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTImageSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTInvisibleSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTRectSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTSelectionSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTSelectivitySymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
@@ -107,6 +117,6 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		if( "Arrow".equals(type))
 			return new SWTArrowSymbolElement< C >( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ));
 		
-		return new SWTConnectionSymbolElement<C>( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
+		return new SWTLineConnectionSymbolElement<C>( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
 	}
 }

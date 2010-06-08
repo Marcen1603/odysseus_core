@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.viewer.view.editor.GraphViewEditor"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditor"
             default="false"
             id="de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor"
             name="Graph Editor">

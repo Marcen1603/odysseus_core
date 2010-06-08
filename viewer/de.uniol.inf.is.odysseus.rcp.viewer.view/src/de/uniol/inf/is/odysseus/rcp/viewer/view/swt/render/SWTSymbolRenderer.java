@@ -14,9 +14,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl.RenderRange;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.render.impl.SimpleSymbolRenderer;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.AbstractSWTConnectionSymbolElement;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.AbstractSWTSymbolElement;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSelectionSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTConnectionSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTSelectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.SymbolElementContainer;
@@ -82,7 +82,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 							.mul( zoomFactor );
 			
 			for( IConnectionSymbolElement<C> ele : conn.getSymbolContainer() ) {
-				((AbstractSWTConnectionSymbolElement<C>)ele).setActualGC( gc );
+				((SWTConnectionSymbolElement<C>)ele).setActualGC( gc );
 				ele.draw( start, end, zoomFactor );
 			}
 		}
@@ -135,7 +135,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> {
 	}
 	
 	private void renderSymbolElement( ISymbolElement<C> element, Vector pos, int width, int height, float zoomFactor ) {
-		((AbstractSWTSymbolElement<C>)element).setActualGC( gc );
+		((SWTSymbolElement<C>)element).setActualGC( gc );
 		element.draw( pos, width, height, zoomFactor );
 	}
 }

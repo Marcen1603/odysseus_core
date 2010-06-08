@@ -4,7 +4,7 @@ import org.eclipse.swt.graphics.GC;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.AbstractSymbolElement;
 
-public abstract class AbstractSWTSymbolElement<C> extends AbstractSymbolElement<C>  {
+public abstract class SWTSymbolElement<C> extends AbstractSymbolElement<C>  {
 	
 	private GC actualGC;
 	

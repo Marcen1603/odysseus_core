@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.editor;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;

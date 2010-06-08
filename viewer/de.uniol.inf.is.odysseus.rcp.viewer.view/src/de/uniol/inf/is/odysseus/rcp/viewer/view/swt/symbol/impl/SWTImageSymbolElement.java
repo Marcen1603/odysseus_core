@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 
-public class SWTImageSymbolElement<C> extends AbstractUnfreezableSWTSymbolElement<C> {
+public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 	private final String imageName;
 	private Image image;

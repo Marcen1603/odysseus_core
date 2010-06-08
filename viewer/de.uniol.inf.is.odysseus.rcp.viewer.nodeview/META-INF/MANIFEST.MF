@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.nodeview.Activator
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
@@ -15,7 +16,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.rcp.viewer.model,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.editor,
  de.uniol.inf.is.odysseus.rcp.viewer.view.graph,
- de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource,
- de.uniol.inf.is.odysseus.rcp.viewer.view.symbol,
  org.slf4j
