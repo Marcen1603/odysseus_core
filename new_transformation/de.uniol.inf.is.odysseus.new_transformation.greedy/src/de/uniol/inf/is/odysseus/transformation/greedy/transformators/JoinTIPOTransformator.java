@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.IPOTransformator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TempTransformationOperator;
 import de.uniol.inf.is.odysseus.new_transformation.costmodel.base.TransformedPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
 
 public class JoinTIPOTransformator implements IPOTransformator<JoinAO> {
 	@Override
@@ -53,7 +53,7 @@ public class JoinTIPOTransformator implements IPOTransformator<JoinAO> {
 		}
 		
 		if (metaTypes.contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")) {
-			ISweepArea[] areas = new ISweepArea[2];
+			ITemporalSweepArea[] areas = new ITemporalSweepArea[2];
 			areas[0] = new JoinTISweepArea();
 			areas[1] = new JoinTISweepArea();
 
