@@ -210,7 +210,7 @@ public class NestPO<T extends IMetaAttribute> extends
 	
 				g.removeLastMin();
 				Iterator<PartialNest<TimeInterval>> results = 
-					saOfMin.extractElements(incomingTupleStart);
+					saOfMin.extractElementsBefore(incomingTupleStart);
 				
 				/*
 				 * Here happens the evaluating 
