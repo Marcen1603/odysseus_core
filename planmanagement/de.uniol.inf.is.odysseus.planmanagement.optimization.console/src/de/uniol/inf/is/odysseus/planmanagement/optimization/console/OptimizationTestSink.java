@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.console;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
@@ -13,7 +14,7 @@ public class OptimizationTestSink extends AbstractSink<Object> {
 	}
 	
 	private OutputMode mode;
-	private int count;
+	private Integer count;
 	private long nextOut;
 	private int outputHash;
 	
@@ -35,9 +36,11 @@ public class OptimizationTestSink extends AbstractSink<Object> {
 			break;
 		case NORMAL:
 			System.out.println("Port:" + port + ", Object:" + object.toString());
-			break;
+//			break; // auch bei Normal die Tupel zählen
 		case COUNT:
-			this.count++;
+			synchronized(count){
+				this.count++;
+			}
 			break;
 		case HASH:
 			RelationalTuple<?> t = (RelationalTuple<?>)object;
@@ -69,7 +72,16 @@ public class OptimizationTestSink extends AbstractSink<Object> {
 	}
 
 	public int getCount() {
-		return count;
+		synchronized(count){
+			return count;
+		}
 	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// Nothing to do
+	}
+	
+
 	
 }

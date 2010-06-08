@@ -41,4 +41,6 @@ public interface IPlanMigrationStrategy {
 	 */
 	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery, 
 			IPhysicalOperator newPlanRoot) throws QueryOptimizationException;
+	
+	public String getName();
 }

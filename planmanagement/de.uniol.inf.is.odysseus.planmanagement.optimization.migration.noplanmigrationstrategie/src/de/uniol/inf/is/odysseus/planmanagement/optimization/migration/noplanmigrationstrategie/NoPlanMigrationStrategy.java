@@ -14,7 +14,13 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanM
  * @author Wolf Bauer
  * 
  */
-public class NoPlanMigrationStrategie implements IPlanMigrationStrategy {
+public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
+	
+	
+	@Override
+	public String getName() {
+		return "No Migration Strategy";
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategie#migratePlan(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)

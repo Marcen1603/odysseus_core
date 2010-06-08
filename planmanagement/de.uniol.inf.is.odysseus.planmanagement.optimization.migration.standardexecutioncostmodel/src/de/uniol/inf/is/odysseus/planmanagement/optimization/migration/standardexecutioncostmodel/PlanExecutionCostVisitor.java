@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.advancedoptimizer.AdvancedOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer.StandardOptimizer;
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
@@ -92,7 +92,7 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 		// get input datarate from source
 		if (!op.isSink()) {
 			if (op.getProvidedMonitoringData().contains(MonitoringDataTypes.DATARATE.name)) {
-				IMonitoringData<Double> datarate = op.getMonitoringData(MonitoringDataTypes.DATARATE.name, AdvancedOptimizer.MONITORING_PERIOD);
+				IMonitoringData<Double> datarate = op.getMonitoringData(MonitoringDataTypes.DATARATE.name, StandardOptimizer.MONITORING_PERIOD);
 				StandardPlanExecutionCost opCost = this.model.getCost(op);
 				if (opCost!=null) {
 					opCost.scaleWithDatarate(datarate.getValue().floatValue());

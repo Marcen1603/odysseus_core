@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	/**
 	 * Logger for detailed informations.
 	 */
-	protected Logger logger;
+	protected Logger logger = LoggerFactory.getLogger(AbstractOptimizer.class);
 
 	/**
 	 * Map of registered buffer placement strategies.
@@ -61,7 +62,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	/**
 	 * Registered plan migration service.
 	 */
-	protected IPlanMigrationStrategy planMigrationStrategy;
+	// protected IPlanMigrationStrategy planMigrationStrategy;
+	private Map<String, IPlanMigrationStrategy> planMigrationStrategies = new HashMap<String, IPlanMigrationStrategy>();
 
 	// protected IBufferPlacementStrategy bufferPlacementStrategy;
 
@@ -79,7 +81,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	public void activate() {
 		// load logger
-		this.logger = LoggerFactory.getLogger(AbstractOptimizer.class);
 		this.logger.trace("Create Executor.");
 	}
 
@@ -91,6 +92,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public void bindBufferPlacementStrategy(
 			IBufferPlacementStrategy bufferPlacementStrategy) {
 		String bpN = bufferPlacementStrategy.getName();
+		logger.debug("bindBufferPlacementStrategy "+bpN);
 		synchronized (this.bufferPlacementStrategies) {
 			this.bufferPlacementStrategies.put(bpN, bufferPlacementStrategy);
 		}
@@ -156,7 +158,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	public void bindPlanMigrationStrategy(
 			IPlanMigrationStrategy planMigrationStrategy) {
-		this.planMigrationStrategy = planMigrationStrategy;
+		logger.debug("Bind planmigration strategy "+planMigrationStrategy.getName());
+		this.planMigrationStrategies.put(planMigrationStrategy.getName(), planMigrationStrategy);
 	}
 
 	/**
@@ -166,9 +169,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	public void unbindPlanMigrationStrategy(
 			IPlanMigrationStrategy planMigrationStrategy) {
-		if (this.planMigrationStrategy == planMigrationStrategy) {
-			this.planMigrationStrategy = null;
-		}
+		this.planMigrationStrategies.remove(planMigrationStrategy.getName());
 	}
 
 	/**
@@ -308,8 +309,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		}
 		infos += "</BufferPlacementStrategy>";
 
-		infos += getInfoString(this.planMigrationStrategy,
-				"PlanMigrationStrategie");
+//		infos += getInfoString(this.planMigrationStrategy,
+//				"PlanMigrationStrategie");
 		infos += getInfoString(this.planOptimizer, "PlanOptimizer");
 		infos += getInfoString(this.queryOptimizer, "QueryOptimizer");
 
@@ -333,7 +334,16 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String strategy) {
 		return this.bufferPlacementStrategies.get(strategy);
 	}
+	
+	public Set<String> getRegisteredPlanMigrationStrategies(){
+		return this.planMigrationStrategies.keySet();		
+	}
 
+	public IPlanMigrationStrategy getPlanMigrationStrategy(String strategy){
+		return this.planMigrationStrategies.get(strategy);		
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler#addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener)
 	 */

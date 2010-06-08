@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.IWindow.WindowType;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.predicate.FalsePredicate;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
@@ -29,6 +30,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.MigrationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+
 
 /**
  * SimplePlanMigrationStrategy transfers a currently running physical plan into
@@ -48,6 +50,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	public SimplePlanMigrationStrategy() {
 		this.logger = LoggerFactory
 				.getLogger(SimplePlanMigrationStrategy.class);
+	}
+	
+	@Override
+	public String getName() {
+		return "Simple Plan Migration Strategy";
 	}
 
 	@Override
@@ -110,9 +117,14 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		for (ISource<?> source : oldPlanSources) {
 			this.logger.debug("Insert Blocking-Buffer after source " +source);
 			BlockingBuffer buffer = new BlockingBuffer(true);
+			try {
+				buffer.open();
+			} catch (OpenFailedException e) {
+				// Buffer not connected, so no errors can occur
+				e.printStackTrace();
+			}
 			buffer.setOutputSchema(source.getOutputSchema());
 			// pause execution by blocking output of buffer
-			this.logger.debug("Insert Blocking-Buffer after source ... done");
 			context.getBlockingBuffers().add((BlockingBuffer<?>) buffer);
 
 			List<PhysicalSubscription<?>> unSubList = new ArrayList<PhysicalSubscription<?>>();
@@ -130,6 +142,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			// replace direct connection to source with connection to buffer in
 			// one atomic step
 			PhysicalRestructHelper.atomicReplaceSink(source, unSubList, buffer);
+			this.logger.debug("Insert Blocking-Buffer after source ... done");
 		}
 
 		this.logger.debug("Adding False Select to new Plan " );
@@ -137,6 +150,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// realized with base operators union and select with falsepredicate
 		IPipe<?, ?> select = null;
 		select = new SelectPO(new FalsePredicate());
+		((SelectPO)select).setHeartbeatGenerationStrategy(new DefaultHeartbeatGeneration());
 		select.setOutputSchema(lastOperatorNewPlan.getOutputSchema());
 		IPipe<?, ?> union = null;
 		// only interval approach like in TUnionTIPO.drl supported
@@ -155,15 +169,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		context.setSelect(select);
 		context.setUnion(union);
 		context.setOldPlanRoot(oldPlanRoot);
-
-		// open auf dem neuen Plan aufrufen
-		this.logger.debug("Calling open on new Plan " );
-		try {
-			union.open();
-		} catch (OpenFailedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
 		this.logger.debug("Merging Plans " );
 
@@ -182,8 +187,19 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// Union geht, muss nur diese Zeile und in finishedParallelExecution
 		// markierte
 		// Zeilen entfernt werden.
-	//	PhysicalRestructHelper.appendOperator(oldPlanRoot, lastOperatorOldPlan);
+		// Anm (MG). Es werder hier die Teilpläne zusammen an die Senke gehängt.Dann
+		// stimmt aber u.U. die Ausgabereihenfolge der Tupel nicht mehr!!
+		//PhysicalRestructHelper.appendOperator(oldPlanRoot, lastOperatorOldPlan);
 		// Workaround Ende
+		
+		// open auf dem neuen Plan aufrufen
+		this.logger.debug("Calling open on new Plan " );
+		try {
+			union.open();
+		} catch (OpenFailedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		this.logger.debug("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(newPlanRoot,

@@ -26,7 +26,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingRefuseOptimizationAtMemoryLoad;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.console.OptimizationTestSink.OutputMode;
@@ -162,7 +164,7 @@ public class OptimizationTestConsole implements
 	public void _testReoptimizationRules(CommandInterpreter ci) {
 		try {
 			nmsn(ci);
-			Collection<Integer> queryIds = this.executor
+			this.executor
 					.addQuery(
 							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
 							parser(), new ParameterDefaultRoot(
@@ -242,6 +244,20 @@ public class OptimizationTestConsole implements
 	public void _evalMigration(CommandInterpreter ci) {
 		_e(ci);
 	}
+	
+	public void _em1(CommandInterpreter ci) {
+		// TODO: Hack zum einfachen Testen ;-)
+		basepath = "c:/development/";
+		nmsn(ci);
+		EvalQuery eq = EvalQuery.MIG;
+		try {
+			eval(eq, 120, 1, "" + System.currentTimeMillis()+eq);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	public void _em(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
@@ -260,14 +276,27 @@ public class OptimizationTestConsole implements
 	public void _e(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
 		basepath = "c:/development/";
+		String bufferPlacement = "Standard Buffer Placement";
+
+		System.out.println(this.executor.getRegisteredBufferPlacementStrategies());
+		
+		ExecutionConfiguration config = this.executor.getConfiguration();
+		config.set(new SettingBufferPlacementStrategy(bufferPlacement));
+		
 		nmsn(ci);
-		for (EvalQuery eq : EvalQuery.values()) {
-			try {
-				eval(eq, 120, 5, "" + System.currentTimeMillis()+eq);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		for (int i=0;i<2;i++){
+			for (EvalQuery eq : EvalQuery.values()) {
+				try {
+					eval(eq, 120, 5, "" + System.currentTimeMillis()+eq);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			// Einmal mit Buffern
+			//this.executor.setDefaultBufferPlacementStrategy(bufferPlacement);
+			this.executor.getConfiguration().set(
+					new SettingBufferPlacementStrategy(bufferPlacement));
 		}
 	}
 
@@ -325,11 +354,11 @@ public class OptimizationTestConsole implements
 	public List<Measure> e(EvalQuery evalQuery, int seconds) {
 		List<Measure> measures = new ArrayList<Measure>(seconds);
 		System.out.println(evalQuery + " " + seconds);
-		String newline = System.getProperty("line.separator");
 		String sep = ";";
 		try {
 
-			OptimizationTestSink sink = new OptimizationTestSink(OutputMode.COUNT);
+			OptimizationTestSink sink = new OptimizationTestSink(OutputMode.NORMAL);
+			
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
 							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
@@ -429,7 +458,7 @@ public class OptimizationTestConsole implements
 				measures.add(m);
 				System.out.println(m.time_elapsed + sep + m.tuples_passed + sep
 						+ m.cpu_load + sep + m.memory_usage);
-				if (evalQuery == EvalQuery.MIG && i == 50) {
+				if (evalQuery == EvalQuery.MIG && i == 30) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
 						@Override

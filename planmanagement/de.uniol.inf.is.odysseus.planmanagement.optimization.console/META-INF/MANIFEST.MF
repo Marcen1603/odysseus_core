@@ -29,4 +29,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/component.xml
 Require-Bundle: de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel,
- de.uniol.inf.is.odysseus.base
+ de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.planmanagement.executor

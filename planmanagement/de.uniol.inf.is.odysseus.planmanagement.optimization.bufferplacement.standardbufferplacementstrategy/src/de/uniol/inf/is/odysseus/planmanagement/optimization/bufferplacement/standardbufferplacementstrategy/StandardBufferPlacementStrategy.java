@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.sta
 import java.util.Collection;
 
 import org.osgi.service.component.ComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
@@ -20,8 +22,13 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.Abst
 public class StandardBufferPlacementStrategy extends
 		AbstractBufferPlacementStrategy {
 
+	Logger logger = LoggerFactory.getLogger(StandardBufferPlacementStrategy.class);;
+	
 	@Override
 	protected void activate(ComponentContext context){
+//		logger.debug("StandardBufferPlacementStrategy activated");
+		
+		System.out.println("HAAAAAAAAAAAAAAAAAAAAAAAAAAALLLOOO");
 		super.activate(context);
 	}
 	
