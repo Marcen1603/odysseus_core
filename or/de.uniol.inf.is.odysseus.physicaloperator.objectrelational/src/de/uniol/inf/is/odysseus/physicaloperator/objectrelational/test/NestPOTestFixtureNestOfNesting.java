@@ -61,8 +61,10 @@ public class NestPOTestFixtureNestOfNesting
 
 		inputAttributes[1] = new SDFAttribute("input","a2");
 		inputAttributes[1].setDatatype(
-			SDFDatatypeFactory.getDatatype("Nest")
+			SDFDatatypeFactory.getDatatype("Set")
 		);
+		
+		inputAttributes[1].setSubattributes(this.getInputNestSchema());
 
 		inputAttributes[2] = new SDFAttribute("input","a3");
 		inputAttributes[2].setDatatype(
@@ -76,7 +78,51 @@ public class NestPOTestFixtureNestOfNesting
 	
 		return new SDFAttributeList(inputAttributes);
 	}
+	
+	public SDFAttributeList getOutputNestSchema() {
+	    
+	    SDFAttribute inputAttributes[] = new SDFAttribute[3];
+	    
+        inputAttributes[0] = new SDFAttribute("input","a2");
+        inputAttributes[0].setDatatype(
+            SDFDatatypeFactory.getDatatype("Set")
+        );
+        
+        inputAttributes[0].setSubattributes(this.getInputNestSchema());
 
+        inputAttributes[1] = new SDFAttribute("input","a3");
+        inputAttributes[1].setDatatype(
+            SDFDatatypeFactory.getDatatype("String")
+        );
+
+        inputAttributes[2] = new SDFAttribute("input","a4");
+        inputAttributes[2].setDatatype(
+            SDFDatatypeFactory.getDatatype("String")
+        );
+        
+        return new SDFAttributeList(inputAttributes);
+	}
+
+	private SDFAttributeList getInputNestSchema() {
+		SDFAttribute inputAttributes[] = new SDFAttribute[3]; 
+
+		inputAttributes[0] = new SDFAttribute("input","a1");
+		inputAttributes[0].setDatatype(
+			SDFDatatypeFactory.getDatatype("String")
+		);
+
+		inputAttributes[1] = new SDFAttribute("input","a2");
+		inputAttributes[1].setDatatype(
+			SDFDatatypeFactory.getDatatype("String")
+		);
+
+		inputAttributes[2] = new SDFAttribute("input","a3");
+		inputAttributes[2].setDatatype(
+			SDFDatatypeFactory.getDatatype("String")
+		);
+		return new SDFAttributeList(inputAttributes);		
+	}
+	
 	@Override
 	public SDFAttribute getNestingAttribute() {
 		return new SDFAttribute("output", "nesting");
@@ -92,8 +138,9 @@ public class NestPOTestFixtureNestOfNesting
 
 		SDFAttribute outA2S1 = new SDFAttribute("output", "a2");
 		outA2S1.setDatatype(
-				SDFDatatypeFactory.getDatatype("Nest")
+				SDFDatatypeFactory.getDatatype("Set")
 		);
+		outA2S1.setSubattributes(this.getOutputNestSchema());
 
 		SDFAttribute outA2S2 = new SDFAttribute("output", "a3");
 		outA2S2.setDatatype(
@@ -119,13 +166,12 @@ public class NestPOTestFixtureNestOfNesting
 	@Override
 	public List<ObjectRelationalTuple<TimeInterval>> getInputTuples() {
 
-		List<ObjectRelationalTuple<TimeInterval>> inputTuples;	
+		List<ObjectRelationalTuple<TimeInterval>> inputTuples;
+		ObjectRelationalTuple<TimeInterval> firstTuple;
+		SetEntry<ObjectRelationalTuple<TimeInterval>> nest[];
 		
 		inputTuples = new ArrayList<ObjectRelationalTuple<TimeInterval>>();
-		
-		ObjectRelationalTuple<TimeInterval> firstTuple;
-		
-		SetEntry<ObjectRelationalTuple<TimeInterval>> nest[] = new SetEntry[2];
+		nest = new SetEntry[2];
 
 		String[] firstNestedValues = new String[3];
 		firstNestedValues[0] = "2";
@@ -133,7 +179,10 @@ public class NestPOTestFixtureNestOfNesting
 		firstNestedValues[2] = "4";
 		
 		ObjectRelationalTuple<TimeInterval> firstNested = 
-			new ObjectRelationalTuple<TimeInterval>(firstNestedValues);
+			new ObjectRelationalTuple<TimeInterval>(
+				this.getInputNestSchema(),
+				(Object[]) firstNestedValues
+			);
 		
 		String[] secondNestedValues = new String[3];
 		secondNestedValues[0] = "5";
@@ -141,7 +190,10 @@ public class NestPOTestFixtureNestOfNesting
 		secondNestedValues[2] = "7";
 		
 		ObjectRelationalTuple<TimeInterval> secondNested = 
-			new ObjectRelationalTuple<TimeInterval>(secondNestedValues);
+			new ObjectRelationalTuple<TimeInterval>(
+				this.getInputNestSchema(),
+				(Object[]) secondNestedValues
+			);
 		
 		nest[0] = new SetEntry(firstNested);
 		nest[1] = new SetEntry(secondNested); 
@@ -155,6 +207,7 @@ public class NestPOTestFixtureNestOfNesting
 		
 		firstTuple = 
 			new ObjectRelationalTuple<TimeInterval>(
+			    this.getInputSchema(),
 				attributeValues
 			);
 		
@@ -170,20 +223,26 @@ public class NestPOTestFixtureNestOfNesting
 		SetEntry[] nest2 = new SetEntry[2];
 				
 		String[] firstNestedValues2 = new String[3];
-		firstNestedValues2[0] = "2";
-		firstNestedValues2[1] = "3";
-		firstNestedValues2[2] = "4";
+		firstNestedValues2[0] = "1";
+		firstNestedValues2[1] = "1";
+		firstNestedValues2[2] = "1";
 		
 		ObjectRelationalTuple<TimeInterval> firstNested2 = 
-			new ObjectRelationalTuple<TimeInterval>(firstNestedValues2);
-		
+			new ObjectRelationalTuple<TimeInterval>(
+			    this.getInputNestSchema(),
+			    (Object[]) firstNestedValues2			    
+			);
+		        
 		String[] secondNestedValues2 = new String[3];
-		secondNestedValues2[0] = "5";
-		secondNestedValues2[0] = "6";
-		secondNestedValues2[0] = "7";
+		secondNestedValues2[0] = "2";
+		secondNestedValues2[1] = "4";
+		secondNestedValues2[2] = "5";
 		
 		ObjectRelationalTuple<TimeInterval> secondNested2 = 
-			new ObjectRelationalTuple<TimeInterval>(secondNestedValues2);
+		    new ObjectRelationalTuple<TimeInterval>(
+		        this.getInputNestSchema(),
+		        (Object[]) secondNestedValues2
+		    );
 		
 		nest2[0] = new SetEntry(firstNested2);
 		nest2[1] = new SetEntry(secondNested2); 
@@ -191,13 +250,14 @@ public class NestPOTestFixtureNestOfNesting
 		Object attributeValues2[] = new Object[4];
 		
 		attributeValues2[0] = "1";
-		attributeValues2[1] = nest;
-		attributeValues2[2] = "3";
-		attributeValues2[3] = "4";
+		attributeValues2[1] = nest2;
+		attributeValues2[2] = "8";
+		attributeValues2[3] = "9";
 		
 		secondTuple = 
 			new ObjectRelationalTuple<TimeInterval>(
-				attributeValues2
+			    this.getInputSchema(),
+				(Object[]) attributeValues2
 			);
 		
 		secondTuple.setMetadata(

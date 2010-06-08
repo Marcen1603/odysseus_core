@@ -27,10 +27,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @param <T>
  * 
  */
-public class ObjectRelationalTuple<T extends IMetaAttribute> extends 
-	MetaAttributeContainer<T> 
+public class ObjectRelationalTuple
+	<T extends IMetaAttribute> extends MetaAttributeContainer<T> 
 	implements Serializable, Comparable<ObjectRelationalTuple<T>> {
 
+	protected SDFAttributeList schema;
 	protected Object[] attributes;
 	protected char delimiter = '|';
 	protected int memSize = -1;
@@ -47,33 +48,44 @@ public class ObjectRelationalTuple<T extends IMetaAttribute> extends
 		super(copy);
 		int attributeLength = copy.attributes.length;
 		this.attributes = new Object[attributeLength];
-		System.arraycopy(copy.attributes, 0, this.attributes, 0,
-				attributeLength);
+		this.schema = copy.getSchema();
+		System.arraycopy(
+			copy.attributes, 
+			0, 
+			this.attributes, 
+			0,
+			attributeLength
+		);
 		this.delimiter = copy.delimiter;
 	}
 
-	public ObjectRelationalTuple
-		(SDFAttributeList schema, String line, char delimiter) {
-		this.attributes = splitLineToAttributes(line, delimiter, schema);
+	public ObjectRelationalTuple(
+		SDFAttributeList schema, 
+		String line, 
+		char delimiter
+	) {
+		this.attributes = 
+			this.splitLineToAttributes(line, delimiter, schema);
 	}
 
-	public ObjectRelationalTuple(SDFAttributeList schema, Object... attributes) {
+	public ObjectRelationalTuple(
+		SDFAttributeList schema, 
+		Object... attributes
+	) {
 		if (schema.size() != attributes.length) {
-			throw new IllegalArgumentException("listsize doesn't match schema");
+			throw new IllegalArgumentException
+				("listsize doesn't match schema");
 		}
-
+		
 		for (int i = 0; i < schema.size(); ++i) {
 			if (!checkDataType(attributes[i], schema.get(i))) {
-				throw new IllegalArgumentException("attribute " + i
-						+ " has an invalid type");
+				throw new IllegalArgumentException(
+						"attribute " + i + " has an invalid type");
 			}
 		}
-
+		
+		this.schema = schema;
 		this.attributes = Arrays.copyOf(attributes, attributes.length);
-	}
-	
-	public ObjectRelationalTuple(Object[] values) {
-		this.attributes = (Object[]) values.clone();
 	}
 
 	public int getAttributeCount() {
@@ -85,6 +97,10 @@ public class ObjectRelationalTuple<T extends IMetaAttribute> extends
 		return (K) this.attributes[pos];
 	}
 
+	public SDFAttributeList getSchema() {
+		return this.schema;
+	}
+	
 	public final void setAttribute(int pos, Object value) {
 		this.attributes[pos] = value;
 	}
@@ -137,8 +153,6 @@ public class ObjectRelationalTuple<T extends IMetaAttribute> extends
 					} else {
 						return -1;
 					}
-						
-						
 				} else {
 				compare = 
 					((Comparable) this.attributes[i]).
@@ -176,6 +190,7 @@ public class ObjectRelationalTuple<T extends IMetaAttribute> extends
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final String toString() {
 		StringBuffer retBuff = new StringBuffer();
@@ -187,16 +202,36 @@ public class ObjectRelationalTuple<T extends IMetaAttribute> extends
 		for (int i = 1; i < this.attributes.length; ++i) {
 			Object curAttribute = this.attributes[i];
 			retBuff.append(delimiter);
-			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
+			
+			if(curAttribute == null) {
+				retBuff.append("");
+			} else {
+				String attrStr;
+				if(curAttribute instanceof SetEntry[]) {
+					attrStr = Arrays.deepToString(((SetEntry[]) curAttribute));
+				} else {
+					attrStr = curAttribute.toString();
+				}
+				retBuff.append(attrStr);
+			}
 		}
 		retBuff.append(" | sz="+(memSize==-1?"(-)":memSize));
 		retBuff.append(" | META | " + getMetadata());
 		return retBuff.toString();
 	}
-
-	private final boolean checkDataType(Object object, SDFAttribute attribute) {
+	
+	@SuppressWarnings("unchecked")
+    private final boolean checkDataType(
+	    Object object,
+	    SDFAttribute attribute
+	) {
+	    if (object instanceof SetEntry[]) {
+	        return SDFObjectRelationalDatatypes.isSet(attribute.getDatatype());
+	    }
+	    
 		if (object instanceof String) {
-			return SDFDatatypes.isString(attribute.getDatatype());
+			return SDFDatatypes.
+			    isString(attribute.getDatatype());
 		}
 		
 		if (object instanceof Integer) {

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -15,7 +14,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.PartialNest;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.SetEntry;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

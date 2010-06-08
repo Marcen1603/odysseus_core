@@ -6,7 +6,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -31,9 +30,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * outcome: 
  * 
  * a1	a2	n1
- * 1	2	[3	4 [0,10)][6	7	[0,10)] [0,10)
- * 2	2	[3	4 [15,30)] [15,30)
- * 2	5	[6	7 [20,30)][7	7	[20,30)] [20,30)
+ * 1	   2	    [3	4 [0,10)][6	7	[0,10)] [0,10)
+ * 2	   2	    [3	4 [15,30)] [15,30)
+ * 2	   5	[6	7 [20,30)][7	7	[20,30)] [20,30)
  * 
  * @author Jendrik Poloczek
  * 
@@ -100,8 +99,16 @@ public class NestPOTestFixtureTwoGAttrNesting
 		SDFAttribute outputAttributes[] = new SDFAttribute[3];
 
 		SDFAttribute outA1 = new SDFAttribute("output","a1");
-		SDFAttribute outA2 = new SDFAttribute("output","a2");
-		SDFAttribute outA3 = new SDFAttribute("output","nesting");
+		outA1.setDatatype(
+		        SDFDatatypeFactory.getDatatype("String")
+		);
+		
+		SDFAttribute outA2 = new SDFAttribute("output","a2");		
+		outA2.setDatatype(
+                SDFDatatypeFactory.getDatatype("String")
+        );
+		
+		SDFAttribute outA3 = new SDFAttribute("output","n1");
 
 		SDFAttribute outA2S1 = new SDFAttribute("output", "a3");
 		outA2S1.setDatatype(

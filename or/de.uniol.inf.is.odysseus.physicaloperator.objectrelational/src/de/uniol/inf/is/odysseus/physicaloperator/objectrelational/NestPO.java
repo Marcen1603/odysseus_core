@@ -115,7 +115,10 @@ public class NestPO<T extends IMetaAttribute> extends
 	}
 
 	@Override
-	final protected void process_next(ObjectRelationalTuple<T> object, int port) {
+	final protected void process_next(
+		ObjectRelationalTuple<T> object, 
+		int port
+	) {
 		try {
 			// do nothing
 			transfer(object);
@@ -381,8 +384,6 @@ public class NestPO<T extends IMetaAttribute> extends
 		
 		ObjectRelationalTuple<TimeInterval> gTuple 
 			= elem.restrict(this.getGroupingAttributesPos(), true);
-		
-		System.out.println(gTuple);
 		
 		Integer id = keyMap.get(gTuple);
 		if (id == null) {
@@ -770,12 +771,14 @@ public class NestPO<T extends IMetaAttribute> extends
 		
 	}
 
+	@SuppressWarnings("hiding")
 	@Override
 	public <T> IMonitoringData<T> getMonitoringData(String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@SuppressWarnings("hiding")
 	@Override
 	public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
 			long period) {

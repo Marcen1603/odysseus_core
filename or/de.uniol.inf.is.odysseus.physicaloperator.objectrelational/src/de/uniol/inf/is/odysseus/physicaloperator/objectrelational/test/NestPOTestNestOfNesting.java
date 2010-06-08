@@ -9,6 +9,7 @@ import org.junit.Test;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.SetEntry;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -46,7 +47,8 @@ public class NestPOTestNestOfNesting {
 	    this.result = 
 	    	new ArrayList<ObjectRelationalTuple<TimeInterval>>();
 	    
-	    for(ObjectRelationalTuple<TimeInterval> tuple : inputTuples) {	    
+	    for(ObjectRelationalTuple<TimeInterval> tuple : inputTuples) {	
+	    	System.out.println(tuple);
 	    	nestPO.processNextTest(tuple, 0);
 	    }
 	    
@@ -61,13 +63,20 @@ public class NestPOTestNestOfNesting {
 	    	result.add(nestPO.deliver());
 	    }	    
 	}
-	
+
 	@Test 
 	public void testNestOfNesting() {
 		System.out.println("output");
 		for(ObjectRelationalTuple<TimeInterval> tuple : this.result) {
-			System.out.println(tuple);
+			SetEntry[] entries = (SetEntry[]) tuple.getAttribute(1);
+			ObjectRelationalTuple t = (ObjectRelationalTuple) entries[0].getValue();
+			System.out.println(t);
+	
+			SetEntry[] entries2 = (SetEntry[]) t.getAttribute(0);			
+			System.out.println(entries2[0]);
 		}
+		
+		
 	}
 	
 }

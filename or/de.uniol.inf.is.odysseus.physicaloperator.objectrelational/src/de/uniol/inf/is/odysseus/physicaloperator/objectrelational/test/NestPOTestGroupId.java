@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * start:
  * 
  * a1	a2	a3	a4
- * 1	2	3	4 	[0,10)
- * 1	5	6	7	[0,10)
+ * 1    	2	3	4 	[0,10)
+ * 1	    5	6	7	[0,10)
  * 
  * inputSchema is a1 ... a4 are strings
  * outputSchema is a1, n1. a1 is string 

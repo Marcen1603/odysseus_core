@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.PartialNest;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -27,23 +26,23 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * we got a partial [5,10) with following relational tuples
  * 
  * a1	a2	a3	a4
- * 1	2	3	4 	[5,10)
- * 1	4	5	6 	[5,10)
+ * 1    	2	3	4 	[5,10)
+ * 1	    4	5	6 	[5,10)
  * 
  * and a partial [0,10) with the following relational tuples
  * 
  * a1	a2	a3	a4
- * 1	5	6	7	[0,10)
- * 1	8	9	10	[0,10)
+ * 1    	5	6	7	[0,10)
+ * 1	    8	9	10	[0,10)
  * 
  * end:
  * if everything works correctly the end partial [5,10) should contain
  * 
  * a1	a2	a3	a4
- * 1	2	3	4	[5,10)
- * 1	4	5	6	[5,10)
- * 1	5	6	7	[5,10)
- * 1	8	9	10	[5,10)
+ * 1    	2	3	4	[5,10)
+ * 1    	4	5	6	[5,10)
+ * 1	    5	6	7	[5,10)
+ * 1	    8	9	10	[5,10)
  * 
  * @author Jendrik Poloczek
  * 
@@ -87,7 +86,8 @@ public class NestPOTestMerge {
 				"1;5;6;7,0;5",
 			  };  
 	    
-		inputTuplesPartialA = new ArrayList<ObjectRelationalTuple<TimeInterval>>();
+		inputTuplesPartialA = 
+		    new ArrayList<ObjectRelationalTuple<TimeInterval>>();
 		
 		String dataAndInterval[];
 		String timeInterval[];
@@ -121,7 +121,8 @@ public class NestPOTestMerge {
 				"1;8;9;10,0;10",
 			  };  
 	    
-		inputTuplesPartialB = new ArrayList<ObjectRelationalTuple<TimeInterval>>();
+		inputTuplesPartialB = 
+		    new ArrayList<ObjectRelationalTuple<TimeInterval>>();
 		
 	    for(int i = 0; i < inputDataPartialB.length; i++) {
 		    
