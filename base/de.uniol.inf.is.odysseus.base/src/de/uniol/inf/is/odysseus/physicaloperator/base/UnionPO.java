@@ -36,6 +36,7 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 	
 	@Override
 	protected synchronized void process_next(R object, int port) {
+		transferFunction.transfer(object);
 		transferFunction.newElement(object, port);
 	}
 

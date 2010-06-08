@@ -39,4 +39,8 @@ public interface ITransferFunction<T extends IMetaAttributeContainer<?>> extends
 	public ITransferFunction<T> clone();
 	
 	public void newHeartbeat(PointInTime heartbeat, int port);
+
+	public void setDebug(boolean b);
+	
+	
 }

@@ -221,6 +221,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				sink, sinkInPort, sourceOutPort, schema);
 //		synchronized (this.subscriptions) {
 			if (!this.sinkSubscriptions.contains(sub)) {
+				getLogger().debug(this+" Subscribe Sink "+sink+" to "+sinkInPort+" from "+sourceOutPort);
 				this.sinkSubscriptions.add(sub);
 				sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
 			}

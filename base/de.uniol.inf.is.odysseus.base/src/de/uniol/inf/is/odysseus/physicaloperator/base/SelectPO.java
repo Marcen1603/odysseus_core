@@ -10,17 +10,19 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 public class SelectPO<T> extends AbstractPipe<T, T> {
 
 	private IPredicate<? super T> predicate;
-
+	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy();
+	
 	public IPredicate<? super T> getPredicate() {
 		return predicate;
 	}
 
 	public SelectPO(IPredicate<? super T> predicate){
-		this.predicate = predicate.clone();
+		this.predicate = predicate.clone();	
 	}
 	
 	public SelectPO(SelectPO<T> po){
-		this.predicate = po.predicate.clone();		
+		this.predicate = po.predicate.clone();
+		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
 	}
 
 	@Override
@@ -30,8 +32,11 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 	
 	@Override
 	protected synchronized void process_next(T object, int port) {
+	//	System.out.println(this+" "+object+" "+port);
 		if (predicate.evaluate(object)) {
 			transfer(object);
+		}else{
+			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
 	}
 	
@@ -87,4 +92,13 @@ public class SelectPO<T> extends AbstractPipe<T, T> {
 		sendPunctuation(timestamp);
 	}
 
+	public IHeartbeatGenerationStrategy<T> getHeartbeatGenerationStrategy() {
+		return heartbeatGenerationStrategy;
+	}
+
+	public void setHeartbeatGenerationStrategy(
+			IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy) {
+		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
+	}
 }
+

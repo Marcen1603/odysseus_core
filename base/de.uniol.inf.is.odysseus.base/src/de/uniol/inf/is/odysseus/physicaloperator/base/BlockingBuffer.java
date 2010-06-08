@@ -21,13 +21,12 @@ public class BlockingBuffer<T extends IClone> extends BufferedPipe<T> {
 	
 	
 	public BlockingBuffer(BlockingBuffer<T> blockingBuffer) {
-		super(blockingBuffer);	
+		super(blockingBuffer);
 	}
 
 	@Override
 	public BufferedPipe<T> clone() {
 		return new BlockingBuffer<T>(this);
 	}
-	
 		
 }
