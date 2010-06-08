@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.PriorityQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
@@ -14,6 +17,17 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
 public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		implements ITransferFunction<T> {
 
+	private boolean debug = false;
+
+	static private Logger _logger = null;
+
+	static private Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(TITransferFunction.class);
+		}
+		return _logger;
+	}
+	
 	final protected PointInTime[] minTs;
 	protected AbstractSource<T> po;
 	// Initiale Groesse da Comperator uebergeben werden muss
@@ -92,11 +106,18 @@ public class TITransferFunction<T extends IMetaAttributeContainer<? extends ITim
 						&& elem.getMetadata().getStart()
 								.beforeOrEquals(minimum)) {
 					this.out.poll();
+					if (debug) getLogger().debug("TITransfer "+elem);
+
 					po.transfer(elem);
 					elem = this.out.peek();
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setDebug(boolean b) {
+		this.debug = b;
 	}
 
 }

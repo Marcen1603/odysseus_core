@@ -105,4 +105,10 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void setDebug(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
 }

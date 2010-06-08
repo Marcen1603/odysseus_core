@@ -88,4 +88,10 @@ public class PNTransferFunction<T extends IMetaAttributeContainer<? extends IPos
 		
 	}
 
+	@Override
+	public void setDebug(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

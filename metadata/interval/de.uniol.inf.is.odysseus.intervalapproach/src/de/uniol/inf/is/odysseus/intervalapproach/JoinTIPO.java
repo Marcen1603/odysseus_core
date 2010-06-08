@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -29,8 +32,15 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
 		extends AbstractPipe<T, T> {
-	// private static final Logger logger = LoggerFactory
-	// .getLogger(JoinTIPO.class);
+	private static Logger _logger =  null;
+	
+	private static Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(JoinTIPO.class);
+		}
+		return _logger;
+	}
+		
 	private ITemporalSweepArea<T>[] areas;
 	private IPredicate<? super T> joinPredicate;
 
@@ -143,6 +153,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			// dass ein kompletter teilplan nicht mehr ausgefuehrt
 			// werden muss, man also ressourcen spart
 			return;
+		}
+		if (!isOpen()) {
+			getLogger().error("process next called on non open operator "+this);
 		}
 		otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
