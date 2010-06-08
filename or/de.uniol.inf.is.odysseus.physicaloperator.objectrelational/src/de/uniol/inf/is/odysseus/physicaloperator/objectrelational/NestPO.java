@@ -18,9 +18,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
+ * 
  * NestPO
  * 
  * @author Jendrik Poloczek
+ * 
  */
 public class NestPO<T extends IMetaAttribute> extends
 		AbstractPipe<ObjectRelationalTuple<T>, ObjectRelationalTuple<T>> {
@@ -106,12 +108,12 @@ public class NestPO<T extends IMetaAttribute> extends
 	/**
 	 * @param relationalNestPO nesting plan operator to copy
 	 */	
-	public NestPO(NestPO<T> relationalNestPO) {
+	public NestPO(NestPO<T> nestPO) {
 		super();
-		this.inputSchema = relationalNestPO.getInputSchema();
-		this.outputSchema = relationalNestPO.getOutputSchema();
-		this.nestingAttribute = relationalNestPO.getNestingAttribute();
-		this.groupingAttributes = relationalNestPO.getGroupingAttributes();
+		this.inputSchema = nestPO.getInputSchema();
+		this.outputSchema = nestPO.getOutputSchema();
+		this.nestingAttribute = nestPO.getNestingAttribute();
+		this.groupingAttributes = nestPO.getGroupingAttributes();
 	}
 
 	@Override
@@ -740,19 +742,19 @@ public class NestPO<T extends IMetaAttribute> extends
 	 * Getter and setter for copy constructor. 
 	 */
 	public SDFAttributeList getInputSchema() {
-		return inputSchema;
+		return this.inputSchema;
 	}
 	
 	public SDFAttributeList getOutputSchema() {
-		return outputSchema;
+		return this.outputSchema;
 	}
 	
 	public SDFAttributeList getGroupingAttributes() {
-		return groupingAttributes;
+		return this.groupingAttributes;
 	}	
 	
 	public SDFAttribute getNestingAttribute() {
-		return nestingAttribute;
+		return this.nestingAttribute;
 	}	
 	
 	@Override

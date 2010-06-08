@@ -8,11 +8,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
+ * 
+ * UnnestPO
+ * 
  * @author Jendrik Poloczek
+ * 
  */
 public class UnnestPO<T extends IMetaAttribute> extends
-		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
+		AbstractPipe<ObjectRelationalTuple<T>, ObjectRelationalTuple<T>> {
 
+    private SDFAttributeList inputSchema;
+    private SDFAttributeList outputSchema;
 	private SDFAttribute nestingAttribute;
 	
 	/**
@@ -24,23 +30,35 @@ public class UnnestPO<T extends IMetaAttribute> extends
 			SDFAttributeList outputSchema,
 			SDFAttribute nestingAttribute
 		) {
+	    this.inputSchema = inputSchema;
+	    this.outputSchema = outputSchema;
 		this.nestingAttribute = nestingAttribute.clone();
 	}
 
 	/**
 	 * @param relationalNestPO nesting plan operator to copy
 	 */	
-	public UnnestPO(UnnestPO<T> relationalNestPO) {
+	public UnnestPO(UnnestPO<T> unnestPO) {
 		super();
+		this.inputSchema = unnestPO.getInputSchema();
+		this.outputSchema = unnestPO.getOutputSchema();
 		this.nestingAttribute = nestingAttribute.clone();
 	}
 
 	/*
 	 * Getter and setter for copy constructor. 
 	 */
-
+	
+    public SDFAttributeList getInputSchema() {
+        return this.inputSchema;
+    }
+    
+    public SDFAttributeList getOutputSchema() {
+        return this.outputSchema;
+    }
+	
 	public SDFAttribute getNestingAttribute() {
-		return nestingAttribute;
+		return this.nestingAttribute;
 	}	
 	
 	@Override
@@ -54,7 +72,10 @@ public class UnnestPO<T extends IMetaAttribute> extends
 	}
 	
 	@Override
-	final protected void process_next(RelationalTuple<T> object, int port) {
+	final protected void process_next(
+	    ObjectRelationalTuple<T> object,
+	    int port
+	) {
 		try {
 			System.out.println("RelationalTuple "+this+" "+object);
 			// do nothing
@@ -81,5 +102,5 @@ public class UnnestPO<T extends IMetaAttribute> extends
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		sendPunctuation(timestamp);
-	}	
+	}
 }
