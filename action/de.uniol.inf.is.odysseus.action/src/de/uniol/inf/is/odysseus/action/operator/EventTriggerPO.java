@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter.ParameterType;
 import de.uniol.inf.is.odysseus.action.services.dataExtraction.IDataExtractor;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
@@ -150,5 +151,10 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 		if (bmData != null){
 			benchmark.addBenchmarkData(bmData);
 		}
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// Do nothing. 
 	}
 }
