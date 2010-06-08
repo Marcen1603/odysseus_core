@@ -4,6 +4,7 @@ import net.java.dev.jaxb.array.StringArray;
 
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.broker.console.ConsoleServer;
 import de.uniol.inf.is.odysseus.broker.console.ConsoleServerService;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
@@ -109,6 +110,11 @@ public class EclipseConsoleSink extends AbstractSink<Object> {
 		if (port != other.port)
 			return false;
 		return true;
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// Nothing to do
 	}
 
 }
