@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 
 public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPriority>>
 		extends AbstractPipe<T, T> implements IPostPriorisationPipe<T> {
@@ -75,12 +74,6 @@ public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPri
 		}
 	}
 
-	@Override
-	public boolean cleanInternalStates(PointInTime punctuation,
-			IMetaAttributeContainer<?> current) {
-		return true;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public void transfer(T object) {
@@ -89,10 +82,6 @@ public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPri
 		}
 
 		transfer(object, 0);
-
-		if (isActive) {
-			updatePunctuationData(object);
-		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -126,21 +115,14 @@ public class PostPriorisationPO<T extends IMetaAttributeContainer<? extends IPri
 	}
 
 	@Override
-	public PostPriorisationPO<T> clone()  {
+	public PostPriorisationPO<T> clone() {
 		return new PostPriorisationPO<T>(this);
-	}
-
-	@Override
-	public void setPostPriorisationFunctionality(
-			IPostPriorisationFunctionality<T> functionality) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
