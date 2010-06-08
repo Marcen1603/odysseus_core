@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
@@ -165,6 +166,12 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
 	@Override
 	public P2PSinkPO<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		throw new RuntimeException("process punctuation not implemented");
 	}
 
 
