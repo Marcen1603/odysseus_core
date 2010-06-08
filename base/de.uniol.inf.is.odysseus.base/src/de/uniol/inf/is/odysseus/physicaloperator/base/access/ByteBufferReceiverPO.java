@@ -3,12 +3,17 @@ package de.uniol.inf.is.odysseus.physicaloperator.base.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 
 public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		IRouterReceiver {
+	
+	Logger logger = LoggerFactory.getLogger(ByteBufferReceiverPO.class);
 
 	private IObjectHandler<W> handler;
 	private int size = -1;
@@ -115,7 +120,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 	private synchronized void transfer() throws IOException,
 			ClassNotFoundException {
 		W toTrans = handler.create();
-		// logger.debug("Transfer "+toTrans);
+		//logger.debug("Transfer "+toTrans);
 		transfer(toTrans);
 		size = -1;
 		sizeBuffer.clear();

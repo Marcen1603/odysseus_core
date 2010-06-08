@@ -11,7 +11,14 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMonitoringDataProvider implements IMonitoringDataProvider {
 
-	Logger logger = LoggerFactory.getLogger(AbstractMonitoringDataProvider.class);
+	static Logger _logger = null;
+
+	static private Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(AbstractMonitoringDataProvider.class);
+		}
+		return _logger;
+	}
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, IMonitoringData> metaDataItem;
@@ -66,7 +73,7 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 
 	public void addMonitoringData(String type,
 			IMonitoringData<?> item) {
-		logger.debug("Add Monitoring Data "+type+" "+item+" to "+this);
+		getLogger().debug("Add Monitoring Data "+type+" "+item+" to "+this);
 		if (this.metaDataItem.containsKey(type)) {
 			//throw new IllegalArgumentException(type + " is already registered");
 			return;
@@ -76,12 +83,12 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 	}
 
 	public void removeMonitoringData(String type) {
-		logger.debug("Add Monitoring Data "+type+" from "+this);
+		getLogger().debug("Add Monitoring Data "+type+" from "+this);
 		this.metaDataItem.remove(type);
 	}
 	
 	protected void stopMonitoring() {
-		logger.debug("Stop Monitoring "+this);
+		getLogger().debug("Stop Monitoring "+this);
 		for (IMonitoringData<?> m : metaDataItem.values()) {
 			m.cancelMonitoring();
 		}

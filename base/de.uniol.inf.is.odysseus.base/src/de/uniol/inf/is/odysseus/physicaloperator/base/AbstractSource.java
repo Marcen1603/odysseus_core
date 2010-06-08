@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
 	
-	private static Logger _logger = null;
+	static private Logger _logger = null;
 	
 	private static Logger getLogger(){
 		if (_logger == null){
@@ -69,7 +69,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	public AbstractSource(AbstractSource<T> source) {
 		this.outputSchema = source.outputSchema;
-		this.blocked = source.blocked;
+		this.blocked = new AtomicBoolean();
+		this.blocked.set(source.blocked.get());
 		// TODO: Other Members to copy??
 	}
 

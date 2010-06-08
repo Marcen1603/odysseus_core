@@ -7,6 +7,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -18,6 +21,8 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
 
+	Logger logger = LoggerFactory.getLogger(BufferedPipe.class);
+	
 	protected LinkedList<T> buffer = new LinkedList<T>();
 	private Lock transferLock = new ReentrantLock();
 	protected AtomicReference<PointInTime> heartbeat = new AtomicReference<PointInTime>();
@@ -46,8 +51,11 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 
 	@Override
 	public boolean hasNext() {
-		if (!isOpen())
+		if (!isOpen()){
+			logger.error("hasNext call on not opened buffer!");
 			return false;
+		}
+			
 		return !buffer.isEmpty() || this.heartbeat.get() != null;
 	}
 
@@ -61,6 +69,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 			synchronized (this.buffer) {
 				element = buffer.pop();
 			}
+			//logger.debug(this+" transferNext() "+element);
 			transfer(element);
 			if (isDone()) {
 				propagateDone();
