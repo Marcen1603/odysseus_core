@@ -30,13 +30,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
 	
-	private static Logger logger = null;
+	private static Logger _logger = null;
 	
 	private static Logger getLogger(){
-		if (logger == null){
-			logger = LoggerFactory.getLogger(AbstractSource.class);
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(AbstractSource.class);
 		}
-		return logger;
+		return _logger;
 	}
 	//final protected List<PhysicalSubscription<ISink<? super T>>> subscriptions = new ArrayList<PhysicalSubscription<ISink<? super T>>>();;
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
@@ -430,7 +430,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void block() {
 		synchronized(blocked){
 			this.blocked.set(true);
-			logger.debug("Operator "+this.toString()+" blocked");
+			getLogger().debug("Operator "+this.toString()+" blocked");
 			fire(blockedEvent);
 		}
 	}
@@ -438,7 +438,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void unblock() {
 		synchronized (blocked) {
 			this.blocked.set(false);
-			logger.debug("Operator "+this.toString()+" unblocked");
+			getLogger().debug("Operator "+this.toString()+" unblocked");
 			fire(unblockedEvent);			
 		}
 	}
