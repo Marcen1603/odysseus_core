@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Objectrelational
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.logicaloperator.objectrelational
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.logicaloperator.objectrelational.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ org.osgi.framework
+Export-Package: de.uniol.inf.is.odysseus.logicaloperator.objectrelational

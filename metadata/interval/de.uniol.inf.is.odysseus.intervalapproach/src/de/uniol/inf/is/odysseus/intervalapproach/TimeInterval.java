@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 
@@ -213,6 +215,15 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		// return true;
 	}
 
+	/* 
+	 * @TODO Difference method is returning a distance between time 
+	 * intervals and not the difference, example for an time interval A and 
+	 * an inside time interval B: A - B = two time intervals 
+	 * left and right to A.
+	 * 
+	 * minus method implements the difference
+	 */
+	
 	public static ITimeInterval[] difference(ITimeInterval left,
 			ITimeInterval right) {
 		if (inside(left, right)) {
@@ -232,6 +243,107 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		}
 	}
 
+	/**
+	 * Difference method is returning a distance between time intervals and
+	 * not the difference, example for an time interval A and an inside 
+	 * time interval B: A - B = two time intervals left and right to A.
+	 * 
+	 * The method implements the behaviour difference method should have.
+	 * 
+	 * @TODO wrap equal if-clause bodies later; and create temporary points 
+	 * for starts and ends. 
+	 * 
+	 * @param minuend
+	 * @param subtrahend
+	 * @author Jendrik Poloczek
+	 * @return
+	 */
+	
+	public static List<TimeInterval> minus(
+		ITimeInterval minuend, 
+		ITimeInterval subtrahend
+	) {		
+		List<TimeInterval> difference = new ArrayList<TimeInterval>();
+		
+		if(
+			minuend.equals(subtrahend) || 
+			!overlaps(minuend, subtrahend) ||
+			TimeInterval.inside(minuend, subtrahend)
+		) {
+			return difference;
+		}
+		
+		if(minuend.getStart().equals(subtrahend.getStart())) {
+			if(subtrahend.getEnd().before(minuend.getEnd())) {
+				difference.add(new TimeInterval(
+						new PointInTime(subtrahend.getEnd()),
+						new PointInTime(minuend.getEnd())						
+				));					
+				return difference;
+			} else {
+				difference.add(new TimeInterval(
+						new PointInTime(minuend.getEnd()),
+						new PointInTime(subtrahend.getEnd())
+				));		
+				return difference;
+			}
+		}
+		
+		if(minuend.getStart().before(subtrahend.getStart())) {
+			if(subtrahend.getEnd().before(minuend.getEnd())) {
+				difference.add(new TimeInterval(
+						new PointInTime(minuend.getStart()),
+						new PointInTime(subtrahend.getStart())
+				));	
+				difference.add(new TimeInterval(
+						new PointInTime(subtrahend.getEnd()),
+						new PointInTime(minuend.getEnd())
+				));	
+				return difference;
+			} if(minuend.getEnd().before(subtrahend.getEnd())) {
+				difference.add(new TimeInterval(
+						new PointInTime(minuend.getStart()),
+						new PointInTime(subtrahend.getStart())
+				));			
+				return difference;
+			} else {
+				difference.add(new TimeInterval(
+						new PointInTime(minuend.getStart()),
+						new PointInTime(subtrahend.getStart())
+				));		
+				return difference;
+			}
+		}
+		
+		if(subtrahend.getStart().before(minuend.getStart())) {
+			if(minuend.getEnd().before(subtrahend.getEnd())) {
+				difference.add(new TimeInterval(
+						new PointInTime(subtrahend.getStart()),
+						new PointInTime(minuend.getStart())
+				));		
+				difference.add(new TimeInterval(
+						new PointInTime(minuend.getEnd()),
+						new PointInTime(subtrahend.getEnd())
+				));		
+				return difference;
+			} if(subtrahend.getEnd().before(minuend.getEnd())) {
+				difference.add(new TimeInterval(
+						new PointInTime(subtrahend.getStart()),
+						new PointInTime(minuend.getStart())
+				));					
+				return difference;
+			} else {
+				difference.add(new TimeInterval(
+						new PointInTime(subtrahend.getStart()),
+						new PointInTime(minuend.getStart())
+				));			
+				return difference;
+			}			
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Beim Vergleich werden zunchst die Startzeitpunkte und dann die
 	 * Endzeitpunkte der Intervalle betrachtet
