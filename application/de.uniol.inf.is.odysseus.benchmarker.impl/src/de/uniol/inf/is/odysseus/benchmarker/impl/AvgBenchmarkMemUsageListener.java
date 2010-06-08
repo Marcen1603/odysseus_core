@@ -87,11 +87,11 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 				hash.put(op.hashCode(), op);
 			}
 			
-			if(op instanceof DirectInterlinkBufferedPipe) {
-				AvgTempMemUsageListener listener = new AvgTempMemUsageListener(((DirectInterlinkBufferedPipe)op).getStorage());
-				listenersPunc.add(listener);
-				op.subscribe(listener, POEventType.PushDone);				
-			}
+//			if(op instanceof DirectInterlinkBufferedPipe) {
+//				AvgTempMemUsageListener listener = new AvgTempMemUsageListener(((DirectInterlinkBufferedPipe)op).getStorage());
+//				listenersPunc.add(listener);
+//				op.subscribe(listener, POEventType.PushDone);				
+//			}
 			 
 			if(((IPhysicalOperator)sub.getTarget()).isSink()) {
 				addMemListeners((ISink<?>) sub.getTarget());
