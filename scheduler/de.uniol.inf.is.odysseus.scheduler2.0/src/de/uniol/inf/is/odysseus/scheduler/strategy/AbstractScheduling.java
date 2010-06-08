@@ -24,8 +24,9 @@ import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
  */
 public abstract class AbstractScheduling implements IScheduling,
 		IPOEventListener {
-	
-	static private Logger logger = LoggerFactory.getLogger(AbstractScheduling.class);
+
+	static private Logger logger = LoggerFactory
+			.getLogger(AbstractScheduling.class);
 
 	private List<ISchedulingEventListener> schedulingEventListener = new ArrayList<ISchedulingEventListener>();
 	private IPartialPlan plan = null;
@@ -36,18 +37,18 @@ public abstract class AbstractScheduling implements IScheduling,
 	 */
 	BitSet schedulable = new BitSet();
 	/**
-	 * if scheduling currently paused because nothing to schedule, need
-	 * to send event if scheduling can be continued 
+	 * if scheduling currently paused because nothing to schedule, need to send
+	 * event if scheduling can be continued
 	 */
 	boolean schedulingPaused = false;
 	/**
-	 * BitVector for every source, is set to false, if source in manually blocked
-	 * Changed by Blocked and Unblocked Events
+	 * BitVector for every source, is set to false, if source in manually
+	 * blocked Changed by Blocked and Unblocked Events
 	 */
 	BitSet notBlocked = new BitSet();
 	/**
-	 * if all schedulable operators are blocked, is set to true, 
-	 * need to send event that scheduling is possible again
+	 * if all schedulable operators are blocked, is set to true, need to send
+	 * event that scheduling is possible again
 	 */
 	boolean blocked = false;
 
@@ -65,7 +66,7 @@ public abstract class AbstractScheduling implements IScheduling,
 	}
 
 	protected void prepareSources() {
-		logger.debug("Prepare Sources "+plan.getIterableSource());
+		logger.debug("Prepare Sources " + plan.getIterableSource());
 
 		for (int bitIndex = 0; bitIndex < plan.getIterableSource().size(); bitIndex++) {
 			plan.getIterableSource(bitIndex).subscribe(this,
@@ -77,6 +78,8 @@ public abstract class AbstractScheduling implements IScheduling,
 			schedulable.set(bitIndex, true);
 			notBlocked.set(bitIndex, true);
 		}
+		blocked = false;
+		schedulingPaused = false;
 	}
 
 	@Override
@@ -90,21 +93,24 @@ public abstract class AbstractScheduling implements IScheduling,
 			this.isPlanChanged = false;
 		}
 
-//		System.out.println("Scheduling "+plan.getIterableSource());
 		long endTime = System.currentTimeMillis() + maxTime;
 		IIterableSource<?> nextSource = nextSource();
 		synchronized (schedulingEventListener) {
-			while (!this.blocked && !this.schedulingPaused && nextSource != null
+			while (!this.blocked && !this.schedulingPaused
+					&& nextSource != null
 					&& System.currentTimeMillis() < endTime) {
-//				System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" a="
-//						+nextSource.isActive()+" n="+nextSource.hasNext());
+				// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" a="
+				// +nextSource.isActive()+" n="+nextSource.hasNext());
 				if (nextSource.isDone()) {
 					sourceDone(nextSource);
 				} else if (nextSource.isBlocked()) {
+					logger.debug(nextSource + " blocked");
 					updateBlocked(plan.getSourceId(nextSource));
 				} else if (nextSource.hasNext() && nextSource.isActive()) {
+					// logger.debug(nextSource + " process");
 					nextSource.transferNext();
 				} else {
+					// logger.debug(nextSource + " nothing to process");
 					updateSchedulable(nextSource);
 				}
 				nextSource = nextSource();
@@ -116,20 +122,20 @@ public abstract class AbstractScheduling implements IScheduling,
 	private void updateSchedulable(IIterableSource<?> nextSource) {
 		schedulable.set(plan.getSourceId(nextSource), false);
 		if (schedulable.cardinality() == 0) {
-			if (schedulingPaused == false){
+			if (schedulingPaused == false) {
 				schedulingPaused = true;
-				//logger.debug("Scheduling paused, nothing to schedule");
+				// logger.debug("Scheduling paused, nothing to schedule");
 				for (ISchedulingEventListener l : schedulingEventListener) {
 					l.nothingToSchedule(this);
 				}
 			}
 		}
 	}
-	
+
 	private void updateBlocked(int index) {
 		notBlocked.set(index, false);
-		if (notBlocked.cardinality() == 0){
-			if (blocked == false){
+		if (notBlocked.cardinality() == 0) {
+			if (blocked == false) {
 				blocked = true;
 				logger.debug("Processing blocked because of blocked operators");
 				for (ISchedulingEventListener l : schedulingEventListener) {
@@ -169,15 +175,15 @@ public abstract class AbstractScheduling implements IScheduling,
 	public void poEventOccured(POEvent poEvent) {
 		IIterableSource<?> s = (IIterableSource<?>) poEvent.getSource();
 		int index = plan.getSourceId(s);
-		synchronized (notBlocked){
+		synchronized (notBlocked) {
 			if (poEvent.getPOEventType() == POEventType.Blocked) {
-//				System.out.println(poEvent);
+				// System.out.println(poEvent);
 				updateBlocked(index);
 				return;
 			} else if (poEvent.getPOEventType() == POEventType.Unblocked) {
-//				System.out.println(poEvent);
+				// System.out.println(poEvent);
 				notBlocked.set(index, true);
-				if (blocked){
+				if (blocked) {
 					for (ISchedulingEventListener l : schedulingEventListener) {
 						l.scheddulingPossible(this);
 					}
@@ -185,14 +191,14 @@ public abstract class AbstractScheduling implements IScheduling,
 			}
 		}
 		// Ignore ProcessDone Events if Source is blocked
-		if (notBlocked.get(index)){
-//			System.out.println(poEvent);
-			if (poEvent.getPOEventType() == POEventType.ProcessDone){
-				synchronized (schedulingEventListener) {			
+		if (notBlocked.get(index)) {
+			// System.out.println(poEvent);
+			if (poEvent.getPOEventType() == POEventType.ProcessDone) {
+				synchronized (schedulingEventListener) {
 					schedulable.set(index, true);
 					if (schedulingPaused && s.isActive() && !s.isBlocked()) {
 						schedulingPaused = false;
-						//logger.debug("Scheduling reactivated");
+						// logger.debug("Scheduling reactivated");
 						for (ISchedulingEventListener l : schedulingEventListener) {
 							l.scheddulingPossible(this);
 						}
@@ -201,6 +207,5 @@ public abstract class AbstractScheduling implements IScheduling,
 			}
 		}
 	}
-
 
 }
