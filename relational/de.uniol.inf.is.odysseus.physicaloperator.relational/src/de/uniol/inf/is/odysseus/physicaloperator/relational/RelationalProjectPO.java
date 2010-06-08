@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -11,6 +14,8 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 public class RelationalProjectPO<T extends IMetaAttribute> extends
 		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
+	Logger logger = LoggerFactory.getLogger(RelationalProjectPO.class);
+	
 	private int[] restrictList;
 
 	public RelationalProjectPO(int[] restrictList) {
@@ -34,8 +39,9 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		try {
 			// System.out.println("RelationalTuple "+this+" "+object);
 			//RelationalTuple<T> out = object.restrict(this.restrictList, false);
-			// TODO: Change the Following
+			// TODO: Change the Following ??
 			RelationalTuple<T> out = object.restrict(this.restrictList, true);
+		//	logger.debug(this+" transferNext() "+object);
 			transfer(out);
 		} catch (Exception e) {
 			e.printStackTrace();
