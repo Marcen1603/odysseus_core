@@ -4,6 +4,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.XMLResourceLoader;
+
 public class Activator extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view";
@@ -22,6 +24,10 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		bundleContext = context;
+
+		XMLResourceLoader.loadImages(
+				context.getBundle().getEntry("viewer_cfg/resources.xml"), 
+				context.getBundle().getEntry("viewer_cfg/resourcesSchema.xsd"));
 	}
 
 	/*

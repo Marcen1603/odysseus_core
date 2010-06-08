@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,7 +15,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -26,16 +23,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.rcp.resource.IResourceConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.Activator;
 
-public class XMLResourceConfiguration implements IResourceConfiguration {
+public class XMLResourceLoader {
 
-	private static final Logger logger = LoggerFactory.getLogger( XMLResourceConfiguration.class );
+	private static final Logger logger = LoggerFactory.getLogger( XMLResourceLoader.class );
 	
-	private Map<String, URL> resources = new HashMap<String, URL>();
-	
-	public XMLResourceConfiguration( URL xmlFile, URL xsd, Bundle bundle ) {
-		
+	public static void loadImages( URL xmlFile, URL xsd ) {
+
 		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
 		
 		// VALIDATION
@@ -83,7 +78,12 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 				final String name = getAttributeValue(node, "name");
 				final String src= getAttributeValue(node, "source");
 				logger.debug( "Inserting resourceInfo " + src + " --> " + name );
-				resources.put( name, bundle.getEntry(src)  );
+				
+				try {
+					Activator.getDefault().getImageRegistry().put(name, Activator.getImageDescriptor(src));
+				} catch( Exception ex ) {
+					logger.error("Exception while loading image " + src + ":", ex);
+				}
 			}
 			
 			logger.info( "Paring resourceConfigurationfile successful" );
@@ -93,11 +93,6 @@ public class XMLResourceConfiguration implements IResourceConfiguration {
 			logger.error("Error during loading resource-configuration!", ex);
 		}
 
-	}
-	
-	@Override
-	public Map< String, URL > getResources() {
-		return resources;
 	}
 
 	private static String getAttributeValue( Node node, String attributeName ) {

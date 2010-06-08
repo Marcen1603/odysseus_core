@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -27,6 +28,9 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		getImageRegistry().put("metadata", ImageDescriptor.createFromURL(context.getBundle().getEntry("images/metadata.gif")));
+		getImageRegistry().put("node", ImageDescriptor.createFromURL(context.getBundle().getEntry("images/node.png")));
 	}
 
 	/*
@@ -47,4 +51,5 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	
 }

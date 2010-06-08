@@ -5,10 +5,10 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTArrowSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTCircleSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl.SWTLineConnectionSymbolElement;
@@ -90,7 +90,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		int g = clampInt(tryParseInt( params.get( "g" ), 0), 0, 255 );
 		int b = clampInt(tryParseInt( params.get( "b" ), 0), 0, 255);
 		
-		return ResourceManager.getInstance().getColor(r, g, b );
+		return new Color(PlatformUI.getWorkbench().getDisplay(), r, g, b );
 	}
 
 	private static int tryParseInt( String str, int defValue ) {

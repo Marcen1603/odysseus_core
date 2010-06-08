@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="resourcesSchema.xsd">
 
-	<Image source="viewer_cfg/pause.png" name="pause"/>
-	<Image source="viewer_cfg/play.png" name="play" />
-	<Image source="viewer_cfg/lock.png" name="lock" />
-	<Image source="viewer_cfg/unlock.png" name="unlock" />
-	<Image source="viewer_cfg/reset.png" name="reset" />
-	<Image source="viewer_cfg/exit.png" name="exit" />
-	<Image source="viewer_cfg/position.png" name="position" />
-	<Image source="viewer_cfg/zoomIn.png" name="zoomIn" />
-	<Image source="viewer_cfg/zoomOut.png" name="zoomOut" />
-	<Image source="viewer_cfg/visible.png" name="visible" />
 	<Image source="viewer_cfg/invisibleNode.png" name="invisibleNode" />
 	
 	<Image source="viewer_cfg/bufferedPipe.png" name="bufferedPipe" />

@@ -8,7 +8,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 
 public class NodeViewLabelProvider implements ILabelProvider {
@@ -21,7 +20,7 @@ public class NodeViewLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IMonitoringData<?>) {
-			return ResourceManager.getInstance().getImage("metadata");
+			return Activator.getDefault().getImageRegistry().get("metadata");
 		}
 
 		if (element instanceof IOdysseusNodeView) {
@@ -42,7 +41,7 @@ public class NodeViewLabelProvider implements ILabelProvider {
 //			images.put(node.getModelNode().getName(), image);		
 //			return image;
 			
-			return ResourceManager.getInstance().getImage("node");
+			return Activator.getDefault().getImageRegistry().get("node");
 		}
 
 		return null;
@@ -71,10 +70,7 @@ public class NodeViewLabelProvider implements ILabelProvider {
 	}
 
 	@Override
-	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
-	}
+	public void addListener(ILabelProviderListener listener) {}
 
 	@Override
 	public void dispose() {
@@ -84,14 +80,10 @@ public class NodeViewLabelProvider implements ILabelProvider {
 
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
-	}
+	public void removeListener(ILabelProviderListener listener) {}
 
 }

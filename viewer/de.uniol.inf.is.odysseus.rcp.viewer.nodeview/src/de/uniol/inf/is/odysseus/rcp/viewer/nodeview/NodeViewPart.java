@@ -13,15 +13,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.resource.ResourceManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.IGraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 
 public class NodeViewPart extends ViewPart implements ISelectionListener {
 
 	public static final String VIEW_ID = "de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView";
-	
-	private static boolean imagesLoaded = false;
 
 	private TreeViewer treeViewer;
 	private boolean synched = false;
@@ -35,12 +32,6 @@ public class NodeViewPart extends ViewPart implements ISelectionListener {
 		treeViewer.setContentProvider(new NodeViewContentProvider());
 		treeViewer.setLabelProvider(new NodeViewLabelProvider());
 		treeViewer.setInput(null);
-
-		// Bilder laden
-		if (!imagesLoaded) {
-			ResourceManager.getInstance().load(parent.getDisplay(), new ResourceConfiguration(Activator.getDefault().getBundle()));
-			imagesLoaded = true;
-		}
 			
 		// auf Editor achten
 		getSite().getPage().addPartListener(new IPartListener() {
