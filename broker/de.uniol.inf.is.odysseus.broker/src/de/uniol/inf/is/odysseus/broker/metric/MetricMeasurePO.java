@@ -7,6 +7,7 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
@@ -110,6 +111,11 @@ public class MetricMeasurePO<T extends IMetaAttribute> extends AbstractPipe<Rela
 			}
 		}
 
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 }

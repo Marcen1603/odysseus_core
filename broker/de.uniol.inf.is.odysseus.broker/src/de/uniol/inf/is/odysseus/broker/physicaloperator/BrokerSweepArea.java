@@ -107,4 +107,36 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 		return new BrokerSweepArea<T>(this);
 	}
 
+	@Override
+	public Iterator<T> extractElementsBefore(PointInTime time) {
+		LinkedList<T> result = new LinkedList<T>();
+		synchronized(elements){
+			Iterator<T> it = this.elements.iterator();
+			while (it.hasNext()) {
+				T next = it.next();
+				if (next.getMetadata().getStart().before(time)) {
+					it.remove();
+					result.add(next);
+				} else {
+					//return result.iterator();
+				}
+			}
+		}
+		return result.iterator();
+	}
+
+	@Override
+	public void purgeElementsBefore(PointInTime time) {
+		synchronized(elements){
+			Iterator<T> it = this.elements.iterator();
+			while (it.hasNext()) {
+				T next = it.next();
+				if (next.getMetadata().getStart().before(time)) {
+					it.remove();
+				}
+		
+			}
+		}
+	}
+
 }

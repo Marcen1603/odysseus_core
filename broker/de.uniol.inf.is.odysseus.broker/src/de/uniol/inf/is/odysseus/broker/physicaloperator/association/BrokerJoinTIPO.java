@@ -34,7 +34,6 @@ public class BrokerJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeCon
 	 */
 	@Override
 	protected void process_next(T object, int port) {	
-		storage.setCurrentPort(port);
 		if (isDone()) { 
 			return;
 		}
@@ -72,10 +71,6 @@ public class BrokerJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeCon
 			getAreas()[0].clear();
 			
 		}		
-		
-		synchronized (this.getAreas()) {
-			storage.updatePunctuationData(object);
-		}
 		
 	}
 }

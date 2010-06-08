@@ -316,5 +316,5 @@ public abstract class SweepArea<T extends IMetaAttributeContainer<?>> implements
 		
 		return sa;
 	}
-
+	
 }
