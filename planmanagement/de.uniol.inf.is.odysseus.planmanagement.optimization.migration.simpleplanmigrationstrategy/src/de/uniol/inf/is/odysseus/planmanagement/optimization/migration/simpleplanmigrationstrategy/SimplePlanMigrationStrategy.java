@@ -194,12 +194,15 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		
 		// open auf dem neuen Plan aufrufen
 		this.logger.debug("Calling open on new Plan " );
-		try {
-			union.open();
-		} catch (OpenFailedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		synchronized (union) {
+			try {
+				union.open();
+			} catch (OpenFailedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}			
 		}
+		this.logger.debug("Calling open on new Plan ... done" );
 
 		this.logger.debug("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(newPlanRoot,
