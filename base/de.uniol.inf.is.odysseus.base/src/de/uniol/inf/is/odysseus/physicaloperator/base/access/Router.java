@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.Pair;
 
@@ -32,6 +33,10 @@ public class Router extends Thread {
 		return instance;
 	}
 
+	public Set<IRouterReceiver> getRouterReceiver(){
+		return routerReceiverMap.keySet();
+	}
+	
 	public static synchronized Router getInstanceWithOutStarting()
 			throws IOException {
 		if (instance == null) {
