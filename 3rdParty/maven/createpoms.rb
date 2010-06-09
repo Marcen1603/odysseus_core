@@ -84,7 +84,7 @@ private
 	end
 	
 	def addImport(project, line)
-		match = (/\w+(\.\w+)*/.match(line))
+		match = (/\w+(\.(\w|_)+)*/.match(line))
 		unless match.nil?
 			@manifestImports[project] << match[0]
 			pos = line.index(',', match.end(0))
