@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
  * @author Andre Bolles
  */
 public class DefaultPNSweepArea<T extends IMetaAttributeContainer<? extends IPosNeg>>
-		extends SweepArea<T> {
+		extends AbstractSweepArea<T> {
 	
 	public DefaultPNSweepArea() {
 		super(new MetadataComparator<IPosNeg>());

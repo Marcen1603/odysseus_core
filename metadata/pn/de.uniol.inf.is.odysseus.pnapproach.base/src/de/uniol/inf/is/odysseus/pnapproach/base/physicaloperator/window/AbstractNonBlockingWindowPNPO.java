@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -26,7 +26,7 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 	 * Stelle noch keinen negativen Elemente gibt. Es muessen nur die Query und
 	 * Remove-Praedikate entsprechend definiert werden.
 	 */
-	SweepArea<T> sa;
+	AbstractSweepArea<T> sa;
 
 	public AbstractNonBlockingWindowPNPO(long windowSize, long windowAdvance,
 			IDataFactory<M, M, T, T> dFac) {

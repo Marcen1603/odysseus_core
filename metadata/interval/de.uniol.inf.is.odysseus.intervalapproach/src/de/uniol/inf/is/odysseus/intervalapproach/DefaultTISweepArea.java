@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
 
 /**
  * This sweeparea implementation provides some optimizations on extract and
@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
  * @author Jonas Jacobi
  */
 public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
-		extends SweepArea<T> implements Comparable<DefaultTISweepArea<T>> {
+		extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>> {
 	// private static final Logger logger =
 	// LoggerFactory.getLogger(ITemporalSweepArea.class);
 

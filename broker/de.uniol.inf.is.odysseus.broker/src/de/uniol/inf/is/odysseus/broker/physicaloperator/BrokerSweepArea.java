@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.predicate.AttributeTimeIntervalComparator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
 
 /**
  * The BrokerSweepArea allows to save the current valid content for the broker.
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
  *
  * @param <T> the type of a tuple
  */
-public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeInterval>> extends SweepArea<T>{
+public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractSweepArea<T>{
 	
 	/**
 	 * Instantiates a new SweepArea.

@@ -36,6 +36,7 @@ tokens{
 	package de.uniol.inf.is.odysseus.cep.sase; 
 }
 
+
 start 	: createStmt|
 	  queryStmt;
 

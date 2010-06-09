@@ -89,7 +89,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	private Map<String, List<Command>> macros = new HashMap<String, List<Command>>();
 	private String currentMacro = null;
-	
+
 	private ReoptimizeTimer reoptimizeTimer = null;
 
 	private static class DelegateCommandInterpreter implements
@@ -278,8 +278,8 @@ public class ExecutorConsole implements CommandProvider,
 	}
 
 	/**
-	 * _ExecutorInfo schreibt Informationen �ber die Ausf�hrungsumgebung in die
-	 * Konsole. Kann in der OSGi-Konsole verwendet werden.
+	 * _ExecutorInfo schreibt Informationen �ber die Ausf�hrungsumgebung in
+	 * die Konsole. Kann in der OSGi-Konsole verwendet werden.
 	 */
 	@Help(description = "show internal information about the executor")
 	public void _ExecutorInfo(CommandInterpreter ci) {
@@ -851,20 +851,21 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Object fusion configuration is "
 				+ (useObjectFusionConfig ? "activated" : "deactivated"));
 	}
-	
-	
+
 	@Help(parameter = "<on|off>", description = "turn usage of broker configuration on|off")
 	public void _useBrokerConfig(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
 		try {
 			if (args.length == 1) {
-				useBrokerConfig = toBoolean(args[0]);				
+				useBrokerConfig = toBoolean(args[0]);
 				if (useBrokerConfig) {
-					this.trafoConfigParam.getValue().setOption("IBrokerInterval", true);					
-				} else {					
-					this.trafoConfigParam.getValue().removeOption("IBrokerInterval");
-				}				
+					this.trafoConfigParam.getValue().setOption(
+							"IBrokerInterval", true);
+				} else {
+					this.trafoConfigParam.getValue().removeOption(
+							"IBrokerInterval");
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			ci.println(e.getMessage());
@@ -872,8 +873,7 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Broker configuration is "
 				+ (useBrokerConfig ? "activated" : "deactivated"));
 	}
-	
-	
+
 	private boolean toBoolean(String string) {
 		if (string.equalsIgnoreCase("true")) {
 			return true;
@@ -1035,7 +1035,7 @@ public class ExecutorConsole implements CommandProvider,
 				this.executor.addQuery(args[0], parser(),
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
-			} else if (args[1].equalsIgnoreCase("E")){
+			} else if (args[1].equalsIgnoreCase("E")) {
 				this.addQueryWithEclipseConsoleOutput(args[0]);
 			} else if (args[1].equalsIgnoreCase("TRUE")) {
 				this.executor
@@ -1567,8 +1567,8 @@ public class ExecutorConsole implements CommandProvider,
 
 	@Override
 	public String getHelp() {
-		
-		String info = "\n---Odysseus Executor Console---\n";					
+
+		String info = "\n---Odysseus Executor Console---\n";
 		info += "\tman - show all executor commands\n";
 		return info;
 	}
@@ -1640,15 +1640,14 @@ public class ExecutorConsole implements CommandProvider,
 
 			this.executor.addQuery(query, parser(), new ParameterDefaultRoot(
 					ecSink), this.trafoConfigParam);
-		}catch(ClassNotFoundException e){
+		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
 
 	}
-	
+
 	@Help(parameter = "<period>", description = "activate timebased reoptimization of the execution plan every <period> milliseconds")
 	public void _startreoptimizetimer(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -1671,17 +1670,21 @@ public class ExecutorConsole implements CommandProvider,
 
 		try {
 			if (this.reoptimizeTimer != null) {
-				this.executor.getSealedPlan().removeReoptimzeRule(this.reoptimizeTimer);
+				this.executor.getSealedPlan().removeReoptimzeRule(
+						this.reoptimizeTimer);
 				ci.println("Old ReoptimizeTimer removed.");
 			}
 			this.reoptimizeTimer = new ReoptimizeTimer(period);
-			this.executor.getSealedPlan().addReoptimzeRule(this.reoptimizeTimer);
-			ci.println("ReoptimizeTimer with "+period+" ms period started.");
+			this.executor.getSealedPlan()
+					.addReoptimzeRule(this.reoptimizeTimer);
+			ci
+					.println("ReoptimizeTimer with " + period
+							+ " ms period started.");
 		} catch (PlanManagementException e) {
 			System.err.println(e.getMessage());
 		}
 	}
-	
+
 	@Help(description = "deactivate timebased reoptimization of the execution plan")
 	public void _stopreoptimizetimer(CommandInterpreter ci) {
 		addCommand();
@@ -1691,7 +1694,8 @@ public class ExecutorConsole implements CommandProvider,
 			return;
 		}
 		try {
-			this.executor.getSealedPlan().removeReoptimzeRule(this.reoptimizeTimer);
+			this.executor.getSealedPlan().removeReoptimzeRule(
+					this.reoptimizeTimer);
 			this.reoptimizeTimer = null;
 			ci.println("ReoptimizeTimer removed.");
 		} catch (PlanManagementException e) {

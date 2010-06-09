@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.StartsBeforePredicate
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
 /**
@@ -36,7 +36,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 	/**
 	 * This operator needs a sweeparea if the pos-neg approach will be used.
 	 */
-	private SweepArea<IMetaAttributeContainer<? extends ITimeInterval>> sa;
+	private AbstractSweepArea<IMetaAttributeContainer<? extends ITimeInterval>> sa;
 
 	/**
 	 * This is the number of slides that have been processed.

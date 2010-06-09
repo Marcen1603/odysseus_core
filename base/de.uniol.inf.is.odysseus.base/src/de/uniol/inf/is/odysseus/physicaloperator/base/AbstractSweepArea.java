@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 /**
  * @author Jonas Jacobi
  */
-public abstract class SweepArea<T extends IMetaAttributeContainer<?>> implements ITemporalSweepArea<T> {
+public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> implements ITemporalSweepArea<T> {
 	// elements get stored in a linked list instead of a priority queue
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because
@@ -97,20 +97,20 @@ public abstract class SweepArea<T extends IMetaAttributeContainer<?>> implements
 
 	}
 
-	public SweepArea() {
+	public AbstractSweepArea() {
 		this.elements = new LinkedList<T>();
 //		this.saSupervisor = new SweepAreaSupervisor(this, 20000);
 //		this.saSupervisor.start();
 	}
 
-	public SweepArea(Comparator<? super T> comparator) {
+	public AbstractSweepArea(Comparator<? super T> comparator) {
 		this.comparator = comparator;
 		this.elements = new LinkedList<T>();
 //		this.saSupervisor = new SweepAreaSupervisor(this, 20000);
 //		this.saSupervisor.start();
 	}
 
-	public SweepArea(SweepArea<T> area) {
+	public AbstractSweepArea(AbstractSweepArea<T> area) {
 		this.elements = new LinkedList<T>(area.elements);
 		this.comparator = area.comparator;
 		this.queryPredicate = area.queryPredicate.clone();
@@ -301,10 +301,10 @@ public abstract class SweepArea<T extends IMetaAttributeContainer<?>> implements
 	}
 	
 	@SuppressWarnings("unchecked")
-	public SweepArea<T> clone() {
-		SweepArea<T> sa;
+	public AbstractSweepArea<T> clone() {
+		AbstractSweepArea<T> sa;
 		try {
-			sa = (SweepArea<T>) super.clone();
+			sa = (AbstractSweepArea<T>) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
 		}

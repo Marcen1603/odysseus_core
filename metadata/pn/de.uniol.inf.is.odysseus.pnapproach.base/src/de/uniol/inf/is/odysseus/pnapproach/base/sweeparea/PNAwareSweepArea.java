@@ -5,22 +5,22 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.base.SweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 
 /**
  * Diese SweepArea kann in einem Plan genutzt werden, der den PN Ansatz benutzt.
- * Zur normalen Version der {@link SweepArea} kann diese Klasse auskunft
+ * Zur normalen Version der {@link AbstractSweepArea} kann diese Klasse auskunft
  * darueber geben wieviele positive bzw. negative Elemente enthalten sind. Sie
- * verhaelt sich genau wie eine normale {@link SweepArea}, d.h. es werden
+ * verhaelt sich genau wie eine normale {@link AbstractSweepArea}, d.h. es werden
  * positive Elemente nicht geloescht, wenn ein zugehoeriges negatives Element
  * eingefuegt wird.
  * 
  * @author Bernd Hochschulz
  */
 public class PNAwareSweepArea<T extends IMetaAttributeContainer<? extends IPosNeg>>
-		extends SweepArea<T> implements IPNAwareSweepArea<T> {
+		extends AbstractSweepArea<T> implements IPNAwareSweepArea<T> {
 	
 	public PNAwareSweepArea(){};
 	
