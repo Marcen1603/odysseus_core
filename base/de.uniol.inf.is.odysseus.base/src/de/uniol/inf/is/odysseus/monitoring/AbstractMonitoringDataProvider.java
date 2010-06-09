@@ -83,7 +83,7 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 	}
 
 	public void removeMonitoringData(String type) {
-		getLogger().debug("Add Monitoring Data "+type+" from "+this);
+		getLogger().debug("Remove Monitoring Data "+type+" from "+this);
 		this.metaDataItem.remove(type);
 	}
 	
