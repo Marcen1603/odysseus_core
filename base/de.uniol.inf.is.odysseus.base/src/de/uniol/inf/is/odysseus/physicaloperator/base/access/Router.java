@@ -13,9 +13,20 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.base.Pair;
 
 public class Router extends Thread {
+	
+	static private Logger _logger = null;
+	static private Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(Router.class);
+		}
+		return _logger;
+	}
 
 	private ByteBuffer buffer = ByteBuffer.allocate(1024);
 	Selector selector = null;
@@ -57,7 +68,7 @@ public class Router extends Thread {
 
 	@Override
 	public void run() {
-		// System.out.println("Router started ...");
+		getLogger().debug("Router started ...");
 		while (doRouting) {
 			try {
 				int n = selector.select();
@@ -80,29 +91,28 @@ public class Router extends Thread {
 
 					// System.out.println("Selection Key "+key.isConnectable()+" "+key.isReadable()+" "+op);
 					if (key.isConnectable() && sc.finishConnect()) {
-						// System.out.println("Client connected to " +
-						// sc+" from "+sc.socket().getLocalPort());
+						getLogger().debug("Client connected to "+ sc+" from "+sc.socket().getLocalPort());
 						// sc.register(selector, SelectionKey.OP_READ, op);
 
 						if (sc.isConnected()) {
 							key.interestOps(SelectionKey.OP_READ);
 						} else {
-							System.err.println("NOT CONNECTED!!!!!!!!!!!!!");
+							getLogger().error("NOT CONNECTED!!!!!!!!!!!!!");
 						}
 					} else if (key.isReadable()) {
 						if (!sc.isConnected()) {
 							key.interestOps(SelectionKey.OP_CONNECT);
-							System.err.println("NOT CONNECTED2!!!!!!!!!!!!!");
+							getLogger().error("NOT CONNECTED2!!!!!!!!!!!!!");
 						} else {
 							if (op != null) {
 								readDataFromSocket(sc, op);
 							} else {
-								System.out.println(sc.toString() + " "
+								getLogger().error(sc.toString() + " "
 										+ key.readyOps());
 							}
 						}
 					} else {
-						System.out.println("WAS ANDERES " + key);
+						getLogger().error("WAS ANDERES " + key);
 					}
 
 					// if (key.isAcceptable()){
@@ -124,7 +134,7 @@ public class Router extends Thread {
 				}
 			}catch (java.nio.channels.CancelledKeyException e1){
 				// Ignore
-				e1.printStackTrace();
+				//e1.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -133,6 +143,7 @@ public class Router extends Thread {
 
 	public void connectToServer(IRouterReceiver sink, String host, int port)
 			throws Exception {
+		getLogger().debug(sink+" connect to server "+host+" "+port);
 		SocketChannel sc = SocketChannel.open();
 		sc.configureBlocking(false);
 		// sc.configureBlocking(true);
@@ -165,13 +176,13 @@ public class Router extends Thread {
 				Pair<SocketChannel, IRouterReceiver> pair = deferredList
 						.poll();
 				try {
-					// System.out.println("Registering "+pair.getE1()+" "+pair.getE2());
+					getLogger().debug("Registering "+pair.getE1()+" "+pair.getE2());
 					pair.getE1().register(selector, SelectionKey.OP_CONNECT,
 							pair.getE2());
 				} catch (ClosedChannelException e) {
 					e.printStackTrace();
 				}
-				// System.out.println("done");
+				getLogger().debug("done");
 			}
 			registerAction = false;
 		}
