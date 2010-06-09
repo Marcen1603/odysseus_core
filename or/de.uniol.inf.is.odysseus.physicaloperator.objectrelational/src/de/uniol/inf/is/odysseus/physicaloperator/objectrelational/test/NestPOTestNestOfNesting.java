@@ -64,11 +64,15 @@ public class NestPOTestNestOfNesting {
 	    }	    
 	}
 
-	@Test 
+	@SuppressWarnings("unchecked")
+    @Test 
 	public void testNestOfNesting() {
 		System.out.println("output");
 		for(ObjectRelationalTuple<TimeInterval> tuple : this.result) {
-			SetEntry[] entries = (SetEntry[]) tuple.getAttribute(1);
+		    
+			SetEntry<ObjectRelationalTuple<TimeInterval>>[] entries = 
+			    (SetEntry[]) tuple.getAttribute(1);
+			
 			ObjectRelationalTuple t = (ObjectRelationalTuple) entries[0].getValue();
 			System.out.println(t);
 	

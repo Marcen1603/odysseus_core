@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;

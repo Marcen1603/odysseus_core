@@ -87,7 +87,7 @@ public class UnnestPOTestFixtureUnnestOfNestWithNestings
     public List<ObjectRelationalTuple<TimeInterval>> getInputTuples() {
         
         List<ObjectRelationalTuple<TimeInterval>> inputTuples;
-        ObjectRelationalTuple<TimeInterval> a2suba1Tuple, a2suba1subTuple;
+        ObjectRelationalTuple<TimeInterval> a2suba1subTuple;
 
         SetEntry<ObjectRelationalTuple<TimeInterval>>[] set, subset1, subset2;
     
