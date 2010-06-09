@@ -95,6 +95,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	public void close() {
 		this.isOpen.set(false);
+		process_close();
 		stopMonitoring();
 	};
 
