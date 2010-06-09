@@ -221,5 +221,10 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	public String toString() {
 		return super.toString() + " " + host + " " + port;
 	}
+	
+	@Override
+	public String getSourceName() {
+		return toString();
+	}
 
 }
