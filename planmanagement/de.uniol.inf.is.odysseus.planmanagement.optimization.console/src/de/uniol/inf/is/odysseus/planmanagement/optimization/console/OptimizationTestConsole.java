@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
+import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -48,6 +49,8 @@ public class OptimizationTestConsole implements
 	private IAdvancedExecutor executor;
 
 	private static ConsoleFunctions support = new ConsoleFunctions();
+
+	OptimizationTestSink sink = null;
 
 	/**
 	 * This is the basebath to files. This path can be set by command setPath.
@@ -82,7 +85,7 @@ public class OptimizationTestConsole implements
 				+ "  m - default planmigration test\n";
 	}
 
-	private void dumpRoots(){
+	private void dumpRoots() {
 		int depth = 0;
 		StringBuffer buff = new StringBuffer();
 		System.out.println("Physical plan of all roots: ");
@@ -104,7 +107,7 @@ public class OptimizationTestConsole implements
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void nmsn(CommandInterpreter ci) {
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
@@ -244,14 +247,14 @@ public class OptimizationTestConsole implements
 	public void _evalMigration(CommandInterpreter ci) {
 		_e(ci);
 	}
-	
+
 	public void _em1(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
 		basepath = "c:/development/";
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.MIG;
 		try {
-			eval(eq, 120, 1, "" + System.currentTimeMillis()+eq);
+			eval(eq, 120, 1, "" + System.currentTimeMillis() + eq);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -265,7 +268,7 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.MIG;
 		try {
-			eval(eq, 120, 5, "" + System.currentTimeMillis()+eq);
+			eval(eq, 120, 5, "" + System.currentTimeMillis() + eq);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -278,23 +281,24 @@ public class OptimizationTestConsole implements
 		basepath = "c:/development/";
 		String bufferPlacement = "Standard Buffer Placement";
 
-		System.out.println(this.executor.getRegisteredBufferPlacementStrategies());
-		
+		System.out.println(this.executor
+				.getRegisteredBufferPlacementStrategies());
+
 		ExecutionConfiguration config = this.executor.getConfiguration();
 		config.set(new SettingBufferPlacementStrategy(bufferPlacement));
-		
+
 		nmsn(ci);
-		for (int i=0;i<2;i++){
+		for (int i = 0; i < 2; i++) {
 			for (EvalQuery eq : EvalQuery.values()) {
 				try {
-					eval(eq, 120, 5, "" + System.currentTimeMillis()+eq);
+					eval(eq, 120, 5, "" + System.currentTimeMillis() + eq);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 			// Einmal mit Buffern
-			//this.executor.setDefaultBufferPlacementStrategy(bufferPlacement);
+			// this.executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			this.executor.getConfiguration().set(
 					new SettingBufferPlacementStrategy(bufferPlacement));
 		}
@@ -310,7 +314,7 @@ public class OptimizationTestConsole implements
 		for (int i = 0; i < runs; i++) {
 			r.add(e(evalQuery, secondsPerRun));
 			waitFor(10000); // Zwischen zwei Aufrufen warten --> Quellenconnect
-							// etc.
+			// etc.
 		}
 
 		FileWriter fw = new FileWriter(basepath + "" + filename + ".csv");
@@ -351,14 +355,20 @@ public class OptimizationTestConsole implements
 		fw.close();
 	}
 
+	public void setOptimizationSink(OptimizationTestSink sink) {
+		synchronized (this) {
+			this.sink = sink;
+		}
+	}
+
 	public List<Measure> e(EvalQuery evalQuery, int seconds) {
 		List<Measure> measures = new ArrayList<Measure>(seconds);
 		System.out.println(evalQuery + " " + seconds);
 		String sep = ";";
 		try {
 
-			OptimizationTestSink sink = new OptimizationTestSink(OutputMode.NORMAL);
-			
+			setOptimizationSink(new OptimizationTestSink(OutputMode.COUNT));
+
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
 							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
@@ -413,7 +423,7 @@ public class OptimizationTestConsole implements
 				query.initializePhysicalPlan(root);
 				this.executor.updateExecutionPlan();
 			}
-			
+
 			dumpRoots();
 
 			MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
@@ -451,19 +461,31 @@ public class OptimizationTestConsole implements
 					}
 					cputime += t;
 				}
-				Measure m = new Measure((long) Math
-						.floor(((currentTime - startTime) / 1000)), sink
-						.getCount(), cputime, memBean.getHeapMemoryUsage()
-						.getUsed());
-				measures.add(m);
-				System.out.println(m.time_elapsed + sep + m.tuples_passed + sep
-						+ m.cpu_load + sep + m.memory_usage);
+				synchronized (this) {
+					Measure m = new Measure((long) Math
+							.floor(((currentTime - startTime) / 1000)), sink
+							.getCount(), cputime, memBean.getHeapMemoryUsage()
+							.getUsed());
+					measures.add(m);
+					System.out.println(m.time_elapsed + sep + m.tuples_passed + sep
+							+ m.cpu_load + sep + m.memory_usage);
+				}
+				
 				if (evalQuery == EvalQuery.MIG && i == 30) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
 						@Override
 						public void run() {
 							q.reoptimize();
+							System.out
+									.println("------------------------------------> Reopt durch, ggf. Senke anpassen");
+							synchronized (this) {
+								StringBuffer oldPlan = new StringBuffer();
+								support.dumpPlan(sink, 0, oldPlan);
+								System.out.println(oldPlan);	
+							}
+							
+							setOptimizationSink((OptimizationTestSink) q.getSealedRoot());
 						}
 					};
 					new Thread(reopt).start();
@@ -471,8 +493,12 @@ public class OptimizationTestConsole implements
 			}
 			System.out
 					.println("----------Evaluation End--------------------------------");
+			
+			System.out.println(Router.getInstance().getRouterReceiver());
 
 			executor.removeQuery(query.getID());
+			System.out.println(Router.getInstance().getRouterReceiver());
+
 			lsqueries();
 
 		} catch (Exception e) {
