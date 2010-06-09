@@ -15,6 +15,9 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.NestTISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.PartialNest;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.PriorityQueueG;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 

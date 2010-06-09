@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,18 +41,18 @@ public class PriorityQueueG {
 		this.gToId.putAll(g.gToId);
 	}
 	
-	synchronized void insert(
+	synchronized public void insert(
 			DefaultTISweepArea<PartialNest<TimeInterval>> sa,
 			Integer groupID) {
 		this.groupsQueue.add(sa);
 		this.gToId.put(sa, groupID);
 	}
 
-	boolean isEmpty() {
+	public boolean isEmpty() {
 		return this.groupsQueue.size() == 0;
 	}
 
-	synchronized Integer min() {
+	synchronized public Integer min() {
 		if (isEmpty())
 			return -1;
 
@@ -70,7 +70,7 @@ public class PriorityQueueG {
 	}
 	
 	@Override
-	protected PriorityQueueG clone(){
+	public PriorityQueueG clone(){
 		return new PriorityQueueG(this);
 	}
 }
