@@ -20,8 +20,17 @@ public class NestTISweepArea extends
 		super();
 		this.groupingValues = groupingValues.clone();
 	}
+
+	public NestTISweepArea(NestTISweepArea toCopy) {
+	    super(toCopy);
+	    this.groupingValues = toCopy.groupingValues.clone();
+	}
 	
 	public Object[] getGroupingValues() {
 		return this.groupingValues;
+	}
+	
+	public NestTISweepArea clone() {
+	    return new NestTISweepArea(this);
 	}
 }

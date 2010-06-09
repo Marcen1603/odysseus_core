@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -81,11 +82,7 @@ public class NestPO<T extends IMetaAttribute> extends
 		this.outputSchema = outputSchema;
 		this.nestingAttribute = nestingAttribute;
 		this.groupingAttributes = groupingAttributes;
-		
-		/*
-		 * Setting the position of output attributes and values
-		 */
-		
+
 		this.groupingAttributesPos = this.getGroupingAttributesPos();
 		this.inputAttributesCount = this.inputSchema.getAttributeCount();
 		this.outputAttributesCount = this.groupingAttributesPos.length + 1;
@@ -106,14 +103,51 @@ public class NestPO<T extends IMetaAttribute> extends
 	}
 
 	/**
+	 * A lot of code for creating a deep copy of maps groups and keyMap.
+	 * 
 	 * @param relationalNestPO nesting plan operator to copy
 	 */	
 	public NestPO(NestPO<T> nestPO) {
 		super();
-		this.inputSchema = nestPO.getInputSchema();
-		this.outputSchema = nestPO.getOutputSchema();
-		this.nestingAttribute = nestPO.getNestingAttribute();
-		this.groupingAttributes = nestPO.getGroupingAttributes();
+		
+		this.inputSchema = nestPO.inputSchema;
+		this.outputSchema = nestPO.outputSchema;
+		this.nestingAttribute = nestPO.nestingAttribute.clone();
+		this.groupingAttributes = nestPO.groupingAttributes.clone();
+		
+		Iterator<Entry<ObjectRelationalTuple<TimeInterval>, Integer>> keyMapIter;
+		Iterator<Entry<Integer, NestTISweepArea>> groupsIter;
+		
+		Entry<ObjectRelationalTuple<TimeInterval>, Integer> entryOfkeyMap;
+		Entry<Integer, NestTISweepArea> entryOfGroups;
+		
+		keyMapIter = nestPO.keyMap.entrySet().iterator();
+		groupsIter = nestPO.groups.entrySet().iterator();
+	
+		while(keyMapIter.hasNext()) {
+		    entryOfkeyMap = keyMapIter.next();
+		    
+		    ObjectRelationalTuple<TimeInterval> tuple = 
+                entryOfkeyMap.getKey();
+		 
+		    this.keyMap.put(
+		       tuple.clone(),
+		       entryOfkeyMap.getValue()
+		    );
+		}
+		
+		while(groupsIter.hasNext()) {
+		    entryOfGroups = groupsIter.next();
+		    NestTISweepArea sa = entryOfGroups.getValue();
+		    
+		    this.groups.put(
+		        entryOfGroups.getKey(), 
+		        sa.clone()
+		    );
+		}
+		
+		this.g = nestPO.g.clone();
+		this.q = nestPO.q.clone();
 	}
 
 	@Override
@@ -136,7 +170,7 @@ public class NestPO<T extends IMetaAttribute> extends
 	 * @param object
 	 * @param port
 	 */	
-	public final ObjectRelationalTuple<TimeInterval> processNextTest
+	public final void processNextTest
 		(ObjectRelationalTuple<TimeInterval> incomingTuple, int port) {
 		
 		NestTISweepArea sa;
@@ -239,8 +273,6 @@ public class NestPO<T extends IMetaAttribute> extends
 				}				
 			} else break;
 		}
-		
-		return incomingTuple;
 	}
 
 	/**
@@ -281,7 +313,79 @@ public class NestPO<T extends IMetaAttribute> extends
 		return (q.size() == 0);
 	}
 	
-	/**
+	@Override
+    public void processPunctuation(PointInTime timestamp, int port) {
+    	sendPunctuation(timestamp);
+    }
+
+    /*
+     * Getter and setter for copy constructor. 
+     */
+    public SDFAttributeList getInputSchema() {
+    	return this.inputSchema;
+    }
+
+    public SDFAttributeList getOutputSchema() {
+    	return this.outputSchema;
+    }
+
+    public SDFAttributeList getGroupingAttributes() {
+    	return this.groupingAttributes;
+    }
+
+    public SDFAttribute getNestingAttribute() {
+    	return this.nestingAttribute;
+    }
+
+    @Override
+    public NestPO<T> clone() {
+    	return new NestPO<T>(this);
+    }
+
+    @Override
+    public OutputMode getOutputMode() {
+    	return OutputMode.MODIFIED_INPUT;
+    }
+
+    @Override
+    public void addMonitoringData(String type, IMonitoringData<?> item) {
+    	// TODO Auto-generated method stub
+    	
+    }
+
+    @SuppressWarnings("hiding")
+    @Override
+    public <T> IMonitoringData<T> getMonitoringData(String type) {
+    	// TODO Auto-generated method stub
+    	return null;
+    }
+
+    @SuppressWarnings("hiding")
+    @Override
+    public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
+    		long period) {
+    	// TODO Auto-generated method stub
+    	return null;
+    }
+
+    @Override
+    public Collection<String> getProvidedMonitoringData() {
+    	// TODO Auto-generated method stub
+    	return null;
+    }
+
+    @Override
+    public boolean providesMonitoringData(String type) {
+    	// TODO Auto-generated method stub
+    	return false;
+    }
+
+    @Override
+    public void removeMonitoringData(String type) {
+    	// TODO Auto-generated method stub    	
+    }
+    
+    /**
 	 * 
 	 * This method is used initially for determining the group attributes
 	 * position with grouping attribute names as input.
@@ -730,79 +834,6 @@ public class NestPO<T extends IMetaAttribute> extends
 				sa.insert(fillPartial);
 			}
 		}
-		
-	}
-	
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}	
-	
-	/*
-	 * Getter and setter for copy constructor. 
-	 */
-	public SDFAttributeList getInputSchema() {
-		return this.inputSchema;
-	}
-	
-	public SDFAttributeList getOutputSchema() {
-		return this.outputSchema;
-	}
-	
-	public SDFAttributeList getGroupingAttributes() {
-		return this.groupingAttributes;
-	}	
-	
-	public SDFAttribute getNestingAttribute() {
-		return this.nestingAttribute;
-	}	
-	
-	@Override
-	public NestPO<T> clone() {
-		return new NestPO<T>(this);
-	}
-	
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
-
-	@Override
-	public void addMonitoringData(String type, IMonitoringData<?> item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@SuppressWarnings("hiding")
-	@Override
-	public <T> IMonitoringData<T> getMonitoringData(String type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@SuppressWarnings("hiding")
-	@Override
-	public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
-			long period) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<String> getProvidedMonitoringData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean providesMonitoringData(String type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void removeMonitoringData(String type) {
-		// TODO Auto-generated method stub
 		
 	}
 	
