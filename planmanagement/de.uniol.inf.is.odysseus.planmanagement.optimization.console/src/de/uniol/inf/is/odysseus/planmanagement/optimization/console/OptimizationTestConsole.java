@@ -241,7 +241,7 @@ public class OptimizationTestConsole implements
 	}
 
 	private enum EvalQuery {
-		GOOD, BAD, MIG
+		GOOD, BAD, MIG, GOOD_REMOVE
 	};
 
 	public void _evalMigration(CommandInterpreter ci) {
@@ -262,6 +262,21 @@ public class OptimizationTestConsole implements
 
 	}
 
+	public void _er(CommandInterpreter ci) {
+		// TODO: Hack zum einfachen Testen ;-)
+		basepath = "c:/development/";
+		nmsn(ci);
+		EvalQuery eq = EvalQuery.GOOD_REMOVE;
+		try {
+			eval(eq, 500, 5, "" + System.currentTimeMillis() + eq);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	
 	public void _em(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
 		basepath = "c:/development/";
@@ -489,6 +504,22 @@ public class OptimizationTestConsole implements
 						}
 					};
 					new Thread(reopt).start();
+				}
+				if (evalQuery == EvalQuery.GOOD_REMOVE && (i == 100 || i == 200 || i == 300 || i == 400)){
+					System.out
+					.println("Removing Query");
+					executor.removeQuery(query.getID());
+					System.out.println("Removing Query done");
+					waitFor(10000);
+					sink.close();
+					//setOptimizationSink(new OptimizationTestSink(OutputMode.COUNT));
+					queryIds = this.executor
+					.addQuery(
+							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
+							parser(), new ParameterDefaultRoot(sink),
+							this.trafoConfigParam);
+					plan = (IEditablePlan) this.executor.getSealedPlan();
+					query = plan.getQuery(queryIds.iterator().next());
 				}
 			}
 			System.out
