@@ -14,6 +14,7 @@ git branch migration
 git checkout migration
 
 partyDir="3rdParty/maven"
+depScript="3rdParty/maven/createpoms.rb"
 cp -uR $partyDir/odysseus-parent .
 git add odysseus-parent/pom.xml
 
@@ -126,14 +127,9 @@ EOF
       </plugin>
     </plugins>
   </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>\${project.groupId}</groupId>
-      <artifactId>odysseus-base</artifactId>
-      <version>\${project.version}</version>
-    </dependency>
-  </dependencies>
+EOF
+ruby $depScript $PWD $basename >> $f/odysseus-$artifactId/pom.xml
+cat >> $f/odysseus-$artifactId/pom.xml <<EOF
 </project>
 EOF
 		    fi
