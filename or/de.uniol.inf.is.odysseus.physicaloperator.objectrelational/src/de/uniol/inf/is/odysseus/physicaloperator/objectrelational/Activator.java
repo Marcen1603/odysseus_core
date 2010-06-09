@@ -1,7 +1,12 @@
 package de.uniol.inf.is.odysseus.physicaloperator.objectrelational;
 
+import junit.textui.TestRunner;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.TestSuiteAllTests;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.NestPOAllTests;
 
 public class Activator implements BundleActivator {
 
@@ -11,7 +16,8 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext c) throws Exception {
+	public void start(BundleContext c) throws Exception {	    
+	    TestRunner.run(new TestSuiteAllTests());
 		context = c;
 	}
 

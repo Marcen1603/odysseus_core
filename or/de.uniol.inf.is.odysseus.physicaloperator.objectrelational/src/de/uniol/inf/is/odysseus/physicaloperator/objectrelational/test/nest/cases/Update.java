@@ -1,10 +1,12 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases;
 
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.NestTISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.PartialNest;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.Factory;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.SimpleNestingFixture;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -29,7 +33,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Jendrik Poloczek
  * 
  */
-public class NestPOTestUpdate {
+public class Update extends TestCase {
 
 	private NestPO<TimeInterval> nestPO;
 	private NestTISweepArea sa;
@@ -39,17 +43,23 @@ public class NestPOTestUpdate {
 	private Method getGroupingValues;
 	private Method update;
 
+	public Update() {
+	    this.setName(
+	       "update"
+	    );
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		List<ObjectRelationalTuple<TimeInterval>> tuples;
-		NestPOTestFixtureFactory fixtures;
+		Factory fixtures;
 		
 		SDFAttributeList inputSchema;
 		SDFAttributeList outputSchema;		
 		SDFAttributeList groupingAttributes;
 		SDFAttribute nestingAttribute;
 
-		fixtures = new NestPOTestFixtureSimpleNesting();
+		fixtures = new SimpleNestingFixture();
 		inputSchema = fixtures.getInputSchema();
 		outputSchema = fixtures.getOutputSchema();
 		groupingAttributes = fixtures.getGroupingAttributes();

@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases;
 
-import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,8 @@ import org.junit.Test;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.SetEntry;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.Factory;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.SimpleNestingFixture;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -43,9 +46,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Jendrik Poloczek
  */
 
-public class NestPOTestNest {
+public class Nest extends TestCase {
 
 	ArrayList<ObjectRelationalTuple<TimeInterval>> result;
+	
+	public Nest() {
+	    this.setName("nest");
+	}
 	
 	/**
 	 * Setting up input and output schema and nesting attribute and 
@@ -57,7 +64,7 @@ public class NestPOTestNest {
 	@Before
 	public void setUp() throws Exception {
 		
-		NestPOTestFixtureFactory fixtures;
+		Factory fixtures;
 		NestPO<TimeInterval> nestPO;
 		
 		SDFAttributeList inputSchema;
@@ -67,7 +74,7 @@ public class NestPOTestNest {
 		
 		List<ObjectRelationalTuple<TimeInterval>> inputTuples;
 
-		fixtures = new NestPOTestFixtureSimpleNesting();
+		fixtures = new SimpleNestingFixture();
 		inputSchema = fixtures.getInputSchema();
 		outputSchema = fixtures.getOutputSchema();
 		groupingAttributes = fixtures.getGroupingAttributes();
@@ -104,52 +111,54 @@ public class NestPOTestNest {
 	 * The grouping values will be asserted.
 	 */
 	
-	@Test public void testGroupingValues() {	    
+	@Test public void nest() {	    
 	    ObjectRelationalTuple<TimeInterval> checkTuple = result.get(0);
 	    assertEquals(checkTuple.getAttribute(0),"1");
 	    checkTuple = result.get(1);
 	    assertEquals(checkTuple.getAttribute(0),"2");
 	    checkTuple = result.get(2);
 	    assertEquals(checkTuple.getAttribute(0),"2");	    
+	    
+      
+        Object nest[] = checkTuple.getAttribute(1);
+                
+        ObjectRelationalTuple<TimeInterval> nest0 = 
+            ((SetEntry<ObjectRelationalTuple>) nest[0]).getValue();
+        
+        ObjectRelationalTuple<TimeInterval> nest1 = 
+            ((SetEntry<ObjectRelationalTuple>) nest[1]).getValue();
+                
+        assertEquals(nest0.getAttributeCount(), 3);
+        assertEquals(nest0.getAttribute(0), "2");
+        assertEquals(nest0.getAttribute(1), "3");
+        assertEquals(nest0.getAttribute(2), "4");
+        assertEquals(nest1.getAttributeCount(), 3);
+        assertEquals(nest1.getAttribute(0), "5");
+        assertEquals(nest1.getAttribute(1), "6");
+        assertEquals(nest1.getAttribute(2), "7");
+        
+        checkTuple = result.get(1);
+        nest = checkTuple.getAttribute(1);
+        assertEquals(nest0.getAttributeCount(), 3);
+        assertEquals(nest0.getAttribute(0), "2");
+        assertEquals(nest0.getAttribute(1), "3");
+        assertEquals(nest0.getAttribute(2), "4");
+        
+        checkTuple = result.get(2);
+        nest = checkTuple.getAttribute(1);
+        assertEquals(nest0.getAttributeCount(), 3);
+        assertEquals(nest0.getAttribute(0), "2");
+        assertEquals(nest0.getAttribute(1), "3");
+        assertEquals(nest0.getAttribute(2), "4");
+        assertEquals(nest1.getAttributeCount(), 3);     
+        assertEquals(nest1.getAttribute(0), "5");
+        assertEquals(nest1.getAttribute(1), "6");
+        assertEquals(nest1.getAttribute(2), "7");
 	}
 	
 	
 	@SuppressWarnings("unchecked")
 	@Test public void testNestings() {
-		ObjectRelationalTuple<TimeInterval> checkTuple = result.get(0);
-	    Object nest[] = checkTuple.getAttribute(1);
-	    	    
-		ObjectRelationalTuple<TimeInterval> nest0 = 
-			((SetEntry<ObjectRelationalTuple>) nest[0]).getValue();
-	    
-		ObjectRelationalTuple<TimeInterval> nest1 = 
-			((SetEntry<ObjectRelationalTuple>) nest[1]).getValue();
-	    		
-	    assertEquals(nest0.getAttributeCount(), 3);
-	    assertEquals(nest0.getAttribute(0), "2");
-	    assertEquals(nest0.getAttribute(1), "3");
-	    assertEquals(nest0.getAttribute(2), "4");
-	    assertEquals(nest1.getAttributeCount(), 3);
-	    assertEquals(nest1.getAttribute(0), "5");
-	    assertEquals(nest1.getAttribute(1), "6");
-	    assertEquals(nest1.getAttribute(2), "7");
-	    
-		checkTuple = result.get(1);
-	    nest = checkTuple.getAttribute(1);
-	    assertEquals(nest0.getAttributeCount(), 3);
-	    assertEquals(nest0.getAttribute(0), "2");
-	    assertEquals(nest0.getAttribute(1), "3");
-	    assertEquals(nest0.getAttribute(2), "4");
-	    
-		checkTuple = result.get(2);
-	    nest = checkTuple.getAttribute(1);
-	    assertEquals(nest0.getAttributeCount(), 3);
-	    assertEquals(nest0.getAttribute(0), "2");
-	    assertEquals(nest0.getAttribute(1), "3");
-	    assertEquals(nest0.getAttribute(2), "4");
-	    assertEquals(nest1.getAttributeCount(), 3);	    
-	    assertEquals(nest1.getAttribute(0), "5");
-	    assertEquals(nest1.getAttribute(1), "6");
-	    assertEquals(nest1.getAttribute(2), "7");
+
 	}
 }

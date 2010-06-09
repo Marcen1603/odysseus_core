@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * 
  * a1	a2	a3	a4
  * 1	2	3	4 	[0,10)
- * 1	2	6	7	[0,10)
+ * 1	5	6	7	[0,10)
  * 2	2	3	4	[15,30)
  * 2	5	6	7	[20,30)
  * 
@@ -29,16 +29,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * 
  * outcome: 
  * 
- * a1	a2	n1
- * 1	   2	    [3	4 [0,10)][6	7	[0,10)] [0,10)
- * 2	   2	    [3	4 [15,30)] [15,30)
- * 2	   5	[6	7 [20,30)][7	7	[20,30)] [20,30)
+ * a1	n1
+ * 1	[2	3	4 [0,10)][5	6	7	[0,10)]
+ * 2	[2	3	4 [15,20)][5	6	7	[15,20)]
+ * 2	[2	5	6	7 [20,30]]
  * 
  * @author Jendrik Poloczek
  * 
  */
-public class NestPOTestFixtureTwoGAttrNesting 
-	implements NestPOTestFixtureFactory {
+public class SimpleNestingFixture 
+	implements Factory {
 
 	@Override
 	public SDFAttributeList getGroupingAttributes() {
@@ -48,9 +48,8 @@ public class NestPOTestFixtureTwoGAttrNesting
 		 * of toNestAttributes is grouped by equality. 
 		 */
 
-		SDFAttribute groupingAttributesArray[] = new SDFAttribute[2]; 
+		SDFAttribute groupingAttributesArray[] = new SDFAttribute[1]; 
 		groupingAttributesArray[0] = new SDFAttribute("input","a1");
-		groupingAttributesArray[1] = new SDFAttribute("input","a2");
 
 		return new SDFAttributeList(groupingAttributesArray);
 	}
@@ -96,36 +95,39 @@ public class NestPOTestFixtureTwoGAttrNesting
 	@Override
 	public SDFAttributeList getOutputSchema() {
 
-		SDFAttribute outputAttributes[] = new SDFAttribute[3];
+		SDFAttribute outputAttributes[] = new SDFAttribute[2];
 
 		SDFAttribute outA1 = new SDFAttribute("output","a1");
 		outA1.setDatatype(
-		        SDFDatatypeFactory.getDatatype("String")
+		    SDFDatatypeFactory.getDatatype("String")
 		);
-		
-		SDFAttribute outA2 = new SDFAttribute("output","a2");		
+	
+		SDFAttribute outA2 = new SDFAttribute("output","n1");
 		outA2.setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
-        );
-		
-		SDFAttribute outA3 = new SDFAttribute("output","n1");
+		    SDFDatatypeFactory.getDatatype("Set")
+		);
 
-		SDFAttribute outA2S1 = new SDFAttribute("output", "a3");
+		SDFAttribute outA2S1 = new SDFAttribute("output", "a2");
 		outA2S1.setDatatype(
+			SDFDatatypeFactory.getDatatype("String")
+		);
+
+		SDFAttribute outA2S2 = new SDFAttribute("output", "a3");
+		outA2S2.setDatatype(
 				SDFDatatypeFactory.getDatatype("String")
 		);
 
-		SDFAttribute outA2S2 = new SDFAttribute("output", "a4");
-		outA2S2.setDatatype(
+		SDFAttribute outA2S3 = new SDFAttribute("output", "a4");
+		outA2S3.setDatatype(
 				SDFDatatypeFactory.getDatatype("String")
 		);
 
 		outA2.addSubattribute(outA2S1);
 		outA2.addSubattribute(outA2S2);
-		
+		outA2.addSubattribute(outA2S3);
+
 		outputAttributes[0] = outA1;
 		outputAttributes[1] = outA2;
-		outputAttributes[1] = outA3;
 
 		return new SDFAttributeList(outputAttributes);
 	}
@@ -137,10 +139,9 @@ public class NestPOTestFixtureTwoGAttrNesting
 		
 		String[] inputData = new String[] {
 				"1;2;3;4,0;10",
-				"1;2;6;7,0;10",
+				"1;5;6;7,0;10",
 				"2;2;3;4,15;30",
-				"2;5;6;7,20;30",
-				"2;5;7;7,20;30"
+				"2;5;6;7,20;30"
 		};  
 
 

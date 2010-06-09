@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,11 +10,15 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 
+import junit.framework.TestCase;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.PartialNest;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.Factory;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.SimpleNestingFixture;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -47,7 +51,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Jendrik Poloczek
  * 
  */
-public class NestPOTestMerge {
+public class Merge extends TestCase {
 	
 	private NestPO<TimeInterval> nestPO;
 	private PartialNest<TimeInterval> result;
@@ -58,17 +62,21 @@ public class NestPOTestMerge {
 	
 	private Method merge;
 
+	public Merge() {
+	    this.setName("merge");
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws Exception {
-		NestPOTestFixtureFactory fixtures;
+		Factory fixtures;
 
 		SDFAttributeList inputSchema;
 		SDFAttributeList outputSchema;		
 		SDFAttributeList groupingAttributes;
 		SDFAttribute nestingAttribute;
 
-		fixtures = new NestPOTestFixtureSimpleNesting();
+		fixtures = new SimpleNestingFixture();
 		inputSchema = fixtures.getInputSchema();
 		outputSchema = fixtures.getOutputSchema();
 		groupingAttributes = fixtures.getGroupingAttributes();
@@ -178,28 +186,20 @@ public class NestPOTestMerge {
 		
 		this.result = 
 			(PartialNest<TimeInterval>) 
-			this.merge.invoke(this.nestPO, partialA, partialB);
-		
-		this.tuples = result.getNest();
-		
-	}
-
-	@Test
-	public void testSizeOfPartial() {
-		assertEquals(this.result.getSize(), new Integer(3));
+			this.merge.invoke(this.nestPO, partialA, partialB);			   
 	}
 	
-	@Test
-	public void testCorrectTimeIntervalOfPartial() {
-		assertEquals(this.result.getMetadata().getStart(), new PointInTime(5));
-		assertEquals(this.result.getMetadata().getEnd(), new PointInTime(10));	
-	}
-	
-	@Test
-	public void testCorrectTimeIntervalOfTuples() {
-		for(ObjectRelationalTuple<TimeInterval> t : this.tuples) {
-			assertEquals(t.getMetadata().getStart(), new PointInTime(5));
-			assertEquals(t.getMetadata().getEnd(), new PointInTime(10));	
-		}
+	@Test public void merge() {
+        this.tuples = result.getNest();
+        
+        assertEquals(this.result.getSize(), new Integer(3));
+        
+        assertEquals(this.result.getMetadata().getStart(), new PointInTime(5));
+        assertEquals(this.result.getMetadata().getEnd(), new PointInTime(10));  
+        
+        for(ObjectRelationalTuple<TimeInterval> t : this.tuples) {
+            assertEquals(t.getMetadata().getStart(), new PointInTime(5));
+            assertEquals(t.getMetadata().getEnd(), new PointInTime(10));    
+        }
 	}
 }

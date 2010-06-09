@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.unnest.fixtures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
-public class UnnestPOTestFixtureSimpleUnnesting 
-    implements UnnestPOTestFixtureFactory {
+public class SimpleUnnestingFixture 
+    implements Factory {
 
     private SDFAttributeList getInputNestSchema() {
         SDFAttribute inputAttributes[];

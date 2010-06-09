@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -7,9 +7,13 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.Factory;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.SimpleNestingFixture;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -33,11 +37,15 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Jendrik Poloczek
  * 
  */
-public class NestPOTestGroupId {
+public class GroupId extends TestCase {
 
 	private List<ObjectRelationalTuple<TimeInterval>> inputTuples;
 	private NestPO<TimeInterval> nestPO;
 	private Method getGroupId;
+	
+	public GroupId() {
+	    this.setName("groupTheInputTuples");
+	}
 	
 	@Test
 	public void groupTheInputTuples() {
@@ -54,14 +62,14 @@ public class NestPOTestGroupId {
 	@Before
 	public void setUp() throws Exception {
 		
-		NestPOTestFixtureFactory fixtures;
+		Factory fixtures;
 		
 		SDFAttributeList inputSchema;
 		SDFAttributeList outputSchema;		
 		SDFAttributeList groupingAttributes;
 		SDFAttribute nestingAttribute;
 
-		fixtures = new NestPOTestFixtureSimpleNesting();
+		fixtures = new SimpleNestingFixture();
 		inputSchema = fixtures.getInputSchema();
 		outputSchema = fixtures.getOutputSchema();
 		groupingAttributes = fixtures.getGroupingAttributes();

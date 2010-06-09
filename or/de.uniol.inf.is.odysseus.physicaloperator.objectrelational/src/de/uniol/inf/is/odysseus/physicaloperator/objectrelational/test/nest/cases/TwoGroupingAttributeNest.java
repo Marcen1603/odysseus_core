@@ -1,7 +1,9 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,18 +11,31 @@ import org.junit.Test;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.SetEntry;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.Factory;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.TwoGroupingAttributesNestingFixture;
+
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class NestPOTestNestOfNesting {
-
+public class TwoGroupingAttributeNest extends TestCase {
+	
 	ArrayList<ObjectRelationalTuple<TimeInterval>> result;
 	
+	public TwoGroupingAttributeNest() {
+	    this.setName("nest");
+	}
+	
+	/**
+	 * 
+	 * Setting up input and output schema and nesting attribute and 
+	 * grouping attributes; setting up relational tuples etc.
+	 * 
+	 * @throws Exception
+	 * 
+	 */
 	@Before
 	public void setUp() throws Exception {
-		
-		NestPOTestFixtureFactory fixtures;
+		Factory fixtures;
 		NestPO<TimeInterval> nestPO;
 		
 		SDFAttributeList inputSchema;
@@ -30,7 +45,7 @@ public class NestPOTestNestOfNesting {
 		
 		List<ObjectRelationalTuple<TimeInterval>> inputTuples;
 
-		fixtures = new NestPOTestFixtureNestOfNesting();
+		fixtures = new TwoGroupingAttributesNestingFixture();
 		inputSchema = fixtures.getInputSchema();
 		outputSchema = fixtures.getOutputSchema();
 		groupingAttributes = fixtures.getGroupingAttributes();
@@ -47,8 +62,7 @@ public class NestPOTestNestOfNesting {
 	    this.result = 
 	    	new ArrayList<ObjectRelationalTuple<TimeInterval>>();
 	    
-	    for(ObjectRelationalTuple<TimeInterval> tuple : inputTuples) {	
-	    	System.out.println(tuple);
+	    for(ObjectRelationalTuple<TimeInterval> tuple : inputTuples) {
 	    	nestPO.processNextTest(tuple, 0);
 	    }
 	    
@@ -63,24 +77,15 @@ public class NestPOTestNestOfNesting {
 	    	result.add(nestPO.deliver());
 	    }	    
 	}
-
-	@SuppressWarnings("unchecked")
-    @Test 
-	public void testNestOfNesting() {
-		System.out.println("output");
-		for(ObjectRelationalTuple<TimeInterval> tuple : this.result) {
-		    
-			SetEntry<ObjectRelationalTuple<TimeInterval>>[] entries = 
-			    (SetEntry[]) tuple.getAttribute(1);
-			
-			ObjectRelationalTuple t = (ObjectRelationalTuple) entries[0].getValue();
-			System.out.println(t);
 	
-			SetEntry[] entries2 = (SetEntry[]) t.getAttribute(0);			
-			System.out.println(entries2[0]);
-		}
-		
-		
+	/**
+	 * @TODO implement the test.
+	 */
+	
+	@Test 
+	public void nest() {
+	    for(ObjectRelationalTuple<TimeInterval> tuple : this.result) {
+	    	
+	    }	 
 	}
-	
 }

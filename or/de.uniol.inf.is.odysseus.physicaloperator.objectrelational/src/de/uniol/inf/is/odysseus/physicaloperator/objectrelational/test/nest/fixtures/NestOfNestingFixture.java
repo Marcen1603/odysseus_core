@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +27,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * @author Jendrik Poloczek
  * 
  */
-public class NestPOTestFixtureNestOfNesting 
-	implements NestPOTestFixtureFactory {
+public class NestOfNestingFixture 
+	implements Factory {
 
 	@Override
 	public SDFAttributeList getGroupingAttributes() {
