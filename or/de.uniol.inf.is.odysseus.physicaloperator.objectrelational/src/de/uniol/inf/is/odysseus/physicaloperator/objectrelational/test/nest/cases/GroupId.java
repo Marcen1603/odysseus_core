@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 

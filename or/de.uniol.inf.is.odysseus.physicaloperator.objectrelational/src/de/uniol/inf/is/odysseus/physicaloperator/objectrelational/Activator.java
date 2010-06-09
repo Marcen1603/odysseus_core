@@ -6,7 +6,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.TestSuiteAllTests;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.NestPOAllTests;
 
 public class Activator implements BundleActivator {
 

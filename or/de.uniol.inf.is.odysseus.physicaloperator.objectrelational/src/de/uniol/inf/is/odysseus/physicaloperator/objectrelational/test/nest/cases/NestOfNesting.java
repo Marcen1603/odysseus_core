@@ -83,7 +83,8 @@ public class NestOfNesting extends TestCase {
 			SetEntry<ObjectRelationalTuple<TimeInterval>>[] entries = 
 			    (SetEntry[]) tuple.getAttribute(1);
 			
-			ObjectRelationalTuple t = (ObjectRelationalTuple) entries[0].getValue();		
+			@SuppressWarnings("unused")
+            ObjectRelationalTuple t = (ObjectRelationalTuple) entries[0].getValue();		
 			//SetEntry[] entries2 = (SetEntry[]) t.getAttribute(0);					
 		}
 		

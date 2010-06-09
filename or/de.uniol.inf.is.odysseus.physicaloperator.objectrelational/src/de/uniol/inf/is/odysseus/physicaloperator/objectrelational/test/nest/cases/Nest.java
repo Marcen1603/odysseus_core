@@ -111,7 +111,8 @@ public class Nest extends TestCase {
 	 * The grouping values will be asserted.
 	 */
 	
-	@Test public void nest() {	    
+	@SuppressWarnings("unchecked")
+    @Test public void nest() {	    
 	    ObjectRelationalTuple<TimeInterval> checkTuple = result.get(0);
 	    assertEquals(checkTuple.getAttribute(0),"1");
 	    checkTuple = result.get(1);
@@ -154,11 +155,5 @@ public class Nest extends TestCase {
         assertEquals(nest1.getAttribute(0), "5");
         assertEquals(nest1.getAttribute(1), "6");
         assertEquals(nest1.getAttribute(2), "7");
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	@Test public void testNestings() {
-
 	}
 }

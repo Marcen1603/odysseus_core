@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;

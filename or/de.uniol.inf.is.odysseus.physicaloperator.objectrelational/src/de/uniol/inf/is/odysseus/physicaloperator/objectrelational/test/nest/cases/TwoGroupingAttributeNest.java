@@ -83,8 +83,9 @@ public class TwoGroupingAttributeNest extends TestCase {
 	 */
 	
 	@Test 
+	@SuppressWarnings("unused")
 	public void nest() {
-	    for(ObjectRelationalTuple<TimeInterval> tuple : this.result) {
+	    for( ObjectRelationalTuple<TimeInterval> tuple : this.result) {
 	    	
 	    }	 
 	}

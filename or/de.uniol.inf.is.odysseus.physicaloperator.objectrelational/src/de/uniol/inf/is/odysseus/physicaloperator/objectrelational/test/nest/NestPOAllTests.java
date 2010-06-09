@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.case
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases.Nest;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases.NestOfNesting;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases.TwoGroupingAttributeNest;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases.Update;
 import junit.framework.TestSuite;
 
 public class NestPOAllTests extends TestSuite {
