@@ -315,6 +315,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// remove buffers, thereby resuming query processing
 		this.logger.debug("Removing buffers.");
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
+			this.logger.debug("Remove buffer "+buffer);
 			ISource<?> source = buffer.getSubscribedToSource(0).getTarget();
 			List<ISink<?>> sinks = new ArrayList<ISink<?>>();
 			for (PhysicalSubscription<?> sub : buffer.getSubscriptions()) {
@@ -329,6 +330,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				PhysicalRestructHelper.removeSubscription(sink, buffer);
 			}
 			buffer.removeOwner(context.getRunningQuery());
+			this.logger.debug("Remove buffer "+buffer+" done.");
 		}
 
 		// new plan is ready and running
