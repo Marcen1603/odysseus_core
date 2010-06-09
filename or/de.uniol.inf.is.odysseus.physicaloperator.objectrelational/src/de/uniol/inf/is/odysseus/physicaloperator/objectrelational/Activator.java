@@ -5,7 +5,7 @@ import junit.textui.TestRunner;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.TestSuiteAllTests;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.AllTests;
 
 public class Activator implements BundleActivator {
 
@@ -16,7 +16,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext c) throws Exception {	    
-	    TestRunner.run(new TestSuiteAllTests());
+	    TestRunner.run(new AllTests());
 		context = c;
 	}
 

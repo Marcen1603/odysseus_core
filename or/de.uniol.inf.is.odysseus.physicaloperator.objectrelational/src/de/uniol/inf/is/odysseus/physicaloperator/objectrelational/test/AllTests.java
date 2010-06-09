@@ -4,8 +4,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.Nest
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.unnest.UnnestPOAllTests;
 import junit.framework.TestSuite;
 
-public class TestSuiteAllTests extends TestSuite {
-    public TestSuiteAllTests() {
+public class AllTests extends TestSuite {
+    public AllTests() {
         this.addTest(new NestPOAllTests());
         this.addTest(new UnnestPOAllTests());
     }
