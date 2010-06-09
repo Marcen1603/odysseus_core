@@ -51,7 +51,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
 		
 		this.inputAttributesCount = this.inputSchema.getAttributeCount();
 		this.outputAttributesCount = this.outputSchema.getAttributeCount();  
-		this.nonNestAttributesCount = this.outputAttributesCount - 1;
+		this.nonNestAttributesCount = this.inputAttributesCount - 1;
 		
 		this.nestedAttributesCount = 
 		    this.nestingAttribute.getAmountOfSubattributes();
@@ -74,7 +74,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
     }
 
     /**
-     * Instead of transfering the objects to the subscriber, we return the 
+     * Instead of transferring the objects to the subscriber, we return the 
      * values to assert correctness in a test case.
      * 
      * @param object
@@ -107,10 +107,21 @@ public class UnnestPO<T extends IMetaAttribute> extends
                 this.outputSchema,
                 outputValues
             );
+            outputTuple.setMetadata(
+                subTuples[i].getMetadata().clone()
+            );
             this.q.insert(outputTuple.clone());
         }
     }
-
+    
+    public ObjectRelationalTuple<TimeInterval> deliver() {
+        return this.q.poll();
+    }
+    
+    public boolean isDone() {
+        return this.q.size() == 0;
+    }
+    
     public SDFAttributeList getInputSchema() {
         return this.inputSchema;
     }

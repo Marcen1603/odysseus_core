@@ -65,7 +65,11 @@ public class ObjectRelationalTuple
 		char delimiter
 	) {
 		this.attributes = 
-			this.splitLineToAttributes(line, delimiter, schema);
+			ObjectRelationalTuple.splitLineToAttributes(
+			    line, 
+			    delimiter, 
+			    schema
+			);
 	}
 
 	public ObjectRelationalTuple(
@@ -317,14 +321,17 @@ public class ObjectRelationalTuple
 				"attributes of type " + 
 				attribute.getDatatype() + 
 				" can't be used with " + 
-				RelationalTuple.class);
+				RelationalTuple.class
+		);
 	}
 
 	@SuppressWarnings("unchecked")
-	private ObjectRelationalTuple<T> restrictCreation(boolean createNew,
-			Object[] newAttrs) {
-		
-		if(createNew) {			
+	private ObjectRelationalTuple<T> restrictCreation(
+	        boolean createNew,
+			Object[] newAttrs
+	) {
+		if(createNew) {
+		    
 			ObjectRelationalTuple<T> newTuple = 
 				new ObjectRelationalTuple<T>(newAttrs.length);
 			

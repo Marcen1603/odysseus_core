@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.SetEntry;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -38,33 +39,18 @@ public class UnnestPOTestFixtureSimpleUnnesting
         
         inputAttributes = new SDFAttribute[4];
         
-        /* 
-         * Setting up the input schema and output schema
-         * with some attributes. the nesting attribute is 
-         * where the sets go in. But now we're adding a 
-         * previous nesting to attribute a2.
-         */
-        
         inputAttributes[0] = new SDFAttribute("input","a1");
         inputAttributes[0].setDatatype(
             SDFDatatypeFactory.getDatatype("String")
-        );
+        );       
         
-        /*
-         * Here it goes, with a2sub1 and a2sub2. The test checks if 
-         * nested tuples will correctly nest. 
-         */
-        
-        inputAttributes[1] = new SDFAttribute("input","n1");
-        inputAttributes[1].setDatatype(
-            SDFDatatypeFactory.getDatatype("Set")
-        );
+        inputAttributes[1] = this.getNestingAttribute();
  
         inputAttributes[1].setSubattributes(this.getInputNestSchema());
         
         inputAttributes[2] = new SDFAttribute("input","a3");
         inputAttributes[2].setDatatype(
-                SDFDatatypeFactory.getDatatype("String")
+            SDFDatatypeFactory.getDatatype("String")
         );
         
         inputAttributes[3] = new SDFAttribute("input","a4");
@@ -77,17 +63,19 @@ public class UnnestPOTestFixtureSimpleUnnesting
         return inputSchema;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<ObjectRelationalTuple<TimeInterval>> getInputTuples() {
         
         List<ObjectRelationalTuple<TimeInterval>> inputTuples;
-        List<ObjectRelationalTuple<TimeInterval>> subTuplesA2;
+        
+        SetEntry<ObjectRelationalTuple<TimeInterval>>[] set = 
+            new SetEntry[2];
         
         inputTuples = new ArrayList<ObjectRelationalTuple<TimeInterval>>();
-        subTuplesA2 = new ArrayList<ObjectRelationalTuple<TimeInterval>>();
         
-        Object valuesForV2_1_1[] = {"v2s1","v2s2"};
-        Object valuesForV2_1_2[] = {"v2s1","v2s2"};
+        Object valuesForV2_1_1[] = {"v2_s1_a1","v2_s1_a2"};
+        Object valuesForV2_1_2[] = {"v2_s2_a1","v2_s2_a2"};
         
         ObjectRelationalTuple<TimeInterval> t1sub1 = 
             new ObjectRelationalTuple<TimeInterval>(
@@ -100,7 +88,7 @@ public class UnnestPOTestFixtureSimpleUnnesting
                 new PointInTime(0),
                 new PointInTime(10)
             )
-        );
+        );       
         
         ObjectRelationalTuple<TimeInterval> t1sub2 = 
             new ObjectRelationalTuple<TimeInterval>(
@@ -110,15 +98,15 @@ public class UnnestPOTestFixtureSimpleUnnesting
         
         t1sub2.setMetadata(
             new TimeInterval(
-                new PointInTime(0),
+                new PointInTime(5),
                 new PointInTime(10)
             )
         );
         
-        subTuplesA2.add(t1sub1);
-        subTuplesA2.add(t1sub2);
+        set[0] = new SetEntry(t1sub1);
+        set[1] = new SetEntry(t1sub2);
         
-        Object[] t1val = {"v1", subTuplesA2, "v3", "v4"};
+        Object[] t1val = {"v1", set, "v3", "v4"};
         
         ObjectRelationalTuple<TimeInterval> t1 = new 
             ObjectRelationalTuple<TimeInterval>(
@@ -140,7 +128,12 @@ public class UnnestPOTestFixtureSimpleUnnesting
 
     @Override
     public SDFAttribute getNestingAttribute() {
-        return new SDFAttribute("input", "n1");
+        SDFAttribute nestAttr = new SDFAttribute("input", "n1");
+        nestAttr.setDatatype(
+            SDFDatatypeFactory.getDatatype("Set")
+        );
+        nestAttr.setSubattributes(this.getInputNestSchema());
+        return nestAttr;
     }
 
     @Override
