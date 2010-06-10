@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -57,15 +56,13 @@ public class MetricMeasurePO<T extends IMetaAttribute> extends AbstractPipe<Rela
 	}
 
 	@Override
-	protected void process_close() throws CloseFailedException {
+	protected void process_close(){
 		System.out.println("Processing takes " + (System.currentTimeMillis() - this.startTime) + " ms");
 		super.process_close();
 		try {
 			out.close();
 		} catch (IOException e) {
-			CloseFailedException ex = new CloseFailedException(e);
-			ex.fillInStackTrace();
-			throw ex;
+			e.printStackTrace();
 		}
 	}
 
