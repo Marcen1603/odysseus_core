@@ -13,4 +13,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.standardbufferplacementstrategy
 Service-Component: OSGI-INF/StandardBufferPlacementStrategy.xml
+Require-Bundle: de.uniol.inf.is.odysseus.base
 

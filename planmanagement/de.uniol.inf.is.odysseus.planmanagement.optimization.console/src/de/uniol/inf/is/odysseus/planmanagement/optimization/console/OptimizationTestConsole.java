@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
@@ -63,6 +64,10 @@ public class OptimizationTestConsole implements
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
 			new TransformationConfiguration("relational", ITimeInterval.class));
+
+	private String currentScheduler;
+
+	private String currentBuffer;
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
@@ -186,6 +191,7 @@ public class OptimizationTestConsole implements
 			this.executor.getSealedPlan().addReoptimzeRule(loadListener);
 			Thread.sleep(4000);
 			try {
+				@SuppressWarnings("unused")
 				int[] i = new int[6000000];
 				Thread.sleep(3000);
 				i = null;
@@ -227,6 +233,7 @@ public class OptimizationTestConsole implements
 			this.executor.getOptimizerConfiguration().set(
 					new SettingRefuseOptimizationAtMemoryLoad(20.0));
 			try {
+				@SuppressWarnings("unused")
 				int[] i = new int[6000000];
 				Thread.sleep(1000);
 				this.executor.getSealedPlan().getQuery(
@@ -265,6 +272,20 @@ public class OptimizationTestConsole implements
 
 	}
 
+	public void _eg(CommandInterpreter ci) {
+		// TODO: Hack zum einfachen Testen ;-)
+		basepath = "c:/development/";
+		nmsn(ci);
+		EvalQuery eq = EvalQuery.GOOD;
+		try {
+			eval(eq, 120, 5, "" + System.currentTimeMillis()+ eq+"_"+currentBuffer+"_"+currentScheduler);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	public void _er(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
 		basepath = "c:/development/";
@@ -293,7 +314,6 @@ public class OptimizationTestConsole implements
 
 	}
 
-	
 	public void _em(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
 		basepath = "c:/development/";
@@ -311,28 +331,15 @@ public class OptimizationTestConsole implements
 	public void _e(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
 		basepath = "c:/development/";
-		String bufferPlacement = "Standard Buffer Placement";
-
-		System.out.println(this.executor
-				.getRegisteredBufferPlacementStrategies());
-
-		ExecutionConfiguration config = this.executor.getConfiguration();
-		config.set(new SettingBufferPlacementStrategy(bufferPlacement));
 
 		nmsn(ci);
-		for (int i = 0; i < 2; i++) {
-			for (EvalQuery eq : EvalQuery.values()) {
-				try {
-					eval(eq, 120, 5, "" + System.currentTimeMillis() + eq);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		for (EvalQuery eq : EvalQuery.values()) {
+			try {
+				eval(eq, 120, 5, "" + System.currentTimeMillis() + eq);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			// Einmal mit Buffern
-			// this.executor.setDefaultBufferPlacementStrategy(bufferPlacement);
-			this.executor.getConfiguration().set(
-					new SettingBufferPlacementStrategy(bufferPlacement));
 		}
 	}
 
@@ -406,12 +413,13 @@ public class OptimizationTestConsole implements
 							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
 							parser(), new ParameterDefaultRoot(sink),
 							this.trafoConfigParam);
-			System.out.println("QueryIDs: "+queryIds);
+			System.out.println("QueryIDs: " + queryIds);
 			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
 			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
 
 			// manipulate: push select to top
-			if (evalQuery == EvalQuery.BAD || evalQuery == EvalQuery.MIG || evalQuery == EvalQuery.BAD_REMOVE) {
+			if (evalQuery == EvalQuery.BAD || evalQuery == EvalQuery.MIG
+					|| evalQuery == EvalQuery.BAD_REMOVE) {
 				_helpMakeQueryBad(query);
 			}
 
@@ -458,10 +466,10 @@ public class OptimizationTestConsole implements
 							.getCount(), cputime, memBean.getHeapMemoryUsage()
 							.getUsed());
 					measures.add(m);
-					System.out.println(m.time_elapsed + sep + m.tuples_passed + sep
-							+ m.cpu_load + sep + m.memory_usage);
+					System.out.println(m.time_elapsed + sep + m.tuples_passed
+							+ sep + m.cpu_load + sep + m.memory_usage);
 				}
-				
+
 				if (evalQuery == EvalQuery.MIG && i == 30) {
 					final IQuery q = query;
 					Runnable reopt = new Runnable() {
@@ -470,40 +478,42 @@ public class OptimizationTestConsole implements
 							q.reoptimize();
 							System.out
 									.println("------------------------------------> Reopt durch, ggf. Senke anpassen");
-							setOptimizationSink((OptimizationTestSink) q.getSealedRoot());
+							setOptimizationSink((OptimizationTestSink) q
+									.getSealedRoot());
 						}
 					};
 					new Thread(reopt).start();
-				}else if ((evalQuery == EvalQuery.GOOD_REMOVE || evalQuery == EvalQuery.BAD_REMOVE)
-						&& (i == 100 || i == 200 || i == 300 || i == 400)){
-					System.out
-					.println("Removing Query");
+				} else if ((evalQuery == EvalQuery.GOOD_REMOVE || evalQuery == EvalQuery.BAD_REMOVE)
+						&& (i == 100 || i == 200 || i == 300 || i == 400)) {
+					System.out.println("Removing Query");
 					executor.removeQuery(query.getID());
 					System.out.println("Removing Query done");
 					waitFor(10000);
 					// Neu zählen
 					sink.reset();
-					//setOptimizationSink(new OptimizationTestSink(OutputMode.COUNT));
+					// setOptimizationSink(new
+					// OptimizationTestSink(OutputMode.COUNT));
 					queryIds = this.executor
-					.addQuery(
-							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
-							parser(), new ParameterDefaultRoot(sink),
-							this.trafoConfigParam);
+							.addQuery(
+									"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
+									parser(), new ParameterDefaultRoot(sink),
+									this.trafoConfigParam);
 					plan = (IEditablePlan) this.executor.getSealedPlan();
-					System.out.println("QueryIDs: "+queryIds);
+					System.out.println("QueryIDs: " + queryIds);
 					query = plan.getQuery(queryIds.iterator().next());
-					if (evalQuery == EvalQuery.BAD_REMOVE){
+					if (evalQuery == EvalQuery.BAD_REMOVE) {
 						_helpMakeQueryBad(query);
 					}
 				}
 			}
 			System.out
 					.println("----------Evaluation End--------------------------------");
-			
+
 			System.out.println(Router.getInstance().getRouterReceiver());
 
 			executor.removeQuery(query.getID());
 			System.out.println(Router.getInstance().getRouterReceiver());
+			this.executor.stopExecution();
 
 			lsqueries();
 
@@ -519,8 +529,8 @@ public class OptimizationTestConsole implements
 		System.out.println("Rebuilding Query to Bad Query");
 		IPhysicalOperator root = query.getRoot();
 		System.out.println(root.getName());
-		IPhysicalOperator project = ((ISink<?>) root)
-				.getSubscribedToSource(0).getTarget();
+		IPhysicalOperator project = ((ISink<?>) root).getSubscribedToSource(0)
+				.getTarget();
 		System.out.println(project.getName());
 		IPhysicalOperator lastJoin = ((ISink<?>) project)
 				.getSubscribedToSource(0).getTarget();
@@ -534,11 +544,11 @@ public class OptimizationTestConsole implements
 		IPhysicalOperator window = ((ISink<?>) firstJoin)
 				.getSubscribedToSource(1).getTarget();
 		System.out.println(window.getName());
-		IPhysicalOperator select = ((ISink<?>) window)
-				.getSubscribedToSource(0).getTarget();
+		IPhysicalOperator select = ((ISink<?>) window).getSubscribedToSource(0)
+				.getTarget();
 		System.out.println(select.getName());
-		IPhysicalOperator meta = ((ISink<?>) select)
-				.getSubscribedToSource(0).getTarget();
+		IPhysicalOperator meta = ((ISink<?>) select).getSubscribedToSource(0)
+				.getTarget();
 		System.out.println(meta.getName());
 
 		// remove select before join
@@ -550,8 +560,8 @@ public class OptimizationTestConsole implements
 		PhysicalRestructHelper.removeSubscription(project, lastJoin);
 		RelationalPredicate predicate = (RelationalPredicate) ((SelectPO<?>) select)
 				.getPredicate();
-		RelationalPredicate newPredicate = new RelationalPredicate(
-				predicate.getExpression());
+		RelationalPredicate newPredicate = new RelationalPredicate(predicate
+				.getExpression());
 		newPredicate.init(lastJoin.getOutputSchema(), null);
 		SelectPO<?> newSelect = new SelectPO(newPredicate);
 		newSelect.setName("New Selection");
@@ -628,6 +638,112 @@ public class OptimizationTestConsole implements
 
 	private String parser() {
 		return "CQL";
+	}
+
+	public void _buffer(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		if (args != null && args.length > 0) {
+			try {
+				String bufferName = args[0];
+				Set<String> list = this.executor
+						.getRegisteredBufferPlacementStrategies();
+				if (list.contains(bufferName)) {
+					this.executor.getConfiguration().set(
+							new SettingBufferPlacementStrategy(bufferName));
+					ci.println("Strategy " + bufferName + " set.");
+					currentBuffer = bufferName;
+					return;
+				} else {
+					this.executor.getConfiguration().set(
+							new SettingBufferPlacementStrategy(null));
+					if ("no strategy".equalsIgnoreCase(bufferName)) {
+						ci.println("Current strategy removed.");
+					} else {
+						ci
+								.println("Strategy not found. Current strategy removed.");
+					}
+					return;
+				}
+
+			} catch (Exception e) {
+				ci.println(e.getMessage());
+			}
+		} else {
+			ci.println("No query argument.");
+		}
+	}
+
+	public void _lsbuffer(CommandInterpreter ci) {
+		Set<String> bufferList = this.executor
+				.getRegisteredBufferPlacementStrategies();
+		if (bufferList != null) {
+			String current = (String) this.executor.getConfiguration().get(
+					SettingBufferPlacementStrategy.class).getValue();
+			ci.println("Available bufferplacement strategies:");
+			if (current == null) {
+				System.out.print("no strategy - SELECTED");
+			} else {
+				System.out.print("no strategy");
+			}
+			ci.println("");
+			for (String iBufferPlacementStrategy : bufferList) {
+				System.out.print(iBufferPlacementStrategy);
+				if (current != null && iBufferPlacementStrategy.equals(current)) {
+					System.out.print(" - SELECTED");
+				}
+				ci.println("");
+			}
+
+		}
+	}
+
+	public void _lsschedulingstrategies(CommandInterpreter ci) {
+		Set<String> list = this.executor
+				.getRegisteredSchedulingStrategyFactories();
+		if (list != null) {
+			String current = executor.getCurrentSchedulingStrategy();
+			ci.println("Available Scheduling strategies:");
+
+			ci.println("");
+			for (String iStrategy : list) {
+				System.out.print(iStrategy.toString());
+				if (current != null && iStrategy.equals(current)) {
+					System.out.print(" - SELECTED");
+				}
+				ci.println("");
+			}
+			System.out.print("no strategy");
+		}
+	}
+
+	public void _lsscheduler(CommandInterpreter ci) {
+		Set<String> list = this.executor.getRegisteredSchedulerFactories();
+		if (list != null) {
+			String current = executor.getCurrentScheduler();
+			ci.println("Available Schedulers:");
+
+			// if (current == null) {
+			// System.out.print(" - SELECTED");
+			// }
+			ci.println("");
+			for (String iStrategy : list) {
+				System.out.print(iStrategy.toString());
+				if (current != null && iStrategy.equals(current)) {
+					System.out.print(" - SELECTED");
+				}
+				ci.println("");
+			}
+		}
+	}
+
+	public void _scheduler(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		if (args != null && args.length > 0) {
+			currentScheduler = args[0];
+			executor.setScheduler(args[0], args[1]);
+		} else {
+			ci.println("No query argument.");
+		}
 	}
 
 }

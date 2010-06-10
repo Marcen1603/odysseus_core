@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.Abst
  * @author Jonas Jacobi, Marco Grawunder
  *
  */
-public class StandardBufferPlacementStrategy extends
-		AbstractBufferPlacementStrategy {
-
+public class StandardBufferPlacementStrategy 
+	   extends	AbstractBufferPlacementStrategy {
+ 
 	Logger logger = LoggerFactory.getLogger(StandardBufferPlacementStrategy.class);;
 	
 	@Override
@@ -42,8 +42,12 @@ public class StandardBufferPlacementStrategy extends
 		// do nothing. It's only a standard placement strategy.
 	}
 
+	
+	
 	@Override
 	public String getName() {
 		return "Standard Buffer Placement";
 	}
+
+
 }

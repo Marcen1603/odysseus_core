@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 
 /**
  * Describes an object which represents a basic query in odyessus. This
@@ -69,4 +70,10 @@ public interface IQuery extends
 	public void setPriority(int priority);
 	
 	public String getParserId();
+	
+	public String getQueryText();
+	public void setQueryText(String queryText);
+	
+	public User getUser();
+	public void setUser(User user);
 }

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.AbstractQueryReoptimiz
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
@@ -26,15 +27,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
  * unique ID and stores all relevant data (logical/physical plan, parser ID,
  * execution state etc.).
  * 
- * @author Wolf Bauer
- * 
- */
-/**
- * @author Wolf Bauer
+ * @author Wolf Bauer, Marco Grawunder
  * 
  */
 public class Query implements IEditableQuery {
-	
+
 	protected Logger logger = LoggerFactory.getLogger(Query.class);
 
 	/**
@@ -46,6 +43,16 @@ public class Query implements IEditableQuery {
 	 * Unique id of an ID. Used for identification of an query.
 	 */
 	private final int id;
+
+	/**
+	 * If available the text of the entered query
+	 */
+	private String queryText = null;
+
+	/**
+	 * The user who created this query
+	 */
+	private User user = null;
 
 	/**
 	 * List of all direct physical child operators. Stored separate because a
@@ -200,7 +207,7 @@ public class Query implements IEditableQuery {
 				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
 				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
 						.getSubscribedToSource()) {
-					if(!ret.contains(subscription.getTarget())){
+					if (!ret.contains(subscription.getTarget())) {
 						sources.push(subscription.getTarget());
 					}
 				}
@@ -271,11 +278,13 @@ public class Query implements IEditableQuery {
 			if (this.parameters.getDefaultRoot() != null) {
 				defaultRoot = this.parameters.getDefaultRoot();
 
-				// register default root TODO hier koennen fehler uebersprungen werden, wenn
-				//root keine source ist
+				// register default root TODO hier koennen fehler uebersprungen
+				// werden, wenn
+				// root keine source ist
 				if (defaultRoot != null && defaultRoot.isSink()
 						&& root.isSource()) {
-					((ISink) defaultRoot).subscribeToSource((ISource) root, 0,0, root.getOutputSchema());
+					((ISink) defaultRoot).subscribeToSource((ISource) root, 0,
+							0, root.getOutputSchema());
 					this.root = defaultRoot;
 				}
 			}
@@ -355,13 +364,14 @@ public class Query implements IEditableQuery {
 	public void removeOwnerschip() {
 		logger.debug("Remove ownership start");
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-			logger.debug("Remove Ownership for "+physicalOperator);
+			logger.debug("Remove Ownership for " + physicalOperator);
 			physicalOperator.removeOwner(this);
 			if (!physicalOperator.hasOwner()) {
-				logger.debug("No more owners. Closing "+physicalOperator);
+				logger.debug("No more owners. Closing " + physicalOperator);
 				physicalOperator.close();
 				if (physicalOperator.isSink()) {
-					logger.debug("Sink unsubscribe from all sources "+physicalOperator);
+					logger.debug("Sink unsubscribe from all sources "
+							+ physicalOperator);
 					ISink<?> sink = (ISink<?>) physicalOperator;
 					sink.unsubscribeFromAllSources();
 				}
@@ -381,7 +391,8 @@ public class Query implements IEditableQuery {
 		synchronized (this.physicalChilds) {
 			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 				if (physicalOperator instanceof IIterableSource<?>) {
-					((IIterableSource<?>)physicalOperator).activateRequest(this);
+					((IIterableSource<?>) physicalOperator)
+							.activateRequest(this);
 				}
 			}
 		}
@@ -399,7 +410,8 @@ public class Query implements IEditableQuery {
 		synchronized (this.physicalChilds) {
 			for (IPhysicalOperator physicalOperator : this.physicalChilds) {
 				if (physicalOperator instanceof IIterableSource<?>) {
-					((IIterableSource<?>)physicalOperator).deactivateRequest(this);
+					((IIterableSource<?>) physicalOperator)
+							.deactivateRequest(this);
 				}
 			}
 		}
@@ -559,9 +571,29 @@ public class Query implements IEditableQuery {
 	public boolean isRunning() {
 		return this.started;
 	}
-	
+
 	@Override
 	public String getParserId() {
 		return parserID;
+	}
+
+	@Override
+	public String getQueryText() {
+		return queryText;
+	}
+
+	@Override
+	public void setQueryText(String queryText) {
+		this.queryText = queryText;
+	}
+
+	@Override
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@Override
+	public User getUser() {
+		return user;
 	}
 }

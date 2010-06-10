@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.Op
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
+
 /**
  * The {@link StandardOptimizer} installs monitoring points in physical plans.
  * On reoptimize requests, the optimizer initiates a plan migration to a more
