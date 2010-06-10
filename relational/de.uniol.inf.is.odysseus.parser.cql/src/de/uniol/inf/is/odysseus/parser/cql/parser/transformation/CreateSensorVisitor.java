@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
@@ -13,6 +14,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordEntryDefinition;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class CreateSensorVisitor extends AbstractDefaultVisitor {
@@ -30,8 +32,15 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		
 		SDFAttributeListExtended ex = new SDFAttributeListExtended(new SDFAttribute[] { rootAttribute });
 		
+		SDFEntity entity = new SDFEntity(name);
+		entity.setAttributes(ex);
+		DataDictionary.getInstance().sourceTypeMap.put(name, "ObjectRelationalStreaming");
+		DataDictionary.getInstance().entityMap.put(name, entity);
+		
+		System.out.println(DataDictionary.getInstance().sourceTypeMap);
+		System.out.println(DataDictionary.getInstance().entityMap);
+		
 		System.out.println(ex);
-		// TODO: Vieles machen. DataDictonary...
 		// TODO: Channel auslesen
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist (extra Klasse oder so)
 		
