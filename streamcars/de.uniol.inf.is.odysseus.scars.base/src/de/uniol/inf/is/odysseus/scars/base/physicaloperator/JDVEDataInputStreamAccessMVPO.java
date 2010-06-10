@@ -5,7 +5,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,29 +16,57 @@ import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
 import java.util.ArrayList;
 
-public class JDVEDataInputStreamAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
+public abstract class JDVEDataInputStreamAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return null;
+	private JDVEData data;
+	private int port;
+	protected ArrayList<CarData> buffer;
+	
+	public JDVEDataInputStreamAccessMVPO(int pPort) {
+		this.port = pPort;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		try {
+			data = new JDVEData(this.port);
+		}
+		catch (SocketException ex){
+			throw new OpenFailedException(ex);
+		}
+	}
+	
+	@Override
+	protected void process_done() {
+		data.closeJDVEDataPort();
 	}
 
 	@Override
 	public boolean hasNext() {
-		return false;
+		if (buffer == null) {
+			try {
+				buffer = data.getScan();
+			} catch (SocketTimeoutException e) {
+				e.printStackTrace();
+				return false;
+			} catch (PortUnreachableException e) {
+				e.printStackTrace();
+				return false;
+			} catch (IllegalBlockingModeException e) {
+				e.printStackTrace();
+				return false;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public boolean isDone() {
+		/* Lassen wir so, weil wir das erstmal nicht behandeln */
 		return false;
-	}
-
-	@Override
-	public void transferNext() {
 	}
 
 	@Override
@@ -62,7 +89,7 @@ class JDVEData {
 		clientSocket.setSoTimeout(10000);
 	}
 	
-	public ArrayList<CarData> getScan() {
+	public ArrayList<CarData> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
 		ArrayList<CarData> result = new ArrayList<CarData>();
 		
 		/* Benötigter Puffer:
@@ -78,25 +105,7 @@ class JDVEData {
 		
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		
-		try {
-			clientSocket.receive(receivePacket);
-		}
-		catch (SocketTimeoutException ex) {
-			//TODO: Abfangen und Loggen
-			System.err.println(ex.getMessage());
-		}
-		catch (PortUnreachableException ex) {
-			//TODO: Abfangen und Loggen
-			System.err.println(ex.getMessage());
-		}
-		catch (IllegalBlockingModeException ex) {
-			//TODO: Abfangen und Loggen
-			System.err.println(ex.getMessage());
-		}
-		catch (IOException ex) {
-			//TODO: Abfangen und Loggen
-			System.err.println(ex.getMessage());
-		}
+		clientSocket.receive(receivePacket);
 		
 		/* ByteBuffer übernimmt die Daten. ByteBuffer besitzt
 	     * die Methoden, die wir zum Auslesen benötigen. */
@@ -148,126 +157,8 @@ class JDVEData {
 		}
 	    return result;
 	}
-}
-
-class CarData {
-
-	private int carType;
-	private int carTrafficID;
-	private int laneID;
-	private double[] positionUTM;
-	private float velocity;
-	private float length;
-	private float width;
 	
-	public CarData() {}
-	
-	public CarData(int pCarType, int pCarTrafficID, int pLaneID, double[] pPositionUTM, float pVelocity, float pLength, float pWidth) {
-		this.setCarType(pCarType);
-		this.setCarTrafficID(pCarTrafficID);
-		this.setLaneID(pLaneID);
-		this.setPositionUTM(pPositionUTM);
-		this.setVelocity(pVelocity);
-		this.setLength(pLength);
-		this.setWidth(pWidth);
+	public void closeJDVEDataPort() {
+		this.clientSocket.close();
 	}
-
-	/**
-	 * @param Setzt den carType auf carType.
-	 */
-	public void setCarType(int carType) {
-		this.carType = carType;
-	}
-
-	/**
-	 * @return carType
-	 */
-	public int getCarType() {
-		return carType;
-	}
-
-	/**
-	 * @param carTrafficID the carTrafficID to set
-	 */
-	public void setCarTrafficID(int carTrafficID) {
-		this.carTrafficID = carTrafficID;
-	}
-
-	/**
-	 * @return the carTrafficID
-	 */
-	public int getCarTrafficID() {
-		return carTrafficID;
-	}
-
-	/**
-	 * @param laneID the laneID to set
-	 */
-	public void setLaneID(int laneID) {
-		this.laneID = laneID;
-	}
-
-	/**
-	 * @return the laneID
-	 */
-	public int getLaneID() {
-		return laneID;
-	}
-
-	/**
-	 * @param positionUTM the positionUTM to set
-	 */
-	public void setPositionUTM(double[] positionUTM) {
-		this.positionUTM = positionUTM;
-	}
-
-	/**
-	 * @return the positionUTM
-	 */
-	public double[] getPositionUTM() {
-		return positionUTM;
-	}
-
-	/**
-	 * @param velocity the velocity to set
-	 */
-	public void setVelocity(float velocity) {
-		this.velocity = velocity;
-	}
-
-	/**
-	 * @return the velocity
-	 */
-	public float getVelocity() {
-		return velocity;
-	}
-
-	/**
-	 * @param length the length to set
-	 */
-	public void setLength(float length) {
-		this.length = length;
-	}
-
-	/**
-	 * @return the length
-	 */
-	public float getLength() {
-		return length;
-	}
-
-	/**
-	 * @param width the width to set
-	 */
-	public void setWidth(float width) {
-		this.width = width;
-	}
-
-	/**
-	 * @return the width
-	 */
-	public float getWidth() {
-		return width;
-	}
-	
 }
