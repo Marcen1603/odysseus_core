@@ -28,7 +28,7 @@ public class SDFAttribute extends SDFSchemaElement implements
 	/**
 	 * For NF2 we need subattributes
 	 */
-	private SDFAttributeList subattributes;
+	private SDFAttributeList subattributes = new SDFAttributeList();
 
 	/**
 	 * used for measurement values
@@ -177,6 +177,14 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 */
 	public void clearSubattributes() {
 		this.subattributes = new SDFAttributeList();
+	}
+	
+	public int getSubattributeCount() {
+		return this.subattributes.size();
+	}
+	
+	public SDFAttribute getSubattribute( int index ) {
+		return this.subattributes.get(index);
 	}
 
 	/**
