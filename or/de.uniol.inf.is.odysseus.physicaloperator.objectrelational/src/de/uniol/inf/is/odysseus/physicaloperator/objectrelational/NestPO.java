@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.IPeriodicalMonitoringData;
+import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.NestTISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.PartialNest;

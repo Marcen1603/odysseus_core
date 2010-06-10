@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.physicaloperator.objectrelational.Activator
 Require-Bundle: com.springsource.org.apache.log4j;bundle-version="1.2.15",
  com.springsource.slf4j.api;bundle-version="1.5.6",
- org.junit4
+ org.junit4,
+ de.uniol.inf.is.odysseus.objectrelational.base;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
@@ -16,6 +17,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions,
+ de.uniol.inf.is.odysseus.physicaloperator.objectrelational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,

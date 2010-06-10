@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.SetEntry;
+import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.UnnestPO;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.unnest.fixtures.Factory;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.unnest.fixtures.UnnestOfNestWithNestingsFixture;

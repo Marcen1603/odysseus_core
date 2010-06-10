@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.objectrelational.base.SDFORDatatypes;
+import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -230,7 +232,7 @@ public class ObjectRelationalTuple
 	    SDFAttribute attribute
 	) {
 	    if (object instanceof SetEntry[]) {
-	        return SDFObjectRelationalDatatypes.isSet(attribute.getDatatype());
+	        return SDFORDatatypes.isSet(attribute.getDatatype());
 	    }
 	    
 		if (object instanceof String) {

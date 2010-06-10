@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelation
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.PartialNest;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.Factory;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.SimpleNestingFixture;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.SetEntry;
+import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
