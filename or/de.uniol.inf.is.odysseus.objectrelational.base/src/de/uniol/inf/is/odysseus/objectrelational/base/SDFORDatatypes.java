@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.objectrelational.base;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
+/**
+ * @author Jendrik Poloczek
+ */
 public class SDFORDatatypes extends SDFDatatypes {
 
     public static String Set = baseURI + "Set";

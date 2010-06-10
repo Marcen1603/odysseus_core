@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.objectrelational.base;
 
+/**
+ * @author Jendrik Poloczek
+ * @param <T> type of set entry
+ */
 public class SetEntry<T> implements Comparable<T> {
 	private static final long serialVersionUID = 1L;
 
