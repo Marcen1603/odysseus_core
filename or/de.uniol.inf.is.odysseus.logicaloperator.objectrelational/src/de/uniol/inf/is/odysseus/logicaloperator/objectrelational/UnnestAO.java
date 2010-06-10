@@ -5,14 +5,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
+ * UnnestAO 
+ * 
+ * u[A](S) where A is attribute name of nest to unnest and S is 
+ * equal to the stream. 
+ * 
  * @author Jendrik Poloczek
  */
-
 public class UnnestAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private SDFAttributeList outputSchema = null;
-	private SDFAttribute nestingAttribute = null;
+	private SDFAttribute nestAttribute = null;
 
 	public UnnestAO() {
 		super();
@@ -21,7 +25,7 @@ public class UnnestAO extends UnaryLogicalOp {
 	public UnnestAO(UnnestAO ao) {
 		super(ao);
 		this.outputSchema = ao.getOutputSchema();
-		this.nestingAttribute = ao.getNestingAttribute();
+		this.nestAttribute = ao.getNestAttribute();
 	}
 	
 	@Override
@@ -32,11 +36,11 @@ public class UnnestAO extends UnaryLogicalOp {
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		if(outputSchema == null) 
-			calcOutputSchema();
+			calcOutputSchema(this.getInputSchema());
 		return outputSchema;
 	}
 
-	public void setNestingAttribute(SDFAttribute nestingAttribute) {
+	public void setNestAttribute(SDFAttribute nestingAttribute) {
 		nestingAttribute = nestingAttribute.clone();
 	}
 	
@@ -45,14 +49,12 @@ public class UnnestAO extends UnaryLogicalOp {
 	 * remove nesting attribute.
 	 */	
 	
-	private void calcOutputSchema() {
-		SDFAttributeList inputSchema = getInputSchema();
+	private SDFAttributeList calcOutputSchema(SDFAttributeList inputSchema) {
 		outputSchema = inputSchema.clone();
-		// outputSchema = SDFAttributeList.difference(inputSchema, toNestAttributes);
-		// outputSchema.addAttribute(nestingAttribute);
+		return outputSchema;
 	}
 	
-	public SDFAttribute getNestingAttribute() {
-		return nestingAttribute;
+	public SDFAttribute getNestAttribute() {
+		return nestAttribute;
 	}
 }

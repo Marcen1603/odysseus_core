@@ -5,25 +5,30 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
+ * NestAO
+ * 
+ * v[(A1,...,AN);N](S) where A1...AN are attributes and tuples are nested 
+ * when they're equal in attributes except A1...AN. N is the nest attribute
+ * and S is the stream.
+ * 
  * @author Jendrik Poloczek
  */
-
 public class NestAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private SDFAttributeList outputSchema = null;
-	private SDFAttributeList toNestAttributes = null;
-	private SDFAttribute nestingAttribute = null;
+	private SDFAttributeList nestingAttributes = null;
+	private SDFAttribute nestAttribute = null;
 
-	public NestAO() {
+	public NestAO() {	    
 		super();
 	}
 	
 	public NestAO(NestAO ao) {
 		super(ao);
-		this.outputSchema = ao.getOutputSchema();
-		this.toNestAttributes = ao.getToNestAttributes();
-		this.nestingAttribute = ao.getNestingAttribute();
+		this.outputSchema = ao.getOutputSchema().clone();
+		this.nestingAttributes = ao.getNestingAttributes().clone();
+		this.nestAttribute = ao.getNestAttribute().clone();
 	}
 	
 	@Override
@@ -33,8 +38,10 @@ public class NestAO extends UnaryLogicalOp {
 	
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		if(outputSchema == null) 
-			calcOutputSchema();
+		if(this.outputSchema == null) {
+		    SDFAttributeList inputSchema = this.getInputSchema();
+			this.outputSchema = calcOutputSchema(inputSchema);
+		}
 		return outputSchema;
 	}
 
@@ -43,32 +50,28 @@ public class NestAO extends UnaryLogicalOp {
 	 * 
 	 * @param nestingAttributeName name of nesting attribute
 	 */	
-	public void setNestingAttributeName(String nestingAttributeName) {
-		nestingAttribute = new SDFAttribute(nestingAttributeName);
+	public void setNestAttributeName(String nestingAttributeName) {
+		nestAttribute = new SDFAttribute(nestingAttributeName);
 	}
 	
 	/**
 	 * modify input schema, removing attributes to nest, and 
 	 * adding new nesting attribute.
 	 */	
-	private void calcOutputSchema() {
-		SDFAttributeList inputSchema = getInputSchema();
-		outputSchema = inputSchema.clone();
-		// outputSchema = SDFAttributeList.difference(inputSchema, toNestAttributes);
-		// outputSchema.addAttribute(nestingAttribute);
+	private SDFAttributeList calcOutputSchema(SDFAttributeList inputSchema) {
+	    SDFAttributeList outputSchema = new SDFAttributeList();
+	    return outputSchema;
 	}
 	
-	public SDFAttributeList getToNestAttributes() {
-		return toNestAttributes;
+	public SDFAttributeList getNestingAttributes() {
+		return nestingAttributes;
 	}
 	
-	public SDFAttribute getNestingAttribute() {
-		return nestingAttribute;
+	public SDFAttribute getNestAttribute() {
+		return nestAttribute;
 	}
 	
-	public void setToNestAttributes(SDFAttributeList toNestAttributes) {
+	public void setNestingAttributes(SDFAttributeList toNestAttributes) {
 		toNestAttributes = toNestAttributes.clone(); 
 	}
-	
-
 }
