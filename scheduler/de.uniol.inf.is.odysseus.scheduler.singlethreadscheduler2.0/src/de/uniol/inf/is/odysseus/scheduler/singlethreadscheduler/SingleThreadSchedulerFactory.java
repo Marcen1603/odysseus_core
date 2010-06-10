@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
 
 /**
- * Factory for creating {@link SingleThreadScheduler} instances.
+ * Factory for creating {@link SingleThreadSchedulerWithStrategy} instances.
  * 
  * @author Wolf Bauer
  * 
@@ -34,6 +34,7 @@ public class SingleThreadSchedulerFactory extends AbstractSchedulerFactory {
 	@Override
 	public IScheduler createScheduler(
 			ISchedulingFactory schedulingStrategy) {
+		//return new SingleThreadScheduler(schedulingStrategy);
 		return new SingleThreadScheduler(schedulingStrategy);
 	}
 

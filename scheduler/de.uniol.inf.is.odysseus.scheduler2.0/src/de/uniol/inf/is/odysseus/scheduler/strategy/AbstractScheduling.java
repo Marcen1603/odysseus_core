@@ -137,7 +137,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		if (notBlocked.cardinality() == 0) {
 			if (blocked == false) {
 				blocked = true;
-				logger.debug("Processing blocked because of blocked operators");
+				logger.debug("Processing blocked because all operators are blocked");
 				for (ISchedulingEventListener l : schedulingEventListener) {
 					l.nothingToSchedule(this);
 				}
