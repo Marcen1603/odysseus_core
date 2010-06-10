@@ -1245,7 +1245,6 @@ public class ExecutorConsole implements CommandProvider,
 		WrapperPlanFactory.clearSources();
 		DataDictionary.getInstance().sourceTypeMap.clear();
 		DataDictionary.getInstance().entityMap.clear();
-		DataDictionary.getInstance().attributeMap.clear();
 		DataDictionary.getInstance().clearViews();
 	}
 

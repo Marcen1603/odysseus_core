@@ -26,11 +26,6 @@ public class DataDictionary {
 
 	private Map<String, ILogicalOperator> viewDefinitions = new HashMap<String, ILogicalOperator>();
 
-	// TODO schoene loesung finden. folgendes ist als hack public, damit man
-	// einfach zum
-	// testen quellen etc definieren kann
-	public Map<String, SDFAttribute> attributeMap = new HashMap<String, SDFAttribute>();
-
 	public Map<String, SDFEntity> entityMap = new HashMap<String, SDFEntity>();
 
 	public Map<String, String> sourceTypeMap = new HashMap<String, String>();
@@ -44,15 +39,6 @@ public class DataDictionary {
 			instance = new DataDictionary();
 		}
 		return instance;
-	}
-
-	public SDFAttribute getAttribute(String uri) {
-		SDFAttribute ret = attributeMap.get(uri);
-		if (ret == null) {
-			throw new IllegalArgumentException("no such attribute '" + uri
-					+ "'");
-		}
-		return ret;
 	}
 
 	public SDFEntity getEntity(String uri) {

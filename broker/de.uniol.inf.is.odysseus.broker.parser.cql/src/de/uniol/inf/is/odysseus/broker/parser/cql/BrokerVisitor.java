@@ -251,11 +251,6 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			}
 		}
 
-		// add everything to DataDictionary
-		for (SDFAttribute a : attributes) {
-			DataDictionary.getInstance().attributeMap.put(brokerName, a);
-		}
-
 		// make it accessible like a normal source
 		DataDictionary.getInstance().sourceTypeMap.put(brokerName, "brokerStreaming");
 		SDFEntity entity = new SDFEntity(brokerName);
