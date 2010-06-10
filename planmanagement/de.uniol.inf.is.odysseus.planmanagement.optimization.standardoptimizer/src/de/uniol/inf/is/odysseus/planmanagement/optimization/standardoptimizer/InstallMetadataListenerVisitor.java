@@ -33,7 +33,7 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 	@Override
 	public void node(IPhysicalOperator op) {
 		// install datarate listener on sources
-		if (!op.isSink() && !((ISource<?>)op).getProvidedMonitoringData().contains(MonitoringDataTypes.DATARATE.name)) {
+		if (!op.isSink() && !((ISource<?>)op).providesMonitoringData(MonitoringDataTypes.DATARATE.name)) {
 			ISource<?> source = (ISource<?>) op;
 			IMonitoringData<?> mData = MonitoringDataTypes.createMetadata(MonitoringDataTypes.DATARATE.name, source);
 			source.subscribe((IPOEventListener)mData, POEventType.PushDone);
@@ -42,7 +42,7 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 			source.subscribe((IPOEventListener)mData, POEventType.PushDone);
 		}
 		// install selectivity listener on every pipe operator
-		if (op.isPipe() && !((IPipe<?,?>)op).getProvidedMonitoringData().contains(MonitoringDataTypes.SELECTIVITY.name)) {
+		if (op.isPipe() && !((IPipe<?,?>)op).providesMonitoringData(MonitoringDataTypes.SELECTIVITY.name)) {
 			try{
 				MonitoringDataTypes.createMetadata(MonitoringDataTypes.SELECTIVITY.name, (IPipe<?, ?>) op);
 			}catch(Exception e){

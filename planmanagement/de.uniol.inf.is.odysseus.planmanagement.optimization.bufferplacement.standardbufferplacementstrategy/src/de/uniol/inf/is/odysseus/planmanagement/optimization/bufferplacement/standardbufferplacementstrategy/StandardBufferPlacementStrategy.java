@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.sta
 
 import java.util.Collection;
 
-import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +13,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 
 /**
- * TODO: sollte von Jonas oder Marco dokumentiert werden.
- * 
- * @author Wolf Bauer
+ *  
+ * @author Jonas Jacobi, Marco Grawunder
  *
  */
 public class StandardBufferPlacementStrategy extends
@@ -25,33 +23,27 @@ public class StandardBufferPlacementStrategy extends
 	Logger logger = LoggerFactory.getLogger(StandardBufferPlacementStrategy.class);;
 	
 	@Override
-	protected void activate(ComponentContext context){
-//		logger.debug("StandardBufferPlacementStrategy activated");
-		
-		System.out.println("HAAAAAAAAAAAAAAAAAAAAAAAAAAALLLOOO");
-		super.activate(context);
-	}
-	
-	// add buffer, if we are a binary operator or if the bottom
-	// operator is a binary one
-	@Override
 	protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {
+		// add buffer, if we are a binary operator or if the bottom
+		// operator is a binary one
 		return subscriptions.size() > 1
 				|| childSink.getSubscribedToSource().size() > 1;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected IBuffer<?> createNewBuffer() {
-		// TODO Warnings
 		return new BufferedPipe();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
 		// do nothing. It's only a standard placement strategy.
+	}
+
+	@Override
+	public String getName() {
+		return "Standard Buffer Placement";
 	}
 }

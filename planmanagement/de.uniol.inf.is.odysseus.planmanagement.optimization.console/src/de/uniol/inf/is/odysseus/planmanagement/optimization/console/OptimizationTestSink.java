@@ -56,15 +56,15 @@ public class OptimizationTestSink extends AbstractSink<Object> {
 		}
 	}
 
-	@Override
-	protected void process_open() throws OpenFailedException {
-		reset();
-	}
+//	@Override
+//	protected void process_open() throws OpenFailedException {
+//		reset();
+//	}
 	
-	@Override
-	protected void process_close() {
-		reset();
-	}
+//	@Override
+//	protected void process_close() {
+//		reset();
+//	}
 	
 	@Override
 	public OptimizationTestSink clone()  {

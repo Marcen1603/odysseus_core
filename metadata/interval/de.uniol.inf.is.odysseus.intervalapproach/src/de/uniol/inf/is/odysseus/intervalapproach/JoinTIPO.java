@@ -156,6 +156,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 		if (!isOpen()) {
 			getLogger().error("process next called on non open operator "+this);
+			return;
 		}
 		otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);

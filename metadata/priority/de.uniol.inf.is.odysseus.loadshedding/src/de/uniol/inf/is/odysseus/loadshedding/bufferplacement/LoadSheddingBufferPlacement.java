@@ -55,5 +55,10 @@ AbstractBufferPlacementStrategy {
 			LoadManager.getInstance(null).addLoadShedder((DirectLoadSheddingBuffer)buffer);
 		}
 	}
+	
+	@Override
+	public String getName() {
+		return "A4 Load Shedding Buffer Placement";
+	}
 
 }

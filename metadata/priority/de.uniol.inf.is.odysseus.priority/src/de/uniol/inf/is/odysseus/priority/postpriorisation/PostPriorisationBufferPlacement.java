@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.priority.postpriorisation;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.osgi.service.component.ComponentContext;
-
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -20,10 +18,6 @@ import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostP
 public class PostPriorisationBufferPlacement extends
 		AbstractBufferPlacementStrategy {
 
-	@Override
-	protected void activate(ComponentContext context) {
-		super.activate(context);
-	}
 
 	// add buffer, if we are a binary operator or if the bottom
 	// operator is a binary one
@@ -82,6 +76,11 @@ public class PostPriorisationBufferPlacement extends
 			prioPO.getCopartners().add(postBuf);
 		}
 		
+	}
+	
+	@Override
+	public String getName() {
+		return "A2 Post priorisation buffer placement";
 	}
 
 }

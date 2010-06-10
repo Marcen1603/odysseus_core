@@ -241,7 +241,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					+ " input buffers.");
 		}
 		for (BlockingBuffer<?> buffer : context.getBlockingBuffers()) {
+			logger.debug("Blocking buffer "+buffer);
 			buffer.block();
+			logger.debug("Blocking buffer "+buffer+" done.");
 		}
 
 		// drain all tuples out of plans

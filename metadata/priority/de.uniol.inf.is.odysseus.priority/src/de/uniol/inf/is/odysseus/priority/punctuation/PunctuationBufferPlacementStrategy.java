@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.priority.punctuation;
 
 import java.util.Collection;
-import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -18,11 +17,6 @@ import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
  */
 public class PunctuationBufferPlacementStrategy  extends
 		AbstractBufferPlacementStrategy {
-
-	@Override
-	protected void activate(ComponentContext context){
-		super.activate(context);
-	}
 	
 	// add buffer, if we are a binary operator or if the bottom
 	// operator is a binary one
@@ -45,5 +39,10 @@ public class PunctuationBufferPlacementStrategy  extends
 	protected void initBuffer(IBuffer buffer) {
 		// do nothing. It's only for punctuations
 	}	
+	
+	@Override
+	public String getName() {
+		return "A Punctuation Buffer Placement";
+	}
 	
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
@@ -28,11 +29,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingMaxConcurrentOptimizations;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.SettingRefuseOptimizationAtMemoryLoad;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.console.OptimizationTestSink.OutputMode;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -241,7 +244,7 @@ public class OptimizationTestConsole implements
 	}
 
 	private enum EvalQuery {
-		GOOD, BAD, MIG, GOOD_REMOVE
+		GOOD, BAD, MIG, GOOD_REMOVE, BAD_REMOVE
 	};
 
 	public void _evalMigration(CommandInterpreter ci) {
@@ -267,6 +270,20 @@ public class OptimizationTestConsole implements
 		basepath = "c:/development/";
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.GOOD_REMOVE;
+		try {
+			eval(eq, 500, 5, "" + System.currentTimeMillis() + eq);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void _erb(CommandInterpreter ci) {
+		// TODO: Hack zum einfachen Testen ;-)
+		basepath = "c:/development/";
+		nmsn(ci);
+		EvalQuery eq = EvalQuery.BAD_REMOVE;
 		try {
 			eval(eq, 500, 5, "" + System.currentTimeMillis() + eq);
 		} catch (IOException e) {
@@ -389,54 +406,13 @@ public class OptimizationTestConsole implements
 							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
 							parser(), new ParameterDefaultRoot(sink),
 							this.trafoConfigParam);
+			System.out.println("QueryIDs: "+queryIds);
 			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
 			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
 
 			// manipulate: push select to top
-			if (evalQuery == EvalQuery.BAD || evalQuery == EvalQuery.MIG) {
-				System.out.println("Rebuilding Query to Bad Query");
-				IPhysicalOperator root = query.getRoot();
-				System.out.println(root.getName());
-				IPhysicalOperator project = ((ISink<?>) root)
-						.getSubscribedToSource(0).getTarget();
-				System.out.println(project.getName());
-				IPhysicalOperator lastJoin = ((ISink<?>) project)
-						.getSubscribedToSource(0).getTarget();
-				System.out.println(lastJoin.getName());
-				IPhysicalOperator secondJoin = ((ISink<?>) lastJoin)
-						.getSubscribedToSource(0).getTarget();
-				System.out.println(secondJoin.getName());
-				IPhysicalOperator firstJoin = ((ISink<?>) secondJoin)
-						.getSubscribedToSource(0).getTarget();
-				System.out.println(firstJoin.getName());
-				IPhysicalOperator window = ((ISink<?>) firstJoin)
-						.getSubscribedToSource(1).getTarget();
-				System.out.println(window.getName());
-				IPhysicalOperator select = ((ISink<?>) window)
-						.getSubscribedToSource(0).getTarget();
-				System.out.println(select.getName());
-				IPhysicalOperator meta = ((ISink<?>) select)
-						.getSubscribedToSource(0).getTarget();
-				System.out.println(meta.getName());
-
-				// remove select before join
-				PhysicalRestructHelper.removeSubscription(window, select);
-				PhysicalRestructHelper.removeSubscription(select, meta);
-				PhysicalRestructHelper.appendOperator(window, meta);
-
-				// put select after join
-				PhysicalRestructHelper.removeSubscription(project, lastJoin);
-				RelationalPredicate predicate = (RelationalPredicate) ((SelectPO<?>) select)
-						.getPredicate();
-				RelationalPredicate newPredicate = new RelationalPredicate(
-						predicate.getExpression());
-				newPredicate.init(lastJoin.getOutputSchema(), null);
-				SelectPO<?> newSelect = new SelectPO(newPredicate);
-				newSelect.setOutputSchema(lastJoin.getOutputSchema().clone());
-				PhysicalRestructHelper.appendOperator(newSelect, lastJoin);
-				PhysicalRestructHelper.appendOperator(project, newSelect);
-				query.initializePhysicalPlan(root);
-				this.executor.updateExecutionPlan();
+			if (evalQuery == EvalQuery.BAD || evalQuery == EvalQuery.MIG || evalQuery == EvalQuery.BAD_REMOVE) {
+				_helpMakeQueryBad(query);
 			}
 
 			dumpRoots();
@@ -494,24 +470,19 @@ public class OptimizationTestConsole implements
 							q.reoptimize();
 							System.out
 									.println("------------------------------------> Reopt durch, ggf. Senke anpassen");
-							synchronized (this) {
-								StringBuffer oldPlan = new StringBuffer();
-								support.dumpPlan(sink, 0, oldPlan);
-								System.out.println(oldPlan);	
-							}
-							
 							setOptimizationSink((OptimizationTestSink) q.getSealedRoot());
 						}
 					};
 					new Thread(reopt).start();
-				}
-				if (evalQuery == EvalQuery.GOOD_REMOVE && (i == 100 || i == 200 || i == 300 || i == 400)){
+				}else if ((evalQuery == EvalQuery.GOOD_REMOVE || evalQuery == EvalQuery.BAD_REMOVE)
+						&& (i == 100 || i == 200 || i == 300 || i == 400)){
 					System.out
 					.println("Removing Query");
 					executor.removeQuery(query.getID());
 					System.out.println("Removing Query done");
 					waitFor(10000);
-					sink.close();
+					// Neu zählen
+					sink.reset();
 					//setOptimizationSink(new OptimizationTestSink(OutputMode.COUNT));
 					queryIds = this.executor
 					.addQuery(
@@ -519,7 +490,11 @@ public class OptimizationTestConsole implements
 							parser(), new ParameterDefaultRoot(sink),
 							this.trafoConfigParam);
 					plan = (IEditablePlan) this.executor.getSealedPlan();
+					System.out.println("QueryIDs: "+queryIds);
 					query = plan.getQuery(queryIds.iterator().next());
+					if (evalQuery == EvalQuery.BAD_REMOVE){
+						_helpMakeQueryBad(query);
+					}
 				}
 			}
 			System.out
@@ -536,6 +511,55 @@ public class OptimizationTestConsole implements
 			e.printStackTrace();
 		}
 		return measures;
+	}
+
+	private void _helpMakeQueryBad(IEditableQuery query)
+			throws OpenFailedException, NoOptimizerLoadedException,
+			QueryOptimizationException {
+		System.out.println("Rebuilding Query to Bad Query");
+		IPhysicalOperator root = query.getRoot();
+		System.out.println(root.getName());
+		IPhysicalOperator project = ((ISink<?>) root)
+				.getSubscribedToSource(0).getTarget();
+		System.out.println(project.getName());
+		IPhysicalOperator lastJoin = ((ISink<?>) project)
+				.getSubscribedToSource(0).getTarget();
+		System.out.println(lastJoin.getName());
+		IPhysicalOperator secondJoin = ((ISink<?>) lastJoin)
+				.getSubscribedToSource(0).getTarget();
+		System.out.println(secondJoin.getName());
+		IPhysicalOperator firstJoin = ((ISink<?>) secondJoin)
+				.getSubscribedToSource(0).getTarget();
+		System.out.println(firstJoin.getName());
+		IPhysicalOperator window = ((ISink<?>) firstJoin)
+				.getSubscribedToSource(1).getTarget();
+		System.out.println(window.getName());
+		IPhysicalOperator select = ((ISink<?>) window)
+				.getSubscribedToSource(0).getTarget();
+		System.out.println(select.getName());
+		IPhysicalOperator meta = ((ISink<?>) select)
+				.getSubscribedToSource(0).getTarget();
+		System.out.println(meta.getName());
+
+		// remove select before join
+		PhysicalRestructHelper.removeSubscription(window, select);
+		PhysicalRestructHelper.removeSubscription(select, meta);
+		PhysicalRestructHelper.appendOperator(window, meta);
+
+		// put select after join
+		PhysicalRestructHelper.removeSubscription(project, lastJoin);
+		RelationalPredicate predicate = (RelationalPredicate) ((SelectPO<?>) select)
+				.getPredicate();
+		RelationalPredicate newPredicate = new RelationalPredicate(
+				predicate.getExpression());
+		newPredicate.init(lastJoin.getOutputSchema(), null);
+		SelectPO<?> newSelect = new SelectPO(newPredicate);
+		newSelect.setName("New Selection");
+		newSelect.setOutputSchema(lastJoin.getOutputSchema().clone());
+		PhysicalRestructHelper.appendOperator(newSelect, lastJoin);
+		PhysicalRestructHelper.appendOperator(project, newSelect);
+		query.initializePhysicalPlan(root);
+		this.executor.updateExecutionPlan();
 	}
 
 	public void lsqueries() {
