@@ -173,6 +173,17 @@ public class SDFAttribute extends SDFSchemaElement implements
 	}
 
 	/**
+	 * Return amount of subattributes
+	 */
+	
+	public int getAmountOfSubattributes() {
+	    if(this.subattributes == null) 
+	        return 0;	    
+	    
+	    return this.subattributes.size();
+	}
+	
+	/**
 	 * Remove all subattributes
 	 */
 	public void clearSubattributes() {
@@ -185,6 +196,10 @@ public class SDFAttribute extends SDFSchemaElement implements
 	
 	public SDFAttribute getSubattribute( int index ) {
 		return this.subattributes.get(index);
+	}
+	
+	public SDFAttributeList getSubattributes() {
+	    return this.subattributes;
 	}
 
 	/**
