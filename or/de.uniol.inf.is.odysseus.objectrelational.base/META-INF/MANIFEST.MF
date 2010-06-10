@@ -4,7 +4,9 @@ Bundle-Name: Base
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.objectrelational.base
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.objectrelational.base.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,
+ org.osgi.framework
