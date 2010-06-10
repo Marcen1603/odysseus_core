@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.POPortEvent;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		implements ISink<T> {
@@ -38,6 +38,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	final private List<PhysicalSubscription<ISource<? extends T>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends T>>>();
+	// Monitoring Data
 	final protected Map<POEventType, ArrayList<IPOEventListener>> eventListener = new HashMap<POEventType, ArrayList<IPOEventListener>>();
 	final protected ArrayList<IPOEventListener> genericEventListener = new ArrayList<IPOEventListener>();;
 
@@ -106,12 +107,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			process_open();
 			fire(openDoneEvent);
 			this.isOpen.set(true);
-			// synchronized (this.subscribedToSource) {
 			for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 				sub.getTarget().open();
 			}
 		}
-		// }
 	}
 
 	final public boolean isOpen() {
@@ -150,7 +149,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void done(int port) {
 		process_done(port);
-		// synchronized (this.subscribedToSource) {
 		this.allInputsDone = true;
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == port) {
@@ -160,13 +158,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 				this.allInputsDone = false;
 			}
 		}
-		// }
 	}
 
 	final public boolean isDone() {
-		// synchronized (this.subscribedToSource) {
 		return this.allInputsDone;
-		// }
 	}
 
 	@Override
@@ -177,14 +172,14 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 		PhysicalSubscription<ISource<? extends T>> sub = new PhysicalSubscription<ISource<? extends T>>(
 				source, sinkInPort, sourceOutPort, schema);
-		// synchronized (this.subscribedToSource) {
 		if (!this.subscribedToSource.contains(sub)) {
-			getLogger().debug(this.getInstance()+" Subscribe To Source "+source+" to "+sinkInPort+" from "+sourceOutPort);
+			getLogger().debug(
+					this.getInstance() + " Subscribe To Source " + source
+							+ " to " + sinkInPort + " from " + sourceOutPort);
 			this.subscribedToSource.add(sub);
 			source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 					schema);
 		}
-		// }
 	}
 
 	// "delegatable this", used for the delegate sink
@@ -202,18 +197,22 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			PhysicalSubscription<ISource<? extends T>> subscription) {
 		getLogger()
 				.debug("Unsubscribe from Source " + subscription.getTarget());
-		// synchronized (this.subscribedToSource) {
 		if (this.subscribedToSource.remove(subscription)) {
 			subscription.getTarget().unsubscribeSink(this.getInstance(),
 					subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
 		}
-		// }
 	}
 
 	@Override
+	public void unsubscribeFromSource(ISource<? extends T> source,
+			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
+				source, sinkInPort, sourceOutPort, schema));
+	}
+	
+	@Override
 	public void unsubscribeFromAllSources() {
-		// synchronized (this.subscribedToSource) {
 		while (!subscribedToSource.isEmpty()) {
 			PhysicalSubscription<ISource<? extends T>> subscription = subscribedToSource
 					.remove(0);
@@ -227,7 +226,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 							+ " done.");
 
 		}
-		// }
 	}
 
 	final public PhysicalSubscription<ISource<? extends T>> getSubscribedToSource(
@@ -264,12 +262,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	@Override
-	public void unsubscribeFromSource(ISource<? extends T> source,
-			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
-		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
-				source, sinkInPort, sourceOutPort, schema));
-	}
+
 
 	/**
 	 * One listener can have multiple subscriptions to the same event sender

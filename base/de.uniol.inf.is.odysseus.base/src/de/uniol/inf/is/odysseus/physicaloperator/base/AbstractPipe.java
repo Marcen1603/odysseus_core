@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -74,11 +73,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void close() {
-		try {
-			process_close();
-		} catch (CloseFailedException e) {
-			e.printStackTrace();
-		}
+		process_close();
 		this.delegateSink.close();
 		super.close();
 	};
@@ -161,7 +156,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	protected void process_close() throws CloseFailedException {
+	protected void process_close() {
 	}
 
 	@Override

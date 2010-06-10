@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.CloseFailedException;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 
@@ -59,12 +58,12 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 	}
 	
 	@Override
-	protected void process_close() throws CloseFailedException{
+	protected void process_close(){
 		if (opened){
 			try {
 				router.disconnectFromServer(this);
 			} catch (IOException e) {
-				throw new CloseFailedException(e);
+				e.printStackTrace();
 			}
 		}
 	}
