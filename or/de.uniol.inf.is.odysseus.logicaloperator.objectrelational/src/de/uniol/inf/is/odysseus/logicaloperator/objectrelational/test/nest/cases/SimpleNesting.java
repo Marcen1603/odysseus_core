@@ -1,10 +1,9 @@
 package de.uniol.inf.is.odysseus.
     logicaloperator.objectrelational.test.nest.cases;
 
-import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
-
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,17 +29,20 @@ import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.NestAO;
  * 
  * @author Jendrik Poloczek
  */
-public class SimpleNesting {
+public class SimpleNesting extends TestCase {    
     
     private SDFAttributeList outputSchema;
     private NestAO nestAo;
     private Method calcOutputSchema;
     private SimpleNestingFixture fixture;
     
+    public SimpleNesting() {
+        this.setName("simpleNesting");
+    }
+    
     @Before
     public void setUp() {
-        SDFAttributeList inputSchema;
-       
+        SDFAttributeList inputSchema;       
         this.fixture = new SimpleNestingFixture();
         inputSchema = this.fixture.getInputSchema();
         
@@ -71,12 +73,11 @@ public class SimpleNesting {
     }
     
     @Test 
-    public void simpleNesting() {
+    public void simpleNesting() { 
         SDFAttribute axOut, nOut;
         SDFAttribute[] nestingAttributesIn;
         
-        nestingAttributesIn = new SDFAttribute[2];
-        
+        nestingAttributesIn = new SDFAttribute[2];       
         axOut = this.outputSchema.get(0);
         nOut = this.outputSchema.get(1);
      

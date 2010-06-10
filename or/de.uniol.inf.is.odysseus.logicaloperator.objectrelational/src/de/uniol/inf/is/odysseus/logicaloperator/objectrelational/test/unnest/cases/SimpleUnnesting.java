@@ -1,17 +1,15 @@
 package de.uniol.inf.is.odysseus.
     logicaloperator.objectrelational.test.unnest.cases;
 
-import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
-
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.
     logicaloperator.objectrelational.test.unnest.fixtures.SimpleUnnestingFixture;
 
-import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.NestAO;
 import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.UnnestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -29,12 +27,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Jendrik Poloczek
  */
-public class SimpleUnnesting {
+public class SimpleUnnesting extends TestCase {
 
     private SDFAttributeList outputSchema;
     private UnnestAO unnestAo;
     private Method calcOutputSchema;
     private SimpleUnnestingFixture fixture;
+    
+    public SimpleUnnesting() {
+        this.setName("simpleUnnesting");
+    }
     
     @Before
     public void setUp() throws Exception {
@@ -48,7 +50,7 @@ public class SimpleUnnesting {
         
         try {
             this.calcOutputSchema = 
-                NestAO.class.getDeclaredMethod(
+                UnnestAO.class.getDeclaredMethod(
                     "calcOutputSchema", 
                     SDFAttributeList.class
                 );
@@ -73,6 +75,5 @@ public class SimpleUnnesting {
         assertEquals(this.outputSchema.get(0), this.fixture.getAx());
         assertEquals(this.outputSchema.get(1), this.fixture.getA1());
         assertEquals(this.outputSchema.get(2), this.fixture.getA2());
-    }
-    
+    }    
 }

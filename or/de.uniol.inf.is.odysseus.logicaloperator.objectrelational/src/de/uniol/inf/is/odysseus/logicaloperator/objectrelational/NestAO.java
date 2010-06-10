@@ -3,22 +3,18 @@ package de.uniol.inf.is.odysseus.logicaloperator.objectrelational;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 /**
- * NestAO
- * 
- * v[(A1,...,AN);N](S) where A1...AN are attributes and tuples are nested 
- * when they're equal in attributes except A1...AN. N is the nest attribute
- * and S is the stream.
- * 
  * @author Jendrik Poloczek
  */
 public class NestAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	private SDFAttributeList outputSchema = null;
-	private SDFAttributeList nestingAttributes = null;
-	private SDFAttribute nestAttribute = null;
+	private SDFAttributeList outputSchema;
+	private SDFAttributeList nestingAttributes;
+	private SDFAttribute nestAttribute;
+	private String nestAttributeName;
 
 	public NestAO() {	    
 		super();
@@ -50,8 +46,8 @@ public class NestAO extends UnaryLogicalOp {
 	 * 
 	 * @param nestingAttributeName name of nesting attribute
 	 */	
-	public void setNestAttributeName(String nestingAttributeName) {
-		nestAttribute = new SDFAttribute(nestingAttributeName);
+	public void setNestAttributeName(String nestAttributeName) {
+		this.nestAttributeName = nestAttributeName;
 	}
 	
 	/**
@@ -59,7 +55,29 @@ public class NestAO extends UnaryLogicalOp {
 	 * adding new nesting attribute.
 	 */	
 	private SDFAttributeList calcOutputSchema(SDFAttributeList inputSchema) {
-	    SDFAttributeList outputSchema = new SDFAttributeList();
+	    SDFAttributeList outputSchema;
+	    SDFAttributeList groupingAttributes;
+	    SDFAttribute nestAttribute;
+	    
+	    groupingAttributes = new SDFAttributeList();
+
+	    for(SDFAttribute attribute : inputSchema) {
+	        if(!this.nestingAttributes.contains(attribute)) {
+	            groupingAttributes.add(attribute.clone());
+	        }
+	    }
+	    
+	    nestAttribute = new SDFAttribute(this.nestAttributeName);	    
+	    nestAttribute.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
+	    nestAttribute.setSubattributes(this.nestingAttributes);
+	    
+	    outputSchema = new SDFAttributeList();
+	   
+	    for(SDFAttribute groupingAttribute : groupingAttributes) {
+	        outputSchema.add(groupingAttribute);
+	    }
+	    
+	    outputSchema.add(nestAttribute);	    
 	    return outputSchema;
 	}
 	
@@ -71,7 +89,7 @@ public class NestAO extends UnaryLogicalOp {
 		return nestAttribute;
 	}
 	
-	public void setNestingAttributes(SDFAttributeList toNestAttributes) {
-		toNestAttributes = toNestAttributes.clone(); 
+	public void setNestingAttributes(SDFAttributeList nestingAttributes) {
+		this.nestingAttributes = nestingAttributes.clone(); 
 	}
 }

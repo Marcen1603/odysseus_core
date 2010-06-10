@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.
     logicaloperator.objectrelational.test.nest.fixtures;
 
+
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -9,6 +10,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * @author Jendrik Poloczek
  */
 public class SimpleNestingFixture {
+    
     public SDFAttributeList getInputSchema() {
         SDFAttribute[] attrs = {
             this.getA1(), 

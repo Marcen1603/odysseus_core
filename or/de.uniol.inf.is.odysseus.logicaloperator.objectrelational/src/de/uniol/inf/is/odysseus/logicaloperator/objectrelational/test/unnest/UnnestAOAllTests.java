@@ -1,12 +1,17 @@
 package de.uniol.inf.is.odysseus.logicaloperator.objectrelational.test.unnest;
 
+import de.uniol.inf.is.odysseus.
+    logicaloperator.objectrelational.test.unnest.cases.ComplexUnnesting;
 
-import org.junit.Before;
+import de.uniol.inf.is.odysseus.
+    logicaloperator.objectrelational.test.unnest.cases.SimpleUnnesting;
 
-public class UnnestAOAllTests {
+import junit.framework.TestSuite;
 
-    @Before
-    public void setUp() throws Exception {
+public class UnnestAOAllTests extends TestSuite {
+
+    public UnnestAOAllTests() {
+        this.addTest(new SimpleUnnesting());
+        this.addTest(new ComplexUnnesting());
     }
-
 }

@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.logicaloperator.objectrelational.test.unnest.fixtures;
 
+
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public class ComplexUnnestingFixture extends SimpleUnnestingFixture {
+    
     public SDFAttributeList getInputSchema() {
         SDFAttribute[] attrs = {         
             this.getAx(),

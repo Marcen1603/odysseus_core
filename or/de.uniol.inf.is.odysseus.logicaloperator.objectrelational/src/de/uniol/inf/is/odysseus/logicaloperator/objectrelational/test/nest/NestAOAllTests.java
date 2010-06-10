@@ -1,12 +1,17 @@
 package de.uniol.inf.is.odysseus.logicaloperator.objectrelational.test.nest;
 
 
-import org.junit.Before;
+import de.uniol.inf.is.odysseus.
+    logicaloperator.objectrelational.test.nest.cases.NestOfNesting;
 
-public class NestAOAllTests {
+import de.uniol.inf.is.odysseus.
+    logicaloperator.objectrelational.test.nest.cases.SimpleNesting;
 
-    @Before
-    public void setUp() throws Exception {
+import junit.framework.TestSuite;
+
+public class NestAOAllTests extends TestSuite {
+    public NestAOAllTests() {
+        this.addTest(new SimpleNesting());
+        this.addTest(new NestOfNesting());
     }
-
 }

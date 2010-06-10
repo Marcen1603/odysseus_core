@@ -7,9 +7,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * UnnestAO 
  * 
- * u[A](S) where A is attribute name of nest to unnest and S is 
- * equal to the stream. 
- * 
  * @author Jendrik Poloczek
  */
 public class UnnestAO extends UnaryLogicalOp {
@@ -40,8 +37,8 @@ public class UnnestAO extends UnaryLogicalOp {
 		return outputSchema;
 	}
 
-	public void setNestAttribute(SDFAttribute nestingAttribute) {
-		nestingAttribute = nestingAttribute.clone();
+	public void setNestAttribute(SDFAttribute nestAttribute) {
+		this.nestAttribute = nestAttribute.clone();
 	}
 	
 	/**
@@ -50,7 +47,20 @@ public class UnnestAO extends UnaryLogicalOp {
 	 */	
 	
 	private SDFAttributeList calcOutputSchema(SDFAttributeList inputSchema) {
-		outputSchema = inputSchema.clone();
+	    SDFAttributeList outputSchema;
+	    SDFAttributeList subAttributes; 	   
+	    
+	    outputSchema = new SDFAttributeList();
+	    subAttributes = this.nestAttribute.getSubattributes();
+	    
+	    for(SDFAttribute attribute : inputSchema) {
+	        if(!attribute.equals(this.nestAttribute)) {
+	            outputSchema.add(attribute);
+	        }
+	    }
+	    
+		outputSchema.addAll(subAttributes);
+		System.out.println(outputSchema);
 		return outputSchema;
 	}
 	

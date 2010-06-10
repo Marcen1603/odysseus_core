@@ -2,20 +2,14 @@ package de.uniol.inf.is.odysseus.
     logicaloperator.objectrelational.test.unnest.cases;
 
 
-import static org.junit.Assert.assertEquals;
-
 import java.lang.reflect.Method;
-
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.
     logicaloperator.objectrelational.test.unnest.fixtures.ComplexUnnestingFixture;
 
-import de.uniol.inf.is.odysseus.
-    logicaloperator.objectrelational.test.unnest.fixtures.SimpleUnnestingFixture;
-
-import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.NestAO;
 import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.UnnestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -34,12 +28,16 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Jendrik Poloczek
  */
-public class ComplexUnnesting {
+public class ComplexUnnesting extends TestCase {
 
     private SDFAttributeList outputSchema;
     private UnnestAO unnestAo;
     private Method calcOutputSchema;
-    private SimpleUnnestingFixture fixture;
+    private ComplexUnnestingFixture fixture;
+    
+    public ComplexUnnesting() {
+        this.setName("complexUnnesting");
+    }
     
     @Before
     public void setUp() throws Exception {
@@ -53,7 +51,7 @@ public class ComplexUnnesting {
         
         try {
             this.calcOutputSchema = 
-                NestAO.class.getDeclaredMethod(
+                UnnestAO.class.getDeclaredMethod(
                     "calcOutputSchema", 
                     SDFAttributeList.class
                 );
@@ -86,6 +84,9 @@ public class ComplexUnnesting {
         assertEquals(axOut, this.fixture.getAx());
         assertEquals(a1Out, this.fixture.getA1());
         assertEquals(a2Out, this.fixture.getA2());
+        
+        assertEquals(a2Out.getSubattributes().get(0), this.fixture.getA2A1());
+        assertEquals(a2Out.getSubattributes().get(1), this.fixture.getA2A2());
     }
     
 }
