@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
  * @author Wolf Bauer
  * 
  */
-public class SingleThreadSchedulerFactory extends AbstractSchedulerFactory {
+public class SingleThreadSchedulerFactoryRR extends AbstractSchedulerFactory {
 
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
@@ -34,7 +34,7 @@ public class SingleThreadSchedulerFactory extends AbstractSchedulerFactory {
 	@Override
 	public IScheduler createScheduler(
 			ISchedulingFactory schedulingStrategy) {
-		return new SingleThreadScheduler(schedulingStrategy);
+		return new SingleThreadSchedulerWithStrategy(schedulingStrategy);
 	}
 
 }

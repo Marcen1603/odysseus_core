@@ -17,5 +17,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.osgi.service.component,
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Service-Component: OSGI-INF/singlethreadscheduler.xml
+Service-Component: OSGI-INF/singlethreadscheduler.xml, OSGI-INF/singlethreadscheduler_nowait.xml, OSGI-INF/singlethreadscheduler_rrstrat.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;version="2.0.0"
