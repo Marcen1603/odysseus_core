@@ -68,8 +68,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data);
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(attributes);
-		DataDictionary.getInstance().sourceTypeMap.put(name,
-				"RelationalStreaming");
+		DataDictionary.getInstance().sourceTypeMap.put(name, "RelationalStreaming");
 		DataDictionary.getInstance().entityMap.put(name, entity);
 		for (SDFAttribute a : attributes) {
 			DataDictionary.getInstance().attributeMap.put(name, a);
@@ -85,8 +84,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTTimedTuples node, Object data) {
-		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary
-				.getInstance().getSource(name), node.getTuples(attributes));
+		FixedSetAccessAO newPO = new FixedSetAccessAO(DataDictionary.getInstance().getSource(name), node.getTuples(attributes));
 		newPO.setOutputSchema(attributes);
 		DataDictionary.getInstance().setView(name, newPO);
 		return null;
@@ -99,16 +97,12 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		operator = ((List<ILogicalOperator>) parser.visit(node, null)).get(0);
 		SDFAttributeList otherAttributes = operator.getOutputSchema();
 		if (otherAttributes.size() != this.attributes.size()) {
-			throw new RuntimeException(
-					"Query output does not match specified schema for: " + name);
+			throw new RuntimeException("Query output does not match specified schema for: " + name);
 		}
 		ListIterator<SDFAttribute> li = otherAttributes.listIterator();
 		for (SDFAttribute attr : this.attributes) {
-			if (!((SDFAttribute) li.next()).getAttributeName().equals(
-					((SDFAttribute) attr).getAttributeName())) {
-				throw new RuntimeException(
-						"Query output does not match specified schema for: "
-								+ name);
+			if (!((SDFAttribute) li.next()).getAttributeName().equals(((SDFAttribute) attr).getAttributeName())) {
+				throw new RuntimeException("Query output does not match specified schema for: " + name);
 			}
 		}
 
@@ -141,19 +135,16 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
 		AccessAO source = null;
 		if (node.useTupleMode()) {
-			source = new AccessAO(new SDFSource(name,
-					"RelationalInputStreamAccessPO"));
+			source = new AccessAO(new SDFSource(name, "RelationalInputStreamAccessPO"));
 			source.setPort(port);
 			source.setHost(host);
 		} else if (node.useMVMode()) {
-			source = new AccessAO(new SDFSource(name,
-					"RelationalAtomicDataInputStreamAccessMVPO"));
+			source = new AccessAO(new SDFSource(name, "RelationalAtomicDataInputStreamAccessMVPO"));
 			source.setPort(port);
 			source.setHost(host);
 			source.setOutputSchema(this.attributes);
 		} else {
-			source = new AccessAO(new SDFSource(name,
-					"RelationalAtomicDataInputStreamAccessPO"));
+			source = new AccessAO(new SDFSource(name, "RelationalAtomicDataInputStreamAccessPO"));
 			source.setPort(port);
 			source.setHost(host);
 			source.setOutputSchema(this.attributes);
@@ -166,17 +157,16 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTChannel node, Object data) {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
-		AccessAO source = new AccessAO(new SDFSource(name,
-				"RelationalByteBufferAccessPO"));
+		AccessAO source = new AccessAO(new SDFSource(name, "RelationalByteBufferAccessPO"));
 		source.setPort(port);
 		source.setHost(host);
 		source.setOutputSchema(this.attributes);
 		DataDictionary.getInstance().setView(name, source);
 		return data;
 	}
-	
+
 	@Override
-	public Object visit(ASTSilab node, Object data){
+	public Object visit(ASTSilab node, Object data) {
 		// TODO: Behandlung, wenn kein Visitor gefunden wird
 		try {
 			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.SILABVisitor");
@@ -185,7 +175,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			e.printStackTrace();
 		}
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
-		return v.visit(node,data, this);
+		return v.visit(node, data, this);
 
 	}
 
