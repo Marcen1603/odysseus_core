@@ -10,13 +10,11 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 
 /**
- * 
  * G is a helper class which contains a min-priority queue list which holds the  
  * group identifier for each non-empty group. Its order is ascending: the 
  * group with the smallest start timestamp first. 
  * 
  * @author Jendrik Poloczek
- * 
  */
 public class PriorityQueueG {
 	

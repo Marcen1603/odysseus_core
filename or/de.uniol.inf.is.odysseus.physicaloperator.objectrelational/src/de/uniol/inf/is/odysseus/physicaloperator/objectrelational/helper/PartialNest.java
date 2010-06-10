@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelation
  * partial nests.
  * 
  * @author Jendrik Poloczek
- * 
  */
 public class PartialNest<M extends ITimeInterval> 
 	extends MetaAttributeContainer<TimeInterval> { 

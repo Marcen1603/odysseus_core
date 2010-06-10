@@ -10,11 +10,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * 
  * UnnestPO
  * 
  * @author Jendrik Poloczek
- * 
  */
 public class UnnestPO<T extends IMetaAttribute> extends
 		AbstractPipe<ObjectRelationalTuple<T>, ObjectRelationalTuple<T>> {
