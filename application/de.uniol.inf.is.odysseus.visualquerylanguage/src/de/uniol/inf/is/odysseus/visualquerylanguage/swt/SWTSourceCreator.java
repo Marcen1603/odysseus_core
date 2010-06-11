@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.visualquerylanguage.ReflectionException;
@@ -43,8 +44,10 @@ public class SWTSourceCreator{
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
+					// TODO: User einfuegen, der diese Query ausführt
+					User user = new User("TODO.SetUser");
 					executor.addQuery(textArea.getText(), executor.getSupportedQueryParser().iterator()
-							.next());
+							.next(), user);
 					for (ISWTTreeChangedListener listener : listeners) {
 						listener.treeChanged();
 					}

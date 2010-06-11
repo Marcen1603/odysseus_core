@@ -9,8 +9,9 @@ import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 
@@ -66,7 +67,9 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 						AdministrationPeerJxtaImpl.getInstance().getSources().put(adv.getSourceName(), adv);
 						// Hier wird noch das Schema der Quelle zum DataDictionary hinzugefÃ¼gt, damit der Compiler mit den Informationen arbeiten kann
 						if(DataDictionary.getInstance().sourceTypeMap.isEmpty() || !DataDictionary.getInstance().sourceTypeMap.containsKey(adv.getSourceName())) {
-							getExecutor().addQuery(adv.getSourceScheme(), "CQL", new ParameterPriority(2));
+							// TODO: User einfuegen, der diese Query ausführt
+							User user = new User("TODO.SetUser");
+							getExecutor().addQuery(adv.getSourceScheme(), "CQL", user, new ParameterPriority(2));
 						}
 						
 					}

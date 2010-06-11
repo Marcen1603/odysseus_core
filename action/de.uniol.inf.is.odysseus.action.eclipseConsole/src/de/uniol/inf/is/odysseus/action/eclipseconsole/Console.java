@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
@@ -25,6 +26,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IAdvancedExecutor executer;
 	private IActuatorFactory actuatorFactory;
 	private IActuatorBenchmark benchmark;
+	private User user = new User("Console");
 
 	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
@@ -34,7 +36,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA");
+			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA", user);
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -79,7 +81,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55564");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL");
+				this.executer.addQuery(query, "CQL", user);
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -129,7 +131,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL");
+				this.executer.addQuery(query, "CQL", user);
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -152,7 +154,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL");
+				this.executer.addQuery(query, "CQL", user);
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -213,15 +215,14 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		this._mmsdb(ci);
 		
 		try {
-			executer.addQuery("select * from machineMaintenance:usage", "CQL");
-			executer.addQuery("select * from machineMaintenance:factory", "CQL");
-			executer.addQuery("select * from machineMaintenance:machine", "CQL");
-			executer.addQuery("select * from machineMaintenance:install", "CQL");
+			executer.addQuery("select * from machineMaintenance:usage", "CQL", user);
+			executer.addQuery("select * from machineMaintenance:factory", "CQL", user);
+			executer.addQuery("select * from machineMaintenance:machine", "CQL", user);
+			executer.addQuery("select * from machineMaintenance:install", "CQL", user);
 			
 			this.benchmark.run();
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

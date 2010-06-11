@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Query;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
@@ -68,7 +69,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public int addQuery(ILogicalOperator logicalPlan,
+	public int addQuery(ILogicalOperator logicalPlan, User user,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
 
@@ -103,7 +104,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public Collection<Integer> addQuery(String query, String compilerID,
+	public Collection<Integer> addQuery(String query, String compilerID, User user,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
 	
@@ -128,7 +129,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public Collection<Integer> addQuery(String query, String parserID,
+	public Collection<Integer> addQuery(String query, String parserID, User user,
 			boolean doRestruct,
 			Set<String> rulesToUse,
 			AbstractQueryBuildParameter<?>... parameters)
@@ -149,7 +150,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public int addQuery(IPhysicalOperator physicalPlan,
+	public int addQuery(IPhysicalOperator physicalPlan, User user,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
 

@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterParserID;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.console.ExecutorConsole;
 
@@ -34,6 +35,7 @@ public class ECAParserTest implements CommandProvider {
 	private ExecutorConsole executerConsole;
 	private IActuatorFactory actuatorFactory;
 	private ICompiler compiler;
+	private User user = new User("ECAParserTest");
 	
 	//set to false if u want to prevent removal of testActuators!
 	private static boolean autoRemoveActuator = true;
@@ -179,7 +181,7 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		int queryID = this.executor.addQuery(logicalPlan.get(0), new ParameterParserID("ECA"));
+		int queryID = this.executor.addQuery(logicalPlan.get(0), user, new ParameterParserID("ECA"));
 		ci.println("	*Testcase3: Check if physical plan is correct");
 		IPlan plan = this.executor.getSealedPlan();
 		IQuery installedQuery = plan.getQuery(queryID);

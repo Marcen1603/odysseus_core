@@ -9,13 +9,14 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.Pair;
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.benchmarker.IBenchmark;
@@ -41,6 +42,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private boolean useLoadShedding;
 	private boolean extendedPostPriorisation = false;
 	private boolean useBenchmarkMemUsage = false;
+	
+	private User user = new User("Benchmark");
 	
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
@@ -134,7 +137,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			parameters.add(new ParameterDefaultRoot(latency));
 			parameters.addAll(getBuildParameters());
 			for (Pair<String, String> query : getQueries()) {
-				executor.addQuery(query.getE2(), query.getE1(), parameters
+				executor.addQuery(query.getE2(), query.getE1(), user, parameters
 						.toArray(new AbstractQueryBuildParameter<?>[0]));
 			}
 			result.setStartTime(System.nanoTime());
@@ -163,7 +166,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, "CQL");
+				this.executor.addQuery(s, "CQL", user);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}

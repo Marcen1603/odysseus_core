@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -34,7 +35,9 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
      */
 	public int addStatement(QueryType query) throws StatementQueryFault    { 
         try {
-			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage()
+			// TODO: User einfuegen, der diese Query ausführt
+			User user = new User("TODO.SetUser");
+			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user
 					).iterator().next();
 			return queryID;
 		} catch (Exception e) {
@@ -113,7 +116,9 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     		}else {
     			query = sourceDescription.getSourceString();
     		}
-    		executor.addQuery(query, "CQL");
+			// TODO: User einfuegen, der diese Query ausführt
+			User user = new User("TODO.SetUser");
+    		executor.addQuery(query, "CQL", user);
     		return "";
     	}catch (Exception e){
     		ObjectFactory factory = new ObjectFactory();

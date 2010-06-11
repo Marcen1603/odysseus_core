@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -29,7 +30,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.latency.ILatency;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -55,6 +56,8 @@ public class OptimizationTestConsole implements
 	private static ConsoleFunctions support = new ConsoleFunctions();
 
 	OptimizationTestSink sink = null;
+	
+	User currentUser = new User("OptimizationTestConsole");
 
 	/**
 	 * This is the basebath to files. This path can be set by command setPath.
@@ -63,11 +66,13 @@ public class OptimizationTestConsole implements
 
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration("relational", ITimeInterval.class));
+			new TransformationConfiguration("relational", ITimeInterval.class, ILatency.class));
 
 	private String currentScheduler;
 
 	private String currentBuffer;
+
+	private Object parser;
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
@@ -124,7 +129,7 @@ public class OptimizationTestConsole implements
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser());
+				this.executor.addQuery(s, parser(), currentUser);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -142,7 +147,7 @@ public class OptimizationTestConsole implements
 							// "SELECT bid.price FROM nexmark:bid2 [SIZE 5 SECONDS ADVANCE 1 TIME] AS bid WHERE bid.price > 1",
 							// "SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
 							// "SELECT bid.price FROM nexmark:bid2 AS bid",
-							parser(), new ParameterDefaultRoot(
+							parser(), currentUser, new ParameterDefaultRoot(
 									new OptimizationTestSink(OutputMode.HASH)),
 							this.trafoConfigParam);
 			this.executor.startExecution();
@@ -178,7 +183,7 @@ public class OptimizationTestConsole implements
 			this.executor
 					.addQuery(
 							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
-							parser(), new ParameterDefaultRoot(
+							parser(), currentUser, new ParameterDefaultRoot(
 									new OptimizationTestSink(OutputMode.NONE)),
 							this.trafoConfigParam);
 			this.executor.startExecution();
@@ -221,7 +226,7 @@ public class OptimizationTestConsole implements
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
 							"SELECT bid3.price FROM nexmark:bid2 AS bid3 WHERE bid3.price > 1",
-							parser(), new ParameterDefaultRoot(
+							parser(), currentUser, new ParameterDefaultRoot(
 									new OptimizationTestSink(OutputMode.NONE)),
 							this.trafoConfigParam);
 			this.executor.startExecution();
@@ -411,7 +416,7 @@ public class OptimizationTestConsole implements
 			Collection<Integer> queryIds = this.executor
 					.addQuery(
 							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
-							parser(), new ParameterDefaultRoot(sink),
+							parser(), currentUser, new ParameterDefaultRoot(sink),
 							this.trafoConfigParam);
 			System.out.println("QueryIDs: " + queryIds);
 			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
@@ -496,7 +501,7 @@ public class OptimizationTestConsole implements
 					queryIds = this.executor
 							.addQuery(
 									"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
-									parser(), new ParameterDefaultRoot(sink),
+									parser(), currentUser, new ParameterDefaultRoot(sink),
 									this.trafoConfigParam);
 					plan = (IEditablePlan) this.executor.getSealedPlan();
 					System.out.println("QueryIDs: " + queryIds);
@@ -600,13 +605,13 @@ public class OptimizationTestConsole implements
 					OutputMode.COUNT);
 			OptimizationTestSink sinkPerson = new OptimizationTestSink(
 					OutputMode.COUNT);
-			this.executor.addQuery("SELECT * FROM nexmark:auction2", parser(),
+			this.executor.addQuery("SELECT * FROM nexmark:auction2", parser(), currentUser,
 					new ParameterDefaultRoot(sinkAuction),
 					this.trafoConfigParam);
-			this.executor.addQuery("SELECT * FROM nexmark:bid2", parser(),
+			this.executor.addQuery("SELECT * FROM nexmark:bid2", parser(), currentUser,
 					new ParameterDefaultRoot(sinkBid), this.trafoConfigParam);
 			this.executor
-					.addQuery("SELECT * FROM nexmark:person2", parser(),
+					.addQuery("SELECT * FROM nexmark:person2", parser(), currentUser,
 							new ParameterDefaultRoot(sinkPerson),
 							this.trafoConfigParam);
 
@@ -746,6 +751,48 @@ public class OptimizationTestConsole implements
 		}
 	}
 
+	public void _lsparser(CommandInterpreter ci) {
+		Set<String> parserList = null;
+		try {
+			parserList = this.executor.getSupportedQueryParser();
+			// "Set" Default-Parser
+			if (parser == null && parserList.size() > 0) {
+				parser = parserList.iterator().next();
+			}
+		} catch (PlanManagementException e) {
+			ci.println(e.getMessage());
+		}
+		if (parserList != null) {
+			ci.println("Available parser:");
+			for (String par : parserList) {
+				System.out.print(par);
+
+				if (par.equals(this.parser)) {
+					System.out.print(" - Selected");
+				}
+				ci.println("");
+			}
+		}
+	}
+
+	public void _parser(CommandInterpreter ci) {
+		String[] args = support.getArgs(ci);
+		if (args != null && args.length > 0) {
+			try {
+				if (this.executor.getSupportedQueryParser().contains(args[0])) {
+					this.parser = args[0];
+					ci.println("New parser: " + args[0]);
+				} else {
+					ci.println("No parser with this ID.");
+				}
+			} catch (Exception e) {
+				ci.println(e.getMessage());
+			}
+		} else {
+			ci.println("No query argument.");
+		}
+	}
+	
 }
 
 class Measure {

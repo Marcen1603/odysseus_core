@@ -20,3 +20,4 @@ Import-Package: de.uniol.inf.is.odysseus.action.operator,
 Service-Component: OSGI-INF/parser.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.eca.test.Activator
+Require-Bundle: de.uniol.inf.is.odysseus.base

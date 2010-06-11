@@ -5,6 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
@@ -26,7 +27,9 @@ public class NMSNCommand extends AbstractHandler implements IHandler {
 			q[7] = "CREATE STREAM nexmark:category2_v (id INTEGER, name STRING, description STRING, parentid INTEGER) FROM (SELECT * FROM nexmark:category2 [UNBOUNDED])";
 			for (String s : q) {
 				try {
-					exec.addQuery(s, "CQL");
+					// TODO: User einfuegen, der diese Query ausführt
+					User user = new User("TODO.SetUser");
+					exec.addQuery(s, "CQL", user);
 				} catch (PlanManagementException e) {
 					e.printStackTrace();
 				} catch (Exception e) {

@@ -15,19 +15,20 @@ import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
+import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.MessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.SocketServerListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.CacheTool;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezification;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	
@@ -283,7 +284,10 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		
 		for (String s : getSources().values()) {
 			try {		
-				aPeer.getExecutor().addQuery(s, "CQL", new ParameterPriority(2) );
+				// TODO: User einfuegen, der diese Query ausführt
+				User user = new User("TODO.SetUser");
+
+				aPeer.getExecutor().addQuery(s, "CQL", user, new ParameterPriority(2) );
 				
 			} catch (PlanManagementException e) {
 				e.printStackTrace();

@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.p2p.operatorpeer.lifecycle.running;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
@@ -12,7 +14,6 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
 
 public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPeer, IAdvancedExecutor> {
 
@@ -44,7 +45,9 @@ public class RunningExecutionHandler extends AbstractExecutionHandler<AbstractPe
 			if(s.getStatus() == Lifecycle.GRANTED) {
 				System.out.println("FÃ¼ge hinzu: "+AbstractTreeWalker.prefixWalk(s.getAo(),
 						new AlgebraPlanToStringVisitor()));
-				getFunction().addQuery(s.getAo(), new ParameterPriority(2));		
+				// TODO: User einfuegen, der diese Query ausführt
+				User user = new User("TODO.SetUser");
+				getFunction().addQuery(s.getAo(), user, new ParameterPriority(2));		
 			}
 		}
 		

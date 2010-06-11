@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListe
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.base.FileSink;
@@ -68,6 +69,8 @@ public class ExecutorConsole implements CommandProvider,
 	private IAdvancedExecutor executor;
 
 	private String parser = null;
+	
+	private User currentUser = new User("Console");
 
 	/**
 	 * This is the bath to files, to read queries from. This path can be set by
@@ -698,7 +701,7 @@ public class ExecutorConsole implements CommandProvider,
 		q[7] = "CREATE STREAM nexmark:category2_v (id INTEGER, name STRING, description STRING, parentid INTEGER) FROM (SELECT * FROM nexmark:category2 [UNBOUNDED])";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser());
+				this.executor.addQuery(s, parser(), currentUser);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -723,7 +726,7 @@ public class ExecutorConsole implements CommandProvider,
 		q[3] = "CREATE STREAM nexmark:category (id INTEGER, name STRING, description STRING, parentid INTEGER) SOCKET localhost : 65433";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser());
+				this.executor.addQuery(s, parser(), currentUser);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -781,10 +784,10 @@ public class ExecutorConsole implements CommandProvider,
 	private void addQuery(String q) {
 		try {
 			if (outputputFilename == null || outputputFilename.length() == 0) {
-				this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
+				this.executor.addQuery(q, parser(), currentUser, new ParameterDefaultRoot(
 						new MySink()));
 			} else {
-				this.executor.addQuery(q, parser(), new ParameterDefaultRoot(
+				this.executor.addQuery(q, parser(), currentUser, new ParameterDefaultRoot(
 						new FileSink(outputputFilename)));
 			}
 		} catch (PlanManagementException e) {
@@ -906,7 +909,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 		try {
 			q.append(args[args.length - 1]);
-			this.executor.addQuery(q.toString(), parser(),
+			this.executor.addQuery(q.toString(), parser(), currentUser,
 					this.trafoConfigParam);
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -923,11 +926,11 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			if (args[args.length - 1].toUpperCase().equals("<S>")) {
 				q.append(args[args.length - 2]).append(" ");
-				this.executor.addQuery(q.toString(), parser(),
+				this.executor.addQuery(q.toString(), parser(), currentUser,
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
-				this.executor.addQuery(q.toString(), parser(),
+				this.executor.addQuery(q.toString(), parser(), currentUser,
 						new ParameterDefaultRoot(new FileSink(
 								args[args.length - 1])), this.trafoConfigParam);
 
@@ -937,7 +940,7 @@ public class ExecutorConsole implements CommandProvider,
 			} else {
 				q.append(args[args.length - 2]).append(" ");
 				q.append(args[args.length - 1]).append(" ");
-				this.executor.addQuery(q.toString(), parser(),
+				this.executor.addQuery(q.toString(), parser(), currentUser,
 						this.trafoConfigParam);
 			}
 		} catch (Exception e) {
@@ -1025,23 +1028,23 @@ public class ExecutorConsole implements CommandProvider,
 		// a CREATE statement has no arguments
 		// a QUERY statement does have to have arguments
 		if (args.length == 1) {
-			this.executor.addQuery(args[0], parser(), this.trafoConfigParam);
+			this.executor.addQuery(args[0], parser(), currentUser, this.trafoConfigParam);
 		}
 		// a QUERY statement can have arguments
 		else if (args.length == 2) {
 			// the second argument can be for sink, so 'S'
 			// or it can be for doRestruct, so 'true' or 'false'
 			if (args[1].equalsIgnoreCase("S")) {
-				this.executor.addQuery(args[0], parser(),
+				this.executor.addQuery(args[0], parser(), currentUser,
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
 			} else if (args[1].equalsIgnoreCase("E")) {
 				this.addQueryWithEclipseConsoleOutput(args[0]);
 			} else if (args[1].equalsIgnoreCase("TRUE")) {
 				this.executor
-						.addQuery(args[0], parser(), this.trafoConfigParam);
+						.addQuery(args[0], parser(), currentUser, this.trafoConfigParam);
 			} else if (args[1].equalsIgnoreCase("FALSE")) {
-				this.executor.addQuery(args[0], parser(), false, null,
+				this.executor.addQuery(args[0], parser(), currentUser, false, null,
 						this.trafoConfigParam);
 			}
 		} else if (args.length == 3) {
@@ -1049,7 +1052,7 @@ public class ExecutorConsole implements CommandProvider,
 				// the thrid argument is setting the restructuring mode.
 				if (args[2].equalsIgnoreCase("TRUE")
 						|| args[2].equalsIgnoreCase("FALSE")) {
-					this.executor.addQuery(args[0], parser(), args[2]
+					this.executor.addQuery(args[0], parser(), currentUser, args[2]
 							.equalsIgnoreCase("TRUE") ? true : false, null,
 							new ParameterDefaultRoot(new MySink()),
 							this.trafoConfigParam);
@@ -1064,7 +1067,7 @@ public class ExecutorConsole implements CommandProvider,
 						ruleNames.add(tokens.nextToken());
 					}
 
-					this.executor.addQuery(args[0], parser(), true, ruleNames,
+					this.executor.addQuery(args[0], parser(), currentUser, true, ruleNames,
 							new ParameterDefaultRoot(new MySink()),
 							this.trafoConfigParam);
 				}
@@ -1080,7 +1083,7 @@ public class ExecutorConsole implements CommandProvider,
 						ruleNames.add(tokens.nextToken());
 					}
 
-					this.executor.addQuery(args[0], parser(), args[2]
+					this.executor.addQuery(args[0], parser(), currentUser, args[2]
 							.equalsIgnoreCase("TRUE") ? true : false,
 							ruleNames, this.trafoConfigParam);
 
@@ -1092,7 +1095,7 @@ public class ExecutorConsole implements CommandProvider,
 						ruleNames.add(tokens.nextToken());
 					}
 
-					this.executor.addQuery(args[0], parser(), true, ruleNames,
+					this.executor.addQuery(args[0], parser(), currentUser, true, ruleNames,
 							this.trafoConfigParam);
 				}
 			}
@@ -1106,7 +1109,7 @@ public class ExecutorConsole implements CommandProvider,
 					ruleNames.add(tokens.nextToken());
 				}
 
-				this.executor.addQuery(args[0], parser(), args[2]
+				this.executor.addQuery(args[0], parser(), currentUser, args[2]
 						.equalsIgnoreCase("TRUE") ? true : false, ruleNames,
 						new ParameterDefaultRoot(new MySink()),
 						this.trafoConfigParam);
@@ -1119,7 +1122,7 @@ public class ExecutorConsole implements CommandProvider,
 					ruleNames.add(tokens.nextToken());
 				}
 
-				this.executor.addQuery(args[0], parser(), args[2]
+				this.executor.addQuery(args[0], parser(), currentUser, args[2]
 						.equalsIgnoreCase("TRUE") ? true : false, ruleNames,
 						this.trafoConfigParam);
 			}
@@ -1637,7 +1640,7 @@ public class ExecutorConsole implements CommandProvider,
 			Object ecs = eclipseConsoleSink.newInstance();
 			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
-			this.executor.addQuery(query, parser(), new ParameterDefaultRoot(
+			this.executor.addQuery(query, parser(), currentUser, new ParameterDefaultRoot(
 					ecSink), this.trafoConfigParam);
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");

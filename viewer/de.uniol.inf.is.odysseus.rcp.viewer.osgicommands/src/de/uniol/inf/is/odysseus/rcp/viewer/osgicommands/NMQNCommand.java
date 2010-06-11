@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.console.MySink;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -27,7 +28,9 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 		if (executor != null) {
 			for (String q : queries) {
 				try {
-					executor.addQuery(q, "CQL", new ParameterDefaultRoot(new MySink()));
+					// TODO: User einfuegen, der diese Query ausführt
+					User user = new User("TODO.SetUser");
+					executor.addQuery(q, "CQL", user, new ParameterDefaultRoot(new MySink()));
 				} catch (PlanManagementException e) {
 					e.printStackTrace();
 				}

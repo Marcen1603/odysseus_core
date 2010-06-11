@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.console.MySink;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -26,7 +27,9 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 		try {
 			IAdvancedExecutor executor = Activator.getExecutor();
 			if (executor != null) {
-				executor.addQuery(queryToExecute, parserToUse, new ParameterDefaultRoot(new MySink()));
+				// TODO: User einfuegen, der diese Query ausführt
+				User user = new User("TODO.SetUser");
+				executor.addQuery(queryToExecute, parserToUse, user, new ParameterDefaultRoot(new MySink()));
 				
 			} else {
 				System.out.println("Kein ExecutorService gefunden");

@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Ab
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor;
@@ -169,7 +170,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private ArrayList<IEditableQuery> createQueries(String query, String parserID, QueryBuildParameter parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
+	private ArrayList<IEditableQuery> createQueries(String query, String parserID, User user, QueryBuildParameter parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
 		this.logger.debug("Translate Queries.");
 		ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
 		Query newQuery = null;
@@ -179,7 +180,9 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		// create for each logical plan an intern query
 		for (ILogicalOperator planOp : logicalPlan) {
 			newQuery = new Query(parserID, parameters);
+			newQuery.setQueryText(query);
 			newQuery.setLogicalPlan(planOp);
+			newQuery.setUser(user);
 			// this executor processes reoptimize requests
 			newQuery.addReoptimizeListener(this);
 			newQueries.add(newQuery);
@@ -382,11 +385,11 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public Collection<Integer> addQuery(String query, String parserID, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
 		this.logger.info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IEditableQuery> newQueries = createQueries(query, parserID, params);
+			ArrayList<IEditableQuery> newQueries = createQueries(query, parserID, user, params);
 			addQueries(newQueries);
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
@@ -406,11 +409,11 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * .query.querybuiltparameter.AbstractQueryBuildParameter<?>[])
 	 */
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, boolean doRestruct, Set<String> rulesToUse, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public Collection<Integer> addQuery(String query, String parserID, User user, boolean doRestruct, Set<String> rulesToUse, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
 		this.logger.info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IEditableQuery> newQueries = createQueries(query, parserID, params);
+			ArrayList<IEditableQuery> newQueries = createQueries(query, parserID, user, params);
 			if (rulesToUse != null && !rulesToUse.isEmpty()) {
 				addQueries(newQueries, doRestruct, rulesToUse);
 			} else {
@@ -435,12 +438,13 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * <?>[])
 	 */
 	@Override
-	public int addQuery(ILogicalOperator logicalPlan, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public int addQuery(ILogicalOperator logicalPlan, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
 		this.logger.info("Start adding Queries.");
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
 			ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
 			Query query = new Query(logicalPlan, params);
+			query.setUser(user);
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries);
@@ -462,12 +466,13 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * <?>[])
 	 */
 	@Override
-	public int addQuery(IPhysicalOperator physicalPlan, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public int addQuery(IPhysicalOperator physicalPlan, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
 		this.logger.info("Start adding Queries.");
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
 			ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
 			Query query = new Query(physicalPlan, params);
+			query.setUser(user);
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries);

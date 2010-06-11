@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
+import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
@@ -30,6 +31,8 @@ public class DefaultQueryController implements IQueryController {
 	private static final Logger log = LoggerFactory
 			.getLogger(DefaultQueryController.class);
 
+	private User user = new User("TODO Set User");
+	
 	public DefaultQueryController() {
 
 	}
@@ -86,7 +89,7 @@ public class DefaultQueryController implements IQueryController {
 			}
 
 			if (root != null) {
-				area.setQueryID(executor.addQuery(root,
+				area.setQueryID(executor.addQuery(root,user,
 						new ParameterDefaultRoot(new ConsoleSink())));
 
 			} else {
