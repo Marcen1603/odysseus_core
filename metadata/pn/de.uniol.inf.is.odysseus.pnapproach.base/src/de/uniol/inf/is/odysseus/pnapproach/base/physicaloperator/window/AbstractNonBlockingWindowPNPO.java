@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -26,7 +26,7 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 	 * Stelle noch keinen negativen Elemente gibt. Es muessen nur die Query und
 	 * Remove-Praedikate entsprechend definiert werden.
 	 */
-	AbstractSweepArea<T> sa;
+	ISweepArea<T> sa;
 
 	public AbstractNonBlockingWindowPNPO(long windowSize, long windowAdvance,
 			IDataFactory<M, M, T, T> dFac) {
@@ -52,6 +52,7 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 		// Fuer jedes Element, dass sich noch in der SweepArea befindet,
@@ -59,7 +60,7 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		// ein neues negatives Element in den Ausgabedatenstrom
 		Iterator<T> negs = this.sa.extractElements(object, Order.LeftRight);
 		while (negs.hasNext()) {
-			@SuppressWarnings("unchecked")
+			
 			T neg;
 			neg = (T) negs.next().clone();
 			T modifiedElem = this.dFac.createData(neg);
@@ -93,12 +94,12 @@ public abstract class AbstractNonBlockingWindowPNPO<M extends IPosNeg, T extends
 		return this.windowAdvance;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void process_done() {
 		// Iterator<T> negs = this.sa.extractAllElements();
 		Iterator<T> negs = this.sa.iterator();
 		while (negs.hasNext()) {
-			@SuppressWarnings("unchecked")
 			T neg;
 			neg = (T) negs.next().clone();
 			T modifiedElem = this.dFac.createData(neg);
