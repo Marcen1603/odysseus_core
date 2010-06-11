@@ -31,7 +31,6 @@ public class ProceduralParser implements IQueryParser{
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Override
 	public List<ILogicalOperator> parse(String query)
 			throws QueryParseException {
 		// TODO Auto-generated method stub
@@ -66,14 +65,12 @@ public class ProceduralParser implements IQueryParser{
 		return listOfPlans;
 	}
 
-	@Override
 	public List<ILogicalOperator> parse(Reader reader)
 			throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getLanguage() {
 		// TODO Auto-generated method stub
 		return "PQLHack";
