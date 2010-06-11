@@ -53,7 +53,7 @@ public class NEXMarkStreamServer extends Thread {
 	
 		while (true) {
 			// Wait for Client connection
-			logger.debug("waiting for connection on port: " + this.port+ " using NIO="+useNIO);
+			logger.debug("waiting for connection "+type+" on port: " + this.port+ " using NIO="+useNIO);
 			Socket connection = null;
 			try {
 				connection = socket.accept();

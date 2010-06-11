@@ -12,6 +12,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGenerator;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
@@ -28,6 +31,9 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author Bernd Hochschulz
  */
 public class NexmarkStreamClientHandler extends Thread {
+	
+	Logger logger = LoggerFactory.getLogger(NexmarkStreamClientHandler.class);
+	
 	private static final boolean CACHE_FILES = false;
 
 	private static final String CACHED_FILE_PATH = "cached_files";
@@ -103,17 +109,17 @@ public class NexmarkStreamClientHandler extends Thread {
 		try {
 			switch (simulationType) {
 			case newSimulation:
-				System.out.println("starting new Simulation - another Thread caches Files");
+				logger.debug("starting new Simulation - another Thread caches Files");
 				this.startNewSimulation();
 				break;
 
 			case cachedSimulation:
-				System.out.println("reading Simulation from Files");
+				logger.debug("reading Simulation from Files");
 				this.startSimulationFromFiles();
 				break;
 
 			case newSimulationAndCache:
-				System.out.println("starting new Simulation and caching files");
+				logger.debug("starting new Simulation and caching files");
 				this.startNewSimulationAndCacheFiles();
 			}
 
@@ -178,7 +184,7 @@ public class NexmarkStreamClientHandler extends Thread {
 					&& !isInterrupted()) {
 				sendTupleToClients(container.tuple, container.type);
 				if (noMoreClients) {
-					System.out.println("Client " + connection.getInetAddress() + " disconnected.");
+					logger.debug("Client " + connection.getInetAddress() + " disconnected.");
 					break;
 				}
 			}
@@ -238,7 +244,7 @@ public class NexmarkStreamClientHandler extends Thread {
 
 				sendTupleToClients(container.tuple, container.type);
 				if (noMoreClients) {
-					System.out.println("Client " + connection.getInetAddress() + " disconnected.");
+					logger.debug("Client " + connection.getInetAddress() + " disconnected.");
 					break;
 				}
 			}
@@ -296,7 +302,7 @@ public class NexmarkStreamClientHandler extends Thread {
 					&& !isInterrupted()) {
 				sendTupleToClients(container.tuple, container.type);
 				if (noMoreClients) {
-					System.out.println("Client " + connection.getInetAddress() + " disconnected.");
+					logger.debug("Client " + connection.getInetAddress() + " disconnected.");
 					break;
 				}
 				writeTupleToFile(fileOut, container);
@@ -400,7 +406,7 @@ public class NexmarkStreamClientHandler extends Thread {
 					}
 				} catch (IOException e) {
 					iter.remove();
-					System.out.println("A '" + client + "' of " + connection.getInetAddress()
+					logger.debug("A '" + client + "' of " + connection.getInetAddress()
 							+ " disconnected.");
 				}
 			}
