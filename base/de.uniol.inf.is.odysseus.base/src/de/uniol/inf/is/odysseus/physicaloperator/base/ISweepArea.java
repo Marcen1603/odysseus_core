@@ -83,6 +83,8 @@ public interface ISweepArea<T> extends Iterable<T> {
 	public IPredicate<? super T> getQueryPredicate();
 
 	public void setQueryPredicate(IPredicate<? super T> updatePredicate);
-	
-	public ISweepArea<T> clone()  ;
+
+	public void setRemovePredicate(IPredicate<? super T> removePredicate);
+
+	public ISweepArea<T> clone();
 }
