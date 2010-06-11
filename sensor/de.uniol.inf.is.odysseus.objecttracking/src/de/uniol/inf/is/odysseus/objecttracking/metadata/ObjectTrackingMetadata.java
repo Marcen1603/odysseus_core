@@ -24,10 +24,20 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 	
 	public ObjectTrackingMetadata(ObjectTrackingMetadata<K> copy) {
 		super(copy);
-		this.predFctKey = (IPredictionFunctionKey)copy.predFctKey.clone();
-		this.prob = (IProbability)copy.prob.clone();
-		this.lat = (ILatency)copy.lat.clone();
-		this.appTime = (IApplicationTime)copy.appTime.clone();
+		if(copy.predFctKey != null){
+			this.predFctKey = (IPredictionFunctionKey)copy.predFctKey.clone();
+		}
+		if(copy.prob != null){
+			this.prob = (IProbability)copy.prob.clone();
+		}
+		
+		if(copy.lat != null){
+			this.lat = (ILatency)copy.lat.clone();
+		}
+		
+		if(copy.appTime != null){
+			this.appTime = (IApplicationTime)copy.appTime.clone();
+		}
 	}
 	
 	public ObjectTrackingMetadata(IPredictionFunctionKey<K> predFctKey, IProbability prob, ILatency lat, IApplicationTime appTime){
