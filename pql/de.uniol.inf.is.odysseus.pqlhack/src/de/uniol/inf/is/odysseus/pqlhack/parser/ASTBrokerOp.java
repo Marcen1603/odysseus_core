@@ -17,5 +17,20 @@ class ASTBrokerOp extends SimpleNode {
   public Object jjtAccept(ProceduralExpressionParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public String getAlias() {
+		switch (jjtGetNumChildren()) {
+		case 1:
+			return null;
+		case 2:
+			return ((ASTIdentifier)jjtGetChild(1)).getName();
+		default:
+			return null;
+		}
+	}
+
+	public boolean hasAlias() {
+		return getAlias() != null;
+	}
 }
 /* JavaCC - OriginalChecksum=968a071d3599b11d992deb4976887d5d (do not edit this line) */
