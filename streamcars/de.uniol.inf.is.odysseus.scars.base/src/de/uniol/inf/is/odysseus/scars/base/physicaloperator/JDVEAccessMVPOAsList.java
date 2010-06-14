@@ -6,11 +6,11 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class JDVEDataInputStreamAccessMVPOAsList<M extends IProbability> extends JDVEDataInputStreamAccessMVPO<M> {
+public class JDVEAccessMVPOAsList<M extends IProbability> extends JDVEAccessMVPO<M> {
 
 	private SDFAttributeList outputSchema;
 	
-	public JDVEDataInputStreamAccessMVPOAsList(int pPort, SDFAttributeList outputSchema) {
+	public JDVEAccessMVPOAsList(int pPort, SDFAttributeList outputSchema) {
 		super(pPort);
 		this.outputSchema = outputSchema;
 	}

@@ -16,13 +16,13 @@ import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
 import java.util.ArrayList;
 
-public abstract class JDVEDataInputStreamAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
+public abstract class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
 	private JDVEData data;
 	private int port;
 	protected ArrayList<CarData> buffer;
 	
-	public JDVEDataInputStreamAccessMVPO(int pPort) {
+	public JDVEAccessMVPO(int pPort) {
 		this.port = pPort;
 	}
 
@@ -92,29 +92,29 @@ class JDVEData {
 	public ArrayList<CarData> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
 		ArrayList<CarData> result = new ArrayList<CarData>();
 		
-		/* Benötigter Puffer:
+		/* Benï¿½tigter Puffer:
 		 * carType: 4 Byte
 		 * carTrafficID: 4 Byte
 		 * laneID: 4 Byte
-		 * positionUTM: 8 Byte * 6 + 4 Füllbytes für das Array
+		 * positionUTM: 8 Byte * 6 + 4 Fï¿½llbytes fï¿½r das Array
 		 * velocity: 4 Byte
 		 * length: 4 Byte
 		 * width: 4 Byte 
-		 * = (76 Byte + 4 Füllbytes für das struct) * 50 Autos für einen Scan = 4000 Bytes */
+		 * = (76 Byte + 4 Fï¿½llbytes fï¿½r das struct) * 50 Autos fï¿½r einen Scan = 4000 Bytes */
 		byte[] receiveData = new byte[4000];
 		
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		
 		clientSocket.receive(receivePacket);
 		
-		/* ByteBuffer übernimmt die Daten. ByteBuffer besitzt
-	     * die Methoden, die wir zum Auslesen benötigen. */
+		/* ByteBuffer ï¿½bernimmt die Daten. ByteBuffer besitzt
+	     * die Methoden, die wir zum Auslesen benï¿½tigen. */
 		ByteBuffer bb = ByteBuffer.wrap(receiveData);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		
-		/* Pro Scan werden (zumindest für den 
+		/* Pro Scan werden (zumindest fï¿½r den 
 	     * vertikalen Prototypen)
-	     * immer 50 Autos übermittelt */
+	     * immer 50 Autos ï¿½bermittelt */
 	    for (int k = 0; k < this.numberOfCars; k++)
 	    {
 	    	CarData currentCar = new CarData();
@@ -122,7 +122,7 @@ class JDVEData {
 	    	currentCar.setCarTrafficID(bb.getInt());
 	    	currentCar.setLaneID(bb.getInt());
 	    	
-	    	/* Füllbytes für das Array auslesen */
+	    	/* Fï¿½llbytes fï¿½r das Array auslesen */
 	        bb.getInt();
 	        
 	        double[] positionUTM = new double[6];
@@ -135,10 +135,10 @@ class JDVEData {
 	        currentCar.setLength(bb.getFloat());
 	        currentCar.setWidth(bb.getFloat());
 	        
-	        /* Füllbytes für das Struct 'CarData' auslesen */
+	        /* Fï¿½llbytes fï¿½r das Struct 'CarData' auslesen */
 	        bb.getInt();
 	        
-	        /* Das Auto der ArrayList hinzufügen, 
+	        /* Das Auto der ArrayList hinzufï¿½gen, 
 	         * falls es existiert (carTrafficID != -1) */
 	        if (currentCar.getCarTrafficID() != -1)
 	        	result.add(currentCar);
@@ -147,7 +147,7 @@ class JDVEData {
 	}
 	
 	private double[] readArray(ByteBuffer bb, int length) {
-		/* Füllbytes für das Array auslesen */
+		/* Fï¿½llbytes fï¿½r das Array auslesen */
 	    bb.getInt();
 	        
 	    double[] result = new double[length];
