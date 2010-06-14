@@ -8,9 +8,9 @@ public class JDVEAccessMVPOAsList<M extends IProbability> extends JDVEAccessMVPO
 
 	private SDFAttributeList outputSchema;
 	
-	public JDVEAccessMVPOAsList(int pPort, SDFAttributeList outputSchema) {
+	public JDVEAccessMVPOAsList(int pPort) {
 		super(pPort);
-		this.outputSchema = outputSchema;
+//		this.outputSchema = outputSchema;
 	}
 
 	@Override

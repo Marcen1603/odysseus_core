@@ -3,10 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: de.uniol.inf.is.odysseus.scars.base
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.base
 Bundle-Version: 1.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.scars.base.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking,
@@ -17,3 +15,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.scars.base.physicaloperator
+Bundle-ActivationPolicy: lazy
