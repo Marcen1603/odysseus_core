@@ -1,10 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.base.physicaloperator;
 
-import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -15,6 +10,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
 import java.util.ArrayList;
+
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 
 public abstract class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
@@ -146,17 +147,17 @@ class JDVEData {
 	    return result;
 	}
 	
-	private double[] readArray(ByteBuffer bb, int length) {
-		/* F�llbytes f�r das Array auslesen */
-	    bb.getInt();
-	        
-	    double[] result = new double[length];
-	    for (int j = 0; j < length; j++)
-	    {
-	      result[j] = bb.getDouble();
-		}
-	    return result;
-	}
+//	private double[] readArray(ByteBuffer bb, int length) {
+//		/* F�llbytes f�r das Array auslesen */
+//	    bb.getInt();
+//	        
+//	    double[] result = new double[length];
+//	    for (int j = 0; j < length; j++)
+//	    {
+//	      result[j] = bb.getDouble();
+//		}
+//	    return result;
+//	}
 	
 	public void closeJDVEDataPort() {
 		this.clientSocket.close();

@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.base.physicaloperator;
 
-import java.util.ArrayList;
-
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
