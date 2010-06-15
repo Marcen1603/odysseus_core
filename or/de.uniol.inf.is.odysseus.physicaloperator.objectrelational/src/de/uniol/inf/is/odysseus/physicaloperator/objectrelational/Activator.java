@@ -15,7 +15,7 @@ public class Activator implements BundleActivator {
 	static BundleContext context;
 
 	public void start(BundleContext c) throws Exception {	    
-	    TestRunner.run(new AllTests());
+	    //TestRunner.run(new AllTests());
 		context = c;
 	}
 
