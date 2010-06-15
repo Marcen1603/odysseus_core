@@ -2,11 +2,16 @@ package de.uniol.inf.is.odysseus.objecttracking;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+import de.uniol.inf.is.odysseus.objectrelational.base.SDFORDatatypes;
+import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -166,6 +171,11 @@ public class MVRelationalTuple<T extends IProbability> extends
 	}
 
 	private boolean checkDataType(Object object, SDFAttribute attribute) {
+	    
+	    if (object instanceof SetEntry[]) {
+	        return SDFORDatatypes.isSet(attribute.getDatatype());
+	    }
+	       
 		if (object instanceof String) {
 			return SDFDatatypes.isString(attribute.getDatatype());
 		}
@@ -234,7 +244,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 			this.measurementValuePositions[i] = list.get(i);
 		}
 	}
-
+	
 	public int[] getMeasurementValuePositions() {
 		return measurementValuePositions;
 	}
@@ -416,5 +426,55 @@ public class MVRelationalTuple<T extends IProbability> extends
 	public MVRelationalTuple<T> clone() {
 		return new MVRelationalTuple<T>(this);
 	}
-
+	
+    @SuppressWarnings("unchecked")
+    public int compareTo(MVRelationalTuple<T> tuple) {
+        int min = tuple.getAttributeCount();
+        if (min > this.attributes.length) {
+            min = this.attributes.length;
+        }
+        int compare = 0;
+        int i = 0;
+        for (i = 0; i < min && compare == 0; i++) {
+            try {
+                Object objectB = tuple.getAttribute(i);
+                if(objectB instanceof SetEntry[]) {
+                    int containedInA = 0;
+                    
+                    List setA = 
+                        Arrays.asList((SetEntry[]) this.attributes[i]);
+                    List setB = 
+                        Arrays.asList((SetEntry[]) objectB);
+                    
+                    for(Object b : setB) {
+                        if(setA.contains(b)) {
+                            containedInA++;
+                        }
+                    }
+                    if(containedInA == setB.size()) {
+                        if(containedInA == setA.size()) {
+                            return 0;
+                        } else {
+                            return 1;
+                        }
+                    } else {
+                        return -1;
+                    }
+                } else {
+                compare = 
+                    ((Comparable) this.attributes[i]).
+                        compareTo(tuple.getAttribute(i));
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+        if (compare < 0) {
+            compare = (-1) * i;
+        }
+        if (compare > 0) {
+            compare = i;
+        }
+        return compare;
+    }
 }
