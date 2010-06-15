@@ -124,7 +124,7 @@ public class ObjectTrackingNestPO extends
 	 * @param relationalNestPO nesting plan operator to copy
 	 */	
 	public ObjectTrackingNestPO(ObjectTrackingNestPO nestPO) {
-		super();
+		super(nestPO);
 		
 		this.inputSchema = nestPO.inputSchema;
 		this.outputSchema = nestPO.outputSchema;
