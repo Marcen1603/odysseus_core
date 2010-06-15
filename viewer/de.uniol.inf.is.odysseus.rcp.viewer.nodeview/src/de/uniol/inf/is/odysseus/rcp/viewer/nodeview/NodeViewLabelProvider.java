@@ -48,9 +48,10 @@ public class NodeViewLabelProvider implements ILabelProvider {
 	}
 
 	@Override
-	public String getText(Object element) {
+	public String getText(Object element) {		
 		if (element instanceof IOdysseusNodeView) {
 			IOdysseusNodeView node = (IOdysseusNodeView)element;
+			if( node.getModelNode() == null ) return "";
 			String name = node.getModelNode().getName();
 			int sources = node.getConnectionsAsEnd().size();
 			int sinks = node.getConnectionsAsStart().size();
@@ -62,9 +63,6 @@ public class NodeViewLabelProvider implements ILabelProvider {
 			final String value = monData.getValue() != null ? monData.getValue().toString() : "null";
 			return type + " = " + value;
 		}
-		
-		if( element instanceof String )
-			return element.toString();
 
 		return element.getClass().getName();
 	}

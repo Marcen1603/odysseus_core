@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -15,6 +16,7 @@ import org.eclipse.ui.part.ViewPart;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.IGraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 
 public class NodeViewPart extends ViewPart implements ISelectionListener {
 
@@ -106,12 +108,19 @@ public class NodeViewPart extends ViewPart implements ISelectionListener {
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if( this.synched && part != this )  {
-			treeViewer.setSelection(selection);
+		if( selection instanceof IStructuredSelection ) {
+			if( ((IStructuredSelection) selection).getFirstElement() instanceof INodeView<?> ||
+				((IStructuredSelection) selection).getFirstElement() instanceof IGraphView<?>) {
+				
+				if( this.synched && part != this )  {
+					treeViewer.setSelection(selection);
+				}
+				
+				// einfach speichern..
+				if( !this.synched )
+					this.selection = selection;
+				
+			}
 		}
-		
-		// einfach speichern..
-		if( !this.synched )
-			this.selection = selection;
 	}
 }

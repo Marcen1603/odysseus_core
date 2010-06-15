@@ -15,6 +15,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -29,7 +30,7 @@ public class XMLResourceLoader {
 
 	private static final Logger logger = LoggerFactory.getLogger( XMLResourceLoader.class );
 	
-	public static void loadImages( URL xmlFile, URL xsd ) {
+	public static void loadImages( URL xmlFile, URL xsd, ImageRegistry imageRegistry ) {
 
 		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
 		
@@ -80,7 +81,7 @@ public class XMLResourceLoader {
 				logger.debug( "Inserting resourceInfo " + src + " --> " + name );
 				
 				try {
-					Activator.getDefault().getImageRegistry().put(name, Activator.getImageDescriptor(src));
+					imageRegistry.put(name, Activator.getImageDescriptor(src));
 				} catch( Exception ex ) {
 					logger.error("Exception while loading image " + src + ":", ex);
 				}

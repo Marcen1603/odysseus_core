@@ -166,5 +166,11 @@
          </with>
       </definition>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.Startup">
+      </startup>
+   </extension>
 
 </plugin>

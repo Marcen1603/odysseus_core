@@ -4,16 +4,19 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.resource.XMLResourceLoader;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.XMLSymbolConfiguration;
 
 public class Activator extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view";
+	public static ISymbolConfiguration SYMBOL_CONFIGURATION = null;
 	
 	private static Activator plugin;
 	private static BundleContext bundleContext;
 	
 	public Activator() {
+		
 	}
 
 	/*
@@ -24,10 +27,10 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		bundleContext = context;
-
-		XMLResourceLoader.loadImages(
-				context.getBundle().getEntry("viewer_cfg/resources.xml"), 
-				context.getBundle().getEntry("viewer_cfg/resourcesSchema.xsd"));
+		
+		SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(
+				Activator.getContext().getBundle().getEntry("viewer_cfg/symbol.xml"), 
+				Activator.getContext().getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
 	}
 
 	/*

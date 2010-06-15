@@ -21,28 +21,15 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditorInputFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.SWTSymbolElementFactory;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.impl.XMLSymbolConfiguration;
 
 public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
 
 	public static final String COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor";
-	private static GraphViewEditorInputFactory GRAPH_VIEW_FACTORY;
 	
-	private static ISymbolConfiguration SYMBOL_CONFIGURATION = null;
-	private static ISymbolElementFactory<IPhysicalOperator> SYMBOL_FACTORY = null;
-	
-	public CallGraphEditorCommand() {
-		try {
-			SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(Activator.getContext().getBundle().getEntry("viewer_cfg/symbol.xml"), Activator.getContext().getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
-			SYMBOL_FACTORY = new SWTSymbolElementFactory<IPhysicalOperator>();
-			GRAPH_VIEW_FACTORY = new GraphViewEditorInputFactory();
-		} catch( Exception ex ) {
-			ex.printStackTrace();
-		}
-	}
-	
+	private static GraphViewEditorInputFactory GRAPH_VIEW_FACTORY = new GraphViewEditorInputFactory();
+	private static ISymbolElementFactory<IPhysicalOperator> SYMBOL_FACTORY = new SWTSymbolElementFactory<IPhysicalOperator>();
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -81,7 +68,7 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 			
 			
 			// ViewModell erzeugen
-			GraphViewEditorInput input = (GraphViewEditorInput)GRAPH_VIEW_FACTORY.createGraphView(graph, SYMBOL_CONFIGURATION, SYMBOL_FACTORY);
+			GraphViewEditorInput input = (GraphViewEditorInput)GRAPH_VIEW_FACTORY.createGraphView(graph, Activator.SYMBOL_CONFIGURATION, SYMBOL_FACTORY);
 			
 			try {
 				page.openEditor(input, GraphViewEditor.EDITOR_ID);

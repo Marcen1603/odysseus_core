@@ -21,7 +21,15 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		
 		if( parentElement instanceof IGraphView<?>) {
-			return ((IGraphView<IPhysicalOperator>)parentElement).getViewedNodes().toArray();
+			IGraphView<IPhysicalOperator> graph = (IGraphView<IPhysicalOperator>)parentElement;
+			
+			ArrayList list = new ArrayList();
+			for( INodeView<IPhysicalOperator> node : graph.getViewedNodes()) {
+				if( node.getModelNode() != null )
+					list.add(node);
+			}
+			
+			return list.toArray();
 		}
 		
 		if( parentElement instanceof IOdysseusNodeView) {
@@ -50,17 +58,17 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 				if( n.getModelNode() == tgt ) return n;
 			}
 		}
-		
-		if( element instanceof String ) {
-			return activeGraph; // BAD
-		}
+
+		System.out.println("getParent() mit " + element.getClass().getSimpleName() + " fehlgeschlagen");
 		return null;
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
 		if( element instanceof IOdysseusNodeView ) {
-			return ((IOdysseusNodeView)element).getModelNode().getProvidedMetadataTypes().size() > 0;
+			IOdysseusNodeView node = (IOdysseusNodeView)element;
+			if( node.getModelNode() == null ) return false;
+			return node.getModelNode().getProvidedMetadataTypes().size() > 0;
 		}
 		if( element instanceof Collection<?>) return true;
 		

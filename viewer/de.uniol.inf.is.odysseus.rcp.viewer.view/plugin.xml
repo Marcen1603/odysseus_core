@@ -18,6 +18,12 @@
             name="Call Graph Editor">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.viewer.view.Startup">
+      </startup>
+   </extension>
 
 
 </plugin>
