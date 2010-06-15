@@ -53,13 +53,13 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		init(start, end);
 	}
 
-	private void init(PointInTime start, PointInTime end) {
+	protected void init(PointInTime start, PointInTime end) {
 		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
 					"start point is not before end point in time interval ["
 							+ start + "," + end + ")");
 		}
-		this.start = start;
+		setStart(start);
 		setEnd(end);
 	}
 
@@ -244,6 +244,24 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	}
 
 	/**
+	 * Setting the time interval is used often in nest po code, so an extra
+	 * method for setting both, start and end, would be appropiate.
+	 * 
+	 * @author Jendrik Poloczek
+	 * @return 
+	 */
+	public void setTimeInterval(PointInTime start, PointInTime end) {
+	    this.setStart(start.clone());
+	    this.setEnd(end.clone());
+	}
+	
+    public void setTimeInterval(ITimeInterval ti) {
+        this.setStart(ti.getStart().clone());
+        this.setEnd(ti.getEnd().clone());
+    }
+    	
+	
+	/**
 	 * Difference method is returning a distance between time intervals and
 	 * not the difference, example for an time interval A and an inside 
 	 * time interval B: A - B = two time intervals left and right to A.
@@ -257,8 +275,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	 * @param subtrahend
 	 * @author Jendrik Poloczek
 	 * @return
-	 */
-	
+	 */	
 	public static List<TimeInterval> minus(
 		ITimeInterval minuend, 
 		ITimeInterval subtrahend
@@ -400,7 +417,4 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	public TimeInterval clone() {
 		return new TimeInterval(this);
 	}
-
-
-
 }
