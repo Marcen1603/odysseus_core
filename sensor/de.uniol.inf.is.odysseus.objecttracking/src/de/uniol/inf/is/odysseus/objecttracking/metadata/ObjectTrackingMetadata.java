@@ -2,14 +2,17 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
 public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredictionFunctionKey<K>, IProbability, ILatency, IApplicationTime{
-
-	IPredictionFunctionKey<K> predFctKey;
+    
+    private static final long serialVersionUID = 1L;
+    
+    IPredictionFunctionKey<K> predFctKey;
 	IProbability prob;
 	ILatency lat;
 	IApplicationTime appTime;
@@ -22,6 +25,16 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 		this.appTime = new ApplicationTime();
 	}
 	
+    public ObjectTrackingMetadata(PointInTime start, PointInTime end) {
+        super();
+        this.predFctKey = new PredictionFunctionKey<K>();
+        this.prob = new Probability();
+        this.lat = new Latency();
+        this.appTime = new ApplicationTime();
+        
+        this.init(start, end);
+     }
+
 	public ObjectTrackingMetadata(ObjectTrackingMetadata<K> copy) {
 		super(copy);
 		if(copy.predFctKey != null){
