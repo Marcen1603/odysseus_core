@@ -7,3 +7,4 @@ Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.objectrelational.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework
+Export-Package: de.uniol.inf.is.odysseus.parser.pql.objectrelational

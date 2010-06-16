@@ -31,12 +31,15 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * NestPO
+ * Object Tracking NestPO, this one is for MVRelationalTuple processing
  * 
  * @author Jendrik Poloczek
  */
 public class ObjectTrackingNestPO extends
-		AbstractPipe<MVRelationalTuple<ObjectTrackingMetadata<Object>>, MVRelationalTuple<ObjectTrackingMetadata<Object>>> {
+		AbstractPipe<
+		    MVRelationalTuple<ObjectTrackingMetadata<Object>>, 
+		    MVRelationalTuple<ObjectTrackingMetadata<Object>>
+        > {
 	
 	private SDFAttributeList inputSchema;
 	private SDFAttributeList outputSchema;
@@ -55,14 +58,21 @@ public class ObjectTrackingNestPO extends
 	 * sweep area are partial sets with time interval approach metadata
 	 */
 	
-	private Map<Integer, ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>> groups;
+	private 
+	    Map<
+	        Integer, 
+	        ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>
+	    > groups;
 	
 	/*
 	 * keyMap maps restricted tuples (to grouping attributes) to a key, 
 	 * if grouping doesn't match a key, maxId is incremented and used. 
 	 */
 	
-	private Map<MVRelationalTuple<ObjectTrackingMetadata<Object>>, Integer> keyMap;
+	private Map<
+	        MVRelationalTuple<ObjectTrackingMetadata<Object>>, 
+	        Integer
+	    > keyMap;
 	
 	/*
 	 * MVPriorityQueueG stores the sweep areas ascending to the smallest 
@@ -76,14 +86,33 @@ public class ObjectTrackingNestPO extends
 	 * to their time stamps.
 	 */
 	
-	private DefaultTISweepArea<MVRelationalTuple<ObjectTrackingMetadata<Object>>> q;
+	private DefaultTISweepArea<
+	        MVRelationalTuple<ObjectTrackingMetadata<Object>>
+	    > q;
 	
 	/**
 	 * @param groupingAttributes attributes to group by
 	 * @param nestingAttribute nesting attribute
 	 */
 	
-	public ObjectTrackingNestPO() {
+	public ObjectTrackingNestPO(
+	       SDFAttributeList inputSchema,
+	       SDFAttributeList outputSchema,
+	       SDFAttribute nestingAttribute,
+	       SDFAttributeList groupingAttributes
+	    ) {
+	    
+	    this.inputSchema = inputSchema;
+	    this.outputSchema = outputSchema;
+	    this.nestingAttribute = nestingAttribute.clone();
+	    this.groupingAttributes = groupingAttributes.clone();
+	    
+	    this.inputAttributesCount = this.inputSchema.getAttributeCount();       
+        this.groupingAttributesPos = this.getGroupingAttributesPos();
+        this.outputAttributesCount = this.groupingAttributesPos.length + 1;
+        this.nonGroupingAttributesPos = this.getNonGroupingAttributePos();
+        this.nestingAttributePos = this.groupingAttributesPos.length;
+	        
 		this.groups = 
 			new HashMap<
 				Integer, 
@@ -91,32 +120,19 @@ public class ObjectTrackingNestPO extends
 			>();
 		
 		this.keyMap = 
-			new HashMap<MVRelationalTuple<ObjectTrackingMetadata<Object>>, Integer>();
+			new HashMap<
+			    MVRelationalTuple<ObjectTrackingMetadata<Object>>,
+			    Integer
+			>();
 		
-		this.g = new ObjectTrackingPriorityQueueG<ObjectTrackingMetadata<Object>>();
-		this.q = new DefaultTISweepArea<MVRelationalTuple<ObjectTrackingMetadata<Object>>>();
+		this.g = 
+		    new ObjectTrackingPriorityQueueG<ObjectTrackingMetadata<Object>>();
+		
+		this.q = 
+		    new DefaultTISweepArea<
+		        MVRelationalTuple<ObjectTrackingMetadata<Object>>
+		    >();
 	}
-
-	public void setInputSchema(SDFAttributeList inputSchema) {
-	    this.inputSchema = inputSchema;
-	    this.inputAttributesCount = this.inputSchema.getAttributeCount();
-	}
-	
-    public void setOutputSchema(SDFAttributeList outputSchema) {
-        this.outputSchema = outputSchema;
-    }
-    
-    public void setNestAttribute(SDFAttribute nestAttribute) {
-        this.nestingAttribute = nestingAttribute.clone();
-    }
-    
-    public void setGroupingAttributes(SDFAttributeList groupingAttributes) {
-        this.groupingAttributes = groupingAttributes.clone();
-        this.groupingAttributesPos = this.getGroupingAttributesPos();
-        this.outputAttributesCount = this.groupingAttributesPos.length + 1;
-        this.nonGroupingAttributesPos = this.getNonGroupingAttributePos();
-        this.nestingAttributePos = this.groupingAttributesPos.length;
-    }
 	
 	/**
 	 * A lot of code for creating a deep copy of maps groups and keyMap.
@@ -131,8 +147,13 @@ public class ObjectTrackingNestPO extends
 		this.nestingAttribute = nestPO.nestingAttribute.clone();
 		this.groupingAttributes = nestPO.groupingAttributes.clone();
 		
-		Iterator<Entry<MVRelationalTuple<ObjectTrackingMetadata<Object>>, Integer>> keyMapIter;
-		Iterator<Entry<Integer, ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>>> groupsIter;
+		Iterator<
+		    Entry<MVRelationalTuple<ObjectTrackingMetadata<Object>>, 
+		    Integer>
+		> keyMapIter;
+		
+		Iterator<
+		    Entry<Integer, ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>>> groupsIter;
 		
 		Entry<MVRelationalTuple<ObjectTrackingMetadata<Object>>, Integer> entryOfkeyMap;
 		Entry<Integer, ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>> entryOfGroups;

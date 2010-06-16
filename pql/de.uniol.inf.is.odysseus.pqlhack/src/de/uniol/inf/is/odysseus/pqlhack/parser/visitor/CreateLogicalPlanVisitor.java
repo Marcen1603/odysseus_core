@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
+import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.ObjectTrackingNestAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoinAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
@@ -683,21 +684,63 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTRelationalNestOp node, Object data) {
-		Class<?> visitorClass;
-		try {
-			visitorClass = Class
-					.forName("de.uniol.inf.is.odysseus.objectrelational.parser.Visitor");
-			Object visitorInstance = visitorClass.newInstance();
-			Method m = visitorClass.getDeclaredMethod("visit",
-					ASTRelationalNestOp.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-				.invoke(visitorInstance, node, data);	
-			return sourceOp;
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Objectrelational Plugin is missing in parser.", e.getCause());
-		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
-		}
+//		Class<?> visitorClass;
+//		try {
+//			visitorClass = Class
+//					.forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
+//			Object visitorInstance = visitorClass.newInstance();
+//			Method m = visitorClass.getDeclaredMethod("visit",
+//					ASTRelationalNestOp.class, Object.class);
+//			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+//				.invoke(visitorInstance, node, data);	
+//			return sourceOp;
+//		} catch (ClassNotFoundException e) {
+//			throw new RuntimeException("Objectrelational Plugin is missing in parser.", e.getCause());
+//		} catch (Exception e) {
+//			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
+//		}	 	   
+        ObjectTrackingNestAO op;
+        op = new ObjectTrackingNestAO();
+        
+        AbstractLogicalOperator input;
+        IAttributeResolver attrRes;
+        SDFAttributeList nestingAttributes;
+        ASTIdentifier nestAttributeIdentifier;
+        String nestAttributeName;
+        ArrayList newData;
+        
+        attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+        
+        nestingAttributes = new SDFAttributeList();
+        newData = new ArrayList();
+        
+        newData.add(attrRes);
+        
+        input = (AbstractLogicalOperator) 
+            ((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+        
+        op.subscribeTo(input, input.getOutputSchema());        
+        
+        nestAttributeIdentifier = 
+            (ASTIdentifier) node.jjtGetChild(1);
+        
+        nestAttributeName = nestAttributeIdentifier.getName();
+        
+        System.out.println("nestAttributeName " + nestAttributeName);
+        
+        for(int i = 2; i < node.jjtGetNumChildren(); i++){
+            ASTIdentifier attrIdentifier = (ASTIdentifier) node.jjtGetChild(i);          
+            String attrString = ((ASTIdentifier) attrIdentifier).getName();
+            SDFAttribute attr = attrRes.getAttribute(attrString);
+            nestingAttributes.add(attr);            
+        }
+        
+        op.setNestAttributeName(nestAttributeName);
+        op.setNestingAttributes(nestingAttributes);
+        
+        ((ArrayList) data).add(op);
+        
+        return data;
 	}
 
 	
@@ -705,7 +748,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		Class<?> visitorClass;
 		try {
 			visitorClass = Class
-					.forName("de.uniol.inf.is.odysseus.objectrelational.parser.Visitor");
+					.forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
 			Object visitorInstance = visitorClass.newInstance();
 			Method m = visitorClass.getDeclaredMethod("visit",
 					ASTRelationalNestOp.class, Object.class);

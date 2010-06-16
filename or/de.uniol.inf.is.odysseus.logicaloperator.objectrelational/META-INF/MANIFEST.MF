@@ -10,4 +10,5 @@ Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.logicaloperator.objectrelational
-Require-Bundle: org.junit4
+Require-Bundle: org.junit4,
+ de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"

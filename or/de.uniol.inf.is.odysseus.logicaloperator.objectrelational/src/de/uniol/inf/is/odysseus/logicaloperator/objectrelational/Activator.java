@@ -1,10 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator.objectrelational;
 
-import junit.textui.TestRunner;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
-import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.test.AllTests;
 
 /**
  * @author Jendrik Poloczek
@@ -14,7 +11,7 @@ public class Activator implements BundleActivator {
 	static BundleContext context;
 	
 	public void start(BundleContext c) throws Exception {
-	    TestRunner.run(new AllTests());
+	    //TestRunner.run(new AllTests());
 		context = c;
 	}
 
