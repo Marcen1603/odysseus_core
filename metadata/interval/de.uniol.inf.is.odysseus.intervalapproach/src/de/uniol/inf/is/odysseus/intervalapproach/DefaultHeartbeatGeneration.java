@@ -12,14 +12,14 @@ public class DefaultHeartbeatGeneration<K extends ITimeInterval, T extends IMeta
 	Logger logger = LoggerFactory.getLogger(DefaultHeartbeatGeneration.class);
 	
 	@Override
-	public void generateHeartbeat(T object, ISource source) {
+	public void generateHeartbeat(T object, ISource<?> source) {
 		source.sendPunctuation(object.getMetadata().getStart());
 		logger.debug("Send Heartbeat"+object.getMetadata().getStart());
 	}
 
 	@Override
-	public DefaultHeartbeatGeneration clone() {
-		return new DefaultHeartbeatGeneration();
+	public DefaultHeartbeatGeneration<K, T> clone() {
+		return new DefaultHeartbeatGeneration<K, T>();
 	}
 
 		
