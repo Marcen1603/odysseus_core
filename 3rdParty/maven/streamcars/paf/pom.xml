@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-streamcars-paf-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: streamcars-paf</name>
+
+  <modules>
+<module>odysseus-scars-objecttracking-filtering</module>
+<module>odysseus-scars-objecttracking</module>
+<module>odysseus-scars-objecttracking-gating</module>
+<module>odysseus-scars-objecttracking-prediction</module>
+<module>odysseus-scars-objecttracking-assoziation</module>
+  </modules>
+</project>
