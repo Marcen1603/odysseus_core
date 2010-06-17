@@ -116,10 +116,10 @@ cat >> $f/odysseus-$artifactId/pom.xml <<EOF
 EOF
 		    fi
 		    git add $f/odysseus-$artifactId/pom.xml
-		    git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
-		    git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
-            for sf in $s/resources/ ; do git mv -kf $sf $f/odysseus-$artifactId/src/main/resources/ ; done
-		    for sf in $s/src ; do git mv -kf $sf $f/odysseus-$artifactId/src/main/java/ ; done
+		    #git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
+		    #git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
+            for sf in $s/resources/* ; do git mv -kf $sf $f/odysseus-$artifactId/src/main/resources/ ; done
+		    for sf in $s/src/* ; do git mv -kf $sf $f/odysseus-$artifactId/src/main/java/ ; done
 	    fi
     done
     cat >> $f/pom.xml <<EOF
@@ -133,7 +133,7 @@ mkdir -p resources/drools-pathscanner/src/main/java
 mkdir -p resources/drools-pathscanner/src/main/resources
 mkdir -p resources/drools-pathscanner/src/test/java
 mkdir -p resources/drools-pathscanner/src/test/resources
-for sf in resources/de.uniol.inf.is.drools.osgi_path_scanner/src/ ; do git mv -kf $sf resources/drools-pathscanner/src/main/java/ ; done
+for sf in resources/de.uniol.inf.is.drools.osgi_path_scanner/src/* ; do git mv -kf $sf resources/drools-pathscanner/src/main/java/ ; done
 cp -u $partyDir/resources/drools-pathscanner/pom.xml resources/drools-pathscanner/
 git add resources/drools-pathscanner/pom.xml
 
@@ -141,7 +141,7 @@ mkdir -p resources/drools-ruleagent/src/main/java
 mkdir -p resources/drools-ruleagent/src/main/resources
 mkdir -p resources/drools-ruleagent/src/test/java
 mkdir -p resources/drools-ruleagent/src/test/resources
-for sf in resources/de.uniol.inf.is.drools.osgi_rule_agent/src/ ; do git mv -kf $sf resources/drools-ruleagent/src/main/java/ ; done
+for sf in resources/de.uniol.inf.is.drools.osgi_rule_agent/src/* ; do git mv -kf $sf resources/drools-ruleagent/src/main/java/ ; done
 cp -u $partyDir/resources/drools-ruleagent/pom.xml resources/drools-ruleagent/
 git add resources/drools-ruleagent/pom.xml
 
