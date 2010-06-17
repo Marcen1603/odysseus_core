@@ -25,6 +25,7 @@ private
 					unknownDependencies << package
 					next
 				end
+				next if bundle == project
 				bundles << bundle
 				
 			end
