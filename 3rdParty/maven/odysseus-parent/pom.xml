@@ -494,6 +494,7 @@
 	    <Require-Bundle>${odysseus.osgi.bundles}</Require-Bundle>
 	    <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
 	    <Embed-Dependency>${odysseus.osgi.embed}</Embed-Dependency>
+            <_failok>true</_failok>
  	  </instructions>
 	  <supportedProjectTypes>
 	    <supportedProjectType>jar</supportedProjectType>
