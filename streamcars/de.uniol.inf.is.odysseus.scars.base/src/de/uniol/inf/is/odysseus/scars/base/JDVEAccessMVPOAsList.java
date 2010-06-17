@@ -40,6 +40,7 @@ public class JDVEAccessMVPOAsList<M extends IProbability> extends JDVEAccessMVPO
 			carObject[6] = buffer.get(j).getWidth();
 			MVRelationalTuple<M> carTupel = new MVRelationalTuple<M>(carObject);
 			complete[j] = carTupel;
+			System.out.println(buffer.get(j).getCarTrafficID() + ": " + buffer.get(j).getVelocity());
 		}
 		
 		if (!buffer.isEmpty()) {

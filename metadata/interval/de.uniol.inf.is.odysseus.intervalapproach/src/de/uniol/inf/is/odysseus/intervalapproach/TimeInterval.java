@@ -59,7 +59,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 					"start point is not before end point in time interval ["
 							+ start + "," + end + ")");
 		}
-		setStart(start);
+		this.start = start;
 		setEnd(end);
 	}
 
@@ -251,12 +251,12 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	 * @return 
 	 */
 	public void setTimeInterval(PointInTime start, PointInTime end) {
-	    this.setStart(start.clone());
+	    this.start = start.clone();
 	    this.setEnd(end.clone());
 	}
 	
     public void setTimeInterval(ITimeInterval ti) {
-        this.setStart(ti.getStart().clone());
+        this.start = ti.getStart().clone();
         this.setEnd(ti.getEnd().clone());
     }
     	

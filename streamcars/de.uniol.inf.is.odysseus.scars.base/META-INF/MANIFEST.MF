@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.base
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
