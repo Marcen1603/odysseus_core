@@ -21,7 +21,6 @@
 <module>odysseus-planmanagement-optimization-query-restructoptimizer</module>
 <module>odysseus-planmanagement-optimization-migration-standardmigrationcostmodel</module>
 <module>odysseus-planmanagement-executor-standardexecutor</module>
-<module>odysseus-planmanagement-optimization-advancedoptimizer</module>
 <module>odysseus-planmanagement-optimization-standardoptimizer</module>
 <module>odysseus-planmanagement-executor</module>
 <module>odysseus-planmanagement-optimization-bufferplacement-standardbufferplacementstrategy</module>

@@ -14,6 +14,7 @@
   <properties>
     <odysseus.osgi.import>
 de.uniol.inf.is.odysseus.base,
+de.uniol.inf.is.odysseus.base.usermanagement,
  de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.base.planmanagement.configuration,
  de.uniol.inf.is.odysseus.base.planmanagement.event,

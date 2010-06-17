@@ -14,9 +14,9 @@
 
   <modules>
 <module>odysseus-parser-pql</module>
-<!-- <module>odysseus-parser-pql-test</module> -->
+<module>odysseus-parser-pql-test</module>
 <module>odysseus-parser-pql-base</module>
-<!-- <module>odysseus-pqlhack</module> -->
-<!-- <module>odysseus-parser-pql-benchmark</module> -->
+<module>odysseus-pqlhack</module>
+<module>odysseus-parser-pql-benchmark</module>
   </modules>
 </project>

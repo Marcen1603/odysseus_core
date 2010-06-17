@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-broker-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: broker</name>
+
+  <modules>
+<module>odysseus-broker-parser-cql</module>
+<module>odysseus-broker-console-client</module>
+<module>odysseus-broker-console</module>
+<module>odysseus-broker-transformation</module>
+<module>odysseus-broker-rewrite</module>
+<module>odysseus-broker</module>
+<module>odysseus-broker-sensors</module>
+<module>odysseus-broker-executor</module>
+  </modules>
+</project>

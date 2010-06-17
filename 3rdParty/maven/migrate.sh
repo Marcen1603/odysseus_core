@@ -18,25 +18,7 @@ depScript="3rdParty/maven/createpoms.rb"
 cp -uR $partyDir/odysseus-parent .
 git add odysseus-parent/pom.xml
 
-folders=". action application base broker cep metadata metadata/pn metadata/interval metadata/priority new_transformation p2p p2p/adminpeer p2p/base p2p/distribution p2p/execution p2p/jxta p2p/operatorpeer p2p/splitting p2p/superpeer p2p/thinpeer planmanagement pql rcp relational scheduler sensor viewer webservice"
-
-cat > pom.xml <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<project
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>de.uniol.inf.is.odysseus</groupId>
-    <artifactId>odysseus-pom</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>odysseus-parent</artifactId>
-  <packaging>pom</packaging>
-  <name>Odysseus</name>
-
-  <modules>
-EOF
+folders=". action application base broker cep metadata metadata/pn metadata/interval metadata/priority new_transformation p2p p2p/adminpeer p2p/base p2p/distribution p2p/execution p2p/jxta p2p/operatorpeer p2p/splitting p2p/superpeer p2p/thinpeer planmanagement pql rcp relational relational/database scheduler sensor streamcars streamcars/paf viewer webservice"
 
 for f in $folders; do
     mkdir -p $f
@@ -202,15 +184,6 @@ cat > resources/pom.xml <<EOF
 EOF
 git add resources/pom.xml
 
-for s in $(find . -mindepth 1 -maxdepth 1 -type f -name 'pom.xml'); do
-    basename=${s%/*}
-    echo "<module>$basename</module>" >> pom.xml
-done
-
-cat >> pom.xml <<EOF
-  </modules>
-</project>
-EOF
 git add pom.xml
 
 echo "Migration processed. Ready to merge? (y/n)"

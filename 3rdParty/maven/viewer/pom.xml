@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-viewer-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: viewer</name>
+
+  <modules>
+<module>odysseus-rcp-viewer-model</module>
+<module>odysseus-rcp-viewer-view</module>
+<module>odysseus-rcp-viewer-osgicommands</module>
+<module>odysseus-rcp-viewer-nodeview</module>
+  </modules>
+</project>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-application-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: application</name>
+
+  <modules>
+<module>odysseus-benchmarker-impl</module>
+<module>odysseus-viewer</module>
+<module>odysseus-iec61970</module>
+<module>odysseus-labdataserver</module>
+<module>odysseus-benchmarker-runner</module>
+<module>odysseus-benchmarker</module>
+<module>odysseus-nexmark</module>
+<module>odysseus-args</module>
+<module>odysseus-planmanagement-executor-console</module>
+<module>odysseus-visualquerylanguage</module>
+<module>odysseus-transformation-benchmark</module>
+<module>odysseus-BenchmarkGUI</module>
+<module>odysseus-randomserver</module>
+  </modules>
+</project>

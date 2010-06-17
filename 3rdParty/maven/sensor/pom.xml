@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-sensor-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: sensor</name>
+
+  <modules>
+<module>odysseus-objecttracking-drools-rewrite</module>
+<module>odysseus-de-uniol-inf-is-objecttracking-drools</module>
+<module>odysseus-objecttracking-test</module>
+<module>odysseus-objecttracking-parser</module>
+<module>odysseus-objecttracking</module>
+  </modules>
+</project>

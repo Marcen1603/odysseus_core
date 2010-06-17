@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.uniol.inf.is.odysseus</groupId>
+    <artifactId>odysseus-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>odysseus-rcp-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Odysseus :: rcp</name>
+
+  <modules>
+<module>odysseus-rcp-p2p-superpeer-feature</module>
+<module>odysseus-rcp-p2p-jxta-feature</module>
+<module>odysseus-rcp-webservice-feature</module>
+<module>odysseus-rcp-new_transformation-feature</module>
+<module>odysseus-rcp-p2p-base-feature</module>
+<module>odysseus-rcp-base-feature</module>
+<module>odysseus-rcp-resources-feature</module>
+<module>odysseus-rcp-application-labdataserver-feature</module>
+<module>odysseus-rcp-cep-feature</module>
+<module>odysseus-rcp-metadata-pn-feature</module>
+<module>odysseus-rcp-planmanagement-feature</module>
+<module>odysseus-rcp-sensor-feature</module>
+<module>odysseus-rcp-application-args-feature</module>
+<module>odysseus-rcp-action-feature</module>
+<module>odysseus-rcp-metadata-interval-feature</module>
+<module>odysseus-rcp-broker-feature</module>
+<module>odysseus-rcp-application-planmanagementexec-feature</module>
+<module>odysseus-rcp-p2p-splitting-feature</module>
+<module>odysseus-rcp-starter-feature</module>
+<module>odysseus-rcp-application-benchmarker-feature</module>
+<module>odysseus-rcp-relational-database-feature</module>
+<module>odysseus-rcp-p2p-thinpeer-feature</module>
+<module>odysseus-rcp-pql-feature</module>
+<module>odysseus-rcp-application-transformationbenchmark-feature</module>
+<module>odysseus-rcp-scheduler-feature</module>
+<module>odysseus-rcp-p2p-distribution-feature</module>
+<module>odysseus-rcp-relational-feature</module>
+<module>odysseus-rcp-p2p-operatorpeer-feature</module>
+<module>odysseus-rcp-p2p-execution-feature</module>
+<module>odysseus-rcp-visualquerylanguage-feature</module>
+<module>odysseus-rcp-application-iec61970-feature</module>
+<module>odysseus-rcp-metadata-priority-feature</module>
+<module>odysseus-rcp-starter</module>
+<module>odysseus-rcp-viewer-feature</module>
+<module>odysseus-rcp-3rdparty-feature</module>
+<module>odysseus-rcp-p2p-adminpeer-feature</module>
+<module>odysseus-rcp-application-randomserver-feature</module>
+<module>odysseus-rcp-application-nexmark-feature</module>
+<module>odysseus-rcp-metadata-base-feature</module>
+  </modules>
+</project>

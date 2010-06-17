@@ -15,8 +15,10 @@
   <modules>
 <module>odysseus-physicaloperator-relational</module>
 <module>odysseus-parser-cql</module>
+<module>odysseus-transformation-relational</module>
 <module>odysseus-transformation-relational_interval</module>
 <module>odysseus-relational_interval</module>
+<module>odysseus-rewrite-norules</module>
 <module>odysseus-relational-base</module>
 <module>odysseus-rewrite-relational</module>
 <module>odysseus-logicaloperator-relational</module>
