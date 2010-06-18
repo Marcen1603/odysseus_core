@@ -593,7 +593,7 @@ public class ObjectTrackingNestPO extends
 		
 		meta = new ObjectTrackingMetadata<Object>();
 	
-		meta.setTimeInterval(
+		meta.setStreamTime(
 		   TimeInterval.intersection(
 		      a.getMetadata(), 
 		      b.getMetadata()

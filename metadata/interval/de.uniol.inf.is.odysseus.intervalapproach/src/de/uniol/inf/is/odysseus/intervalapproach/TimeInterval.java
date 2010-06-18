@@ -250,15 +250,15 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	 * @author Jendrik Poloczek
 	 * @return 
 	 */
-	public void setTimeInterval(PointInTime start, PointInTime end) {
-	    this.start = start.clone();
-	    this.setEnd(end.clone());
-	}
-	
-    public void setTimeInterval(ITimeInterval ti) {
-        this.start = ti.getStart().clone();
-        this.setEnd(ti.getEnd().clone());
-    }
+//	public void setTimeInterval(PointInTime start, PointInTime end) {
+//	    this.start = start.clone();
+//	    this.setEnd(end.clone());
+//	}
+//	
+//    public void setTimeInterval(ITimeInterval ti) {
+//        this.start = ti.getStart().clone();
+//        this.setEnd(ti.getEnd().clone());
+//    }
     	
 	
 	/**

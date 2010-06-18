@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
-public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredictionFunctionKey<K>, IProbability, ILatency, IApplicationTime{
+public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IProbability, ILatency, IApplicationTime, ITimeInterval{
     
     private static final long serialVersionUID = 1L;
     
@@ -16,7 +16,36 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 	IProbability prob;
 	ILatency lat;
 	IApplicationTime appTime;
+	ITimeInterval streamTime;
 	
+	public int compareTo(ITimeInterval arg0) {
+		return streamTime.compareTo(arg0);
+	}
+
+	public PointInTime getEnd() {
+		return streamTime.getEnd();
+	}
+
+	public PointInTime getStart() {
+		return streamTime.getStart();
+	}
+
+	public boolean isValid() {
+		return streamTime.isValid();
+	}
+
+	public void setEnd(PointInTime point) {
+		streamTime.setEnd(point);
+	}
+
+	public void setStart(PointInTime point) {
+		streamTime.setStart(point);
+	}
+
+	public String toString(PointInTime baseTime) {
+		return streamTime.toString(baseTime);
+	}
+
 	public ObjectTrackingMetadata(){
 		super();
 		this.predFctKey = new PredictionFunctionKey<K>();
@@ -31,12 +60,10 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
         this.prob = new Probability();
         this.lat = new Latency();
         this.appTime = new ApplicationTime();
-        
-        this.init(start, end);
+        this.streamTime = new TimeInterval(start, end);
      }
 
 	public ObjectTrackingMetadata(ObjectTrackingMetadata<K> copy) {
-		super(copy);
 		if(copy.predFctKey != null){
 			this.predFctKey = (IPredictionFunctionKey)copy.predFctKey.clone();
 		}
@@ -50,6 +77,9 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 		
 		if(copy.appTime != null){
 			this.appTime = (IApplicationTime)copy.appTime.clone();
+		}
+		if(copy.streamTime != null){
+			this.streamTime = (ITimeInterval)copy.streamTime.clone();
 		}
 	}
 	
@@ -170,6 +200,14 @@ public class ObjectTrackingMetadata<K> extends TimeInterval implements IPredicti
 	public void setApplicationIntervals(List<ITimeInterval> intervals) {
 		this.appTime.setApplicationIntervals(intervals);
 		
+	}
+	
+	public void setStreamTime(ITimeInterval interval){
+		this.streamTime = interval;
+	}
+	
+	public ITimeInterval getStreamTime(){
+		return this.streamTime;
 	}
 
 }

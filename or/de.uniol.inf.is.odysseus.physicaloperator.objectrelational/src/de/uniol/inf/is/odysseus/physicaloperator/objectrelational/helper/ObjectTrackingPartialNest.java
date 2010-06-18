@@ -45,9 +45,9 @@ public class ObjectTrackingPartialNest<M extends ITimeInterval & IProbability>
 		ObjectTrackingMetadata<Object> meta = 
 		    new ObjectTrackingMetadata<Object>();
 		
-		meta.setTimeInterval(
-		    new PointInTime(t.getMetadata().getStart()),
-		    new PointInTime(t.getMetadata().getEnd())
+		meta.setStreamTime(new TimeInterval(
+				new PointInTime(t.getMetadata().getStart()),
+				new PointInTime(t.getMetadata().getEnd()))
 		);		
 	}
 
