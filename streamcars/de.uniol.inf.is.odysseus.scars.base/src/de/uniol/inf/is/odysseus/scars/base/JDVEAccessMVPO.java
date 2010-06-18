@@ -9,19 +9,20 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
-import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public abstract class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
-	private JDVEData data;
+	private JDVEData<M> data;
 	private int port;
-	protected ArrayList<CarData> buffer;
+	protected MVRelationalTuple<M> buffer;
 	
 	public JDVEAccessMVPO(int pPort) {
 		this.port = pPort;
@@ -30,7 +31,7 @@ public abstract class JDVEAccessMVPO <M extends IProbability> extends AbstractSe
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			data = new JDVEData(this.port);
+			data = new JDVEData<M>(this.port, getOutputSchema());
 		}
 		catch (SocketException ex){
 			throw new OpenFailedException(ex);
@@ -77,22 +78,23 @@ public abstract class JDVEAccessMVPO <M extends IProbability> extends AbstractSe
 	}
 }
 
-class JDVEData {
+class JDVEData<M extends IProbability> {
 	
+	private static final int RECEIVE_SIZE = 10000;
+	private static final int TIMEOUT = 10000;
+		
 	private int port = -1;
 	private DatagramSocket clientSocket;
-	private int numberOfCars;
+	private SDFAttributeList attributeList;
 
-	public JDVEData(int pPort) throws SocketException {
-		this.numberOfCars = 50;
+	public JDVEData(int pPort, SDFAttributeList list) throws SocketException {
 		this.port = pPort;
 		this.clientSocket = new DatagramSocket(this.port);
-		clientSocket.setSoTimeout(10000);
+		this.clientSocket.setSoTimeout(TIMEOUT);
+		this.attributeList = list;
 	}
 	
-	public ArrayList<CarData> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
-		ArrayList<CarData> result = new ArrayList<CarData>();
-		
+	public MVRelationalTuple<M> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
 		/* Ben�tigter Puffer:
 		 * carType: 4 Byte
 		 * carTrafficID: 4 Byte
@@ -102,7 +104,7 @@ class JDVEData {
 		 * length: 4 Byte
 		 * width: 4 Byte 
 		 * = (76 Byte + 4 F�llbytes f�r das struct) * 50 Autos f�r einen Scan = 4000 Bytes */
-		byte[] receiveData = new byte[4000];
+		byte[] receiveData = new byte[RECEIVE_SIZE];
 		
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		
@@ -112,52 +114,63 @@ class JDVEData {
 	     * die Methoden, die wir zum Auslesen ben�tigen. */
 		ByteBuffer bb = ByteBuffer.wrap(receiveData);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
-		
-		/* Pro Scan werden (zumindest f�r den 
-	     * vertikalen Prototypen)
-	     * immer 50 Autos �bermittelt */
-	    for (int k = 0; k < this.numberOfCars; k++)
-	    {
-	    	CarData currentCar = new CarData();
-	    	currentCar.setCarType(bb.getInt());
-	    	currentCar.setCarTrafficID(bb.getInt());
-	    	currentCar.setLaneID(bb.getInt());
-	    	
-	    	/* F�llbytes f�r das Array auslesen */
-	        bb.getInt();
-	        
-	        double[] positionUTM = new double[6];
-	        for (int j = 0; j < 6; j++)
-	        {
-	          positionUTM[j] = bb.getDouble();
-	        }
-	        currentCar.setPositionUTM(positionUTM);
-	        currentCar.setVelocity(bb.getFloat());
-	        currentCar.setLength(bb.getFloat());
-	        currentCar.setWidth(bb.getFloat());
-	        
-	        /* F�llbytes f�r das Struct 'CarData' auslesen */
-	        bb.getInt();
-	        
-	        /* Das Auto der ArrayList hinzuf�gen, 
-	         * falls es existiert (carTrafficID != -1) */
-	        if (currentCar.getCarTrafficID() != -1)
-	        	result.add(currentCar);
-	    }
-	    return result;
+		return parseStart(attributeList.get(0), bb);
 	}
 	
-//	private double[] readArray(ByteBuffer bb, int length) {
-//		/* F�llbytes f�r das Array auslesen */
-//	    bb.getInt();
-//	        
-//	    double[] result = new double[length];
-//	    for (int j = 0; j < length; j++)
-//	    {
-//	      result[j] = bb.getDouble();
-//		}
-//	    return result;
-//	}
+	public MVRelationalTuple<M> parseStart(SDFAttribute schema, ByteBuffer bb) {
+		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		base.addAttributeValue(0, parseNext(schema.getSubattribute(0), bb));
+		return base;
+	}
+	
+	public MVRelationalTuple<M> parseRecord(SDFAttribute schema, ByteBuffer bb) {
+		int count = schema.getSubattributeCount();
+		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
+		for( int i = 0; i < count; i++ ) {
+			Object obj = parseNext(schema.getSubattribute(i), bb);
+			recordTuple.addAttributeValue(i, obj);
+		}
+		return recordTuple;
+	}
+	
+	public MVRelationalTuple<M> parseList(SDFAttribute schema, ByteBuffer bb) {
+		int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
+		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
+
+		for( int i = 0; i < count; i++ ) {
+			Object obj = parseNext(schema.getSubattribute(i), bb);
+			recordTuple.addAttributeValue(i, obj);
+		}
+		return recordTuple;
+	}
+		
+	public Object parseAttribute(SDFAttribute schema, ByteBuffer bb) {
+		if( "Integer".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getInt();
+		} else 	if( "Double".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getDouble();
+		} else 	if( "String".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			throw new RuntimeException("not implememted yet");			
+		} else 	if( "Long".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getLong();
+//		} else 	if( "Date".equals(schema.getDatatype().getURIWithoutQualName() )) {
+//			throw new RuntimeException("not implememted yet");
+		} else {
+			throw new RuntimeException("not implememted yet");			
+		}
+	}
+	
+	public Object parseNext(SDFAttribute attr, ByteBuffer bb) {
+		Object obj = null;
+		if( "Record".equals(attr.getDatatype().getURIWithoutQualName())) {
+			obj = parseRecord(attr, bb);
+		} else if( "List".equals(attr.getDatatype().getURIWithoutQualName())) {
+			obj = parseList(attr, bb);
+		} else {
+			obj = parseAttribute(attr, bb);
+		}
+		return obj;
+	}
 	
 	public void closeJDVEDataPort() {
 		this.clientSocket.close();
