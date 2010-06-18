@@ -16,7 +16,7 @@
 <module>odysseus-monitoring-standardsystemmonitor</module>
 <module>odysseus-latency</module>
 <module>pn</module>
-<!--<module>priority</module>-->
+<module>priority</module>
 <module>interval</module>
   </modules>
 </project>

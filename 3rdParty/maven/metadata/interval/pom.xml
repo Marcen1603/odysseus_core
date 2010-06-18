@@ -14,6 +14,7 @@
 
   <modules>
 <module>odysseus-intervalapproach</module>
+<module>odysseus-interval_latency</module>
 <module>odysseus-transformation-interval</module>
   </modules>
 </project>

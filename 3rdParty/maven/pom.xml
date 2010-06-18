@@ -108,12 +108,24 @@
   </build>
 
   <modules>
+<module>action</module>
+<module>application</module>
 <module>base</module>
+<module>broker</module>
+<module>cep</module>
 <module>metadata</module>
+<module>new_transformation</module>
+<module>p2p</module>
 <module>planmanagement</module>
+<module>pql</module>
+<module>rcp</module>
 <module>relational</module>
 <module>scheduler</module>
-<module>resources</module>
-<module>application</module>
+<module>sensor</module>
+<module>streamcars</module>
+<module>viewer</module>
+<module>webservice</module>
+
+
   </modules>
 </project>
