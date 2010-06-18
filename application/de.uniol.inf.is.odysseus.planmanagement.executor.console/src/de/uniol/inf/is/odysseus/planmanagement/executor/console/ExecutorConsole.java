@@ -28,6 +28,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 import org.osgi.service.prefs.PreferencesService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -60,6 +62,8 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
 public class ExecutorConsole implements CommandProvider,
 		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener {
 
+	private static Logger logger = LoggerFactory.getLogger(ExecutorConsole.class);
+	
 	private static final String METHOD = "method";
 
 	private static final String ARGUMENTS = "arguments";
@@ -233,8 +237,8 @@ public class ExecutorConsole implements CommandProvider,
 	private boolean useBrokerConfig = false;
 
 	public void bindExecutor(IAdvancedExecutor executor) {
-		System.out.println("executor gebunden");
-
+		logger.debug("executor gebunden");
+		
 		this.executor = executor;
 
 		this.executor.addErrorEventListener(this);
