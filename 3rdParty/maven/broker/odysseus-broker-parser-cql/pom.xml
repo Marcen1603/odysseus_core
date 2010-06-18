@@ -50,5 +50,10 @@
 <artifactId>odysseus-broker</artifactId>
 <version>${project.version}</version>
 </dependency>
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-parser-cql</artifactId>
+<version>${project.version}</version>
+</dependency>
 </dependencies>
 </project>

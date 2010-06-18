@@ -24,7 +24,7 @@
 <module>odysseus-planmanagement-executor-console</module>
 <module>odysseus-visualquerylanguage</module>
 <module>odysseus-transformation-benchmark</module>
-<module>odysseus-BenchmarkGUI</module>
+<!--<module>odysseus-BenchmarkGUI</module> -->
 <module>odysseus-randomserver</module>
   </modules>
 </project>

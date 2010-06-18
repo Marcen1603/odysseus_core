@@ -95,5 +95,11 @@
 <artifactId>odysseus-planmanagement-executor-standardexecutor</artifactId>
 <version>${project.version}</version>
 </dependency>
+
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-relational-base</artifactId>
+<version>${project.version}</version>
+</dependency>
 </dependencies>
 </project>
