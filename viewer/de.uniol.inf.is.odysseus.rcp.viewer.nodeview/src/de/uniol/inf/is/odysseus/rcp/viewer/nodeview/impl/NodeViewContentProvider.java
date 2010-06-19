@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
+package de.uniol.inf.is.odysseus.rcp.viewer.nodeview.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
+package de.uniol.inf.is.odysseus.rcp.viewer.nodeview.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.rcp.viewer.nodeview.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 
 public class NodeViewLabelProvider implements ILabelProvider {

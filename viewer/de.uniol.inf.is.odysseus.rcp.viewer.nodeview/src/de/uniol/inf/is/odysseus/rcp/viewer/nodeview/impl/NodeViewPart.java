@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
+package de.uniol.inf.is.odysseus.rcp.viewer.nodeview.impl;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -14,17 +14,18 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.rcp.viewer.nodeview.INodeViewPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.IGraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 
-public class NodeViewPart extends ViewPart implements ISelectionListener {
-
-	public static final String VIEW_ID = "de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView";
+public class NodeViewPart extends ViewPart implements INodeViewPart, ISelectionListener {
 
 	private TreeViewer treeViewer;
 	private boolean synched = false;
 	private ISelection selection = null;
+	private MenuManager menuManager = new MenuManager();
+	private Menu contextMenu;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -35,6 +36,9 @@ public class NodeViewPart extends ViewPart implements ISelectionListener {
 		treeViewer.setLabelProvider(new NodeViewLabelProvider());
 		treeViewer.setInput(null);
 			
+		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		getSite().setSelectionProvider(treeViewer);
+		
 		// auf Editor achten
 		getSite().getPage().addPartListener(new IPartListener() {
 
@@ -73,10 +77,9 @@ public class NodeViewPart extends ViewPart implements ISelectionListener {
 		});
 
 		// Contextmenu
-		MenuManager menuManager = new MenuManager();
-		Menu menu = menuManager.createContextMenu(treeViewer.getTree());
+		contextMenu = menuManager.createContextMenu(treeViewer.getTree());
 		// Set the MenuManager
-		treeViewer.getTree().setMenu(menu);
+		treeViewer.getTree().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, treeViewer);
 		
 	}
@@ -86,22 +89,26 @@ public class NodeViewPart extends ViewPart implements ISelectionListener {
 		treeViewer.getControl().setFocus();
 	}
 	
+	@Override
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
 	
+	@Override
 	public void setSync( boolean sync ) {
 		this.synched = sync;
 		if( this.synched ) {
-			getSite().setSelectionProvider(treeViewer);
-			getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 			treeViewer.setSelection(this.selection);
 		} else {
-			getSite().setSelectionProvider(null);
-			getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 		}
 	}
 	
+	@Override
+	public MenuManager getContextMenu() {
+		return menuManager;
+	}
+	
+	@Override
 	public boolean getSync() {
 		return synched;
 	}

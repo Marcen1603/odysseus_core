@@ -21,7 +21,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            class="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeViewPart"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.impl.NodeViewPart"
             icon="images/outline_co.gif"
             id="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView"
             name="Graph Outline"
@@ -169,7 +169,7 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.Startup">
+            class="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.activator.Startup">
       </startup>
    </extension>
 

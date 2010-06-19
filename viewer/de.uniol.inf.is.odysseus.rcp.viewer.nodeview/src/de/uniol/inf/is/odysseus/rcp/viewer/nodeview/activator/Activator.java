@@ -1,6 +1,5 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
+package de.uniol.inf.is.odysseus.rcp.viewer.nodeview.activator;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

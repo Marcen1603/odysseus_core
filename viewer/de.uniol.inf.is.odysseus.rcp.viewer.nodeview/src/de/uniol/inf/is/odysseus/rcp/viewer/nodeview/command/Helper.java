@@ -8,14 +8,15 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeViewPart;
+import de.uniol.inf.is.odysseus.rcp.viewer.nodeview.INodeViewConstants;
+import de.uniol.inf.is.odysseus.rcp.viewer.nodeview.impl.NodeViewPart;
 
 public class Helper {
 
 	public static TreeViewer getTreeViewer(ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
-		NodeViewPart view = (NodeViewPart) page.findView(NodeViewPart.VIEW_ID);
+		NodeViewPart view = (NodeViewPart) page.findView(INodeViewConstants.NODEVIEW_ID);
 		return view.getTreeViewer();
 	}
 	

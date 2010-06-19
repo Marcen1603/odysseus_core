@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nodeview
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.nodeview;singleton:=true
 Bundle-Version: 1.0.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.nodeview.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.nodeview.activator.Activator
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -18,3 +18,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.rcp.viewer.view.editor,
  de.uniol.inf.is.odysseus.rcp.viewer.view.graph,
  org.slf4j
+Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.nodeview

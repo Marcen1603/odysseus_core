@@ -1,10 +1,11 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.nodeview;
+package de.uniol.inf.is.odysseus.rcp.viewer.nodeview.activator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
+
 
 public class Startup implements IStartup {
 
