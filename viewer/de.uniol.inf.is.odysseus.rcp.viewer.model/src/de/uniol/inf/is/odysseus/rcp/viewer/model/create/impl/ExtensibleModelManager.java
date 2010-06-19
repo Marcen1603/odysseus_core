@@ -23,11 +23,11 @@ public class ExtensibleModelManager<C> extends ModelManager<C> {
 		for( int i = 0; i < elements.length; i++ ) {
 //			System.out.println("Extension found!");
 			IConfigurationElement element = elements[i];
-			System.out.println(i + " : " + element.getName());
+//			System.out.println(i + " : " + element.getName());
 			try {
 				IModelManagerListener<C> listener = (IModelManagerListener<C>)element.createExecutableExtension("class");
 				addListener(listener);
-				System.out.println("Listener added");
+//				System.out.println("Listener added");
 			} catch( CoreException ex ) {
 				logger.error(ex.getMessage());
 			}
