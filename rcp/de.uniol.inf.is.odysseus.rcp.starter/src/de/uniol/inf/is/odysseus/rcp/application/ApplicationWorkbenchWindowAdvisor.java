@@ -19,7 +19,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	public void preWindowOpen() {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		configurer.setInitialSize(new Point(600, 600));
-		configurer.setShowCoolBar(true);
+		configurer.setShowCoolBar(false);
 		configurer.setShowStatusLine(true);
 		configurer.setTitle("Odysseus RCP");
 		configurer.setShowProgressIndicator(true);

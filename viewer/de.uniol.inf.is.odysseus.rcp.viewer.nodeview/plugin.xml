@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.application.perspective.viewer">
+            targetID="de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer">
          <view
                closeable="true"
                id="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView"
