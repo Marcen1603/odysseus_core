@@ -21,7 +21,7 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="de.uniol.inf.is.odysseus.rcp.viewer.view.Startup">
+            class="de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Startup">
       </startup>
    </extension>
 

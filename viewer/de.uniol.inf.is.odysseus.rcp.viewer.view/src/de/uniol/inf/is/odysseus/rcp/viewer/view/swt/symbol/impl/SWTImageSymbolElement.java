@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol.impl;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.Activator;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.Vector;
 
 public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {

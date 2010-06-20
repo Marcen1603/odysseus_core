@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.view;
+package de.uniol.inf.is.odysseus.rcp.viewer.view.activator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.view.Activator;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator;
 
 public class XMLResourceLoader {
 

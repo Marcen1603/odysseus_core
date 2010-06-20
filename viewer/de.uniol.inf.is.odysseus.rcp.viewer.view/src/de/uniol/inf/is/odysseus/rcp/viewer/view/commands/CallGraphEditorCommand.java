@@ -16,7 +16,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.Activator;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditorInputFactory;
@@ -25,8 +25,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.ISymbolElementFactory;
 
 public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
 
-	public static final String COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor";
-	
 	private static GraphViewEditorInputFactory GRAPH_VIEW_FACTORY = new GraphViewEditorInputFactory();
 	private static ISymbolElementFactory<IPhysicalOperator> SYMBOL_FACTORY = new SWTSymbolElementFactory<IPhysicalOperator>();
 
