@@ -109,9 +109,16 @@ EOF
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 EOF
 ruby $depScript $PWD $basename >> $f/odysseus-$artifactId/pom.xml
 cat >> $f/odysseus-$artifactId/pom.xml <<EOF
+  </dependencies>
 </project>
 EOF
 #		    fi

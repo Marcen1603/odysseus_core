@@ -217,7 +217,6 @@ pdg.parse path
 #pdg.unknownDepAr.each{|pkg| puts pkg}
 #hier kommst du ...
 if pdg.projectDependencies[bundle]
-	puts "<dependencies>"
 	pdg.projectDependencies[bundle].each {|v|
 		artifact = v.split(".")
 		artifact = "odysseus-" + artifact[5..artifact.length].join("-")
@@ -236,7 +235,6 @@ dep = pdg.externalDependencies[v]
   tmp.uniq.each{|v|
     puts v
   }
-	puts "</dependencies>"
 end
 #pdg.projectDependencies = hashmap von bundle => <dependencies des bundles>
 #pdg.unresolvedDependencies = hashmap von bundle => <dependencies des bundles, die nicht aufgeloest werden konnten (kein src-projekt im svn sind)>
