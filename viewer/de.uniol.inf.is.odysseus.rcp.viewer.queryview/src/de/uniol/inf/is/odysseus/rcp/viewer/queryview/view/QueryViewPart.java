@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.queryview.view;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -12,6 +13,7 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
@@ -82,6 +84,13 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 			}			
 		});
 		
+		// Contextmenu
+		MenuManager menuManager = new MenuManager();
+		Menu contextMenu = menuManager.createContextMenu(tableViewer.getTable());
+		// Set the MenuManager
+		tableViewer.getTable().setMenu(contextMenu);
+		getSite().registerContextMenu(menuManager, tableViewer);
+	
 		Thread t = new Thread( new Runnable() {
 
 			@Override
@@ -124,7 +133,11 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		try {
 			int count = eventArgs.getSender().getSealedPlan().getQueries().size();
-			addQuery(eventArgs.getSender().getSealedPlan().getQuery(count-1));
+			if("QUERY_REMOVE".equals(eventArgs.getID())) {
+				removeQuery((IQuery)eventArgs.getValue());
+			} else if("QUERY_ADDED".equals(eventArgs.getID())) {
+				addQuery(eventArgs.getSender().getSealedPlan().getQuery(count-1));
+			}
 		} catch (PlanManagementException e) {
 			logger.error("cannot get queries", e);
 		}
@@ -132,6 +145,17 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 	
 	private void addQueries( Collection<IQuery> qs ) {
 		queries.addAll(qs);
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				tableViewer.refresh();
+			}
+			
+		});
+	}
+	private void removeQuery( IQuery q ) {
+		queries.remove(q);
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
 			@Override

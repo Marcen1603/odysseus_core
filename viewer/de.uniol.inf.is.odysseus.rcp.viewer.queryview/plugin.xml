@@ -36,6 +36,19 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.RemoveQueryCommand"
+               label="Remove Query"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.ShowQueryDialogCommand"
+               label="Add Query..."
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

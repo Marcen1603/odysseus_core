@@ -4,31 +4,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.AddQueryCommand"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.AddQuery"
-            name="Add Query">
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.QueryParameter"
-               name="Query Parameter"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ParserParameter"
-               name="Parser Parameter"
-               optional="false">
-         </commandParameter>
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialogCommand"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
-            name="Show Query Dialog">
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartQueryParameter"
-               name="StartQuery Parameter"
-               optional="true">
-         </commandParameter>
-      </command>
-      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartSchedulerCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartScheduler"
             name="Start Scheduler">
@@ -56,7 +31,7 @@
          <menu
                label="OSGi Commands">
             <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.ShowQueryDialog"
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.ShowQueryDialogCommand"
                   label="Add Query..."
                   style="push">
             </command>
