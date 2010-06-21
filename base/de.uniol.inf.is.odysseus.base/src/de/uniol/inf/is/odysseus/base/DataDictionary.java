@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 //import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 /**

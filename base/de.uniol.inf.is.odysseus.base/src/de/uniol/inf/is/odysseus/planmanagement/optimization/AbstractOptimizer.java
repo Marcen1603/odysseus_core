@@ -14,8 +14,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -59,12 +57,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	protected IQueryOptimizer queryOptimizer;
 
 	/**
-	 * Registered plan migration service.
+	 * Registered plan migration services.
 	 */
-	// protected IPlanMigrationStrategy planMigrationStrategy;
 	private Map<String, IPlanMigrationStrategy> planMigrationStrategies = new HashMap<String, IPlanMigrationStrategy>();
-
-	// protected IBufferPlacementStrategy bufferPlacementStrategy;
 
 	/**
 	 * List of error event listener. If an error occurs these objects should be informed.

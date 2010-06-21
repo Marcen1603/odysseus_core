@@ -7,8 +7,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;

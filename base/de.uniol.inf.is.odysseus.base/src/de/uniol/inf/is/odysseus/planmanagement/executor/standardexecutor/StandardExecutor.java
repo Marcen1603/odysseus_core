@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;

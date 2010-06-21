@@ -1,22 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 
 /**
  * @author Wolf Bauer, Jonas Jacobi
