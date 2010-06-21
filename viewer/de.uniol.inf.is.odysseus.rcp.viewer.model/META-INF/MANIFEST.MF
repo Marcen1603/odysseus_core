@@ -7,8 +7,6 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.model.activator.Activator
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.planmanagement.event,
- de.uniol.inf.is.odysseus.base.planmanagement.plan,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.base,
