@@ -42,13 +42,13 @@ for f in $folders; do
 EOF
     for s in $(find $f -mindepth 1 -maxdepth 1 -type d -name 'de.uniol*'); do
 	    basename=${s##*/}
-	    isin=0
-	    for i in $folders; do
-	        if [ $i = $basename ]; then
-		        isin=1
-	        fi
-	    done
-	    if [ $isin = 0 ]; then
+#	    isin=0
+#	    for i in $folders; do
+#	        if [ $i = $basename ]; then
+#		        isin=1
+#	        fi
+#	    done
+#	    if [ $isin = 0 ]; then
 	        echo "Processing $basename"
 	        artifactId=${basename#*de.uniol.inf.is.odysseus.}
 	        artifactId=$(echo $artifactId | tr "." "-")
@@ -58,9 +58,9 @@ EOF
 		    mkdir -p $f/odysseus-$artifactId/src/main/resources
 		    mkdir -p $f/odysseus-$artifactId/src/test/java
 		    mkdir -p $f/odysseus-$artifactId/src/test/resources
-		    if [ -d $partyDir/$f/odysseus-$artifactId ]; then
-		        cp -u $partyDir/$f/odysseus-$artifactId/pom.xml $f/odysseus-$artifactId/
-		    else
+#		    if [ -d $partyDir/$f/odysseus-$artifactId ]; then
+#		        cp -u $partyDir/$f/odysseus-$artifactId/pom.xml $f/odysseus-$artifactId/
+#		    else
 		        echo "Generate pom"
 		        cat > $f/odysseus-$artifactId/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -114,13 +114,13 @@ ruby $depScript $PWD $basename >> $f/odysseus-$artifactId/pom.xml
 cat >> $f/odysseus-$artifactId/pom.xml <<EOF
 </project>
 EOF
-		    fi
+#		    fi
 		    git add $f/odysseus-$artifactId/pom.xml
 		    #git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
 		    #git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
             for sf in $s/resources/* ; do git mv -kf ${sf%*resources/} $f/odysseus-$artifactId/src/main/resources/ ; done
 		    for sf in $s/src/* ; do git mv -kf ${sf%*src/} $f/odysseus-$artifactId/src/main/java/ ; done
-	    fi
+#	    fi
     done
     cat >> $f/pom.xml <<EOF
   </modules>
