@@ -134,13 +134,17 @@ private
 	def getPackages(project, prefix, dir)
 		Dir.entries(prefix + "/" + dir).each do
 			|curDirName|
-			next if (curDirName[0] ==  46) #46 = '.'
+			next if (/^\./ =~ curDirName) #46 = '.'curDirName[0] ==  46) #46 = '.'
 			curPackage = dir.empty? ? curDirName : dir + "/" + curDirName
 			curDir = prefix + "/" + curPackage
+			begin
 			if File.stat(curDir).directory? then
 				package = curPackage.gsub(/\//, '.')
 				@packages[package] = project
 				getPackages(project, prefix, curPackage)
+			end
+			rescue 
+			puts "error"
 			end
 		end
 	end
@@ -148,8 +152,10 @@ private
 	def findSrc(path, lastdir)
 		Dir.entries(path).each do
 			|curDir|
-			next if (curDir[0] == 46) #46 = '.'
+			#puts curDir
+			next if (/^\./ =~ curDir) #46 = '.'
 			curPath = path + "/" + curDir
+			begin
 			if File.stat(curPath).directory? then
 				if curDir.downcase == "src" then
 					manifest = path + "/META-INF/MANIFEST.MF"
@@ -160,6 +166,9 @@ private
 				else
 					findSrc(curPath, curDir)
 				end
+			end
+			rescue
+			puts "error"
 			end
 		end
 	end
@@ -173,7 +182,7 @@ private
 				addImport(project, line[15, line.length-1])
 				while not file.eof?
 					line = file.readline
-					return if /^.+:/ =~ line
+					return if /^[^;]+:/ =~ line
 					addImport(project, line)
 				end
 			end
@@ -221,7 +230,7 @@ if pdg.projectDependencies[bundle]
   tmp = Array.new
   pdg.unresolvedDependencies[bundle].each{|v|
 dep = pdg.externalDependencies[v]
-
+	#puts "unresolved #{v}" if dep.nil?
     tmp << dep unless dep.nil?
 }
   tmp.uniq.each{|v|
