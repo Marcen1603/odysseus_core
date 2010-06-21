@@ -21,5 +21,12 @@ public class OdysseusGraphModel extends DefaultGraphModel<IPhysicalOperator> imp
 	public IQuery getQuery() {
 		return query;
 	}
+	
+	@Override
+	public String getName() {
+		if( query != null ) 
+			return "Query " + String.valueOf(query.getID());
+		return super.getName();
+	}
 
 }
