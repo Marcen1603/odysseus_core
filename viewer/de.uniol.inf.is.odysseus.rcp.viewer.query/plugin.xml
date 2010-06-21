@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.AddQueryCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.query.AddQueryCommand"
+            name="Add Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.viewer.query.QueryParameter"
+               name="Query Parameter"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.viewer.query.ParserParameter"
+               name="Parser Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.RemoveQueryCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.query.RemoveQueryCommand"
+            name="Remove Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.viewer.query.QueryIDParameter"
+               name="Query ID"
+               optional="true">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.ShowQueryDialogCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.query.ShowQueryDialogCommand"
+            name="Show Query Dialog">
+      </command>
+   </extension>
+
+</plugin>
