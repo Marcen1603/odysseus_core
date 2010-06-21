@@ -269,7 +269,7 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.MIG;
 		try {
-			eval(eq, 120, 1, "" + System.currentTimeMillis() + eq);
+			eval(eq, 120, 1, "" + System.currentTimeMillis() + eq,0);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -283,21 +283,33 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.GOOD;
 		try {
-			eval(eq, 120, 5, "" + System.currentTimeMillis()+ eq+"_"+currentBuffer+"_"+currentScheduler);
+			eval(eq, 120, 5, "" + System.currentTimeMillis()+ eq+"_"+currentBuffer+"_"+currentScheduler,0);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
+	public void _emulti(CommandInterpreter ci) {
+		// TODO: Hack zum einfachen Testen ;-)
+		basepath = "c:/development/";
+		nmsn(ci);
+		EvalQuery eq = EvalQuery.GOOD;
+		try {
+			eval(eq, 120, 5, "" + System.currentTimeMillis()+ eq+"_"+currentBuffer+"_"+currentScheduler, 10);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void _er(CommandInterpreter ci) {
 		// TODO: Hack zum einfachen Testen ;-)
 		basepath = "c:/development/";
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.GOOD_REMOVE;
 		try {
-			eval(eq, 500, 5, "" + System.currentTimeMillis() + eq);
+			eval(eq, 500, 5, "" + System.currentTimeMillis() + eq,0);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -311,7 +323,7 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.BAD_REMOVE;
 		try {
-			eval(eq, 500, 5, "" + System.currentTimeMillis() + eq);
+			eval(eq, 500, 5, "" + System.currentTimeMillis() + eq,0);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -325,7 +337,7 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		EvalQuery eq = EvalQuery.MIG;
 		try {
-			eval(eq, 120, 5, "" + System.currentTimeMillis() + eq);
+			eval(eq, 120, 5, "" + System.currentTimeMillis() + eq,0);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -340,7 +352,7 @@ public class OptimizationTestConsole implements
 		nmsn(ci);
 		for (EvalQuery eq : EvalQuery.values()) {
 			try {
-				eval(eq, 120, 5, "" + System.currentTimeMillis() + eq);
+				eval(eq, 120, 5, "" + System.currentTimeMillis() + eq,0);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -349,14 +361,18 @@ public class OptimizationTestConsole implements
 	}
 
 	public void eval(EvalQuery evalQuery, int secondsPerRun, int runs,
-			String filename) throws IOException {
+			String filename, int concurrentQueries) throws IOException {
 		String newline = System.getProperty("line.separator");
 		String sep = ";";
 
 		List<List<Measure>> r = new ArrayList<List<Measure>>(runs);
 
 		for (int i = 0; i < runs; i++) {
-			r.add(e(evalQuery, secondsPerRun));
+			if (concurrentQueries > 0){
+				r.add(eMulti(secondsPerRun, concurrentQueries));
+			}else{
+				r.add(e(evalQuery, secondsPerRun));
+			}
 			waitFor(10000); // Zwischen zwei Aufrufen warten --> Quellenconnect
 			// etc.
 		}
@@ -413,15 +429,14 @@ public class OptimizationTestConsole implements
 
 			setOptimizationSink(new OptimizationTestSink(OutputMode.COUNT));
 
-			Collection<Integer> queryIds = this.executor
-					.addQuery(
-							"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
-							parser(), currentUser, new ParameterDefaultRoot(sink),
-							this.trafoConfigParam);
-			System.out.println("QueryIDs: " + queryIds);
-			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
-			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
-
+				Collection<Integer> queryIds = this.executor
+						.addQuery(
+								"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
+								parser(), currentUser, new ParameterDefaultRoot(sink),
+								this.trafoConfigParam);
+				System.out.println("QueryIDs: " + queryIds);
+				IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
+				IEditableQuery query = plan.getQuery(queryIds.iterator().next());
 			// manipulate: push select to top
 			if (evalQuery == EvalQuery.BAD || evalQuery == EvalQuery.MIG
 					|| evalQuery == EvalQuery.BAD_REMOVE) {
@@ -517,6 +532,88 @@ public class OptimizationTestConsole implements
 			System.out.println(Router.getInstance().getRouterReceiver());
 
 			executor.removeQuery(query.getID());
+			System.out.println(Router.getInstance().getRouterReceiver());
+			this.executor.stopExecution();
+
+			lsqueries();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return measures;
+	}
+
+	
+	public List<Measure> eMulti(int seconds, int noOfQueries) {
+		List<Measure> measures = new ArrayList<Measure>(seconds);
+		String sep = ";";
+		try {
+
+			setOptimizationSink(new OptimizationTestSink(OutputMode.COUNT));
+
+			for (int i=0;i<noOfQueries;i++) {
+				this.executor
+						.addQuery(
+								"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
+								parser(), currentUser, new ParameterDefaultRoot(sink),
+								this.trafoConfigParam);
+			}
+
+			dumpRoots();
+
+			MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
+			ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+			if (!threadBean.isThreadCpuTimeSupported()) {
+				System.err.println("Messung nicht möglich!!!");
+			}
+			Map<Long, Long> lastTime = new HashMap<Long, Long>();
+
+			waitFor(1000);
+			this.executor.startExecution();
+			long startTime = System.currentTimeMillis();
+			System.out
+					.println("----------Evaluation Start------------------------------");
+			System.out.println("time_elapsed" + sep + "tuples_passed "
+					+ sep + "cpu_load " +  sep
+					+ "memory_usage " );
+			// first time minus old cpu load
+			for (long id : threadBean.getAllThreadIds()) {
+				long t = threadBean.getThreadCpuTime(id);
+				lastTime.put(id, t);
+			}
+			for (int i = 0; i < seconds; i++) {
+				waitFor(1000);
+				long cputime = 0L;
+				long currentTime = System.currentTimeMillis();
+				for (long id : threadBean.getAllThreadIds()) {
+					long t = threadBean.getThreadCpuTime(id);
+					if (lastTime.containsKey(id)) {
+						long last = lastTime.get(id);
+						lastTime.put(id, t);
+						t -= last;
+					} else {
+						lastTime.put(id, t);
+					}
+					cputime += t;
+				}
+				synchronized (this) {
+					Measure m = new Measure((long) Math
+							.floor(((currentTime - startTime) / 1000)), sink
+							.getCount(), cputime, memBean.getHeapMemoryUsage()
+							.getUsed());
+					measures.add(m);
+					System.out.println(m.time_elapsed + sep + m.tuples_passed
+							+ sep + m.cpu_load + sep + m.memory_usage);
+				}
+
+			}
+			System.out
+					.println("----------Evaluation End--------------------------------");
+
+			System.out.println(Router.getInstance().getRouterReceiver());
+			for(IQuery q: executor.getSealedPlan().getQueries()){
+				executor.removeQuery(q.getID());
+			}
 			System.out.println(Router.getInstance().getRouterReceiver());
 			this.executor.stopExecution();
 

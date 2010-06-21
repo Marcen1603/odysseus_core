@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,13 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * Priority with which the objects should be scheduled.
 	 */
-	private int priority;
+	private int currentPriority;
+	
+	/**
+	 * Priority at creation time
+	 */
+	private int basePriority;
+	
 
 	/**
 	 *  Cache Ids for Sources to speed up getSourceID
@@ -47,18 +54,20 @@ public class PartialPlan implements IPartialPlan {
 	 *            Sources which should be scheduled.
 	 * @param roots
 	 *            Roots which should be scheduled.
-	 * @param priority
-	 *            Priority with which the objects should be scheduled.
+	 * @param basePriority
+	 *            Initial priority with which the objects should be scheduled. Real priorty can change
+	 *            at runtime
 	 */
 	public PartialPlan(List<IIterableSource<?>> iterableSource,
-			List<ISink<?>> roots, int priority) {
+			List<ISink<?>> roots, int basePriority) {
 		this.iterableSource = new ArrayList<IIterableSource<?>>(iterableSource);
 		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
 		for (int i=0;i<iterableSource.size();i++){
 			sourceIds.put(iterableSource.get(i), i); // Iterator does not garantee order ... (?)
 		}
 		this.roots = roots;
-		this.priority = priority;
+		this.currentPriority = basePriority;
+		this.basePriority = basePriority;
 	}
 
 	/**
@@ -87,7 +96,7 @@ public class PartialPlan implements IPartialPlan {
 	 */
 	@Override
 	public List<IIterableSource<?>> getIterableSource() {
-		return iterableSource;
+		return Collections.unmodifiableList(iterableSource);
 	}
 
 	@Override
@@ -122,10 +131,20 @@ public class PartialPlan implements IPartialPlan {
 	 * ()
 	 */
 	@Override
-	public int getPriority() {
-		return this.priority;
+	public int getCurrentPriority() {
+		return this.currentPriority;
 	}
 
+	@Override
+	public void setCurrentPriority(int newPriority) {
+		this.currentPriority = newPriority;
+	}
+	
+	@Override
+	public int getBasePriority() {
+		return this.basePriority;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
