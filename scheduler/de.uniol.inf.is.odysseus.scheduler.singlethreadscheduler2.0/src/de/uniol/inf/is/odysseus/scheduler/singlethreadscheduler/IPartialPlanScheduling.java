@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
-public interface IPlanScheduling {
+public interface IPartialPlanScheduling {
 
 	void clear();
 
@@ -10,7 +10,7 @@ public interface IPlanScheduling {
 
 	int planCount();
 
-	IPlanScheduling clone();
+	IPartialPlanScheduling clone();
 
 	IScheduling nextPlan();
 

@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
-public class RoundRobinPlanScheduling implements IPlanScheduling, ISchedulingEventListener, IClone{
+public class RoundRobinPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener, IClone{
 
 	Logger logger = LoggerFactory.getLogger(RoundRobinPlanScheduling.class);
 

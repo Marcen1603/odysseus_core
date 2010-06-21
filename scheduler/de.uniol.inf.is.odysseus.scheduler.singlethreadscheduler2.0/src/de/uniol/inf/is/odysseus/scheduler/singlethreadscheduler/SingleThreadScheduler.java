@@ -238,7 +238,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 				logger.debug("setPartialPlans create new Parts");
 				for (IPartialPlan partialPlan : partialPlans) {
 					final IScheduling scheduling = schedulingFactory.create(
-							partialPlan, partialPlan.getPriority());
+							partialPlan, partialPlan.getCurrentPriority());
 					this.parts.add(scheduling);
 				}
 //			}

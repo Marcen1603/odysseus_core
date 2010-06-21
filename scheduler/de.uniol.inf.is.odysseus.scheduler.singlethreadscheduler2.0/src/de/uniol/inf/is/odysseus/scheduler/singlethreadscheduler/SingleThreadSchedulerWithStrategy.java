@@ -30,7 +30,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 		UncaughtExceptionHandler {
 
 	Logger logger = LoggerFactory.getLogger(SingleThreadSchedulerWithStrategy.class);
-	final IPlanScheduling planScheduling;
+	final IPartialPlanScheduling planScheduling;
 
 	/**
 	 * Creates a new SingleThreadScheduler.
@@ -39,7 +39,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 	 *            Factory for creating new scheduling strategies for each
 	 *            partial plan which should be scheduled.
 	 */
-	public SingleThreadSchedulerWithStrategy(ISchedulingFactory schedulingStrategieFactory, IPlanScheduling planScheduling) {
+	public SingleThreadSchedulerWithStrategy(ISchedulingFactory schedulingStrategieFactory, IPartialPlanScheduling planScheduling) {
 		super(schedulingStrategieFactory);
 		this.planScheduling = planScheduling;
 	}
@@ -106,7 +106,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 			for (IPartialPlan partialPlan : partialPlans) {
 				logger.debug("setPartialPlans create new Parts with Scheduling "+schedulingFactory.getName());
 				final IScheduling scheduling = schedulingFactory.create(
-						partialPlan, partialPlan.getPriority());
+						partialPlan, partialPlan.getCurrentPriority());
 				planScheduling.addPlan(scheduling);
 			}
 		}
@@ -194,10 +194,10 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 
 class ExecutorThread extends Thread {
 
-	private IPlanScheduling planScheduling;
+	private IPartialPlanScheduling planScheduling;
 	private long timeSlicePerStrategy;
 
-	public ExecutorThread(IPlanScheduling planScheduling,
+	public ExecutorThread(IPartialPlanScheduling planScheduling,
 			long timeSlicePerStrategy) {
 		this.planScheduling = planScheduling.clone();
 		this.timeSlicePerStrategy = timeSlicePerStrategy;
