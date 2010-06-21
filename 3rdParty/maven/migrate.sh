@@ -111,9 +111,9 @@ EOF
   </build>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>\${project.groupId}</groupId>
       <artifactId>odysseus-base</artifactId>
-      <version>${project.version}</version>
+      <version>\${project.version}</version>
     </dependency>
 EOF
 ruby $depScript $PWD $basename >> $f/odysseus-$artifactId/pom.xml
