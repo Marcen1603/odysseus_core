@@ -11,7 +11,9 @@ public interface IPartialPlan {
 	public int getSourceId(IIterableSource<?> source);
 	public List<ISink<?>> getRoots();
 	
-	public int getPriority();
+	public int getCurrentPriority();
+	public void setCurrentPriority(int newPriority);
+	public int getBasePriority();
 
 	public int hashCode();
 	

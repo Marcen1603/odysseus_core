@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRule;
  * 
  */
 public abstract class AbstractPlanReoptimizeRule 
-	implements IReoptimizeRule<IEditablePlan> {
+	implements IReoptimizeRule<IPlan> {
 
 	/**
 	 * List of global plans which are informed if this rule is valid.
@@ -35,7 +35,7 @@ public abstract class AbstractPlanReoptimizeRule
 	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRule#addReoptimieRequester(de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester)
 	 */
 	@Override
-	public void addReoptimieRequester(IEditablePlan reoptimizable) {
+	public void addReoptimieRequester(IPlan reoptimizable) {
 		this.reoptimizable.add(reoptimizable);
 	}
 	
@@ -43,7 +43,7 @@ public abstract class AbstractPlanReoptimizeRule
 	 * @see de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRule#removeReoptimieRequester(de.uniol.inf.is.odysseus.base.planmanagement.IReoptimizeRequester)
 	 */
 	@Override
-	public void removeReoptimieRequester(IEditablePlan reoptimizable) {
+	public void removeReoptimieRequester(IPlan reoptimizable) {
 		this.reoptimizable.remove(reoptimizable);
 	}
 	

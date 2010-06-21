@@ -6,7 +6,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
@@ -82,7 +82,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan reoptimize(IOptimizable sender, IEditableQuery query,
+	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException;
 
@@ -164,7 +164,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries,
+			List<IQuery> newQueries,
 			AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException;
 	
@@ -185,7 +185,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> queries,
+			List<IQuery> queries,
 			Set<String> rulesToUse,
 			AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException;
@@ -205,7 +205,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries, OptimizeParameter parameter)
+			List<IQuery> newQueries, OptimizeParameter parameter)
 			throws QueryOptimizationException;
 	
 	/**
@@ -225,7 +225,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries, OptimizeParameter parameter, Set<String> rulesToUse)
+			List<IQuery> newQueries, OptimizeParameter parameter, Set<String> rulesToUse)
 			throws QueryOptimizationException;
 	
 	/**
@@ -234,7 +234,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @param query
 	 * 			Query that has finished a migration to a new plan.
 	 */
-	public void handleFinishedMigration(IEditableQuery query);
+	public void handleFinishedMigration(IQuery query);
 	
 	/**
 	 * 

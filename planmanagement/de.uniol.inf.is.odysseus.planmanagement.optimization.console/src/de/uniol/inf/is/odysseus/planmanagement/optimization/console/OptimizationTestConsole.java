@@ -17,8 +17,8 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
@@ -152,8 +152,8 @@ public class OptimizationTestConsole implements
 							this.trafoConfigParam);
 			this.executor.startExecution();
 
-			IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
-			IEditableQuery query = plan.getQuery(queryIds.iterator().next());
+			IPlan plan = (IPlan) this.executor.getSealedPlan();
+			IQuery query = plan.getQuery(queryIds.iterator().next());
 			IPhysicalOperator op = query.getRoot();
 			System.out.println(op.getName());
 
@@ -435,8 +435,8 @@ public class OptimizationTestConsole implements
 								parser(), currentUser, new ParameterDefaultRoot(sink),
 								this.trafoConfigParam);
 				System.out.println("QueryIDs: " + queryIds);
-				IEditablePlan plan = (IEditablePlan) this.executor.getSealedPlan();
-				IEditableQuery query = plan.getQuery(queryIds.iterator().next());
+				IPlan plan = (IPlan) this.executor.getSealedPlan();
+				IQuery query = plan.getQuery(queryIds.iterator().next());
 			// manipulate: push select to top
 			if (evalQuery == EvalQuery.BAD || evalQuery == EvalQuery.MIG
 					|| evalQuery == EvalQuery.BAD_REMOVE) {
@@ -518,7 +518,7 @@ public class OptimizationTestConsole implements
 									"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
 									parser(), currentUser, new ParameterDefaultRoot(sink),
 									this.trafoConfigParam);
-					plan = (IEditablePlan) this.executor.getSealedPlan();
+					plan = (IPlan) this.executor.getSealedPlan();
 					System.out.println("QueryIDs: " + queryIds);
 					query = plan.getQuery(queryIds.iterator().next());
 					if (evalQuery == EvalQuery.BAD_REMOVE) {
@@ -625,7 +625,7 @@ public class OptimizationTestConsole implements
 		return measures;
 	}
 
-	private void _helpMakeQueryBad(IEditableQuery query)
+	private void _helpMakeQueryBad(IQuery query)
 			throws OpenFailedException, NoOptimizerLoadedException,
 			QueryOptimizationException {
 		System.out.println("Rebuilding Query to Bad Query");

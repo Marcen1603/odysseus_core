@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.IWindow;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.IWindow.WindowType;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
@@ -66,7 +66,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void migrateQuery(IOptimizer sender, IEditableQuery runningQuery,
+	public void migrateQuery(IOptimizer sender, IQuery runningQuery,
 			IPhysicalOperator newPlanRoot) throws QueryOptimizationException {
 		this.logger.debug("Start planmigration.");
 

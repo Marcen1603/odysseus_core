@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.UpdateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -33,10 +33,10 @@ import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 public class QueryRestructOptimizer implements IQueryOptimizer {
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter)
 	 */
 	@Override
-	public void optimizeQuery(IQueryOptimizable sender, IEditableQuery query,
+	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
 			OptimizeParameter parameters) throws QueryOptimizationException {
 		ICompiler compiler = sender.getCompiler();
 		
@@ -79,10 +79,10 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter, Set<String>)
+	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable, de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter, Set<String>)
 	 */
 	@Override
-	public void optimizeQuery(IQueryOptimizable sender, IEditableQuery query,
+	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
 			OptimizeParameter parameters, Set<String> rulesToUse) throws QueryOptimizationException {
 		ICompiler compiler = sender.getCompiler();
 		
@@ -123,7 +123,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	}
 	
 	@Override
-	public void postTransformationInit(IEditableQuery query, IPhysicalOperator physicalPlan) 
+	public void postTransformationInit(IQuery query, IPhysicalOperator physicalPlan) 
 			throws QueryOptimizationException, OpenFailedException {
 		addBuffers(query, physicalPlan);
 		
@@ -131,7 +131,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		query.initializePhysicalPlan(physicalPlan);
 	}
 	
-	private void addBuffers(IEditableQuery query, IPhysicalOperator physicalPlan) 
+	private void addBuffers(IQuery query, IPhysicalOperator physicalPlan) 
 			throws QueryOptimizationException {
 		IBufferPlacementStrategy bufferPlacementStrategy = query
 				.getBuildParameter().getBufferPlacementStrategy();
@@ -150,7 +150,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<IPhysicalOperator,ILogicalOperator> createAlternativePlans(
-			IQueryOptimizable sender, IEditableQuery query,
+			IQueryOptimizable sender, IQuery query,
 			OptimizeParameter parameters, Set<String> rulesToUse)
 			throws QueryOptimizationException {
 		

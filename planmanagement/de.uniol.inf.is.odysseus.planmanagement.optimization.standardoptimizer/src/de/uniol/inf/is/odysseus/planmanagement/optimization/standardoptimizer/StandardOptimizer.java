@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
@@ -49,7 +49,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	private IPlanMigrationCostModel migrationCostModel;
 	
 	private Map<Integer, PlanMigrationContext> optimizationContext;
-	private Queue<IEditableQuery> pendingRequests;
+	private Queue<IQuery> pendingRequests;
 	
 	public static final long MONITORING_PERIOD = 30000;
 	
@@ -57,7 +57,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		logger = LoggerFactory.getLogger(StandardOptimizer.class);
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 //		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategy>();
-		this.pendingRequests = new LinkedList<IEditableQuery>();
+		this.pendingRequests = new LinkedList<IQuery>();
 	}
 	
 	public void bindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
@@ -103,16 +103,16 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> queries, OptimizeParameter parameter)
+			List<IQuery> queries, OptimizeParameter parameter)
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
-			for (IEditableQuery editableQuery : queries) {
+			for (IQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 						parameter);
 				updateMetadataListener(editableQuery);
 			}
 
-			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
+			List<IQuery> newPlan = sender.getRegisteredQueries();
 			newPlan.addAll(queries);
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
@@ -125,16 +125,16 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
+			List<IQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
-			for (IEditableQuery editableQuery : queries) {
+			for (IQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 						parameter, rulesToUse);
 				updateMetadataListener(editableQuery);
 			}
 
-			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
+			List<IQuery> newPlan = sender.getRegisteredQueries();
 			newPlan.addAll(queries);
 
 			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
@@ -151,7 +151,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			T sender, IQuery removedQuery,
 			IEditableExecutionPlan executionPlan, OptimizeParameter parameter)
 			throws QueryOptimizationException {
-		ArrayList<IEditableQuery> newPlan = new ArrayList<IEditableQuery>(
+		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
 				sender.getRegisteredQueries());
 		newPlan.remove(removedQuery);
 
@@ -161,14 +161,14 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return newExecutionPlan;
 	}
 	
-	private void updateMetadataListener(IEditableQuery editableQuery) {
+	private void updateMetadataListener(IQuery editableQuery) {
 		AbstractTreeWalker.prefixWalk2(editableQuery.getRoot(), new InstallMetadataListenerVisitor());
 	}
 	
 	@Override
 	public IExecutionPlan preQueryMigrateOptimization(IOptimizable sender,
 			OptimizeParameter parameter) throws QueryOptimizationException {
-		ArrayList<IEditableQuery> newPlan = new ArrayList<IEditableQuery>(
+		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
 				sender.getRegisteredQueries());
 		IEditableExecutionPlan newExecutionPlan = this.planOptimizer
 			.optimizePlan(sender, parameter, newPlan);
@@ -176,7 +176,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	}
 	
 	@Override
-	public IExecutionPlan reoptimize(IOptimizable sender, IEditableQuery query,
+	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		this.logger.info("Start reoptimize query ID "+query.getID());
@@ -265,7 +265,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	}
 
 	@Override
-	public void handleFinishedMigration(IEditableQuery query) {
+	public void handleFinishedMigration(IQuery query) {
 		PlanMigrationContext context = this.optimizationContext.get(query.getID());
 
 		try {
@@ -293,7 +293,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		}
 	}
 	
-	private void queueRequest(IEditableQuery query, String reason) {
+	private void queueRequest(IQuery query, String reason) {
 		this.logger.warn("Reoptimization request queued. "+reason);
 		if (!this.pendingRequests.contains(query)) {
 			this.pendingRequests.offer(query);
@@ -304,7 +304,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public IExecutionPlan reoptimize(IOptimizable sender,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
-		for (IEditableQuery query : sender.getRegisteredQueries()) {
+		for (IQuery query : sender.getRegisteredQueries()) {
 			reoptimize(sender, query, executionPlan);
 		}
 		return executionPlan;

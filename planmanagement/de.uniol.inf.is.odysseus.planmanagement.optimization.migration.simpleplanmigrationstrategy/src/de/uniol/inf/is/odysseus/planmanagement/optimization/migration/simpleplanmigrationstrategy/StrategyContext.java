@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.IWindow;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 
@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 class StrategyContext {
 
 	private IOptimizer optimizer;
-	private IEditableQuery runningQuery;
+	private IQuery runningQuery;
 	private IPhysicalOperator newPlanRoot;
 	private IPhysicalOperator oldPlanRoot;
 	private IWindow wMax;
@@ -31,7 +31,7 @@ class StrategyContext {
 	private IPhysicalOperator lastOperatorOldPlan;
 	private IPhysicalOperator lastOperatorNewPlan;
 
-	public StrategyContext(IOptimizer optimizer, IEditableQuery runningQuery,
+	public StrategyContext(IOptimizer optimizer, IQuery runningQuery,
 			IPhysicalOperator newPlanRoot) {
 		this.optimizer = optimizer;
 		this.runningQuery = runningQuery;
@@ -47,11 +47,11 @@ class StrategyContext {
 		this.optimizer = optimizer;
 	}
 
-	public IEditableQuery getRunningQuery() {
+	public IQuery getRunningQuery() {
 		return runningQuery;
 	}
 
-	public void setRunningQuery(IEditableQuery runningQuery) {
+	public void setRunningQuery(IQuery runningQuery) {
 		this.runningQuery = runningQuery;
 	}
 

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 
@@ -17,11 +17,11 @@ class PlanMigrationContext {
 
 	private IPhysicalOperator root;
 	private ILogicalOperator logicalPlan;
-	private IEditableQuery query;
+	private IQuery query;
 	private IPlanMigrationStrategy strategy;
 	private IOptimizable sender;
 
-	public PlanMigrationContext(IEditableQuery query) {
+	public PlanMigrationContext(IQuery query) {
 		this.query = query;
 	}
 
@@ -41,11 +41,11 @@ class PlanMigrationContext {
 		this.logicalPlan = logicalPlan;
 	}
 
-	IEditableQuery getQuery() {
+	IQuery getQuery() {
 		return query;
 	}
 
-	void setQuery(IEditableQuery query) {
+	void setQuery(IQuery query) {
 		this.query = query;
 	}
 

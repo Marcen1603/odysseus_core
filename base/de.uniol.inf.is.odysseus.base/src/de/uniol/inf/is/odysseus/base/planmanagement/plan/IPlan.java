@@ -20,14 +20,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 public interface IPlan extends
 		IReoptimizeRequester<AbstractPlanReoptimizeRule>,
 		IReoptimizeHandler<IPlanReoptimizeListener> {
-	/**
-	 * Returns a query with the defined ID.
-	 * 
-	 * @param queryID
-	 *            ID of the searched query
-	 * @return The query with the defined ID or null if no query is found.
-	 */
-	public IQuery getQuery(int queryID);
 
 	/**
 	 * Returns a list of all registered queries.
@@ -44,4 +36,38 @@ public interface IPlan extends
 	 * @return A list of all registered roots.
 	 */
 	public ArrayList<IPhysicalOperator> getRoots();
+	
+	/**
+	 * Adds a new query to the global plan.
+	 * 
+	 * @param query
+	 *            The query which should be added.
+	 * @return TRUE: The query is added. FALSE: else
+	 */
+	public boolean addQuery(IQuery query);
+
+	/**
+	 * Returns a modifiable query with the defined ID.
+	 * 
+	 * @param queryID
+	 *            ID of the searched modifiable query
+	 * @return The query with the defined ID or null if no query is found.
+	 */
+	public IQuery getQuery(int queryID);
+
+	/**
+	 * Returns a query with the defined ID.
+	 * 
+	 * @param queryID
+	 *            ID of the query to remove.
+	 * @return The query with the defined ID or null if no query is found.
+	 */
+	public IQuery removeQuery(int queryID);
+
+	/**
+	 * Returns a list of all registered modifiable queries.
+	 * 
+	 * @return A list of all registered modifiable queries.
+	 */
+	public ArrayList<IQuery> getEdittableQueries();
 }

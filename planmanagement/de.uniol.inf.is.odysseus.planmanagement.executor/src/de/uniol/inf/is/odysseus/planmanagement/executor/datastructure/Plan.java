@@ -8,9 +8,8 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.AbstractPlanReoptimizeRule;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
+import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 
 /**
@@ -19,7 +18,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
  * @author Wolf Bauer
  *
  */
-public class Plan implements IEditablePlan {
+public class Plan implements IPlan {
 
 	/**
 	 * Map of all registered queries.
@@ -44,10 +43,10 @@ public class Plan implements IEditablePlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan#addQuery(de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#addQuery(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery)
 	 */
 	@Override
-	public synchronized boolean addQuery(IEditableQuery query) {
+	public synchronized boolean addQuery(IQuery query) {
 		if (query == null || queries.containsKey(query.getID())) {
 			return false;
 		}
@@ -58,7 +57,7 @@ public class Plan implements IEditablePlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan#removeQuery(int)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#removeQuery(int)
 	 */
 	@Override
 	public synchronized Query removeQuery(int queryID) {
@@ -66,7 +65,7 @@ public class Plan implements IEditablePlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan#getQuery(int)
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#getQuery(int)
 	 */
 	@Override
 	public synchronized Query getQuery(int queryID) {
@@ -140,11 +139,11 @@ public class Plan implements IEditablePlan {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan#getEdittableQueries()
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan#getEdittableQueries()
 	 */
 	@Override
-	public ArrayList<IEditableQuery> getEdittableQueries() {
-		return new ArrayList<IEditableQuery>(this.queries.values());
+	public ArrayList<IQuery> getEdittableQueries() {
+		return new ArrayList<IQuery>(this.queries.values());
 	}
 
 	/* (non-Javadoc)
@@ -154,7 +153,7 @@ public class Plan implements IEditablePlan {
 	public ArrayList<IPhysicalOperator> getRoots() {
 		ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 
-		for (IEditableQuery query : getEdittableQueries()) {
+		for (IQuery query : getEdittableQueries()) {
 			if (!roots.contains(query.getSealedRoot())) {
 				roots.add(query.getRoot());
 			}

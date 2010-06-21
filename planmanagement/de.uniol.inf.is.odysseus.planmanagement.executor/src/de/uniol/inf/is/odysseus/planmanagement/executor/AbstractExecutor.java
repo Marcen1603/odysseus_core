@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.plan.IEditablePlan;
+import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
@@ -57,7 +57,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	/**
 	 * Alle in Odysseus gespeicherten Anfragen
 	 */
-	protected IEditablePlan plan;
+	protected IPlan plan;
 
 	/**
 	 * Der aktuell ausgeführte physische Plan

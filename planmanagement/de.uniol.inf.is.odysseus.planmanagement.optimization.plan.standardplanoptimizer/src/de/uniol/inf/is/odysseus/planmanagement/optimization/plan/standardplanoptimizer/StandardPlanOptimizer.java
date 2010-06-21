@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.NoTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
@@ -58,11 +58,11 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 *             {@link QueryBuildParameter}.
 	 */
 	private void checkPhysikalPlan(IPlanOptimizable sender,
-			List<IEditableQuery> queries) throws OpenFailedException,
+			List<IQuery> queries) throws OpenFailedException,
 			TransformationException, NoTransformationConfiguration {
 
 		// check each query
-		for (IEditableQuery query : queries) {
+		for (IQuery query : queries) {
 			// create a physical plan if none is set
 			if (query.getSealedRoot() == null) {
 				IPhysicalOperator physicalPlan = sender.getCompiler()
@@ -88,7 +88,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 */
 	@Override
 	public IEditableExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizeParameter parameters, List<IEditableQuery> allQueries)
+			OptimizeParameter parameters, List<IQuery> allQueries)
 			throws QueryOptimizationException {
 
 		// check all queries
@@ -108,7 +108,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// Get Roots, PartialPlans and IIterableSource for the execution plan.
 		// Each query will be one PartialPlan. Duplicated operators will be
 		// ignored.
-		for (IEditableQuery query : allQueries) {
+		for (IQuery query : allQueries) {
 			// if the root is not checked
 			if (!roots.contains(query.getSealedRoot())) {
 				// Add root

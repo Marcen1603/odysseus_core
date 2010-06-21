@@ -7,7 +7,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
@@ -27,15 +27,15 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //
 //	@Override
 //	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IEditableQuery> queries, OptimizeParameter parameter)
+//			List<IQuery> queries, OptimizeParameter parameter)
 //			throws QueryOptimizationException {
 //		if (!queries.isEmpty()) {
-//			for (IEditableQuery editableQuery : queries) {
+//			for (IQuery editableQuery : queries) {
 //				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 //						parameter);
 //			}
 //
-//			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
+//			List<IQuery> newPlan = sender.getRegisteredQueries();
 //			newPlan.addAll(queries);
 //
 //			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
@@ -49,15 +49,15 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //	
 //	@Override
 //	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-//			List<IEditableQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
+//			List<IQuery> queries, OptimizeParameter parameter, Set<String> rulesToUse)
 //			throws QueryOptimizationException {
 //		if (!queries.isEmpty()) {
-//			for (IEditableQuery editableQuery : queries) {
+//			for (IQuery editableQuery : queries) {
 //				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 //						parameter, rulesToUse);
 //			}
 //
-//			List<IEditableQuery> newPlan = sender.getRegisteredQueries();
+//			List<IQuery> newPlan = sender.getRegisteredQueries();
 //			newPlan.addAll(queries);
 //
 //			IEditableExecutionPlan newExecutionPlan = this.planOptimizer
@@ -76,7 +76,7 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //			IEditableExecutionPlan executionPlan, OptimizeParameter parameter)
 //			throws QueryOptimizationException {
 //		logger.debug("preQueryRemoveOptimization");
-//		ArrayList<IEditableQuery> newPlan = new ArrayList<IEditableQuery>(
+//		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(
 //				sender.getRegisteredQueries());
 //		newPlan.remove(removedQuery);
 //		logger.debug("preQueryRemoveOptimization optimize Plan");
@@ -91,7 +91,7 @@ abstract public class OldStandardOptimizer extends AbstractOptimizer {
 //	}
 //
 //	@Override
-//	public void handleFinishedMigration(IEditableQuery query) {
+//	public void handleFinishedMigration(IQuery query) {
 //		// TODO Auto-generated method stub
 //		
 //	}

@@ -7,4 +7,5 @@ Fragment-Host: de.uniol.inf.is.odysseus.parser.cql;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.dbIntegration.control,
  de.uniol.inf.is.odysseus.dbIntegration.model,
- de.uniol.inf.is.odysseus.dbIntegration.operators
+ de.uniol.inf.is.odysseus.dbIntegration.operators,
+ de.uniol.inf.is.odysseus.parser.cql.parser

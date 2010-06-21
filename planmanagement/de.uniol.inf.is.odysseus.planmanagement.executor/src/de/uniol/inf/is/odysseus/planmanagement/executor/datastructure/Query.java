@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.AbstractQueryReoptimizeRule;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public class Query implements IEditableQuery {
+public class Query implements IQuery {
 
 	protected Logger logger = LoggerFactory.getLogger(Query.class);
 
@@ -239,7 +239,7 @@ public class Query implements IEditableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#
+	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
 	 * setLogicalPlan(de.uniol.inf.is.odysseus.base.ILogicalOperator)
 	 */
 	@Override
@@ -262,7 +262,7 @@ public class Query implements IEditableQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#setRoot
+	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#setRoot
 	 * (de.uniol.inf.is.odysseus.base.IPhysicalOperator)
 	 */
 	@SuppressWarnings("unchecked")
@@ -307,7 +307,7 @@ public class Query implements IEditableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#
+	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
 	 * getIntialPhysicalPlan()
 	 */
 	@Override
@@ -318,7 +318,7 @@ public class Query implements IEditableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#
+	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
 	 * initializePhysicalPlan(de.uniol.inf.is.odysseus.base.IPhysicalOperator)
 	 */
 	@Override
@@ -337,7 +337,7 @@ public class Query implements IEditableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#
+	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
 	 * setPhysicalChilds(java.util.ArrayList)
 	 */
 	@Override
@@ -357,7 +357,7 @@ public class Query implements IEditableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#
+	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
 	 * removeOwnerschip()
 	 */
 	@Override
@@ -384,7 +384,7 @@ public class Query implements IEditableQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#start()
+	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#start()
 	 */
 	@Override
 	public void start() {
@@ -403,7 +403,7 @@ public class Query implements IEditableQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#stop()
+	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#stop()
 	 */
 	@Override
 	public void stop() {
@@ -520,7 +520,7 @@ public class Query implements IEditableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#
+	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
 	 * getLogicalPlan()
 	 */
 	@Override
@@ -532,7 +532,7 @@ public class Query implements IEditableQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#getRoot
+	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#getRoot
 	 * ()
 	 */
 	@Override
@@ -543,7 +543,7 @@ public class Query implements IEditableQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery#
+	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
 	 * getBuildParameter()
 	 */
 	@Override

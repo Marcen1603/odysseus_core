@@ -155,7 +155,9 @@ public class Router extends Thread {
 	public void disconnectFromServer(IRouterReceiver sink) throws IOException{
 		synchronized(routerReceiverMap){
 			SocketChannel s = routerReceiverMap.remove(sink);
-			s.close();
+			if (s!=null){
+				s.close();
+			}
 		}
 	}
 

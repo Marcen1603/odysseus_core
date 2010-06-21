@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
@@ -170,9 +170,9 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private ArrayList<IEditableQuery> createQueries(String query, String parserID, User user, QueryBuildParameter parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
+	private ArrayList<IQuery> createQueries(String query, String parserID, User user, QueryBuildParameter parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
 		this.logger.debug("Translate Queries.");
-		ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
+		ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 		Query newQuery = null;
 		// translate query and build logical plans
 		Collection<ILogicalOperator> logicalPlan = compiler().translateQuery(query, parserID);
@@ -203,7 +203,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private void addQueries(List<IEditableQuery> newQueries) throws NoOptimizerLoadedException, QueryOptimizationException {
+	private void addQueries(List<IQuery> newQueries) throws NoOptimizerLoadedException, QueryOptimizationException {
 		this.logger.debug("Optimize Queries. Count:" + newQueries.size());
 		if (newQueries.isEmpty()) {
 			return;
@@ -220,7 +220,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		}
 
 		// store optimized queries
-		for (IEditableQuery optimizedQuery : newQueries) {
+		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
 		}
@@ -246,7 +246,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private void addQueries(List<IEditableQuery> newQueries, boolean doRestruct, Set<String> rulesToUse) throws NoOptimizerLoadedException, QueryOptimizationException {
+	private void addQueries(List<IQuery> newQueries, boolean doRestruct, Set<String> rulesToUse) throws NoOptimizerLoadedException, QueryOptimizationException {
 		this.logger.debug("Optimize Queries. Count:" + newQueries.size());
 		if (newQueries.isEmpty()) {
 			return;
@@ -265,7 +265,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.info("Before adding these new Queries "+newQueries);
 		
 		// store optimized queries
-		for (IEditableQuery optimizedQuery : newQueries) {
+		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
 		}
@@ -288,7 +288,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private void addQueries(List<IEditableQuery> newQueries, boolean doRestruct) throws NoOptimizerLoadedException, QueryOptimizationException {
+	private void addQueries(List<IQuery> newQueries, boolean doRestruct) throws NoOptimizerLoadedException, QueryOptimizationException {
 		this.logger.debug("Optimize Queries. Count:" + newQueries.size());
 		if (newQueries.isEmpty()) {
 			return;
@@ -305,7 +305,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		}
 
 		// store optimized queries
-		for (IEditableQuery optimizedQuery : newQueries) {
+		for (IQuery optimizedQuery : newQueries) {
 			this.plan.addQuery(optimizedQuery);
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_ADDED, optimizedQuery));
 		}
@@ -320,10 +320,10 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 *            Queries for search.
 	 * @return ID list of the given queries.
 	 */
-	private ArrayList<Integer> getQuerieIDs(ArrayList<IEditableQuery> newQueries) {
+	private ArrayList<Integer> getQuerieIDs(ArrayList<IQuery> newQueries) {
 		ArrayList<Integer> newIDs = new ArrayList<Integer>();
 
-		for (IEditableQuery query : newQueries) {
+		for (IQuery query : newQueries) {
 			newIDs.add(query.getID());
 		}
 
@@ -389,7 +389,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IEditableQuery> newQueries = createQueries(query, parserID, user, params);
+			ArrayList<IQuery> newQueries = createQueries(query, parserID, user, params);
 			addQueries(newQueries);
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
@@ -413,7 +413,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IEditableQuery> newQueries = createQueries(query, parserID, user, params);
+			ArrayList<IQuery> newQueries = createQueries(query, parserID, user, params);
 			if (rulesToUse != null && !rulesToUse.isEmpty()) {
 				addQueries(newQueries, doRestruct, rulesToUse);
 			} else {
@@ -442,7 +442,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.info("Start adding Queries.");
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
+			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(logicalPlan, params);
 			query.setUser(user);
 			query.addReoptimizeListener(this);
@@ -470,7 +470,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.info("Start adding Queries.");
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
+			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			Query query = new Query(physicalPlan, params);
 			query.setUser(user);
 			query.addReoptimizeListener(this);
@@ -491,7 +491,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	public int addQuery(Query query) throws PlanManagementException {
 		try {
 			query.addReoptimizeListener(this);
-			ArrayList<IEditableQuery> newQueries = new ArrayList<IEditableQuery>();
+			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			newQueries.add(query);
 			addQueries(newQueries,false);
 			return query.getID();
@@ -614,7 +614,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		try {
 			if (sender instanceof Query) {
 				this.executionPlanLock.lock();
-				setExecutionPlan(optimizer().reoptimize(this, (IEditableQuery) sender, this.executionPlan));
+				setExecutionPlan(optimizer().reoptimize(this, (IQuery) sender, this.executionPlan));
 
 				this.logger.debug("Query " + sender.getID() + " reoptimized.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_REOPTIMIZE, sender));
@@ -671,7 +671,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * #getRegisteredQueries()
 	 */
 	@Override
-	public ArrayList<IEditableQuery> getRegisteredQueries() {
+	public ArrayList<IQuery> getRegisteredQueries() {
 		return this.plan.getEdittableQueries();
 	}
 

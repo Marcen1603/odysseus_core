@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
@@ -33,7 +33,7 @@ public interface IQueryOptimizer {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during the optimization.
 	 */
-	public void optimizeQuery(IQueryOptimizable sender, IEditableQuery query,
+	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
 			OptimizeParameter parameters) throws QueryOptimizationException;
 	
 	/**
@@ -53,7 +53,7 @@ public interface IQueryOptimizer {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during the optimization.
 	 */
-	public void optimizeQuery(IQueryOptimizable sender, IEditableQuery query,
+	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
 			OptimizeParameter parameters, Set<String> rulesToUse) throws QueryOptimizationException;
 	
 	/**
@@ -69,7 +69,7 @@ public interface IQueryOptimizer {
 	 * @throws OpenFailedException
 	 *             An exception during plan initializing.
 	 */
-	public void postTransformationInit(IEditableQuery query,
+	public void postTransformationInit(IQuery query,
 			IPhysicalOperator physicalPlan) throws QueryOptimizationException,
 			OpenFailedException;
 	
@@ -92,6 +92,6 @@ public interface IQueryOptimizer {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during the optimization.
 	 */
-	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(IQueryOptimizable sender, IEditableQuery query,
+	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(IQueryOptimizable sender, IQuery query,
 			OptimizeParameter parameters, Set<String> rulesToUse) throws QueryOptimizationException;
 }

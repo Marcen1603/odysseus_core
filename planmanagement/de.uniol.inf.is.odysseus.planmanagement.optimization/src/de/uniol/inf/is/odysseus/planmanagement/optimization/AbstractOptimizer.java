@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IEditableQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
@@ -244,7 +244,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries,
+			List<IQuery> newQueries,
 			AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException {
 		return preQueryAddOptimization(sender, newQueries,
@@ -256,7 +256,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
-			List<IEditableQuery> newQueries,
+			List<IQuery> newQueries,
 			Set<String> rulesToUse,
 			AbstractOptimizationParameter<?>... parameters)
 			throws QueryOptimizationException {
@@ -268,7 +268,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan reoptimize(IOptimizable sender, IEditableQuery query,
+	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
 			IEditableExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		return executionPlan;
