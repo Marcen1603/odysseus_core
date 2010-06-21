@@ -18,20 +18,27 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public abstract class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
+public class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
 	private JDVEData<M> data;
 	private int port;
 	protected MVRelationalTuple<M> buffer;
+	private SDFAttributeList outputSchema;
 	
 	public JDVEAccessMVPO(int pPort) {
 		this.port = pPort;
+	}
+	
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		super.setOutputSchema(outputSchema);
+		this.outputSchema = outputSchema;
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			data = new JDVEData<M>(this.port, getOutputSchema());
+			data = new JDVEData<M>(this.port, outputSchema);
 		}
 		catch (SocketException ex){
 			throw new OpenFailedException(ex);
@@ -67,14 +74,24 @@ public abstract class JDVEAccessMVPO <M extends IProbability> extends AbstractSe
 
 	@Override
 	public boolean isDone() {
-		/* Lassen wir so, weil wir das erstmal nicht behandeln */
 		return false;
 	}
 
 	@Override
 	public AbstractSource<MVRelationalTuple<M>> clone() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public SDFAttributeList getOutputSchema() {
+		return outputSchema;
+	}
+
+	@Override
+	public void transferNext() {
+		if( buffer != null )
+			transfer(buffer);
+		buffer = null;
 	}
 }
 
@@ -94,6 +111,7 @@ class JDVEData<M extends IProbability> {
 		this.attributeList = list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public MVRelationalTuple<M> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
 		/* Ben�tigter Puffer:
 		 * carType: 4 Byte
@@ -112,9 +130,17 @@ class JDVEData<M extends IProbability> {
 		
 		/* ByteBuffer �bernimmt die Daten. ByteBuffer besitzt
 	     * die Methoden, die wir zum Auslesen ben�tigen. */
-		ByteBuffer bb = ByteBuffer.wrap(receiveData);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		return parseStart(attributeList.get(0), bb);
+		ByteBuffer byteBuffer = ByteBuffer.wrap(receiveData);
+		byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		Object res = parseNext(attributeList.get(0), byteBuffer);
+		
+		if( res instanceof MVRelationalTuple<?>) {
+			return (MVRelationalTuple<M>)res;
+		} else {
+			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(1);
+			tuple.addAttributeValue(0, res);
+			return tuple;
+		}
 	}
 	
 	public MVRelationalTuple<M> parseStart(SDFAttribute schema, ByteBuffer bb) {
@@ -135,10 +161,12 @@ class JDVEData<M extends IProbability> {
 	
 	public MVRelationalTuple<M> parseList(SDFAttribute schema, ByteBuffer bb) {
 		int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
+		System.out.println(count);
+		count = 50;
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 
 		for( int i = 0; i < count; i++ ) {
-			Object obj = parseNext(schema.getSubattribute(i), bb);
+			Object obj = parseNext(schema.getSubattribute(0), bb);
 			recordTuple.addAttributeValue(i, obj);
 		}
 		return recordTuple;
@@ -153,6 +181,8 @@ class JDVEData<M extends IProbability> {
 			throw new RuntimeException("not implememted yet");			
 		} else 	if( "Long".equals(schema.getDatatype().getURIWithoutQualName() )) {
 			return bb.getLong();
+		} else 	if( "Float".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getFloat();
 //		} else 	if( "Date".equals(schema.getDatatype().getURIWithoutQualName() )) {
 //			throw new RuntimeException("not implememted yet");
 		} else {
