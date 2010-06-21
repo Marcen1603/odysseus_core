@@ -15,13 +15,13 @@ public interface ISchedulerFactory {
 	 * Creates a specific {@link IScheduler}. Each {@link IScheduler} is
 	 * initialized with a {@link ISchedulingFactory}.
 	 * 
-	 * @param schedulingStrategy
+	 * @param schedulingFactory
 	 *            {@link ISchedulingFactory} which will be used for
 	 *            creating new {@link IScheduler}.
 	 * @return A new specific {@link IScheduler} instance.
 	 */
 	public IScheduler createScheduler(
-			ISchedulingFactory schedulingStrategy);
+			ISchedulingFactory schedulingFactoring);
 
 	/**
 	 * Returns a name for this factory. This name should be unique.
