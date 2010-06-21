@@ -98,12 +98,12 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		try {
 			for( String parserID : executor.getSupportedQueryParser() ) 
 				parserCombo.add(parserID);
-			parserCombo.setText(parserCombo.getItem(0));
 		} catch (PlanManagementException e1) {
 			parserCombo.add("No parser available");
 			parserCombo.setEnabled(false);
 			okButton.setEnabled(false);
 		}
+		parserCombo.setText(parserCombo.getItem(0));
 
 		dialogShell.open();
 		

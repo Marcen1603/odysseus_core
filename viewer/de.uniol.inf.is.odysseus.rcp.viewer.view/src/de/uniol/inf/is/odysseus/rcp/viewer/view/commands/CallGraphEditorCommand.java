@@ -5,7 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -14,7 +14,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.Model;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditor;
@@ -36,19 +39,33 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 		IWorkbenchPage page = window.getActivePage();
 		
 		ISelection selection = window.getSelectionService().getSelection();
-		if( selection instanceof ITreeSelection ) {
-			ITreeSelection treeSelection = (ITreeSelection)selection;
+		if( selection instanceof IStructuredSelection ) {
+			IStructuredSelection treeSelection = (IStructuredSelection)selection;
 			Object obj = treeSelection.getFirstElement();
 						
 			// Auswahl holen
-			IGraphModel<IPhysicalOperator> graph;
+			IGraphModel<IPhysicalOperator> graph = null;
 			if( obj instanceof IGraphModel<?>)
 				graph = (IGraphModel<IPhysicalOperator>)obj;
-			else if( obj instanceof IOdysseusNodeModel) {
+			else if( obj instanceof IQuery ) {
+				IQuery q = (IQuery)obj;
+				
+				for( IGraphModel<IPhysicalOperator> g : Model.getInstance().getModelManager().getModels()) {
+					if( g instanceof IOdysseusGraphModel ) {
+						if( ((IOdysseusGraphModel)g).getQuery() == q ) {
+							graph = g;
+							break;
+						}
+					}
+				}
+			} else if( obj instanceof IOdysseusNodeModel) {
 				return null;
 			} else {
 				return null;
 			}
+			
+			if( graph == null )
+				return null;
 			
 			// schauen, ob Editor f�r den Graphen schon offen ist
 			for( IEditorReference editorRef : page.getEditorReferences() ) {

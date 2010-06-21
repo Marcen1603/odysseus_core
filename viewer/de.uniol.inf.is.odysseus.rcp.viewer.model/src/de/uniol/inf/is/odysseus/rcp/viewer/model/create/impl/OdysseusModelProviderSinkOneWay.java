@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
@@ -16,8 +17,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.DefaultConnectionModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.DefaultGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusNodeModel;
 
 /**
@@ -36,7 +38,7 @@ public final class OdysseusModelProviderSinkOneWay implements IModelProvider<IPh
 	
 	private static final Logger logger = LoggerFactory.getLogger( OdysseusModelProviderSinkOneWay.class );
 	
-	private final IGraphModel<IPhysicalOperator> graphModel;
+	private final IOdysseusGraphModel graphModel;
 	private Collection<Object> traversedObjects = new ArrayList<Object>();
 	
 	/**
@@ -47,11 +49,11 @@ public final class OdysseusModelProviderSinkOneWay implements IModelProvider<IPh
 	 * 
 	 * @param sink Senke, welcher den Ausgangspunkt der Traversierung des Ablaufplans darstellt.
 	 */
-	public OdysseusModelProviderSinkOneWay( ISink<?> sink ) {
+	public OdysseusModelProviderSinkOneWay( ISink<?> sink, IQuery query ) {
 		if( sink == null ) 
 			throw new IllegalArgumentException("sink is null!");
 		
-		graphModel = new DefaultGraphModel<IPhysicalOperator>();
+		graphModel = new OdysseusGraphModel(query);
 		
 		logger.info( "reading operator-tree from ODYSSEUS" );
 		parse( sink, graphModel, null);

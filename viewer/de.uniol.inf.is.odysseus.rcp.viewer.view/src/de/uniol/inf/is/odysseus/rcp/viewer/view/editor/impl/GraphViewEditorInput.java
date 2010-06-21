@@ -4,13 +4,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.DefaultGraphView;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.OdysseusGraphView;
 
-public class GraphViewEditorInput extends DefaultGraphView<IPhysicalOperator> implements IEditorInput {
+public class GraphViewEditorInput extends OdysseusGraphView implements IEditorInput {
 
-	public GraphViewEditorInput(IGraphModel<IPhysicalOperator> data) {
+	public GraphViewEditorInput(IOdysseusGraphModel data) {
 		super(data);
 	}
 

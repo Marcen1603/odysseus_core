@@ -22,10 +22,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.IGraphViewEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.position.impl.SugiyamaPositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.select.ISelectListener;
@@ -170,13 +170,13 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 	}
 
 	@Override
-	public IGraphModel<IPhysicalOperator> getGraphModel() {
+	public IOdysseusGraphModel getGraphModel() {
 		return input.getModelGraph();
 	}
 
 	@Override
-	public IGraphView<IPhysicalOperator> getGraphView() {
-		return renderManager.getDisplayedGraph();
+	public IOdysseusGraphView getGraphView() {
+		return (IOdysseusGraphView)renderManager.getDisplayedGraph();
 	}
 
 }

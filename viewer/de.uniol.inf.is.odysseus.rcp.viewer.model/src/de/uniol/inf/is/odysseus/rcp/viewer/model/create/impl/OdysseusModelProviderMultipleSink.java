@@ -15,8 +15,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.DefaultConnectionModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.DefaultGraphModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusNodeModel;
 
 /**
@@ -36,7 +37,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 	
 	private static final Logger logger = LoggerFactory.getLogger( OdysseusModelProviderMultipleSink.class );
 	
-	private final IGraphModel<IPhysicalOperator> graphModel;
+	private final IOdysseusGraphModel graphModel;
 	private Collection<Object> traversedObjects = new ArrayList<Object>();
 	
 	/**
@@ -51,7 +52,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		if( sinks == null ) 
 			throw new IllegalArgumentException("sinks is null!");
 		
-		graphModel = new DefaultGraphModel<IPhysicalOperator>();
+		graphModel = new OdysseusGraphModel();
 		
 		logger.info( "reading operator-tree from ODYSSEUS" );
 		

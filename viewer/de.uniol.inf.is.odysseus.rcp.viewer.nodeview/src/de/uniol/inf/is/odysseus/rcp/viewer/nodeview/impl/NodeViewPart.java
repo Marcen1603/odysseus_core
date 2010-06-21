@@ -13,11 +13,10 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.nodeview.INodeViewPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.IGraphViewEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 
 public class NodeViewPart extends ViewPart implements INodeViewPart, ISelectionListener {
 
@@ -45,7 +44,7 @@ public class NodeViewPart extends ViewPart implements INodeViewPart, ISelectionL
 			@Override
 			public void partActivated(IWorkbenchPart part) {
 				if( part instanceof IGraphViewEditor ) {
-					IGraphView<IPhysicalOperator> graph = ((IGraphViewEditor)part).getGraphView();
+					IOdysseusGraphView graph = ((IGraphViewEditor)part).getGraphView();
 					if( treeViewer.getInput() != graph ) {
 						treeViewer.setInput(graph);
 						treeViewer.refresh();
@@ -59,7 +58,7 @@ public class NodeViewPart extends ViewPart implements INodeViewPart, ISelectionL
 			@Override
 			public void partClosed(IWorkbenchPart part) {
 				if( part instanceof IGraphViewEditor ) {
-					IGraphView<IPhysicalOperator> graph = ((IGraphViewEditor)part).getGraphView();
+					IOdysseusGraphView graph = ((IGraphViewEditor)part).getGraphView();
 					if( treeViewer.getInput() == graph ) {
 						treeViewer.setInput(null);
 						treeViewer.refresh();
@@ -116,8 +115,8 @@ public class NodeViewPart extends ViewPart implements INodeViewPart, ISelectionL
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if( selection instanceof IStructuredSelection ) {
-			if( ((IStructuredSelection) selection).getFirstElement() instanceof INodeView<?> ||
-				((IStructuredSelection) selection).getFirstElement() instanceof IGraphView<?>) {
+			if( ((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusNodeView ||
+				((IStructuredSelection) selection).getFirstElement() instanceof IOdysseusGraphView) {
 				
 				if( this.synched && part != this )  {
 					treeViewer.setSelection(selection);

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.model.activator;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -10,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -67,22 +67,18 @@ public class Activator implements BundleActivator, IPlanModificationListener  {
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		try {
 			ArrayList<IPhysicalOperator> roots = eventArgs.getSender().getSealedPlan().getRoots();
-			
-			eventArgs.getSender().getSealedPlan();
+			ArrayList<IQuery> queries = eventArgs.getSender().getSealedPlan().getQueries();
 			if (!roots.isEmpty()) {
-				
-				ListIterator<IPhysicalOperator> li = roots.listIterator(roots.size());
-				IPhysicalOperator lastRoot = null;
-				do {
-					lastRoot = li.previous();
-				} while (li.hasPrevious() && lastRoot == null);
-				
+
+				IPhysicalOperator lastRoot = roots.get(roots.size() - 1);
+				IQuery lastQuery = queries.get(queries.size() - 1);
 				if (lastRoot != null && lastRoot instanceof ISink<?>) {
-					IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay((ISink<?>) lastRoot);
+					IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay((ISink<?>) lastRoot, lastQuery);
 					
 					ArrayList<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
 					for(IPhysicalOperator po : roots ) 
 						sinkRoots.add((ISink<?>)po);
+					
 					IModelProvider<IPhysicalOperator> providerActiveModel = new OdysseusModelProviderMultipleSink(sinkRoots);
 					
 					Model.getInstance().getModelManager().addModel(provider.get());

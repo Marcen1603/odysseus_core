@@ -17,6 +17,11 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callGraphEditor"
             name="Call Graph Editor">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.CallActiveGraphEditor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callActiveGraphEditor"
+            name="Call Graph Editor with Active Graph">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

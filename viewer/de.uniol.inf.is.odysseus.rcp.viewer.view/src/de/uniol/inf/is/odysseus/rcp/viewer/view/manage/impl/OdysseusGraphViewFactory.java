@@ -11,13 +11,15 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusNodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.DefaultConnectionView;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.DefaultGraphView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.OdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.impl.OdysseusNodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.manage.IGraphViewFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.symbol.IConnectionSymbolElement;
@@ -48,7 +50,7 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 			throw new IllegalArgumentException("symbolFactory is null!");
 		
 		// Graph
-		IGraphView<IPhysicalOperator> graphView = new DefaultGraphView<IPhysicalOperator>(graph);
+		IOdysseusGraphView graphView = new OdysseusGraphView((IOdysseusGraphModel)graph);
 		
 		// Knoten
 		final Map<String, Collection<SymbolElementInfo>> map = symbolConfig.getMap();

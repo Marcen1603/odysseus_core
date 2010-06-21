@@ -8,20 +8,20 @@ import org.eclipse.jface.viewers.Viewer;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 
 public class NodeViewContentProvider implements ITreeContentProvider {
 	
-	private IGraphView<IPhysicalOperator> activeGraph;
+	private IOdysseusGraphView activeGraph;
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		
-		if( parentElement instanceof IGraphView<?>) {
-			IGraphView<IPhysicalOperator> graph = (IGraphView<IPhysicalOperator>)parentElement;
+		if( parentElement instanceof IOdysseusGraphView) {
+			IOdysseusGraphView graph = (IOdysseusGraphView)parentElement;
 			
 			ArrayList list = new ArrayList();
 			for( INodeView<IPhysicalOperator> node : graph.getViewedNodes()) {
@@ -85,10 +85,9 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 		activeGraph = null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		activeGraph = (IGraphView<IPhysicalOperator>)newInput;
+		activeGraph = (IOdysseusGraphView)newInput;
 		
 		viewer.refresh();
 	}
