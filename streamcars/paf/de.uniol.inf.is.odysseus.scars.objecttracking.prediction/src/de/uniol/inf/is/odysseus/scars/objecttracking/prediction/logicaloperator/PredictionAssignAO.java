@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
@@ -16,6 +17,7 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	private static final long serialVersionUID = 1L;
 	
 	private PredictionFunctionContainer<M> predictionFunctions;
+	private int detectedListIndex = 0;
 
 	
 	public PredictionAssignAO() {
@@ -26,6 +28,14 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	public PredictionAssignAO(PredictionAssignAO<M> predictionAO) {
 		super(predictionAO);
 		predictionFunctions = new PredictionFunctionContainer<M>(predictionAO.getPredictionFunctions());
+	}
+	
+	public void initDetectedListIndex(SDFAttributeList inputSchema, String listAttributeName) {
+		for(SDFAttribute attr : inputSchema) {
+			if(attr.getAttributeName().equals(listAttributeName)) {
+				detectedListIndex = inputSchema.indexOf(attr);
+			}
+		}
 	}
 	
 	public void setDefaultPredictionFunction(SDFExpression[] defaultPredictionFunction) {

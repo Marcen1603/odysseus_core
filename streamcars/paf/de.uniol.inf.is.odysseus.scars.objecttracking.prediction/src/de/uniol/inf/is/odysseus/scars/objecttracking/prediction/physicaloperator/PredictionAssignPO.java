@@ -13,6 +13,7 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 	
 	private PredictionFunctionContainer<M> predictionFunctions;
 	
+	
 	public PredictionAssignPO(PredictionAssignAO<M> predictionAO) {
 		super();
 		predictionFunctions = predictionAO.getPredictionFunctions();
@@ -37,7 +38,6 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 				return;
 			}
 		}
-		
 		object.getMetadata().setPredictionFunctionKey(predictionFunctions.getDefaultPredictionFunctionKey());
 		transfer(object);
 		return;
