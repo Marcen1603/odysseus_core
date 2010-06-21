@@ -1,33 +1,27 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.AbstractScheduler;
-import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.scheduler.exception.SchedulingException;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
-
-// MG: HINWEIS: Ich weiﬂ noch nicht warum, aber es scheint deutlich (!) weniger effizient zu sein
 
 /**
  * SingleThreadScheduler is a scheduler which uses two threads for execution the
  * physical execution plan.
  * 
  * One Thread for global sources and one for the registered partial plans.
+ * 
+ * The Selection which plans to schedule is based on a selection strategy
  * 
  * @author Wolf Bauer, Marco Grawunder
  * 
@@ -36,7 +30,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 		UncaughtExceptionHandler {
 
 	Logger logger = LoggerFactory.getLogger(SingleThreadSchedulerWithStrategy.class);
-	RoundRobinPlanScheduling planScheduling = new RoundRobinPlanScheduling();
+	final IPlanScheduling planScheduling;
 
 	/**
 	 * Creates a new SingleThreadScheduler.
@@ -45,8 +39,9 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 	 *            Factory for creating new scheduling strategies for each
 	 *            partial plan which should be scheduled.
 	 */
-	public SingleThreadSchedulerWithStrategy(ISchedulingFactory schedulingStrategieFactory) {
+	public SingleThreadSchedulerWithStrategy(ISchedulingFactory schedulingStrategieFactory, IPlanScheduling planScheduling) {
 		super(schedulingStrategieFactory);
+		this.planScheduling = planScheduling;
 	}
 
 	/**
@@ -199,10 +194,10 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 
 class ExecutorThread extends Thread {
 
-	private RoundRobinPlanScheduling planScheduling;
+	private IPlanScheduling planScheduling;
 	private long timeSlicePerStrategy;
 
-	public ExecutorThread(RoundRobinPlanScheduling planScheduling,
+	public ExecutorThread(IPlanScheduling planScheduling,
 			long timeSlicePerStrategy) {
 		this.planScheduling = planScheduling.clone();
 		this.timeSlicePerStrategy = timeSlicePerStrategy;
@@ -251,83 +246,3 @@ class SingleSourceExecutor extends Thread {
 
 }
 
-class RoundRobinPlanScheduling implements ISchedulingEventListener, IClone{
-
-	Logger logger = LoggerFactory.getLogger(RoundRobinPlanScheduling.class);
-
-	final private List<IScheduling> planList;
-	final private Set<IScheduling> pausedPlans;
-	private Iterator<IScheduling> planIterator = null;
-
-	public RoundRobinPlanScheduling() {
-		planList = new ArrayList<IScheduling>();
-		pausedPlans = new HashSet<IScheduling>();
-	}
-	
-	public RoundRobinPlanScheduling(RoundRobinPlanScheduling other){
-		this.planList = new ArrayList(other.planList);
-		this.pausedPlans = new HashSet<IScheduling>(other.pausedPlans);
-	}
-	
-	public void addPlan(IScheduling plan) {
-		planList.add(plan);
-		plan.addSchedulingEventListener(this);
-		planIterator = null;
-	}
-
-	public void clear() {
-		planIterator = null;
-		pausedPlans.clear();
-		planList.clear();
-	}
-
-	public void removeCurrent() {
-		if (planIterator != null) {
-			planIterator.remove();
-		}
-	}
-
-	public int planCount() {
-		return planList.size();
-	}
-
-	public IScheduling nextPlan() {
-		if (planIterator == null || !planIterator.hasNext()) {
-			planIterator = planList.iterator();
-		}
-		if (planIterator.hasNext()) {
-			synchronized (pausedPlans) {
-				while (planCount() == pausedPlans.size()) {
-					try {
-						logger.debug(this+" paused");
-						pausedPlans.wait(1000);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			return planIterator.next();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public void nothingToSchedule(IScheduling sched) {
-		pausedPlans.add(sched);
-	}
-
-	@Override
-	public void scheddulingPossible(IScheduling sched) {
-		pausedPlans.remove(sched);
-		synchronized (pausedPlans) {
-			pausedPlans.notifyAll();
-		}
-	}
-
-	@Override
-	public RoundRobinPlanScheduling clone(){
-		return new RoundRobinPlanScheduling(this);
-	}
-	
-}
