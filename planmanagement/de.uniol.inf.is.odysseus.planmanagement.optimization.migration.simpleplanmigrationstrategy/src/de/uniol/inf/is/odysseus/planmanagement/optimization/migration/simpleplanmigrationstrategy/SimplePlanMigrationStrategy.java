@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.SelectPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
-import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IEditableExecutionPlan;
+import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -58,8 +58,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	@Override
-	public IEditableExecutionPlan migratePlan(IPlanMigratable sender,
-			IEditableExecutionPlan newExecutionPlan) {
+	public IExecutionPlan migratePlan(IPlanMigratable sender,
+			IExecutionPlan newExecutionPlan) {
 		// no global plan migration
 		return newExecutionPlan;
 	}
