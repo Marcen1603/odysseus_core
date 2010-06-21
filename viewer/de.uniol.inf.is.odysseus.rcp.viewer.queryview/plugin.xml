@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.uniol.inf.is.odysseus.rcp.viewer.queryview.view.QueryViewPart"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.queryview"
+            name="Query View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.viewer.perspective.queries">
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.rcp.viewer.queryview"
+               minimized="false"
+               moveable="true"
+               relationship="stack"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callActiveGraphEditor"
+               label="Show active graph"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

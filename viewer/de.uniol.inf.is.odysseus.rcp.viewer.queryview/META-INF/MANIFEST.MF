@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Queryview
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.queryview;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.queryview.activator.Activator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.base
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.base.planmanagement.event,
+ de.uniol.inf.is.odysseus.base.planmanagement.event.error,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification,
+ de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event,
+ de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.rcp.viewer.view,
+ org.slf4j
+Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.queryview
