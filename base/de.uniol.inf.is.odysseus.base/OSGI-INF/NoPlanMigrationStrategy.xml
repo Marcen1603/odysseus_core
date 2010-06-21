@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.noplanmigrationstrategy">
+   <implementation class="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.noplanmigrationstrategie.NoPlanMigrationStrategy"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy"/>
+   </service>
+</scr:component>
