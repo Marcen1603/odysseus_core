@@ -207,5 +207,15 @@ public abstract class AbstractScheduling implements IScheduling,
 			}
 		}
 	}
+	
+	@Override
+	public boolean isSchedulingBlocked() {
+		return blocked;
+	}
+	
+	@Override
+	public boolean isSchedulingPaused() {
+		return schedulingPaused;
+	}
 
 }
