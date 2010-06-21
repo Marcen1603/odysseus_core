@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stream
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.Activator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
+ de.uniol.inf.is.odysseus.rcp.viewer.nodeview,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.graph,
+ org.slf4j;version="1.5.6"
+Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.extension

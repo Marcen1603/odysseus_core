@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor" name="Stream Editor" schema="schema/de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor.exsd"/>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.ShowStream"
+            name="ShowStream">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.StreamEditorType"
+               name="Stream Editor Type"
+               optional="false">
+         </commandParameter>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="isNodeView">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.command.ShowStreamCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.ShowStream">
+         <enabledWhen>
+            <reference
+                  definitionId="isNodeView">
+            </reference>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor"
+            default="false"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.StreamEditor"
+            name="Stream Editor">
+      </editor>
+   </extension>
+
+</plugin>

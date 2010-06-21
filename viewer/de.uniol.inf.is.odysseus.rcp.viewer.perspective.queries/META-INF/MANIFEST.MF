@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Queries Perspective
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.perspective.queries;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.perspective.queries.impl.Activator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.perspective.queries
+Import-Package: org.eclipse.ui.console
