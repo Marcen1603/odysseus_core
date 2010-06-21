@@ -5,11 +5,16 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 public class SimpleDynamicPriorityPlanScheduling extends
 		AbstractPriorityPlanScheduling {
 	
-	int minPrio = 0;
+	final int minPrio;
+	
+	public SimpleDynamicPriorityPlanScheduling(int minPrio){
+		this.minPrio = minPrio;
+	}
 	
 	public SimpleDynamicPriorityPlanScheduling(
 			SimpleDynamicPriorityPlanScheduling dynamicPriorityPlanScheduling) {
 		super(dynamicPriorityPlanScheduling);
+		minPrio = dynamicPriorityPlanScheduling.minPrio;
 	}
 
 	@Override
