@@ -38,7 +38,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		final String startQuery = event.getParameter(START_QUERY_PARAMETER_ID);
 		
 		final Shell dialogShell = new Shell(parent);
-		dialogShell.setSize(500,120);
+		dialogShell.setSize(500,300);
 		dialogShell.setText("Add Query");
 		
 		GridLayout gridLayout = new GridLayout();
@@ -48,7 +48,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		final Label queryLabel = new Label(dialogShell, SWT.None );
 		queryLabel.setText("Query");
 
-		final Text queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI);
+		final Text queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		queryTextField.setLayoutData(new GridData(GridData.FILL_BOTH));
 		queryTextField.setText(startQuery != null ? startQuery : "");
 					
@@ -56,7 +56,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		parserLabel.setText("Parser");
 		
 		final Combo parserCombo = new Combo( dialogShell, SWT.BORDER );
-		parserCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
+		parserCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Button okButton = new Button(dialogShell, SWT.PUSH);
 		okButton.setText("OK");
