@@ -133,12 +133,13 @@ public class ECAParserTest implements CommandProvider {
 
 	@SuppressWarnings("unchecked")
 	private void runTestSuite(String query, List<IActionParameter> parameters, CommandInterpreter ci) throws Exception {	
-		List<ILogicalOperator> logicalPlan = this.compiler.translateQuery(query , "ECA");
-		logicalPlan.get(0).getOutputSchema();
+		List<IQuery> queries = this.compiler.translateQuery(query , "ECA");
+		ILogicalOperator logicalPlan = queries.get(0).getLogicalPlan();
+		logicalPlan.getOutputSchema();
 		
 		//check logical operator
 		ci.println("	*Testcase1: Check if top operator is eAO");
-		ILogicalOperator eAO = logicalPlan.get(0);
+		ILogicalOperator eAO = logicalPlan;
 		if (! (eAO.getClass() == EventTriggerAO.class)) {
 			throw new Exception("EventDetectionAO is not top operator");
 		}
@@ -181,7 +182,7 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		int queryID = this.executor.addQuery(logicalPlan.get(0), user, new ParameterParserID("ECA"));
+		int queryID = this.executor.addQuery(logicalPlan, user, new ParameterParserID("ECA"));
 		ci.println("	*Testcase3: Check if physical plan is correct");
 		IPlan plan = this.executor.getSealedPlan();
 		IQuery installedQuery = plan.getQuery(queryID);

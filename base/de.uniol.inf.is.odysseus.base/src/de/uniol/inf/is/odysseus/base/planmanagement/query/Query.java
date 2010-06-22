@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.planmanagement.executor.datastructure;
+package de.uniol.inf.is.odysseus.base.planmanagement.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.AbstractQueryReoptimizeRule;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
@@ -100,6 +97,10 @@ public class Query implements IQuery {
 	 */
 	private QueryBuildParameter parameters = new QueryBuildParameter();
 
+	public Query() {
+		this("", null, null, null);
+	}
+	
 	/**
 	 * Creates a query based on a physical plan and {@link QueryBuildParameter}
 	 * 
@@ -595,5 +596,15 @@ public class Query implements IQuery {
 	@Override
 	public User getUser() {
 		return user;
+	}
+
+	@Override
+	public void setParserId(String parserId) {
+		this.parserID = parserId;
+	}
+
+	@Override
+	public void setBuildParameter(QueryBuildParameter parameter) {
+		this.parameters = parameter;
 	}
 }

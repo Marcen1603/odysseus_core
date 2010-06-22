@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
@@ -30,7 +31,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.AbstractExecutionSetting;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Plan;
-import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Query;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
@@ -154,7 +154,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * Creates a list of queries based on a query as a string, a parser id and
 	 * build parameters.
 	 * 
-	 * @param query
+	 * @param queryStr
 	 *            query as a string (e. g. CQL). Can contain more then one query
 	 *            (e. g. ";"-separated).
 	 * @param parserID
@@ -169,25 +169,21 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private ArrayList<IQuery> createQueries(String query, String parserID, User user, QueryBuildParameter parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
+	private List<IQuery> createQueries(String queryStr, String parserID, User user, QueryBuildParameter parameters) throws NoCompilerLoadedException, QueryParseException, OpenFailedException {
 		this.logger.debug("Translate Queries.");
-		ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
-		Query newQuery = null;
 		// translate query and build logical plans
-		Collection<ILogicalOperator> logicalPlan = compiler().translateQuery(query, parserID);
+		List<IQuery> queries = compiler().translateQuery(queryStr, parserID);
 
 		// create for each logical plan an intern query
-		for (ILogicalOperator planOp : logicalPlan) {
-			newQuery = new Query(parserID, parameters);
-			newQuery.setQueryText(query);
-			newQuery.setLogicalPlan(planOp);
-			newQuery.setUser(user);
+		for (IQuery query : queries) {
+			query.setBuildParameter(parameters);
+			query.setQueryText(queryStr);
+			query.setUser(user);
 			// this executor processes reoptimize requests
-			newQuery.addReoptimizeListener(this);
-			newQueries.add(newQuery);
+			query.addReoptimizeListener(this);
 		}
 
-		return newQueries;
+		return queries;
 	}
 
 	/**
@@ -319,7 +315,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 *            Queries for search.
 	 * @return ID list of the given queries.
 	 */
-	private ArrayList<Integer> getQuerieIDs(ArrayList<IQuery> newQueries) {
+	private List<Integer> getQuerieIDs(List<IQuery> newQueries) {
 		ArrayList<Integer> newIDs = new ArrayList<Integer>();
 
 		for (IQuery query : newQueries) {
@@ -388,7 +384,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IQuery> newQueries = createQueries(query, parserID, user, params);
+			List<IQuery> newQueries = createQueries(query, parserID, user, params);
 			addQueries(newQueries);
 			return getQuerieIDs(newQueries);
 		} catch (Exception e) {
@@ -412,7 +408,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.info("Start adding Queries. " + query);
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
-			ArrayList<IQuery> newQueries = createQueries(query, parserID, user, params);
+			List<IQuery> newQueries = createQueries(query, parserID, user, params);
 			if (rulesToUse != null && !rulesToUse.isEmpty()) {
 				addQueries(newQueries, doRestruct, rulesToUse);
 			} else {

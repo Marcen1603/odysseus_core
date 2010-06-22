@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.pqlhack
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.pqlhack.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.broker.dictionary,
  de.uniol.inf.is.odysseus.broker.logicaloperator,
@@ -15,6 +16,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking.sdf,
  de.uniol.inf.is.odysseus.parser.cql.parser.transformation,
  de.uniol.inf.is.odysseus.parser.pql.objectrelational,
+ de.uniol.inf.is.odysseus.planmanagement.executor.datastructure,
  de.uniol.inf.is.odysseus.pqlhack.parser,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,

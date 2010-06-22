@@ -75,6 +75,7 @@ public interface IQuery extends
 	public void setPriority(int priority);
 	
 	public String getParserId();
+	public void setParserId(String parserId);
 	
 	public String getQueryText();
 	public void setQueryText(String queryText);
@@ -178,6 +179,7 @@ public interface IQuery extends
 	 */
 	public QueryBuildParameter getBuildParameter();
 
+	public void setBuildParameter(QueryBuildParameter parameter);
 	/*
 	 * (non-Javadoc)
 	 * 

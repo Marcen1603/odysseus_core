@@ -2,11 +2,14 @@ package de.uniol.inf.is.odysseus.parser.pql;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 
 public class PQLParser implements IQueryParser {
@@ -19,13 +22,13 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<ILogicalOperator> parse(String query)
+	public synchronized List<IQuery> parse(String query)
 			throws QueryParseException {
 		return parse(new StringReader(query));
 	}
 
 	@Override
-	public synchronized List<ILogicalOperator> parse(Reader reader)
+	public synchronized List<IQuery> parse(Reader reader)
 			throws QueryParseException {
 		try {
 			if (this.parser == null) {
@@ -38,7 +41,16 @@ public class PQLParser implements IQueryParser {
 				PQLParserImpl.ReInit(reader);
 			}
 
-			return PQLParserImpl.query();
+			List<ILogicalOperator> logicalOps = PQLParserImpl.query();
+			List<IQuery> queries = new ArrayList<IQuery>();
+			
+			for(ILogicalOperator op : logicalOps) {
+				Query query = new Query();
+				query.setParserId(getLanguage());
+				query.setLogicalPlan(op);
+				queries.add(query);
+			}
+			return queries;
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}

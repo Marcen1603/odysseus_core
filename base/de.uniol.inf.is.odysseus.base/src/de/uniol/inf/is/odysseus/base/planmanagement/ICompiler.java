@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 
 /**
  * Describes an object which provides methods for processing queries. Fassade to
@@ -31,7 +32,7 @@ public interface ICompiler extends IInfoProvider {
 	 * @throws QueryParseException
 	 *             An {@link Exception} which occurs during parsing the query.
 	 */
-	public List<ILogicalOperator> translateQuery(String query, String parserID)
+	public List<IQuery> translateQuery(String query, String parserID)
 			throws QueryParseException;
 
 	/**
@@ -42,18 +43,21 @@ public interface ICompiler extends IInfoProvider {
 	 * @return rewrited logical plan.
 	 */
 	public ILogicalOperator restructPlan(ILogicalOperator logicalAlgebraList);
-	
+
 	/**
 	 * Rewrites a logical plan.
 	 * 
 	 * @param logicalAlgebraList
 	 *            logical plan which should be rewrited.
-	 * @param rules Contains the name of the rules to use. Other rules will not be used.
+	 * @param rules
+	 *            Contains the name of the rules to use. Other rules will not be
+	 *            used.
 	 * 
 	 * @return rewrited logical plan.
 	 */
-	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan, Set<String> rulesToUse);
-	
+	public ILogicalOperator restructPlan(ILogicalOperator logicalPlan,
+			Set<String> rulesToUse);
+
 	/**
 	 * Creates semantically equivalent alternative plans.
 	 * 
@@ -64,7 +68,8 @@ public interface ICompiler extends IInfoProvider {
 	 *            used.
 	 * @return list of possible alternatives, excluding the given plan.
 	 */
-	public List<ILogicalOperator> createAlternativePlans(ILogicalOperator logicalPlan, Set<String> rulesToUse);
+	public List<ILogicalOperator> createAlternativePlans(
+			ILogicalOperator logicalPlan, Set<String> rulesToUse);
 
 	/**
 	 * Transforms a logical plan into a physical representation.
@@ -82,9 +87,10 @@ public interface ICompiler extends IInfoProvider {
 	public IPhysicalOperator transform(ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException;
-	
+
 	/**
-	 * Transforms a logical plan into several semantically equivalent physical representations.
+	 * Transforms a logical plan into several semantically equivalent physical
+	 * representations.
 	 * 
 	 * @param logicalPlan
 	 *            logical plan which should be transformed.
@@ -96,7 +102,8 @@ public interface ICompiler extends IInfoProvider {
 	 *             An {@link Exception} which occurs during transformation the
 	 *             query.
 	 */
-	public List<IPhysicalOperator> transformWithAlternatives(ILogicalOperator logicalPlan,
+	public List<IPhysicalOperator> transformWithAlternatives(
+			ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException;
 

@@ -10,6 +10,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
@@ -131,9 +133,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
-	// TODO oder eine map erzeugen? ist die reihenfolge der queries relevant?
-	private List<ILogicalOperator> plans = new ArrayList<ILogicalOperator>();
-	private List<Integer> priorities = new ArrayList<Integer>();
+	private List<IQuery> plans = new ArrayList<IQuery>();
 	private static CQLParser instance = null;
 	private static NewSQLParser parser;
 
@@ -149,12 +149,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return "CQL";
 	}
 
-	public synchronized List<ILogicalOperator> parse(String query)
+	public synchronized List<IQuery> parse(String query)
 			throws QueryParseException {
 		return parse(new StringReader(query));
 	}
 
-	public synchronized List<ILogicalOperator> parse(Reader reader)
+	public synchronized List<IQuery> parse(Reader reader)
 			throws QueryParseException {
 		try {
 			if (parser == null) {
@@ -209,21 +209,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this,
 					data);
 			if (node.jjtGetNumChildren() == 2) {
-				if(node.jjtGetChild(1) instanceof ASTPriority){
-				priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
-				}else{
-					if(node.jjtGetChild(1) instanceof ASTMetric){
-						op = (AbstractLogicalOperator) node.jjtGetChild(1).jjtAccept(this, op);
+				if (node.jjtGetChild(1) instanceof ASTPriority) {
+					priority = (Integer) node.jjtGetChild(1).jjtAccept(this,
+							data);
+				} else {
+					if (node.jjtGetChild(1) instanceof ASTMetric) {
+						op = (AbstractLogicalOperator) node.jjtGetChild(1)
+								.jjtAccept(this, op);
 					}
 				}
 			}
 		}
-		this.priorities.add(priority);
-		// TODO: Warum dies? MG erstmal auskommentiert, da sonst doppelte
-		// Wurzeln f�r eine Anfrage
-		// TopAO dummy = new TopAO();
-		// dummy.subscribeTo(op,0,0);
-		plans.add(op);
+
+		Query query = new Query();
+		query.setParserId(getLanguage());
+		query.setPriority(priority);
+		query.setLogicalPlan(op);
+
+		plans.add(query);
 		return plans;
 	}
 
@@ -692,13 +695,23 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					ASTCreateBroker.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 					.invoke(bsv, node, data);
-			plans.add(sourceOp);
+
+			addQuery(sourceOp);
 			return plans;
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new RuntimeException(
+					"Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing CREATE BROKER statement", e.getCause());
-		}		
+			throw new RuntimeException(
+					"Error while parsing CREATE BROKER statement", e.getCause());
+		}
+	}
+
+	private void addQuery(AbstractLogicalOperator sourceOp) {
+		Query query = new Query();
+		query.setParserId(getLanguage());
+		query.setLogicalPlan(sourceOp);
+		plans.add(query);
 	}
 
 	@Override
@@ -708,23 +721,26 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTBrokerSelectInto node, Object data) {
-		
-			try {
-				Class<?> brokerSourceVisitor = Class
-						.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
-				Object bsv = brokerSourceVisitor.newInstance();
-				Method m = brokerSourceVisitor.getDeclaredMethod("visit",
-						ASTBrokerSelectInto.class, Object.class);
-				AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-						.invoke(bsv, node, data);
-				plans.add(sourceOp);
-				return plans;
-			} catch (ClassNotFoundException e) {
-				throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
-			} catch (Exception e) {
-				throw new RuntimeException("Error while parsing the SELECT INTO statement", e.getCause());
-			}			
+
+		try {
+			Class<?> brokerSourceVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Object bsv = brokerSourceVisitor.newInstance();
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+					ASTBrokerSelectInto.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+					.invoke(bsv, node, data);
+			addQuery(sourceOp);
+			return plans;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(
+					"Brokerplugin is missing in CQL parser.", e.getCause());
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Error while parsing the SELECT INTO statement", e
+							.getCause());
 		}
+	}
 
 	@Override
 	public Object visit(ASTBrokerAsSource node, Object data) {
@@ -742,7 +758,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTMetric node, Object data) {		
+	public Object visit(ASTMetric node, Object data) {
 		try {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
@@ -750,13 +766,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
 					ASTMetric.class, Object.class);
 			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);			
+					.invoke(bsv, node, data);
 			return sourceOp;
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new RuntimeException(
+					"Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing the METRIC clause", e.getCause());
-		}							
+			throw new RuntimeException("Error while parsing the METRIC clause",
+					e.getCause());
+		}
 	}
 
 	@Override
@@ -794,6 +812,5 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 
 }

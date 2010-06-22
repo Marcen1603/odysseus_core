@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.plan.AbstractPlanReoptimizeR
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 
 /**
  * Plan represents a map of all registered queries. 

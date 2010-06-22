@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.base.UpdateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
@@ -173,10 +174,10 @@ public class StandardCompiler implements ICompiler {
 	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#translateQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ArrayList<ILogicalOperator> translateQuery(String query,
+	public List<IQuery> translateQuery(String query,
 			String parserID) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
-			return (ArrayList<ILogicalOperator>) this.parserList.get(parserID)
+			return (ArrayList<IQuery>) this.parserList.get(parserID)
 					.parse(query);
 		}
 

@@ -18,6 +18,8 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
@@ -27,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
-public class SaseBuilder implements IQueryParser, BundleActivator  {
+public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public String getLanguage() {
@@ -41,7 +43,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 	@Override
 	public void stop(BundleContext arg0) throws Exception {
 	}
-	
+
 	public void printTree(CommonTree t, int indent) {
 		if (t != null) {
 			StringBuffer sb = new StringBuffer(indent);
@@ -53,9 +55,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 			}
 		}
 	}
-	
-	public List<ILogicalOperator> parse(Reader reader)
-			throws QueryParseException {
+
+	public List<IQuery> parse(Reader reader) throws QueryParseException {
 		SaseLexer lex = null;
 		try {
 			lex = new SaseLexer(new ANTLRReaderStream(reader));
@@ -65,14 +66,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 		return processParse(lex);
 	}
 
-	public List<ILogicalOperator> parse(String text) throws QueryParseException {
+	public List<IQuery> parse(String text) throws QueryParseException {
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
 		return processParse(lex);
 	}
 
-	private List<ILogicalOperator> processParse(SaseLexer lexer)
+	private List<IQuery> processParse(SaseLexer lexer)
 			throws QueryParseException {
-		List<ILogicalOperator> retList = new ArrayList<ILogicalOperator>();
+		ArrayList<IQuery> retList = new ArrayList<IQuery>();
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		SaseParser parser = new SaseParser(tokens);
 		SaseParser.start_return ret;
@@ -92,7 +93,11 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 		CepVariable.setSymbolTableOperationFactory(walker.symTableOpFac);
 
 		try {
-			retList.add(walker.start());
+			ILogicalOperator ao = walker.start();
+			Query query = new Query();
+			query.setParserId(getLanguage());
+			query.setLogicalPlan(ao);
+			retList.add(query);
 		} catch (RecognitionException e) {
 			throw new QueryParseException(e);
 		}
@@ -102,14 +107,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 	// -----------------------------------------------------------------------------------------
 	// FOR TESTING ONLY
 	// -----------------------------------------------------------------------------------------
-	
+
 	private static void createDummySource(String sourcename) {
 		AccessAO source;
 		source = new AccessAO(new SDFSource(sourcename, "RelationalStreaming"));
 		source.setOutputSchema(new SDFAttributeList());
 		DataDictionary.getInstance().setView(sourcename, source);
 	}
-	
+
 	public static void main(String[] args) {
 		SaseBuilder exec = new SaseBuilder();
 		// Zum Testen
@@ -128,29 +133,29 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 		createDummySource("nexmark:auction");
 		createDummySource("nexmark:category");
 
-		String[] toParse = new String[] {
-				"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2} WITHIN 1 minute RETURN person.id, person.name, auction.id, Count(bid[..i-1].bidder)"
-//				"CREATE STREAM Marco PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
-//				,
-//				"PATTERN SEQ(~nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
-//				,
-//				"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
-//				,
-//		,"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction+bid[i].auction and 5*21+(7+7)*2/COunt(bid[..i-1].bidder)>2} RETURN person.id, count(person[]), person.name, auction.id" };
-//						"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction+bid[i].auction and 5*21+(7+7)*2/COunt(bid[..i-1].bidder)>2} WITHIN 1" };
-	// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction} RETURN person.id, count(person[]), person.name, auction.id" 
-				};
+		String[] toParse = new String[] { "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2} WITHIN 1 minute RETURN person.id, person.name, auction.id, Count(bid[..i-1].bidder)"
+		// "CREATE STREAM Marco PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
+		// ,
+		// "PATTERN SEQ(~nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
+		// ,
+		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
+		// ,
+		// ,"PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction+bid[i].auction and 5*21+(7+7)*2/COunt(bid[..i-1].bidder)>2} RETURN person.id, count(person[]), person.name, auction.id"
+		// };
+		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction+bid[i].auction and 5*21+(7+7)*2/COunt(bid[..i-1].bidder)>2} WITHIN 1"
+		// };
+		// "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction} RETURN person.id, count(person[]), person.name, auction.id"
+		};
 
 		for (String q : toParse) {
 			System.out.println(q);
 			try {
-				List<ILogicalOperator> top = exec.parse(q);
-				CepAO cepAo = (CepAO) top
-						.get(0);
+				List<IQuery> top = exec.parse(q);
+				CepAO<?> cepAo = (CepAO<?>) top.get(0);
 				System.out.println("Final SM "
 						+ cepAo.getStateMachine().prettyPrint());
-				System.out.println(AbstractTreeWalker.prefixWalk(top.get(0),
-						new AlgebraPlanToStringVisitor()));
+				System.out.println(AbstractTreeWalker.prefixWalk(top.get(0)
+						.getLogicalPlan(), new AlgebraPlanToStringVisitor()));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -158,6 +163,5 @@ public class SaseBuilder implements IQueryParser, BundleActivator  {
 		}
 
 	}
-
 
 }

@@ -4,14 +4,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
-import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.QueryParseException;
-import de.uniol.inf.is.odysseus.p2p.gui.Log;
 
 public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer, ICompiler> {
 
@@ -37,7 +38,7 @@ public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer,
 	@Override
 	public void run() {
 		if(getFunction()!=null && getPeer()!=null && getExecutionListenerCallback()!=null) {
-			List<ILogicalOperator> plan = null;
+			List<IQuery> plan = null;
 			try {
 				//Anfrage Übersetzen und in Query kapseln
 				plan = getFunction().translateQuery(getExecutionListenerCallback().getQuery().getDeclarativeQuery(), getExecutionListenerCallback().getQuery().getLanguage());
@@ -55,7 +56,7 @@ public class OpenExecutionHandler extends AbstractExecutionHandler<AbstractPeer,
 			}			
 			try {
 			//Restrukturierung des Operatorplans
-			ILogicalOperator restructPlan = getFunction().restructPlan(plan.get(0));
+			ILogicalOperator restructPlan = getFunction().restructPlan(plan.get(0).getLogicalPlan());
 			getExecutionListenerCallback().getQuery().setLogicalOperatorplan(restructPlan);
 			} catch (Exception e) {
 				e.printStackTrace();

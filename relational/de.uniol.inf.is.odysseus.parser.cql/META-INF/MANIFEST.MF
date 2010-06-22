@@ -5,12 +5,14 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.cql
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.cql.Activator
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.intervalapproach;resolution:=optional,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.objecttracking.sdf;resolution:=optional,
+ de.uniol.inf.is.odysseus.planmanagement.executor.datastructure,
  de.uniol.inf.is.odysseus.priority;resolution:=optional,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,

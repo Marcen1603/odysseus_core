@@ -5,9 +5,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTLogicalPlan;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ParseException;
@@ -16,35 +17,34 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.CreateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitAttributesVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitBrokerVisitor;
 
-public class ProceduralParser implements IQueryParser{
+public class ProceduralParser implements IQueryParser {
 
 	public static IQueryParser instance;
-	
+
 	public static final String language = "";
-	
+
 	private ProceduralExpressionParser parser;
-	
-	public static synchronized IQueryParser getInstance(){
-		if (instance == null){
+
+	public static synchronized IQueryParser getInstance() {
+		if (instance == null) {
 			instance = new ProceduralParser();
 		}
 		return instance;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<ILogicalOperator> parse(String query)
-			throws QueryParseException {
+	public List<IQuery> parse(String query) throws QueryParseException {
 		// TODO Auto-generated method stub
-		List<ILogicalOperator> listOfPlans = new ArrayList<ILogicalOperator>();
-		
+		List<IQuery> listOfPlans = new ArrayList<IQuery>();
+
 		InitAttributesVisitor initAttrs = new InitAttributesVisitor();
 		InitBrokerVisitor initBroker = new InitBrokerVisitor();
 		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor();
-		
-		if(this.parser == null){
-			this.parser = new ProceduralExpressionParser(new StringReader(query));
-		}
-		else{
+
+		if (this.parser == null) {
+			this.parser = new ProceduralExpressionParser(
+					new StringReader(query));
+		} else {
 			ProceduralExpressionParser.ReInit(new StringReader(query));
 		}
 
@@ -60,19 +60,23 @@ public class ProceduralParser implements IQueryParser{
 		initAttrs.visit(logicalPlan, null);
 		ArrayList data = new ArrayList();
 		data.add(initAttrs.getAttributeResolver());
-		
+
 		// init the broker dictionary
 		initBroker.visit(logicalPlan, null);
-		
+
 		// create the logical plan
-		AbstractLogicalOperator topAO = (AbstractLogicalOperator)((ArrayList)createPlan.visit(logicalPlan, data)).get(1);
-		
-		listOfPlans.add(topAO);
+		AbstractLogicalOperator topAO = (AbstractLogicalOperator) ((ArrayList) createPlan
+				.visit(logicalPlan, data)).get(1);
+
+		Query queryObj = new Query();
+		queryObj.setParserId(getLanguage());
+		queryObj.setLogicalPlan(topAO);
+
+		listOfPlans.add(queryObj);
 		return listOfPlans;
 	}
 
-	public List<ILogicalOperator> parse(Reader reader)
-			throws QueryParseException {
+	public List<IQuery> parse(Reader reader) throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
