@@ -45,6 +45,11 @@
     </plugins>
   </build>
 <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 <dependency>
 <groupId>${project.groupId}</groupId>
 <artifactId>odysseus-broker</artifactId>

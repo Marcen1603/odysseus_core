@@ -78,15 +78,19 @@ drools;bundle-version="1.0.0.SNAPSHOT"
       <artifactId>odysseus-logicaloperator-base</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>drools-ruleagent</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>drools</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-osgi_rule_agent</artifactId>
+<version>${project.version}</version>
+</dependency>
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-monitoring-standardsystemmonitor</artifactId>
+<version>${project.version}</version>
+</dependency>
+<dependency><groupId>org.osgi</groupId><artifactId>org.osgi.core</artifactId><version>4.2.0</version></dependency>
+<dependency><groupId>org.slf4j</groupId><artifactId>com.springsource.slf4j.api</artifactId></dependency>
+
   </dependencies>
 </project>

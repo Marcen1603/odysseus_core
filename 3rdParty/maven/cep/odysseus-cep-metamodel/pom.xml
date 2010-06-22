@@ -17,7 +17,7 @@
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.cep.metamodel*;version=${project.version}
+      de.uniol.inf.is.odysseus.cep*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
@@ -25,28 +25,6 @@
 
   <build>
     <plugins>
-<plugin>
-                                <artifactId>maven-shade-plugin</artifactId>
-                                <executions>
-                                        <execution>
-                                                <phase>package</phase>
-                                                <goals>
-                                                        <goal>shade</goal>
-                                                </goals>
-                                                <configuration>
-                                                        <artifactSet>
-                                                                <includes>
-                                                                        <include>org.nfunk:jep-modified</include>
-                                                                </includes>
-                                                        </artifactSet>
-
-                                                        <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-                                                        <createDependencyReducedPom>true</createDependencyReducedPom>
-                                                </configuration>
-                                        </execution>
-                                </executions>
-                        </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
@@ -74,14 +52,8 @@
 </dependency>
 <dependency>
 <groupId>${project.groupId}</groupId>
-<artifactId>odysseus-physicaloperator-base</artifactId>
+<artifactId>odysseus-logicaloperator-base</artifactId>
 <version>${project.version}</version>
 </dependency>
-    <dependency>
-      <groupId>org.nfunk</groupId>
-      <artifactId>jep-modified</artifactId>
-      <version>2.4.0</version>
-    </dependency>
-
 </dependencies>
 </project>
