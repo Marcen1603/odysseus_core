@@ -73,19 +73,16 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(SimpleNode node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTLogicalPlan node, Object data) {
-		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
 	
 	public Object visit(ASTAlgebraOp node, Object data) {
-		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
@@ -217,7 +214,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTJoinOp node, Object data) {
-		// TODO Auto-generated method stub
 		ObjectTrackingJoinAO join = new ObjectTrackingJoinAO();
 		
 		// the window size determine how many evaluations
@@ -257,13 +253,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTWindowOp node, Object data) {
-		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
 	
 	public Object visit(ASTSlidingTimeWindow node, Object data) {
-		// TODO Auto-generated method stub
 		WindowAO win = new WindowAO(WindowType.SLIDING_TIME_WINDOW);
 		
 		// pass only the attribute resolver to the children
@@ -308,7 +302,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTPredictionOp node, Object data) {
-		// TODO Auto-generated method stub
 		ObjectTrackingPredictionAssignAO prediction = new ObjectTrackingPredictionAssignAO();
 		
 		// pass only the attribute resolver to the children
@@ -502,37 +495,31 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTExpression node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTSimpleToken node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTNumber node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTString node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTIdentifier node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTCompareOperator node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -580,7 +567,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTPredictionFunctionDefinition node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -605,19 +591,16 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTDefaultPredictionDefinition node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTFunctionExpression node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
 	public Object visit(ASTFunctionName node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -650,7 +633,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTRelationalJoinOp node, Object data) {
-		// TODO Auto-generated method stub
 		JoinAO join = new JoinAO();
 		
 		
