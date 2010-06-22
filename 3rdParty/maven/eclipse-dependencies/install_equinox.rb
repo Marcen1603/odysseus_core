@@ -20,7 +20,11 @@ Find.find(ENV["PWD"]) { |f|
       name = name.split(".")
       version = version.split(".")
       if version[-1] == "jar"
+	if (version.length < 4)
         version = version[0...version.length-1]
+	else
+	version = version[0...3]
+	end	
         group = name[0,3]
         if name.length < 4
           artifact = name[2...name.length]

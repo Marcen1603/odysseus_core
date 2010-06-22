@@ -17,7 +17,7 @@
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.action.demoApp*;version=${project.version}
+      de.uniol.inf.is.odysseus.action.demoapp*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
@@ -46,7 +46,8 @@
   </build>
 <dependencies>
 <dependency><groupId>org.eclipse.equinox</groupId><artifactId>app</artifactId></dependency>
-<dependency><groupId>org.eclipse</groupId><artifactId>swt</artifactId><version>3.3.0-v3346</version></dependency>
+<dependency><groupId>org.eclipse.swt</groupId><artifactId>swt</artifactId><version>3.5.2</version></dependency>
+<dependency><groupId>org.eclipse.swt</groupId><artifactId>gtk.linux.x86</artifactId><version>64_3.5.2</version></dependency>
 <dependency><groupId>org.slf4j</groupId><artifactId>com.springsource.slf4j.api</artifactId></dependency>
 </dependencies>
 </project>

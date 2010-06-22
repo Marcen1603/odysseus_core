@@ -45,5 +45,25 @@
     </plugins>
   </build>
 <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+   <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-action-services</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+   <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-action</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+   <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-action-demoApp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 </dependencies>
 </project>

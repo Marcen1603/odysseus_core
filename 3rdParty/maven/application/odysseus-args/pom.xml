@@ -44,4 +44,16 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+      <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+<scope>compile</scope>
+      </dependency>
+  </dependencies>
 </project>

@@ -17,7 +17,7 @@
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.action.ideaalWrapper*;version=${project.version}
+      de.uniol.inf.is.odysseus.action.ideaalwrapper*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>

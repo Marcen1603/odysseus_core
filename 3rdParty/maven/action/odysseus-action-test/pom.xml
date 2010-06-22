@@ -45,12 +45,25 @@
     </plugins>
   </build>
 <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 <dependency>
 <groupId>${project.groupId}</groupId>
 <artifactId>odysseus-action-services</artifactId>
 <version>${project.version}</version>
 </dependency>
-      <dependency>            <groupId>junit</groupId>            <artifactId>junit</artifactId></dependency>
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-action</artifactId>
+<version>${project.version}</version>
+</dependency>
+      <dependency>            
+<groupId>junit</groupId>            
+<artifactId>junit</artifactId>
+<scope>compile</scope></dependency>
 <dependency><groupId>org.osgi</groupId><artifactId>org.osgi.core</artifactId><version>4.2.0</version></dependency>
 </dependencies>
 </project>

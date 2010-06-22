@@ -17,7 +17,7 @@
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.action.eclipseConsole*;version=${project.version}
+      de.uniol.inf.is.odysseus.action.eclipseconsole*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
@@ -63,11 +63,6 @@
 <dependency>
 <groupId>${project.groupId}</groupId>
 <artifactId>odysseus-planmanagement-executor-console</artifactId>
-<version>${project.version}</version>
-</dependency>
-<dependency>
-<groupId>${project.groupId}</groupId>
-<artifactId>odysseus-planmanagement-executor</artifactId>
 <version>${project.version}</version>
 </dependency>
 <dependency><groupId>org.eclipse.osgi</groupId><artifactId>osgi</artifactId></dependency>
