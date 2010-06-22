@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * Represents the knowledge for a broker.  
  * 
- * @author Dennis Geesen
+ * @author Dennis Geesen, Andre Bolles
  */
 public class BrokerDictionaryEntry {
 	
@@ -34,6 +34,39 @@ public class BrokerDictionaryEntry {
 	/** The port mappings. */
 	private List<QueuePortMapping> portMappings = new ArrayList<QueuePortMapping>();
 	
+	/**
+	 * A broker can be created by more than one statement. Therefore, we have
+	 * to store the current input port position. If the broker has no input connections,
+	 * the current input port is 0. If there is one connection the current input port is 1
+	 * and so on. This field is only used for parsing and
+	 * adding additional query plans.
+	 */
+	private int currentInputPort;
+	
+	public int getCurrentInputPort() {
+		return currentInputPort;
+	}
+
+	public void setCurrentInputPort(int currentInputPort) {
+		this.currentInputPort = currentInputPort;
+	}
+
+	public int getCurrentOutputPort() {
+		return currentOutputPort;
+	}
+
+	public void setCurrentOutputPort(int currentOutputPort) {
+		this.currentOutputPort = currentOutputPort;
+	}
+
+	/***
+	 * A broker can be created by more than one statement. Therefore, we have
+	 * to store the current output port position. If there is no reading access to
+	 * the broker the current output port is 0. If there is one reading access, the
+	 * current output port is 1 and so on. This field is only used for parsing and
+	 * adding additional query plans.
+	 */
+	private int currentOutputPort;
 	
 	/**
 	 * Creates a new instance for the given name.

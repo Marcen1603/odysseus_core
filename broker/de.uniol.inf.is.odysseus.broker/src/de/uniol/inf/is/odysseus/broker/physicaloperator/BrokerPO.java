@@ -161,69 +161,69 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		}
 		contentChanged = false;
 		// if the broker is not in waiting mode...		
-			// ... and there is a valid minimum (each writing transaction has at
-			// least one valid tuple or punctuation)
-			if (min != null) {
-				printDebug("Get all from waiting buffer <= " + min);
-				// get all objects from waiting buffer...
-				while (!waitingBuffer.isEmpty()) {
-					T o = waitingBuffer.peek();
-					// ... which are before or equal the minimum
-					if (o.getMetadata().getStart().beforeOrEquals(min)) {
-						contentChanged = true;
-						T toInsert = waitingBuffer.poll();
-						// remove the old version from SweepArea
-						sweepArea.purgeElements(toInsert, Order.LeftRight);
-						// insert the new version
-						sweepArea.insert(toInsert);
-					} else {
-						break;
-					}
+		// ... and there is a valid minimum (each writing transaction has at
+		// least one valid tuple or punctuation)
+		if (min != null) {
+			printDebug("Get all from waiting buffer <= " + min);
+			// get all objects from waiting buffer...
+			while (!waitingBuffer.isEmpty()) {
+				T o = waitingBuffer.peek();
+				// ... which are before or equal the minimum
+				if (o.getMetadata().getStart().beforeOrEquals(min)) {
+					contentChanged = true;
+					T toInsert = waitingBuffer.poll();
+					// remove the old version from SweepArea
+					sweepArea.purgeElements(toInsert, Order.LeftRight);
+					// insert the new version
+					sweepArea.insert(toInsert);
+				} else {
+					break;
 				}
 			}
-			List<PhysicalSubscription<ISink<? super T>>> destinations = new ArrayList<PhysicalSubscription<ISink<? super T>>>();
-			if (contentChanged) {
-				// get all continuously reading subscriptions for output
-				destinations = getWritingToSinks();
-			}
-			if (!timestampList.isEmpty()) {
-				TransactionTS nextTs = timestampList.peek();
-				// if there is a minimum (at least one valid timestamp from each
-				// writing stream)
-				// and if the next timestamp from a queue stream is before or
-				// equal this minimum
-				if (min != null && nextTs.getPointInTime().beforeOrEquals(min)) {
-					// add the next timestamp transaction to the destinations
-					TransactionTS tts = timestampList.poll();
-					int nextPort = tts.getOutgoingPort();
-					PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
-					if (nextSub != null) {
-						destinations.add(nextSub);						
-					}
+		}
+		List<PhysicalSubscription<ISink<? super T>>> destinations = new ArrayList<PhysicalSubscription<ISink<? super T>>>();
+		if (contentChanged) {
+			// get all continuously reading subscriptions for output
+			destinations = getWritingToSinks();
+		}
+		if (!timestampList.isEmpty()) {
+			TransactionTS nextTs = timestampList.peek();
+			// if there is a minimum (at least one valid timestamp from each
+			// writing stream)
+			// and if the next timestamp from a queue stream is before or
+			// equal this minimum
+			if (min != null && nextTs.getPointInTime().beforeOrEquals(min)) {
+				// add the next timestamp transaction to the destinations
+				TransactionTS tts = timestampList.poll();
+				int nextPort = tts.getOutgoingPort();
+				PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
+				if (nextSub != null) {
+					destinations.add(nextSub);						
 				}
 			}
-			printDebug("Next cyclic output: " + getNextCyclicTransactionList());
-			// transfer the content of the the SweepArea to the destinations
-			// (first ones are continuous)
-			if (!this.sweepArea.isEmpty()) {
-				for (PhysicalSubscription<ISink<? super T>> toSub : destinations) {
-					int toPort = toSub.getSourceOutPort();
-					// transfer the whole content to the subscription
-					for (T element : this.sweepArea) {
-						transfer(element, toPort);
-					}
-					// if (last) one is cycle then stop and wait
-					if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.Cyclic) {
-						// determine the port the broker has to wait for					
-						return;
-					} else if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.OneTime) {
-						// broker don't have to wait, because it is one time
-						// reading.
-						// therefore the timestamp can directly removed
-						this.timestampList.poll();
-					}
+		}
+		printDebug("Next cyclic output: " + getNextCyclicTransactionList());
+		// transfer the content of the the SweepArea to the destinations
+		// (first ones are continuous)
+		if (!this.sweepArea.isEmpty()) {
+			for (PhysicalSubscription<ISink<? super T>> toSub : destinations) {
+				int toPort = toSub.getSourceOutPort();
+				// transfer the whole content to the subscription
+				for (T element : this.sweepArea) {
+					transfer(element, toPort);
+				}
+				// if (last) one is cycle then stop and wait
+				if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.Cyclic) {
+					// determine the port the broker has to wait for					
+					return;
+				} else if (BrokerDictionary.getInstance().getReadTypeForPort(getIdentifier(), toPort) == ReadTransaction.OneTime) {
+					// broker don't have to wait, because it is one time
+					// reading.
+					// therefore the timestamp can directly removed
+					this.timestampList.poll();
 				}
 			}
+		}
 
 		
 

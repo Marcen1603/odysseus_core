@@ -214,5 +214,21 @@ public class BrokerDictionary {
 	public void clearAllReadingPorts(String brokername) {
 		this.brokerlist.get(brokername).removeAllReadingPorts();
 	}
+	
+	public int getCurrentInputPort(String brokername){
+		return this.brokerlist.get(brokername).getCurrentInputPort();
+	}
+	
+	public void setCurrentInputPort(String brokername, int curIn){
+		this.brokerlist.get(brokername).setCurrentInputPort(curIn);
+	}
+	
+	public int getCurrentOutputPort(String brokername){
+		return this.brokerlist.get(brokername).getCurrentOutputPort();
+	}
+	
+	public void setCurrentOuputPort(String brokername, int curOut){
+		this.brokerlist.get(brokername).setCurrentOutputPort(curOut);
+	}
 
 }
