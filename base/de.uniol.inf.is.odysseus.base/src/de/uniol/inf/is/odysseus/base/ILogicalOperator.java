@@ -33,6 +33,6 @@ public interface ILogicalOperator extends IOwnedOperator,
 	public Collection<ISource<?>> getPhysInputPOs();
 	public int getNumberOfInputs();
 
-	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a);
+//	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a);
 	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a);
 }

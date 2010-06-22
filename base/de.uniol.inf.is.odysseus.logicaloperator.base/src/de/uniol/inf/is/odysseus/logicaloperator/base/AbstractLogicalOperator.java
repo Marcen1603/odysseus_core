@@ -345,18 +345,18 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return new Vector<LogicalSubscription>(this.subscriptions);
 	}
 
-	@Override
-	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a) {
-		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
-		synchronized (subscriptions) {
-			for (LogicalSubscription l : subscriptions) {
-				if (l.getTarget() == a) {
-					subs.add(l);
-				}
-			}
-		}
-		return subs;
-	}
+//	@Override
+//	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a) {
+//		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
+//		synchronized (subscriptions) {
+//			for (LogicalSubscription l : subscriptions) {
+//				if (l.getTarget() == a) {
+//					subs.add(l);
+//				}
+//			}
+//		}
+//		return subs;
+//	}
 
 	@Override
 	public int getNumberOfInputs() {
