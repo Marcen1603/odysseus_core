@@ -593,13 +593,14 @@ public class ObjectTrackingNestPO extends
 		
 		meta = new ObjectTrackingMetadata<Object>();
 	
-		meta.setStreamTime(
-		   TimeInterval.intersection(
+		TimeInterval ti = TimeInterval.intersection(
 		      a.getMetadata(), 
 		      b.getMetadata()
-		   )
 		);
-		   
+		
+		meta.setStart(ti.getStart());
+		meta.setEnd(ti.getEnd());
+		
 		tuples = new ArrayList<MVRelationalTuple<ObjectTrackingMetadata<Object>>>();
 		
 		/*
