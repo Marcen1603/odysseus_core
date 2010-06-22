@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
@@ -774,6 +775,23 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		
 		((ArrayList)data).add(op);
 
+		return data;
+	}
+
+
+	@Override
+	public Object visit(ASTBrokerOp node, Object data) {
+		// We cannot use the same code as for ASTAccessOp, since
+		// the broker also can but not has to have input operators.
+		AttributeResolver attributeResolver = (AttributeResolver) ((ArrayList)data).get(0);
+		
+		
+		// The broker must not have an alias
+//		if(node.hasAlias()){
+//			((ArrayList)data).add(attributeResolver.getSource(node.getAlias()));
+//		}else{
+			((ArrayList)data).add(attributeResolver.getSource(((ASTIdentifier)node.jjtGetChild(0)).getName()));
+//		}
 		return data;
 	}
 

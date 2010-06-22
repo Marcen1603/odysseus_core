@@ -4,7 +4,12 @@ package de.uniol.inf.is.odysseus.pqlhack.parser;
 
 public
 class ASTBrokerOp extends SimpleNode {
-  public ASTBrokerOp(int id) {
+	
+	private boolean hasQueue;
+	
+	private int noOfChildOps;
+	
+	public ASTBrokerOp(int id) {
     super(id);
   }
 
@@ -18,19 +23,38 @@ class ASTBrokerOp extends SimpleNode {
     return visitor.visit(this, data);
   }
   
-  public String getAlias() {
-		switch (jjtGetNumChildren()) {
-		case 1:
-			return null;
-		case 2:
-			return ((ASTIdentifier)jjtGetChild(1)).getName();
-		default:
-			return null;
-		}
-	}
+//  public String getAlias() {
+//	  
+//	  // first child = name of broker
+//	  // second child = alias or following algebra operator
+//		if(jjtGetNumChildren() > 1 && this.jjtGetChild(1) instanceof ASTIdentifier){
+//			return ((ASTIdentifier)this.jjtGetChild(1)).getName();
+//		}
+//		return null;
+//	}
 
-	public boolean hasAlias() {
-		return getAlias() != null;
+//	public boolean hasAlias() {
+//		return getAlias() != null;
+//	}
+	
+	public String getName(){
+		return ((ASTIdentifier)this.jjtGetChild(0)).getName();
+	}
+	
+	public void setQueue(boolean b){
+		this.hasQueue = b;
+	}
+	
+	public boolean hasQueue(){
+		return this.hasQueue;
+	}
+	
+	public int getNoOfChildOps(){
+		return this.noOfChildOps;
+	}
+	
+	public void increaseNoOfChildOps(){
+		this.noOfChildOps++;
 	}
 }
 /* JavaCC - OriginalChecksum=968a071d3599b11d992deb4976887d5d (do not edit this line) */

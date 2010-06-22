@@ -37,6 +37,7 @@ TOKEN : /* Keywords */ {
 |	<K_AS: "AS">
 |	<K_AND: "AND">
 |	<K_AVG: "AVG">
+|   <K_BROKER: "BROKER">
 |	<K_COUNT: "COUNT">
 |	<K_DEFAULT: "DEFAULT">
 |	<K_JOIN: "JOIN">
@@ -48,6 +49,7 @@ TOKEN : /* Keywords */ {
 |	<K_ON: "ON">
 |	<K_PLAN: "PLAN">
 |	<K_PROJECTION: "PROJECTION">
+|   <K_QUEUE: "QUEUE">
 |   <K_RELATIONAL_PROJECTION: "RPROJECTION">
 |   <K_RELATIONAL_SELECTION: "RSELECTION">
 |   <K_RELATIONAL_JOIN: "RJOIN">
@@ -110,6 +112,7 @@ void AlgebraOp():{}{
 	RelationalUnnestOp() |
 	WindowOp() |
 	AccessOp() |
+	BrokerOp() |
 	PredictionOp() |
 	TestOp()
 }
@@ -185,6 +188,10 @@ void SlidingTimeWindow(): {}{
 
 void AccessOp(): {}{
 	<K_ACCESS>"(" Identifier() [<K_AS> Identifier()] ")"
+}
+
+void BrokerOp(): {}{
+	<K_BROKER>"(" Identifier() [LOOKAHEAD(2) "," <K_QUEUE>"(" AlgebraOp() ")" {jjtThis.setQueue(true);}] ("," AlgebraOp() {jjtThis.increaseNoOfChildOps();})* ")"
 }
 
 void PredictionOp() : {}{

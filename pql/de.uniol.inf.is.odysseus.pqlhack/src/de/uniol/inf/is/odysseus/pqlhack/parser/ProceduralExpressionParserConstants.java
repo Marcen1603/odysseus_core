@@ -19,77 +19,81 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_AVG = 8;
   /** RegularExpression Id. */
-  int K_COUNT = 9;
+  int K_BROKER = 9;
   /** RegularExpression Id. */
-  int K_DEFAULT = 10;
+  int K_COUNT = 10;
   /** RegularExpression Id. */
-  int K_JOIN = 11;
+  int K_DEFAULT = 11;
   /** RegularExpression Id. */
-  int K_LOGICAL = 12;
+  int K_JOIN = 12;
   /** RegularExpression Id. */
-  int K_MAX = 13;
+  int K_LOGICAL = 13;
   /** RegularExpression Id. */
-  int K_MIN = 14;
+  int K_MAX = 14;
   /** RegularExpression Id. */
-  int K_NOT = 15;
+  int K_MIN = 15;
   /** RegularExpression Id. */
-  int K_OR = 16;
+  int K_NOT = 16;
   /** RegularExpression Id. */
-  int K_ON = 17;
+  int K_OR = 17;
   /** RegularExpression Id. */
-  int K_PLAN = 18;
+  int K_ON = 18;
   /** RegularExpression Id. */
-  int K_PROJECTION = 19;
+  int K_PLAN = 19;
   /** RegularExpression Id. */
-  int K_RELATIONAL_PROJECTION = 20;
+  int K_PROJECTION = 20;
   /** RegularExpression Id. */
-  int K_RELATIONAL_SELECTION = 21;
+  int K_QUEUE = 21;
   /** RegularExpression Id. */
-  int K_RELATIONAL_JOIN = 22;
+  int K_RELATIONAL_PROJECTION = 22;
   /** RegularExpression Id. */
-  int K_RELATIONAL_NEST = 23;
+  int K_RELATIONAL_SELECTION = 23;
   /** RegularExpression Id. */
-  int K_RELATIONAL_UNNEST = 24;
+  int K_RELATIONAL_JOIN = 24;
   /** RegularExpression Id. */
-  int K_SELECTION = 25;
+  int K_RELATIONAL_NEST = 25;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 26;
+  int K_RELATIONAL_UNNEST = 26;
   /** RegularExpression Id. */
-  int K_SIZE = 27;
+  int K_SELECTION = 27;
   /** RegularExpression Id. */
-  int K_SLIDE = 28;
+  int K_SET_PREDICTION = 28;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 29;
+  int K_SIZE = 29;
   /** RegularExpression Id. */
-  int K_SUM = 30;
+  int K_SLIDE = 30;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 31;
+  int K_SLDING_TIME_WINDOW = 31;
   /** RegularExpression Id. */
-  int K_WHERE = 32;
+  int K_SUM = 32;
   /** RegularExpression Id. */
-  int K_TEST = 33;
+  int K_TUMBLING_TIME_WINDOW = 33;
   /** RegularExpression Id. */
-  int IDENTIFIER = 34;
+  int K_WHERE = 34;
   /** RegularExpression Id. */
-  int LETTER = 35;
+  int K_TEST = 35;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 36;
+  int IDENTIFIER = 36;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 37;
+  int LETTER = 37;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 38;
+  int SPECIAL_CHARS = 38;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 39;
+  int CHAR_LITERAL = 39;
   /** RegularExpression Id. */
-  int REGEXP = 40;
+  int QUOTED_IDENTIFIER = 40;
   /** RegularExpression Id. */
-  int FLOAT = 41;
+  int COMPARE_OPERATOR = 41;
   /** RegularExpression Id. */
-  int INTEGER = 42;
+  int REGEXP = 42;
   /** RegularExpression Id. */
-  int DIGIT = 43;
+  int FLOAT = 43;
   /** RegularExpression Id. */
-  int IPADDRESS = 44;
+  int INTEGER = 44;
+  /** RegularExpression Id. */
+  int DIGIT = 45;
+  /** RegularExpression Id. */
+  int IPADDRESS = 46;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -105,6 +109,7 @@ public interface ProceduralExpressionParserConstants {
     "\"AS\"",
     "\"AND\"",
     "\"AVG\"",
+    "\"BROKER\"",
     "\"COUNT\"",
     "\"DEFAULT\"",
     "\"JOIN\"",
@@ -116,6 +121,7 @@ public interface ProceduralExpressionParserConstants {
     "\"ON\"",
     "\"PLAN\"",
     "\"PROJECTION\"",
+    "\"QUEUE\"",
     "\"RPROJECTION\"",
     "\"RSELECTION\"",
     "\"RJOIN\"",

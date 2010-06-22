@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
@@ -232,6 +233,12 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 
 	
 	public Object visit(ASTTestOp node, Object data) {
+		// TODO Auto-generated method stub
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTBrokerOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}

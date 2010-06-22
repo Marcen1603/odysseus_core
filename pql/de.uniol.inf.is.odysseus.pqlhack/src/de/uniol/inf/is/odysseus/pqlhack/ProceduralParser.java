@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ParseException;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParser;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.CreateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitAttributesVisitor;
+import de.uniol.inf.is.odysseus.pqlhack.parser.visitor.InitBrokerVisitor;
 
 public class ProceduralParser implements IQueryParser{
 
@@ -37,6 +38,7 @@ public class ProceduralParser implements IQueryParser{
 		List<ILogicalOperator> listOfPlans = new ArrayList<ILogicalOperator>();
 		
 		InitAttributesVisitor initAttrs = new InitAttributesVisitor();
+		InitBrokerVisitor initBroker = new InitBrokerVisitor();
 		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor();
 		
 		if(this.parser == null){
@@ -54,11 +56,15 @@ public class ProceduralParser implements IQueryParser{
 			e.printStackTrace();
 		}
 
+		// init the attribute resolver
 		initAttrs.visit(logicalPlan, null);
-		
 		ArrayList data = new ArrayList();
 		data.add(initAttrs.getAttributeResolver());
 		
+		// init the broker dictionary
+		initBroker.visit(logicalPlan, null);
+		
+		// create the logical plan
 		AbstractLogicalOperator topAO = (AbstractLogicalOperator)((ArrayList)createPlan.visit(logicalPlan, data)).get(1);
 		
 		listOfPlans.add(topAO);
