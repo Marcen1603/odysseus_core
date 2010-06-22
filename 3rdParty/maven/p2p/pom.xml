@@ -13,5 +13,14 @@
   <name>Odysseus :: p2p</name>
 
   <modules>
+<module>adminpeer</module>
+<module>superpeer</module>
+<module>thinpeer</module>
+<module>operatorpeer</module>
+<module>distribution</module>
+<module>base</module>
+<module>jxta</module>
+<module>splitting</module>
+<module>execution</module>
   </modules>
 </project>
