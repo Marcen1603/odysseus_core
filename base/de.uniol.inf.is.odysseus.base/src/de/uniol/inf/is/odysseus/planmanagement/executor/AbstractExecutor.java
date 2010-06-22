@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
  * 
  */
 public abstract class AbstractExecutor implements IExecutor, IScheduleable,
-		ISettingChangeListener, IOptimizable,
+		ISettingChangeListener, 
 		IQueryReoptimizeListener, IPlanReoptimizeListener {
 
 	/**

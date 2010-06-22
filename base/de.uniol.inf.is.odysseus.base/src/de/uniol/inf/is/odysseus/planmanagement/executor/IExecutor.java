@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionC
 import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Query;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 
 /**
  * IExecutor stellt die Hauptschnittstelle für externe Anwendungen zu Odysseus
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
  * @author wolf
  * 
  */
-public interface IExecutor extends IPlanManager, IPlanScheduling,
+public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 		IInfoProvider, IErrorEventHandler, IErrorEventListener {
 	/**
 	 * initialize initialisiert die AUsführungsumgebung. ggf. gehen Anfragen,
