@@ -17,7 +17,7 @@
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.costmodel.base*;version=${project.version}
+      de.uniol.inf.is.odysseus.new_transformation.costmodel.base*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>

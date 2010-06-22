@@ -23,8 +23,31 @@
     </odysseus.osgi.bundles>
   </properties>
 
+
   <build>
     <plugins>
+<plugin>
+                                <artifactId>maven-shade-plugin</artifactId>
+                                <executions>
+                                        <execution>
+                                                <phase>package</phase>
+                                                <goals>
+                                                        <goal>shade</goal>
+                                                </goals>
+                                                <configuration>
+                                                        <artifactSet>
+                                                                <includes>
+                                                                        <include>org.openrdf:sesame</include>
+                                                                </includes>
+                                                        </artifactSet>
+
+                                                        <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                                                        <createDependencyReducedPom>true</createDependencyReducedPom>
+                                                </configuration>
+                                        </execution>
+                                </executions>
+                        </plugin>
+<plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
@@ -41,6 +64,28 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-scr-plugin</artifactId>
+      </plugin>
+<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-jep</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${project.basedir}/lib/openrdf-sesame-2.3.1-onejar.jar</file>
+              <groupId>org.openrdf</groupId>
+              <artifactId>sesame</artifactId>
+              <version>2.3.1</version>
+              <packaging>jar</packaging>
+              <createChecksum>true</createChecksum>
+              <generatePom>true</generatePom>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

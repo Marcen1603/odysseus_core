@@ -17,7 +17,7 @@
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      de.uniol.inf.is.odysseus.costmodel.mockup*;version=${project.version}
+      de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup*;version=${project.version}
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
@@ -45,9 +45,24 @@
     </plugins>
   </build>
 <dependencies>
+  <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odysseus-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 <dependency>
 <groupId>${project.groupId}</groupId>
 <artifactId>odysseus-new_transformation-stream_characteristics</artifactId>
+<version>${project.version}</version>
+</dependency>
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-costmodel-base</artifactId>
+<version>${project.version}</version>
+</dependency>
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-logicaloperator-base</artifactId>
 <version>${project.version}</version>
 </dependency>
 <dependency><groupId>org.osgi</groupId><artifactId>org.osgi.core</artifactId><version>4.2.0</version></dependency>
