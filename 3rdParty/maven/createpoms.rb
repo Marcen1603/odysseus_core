@@ -81,13 +81,13 @@ public
         "org.apache.log4j.spi" => "<dependency>        <groupId>org.apache.log4j</groupId>        <artifactId>com.springsource.org.apache.log4j</artifactId></dependency>",
 
 
-"org.apache.cxf.binding" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>apache-cxf</artifactId>    <version>2.2.9</version></dependency>",
-"org.apache.cxf.endpoint" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>apache-cxf</artifactId>    <version>2.2.9</version></dependency>",
-"org.apache.cxf.endpoint.dynamic" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>apache-cxf</artifactId>    <version>2.2.9</version></dependency>",
-"org.apache.cxf.jaxws.endpoint.dynamic" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>apache-cxf</artifactId>    <version>2.2.9</version></dependency>",
-"org.apache.cxf.service" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>apache-cxf</artifactId>    <version>2.2.9</version></dependency>",
-"org.apache.cxf.service.model" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>apache-cxf</artifactId>    <version>2.2.9</version></dependency>",
-        "org.junit" => "      <dependency>            <groupId>junit</groupId>            <artifactId>junit</artifactId></dependency>"}
+"org.apache.cxf.binding" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>cxf-bundle</artifactId>    <version>2.2.9</version></dependency>",
+"org.apache.cxf.endpoint" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>cxf-bundle</artifactId>    <version>2.2.9</version></dependency>",
+"org.apache.cxf.endpoint.dynamic" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>cxf-bundle</artifactId>    <version>2.2.9</version></dependency>",
+"org.apache.cxf.jaxws.endpoint.dynamic" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>cxf-bundle</artifactId>    <version>2.2.9</version></dependency>",
+"org.apache.cxf.service" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>cxf-bundle</artifactId>    <version>2.2.9</version></dependency>",
+"org.apache.cxf.service.model" => "<dependency>    <groupId>org.apache.cxf</groupId>    <artifactId>cxf-bundle</artifactId>    <version>2.2.9</version></dependency>",
+        "org.junit" => "      <dependency>            <groupId>junit</groupId>            <artifactId>junit</artifactId><scope>compile</scope></dependency>"}
 
         findSrc(dir, "")
 		buildDependencies
@@ -164,8 +164,15 @@ private
 		file = File.new(path, 'r')
 		while not file.eof?
 			line = file.readline
+			if /^Require-Bundle:/ =~ line
+			  match = (/\w+(\.(\w|_)+)*/.match(line))
+			  unless match.nil?
+			      @manifestImports[project] |= Array.new
+			      @manifestImports[project] << match[0]
+			  end
+			end
 			if /^Import-Package:/ =~ line
-				@manifestImports[project] = Array.new
+				@manifestImports[project] |= Array.new
 				addImport(project, line[15, line.length-1])
 				while not file.eof?
 					line = file.readline
