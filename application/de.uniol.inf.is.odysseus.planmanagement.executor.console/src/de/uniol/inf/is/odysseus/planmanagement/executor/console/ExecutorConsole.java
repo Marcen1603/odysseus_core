@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
@@ -60,7 +61,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planr
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public class ExecutorConsole implements CommandProvider,
-		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener {
+		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
 
 	private static Logger logger = LoggerFactory.getLogger(ExecutorConsole.class);
 	
@@ -244,6 +245,7 @@ public class ExecutorConsole implements CommandProvider,
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
+		this.executor.addCompilerListener(this);
 
 		// Typically no compiler is loaded here, so the following
 		// code will always break
@@ -1707,6 +1709,21 @@ public class ExecutorConsole implements CommandProvider,
 		} catch (PlanManagementException e) {
 			System.err.println(e.getMessage());
 		}
+	}
+
+	@Override
+	public void parserBound(String parserID) {
+		System.out.println("Parser "+parserID+" bound");
+	}
+
+	@Override
+	public void rewriteBound() {
+		System.out.println("Rewrite bound");
+	}
+
+	@Override
+	public void transformationBound() {
+		System.out.println("Transformation bound");
 	}
 
 }
