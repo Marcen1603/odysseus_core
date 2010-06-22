@@ -46,6 +46,16 @@
       <artifactId>odysseus-base</artifactId>
       <version>${project.version}</version>
     </dependency>
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-intervalapproach</artifactId>
+<version>${project.version}</version>
+</dependency>
+<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>odysseus-scheduler-strategy-factory-simplestratfactory</artifactId>
+<version>${project.version}</version>
+</dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>odysseus-loadshedding</artifactId>

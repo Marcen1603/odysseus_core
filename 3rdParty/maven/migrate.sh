@@ -18,7 +18,7 @@ depScript="3rdParty/maven/createpoms.rb"
 cp -uR $partyDir/odysseus-parent .
 git add odysseus-parent/pom.xml
 
-folders=". action application base broker cep metadata metadata/pn metadata/interval metadata/priority new_transformation p2p p2p/adminpeer p2p/base p2p/distribution p2p/execution p2p/jxta p2p/operatorpeer p2p/splitting p2p/superpeer p2p/thinpeer planmanagement pql rcp relational relational/database scheduler sensor streamcars streamcars/paf viewer webservice"
+folders=". action application base broker cep metadata metadata/pn metadata/interval metadata/priority new_transformation or p2p p2p/adminpeer p2p/base p2p/distribution p2p/execution p2p/jxta p2p/operatorpeer p2p/splitting p2p/superpeer p2p/thinpeer planmanagement pql rcp relational relational/database scheduler sensor streamcars streamcars/paf viewer webservice"
 
 for f in $folders; do
     mkdir -p $f
