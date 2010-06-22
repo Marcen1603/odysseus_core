@@ -224,13 +224,13 @@ public class StandardCompiler implements ICompiler {
 	
 
 	@Override
-	public boolean transformationBound() {
+	public boolean isTransformationBound() {
 		return transformation != null;
 	}
 
 
 	@Override
-	public boolean rewriteBound() {
+	public boolean isRewriteBound() {
 		return rewrite != null;
 	}
 	

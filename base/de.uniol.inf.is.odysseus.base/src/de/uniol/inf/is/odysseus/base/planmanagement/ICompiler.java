@@ -113,12 +113,12 @@ public interface ICompiler extends IInfoProvider {
 	 * Returns true if an transformation service is bound
 	 */
 	
-	public boolean transformationBound();
+	public boolean isTransformationBound();
 
 	/**
 	 * Returns true if a rewrite service is bound	
 	*/
-	public boolean rewriteBound();
+	public boolean isRewriteBound();
 	
 	/**
 	 * Registration of Compiler Event Listener  
