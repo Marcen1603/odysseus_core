@@ -246,6 +246,12 @@ public class ExecutorConsole implements CommandProvider,
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
 		this.executor.addCompilerListener(this);
+		
+		System.out.println(executor.getCompiler());
+		if (executor.getCompiler() != null){
+			System.out.println("Rewrite Bound : "+executor.getCompiler().isRewriteBound());
+			System.out.println("Transformation Bound :"+executor.getCompiler().isTransformationBound());
+		}
 
 		// Typically no compiler is loaded here, so the following
 		// code will always break
