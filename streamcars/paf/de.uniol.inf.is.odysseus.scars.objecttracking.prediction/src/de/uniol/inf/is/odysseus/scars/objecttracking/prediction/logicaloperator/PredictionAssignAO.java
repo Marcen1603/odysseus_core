@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.scars.objecttracking.ObjectrelationialSchemaAttributeResolver;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -17,7 +18,7 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	private static final long serialVersionUID = 1L;
 	
 	private PredictionFunctionContainer<M> predictionFunctions;
-	private int detectedListIndex = 0;
+	private int[] pathToList;
 
 	
 	public PredictionAssignAO() {
@@ -30,12 +31,12 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 		predictionFunctions = new PredictionFunctionContainer<M>(predictionAO.getPredictionFunctions());
 	}
 	
-	public void initDetectedListIndex(SDFAttributeList inputSchema, String listAttributeName) {
-		for(SDFAttribute attr : inputSchema) {
-			if(attr.getAttributeName().equals(listAttributeName)) {
-				detectedListIndex = inputSchema.indexOf(attr);
-			}
-		}
+	public void initListPath(SDFAttributeList inputSchema, String[] listAttributeNamePath) {
+		pathToList = ObjectrelationialSchemaAttributeResolver.resolveIndices(inputSchema, listAttributeNamePath);
+	}
+	
+	public int[] getPathToList() {
+		return pathToList;
 	}
 	
 	public void setDefaultPredictionFunction(SDFExpression[] defaultPredictionFunction) {

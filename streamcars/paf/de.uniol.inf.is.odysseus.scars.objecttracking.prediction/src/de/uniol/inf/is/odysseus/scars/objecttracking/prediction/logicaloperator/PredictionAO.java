@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.scars.objecttracking.ObjectrelationialSchemaAttributeResolver;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
@@ -15,8 +15,9 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 	private static final long serialVersionUID = 1L;
 	
 	private PredictionFunctionContainer<M> predictionFunctions;
-	private String timeAttributeName;
-	private String detectedObjectListName;
+	private int[] timeStampPath;
+	private int[] objListPath;
+
 	
 	public PredictionAO() {
 		super();
@@ -37,15 +38,17 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 		return predictionFunctions;
 	}
 	
-	public void initNeededAttributeIndices(SDFAttributeList left, SDFAttributeList right, String timeAttr,String listAttr) {
-		int timeIndex = 0;
-		for(SDFAttribute attr : left) {
-			if(attr.getAttributeName().equals(timeAttr)) {
-				timeIndex = left.indexOf(attr);
-			}
-		}
-		
-		
+	public int[] getTimeStampPath() {
+		return timeStampPath;
+	}
+	
+	public int[] getObjListPath() {
+		return objListPath;
+	}
+	
+	public void initNeededAttributeIndices(SDFAttributeList left, SDFAttributeList right, String[] timeStampPath,String[] objListPath) {
+		this.timeStampPath = ObjectrelationialSchemaAttributeResolver.resolveIndices(left, timeStampPath);
+		this.objListPath = ObjectrelationialSchemaAttributeResolver.resolveIndices(right, objListPath);
 	}
 	
 	@SuppressWarnings("unchecked")
