@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking;
 
+import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -30,9 +32,16 @@ public class ObjectrelationialSchemaAttributeResolver {
 		return null;
 	}
 	
-	public static<M extends IProbability> MVRelationalTuple<M> getTuple(MVRelationalTuple<M> root, int[] path) {
-		return root;
-		
+	public static<M extends IMetaAttribute> Object resolveTuple(RelationalTuple<?> root, int[] path) {
+		Object currentTuple = root;
+		for(int index=0; index<path.length; index++) {
+			if(currentTuple instanceof RelationalTuple<?>) {
+				currentTuple = ((RelationalTuple<?>) currentTuple).getAttributes()[path[index]];
+			} else {
+				return null;
+			}
+		}
+		return currentTuple;
 	}
 	
 	private static int resolveIndex(SDFAttributeList attr, String name) {
@@ -77,6 +86,29 @@ public class ObjectrelationialSchemaAttributeResolver {
 		}
 		
 		System.out.println(indices2[0]);
+		
+		MVRelationalTuple<IProbability> root = new MVRelationalTuple<IProbability>(2);
+		MVRelationalTuple<IProbability>  tuple1 = new MVRelationalTuple<IProbability>(1);
+		MVRelationalTuple<IProbability>  tuple2 = new MVRelationalTuple<IProbability>(1);
+		MVRelationalTuple<IProbability>  tuple11 = new MVRelationalTuple<IProbability>(1);
+		root.setAttribute(0, tuple1);
+		root.setAttribute(1, tuple2);
+		tuple1.setAttribute(0, tuple11);
+		tuple2.setAttribute(0, "tuple2Attribute");
+		tuple11.setAttribute(0, "tuple11attribute");
+
+		System.out.println("===== get tuple test");
+		
+//		System.out.println(root + ", isTuple: "+ (root instanceof RelationalTuple<?>));
+//		System.out.println(root.getAttribute(0) + ", isTuple: "+ (root.getAttributes()[0] instanceof MVRelationalTuple<?>));
+//		System.out.println(tuple1.getAttribute(0) + ", isTuple: "+ (tuple1.getAttributes()[0] instanceof MVRelationalTuple<?>));
+		
+//		System.out.println(tuple11.getAttribute(0) + ", isTuple: "+ (tuple11.getAttributes()[0] instanceof RelationalTuple<?>));
+		
+		
+		System.out.println(resolveTuple(root, new int[] {0, 0, 0}));
+		
+		
 	}
 
 }
