@@ -17,6 +17,7 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
@@ -48,7 +49,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  * 
  */
 public class OptimizationTestConsole implements
-		org.eclipse.osgi.framework.console.CommandProvider {
+		org.eclipse.osgi.framework.console.CommandProvider, ICompilerListener {
 
 	private IAdvancedExecutor executor;
 
@@ -76,6 +77,12 @@ public class OptimizationTestConsole implements
 	public void bindExecutor(IAdvancedExecutor executor) {
 		this.executor = executor;
 		System.out.println("executor gebunden");
+		this.executor.addCompilerListener(this);
+		System.out.println(executor.getCompiler());
+		if (executor.getCompiler() != null){
+			System.out.println("Rewrite Bound : "+executor.getCompiler().isRewriteBound());
+			System.out.println("Transformation Bound :"+executor.getCompiler().isTransformationBound());
+		}
 	}
 
 	public void _setPath(CommandInterpreter ci) {
@@ -887,6 +894,21 @@ public class OptimizationTestConsole implements
 		} else {
 			ci.println("No query argument.");
 		}
+	}
+
+	@Override
+	public void parserBound(String parserID) {
+		System.out.println("Parser "+parserID+" bound");
+	}
+
+	@Override
+	public void rewriteBound() {
+		System.out.println("Rewrite Bound");
+	}
+
+	@Override
+	public void transformationBound() {
+		System.out.println("Transformation Bound");
 	}
 	
 }
