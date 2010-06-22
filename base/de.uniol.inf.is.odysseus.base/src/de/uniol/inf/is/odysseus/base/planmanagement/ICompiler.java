@@ -108,4 +108,23 @@ public interface ICompiler extends IInfoProvider {
 	 *         for translating queries.
 	 */
 	public Set<String> getSupportedQueryParser();
+	
+	/**
+	 * Returns true if an transformation service is bound
+	 */
+	
+	public boolean transformationBound();
+
+	/**
+	 * Returns true if a rewrite service is bound	
+	*/
+	public boolean rewriteBound();
+	
+	/**
+	 * Registration of Compiler Event Listener  
+	 */
+	
+	public void addCompilerListener(ICompilerListener listener);
+	public void removeCompilerListener(ICompilerListener listener);
+	
 }

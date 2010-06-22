@@ -5,6 +5,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
@@ -154,5 +155,8 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	public int addQuery(IPhysicalOperator physicalPlan, User user,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
+	
+	public void addCompilerListener(ICompilerListener compilerListener);
+
 
 }

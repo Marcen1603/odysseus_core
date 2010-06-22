@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
@@ -30,7 +32,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoad
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
@@ -99,6 +100,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
+	
+	/**
+	 * Compiler Listener 
+	 */
+	private List<ICompilerListener> compilerListener = new CopyOnWriteArrayList<ICompilerListener>();
 	
 	/**
 	 * Lock for synchronizing execution plan changes.
@@ -248,6 +254,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	public void bindCompiler(ICompiler compiler) {
 		this.compiler = compiler;
+		for (ICompilerListener l: compilerListener){
+			compiler.addCompilerListener(l);
+		}
 	}
 
 	/**
@@ -257,6 +266,9 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 *            zu entfernende Anfragebearbeitungs-Komponente
 	 */
 	public void unbindCompiler(ICompiler compiler) {
+		for (ICompilerListener l:compilerListener){
+			compiler.removeCompilerListener(l);
+		}
 		if (this.compiler == compiler) {
 			this.compiler = null;
 		}
@@ -558,6 +570,15 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 			this.defaultSystemMonitor.stop();
 			this.defaultSystemMonitor = null;
 		}
+	}
+	
+	@Override
+	public void addCompilerListener(ICompilerListener compilerListener) {
+		this.compilerListener.add(compilerListener);
+		// if Compiler already bound
+		if (compiler != null){
+			compiler.addCompilerListener(compilerListener);
+		} // else will be done if compiler is bound
 	}
 
 }

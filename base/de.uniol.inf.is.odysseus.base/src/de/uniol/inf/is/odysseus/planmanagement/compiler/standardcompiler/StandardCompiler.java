@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.base.CopyLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -17,6 +18,7 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.base.UpdateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
@@ -44,6 +46,11 @@ public class StandardCompiler implements ICompiler {
 	 * {@link IRewrite} service
 	 */
 	protected IRewrite rewrite;
+	
+	/**
+	 * Listener
+	 */
+	private List<ICompilerListener> listener = new CopyOnWriteArrayList<ICompilerListener>();
 
 	/**
 	 * Get a formated info string for object. if object not null
@@ -76,6 +83,9 @@ public class StandardCompiler implements ICompiler {
 		synchronized (this.parserList) {
 			this.parserList.put(parser.getLanguage(), parser);
 		}
+		for (ICompilerListener l: listener){
+			l.parserBound(parser.getLanguage());
+		}
 	}
 
 	/**
@@ -98,6 +108,9 @@ public class StandardCompiler implements ICompiler {
 	 */
 	public void bindTransformation(ITransformation transformation) {
 		this.transformation = transformation;
+		for (ICompilerListener l: listener){
+			l.transformationBound();
+		}
 	}
 
 	/**
@@ -118,6 +131,10 @@ public class StandardCompiler implements ICompiler {
 	 */
 	public void bindRewrite(IRewrite rewrite) {
 		this.rewrite = rewrite;
+		for (ICompilerListener l: listener){
+			l.rewriteBound();
+		}
+
 	}
 
 	/**
@@ -204,6 +221,19 @@ public class StandardCompiler implements ICompiler {
 	public Set<String> getSupportedQueryParser() {
 		return Collections.unmodifiableSet(this.parserList.keySet());
 	}
+	
+
+	@Override
+	public boolean transformationBound() {
+		return transformation != null;
+	}
+
+
+	@Override
+	public boolean rewriteBound() {
+		return rewrite != null;
+	}
+	
 
 	@Override
 	public List<ILogicalOperator> createAlternativePlans(
@@ -229,4 +259,16 @@ public class StandardCompiler implements ICompiler {
 		list.add(p);
 		return list;
 	}
+	
+	@Override
+	public void addCompilerListener(ICompilerListener listener) {
+		this.listener.add(listener);
+	}
+	
+	@Override
+	public void removeCompilerListener(ICompilerListener listener) {
+		this.listener.remove(listener);
+	}
+
+
 }

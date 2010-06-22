@@ -119,4 +119,5 @@ public interface IAdvancedExecutor extends IExecutor {
 	 */
 	public void updateExecutionPlan() throws NoOptimizerLoadedException,
 			QueryOptimizationException;
+
 }
