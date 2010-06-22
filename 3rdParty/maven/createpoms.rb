@@ -1,18 +1,5 @@
 #!/usr/bin/env ruby
 
-class Ext
-  attr_reader :artifactId, :groupId, :version
-  def initialize artifactId, groupId, version
-    @artifactId = artifactId
-    @groupId = groupId
-    @version = version
-  end
-
-  def  to_s
-    "<dependency><groupId>#{@groupId}</groupId><artifactId>#{@artifactId}</artifactId><version>#{@version}</verion></dependency>"
-  end
-
-end
 class ProjectDependencyGenerator
 public
 	attr_reader :projectDependencies, :unresolvedDependencies, :unknownDepAr, :externalDependencies
@@ -211,8 +198,14 @@ if not File.stat(path).directory? then
 	exit -1
 end
 
-pdg = ProjectDependencyGenerator.new
-pdg.parse path
+dumpfile = path + "/dependencies"
+if not File.exists?(dumpfile) then
+  pdg = ProjectDependencyGenerator.new
+  pdg.parse path
+  Marshal.dump(pdg, File.new(dumpfile,"w+"))
+else
+  pdg = Marshal.load(File.new(dumpfile))
+end
 
 #pdg.unknownDepAr.each{|pkg| puts pkg}
 #hier kommst du ...

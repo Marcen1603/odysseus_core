@@ -125,8 +125,8 @@ EOF
 		    git add $f/odysseus-$artifactId/pom.xml
 		    #git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
 		    #git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
-            for sf in $s/resources/* ; do git mv -kf ${sf%*resources/} $f/odysseus-$artifactId/src/main/resources/ ; done
-		    for sf in $s/src/* ; do git mv -kf ${sf%*src/} $f/odysseus-$artifactId/src/main/java/ ; done
+            for sf in $s/resources/* ; do git mv -kf "${sf%*resources/}" $f/odysseus-$artifactId/src/main/resources/  || echo "fehler: $sf%*resources/";  done
+	    for sf in $s/src/* ; do git mv -kf "${sf%*src/}" $f/odysseus-$artifactId/src/main/java/ ; done
 #	    fi
     done
     cat >> $f/pom.xml <<EOF
