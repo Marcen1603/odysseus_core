@@ -193,6 +193,11 @@ git add resources/pom.xml
 
 git add pom.xml
 
+for i in $folders; do
+  cp 3rdParty/maven/$i/pom.xml $i
+  git add $i/pom.xml
+done
+
 echo "Migration processed. Ready to merge? (y/n)"
 read yesno
 if [ $yesno = "y" ]; then
