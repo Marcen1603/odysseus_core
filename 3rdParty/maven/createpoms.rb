@@ -167,12 +167,12 @@ private
 			if /^Require-Bundle:/ =~ line
 			  match = (/\w+(\.(\w|_)+)*/.match(line))
 			  unless match.nil?
-			      @manifestImports[project] |= Array.new
+			      @manifestImports[project] = Array.new if @manifestImports[project].nil?
 			      @manifestImports[project] << match[0]
 			  end
 			end
 			if /^Import-Package:/ =~ line
-				@manifestImports[project] |= Array.new
+				@manifestImports[project] = Array.new if @manifestImports[project].nil?
 				addImport(project, line[15, line.length-1])
 				while not file.eof?
 					line = file.readline
