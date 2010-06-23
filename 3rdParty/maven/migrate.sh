@@ -15,6 +15,7 @@ git checkout migration
 
 partyDir="3rdParty/maven"
 depScript="3rdParty/maven/createpoms.rb"
+exportScript="3rdParty/maven/export.rb"
 cp -uR $partyDir/odysseus-parent .
 git add odysseus-parent/pom.xml
 
@@ -82,7 +83,7 @@ EOF
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      $basename*;version=\${project.version}
+      $(ruby $exportScript "$s/META-INF/MANIFEST.MF")
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
