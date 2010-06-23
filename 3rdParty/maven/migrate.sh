@@ -198,6 +198,9 @@ for i in $folders; do
   git add $i/pom.xml
 done
 
+cp -R 3rdPart/maven/base/odysseus-base/lib base/odysseus-base/
+git add base/odysseus-base/lib
+
 echo "Migration processed. Ready to merge? (y/n)"
 read yesno
 if [ $yesno = "y" ]; then

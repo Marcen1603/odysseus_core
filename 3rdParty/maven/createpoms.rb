@@ -54,20 +54,20 @@ public
 
 "com.Ostermiller.util" => "<dependency><groupId>org.ostermiller</groupId><artifactId>utils</artifactId><version>1.07.00</version></dependency>",
 
-"org.eclipse.swt" => "<dependency><groupId>org.eclipse</groupId><artifactId>swt</artifactId><version>3.3.0-v3346</version></dependency>",
-"org.eclipse.swt.custom" => "<dependency><groupId>org.eclipse</groupId><artifactId>swt</artifactId><version>3.3.0-v3346</version></dependency>",
-"org.eclipse.swt.events" => "<dependency><groupId>org.eclipse</groupId><artifactId>swt</artifactId><version>3.3.0-v3346</version></dependency>",
-"org.eclipse.swt.graphics" => "<dependency><groupId>org.eclipse</groupId><artifactId>swt</artifactId><version>3.3.0-v3346</version></dependency>",
-"org.eclipse.swt.layout" => "<dependency><groupId>org.eclipse</groupId><artifactId>swt</artifactId><version>3.3.0-v3346</version></dependency>",
-"org.eclipse.swt.widgets" => "<dependency><groupId>org.eclipse</groupId><artifactId>swt</artifactId><version>3.3.0-v3346</version></dependency>",
+"org.eclipse.swt" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.custom" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.events" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.graphics" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.layout" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.widgets" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
 
 "org.eclipse.equinox.app" => "<dependency><groupId>org.eclipse.equinox</groupId><artifactId>app</artifactId></dependency>",
 "org.eclipse.osgi.framework.console" => "<dependency><groupId>org.eclipse.osgi</groupId><artifactId>osgi</artifactId></dependency>",
 "org.osgi.service.prefs" => "<dependency><groupId>org.osgi</groupId><artifactId>org.osgi.core</artifactId></dependency>",
 
-"org.eclipse.ui.plugin" => "<dependency><groupId>org.eclipse</groupId><artifactId>eclipse-platform</artifactId><version>3.5.1</version></dependency>",
-"org.eclipse.core.runtime" => "<dependency><groupId>org.eclipse</groupId><artifactId>eclipse-platform</artifactId><version>3.5.1</version></dependency>",
-"org.eclipse.core.commands" => "<dependency><groupId>org.eclipse</groupId><artifactId>eclipse-platform</artifactId><version>3.5.1</version></dependency>",
+"org.eclipse.ui.plugin" => "<dependency><groupId>org.eclipse</groupId><artifactId>eclipse-platform</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.core.runtime" => "<dependency><groupId>org.eclipse.core</groupId><artifactId>runtime</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.core.commands" => "<dependency><groupId>org.eclipse.core</groupId><artifactId>commands</artifactId><version>[3.5,)</version></dependency>",
 "com.hp.hpl.jena.ontology" => "<dependency><groupId>com.hp.hpl.jena</groupId><artifactId>jena</artifactId><version>2.6.3</version></dependency>",
 "com.hp.hpl.jena.rdf.model" => "<dependency><groupId>com.hp.hpl.jena</groupId><artifactId>jena</artifactId><version>2.6.3</version></dependency>",
 "com.hp.hpl.jena.util" => "<dependency><groupId>com.hp.hpl.jena</groupId><artifactId>jena</artifactId><version>2.6.3</version></dependency>",
@@ -162,27 +162,28 @@ private
 
 	def importManifest(project, path)
 		file = File.new(path, 'r')
+		@manifestImports[project] = Array.new if @manifestImports[project].nil?
 		while not file.eof?
 			line = file.readline
 			if /^Require-Bundle:/ =~ line
-			  match = (/\w+(\.(\w|_)+)*/.match(line))
-			  unless match.nil?
-			      @manifestImports[project] = Array.new if @manifestImports[project].nil?
-			      @manifestImports[project] << match[0]
-			  end
+			  addImports file, project, line[15, line.length-1]
+			end
+			if /^Fragment-Host:/ =~ line
+			  addImport project, line[14, line.length-1]
 			end
 			if /^Import-Package:/ =~ line
-				@manifestImports[project] = Array.new if @manifestImports[project].nil?
-				addImport(project, line[15, line.length-1])
+				addImports file, project, line[15, line.length-1]
+			end
+		end
+	end
+	def addImports file, project, line
+	  addImport(project, line[15, line.length-1])
 				while not file.eof?
 					line = file.readline
 					return if /^[^;]+:/ =~ line
 					addImport(project, line)
 				end
-			end
-		end
 	end
-
 	def addImport(project, line)
 		match = (/\w+(\.(\w|_)+)*/.match(line))
 		unless match.nil?
@@ -191,6 +192,7 @@ private
 			addImport(project, line[pos,line.length-1]) unless pos.nil?
 		end
 	end
+
 end
 
 if ARGV.length != 2 then
