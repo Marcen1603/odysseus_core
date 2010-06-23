@@ -13,7 +13,6 @@
   <name>Odysseus :: scheduler</name>
 
   <modules>
-<module>odysseus-scheduler</module>
 <module>odysseus-scheduler-strategy-factory-chainfactory</module>
 <module>odysseus-scheduler-strategy-factory-aurorafactory</module>
 <module>odysseus-scheduler-singlethreadscheduler</module>

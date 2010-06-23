@@ -16,7 +16,8 @@ while !file.eof? do
 	puts match[0]
 	pos = line.index(',', match.end(0))
 	break if pos.nil?
-	match = /\w+(\.(\w|_)+)*/.match(line[pos, line.length - 1])
+	line = line[pos, line.length - 1]
+	match = /\w+(\.(\w|_)+)*/.match(line)
       end
       line = file.readline
     end
