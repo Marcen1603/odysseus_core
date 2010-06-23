@@ -63,6 +63,7 @@ EOF
 #		        cp -u $partyDir/$f/odysseus-$artifactId/pom.xml $f/odysseus-$artifactId/
 #		    else
 		        echo "Generate pom"
+			manifest=$s/META-INF/MANIFEST.MF
 		        cat > $f/odysseus-$artifactId/pom.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <project
@@ -72,7 +73,7 @@ EOF
   <parent>
     <groupId>de.uniol.inf.is.odysseus</groupId>
     <artifactId>odysseus-pom</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>$(if [ -d $manifest ]; then v=$(grep "Bundle-Version:" $manifest);echo ${v##*:}; else echo 1.0-SNAPSHOT; fi)</version>
   </parent>
   <artifactId>odysseus-$artifactId</artifactId>
   <packaging>bundle</packaging>
@@ -83,7 +84,7 @@ EOF
       *
     </odysseus.osgi.import>
     <odysseus.osgi.export>
-      $(ruby $exportScript "$s/META-INF/MANIFEST.MF")
+      $(ruby $exportScript $manifest)
     </odysseus.osgi.export>
     <odysseus.osgi.bundles>
     </odysseus.osgi.bundles>
@@ -114,7 +115,7 @@ EOF
     <dependency>
       <groupId>\${project.groupId}</groupId>
       <artifactId>odysseus-base</artifactId>
-      <version>\${project.version}</version>
+      <version>$s/META-INF/MANIFEST.MF</version>
     </dependency>
 EOF
 ruby $depScript $PWD $basename >> $f/odysseus-$artifactId/pom.xml
@@ -126,7 +127,7 @@ EOF
 		    git add $f/odysseus-$artifactId/pom.xml
 		    #git mv -kf $s/META-INF $f/odysseus-$artifactId/src/main/resources/
 		    #git mv -kf $s/OSGI-INF $f/odysseus-$artifactId/src/main/resources/
-            for sf in $s/resources/* ; do git mv -kf "${sf%*resources/}" $f/odysseus-$artifactId/src/main/resources/  || echo "fehler: $sf%*resources/";  done
+            for sf in $s/resources/* ; do git mv -kf "${sf%*resources/}" $f/odysseus-$artifactId/src/main/resources/;  done
 	    for sf in $s/src/* ; do git mv -kf "${sf%*src/}" $f/odysseus-$artifactId/src/main/java/ ; done
 #	    fi
     done

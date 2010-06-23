@@ -225,7 +225,7 @@ if pdg.projectDependencies[bundle]
 		puts "<dependency>"
 		puts "<groupId>${project.groupId}</groupId>"
 		puts "<artifactId>#{artifact}</artifactId>"
-		puts "<version>${project.version}</version>"
+		puts "<version>[1.0,)</version>"
        		 puts "</dependency>"
 	}
   tmp = Array.new
