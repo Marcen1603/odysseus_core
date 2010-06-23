@@ -2,10 +2,8 @@
 
 filename = ARGV[0]
 
-unless File.exists?(filename) do
-
+if File.exists?(filename)
   file = File.open(filename)
-
   while !file.eof? do
     line = file.readline
     if /^Export-Package:/ =~ line
