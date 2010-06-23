@@ -54,12 +54,12 @@ public
 
 "com.Ostermiller.util" => "<dependency><groupId>org.ostermiller</groupId><artifactId>utils</artifactId><version>1.07.00</version></dependency>",
 
-"org.eclipse.swt" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
-"org.eclipse.swt.custom" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
-"org.eclipse.swt.events" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
-"org.eclipse.swt.graphics" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
-"org.eclipse.swt.layout" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
-"org.eclipse.swt.widgets" => "<dependency><groupId>org.eclipse</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt" => "<dependency><groupId>org.eclipse.swt</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.custom" => "<dependency><groupId>org.eclipse.swt</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.events" => "<dependency><groupId>org.eclipse.swt</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.graphics" => "<dependency><groupId>org.eclipse.swt</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.layout" => "<dependency><groupId>org.eclipse.swt</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
+"org.eclipse.swt.widgets" => "<dependency><groupId>org.eclipse.swt</groupId><artifactId>${swt.artifactId}</artifactId><version>[3.5,)</version></dependency>",
 
 "org.eclipse.equinox.app" => "<dependency><groupId>org.eclipse.equinox</groupId><artifactId>app</artifactId></dependency>",
 "org.eclipse.osgi.framework.console" => "<dependency><groupId>org.eclipse.osgi</groupId><artifactId>osgi</artifactId></dependency>",
