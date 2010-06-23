@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
@@ -22,38 +19,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl.OdysseusModelProvid
 
 public class Activator implements BundleActivator, IPlanModificationListener  {
 
-	private Logger logger = LoggerFactory.getLogger("rcp.viewer.model");
-	
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(final BundleContext context) throws Exception {
 		
-		final Activator that = this;
-		Thread t = new Thread( new Runnable() {
-
-			@Override
-			public void run() {
-				ServiceTracker execTracker = new ServiceTracker(context, IAdvancedExecutor.class.getName(), null);
-				execTracker.open();
-				IAdvancedExecutor executor;
-				try {
-					executor = (IAdvancedExecutor) execTracker.waitForService(0);
-					if (executor != null) {
-						executor.addPlanModificationListener(that);
-					} else {
-						logger.error("cannot get executor service");
-					}
-					execTracker.close();
-				} catch (InterruptedException e) {
-					logger.error("cannot get executor service");
-				} 			
-			}
-			
-		});
-		
-		t.start();
 	}
 
 	/*
@@ -90,4 +61,11 @@ public class Activator implements BundleActivator, IPlanModificationListener  {
 		}
 	}
 
+	public void bindExecutor(IAdvancedExecutor executor) {
+		executor.addPlanModificationListener(this);
+	}
+	
+	public void unbindExecutor(IAdvancedExecutor executor) {
+		executor.removePlanModificationListener(this);
+	}
 }

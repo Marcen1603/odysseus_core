@@ -23,3 +23,4 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.model,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
  de.uniol.inf.is.odysseus.rcp.viewer.model.stream
+Service-Component: OSGI-INF/Executor.xml
