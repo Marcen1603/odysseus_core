@@ -32,7 +32,7 @@
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callActiveGraphEditor"
-               label="Show active graph"
+               label="Actual Graph"
                style="push">
          </command>
       </menuContribution>
@@ -41,11 +41,6 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.RemoveQueryCommand"
                label="Remove Query"
-               style="push">
-         </command>
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.ShowQueryDialogCommand"
-               label="Add Query..."
                style="push">
          </command>
       </menuContribution>
