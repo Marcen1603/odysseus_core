@@ -13,30 +13,22 @@ Find.find(ENV["PWD"]) { |f|
   else
     puts "-----------"
     file = File.basename(f)
-    file = file.split("_")
-    name = file[0]
-    version = file[1...file.length].join("_")
-    if name && version
-      name = name.split(".")
-      version = version.split(".")
-      if version[-1] == "jar"
-	if (version.length < 4)
-        version = version[0...version.length-1]
-	else
-	version = version[0...3]
-	end	
-        group = name[0,3]
-        if name.length < 4
-          artifact = name[2...name.length]
-        else
-          artifact = name[3...name.length]
-        end
-        puts group.join(".")
-        puts artifact.join(".")
-        puts version.join(".")
-        puts `mvn install:install-file -Dfile=#{f} -DgroupId=#{group.join(".")} -DartifactId=#{artifact.join(".")} -Dversion=#{version.join(".")} -Dpackaging=jar -DgeneratePom=true`
-      end
-    end
+    match = /(.+)_(\d+\.\d+.\d+).*/.match(file)
+                      if match.nil?
+			puts "error #{file}"
+                      next
+                      end
+                      name = match[1]
+                      version = match[2]
+    nameAr = name.split(".")
+                      
+    group = nameAr[0...nameAr.length - 1].join(".")
+                      artifactId=nameAr[-1]
+                      
+        puts group
+        puts artifactId
+        puts version
+        puts `mvn install:install-file -Dfile=#{f} -DgroupId=#{group} -DartifactId=#{artifactId} -Dversion=#{version} -Dpackaging=jar -DgeneratePom=true`
   end
 }
 
