@@ -5,6 +5,7 @@ import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -19,8 +20,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -91,7 +92,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTPriorizedStatement node, Object data) {
 		CQLParser parser = new CQLParser();
-		operator = ((List<ILogicalOperator>) parser.visit(node, null)).get(0);
+		operator = ((List<IQuery>) parser.visit(node, null)).get(0).getLogicalPlan();
 		SDFAttributeList otherAttributes = operator.getOutputSchema();
 		if (otherAttributes.size() != this.attributes.size()) {
 			throw new RuntimeException("Query output does not match specified schema for: " + name);
@@ -175,13 +176,4 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		return v.visit(node, data, this);
 
 	}
-
-	// @Override
-	// public Object visit(ASTOSGI node, Object data) {
-	// OSGIAccessAO source = new OSGIAccessAO(new SDFSource(name,
-	// SourceType.OSGI));
-	// source.setRegexp(node.getRegexp());
-	// DataDictionary.getInstance().setView(name, source);
-	// return data;
-	// }
 }
