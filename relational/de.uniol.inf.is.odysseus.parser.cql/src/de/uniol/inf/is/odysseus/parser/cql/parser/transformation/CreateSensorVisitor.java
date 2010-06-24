@@ -44,7 +44,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist (extra Klasse oder so)
 		// accessao bauen
-		AccessAO source = new AccessAO(new SDFSource(name, "JDVEAccessMVPOAsList"));
+		AccessAO source = new AccessAO(new SDFSource(name, "JDVEAccessMVPO"));
 		source.setPort(port.intValue());
 		source.setHost(host);
 		source.setOutputSchema(ex);
