@@ -45,15 +45,20 @@ public class ObjectrelationialSchemaAttributeResolver {
 	}
 	
 	private static int resolveIndex(SDFAttributeList attr, String name) {
-		System.out.println("resolveIndex: " + attr + ", name: " + name);
 		for(int index=0; index<attr.getAttributeCount(); index++) {
 			SDFAttribute a = attr.get(index);
 			if(a.getAttributeName().equals(name)) {
-				System.out.println("return index from: " + a + ", " + index);
 				return index;
 			}
 		}
 		return -1;
+	}
+	
+	public static SDFAttributeList getSubSchema(SDFAttributeList root, String[] path) {
+		SDFAttributeList currentSchema = root;
+		
+		
+		return currentSchema;
 	}
 	
 	public static void main(String[] args) {
