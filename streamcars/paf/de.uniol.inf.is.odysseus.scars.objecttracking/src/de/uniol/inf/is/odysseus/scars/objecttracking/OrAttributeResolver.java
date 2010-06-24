@@ -72,7 +72,7 @@ public class OrAttributeResolver {
 		return currentSchema;
 	}
 	
-	public static Object indexOfAttribute(RelationalTuple<?> parent, Object attr) {
+	public static int indexOfAttribute(RelationalTuple<?> parent, Object attr) {
 		Object[] children = parent.getAttributes();
 		for(int index=0; index<children.length; index++) {
 			if(attr.equals(children[index])) {
