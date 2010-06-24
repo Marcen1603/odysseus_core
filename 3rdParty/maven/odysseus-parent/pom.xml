@@ -6,7 +6,7 @@
   <groupId>de.uniol.inf.is.odysseus</groupId>
   <artifactId>odysseus-pom</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>Odysseus :: POM</name>
   <description>This pom provides the common bits for all Odysseus components.</description>
   <organization>
@@ -180,7 +180,7 @@
       </dependency>
 
       <dependency>
-        <groupId>org.eclipse.osgi</groupId>
+        <groupId>org.eclipse</groupId>
         <artifactId>osgi</artifactId>
         <version>${eclipse.osgi.osgi.version}</version>
       </dependency>
@@ -311,7 +311,7 @@
     </dependency> 
 -->
       <dependency>
-        <groupId>org.eclipse.osgi</groupId>
+        <groupId>org.eclipse</groupId>
         <artifactId>osgi</artifactId>
       </dependency>
       <dependency>
@@ -573,6 +573,44 @@
     </plugins>
   </reporting>
   <profiles>
+	<profile>
+     <id>unix</id>
+     <activation>
+           <os>
+             <family>unix</family>
+           </os>
+     </activation>
+     <properties>
+       <swt.groupId>org.eclipse.swt.gtk.linux</swt.groupId>
+           <swt.artifactId>x86_64</swt.artifactId>
+           <swt.version>[3.5,)</swt.version>
+     </properties>
+   </profile>
+   <profile>
+     <id>windows</id>
+     <activation>
+           <os>
+             <family>windows</family>
+           </os>
+     </activation>
+     <properties>
+	    <swt.groupId>org.eclipse.swt.gtk.linux</swt.groupId>
+           <swt.artifactId>x86_64</swt.artifactId>
+           <swt.version>[3.5,)</swt.version>
+     </properties>
+   </profile>
+   <profile>
+     <id>mac</id>
+     <activation>
+           <os>
+             <family>macosx</family>
+           </os>
+     </activation>
+     <properties>
+           <swt.artifactId>swt-macosx</swt.artifactId>
+           <swt.version>[3.5,)</swt.version>
+     </properties>
+   </profile>
     <profile>
       <id>deploy</id>
       <build>
@@ -708,21 +746,9 @@
   </profiles>
 
   <repositories>
-<!--    <repository>
-      <id>dynamicjava</id>
-      <url>http://maven.dynamicjava.org/</url>
-    </repository>
-    <repository>
-      <id>jboss</id>
-      <url>http://repository.jboss.com/maven2</url>
-    </repository>
-    <repository>
-      <id>Maven.org-1</id>
-      <url>http://repo1.maven.org/maven2</url>
-    </repository>
-    <repository>
-      <id>Maven.org-2</id>
-      <url>http://repo2.maven.org/maven2</url>
-    </repository> -->
+<repository>
+        <id>artifactory-repo</id>
+        <url>http://134.106.50.88:8081/artifactory/repo</url>
+</repository>
   </repositories>
 </project>

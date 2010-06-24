@@ -33,7 +33,7 @@ for f in $folders; do
   <parent>
     <groupId>de.uniol.inf.is.odysseus</groupId>
     <artifactId>odysseus-pom</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
   <artifactId>odysseus-$module-parent</artifactId>
   <packaging>pom</packaging>
@@ -73,9 +73,10 @@ EOF
   <parent>
     <groupId>de.uniol.inf.is.odysseus</groupId>
     <artifactId>odysseus-pom</artifactId>
-    <version>$(if [ -a $manifest ]; then grep "Bundle-Version:" $manifest | sed 's/Bundle-Version://' | tr -d " "; else echo 1.0.0; fi)</version>
+    <version>1.0.0</version>
   </parent>
   <artifactId>odysseus-$artifactId</artifactId>
+  <version>$(if [ -a $manifest ]; then grep "Bundle-Version:" $manifest | sed 's/Bundle-Version://' | tr -d " "; else echo 1.0.0; fi)</version>
   <packaging>bundle</packaging>
   <name>Odysseus :: $artifactId</name>
   <properties>
@@ -115,7 +116,7 @@ EOF
     <dependency>
       <groupId>\${project.groupId}</groupId>
       <artifactId>odysseus-base</artifactId>
-      <version>$s/META-INF/MANIFEST.MF</version>
+      <version>[1.0,)</version>
     </dependency>
 EOF
 ruby $depScript $PWD $basename >> $f/odysseus-$artifactId/pom.xml
