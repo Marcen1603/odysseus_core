@@ -28,9 +28,9 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	
 	@Override
 	public Object visit(ASTCreateSensor node, Object data) {
-		System.out.println("Visit ASTCreateSensor(" + node + "," + data + ")");
+//		System.out.println("Visit ASTCreateSensor(" + node + "," + data + ")");
 		this.name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		System.out.println("Sensorname = " + name);
+//		System.out.println("Sensorname = " + name);
 		
 		SDFAttribute rootAttribute = (SDFAttribute)node.jjtGetChild(1).jjtAccept(this, data);
 		node.jjtGetChild(2).jjtAccept(this, data);
