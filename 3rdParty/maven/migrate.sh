@@ -179,7 +179,7 @@ cat > resources/pom.xml <<EOF
   <parent>
     <groupId>de.uniol.inf.is.odysseus</groupId>
     <artifactId>odysseus-pom</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
   <artifactId>odysseus-$module-parent</artifactId>
   <packaging>pom</packaging>
