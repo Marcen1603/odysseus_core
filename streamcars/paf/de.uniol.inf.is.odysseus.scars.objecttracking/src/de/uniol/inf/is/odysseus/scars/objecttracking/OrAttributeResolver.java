@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class ObjectrelationialSchemaAttributeResolver {
+public class OrAttributeResolver {
 	
 	
 	public static int[] resolveIndices(SDFAttributeList schema, String...path) {
