@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.assoziation;
 
-public abstract class AbstractAssignEvaluationFunction implements IAssignEvaluationFunction {
+public abstract class AbstractHypothesisEvaluationFunction implements IHypothesisEvaluationFunction {
  	
 	@Override
 	public abstract int evaluate(Object tupleNew, Object tupleOld);

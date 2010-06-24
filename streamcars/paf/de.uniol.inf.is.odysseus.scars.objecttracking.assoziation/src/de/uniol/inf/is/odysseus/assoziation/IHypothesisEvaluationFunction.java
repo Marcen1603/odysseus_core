@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.assoziation;
 
-public interface IAssignEvaluationFunction {
+public interface IHypothesisEvaluationFunction {
 		
 	public int[][] evaluateAll(int[][] matrix, Object[] tupleNew, Object[] tupleOld);
 	
