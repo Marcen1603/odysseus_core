@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
-import de.uniol.inf.is.odysseus.scars.objecttracking.ObjectrelationialSchemaAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.objecttracking.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -47,8 +47,8 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 	}
 	
 	public void initNeededAttributeIndices(SDFAttributeList left, SDFAttributeList right, String[] timeStampPath,String[] objListPath) {
-		this.timeStampPath = ObjectrelationialSchemaAttributeResolver.resolveIndices(left, timeStampPath);
-		this.objListPath = ObjectrelationialSchemaAttributeResolver.resolveIndices(right, objListPath);
+		this.timeStampPath = OrAttributeResolver.resolveIndices(left, timeStampPath);
+		this.objListPath = OrAttributeResolver.resolveIndices(right, objListPath);
 	}
 	
 	@SuppressWarnings("unchecked")

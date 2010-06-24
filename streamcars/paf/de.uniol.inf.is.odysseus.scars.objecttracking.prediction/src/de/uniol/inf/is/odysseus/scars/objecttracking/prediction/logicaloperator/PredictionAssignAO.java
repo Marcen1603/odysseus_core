@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
-import de.uniol.inf.is.odysseus.scars.objecttracking.ObjectrelationialSchemaAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.objecttracking.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -32,7 +32,7 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	}
 	
 	public void initListPath(SDFAttributeList inputSchema, String[] listAttributeNamePath) {
-		pathToList = ObjectrelationialSchemaAttributeResolver.resolveIndices(inputSchema, listAttributeNamePath);
+		pathToList = OrAttributeResolver.resolveIndices(inputSchema, listAttributeNamePath);
 	}
 	
 	public int[] getPathToList() {

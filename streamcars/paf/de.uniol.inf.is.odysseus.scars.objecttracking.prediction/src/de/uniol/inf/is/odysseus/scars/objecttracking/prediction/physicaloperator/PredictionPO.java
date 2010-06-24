@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.scars.objecttracking.ObjectrelationialSchemaAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.objecttracking.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 
@@ -46,7 +46,7 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		// TODO sehr simple, muss noch darauf geachtet werden das die zeitintervalle bei den zwei eingängen zusammenpassen,
 		// ist jetzt nicht garantiert (sweaparea? irgendein Buffer?).
 		if(port == 0) {
-			currentTime = (PointInTime)ObjectrelationialSchemaAttributeResolver.resolveTuple(object, timeStampPath);
+			currentTime = (PointInTime)OrAttributeResolver.resolveTuple(object, timeStampPath);
 		} else if(port == 1) {
 			currentScan = object;
 		}
@@ -62,7 +62,7 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	
 	@SuppressWarnings("unchecked")
 	private void predictData() {
-		MVRelationalTuple<?> list = (MVRelationalTuple<?>)ObjectrelationialSchemaAttributeResolver.resolveTuple(currentScan, objListPath);
+		MVRelationalTuple<?> list = (MVRelationalTuple<?>)OrAttributeResolver.resolveTuple(currentScan, objListPath);
 		for(MVRelationalTuple<M> obj : (MVRelationalTuple<M>[])list.getAttributes()) {
 			IPredictionFunction<MVRelationalTuple<M>, M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
 			pf.predictAll(getOutputSchema(), obj, currentTime);
