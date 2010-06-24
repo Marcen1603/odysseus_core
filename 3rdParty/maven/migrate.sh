@@ -73,7 +73,7 @@ EOF
   <parent>
     <groupId>de.uniol.inf.is.odysseus</groupId>
     <artifactId>odysseus-pom</artifactId>
-    <version>$(if [ -d $manifest ]; then v=$(grep "Bundle-Version:" $manifest);echo ${v##*:}; else echo 1.0-SNAPSHOT; fi)</version>
+    <version>$(if [ -a $manifest ]; then export v=$(grep "Bundle-Version:" $manifest);echo ${v##*:}; else echo 1.0-SNAPSHOT; fi)</version>
   </parent>
   <artifactId>odysseus-$artifactId</artifactId>
   <packaging>bundle</packaging>
