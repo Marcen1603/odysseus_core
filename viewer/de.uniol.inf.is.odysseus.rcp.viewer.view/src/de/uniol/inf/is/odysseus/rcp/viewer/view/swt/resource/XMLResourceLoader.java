@@ -32,7 +32,7 @@ public class XMLResourceLoader {
 	
 	public static void loadImages( URL xmlFile, URL xsd, ImageRegistry imageRegistry ) {
 
-		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
+//		logger.info( "Paring resourceConfigurationfile " + xmlFile  );
 		
 		// VALIDATION
 		SchemaFactory factory = SchemaFactory.newInstance( "http://www.w3.org/2001/XMLSchema" );	
@@ -78,7 +78,7 @@ public class XMLResourceLoader {
 				Node node = nodes.item( i );
 				final String name = getAttributeValue(node, "name");
 				final String src= getAttributeValue(node, "source");
-				logger.debug( "Inserting resourceInfo " + src + " --> " + name );
+//				logger.debug( "Inserting resourceInfo " + src + " --> " + name );
 				
 				try {
 					imageRegistry.put(name, Activator.getImageDescriptor(src));
@@ -87,7 +87,7 @@ public class XMLResourceLoader {
 				}
 			}
 			
-			logger.info( "Paring resourceConfigurationfile successful" );
+//			logger.info( "Paring resourceConfigurationfile successful" );
 
 		} catch( Exception ex ) {
 			ex.printStackTrace();
