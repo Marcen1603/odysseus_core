@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.assoziation;
 
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+
 public interface IHypothesisEvaluationFunction {
 		
-	public int[][] evaluateAll(int[][] matrix, Object[] tupleNew, Object[] tupleOld);
+	public int[][] evaluateAll(int[][] matrix, MVRelationalTuple[] tupleNew, MVRelationalTuple[] tupleOld);
 	
-	public int evaluate(Object tupleNew, Object tupleOld);
+	public int evaluate(MVRelationalTuple tupleNew, MVRelationalTuple tupleOld);
 	
 
 }

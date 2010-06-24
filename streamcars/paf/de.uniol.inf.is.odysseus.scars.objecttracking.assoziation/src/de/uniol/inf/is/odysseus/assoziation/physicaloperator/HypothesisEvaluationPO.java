@@ -39,8 +39,8 @@ public class HypothesisEvaluationPO<M extends IProbability & IPredictionFunction
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.newObjListPath)).getAttributes();
-		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();;
-		MVRelationalTuple<M>[] objConList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.objConListPath)).getAttributes();;
+		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();
+		MVRelationalTuple<M>[] objConList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.objConListPath)).getAttributes();
 		// TODO Matrizen generieren
 		// this.hypothesisEvaluationFunction.evaluateAll(matrix, newList, oldList);
 	}
