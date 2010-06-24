@@ -72,6 +72,16 @@ public class OrAttributeResolver {
 		return currentSchema;
 	}
 	
+	public static Object indexOfAttribute(RelationalTuple<?> parent, Object attr) {
+		Object[] children = parent.getAttributes();
+		for(int index=0; index<children.length; index++) {
+			if(attr.equals(children[index])) {
+				return index;
+			}
+		}
+		return -1;
+	}
+	
 	public static void main(String[] args) {
 		SDFAttributeList list = new SDFAttributeList("Scan");
 		SDFAttribute attr1 = new SDFAttribute("list1");
