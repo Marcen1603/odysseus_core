@@ -56,7 +56,18 @@ public class OrAttributeResolver {
 	
 	public static SDFAttributeList getSubSchema(SDFAttributeList root, String[] path) {
 		SDFAttributeList currentSchema = root;
+		for(String p : path) {
+			currentSchema = resolveAttribute(currentSchema, p).getSubattributes(); 
+		}
 		
+		return currentSchema;
+	}
+	
+	public static SDFAttributeList getSubSchema(SDFAttributeList root, int[] path) {
+		SDFAttributeList currentSchema = root;
+		for(int p : path) {
+			currentSchema = currentSchema.get(p).getSubattributes();
+		}
 		
 		return currentSchema;
 	}
