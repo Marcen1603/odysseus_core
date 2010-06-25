@@ -50,7 +50,7 @@ public class NexmarkServer {
 	 */
 	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort, boolean useNIO, String configFile)
 			throws IOException {
-		this(personPort, auctionPort, bidPort, categoryPort, -1, useNIO, configFile);
+		this(personPort, auctionPort, bidPort, categoryPort, 0, useNIO, configFile);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class NexmarkServer {
 	 *            - if no connection cannot be established on a port
 	 */
 	public NexmarkServer(int startPort, boolean useNIO, String filename) throws IOException {
-		this(startPort, ++startPort, ++startPort, ++startPort, -1, useNIO, filename);
+		this(startPort, ++startPort, ++startPort, ++startPort, 0, useNIO, filename);
 	}
 	
 	/**
