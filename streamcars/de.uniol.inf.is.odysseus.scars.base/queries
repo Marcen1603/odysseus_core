@@ -19,3 +19,25 @@ CREATE SENSOR radarSensor (
 		)
 	)
 ) FROM CHANNEL 192.168.0.1:5001
+
+CREATE SENSOR radarSensor (
+	RECORD( scan,
+		ATTRIBUTE(timestamp, LONG)
+		LIST( cars, 
+			RECORD( car,
+				ATTRIBUTE(type, INTEGER)
+				ATTRIBUTE(id, INTEGER)
+				ATTRIBUTE(laneid, INTEGER)
+				ATTRIBUTE(posx, MV DOUBLE 		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posy, MV DOUBLE		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posz, MV DOUBLE		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(roll, MV DOUBLE		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(pitch, MV DOUBLE		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(heading, MV DOUBLE	0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(velocity, MV FLOAT	0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(length, FLOAT)
+				ATTRIBUTE(width, FLOAT)
+			)
+		)
+	)
+) FROM CHANNEL 192.168.0.1:5001

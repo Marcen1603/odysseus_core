@@ -160,9 +160,9 @@ class JDVEData<M extends IProbability> {
 	}
 	
 	public MVRelationalTuple<M> parseList(SDFAttribute schema, ByteBuffer bb) {
-		int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
-		System.out.println(count);
-		count = 50;
+//		int count = bb.getInt(); // TODO: hier Länge aus Buffer einlesen
+//		System.out.println(count);
+		int count = 50;
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 
 		for( int i = 0; i < count; i++ ) {
@@ -183,11 +183,37 @@ class JDVEData<M extends IProbability> {
 			return bb.getLong();
 		} else 	if( "Float".equals(schema.getDatatype().getURIWithoutQualName() )) {
 			return bb.getFloat();
+		} else if( "MV".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getDouble();
+		} else if( "MV Float".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getFloat();
+		} else if( "MV Long".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getLong();
+		} else if( "MV Integer".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return bb.getInt();
 //		} else 	if( "Date".equals(schema.getDatatype().getURIWithoutQualName() )) {
 //			throw new RuntimeException("not implememted yet");
 		} else {
 			throw new RuntimeException("not implememted yet");			
 		}
+	}
+	
+	public static float arr2float (byte[] arr, int start) {
+		int i = 0;
+		int len = 4;
+		int cnt = 0;
+		byte[] tmp = new byte[len];
+		for (i = start; i < (start + len); i++) {
+			tmp[cnt] = arr[i];
+			cnt++;
+		}
+		int accum = 0;
+		i = 0;
+		for ( int shiftBy = 0; shiftBy < 32; shiftBy += 8 ) {
+			accum |= ( (long)( tmp[i] & 0xff ) ) << shiftBy;
+			i++;
+		}
+		return Float.intBitsToFloat(accum);
 	}
 	
 	public Object parseNext(SDFAttribute attr, ByteBuffer bb) {
