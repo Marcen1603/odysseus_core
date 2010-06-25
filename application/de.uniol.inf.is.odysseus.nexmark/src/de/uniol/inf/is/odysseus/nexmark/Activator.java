@@ -27,7 +27,7 @@ public class Activator implements BundleActivator {
 		logger.debug("NexMark started ");
 		// Right now, just a simple set of parameters
 		
-		String[] args = new String[3];
+		String[] args = new String[5];
 		args[0] = "-pr"; 
 		args[1] = System.getenv("pr");
 		args[2] = "-useNIO";
@@ -36,8 +36,15 @@ public class Activator implements BundleActivator {
 			boolean useNIO = Boolean.parseBoolean(uN);
 			if (!useNIO) args[2] = "";
 		}
+		// Read from GeneratorConfigfile?
+		args[3] = "-gcf";
+		args[4] = System.getenv("gcf");
+		if (args[4] == null || args[4] == ""){
+			args[3] = "";
+		}
+
 		
-		logger.debug("NexMark started "+args[0]+" "+args[1]+" "+args[2]);
+		logger.debug("NexMark started "+args[0]+" "+args[1]+" "+args[2]+" "+args[3]+" "+args[4]);
 		if (args[1] != null){
 			NexmarkServer.main(args);
 		}

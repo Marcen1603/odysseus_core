@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Wrapper for configuration of {@link NEXMarkGenerator}.
  */
 public class NEXMarkGeneratorConfiguration {
-	private static final String PROPERTIES_FILE = "/de/uniol/inf/is/odysseus/nexmark/generator/NEXMarkGeneratorConfiguration.properties";
-
+	
+	Logger logger = LoggerFactory.getLogger(NEXMarkGeneratorConfiguration.class);
+	
 	public int minDistBetweenPersons;
 	public int maxDistBetweenPersons;
 
@@ -30,8 +34,8 @@ public class NEXMarkGeneratorConfiguration {
 	 * Reads configuration of generator from PROPERTIES_FILE.
 	 * @throws IOException if property file cannot be read.
 	 */
-	public NEXMarkGeneratorConfiguration() throws IOException {
-		Properties properties = readProperties();
+	public NEXMarkGeneratorConfiguration(String filename) throws IOException {
+		Properties properties = readProperties(filename);
 
 		burstConfig = new NEXMarkBurstConfiguration(Integer.parseInt(properties
 				.getProperty("minTimeBetweenBursts")), Integer.parseInt(properties
@@ -60,6 +64,7 @@ public class NEXMarkGeneratorConfiguration {
 
 		this.minAuctionDuration = Integer.parseInt(properties.getProperty("minAuctionDuration"));
 		this.maxAuctionDuration = Integer.parseInt(properties.getProperty("maxAuctionDuration"));
+		logger.debug("Config Set: "+toString());
 	}
 
 	public NEXMarkGeneratorConfiguration(int minDistBetweenPersons, int maxDistBetweenPersons,
@@ -93,8 +98,9 @@ public class NEXMarkGeneratorConfiguration {
 	 * @return die Properties
 	 * @throws IOException wenn Properties file nicht gelesen werden kann
 	 */
-	private Properties readProperties() throws IOException {
-		InputStream is = getClass().getResourceAsStream(PROPERTIES_FILE);
+	private Properties readProperties(String filename) throws IOException {
+		logger.debug("Reading Generator Properties from "+filename);
+		InputStream is = getClass().getResourceAsStream(filename);
 		Properties properties = new Properties();
 		
 		try {
@@ -110,7 +116,7 @@ public class NEXMarkGeneratorConfiguration {
 		return "person: [" + minDistBetweenPersons + ", " + maxDistBetweenPersons + "] - "
 				+ "auction: [" + minDistBetweenAuctions + ", " + maxDistBetweenAuctions + "] - "
 				+ "bid: [" + minDistBetweenBids + ", " + maxDistBetweenBids + "] - "
-				+ "acceleration Factor: " + accelerationFactor + burstConfig;
+				+ "acceleration Factor: " + accelerationFactor +" " + burstConfig;
 	}
 
 }

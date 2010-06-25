@@ -6,14 +6,14 @@
 <stringAttribute key="bootstrap" value=""/>
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="clearConfig" value="false"/>
-<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Nexmark NIO"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Nexmark NIO SLOW"/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
 <intAttribute key="default_start_level" value="4"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-<mapEntry key="gcf" value="/config/NEXMarkGeneratorConfiguration.properties"/>
-<mapEntry key="pr" value="65440"/>
+<mapEntry key="gcf" value="/config/NEXMarkGeneratorConfiguration_SLOW.properties"/>
+<mapEntry key="pr" value="65450"/>
 <mapEntry key="useNIO" value="true"/>
 </mapAttribute>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">

@@ -22,14 +22,17 @@ import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
  */
 public class NexmarkServer {
 	private HashMap<InetAddress, NexmarkStreamClientHandler> activeClientHandler = new HashMap<InetAddress, NexmarkStreamClientHandler>();
+//	private static final String PROPERTIES_FILE = "/de/uniol/inf/is/odysseus/nexmark/generator/NEXMarkGeneratorConfiguration.properties";
+	private static final String PROPERTIES_FILE = "/config/NEXMarkGeneratorConfiguration.properties";
+
 	
 	private int elementLimit = 0;
 
-	private NEXMarkGeneratorConfiguration configuration = new NEXMarkGeneratorConfiguration();
-	private NEXMarkStreamServer personServer;
-	private NEXMarkStreamServer auctionServer;
-	private NEXMarkStreamServer bidServer;
-	private NEXMarkStreamServer categoryServer;
+	final private NEXMarkGeneratorConfiguration configuration;
+	final private NEXMarkStreamServer personServer;
+	final private NEXMarkStreamServer auctionServer;
+	final private NEXMarkStreamServer bidServer;
+	final private NEXMarkStreamServer categoryServer;
 
 	/**
 	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
@@ -45,12 +48,9 @@ public class NexmarkServer {
 	 * @throws IOException
 	 *            - if no connection cannot be established on a port
 	 */
-	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort, boolean useNIO)
+	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort, boolean useNIO, String configFile)
 			throws IOException {
-		personServer = new NEXMarkStreamServer(personPort, this, NEXMarkStreamType.PERSON, useNIO);
-		auctionServer = new NEXMarkStreamServer(auctionPort, this, NEXMarkStreamType.AUCTION, useNIO);
-		bidServer = new NEXMarkStreamServer(bidPort, this, NEXMarkStreamType.BID, useNIO);
-		categoryServer = new NEXMarkStreamServer(categoryPort, this, NEXMarkStreamType.CATEGORY, useNIO);
+		this(personPort, auctionPort, bidPort, categoryPort, -1, useNIO, configFile);
 	}
 
 	/**
@@ -70,7 +70,8 @@ public class NexmarkServer {
 	 *            - if no connection cannot be established on a port
 	 */
 	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort,
-			int elementLimit, boolean useNIO) throws IOException {
+			int elementLimit, boolean useNIO, String configFile) throws IOException {
+		configuration = new NEXMarkGeneratorConfiguration(configFile);
 		personServer = new NEXMarkStreamServer(personPort, this, NEXMarkStreamType.PERSON, useNIO);
 		auctionServer = new NEXMarkStreamServer(auctionPort, this, NEXMarkStreamType.AUCTION, useNIO);
 		bidServer = new NEXMarkStreamServer(bidPort, this, NEXMarkStreamType.BID, useNIO);
@@ -88,11 +89,8 @@ public class NexmarkServer {
 	 * @throws IOException
 	 *            - if no connection cannot be established on a port
 	 */
-	public NexmarkServer(int startPort, boolean useNIO) throws IOException {
-		personServer = new NEXMarkStreamServer(startPort, this, NEXMarkStreamType.PERSON, useNIO);
-		auctionServer = new NEXMarkStreamServer(++startPort, this, NEXMarkStreamType.AUCTION, useNIO);
-		bidServer = new NEXMarkStreamServer(++startPort, this, NEXMarkStreamType.BID, useNIO);
-		categoryServer = new NEXMarkStreamServer(++startPort, this, NEXMarkStreamType.CATEGORY, useNIO);
+	public NexmarkServer(int startPort, boolean useNIO, String filename) throws IOException {
+		this(startPort, ++startPort, ++startPort, ++startPort, -1, useNIO, filename);
 	}
 	
 	/**
@@ -107,13 +105,8 @@ public class NexmarkServer {
 	 *            - if no connection cannot be established on a port
 	 */
 
-	public NexmarkServer(int startPort, int elementLimit, boolean useNIO) throws IOException {
-		personServer = new NEXMarkStreamServer(startPort, this, NEXMarkStreamType.PERSON, useNIO);
-		auctionServer = new NEXMarkStreamServer(++startPort, this, NEXMarkStreamType.AUCTION, useNIO);
-		bidServer = new NEXMarkStreamServer(++startPort, this, NEXMarkStreamType.BID, useNIO);
-		categoryServer = new NEXMarkStreamServer(++startPort, this, NEXMarkStreamType.CATEGORY, useNIO);
-		
-		this.elementLimit = elementLimit;
+	public NexmarkServer(int startPort, int elementLimit, boolean useNIO, String filename) throws IOException {
+		this(startPort, ++startPort, ++startPort, ++startPort, elementLimit, useNIO, filename);
 	}	
 
 	/**
@@ -177,6 +170,7 @@ public class NexmarkServer {
 		int personPort = 0, auctionPort = 0, bidPort = 0, categoryPort = 0;
 		int startPort = 0;
 		int elementLimit = 0;
+		String generatorConfigFile = PROPERTIES_FILE;
 		boolean useNIO = false;
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
@@ -192,22 +186,24 @@ public class NexmarkServer {
 				elementLimit = Integer.parseInt(args[++i]);
 			} else if (arg.equals("-useNIO")){
 				useNIO = true;
+			} else if (arg.equals("-genConfigFile") || arg.equals("-gcf")){
+				generatorConfigFile = args[++i];
 			}
 		}
 		NexmarkServer server = null;
 		try {
 			if (startPort > 0) {
 				if (elementLimit > 0) {
-					server = new NexmarkServer(startPort, elementLimit, useNIO);
+					server = new NexmarkServer(startPort, elementLimit, useNIO, generatorConfigFile);
 				} else {
-					server = new NexmarkServer(startPort, useNIO);
+					server = new NexmarkServer(startPort, useNIO, generatorConfigFile);
 				}
 			} else if (personPort > 0 && auctionPort > 0 && bidPort > 0 && categoryPort > 0) {
 				if (elementLimit > 0) {
 					server = new NexmarkServer(personPort, auctionPort, bidPort, categoryPort,
-							elementLimit, useNIO);
+							elementLimit, useNIO, generatorConfigFile);
 				} else {
-					server = new NexmarkServer(personPort, auctionPort, bidPort, categoryPort, useNIO);
+					server = new NexmarkServer(personPort, auctionPort, bidPort, categoryPort, useNIO, generatorConfigFile);
 				}
 			} else {
 				throw new IOException();
