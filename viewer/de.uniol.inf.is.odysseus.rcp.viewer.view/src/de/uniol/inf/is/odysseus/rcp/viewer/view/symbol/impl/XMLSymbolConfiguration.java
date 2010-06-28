@@ -43,7 +43,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		
 	
 		
-		logger.info("Parsing configurationfile " + xmlFile );
+//		logger.info("Parsing configurationfile " + xmlFile );
 		
 		// DATEN EINLESEN
 		mapTypeSymbolInfos = new HashMap<String, Collection<SymbolElementInfo>>();
@@ -66,7 +66,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		try {
 			Validator validator = schema.newValidator();
 			// Neu mit OSGi
-			logger.debug(xmlFile.toString());
+//			logger.debug(xmlFile.toString());
 			Source source = new StreamSource(xmlFile.openStream());
 			validator.validate( source );
 			
@@ -79,7 +79,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 			return;
 		}
 
-		logger.trace( "Empty SymbolConfiguration-instance created!" );
+//		logger.trace( "Empty SymbolConfiguration-instance created!" );
 		
 		try {
 			// Parsing
@@ -107,7 +107,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 			if( defaultSymbolInfos.size() == 0 )
 				logger.warn("No default symbol specified!");
 					
-			logger.info( "File parsed successfully" );
+//			logger.info( "File parsed successfully" );
 		} catch( Exception ex ) {
 			ex.printStackTrace();
 			logger.error("Error during loading symbolConfiguration", ex );
@@ -115,14 +115,14 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 	}
 				
 	private SymbolElementInfo parseSymbolElement( Node node, int width, int height ) {
-		logger.trace( "Entering <SymbolElement>" );
+//		logger.trace( "Entering <SymbolElement>" );
 		
 		final String symbolType = getAttributeValue(node, "type");
 		if( symbolType.length() == 0 ) {
 			logger.warn( "type for entity 'SymbolElement' must be specified" );
 		}
 		
-		logger.debug( "Reading SymbolInfoParameters for '" + symbolType + "'" );
+//		logger.debug( "Reading SymbolInfoParameters for '" + symbolType + "'" );
 		
 		// Parameter auslesen
 		final NodeList childNodes = node.getChildNodes();
@@ -134,7 +134,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 					final String key = getAttributeValue(childNode, "key");
 					final String value = getAttributeValue( childNode, "value");
 					if( key.length() > 0 && value.length() > 0  ) {
-						logger.debug( "Adding Parameter key=" + key + " value=" + value );
+//						logger.debug( "Adding Parameter key=" + key + " value=" + value );
 						params.put( key, value );
 					} else {
 						logger.warn("Wrong Parameter-entity: Key=" + key + " Value=" + value);
@@ -144,13 +144,13 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		} else
 			logger.debug( "No parameters for '" + symbolType + "' specified" );
 		
-		logger.trace( "Leaving <SymbolElement>" );
+//		logger.trace( "Leaving <SymbolElement>" );
 		
 		return new SymbolElementInfo(symbolType, params, width, height);
 	}
 	
 	private void parseSymbol( Node node ) {
-		logger.trace( "Entering <Symbol>" );
+//		logger.trace( "Entering <Symbol>" );
 		
 		final String type = getAttributeValue(node, "nodeName");
 		if( type.length() == 0 ) {
@@ -179,7 +179,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 			}
 		} 
 		if( infos.size() > 0 ) {
-			logger.debug( "Adding SymbolInfos for Type '" + type + "'" );
+//			logger.debug( "Adding SymbolInfos for Type '" + type + "'" );
 			mapTypeSymbolInfos.put( type, infos );
 		} else {
 			logger.warn( "No symbols for type '" + type + "' specified. Using default-symbol.");
@@ -189,7 +189,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 	}
 	
 	private void parseDefault( Node node ) {
-		logger.trace( "Entering <Default>" );
+//		logger.trace( "Entering <Default>" );
 				
 		int width = -1;
 		int height = -1;
@@ -211,7 +211,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 				}
 			}
 		} 
-		logger.trace( "Leaving <Default>" );
+//		logger.trace( "Leaving <Default>" );
 	}
 	
 	private static String getAttributeValue( Node node, String attributeName ) {
