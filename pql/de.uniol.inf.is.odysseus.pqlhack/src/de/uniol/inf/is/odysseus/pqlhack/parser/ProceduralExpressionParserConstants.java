@@ -148,6 +148,7 @@ public interface ProceduralExpressionParserConstants {
     "<DIGIT>",
     "<IPADDRESS>",
     "\":\"",
+    "\";\"",
     "\"(\"",
     "\")\"",
     "\",\"",
@@ -156,7 +157,6 @@ public interface ProceduralExpressionParserConstants {
     "\"-\"",
     "\"/\"",
     "\"^\"",
-    "\";\"",
     "\":=\"",
   };
 

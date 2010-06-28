@@ -833,7 +833,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			ILogicalOperator inputQueue = (ILogicalOperator)returnData.get(1);
 			int sourceOutPort = ((Integer)returnData.get(2)).intValue();
 			
-			if(!broker.getQueueSchema().equals(inputQueue.getOutputSchema())){
+			if(!broker.getQueueSchema().compatibleTo(inputQueue.getOutputSchema())){
 				throw new RuntimeException("Schema mismatch! \nBrokerQueueSchema: " + broker.getQueueSchema().toString() + "\nInputQueueSchema: " + inputQueue.getOutputSchema() );
 			}
 			
@@ -843,9 +843,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}
 		
 		// get the input ops of the broker
-		// if no queue, then the first child is already a preceding operator
-		// if queue, then the second child is the first preceding operator
-		int start = node.hasQueue() ? 0 : 1;
+		// if no queue, then the second child is already a preceding operator
+		// if queue, then the third child is the first preceding operator
+		// the first child is the identifier
+		int start = node.hasQueue() ? 1 : 2;
 		for(int i = start; i<node.jjtGetNumChildren(); i++){
 			returnData = (ArrayList)node.jjtGetChild(i).jjtAccept(this, newData);
 			ILogicalOperator inputOp = (ILogicalOperator)returnData.get(1);

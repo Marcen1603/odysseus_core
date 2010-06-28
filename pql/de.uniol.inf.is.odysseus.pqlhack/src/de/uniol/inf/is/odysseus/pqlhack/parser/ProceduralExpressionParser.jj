@@ -110,12 +110,12 @@ ASTLogicalPlan LogicalPlan():{/*@bgen(jjtree) LogicalPlan */
 /*@egen*/}{/*@bgen(jjtree) LogicalPlan */
         try {
 /*@egen*/
-	<K_LOGICAL><K_PLAN>":"
-	AlgebraOp()/*@bgen(jjtree)*/
-                    {
-                      jjtree.closeNodeScope(jjtn000, true);
-                      jjtc000 = false;
-                    }
+	
+	<K_LOGICAL><K_PLAN>":" (AlgebraOp() [";"])+ < EOF >/*@bgen(jjtree)*/
+                                                            {
+                                                              jjtree.closeNodeScope(jjtn000, true);
+                                                              jjtc000 = false;
+                                                            }
 /*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
@@ -146,7 +146,7 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 /*@egen*/}{/*@bgen(jjtree) AlgebraOp */
         try {
 /*@egen*/
-	ProjectionOp() |
+	ProjectionOp() | RelationalProjectionOp() |
 	SelectionOp() | RelationalSelectionOp() |
 	JoinOp() | RelationalJoinOp() |
 	RelationalNestOp() |
@@ -403,7 +403,7 @@ void RelationalJoinOp(): {/*@bgen(jjtree) RelationalJoinOp */
 /*@egen*/
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"/*@bgen(jjtree)*/
+	<K_RELATIONAL_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -503,7 +503,7 @@ void JoinOp(): {/*@bgen(jjtree) JoinOp */
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
 	// window size is a hack for evaluation of window size
-	<K_RELATIONAL_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
+	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
