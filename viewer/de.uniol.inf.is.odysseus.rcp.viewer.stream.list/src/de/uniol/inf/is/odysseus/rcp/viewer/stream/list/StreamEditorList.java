@@ -22,6 +22,36 @@ public class StreamEditorList implements IStreamEditorType {
 		tableViewer.setContentProvider(contentProvider);
 		tableViewer.setLabelProvider(labelProvider);
 		tableViewer.setInput(input);
+
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (true) {
+					if (PlatformUI.getWorkbench().getDisplay().isDisposed())
+						return;
+
+					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							if (!tableViewer.getTable().isDisposed())
+								tableViewer.refresh();
+						}
+
+					});
+
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		});
+		
+		t.start();
 	}
 
 	@Override
@@ -40,18 +70,6 @@ public class StreamEditorList implements IStreamEditorType {
 	@Override
 	public void streamElementRecieved(Object element, int port) {
 		contentProvider.addElement(element.toString());
-		if (PlatformUI.getWorkbench().getDisplay().isDisposed())
-			return;
-
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				if(!tableViewer.getTable().isDisposed())
-					tableViewer.refresh();
-			}
-
-		});
 	}
 
 }
