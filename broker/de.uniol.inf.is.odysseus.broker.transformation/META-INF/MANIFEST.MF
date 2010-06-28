@@ -12,4 +12,5 @@ Import-Package: de.uniol.inf.is.odysseus.broker.dictionary,
  de.uniol.inf.is.odysseus.broker.physicaloperator.association,
  de.uniol.inf.is.odysseus.broker.transaction,
  de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.objecttracking.sdf,
  de.uniol.inf.is.odysseus.physicaloperator.base
