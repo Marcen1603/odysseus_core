@@ -1,16 +1,13 @@
 package de.uniol.inf.is.odysseus.scars.base;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.PortUnreachableException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
+import java.util.Random;
 
-import java.util.*;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -98,7 +95,6 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 
 class DummyJDVEData<M extends IProbability> {
 	
-	private static final int RECEIVE_SIZE = 10000;
 	private static final int TIMEOUT = 10000;
 		
 	private static Random rdm = new Random();
