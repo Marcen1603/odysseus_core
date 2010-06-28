@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
+import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoi
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingSelectAO;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
@@ -66,8 +65,17 @@ import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
+/**
+ * This visitor creates the logical plan from a procedural expression.
+ * IMPORTANT: data[0] contains the attribute resolver
+ *            data[1] contains the child operator
+ *            data[2] contains the output port of the child operator to which the parent is connected
+ * @author Andre Bolles
+ *
+ */
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor{
 
@@ -100,10 +108,13 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		newData.add(attrRes);
 		
 		// the first child is the input operator
-		AbstractLogicalOperator inputForProjection = 
-			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		ArrayList returnData = ((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData));
 		
-		projection.subscribeTo(inputForProjection, inputForProjection.getOutputSchema());
+		
+		AbstractLogicalOperator inputForProjection = (AbstractLogicalOperator) returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+		
+		projection.subscribeToSource(inputForProjection, 0, sourceOutPort, inputForProjection.getOutputSchema());
 		
 		// the further children are the identifiers
 		SDFAttributeListExtended outAttributes = new SDFAttributeListExtended();
@@ -132,6 +143,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 //		projection.setRestrictList(restrictList);
 		
 		((ArrayList)data).add(projection);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -147,10 +159,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		newData.add(attrRes);
 		
 		// the first child is the input operator
-		AbstractLogicalOperator inputForProjection = 
-			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		ArrayList returnData = ((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData));
+		AbstractLogicalOperator inputForProjection = (AbstractLogicalOperator) returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+		projection.subscribeToSource(inputForProjection, 0, sourceOutPort, inputForProjection.getOutputSchema());
 		
-		projection.subscribeTo(inputForProjection, inputForProjection.getOutputSchema());
 		
 		// the further children are the identifiers
 		SDFAttributeList outAttributes = new SDFAttributeList();
@@ -179,6 +192,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 //		projection.setRestrictList(restrictList);
 		
 		((ArrayList)data).add(projection);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -193,9 +207,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		newData.add(((ArrayList)data).get(0));
 		
 		// the first child is the input operator
-		AbstractLogicalOperator inputForSelection =
-			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
-		selection.subscribeTo(inputForSelection, inputForSelection.getOutputSchema());
+		ArrayList returnData = ((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData));
+		AbstractLogicalOperator inputForSelection =	(AbstractLogicalOperator) returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+		selection.subscribeToSource(inputForSelection, 0, sourceOutPort, inputForSelection.getOutputSchema());
 		
 		newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
@@ -208,6 +223,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		selection.init((IAttributeResolver)((ArrayList)data).get(0));
 		
 		((ArrayList)data).add(selection);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -228,14 +244,19 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// in both following lines the index 1 in the get method
 		// can be used, since in both lines the collection
 		// only contains the attribute resolver
-		AbstractLogicalOperator leftIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		ArrayList leftInData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator leftIn = (AbstractLogicalOperator)leftInData.get(1);
+		int leftInSourceOutPort = ((Integer)leftInData.get(2)).intValue();
 		
 		newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
-		AbstractLogicalOperator rightIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
+		
+		ArrayList rightInData = (ArrayList)node.jjtGetChild(1).jjtAccept(this, newData);
+		AbstractLogicalOperator rightIn = (AbstractLogicalOperator)rightInData.get(1);
+		int rightInSourceOutPort = ((Integer)rightInData.get(2)).intValue();
 			
-		join.subscribeToSource(leftIn, 0, 0, leftIn.getOutputSchema());
-		join.subscribeToSource(rightIn, 1, 0, rightIn.getOutputSchema());
+		join.subscribeToSource(leftIn, 0, leftInSourceOutPort, leftIn.getOutputSchema());
+		join.subscribeToSource(rightIn, 1, rightInSourceOutPort, rightIn.getOutputSchema());
 		
 		// setting the predicate and initializing the operator
 		newData.clear();
@@ -247,6 +268,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		join.init((IAttributeResolver)((ArrayList)data).get(0));
 		
 		((ArrayList)data).add(join);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -267,8 +289,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// the input must be set first, since the output schema
 		// of the window's input is used for determining an
 		// ON attribute
-		AbstractLogicalOperator inputForWindow = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
-		win.subscribeTo(inputForWindow, inputForWindow.getOutputSchema());
+		ArrayList returnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForWindow = (AbstractLogicalOperator)returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+		
+		win.subscribeToSource(inputForWindow, 0, sourceOutPort, inputForWindow.getOutputSchema());
 		
 		win.setWindowSize(((ASTNumber)node.jjtGetChild(1)).getValue());
 		win.setWindowAdvance(((ASTNumber)node.jjtGetChild(2)).getValue());
@@ -284,6 +309,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}
 		
 		((ArrayList)data).add(win);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -297,6 +323,9 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}else{
 			((ArrayList)data).add(attributeResolver.getSource(((ASTIdentifier)node.jjtGetChild(0)).getName()));
 		}
+		
+		((ArrayList)data).add(new Integer(0));
+		
 		return data;
 	}
 
@@ -308,11 +337,12 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
 		
-		AbstractLogicalOperator inputForPrediction =
-			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		ArrayList returnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForPrediction = (AbstractLogicalOperator)returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
 		
 
-		prediction.subscribeTo(inputForPrediction, inputForPrediction.getOutputSchema());
+		prediction.subscribeToSource(inputForPrediction, 0, sourceOutPort, inputForPrediction.getOutputSchema());
 				
 		for(int i = 1; i<node.jjtGetNumChildren(); i++){
 			
@@ -409,6 +439,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		}
 		
 		((ArrayList)data).add(prediction);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -613,9 +644,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		newData.add(((ArrayList)data).get(0));
 		
 		// the first child is the input operator
-		AbstractLogicalOperator inputForSelection =
-			(AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
-		selection.subscribeTo(inputForSelection, inputForSelection.getOutputSchema());
+		ArrayList returnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForSelection =	(AbstractLogicalOperator)returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+		selection.subscribeToSource(inputForSelection, 0, sourceOutPort, inputForSelection.getOutputSchema());
 		
 		newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
@@ -627,6 +659,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		selection.setPredicate(predicate);
 		
 		((ArrayList)data).add(selection);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -643,14 +676,18 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// in both following lines the index 1 in the get method
 		// can be used, since in both lines the collection
 		// only contains the attribute resolver
-		AbstractLogicalOperator leftIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		ArrayList leftReturnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator leftIn = (AbstractLogicalOperator) leftReturnData.get(1);
+		int leftSourceOutPort = ((Integer)leftReturnData.get(2)).intValue();
 		
 		newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
-		AbstractLogicalOperator rightIn = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
+		ArrayList rightReturnData = (ArrayList)node.jjtGetChild(1).jjtAccept(this, newData);
+		AbstractLogicalOperator rightIn = (AbstractLogicalOperator)rightReturnData.get(1);
+		int rightSourceOutPort = ((Integer)rightReturnData.get(2)).intValue();
 			
-		join.subscribeToSource(leftIn, 0, 0, leftIn.getOutputSchema());
-		join.subscribeToSource(rightIn, 1, 0, rightIn.getOutputSchema());
+		join.subscribeToSource(leftIn, 0, leftSourceOutPort, leftIn.getOutputSchema());
+		join.subscribeToSource(rightIn, 1, rightSourceOutPort, rightIn.getOutputSchema());
 		
 		// setting the predicate and initializing the operator
 		newData.clear();
@@ -661,6 +698,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		join.setPredicate(predicate);
 		
 		((ArrayList)data).add(join);
+		((ArrayList)data).add(new Integer(0));
 		
 		return data;
 	}
@@ -699,10 +737,12 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         
         newData.add(attrRes);
         
-        input = (AbstractLogicalOperator) 
-            ((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
         
-        op.subscribeTo(input, input.getOutputSchema());        
+        ArrayList returnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+        input = (AbstractLogicalOperator) returnData.get(1);
+        int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+        
+        op.subscribeToSource(input, 0, sourceOutPort, input.getOutputSchema());        
         
         nestAttributeIdentifier = 
             (ASTIdentifier) node.jjtGetChild(1);
@@ -722,27 +762,33 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         op.setNestingAttributes(nestingAttributes);
         
         ((ArrayList) data).add(op);
+        ((ArrayList) data).add(new Integer(0));
         
         return data;
 	}
 
 	
 	public Object visit(ASTRelationalUnnestOp node, Object data) {
-		Class<?> visitorClass;
-		try {
-			visitorClass = Class
-					.forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
-			Object visitorInstance = visitorClass.newInstance();
-			Method m = visitorClass.getDeclaredMethod("visit",
-					ASTRelationalNestOp.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-				.invoke(visitorInstance, node, data);	
-			return sourceOp;
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Objectrelational Plugin is missing in parser.", e.getCause());
-		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
-		}
+//		Class<?> visitorClass;
+//		try {
+//			visitorClass = Class
+//					.forName("de.uniol.inf.is.odysseus.parser.pql.objectrelational.Visitor");
+//			Object visitorInstance = visitorClass.newInstance();
+//			Method m = visitorClass.getDeclaredMethod("visit",
+//					ASTRelationalNestOp.class, Object.class);
+//		
+//			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+//				.invoke(visitorInstance, node, newData);	
+//			
+//			((ArrayList)data).add(sourceOp);
+//			((ArrayList)data).add(new Integer(0));
+//			return data;
+//		} catch (ClassNotFoundException e) {
+//			throw new RuntimeException("Objectrelational Plugin is missing in parser.", e.getCause());
+//		} catch (Exception e) {
+//			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
+//		}
+		throw new RuntimeException("Method visit(ASTRelationalUnnestOp, Object) does not work");
 	}
 
 	
@@ -752,10 +798,14 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList)data).get(0));
 		
-		AbstractLogicalOperator inputForSelection = (AbstractLogicalOperator)((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
-		op.subscribeTo(inputForSelection, inputForSelection.getOutputSchema());
+		ArrayList returnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForTest = (AbstractLogicalOperator)returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+		
+		op.subscribeToSource(inputForTest, 0, sourceOutPort, inputForTest.getOutputSchema());
 		
 		((ArrayList)data).add(op);
+		((ArrayList)data).add(new Integer(0));
 
 		return data;
 	}
@@ -767,13 +817,46 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// the broker also can but not has to have input operators.
 		AttributeResolver attributeResolver = (AttributeResolver) ((ArrayList)data).get(0);
 		
+		ArrayList newData = new ArrayList();
+		newData.add(attributeResolver);
 		
-		// The broker must not have an alias
-//		if(node.hasAlias()){
-//			((ArrayList)data).add(attributeResolver.getSource(node.getAlias()));
-//		}else{
-			((ArrayList)data).add(attributeResolver.getSource(((ASTIdentifier)node.jjtGetChild(0)).getName()));
-//		}
+		String brokerName = ((ASTIdentifier)node.jjtGetChild(0)).getName();
+		BrokerAO broker = (BrokerAO)attributeResolver.getSource(brokerName);
+		int curOutPort = broker.getSubscriptions().size();
+		
+		// first get the queue of the broker, if it has one
+		// must be first, because otherwise the queue port mappings
+		// would not match
+		ArrayList returnData = null;
+		if(node.hasQueue()){
+			returnData = (ArrayList)node.jjtGetChild(1).jjtAccept(this, newData);
+			ILogicalOperator inputQueue = (ILogicalOperator)returnData.get(1);
+			int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+			
+			if(!broker.getQueueSchema().equals(inputQueue.getOutputSchema())){
+				throw new RuntimeException("Schema mismatch! \nBrokerQueueSchema: " + broker.getQueueSchema().toString() + "\nInputQueueSchema: " + inputQueue.getOutputSchema() );
+			}
+			
+			int curInPort = broker.getSubscribedToSource().size();
+			
+			broker.subscribeToSource(inputQueue, curInPort, sourceOutPort, inputQueue.getOutputSchema());
+		}
+		
+		// get the input ops of the broker
+		// if no queue, then the first child is already a preceding operator
+		// if queue, then the second child is the first preceding operator
+		int start = node.hasQueue() ? 0 : 1;
+		for(int i = start; i<node.jjtGetNumChildren(); i++){
+			returnData = (ArrayList)node.jjtGetChild(i).jjtAccept(this, newData);
+			ILogicalOperator inputOp = (ILogicalOperator)returnData.get(1);
+			int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+			
+			int curInPort = broker.getSubscribedToSource().size();
+			broker.subscribeToSource(inputOp, curInPort, sourceOutPort, inputOp.getOutputSchema());
+		}
+		
+		((ArrayList)data).add(broker);
+		((ArrayList)data).add(new Integer(curOutPort));
 		return data;
 	}
 

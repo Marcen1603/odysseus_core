@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
@@ -57,7 +59,22 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
  */
 public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
+	private ArrayList<String> brokerNames;
+	
+	public InitBrokerVisitor(){
+		this.brokerNames = new ArrayList<String>();
+	}
+	
+	public ArrayList<String> getBrokerNames(){
+		return this.brokerNames;
+	}
+	
 	public Object visit(ASTBrokerOp broker, Object data) {
+		
+		if(!brokerNames.contains(broker.getName())){
+			this.brokerNames.add(broker.getName());
+		}
+		
 		// check if the preceding node is an algebra operator
 		if(data != null && data instanceof ASTAlgebraOp){
 			// check if the broker has a queue statement.

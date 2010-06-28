@@ -100,8 +100,8 @@ TOKEN:/* Numeric Constants */
 }
 
 ASTLogicalPlan LogicalPlan():{}{
-	<K_LOGICAL><K_PLAN>":"
-	AlgebraOp() {return jjtThis;}
+	
+	<K_LOGICAL><K_PLAN>":" (AlgebraOp() [";"])+ < EOF > {return jjtThis;}
 }
 
 void AlgebraOp():{}{
@@ -152,7 +152,7 @@ void RelationalJoinOp(): {
 }{
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
-	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"
+	<K_RELATIONAL_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate()")"
 }
 
 void RelationalNestOp(): {
@@ -174,7 +174,7 @@ void JoinOp(): {
 	// Here no join predicate will be set
 	// this will be done by the restructuring component
 	// window size is a hack for evaluation of window size
-	<K_RELATIONAL_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
+	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
 }
 
 void WindowOp():{}{

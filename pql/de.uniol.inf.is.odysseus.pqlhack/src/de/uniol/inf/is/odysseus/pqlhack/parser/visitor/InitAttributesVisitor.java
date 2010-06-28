@@ -33,6 +33,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		super();
 		this.attributeResolver = new AttributeResolver();
 		this.sources = new HashMap<SDFSource, AccessAO>();
+		this.brokers = new HashMap<SDFSource, BrokerAO>();
 	}
 	
 	@Override
@@ -52,15 +53,20 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		
 		AccessAO access = this.sources.get(source);
 		if (access == null) {
-			access = new AccessAO(source);
-			SDFEntity entity = null;
-			try {
-				entity = DataDictionary.getInstance().getEntity(sourceName);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			access.setOutputSchema(entity.getAttributes());
+			
+			// TODO ist das korrekt, oder muss man doch
+			// einen eigenen AccessAO erzeugen?
+			access = (AccessAO)DataDictionary.getInstance().getView(sourceName);
+			
+//			access = new AccessAO(source);
+//			SDFEntity entity = null;
+//			try {
+//				entity = DataDictionary.getInstance().getEntity(sourceName);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			access.setOutputSchema(entity.getAttributes());
 
 			this.sources.put(source, access);
 		}
@@ -81,10 +87,11 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	public Object visit(ASTBrokerOp node, Object data){
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();		
+		DataDictionary inst = DataDictionary.getInstance();
 		SDFSource source = DataDictionary.getInstance().getSource(sourceString);
 		brokerStreamingSource(node, source, sourceString);
 
-		return null;
+		return node.childrenAccept(this, data);
 	}
 	
 	private void brokerStreamingSource(ASTBrokerOp node,
@@ -94,37 +101,11 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		
 		BrokerAO broker = this.brokers.get(source);
 		if (broker == null) {
-			broker = BrokerAOFactory.getFactory().createBrokerAO(sourceName);
-			SDFAttributeList brokerSchema = null;
-			SDFAttributeList brokerQueueSchema = null;
-			try {
-				brokerSchema = BrokerDictionary.getInstance().getSchema(sourceName);
-				brokerQueueSchema = BrokerDictionary.getInstance().getQueueSchema(sourceName);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			broker.setSchema(brokerSchema);
-			broker.setQueueSchema(brokerQueueSchema);
-
+			broker = (BrokerAO)DataDictionary.getInstance().getView(sourceName);
 			this.brokers.put(source, broker);
+			this.attributeResolver.addSource(sourceName, broker);
 		}
 
-		AbstractLogicalOperator inputOp = broker;
-
-		// The broker should not use an alias.
-		// This might not work with the mapping
-		// between queue in-port and data out-port
-//		if (node.hasAlias()) {
-//
-//			throw new RuntimeException("Broker should not use an alias. Otherwise the mapping between queue in-port and data out-port is not correct.");
-//			inputOp = new RenameAO();
-//			inputOp.subscribeToSource(broker, 0, 0, broker.getOutputSchema());
-//			((RenameAO)inputOp).setOutputSchema(createAliasSchema(node.getAlias(), broker));
-//			sourceName = node.getAlias();
-//		}
-
-		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 	
 	private SDFAttributeList createAliasSchema(String alias, AbstractLogicalOperator access) {

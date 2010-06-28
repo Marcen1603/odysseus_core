@@ -19,14 +19,14 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.OrRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePredicate;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 

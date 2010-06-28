@@ -10,9 +10,9 @@ import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 @SuppressWarnings("unchecked")
 public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
