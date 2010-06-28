@@ -1,11 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.base;
 
-import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.PortUnreachableException;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.nio.channels.IllegalBlockingModeException;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
@@ -19,12 +14,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
 	private DummyJDVEData<M> data;
-	private int port;
-	protected MVRelationalTuple<M> buffer;
 	private SDFAttributeList outputSchema;
 	
-	public DummyAccessMVPO(int pPort) {
-		this.port = pPort;
+	public DummyAccessMVPO() {
 	}
 	
 	@Override
@@ -35,7 +27,7 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			data = new DummyJDVEData<M>(this.port, outputSchema);
+			data = new DummyJDVEData<M>(outputSchema);
 		}
 		catch (SocketException ex){
 			throw new OpenFailedException(ex);
@@ -44,28 +36,10 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 
 	@Override
 	protected void process_done() {
-		data.closeJDVEDataPort();
 	}
 	
 	@Override
 	public boolean hasNext() {
-		if (buffer == null) {
-			try {
-				buffer = data.getScan();
-			} catch (SocketTimeoutException e) {
-				e.printStackTrace();
-				return false;
-			} catch (PortUnreachableException e) {
-				e.printStackTrace();
-				return false;
-			} catch (IllegalBlockingModeException e) {
-				e.printStackTrace();
-				return false;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
 		return true;
 	}
 
@@ -81,9 +55,7 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 	
 	@Override
 	public void transferNext() {
-		if( buffer != null )
-			transfer(buffer);
-		buffer = null;
+		transfer(data.getScan());
 	}
 
 	@Override
@@ -95,41 +67,15 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 
 class DummyJDVEData<M extends IProbability> {
 	
-	private static final int TIMEOUT = 10000;
-		
 	private static Random rdm = new Random();
-	private int port = -1;
-	private DatagramSocket clientSocket;
 	private SDFAttributeList attributeList;
 
-	public DummyJDVEData(int pPort, SDFAttributeList list) throws SocketException {
-		this.port = pPort;
-		this.clientSocket = new DatagramSocket(this.port);
-		this.clientSocket.setSoTimeout(TIMEOUT);
+	public DummyJDVEData(SDFAttributeList list) throws SocketException {
 		this.attributeList = list;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public MVRelationalTuple<M> getScan() throws SocketTimeoutException, PortUnreachableException, IllegalBlockingModeException, IOException {
-		/* Ben�tigter Puffer:
-		 * carType: 4 Byte
-		 * carTrafficID: 4 Byte
-		 * laneID: 4 Byte
-		 * positionUTM: 8 Byte * 6 + 4 F�llbytes f�r das Array
-		 * velocity: 4 Byte
-		 * length: 4 Byte
-		 * width: 4 Byte 
-		 * = (76 Byte + 4 F�llbytes f�r das struct) * 50 Autos f�r einen Scan = 4000 Bytes */
-		//byte[] receiveData = new byte[RECEIVE_SIZE];
-		
-		//DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		
-		//clientSocket.receive(receivePacket);
-		
-		/* ByteBuffer �bernimmt die Daten. ByteBuffer besitzt
-	     * die Methoden, die wir zum Auslesen ben�tigen. */
-		//ByteBuffer byteBuffer = ByteBuffer.wrap(receiveData);
-		//byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+	public MVRelationalTuple<M> getScan() {
 		Object res = parseNext(attributeList.get(0));
 		
 		if( res instanceof MVRelationalTuple<?>) {
@@ -158,9 +104,7 @@ class DummyJDVEData<M extends IProbability> {
 	}
 	
 	public MVRelationalTuple<M> parseList(SDFAttribute schema) {
-		int count; // TODO: hier Länge aus Buffer einlesen
-		//System.out.println(count);
-		count = 50;
+		int count = 50;
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 
 		for( int i = 0; i < count; i++ ) {
@@ -172,17 +116,23 @@ class DummyJDVEData<M extends IProbability> {
 		
 	public Object parseAttribute(SDFAttribute schema) {
 		if( "Integer".equals(schema.getDatatype().getURIWithoutQualName() )) {
-			return rdm.nextInt();
+			return rdm.nextInt(100);
 		} else 	if( "Double".equals(schema.getDatatype().getURIWithoutQualName() )) {
 			return rdm.nextDouble();
 		} else 	if( "String".equals(schema.getDatatype().getURIWithoutQualName() )) {
 			throw new RuntimeException("not implememted yet");			
 		} else 	if( "Long".equals(schema.getDatatype().getURIWithoutQualName() )) {
-			return rdm.nextLong();
+			return (long)rdm.nextInt(100);
 		} else 	if( "Float".equals(schema.getDatatype().getURIWithoutQualName() )) {
 			return rdm.nextFloat();
-//		} else 	if( "Date".equals(schema.getDatatype().getURIWithoutQualName() )) {
-//			throw new RuntimeException("not implememted yet");
+		} else if( "MV".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return rdm.nextDouble();
+		} else if( "MV Float".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return rdm.nextFloat();
+		} else if( "MV Long".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return (long)rdm.nextInt(100);
+		} else if( "MV Integer".equals(schema.getDatatype().getURIWithoutQualName() )) {
+			return rdm.nextInt(100);
 		} else {
 			throw new RuntimeException("not implememted yet");			
 		}
@@ -198,9 +148,5 @@ class DummyJDVEData<M extends IProbability> {
 			obj = parseAttribute(attr);
 		}
 		return obj;
-	}
-	
-	public void closeJDVEDataPort() {
-		this.clientSocket.close();
 	}
 }
