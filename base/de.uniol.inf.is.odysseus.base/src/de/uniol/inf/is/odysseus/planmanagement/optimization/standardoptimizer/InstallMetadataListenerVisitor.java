@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEventType;
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
@@ -35,11 +33,14 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 		// install datarate listener on sources
 		if (!op.isSink() && !((ISource<?>)op).providesMonitoringData(MonitoringDataTypes.DATARATE.name)) {
 			ISource<?> source = (ISource<?>) op;
-			IMonitoringData<?> mData = MonitoringDataTypes.createMetadata(MonitoringDataTypes.DATARATE.name, source);
-			source.subscribe((IPOEventListener)mData, POEventType.PushDone);
+//			IMonitoringData<?> mData = null;
+//			mData = 
+			MonitoringDataTypes.createMetadata(MonitoringDataTypes.DATARATE.name, source);
+			//source.subscribe((IPOEventListener)mData, POEventType.PushDone);
 			// activate periodical datarate update
-			mData = source.getMonitoringData(MonitoringDataTypes.DATARATE.name, StandardOptimizer.MONITORING_PERIOD);
-			source.subscribe((IPOEventListener)mData, POEventType.PushDone);
+			//mData = 
+			source.getMonitoringData(MonitoringDataTypes.DATARATE.name, StandardOptimizer.MONITORING_PERIOD);
+			//source.subscribe((IPOEventListener)mData, POEventType.PushDone);
 		}
 		// install selectivity listener on every pipe operator
 		if (op.isPipe() && !((IPipe<?,?>)op).providesMonitoringData(MonitoringDataTypes.SELECTIVITY.name)) {
