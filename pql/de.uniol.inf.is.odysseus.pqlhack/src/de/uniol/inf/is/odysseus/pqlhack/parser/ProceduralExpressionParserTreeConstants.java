@@ -20,7 +20,7 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTTIMESTAMPATTRIBUTE = 14;
   public int JJTACCESSOP = 15;
   public int JJTBROKEROP = 16;
-  public int JJTPREDICTIONOP = 17;
+  public int JJTPREDICTIONASSIGNOP = 17;
   public int JJTPREDICATE = 18;
   public int JJTSIMPLEPREDICATE = 19;
   public int JJTBASICPREDICATE = 20;
@@ -59,7 +59,7 @@ public interface ProceduralExpressionParserTreeConstants
     "TimestampAttribute",
     "AccessOp",
     "BrokerOp",
-    "PredictionOp",
+    "PredictionAssignOp",
     "Predicate",
     "SimplePredicate",
     "BasicPredicate",
@@ -80,4 +80,4 @@ public interface ProceduralExpressionParserTreeConstants
     "PredictionFunctionDefinition",
   };
 }
-/* JavaCC - OriginalChecksum=7f30dcc56e3f6e23278d490c943e3ce3 (do not edit this line) */
+/* JavaCC - OriginalChecksum=a5d1a5e76632224de28c0a07125f5f15 (do not edit this line) */

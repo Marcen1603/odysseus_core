@@ -119,7 +119,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           BrokerOp();
           break;
         case K_SET_PREDICTION:
-          PredictionOp();
+          PredictionAssignOp();
           break;
         case K_TEST:
           TestOp();
@@ -814,11 +814,11 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     }
   }
 
-  static final public void PredictionOp() throws ParseException {
-    trace_call("PredictionOp");
+  static final public void PredictionAssignOp() throws ParseException {
+    trace_call("PredictionAssignOp");
     try {
-                       /*@bgen(jjtree) PredictionOp */
-  ASTPredictionOp jjtn000 = new ASTPredictionOp(JJTPREDICTIONOP);
+                             /*@bgen(jjtree) PredictionAssignOp */
+  ASTPredictionAssignOp jjtn000 = new ASTPredictionAssignOp(JJTPREDICTIONASSIGNOP);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
       try {
@@ -869,7 +869,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           }
       }
     } finally {
-      trace_return("PredictionOp");
+      trace_return("PredictionAssignOp");
     }
   }
 

@@ -21,7 +21,7 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTTimestampAttribute node, Object data);
   public Object visit(ASTAccessOp node, Object data);
   public Object visit(ASTBrokerOp node, Object data);
-  public Object visit(ASTPredictionOp node, Object data);
+  public Object visit(ASTPredictionAssignOp node, Object data);
   public Object visit(ASTPredicate node, Object data);
   public Object visit(ASTSimplePredicate node, Object data);
   public Object visit(ASTBasicPredicate node, Object data);
@@ -40,4 +40,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTDefaultPredictionDefinition node, Object data);
   public Object visit(ASTPredictionFunctionDefinition node, Object data);
 }
-/* JavaCC - OriginalChecksum=4d16594002ea00a8e6232c5f2b5cd846 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3155c667f0ddb588c87bfd20a29e91b4 (do not edit this line) */

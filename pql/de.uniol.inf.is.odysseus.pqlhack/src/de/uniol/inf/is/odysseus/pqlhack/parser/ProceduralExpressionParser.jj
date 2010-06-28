@@ -154,7 +154,7 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	WindowOp() |
 	AccessOp() |
 	BrokerOp() |
-	PredictionOp() |
+	PredictionAssignOp() |
 	TestOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
@@ -674,11 +674,11 @@ void BrokerOp(): {/*@bgen(jjtree) BrokerOp */
 /*@egen*/
 }
 
-void PredictionOp() : {/*@bgen(jjtree) PredictionOp */
-  ASTPredictionOp jjtn000 = new ASTPredictionOp(JJTPREDICTIONOP);
+void PredictionAssignOp() : {/*@bgen(jjtree) PredictionAssignOp */
+  ASTPredictionAssignOp jjtn000 = new ASTPredictionAssignOp(JJTPREDICTIONASSIGNOP);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) PredictionOp */
+/*@egen*/}{/*@bgen(jjtree) PredictionAssignOp */
         try {
 /*@egen*/
 	<K_SET_PREDICTION>"(" AlgebraOp() "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"/*@bgen(jjtree)*/
