@@ -71,7 +71,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 	 *
 	 * @param outputSchema the new schema
 	 */
-	public void setSchema(SDFAttributeListExtended outputSchema) {		
+	public void setSchema(SDFAttributeList outputSchema) {		
 		//create alias schema
 		SDFAttributeListExtended aliasSchema = new SDFAttributeListExtended();
 		for(SDFAttribute attribute : outputSchema){
@@ -80,8 +80,10 @@ public class BrokerAO extends AbstractLogicalOperator{
 			aliasSchema.add(newAttribute);
 		}
 		
-		for(SDFAttributeListMetadataTypes p : SDFAttributeListMetadataTypes.values()){
-			aliasSchema.setMetadata(p, outputSchema.getMetadata(p));
+		if(outputSchema instanceof SDFAttributeListExtended){
+			for(SDFAttributeListMetadataTypes p : SDFAttributeListMetadataTypes.values()){
+				aliasSchema.setMetadata(p, ((SDFAttributeListExtended)outputSchema).getMetadata(p));
+			}
 		}
 		
 		this.schema = aliasSchema;		
