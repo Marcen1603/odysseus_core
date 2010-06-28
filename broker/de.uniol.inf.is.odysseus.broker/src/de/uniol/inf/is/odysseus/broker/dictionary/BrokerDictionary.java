@@ -7,6 +7,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -68,7 +69,7 @@ public class BrokerDictionary {
 	 * @param schema the data schema of the broker
 	 * @param queueSchema the queue schema of the broker
 	 */
-	public void addBroker(String name, SDFAttributeList schema, SDFAttributeList queueSchema) {
+	public void addBroker(String name, SDFAttributeListExtended schema, SDFAttributeList queueSchema) {
 		if (!brokerExists(name)) {
 			BrokerDictionaryEntry entry = new BrokerDictionaryEntry(name, schema, queueSchema);
 			this.brokerlist.put(name, entry);
@@ -117,7 +118,7 @@ public class BrokerDictionary {
 	 * @param brokername the name of the broker
 	 * @return the data schema
 	 */
-	public SDFAttributeList getSchema(String brokername) {
+	public SDFAttributeListExtended getSchema(String brokername) {
 		return this.brokerlist.get(brokername).getSchema();
 	}
 

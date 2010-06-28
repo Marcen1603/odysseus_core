@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
@@ -102,7 +103,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
 
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
-		broker.setSchema(result.getOutputSchema());
+		broker.setSchema((SDFAttributeListExtended) result.getOutputSchema());
 		if (!BrokerDictionary.getInstance().brokerExists(name)) {
 			BrokerDictionary.getInstance().addBroker(name, broker.getOutputSchema(), broker.getQueueSchema());
 		}
@@ -215,7 +216,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// parse attributes
-		SDFAttributeList attributes = new SDFAttributeList();
+		SDFAttributeListExtended attributes = new SDFAttributeListExtended();
 		ASTAttributeDefinitions attributeDe = (ASTAttributeDefinitions) node.jjtGetChild(1);
 		for (int i = 0; i < attributeDe.jjtGetNumChildren(); i++) {
 			ASTAttributeDefinition attrNode = (ASTAttributeDefinition) attributeDe.jjtGetChild(i);
@@ -261,6 +262,11 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		broker.setSchema(attributes);
 		broker.setQueueSchema(metaAttributes);
 		BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema(), broker.getQueueSchema());
+		
+		// set the broker view in the data dictionary
+		// used for procedural parser
+		DataDictionary.getInstance().setView(brokerName, broker);
+		
 		return broker;
 	}
 

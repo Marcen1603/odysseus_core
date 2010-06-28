@@ -1,6 +1,11 @@
 package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -18,7 +23,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 	private String identifier;
 	
 	/** The data schema. */
-	private SDFAttributeList schema = null;
+	private SDFAttributeListExtended schema = null;
 	
 	/** The generated time will be used to distinguish between two BrokerAOs. */
 	private long generatedTime;
@@ -57,7 +62,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 	 * @see de.uniol.inf.is.odysseus.base.ILogicalOperator#getOutputSchema()
 	 */
 	@Override	
-	public synchronized SDFAttributeList getOutputSchema() {		
+	public synchronized SDFAttributeListExtended getOutputSchema() {		
 		return this.schema;		
 	}		
 
@@ -66,14 +71,19 @@ public class BrokerAO extends AbstractLogicalOperator{
 	 *
 	 * @param outputSchema the new schema
 	 */
-	public void setSchema(SDFAttributeList outputSchema) {		
+	public void setSchema(SDFAttributeListExtended outputSchema) {		
 		//create alias schema
-		SDFAttributeList aliasSchema = new SDFAttributeList();
+		SDFAttributeListExtended aliasSchema = new SDFAttributeListExtended();
 		for(SDFAttribute attribute : outputSchema){
 			SDFAttribute newAttribute = attribute.clone();
 			newAttribute.setSourceName(null);
 			aliasSchema.add(newAttribute);
 		}
+		
+		for(SDFAttributeListMetadataTypes p : SDFAttributeListMetadataTypes.values()){
+			aliasSchema.setMetadata(p, outputSchema.getMetadata(p));
+		}
+		
 		this.schema = aliasSchema;		
 	}
 	
