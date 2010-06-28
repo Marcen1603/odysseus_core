@@ -13,19 +13,8 @@ abstract public class AbstractPeriodicalMonitoringData<T> extends AbstractPublis
 		return target;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractPeriodicalMonitoringData<T> clone() {
-		AbstractPeriodicalMonitoringData<T> ret = null;
-		try {
-			ret = (AbstractPeriodicalMonitoringData<T>) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ret.target = this.target;
-		return ret;
-	}
+	public abstract AbstractPeriodicalMonitoringData<T> clone();
 	
 	public void cancelMonitoring() {
 		synchronized (this.subscribers) {

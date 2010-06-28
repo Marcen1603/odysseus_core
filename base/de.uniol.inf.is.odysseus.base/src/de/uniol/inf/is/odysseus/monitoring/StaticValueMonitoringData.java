@@ -14,6 +14,12 @@ public class StaticValueMonitoringData<T> implements IMonitoringData<T> {
 		this.value = value;
 		this.type = type;
 	}
+	public StaticValueMonitoringData(
+			StaticValueMonitoringData<T> staticValueMonitoringData) {
+		this.target = staticValueMonitoringData.target;
+		this.value = staticValueMonitoringData.value;
+		this.type = staticValueMonitoringData.type;
+	}
 	@Override
 	public IMonitoringDataProvider getTarget() {
 		return this.target;
@@ -29,20 +35,9 @@ public class StaticValueMonitoringData<T> implements IMonitoringData<T> {
 		return this.value;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public StaticValueMonitoringData<T> clone() {
-		StaticValueMonitoringData<T> ret = null;
-		try {
-			ret = (StaticValueMonitoringData<T>) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ret.target = this.target;
-		ret.value = this.value;
-		ret.type = this.type;
-		return ret;
+		return new StaticValueMonitoringData(this);
 	}
 	
 	@Override

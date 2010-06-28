@@ -61,7 +61,7 @@ public class AvgProcessingTime extends AbstractMonitoringData<Double> implements
 	}
 
 	@Override
-	public AbstractMonitoringData<Double> clone() {
+	public AvgProcessingTime clone() {
 		return new AvgProcessingTime(this);
 	}
 

@@ -10,23 +10,16 @@ public abstract class AbstractMonitoringData<T>
 		this.target = target;
 	}
 
+	public AbstractMonitoringData(AbstractMonitoringData other) {
+		this.target = other.target;
+	}
+
 	public IMonitoringDataProvider getTarget() {
 		return target;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractMonitoringData<T> clone() {
-		AbstractMonitoringData<T> ret = null;
-		try {
-			ret = (AbstractMonitoringData<T>) super.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ret.target = this.target;
-		return ret;
-	}
+	public abstract AbstractMonitoringData<T> clone() ;
 
 	@Override
 	public void cancelMonitoring() {

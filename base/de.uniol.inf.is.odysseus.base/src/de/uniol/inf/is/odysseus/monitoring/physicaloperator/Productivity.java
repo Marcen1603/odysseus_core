@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
 
 /**
  * Calculates the Productivity of an Operator by relating the count of the written
@@ -15,6 +16,10 @@ public class Productivity extends Selectivity {
 		super(po, sourceCount);	
 	}
 
+	public Productivity(Productivity productivity) {
+		super(productivity);
+	}
+
 	@Override
 	public Double getValue() {
 		return getWriteCount()/getReadCountSum();
@@ -23,6 +28,11 @@ public class Productivity extends Selectivity {
 	@Override
 	public String getType() {
 		return MonitoringDataTypes.PRODUCTIVITY.name;
+	}
+
+	@Override
+	public Productivity clone() {
+		return new Productivity(this);
 	}
 
 }

@@ -16,6 +16,11 @@ public class ElementsRead extends AbstractMonitoringData<Long> implements IPOEve
 		target.subscribe(this, POEventType.ProcessDone);
 	}
 
+	public ElementsRead(ElementsRead elementsRead) {
+		super(elementsRead);
+		this.readCount = elementsRead.readCount;
+	}
+
 	public void reset() {
 		this.readCount = 0;
 	}
@@ -32,6 +37,11 @@ public class ElementsRead extends AbstractMonitoringData<Long> implements IPOEve
 	
 	public void poEventOccured(POEvent poEvent) {
 		this.readCount++;
+	}
+
+	@Override
+	public ElementsRead clone() {
+		return new ElementsRead(this);
 	}
 
 }

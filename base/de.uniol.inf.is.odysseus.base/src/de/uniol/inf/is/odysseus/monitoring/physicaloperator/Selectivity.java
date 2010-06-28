@@ -23,6 +23,16 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 		target.subscribe(this, POEventType.PushDone);
 		target.subscribe(this, POEventType.ProcessDone);
 	}
+	
+	public Selectivity(Selectivity other){
+		super(other);
+		this.writeCount = other.writeCount;
+		this.readCount = new int[other.readCount.length];
+		System.arraycopy(readCount, 0, this.readCount, 0, other.readCount.length);
+		this.readCountSum = other.readCountSum;
+	}
+	
+	
 
 	public void reset() {
 		this.writeCount = 0;
@@ -71,15 +81,4 @@ public abstract class Selectivity extends AbstractMonitoringData<Double>
 		}
 	}
 
-	@Override
-	public AbstractMonitoringData<Double> clone() {
-		Selectivity ret = null;
-		ret = (Selectivity) super.clone();
-		ret.writeCount = writeCount;
-		ret.readCount = new int[readCount.length];
-		System.arraycopy(readCount, 0, ret.readCount, 0, readCount.length);
-		ret.readCountSum = readCountSum;
-		
-		return ret;
-	}
 }
