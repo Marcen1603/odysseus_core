@@ -150,4 +150,28 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute> {
 		return attribs2.elements.containsAll(attribs1);
 	}
 
+	/**
+	 * Checks whether this schema is union compatible to another
+	 * schema. This means: all the attributes of each schema
+	 * have the same datatype.
+	 */
+	public boolean compatibleTo(SDFAttributeList other){
+		for(SDFAttribute attrLeft : this){
+			for(SDFAttribute attrRight : other){
+				if(!attrLeft.getDatatype().equals(attrRight.getDatatype())){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Checks whether this schema is union compatible to another
+	 * schema. This means: all the attributes of each schema
+	 * have the same datatype.
+	 */
+	public static boolean compatible(SDFAttributeList left, SDFAttributeList right){
+		return left.compatibleTo(right);
+	}
 }
