@@ -90,12 +90,16 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		});
 		cancelButton.setLayoutData(new GridData(GridData.CENTER));
 
-		IAdvancedExecutor executor = Activator.getExecutor();
 		try {
+			IAdvancedExecutor executor = Activator.getExecutor();
 			for( String parserID : executor.getSupportedQueryParser() ) 
 				parserCombo.add(parserID);
 		} catch (PlanManagementException e1) {
 			parserCombo.add("No parser available");
+			parserCombo.setEnabled(false);
+			okButton.setEnabled(false);
+		} catch (NullPointerException ex ) {
+			parserCombo.add("No executor available");
 			parserCombo.setEnabled(false);
 			okButton.setEnabled(false);
 		}
