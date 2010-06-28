@@ -113,7 +113,7 @@ void AlgebraOp():{}{
 	WindowOp() |
 	AccessOp() |
 	BrokerOp() |
-	PredictionOp() |
+	PredictionAssignOp() |
 	TestOp()
 }
 
@@ -194,7 +194,7 @@ void BrokerOp(): {}{
 	<K_BROKER>"(" Identifier() [LOOKAHEAD(2) "," <K_QUEUE>"(" AlgebraOp() ")" {jjtThis.setQueue(true);}] ("," AlgebraOp() {jjtThis.increaseNoOfChildOps();})* ")"
 }
 
-void PredictionOp() : {}{
+void PredictionAssignOp() : {}{
 	<K_SET_PREDICTION>"(" AlgebraOp() "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
 }
 

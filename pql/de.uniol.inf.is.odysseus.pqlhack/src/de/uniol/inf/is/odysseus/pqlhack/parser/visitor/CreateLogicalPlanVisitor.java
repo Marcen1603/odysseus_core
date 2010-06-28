@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
@@ -330,7 +330,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	}
 
 	
-	public Object visit(ASTPredictionOp node, Object data) {
+	public Object visit(ASTPredictionAssignOp node, Object data) {
 		ObjectTrackingPredictionAssignAO prediction = new ObjectTrackingPredictionAssignAO();
 		
 		// pass only the attribute resolver to the children
