@@ -32,6 +32,8 @@ public class PredictionFunctionKey<T> implements IPredictionFunctionKey<T> {
 	}
 	
 	public String toString(){
-		return this.key.toString();
+		if(this.key != null) {
+			return this.key.toString();
+		} else return "PredFctKey: empty";
 	}
 }

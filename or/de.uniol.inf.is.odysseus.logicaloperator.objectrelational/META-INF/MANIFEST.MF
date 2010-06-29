@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.osgi.framework
-Export-Package: de.uniol.inf.is.odysseus.logicaloperator.objectrelational
+Export-Package: de.uniol.inf.is.odysseus.logicaloperator.objectrelational,
+ de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking
 Require-Bundle: org.junit4,
  de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"

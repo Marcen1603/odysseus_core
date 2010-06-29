@@ -1,8 +1,7 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.helper;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 
 /**
  * This sweep area sub class stores grouping attributes for later 
@@ -10,7 +9,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  * 
  * @author Jendrik Poloczek
  */
-public class ObjectTrackingNestTISweepArea<M extends ITimeInterval & IProbability> 
+public class ObjectTrackingNestTISweepArea<M extends ObjectTrackingMetadata<Object>> 
     extends DefaultTISweepArea<ObjectTrackingPartialNest<M>> {
 	
 	Object[] groupingValues;

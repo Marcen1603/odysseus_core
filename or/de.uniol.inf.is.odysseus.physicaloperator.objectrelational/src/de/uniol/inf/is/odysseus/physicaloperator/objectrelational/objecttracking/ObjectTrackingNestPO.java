@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.
+	objecttracking;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,17 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.
-    physicaloperator.objectrelational.helper.ObjectTrackingNestTISweepArea;
-
-import de.uniol.inf.is.odysseus.
-    physicaloperator.objectrelational.helper.ObjectTrackingPartialNest;
-
-import de.uniol.inf.is.odysseus.physicaloperator.
-    objectrelational.helper.ObjectTrackingPriorityQueueG;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.
+	objecttracking.helper.ObjectTrackingNestTISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.
+	objecttracking.helper.ObjectTrackingPartialNest;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.
+	objecttracking.helper.ObjectTrackingPriorityQueueG;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.IPeriodicalMonitoringData;
@@ -31,15 +31,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * Object Tracking NestPO, this one is for MVRelationalTuple processing
+ * Object Tracking NestPO, this one is for MVRelationalTuple processing,
+ * for testing the nest po use the test suite of
+ *  
+ * /de.uniol.inf.is.odysseus.physicaloperator.objectrelational/src/de/uniol
+ * /inf/is/odysseus/physicaloperator/objectrelational/objecttracking/test/
+ * nest/NestPOAllTests.java
  * 
  * @author Jendrik Poloczek
  */
-public class ObjectTrackingNestPO extends
-		AbstractPipe<
-		    MVRelationalTuple<ObjectTrackingMetadata<Object>>, 
-		    MVRelationalTuple<ObjectTrackingMetadata<Object>>
-        > {
+public class ObjectTrackingNestPO
+		<M extends ObjectTrackingMetadata<Object>> 
+		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	
 	private SDFAttributeList inputSchema;
 	private SDFAttributeList outputSchema;
@@ -58,37 +61,28 @@ public class ObjectTrackingNestPO extends
 	 * sweep area are partial sets with time interval approach metadata
 	 */
 	
-	private 
-	    Map<
-	        Integer, 
-	        ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>
-	    > groups;
+	private Map<Integer, ObjectTrackingNestTISweepArea<M>> groups;
 	
 	/*
 	 * keyMap maps restricted tuples (to grouping attributes) to a key, 
 	 * if grouping doesn't match a key, maxId is incremented and used. 
 	 */
 	
-	private Map<
-	        MVRelationalTuple<ObjectTrackingMetadata<Object>>, 
-	        Integer
-	    > keyMap;
+	private Map<MVRelationalTuple<M>, Integer> keyMap;
 	
 	/*
 	 * MVPriorityQueueG stores the sweep areas ascending to the smallest 
 	 * start time stamp of containing partial nests.   
 	 */
 	
-	private ObjectTrackingPriorityQueueG<ObjectTrackingMetadata<Object>> g;
+	private ObjectTrackingPriorityQueueG<M> g;
 	
 	/*
 	 * q is a default min-priority queue for relational tuples according 
 	 * to their time stamps.
 	 */
 	
-	private DefaultTISweepArea<
-	        MVRelationalTuple<ObjectTrackingMetadata<Object>>
-	    > q;
+	private DefaultTISweepArea<MVRelationalTuple<M>> q;
 	
 	/**
 	 * @param groupingAttributes attributes to group by
@@ -113,25 +107,10 @@ public class ObjectTrackingNestPO extends
         this.nonGroupingAttributesPos = this.getNonGroupingAttributePos();
         this.nestingAttributePos = this.groupingAttributesPos.length;
 	        
-		this.groups = 
-			new HashMap<
-				Integer, 
-				ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>
-			>();
-		
-		this.keyMap = 
-			new HashMap<
-			    MVRelationalTuple<ObjectTrackingMetadata<Object>>,
-			    Integer
-			>();
-		
-		this.g = 
-		    new ObjectTrackingPriorityQueueG<ObjectTrackingMetadata<Object>>();
-		
-		this.q = 
-		    new DefaultTISweepArea<
-		        MVRelationalTuple<ObjectTrackingMetadata<Object>>
-		    >();
+		this.groups = new HashMap<Integer, ObjectTrackingNestTISweepArea<M>>();		
+		this.keyMap = new HashMap<MVRelationalTuple<M>,Integer>();		
+		this.g = new ObjectTrackingPriorityQueueG<M>();	
+		this.q = new DefaultTISweepArea<MVRelationalTuple<M>>();
 	}
 	
 	/**
@@ -139,7 +118,7 @@ public class ObjectTrackingNestPO extends
 	 * 
 	 * @param relationalNestPO nesting plan operator to copy
 	 */	
-	public ObjectTrackingNestPO(ObjectTrackingNestPO nestPO) {
+	public ObjectTrackingNestPO(ObjectTrackingNestPO<M> nestPO) {
 		super(nestPO);
 		
 		this.inputSchema = nestPO.inputSchema;
@@ -147,16 +126,11 @@ public class ObjectTrackingNestPO extends
 		this.nestingAttribute = nestPO.nestingAttribute.clone();
 		this.groupingAttributes = nestPO.groupingAttributes.clone();
 		
-		Iterator<
-		    Entry<MVRelationalTuple<ObjectTrackingMetadata<Object>>, 
-		    Integer>
-		> keyMapIter;
+		Iterator<Entry<MVRelationalTuple<M>, Integer>> keyMapIter;		
+		Iterator<Entry<Integer, ObjectTrackingNestTISweepArea<M>>> groupsIter;
 		
-		Iterator<
-		    Entry<Integer, ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>>> groupsIter;
-		
-		Entry<MVRelationalTuple<ObjectTrackingMetadata<Object>>, Integer> entryOfkeyMap;
-		Entry<Integer, ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>> entryOfGroups;
+		Entry<MVRelationalTuple<M>, Integer> entryOfkeyMap;
+		Entry<Integer, ObjectTrackingNestTISweepArea<M>> entryOfGroups;
 		
 		keyMapIter = nestPO.keyMap.entrySet().iterator();
 		groupsIter = nestPO.groups.entrySet().iterator();
@@ -164,20 +138,15 @@ public class ObjectTrackingNestPO extends
 		while(keyMapIter.hasNext()) {
 		    entryOfkeyMap = keyMapIter.next();
 		    
-		    MVRelationalTuple<ObjectTrackingMetadata<Object>> tuple = 
+		    MVRelationalTuple<M> tuple = 
                 entryOfkeyMap.getKey();
 		 
-		    this.keyMap.put(
-		       tuple.clone(),
-		       entryOfkeyMap.getValue()
-		    );
-		}
-		
-		// FATAL ERROR IN RULE
+		    this.keyMap.put(tuple.clone(), entryOfkeyMap.getValue());
+		}	
 		
 		while(groupsIter.hasNext()) {
 		    entryOfGroups = groupsIter.next();
-		    ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>> sa = entryOfGroups.getValue();
+		    ObjectTrackingNestTISweepArea<M> sa = entryOfGroups.getValue();
 		    
 		    this.groups.put(
 		        entryOfGroups.getKey(), 
@@ -187,33 +156,21 @@ public class ObjectTrackingNestPO extends
 		
 		this.g = nestPO.g.clone();
 		this.q = nestPO.q.clone();
-		
-	}
-
-	@Override
-	final protected void process_next(
-		MVRelationalTuple<ObjectTrackingMetadata<Object>> object, 
-		int port
-	) {
-		try {
-			// do nothing
-			transfer(object);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
-	 * Instead of transfering the objects to the subscriber, we return the 
-	 * values to assert correctness in a test case.
+	 * process_next method is a primary function for an operator, tuples of 
+	 * subscripted sources will be sent to this method. The port is not 
+	 * relevant due to an unary operator.
 	 * 
 	 * @param object
 	 * @param port
 	 */	
-	public final void processNextTest
-		(MVRelationalTuple<ObjectTrackingMetadata<Object>> incomingTuple, int port) {
+	final protected void process_next(
+		MVRelationalTuple<M> incomingTuple, 
+		int port) {
 		
-		ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>> sa;
+		ObjectTrackingNestTISweepArea<M> sa;
 		PointInTime minStart;
 		PointInTime incomingTupleStart;
 		Integer groupId;
@@ -234,12 +191,12 @@ public class ObjectTrackingNestPO extends
 			
 			/*
 			 * Storing the values of the groupingAttributes in the 
-			 * MVNestTISweepArea<ObjectTrackingMetadata<Object>> for evaluating (transform to relational 
+			 * MVNestTISweepArea<M> for evaluating (transform to relational 
 			 * tuple output)
 			 */
 			
 			Object[] groupingValues = this.getGroupingValues(incomingTuple);
-			sa = new ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>>(groupingValues);
+			sa = new ObjectTrackingNestTISweepArea<M>(groupingValues);
 			groups.put(groupId, sa);
 		}
 		
@@ -254,8 +211,8 @@ public class ObjectTrackingNestPO extends
 			emptySA = false;
 		}
 		
-		MVRelationalTuple<ObjectTrackingMetadata<Object>> restrictedToNonGrouping 
-			= (MVRelationalTuple<ObjectTrackingMetadata<Object>>) 
+		MVRelationalTuple<M> restrictedToNonGrouping 
+			= (MVRelationalTuple<M>) 
 			incomingTuple.restrict(this.nonGroupingAttributesPos, false);
 			
 		this.update(sa, restrictedToNonGrouping);
@@ -272,10 +229,10 @@ public class ObjectTrackingNestPO extends
 		while(!g.isEmpty()) {
 			Integer groupIdOfMin = g.min();
 			
-			ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>> saOfMin = 
+			ObjectTrackingNestTISweepArea<M> saOfMin = 
 				groups.get(groupIdOfMin);
 			
-			ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> minPartial = 
+			ObjectTrackingPartialNest<M> minPartial = 
 				saOfMin.iterator().next();
 						
 			if(
@@ -291,7 +248,7 @@ public class ObjectTrackingNestPO extends
 				minStart.equals(incomingTupleStart)) {
 	
 				g.removeLastMin();
-				Iterator<ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>>> results = 
+				Iterator<ObjectTrackingPartialNest<M>> results = 
 					saOfMin.extractElementsBefore(incomingTupleStart);
 				
 				/*
@@ -299,10 +256,135 @@ public class ObjectTrackingNestPO extends
 				 */
 				
 				while(results.hasNext()) {
-					ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> result = results.next();
+					ObjectTrackingPartialNest<M> result = results.next();
 					
 					Object[] groupingValues = saOfMin.getGroupingValues();
-					MVRelationalTuple<ObjectTrackingMetadata<Object>> output = 
+					MVRelationalTuple<M> output = 
+						this.createOutputTuple(groupingValues, result);
+						
+					q.insert(output);
+				}
+				
+				if(saOfMin.size() > 0) {
+					g.insert(saOfMin, groupIdOfMin);
+				}				
+			} else break;
+		}
+		
+		MVRelationalTuple<M> delivery = this.deliver();
+		if(delivery != null) {
+			this.transfer(delivery);
+		} 
+	}	
+	
+	@Override
+	public void process_done() {
+		for(MVRelationalTuple<M> t : this.q) {
+			this.transfer(t);
+			System.out.println(t);
+		}
+	}
+	
+	/**
+	 * Instead of transfering the objects to the subscriber, we return the 
+	 * values to assert correctness in a test case.
+	 * 
+	 * @param object
+	 * @param port
+	 */	
+	public final void processNextTest
+		(MVRelationalTuple<M> incomingTuple, int port) {
+		
+		ObjectTrackingNestTISweepArea<M> sa;
+		PointInTime minStart;
+		PointInTime incomingTupleStart;
+		Integer groupId;
+		Boolean emptySA;
+		
+		minStart = null;
+		incomingTupleStart = incomingTuple.getMetadata().getStart();
+		
+		/*
+		 * Getting the groupId and the according sweep area with 
+		 * partial nests. If not existent in groups, then create.
+		 */
+		
+		groupId = this.getGroupId(incomingTuple);
+		if(groups.containsKey(groupId)) {
+			sa = groups.get(groupId);
+		} else {
+			
+			/*
+			 * Storing the values of the groupingAttributes in the 
+			 * MVNestTISweepArea<M> for evaluating (transform to relational 
+			 * tuple output)
+			 */
+			
+			Object[] groupingValues = this.getGroupingValues(incomingTuple);
+			sa = new ObjectTrackingNestTISweepArea<M>(groupingValues);
+			groups.put(groupId, sa);
+		}
+		
+		/*
+		 * If the sweep area is newly created we have to put the 
+		 * new groupId into the MVPriorityQueueG, later.
+		 */
+		
+		if(sa.size() == 0) {
+			emptySA = true;
+		} else {
+			emptySA = false;
+		}
+		
+		MVRelationalTuple<M> restrictedToNonGrouping 
+			= (MVRelationalTuple<M>) 
+			incomingTuple.restrict(this.nonGroupingAttributesPos, false);
+			
+		this.update(sa, restrictedToNonGrouping);
+		
+		if(emptySA) {
+			g.insert(sa, groupId);
+		}
+	
+		/*
+		 * Now we search for those partial nests which have minimum start
+		 * timestamp. And if there are equal or less than write out.
+		 */
+		
+		while(!g.isEmpty()) {
+			Integer groupIdOfMin = g.min();
+			
+			ObjectTrackingNestTISweepArea<M> saOfMin = 
+				groups.get(groupIdOfMin);
+			
+			ObjectTrackingPartialNest<M> minPartial = 
+				saOfMin.iterator().next();
+						
+			if(
+				minStart != null && 
+				minStart == minPartial.getMetadata().getStart()
+			) {
+				break;
+			}
+			
+			minStart = minPartial.getMetadata().getStart();
+						
+			if(minStart.before(incomingTupleStart) ||
+				minStart.equals(incomingTupleStart)) {
+	
+				g.removeLastMin();
+				Iterator<ObjectTrackingPartialNest<M>> results = 
+					saOfMin.extractElementsBefore(incomingTupleStart);
+				
+				/*
+				 * Here happens the evaluating 
+				 */
+				
+				while(results.hasNext()) {
+					ObjectTrackingPartialNest<M> result = results.next();
+					
+					Object[] groupingValues = saOfMin.getGroupingValues();
+					MVRelationalTuple<M> output = 
 						this.createOutputTuple(groupingValues, result);
 						
 					q.insert(output);
@@ -325,16 +407,16 @@ public class ObjectTrackingNestPO extends
 			Integer groupIdOfMin = g.min();
 			g.removeLastMin();
 			
-			ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>> saOfMin =
+			ObjectTrackingNestTISweepArea<M> saOfMin =
 				groups.get(groupIdOfMin);
 			
-			Iterator<ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>>> results =
+			Iterator<ObjectTrackingPartialNest<M>> results =
 				saOfMin.iterator();
 			
 			while(results.hasNext()) {
-				ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> result = results.next();
+				ObjectTrackingPartialNest<M> result = results.next();
 				Object[] groupingValues = saOfMin.getGroupingValues();
-				MVRelationalTuple<ObjectTrackingMetadata<Object>> output = 
+				MVRelationalTuple<M> output = 
 					this.createOutputTuple(groupingValues, result);
 					
 				q.insert(output);
@@ -345,7 +427,7 @@ public class ObjectTrackingNestPO extends
 	/**
 	 * Deliver elements 
 	 */
-	public MVRelationalTuple<ObjectTrackingMetadata<Object>> deliver() {
+	public MVRelationalTuple<M> deliver() {
 		return this.q.poll();
 	}
 
@@ -355,7 +437,7 @@ public class ObjectTrackingNestPO extends
 	
 	@Override
     public void processPunctuation(PointInTime timestamp, int port) {
-    	sendPunctuation(timestamp);
+    	sendPunctuation(timestamp);    	
     }
 
     /*
@@ -378,8 +460,8 @@ public class ObjectTrackingNestPO extends
     }
 
     @Override
-    public ObjectTrackingNestPO clone() {
-    	return new ObjectTrackingNestPO(this);
+    public ObjectTrackingNestPO<M> clone() {
+    	return new ObjectTrackingNestPO<M>(this);
     }
 
     @Override
@@ -494,7 +576,7 @@ public class ObjectTrackingNestPO extends
 	/**
 	 * 
 	 * Storing the values of the groupingAttributes in the 
-	 * MVNestTISweepArea<ObjectTrackingMetadata<Object>> for evaluating (transform to relational 
+	 * MVNestTISweepArea<M> for evaluating (transform to relational 
 	 * tuple output)
 	 * 
 	 * @param tuple
@@ -502,7 +584,7 @@ public class ObjectTrackingNestPO extends
 	 * 
 	 */
 	private Object[] getGroupingValues(
-		MVRelationalTuple<ObjectTrackingMetadata<Object>> tuple) {
+		MVRelationalTuple<M> tuple) {
 		
 		int gAttributesCount;
 		Object values[];
@@ -524,11 +606,12 @@ public class ObjectTrackingNestPO extends
 	 * @param elem
 	 * @return group id of the relational tuple
 	 */
-	private int getGroupId(MVRelationalTuple<ObjectTrackingMetadata<Object>> elem) {
+	private int getGroupId(MVRelationalTuple<M> elem) {
 		
-		MVRelationalTuple<ObjectTrackingMetadata<Object>> gTuple 
-			= (MVRelationalTuple<ObjectTrackingMetadata<Object>>) 
-			elem.restrict(this.getGroupingAttributesPos(), true);
+		// here the restrict method of MVRelationalTuple is used.
+		
+		MVRelationalTuple<M> gTuple 
+			= elem.restrict(this.getGroupingAttributesPos(), null, true);
 		
 		Integer id = keyMap.get(gTuple);
 		if (id == null) {
@@ -546,18 +629,18 @@ public class ObjectTrackingNestPO extends
 	 * @param partial
 	 */
 	@SuppressWarnings("unchecked")
-	private MVRelationalTuple<ObjectTrackingMetadata<Object>> 
+	private MVRelationalTuple<M> 
 		createOutputTuple(
 			Object[] groupingValues,
-			ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> partial
+			ObjectTrackingPartialNest<M> partial
 			) {
 		
-		MVRelationalTuple<ObjectTrackingMetadata<Object>> outputTuple;
-		SetEntry<MVRelationalTuple<ObjectTrackingMetadata<Object>>> outputSet[];
-		List<MVRelationalTuple<ObjectTrackingMetadata<Object>>> nest;
+		MVRelationalTuple<M> outputTuple;
+		SetEntry<MVRelationalTuple<M>> outputSet[];
+		List<MVRelationalTuple<M>> nest;
 		
 		outputTuple = 
-			new MVRelationalTuple<ObjectTrackingMetadata<Object>>(this.outputAttributesCount);
+			new MVRelationalTuple<M>(this.outputAttributesCount);
 		
 		outputSet = new SetEntry[partial.getSize()];				
 		nest = partial.getNest();
@@ -571,7 +654,7 @@ public class ObjectTrackingNestPO extends
 		}
 				
 		outputTuple.setAttribute(this.nestingAttributePos, outputSet);
-		outputTuple.setMetadata((ObjectTrackingMetadata<Object>) partial.getMetadata().clone());
+		outputTuple.setMetadata((M) partial.getMetadata().clone());
 		
 		return outputTuple;
 	}
@@ -584,24 +667,23 @@ public class ObjectTrackingNestPO extends
 	 * @param a partial nest
 	 * @param b partial nest
 	 */
-	private ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> merge
-		(ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> a, ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> b) {
+	@SuppressWarnings("unchecked")
+	private ObjectTrackingPartialNest<M> merge
+		(ObjectTrackingPartialNest<M> a, ObjectTrackingPartialNest<M> b) {
 		
-		ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> partial;
-		ObjectTrackingMetadata<Object> meta;
-		List<MVRelationalTuple<ObjectTrackingMetadata<Object>>> tuples;
+		ObjectTrackingMetadata<Object> meta = 
+			new ObjectTrackingMetadata<Object>();
 		
-		meta = new ObjectTrackingMetadata<Object>();
+		List<MVRelationalTuple<M>> tuples;
 	
 		TimeInterval ti = TimeInterval.intersection(
-		      a.getMetadata(), 
-		      b.getMetadata()
-		);
+		      a.getMetadata().clone(), 
+		      b.getMetadata().clone()
+		);				
+				
+		meta.setStreamTime(ti);
 		
-		meta.setStart(ti.getStart());
-		meta.setEnd(ti.getEnd());
-		
-		tuples = new ArrayList<MVRelationalTuple<ObjectTrackingMetadata<Object>>>();
+		tuples = new ArrayList<MVRelationalTuple<M>>();		
 		
 		/*
 		 * Small optimization; addAll tuples of the bigger partial to 
@@ -610,27 +692,46 @@ public class ObjectTrackingNestPO extends
 		 * one, add it. 
 		 */
 		
+		
+		boolean exists = false;
+		
 		if(a.getSize() < b.getSize()) {
-			tuples.addAll(b.getNest());
-			for(MVRelationalTuple<ObjectTrackingMetadata<Object>> t : a.getNest()) {
-				if(!tuples.contains(t)) {
+			tuples.addAll(b.getNest());	
+			for(MVRelationalTuple<M> t : a.getNest()) {
+				for(MVRelationalTuple<M> t2 : tuples) {
+					if(t.equals(t2)) {
+						exists = true;
+					} 
+				}
+				if(!exists) {
 					tuples.add(t);
 				}
+				exists = false;
 			}
+			
 		} else {
+			exists = false;
 			tuples.addAll(a.getNest());
-			for(MVRelationalTuple<ObjectTrackingMetadata<Object>> t : b.getNest()) {
-				if(!tuples.contains(t)) {
+			for(MVRelationalTuple<M> t : b.getNest()) {
+				for(MVRelationalTuple<M> t2 : tuples) {
+					if(t.equals(t2)) {
+						exists = true;
+					}
+				}
+				if(!exists) {
 					tuples.add(t);
 				}
+				exists = false;
 			}
 		}
 		
-		for(MVRelationalTuple<ObjectTrackingMetadata<Object>> t : tuples) {
-			t.setMetadata((ObjectTrackingMetadata<Object>) meta.clone());
+		for(MVRelationalTuple<M> t : tuples) {
+			M metaForTuple = t.getMetadata();
+			metaForTuple.setStreamTime(meta.getStreamTime().clone());
 		}
 		
-		partial = new ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>>(tuples, meta);
+		ObjectTrackingPartialNest<M> partial;
+		partial = new ObjectTrackingPartialNest<M>(tuples, (M)meta);
 		
 		return partial;
 	}
@@ -643,17 +744,17 @@ public class ObjectTrackingNestPO extends
 	 * @param partial
 	 */
 	private void updateFillInitialTI(
-		List<TimeInterval> fillInitialTI, 
-		ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> partial
+		List<ITimeInterval> fillInitialTI, 
+		ObjectTrackingPartialNest<M> partial
 	) {
 
-		List<TimeInterval> addTI;
-		List<TimeInterval> removeTI;
+		List<ITimeInterval> addTI;
+		List<ITimeInterval> removeTI;
 		
-		addTI = new ArrayList<TimeInterval>();
-		removeTI = new ArrayList<TimeInterval>();
+		addTI = new ArrayList<ITimeInterval>();
+		removeTI = new ArrayList<ITimeInterval>();
 		
-		for(TimeInterval ti : fillInitialTI) {
+		for(ITimeInterval ti : fillInitialTI) {
 			addTI.addAll(TimeInterval.minus(
 				ti, 
 				partial.getMetadata()
@@ -662,7 +763,7 @@ public class ObjectTrackingNestPO extends
 			removeTI.add(ti);
 		} 
 		
-		for(TimeInterval ti : removeTI) {
+		for(ITimeInterval ti : removeTI) {
 			fillInitialTI.remove(ti);	
 			fillInitialTI.addAll(addTI);
 		}
@@ -677,13 +778,13 @@ public class ObjectTrackingNestPO extends
 	 * @param sa sweep area of a specific group
 	 * @param incomingTuple incoming tuple 
 	 */	
-	private void update(ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>> sa,
-			MVRelationalTuple<ObjectTrackingMetadata<Object>> incomingTuple) {
+	private void update(ObjectTrackingNestTISweepArea<M> sa,
+			MVRelationalTuple<M> incomingTuple) {
 		
-		TimeInterval incomingPartialTI;
-		TimeInterval partialTI;
+		ITimeInterval incomingPartialTI;
+		ITimeInterval partialTI;
 		
-		List<TimeInterval> fillInitialTI;
+		List<ITimeInterval> fillInitialTI;
 
 		PointInTime incomingPartialStart;
 		PointInTime incomingPartialEnd;
@@ -695,15 +796,15 @@ public class ObjectTrackingNestPO extends
 		 * the other partial nests in the sweep area.
 		 */
 		
-		ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> incomingPartial = new 
-			ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>>(incomingTuple);
+		final ObjectTrackingPartialNest<M> incomingPartial = new 
+			ObjectTrackingPartialNest<M>(incomingTuple);
 		
 		/*
 		 * Get all other partial nests that qualify (overlap in time)
 		 * for a merge.
 		 */
 		
-		Iterator<ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>>> qualifies = 
+		Iterator<ObjectTrackingPartialNest<M>> qualifies = 
 			sa.queryOverlaps(incomingPartial.getMetadata());
 		
 		/*
@@ -729,11 +830,11 @@ public class ObjectTrackingNestPO extends
 			 * create initial partial nests of incoming partial nest.
 			 */
 						
-			fillInitialTI = new ArrayList<TimeInterval>();
+			fillInitialTI = new ArrayList<ITimeInterval>();
 			fillInitialTI.add(incomingPartialTI.clone());
 			
 			while(qualifies.hasNext()) {
-				ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> partial = qualifies.next();
+				ObjectTrackingPartialNest<M> partial = qualifies.next();
 				qualifies.remove();
 		
 				partialTI = partial.getMetadata();
@@ -751,16 +852,18 @@ public class ObjectTrackingNestPO extends
 								
 				if(partialStart.before(incomingPartialStart)) {
 					
-					ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> overlapPartial1 = 
-						partial.clone();
+					ObjectTrackingPartialNest<M> overlapPartial1 = 
+						partial.clone();						
 					
-					overlapPartial1.setMetadata(
-						new TimeInterval(
-							partialStart.clone(),
-							incomingPartialStart.clone()
-						)
+					M meta = overlapPartial1.getMetadata();
+					
+					TimeInterval ti = new TimeInterval(
+						partialStart.clone(),
+						incomingPartialStart.clone()
 					);
 					
+					meta.setStreamTime(ti);
+													
 					sa.insert(overlapPartial1);
 				
 					if(incomingPartialEnd.before(partialEnd)) {
@@ -772,23 +875,25 @@ public class ObjectTrackingNestPO extends
 						 * time interval equals intersection
 						 */
 											
-						ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> mergePartial = 
-							this.merge(partial, incomingPartial);
+						ObjectTrackingPartialNest<M> mergePartial = 
+							this.merge(partial.clone(), incomingPartial.clone());
 						
 						/*
 						 * time interval of partial is reduced to 
 						 * [incomingPartialEnd, partialEnd)
 						 */
 						
-						ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> leftOverlapPartial = 
+						ObjectTrackingPartialNest<M> leftOverlapPartial = 
 							partial.clone();
 						
-						leftOverlapPartial.setMetadata(
-							new TimeInterval(
-								incomingPartialEnd.clone(),
-								partialEnd.clone()
-							)
+						meta = leftOverlapPartial.getMetadata();
+						
+						TimeInterval ti2 = new TimeInterval(
+							incomingPartialEnd.clone(),
+							partialEnd.clone()
 						);
+						
+						meta.setStreamTime(ti2);
 						
 						sa.insert(leftOverlapPartial);
 						sa.insert(mergePartial);			
@@ -801,8 +906,8 @@ public class ObjectTrackingNestPO extends
 						 * Incoming partial TI right overlaps the partial TI.
 						 */
 					
-						ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> mergePartial = 
-							this.merge(partial, incomingPartial);
+						ObjectTrackingPartialNest<M> mergePartial = 
+							this.merge(partial.clone(), incomingPartial.clone());
 						
 						sa.insert(mergePartial);	
 						this.updateFillInitialTI(fillInitialTI, mergePartial);	
@@ -821,8 +926,8 @@ public class ObjectTrackingNestPO extends
 						 * Incoming partial TI is equal to partial TI.
 						 */			
 						
-						ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> mergePartial = 
-							this.merge(partial, incomingPartial);
+						ObjectTrackingPartialNest<M> mergePartial = 
+							this.merge(partial.clone(), incomingPartial.clone());
 						
 						sa.insert(mergePartial);
 						this.updateFillInitialTI(fillInitialTI, mergePartial);					
@@ -833,8 +938,8 @@ public class ObjectTrackingNestPO extends
 						 * Incoming partial TI contains whole partial TI.
 						 */									
 
-						ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> mergePartial = 
-							this.merge(incomingPartial, partial);
+						ObjectTrackingPartialNest<M> mergePartial = 
+							this.merge(incomingPartial.clone(), partial.clone());
 														
 						sa.insert(mergePartial);							
 						this.updateFillInitialTI(fillInitialTI, mergePartial);
@@ -845,8 +950,8 @@ public class ObjectTrackingNestPO extends
 						 * Incoming partial TI left overlaps the partial TI.
 						 */
 						
-						ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> mergePartial = 
-							this.merge(partial, incomingPartial);				
+						ObjectTrackingPartialNest<M> mergePartial = 
+							this.merge(partial.clone(), incomingPartial.clone());				
 
 						/*
 						 * Special case if incomingPartialEnd is equal
@@ -856,15 +961,17 @@ public class ObjectTrackingNestPO extends
 						
 						if(!incomingPartialEnd.equals(partialEnd)) {
 						
-							ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> overlapPartialRight = 
+							ObjectTrackingPartialNest<M> overlapPartialRight = 
 								partial.clone();
 							
-							overlapPartialRight.setMetadata(
-								new TimeInterval(
-									incomingPartialEnd.clone(),
-									partialEnd.clone()					
-								)
+							M meta = overlapPartialRight.getMetadata();
+							
+							TimeInterval ti3 = new TimeInterval(
+								incomingPartialEnd.clone(),
+								partialEnd.clone()
 							);
+							
+							meta.setStreamTime(ti3);
 							
 							sa.insert(overlapPartialRight);
 						}
@@ -876,13 +983,14 @@ public class ObjectTrackingNestPO extends
 				} // else				
 			} // while			
 			
-			for(TimeInterval ti : fillInitialTI) {
-				ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> fillPartial = incomingPartial.clone();
-				fillPartial.setMetadata(ti);
+			for(ITimeInterval ti : fillInitialTI) {
+				ObjectTrackingPartialNest<M> fillPartial = 
+					incomingPartial.clone();
+				
+				M meta = fillPartial.getMetadata();				
+				meta.setStreamTime(ti.clone());					
 				sa.insert(fillPartial);
 			}
 		}
-		
-	}
-	
+	}	
 }

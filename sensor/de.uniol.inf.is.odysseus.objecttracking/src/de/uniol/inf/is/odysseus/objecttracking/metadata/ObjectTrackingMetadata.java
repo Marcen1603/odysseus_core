@@ -52,6 +52,7 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 		this.prob = new Probability();
 		this.lat = new Latency();
 		this.appTime = new ApplicationTime();
+		this.streamTime = new TimeInterval();
 	}
 	
     public ObjectTrackingMetadata(PointInTime start, PointInTime end) {
@@ -149,7 +150,7 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 		return "Latency: " + this.lat.toString() + 
 			" | Cov: " + this.prob.toString() + 
 			" | PredFctKey: " + this.predFctKey.toString() + 
-			" | tTime: " + super.toString() + 
+			" | tTime: " + this.getStreamTime().toString() + 
 			" | appTime: " + this.appTime.toString();
 	}
 

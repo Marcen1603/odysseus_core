@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 
 /**
  * G is a helper class which contains a min-priority queue list which holds the  
@@ -17,7 +16,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  * 
  * @author Jendrik Poloczek
  */
-public class ObjectTrackingPriorityQueueG<M extends ITimeInterval & IProbability> {
+public class ObjectTrackingPriorityQueueG<M extends ObjectTrackingMetadata<Object>> {
 	
 	/*
 	 * groupsQueue stores sweep areas in ascending order of the smallest

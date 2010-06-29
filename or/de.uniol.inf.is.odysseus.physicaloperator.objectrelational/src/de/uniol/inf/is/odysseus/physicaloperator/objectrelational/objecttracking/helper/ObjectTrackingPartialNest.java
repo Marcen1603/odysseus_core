@@ -1,16 +1,11 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.helper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
-
 
 /**
  * This class represents a partial set of relational tuples. The partial 
@@ -24,8 +19,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
  * 
  * @author Jendrik Poloczek
  */
-public class ObjectTrackingPartialNest<M extends ITimeInterval & IProbability> 
-	extends MetaAttributeContainer<TimeInterval> { 
+public class ObjectTrackingPartialNest<M extends ObjectTrackingMetadata<Object>> 
+	extends MetaAttributeContainer<M> { 
 
 	private static final long serialVersionUID = 1L;
 	private List<MVRelationalTuple<M>> partial;
@@ -42,16 +37,7 @@ public class ObjectTrackingPartialNest<M extends ITimeInterval & IProbability>
 		this.partial = new ArrayList<MVRelationalTuple<M>>();
 		this.partial.add(t);
 		
-		ObjectTrackingMetadata<Object> meta = 
-		    new ObjectTrackingMetadata<Object>();
-		
-		TimeInterval ti = 
-			new TimeInterval(
-					new PointInTime(t.getMetadata().getStart()),
-					new PointInTime(t.getMetadata().getEnd()));
-		
-		meta.setStart(ti.getStart());
-		meta.setEnd(ti.getEnd());
+		this.setMetadata(t.getMetadata());
 	}
 
 	/**
@@ -62,9 +48,9 @@ public class ObjectTrackingPartialNest<M extends ITimeInterval & IProbability>
 	 */
 	public ObjectTrackingPartialNest(
 		List<MVRelationalTuple<M>> t, 
-		ObjectTrackingMetadata<Object> meta
+		M meta
 	) {
-		this.partial = t;
+		this.partial = t;	
 		this.setMetadata(meta);
 	}	
 	
@@ -72,12 +58,13 @@ public class ObjectTrackingPartialNest<M extends ITimeInterval & IProbability>
 	 * The clone method is essential for splitting and merging of 
 	 * partial nests. 
 	 */
+	@SuppressWarnings("unchecked")
 	public ObjectTrackingPartialNest<M> clone() {
 		ObjectTrackingPartialNest<M> klone = new ObjectTrackingPartialNest<M>();
 		for(MVRelationalTuple<M> t : this.getNest()) {
 			klone.add(t.clone());
 		}
-		klone.setMetadata(this.getMetadata().clone());
+		klone.setMetadata((M) this.getMetadata().clone());
 		return klone;
 	}
 

@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.objectrelational.base.SDFORDatatypes;
 import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -261,7 +260,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 		}
 		return mvs;
 	}
-
+	
 	/**
 	 * erzeugen eines neuen Objektes, in dem nur die Attribute betrachtet
 	 * werden, die in der attrList uebergeben werden, die Reihenfolge des neuen
@@ -425,6 +424,10 @@ public class MVRelationalTuple<T extends IProbability> extends
 	@Override
 	public MVRelationalTuple<T> clone() {
 		return new MVRelationalTuple<T>(this);
+	}
+	
+	public final boolean equals(MVRelationalTuple<T> o) {
+		return this.compareTo((MVRelationalTuple<T>) o) == 0;
 	}
 	
     @SuppressWarnings("unchecked")

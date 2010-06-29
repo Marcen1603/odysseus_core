@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.logicaloperator.objectrelational;
+package de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -18,12 +18,10 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 
 	public ObjectTrackingNestAO() {
 	    super();
-	    System.out.println("calling AO constructor");		
 	}
 	
 	public ObjectTrackingNestAO(ObjectTrackingNestAO ao) {
 		super(ao);
-		System.out.println("calling AO copy");
 		this.outputSchema = ao.getOutputSchema().clone();
 		this.nestingAttributes = ao.getNestingAttributes().clone();
 		this.nestAttribute = ao.getNestAttribute().clone();
@@ -48,7 +46,9 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 	 * @param nestingAttributeName name of nesting attribute
 	 */	
 	public void setNestAttributeName(String nestAttributeName) {
-		this.nestAttributeName = nestAttributeName;
+		this.nestAttributeName = nestAttributeName;			
+		this.nestAttribute = 
+			new SDFAttribute(nestAttributeName);
 	}
 	
 	/**

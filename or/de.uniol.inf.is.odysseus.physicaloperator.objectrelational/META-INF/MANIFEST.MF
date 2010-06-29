@@ -27,4 +27,5 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary,
  org.apache.commons.math.linear,
  org.osgi.framework
-Export-Package: de.uniol.inf.is.odysseus.physicaloperator.objectrelational
+Export-Package: de.uniol.inf.is.odysseus.physicaloperator.objectrelational,
+ de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking

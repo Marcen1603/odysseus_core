@@ -22,7 +22,8 @@ public class SetEntry<T> implements Comparable<T> {
 	}
 
 	@Override
-	public int compareTo(T o) {
-		return this.compareTo(o);		
+	public int compareTo(Object o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

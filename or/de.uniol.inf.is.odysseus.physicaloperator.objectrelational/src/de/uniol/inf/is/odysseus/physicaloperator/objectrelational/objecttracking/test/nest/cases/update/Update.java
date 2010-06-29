@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases.update;
+package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.test.nest.cases.update;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -7,12 +7,12 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.NestPO;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.ObjectRelationalTuple;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.helper.NestTISweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.Factory;
-import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.fixtures.SimpleNestingFixture;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.ObjectTrackingNestPO;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.helper.ObjectTrackingNestTISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.test.nest.fixtures.Factory;
+import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking.test.nest.fixtures.SimpleNestingFixture;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -29,10 +29,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class Update extends TestCase {
 
-	protected NestPO<TimeInterval> nestPO;
-	protected NestTISweepArea sa;
-	protected ObjectRelationalTuple<TimeInterval> first;
-	protected ObjectRelationalTuple<TimeInterval> second;
+	protected ObjectTrackingNestPO<ObjectTrackingMetadata<Object>> nestPO;
+	protected ObjectTrackingNestTISweepArea<ObjectTrackingMetadata<Object>> sa;
+	protected MVRelationalTuple<ObjectTrackingMetadata<Object>> first;
+	protected MVRelationalTuple<ObjectTrackingMetadata<Object>> second;
 	
 	private Method getGroupingValues;
 	protected Method update;
@@ -45,7 +45,7 @@ public class Update extends TestCase {
 	
 	@Before
 	public void setUp() throws Exception {
-		List<ObjectRelationalTuple<TimeInterval>> tuples;
+		List<MVRelationalTuple<ObjectTrackingMetadata<Object>>> tuples;
 		Factory fixtures;
 		
 		SDFAttributeList inputSchema;
@@ -60,7 +60,8 @@ public class Update extends TestCase {
 		nestingAttribute = fixtures.getNestingAttribute();
 		tuples = fixtures.getInputTuples();
 		
-		this.nestPO = new NestPO<TimeInterval>(
+		this.nestPO = 
+			new ObjectTrackingNestPO<ObjectTrackingMetadata<Object>>(
 				inputSchema, 
 				outputSchema, 
 				nestingAttribute, 
@@ -68,18 +69,18 @@ public class Update extends TestCase {
 		);
 		
 		this.getGroupingValues = 
-			NestPO.class.getDeclaredMethod(
+			ObjectTrackingNestPO.class.getDeclaredMethod(
 				"getGroupingValues", 
-				ObjectRelationalTuple.class
+				MVRelationalTuple.class
 			);
 		
 		this.getGroupingValues.setAccessible(true);
 		
 		this.update = 
-			NestPO.class.getDeclaredMethod(
+			ObjectTrackingNestPO.class.getDeclaredMethod(
 				"update", 
-				NestTISweepArea.class,
-				ObjectRelationalTuple.class
+				ObjectTrackingNestTISweepArea.class,
+				MVRelationalTuple.class
 			);
 		
 		this.update.setAccessible(true);
@@ -90,6 +91,8 @@ public class Update extends TestCase {
 		Object[] gv = 
 			(Object[]) this.getGroupingValues.invoke(this.nestPO, first);
 		
-		this.sa = new NestTISweepArea(gv);		
+		this.sa = new ObjectTrackingNestTISweepArea<
+			ObjectTrackingMetadata<Object>
+		>(gv);		
 	}
 }

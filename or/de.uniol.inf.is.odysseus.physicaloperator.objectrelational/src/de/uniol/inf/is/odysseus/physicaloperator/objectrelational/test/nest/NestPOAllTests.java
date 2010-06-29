@@ -7,19 +7,27 @@ import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.case
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases.NestOfNesting;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.cases.TwoGroupingAttributeNest;
 import de.uniol.inf.is.odysseus.physicaloperator.objectrelational.test.nest.suites.UpdateAllTests;
+import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class NestPOAllTests extends TestSuite {
     public NestPOAllTests() {
         this.setName("Asserting all NestPO tests");
-        
-        this.addTest(new GroupId());
-        this.addTest(new Merge());
-        this.addTest(new UpdateAllTests());
-        this.addTest(new CreateOutputTuple());
-        this.addTest(new Nest());
-        this.addTest(new TwoGroupingAttributeNest());
-        this.addTest(new NestOfNesting());
+    }
+    
+    public static Test suite() {
+    	
+    	TestSuite suite = new TestSuite("NestPO tests");
+    	
+    	suite.addTest(new GroupId());
+    	suite.addTest(new Merge());
+    	suite.addTest(new UpdateAllTests());
+    	suite.addTest(new CreateOutputTuple());
+    	suite.addTest(new Nest());
+    	suite.addTest(new TwoGroupingAttributeNest());
+    	suite.addTest(new NestOfNesting());
+    	
+    	return suite;
     }
 }
 

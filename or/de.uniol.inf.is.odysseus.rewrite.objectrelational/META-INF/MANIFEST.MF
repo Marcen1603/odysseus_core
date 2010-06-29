@@ -5,5 +5,5 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.objectrelational
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.logicaloperator.objectrelational,
- de.uniol.inf.is.odysseus.physicaloperator.objectrelational
+Import-Package: de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking,
+ de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking

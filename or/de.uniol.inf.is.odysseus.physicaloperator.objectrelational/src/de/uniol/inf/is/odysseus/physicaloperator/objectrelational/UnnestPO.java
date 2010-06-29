@@ -65,7 +65,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
      * @param relationalNestPO nesting plan operator to copy
      */	
     public UnnestPO(UnnestPO<T> unnestPO) {
-    	super();
+    	super(unnestPO);
     	this.inputSchema = unnestPO.getInputSchema();
     	this.outputSchema = unnestPO.getOutputSchema();
     	this.nestingAttribute = nestingAttribute.clone();
