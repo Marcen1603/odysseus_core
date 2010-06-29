@@ -1,0 +1,14 @@
+TODO-Liste
+==========
+
+Hier können Dinge/Ideen/Anregungen usw. bzgl. OdysseusRCP eingetragen werden.
+Dinge, welche realisiert wurden, werden entfernt.
+
+=========
+- QueryView
+	- Mehr Informationen der IQuery anzeigen (bspw. Priority)
+	- Queries über Spalten sortieren
+	- Queries starten
+	- Queries stoppen (aber nicht löschen)
+	- Anzeigen, ob Query läuft oder nicht
+
