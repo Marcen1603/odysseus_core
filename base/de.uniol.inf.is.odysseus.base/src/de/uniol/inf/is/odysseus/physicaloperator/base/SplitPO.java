@@ -85,7 +85,7 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 	
 	@Override
 	public SplitPO<T> clone() {
-		return new SplitPO(this);
+		return new SplitPO<T>(this);
 	}
 
 	@Override

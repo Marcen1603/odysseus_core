@@ -32,11 +32,13 @@ public class StandardBufferPlacementStrategy
 				|| childSink.getSubscribedToSource().size() > 1;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected IBuffer<?> createNewBuffer() {
 		return new BufferedPipe();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
 		// do nothing. It's only a standard placement strategy.

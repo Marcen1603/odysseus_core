@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.broker.dictionary;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
@@ -27,10 +28,12 @@ public class BrokerDictionaryEntry {
 	private String brokerName;	
 	
 	/** The writing types. */
-	private WriteTransaction[] writingTypes = new WriteTransaction[0];
+//	private WriteTransaction[] writingTypes = new WriteTransaction[0];
+	private HashMap<Integer, WriteTransaction> writingTypes = new HashMap<Integer, WriteTransaction>();
 	
 	/** The reading types. */
-	private ReadTransaction[] readingTypes = new ReadTransaction[0];
+//	private ReadTransaction[] readingTypes = new ReadTransaction[0];
+	private HashMap<Integer, ReadTransaction> readingTypes = new HashMap<Integer, ReadTransaction>();
 	
 	/** The port mappings. */
 	private List<QueuePortMapping> portMappings = new ArrayList<QueuePortMapping>();
@@ -96,12 +99,15 @@ public class BrokerDictionaryEntry {
 	 *
 	 * @param type The type of the transaction
 	 * @return the assigned incoming port
+	 * @deprecated cyclic logical plans are created completely before transformation
+	 * from now on. So this method is not used any more.
 	 */
 	public int addNewWriteTransaction(WriteTransaction type){
-		int addedToPort = writingTypes.length;
-		writingTypes = Arrays.copyOf(writingTypes, writingTypes.length+1);
-		writingTypes[addedToPort] = type;						
-		return addedToPort;		
+//		int addedToPort = writingTypes.length;
+//		writingTypes = Arrays.copyOf(writingTypes, writingTypes.length+1);
+//		writingTypes[addedToPort] = type;						
+//		return addedToPort;
+		throw new RuntimeException("Transactions of a Broker have to be set directly now.");
 	}
 	
 	/**
@@ -109,12 +115,15 @@ public class BrokerDictionaryEntry {
 	 *
 	 * @param type The type of the transaction
 	 * @return the assigned outgoing port
+	 * @deprecated cyclic logical plans are created completely before transformation
+	 * from now on. So this method is not used any more.
 	 */
 	public int addNewReadTransaction(ReadTransaction type){
-		int addedToPort = readingTypes.length;
-		readingTypes = Arrays.copyOf(readingTypes, readingTypes.length+1);
-		readingTypes[addedToPort] = type;
-		return addedToPort;
+//		int addedToPort = readingTypes.length;
+//		readingTypes = Arrays.copyOf(readingTypes, readingTypes.length+1);
+//		readingTypes[addedToPort] = type;
+//		return addedToPort;
+		throw new RuntimeException("Transactions of a Broker have to be set directly now.");
 	}
 	
 	/**
@@ -124,7 +133,7 @@ public class BrokerDictionaryEntry {
 	 * @return Type of the Transaction
 	 */
 	public WriteTransaction getWriteType(int port){
-		return writingTypes[port];
+		return writingTypes.get(port);
 	}
 
 	/**
@@ -134,7 +143,7 @@ public class BrokerDictionaryEntry {
 	 * @return Type of the Transaction
 	 */
 	public ReadTransaction getReadType(int port){
-		return readingTypes[port];
+		return readingTypes.get(port);
 	}		
 
 	/**
@@ -171,7 +180,7 @@ public class BrokerDictionaryEntry {
 	 * @param type The new type of the transaction
 	 */
 	public void setWriteType(int port, WriteTransaction type) {
-		this.writingTypes[port] = type;		
+		this.writingTypes.put(port, type);		
 	}
 	
 	/**
@@ -181,7 +190,7 @@ public class BrokerDictionaryEntry {
 	 * @param type The new type of the transaction
 	 */
 	public void setReadType(int port, ReadTransaction type) {
-		this.readingTypes[port] = type;		
+		this.readingTypes.put(port,type);		
 	}
 	
 	/**
@@ -189,7 +198,7 @@ public class BrokerDictionaryEntry {
 	 *
 	 * @return The transactions
 	 */
-	public ReadTransaction[] getReadingTransactions() {
+	public HashMap<Integer, ReadTransaction> getReadingTransactions() {
 		return this.readingTypes;
 	}	
 	
@@ -197,7 +206,7 @@ public class BrokerDictionaryEntry {
 	 * Remove all reading Transactions.
 	 */
 	public void removeAllReadingPorts(){		
-		this.readingTypes = new ReadTransaction[0];
+		this.readingTypes = new HashMap<Integer, ReadTransaction>();
 	}
 	
 	/**

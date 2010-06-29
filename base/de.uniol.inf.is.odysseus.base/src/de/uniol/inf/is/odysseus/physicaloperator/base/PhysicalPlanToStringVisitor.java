@@ -25,12 +25,12 @@ public class PhysicalPlanToStringVisitor implements INodeVisitor<IPhysicalOperat
 	}
 
 	@Override
-	public void ascend(IPhysicalOperator to) {
+	public void ascendAction(IPhysicalOperator to) {
 		this.depth--;
 	}
 
 	@Override
-	public void descend(IPhysicalOperator to) {
+	public void descendAction(IPhysicalOperator to) {
 		this.depth++;
 	}
 
@@ -40,7 +40,7 @@ public class PhysicalPlanToStringVisitor implements INodeVisitor<IPhysicalOperat
 	}
 
 	@Override
-	public void node(IPhysicalOperator op) {
+	public void nodeAction(IPhysicalOperator op) {
 		for (int i=0; i<this.depth; i++) {
 			this.builder.append("  ");
 		}

@@ -21,8 +21,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
+import de.uniol.inf.is.odysseus.util.PrintLogicalGraphVisitor;
 
 /**
  * @author Jonas Jacobi
@@ -78,10 +80,17 @@ public class DroolsTransformation implements ITransformation {
 		addLogicalOperatorToSession(session, top, list);
 
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
-			LoggerHelper.getInstance(LOGGER_NAME).debug(
-					"transformation of: "
-							+ AbstractTreeWalker.prefixWalk(top,
-									new AlgebraPlanToStringVisitor()));
+//			LoggerHelper.getInstance(LOGGER_NAME).debug(
+//					"transformation of: "
+//							+ AbstractTreeWalker.prefixWalk(top,
+//									new AlgebraPlanToStringVisitor()));
+			
+			// plans can be cyclic graphs now, so use our new
+			// walker
+			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			new AbstractGraphWalker().prefixWalk(top, pv);
+			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation of: " + pv.getResult());
+			
 			LoggerHelper.getInstance(LOGGER_NAME).debug(
 					"added to working memory " + list);
 		}
@@ -113,8 +122,9 @@ public class DroolsTransformation implements ITransformation {
 		}
 		session.dispose();
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
-			LoggerHelper.getInstance(LOGGER_NAME).debug(
-					"transformation result: \n" + planToString(physicalPO, ""));
+//			LoggerHelper.getInstance(LOGGER_NAME).debug(
+//					"transformation result: \n" + planToString(physicalPO, ""));
+			LoggerHelper.getInstance(LOGGER_NAME).debug("Physical Plan cannot be printed at the moment, because cyclic queries are allowed now.");
 		}		
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 		return physicalPO;

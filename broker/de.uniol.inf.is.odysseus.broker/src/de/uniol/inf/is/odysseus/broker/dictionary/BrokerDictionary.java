@@ -160,7 +160,7 @@ public class BrokerDictionary {
 	 * @param brokername the name of the broker
 	 * @return an array of all reading transactions
 	 */
-	public ReadTransaction[] getReadingTransactions(String brokername) {
+	public HashMap<Integer, ReadTransaction> getReadingTransactions(String brokername) {
 		return this.brokerlist.get(brokername).getReadingTransactions();
 	}
 

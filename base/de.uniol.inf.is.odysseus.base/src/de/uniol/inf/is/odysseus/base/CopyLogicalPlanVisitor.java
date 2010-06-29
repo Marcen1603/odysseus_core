@@ -15,7 +15,10 @@ import de.uniol.inf.is.odysseus.util.INodeVisitor;
  * 
  * @author Tobias Witt
  * 
+ * @deprecated Should not be used any more, since we have general graph walker
+ * now, that can also copy trees.
  */
+@Deprecated
 public class CopyLogicalPlanVisitor	implements
 		INodeVisitor<ISubscriber<ILogicalOperator, LogicalSubscription>, ILogicalOperator> {
 
@@ -39,7 +42,7 @@ public class CopyLogicalPlanVisitor	implements
 	}
 
 	@Override
-	public void ascend(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
+	public void ascendAction(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
 		ILogicalOperator source = this.last.pop();
 		ILogicalOperator sink = this.last.peek();
 		ILogicalOperator oldSource = this.lastOld.pop();
@@ -61,7 +64,7 @@ public class CopyLogicalPlanVisitor	implements
 	}
 
 	@Override
-	public void descend(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
+	public void descendAction(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
 	}
 
 	@Override
@@ -70,7 +73,7 @@ public class CopyLogicalPlanVisitor	implements
 	}
 
 	@Override
-	public void node(ISubscriber<ILogicalOperator, LogicalSubscription> node) {
+	public void nodeAction(ISubscriber<ILogicalOperator, LogicalSubscription> node) {
 		ILogicalOperator op = (ILogicalOperator) node;
 		this.logger.debug("copy " + op.getName());
 		ILogicalOperator op2 = null;

@@ -1,36 +1,46 @@
 package de.uniol.inf.is.odysseus.util;
 
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.ISubscriber;
 import de.uniol.inf.is.odysseus.base.ISubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
+/**
+ * @deprecated Should not be used any more. We have
+ * a general graph walker, that can also walk through
+ * trees. However, not all corresponding visitors have
+ * been changed. 
+ */
 @SuppressWarnings("unchecked")
 public class AbstractTreeWalker {
+	
+	
+	
 	public static <R,T extends ISubscriber, H extends ISubscription<T>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {
-		visitor.node(node);
+		visitor.nodeAction(node);
 		if (!(node instanceof ISubscriber)){
 			return null;
 		}
 		for (H s:node.getSubscribedToSource()){
-			visitor.descend(s.getTarget());
+			visitor.descendAction(s.getTarget());
 			prefixWalk(s.getTarget(), visitor);
-			visitor.ascend(node);
+			visitor.ascendAction(node);
 		}
 		return visitor.getResult();
 	}
 	
 	public static <R> R prefixWalk2(IPhysicalOperator node, INodeVisitor<IPhysicalOperator,R> visitor) {
-		visitor.node(node);
+		visitor.nodeAction(node);
 		if (!node.isSink()) {
 			return null;
 		}
 		for (PhysicalSubscription<?> s : ((ISink<?>)node).getSubscribedToSource()){
 			IPhysicalOperator t = (IPhysicalOperator) s.getTarget();
-			visitor.descend(t);
+			visitor.descendAction(t);
 			prefixWalk2(t, visitor);
-			visitor.ascend(node);
+			visitor.ascendAction(node);
 		}
 		return visitor.getResult();
 	}

@@ -44,6 +44,7 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		return type;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public MetadataCreationPO<M, In> clone()  {
 		return new MetadataCreationPO(this);

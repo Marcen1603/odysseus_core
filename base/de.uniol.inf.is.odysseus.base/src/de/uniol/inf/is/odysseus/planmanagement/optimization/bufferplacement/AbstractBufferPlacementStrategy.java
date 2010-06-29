@@ -24,6 +24,7 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 
 	Logger logger = LoggerFactory.getLogger(AbstractBufferPlacementStrategy.class);
 
+	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan.isSink() && !plan.isSource()) {
 			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan).getSubscribedToSource()) {
@@ -35,6 +36,7 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void placeBuffer(IBuffer buffer, ISink<?> sink, PhysicalSubscription<? extends ISource<?>> s) {
 		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
 		buffer.subscribeSink(sink, s.getSinkInPort(), 0, s.getSchema());
@@ -42,8 +44,10 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 		initBuffer(buffer);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected abstract void initBuffer(IBuffer buffer);
 
+	@SuppressWarnings("unchecked")
 	public void addBuffers(ISource<?> myplan) {
 		Stack<ISink<?>> sinks = new Stack<ISink<?>>();
 		if (myplan.isSink()) {

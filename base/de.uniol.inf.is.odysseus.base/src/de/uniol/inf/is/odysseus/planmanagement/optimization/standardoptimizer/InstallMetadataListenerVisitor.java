@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.util.INodeVisitor;
 public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOperator, Object> {
 
 	@Override
-	public void ascend(IPhysicalOperator to) {
+	public void ascendAction(IPhysicalOperator to) {
 	}
 
 	@Override
-	public void descend(IPhysicalOperator to) {
+	public void descendAction(IPhysicalOperator to) {
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 	}
 
 	@Override
-	public void node(IPhysicalOperator op) {
+	public void nodeAction(IPhysicalOperator op) {
 		// install datarate listener on sources
 		if (!op.isSink() && !((ISource<?>)op).providesMonitoringData(MonitoringDataTypes.DATARATE.name)) {
 			ISource<?> source = (ISource<?>) op;

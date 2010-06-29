@@ -165,7 +165,7 @@ public class TransactionDetector {
 		else{
 			boolean cycleDetected = false;
 			for(LogicalSubscription sub: curNode.getSubscribedToSource()){
-				cycleDetected = cycleDetected || goToFollowingOps(sub.getTarget(), sub.getSourceOutPort(), currentBroker, brokerInPort);
+				cycleDetected = cycleDetected || goToPrecedingOps(sub.getTarget(), sub.getSourceOutPort(), currentBroker, brokerInPort);
 			}
 			return cycleDetected;
 		}

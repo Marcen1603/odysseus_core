@@ -24,7 +24,9 @@ import de.uniol.inf.is.odysseus.base.IRewrite;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.PrintLogicalGraphVisitor;
 
 /**
  * Logical plan rewriting service, based on drools. It loads rule files (*.drl)
@@ -50,6 +52,7 @@ public class DroolsRewrite implements IRewrite {
 	public DroolsRewrite() {
 	}
 
+	@SuppressWarnings("unchecked")
 	public ILogicalOperator rewritePlanInternal(ILogicalOperator plan) {
 
 		logger.debug("Current Top subscriptions  "
@@ -70,9 +73,16 @@ public class DroolsRewrite implements IRewrite {
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
 		if (logger.isInfoEnabled()) {
-			logger.debug("pre rewrite: "
-					+ AbstractTreeWalker.prefixWalk(top,
-							new AlgebraPlanToStringVisitor(true)));
+//			logger.debug("pre rewrite: "
+//					+ AbstractTreeWalker.prefixWalk(top,
+//							new AlgebraPlanToStringVisitor(true)));
+			
+			// plans can be cyclic graphs now, so use our new
+			// walker
+			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			new AbstractGraphWalker().prefixWalk(top, pv);
+			logger.debug("pre rewrite: " + pv.getResult());
+								
 		}
 
 //		WorkingMemoryConsoleLogger lg = new WorkingMemoryConsoleLogger(session);
@@ -84,9 +94,15 @@ public class DroolsRewrite implements IRewrite {
 		session.fireAllRules();
 		session.dispose();
 		if (logger.isInfoEnabled()) {
-			logger.debug("post rewrite:"
-					+ AbstractTreeWalker.prefixWalk(top,
-							new AlgebraPlanToStringVisitor(true)));
+//			logger.debug("post rewrite:"
+//					+ AbstractTreeWalker.prefixWalk(top,
+//							new AlgebraPlanToStringVisitor(true)));
+			
+			// plans can be cyclic graphs now, so use our new
+			// walker
+			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			new AbstractGraphWalker().prefixWalk(top, pv);
+			logger.debug("pre rewrite: " + pv.getResult());
 
 		}
 		LogicalSubscription sub = top.getSubscribedToSource(0);
@@ -94,9 +110,15 @@ public class DroolsRewrite implements IRewrite {
 		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub
 				.getSourceOutPort(), sub.getSchema());
 		if (logger.isInfoEnabled()) {
-			logger.debug("post rewrite:"
-					+ AbstractTreeWalker.prefixWalk(ret,
-							new AlgebraPlanToStringVisitor(true)));
+//			logger.debug("post rewrite:"
+//					+ AbstractTreeWalker.prefixWalk(ret,
+//							new AlgebraPlanToStringVisitor(true)));
+			
+			// plans can be cyclic graphs now, so use our new
+			// walker
+			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			new AbstractGraphWalker().prefixWalk(top, pv);
+			logger.debug("pre rewrite: " + pv.getResult());
 
 		}
 		return ret;

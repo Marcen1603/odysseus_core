@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.uniol.inf.is.odysseus.base.CopyLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
@@ -16,12 +15,12 @@ import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.base.UpdateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 /**
  * The StandardCompiler is a standard implementation for {@link ICompiler}. It
@@ -204,15 +203,17 @@ public class StandardCompiler implements ICompiler {
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.base.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.base.ILogicalOperator, de.uniol.inf.is.odysseus.base.TransformationConfiguration)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public IPhysicalOperator transform(ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException {
 		// create working copy of plan
-		CopyLogicalPlanVisitor v = new CopyLogicalPlanVisitor();
-		ILogicalOperator cPlan = AbstractTreeWalker.prefixWalk(logicalPlan,v);
-		AbstractTreeWalker.prefixWalk(cPlan, new UpdateLogicalPlanVisitor(v.getReplaced()));
-		return this.transformation.transform(cPlan, transformationConfiguration);
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+		AbstractGraphWalker walker = new AbstractGraphWalker();
+		walker.prefixWalk(logicalPlan, copyVisitor);
+		ILogicalOperator copyPlan = copyVisitor.getResult();
+		return this.transformation.transform(copyPlan, transformationConfiguration);
 	}
 
 	/* (non-Javadoc)

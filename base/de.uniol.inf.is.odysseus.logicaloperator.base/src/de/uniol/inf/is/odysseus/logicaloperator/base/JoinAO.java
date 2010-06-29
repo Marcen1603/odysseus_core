@@ -28,7 +28,12 @@ public class JoinAO extends BinaryLogicalOp {
 
 	public JoinAO(JoinAO joinPO) {
 		super(joinPO);
-		this.outputSchema = joinPO.outputSchema.clone();
+		// the outputSchema is only not null
+		// if method getOuputSchema has already been
+		// called
+		if(joinPO.outputSchema != null){
+			this.outputSchema = joinPO.outputSchema.clone();
+		}
 	}
 
 	@Override

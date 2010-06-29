@@ -40,7 +40,7 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 	}
 
 	@Override
-	public void ascend(IPhysicalOperator to) {
+	public void ascendAction(IPhysicalOperator to) {
 		// propagate datarate bottom-up
 		int numSources = ((ISink<?>)to).getSubscribedToSource().size();
 		if (numSources > 1) {
@@ -77,7 +77,7 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 	}
 
 	@Override
-	public void descend(IPhysicalOperator to) {
+	public void descendAction(IPhysicalOperator to) {
 	}
 	
 	@Override
@@ -88,7 +88,7 @@ public class PlanExecutionCostVisitor implements INodeVisitor<IPhysicalOperator,
 	}
 
 	@Override
-	public void node(IPhysicalOperator op) {
+	public void nodeAction(IPhysicalOperator op) {
 		// get input datarate from source
 		if (!op.isSink()) {
 			if (op.getProvidedMonitoringData().contains(MonitoringDataTypes.DATARATE.name)) {

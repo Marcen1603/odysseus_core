@@ -25,11 +25,11 @@ public class CleanOperatorsVisitor implements INodeVisitor<IPhysicalOperator, Ob
 	}
 
 	@Override
-	public void ascend(IPhysicalOperator to) {
+	public void ascendAction(IPhysicalOperator to) {
 	}
 
 	@Override
-	public void descend(IPhysicalOperator to) {
+	public void descendAction(IPhysicalOperator to) {
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class CleanOperatorsVisitor implements INodeVisitor<IPhysicalOperator, Ob
 	}
 
 	@Override
-	public void node(IPhysicalOperator op) {
+	public void nodeAction(IPhysicalOperator op) {
 		logger.debug("Remove Owner "+this.query+" from "+op);
 		op.removeOwner((IOperatorOwner) this.query);
 		if (!op.hasOwner()) {

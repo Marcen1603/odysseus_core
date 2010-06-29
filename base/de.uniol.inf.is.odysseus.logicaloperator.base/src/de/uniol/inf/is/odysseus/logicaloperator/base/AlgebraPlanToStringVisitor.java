@@ -26,7 +26,7 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ISubscriber<ILog
 	}
 	
 	@Override
-	public void descend(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
+	public void descendAction(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
 		if (this.wasup) {
 			this.builder.append(',');
 		} else {
@@ -36,7 +36,7 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ISubscriber<ILog
 	}
 
 	@Override
-	public void node(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
+	public void nodeAction(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
 		this.builder.append(' ');
 		this.builder.append(((ILogicalOperator)sub).getName()).append(sub.hashCode());
 		if(showSchema) {
@@ -45,7 +45,7 @@ public class AlgebraPlanToStringVisitor implements INodeVisitor<ISubscriber<ILog
 	}
 
 	@Override
-	public void ascend(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
+	public void ascendAction(ISubscriber<ILogicalOperator, LogicalSubscription> sub) {
 		if (this.wasup) {
 			this.builder.append(" )");	
 		}

@@ -16,15 +16,17 @@ public class UpdateLogicalPlanVisitor
 	}
 
 	@Override
-	public void ascend(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
+	public void ascendAction(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
 		if (to != null ) {
 			((ILogicalOperator) to).updateAfterClone(replaced);
 		}
 	}
 
 	@Override
-	public void descend(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
-
+	public void descendAction(ISubscriber<ILogicalOperator, LogicalSubscription> to) {
+		if (to != null ) {
+			((ILogicalOperator) to).updateAfterClone(replaced);
+		}
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class UpdateLogicalPlanVisitor
 	}
 
 	@Override
-	public void node(ISubscriber<ILogicalOperator, LogicalSubscription> op) {
+	public void nodeAction(ISubscriber<ILogicalOperator, LogicalSubscription> op) {
 		// TODO Auto-generated method stub
 
 	}

@@ -12,7 +12,7 @@ public abstract class ToStringVisitor<T> implements INodeVisitor<T, String> {
 		reset();
 	}
 
-	public void descend(T to) {
+	public void descendAction(T to) {
 		if (this.wasup) {
 			this.builder.append(',');
 		} else {
@@ -22,7 +22,7 @@ public abstract class ToStringVisitor<T> implements INodeVisitor<T, String> {
 	};
 
 	@Override
-	public void ascend(T sub) {
+	public void ascendAction(T sub) {
 		if (this.wasup) {
 			this.builder.append(" )");
 		}

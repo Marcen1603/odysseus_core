@@ -34,7 +34,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
@@ -59,6 +61,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.PrintLogicalGraphVisitor;
 
 public class ExecutorConsole implements CommandProvider,
 		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
@@ -979,7 +983,7 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@Help(parameter = "<filename> [S] [useProp]", description = "add query declared in <filename> [with console-output-sink] [filepath automatically read from user.files")
+	@Help(parameter = "<filename> [S] [useProp]", description = "add query declared in <filename> [with console-output-sink] [filepath automatically read from user.files]")
 	public void _addFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
@@ -1022,6 +1026,73 @@ public class ExecutorConsole implements CommandProvider,
 				this.delegateAddQueryCmd(newArgs);
 			} catch (Exception e) {
 				ci.printStackTrace(e);
+			}
+		}
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Help(parameter = "<filename> [useProp]", description = "Add query declared in <filename> [filepath automatically read from user.files, otherwise in current directory]")
+	public void _cyclicQueryFromFile(CommandInterpreter ci){
+		String[] args = support.getArgs(ci);
+		addCommand(args);
+		
+		if(args.length == 2 && args[1].equalsIgnoreCase("useProp")){
+			this.path = System.getProperty("user.files");
+		}
+		
+		if (args != null && args.length > 0) {
+			BufferedReader br = null;
+			File file = null;
+			try {
+				file = new File(this.path != null ? this.path + args[0]
+						: args[0]);
+				br = new BufferedReader(new FileReader(file));
+			} catch (FileNotFoundException e) {
+				ci.println("File not found: " + file.getAbsolutePath());
+				return;
+			}
+
+			String queries = "";
+			try {
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					queries += line + "\n";
+				}
+			} catch (IOException e) {
+				ci.printStackTrace(e);
+				return;
+			}
+			
+			ICompiler compiler = this.executor.getCompiler();
+			try {
+				List<IQuery> plans = compiler.translateQuery(queries, parser());
+				
+				// DEBUG: Print the logical plan.
+				PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+				AbstractGraphWalker walker = new AbstractGraphWalker();
+				for(IQuery plan : plans){
+					System.out.println("PRINT PARTIAL PLAN: ");
+					walker.prefixWalk(plan.getLogicalPlan(), pv);
+					System.out.println(pv.getResult());
+					pv.clear();
+					walker.clearVisited();
+					System.out.println("PRINT END.");
+				}
+				
+				// the last plan is the complete plan
+				// so transform this one
+				IPhysicalOperator physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), this.trafoConfigParam.getValue());
+				
+				int queryID = this.executor.addQuery(physPlan, currentUser, this.trafoConfigParam);
+				this.executor.startQuery(queryID);
+				
+			} catch (QueryParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 	}

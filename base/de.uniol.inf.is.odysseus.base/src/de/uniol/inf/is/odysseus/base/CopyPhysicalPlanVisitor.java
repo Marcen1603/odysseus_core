@@ -37,7 +37,7 @@ public class CopyPhysicalPlanVisitor implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void ascend(IPhysicalOperator to) {
+	public void ascendAction(IPhysicalOperator to) {
 		ISource<?> source = (ISource<?>) this.last.pop();
 		ISink sink = (ISink) this.last.peek();
 		ISource<?> oldSource = (ISource<?>) this.lastOld.pop();
@@ -59,7 +59,7 @@ public class CopyPhysicalPlanVisitor implements
 	}
 
 	@Override
-	public void descend(IPhysicalOperator to) {
+	public void descendAction(IPhysicalOperator to) {
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class CopyPhysicalPlanVisitor implements
 	}
 
 	@Override
-	public void node(IPhysicalOperator op) {
+	public void nodeAction(IPhysicalOperator op) {
 		this.logger.debug("copy " + op.getName());
 		this.last.push(op.clone());
 		if (this.root == null) {

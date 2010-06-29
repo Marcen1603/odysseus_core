@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.base.CopyLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
-import de.uniol.inf.is.odysseus.base.UpdateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
@@ -19,7 +17,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
@@ -166,10 +165,11 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		}
 
 		// create working copy of plan
-		CopyLogicalPlanVisitor v = new CopyLogicalPlanVisitor();
-		ILogicalOperator logicalPlanCopy = AbstractTreeWalker.prefixWalk(query.getSealedLogicalPlan(),v);
-		AbstractTreeWalker.prefixWalk(logicalPlanCopy, new UpdateLogicalPlanVisitor(v.getReplaced()));
-		
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+		AbstractGraphWalker walker = new AbstractGraphWalker();
+		walker.prefixWalk(query.getSealedLogicalPlan(), copyVisitor);
+		ILogicalOperator logicalPlanCopy = copyVisitor.getResult();
+				
 		// create logical alternatives
 		List<ILogicalOperator> logicalAlternatives = compiler.createAlternativePlans(logicalPlanCopy,
 				rulesToUse);

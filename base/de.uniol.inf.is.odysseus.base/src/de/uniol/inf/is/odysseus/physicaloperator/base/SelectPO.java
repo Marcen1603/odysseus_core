@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 public class SelectPO<T> extends AbstractPipe<T, T> {
 
 	private IPredicate<? super T> predicate;
-	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy();
+	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
 	
 	public IPredicate<? super T> getPredicate() {
 		return predicate;
