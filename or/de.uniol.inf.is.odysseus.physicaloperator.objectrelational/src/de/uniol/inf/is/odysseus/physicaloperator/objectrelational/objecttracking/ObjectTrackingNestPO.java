@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class ObjectTrackingNestPO
 		<M extends ObjectTrackingMetadata<Object>> 
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-	
+
 	private SDFAttributeList inputSchema;
 	private SDFAttributeList outputSchema;
 	private SDFAttributeList groupingAttributes;
@@ -159,6 +159,119 @@ public class ObjectTrackingNestPO
 	}
 
 	/**
+	 * processing
+	 */
+	private void process(
+		MVRelationalTuple<M> incomingTuple,
+		int port
+	) {
+		ObjectTrackingNestTISweepArea<M> sa;
+		PointInTime minStart;
+		PointInTime incomingTupleStart;
+		Integer groupId;
+		Boolean emptySA;
+		
+		minStart = null;
+		incomingTupleStart = incomingTuple.getMetadata().getStart();
+		
+		/*
+		 * Getting the groupId and the according sweep area with 
+		 * partial nests. If not existent in groups, then create.
+		 */
+		
+		groupId = this.getGroupId(incomingTuple);
+		if(groups.containsKey(groupId)) {
+			sa = groups.get(groupId);
+		} else {
+			
+			/*
+			 * Storing the values of the groupingAttributes in the 
+			 * MVNestTISweepArea<M> for evaluating (transform to relational 
+			 * tuple output)
+			 */
+			
+			Object[] groupingValues = this.getGroupingValues(incomingTuple);
+			sa = new ObjectTrackingNestTISweepArea<M>(groupingValues);
+			groups.put(groupId, sa);
+		}
+		
+		/*
+		 * If the sweep area is newly created we have to put the 
+		 * new groupId into the MVPriorityQueueG, later.
+		 */
+		
+		if(sa.size() == 0) {
+			emptySA = true;
+		} else {
+			emptySA = false;
+		}
+		
+		/*
+		 * @TODO: incomingTuple is modified by restrict
+		 */
+		
+		MVRelationalTuple<M> restrictedToNonGrouping 
+			= (MVRelationalTuple<M>) 
+			incomingTuple.restrict(this.nonGroupingAttributesPos, false);
+			
+		this.update(sa, restrictedToNonGrouping);
+		
+		if(emptySA) {
+			g.insert(sa, groupId);
+		}
+	
+		/*
+		 * Now we search for those partial nests which have minimum start
+		 * timestamp. And if there are equal or less than write out.
+		 */
+		
+		while(!g.isEmpty()) {
+			Integer groupIdOfMin = g.min();
+			
+			ObjectTrackingNestTISweepArea<M> saOfMin = 
+				groups.get(groupIdOfMin);
+			
+			ObjectTrackingPartialNest<M> minPartial = 
+				saOfMin.iterator().next();
+						
+			if(
+				minStart != null && 
+				minStart == minPartial.getMetadata().getStart()
+			) {
+				break;
+			}
+			
+			minStart = minPartial.getMetadata().getStart();
+						
+			if(minStart.before(incomingTupleStart) ||
+				minStart.equals(incomingTupleStart)) {
+	
+				g.removeLastMin();
+				Iterator<ObjectTrackingPartialNest<M>> results = 
+					saOfMin.extractElementsBefore(incomingTupleStart);
+				
+				/*
+				 * Here happens the evaluating 
+				 */
+				
+				while(results.hasNext()) {
+					ObjectTrackingPartialNest<M> result = results.next();
+					
+					Object[] groupingValues = saOfMin.getGroupingValues();
+					MVRelationalTuple<M> output = 
+						this.createOutputTuple(groupingValues, result);
+						
+					q.insert(output);
+				}
+				
+				if(saOfMin.size() > 0) {
+					g.insert(saOfMin, groupIdOfMin);
+				}				
+			} else break;
+		}		
+	}
+	
+	/**
 	 * process_next method is a primary function for an operator, tuples of 
 	 * subscripted sources will be sent to this method. The port is not 
 	 * relevant due to an unary operator.
@@ -168,123 +281,22 @@ public class ObjectTrackingNestPO
 	 */	
 	final protected void process_next(
 		MVRelationalTuple<M> incomingTuple, 
-		int port) {
-		
-		ObjectTrackingNestTISweepArea<M> sa;
-		PointInTime minStart;
-		PointInTime incomingTupleStart;
-		Integer groupId;
-		Boolean emptySA;
-		
-		minStart = null;
-		incomingTupleStart = incomingTuple.getMetadata().getStart();
-		
-		/*
-		 * Getting the groupId and the according sweep area with 
-		 * partial nests. If not existent in groups, then create.
-		 */
-		
-		groupId = this.getGroupId(incomingTuple);
-		if(groups.containsKey(groupId)) {
-			sa = groups.get(groupId);
-		} else {
-			
-			/*
-			 * Storing the values of the groupingAttributes in the 
-			 * MVNestTISweepArea<M> for evaluating (transform to relational 
-			 * tuple output)
-			 */
-			
-			Object[] groupingValues = this.getGroupingValues(incomingTuple);
-			sa = new ObjectTrackingNestTISweepArea<M>(groupingValues);
-			groups.put(groupId, sa);
-		}
-		
-		/*
-		 * If the sweep area is newly created we have to put the 
-		 * new groupId into the MVPriorityQueueG, later.
-		 */
-		
-		if(sa.size() == 0) {
-			emptySA = true;
-		} else {
-			emptySA = false;
-		}
-		
-		MVRelationalTuple<M> restrictedToNonGrouping 
-			= (MVRelationalTuple<M>) 
-			incomingTuple.restrict(this.nonGroupingAttributesPos, false);
-			
-		this.update(sa, restrictedToNonGrouping);
-		
-		if(emptySA) {
-			g.insert(sa, groupId);
-		}
-	
-		/*
-		 * Now we search for those partial nests which have minimum start
-		 * timestamp. And if there are equal or less than write out.
-		 */
-		
-		while(!g.isEmpty()) {
-			Integer groupIdOfMin = g.min();
-			
-			ObjectTrackingNestTISweepArea<M> saOfMin = 
-				groups.get(groupIdOfMin);
-			
-			ObjectTrackingPartialNest<M> minPartial = 
-				saOfMin.iterator().next();
-						
-			if(
-				minStart != null && 
-				minStart == minPartial.getMetadata().getStart()
-			) {
-				break;
-			}
-			
-			minStart = minPartial.getMetadata().getStart();
-						
-			if(minStart.before(incomingTupleStart) ||
-				minStart.equals(incomingTupleStart)) {
-	
-				g.removeLastMin();
-				Iterator<ObjectTrackingPartialNest<M>> results = 
-					saOfMin.extractElementsBefore(incomingTupleStart);
-				
-				/*
-				 * Here happens the evaluating 
-				 */
-				
-				while(results.hasNext()) {
-					ObjectTrackingPartialNest<M> result = results.next();
-					
-					Object[] groupingValues = saOfMin.getGroupingValues();
-					MVRelationalTuple<M> output = 
-						this.createOutputTuple(groupingValues, result);
-						
-					q.insert(output);
-				}
-				
-				if(saOfMin.size() > 0) {
-					g.insert(saOfMin, groupIdOfMin);
-				}				
-			} else break;
-		}
+		int port
+	) {		
+		this.process(incomingTuple, port);
 		
 		MVRelationalTuple<M> delivery = this.deliver();
 		if(delivery != null) {
 			this.transfer(delivery);
+			System.out.println(delivery);
+			for(SetEntry<MVRelationalTuple<M>> sub : 
+				(SetEntry[]) delivery.getAttribute(1)) 
+			{
+				System.out.println("|_ " + sub.getValue());
+			}
 		} 
 	}	
-	
-	@Override
-	public void process_done() {
-		for(MVRelationalTuple<M> t : this.q) {
-			this.transfer(t);
-			System.out.println(t);
-		}
-	}
-	
+
 	/**
 	 * Instead of transfering the objects to the subscriber, we return the 
 	 * values to assert correctness in a test case.
@@ -292,108 +304,18 @@ public class ObjectTrackingNestPO
 	 * @param object
 	 * @param port
 	 */	
-	public final void processNextTest
-		(MVRelationalTuple<M> incomingTuple, int port) {
-		
-		ObjectTrackingNestTISweepArea<M> sa;
-		PointInTime minStart;
-		PointInTime incomingTupleStart;
-		Integer groupId;
-		Boolean emptySA;
-		
-		minStart = null;
-		incomingTupleStart = incomingTuple.getMetadata().getStart();
-		
-		/*
-		 * Getting the groupId and the according sweep area with 
-		 * partial nests. If not existent in groups, then create.
-		 */
-		
-		groupId = this.getGroupId(incomingTuple);
-		if(groups.containsKey(groupId)) {
-			sa = groups.get(groupId);
-		} else {
-			
-			/*
-			 * Storing the values of the groupingAttributes in the 
-			 * MVNestTISweepArea<M> for evaluating (transform to relational 
-			 * tuple output)
-			 */
-			
-			Object[] groupingValues = this.getGroupingValues(incomingTuple);
-			sa = new ObjectTrackingNestTISweepArea<M>(groupingValues);
-			groups.put(groupId, sa);
-		}
-		
-		/*
-		 * If the sweep area is newly created we have to put the 
-		 * new groupId into the MVPriorityQueueG, later.
-		 */
-		
-		if(sa.size() == 0) {
-			emptySA = true;
-		} else {
-			emptySA = false;
-		}
-		
-		MVRelationalTuple<M> restrictedToNonGrouping 
-			= (MVRelationalTuple<M>) 
-			incomingTuple.restrict(this.nonGroupingAttributesPos, false);
-			
-		this.update(sa, restrictedToNonGrouping);
-		
-		if(emptySA) {
-			g.insert(sa, groupId);
-		}
+	public final void processNextTest(
+		MVRelationalTuple<M> incomingTuple, 
+		int port
+	) {
+			this.process(incomingTuple, port);
+	}	
 	
-		/*
-		 * Now we search for those partial nests which have minimum start
-		 * timestamp. And if there are equal or less than write out.
-		 */
-		
-		while(!g.isEmpty()) {
-			Integer groupIdOfMin = g.min();
-			
-			ObjectTrackingNestTISweepArea<M> saOfMin = 
-				groups.get(groupIdOfMin);
-			
-			ObjectTrackingPartialNest<M> minPartial = 
-				saOfMin.iterator().next();
-						
-			if(
-				minStart != null && 
-				minStart == minPartial.getMetadata().getStart()
-			) {
-				break;
-			}
-			
-			minStart = minPartial.getMetadata().getStart();
-						
-			if(minStart.before(incomingTupleStart) ||
-				minStart.equals(incomingTupleStart)) {
-	
-				g.removeLastMin();
-				Iterator<ObjectTrackingPartialNest<M>> results = 
-					saOfMin.extractElementsBefore(incomingTupleStart);
-				
-				/*
-				 * Here happens the evaluating 
-				 */
-				
-				while(results.hasNext()) {
-					ObjectTrackingPartialNest<M> result = results.next();
-					
-					Object[] groupingValues = saOfMin.getGroupingValues();
-					MVRelationalTuple<M> output = 
-						this.createOutputTuple(groupingValues, result);
-						
-					q.insert(output);
-				}
-				
-				if(saOfMin.size() > 0) {
-					g.insert(saOfMin, groupIdOfMin);
-				}				
-			} else break;
+	@Override
+	public void process_done() {
+		for(MVRelationalTuple<M> t : this.q) {
+			this.transfer(t);
+			System.out.println(t);
 		}
 	}
 
@@ -440,71 +362,6 @@ public class ObjectTrackingNestPO
     	sendPunctuation(timestamp);    	
     }
 
-    /*
-     * Getter and setter for copy constructor. 
-     */
-    public SDFAttributeList getInputSchema() {
-    	return this.inputSchema;
-    }
-
-    public SDFAttributeList getOutputSchema() {
-    	return this.outputSchema;
-    }
-
-    public SDFAttributeList getGroupingAttributes() {
-    	return this.groupingAttributes;
-    }
-
-    public SDFAttribute getNestingAttribute() {
-    	return this.nestingAttribute;
-    }
-
-    @Override
-    public ObjectTrackingNestPO<M> clone() {
-    	return new ObjectTrackingNestPO<M>(this);
-    }
-
-    @Override
-    public OutputMode getOutputMode() {
-    	return OutputMode.MODIFIED_INPUT;
-    }
-
-    @Override
-    public void addMonitoringData(String type, IMonitoringData<?> item) {
-    	// TODO Auto-generated method stub
-    	
-    }
-
-    @Override
-    public <T> IMonitoringData<T> getMonitoringData(String type) {
-    	// TODO Auto-generated method stub
-    	return null;
-    }
-
-    @Override
-    public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
-    		long period) {
-    	// TODO Auto-generated method stub
-    	return null;
-    }
-
-    @Override
-    public Collection<String> getProvidedMonitoringData() {
-    	// TODO Auto-generated method stub
-    	return null;
-    }
-
-    @Override
-    public boolean providesMonitoringData(String type) {
-    	// TODO Auto-generated method stub
-    	return false;
-    }
-
-    @Override
-    public void removeMonitoringData(String type) {
-    	// TODO Auto-generated method stub    	
-    }
-    
     /**
 	 * 
 	 * This method is used initially for determining the group attributes
@@ -770,16 +627,36 @@ public class ObjectTrackingNestPO
 	}
 	
 	/**
-	 * update splits and merges partial nests according to the 
-	 * algorithm 9 described by Kraemer with correcting modifications.  
+	 * the method updates all tuples in a partial to new time interval
+	 * this is mostly used for filling partials and cutting of old partials.
 	 * 
-	 * @TODO wrap if clause bodies to methods.
+	 * @param nest specific partial to set the intervals of tuples
+	 * @param ti the time interval to set.
+	 */
+	private void setTimeIntervalOnSubtuples(
+		ObjectTrackingPartialNest<M> partial,
+		ITimeInterval ti
+	) {
+		List<MVRelationalTuple<M>> subTuples;		
+		subTuples = partial.getNest();
+		
+		for(MVRelationalTuple<M> t : subTuples) {
+			M meta = t.getMetadata();
+			meta.setStreamTime(ti.clone());
+		}
+	}
+		
+	/**
+	 * update splits and merges partial nests inspired from 
+	 * algorithm 9 described by Kraemer. 
 	 * 
 	 * @param sa sweep area of a specific group
 	 * @param incomingTuple incoming tuple 
 	 */	
-	private void update(ObjectTrackingNestTISweepArea<M> sa,
-			MVRelationalTuple<M> incomingTuple) {
+	private void update(
+		ObjectTrackingNestTISweepArea<M> sa,
+		MVRelationalTuple<M> incomingTuple
+	) {
 		
 		ITimeInterval incomingPartialTI;
 		ITimeInterval partialTI;
@@ -852,19 +729,26 @@ public class ObjectTrackingNestPO
 								
 				if(partialStart.before(incomingPartialStart)) {
 					
-					ObjectTrackingPartialNest<M> overlapPartial1 = 
+					ObjectTrackingPartialNest<M> leftOverlapPartial = 
 						partial.clone();						
 					
-					M meta = overlapPartial1.getMetadata();
+					M meta = leftOverlapPartial.getMetadata();
 					
 					TimeInterval ti = new TimeInterval(
 						partialStart.clone(),
 						incomingPartialStart.clone()
 					);
 					
-					meta.setStreamTime(ti);
-													
-					sa.insert(overlapPartial1);
+					meta.setStreamTime(ti);					
+					
+					/*
+					 * Setting the time interval to subtuples to the 
+					 * time interval of the partial.
+					 */
+					
+					this.setTimeIntervalOnSubtuples(leftOverlapPartial, ti);
+					
+					sa.insert(leftOverlapPartial);
 				
 					if(incomingPartialEnd.before(partialEnd)) {
 						
@@ -883,10 +767,10 @@ public class ObjectTrackingNestPO
 						 * [incomingPartialEnd, partialEnd)
 						 */
 						
-						ObjectTrackingPartialNest<M> leftOverlapPartial = 
+						ObjectTrackingPartialNest<M> rightOverlapPartial = 
 							partial.clone();
 						
-						meta = leftOverlapPartial.getMetadata();
+						meta = rightOverlapPartial.getMetadata();
 						
 						TimeInterval ti2 = new TimeInterval(
 							incomingPartialEnd.clone(),
@@ -895,7 +779,17 @@ public class ObjectTrackingNestPO
 						
 						meta.setStreamTime(ti2);
 						
-						sa.insert(leftOverlapPartial);
+						/*
+						 * Setting the time interval to subtuples to the 
+						 * time interval of the partials
+						 */
+						
+						this.setTimeIntervalOnSubtuples(
+							rightOverlapPartial, 
+							ti
+						);
+						
+						sa.insert(rightOverlapPartial);
 						sa.insert(mergePartial);			
 												
 						this.updateFillInitialTI(fillInitialTI, mergePartial);
@@ -973,6 +867,16 @@ public class ObjectTrackingNestPO
 							
 							meta.setStreamTime(ti3);
 							
+							/*
+							 * Setting the time interval of the subtuples 
+							 * of the overlapPartialRight
+							 */
+							
+							this.setTimeIntervalOnSubtuples(
+								overlapPartialRight, 
+								ti3
+							);
+							
 							sa.insert(overlapPartialRight);
 						}
 						
@@ -983,14 +887,92 @@ public class ObjectTrackingNestPO
 				} // else				
 			} // while			
 			
+			/*
+			 * This for-loop is for filling the last filling time intervals
+			 * of the incoming partial (which have not been merged) 
+			 */
+			
 			for(ITimeInterval ti : fillInitialTI) {
 				ObjectTrackingPartialNest<M> fillPartial = 
-					incomingPartial.clone();
+					incomingPartial.clone();			
 				
 				M meta = fillPartial.getMetadata();				
-				meta.setStreamTime(ti.clone());					
+				meta.setStreamTime(ti.clone());
+				
+				/*
+				 * Setting the time interval of the sub tuples of the 
+				 * filling partial. 
+				 */
+				
+				this.setTimeIntervalOnSubtuples(fillPartial, ti);
+				
 				sa.insert(fillPartial);
 			}
 		}
 	}	
+
+	   /*
+     * Getter and setter for copy constructor. 
+     */
+    public SDFAttributeList getInputSchema() {
+    	return this.inputSchema;
+    }
+
+    public SDFAttributeList getOutputSchema() {
+    	return this.outputSchema;
+    }
+
+    public SDFAttributeList getGroupingAttributes() {
+    	return this.groupingAttributes;
+    }
+
+    public SDFAttribute getNestingAttribute() {
+    	return this.nestingAttribute;
+    }
+
+    @Override
+    public ObjectTrackingNestPO<M> clone() {
+    	return new ObjectTrackingNestPO<M>(this);
+    }
+
+    @Override
+    public OutputMode getOutputMode() {
+    	return OutputMode.MODIFIED_INPUT;
+    }
+
+    @Override
+    public void addMonitoringData(String type, IMonitoringData<?> item) {
+    	// TODO Auto-generated method stub
+    	
+    }
+
+    @Override
+    public <T> IMonitoringData<T> getMonitoringData(String type) {
+    	// TODO Auto-generated method stub
+    	return null;
+    }
+
+    @Override
+    public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
+    		long period) {
+    	// TODO Auto-generated method stub
+    	return null;
+    }
+
+    @Override
+    public Collection<String> getProvidedMonitoringData() {
+    	// TODO Auto-generated method stub
+    	return null;
+    }
+
+    @Override
+    public boolean providesMonitoringData(String type) {
+    	// TODO Auto-generated method stub
+    	return false;
+    }
+
+    @Override
+    public void removeMonitoringData(String type) {
+    	// TODO Auto-generated method stub    	
+    }	
 }
