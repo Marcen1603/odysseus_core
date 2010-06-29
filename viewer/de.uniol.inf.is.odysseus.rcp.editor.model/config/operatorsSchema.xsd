@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:complexType name="Operator">
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="Label" type="xs:string" />
+			<xs:element name="Group" type="xs:string" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="class" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:element name="Operators">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="Operator" type="Operator" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

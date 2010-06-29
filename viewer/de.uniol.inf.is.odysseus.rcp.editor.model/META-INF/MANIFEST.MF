@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Editor Model
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.model
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.model.activator.Activator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.rcp.editor.model,
+ de.uniol.inf.is.odysseus.rcp.editor.model.cfg
+Import-Package: org.slf4j;version="1.5.6"

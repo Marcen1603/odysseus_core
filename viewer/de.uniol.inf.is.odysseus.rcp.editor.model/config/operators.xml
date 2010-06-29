@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Operators xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="operatorsSchema.xsd">
+
+	<Operator name="JoinAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO">
+		<Label>Join</Label>
+		<Group>Pipes</Group>
+	</Operator>
+
+	<Operator name="SelectAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO">
+		<Label>Selection</Label>
+		<Group>Pipes</Group>
+	</Operator>
+	
+	<Operator name="ProjectAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO">
+		<Label>Projection</Label>
+		<Group>Pipes</Group>
+	</Operator>
+	
+	<Operator name="MapAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.MapAO">
+		<Label>Mapping</Label>
+		<Group>Pipes</Group>
+	</Operator>
+
+	<Operator name="WindowAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO">
+		<Label>Window</Label>
+		<Group>Pipes</Group>
+	</Operator>	
+
+	<Operator name="AggregateAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO">
+		<Label>Aggregation</Label>
+		<Group>Pipes</Group>
+	</Operator>	
+	
+	<Operator name="UnionAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO">
+		<Label>Union</Label>
+		<Group>Pipes</Group>
+	</Operator>	
+
+	<Operator name="IntersectionAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.IntersectionAO">
+		<Label>Intersection</Label>
+		<Group>Pipes</Group>
+	</Operator>	
+	
+	<Operator name="DifferenceAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.DifferenceAO">
+		<Label>Difference</Label>
+		<Group>Pipes</Group>
+	</Operator>	
+	
+	<Operator name="RenameAO" class="de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO">
+		<Label>Rename</Label>
+		<Group>Pipes</Group>
+	</Operator>	
+</Operators>
