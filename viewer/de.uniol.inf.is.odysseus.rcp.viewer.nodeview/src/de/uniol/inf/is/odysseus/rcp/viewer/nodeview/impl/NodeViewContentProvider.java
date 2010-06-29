@@ -16,14 +16,13 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 	
 	private IOdysseusGraphView activeGraph;
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		
 		if( parentElement instanceof IOdysseusGraphView) {
 			IOdysseusGraphView graph = (IOdysseusGraphView)parentElement;
 			
-			ArrayList list = new ArrayList();
+			ArrayList<Object> list = new ArrayList<Object>();
 			for( INodeView<IPhysicalOperator> node : graph.getViewedNodes()) {
 				if( node.getModelNode() != null )
 					list.add(node);
