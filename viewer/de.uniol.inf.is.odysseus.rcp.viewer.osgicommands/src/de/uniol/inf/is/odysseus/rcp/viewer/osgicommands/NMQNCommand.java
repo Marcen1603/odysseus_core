@@ -4,6 +4,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
@@ -13,6 +15,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 
 public class NMQNCommand extends AbstractHandler implements IHandler {
 
+	private final Logger logger = LoggerFactory.getLogger(NMQNCommand.class);
+	
 	private static final String[] queries = {
 			"SELECT b.auction, DolToEur(b.price) AS euroPrice, b.bidder, b.datetime FROM nexmark:bid2 [UNBOUNDED] AS b",
 			"SELECT auction, price FROM nexmark:bid2 WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87",
@@ -27,7 +31,6 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 		if (executor != null) {
 			for (String q : queries) {
 				try {
-					// TODO: User einfuegen, der diese Query ausf�hrt
 					User user = new User("TODO.SetUser");
 					executor.addQuery(q, "CQL", user, new ParameterDefaultRoot(new MySink()));
 				} catch (PlanManagementException e) {
@@ -35,8 +38,7 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 				}
 			}
 		} else {
-			System.out.println("Kein ExecutorService gefunden");
-			// TODO: Nachricht hier anzeigen
+			logger.error("Kein ExecutorService gefunden");
 			return null;
 		}
 		return null;
