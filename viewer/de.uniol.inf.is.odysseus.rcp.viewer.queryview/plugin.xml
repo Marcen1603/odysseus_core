@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.viewer.perspective.queries">
+            targetID="de.uniol.inf.is.odysseus.rcp.perspective.observer">
          <view
                closeable="true"
                id="de.uniol.inf.is.odysseus.rcp.viewer.queryview"

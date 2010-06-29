@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer.impl;
+package de.uniol.inf.is.odysseus.rcp.perspective.observer.impl;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

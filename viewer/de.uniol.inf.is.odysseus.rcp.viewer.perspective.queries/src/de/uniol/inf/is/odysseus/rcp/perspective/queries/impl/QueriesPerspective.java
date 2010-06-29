@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.rcp.viewer.perspective.queries.impl;
+package de.uniol.inf.is.odysseus.rcp.perspective.queries.impl;
 
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.perspective.queries.IQueriesPerspectiveConstants;
+import de.uniol.inf.is.odysseus.rcp.perspective.queries.IQueriesPerspectiveConstants;
 
 public class QueriesPerspective implements IPerspectiveFactory {
 

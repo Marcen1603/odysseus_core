@@ -4,13 +4,14 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer">
+            targetID="de.uniol.inf.is.odysseus.rcp.perspective.observer">
          <view
                closeable="true"
                id="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView"
                minimized="false"
                moveable="true"
                relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
                showTitle="true"
                standalone="false"
                visible="true">

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Observer Perspective
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.perspective.observer;singleton:=true
 Bundle-Version: 1.0.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer.impl.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.perspective.observer.impl.Activator
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
@@ -12,4 +12,4 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j,
  org.apache.log4j.spi,
  org.eclipse.ui.console
-Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer
+Export-Package: de.uniol.inf.is.odysseus.rcp.perspective.observer

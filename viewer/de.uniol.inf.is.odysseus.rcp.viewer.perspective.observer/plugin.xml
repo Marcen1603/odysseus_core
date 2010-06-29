@@ -4,8 +4,8 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer.impl.ObserverPerspective"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer"
+            class="de.uniol.inf.is.odysseus.rcp.perspective.observer.impl.ObserverPerspective"
+            id="de.uniol.inf.is.odysseus.rcp.perspective.observer"
             name="Observer">
       </perspective>
    </extension>

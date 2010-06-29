@@ -12,7 +12,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.perspective.observer.IObserverPerspectiveConstants;
+import de.uniol.inf.is.odysseus.rcp.perspective.observer.IObserverPerspectiveConstants;
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
