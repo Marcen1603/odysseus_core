@@ -48,10 +48,12 @@ public class Activator extends Plugin {
 		return executor;
 	}
 
+	// Declarative Service
 	public void bindExecutor(IAdvancedExecutor ex) {
 		executor = ex;
 	}
 	
+	// Declarative Service
 	public void unbindExecutor(IAdvancedExecutor ex) {
 		executor = null;
 	}

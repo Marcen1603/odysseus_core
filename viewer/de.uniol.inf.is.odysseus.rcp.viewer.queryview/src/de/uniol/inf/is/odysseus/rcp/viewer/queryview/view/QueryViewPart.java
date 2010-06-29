@@ -45,27 +45,67 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 		tableViewer = new TableViewer(parent, SWT.SINGLE);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
-
-		TableViewerColumn col1 = new TableViewerColumn(tableViewer, SWT.NONE);
-		col1.getColumn().setText("ID");
-		col1.getColumn().setWidth(50);
-		col1.setLabelProvider(new CellLabelProvider() {
+		
+		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		idColumn.getColumn().setText("ID");
+		idColumn.getColumn().setWidth(50);
+		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(String.valueOf(((IQuery) cell.getElement()).getID()));
 			}
 		});
 
-		TableViewerColumn col2 = new TableViewerColumn(tableViewer, SWT.NONE);
-		col2.getColumn().setText("Query");
-		col2.getColumn().setWidth(400);
-		col2.setLabelProvider(new CellLabelProvider() {
+		TableViewerColumn statusColumn = new TableViewerColumn( tableViewer, SWT.NONE ) ;
+		statusColumn.getColumn().setText("Status");
+		statusColumn.getColumn().setWidth(100);
+		statusColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(String.valueOf(((IQuery) cell.getElement()).getQueryText()));
+				cell.setText( ((IQuery)cell.getElement()).isRunning() == true ? "Running" : "Stopped");
+			}
+		});
+		
+		TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		priorityColumn.getColumn().setText("Priority");
+		priorityColumn.getColumn().setWidth(100);
+		priorityColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(String.valueOf(((IQuery) cell.getElement()).getPriority()));
+			}
+		});
+		
+		TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		parserIdColumn.getColumn().setText("Parser");
+		parserIdColumn.getColumn().setWidth(100);
+		parserIdColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(((IQuery) cell.getElement()).getParserId());
 			}
 		});
 
+		TableViewerColumn userColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		userColumn.getColumn().setText("User");
+		userColumn.getColumn().setWidth(400);
+		userColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(((IQuery) cell.getElement()).getUser().getUsername());
+			}
+		});
+		
+		TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		queryTextColumn.getColumn().setText("Query");
+		queryTextColumn.getColumn().setWidth(400);
+		queryTextColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(((IQuery) cell.getElement()).getQueryText());
+			}
+		});
+		
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(queries);
 		getSite().setSelectionProvider(tableViewer);
@@ -134,6 +174,10 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 			removeQuery((IQuery) eventArgs.getValue());
 		} else if ("QUERY_ADDED".equals(eventArgs.getID())) {
 			addQuery((IQuery) eventArgs.getValue());
+		} else if( "QUERY_STOP".equals(eventArgs.getID())) {
+			tableViewer.refresh((IQuery) eventArgs.getValue());
+		} else if( "QUERY_START".equals(eventArgs.getID())) {
+			tableViewer.refresh((IQuery) eventArgs.getValue());
 		}
 	}
 

@@ -39,6 +39,20 @@
       <menuContribution
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
          <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.StartQueryCommand"
+               label="Start Query"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.StopQueryCommand"
+               label="Stop Query"
+               style="push">
+         </command>
+         <separator
+               name="Separator1"
+               visible="true">
+         </separator>
+         <command
                commandId="de.uniol.inf.is.odysseus.rcp.viewer.query.RemoveQueryCommand"
                label="Remove Query"
                style="push">
