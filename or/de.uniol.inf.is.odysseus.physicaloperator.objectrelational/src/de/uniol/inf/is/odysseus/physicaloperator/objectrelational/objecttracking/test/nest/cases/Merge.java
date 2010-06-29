@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * a1	a2	a3	a4
  * 1    	2	3	4 	[5,10)
- * 1	    4	5	6 	[5,10)
+ * 1	    5	6	7 	[5,10)
  * 
  * and a partial [0,10) with the following relational tuples
  * 
@@ -44,7 +44,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 1    	2	3	4	[5,10)
  * 1    	4	5	6	[5,10)
  * 1	    5	6	7	[5,10)
- * 1	    8	9	10	[5,10)
  * 
  * @author Jendrik Poloczek
  * 
@@ -209,7 +208,7 @@ public class Merge extends TestCase {
         
         for(MVRelationalTuple<ObjectTrackingMetadata<Object>> t : this.tuples) {
             assertEquals(t.getMetadata().getStart(), new PointInTime(5));
-            assertEquals(t.getMetadata().getEnd(), new PointInTime(10));    
+            assertEquals(t.getMetadata().getEnd(), new PointInTime(10));             
         }
 	}
 }
