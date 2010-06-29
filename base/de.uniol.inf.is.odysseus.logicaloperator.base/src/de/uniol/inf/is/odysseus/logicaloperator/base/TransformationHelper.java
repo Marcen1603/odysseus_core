@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.transformation.drools;
+package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,9 +7,6 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.ISubscription;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.Subscription;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;

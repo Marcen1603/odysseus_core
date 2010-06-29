@@ -1,13 +1,5 @@
 package de.uniol.inf.is.odysseus.action.actuator.impl;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-/*import org.osgi.util.tracker.ServiceTracker;
-
-import de.offis.gal.bus.fs20knxdataservice.IFS20KNXDataListener;
-import de.offis.gal.bus.fs20knxdataservice.IFS20KNXService;
-*/
-import de.uniol.inf.is.odysseus.action.services.Activator;
 import de.uniol.inf.is.odysseus.action.services.actuator.adapter.ActuatorAdapterSchema;
 
 /**

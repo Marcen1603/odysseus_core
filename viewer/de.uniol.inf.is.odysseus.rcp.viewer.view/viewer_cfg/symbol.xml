@@ -67,7 +67,7 @@
 	</Symbol>
 
 	<Symbol nodeName="ByteBufferReceiverPO">
-		<Size width="91" height="27"/>
+		<Size width="48" height="48"/>
 		<SymbolElement type="image">
 			<Parameter key="resource" value="accessPO"/>
 		</SymbolElement>

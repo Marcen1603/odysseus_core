@@ -78,7 +78,7 @@ public class OptimizationTestConsole implements
 		this.executor = executor;
 		System.out.println("executor gebunden");
 		this.executor.addCompilerListener(this);
-		System.out.println(executor.getCompiler());
+		System.out.println("Compiler "+executor.getCompiler());
 		if (executor.getCompiler() != null){
 			System.out.println("Rewrite Bound : "+executor.getCompiler().isRewriteBound());
 			System.out.println("Transformation Bound :"+executor.getCompiler().isTransformationBound());
@@ -128,6 +128,12 @@ public class OptimizationTestConsole implements
 	}
 
 	private void nmsn(CommandInterpreter ci) {
+		nmsn0(ci);
+//		nmsn1(ci);
+//		nmsn2(ci);
+	}
+	
+	private void nmsn0(CommandInterpreter ci) {
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
 		q[1] = "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
@@ -142,7 +148,39 @@ public class OptimizationTestConsole implements
 		}
 		ci.println("Nexmark Sources with NIO added.");
 	}
+	private void nmsn1(CommandInterpreter ci) {
+		String[] q = new String[4];
+		q[0] = "CREATE STREAM nexmark:person3 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL 134.106.56.149 : 65440";
+		q[1] = "CREATE STREAM nexmark:bid3 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL 134.106.56.149 : 65442";
+		q[2] = "CREATE STREAM nexmark:auction3 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL 134.106.56.149 : 65441";
+		q[3] = "CREATE STREAM nexmark:category3 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL 134.106.56.149 : 65443";
+		for (String s : q) {
+			try {
+				this.executor.addQuery(s, parser(), currentUser);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		ci.println("Nexmark Sources with NIO added.");
+	}
+	private void nmsn2(CommandInterpreter ci) {
+		String[] q = new String[4];
+		q[0] = "CREATE STREAM nexmark:person4 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL 134.106.56.149 : 65450";
+		q[1] = "CREATE STREAM nexmark:bid4 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL 134.106.56.149 : 65452";
+		q[2] = "CREATE STREAM nexmark:auction4 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL 134.106.56.149 : 65451";
+		q[3] = "CREATE STREAM nexmark:category4 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL 134.106.56.149 : 65453";
+		for (String s : q) {
+			try {
+				this.executor.addQuery(s, parser(), currentUser);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		ci.println("Nexmark Sources with NIO added.");
+	}
 
+	
+	
 	public void _migrateTest(CommandInterpreter ci) {
 		try {
 			nmsn(ci);
@@ -563,6 +601,17 @@ public class OptimizationTestConsole implements
 								"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person2 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
 								parser(), currentUser, new ParameterDefaultRoot(sink),
 								this.trafoConfigParam);
+//				this.executor
+//				.addQuery(
+//						"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction3 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid3 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person3 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person3 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
+//						parser(), currentUser, new ParameterDefaultRoot(sink),
+//						this.trafoConfigParam);
+//				this.executor
+//				.addQuery(
+//						"SELECT seller.name AS seller, bidder.name AS bidder, auction.itemname AS item, bid.price AS price FROM nexmark:auction4 [SIZE 20 SECONDS ADVANCE 1 TIME] AS auction, nexmark:bid4 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bid, nexmark:person4 [SIZE 20 SECONDS ADVANCE 1 TIME] AS seller, nexmark:person4 [SIZE 20 SECONDS ADVANCE 1 TIME] AS bidder WHERE seller.id=auction.seller AND auction.id=bid.auction AND bid.bidder=bidder.id AND bid.price>260",
+//						parser(), currentUser, new ParameterDefaultRoot(sink),
+//						this.trafoConfigParam);
+
 			}
 
 			dumpRoots();
