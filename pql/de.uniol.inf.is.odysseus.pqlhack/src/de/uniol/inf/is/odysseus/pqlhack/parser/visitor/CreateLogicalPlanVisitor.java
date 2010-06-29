@@ -877,7 +877,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// if no queue, then the second child is already a preceding operator
 		// if queue, then the third child is the first preceding operator
 		// the first child is the identifier
-		int start = node.hasQueue() ? 1 : 2;
+		int start = node.hasQueue() ? 2 : 1;
 		for(int i = start; i<node.jjtGetNumChildren(); i++){
 			returnData = (ArrayList)node.jjtGetChild(i).jjtAccept(this, newData);
 			ILogicalOperator inputOp = (ILogicalOperator)returnData.get(1);
