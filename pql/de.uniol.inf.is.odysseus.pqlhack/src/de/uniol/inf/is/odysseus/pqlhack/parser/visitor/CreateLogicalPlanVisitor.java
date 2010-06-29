@@ -15,7 +15,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
-import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.ObjectTrackingNestAO;
+import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking.ObjectTrackingNestAO;
+import de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking.ObjectTrackingUnnestAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoinAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
@@ -788,7 +789,37 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 //		} catch (Exception e) {
 //			throw new RuntimeException("Error while parsing relational nest clause", e.getCause());
 //		}
-		throw new RuntimeException("Method visit(ASTRelationalUnnestOp, Object) does not work");
+		
+	    ObjectTrackingUnnestAO op;
+        op = new ObjectTrackingUnnestAO();
+        
+        AbstractLogicalOperator input;
+        IAttributeResolver attrRes;        
+        ASTIdentifier nestAttributeIdentifier;
+        String nestAttributeName;
+        ArrayList newData;
+		
+        attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+        
+        newData = new ArrayList();
+        
+        newData.add(attrRes);
+        
+        input = (AbstractLogicalOperator) 
+            ((ArrayList)node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+        
+        op.subscribeTo(input, input.getOutputSchema());        
+        
+        nestAttributeIdentifier = 
+            (ASTIdentifier) node.jjtGetChild(1);
+        
+        nestAttributeName = nestAttributeIdentifier.getName();  
+        System.out.println(nestAttributeName);
+        op.setNestAttribute(attrRes.getAttribute(nestAttributeName));
+        
+        ((ArrayList) data).add(op);
+        
+        return data; 
 	}
 
 	
