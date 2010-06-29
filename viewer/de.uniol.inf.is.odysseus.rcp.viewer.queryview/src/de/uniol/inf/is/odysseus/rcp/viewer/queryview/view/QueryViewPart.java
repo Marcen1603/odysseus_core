@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TableViewer;
@@ -42,69 +44,80 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 
 	@Override
 	public void createPartControl(Composite parent) {
-		tableViewer = new TableViewer(parent, SWT.SINGLE);
+		
+		Composite tableComposite = new Composite( parent, SWT.NONE);
+		TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		tableComposite.setLayout(tableColumnLayout);
+		
+		tableViewer = new TableViewer(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
 		
 		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		idColumn.getColumn().setText("ID");
-		idColumn.getColumn().setWidth(50);
+//		idColumn.getColumn().setWidth(50);
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(String.valueOf(((IQuery) cell.getElement()).getID()));
 			}
 		});
+		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(5,25,true));
 
 		TableViewerColumn statusColumn = new TableViewerColumn( tableViewer, SWT.NONE ) ;
 		statusColumn.getColumn().setText("Status");
-		statusColumn.getColumn().setWidth(100);
+//		statusColumn.getColumn().setWidth(100);
 		statusColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText( ((IQuery)cell.getElement()).isRunning() == true ? "Running" : "Stopped");
 			}
 		});
+		tableColumnLayout.setColumnData(statusColumn.getColumn(), new ColumnWeightData(10,50,true));
 		
 		TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		priorityColumn.getColumn().setText("Priority");
-		priorityColumn.getColumn().setWidth(100);
+//		priorityColumn.getColumn().setWidth(100);
 		priorityColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(String.valueOf(((IQuery) cell.getElement()).getPriority()));
 			}
 		});
+		tableColumnLayout.setColumnData(priorityColumn.getColumn(), new ColumnWeightData(10,50,true));
 		
 		TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		parserIdColumn.getColumn().setText("Parser");
-		parserIdColumn.getColumn().setWidth(100);
+//		parserIdColumn.getColumn().setWidth(100);
 		parserIdColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(((IQuery) cell.getElement()).getParserId());
 			}
 		});
+		tableColumnLayout.setColumnData(parserIdColumn.getColumn(), new ColumnWeightData(10,50,true));
 
 		TableViewerColumn userColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		userColumn.getColumn().setText("User");
-		userColumn.getColumn().setWidth(400);
+//		userColumn.getColumn().setWidth(400);
 		userColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(((IQuery) cell.getElement()).getUser().getUsername());
 			}
 		});
+		tableColumnLayout.setColumnData(userColumn.getColumn(), new ColumnWeightData(20,75,true));
 		
 		TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		queryTextColumn.getColumn().setText("Query");
-		queryTextColumn.getColumn().setWidth(400);
+//		queryTextColumn.getColumn().setWidth(400);
 		queryTextColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(((IQuery) cell.getElement()).getQueryText());
 			}
 		});
+		tableColumnLayout.setColumnData(queryTextColumn.getColumn(), new ColumnWeightData(80,200,true));
 		
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(queries);
