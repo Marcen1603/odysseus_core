@@ -66,6 +66,13 @@
 		</SymbolElement>
 	</Symbol>
 
+	<Symbol nodeName="MetadataCreationPO">
+		<Size width="91" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="metadataCreationPO"/>
+		</SymbolElement>
+	</Symbol>
+
 	<Symbol nodeName="ByteBufferReceiverPO">
 		<Size width="48" height="48"/>
 		<SymbolElement type="image">
@@ -165,6 +172,13 @@
 		</SymbolElement>
 	</Symbol>
 
+	<Symbol nodeName="RelationalMapPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="mapPO" />
+		</SymbolElement>
+	</Symbol>
+
 	<Symbol nodeName="PredictionPO">
 		<Size width="92" height="28"/>
 		<SymbolElement type="image">
@@ -178,12 +192,28 @@
 			<Parameter key="resource" value="splitPO" />
 		</SymbolElement>
 	</Symbol>	
-			
+
+	<Symbol nodeName="SlidingTimeWindowTIPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="windowPO" />
+		</SymbolElement>
+	</Symbol>	
+
+	<Symbol nodeName="SlidingAdvanceTimeWindowTIPO">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="windowPO" />
+		</SymbolElement>
+	</Symbol>	
+
 	<Default>
 		<Size width="92" height="27"/>
 		<SymbolElement type="image">
             <Parameter key="resource" value="pipe"/>
 		</SymbolElement>
 	</Default>
+
+	
 			
 </Symbols>

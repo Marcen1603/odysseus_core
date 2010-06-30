@@ -12,9 +12,12 @@
 	<Image source="viewer_cfg/selectPO.png" name="selectPO" />
 	<Image source="viewer_cfg/projectPO.png" name="projectPO" />
 	<Image source="viewer_cfg/joinPO.png" name="joinPO" />
+
 	<Image source="viewer_cfg/metadataPO.png" name="metadataPO" />
+	<Image source="viewer_cfg/metadataCreationPO.png" name="metadataCreationPO" />
+
 	<Image source="viewer_cfg/accessPO.png" name="accessPO" />
-	<Image source="viewer_cfg/pipe.png" name="aggrGroup" />
+	<Image source="viewer_cfg/aggregatePO.png" name="aggrGroup" />
 	
 	<Image source="viewer_cfg/prioBuffer.png" name="prioBuffer" />
 	<Image source="viewer_cfg/directInterlinkBuffer.png" name="directInterlinkBuffer" />
@@ -31,6 +34,6 @@
 	<Image source="viewer_cfg/splitPO.png" name="splitPO" />
 	<Image source="viewer_cfg/priorityPO.png" name="priorityPO" />
 	<Image source="viewer_cfg/fixedsetPO.png" name="fixedSetPO" />
-
+	<Image source="viewer_cfg/windowPO.png" name="windowPO" />	
 </Resources>
 
