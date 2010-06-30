@@ -44,6 +44,11 @@ public class ObjectTrackingNestPO
 		<M extends ObjectTrackingMetadata<Object>> 
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
+	/*
+	 * For processing internally, only the super class SDFAttributeList
+	 * is needed. The AO is dealing with SDFAttributeListExtended.  
+	 */
+	
 	private SDFAttributeList inputSchema;
 	private SDFAttributeList outputSchema;
 	private SDFAttributeList groupingAttributes;
@@ -284,6 +289,7 @@ public class ObjectTrackingNestPO
 		MVRelationalTuple<M> delivery = this.deliver();
 		if(delivery != null) {
 			this.transfer(delivery);
+			System.out.println(delivery);
 		} 
 	}	
 
@@ -627,6 +633,7 @@ public class ObjectTrackingNestPO
 		 * 
 		 * @TODO n^2 + m^2, n is number of tuples in the partial, m
 		 * number of attributes. better implementation, please.  
+		 * -- implement hashmap the idea!
 		 */
 		
 		for(MVRelationalTuple<M> t : tuples) {
@@ -635,7 +642,8 @@ public class ObjectTrackingNestPO
 					for(Object o : t.getAttributes()) {
 						for(Object o2 : t.getAttributes()) {
 							if(o.equals(o2)) {
-								o2 = o;
+								o2 = null;
+								o2 = o;								
 							}
 						}
 					}

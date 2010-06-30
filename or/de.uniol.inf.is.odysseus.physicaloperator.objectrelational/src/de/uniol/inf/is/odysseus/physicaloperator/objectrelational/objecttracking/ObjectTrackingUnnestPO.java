@@ -25,6 +25,11 @@ public class ObjectTrackingUnnestPO
 	<T extends ObjectTrackingMetadata<Object>> extends
 	AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>> {
 
+	/*
+	 * For processing internally, only the super class SDFAttributeList
+	 * is needed. The AO is dealing with SDFAttributeListExtended.  
+	 */
+	
     private SDFAttributeList inputSchema;
     private SDFAttributeList outputSchema;
 	private SDFAttribute nestingAttribute;
@@ -41,9 +46,7 @@ public class ObjectTrackingUnnestPO
      * to their time stamps.
      */
     
-    private DefaultTISweepArea<
-    	MVRelationalTuple<T>
-    > q;
+    private DefaultTISweepArea<MVRelationalTuple<T>> q;
     	
 	/**
 	 * @param toNestAttributes attributes to nest
@@ -67,10 +70,7 @@ public class ObjectTrackingUnnestPO
 		
 		this.nonNestAttributesPos = new int[this.nonNestAttributesCount]; 
 		
-		this.q = 
-			new DefaultTISweepArea<
-				MVRelationalTuple<T>
-			>();
+		this.q = new DefaultTISweepArea<MVRelationalTuple<T>>();
 		
 		this.calcAttributePos();
 	}

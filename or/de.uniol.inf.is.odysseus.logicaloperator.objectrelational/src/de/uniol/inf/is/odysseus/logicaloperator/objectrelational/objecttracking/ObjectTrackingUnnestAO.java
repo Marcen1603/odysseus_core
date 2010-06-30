@@ -1,19 +1,25 @@
 package de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking;
 
+import java.util.HashMap;
+
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
- * UnnestAO 
+ * ObjectTrackingUnnestAO
  * 
  * @author Jendrik Poloczek
  */
 public class ObjectTrackingUnnestAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	private SDFAttributeList outputSchema = null;
-	private SDFAttribute nestAttribute = null;
+	private SDFAttributeListExtended outputSchema;
+	private SDFAttribute nestAttribute;
 
 	public ObjectTrackingUnnestAO() {
 		super();
@@ -31,7 +37,7 @@ public class ObjectTrackingUnnestAO extends UnaryLogicalOp {
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFAttributeListExtended getOutputSchema() {
 		if(outputSchema == null) 
 			this.outputSchema = calcOutputSchema(this.getInputSchema());
 		return outputSchema;
@@ -46,24 +52,39 @@ public class ObjectTrackingUnnestAO extends UnaryLogicalOp {
 	 * remove nesting attribute.
 	 */	
 	
-	private SDFAttributeList calcOutputSchema(SDFAttributeList inputSchema) {
-	    SDFAttributeList outputSchema;
+	private SDFAttributeListExtended calcOutputSchema(
+		SDFAttributeList sdfAttributeList
+	) {
+	    SDFAttributeListExtended outputSchema;
 	    SDFAttributeList subAttributes; 	   
 	    
-	    outputSchema = new SDFAttributeList();
+	    outputSchema = new SDFAttributeListExtended();
 	    subAttributes = this.nestAttribute.getSubattributes();
-	    
-	    for(SDFAttribute attribute : inputSchema) {
+	    	    
+	    for(SDFAttribute attribute : sdfAttributeList) {
 	        if(!attribute.equals(this.nestAttribute)) {
 	            outputSchema.add(attribute);
 	        }
 	    }
 	    
 		outputSchema.addAll(subAttributes);
+		
+	    /*
+	     * For the use of SDFAttributeListExtended for various 
+	     * ObjectTracking operators prediction functions have to be
+	     * specified as metadata in the schema. For evaluating 
+	     * purpose prediction functions are empty.
+	     */
+	    	    
+	    outputSchema.setMetadata(
+	    	SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, 
+	    	new HashMap<IPredicate, IPredictionFunction>()
+    	);
+		
 		return outputSchema;
 	}
 	
 	public SDFAttribute getNestAttribute() {
-		return nestAttribute;
+		return this.nestAttribute;
 	}
 }

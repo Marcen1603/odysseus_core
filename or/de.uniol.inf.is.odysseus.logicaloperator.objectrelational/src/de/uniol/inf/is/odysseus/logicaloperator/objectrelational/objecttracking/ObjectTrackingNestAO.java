@@ -1,18 +1,25 @@
 package de.uniol.inf.is.odysseus.logicaloperator.objectrelational.objecttracking;
 
+import java.util.HashMap;
+
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
 
 /**
+ * ObjectTrackingNestAO
+ * 
  * @author Jendrik Poloczek
  */
 public class ObjectTrackingNestAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	private SDFAttributeList outputSchema;
-	private SDFAttributeList nestingAttributes;
+	private SDFAttributeListExtended outputSchema;
+	private SDFAttributeListExtended nestingAttributes;
 	private SDFAttribute nestAttribute;
 	private String nestAttributeName;
 
@@ -33,7 +40,7 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFAttributeListExtended getOutputSchema() {
 		if(this.outputSchema == null) {
 			this.outputSchema = calcOutputSchema();
 		}
@@ -59,12 +66,13 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 	 * modify input schema, removing attributes to nest, and 
 	 * adding new nesting attribute.
 	 */	
-	private SDFAttributeList calcOutputSchema() {
-	    SDFAttributeList outputSchema;
-	    SDFAttributeList groupingAttributes;
+	@SuppressWarnings("unchecked")
+	private SDFAttributeListExtended calcOutputSchema() {
+	    SDFAttributeListExtended outputSchema;
+	    SDFAttributeListExtended groupingAttributes;
 	    SDFAttribute nestAttribute;
 	    
-	    groupingAttributes = new SDFAttributeList();
+	    groupingAttributes = new SDFAttributeListExtended();
 
 	    for(SDFAttribute attribute : this.getInputSchema()) {
 	        if(!this.nestingAttributes.contains(attribute)) {
@@ -76,7 +84,19 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 	    nestAttribute.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
 	    nestAttribute.setSubattributes(this.nestingAttributes);
 	    
-	    outputSchema = new SDFAttributeList();
+	    outputSchema = new SDFAttributeListExtended();
+	    
+	    /*
+	     * For the use of SDFAttributeListExtended for various 
+	     * ObjectTracking operators prediction functions have to be
+	     * specified as metadata in the schema. For evaluating 
+	     * purpose prediction functions are empty.
+	     */
+	    	    
+	    outputSchema.setMetadata(
+	    	SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, 
+	    	new HashMap<IPredicate, IPredictionFunction>()
+    	);
 	   
 	    for(SDFAttribute groupingAttribute : groupingAttributes) {
 	        outputSchema.add(groupingAttribute);
@@ -86,13 +106,13 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 	    return outputSchema;
 	}
 	
-	public SDFAttributeList getNestingAttributes() {
-		return nestingAttributes;
+	public SDFAttributeListExtended getNestingAttributes() {
+		return this.nestingAttributes;
 	}
 	
-	public SDFAttributeList getGroupingAttributes() {
-	    SDFAttributeList groupingAttributes;
-        groupingAttributes = new SDFAttributeList();
+	public SDFAttributeListExtended getGroupingAttributes() {
+	    SDFAttributeListExtended groupingAttributes;
+        groupingAttributes = new SDFAttributeListExtended();
 
         for(SDFAttribute attribute : this.getInputSchema()) {
             if(!this.nestingAttributes.contains(attribute)) {
@@ -107,7 +127,9 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 		return nestAttribute;
 	}
 	
-	public void setNestingAttributes(SDFAttributeList nestingAttributes) {
+	public void setNestingAttributes(
+		SDFAttributeListExtended nestingAttributes
+	) {
 		this.nestingAttributes = nestingAttributes.clone(); 
 	}
 }

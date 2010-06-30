@@ -726,14 +726,14 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         
         AbstractLogicalOperator input;
         AttributeResolver attrRes;
-        SDFAttributeList nestingAttributes;
+        SDFAttributeListExtended nestingAttributes;
         ASTIdentifier nestAttributeIdentifier;
         String nestAttributeName;
         ArrayList newData;
         
         attrRes = (AttributeResolver) ((ArrayList) data).get(0);
         
-        nestingAttributes = new SDFAttributeList();
+        nestingAttributes = new SDFAttributeListExtended();
         newData = new ArrayList();
         
         newData.add(attrRes);

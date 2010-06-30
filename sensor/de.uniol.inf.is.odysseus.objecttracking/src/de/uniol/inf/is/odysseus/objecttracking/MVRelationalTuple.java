@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 @SuppressWarnings("unchecked")
 public class MVRelationalTuple<T extends IProbability> extends
 		RelationalTuple<T> implements Serializable {
-
+	
 	/**
 	 * 
 	 */
