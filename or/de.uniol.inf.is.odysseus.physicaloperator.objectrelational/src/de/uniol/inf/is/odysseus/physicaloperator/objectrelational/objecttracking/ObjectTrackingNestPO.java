@@ -367,9 +367,48 @@ public class ObjectTrackingNestPO
 		return false;
 	}
 	
+	/**
+	 * Evaluating all partials before punctuation timestamp.
+	 * Getting the min group (with the smallest timestamp) first, 
+	 * then the next, and passing all partials before the 
+	 * punctuation timestamp to
+	 * 
+	 * @param timestamp writing out all tuples before this timestamp
+	 * @param port has to be 0
+	 */
 	@Override
     public void processPunctuation(PointInTime timestamp, int port) {
-    	sendPunctuation(timestamp);    	
+    	sendPunctuation(timestamp);    
+    	    	
+    	Integer minGroup = g.min();
+    	
+    	while(minGroup != -1) {
+	    	g.removeLastMin();
+	    	ObjectTrackingNestTISweepArea<M> sa = groups.get(minGroup);
+	    	
+	    	Iterator<ObjectTrackingPartialNest<M>> it = 
+	    		sa.extractElementsBefore(timestamp);
+	    	
+	    	Object[] groupingValues = sa.getGroupingValues();
+	    	
+	    	while(it.hasNext()) {
+	    		ObjectTrackingPartialNest<M> partial = it.next();
+	    		q.insert(this.createOutputTuple(groupingValues, partial));
+	    	}	    	
+	    	minGroup = g.min();
+    	}
+    	
+    	/*
+    	 * Writing out the tuples of the min-priority queue, the oldest 
+    	 * first, all before the punctuation timestamp.
+    	 */
+    	
+    	Iterator<MVRelationalTuple<M>> itQ = 
+    		q.extractElementsBefore(timestamp);
+    	
+    	while(itQ.hasNext()) {
+    		transfer(itQ.next());
+    	}
     }
 
     /**
