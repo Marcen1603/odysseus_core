@@ -33,7 +33,7 @@ public class UnnestAO extends UnaryLogicalOp {
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		if(outputSchema == null) 
-			calcOutputSchema(this.getInputSchema());
+			this.outputSchema = calcOutputSchema(this.getInputSchema());
 		return outputSchema;
 	}
 
@@ -60,7 +60,6 @@ public class UnnestAO extends UnaryLogicalOp {
 	    }
 	    
 		outputSchema.addAll(subAttributes);
-		System.out.println(outputSchema);
 		return outputSchema;
 	}
 	

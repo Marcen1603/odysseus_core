@@ -33,12 +33,12 @@ public class ObjectTrackingUnnestAO extends UnaryLogicalOp {
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		if(outputSchema == null) 
-			calcOutputSchema(this.getInputSchema());
+			this.outputSchema = calcOutputSchema(this.getInputSchema());
 		return outputSchema;
 	}
 
 	public void setNestAttribute(SDFAttribute nestAttribute) {
-		this.nestAttribute = nestAttribute.clone();
+		this.nestAttribute = nestAttribute.clone();		
 	}
 	
 	/**
@@ -60,7 +60,6 @@ public class ObjectTrackingUnnestAO extends UnaryLogicalOp {
 	    }
 	    
 		outputSchema.addAll(subAttributes);
-		System.out.println(outputSchema);
 		return outputSchema;
 	}
 	

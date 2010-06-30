@@ -205,11 +205,7 @@ public class ObjectTrackingNestPO
 		} else {
 			emptySA = false;
 		}
-		
-		/*
-		 * @TODO: incomingTuple is modified by restrict
-		 */
-		
+
 		MVRelationalTuple<M> restrictedToNonGrouping 
 			= (MVRelationalTuple<M>) 
 			incomingTuple.restrict(this.nonGroupingAttributesPos, false);
@@ -288,12 +284,12 @@ public class ObjectTrackingNestPO
 		MVRelationalTuple<M> delivery = this.deliver();
 		if(delivery != null) {
 			this.transfer(delivery);
-			System.out.println(delivery);
-			for(SetEntry<MVRelationalTuple<M>> sub : 
-				(SetEntry[]) delivery.getAttribute(1)) 
-			{
-				System.out.println("|_ " + sub.getValue());
-			}
+//			System.out.println(delivery);
+//			for(SetEntry<MVRelationalTuple<M>> sub : 
+//				(SetEntry[]) delivery.getAttribute(this.nestingAttributePos)) 
+//			{
+//				System.out.println("|_ " + sub.getValue());
+//			}
 		} 
 	}	
 

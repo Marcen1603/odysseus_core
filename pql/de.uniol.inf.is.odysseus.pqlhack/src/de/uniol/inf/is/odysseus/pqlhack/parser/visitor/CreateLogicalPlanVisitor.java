@@ -725,20 +725,19 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         op = new ObjectTrackingNestAO();
         
         AbstractLogicalOperator input;
-        IAttributeResolver attrRes;
+        AttributeResolver attrRes;
         SDFAttributeList nestingAttributes;
         ASTIdentifier nestAttributeIdentifier;
         String nestAttributeName;
         ArrayList newData;
         
-        attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+        attrRes = (AttributeResolver) ((ArrayList) data).get(0);
         
         nestingAttributes = new SDFAttributeList();
         newData = new ArrayList();
         
         newData.add(attrRes);
-        
-        
+                
         ArrayList returnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
         input = (AbstractLogicalOperator) returnData.get(1);
         int sourceOutPort = ((Integer)returnData.get(2)).intValue();
@@ -757,10 +756,12 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
             String attrString = ((ASTIdentifier) attrIdentifier).getName();
             SDFAttribute attr = attrRes.getAttribute(attrString);
             nestingAttributes.add(attr);            
-        }
+        }                
         
-        op.setNestAttributeName(nestAttributeName);
         op.setNestingAttributes(nestingAttributes);
+        op.setNestAttributeName(nestAttributeName);        
+        
+        attrRes.addAttribute(op.getNestAttribute());
         
         ((ArrayList) data).add(op);
         ((ArrayList) data).add(new Integer(0));
@@ -813,11 +814,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         nestAttributeIdentifier = 
             (ASTIdentifier) node.jjtGetChild(1);
         
-        nestAttributeName = nestAttributeIdentifier.getName();  
-        System.out.println(nestAttributeName);
+        nestAttributeName = nestAttributeIdentifier.getName();          
         op.setNestAttribute(attrRes.getAttribute(nestAttributeName));
         
         ((ArrayList) data).add(op);
+        ((ArrayList) data).add(new Integer(0));
         
         return data; 
 	}

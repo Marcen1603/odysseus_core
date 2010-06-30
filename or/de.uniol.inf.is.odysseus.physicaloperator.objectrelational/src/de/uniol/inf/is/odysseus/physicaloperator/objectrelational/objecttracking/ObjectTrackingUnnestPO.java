@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.objectrelational.objecttracking;
 
+import java.util.Iterator;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
@@ -83,12 +85,12 @@ public class ObjectTrackingUnnestPO
     	this.nestingAttribute = nestingAttribute.clone();
     	this.q = unnestPO.q.clone();
     }
-
+    
     @SuppressWarnings("unchecked")
 	protected void process_next(
     	MVRelationalTuple<T> input, 
     	int port
-    ) {
+    ) {    	    	
         int index;
         Object[] outputValues;
         MVRelationalTuple<T> outputTuple;        
@@ -120,14 +122,21 @@ public class ObjectTrackingUnnestPO
                 (T) subTuples[i].getMetadata().clone()
             );
             
-            this.q.insert(outputTuple.clone());
+            q.insert(outputTuple);                         
         }   
+               
+        /* 
+         * The min-priority queue q is polling tuple with the smallest 
+         * timestamp first. 
+         */
+            
+        Iterator<MVRelationalTuple<T>> old = q.iterator();
         
-        MVRelationalTuple<T> delivery = q.poll();
-        if(delivery != null) {
-        	transfer(delivery);
-        	System.out.println(delivery);
-        } 
+        while(old.hasNext()) {
+        	MVRelationalTuple<T> oldTuple = old.next();
+        	this.transfer(oldTuple);
+        	System.out.println(oldTuple);
+        }      
     } 
     
     /**
@@ -137,44 +146,11 @@ public class ObjectTrackingUnnestPO
      * @param object
      * @param port
      */
-    @SuppressWarnings("unchecked")
 	final public void processNextTest(
     	MVRelationalTuple<T> input, 
     	int port
     ) {
-        int index;
-        Object[] outputValues;
-        MVRelationalTuple<T> outputTuple;        
-        
-        index = 0;
-        outputValues = new Object[this.outputAttributesCount];
-        
-        MVRelationalTuple<T>[] subTuples = 
-            this.unnest(input);
-        
-        for(int i = 0; i < subTuples.length; i++) {
-        	
-            for(index = 0; index < this.nonNestAttributesCount; index++) {               
-                outputValues[index] = 
-                    input.getAttribute(this.nonNestAttributesPos[index]);
-            }
-            
-            for(int k = 0; k < this.nestedAttributesCount; k++) {
-                outputValues[index] = subTuples[i].getAttribute(k);
-                index++;
-            }
-            
-            outputTuple = 
-            	new MVRelationalTuple<T>(              
-            			outputValues
-            	);
-            
-            outputTuple.setMetadata(
-                (T) subTuples[i].getMetadata().clone()
-            );
-            
-            this.q.insert(outputTuple.clone());
-        }
+    	this.process_next(input, port);
     }
     
     public MVRelationalTuple<T> deliver() {

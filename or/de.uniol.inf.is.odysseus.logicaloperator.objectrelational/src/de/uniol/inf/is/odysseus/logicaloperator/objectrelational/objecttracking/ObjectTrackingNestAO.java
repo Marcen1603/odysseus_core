@@ -49,6 +49,10 @@ public class ObjectTrackingNestAO extends UnaryLogicalOp {
 		this.nestAttributeName = nestAttributeName;			
 		this.nestAttribute = 
 			new SDFAttribute(nestAttributeName);
+		
+		for(SDFAttribute nestingAttribute : this.nestingAttributes) {
+			this.nestAttribute.addSubattribute(nestingAttribute);
+		}
 	}
 	
 	/**
