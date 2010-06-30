@@ -24,7 +24,7 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 			if (executor != null) {
 				// TODO: User einfuegen, der diese Query ausf�hrt
 				User user = new User("TODO.SetUser");
-				executor.addQuery(queryToExecute, parserToUse, user, new ParameterDefaultRoot(new MySink()));
+				executor.addQuery(queryToExecute, parserToUse, user, new ParameterDefaultRoot(new MySink()), Activator.getTrafoConfigParam());
 				
 			} else {
 				System.out.println("Kein ExecutorService gefunden");

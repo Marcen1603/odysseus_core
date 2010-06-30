@@ -29,7 +29,8 @@ public class NMSNCommand extends AbstractHandler implements IHandler {
 				try {
 					// TODO: User einfuegen, der diese Query ausführt
 					User user = new User("TODO.SetUser");
-					exec.addQuery(s, "CQL", user);
+					 
+					exec.addQuery(s, "CQL", user, Activator.getTrafoConfigParam());
 				} catch (PlanManagementException e) {
 					e.printStackTrace();
 				} catch (Exception e) {

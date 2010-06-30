@@ -3,7 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.viewer.query.impl;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -13,6 +18,8 @@ public class Activator extends Plugin {
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer.query";
 	private static Activator plugin;
 	private static IAdvancedExecutor executor = null;
+	private static ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 
 	public Activator() {
 	}
@@ -56,5 +63,9 @@ public class Activator extends Plugin {
 	// Declarative Service
 	public void unbindExecutor(IAdvancedExecutor ex) {
 		executor = null;
+	}
+	
+	public static AbstractQueryBuildParameter getTrafoConfigParam() {
+		return trafoConfigParam;
 	}
 }
