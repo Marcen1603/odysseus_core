@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.physicaloperator.objectrelational;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import java.util.Iterator;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -14,7 +16,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Jendrik Poloczek
  */
-public class UnnestPO<T extends IMetaAttribute> extends
+public class UnnestPO<T extends ITimeInterval> extends
 		AbstractPipe<ObjectRelationalTuple<T>, ObjectRelationalTuple<T>> {
 
     private SDFAttributeList inputSchema;
@@ -33,7 +35,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
      * to their time stamps.
      */
     
-    private DefaultTISweepArea<ObjectRelationalTuple<TimeInterval>> q;
+    private DefaultTISweepArea<ObjectRelationalTuple<T>> q;
     	
 	/**
 	 * @param toNestAttributes attributes to nest
@@ -56,7 +58,7 @@ public class UnnestPO<T extends IMetaAttribute> extends
 		    this.nestingAttribute.getAmountOfSubattributes();
 		
 		this.nonNestAttributesPos = new int[this.nonNestAttributesCount]; 
-		this.q = new DefaultTISweepArea<ObjectRelationalTuple<TimeInterval>>();
+		this.q = new DefaultTISweepArea<ObjectRelationalTuple<T>>();
 		
 		this.calcAttributePos();
 	}
@@ -72,6 +74,62 @@ public class UnnestPO<T extends IMetaAttribute> extends
     	this.q = unnestPO.q.clone();
     }
 
+
+    @SuppressWarnings("unchecked")
+	@Override
+    final protected void process_next(
+        ObjectRelationalTuple<T> input,
+        int port
+    ) {
+        int index;
+        Object[] outputValues;
+        ObjectRelationalTuple<T> outputTuple;        
+        
+        index = 0;
+        outputValues = new Object[this.outputAttributesCount];
+        
+        ObjectRelationalTuple<T>[] subTuples = 
+            this.unnest(input);
+        
+        for(int i = 0; i < subTuples.length; i++) {
+        	
+            for(index = 0; index < this.nonNestAttributesCount; index++) {               
+                outputValues[index] = 
+                    input.getAttribute(this.nonNestAttributesPos[index]);
+            }
+            
+            for(int k = 0; k < this.nestedAttributesCount; k++) {
+                outputValues[index] = subTuples[i].getAttribute(k);
+                index++;
+            }
+            
+            outputTuple = 
+            	new ObjectRelationalTuple<T>(
+            			this.outputSchema,
+            			outputValues
+            	);                  
+            
+            outputTuple.setMetadata(
+                (T) subTuples[i].getMetadata().clone()
+            );
+            
+            q.insert(outputTuple);   
+        }
+        
+        /* 
+         * The min-priority queue q is polling tuple with the smallest 
+         * timestamp first. 
+         */
+            
+        Iterator<ObjectRelationalTuple<T>> old = q.iterator();
+        
+        while(old.hasNext()) {
+        	ObjectRelationalTuple<T> oldTuple = old.next();
+        	this.transfer(oldTuple);
+        	System.out.println(oldTuple);
+        }              
+    }
+    
     /**
      * Instead of transferring the objects to the subscriber, we return the 
      * values to assert correctness in a test case.
@@ -81,39 +139,12 @@ public class UnnestPO<T extends IMetaAttribute> extends
      */
     
     final public void processNextTest
-    	(ObjectRelationalTuple<TimeInterval> input, int port) {
-
-        int index;
-        Object[] outputValues;
-        ObjectRelationalTuple<TimeInterval> outputTuple;        
-        
-        index = 0;
-        outputValues = new Object[this.outputAttributesCount];
-        
-        ObjectRelationalTuple<TimeInterval>[] subTuples = 
-            this.unnest(input);
-        
-        for(int i = 0; i < subTuples.length; i++) {
-            for(index = 0; index < this.nonNestAttributesCount; index++) {               
-                outputValues[index] = 
-                    input.getAttribute(this.nonNestAttributesPos[index]);
-            }
-            for(int k = 0; k < this.nestedAttributesCount; k++) {
-                outputValues[index] = subTuples[i].getAttribute(k);
-                index++;
-            }
-            outputTuple = new ObjectRelationalTuple<TimeInterval>(
-                this.outputSchema,
-                outputValues
-            );
-            outputTuple.setMetadata(
-                subTuples[i].getMetadata().clone()
-            );
-            this.q.insert(outputTuple.clone());
-        }
+    	(ObjectRelationalTuple<T> input, int port) {
+    	
+    	this.process_next(input, port);
     }
     
-    public ObjectRelationalTuple<TimeInterval> deliver() {
+    public ObjectRelationalTuple<T> deliver() {
         return this.q.poll();
     }
     
@@ -148,19 +179,6 @@ public class UnnestPO<T extends IMetaAttribute> extends
     	sendPunctuation(timestamp);
     }
 
-    @Override
-    final protected void process_next(
-        ObjectRelationalTuple<T> tuple,
-        int port
-    ) {
-    	try {			
-    		// do nothing
-    		transfer(tuple);
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    }
-
     private void calcAttributePos() {
         int index;
 	    String nestingAttrName;
@@ -179,8 +197,8 @@ public class UnnestPO<T extends IMetaAttribute> extends
     }
     
     @SuppressWarnings("unchecked")
-    private ObjectRelationalTuple<TimeInterval>[] unnest(
-        ObjectRelationalTuple<TimeInterval> input
+    private ObjectRelationalTuple<T>[] unnest(
+        ObjectRelationalTuple<T> input
     ) {
         int setLength;
         SetEntry[] set;
