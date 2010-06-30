@@ -32,7 +32,7 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 			for (String q : queries) {
 				try {
 					User user = new User("TODO.SetUser");
-					executor.addQuery(q, "CQL", user, new ParameterDefaultRoot(new MySink()));
+					executor.addQuery(q, "CQL", user, new ParameterDefaultRoot(new MySink()), Activator.getTrafoConfigParam());
 				} catch (PlanManagementException e) {
 					e.printStackTrace();
 				}
