@@ -86,6 +86,20 @@ public class ObjectTrackingUnnestPO
     	this.q = unnestPO.q.clone();
     }
     
+    public void process_done() {
+    	System.out.println(
+    		"ObjectTrackingUnnestPO done: " + 
+    		System.nanoTime()
+    	);
+    }
+    
+    protected void process_close() {
+    	System.out.println(
+    		"ObjectTrackingUnnestPO closed: " + 
+    		System.nanoTime()
+    	);
+    }
+    
     @SuppressWarnings("unchecked")
 	protected void process_next(
     	MVRelationalTuple<T> input, 
@@ -124,7 +138,7 @@ public class ObjectTrackingUnnestPO
             
             q.insert(outputTuple);                         
         }   
-               
+           
         /* 
          * The min-priority queue q is polling tuple with the smallest 
          * timestamp first. 
@@ -134,8 +148,7 @@ public class ObjectTrackingUnnestPO
         
         while(old.hasNext()) {
         	MVRelationalTuple<T> oldTuple = old.next();
-        	this.transfer(oldTuple);
-        	System.out.println(oldTuple);
+        	this.transfer(oldTuple);        	
         }      
     } 
     
@@ -158,8 +171,11 @@ public class ObjectTrackingUnnestPO
     }
     
     public boolean isDone() {
-        return this.q.size() == 0;
-    }
+       	if(this.q.size() == 0) {
+       		return this.delegateSink.isDone();        		
+       	} else
+      		return false;
+    }        
     
     public SDFAttributeList getInputSchema() {
         return this.inputSchema;

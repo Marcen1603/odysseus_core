@@ -309,10 +309,21 @@ public class ObjectTrackingNestPO
 	
 	@Override
 	public void process_done() {
+		System.out.println(
+	    	"ObjectTrackingNestPO done signal: " + 
+	    	System.nanoTime()
+	    );
 		for(MVRelationalTuple<M> t : this.q) {
 			this.transfer(t);
 			System.out.println(t);
 		}
+	}
+	
+	protected void process_close() {
+		System.out.println(
+		    "ObjectTrackingNestPO closed: " + 
+		    System.nanoTime()
+		);
 	}
 
 	/**
@@ -350,7 +361,10 @@ public class ObjectTrackingNestPO
 	}
 
 	public boolean isDone() {
-		return (q.size() == 0);
+		if(q.size() == 0) {			
+			return this.delegateSink.isDone();			
+		}
+		return false;
 	}
 	
 	@Override
