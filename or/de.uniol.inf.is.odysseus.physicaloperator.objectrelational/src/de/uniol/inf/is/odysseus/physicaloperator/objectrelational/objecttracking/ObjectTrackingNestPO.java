@@ -284,12 +284,6 @@ public class ObjectTrackingNestPO
 		MVRelationalTuple<M> delivery = this.deliver();
 		if(delivery != null) {
 			this.transfer(delivery);
-//			System.out.println(delivery);
-//			for(SetEntry<MVRelationalTuple<M>> sub : 
-//				(SetEntry[]) delivery.getAttribute(this.nestingAttributePos)) 
-//			{
-//				System.out.println("|_ " + sub.getValue());
-//			}
 		} 
 	}	
 
@@ -361,10 +355,7 @@ public class ObjectTrackingNestPO
 	}
 
 	public boolean isDone() {
-		if(q.size() == 0) {			
-			return this.delegateSink.isDone();			
-		}
-		return false;
+		return (q.size() == 0);
 	}
 	
 	/**
@@ -596,8 +587,7 @@ public class ObjectTrackingNestPO
 		 * the new partial, then check it against the smaller one, 
 		 * if the smaller one got tuples not existent in the bigger 
 		 * one, add it. 
-		 */
-		
+		 */		
 		
 		boolean exists = false;
 		
@@ -630,6 +620,29 @@ public class ObjectTrackingNestPO
 				exists = false;
 			}
 		}
+		
+		/*
+		 * Referencing optimization. If and only if a value of a tuple in the 
+		 * merged partial corresponds to another value of a tuple.
+		 * 
+		 * @TODO n^2 + m^2, n is number of tuples in the partial, m
+		 * number of attributes. better implementation, please.  
+		 */
+		
+		for(MVRelationalTuple<M> t : tuples) {
+			for(MVRelationalTuple<M> t2 : tuples) {
+				if(t != t2) {
+					for(Object o : t.getAttributes()) {
+						for(Object o2 : t.getAttributes()) {
+							if(o.equals(o2)) {
+								o2 = o;
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		
 		for(MVRelationalTuple<M> t : tuples) {
 			M metaForTuple = t.getMetadata();

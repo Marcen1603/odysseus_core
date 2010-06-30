@@ -171,10 +171,7 @@ public class ObjectTrackingUnnestPO
     }
     
     public boolean isDone() {
-       	if(this.q.size() == 0) {
-       		return this.delegateSink.isDone();        		
-       	} else
-      		return false;
+       	return (this.q.size() == 0);
     }        
     
     public SDFAttributeList getInputSchema() {
