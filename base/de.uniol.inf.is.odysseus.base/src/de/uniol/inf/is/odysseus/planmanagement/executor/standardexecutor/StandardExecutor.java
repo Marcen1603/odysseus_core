@@ -338,7 +338,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		QueryBuildParameter params = new QueryBuildParameter(parameters);
 		// assure ParameterTransformationConfiguration
 		if (params.getTransformationConfiguration() == null) {
-			params.set(new ParameterTransformationConfiguration(this.configuration.getSettingDefaultTransformationConfiguration().getValue()));
+			throw new RuntimeException("No transformation configuration set. Abort query execution.");
 		}
 		// assure ParameterBufferPlacementStrategy
 		if (params.getBufferPlacementStrategy() == null) {

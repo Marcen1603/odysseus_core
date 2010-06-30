@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.SystemLoadListener;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
 /**
  * custom OSGi console to test planoptimization scenarios
@@ -66,7 +67,7 @@ public class OptimizationTestConsole implements
 
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration("relational", ITimeInterval.class, ILatency.class));
+			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class, ILatency.class));
 
 	private String currentScheduler;
 

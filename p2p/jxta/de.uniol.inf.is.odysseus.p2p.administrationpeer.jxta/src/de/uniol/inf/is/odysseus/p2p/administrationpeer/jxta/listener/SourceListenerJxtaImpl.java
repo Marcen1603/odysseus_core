@@ -8,12 +8,18 @@ import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterPriority;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.QueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
 /**
  * Operator-Peers mit Quellen werden separat ausgeschrieben, so dass diese gesondert gesucht und eingetragen werden
@@ -27,6 +33,9 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 	private int WAIT_TIME=10000;
 	
 	private IAdvancedExecutor executor;
+	
+	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 
 	public IAdvancedExecutor getExecutor() {
 		return executor;
@@ -69,7 +78,7 @@ public class SourceListenerJxtaImpl implements ISourceListener, DiscoveryListene
 						if(DataDictionary.getInstance().sourceTypeMap.isEmpty() || !DataDictionary.getInstance().sourceTypeMap.containsKey(adv.getSourceName())) {
 							// TODO: User einfuegen, der diese Query ausführt
 							User user = new User("TODO.SetUser");
-							getExecutor().addQuery(adv.getSourceScheme(), "CQL", user, new ParameterPriority(2));
+							getExecutor().addQuery(adv.getSourceScheme(), "CQL", user, this.trafoConfigParam, new ParameterPriority(2));
 						}
 						
 					}

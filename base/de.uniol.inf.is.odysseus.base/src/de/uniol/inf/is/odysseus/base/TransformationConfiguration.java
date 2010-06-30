@@ -11,14 +11,15 @@ public class TransformationConfiguration {
 	private final Set<String> metaTypes;
 	private final String dataType;
 	private Map<String, Object> options;
+	private ITransformationHelper transformHelper;
 
-	public TransformationConfiguration(String dataType, String... metaTypes) {
+	public TransformationConfiguration(ITransformationHelper transformHelper, String dataType, String... metaTypes) {
 		this.dataType = dataType;
 		this.metaTypes = toSet(metaTypes);
 		this.options = new HashMap<String, Object>();		
 	}
 
-	public TransformationConfiguration(final String dataType,
+	public TransformationConfiguration(ITransformationHelper transformHelper, final String dataType,
 			Class<? extends IMetaAttribute>... metaTypes) {
 		this.dataType = dataType;
 		HashSet<String> tmp = new HashSet<String>();
@@ -27,6 +28,7 @@ public class TransformationConfiguration {
 		}
 		this.metaTypes = Collections.unmodifiableSet(tmp);
 		this.options = new HashMap<String, Object>();
+		this.transformHelper = transformHelper;
 	}
 
 	public boolean metaTypesEqual(String... types) {
@@ -76,5 +78,9 @@ public class TransformationConfiguration {
 	
 	public void removeOption(String key){
 		this.options.remove(key);
+	}
+	
+	public ITransformationHelper getTransformationHelper(){
+		return this.transformHelper;
 	}
 }

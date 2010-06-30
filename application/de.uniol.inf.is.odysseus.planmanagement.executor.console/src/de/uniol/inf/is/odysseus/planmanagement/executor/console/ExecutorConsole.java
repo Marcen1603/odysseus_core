@@ -61,6 +61,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.SettingBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper;
+import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.PrintLogicalGraphVisitor;
 
@@ -233,7 +235,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration("relational", ITimeInterval.class));
+			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 
 	private LinkedList<Command> currentCommands;
 
@@ -717,7 +719,7 @@ public class ExecutorConsole implements CommandProvider,
 		q[7] = "CREATE STREAM nexmark:category2_v (id INTEGER, name STRING, description STRING, parentid INTEGER) FROM (SELECT * FROM nexmark:category2 [UNBOUNDED])";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser);
+				this.executor.addQuery(s, parser(), currentUser, this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -742,7 +744,7 @@ public class ExecutorConsole implements CommandProvider,
 		q[3] = "CREATE STREAM nexmark:category (id INTEGER, name STRING, description STRING, parentid INTEGER) SOCKET localhost : 65433";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser);
+				this.executor.addQuery(s, parser(), currentUser, this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -801,10 +803,10 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			if (outputputFilename == null || outputputFilename.length() == 0) {
 				this.executor.addQuery(q, parser(), currentUser, new ParameterDefaultRoot(
-						new MySink()));
+						new MySink()), this.trafoConfigParam);
 			} else {
 				this.executor.addQuery(q, parser(), currentUser, new ParameterDefaultRoot(
-						new FileSink(outputputFilename)));
+						new FileSink(outputputFilename)), this.trafoConfigParam);
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -823,10 +825,10 @@ public class ExecutorConsole implements CommandProvider,
 				usePriority = toBoolean(args[0]);
 				TransformationConfiguration trafoConfig;
 				if (usePriority) {
-					trafoConfig = new TransformationConfiguration("relational",
+					trafoConfig = new TransformationConfiguration(new RelationalTransformationHelper(), "relational",
 							ITimeInterval.class, IPriority.class);
 				} else {
-					trafoConfig = new TransformationConfiguration("relational",
+					trafoConfig = new TransformationConfiguration(new RelationalTransformationHelper(), "relational",
 							ITimeInterval.class);
 
 				}
@@ -851,13 +853,16 @@ public class ExecutorConsole implements CommandProvider,
 				TransformationConfiguration trafoConfig;
 				if (useObjectFusionConfig) {
 					trafoConfig = new TransformationConfiguration(
+							new BrokerTransformationHelper(),
 							"relational",
 							ITimeInterval.class.getName(),
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
 							"de.uniol.inf.is.odysseus.latency.ILatency",
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability");
 				} else {
-					trafoConfig = new TransformationConfiguration("relational",
+					trafoConfig = new TransformationConfiguration(
+							new RelationalTransformationHelper(),
+							"relational",
 							ITimeInterval.class);
 
 				}

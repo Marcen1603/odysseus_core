@@ -1,10 +1,11 @@
-package de.uniol.inf.is.odysseus.logicaloperator.base;
+package de.uniol.inf.is.odysseus.transformation.helper.relational;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.ISubscription;
+import de.uniol.inf.is.odysseus.base.ITransformationHelper;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.Subscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
@@ -15,16 +16,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 @SuppressWarnings("unchecked")
-public class TransformationHelper {
+public class RelationalTransformationHelper implements ITransformationHelper{
 	
-	public static Collection<ILogicalOperator> replace(
+	public Collection<ILogicalOperator> replace(
 			ILogicalOperator logical, IPipe physical) {
 		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical);
 		ret.addAll(replace(logical, (ISource) physical));
 		return ret;
 	}
 
-	public static Collection<ILogicalOperator> replace(
+	public Collection<ILogicalOperator> replace(
 			ILogicalOperator logical, ISink physical) {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
@@ -42,7 +43,7 @@ public class TransformationHelper {
 		return ret;
 	}
 
-	public static Collection<ILogicalOperator> replace(
+	public Collection<ILogicalOperator> replace(
 			ILogicalOperator logical, ISource physical) {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
@@ -62,7 +63,7 @@ public class TransformationHelper {
 	 * @param newFather The new lower operator. oldFather becomes the father of newFather
 	 * @return the modified children must be returned to update the drools working memory
 	 */
-	public static Collection<ILogicalOperator> insertNewFather(ISource oldFather, Collection<ILogicalOperator> children, IPipe newFather){
+	public Collection<ILogicalOperator> insertNewFather(ISource oldFather, Collection<ILogicalOperator> children, IPipe newFather){
 		Collection<ILogicalOperator> modifiedChildren = new ArrayList<ILogicalOperator>();
 		
 		// for every child, remove the connection between
@@ -92,7 +93,7 @@ public class TransformationHelper {
 	 * @param newFather The new lower operator. oldFather becomes the father of newFather
 	 * @return the modified children must be returned to update the drools working memory
 	 */
-	public static Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<ISink>> children, IPipe newFather){
+	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<ISink>> children, IPipe newFather){
 		Collection<ISink> modifiedChildren = new ArrayList<ISink>();
 		
 		// for every child, remove the connection between
@@ -115,7 +116,7 @@ public class TransformationHelper {
 		return modifiedChildren;
 	}
 
-	public static boolean containsWindow(ILogicalOperator inputOp) {
+	public boolean containsWindow(ILogicalOperator inputOp) {
 		if (inputOp instanceof WindowAO) {
 			return true;
 		}

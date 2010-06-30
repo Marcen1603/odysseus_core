@@ -12,9 +12,13 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
 /**
  * Extension for the Equinox OSGI Console providing commands to access
@@ -27,6 +31,9 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IActuatorFactory actuatorFactory;
 	private IActuatorBenchmark benchmark;
 	private User user = new User("Console");
+	@SuppressWarnings("unchecked")
+	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 
 	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
@@ -36,7 +43,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA", user);
+			Collection<Integer> ids = this.executer.addQuery(args[0], "ECA", user, this.trafoConfigParam);
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -81,7 +88,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55564");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user);
+				this.executer.addQuery(query, "CQL", user, this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -131,7 +138,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user);
+				this.executer.addQuery(query, "CQL", user, this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -154,7 +161,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user);
+				this.executer.addQuery(query, "CQL", user, this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}

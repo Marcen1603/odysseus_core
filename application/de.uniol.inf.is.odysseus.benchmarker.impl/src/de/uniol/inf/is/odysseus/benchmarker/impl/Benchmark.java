@@ -9,6 +9,7 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.ITransformationHelper;
 import de.uniol.inf.is.odysseus.base.Pair;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
 public class Benchmark implements IErrorEventListener, IBenchmark {
 	private long maxResults;
@@ -52,7 +54,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private IAdvancedExecutor executor;
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
 	
+	private ITransformationHelper transformHelper;
 	
+	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 
 
 	public Benchmark() {
@@ -66,6 +71,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		this.resultFactory = new LatencyBenchmarkResultFactory();
 		this.usePunctuations = false;
 		this.useLoadShedding = false;
+		this.transformHelper = new RelationalTransformationHelper();
 	}
 
 	public void activate(ComponentContext c) {
@@ -115,7 +121,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
 
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(
-				dataType, getMetadataTypes());
+				this.transformHelper, dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
 		trafoConfig.setOption("useExtendedPostPriorisation", this.extendedPostPriorisation);
@@ -166,7 +172,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, "CQL", user);
+				this.executor.addQuery(s, "CQL", user, this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}

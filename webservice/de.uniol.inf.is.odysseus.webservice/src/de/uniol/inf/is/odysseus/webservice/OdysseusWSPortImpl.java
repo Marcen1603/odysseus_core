@@ -7,11 +7,15 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 
 /**
  * Implementation of the generated webservice
@@ -29,6 +33,8 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
 	private static IAdvancedExecutor executor;
 	private static IActuatorFactory actuatorFactory;
+	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 	
 	/* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
