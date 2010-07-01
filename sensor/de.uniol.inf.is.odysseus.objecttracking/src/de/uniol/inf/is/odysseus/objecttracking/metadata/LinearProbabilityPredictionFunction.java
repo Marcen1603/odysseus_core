@@ -347,7 +347,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		
 		// H * \Sigma ...
 		for(int row = 0; row < tempCov.length; row++){
-			for(int col = 0; col < tempCov[0].length; col++){
+			for(int col = 0; col < tempCov[0].length; col++) {
 				// We now want to set the value in tempCov[row][col]
 				// Row indicates, which expression has to be used. (expr for which attribute)
 				// Col indicates, with which values the variables in the expression have to be filled
@@ -438,7 +438,6 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 		M newMetadata = null;
 		newMetadata = (M)metadata.clone();
 		newMetadata.setCovariance(tempCov2);
-		
 		return newMetadata;
 	}
 	

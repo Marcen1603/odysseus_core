@@ -207,4 +207,16 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		}
 	}
 
+	@Override
+	public int[] getMVAttributeIndices() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMVAttributeIndices(int[] indices) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

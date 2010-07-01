@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 public class Probability implements IProbability{
 
 	private double[][] cov;
+	private int[] attrIndices;
 	
 	public Probability(){
 		cov = null;
@@ -48,5 +49,15 @@ public class Probability implements IProbability{
 		}
 		
 		return bf;
+	}
+
+	@Override
+	public int[] getMVAttributeIndices() {
+		return attrIndices;
+	}
+
+	@Override
+	public void setMVAttributeIndices(int[] indices) {
+		this.attrIndices = indices;
 	}
 }
