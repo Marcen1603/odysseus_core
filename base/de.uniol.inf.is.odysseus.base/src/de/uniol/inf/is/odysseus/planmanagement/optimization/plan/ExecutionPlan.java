@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -33,6 +34,8 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * List of all leaf sources that need to be scheduled periodically.
 	 */
 	protected List<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
+
+	private List<IPhysicalOperator> roots;
 
 	/**
 	 * Describes if the physical operators are opened.
@@ -99,11 +102,15 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public void open() throws OpenFailedException {
 		if (!isOpen()) {
-			for (IPartialPlan partialPlan : this.partialPlans) {
-				for (ISink<?> root : partialPlan.getRoots()) {
-					root.open();
-				}
+			for (IPhysicalOperator root: roots){
+				root.open();
 			}
+			
+//			for (IPartialPlan partialPlan : this.partialPlans) {
+//				for (ISink<?> root : partialPlan.getRoots()) {
+//					root.open();
+//				}
+//			}
 			this.open = true;
 		}
 	}
@@ -138,6 +145,15 @@ public class ExecutionPlan implements IExecutionPlan {
 				.getPartialPlans()));
 		this.setLeafSources(new ArrayList<IIterableSource<?>>(newExecutionPlan
 				.getLeafSources()));
+		this.setRoots(newExecutionPlan.getRoots());
+	}
+
+	public void setRoots(List<IPhysicalOperator> roots) {
+		this.roots = roots;
+	}
+	
+	public List<IPhysicalOperator> getRoots(){
+		return roots;
 	}
 
 }

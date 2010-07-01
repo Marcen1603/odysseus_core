@@ -154,7 +154,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		ExecutionPlan newPlan = new ExecutionPlan();
 		newPlan.setPartialPlans(partialPlans);
 		newPlan.setLeafSources(leafSources);
-//		newPlan.setRoots(roots);
+		newPlan.setRoots(roots);
 
 		return newPlan;
 		}
