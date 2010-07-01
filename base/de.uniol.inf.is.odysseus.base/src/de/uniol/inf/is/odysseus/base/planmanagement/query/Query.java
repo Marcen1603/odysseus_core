@@ -29,7 +29,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
  */
 public class Query implements IQuery {
 
-	protected Logger logger = LoggerFactory.getLogger(Query.class);
+	protected Logger _logger = null;
+	
+	protected Logger getLogger(){
+		if (_logger == null){
+		_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
 
 	/**
 	 * Counter for ID creation.
@@ -342,15 +349,15 @@ public class Query implements IQuery {
 	 */
 	@Override
 	public void removeOwnerschip() {
-		logger.debug("Remove ownership start");
+		getLogger().debug("Remove ownership start");
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-			logger.debug("Remove Ownership for " + physicalOperator);
+			getLogger().debug("Remove Ownership for " + physicalOperator);
 			physicalOperator.removeOwner(this);
 			if (!physicalOperator.hasOwner()) {
-				logger.debug("No more owners. Closing " + physicalOperator);
+				getLogger().debug("No more owners. Closing " + physicalOperator);
 				physicalOperator.close();
 				if (physicalOperator.isSink()) {
-					logger.debug("Sink unsubscribe from all sources "
+					getLogger().debug("Sink unsubscribe from all sources "
 							+ physicalOperator);
 					ISink<?> sink = (ISink<?>) physicalOperator;
 					sink.unsubscribeFromAllSources();
