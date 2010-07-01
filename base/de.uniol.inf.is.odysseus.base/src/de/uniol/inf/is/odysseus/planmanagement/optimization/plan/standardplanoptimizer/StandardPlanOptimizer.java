@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.PartialPlan;
 
@@ -151,7 +151,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		}
 
 		// Create a new execution plan with the found informations.
-		EditableExecutionPlan newPlan = new EditableExecutionPlan();
+		ExecutionPlan newPlan = new ExecutionPlan();
 		newPlan.setPartialPlans(partialPlans);
 		newPlan.setSources(sources);
 		newPlan.setRoots(roots);

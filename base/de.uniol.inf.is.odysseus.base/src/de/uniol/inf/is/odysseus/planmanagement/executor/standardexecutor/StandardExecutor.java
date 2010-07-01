@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.EditableExecutionPlan;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -134,7 +134,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		// add ReoptimizeListener
 		((Plan) this.plan).addReoptimizeListener(this);
 		// create new execution plan object
-		this.executionPlan = new EditableExecutionPlan();
+		this.executionPlan = new ExecutionPlan();
 	}
 
 	/*

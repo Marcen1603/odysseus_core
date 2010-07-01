@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
  * @author Wolf Bauer
  * 
  */
-public class EditableExecutionPlan implements IExecutionPlan {
+public class ExecutionPlan implements IExecutionPlan {
 
 	/**
 	 * Describes if the physical operators are opened.
