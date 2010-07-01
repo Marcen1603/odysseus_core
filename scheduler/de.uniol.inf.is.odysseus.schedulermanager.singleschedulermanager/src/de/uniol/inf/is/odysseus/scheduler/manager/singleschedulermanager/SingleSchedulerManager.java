@@ -182,8 +182,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	public void refreshScheduling(IScheduleable scheduleInfos)
 			throws NoSchedulerLoadedException {
 		this.logger.debug("Refresh Scheduling. Set Sources");
-		this.activeScheduler.setSources(scheduleInfos.getExecutionPlan()
-				.getSources());
+		this.activeScheduler.setLeafSources(scheduleInfos.getExecutionPlan()
+				.getLeafSources());
 		this.logger.debug("Refresh Scheduling. Set Partial Plans");
 		this.activeScheduler.setPartialPlans(scheduleInfos.getExecutionPlan()
 				.getPartialPlans());

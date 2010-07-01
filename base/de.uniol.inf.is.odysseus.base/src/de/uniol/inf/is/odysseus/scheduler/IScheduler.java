@@ -46,7 +46,7 @@ public interface IScheduler extends IErrorEventHandler {
 	 * @param sources
 	 *            Global sources for scheduling (no pipes).
 	 */
-	public void setSources(List<IIterableSource<?>> sources);
+	public void setLeafSources(List<IIterableSource<?>> sources);
 
 	/**
 	 * Set the partial plans for scheduling (pipes and roots).

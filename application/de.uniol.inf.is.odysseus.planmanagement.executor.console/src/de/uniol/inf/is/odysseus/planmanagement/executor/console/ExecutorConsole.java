@@ -494,11 +494,11 @@ public class ExecutorConsole implements CommandProvider,
 		IExecutionPlan plan = this.executor.getExecutionPlan();
 
 		int i = 1;
-		ci.println("Registered source:");
-		for (IIterableSource<?> isource : plan.getSources()) {
-			ci.println(i++ + ": " + isource.toString() + ", Owner:"
-					+ support.getOwnerIDs(isource.getOwner()));
-		}
+//		ci.println("Registered source:");
+//		for (IIterableSource<?> isource : plan.getSources()) {
+//			ci.println(i++ + ": " + isource.toString() + ", Owner:"
+//					+ support.getOwnerIDs(isource.getOwner()));
+//		}
 
 		ci.println("");
 		i = 1;

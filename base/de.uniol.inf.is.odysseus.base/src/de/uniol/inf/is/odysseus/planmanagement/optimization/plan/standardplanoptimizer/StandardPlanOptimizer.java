@@ -101,7 +101,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 
 		ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 		ArrayList<IPartialPlan> partialPlans = new ArrayList<IPartialPlan>();
-		ArrayList<IIterableSource<?>> sources = new ArrayList<IIterableSource<?>>();
+		ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
 		ArrayList<IIterableSource<?>> partialPlanSources;
 		ArrayList<IIterableSource<?>> sourcesTmp;
 
@@ -134,8 +134,8 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 						partialPlanSources.add(iterableSource);
 					} else if (!iterableSource.isSink() // IterableSource is a
 														// global Source
-							&& !sources.contains(iterableSource)) {
-						sources.add(iterableSource);
+							&& !leafSources.contains(iterableSource)) {
+						leafSources.add(iterableSource);
 					}
 				}
 
@@ -153,11 +153,11 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// Create a new execution plan with the found informations.
 		ExecutionPlan newPlan = new ExecutionPlan();
 		newPlan.setPartialPlans(partialPlans);
-		newPlan.setSources(sources);
-		newPlan.setRoots(roots);
+		newPlan.setLeafSources(leafSources);
+//		newPlan.setRoots(roots);
 
 		return newPlan;
-	}
+		}
 
 	/**
 	 * Get all iterable sources of a root source. TODO: should be extracted to

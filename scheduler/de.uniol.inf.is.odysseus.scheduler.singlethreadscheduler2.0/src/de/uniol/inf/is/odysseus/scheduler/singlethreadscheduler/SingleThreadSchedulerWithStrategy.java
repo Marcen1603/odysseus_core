@@ -136,7 +136,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler impleme
 	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
-	public synchronized void setSources(
+	public synchronized void setLeafSources(
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
 			for (SingleSourceExecutor source : sourceThreads) {
