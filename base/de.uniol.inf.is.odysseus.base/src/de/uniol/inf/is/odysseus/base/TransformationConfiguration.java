@@ -16,7 +16,8 @@ public class TransformationConfiguration {
 	public TransformationConfiguration(ITransformationHelper transformHelper, String dataType, String... metaTypes) {
 		this.dataType = dataType;
 		this.metaTypes = toSet(metaTypes);
-		this.options = new HashMap<String, Object>();		
+		this.options = new HashMap<String, Object>();	
+		this.transformHelper = transformHelper;
 	}
 
 	public TransformationConfiguration(ITransformationHelper transformHelper, final String dataType,
