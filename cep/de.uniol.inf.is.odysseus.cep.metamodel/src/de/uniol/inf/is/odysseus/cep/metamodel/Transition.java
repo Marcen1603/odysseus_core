@@ -144,9 +144,9 @@ public class Transition {
 
 	public String toString() {
 		String str =   "T: " + this.id;
-		str += " - " + (this.condition!=null?condition.toString():"true");
-		str +=  " -> " + this.nextState.getId();
-		str += " A: " + this.action;
+		str += ":=(" + ((this.condition!=null && !this.condition.getLabel().equals("1"))?condition.toString():"true")+")";
+		str +=  "-->" + this.nextState.getId();
+		str += " [" + this.action+"]";
 		return str;
 	}
 	

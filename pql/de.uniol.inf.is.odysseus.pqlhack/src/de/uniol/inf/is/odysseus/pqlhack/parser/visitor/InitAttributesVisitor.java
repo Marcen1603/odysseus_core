@@ -56,8 +56,10 @@ public class InitAttributesVisitor extends DefaultVisitor{
 			
 			// TODO ist das korrekt, oder muss man doch
 			// einen eigenen AccessAO erzeugen?
-			access = (AccessAO)DataDictionary.getInstance().getView(sourceName);
-			
+			// access = (AccessAO)DataDictionary.getInstance().getView(sourceName);
+			access = new AccessAO();
+			access.setSource(new SDFSource(sourceName,""));
+			access.setOutputSchema(DataDictionary.getInstance().getViewOutputSchema(sourceName));
 //			access = new AccessAO(source);
 //			SDFEntity entity = null;
 //			try {
@@ -101,7 +103,8 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		
 		BrokerAO broker = this.brokers.get(source);
 		if (broker == null) {
-			broker = (BrokerAO)DataDictionary.getInstance().getView(sourceName);
+			//broker = (BrokerAO)DataDictionary.getInstance().getView(sourceName);
+			broker = new BrokerAO();
 			this.brokers.put(source, broker);
 			this.attributeResolver.addSource(sourceName, broker);
 		}

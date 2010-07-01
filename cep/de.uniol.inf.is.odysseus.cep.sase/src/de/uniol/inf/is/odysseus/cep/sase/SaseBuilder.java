@@ -133,7 +133,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		createDummySource("nexmark:auction");
 		createDummySource("nexmark:category");
 
-		String[] toParse = new String[] { "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2} WITHIN 1 minute RETURN person.id, person.name, auction.id, Count(bid[..i-1].bidder)"
+		String[] toParse = new String[] { "PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[]) WHERE skip_till_any_match(person, auction, bid){person.id = auction.seller and auction.id = bid[1].auction and bid[i].auction = bid[i-1].auction and Count(bid[..i-1].bidder)>2} WITHIN 1 minute"
 		// "CREATE STREAM Marco PATTERN SEQ(nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
 		// ,
 		// "PATTERN SEQ(~nexmark:person2 person, nexmark:auction2 auction, nexmark:bid2+ bid[])"
@@ -151,7 +151,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			System.out.println(q);
 			try {
 				List<IQuery> top = exec.parse(q);
-				CepAO<?> cepAo = (CepAO<?>) top.get(0);
+				CepAO<?> cepAo = (CepAO<?>) top.get(0).getLogicalPlan();
 				System.out.println("Final SM "
 						+ cepAo.getStateMachine().prettyPrint());
 				System.out.println(AbstractTreeWalker.prefixWalk(top.get(0)

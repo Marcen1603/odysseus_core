@@ -18,7 +18,7 @@ public class AccessAOViewTransformator implements IPOTransformator<AccessAO> {
 		String sourceURI = accessAO.getSource().getURI();
 
 		return (WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null)
-				&& DataDictionary.getInstance().getView(sourceURI) != accessAO;
+				&& DataDictionary.getInstance().getViewForTransformation(sourceURI) != accessAO;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class AccessAOViewTransformator implements IPOTransformator<AccessAO> {
 		ISource<?> accessPO = WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI());
 		String sourceURI = accessAO.getSource().getURI();
 
-		ILogicalOperator view = DataDictionary.getInstance().getView(sourceURI);
+		ILogicalOperator view = DataDictionary.getInstance().getViewForTransformation(sourceURI);
 		accessPO = (ISource) transformation.transform(view, config);
 		String accessPOName = accessAO.getSource().getURI(false);
 		WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);

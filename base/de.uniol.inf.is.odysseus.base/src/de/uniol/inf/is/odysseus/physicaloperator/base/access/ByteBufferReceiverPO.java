@@ -30,6 +30,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		router = Router.getInstance();
 		this.host = host;
 		this.port = port;
+		setName("ByteBufferReceiverPO "+host+":"+port);
 		this.opened = false;
 	}
 

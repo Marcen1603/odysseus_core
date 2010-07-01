@@ -7,16 +7,21 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: antlr-runtime-3.2.jar,
  .
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.epa.symboltable.relational,
  de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.cep.metamodel.jep,
+ de.uniol.inf.is.odysseus.cep.metamodel.symboltable,
  de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions,
  de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
- org.osgi.framework;version="1.5.0"
-Require-Bundle: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.cep.metamodel
+ de.uniol.inf.is.odysseus.util,
+ org.apache.log4j;version="1.2.15",
+ org.osgi.framework;version="1.5.0",
+ org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.cep.sase
 Service-Component: OSGI-INF/component.xml, component2.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.cep.sase.SaseBuilder

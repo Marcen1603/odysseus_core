@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 //import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 /**
@@ -73,10 +74,19 @@ public class DataDictionary {
 		viewDefinitions.put(name, plan);
 	}
 
-	public ILogicalOperator getView(String name) {
+
+	public SDFAttributeList getViewOutputSchema(String name) {
+		return viewDefinitions.get(name).getOutputSchema();
+	}
+
+	public ILogicalOperator getViewForTransformation(String name) {
 		return viewDefinitions.get(name);
 	}
 
+	public boolean hasView(String name){
+		return viewDefinitions.containsKey(name);
+	}
+	
 	public Set<Entry<String, ILogicalOperator>> getViews() {
 		return viewDefinitions.entrySet();
 	}

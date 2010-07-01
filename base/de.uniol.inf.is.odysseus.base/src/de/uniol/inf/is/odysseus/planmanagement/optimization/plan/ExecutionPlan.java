@@ -102,16 +102,19 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public void open() throws OpenFailedException {
 		if (!isOpen()) {
-			for (IPhysicalOperator root: roots){
-				root.open();
+			// Call only if theres a plan to execute
+			if (roots != null) {
+				for (IPhysicalOperator root : roots) {
+					root.open();
+				}
+
+				// for (IPartialPlan partialPlan : this.partialPlans) {
+				// for (ISink<?> root : partialPlan.getRoots()) {
+				// root.open();
+				// }
+				// }
+				this.open = true;
 			}
-			
-//			for (IPartialPlan partialPlan : this.partialPlans) {
-//				for (ISink<?> root : partialPlan.getRoots()) {
-//					root.open();
-//				}
-//			}
-			this.open = true;
 		}
 	}
 
@@ -151,8 +154,8 @@ public class ExecutionPlan implements IExecutionPlan {
 	public void setRoots(List<IPhysicalOperator> roots) {
 		this.roots = roots;
 	}
-	
-	public List<IPhysicalOperator> getRoots(){
+
+	public List<IPhysicalOperator> getRoots() {
 		return roots;
 	}
 
