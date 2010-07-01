@@ -652,11 +652,11 @@ public class ExecutorConsole implements CommandProvider,
 				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
 					StringBuffer buff = new StringBuffer();
-					if (query.getSealedRoot().isSink()) {
-						support.dumpPlan((ISink) query.getSealedRoot(), depth,
+					if (query.getRoot().isSink()) {
+						support.dumpPlan((ISink) query.getRoot(), depth,
 								buff);
 					} else {
-						support.dumpPlan((ISource) query.getSealedRoot(),
+						support.dumpPlan((ISource) query.getRoot(),
 								depth, buff);
 					}
 					ci.println("Physical plan of query: " + qnum);
@@ -682,10 +682,10 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
-					if (query.getSealedRoot().isSink()) {
+					if (query.getRoot().isSink()) {
 						support
 								.printPlanMetadata((ISink) query
-										.getSealedRoot());
+										.getRoot());
 
 					} else {
 						ci.println("Root is no sink.");

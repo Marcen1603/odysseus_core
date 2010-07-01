@@ -544,7 +544,7 @@ public class OptimizationTestConsole implements
 							System.out
 									.println("------------------------------------> Reopt durch, ggf. Senke anpassen");
 							setOptimizationSink((OptimizationTestSink) q
-									.getSealedRoot());
+									.getRoot());
 						}
 					};
 					new Thread(reopt).start();

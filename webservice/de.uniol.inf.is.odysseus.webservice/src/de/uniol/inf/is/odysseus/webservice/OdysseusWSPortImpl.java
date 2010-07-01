@@ -141,7 +141,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
         try {
         	IQuery query = executor.getSealedPlan().getQuery(Integer.valueOf(queryID));
-        	SDFAttributeList outputSchema = query.getSealedLogicalPlan().getOutputSchema();
+        	SDFAttributeList outputSchema = query.getLogicalPlan().getOutputSchema();
         	ObjectFactory factory = new ObjectFactory();
         	
         	SchemaArray schemaArray = factory.createSchemaArray();

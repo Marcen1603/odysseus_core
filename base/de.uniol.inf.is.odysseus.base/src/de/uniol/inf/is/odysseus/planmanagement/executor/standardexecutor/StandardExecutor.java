@@ -551,7 +551,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 			setExecutionPlan(optimizer().preStartOptimization(queryToStart, this.executionPlan));
 			queryToStart.start();
 			if (isRunning()) {
-				queryToStart.getSealedRoot().open();
+				queryToStart.getRoot().open();
 			}
 			this.logger.debug("Query " + queryID + " started.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_START, queryToStart));

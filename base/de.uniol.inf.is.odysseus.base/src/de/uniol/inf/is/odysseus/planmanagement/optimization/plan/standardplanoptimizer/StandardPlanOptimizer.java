@@ -64,10 +64,10 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// check each query
 		for (IQuery query : queries) {
 			// create a physical plan if none is set
-			if (query.getSealedRoot() == null) {
+			if (query.getRoot() == null) {
 				IPhysicalOperator physicalPlan = sender.getCompiler()
 						.transform(
-								query.getSealedLogicalPlan(),
+								query.getLogicalPlan(),
 								query.getBuildParameter()
 										.getTransformationConfiguration());
 
@@ -110,17 +110,17 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// ignored.
 		for (IQuery query : allQueries) {
 			// if the root is not checked
-			if (!roots.contains(query.getSealedRoot())) {
+			if (!roots.contains(query.getRoot())) {
 				// Add root
-				roots.add(query.getSealedRoot());
+				roots.add(query.getRoot());
 
 				// Get all iterable sources in the current physical plan.
-				if (query.getSealedRoot().isSink()) {
+				if (query.getRoot().isSink()) {
 					sourcesTmp = (ArrayList<IIterableSource<?>>) iterableSources((ISink<?>) query
-							.getSealedRoot());
+							.getRoot());
 				} else {
 					sourcesTmp = (ArrayList<IIterableSource<?>>) iterableSources((ISource<?>) query
-							.getSealedRoot());
+							.getRoot());
 				}
 
 				partialPlanSources = new ArrayList<IIterableSource<?>>();
@@ -140,10 +140,10 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 				}
 
 				// create a PartialPlan for this query
-				if (query.getSealedRoot().isSink()
+				if (query.getRoot().isSink()
 						&& !partialPlanSources.isEmpty()) {
 					ArrayList<ISink<?>> root = new ArrayList<ISink<?>>();
-					root.add((ISink<?>) query.getSealedRoot());
+					root.add((ISink<?>) query.getRoot());
 					partialPlans.add(new PartialPlan(partialPlanSources, root,
 							query.getPriority()));
 				}

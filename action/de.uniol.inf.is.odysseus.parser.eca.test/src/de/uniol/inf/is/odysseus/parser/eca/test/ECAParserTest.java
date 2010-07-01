@@ -186,7 +186,7 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("	*Testcase3: Check if physical plan is correct");
 		IPlan plan = this.executor.getSealedPlan();
 		IQuery installedQuery = plan.getQuery(queryID);
-		IPhysicalOperator physicalOp = installedQuery.getSealedRoot();
+		IPhysicalOperator physicalOp = installedQuery.getRoot();
 		if (! (physicalOp.getClass() == EventTriggerPO.class)){
 			throw new Exception("Physical operator root is wrong class: <"+physicalOp.getClass()+">");
 		}

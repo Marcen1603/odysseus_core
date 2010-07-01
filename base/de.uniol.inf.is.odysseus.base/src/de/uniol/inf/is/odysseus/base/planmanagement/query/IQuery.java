@@ -12,9 +12,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Qu
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 
 /**
- * Describes an object which represents a basic query in odyessus. This
- * interface is used as an extern view on a query. Editing these queries should
- * delimited.
+ * Describes an object which represents a basic query in odyessus.
  * 
  * It has a unique ID and consists of a logical plan, a physical plan, a
  * priority and a execution state.
@@ -38,26 +36,6 @@ public interface IQuery extends
 	 * @return TRUE: This query will be scheduled. FALSE: else
 	 */
 	public boolean isRunning();
-
-	/**
-	 * Returns the logical plan of this query.
-	 * 
-	 * TODO: getSealedLogicalPlan -> getLogicalPlan: problem getLogicalPlan is
-	 * used by {@link IQuery}.
-	 * 
-	 * @return The logical plan of this query.
-	 */
-	public ILogicalOperator getSealedLogicalPlan();
-
-	/**
-	 * Returns the physical plan of this query.
-	 * 
-	 * TODO: getSealedRoot -> getRoot: problem getRoot is used by
-	 * {@link IQuery}.
-	 * 
-	 * @return The physical plan of this query.
-	 */
-	public IPhysicalOperator getSealedRoot();
 
 	/**
 	 * Returns the priority with which this query should be scheduled.

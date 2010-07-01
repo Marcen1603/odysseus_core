@@ -47,7 +47,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 
 		// if a logical rewrite should be processed.
 		ILogicalOperator sealedLogicalPlan = query
-				.getSealedLogicalPlan();
+				.getLogicalPlan();
 		
 		boolean queryShouldBeRewritten = sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE;
 		if (queryShouldBeRewritten) {
@@ -57,12 +57,12 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		}
 
 		// TODO: is that correct? I think this should be done if (
-		// query.getSealedRoot() || (restruct != null && restruct == ParameterDoRestruct.TRUE)
+		// query.getRoot() || (restruct != null && restruct == ParameterDoRestruct.TRUE)
 		//
 		// (Wolf)
-//		if (query.getSealedRoot() == null || restruct == null
+//		if (query.getRoot() == null || restruct == null
 //				|| restruct == ParameterDoRestruct.FALSE) {
-		if (query.getSealedRoot() == null || queryShouldBeRewritten){
+		if (query.getRoot() == null || queryShouldBeRewritten){
 		try {
 				// create the physical plan
 				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
@@ -93,7 +93,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 
 		// if a logical rewrite should be processed.
 		ILogicalOperator sealedLogicalPlan = query
-				.getSealedLogicalPlan();
+				.getLogicalPlan();
 		
 		if (sealedLogicalPlan != null && restruct != null && restruct == ParameterDoRestruct.TRUE) {
 			ILogicalOperator newLogicalAlgebra = compiler.restructPlan(sealedLogicalPlan, rulesToUse);
@@ -102,12 +102,12 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		}
 
 		// TODO: is that correct? I think this should be done if (
-		// query.getSealedRoot() || (restruct != null && restruct == ParameterDoRestruct.TRUE)
+		// query.getRoot() || (restruct != null && restruct == ParameterDoRestruct.TRUE)
 		//
 		// (Wolf)
-//		if (query.getSealedRoot() == null || restruct == null
+//		if (query.getRoot() == null || restruct == null
 //				|| restruct == ParameterDoRestruct.FALSE) {
-		if (query.getSealedRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
+		if (query.getRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
 		try {
 				// create the physical plan
 				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
@@ -167,7 +167,7 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		// create working copy of plan
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
 		AbstractGraphWalker walker = new AbstractGraphWalker();
-		walker.prefixWalk(query.getSealedLogicalPlan(), copyVisitor);
+		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
 		ILogicalOperator logicalPlanCopy = copyVisitor.getResult();
 				
 		// create logical alternatives

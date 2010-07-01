@@ -248,16 +248,6 @@ public class Query implements IQuery {
 		this.logicalPlan = logicalPlan;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#
-	 * getSealedLogicalPlan()
-	 */
-	@Override
-	public ILogicalOperator getSealedLogicalPlan() {
-		return this.logicalPlan;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -291,17 +281,6 @@ public class Query implements IQuery {
 			}
 		}
 
-		return this.root;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#getSealedRoot()
-	 */
-	@Override
-	public IPhysicalOperator getSealedRoot() {
 		return this.root;
 	}
 
