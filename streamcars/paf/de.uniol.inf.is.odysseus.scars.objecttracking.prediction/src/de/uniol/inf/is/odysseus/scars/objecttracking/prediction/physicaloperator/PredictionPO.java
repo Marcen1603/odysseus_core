@@ -50,7 +50,6 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		} else if(port == 1) {
 			currentScan = object;
 		}
-		
 		if(currentTime != null && currentScan != null) {
 			predictData();
 			MVRelationalTuple<M> tmp = currentScan;
