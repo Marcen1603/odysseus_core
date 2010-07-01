@@ -23,6 +23,13 @@
 		</SymbolElement>
 	</Symbol>
 
+	<Symbol nodeName="CepOperator">
+		<Size width="92" height="28"/>
+		<SymbolElement type="image">
+			<Parameter key="resource" value="cepPO"/>
+		</SymbolElement>
+	</Symbol>
+
 	<Symbol nodeName="MySink">
 		<Size width="86" height="43"/>
 		<SymbolElement type="image">

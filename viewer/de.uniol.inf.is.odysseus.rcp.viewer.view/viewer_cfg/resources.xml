@@ -4,7 +4,8 @@
 	<Image source="viewer_cfg/invisibleNode.png" name="invisibleNode" />
 	
 	<Image source="viewer_cfg/bufferedPipe.png" name="bufferedPipe" />
-	<Image source="viewer_cfg/benchmarkPO.png" name="benchmarkPO" />
+	<Image source="viewer_cfg/benchmarkPO.png" name="benchmarkPO" />	
+<Image source="viewer_cfg/cepPO.png" name="cepPO" />
 	<Image source="viewer_cfg/latency.png" name="latency" />
 	<Image source="viewer_cfg/sink.png" name="sink" />
 	<Image source="viewer_cfg/source.png" name="source" />
