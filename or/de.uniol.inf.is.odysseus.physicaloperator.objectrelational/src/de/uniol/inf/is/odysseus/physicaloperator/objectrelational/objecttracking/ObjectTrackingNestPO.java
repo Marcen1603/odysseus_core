@@ -625,32 +625,7 @@ public class ObjectTrackingNestPO
 				}
 				exists = false;
 			}
-		}
-		
-		/*
-		 * Referencing optimization. If and only if a value of a tuple in the 
-		 * merged partial corresponds to another value of a tuple.
-		 * 
-		 * @TODO n^2 + m^2, n is number of tuples in the partial, m
-		 * number of attributes. better implementation, please.  
-		 * -- implement hashmap the idea!
-		 */
-		
-		for(MVRelationalTuple<M> t : tuples) {
-			for(MVRelationalTuple<M> t2 : tuples) {
-				if(t != t2) {
-					for(Object o : t.getAttributes()) {
-						for(Object o2 : t.getAttributes()) {
-							if(o.equals(o2)) {
-								o2 = null;
-								o2 = o;								
-							}
-						}
-					}
-				}
-			}
-		}
-		
+		}			
 		
 		for(MVRelationalTuple<M> t : tuples) {
 			M metaForTuple = t.getMetadata();
