@@ -143,7 +143,11 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 *            {@link ISchedulerFactory} service to unbind
 	 */
 	public void unbindSchedulerFactory(ISchedulerFactory schedulerFactory) {
-		this.schedulerFactoryMap.remove(schedulerFactory.getName());
+		if (schedulerFactory!= null && schedulerFactory.getName()!=null){
+			this.schedulerFactoryMap.remove(schedulerFactory.getName());
+		}else{
+			logger.error("Trying to unbound "+schedulerFactory);
+		}
 	}
 
 	/**
