@@ -4,7 +4,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-import de.uniol.inf.is.odysseus.rcp.editor.model.cfg.IOperatorDescriptor;
+import de.uniol.inf.is.odysseus.rcp.editor.operator.IOperatorExtensionDescriptor;
 
 public class OperatorViewLabelProvider implements ILabelProvider {
 
@@ -32,11 +32,11 @@ public class OperatorViewLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if( element instanceof IOperatorDescriptor ) {
-			IOperatorDescriptor desc = (IOperatorDescriptor)element;
+		if( element instanceof IOperatorExtensionDescriptor ) {
+			IOperatorExtensionDescriptor desc = (IOperatorExtensionDescriptor)element;
 			if( desc.getLabel() != null && desc.getLabel().length() > 0 )
 				return desc.getLabel();
-			return desc.getName();
+			return desc.getID();
 		}
 		return null;
 	}

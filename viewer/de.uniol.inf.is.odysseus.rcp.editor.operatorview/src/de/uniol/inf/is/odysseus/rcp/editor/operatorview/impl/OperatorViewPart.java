@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.rcp.editor.model.cfg.OperatorDescriptorRegistry;
+import de.uniol.inf.is.odysseus.rcp.editor.operator.OperatorExtensionRegistry;
 
 public class OperatorViewPart extends ViewPart {
 
@@ -22,7 +22,7 @@ public class OperatorViewPart extends ViewPart {
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider( new OperatorViewLabelProvider());
 		
-		tableViewer.setInput(OperatorDescriptorRegistry.getInstance().getAll());
+		tableViewer.setInput(OperatorExtensionRegistry.getInstance().getExtensions());
 		
 		getSite().setSelectionProvider(tableViewer);
 	}
