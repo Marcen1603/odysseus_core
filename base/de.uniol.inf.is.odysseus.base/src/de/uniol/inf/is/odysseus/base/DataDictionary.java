@@ -6,12 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 /**
@@ -76,11 +72,19 @@ public class DataDictionary {
 		viewDefinitions.put(name, plan);
 	}
 
+	public ILogicalOperator getView(String name) {
+		if (this.logicalViewDefinitions.containsKey(name)){
+			return getLogicalView(name);
+		} else { 
+			return getViewReference(name);
+		}
+	}
+	
 	public ILogicalOperator getViewForTransformation(String name) {
 		return viewDefinitions.get(name);
 	}
 	
-	public AccessAO getViewReference(String name) {
+	private AccessAO getViewReference(String name) {
 		if (!this.viewDefinitions.containsKey(name)) {
 			throw new IllegalArgumentException("no such view: " + name);
 		}
@@ -98,7 +102,7 @@ public class DataDictionary {
 		this.logicalViewDefinitions.put(name, topOperator);
 	}
 	
-	public ILogicalOperator getLogicalView(String name) {
+	private ILogicalOperator getLogicalView(String name) {
 		return this.logicalViewDefinitions.get(name);
 	}
 
