@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.operatorview.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class OperatorViewPart extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		Map<String, OperatorGroup> groups = new HashMap<String, OperatorGroup>();
+		Collection<OperatorGroup> groupsCol = new ArrayList<OperatorGroup>();
 		Collection<String> groupNames = OperatorExtensionRegistry.getInstance().getGroups();
 		for( String grp : groupNames ) {
 			OperatorGroup group = new OperatorGroup(grp);
@@ -29,6 +31,7 @@ public class OperatorViewPart extends ViewPart {
 			for( IOperatorExtensionDescriptor desc : descs ) 
 				group.addExtension(desc);
 			groups.put(grp, group);
+			groupsCol.add(group);
 		}
 		
 		treeViewer = new TreeViewer(parent, SWT.SINGLE);
@@ -36,7 +39,7 @@ public class OperatorViewPart extends ViewPart {
 		treeViewer.setContentProvider( new OperatorViewContentProvider(groups));
 		treeViewer.setLabelProvider( new OperatorViewLabelProvider());
 		
-		treeViewer.setInput(groups.values());
+		treeViewer.setInput(groupsCol);
 		
 		getSite().setSelectionProvider(treeViewer);
 	}
