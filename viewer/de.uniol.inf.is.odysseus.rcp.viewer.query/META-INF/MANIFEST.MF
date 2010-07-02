@@ -17,6 +17,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.transformation.helper.broker,
  de.uniol.inf.is.odysseus.transformation.helper.relational,
  org.eclipse.core.commands,
  org.slf4j;version="1.5.6"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration" name="Transformation Configuration" schema="schema/de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration.exsd"/>
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -15,6 +16,11 @@
          <commandParameter
                id="de.uniol.inf.is.odysseus.rcp.viewer.query.ParserParameter"
                name="Parser Parameter"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.viewer.query.TransformationConfigurationName"
+               name="TransformationConfiguration Name"
                optional="false">
          </commandParameter>
       </command>
@@ -53,6 +59,13 @@
                optional="true">
          </commandParameter>
       </command>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration">
+      <transformationConfiguration
+            class="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.DefaultParameterTransformationConfiguration"
+            name="Standard">
+      </transformationConfiguration>
    </extension>
 
 </plugin>

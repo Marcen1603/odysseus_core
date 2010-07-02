@@ -19,7 +19,7 @@ public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		final String queryID = event.getParameter(IQueryConstants.QUERY_ID_ID);
+		final String queryID = event.getParameter(IQueryConstants.QUERY_ID_PARAMETER_ID);
 
 		int qID = -1;
 		try {

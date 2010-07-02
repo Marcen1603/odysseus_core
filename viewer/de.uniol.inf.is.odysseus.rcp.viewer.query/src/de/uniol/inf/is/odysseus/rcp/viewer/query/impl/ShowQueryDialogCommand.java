@@ -27,6 +27,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 
 public class ShowQueryDialogCommand extends AbstractHandler implements IHandler {
 	
@@ -35,7 +36,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
 		
 		final Shell dialogShell = new Shell(parent);
-		dialogShell.setSize(500,300);
+		dialogShell.setSize(600,500);
 		dialogShell.setText("Add Query");
 		
 		GridLayout gridLayout = new GridLayout();
@@ -44,15 +45,26 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		
 		final Label queryLabel = new Label(dialogShell, SWT.None );
 		queryLabel.setText("Query");
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		queryLabel.setLayoutData(gd);
 
 		final Text queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		queryTextField.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd1 = new GridData(GridData.FILL_BOTH);
+		gd1.horizontalSpan = 2;
+		queryTextField.setLayoutData(gd1);
 					
 		final Label parserLabel = new Label(dialogShell, SWT.None );
 		parserLabel.setText("Parser");
 		
 		final Combo parserCombo = new Combo( dialogShell, SWT.BORDER );
 		parserCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		final Label transCfgLabel = new Label(dialogShell, SWT.NONE);
+		transCfgLabel.setText("TransformationCfg");
+		
+		final Combo transCfgCombo = new Combo( dialogShell, SWT.BORDER );
+		transCfgCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Button okButton = new Button(dialogShell, SWT.PUSH);
 		okButton.setText("OK");
@@ -65,7 +77,8 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 					Map<String,String> map = new HashMap<String, String>();
 					map.put(IQueryConstants.PARSER_PARAMETER_ID, parserCombo.getText());
 					map.put(IQueryConstants.QUERY_PARAMETER_ID, queryTextField.getText());
-
+					map.put(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID, transCfgCombo.getText());
+					
 					ICommandService cS = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
 					Command cmd = cS.getCommand(IQueryConstants.ADD_QUERY_COMMAND_ID);
 					ParameterizedCommand parCmd = ParameterizedCommand.generateCommand(cmd, map);
@@ -104,6 +117,11 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 			okButton.setEnabled(false);
 		}
 		parserCombo.setText(parserCombo.getItem(0));
+		
+		for( String name : ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfigurationNames()) {
+			transCfgCombo.add(name);
+		}
+		transCfgCombo.setText(transCfgCombo.getItem(0));
 
 		dialogShell.open();
 		
