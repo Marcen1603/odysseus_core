@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 import com.Ostermiller.util.CSVParser;
@@ -61,6 +62,11 @@ public class LabdataServer {
 	public static void main(String[] args) throws IOException,
 			ClassNotFoundException {
 		String filename = DEFAULT_PROPERTIES_FILE;
+
+		Map<String, String> env = System.getenv();
+		if(env.containsKey("labdata_cfg")) {
+				filename = env.get("labdata_cfg");
+		}
 		
 		Properties cfg = new Properties();
 		try {

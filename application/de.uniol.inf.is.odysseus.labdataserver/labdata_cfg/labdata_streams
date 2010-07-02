@@ -36,6 +36,19 @@ CREATE STREAM linearMove(
 	add2 INTEGER
 ) SOCKET MV localhost : 55570
 
+CREATE STREAM hypothesis(
+	timestamp INTEGER,
+	cycle INTEGER
+) SOCKET MV localhost : 55571
+
+CREATE STREAM pointStream(
+	timestamp INTEGER,
+	cycle INTEGER,
+	x INTEGER,
+	oldX INTEGER,
+	distance INTEGER
+) SOCKET MV localhost : 55572
+	
 
 CREATE STREAM test:labdata (
 	timestamp LONG,
