@@ -8,7 +8,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.QueryAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
@@ -25,7 +24,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
@@ -142,20 +140,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			SDFSource source, String sourceName) {
 		ILogicalOperator access = this.sources.get(source);
 		if (access == null) {
-			access = DataDictionary.getInstance().getView(
-					source.getURI());
-		}
-		if (access == null) {
-			access = new AccessAO(source);
-			SDFEntity entity = null;
-			try {
-				entity = DataDictionary.getInstance().getEntity(sourceName);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			((AccessAO) access).setOutputSchema(entity.getAttributes());
-
+			access = DataDictionary.getInstance().getView(sourceName);
 			this.sources.put(source, access);
 		}
 
