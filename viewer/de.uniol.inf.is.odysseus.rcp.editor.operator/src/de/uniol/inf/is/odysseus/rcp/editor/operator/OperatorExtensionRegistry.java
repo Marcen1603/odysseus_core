@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.editor.operator;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.editor.operator.impl.OperatorExtensionDescriptor;
+import de.uniol.inf.is.odysseus.rcp.editor.operator.impl.OperatorExtensionDescriptorList;
 
 public class OperatorExtensionRegistry {
 
 	private static OperatorExtensionRegistry instance = null;
 	private final Map<String, IOperatorExtensionDescriptor> operatorExtensions = new HashMap<String, IOperatorExtensionDescriptor>();
+	private final Collection<String> operatorGroups = new ArrayList<String>();
+	
 	private final Logger logger = LoggerFactory.getLogger(OperatorExtensionRegistry.class);
 	
 	private OperatorExtensionRegistry() {
@@ -46,6 +51,9 @@ public class OperatorExtensionRegistry {
 				desc.setExtensionClass(extension);
 				
 				operatorExtensions.put(id, desc);
+				if( !operatorGroups.contains(group))
+					operatorGroups.add(group);
+				
 			} catch( CoreException ex ) {
 				logger.error(ex.getMessage());
 			} catch( Exception ex ) {
@@ -58,11 +66,17 @@ public class OperatorExtensionRegistry {
 		return operatorExtensions.get(id);
 	}
 	
-	public Collection<IOperatorExtensionDescriptor> getExtensions() {
-		return operatorExtensions.values();
+	public IOperatorExtensionDescriptorList getExtensions() {
+		OperatorExtensionDescriptorList list = new OperatorExtensionDescriptorList();
+		list.addAll(operatorExtensions.values());
+		return list;
 	}
 	
 	public Collection<String> getExtensionIDs() {
-		return operatorExtensions.keySet();
+		return Collections.unmodifiableCollection(operatorExtensions.keySet());
+	}
+	
+	public Collection<String> getGroups() {
+		return Collections.unmodifiableCollection(operatorGroups);
 	}
 }

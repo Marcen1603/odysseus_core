@@ -1,35 +1,49 @@
 package de.uniol.inf.is.odysseus.rcp.editor.operatorview.impl;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.rcp.editor.operator.IOperatorExtensionDescriptor;
 import de.uniol.inf.is.odysseus.rcp.editor.operator.OperatorExtensionRegistry;
 
 public class OperatorViewPart extends ViewPart {
 
-	private TableViewer tableViewer;
+	private TreeViewer treeViewer;
 	
 	public OperatorViewPart() {
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-		tableViewer = new TableViewer(parent, SWT.SINGLE);
+		Map<String, OperatorGroup> groups = new HashMap<String, OperatorGroup>();
+		Collection<String> groupNames = OperatorExtensionRegistry.getInstance().getGroups();
+		for( String grp : groupNames ) {
+			OperatorGroup group = new OperatorGroup(grp);
+			Collection<IOperatorExtensionDescriptor> descs = OperatorExtensionRegistry.getInstance().getExtensions().getGroup(grp);
+			for( IOperatorExtensionDescriptor desc : descs ) 
+				group.addExtension(desc);
+			groups.put(grp, group);
+		}
 		
-		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setLabelProvider( new OperatorViewLabelProvider());
+		treeViewer = new TreeViewer(parent, SWT.SINGLE);
 		
-		tableViewer.setInput(OperatorExtensionRegistry.getInstance().getExtensions());
+		treeViewer.setContentProvider( new OperatorViewContentProvider(groups));
+		treeViewer.setLabelProvider( new OperatorViewLabelProvider());
 		
-		getSite().setSelectionProvider(tableViewer);
+		treeViewer.setInput(groups.values());
+		
+		getSite().setSelectionProvider(treeViewer);
 	}
 
 	@Override
 	public void setFocus() {
-		tableViewer.getControl().setFocus();
+		treeViewer.getControl().setFocus();
 	}
 
 }

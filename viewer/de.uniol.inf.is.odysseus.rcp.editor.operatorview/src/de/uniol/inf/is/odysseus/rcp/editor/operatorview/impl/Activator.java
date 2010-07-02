@@ -29,6 +29,7 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		Activator.getDefault().getImageRegistry().put("operatorIcon", Activator.getImageDescriptor("icons/operatorIcon.png"));
+		Activator.getDefault().getImageRegistry().put("operatorGroupIcon", Activator.getImageDescriptor("icons/operatorGroupIcon.png"));
 	}
 
 	/*

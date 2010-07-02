@@ -27,7 +27,12 @@ public class OperatorViewLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		return Activator.getDefault().getImageRegistry().get("operatorIcon");
+		if( element instanceof IOperatorExtensionDescriptor)
+			return Activator.getDefault().getImageRegistry().get("operatorIcon");
+		if( element instanceof OperatorGroup ) 
+			return Activator.getDefault().getImageRegistry().get("operatorGroupIcon");
+			
+		return null;
 	}
 
 	@Override
@@ -38,6 +43,8 @@ public class OperatorViewLabelProvider implements ILabelProvider {
 				return desc.getLabel();
 			return desc.getID();
 		}
+		if( element instanceof OperatorGroup ) 
+			return ((OperatorGroup)element).getName();
 		return null;
 	}
 
