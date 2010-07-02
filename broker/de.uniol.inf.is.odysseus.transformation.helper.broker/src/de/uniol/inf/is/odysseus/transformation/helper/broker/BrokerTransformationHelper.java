@@ -8,9 +8,13 @@ import de.uniol.inf.is.odysseus.base.ISubscription;
 import de.uniol.inf.is.odysseus.base.ITransformationHelper;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.Subscription;
+import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
+import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
+import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -21,6 +25,10 @@ public class BrokerTransformationHelper implements ITransformationHelper{
 	
 	public Collection<ILogicalOperator> replace(
 			ILogicalOperator logical, IPipe physical) {
+		// DEBUG
+		if(logical instanceof ObjectTrackingPredictionAssignAO){
+			int i = 0;
+		}
 		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical);
 		ret.addAll(replace(logical, (ISource) physical));
 		return ret;
@@ -49,9 +57,27 @@ public class BrokerTransformationHelper implements ITransformationHelper{
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
 		for (LogicalSubscription l : logical.getSubscriptions()) {
-			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkInPort(),
-					l.getSourceOutPort(), l.getSchema());
-			ret.add(l.getTarget());
+			
+			// if the following operator is a broker, then do not
+			// subscribe to the logical one, but to the physical one
+			if(l.getTarget() instanceof BrokerAO){
+				BrokerPO brokerPO = BrokerWrapperPlanFactory.getPlan(((BrokerAO)l.getTarget()).getIdentifier());
+				physical.subscribeSink(brokerPO, l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
+			}
+			else{
+				l.getTarget().setPhysSubscriptionTo(physical, l.getSinkInPort(),
+						l.getSourceOutPort(), l.getSchema());
+				
+				// the target of the current subscription has only to be returned
+				// if it is a logical operator. Then this logical operator has
+				// to be updated by the drools engine, to be checked in the
+				// next turn of rule checking.
+				// If the target is a broker, then we have subscribed the current phyiscal
+				// to the corresponding physical broker. However, this means that
+				// there is no logical operator to be updated by the drools engine
+				ret.add(l.getTarget());
+			}
+			
 		}
 		return ret;
 	}

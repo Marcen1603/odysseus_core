@@ -858,7 +858,8 @@ public class ExecutorConsole implements CommandProvider,
 							ITimeInterval.class.getName(),
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
 							"de.uniol.inf.is.odysseus.latency.ILatency",
-							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability");
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability",
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime");
 				} else {
 					trafoConfig = new TransformationConfiguration(
 							new RelationalTransformationHelper(),
@@ -1085,9 +1086,13 @@ public class ExecutorConsole implements CommandProvider,
 					System.out.println("PRINT END.");
 				}
 				
+				// DEBUG:
+				System.out.println("ExecutorConsole: trafoConfigHelper: " + this.trafoConfigParam.getValue().getTransformationHelper());
+				
 				// the last plan is the complete plan
 				// so transform this one
 				IPhysicalOperator physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), this.trafoConfigParam.getValue());
+				
 				
 				int queryID = this.executor.addQuery(physPlan, currentUser, this.trafoConfigParam);
 				this.executor.startQuery(queryID);
