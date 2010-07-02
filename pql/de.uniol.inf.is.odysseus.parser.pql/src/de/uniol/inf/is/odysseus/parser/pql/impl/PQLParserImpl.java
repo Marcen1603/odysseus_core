@@ -114,8 +114,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
     if (isView)
     {
       DataDictionary dd = DataDictionary.getInstance();
-      Object view = dd.getView(nameStr);
-      if (view != null)
+
+      if (dd.containsView(nameStr))
       {
         {if (true) throw new IllegalArgumentException("multiple definition of view '"+ nameStr+ "'");}
       }

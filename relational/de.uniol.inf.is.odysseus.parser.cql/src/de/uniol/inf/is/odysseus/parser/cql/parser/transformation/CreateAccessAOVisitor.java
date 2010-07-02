@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.QueryAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
@@ -32,7 +31,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
 
-	private Map<SDFSource, AccessAO> sources;
+	private Map<SDFSource, ILogicalOperator> sources;
 
 	public CreateAccessAOVisitor() {
 		super();
@@ -41,7 +40,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	public final void init() {
 		this.attributeResolver = new AttributeResolver();
-		this.sources = new HashMap<SDFSource, AccessAO>();
+		this.sources = new HashMap<SDFSource, ILogicalOperator>();
 	}
 
 	public AttributeResolver getAttributeResolver() {
@@ -60,10 +59,11 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			brokerStreamingSource(node, data);
 			return null;
 		} else if (source.getSourceType().equals("ObjectRelationalStreaming")) {
-			sensorStreamSource(node, source, sourceString);
+			relationalStreamingSource(node, source, sourceString);
 			return null;
 		} else {
-			throw new RuntimeException("unknown type of source '" + source.getSourceType() + "' for source: " + sourceString);
+			throw new RuntimeException("unknown type of source '"
+					+ source.getSourceType() + "' for source: " + sourceString);
 		}
 
 		// case Relational:
@@ -78,42 +78,45 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	}
 
-	private void sensorStreamSource(ASTSimpleSource node, SDFSource source, String sourceName) {
-		AccessAO access = this.sources.get(source);
-		if (access == null) {
-			access = new AccessAO(source);
-			SDFEntity entity = null;
-			try {
-				entity = DataDictionary.getInstance().getEntity(sourceName);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			access.setOutputSchema(entity.getAttributes());
-
-			this.sources.put(source, access);
-		}
-
-		AbstractLogicalOperator inputOp = access;
-		if (node.hasAlias()) {
-			inputOp = new RenameAO();
-			inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
-			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
-			sourceName = node.getAlias();
-		}
-
-		if (node.hasWindow()) {
-			WindowAO window = createWindow(node.getWindow(), inputOp);
-			inputOp = window;
-		}
-		this.attributeResolver.addSource(sourceName, inputOp);
-	}
+	// private void sensorStreamSource(ASTSimpleSource node, SDFSource source,
+	// String sourceName) {
+	// ILogicalOperator access = this.sources.get(source);
+	// if (access == null) {
+	// access = new AccessAO(source);
+	// SDFEntity entity = null;
+	// try {
+	// entity = DataDictionary.getInstance().getEntity(sourceName);
+	// } catch (Exception e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// ((AccessAO) access).setOutputSchema(entity.getAttributes());
+	//
+	// this.sources.put(source, access);
+	// }
+	//
+	// ILogicalOperator inputOp = access;
+	// if (node.hasAlias()) {
+	// inputOp = new RenameAO();
+	// inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
+	// ((RenameAO) inputOp).setOutputSchema(createAliasSchema(node.getAlias(),
+	// access));
+	// sourceName = node.getAlias();
+	// }
+	//
+	// if (node.hasWindow()) {
+	// WindowAO window = createWindow(node.getWindow(), inputOp);
+	// inputOp = window;
+	// }
+	// this.attributeResolver.addSource(sourceName, inputOp);
+	// }
 
 	// FIXME funktioniert nicht mehr, da datadictionary nicht mehr auf db basis
 	// arbeitet
 	// und noch keine neue repraesentation von relationsinfos da ist
 	@SuppressWarnings("unused")
-	private void relationalSource(ASTSimpleSource node, SDFSource source, String sourceString) {
+	private void relationalSource(ASTSimpleSource node, SDFSource source,
+			String sourceString) {
 		QueryAccessAO access = (QueryAccessAO) this.sources.get(source);
 		if (access == null) {
 			access = new QueryAccessAO(source);
@@ -127,15 +130,21 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (node.hasAlias()) {
 			sourceString = node.getAlias();
 			operator = new RenameAO();
-			SDFAttributeList newSchema = createAliasSchema(node.getAlias(), access);
+			SDFAttributeList newSchema = createAliasSchema(node.getAlias(),
+					access);
 			operator.subscribeToSource(access, 0, 0, newSchema);
 		}
 
 		this.attributeResolver.addSource(sourceString, operator);
 	}
 
-	private void relationalStreamingSource(ASTSimpleSource node, SDFSource source, String sourceName) {
-		AccessAO access = this.sources.get(source);
+	private void relationalStreamingSource(ASTSimpleSource node,
+			SDFSource source, String sourceName) {
+		ILogicalOperator access = this.sources.get(source);
+		if (access == null) {
+			access = DataDictionary.getInstance().getLogicalView(
+					source.getURI());
+		}
 		if (access == null) {
 			access = new AccessAO(source);
 			SDFEntity entity = null;
@@ -145,16 +154,17 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			access.setOutputSchema(entity.getAttributes());
+			((AccessAO) access).setOutputSchema(entity.getAttributes());
 
 			this.sources.put(source, access);
 		}
 
-		AbstractLogicalOperator inputOp = access;
+		ILogicalOperator inputOp = access;
 		if (node.hasAlias()) {
 			inputOp = new RenameAO();
 			inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
-			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
+			((RenameAO) inputOp).setOutputSchema(createAliasSchema(node
+					.getAlias(), access));
 			sourceName = node.getAlias();
 		}
 
@@ -165,7 +175,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 
-	private WindowAO createWindow(ASTWindow windowNode, AbstractLogicalOperator inputOp) {
+	private WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
@@ -187,7 +197,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 					}
 				}
 				if (!found) {
-					throw new IllegalArgumentException("invalid partioning attribute");
+					throw new IllegalArgumentException(
+							"invalid partioning attribute");
 				}
 			}
 			window.setPartitionBy(partitionAttributes);
@@ -202,7 +213,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			}
 			SDFAttribute onAttribute = tmpResolver.getAttribute(onId.getName());
 			if (onAttribute == null) {
-				throw new RuntimeException("invalid attribute in ON: " + onId.getName());
+				throw new RuntimeException("invalid attribute in ON: "
+						+ onId.getName());
 			}
 			window.setWindowOn(onAttribute);
 		}
@@ -217,27 +229,29 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		return window;
 	}
 
-	private boolean containsWindow(ILogicalOperator inputOp) {
-		if (inputOp instanceof WindowAO) {
-			return true;
-		}
-		int numberOfInputs = inputOp.getSubscribedToSource().size();
-		if (inputOp instanceof ExistenceAO) {
-			numberOfInputs = 1;// don't check subselects in existenceaos
-		}
-		for (int i = 0; i < numberOfInputs; ++i) {
-			if (containsWindow(inputOp.getSubscribedToSource(i).getTarget())) {
-				return true;
-			}
-		}
-		return false;
-	}
+	// private boolean containsWindow(ILogicalOperator inputOp) {
+	// if (inputOp instanceof WindowAO) {
+	// return true;
+	// }
+	// int numberOfInputs = inputOp.getSubscribedToSource().size();
+	// if (inputOp instanceof ExistenceAO) {
+	// numberOfInputs = 1;// don't check subselects in existenceaos
+	// }
+	// for (int i = 0; i < numberOfInputs; ++i) {
+	// if (containsWindow(inputOp.getSubscribedToSource(i).getTarget())) {
+	// return true;
+	// }
+	// }
+	// return false;
+	// }
 
 	@Override
 	public Object visit(ASTSubselect node, Object data) {
-		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node.jjtGetChild(0);
+		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
+				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
-		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
+		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
+				childNode, null);
 
 		Node asNode = node.jjtGetChild(1);
 		if (asNode instanceof ASTWindow) {
@@ -248,12 +262,15 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		ASTIdentifier asIdentifier = (ASTIdentifier) asNode.jjtGetChild(0);
 		RenameAO rename = new RenameAO();
 		rename.subscribeToSource(result, 0, 0, result.getOutputSchema());
-		rename.setOutputSchema(createAliasSchema(asIdentifier.getName(), result));
+		rename
+				.setOutputSchema(createAliasSchema(asIdentifier.getName(),
+						result));
 		this.attributeResolver.addSource(asIdentifier.getName(), rename);
 		return null;
 	}
 
-	private SDFAttributeList createAliasSchema(String alias, ILogicalOperator access) {
+	private SDFAttributeList createAliasSchema(String alias,
+			ILogicalOperator access) {
 		SDFAttributeList attributes = new SDFAttributeList();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
 			SDFAttribute newAttribute = (SDFAttribute) attribute.clone();
@@ -267,9 +284,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTDBSelectStatement node, Object data) {
 		Class<?> dbClass;
 		try {
-			dbClass = Class.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
-			IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass.newInstance();
-			AbstractLogicalOperator dbOp = (AbstractLogicalOperator) dbVisitor.visit(node, data);
+			dbClass = Class
+					.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
+			IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
+					.newInstance();
+			AbstractLogicalOperator dbOp = (AbstractLogicalOperator) dbVisitor
+					.visit(node, data);
 			this.attributeResolver.addSource(dbVisitor.getAlias(), dbOp);
 
 		} catch (Exception e) {
@@ -281,19 +301,25 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) {
 		try {
-			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSource.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+					ASTBrokerSource.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+					.invoke(bsv, node, data);
 			Node child = node.jjtGetChild(0);
-			ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren() - 1);
+			ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child
+					.jjtGetNumChildren() - 1);
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);
 		} catch (ClassNotFoundException ex) {
-			throw new RuntimeException("Brokerplugin is missing in CQL parser.", ex.getCause());
+			throw new RuntimeException(
+					"Brokerplugin is missing in CQL parser.", ex.getCause());
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Error while accessing broker as source.", e.getCause());
+			throw new RuntimeException(
+					"Error while accessing broker as source.", e.getCause());
 		}
 
 		return null;
@@ -301,18 +327,23 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private Object brokerStreamingSource(ASTSimpleSource node, Object data) {
 		try {
-			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("visit", ASTSimpleSource.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
+			Method m = brokerSourceVisitor.getDeclaredMethod("visit",
+					ASTSimpleSource.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
+					.invoke(bsv, node, data);
 
 			ASTIdentifier ident = (ASTIdentifier) node.jjtGetChild(0);
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);
 		} catch (ClassNotFoundException ex) {
-			throw new RuntimeException("Brokerplugin is missing in CQL parser.", ex.getCause());
+			throw new RuntimeException(
+					"Brokerplugin is missing in CQL parser.", ex.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException("Error while creating broker as source.", e.getCause());
+			throw new RuntimeException(
+					"Error while creating broker as source.", e.getCause());
 		}
 
 		return null;

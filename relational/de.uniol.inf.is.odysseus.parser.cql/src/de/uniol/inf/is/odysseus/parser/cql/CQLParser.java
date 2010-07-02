@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCovarianceRow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateBroker;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateSensor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateViewStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBExecuteStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabase;
@@ -124,6 +125,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePriorityA
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateSensorVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
+import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateViewVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.IDatabaseAOVisitor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
@@ -319,6 +321,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		CreateStreamVisitor v = new CreateStreamVisitor();
 		return v.visit(node, data);
 	}
+	
+	@Override
+	public Object visit(ASTCreateViewStatement node, Object data) {
+		CreateViewVisitor v = new CreateViewVisitor();
+		return v.visit(node, data);
+	}
+
 
 	public Object visit(ASTPriority node, Object data) {
 		return node.getPriority();
@@ -812,5 +821,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

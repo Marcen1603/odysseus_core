@@ -25,6 +25,7 @@ public class DataDictionary {
 	static private DataDictionary instance = null;
 
 	private Map<String, ILogicalOperator> viewDefinitions = new HashMap<String, ILogicalOperator>();
+	private Map<String, ILogicalOperator> logicalViewDefinitions = new HashMap<String, ILogicalOperator>();
 
 	public Map<String, SDFEntity> entityMap = new HashMap<String, SDFEntity>();
 
@@ -82,6 +83,14 @@ public class DataDictionary {
 	public ILogicalOperator getViewForTransformation(String name) {
 		return viewDefinitions.get(name);
 	}
+	
+	public void setLogicalView(String name, ILogicalOperator topOperator){
+		this.logicalViewDefinitions.put(name, topOperator);
+	}
+	
+	public ILogicalOperator getLogicalView(String name) {
+		return this.logicalViewDefinitions.get(name);
+	}
 
 	public boolean hasView(String name){
 		return viewDefinitions.containsKey(name);
@@ -93,5 +102,9 @@ public class DataDictionary {
 	
 	public void clearViews() {
 		this.viewDefinitions.clear();
+	}
+
+	public boolean containsView(String viewName) {
+		return this.viewDefinitions.containsKey(viewName) || this.logicalViewDefinitions.containsKey(viewName);
 	}
 }
