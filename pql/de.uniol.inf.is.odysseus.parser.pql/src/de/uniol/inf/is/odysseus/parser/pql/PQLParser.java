@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.parser.pql;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
@@ -15,6 +17,8 @@ import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 public class PQLParser implements IQueryParser {
 
 	private PQLParserImpl parser;
+	
+	private static Map<String, IPredicateBuilder> predicateBuilder = new HashMap<String, IPredicateBuilder>();
 
 	@Override
 	public String getLanguage() {
@@ -60,9 +64,21 @@ public class PQLParser implements IQueryParser {
 			IOperatorBuilder builder) {
 		PQLParserImpl.addOperatorBuilder(identifier, builder);
 	}
+	
+	public static void addPredicateBuilder(String identifier, IPredicateBuilder builder) {
+		if (predicateBuilder.containsKey(identifier)) {
+			throw new IllegalArgumentException("multiple definitions of predicate builder: " + identifier);
+		}
+		
+		predicateBuilder.put(identifier, builder);
+	}
 
 	public static void removeOperatorBuilder(String identifier) {
-		PQLParserImpl.removeOperatorBuilder(identifier);
+		predicateBuilder.remove(identifier);
+	}
+	
+	public static IPredicateBuilder getPredicateBuilder(String predicateType) {
+		return predicateBuilder.get(predicateType);
 	}
 
 }

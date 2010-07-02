@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -53,8 +55,29 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	@Override
 	final public ILogicalOperator createOperator(
 			Map<String, Object> parameters, List<ILogicalOperator> inputOps) {
+		initOperatorCreation(parameters, inputOps);
 		initParameters(parameters);
 		return createOperator(inputOps);
+	}
+
+	protected void initOperatorCreation(Map<String, Object> parameters2,
+			List<ILogicalOperator> inputOps) {
+		IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
+		for(Parameter<?> parameter : parameters) {
+			if (parameter instanceof PredicateParameter){
+				((PredicateParameter) parameter).setAttributeResolver(attributeResolver);
+			}
+		}
+	}
+
+	private IAttributeResolver buildAttributeResolver(
+			List<ILogicalOperator> inputOps) {
+		SDFAttributeList attributes = new SDFAttributeList();
+		for(ILogicalOperator op : inputOps) {
+			attributes.addAll(op.getOutputSchema());
+		}
+		
+		return new DirectAttributeResolver(attributes);
 	}
 
 	protected abstract ILogicalOperator createOperator(
@@ -77,4 +100,5 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			}
 		}
 	}
+	
 }

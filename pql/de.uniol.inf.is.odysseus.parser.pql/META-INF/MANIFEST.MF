@@ -10,3 +10,4 @@ Import-Package: de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
 Service-Component: OSGI-INF/component.xml
 Export-Package: de.uniol.inf.is.odysseus.parser.pql
 Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"
+Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.Activator
