@@ -10,6 +10,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +33,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigur
 
 public class ShowQueryDialogCommand extends AbstractHandler implements IHandler {
 	
+	private static String lastQuery = "";
+	private static String lastParser = "";
+	private static String lastTransCfg = "";
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell parent = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
@@ -50,6 +56,10 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		queryLabel.setLayoutData(gd);
 
 		final Text queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		queryTextField.setText(lastQuery);
+		if(lastQuery.length()>0)
+			queryTextField.selectAll();
+		
 		GridData gd1 = new GridData(GridData.FILL_BOTH);
 		gd1.horizontalSpan = 2;
 		queryTextField.setLayoutData(gd1);
@@ -79,6 +89,10 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 					map.put(IQueryConstants.QUERY_PARAMETER_ID, queryTextField.getText());
 					map.put(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID, transCfgCombo.getText());
 					
+//					lastParser = parserCombo.getText();
+//					lastTransCfg = transCfgCombo.getText();
+//					lastQuery = queryTextField.getText();
+					
 					ICommandService cS = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
 					Command cmd = cS.getCommand(IQueryConstants.ADD_QUERY_COMMAND_ID);
 					ParameterizedCommand parCmd = ParameterizedCommand.generateCommand(cmd, map);
@@ -103,26 +117,52 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		});
 		cancelButton.setLayoutData(new GridData(GridData.CENTER));
 
+		dialogShell.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				lastParser = parserCombo.getText();
+				lastTransCfg = transCfgCombo.getText();
+				lastQuery = queryTextField.getText();
+			}
+			
+		});
+		
 		try {
 			IAdvancedExecutor executor = Activator.getExecutor();
-			for( String parserID : executor.getSupportedQueryParser() ) 
+			boolean lastFound = false;
+			for( String parserID : executor.getSupportedQueryParser() ) { 
 				parserCombo.add(parserID);
+				if( parserID.equals(lastParser)) 
+					lastFound = true;
+			}
+			if(lastFound) 
+				parserCombo.setText(lastParser);
+			else
+				parserCombo.setText(parserCombo.getItem(0));
 		} catch (PlanManagementException e1) {
 			parserCombo.add("No parser available");
 			parserCombo.setEnabled(false);
 			okButton.setEnabled(false);
+			parserCombo.setText("No parser available");
 		} catch (NullPointerException ex ) {
 			parserCombo.add("No executor available");
 			parserCombo.setEnabled(false);
 			okButton.setEnabled(false);
+			parserCombo.setText("No executor available");
 		}
-		parserCombo.setText(parserCombo.getItem(0));
 		
+		boolean lastFound = false;
 		for( String name : ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfigurationNames()) {
 			transCfgCombo.add(name);
+			if( name.equals(lastTransCfg)) 
+				lastFound = true;
 		}
-		transCfgCombo.setText(transCfgCombo.getItem(0));
-
+		if( lastFound ) 
+			transCfgCombo.setText(lastTransCfg);
+		else
+			transCfgCombo.setText(transCfgCombo.getItem(0));
+			
 		dialogShell.open();
 		
 		return null;
