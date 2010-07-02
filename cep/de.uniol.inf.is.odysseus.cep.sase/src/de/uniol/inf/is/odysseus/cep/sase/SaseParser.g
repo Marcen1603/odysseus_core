@@ -23,7 +23,7 @@ tokens{
 	COMPAREEXPRESSION;
 	IDEXPRESSION;
 	AGGREGATION;
-	CREATESTREAM;
+	CREATEVIEW;
 	QUERY;
 	NOT;
 	PREV;
@@ -42,7 +42,7 @@ start 	: createStmt|
 
 
 createStmt
-	: CREATE STREAM NAME queryStmt -> ^(CREATESTREAM NAME queryStmt);
+	: CREATE VIEW NAME queryStmt -> ^(CREATEVIEW NAME queryStmt);
 	
 
 queryStmt:  patternPart wherePart? withinPart? returnPart? -> ^(QUERY patternPart wherePart? withinPart? returnPart?)

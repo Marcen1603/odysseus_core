@@ -4,6 +4,7 @@ lexer grammar SaseLexer;
 
 CREATE 	: ('C'|'c')('R'|'r')('E'|'e')('A'|'a')('T'|'t')('E'|'e');
 STREAM  : ('S'|'s')('T'|'t')('R'|'r')('E'|'e')('A'|'a')('M'|'m');
+VIEW: ('V'|'v')('I'|'i')('E'|'e')('W'|'w');
 PATTERN : ('P'|'p')('A'|'a')('T'|'t')('T'|'t')('E'|'e')('R'|'r')('N'|'n');
 WHERE : ('W'|'w')('H'|'h')('E'|'e')('R'|'r')('E'|'e');
 WITHIN	:('W'|'w')('I'|'i')('T'|'t')('H'|'h')('I'|'i')('N'|'n');

@@ -122,9 +122,9 @@ options {
 
 start returns [ILogicalOperator op]
   :
-  ^(CREATESTREAM n=NAME q=query) // Create a new View
-  {	DataDictionary.getInstance().setView(n.getText(), q);
-	  //System.out.println("Created New Stream "+n+" "+q);
+  ^(CREATEVIEW n=NAME q=query) // Create a new View
+  {	DataDictionary.getInstance().setLogicalView(n.getText(), q);
+	  //System.out.println("Created New View "+n+" "+q);
 	  $op = q;}
   | o=query {$op = o;} // Only Query
   ;
@@ -147,7 +147,7 @@ query returns [ILogicalOperator op]
     int port = 0;
     for (String sn : sourceNames) {
       System.out.println("Bind "+sn+" to Port "+port);      
-      ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
+      ILogicalOperator ao = DataDictionary.getInstance().getLogicalView(sn);
       if (ao != null) {
         cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
         cepAo.setInputTypeName(port, sn);
