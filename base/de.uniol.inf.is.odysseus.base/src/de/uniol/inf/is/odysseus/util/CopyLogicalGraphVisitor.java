@@ -56,7 +56,7 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements IGra
 			T original = entry.getKey();
 			T copy = entry.getValue();
 			
-			// it shoulde be enough, to just copy
+			// it should be enough, to copy only
 			// the incoming subscriptions, since
 			// for each incoming subscription there
 			// also exists an outgoing in the preceding
