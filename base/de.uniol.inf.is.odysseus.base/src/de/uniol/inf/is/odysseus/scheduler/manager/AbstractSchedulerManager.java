@@ -70,7 +70,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	protected void deactivate() {
 		synchronized (this.schedulerFactoryMap) {
 			schedulerFactoryMap.clear();
-			schedulerFactoryMap = null;
+			//schedulerFactoryMap = null;
 		}
 	}
 
