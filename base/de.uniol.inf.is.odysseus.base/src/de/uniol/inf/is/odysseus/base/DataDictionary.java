@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
 /**
  * TODO neu machen :). ausserdem: atm werden ressourcen bei exceptions nicht
@@ -102,8 +104,13 @@ public class DataDictionary {
 		this.logicalViewDefinitions.put(name, topOperator);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private ILogicalOperator getLogicalView(String name) {
-		return this.logicalViewDefinitions.get(name);
+		ILogicalOperator logicalPlan = this.logicalViewDefinitions.get(name);
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+		AbstractGraphWalker walker = new AbstractGraphWalker();
+		walker.prefixWalk(logicalPlan, copyVisitor);
+		return copyVisitor.getResult();
 	}
 
 	public boolean hasView(String name){
