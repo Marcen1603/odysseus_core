@@ -38,7 +38,7 @@ public class GraphViewEditorInput extends OdysseusGraphView implements IEditorIn
 		return getModelGraph().getName();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		return null;

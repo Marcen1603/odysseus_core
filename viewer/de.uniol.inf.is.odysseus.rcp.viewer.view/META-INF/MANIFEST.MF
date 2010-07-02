@@ -26,6 +26,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.view,
  de.uniol.inf.is.odysseus.rcp.viewer.view.position,
  de.uniol.inf.is.odysseus.rcp.viewer.view.render,
  de.uniol.inf.is.odysseus.rcp.viewer.view.select,
- de.uniol.inf.is.odysseus.rcp.viewer.view.stream,
  de.uniol.inf.is.odysseus.rcp.viewer.view.swt.symbol,
  de.uniol.inf.is.odysseus.rcp.viewer.view.symbol
