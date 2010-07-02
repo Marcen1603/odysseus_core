@@ -122,7 +122,7 @@ options {
 
 start returns [ILogicalOperator op]
   :
-  ^(CREATEVIEW n=NAME q=query) // Create a new View
+  ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
   {	DataDictionary.getInstance().setLogicalView(n.getText(), q);
 	  //System.out.println("Created New View "+n+" "+q);
 	  $op = q;}
@@ -147,7 +147,7 @@ query returns [ILogicalOperator op]
     int port = 0;
     for (String sn : sourceNames) {
       System.out.println("Bind "+sn+" to Port "+port);      
-      ILogicalOperator ao = DataDictionary.getInstance().getLogicalView(sn);
+      ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
       if (ao != null) {
         cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
         cepAo.setInputTypeName(port, sn);

@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-07-02 10:25:00
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-07-02 11:42:29
 
 	package de.uniol.inf.is.odysseus.cep.sase; 
 	import java.util.LinkedList;
@@ -340,7 +340,7 @@ public class SaseAST extends TreeParser {
                 int port = 0;
                 for (String sn : sourceNames) {
                   System.out.println("Bind "+sn+" to Port "+port);      
-                  ILogicalOperator ao = DataDictionary.getInstance().getLogicalView(sn);
+                  ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
                   if (ao != null) {
                     cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
                     cepAo.setInputTypeName(port, sn);

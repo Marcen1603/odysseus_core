@@ -142,7 +142,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			SDFSource source, String sourceName) {
 		ILogicalOperator access = this.sources.get(source);
 		if (access == null) {
-			access = DataDictionary.getInstance().getLogicalView(
+			access = DataDictionary.getInstance().getView(
 					source.getURI());
 		}
 		if (access == null) {
