@@ -4,8 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
-import de.uniol.inf.is.odysseus.parser.pql.Parameter.REQUIREMENT;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
 
 public class SelectAOBuilder extends AbstractOperatorBuilder {
 
@@ -21,11 +20,8 @@ public class SelectAOBuilder extends AbstractOperatorBuilder {
 	protected ILogicalOperator createOperator(List<ILogicalOperator> inputOps) {
 		checkInputSize(inputOps, 1);
 
-		ILogicalOperator inputOp = inputOps.get(0);
-		SDFAttributeList schema = inputOp.getOutputSchema();
-
-		SelectAO selectAO = new SelectAO(predicateParameter.getValue());
-		selectAO.subscribeToSource(inputOp, 0, 0, schema);
+		SelectAO selectAO = new SelectAO();
+		selectAO.setPredicate(predicateParameter.getValue());
 
 		return selectAO;
 	}

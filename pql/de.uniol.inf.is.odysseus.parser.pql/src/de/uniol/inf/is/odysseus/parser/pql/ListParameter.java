@@ -1,0 +1,34 @@
+package de.uniol.inf.is.odysseus.parser.pql;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
+
+public class ListParameter<T> extends AbstractParameter<List<T>> {
+
+	private IParameter<T> singleParameter;
+
+	public ListParameter(String name, REQUIREMENT requirement, IParameter<T> singleParameter) {
+		super(name, requirement);
+		this.singleParameter = singleParameter;
+	}
+
+	@Override
+	public void setValueOf(Object object) {
+		ArrayList<T> list = new ArrayList<T>();
+		for(Object o : (List<?>)object) {
+			singleParameter.setValueOf(o);
+			list.add(singleParameter.getValue());
+		}
+		
+		setValue(list);
+	}
+	
+	@Override
+	public void setAttributeResolver(IAttributeResolver resolver) {
+		super.setAttributeResolver(resolver);
+		singleParameter.setAttributeResolver(resolver);
+	}
+
+}

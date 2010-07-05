@@ -2,15 +2,11 @@ package de.uniol.inf.is.odysseus.parser.pql;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PredicateItem;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
-@SuppressWarnings("unchecked")
-public class PredicateParameter extends AbstractParameter<IPredicate> {
-
-	private IAttributeResolver resolver;
+public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 
 	public PredicateParameter(String name, REQUIREMENT requirement) {
-		super(name, IPredicate.class, requirement);
+		super(name, requirement);
 	}
 
 	@Override
@@ -23,11 +19,7 @@ public class PredicateParameter extends AbstractParameter<IPredicate> {
 			throw new IllegalArgumentException("unkown type of predicate: "
 					+ pItem.getPredicateType());
 		}
-		setValue(pBuilder.createPredicate(resolver, pItem.getPredicate()));
-	}
-
-	public void setAttributeResolver(IAttributeResolver resolver) {
-		this.resolver = resolver;
+		setValue(pBuilder.createPredicate(getAttributeResolver(), pItem.getPredicate()));
 	}
 
 }

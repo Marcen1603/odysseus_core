@@ -5,8 +5,8 @@ package de.uniol.inf.is.odysseus.parser.pql;
  */
 public class DirectParameter<T> extends AbstractParameter<T> {
 
-	public DirectParameter(String name, Class<T> type, REQUIREMENT requirement) {
-		super(name, type, requirement);
+	public DirectParameter(String name, REQUIREMENT requirement) {
+		super(name, requirement);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -14,4 +14,5 @@ public class DirectParameter<T> extends AbstractParameter<T> {
 	public void setValueOf(Object object) {
 		setValue((T) object);
 	}
+	
 }

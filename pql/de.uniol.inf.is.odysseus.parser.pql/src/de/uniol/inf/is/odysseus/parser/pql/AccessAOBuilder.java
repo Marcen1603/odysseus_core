@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.parser.pql.Parameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
 
 /**
  * @author Jonas Jacobi
@@ -16,7 +16,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	public AccessAOBuilder() {
 		this.sourceName = new DirectParameter<String>(SOURCE_NAME,
-				String.class, REQUIREMENT.MANDATORY);
+				REQUIREMENT.MANDATORY);
 		setParameters(sourceName);
 	}
 

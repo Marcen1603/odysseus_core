@@ -7,7 +7,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parser.pql.IOperatorBuilder;
-import de.uniol.inf.is.odysseus.parser.pql.Parameter;
+import de.uniol.inf.is.odysseus.parser.pql.IParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class MuhBuilder implements IOperatorBuilder {
@@ -24,7 +24,7 @@ public class MuhBuilder implements IOperatorBuilder {
 	}
 
 	@Override
-	public Set<Parameter<?>> getParameters() {
+	public Set<IParameter<?>> getParameters() {
 		return Collections.emptySet();
 	}
 	

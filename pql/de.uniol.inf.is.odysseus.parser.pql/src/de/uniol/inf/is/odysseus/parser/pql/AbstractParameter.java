@@ -1,19 +1,20 @@
 package de.uniol.inf.is.odysseus.parser.pql;
 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
+
 
 /**
  * @author Jonas Jacobi
  */
-public abstract class AbstractParameter<T> implements Parameter<T>{
+public abstract class AbstractParameter<T> implements IParameter<T>{
 
 	final private String name;
-	final private Class<T> type;
 	final private REQUIREMENT requirement;
 	private T value;
+	private IAttributeResolver resolver;
 
-	public AbstractParameter(String name, Class<T> type, REQUIREMENT requirement) {
+	public AbstractParameter(String name, REQUIREMENT requirement) {
 		this.name = name;
-		this.type = type;
 		this.requirement = requirement;
 		value = null;
 	}
@@ -24,7 +25,7 @@ public abstract class AbstractParameter<T> implements Parameter<T>{
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.parser.pql.Parameter.REQUIREMENT getRequirement() {
+	public de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT getRequirement() {
 		return this.requirement;
 	}
 	
@@ -33,11 +34,6 @@ public abstract class AbstractParameter<T> implements Parameter<T>{
 		return this.requirement == REQUIREMENT.MANDATORY;
 	}
 
-	@Override
-	public Class<T> getType() {
-		return this.type;
-	}
-	
 	@Override
 	public void setNoValueAvailable() {
 		this.value = null;
@@ -60,5 +56,15 @@ public abstract class AbstractParameter<T> implements Parameter<T>{
 	@Override
 	public int hashCode() {
 		return name.hashCode();
+	}
+	
+	@Override
+	public IAttributeResolver getAttributeResolver() {
+		return this.resolver;
+	}
+	
+	@Override
+	public void setAttributeResolver(IAttributeResolver resolver) {
+		this.resolver = resolver;
 	}
 }

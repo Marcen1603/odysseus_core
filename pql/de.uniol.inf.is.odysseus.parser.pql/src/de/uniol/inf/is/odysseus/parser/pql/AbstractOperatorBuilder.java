@@ -16,11 +16,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
-	private Set<Parameter<?>> parameters;
+	private Set<IParameter<?>> parameters;
 
-	public void setParameters(Parameter<?>... parameters) {
-		this.parameters = new HashSet<Parameter<?>>();
-		for (Parameter<?> parameter : parameters) {
+	public AbstractOperatorBuilder() {
+		this.parameters = new HashSet<IParameter<?>>();
+	}
+
+	public void setParameters(IParameter<?>... parameters) {
+		for (IParameter<?> parameter : parameters) {
 			if (this.parameters.contains(parameter)) {
 				throw new IllegalArgumentException(
 						"duplicate parameter definition: "
@@ -29,19 +32,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			this.parameters.add(parameter);
 		}
 	}
-	
-	@Override
-	public Set<Parameter<?>> getParameters() {
-		return Collections.unmodifiableSet(this.parameters);
-	}
 
-	protected void createSubscriptions(ILogicalOperator operator,
-			List<ILogicalOperator> inputOps, int inputPortCount, SDFAttributeList schema) {
-		checkInputSize(inputOps, inputPortCount);
-		int i = 0;
-		for (ILogicalOperator op : inputOps) {
-			operator.subscribeToSource(op, i++, 0, schema);
-		}
+	@Override
+	public Set<IParameter<?>> getParameters() {
+		return Collections.unmodifiableSet(this.parameters);
 	}
 
 	protected void checkInputSize(List<ILogicalOperator> inputOps,
@@ -63,20 +57,18 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	protected void initOperatorCreation(Map<String, Object> parameters2,
 			List<ILogicalOperator> inputOps) {
 		IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
-		for(Parameter<?> parameter : parameters) {
-			if (parameter instanceof PredicateParameter){
-				((PredicateParameter) parameter).setAttributeResolver(attributeResolver);
-			}
+		for (IParameter<?> parameter : parameters) {
+			parameter.setAttributeResolver(attributeResolver);
 		}
 	}
 
 	private IAttributeResolver buildAttributeResolver(
 			List<ILogicalOperator> inputOps) {
 		SDFAttributeList attributes = new SDFAttributeList();
-		for(ILogicalOperator op : inputOps) {
+		for (ILogicalOperator op : inputOps) {
 			attributes.addAll(op.getOutputSchema());
 		}
-		
+
 		return new DirectAttributeResolver(attributes);
 	}
 
@@ -84,8 +76,8 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			List<ILogicalOperator> inputOps);
 
 	private void initParameters(Map<String, Object> parameters) {
-		Set<Parameter<?>> params = getParameters();
-		for (Parameter<?> parameter : params) {
+		Set<IParameter<?>> params = getParameters();
+		for (IParameter<?> parameter : params) {
 			String parameterName = parameter.getName();
 			boolean hasParameter = parameters.containsKey(parameterName);
 			if (!hasParameter) {
@@ -100,5 +92,5 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			}
 		}
 	}
-	
+
 }
