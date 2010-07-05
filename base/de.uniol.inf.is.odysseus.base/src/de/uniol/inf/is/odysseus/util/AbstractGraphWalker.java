@@ -2,16 +2,22 @@ package de.uniol.inf.is.odysseus.util;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.ISubscribable;
 import de.uniol.inf.is.odysseus.base.ISubscriber;
 import de.uniol.inf.is.odysseus.base.ISubscription;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S, H>, H extends ISubscription<S>>{
 
 	ArrayList<S> visited;
+	ArrayList<IPhysicalOperator> visitedPhysical;
 	
 	public AbstractGraphWalker(){
 		this.visited = new ArrayList<S>();
+		this.visitedPhysical = new ArrayList<IPhysicalOperator>();
 	}
 	
 	public void clearVisited(){
@@ -57,6 +63,35 @@ public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<
 			visitor.beforeFromSourceToSinkAction(node, s.getTarget());
 			prefixWalk(s.getTarget(), visitor);
 			visitor.afterFromSourceToSinkAction(node, s.getTarget());
+		}
+	}
+	
+	public void prefixWalkPhysical(IPhysicalOperator node, IGraphNodeVisitor<IPhysicalOperator, R> visitor){
+		if(this.visitedPhysical.contains(node)){
+			return;
+		}
+		else{
+			this.visitedPhysical.add(node);
+		}
+		
+		visitor.nodeAction(node);
+		
+		if(node.isSink()){
+			for (PhysicalSubscription<?> s : ((ISink<?>)node).getSubscribedToSource()){
+				IPhysicalOperator t = (IPhysicalOperator) s.getTarget();
+				visitor.beforeFromSinkToSourceAction(node, t);
+				this.prefixWalkPhysical(t, visitor);
+				visitor.afterFromSinkToSourceAction(node, t);
+			}
+		}
+			
+		if(node.isSource()){
+			for(PhysicalSubscription<?> s: ((ISource<?>)node).getSubscriptions()){
+				IPhysicalOperator t = (IPhysicalOperator)s.getTarget();
+				visitor.beforeFromSourceToSinkAction(node, t);
+				this.prefixWalkPhysical(t, visitor);
+				visitor.afterFromSourceToSinkAction(node, t);
+			}
 		}
 	}
 	

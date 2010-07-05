@@ -87,7 +87,6 @@ public class InitAttributesVisitor extends DefaultVisitor{
 	public Object visit(ASTBrokerOp node, Object data){
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();		
-		DataDictionary inst = DataDictionary.getInstance();
 		SDFSource source = DataDictionary.getInstance().getSource(sourceString);
 		brokerStreamingSource(node, source, sourceString);
 
@@ -101,7 +100,7 @@ public class InitAttributesVisitor extends DefaultVisitor{
 		
 		BrokerAO broker = this.brokers.get(source);
 		if (broker == null) {
-			broker = (BrokerAO)DataDictionary.getInstance().getView(sourceName);
+			broker = BrokerDictionary.getInstance().getLogicalPlan(sourceName);
 			this.brokers.put(source, broker);
 			this.attributeResolver.addSource(sourceName, broker);
 		}

@@ -25,10 +25,7 @@ public class BrokerTransformationHelper implements ITransformationHelper{
 	
 	public Collection<ILogicalOperator> replace(
 			ILogicalOperator logical, IPipe physical) {
-		// DEBUG
-		if(logical instanceof ObjectTrackingPredictionAssignAO){
-			int i = 0;
-		}
+
 		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical);
 		ret.addAll(replace(logical, (ISource) physical));
 		return ret;

@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.broker.dictionary;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
@@ -38,6 +38,19 @@ public class BrokerDictionaryEntry {
 	/** The port mappings. */
 	private List<QueuePortMapping> portMappings = new ArrayList<QueuePortMapping>();
 	
+	/**
+	 * The logical plan, containing this broker.
+	 */
+	private BrokerAO logicalPlan; 
+	
+	public BrokerAO getLogicalPlan() {
+		return logicalPlan;
+	}
+
+	public void setLogicalPlan(BrokerAO logicalPlan) {
+		this.logicalPlan = logicalPlan;
+	}
+
 	/**
 	 * A broker can be created by more than one statement. Therefore, we have
 	 * to store the current input port position. If the broker has no input connections,

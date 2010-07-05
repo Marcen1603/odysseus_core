@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
@@ -232,4 +233,11 @@ public class BrokerDictionary {
 		this.brokerlist.get(brokername).setCurrentOutputPort(curOut);
 	}
 
+	public void setLogicalPlan(String brokername, BrokerAO brokerAO){
+		this.brokerlist.get(brokername).setLogicalPlan(brokerAO);
+	}
+	
+	public BrokerAO getLogicalPlan(String brokername){
+		return this.brokerlist.get(brokername).getLogicalPlan();
+	}
 }

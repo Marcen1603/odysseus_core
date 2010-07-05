@@ -45,9 +45,9 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
+import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.base.FileSink;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
@@ -1072,6 +1072,8 @@ public class ExecutorConsole implements CommandProvider,
 			
 			ICompiler compiler = this.executor.getCompiler();
 			try {
+				List pos = BrokerWrapperPlanFactory.getAllBrokerPOs();
+				
 				List<IQuery> plans = compiler.translateQuery(queries, parser());
 				
 				// DEBUG: Print the logical plan.

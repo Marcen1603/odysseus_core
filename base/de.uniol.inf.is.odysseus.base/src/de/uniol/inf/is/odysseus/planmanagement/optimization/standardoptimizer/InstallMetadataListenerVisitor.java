@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
-import de.uniol.inf.is.odysseus.util.INodeVisitor;
+import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
 
 /**
  * Installs {@link IPOEventListener} for datarates and selectivity on operators.
@@ -13,15 +13,8 @@ import de.uniol.inf.is.odysseus.util.INodeVisitor;
  * @author Tobias Witt
  *
  */
-public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOperator, Object> {
+public class InstallMetadataListenerVisitor implements IGraphNodeVisitor<IPhysicalOperator, Object> {
 
-	@Override
-	public void ascendAction(IPhysicalOperator to) {
-	}
-
-	@Override
-	public void descendAction(IPhysicalOperator to) {
-	}
 
 	@Override
 	public Object getResult() {
@@ -56,6 +49,34 @@ public class InstallMetadataListenerVisitor implements INodeVisitor<IPhysicalOpe
 		 * LatencyCalculationPipe setzt Ende
 		 * Benchmark benutzt latency
 		 */
+	}
+
+	@Override
+	public void afterFromSinkToSourceAction(IPhysicalOperator sink,
+			IPhysicalOperator source) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void afterFromSourceToSinkAction(IPhysicalOperator source,
+			IPhysicalOperator sink) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void beforeFromSinkToSourceAction(IPhysicalOperator sink,
+			IPhysicalOperator source) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void beforeFromSourceToSinkAction(IPhysicalOperator source,
+			IPhysicalOperator sink) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

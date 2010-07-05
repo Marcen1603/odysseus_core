@@ -14,6 +14,7 @@ Import-Package:
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.base.usermanagement,
  de.uniol.inf.is.odysseus.base.wrapper,
+ de.uniol.inf.is.odysseus.broker.physicaloperator,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.monitoring,

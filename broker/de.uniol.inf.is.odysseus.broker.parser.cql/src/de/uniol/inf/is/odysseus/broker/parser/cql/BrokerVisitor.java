@@ -265,7 +265,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		
 		// set the broker view in the data dictionary
 		// used for procedural parser
-		DataDictionary.getInstance().setView(brokerName, broker);
+		BrokerDictionary.getInstance().setLogicalPlan(brokerName, broker);
+		
+		// Is this necessary any more?
+		DataDictionary.getInstance().setLogicalView(brokerName, broker);
 		
 		return broker;
 	}

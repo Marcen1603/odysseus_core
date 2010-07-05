@@ -55,7 +55,7 @@ public class ProceduralParser implements IQueryParser {
 	public List<IQuery> parse(String query) throws QueryParseException {
 		List<IQuery> listOfPlans = new ArrayList<IQuery>();
 		this.brokerNames = new ArrayList<String>();
-
+		
 		InitAttributesVisitor initAttrs = new InitAttributesVisitor();
 		InitBrokerVisitor initBroker = new InitBrokerVisitor();
 		CreateLogicalPlanVisitor createPlan = new CreateLogicalPlanVisitor();

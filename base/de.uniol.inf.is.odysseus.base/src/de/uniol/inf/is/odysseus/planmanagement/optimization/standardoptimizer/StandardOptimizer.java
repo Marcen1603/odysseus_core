@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
 
 /**
@@ -159,8 +159,9 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return newExecutionPlan;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void updateMetadataListener(IQuery editableQuery) {
-		AbstractTreeWalker.prefixWalk2(editableQuery.getRoot(), new InstallMetadataListenerVisitor());
+		new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoot(), new InstallMetadataListenerVisitor());
 	}
 	
 	@Override
