@@ -16,8 +16,11 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 	 */
 	protected SDFSource source = null;
 	private SDFAttributeList outputSchema;
-	private SDFAttribute startTimeStampAttribute;
-	private SDFAttribute endTimeStampAttribute;
+	/**
+	 * Attributes can can contain application time information
+	 */
+	private SDFAttribute startTimeStampAttribute = null;
+	private SDFAttribute endTimeStampAttribute = null;
 	
 	private int port;
 	private String host;
