@@ -18,8 +18,8 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     this.resolver = resolver;
   }
 
-  final public IPredicate<RelationalTuple<?>> Predicate() throws ParseException {
-  IPredicate<RelationalTuple<?>> predicate;
+  final public IPredicate < RelationalTuple <? > > Predicate() throws ParseException {
+  IPredicate < RelationalTuple <? > > predicate;
     if (jj_2_1(2147483647)) {
       predicate = OrPredicate();
     } else if (jj_2_2(2147483647)) {
@@ -48,7 +48,7 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
   }
 
   final public OrPredicate OrPredicate() throws ParseException {
-  IPredicate<RelationalTuple<?>> first, second;
+  IPredicate < RelationalTuple <? > > first, second;
     first = SimplePredicate();
     jj_consume_token(K_OR);
     second = Predicate();
@@ -57,7 +57,7 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
   }
 
   final public AndPredicate AndPredicate() throws ParseException {
-  IPredicate<RelationalTuple<?>> first, second;
+  IPredicate < RelationalTuple <? > > first, second;
     first = SimplePredicate();
     jj_consume_token(K_AND);
     second = Predicate();
@@ -65,16 +65,16 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     throw new Error("Missing return statement in function");
   }
 
-  final public IPredicate<RelationalTuple<?>> NotPredicate() throws ParseException {
-  IPredicate<RelationalTuple<?>> predicate;
+  final public IPredicate < RelationalTuple <? > > NotPredicate() throws ParseException {
+  IPredicate < RelationalTuple <? > > predicate;
     jj_consume_token(K_NOT);
     predicate = Predicate();
     {if (true) return new NotPredicate(predicate);}
     throw new Error("Missing return statement in function");
   }
 
-  final public IPredicate<RelationalTuple<?>> SimplePredicate() throws ParseException {
-  IPredicate<RelationalTuple<?>> predicate;
+  final public IPredicate < RelationalTuple <? > > SimplePredicate() throws ParseException {
+  IPredicate < RelationalTuple <? > > predicate;
     if (jj_2_3(2147483647)) {
       jj_consume_token(16);
       predicate = Predicate();
@@ -100,8 +100,8 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     throw new Error("Missing return statement in function");
   }
 
-  final public IPredicate<RelationalTuple<?>> BasicPredicate() throws ParseException {
-  IPredicate<RelationalTuple<?>> predicate;
+  final public IPredicate < RelationalTuple <? > > BasicPredicate() throws ParseException {
+  IPredicate < RelationalTuple <? > > predicate;
   String first, second, cOp;
     first = Expression();
     cOp = CompareOperator();
@@ -291,6 +291,16 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
   final public String CompareOperator() throws ParseException {
   Token t;
     t = jj_consume_token(COMPARE_OPERATOR);
+    if (t.image.equals("="))
+    {
+      {if (true) return "==";}
+    }
+    if (t.image.equals("<>"
+    )
+    )
+    {
+      {if (true) return "!=";}
+    }
     {if (true) return t.image;}
     throw new Error("Missing return statement in function");
   }
@@ -798,7 +808,7 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
       for (int i = 0; i < jj_endpos; i++) {
         jj_expentry[i] = jj_lasttokens[i];
       }
-      jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
+      jj_entries_loop: for (java.util.Iterator it = jj_expentries.iterator(); it.hasNext();) {
         int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {
           for (int i = 0; i < jj_expentry.length; i++) {
