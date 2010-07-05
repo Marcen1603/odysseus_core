@@ -26,4 +26,10 @@ public class ElementPartialAggregate<T> implements IPartialAggregate<T> {
 	public String toString() {
 		return ""+elem;
 	}
+	
+	@Override
+	public ElementPartialAggregate clone(){
+		return new ElementPartialAggregate(this);
+	}
+	
 }

@@ -12,6 +12,12 @@ public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 		this.aggCount = initCount;
 	}
 	
+	public AvgSumPartialAggregate(
+			AvgSumPartialAggregate<R> avgSumPartialAggregate) {
+		this.aggCount = avgSumPartialAggregate.aggCount;
+		this.aggValue = new Double(avgSumPartialAggregate.aggValue);
+	}
+
 	public Double getAggValue(){
 		return aggValue;
 	}
@@ -30,7 +36,10 @@ public class AvgSumPartialAggregate<R> implements IPartialAggregate<R> {
 		aggCount = newCount;
 	}
 	
-	
+	@Override
+	public AvgSumPartialAggregate<R> clone(){
+		return new AvgSumPartialAggregate(this);
+	}
 	
 
 }

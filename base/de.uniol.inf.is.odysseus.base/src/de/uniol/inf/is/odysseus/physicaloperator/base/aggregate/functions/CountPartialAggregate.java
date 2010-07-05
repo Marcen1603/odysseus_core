@@ -11,6 +11,10 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
 		this.count = count;
 	}
 
+	public CountPartialAggregate(CountPartialAggregate<T> countPartialAggregate) {
+		this.count = countPartialAggregate.count;
+	}
+
 	public synchronized int getCount() {
 		return count;
 	}
@@ -24,5 +28,10 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
 	public String toString() {
 		StringBuffer ret = new StringBuffer("CountPartialAggregate (").append(hashCode()).append(")").append(count);
 		return ret.toString();
+	}
+	
+	@Override
+	public CountPartialAggregate<T> clone(){
+		return new CountPartialAggregate(this);
 	}
 }
