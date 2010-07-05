@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -30,11 +31,11 @@ public class MapAO extends UnaryLogicalOp {
 
 	private void calcOutputSchema() {
 		if (expressions != null) {
-			SDFAttributeList inputSchema = getInputSchema();
-			if (inputSchema != null) {
 				this.outputSchema = new SDFAttributeList();
 				for (SDFExpression expr : expressions) {
 					SDFAttribute attr = new SDFAttribute(expr.getExpression());
+					//FIXME stimmt natuerlich nicht im allgemeinen, aber atm ist datatype unbekannt
+					attr.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 					outputSchema.add(attr);
 
 					// Alles Quatsch :-)
@@ -46,8 +47,6 @@ public class MapAO extends UnaryLogicalOp {
 					// } else{
 					// outputSchema.add(new SDFAttribute(expr.toString()));
 					// }
-
-				}
 			}
 		}
 	}

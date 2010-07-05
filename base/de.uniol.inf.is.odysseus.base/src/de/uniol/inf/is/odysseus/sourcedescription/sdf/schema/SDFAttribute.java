@@ -175,31 +175,31 @@ public class SDFAttribute extends SDFSchemaElement implements
 	/**
 	 * Return amount of subattributes
 	 */
-	
+
 	public int getAmountOfSubattributes() {
-	    if(this.subattributes == null) 
-	        return 0;	    
-	    
-	    return this.subattributes.size();
+		if (this.subattributes == null)
+			return 0;
+
+		return this.subattributes.size();
 	}
-	
+
 	/**
 	 * Remove all subattributes
 	 */
 	public void clearSubattributes() {
 		this.subattributes = new SDFAttributeList();
 	}
-	
+
 	public int getSubattributeCount() {
 		return this.subattributes.size();
 	}
-	
-	public SDFAttribute getSubattribute( int index ) {
+
+	public SDFAttribute getSubattribute(int index) {
 		return this.subattributes.get(index);
 	}
-	
+
 	public SDFAttributeList getSubattributes() {
-	    return this.subattributes;
+		return this.subattributes;
 	}
 
 	/**
@@ -258,22 +258,29 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 * @return true if attributeNames/sourceNames are equal
 	 */
 	public boolean equalsCQL(SDFAttribute attr) {
+		// TODO: WOFUER DER AUSKOMMENTIERTE CODE? damit kann es sein, dass
+		// sourcename mit attributename verglichen wird ...
 		if (this.getSourceName() != null && attr.getSourceName() != null) {
 			if (!this.getSourceName().equals(attr.getSourceName())) {
 				return false;
 			}
-			return this.getAttributeName().equals(attr.getAttributeName());
-		} else {
-			// Combinations
-			// TODO: Problem is: name can be as sourceName or as attributeName
-			String t1 = this.getSourceName()!=null?this.getSourceName():this.getAttributeName();
-			String t2 = attr.getSourceName()!=null?attr.getSourceName():attr.getAttributeName();
-			if (t1 != null) {
-				return t1.equals(t2);
-			}else{
-				return false;
-			}
+			// return this.getAttributeName().equals(attr.getAttributeName());
 		}
+		return this.getAttributeName().equals(attr.getAttributeName());
+		// else {
+		// 
+		// // Combinations
+		// // TODO: Problem is: name can be as sourceName or as attributeName
+		// String t1 =
+		// this.getSourceName()!=null?this.getSourceName():this.getAttributeName();
+		// String t2 =
+		// attr.getSourceName()!=null?attr.getSourceName():attr.getAttributeName();
+		// if (t1 != null) {
+		// return t1.equals(t2);
+		// }else{
+		// return false;
+		// }
+		// }
 	}
 
 	@Override
