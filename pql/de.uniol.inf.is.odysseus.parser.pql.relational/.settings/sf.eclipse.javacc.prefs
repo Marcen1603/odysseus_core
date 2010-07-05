@@ -1,0 +1,9 @@
+#Fri Jul 02 11:38:53 CEST 2010
+CLEAR_CONSOLE=false
+JJ_NATURE=true
+JTB_OPTIONS=-p\=de.uniol.inf.is.odysseus.parser.pql.relational.predicateParser
+RUNTIME_JAR=-intern-
+RUNTIME_JTBJAR=-intern-
+SHOW_CONSOLE=true
+SUPPRESS_WARNINGS=true
+eclipse.preferences.version=1
