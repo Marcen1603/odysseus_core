@@ -10,9 +10,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
 public class RelationalPredicateBuilder implements IPredicateBuilder {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public IPredicate createPredicate(IAttributeResolver resolver,
+	public IPredicate<?> createPredicate(IAttributeResolver resolver,
 			String predicate) {
 		RelationalPredicateParser parser = new RelationalPredicateParser(
 				new StringReader(predicate));
