@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-
 
 public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute> {
 	/**
@@ -27,12 +27,11 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute> {
 
 	public SDFAttributeList(SDFAttribute[] attributes1) {
 		super();
-		for (SDFAttribute a:attributes1){
+		for (SDFAttribute a : attributes1) {
 			this.add(a);
 		}
 	}
-	
-	
+
 	public SDFAttributeList(Collection<SDFAttribute> attributes1) {
 		super();
 		super.addAll(attributes1);
@@ -151,27 +150,29 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute> {
 	}
 
 	/**
-	 * Checks whether this schema is union compatible to another
-	 * schema. This means: all the attributes of each schema
-	 * have the same datatype.
+	 * Checks whether this schema is union compatible to another schema. This
+	 * means: all the attributes of each schema have the same datatype.
 	 */
-	public boolean compatibleTo(SDFAttributeList other){
-		for(SDFAttribute attrLeft : this){
-			for(SDFAttribute attrRight : other){
-				if(!attrLeft.getDatatype().equals(attrRight.getDatatype())){
-					return false;
-				}
+	public boolean compatibleTo(SDFAttributeList other) {
+		if (other.size() != size()) {
+			return false;
+		}
+		Iterator<SDFAttribute> it = other.iterator();
+		for (SDFAttribute attrLeft : this) {
+			SDFAttribute attrRight = it.next();
+			if (!attrLeft.getDatatype().equals(attrRight.getDatatype())) {
+				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Checks whether this schema is union compatible to another
-	 * schema. This means: all the attributes of each schema
-	 * have the same datatype.
+	 * Checks whether this schema is union compatible to another schema. This
+	 * means: all the attributes of each schema have the same datatype.
 	 */
-	public static boolean compatible(SDFAttributeList left, SDFAttributeList right){
+	public static boolean compatible(SDFAttributeList left,
+			SDFAttributeList right) {
 		return left.compatibleTo(right);
 	}
 }
