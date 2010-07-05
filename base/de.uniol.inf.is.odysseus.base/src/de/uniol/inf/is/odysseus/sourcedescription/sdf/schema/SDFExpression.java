@@ -107,7 +107,7 @@ public class SDFExpression implements Serializable {
 		this.attribute = attribute;
 		this.attributes = new ArrayList<SDFAttribute>(1);
 		this.attributes.add(attribute);
-		// TODO: Hier wird noch die Punkt-Notation benötigt?
+		// TODO: Hier wird noch die Punkt-Notation benï¿½tigt?
 		this.expression = attribute.toPointString();
 	}
 
@@ -198,6 +198,7 @@ public class SDFExpression implements Serializable {
 		return this.attributePositions;
 	}
 
+
 	/**
 	 * @param URI
 	 * @param value
@@ -261,9 +262,14 @@ public class SDFExpression implements Serializable {
 			this.variableArrayList.add(var);
 			this.attributes.add(attribute.clone());
 			this.variables.put(aliasName, var);
+			insertAttributePath(token);
 		}
 
 		return var;
+	}
+
+	protected void insertAttributePath(String token) {
+		// do nothing special here...
 	}
 
 	private void setValue(Object object) {
