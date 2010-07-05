@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSettable{
@@ -15,6 +16,8 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 	 */
 	protected SDFSource source = null;
 	private SDFAttributeList outputSchema;
+	private SDFAttribute startTimeStampAttribute;
+	private SDFAttribute endTimeStampAttribute;
 	
 	private int port;
 	private String host;
@@ -152,6 +155,22 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 		return host;
 	}
 	
+	public SDFAttribute getStartTimeStampAttribute() {
+		return startTimeStampAttribute;
+	}
+
+	public void setStartTimeStampAttribute(SDFAttribute startTimeStampAttribute) {
+		this.startTimeStampAttribute = startTimeStampAttribute;
+	}
+
+	public SDFAttribute getEndTimeStampAttribute() {
+		return endTimeStampAttribute;
+	}
+
+	public void setEndTimeStampAttribute(SDFAttribute endTimeStampAttribute) {
+		this.endTimeStampAttribute = endTimeStampAttribute;
+	}
+
 	@Override
 	public String toString() {
 		return getName() + " (" + this.getSource().getURI() + ")";
