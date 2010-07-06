@@ -33,6 +33,8 @@ public interface ICondition extends IExpression{
 	 * @return !isNegate() && eventTypePort == port;
 	 */
 	public boolean checkEventTypeWithPort(int port);
+	public boolean doEventTypeChecking();
+	public void setEventTypeChecking(boolean eventTypeChecking);
 	/**
 	 * Set Type of Events that can be processed by this Transition (only one possible?)
 	 * @param type

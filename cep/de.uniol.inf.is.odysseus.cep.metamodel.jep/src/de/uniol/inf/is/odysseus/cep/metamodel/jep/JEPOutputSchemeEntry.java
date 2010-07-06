@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.AbstractOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.UndefinedExpressionLabelException;
 
-public class JEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
+abstract public class JEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 	/**
 	 * JEP Expression, der den Wert der Ausgabe kodiert.
 	 */
@@ -69,7 +69,7 @@ public class JEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 		return symbolTable.keySet();
 	}
 	
-	public void setValue(CepVariable varName, Object newValue) {
+	protected void setValue_internal(CepVariable varName, Object newValue) {
 		expression.getVar(symbolTable.get(varName)).setValue(newValue);
 	}
 

@@ -10,6 +10,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
  de.uniol.inf.is.odysseus.cep.epa.eventreading,
  de.uniol.inf.is.odysseus.cep.metamodel,
+ de.uniol.inf.is.odysseus.cep.metamodel.jep,
  de.uniol.inf.is.odysseus.cep.metamodel.symboltable,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.metadata.base,
@@ -20,5 +21,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
  de.uniol.inf.is.odysseus.cep.epa.eventreading.relational,
+ de.uniol.inf.is.odysseus.cep.epa.metamodel.relational,
  de.uniol.inf.is.odysseus.cep.epa.symboltable.relational
 Require-Bundle: de.uniol.inf.is.odysseus.cep

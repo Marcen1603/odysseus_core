@@ -5,12 +5,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nfunk.jep.JEP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.metamodel.AbstractCondition;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
-import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 
-public class JEPCondition extends AbstractCondition {
+abstract public class JEPCondition extends AbstractCondition {
 
 	/**
 	 * Referenz auf den Ausdruck der Transitionsbedingung
@@ -18,6 +20,14 @@ public class JEPCondition extends AbstractCondition {
 	private JEP expression;
 	private Map<CepVariable, String> symbolTable = new HashMap<CepVariable, String>();
 	private boolean negate = false;
+	
+	private Logger _logger = null;
+	private Logger getLogger(){
+		if (_logger == null){
+			_logger = LoggerFactory.getLogger(JEPCondition.class);
+		}
+		return _logger;
+	}
 
 	/**
 	 * Erzeugt eine neue Transitionsbedingung aus einer textuellen Beschreibung
@@ -93,9 +103,11 @@ public class JEPCondition extends AbstractCondition {
 		return expression.getErrorInfo();
 	}
 
-	public void setValue(CepVariable varName, Object newValue) {
+	protected void setValue_internal(CepVariable varName, Object newValue) {
+	//	getLogger().debug(this+" setValue "+varName+" to "+newValue);
 		expression.getVar(symbolTable.get(varName)).setValue(newValue);
 	}
+
 
 	@Override
 	public boolean evaluate() {
@@ -114,7 +126,7 @@ public class JEPCondition extends AbstractCondition {
 			} else {
 
 				for (CepVariable v : getVarNames()) {
-					System.err.println("Variable " + v + " "
+					getLogger().error("Variable " + v + " "
 							+ expression.getVar(symbolTable.get(v)).getValue());
 				}
 				ConditionEvaluationException e = new ConditionEvaluationException();
@@ -122,6 +134,15 @@ public class JEPCondition extends AbstractCondition {
 				throw e;
 			}
 		}
+//		if (getLogger().isDebugEnabled()){
+//			getLogger().debug("evaluate() --> "+this+" "+conditionValue);
+//			if (conditionValue == 0.0){
+//				for (CepVariable v : getVarNames()) {
+//					System.err.println("Variable " + v + " "
+//							+ expression.getVar(symbolTable.get(v)).getValue());
+//				}				
+//			}
+//		}	
 		return (conditionValue != 0.0);
 	}
 

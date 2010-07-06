@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
  * Processing dar. Sie sind als Operator in den physischen Ablaufplan
  * integrierbar und steuern die gesamte Verarbeitung von komplexen Events
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterval>, W>
@@ -57,8 +57,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private PriorityQueue<Pair<R, Integer>> inputQueue = new PriorityQueue<Pair<R, Integer>>(
 			10, new Comparator<Pair<R, Integer>>() {
 				public int compare(Pair<R, Integer> left, Pair<R, Integer> right) {
-					return left.getE1().getMetadata().compareTo(
-							right.getE1().getMetadata());
+					return left.getE1().getMetadata()
+							.compareTo(right.getE1().getMetadata());
 				};
 			});
 	private Map<Integer, PointInTime> lastTSFromPort = new HashMap<Integer, PointInTime>();
@@ -194,13 +194,29 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private void process_internal(R event, int port) {
 
 		if (logger.isDebugEnabled())
-			logger.debug("INIT with (" + eventReader.get(port).getType() + ") "
-					+ event + " " + port);
+			logger.debug("-------------------> NEXT EVENT from "
+					+ eventReader.get(port).getType() + ": " + event + " "
+					+ port);
 		if (logger.isDebugEnabled())
 			logger.debug(this.getStats());
 
-		this.instances.add(new StateMachineInstance<R>(this.stateMachine,
-				getEventReader().get(port).getTime(event)));
+		// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob mindestens
+		// die Typbedingung erfuellt ist
+		boolean createNewInstance = false;
+		for (Transition transition : this.stateMachine.getInitialState()
+				.getTransitions()) {
+
+			// Hinweis: Es gibt keine Ignore Kante an der ersten Transition
+			// deswegen nicht transition.getCondition().doEventTypeChecking() 
+			if (transition.getCondition().checkEventTypeWithPort(port)) {
+				createNewInstance = true;
+				break;
+			}
+		}
+		if (createNewInstance) {
+			this.instances.add(new StateMachineInstance<R>(this.stateMachine,
+					getEventReader().get(port).getTime(event)));
+		}
 		if (event == null)
 			throw new InvalidEventException(
 					"The event to be processed is null.");
@@ -229,30 +245,38 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 		for (StateMachineInstance<R> instance : this.instances) {
 			if (logger.isDebugEnabled())
-				logger.debug(instance.getStats());
+				logger.debug(instance + " Stats: " + instance.getStats());
 			Stack<Transition> takeTransition = new Stack<Transition>();
 			boolean outofWindow = false;
 
 			for (Transition transition : instance.getCurrentState()
 					.getTransitions()) {
+				logger.debug("Evalating: " + transition + " on event " + event);
 				// Terminate if out of Window
 				if (outofWindow) {
 					break;
 				}
 
 				// First check Type
-				if (!transition.getCondition().checkEventTypeWithPort(port)) {
-					// System.out.println("Wrong Datatype "+eventReader.get(port).getType()+" in State "+instance.getCurrentState());
+				if (transition.getCondition().doEventTypeChecking()
+						&& !transition.getCondition().checkEventTypeWithPort(
+								port)) {
+					// logger.debug(instance + " Wrong Datatype "
+					// + eventReader.get(port).getType()
+					// + " for Transition " + transition.getCondition() +
+					// " "+transition.getCondition().doEventTypeChecking()
+					// + " in state " + instance.getCurrentState());
 					continue;
 				}
-				// and Time
+
+				// Check Time
 				if (stateMachine.getWindowSize() > 0) {
 					if (!transition.getCondition().checkTime(
 							instance.getStartTimestamp(),
 							eventReader.get(port).getTime(event),
 							stateMachine.getWindowSize())) {
 						outofWindow = true;
-						// System.out.println("Out of Window ...");
+						logger.debug(instance + " Out of Window ...");
 						continue;
 					}
 				}
@@ -267,9 +291,12 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						if (transition.evaluate()) {
 							takeTransition.push(transition);
 							if (logger.isDebugEnabled())
-								logger.debug("TRUE: "
+								logger.debug(instance + " Transition true: "
 										+ transition.getCondition().getLabel());
 
+						} else {
+							// logger.debug(instance + " Transition false: "
+							// + transition.getCondition().getLabel());
 						}
 					} catch (Exception e) {
 						// System.out.println(transition.getCondition().getLabel());
@@ -291,28 +318,24 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					if (outofWindow) {
 						logger.debug("Instance " + instance + " out of window");
 					} else {
-						logger
-								.debug("No available transition. Remove instance "
-										+ instance);
+						logger.debug("No available transition. Remove instance "
+								+ instance);
 					}
 				}
 				outdatedInstances.add(instance);
 				this.branchingBuffer.removeBranch(instance);
 			} else if (takeTransition.size() == 1) {
 				// one next state: Change state, execute action
-				// if (logger.isDebugEnabled())
-				// logger.debug("One transition found: "
-				// + takeTransition.peek());
-				this
-						.takeTransition(instance, takeTransition.pop(), event,
-								port);
+				if (logger.isDebugEnabled())
+					logger.debug("One transition found: "
+							+ takeTransition.peek());
+				this.takeTransition(instance, takeTransition.pop(), event, port);
 			} else if (takeTransition.size() > 1) {
 				// mehr als 1 Folgezustand: nichtdeterministische Verzweigung!
 				if (logger.isDebugEnabled())
-					logger
-							.debug(""
-									+ takeTransition.size()
-									+ "  transitions found (nondeterministic branching).");
+					logger.debug(""
+							+ takeTransition.size()
+							+ "  transitions found (nondeterministic branching).");
 				while (takeTransition.size() > 1) {
 					StateMachineInstance<R> newInstance = instance.clone();
 					this.takeTransition(newInstance, takeTransition.pop(),
@@ -324,9 +347,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				// werden?
 				// Dann kann man sich den Fall takeTransition.size()==1 sparen
 				// ...
-				this
-						.takeTransition(instance, takeTransition.pop(), event,
-								port);
+				this.takeTransition(instance, takeTransition.pop(), event, port);
 			}
 		}
 	}
@@ -335,10 +356,16 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			Transition transition, int port) {
 		for (CepVariable varName : transition.getCondition().getVarNames()) {
 
+			// logger.debug("Setting Value for "+varName);
+
 			Object newValue = null;
 			if (varName.isActEventName()) {
 				newValue = this.eventReader.get(port).getValue(
 						varName.getVariableName(), object);
+
+				// logger.debug("Setze " + varName + " auf " + newValue +
+				// " from " + object);
+
 				if (newValue == null) {
 					return false;
 				}
@@ -388,8 +415,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					}
 				}
 				complexEvents.add(this.complexEventFactory.createComplexEvent(
-						this.stateMachine.getOutputScheme(), instance
-								.getMatchingTrace(), instance.getSymTab(),
+						this.stateMachine.getOutputScheme(),
+						instance.getMatchingTrace(),
+						instance.getSymTab(),
 						new PointInTime(getEventReader().get(port).getTime(
 								instance.getMatchingTrace().getLastEvent()
 										.getEvent()))));
@@ -436,8 +464,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						}
 					}
 				}
-				value = eventR.getValue(varName.getAttribute(), event
-						.getEvent());
+				value = eventR.getValue(varName.getAttribute(),
+						event.getEvent());
 			}
 		}
 		return value;
@@ -572,15 +600,15 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					+ " " + "Execute action: " + transition.getAction());
 		}
 
-		instance.executeAction(transition.getAction(), event, this.eventReader
-				.get(port));
+		// TODO : Reihenfolge getauscht ... siehe unten ...
+		instance.executeAction(transition.getAction(), event,
+				this.eventReader.get(port));
 
-		// TODO: getauscht ... Auswirkungen (s.u.)??
 		instance.setCurrentState(transition.getNextState());
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("--> " + instance.getStats());
-		}
+		// if (logger.isDebugEnabled()) {
+		// logger.debug(instance + " --> " + instance.getStats());
+		// }
 		/*
 		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
 		 * das Event gespeichert wird. Wird der Zustand zuerst gewechselt, wird

@@ -86,10 +86,13 @@ public class CepVariable {
 		String[] split = varName.split(getSeperator());
 		this.operation = symTabOpFac.getOperation(split[0]);
 		this.stateIdentifier = split[1];
+		this.index = -1;
 		if (split[2].length() > 0){
-			this.index = Integer.parseInt(split[2]);
-		}else{
-			this.index = -1;
+			try{
+				this.index = Integer.parseInt(split[2]);
+			}catch(NumberFormatException e){
+				System.err.println("NumberFormatException");
+			}
 		}
 		this.attributename = split[3];
 	}
@@ -218,9 +221,7 @@ public class CepVariable {
 	}
 
 	public String toString(String indent) {
-		String str = indent + "SymTabSchemeEntry: " + this.hashCode();
-		indent += "  ";
-		str += indent + "Variable name: " + this.getVariableName();
+		String str = "CEP VarName: " + this.getVariableName();
 		return str;
 	}
 

@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IP
  * In der Symboltabelle werden aktuelle Berechnungszustände für eine
  * Automateninstanz gespeichert.
  * 
- * @author Thomas Vogelgesang
+ * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
 public class SymbolTable<T> {
@@ -46,7 +46,11 @@ public class SymbolTable<T> {
 	}
 
 	public SymbolTable(SymbolTable<T> symbolTable) {
-		this.entries = new HashMap<String, IPartialAggregate<T>>(symbolTable.entries);
+		this.entries = new HashMap<String, IPartialAggregate<T>>();
+		for (Entry<String, IPartialAggregate<T>> e: symbolTable.entries.entrySet()){
+				this.entries.put(e.getKey(), e.getValue()!=null?e.getValue().clone():null);
+			
+		}
 		this.vars = new HashMap<String, CepVariable>(symbolTable.vars);
 	}
 
@@ -74,8 +78,13 @@ public class SymbolTable<T> {
 //	}
 
 	public Object getValue(CepVariable name) {
-		name.getOperation().evaluate(entries.get(name.getVariableName()));
-		return entries.get(name.getVariableName());
+		IPartialAggregate<T> v = entries.get(name.getVariableName());
+		if (v  != null){
+			return name.getOperation().evaluate(v);
+		}else{
+			return null;
+		}
+		// return entries.get(name.getVariableName());
 	}
 
 	public void updateValue(CepVariable variable, T value) {

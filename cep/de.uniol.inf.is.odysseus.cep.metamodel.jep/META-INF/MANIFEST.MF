@@ -8,5 +8,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: JepModified;bundle-version="1.0.0"
 Import-Package: de.uniol.inf.is.odysseus.cep.epa.exceptions,
  de.uniol.inf.is.odysseus.cep.metamodel,
- de.uniol.inf.is.odysseus.cep.metamodel.exception
+ de.uniol.inf.is.odysseus.cep.metamodel.exception,
+ org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.cep.metamodel.jep

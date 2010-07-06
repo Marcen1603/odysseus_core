@@ -10,14 +10,15 @@ options {
 	package de.uniol.inf.is.odysseus.cep.sase; 
 	import java.util.LinkedList;
 	import java.util.Map;
-	import java.util.Set;
-	import java.util.TreeSet;
 	import java.util.HashMap;
 	import java.util.Iterator;
 	
 	import de.uniol.inf.is.odysseus.base.DataDictionary;
 	import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 	import de.uniol.inf.is.odysseus.cep.CepAO;
+	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 	import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 	import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 	import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
@@ -25,13 +26,25 @@ options {
 	import de.uniol.inf.is.odysseus.cep.metamodel.State;
 	import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 	import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-	import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPCondition;
-	import de.uniol.inf.is.odysseus.cep.metamodel.jep.JEPOutputSchemeEntry;
+	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalJEPCondition;
+	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalJEPOutputSchemeEntry;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
+	
+	import org.slf4j.Logger;
+  import org.slf4j.LoggerFactory;
 }
 
 @members {
+
+  Logger _logger = null;
+  Logger getLogger(){
+    if (_logger == null){
+      _logger = LoggerFactory.getLogger(SaseAST.class);
+    }
+    return _logger;
+  } 
+
 	List<String> simpleState = null;
 	List<String> kleeneState = null;
 	Map<String, String> simpleAttributeState = null;
@@ -91,10 +104,10 @@ options {
   }
 
   private String replaceStrings(String ret, String oldString, String newString) {
-//     System.out.println("replace " + oldString + " in " + ret + " with "
+//     getLogger().debug("replace " + oldString + " in " + ret + " with "
 //     + newString);
     ret = ret.replace(oldString, newString);
-//     System.out.println("--> " + ret);
+//     getLogger().debug("--> " + ret);
     return ret;
   }
 	
@@ -124,7 +137,7 @@ start returns [ILogicalOperator op]
   :
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
   {	DataDictionary.getInstance().setLogicalView(n.getText(), q);
-	  //System.out.println("Created New View "+n+" "+q);
+	  getLogger().debug("Created New View "+n+" "+q);
 	  $op = q;}
   | o=query {$op = o;} // Only Query
   ;
@@ -143,10 +156,11 @@ query returns [ILogicalOperator op]
   {
     // Initialize Schema
     cepAo.getStateMachine().getSymTabScheme(true);
+    getLogger().debug("Created State Machine "+cepAo.getStateMachine());
     // Set Inputs for cepAO;
     int port = 0;
     for (String sn : sourceNames) {
-      System.out.println("Bind "+sn+" to Port "+port);      
+      getLogger().debug("Bind "+sn+" to Port "+port);      
       ILogicalOperator ao = DataDictionary.getInstance().getView(sn);
       if (ao != null) {
         cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
@@ -178,27 +192,28 @@ List<State> states = new LinkedList<State>();
          State source = states.get(i);
          State dest = states.get(i + 1);
          if (source.getId().endsWith("[i]")) {
-           JEPCondition con = new JEPCondition("");
+           RelationalJEPCondition con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
            con.setEventPort(i);
            source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.consumeNoBufferWrite));
-           con = new JEPCondition("");
+           con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
            con.setEventPort(i);
            source.addTransition(new Transition(source.getId()+ "_take", source,con, EAction.consumeBufferWrite));
          } else {
-            JEPCondition con = new JEPCondition("");
+            RelationalJEPCondition con = new RelationalJEPCondition("");
             con.setEventType(source.getType());
             con.setEventPort(i);
             source.addTransition(new Transition(source.getId()+ "_begin", dest, con,EAction.consumeBufferWrite));
          }
          if (i > 0 && i < states.size() - 1) {
-            JEPCondition con = new JEPCondition("");
+            RelationalJEPCondition con = new RelationalJEPCondition("");
             // Achtung! Ignore hat keinen Typ!
             //con.setEventType(source.getType());
             // con.con.setEventPort(i);
             // Ignore auf sich selbst!
             source.addTransition(new Transition(source.getId()+ "_ignore", source, con,EAction.discard));
+            
           }
        }
     } else {
@@ -215,7 +230,7 @@ state[List<State> states, List<String> sourceNames]
 		  String _statename = statename.getText();
 		  sourceNames.add(_statename);
 		  String _attributeName = attrName.getText();
-		//	System.out.println("Einfacher Zustand "+_statename+" "+_attributeName);
+		//	getLogger().debug("Einfacher Zustand "+_statename+" "+_attributeName);
 			// Anm. _statename darf mehrfach vorkommen  Variablenname nicht
 			simpleState.add(_statename);
 			if (simpleAttributeState.get(_attributeName) == null){
@@ -231,7 +246,7 @@ state[List<State> states, List<String> sourceNames]
 		  if (not != null) throw new RuntimeException("Negative states not supported now!");
 		  String _statename = statename.getText();
       String _attributeName = attrName.getText();
-		 // System.out.println("Kleene Zustand "+_statename+" "+_attributeName);
+		 // getLogger().debug("Kleene Zustand "+_statename+" "+_attributeName);
 		  kleeneState.add(_statename);
 		  sourceNames.add(_statename);
 		  if (kleeneAttributeState.get(_attributeName) == null){
@@ -291,9 +306,9 @@ whereExpression[StateMachine stmachine]
     )*
    )
   {
-     //System.out.println("Compare Expressions");
+     //getLogger().debug("Compare Expressions");
 //     for (CompareExpression expr:compareExpressions){
-//       System.out.println(expr);
+//       getLogger().debug(expr);
 //     }
     List<State> finalStates = stmachine.getFinalStates();
     for (State finalState : finalStates) {
@@ -303,7 +318,7 @@ whereExpression[StateMachine stmachine]
             .iterator();
         while (compareIter.hasNext()) {
           CompareExpression ce = compareIter.next();
-          //System.out.println(ce);
+          //getLogger().debug(ce);
           PathAttribute attr = ce.get(s.getId());
           if (attr != null) {
             Transition t = s.getTransition(s.getId() + "_begin");
@@ -329,6 +344,7 @@ whereExpression[StateMachine stmachine]
                 break;
               case SKIP_TILL_NEXT_MATCH:
                 t.append(fullExpression);
+                t.getCondition().setEventTypeChecking(false);
                 // negation later!
                 break;
               case STRICT_CONTIGUITY:
@@ -336,7 +352,7 @@ whereExpression[StateMachine stmachine]
                 break;
               case SKIP_TILL_ANY_MATCH:
               default:
-                // let _ignore be true
+                t.getCondition().setEventTypeChecking(false);
               }
             }
             compareIter.remove();
@@ -420,7 +436,7 @@ attributeTerm[List<PathAttribute> attribs]
   :
   ^(KMEMBER kAttributeUsage[name,usage] member=NAME)
   {
-      PathAttribute p = new PathAttribute(name.toString(),usage.toString(),member.getText(),Write.class.getSimpleName());
+      PathAttribute p = new PathAttribute(name.toString(),usage.toString(),member.getText(),Write.class.getSimpleName().toUpperCase());
       attribs.add(p);
       name = new StringBuffer(); 
       usage = new StringBuffer();
@@ -428,24 +444,8 @@ attributeTerm[List<PathAttribute> attribs]
   |
   ^(MEMBER attribName=NAME member=NAME)
   {
-     PathAttribute p = new PathAttribute(attribName.getText(),null,member.getText(),Write.class.getSimpleName()); 
+     PathAttribute p = new PathAttribute(attribName.getText(),null,member.getText(),Write.class.getSimpleName().toUpperCase()); 
       attribs.add(p);}
-  |
-  ^(
-    AGGREGATION op=
-    (
-      MIN
-      | MAX
-      | SUM
-      | COUNT
-    )
-    var=NAME member=NAME
-   )
-  { 
-    PathAttribute p = new PathAttribute(var.getText(),"[i-1]",member.getText(),
-        symTableOpFac.getOperation(op.getText()).getName());
-    attribs.add(p);
-   }
   |
   ^(
     AGGREGATION op=
@@ -457,6 +457,7 @@ attributeTerm[List<PathAttribute> attribs]
       | AVG
     )
     var=NAME
+    (member=NAME)?
    )
   { 
     PathAttribute p = new PathAttribute(var.getText(),"[i-1]","",
@@ -517,7 +518,7 @@ withinPart[CepAO cepAo]
    )
   {
     Long time = getTime(value.getText(),unit);
-    System.out.println("Setting Windowsize to "+time+" milliseconds");
+    getLogger().debug("Setting Windowsize to "+time+" milliseconds");
     cepAo.getStateMachine().setWindowSize(time);
  }
   |
@@ -530,18 +531,24 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
   :
   ^(RETURN attributeTerm[retAttr]*)
   {
-    JEPOutputSchemeEntry e = null;
+    RelationalJEPOutputSchemeEntry e = null;
     OutputScheme scheme = new OutputScheme();
+    SDFAttributeList attrList = new SDFAttributeList();
     for (PathAttribute p : retAttr) {
       String op = p.getAggregation();
       String a = p.getAttribute();
       String i = p.getKleenePart();
       String path = p.getPath();
-      e = new JEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
+      e = new RelationalJEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
           + "." + path));
       scheme.append(e);
+      SDFAttribute attr = new SDFAttribute(e.getLabel());
+      // TODO: Set correct Datatypes
+      attr.setDatatype(new SDFDatatype("String"));
+      attrList.add(attr);
     }
-    cepAo.getStateMachine().setOutputScheme(scheme);
+    cepAo.getStateMachine().setOutputScheme(scheme);    
+    cepAo.setOutputSchema(attrList);
   }
   |
   ;
