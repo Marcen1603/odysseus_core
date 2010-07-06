@@ -116,11 +116,11 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
 		TimestampAO timestampAO = new TimestampAO();
 		for(SDFAttribute attr : this.attributes) {
-			if (attr.getDatatype().equals("StartTimestamp")){
+			if (attr.getDatatype().getURI().equals("StartTimestamp")){
 				timestampAO.setStartTimestamp(attr);
 			}
 			
-			if (attr.getDatatype().equals("EndTimestamp")){
+			if (attr.getDatatype().getURI().equals("EndTimestamp")){
 				timestampAO.setEndTimestamp(attr);
 			}
 		}
