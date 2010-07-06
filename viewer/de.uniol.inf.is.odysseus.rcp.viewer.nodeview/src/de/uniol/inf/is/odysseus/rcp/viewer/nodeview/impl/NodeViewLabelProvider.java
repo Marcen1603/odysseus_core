@@ -69,12 +69,8 @@ public class NodeViewLabelProvider implements ILabelProvider {
 	public String getText(Object element) {		
 		if (element instanceof IOdysseusNodeView) {
 			IOdysseusNodeView node = (IOdysseusNodeView)element;
-			if( node.getModelNode() == null ) return "";
-			//String name = node.getModelNode().getName();
 			String name = node.getModelNode().getContent().getName();
-			int sources = node.getConnectionsAsEnd().size();
-			int sinks = node.getConnectionsAsStart().size();
-			return name + "[" + sources + "/" + sinks + "]";
+			return name;
 		}
 		if (element != null && element instanceof SDFAttributeList){				
 			return "OutputSchema";
