@@ -32,10 +32,9 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 		transfer(object);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public MetadataUpdatePO<M, T> clone() {
-		return new MetadataUpdatePO(this);
+		return new MetadataUpdatePO<M,T>(this);
 	}
 	
 	public String toString(){

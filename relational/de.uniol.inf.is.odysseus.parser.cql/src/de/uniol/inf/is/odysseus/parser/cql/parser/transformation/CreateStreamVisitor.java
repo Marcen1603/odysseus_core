@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -7,6 +8,7 @@ import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
@@ -94,6 +96,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		CQLParser parser = new CQLParser();
 		operator = ((List<IQuery>) parser.visit(node, null)).get(0).getLogicalPlan();
 		SDFAttributeList otherAttributes = operator.getOutputSchema();
+
 		if (otherAttributes.size() != this.attributes.size()) {
 			throw new RuntimeException("Query output does not match specified schema for: " + name);
 		}
@@ -104,13 +107,51 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 
+		operator = addTimestampAO(operator);
+		
 		DataDictionary.getInstance().setView(name, operator);
 		return null;
 	}
 
+	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
+		TimestampAO timestampAO = new TimestampAO();
+		for(SDFAttribute attr : this.attributes) {
+			if (attr.getDatatype().equals("StartTimestamp")){
+				timestampAO.setStartTimestamp(attr);
+			}
+			
+			if (attr.getDatatype().equals("EndTimestamp")){
+				timestampAO.setEndTimestamp(attr);
+			}
+		}
+		
+		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+		return timestampAO;
+	}
+
 	@Override
 	public Object visit(ASTAttributeDefinitions node, Object data) {
-		return node.childrenAccept(this, data);
+		node.childrenAccept(this, data);
+		//check attributes for consistency
+		boolean hasEndTimestamp = false, hasStartTimestamp = false;
+		for(SDFAttribute attr : this.attributes) {
+			if (attr.getDatatype().equals("StartTimestamp")) {
+				if (hasStartTimestamp) {
+					throw new RuntimeException("multiple definitions of StartTimestamp attribute not allowed");
+				}
+				hasStartTimestamp = true;
+			}
+			if (attr.getDatatype().equals("StartEndstamp")) {
+				if (hasEndTimestamp) {
+					throw new RuntimeException("multiple definitions of EndTimestamp attribute not allowed");
+				}
+				hasEndTimestamp = true;
+			}
+			if (Collections.frequency(this.attributes, attr) > 1) {
+				throw new RuntimeException("ambiguous attribute definition: " + attr.toString()); 
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -134,21 +175,21 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		AccessAO source = null;
 		if (node.useTupleMode()) {
 			source = new AccessAO(new SDFSource(name, "RelationalInputStreamAccessPO"));
-			source.setPort(port);
-			source.setHost(host);
 		} else if (node.useMVMode()) {
 			source = new AccessAO(new SDFSource(name, "RelationalAtomicDataInputStreamAccessMVPO"));
-			source.setPort(port);
-			source.setHost(host);
-			source.setOutputSchema(this.attributes);
 		} else {
 			source = new AccessAO(new SDFSource(name, "RelationalAtomicDataInputStreamAccessPO"));
-			source.setPort(port);
-			source.setHost(host);
-			source.setOutputSchema(this.attributes);
 		}
-		DataDictionary.getInstance().setView(name, source);
+		initSource(source, host, port);
+		ILogicalOperator op = addTimestampAO(source);
+		DataDictionary.getInstance().setView(name, op);
 		return data;
+	}
+
+	private void initSource(AccessAO source, String host, int port) {
+		source.setPort(port);
+		source.setHost(host);
+		source.setOutputSchema(this.attributes);
 	}
 
 	@Override
@@ -156,10 +197,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		int port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
 		AccessAO source = new AccessAO(new SDFSource(name, "RelationalByteBufferAccessPO"));
-		source.setPort(port);
-		source.setHost(host);
-		source.setOutputSchema(this.attributes);
-		DataDictionary.getInstance().setView(name, source);
+		initSource(source, host, port);
+		ILogicalOperator op = addTimestampAO(source);
+		DataDictionary.getInstance().setView(name, op);
 		return data;
 	}
 
@@ -174,6 +214,5 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		IVisitor v = VisitorFactory.getInstance().getVisitor("Silab");
 		return v.visit(node, data, this);
-
 	}
 }

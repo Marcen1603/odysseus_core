@@ -190,10 +190,6 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return pvisit(node);
 	}
 
-	public Object visit(ASTOldWindow node, Object data) {
-		return pvisit(node);
-	}
-
 	public Object visit(ASTStreamSQLWindow node, Object data) {
 		return pvisit(node);
 	}

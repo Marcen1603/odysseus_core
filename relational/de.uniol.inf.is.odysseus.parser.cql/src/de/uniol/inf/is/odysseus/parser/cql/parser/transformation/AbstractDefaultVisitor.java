@@ -53,7 +53,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOSGI;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOldWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPartition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPredicate;
@@ -317,10 +316,6 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	}
 
 	public Object visit(ASTPartition node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	public Object visit(ASTOldWindow node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 

@@ -72,7 +72,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOSGI;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOldWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPartition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPredicate;
@@ -505,10 +504,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	public Object visit(ASTDistinctExpression node, Object data) {
-		return null;
-	}
-
-	public Object visit(ASTOldWindow node, Object data) {
 		return null;
 	}
 

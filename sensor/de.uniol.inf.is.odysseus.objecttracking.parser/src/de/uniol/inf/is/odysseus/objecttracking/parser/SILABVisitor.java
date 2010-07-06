@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.TimestampAO;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
@@ -9,6 +11,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class SILABVisitor implements IVisitor{
 
@@ -38,10 +42,29 @@ public class SILABVisitor implements IVisitor{
 			source.setPort(port);
 			source.setHost(host);
 			source.setOutputSchema(((CreateStreamVisitor)baseObject).getAttributes());
+			
+			
 //		}
-		DataDictionary.getInstance().setView(((CreateStreamVisitor)baseObject).getName(), source);
+		ILogicalOperator op = addTimestampAO(source, source.getOutputSchema());
+		DataDictionary.getInstance().setView(((CreateStreamVisitor)baseObject).getName(), op);
 		return data;
 		
+	}
+	
+	private ILogicalOperator addTimestampAO(ILogicalOperator operator, SDFAttributeList attributes) {
+		TimestampAO timestampAO = new TimestampAO();
+		for(SDFAttribute attr : attributes) {
+			if (attr.getDatatype().equals("StartTimestamp")){
+				timestampAO.setStartTimestamp(attr);
+			}
+			
+			if (attr.getDatatype().equals("EndTimestamp")){
+				timestampAO.setEndTimestamp(attr);
+			}
+		}
+		
+		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+		return timestampAO;
 	}
 
 }
