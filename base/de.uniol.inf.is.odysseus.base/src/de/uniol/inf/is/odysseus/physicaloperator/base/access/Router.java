@@ -139,6 +139,7 @@ public class Router extends Thread {
 				e.printStackTrace();
 			}
 		}
+		getLogger().debug("Router terminated ...");
 	}
 
 	public void connectToServer(IRouterReceiver sink, String host, int port)
