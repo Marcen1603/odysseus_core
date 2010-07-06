@@ -16,11 +16,6 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 	 */
 	protected SDFSource source = null;
 	private SDFAttributeList outputSchema;
-	/**
-	 * Attributes can can contain application time information
-	 */
-	private SDFAttribute startTimeStampAttribute = null;
-	private SDFAttribute endTimeStampAttribute = null;
 	
 	private int port;
 	private String host;
@@ -156,22 +151,6 @@ public class AccessAO extends AbstractLogicalOperator implements OutputSchemaSet
 	
 	public String getHost() {
 		return host;
-	}
-	
-	public SDFAttribute getStartTimeStampAttribute() {
-		return startTimeStampAttribute;
-	}
-
-	public void setStartTimeStampAttribute(SDFAttribute startTimeStampAttribute) {
-		this.startTimeStampAttribute = startTimeStampAttribute;
-	}
-
-	public SDFAttribute getEndTimeStampAttribute() {
-		return endTimeStampAttribute;
-	}
-
-	public void setEndTimeStampAttribute(SDFAttribute endTimeStampAttribute) {
-		this.endTimeStampAttribute = endTimeStampAttribute;
 	}
 
 	@Override
