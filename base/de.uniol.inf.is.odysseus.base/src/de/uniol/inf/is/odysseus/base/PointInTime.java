@@ -20,6 +20,10 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	public PointInTime(long point) {
 		this.point = point;
 	}
+	
+	public PointInTime(Number point){
+		this.point = point.longValue();
+	}
 
 	public PointInTime() {
 		isInfinite = true;
