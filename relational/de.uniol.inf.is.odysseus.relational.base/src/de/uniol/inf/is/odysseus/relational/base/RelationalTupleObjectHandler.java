@@ -47,14 +47,14 @@ public class RelationalTupleObjectHandler<M extends IMetaAttribute> implements
 			String uri = attribute.getDatatype().getURI(false);
 			if (uri.equals("Integer")) {
 				this.dataHandler[i++] = new IntegerHandler();
-			} else if (uri.equals("Long")) {
+			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
 				this.dataHandler[i++] = new LongHandler();
 			} else if (uri.equals("Double")) {
 				this.dataHandler[i++] = new DoubleHandler();
 			} else if (uri.equals("String")) {
 				this.dataHandler[i++] = new StringHandler();
 			} else {
-				throw new RuntimeException("illegal datatype");
+				throw new RuntimeException("illegal datatype "+uri);
 			}
 		}
 	}
