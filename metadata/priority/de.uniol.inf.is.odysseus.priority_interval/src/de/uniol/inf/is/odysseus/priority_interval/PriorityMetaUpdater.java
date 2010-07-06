@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
  * Used to create IntervalPriorty metadata, if a ITimeInterval is already available inside
  * the plan.
  * @author jan
- *
+ * @deprecated only for testing purposes. don't use it!! ;)
  */
 public class PriorityMetaUpdater implements IMetadataUpdater<ITimeInterval,IMetaAttributeContainer<ITimeInterval>>{
 
