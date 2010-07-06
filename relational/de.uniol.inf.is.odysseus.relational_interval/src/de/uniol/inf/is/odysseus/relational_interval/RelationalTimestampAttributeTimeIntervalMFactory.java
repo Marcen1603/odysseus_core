@@ -6,23 +6,38 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public class RelationalTimestampAttributeTimeIntervalMFactory
 		implements IMetadataUpdater<ITimeInterval, RelationalTuple<? extends ITimeInterval>> {
 
-	private int attrPos;
+	private int startAttrPos = -1;
+	private int endAttrPos = -1;
 
-	public RelationalTimestampAttributeTimeIntervalMFactory(int attrPos) {
-		this.attrPos = attrPos;
+	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos, int endAttrPos ) {
+		this.startAttrPos = startAttrPos;
+		this.endAttrPos = endAttrPos;
 	}
 
+	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos) {
+		this(startAttrPos, -1);
+	}
+	
 	@Override
 	public void updateMetadata(RelationalTuple<? extends ITimeInterval> inElem) {
-		Number startN = (Number) inElem.getAttribute(attrPos);
-		long startTime = startN.longValue();
-		PointInTime start = new PointInTime(startTime);
+		PointInTime start = extractTimestamp(inElem, startAttrPos);
 		inElem.getMetadata().setStart(start);
+		if (endAttrPos > 0){
+			PointInTime end = extractTimestamp(inElem, endAttrPos);
+			inElem.getMetadata().setEnd(end);
+		}
+	}
+
+	private PointInTime extractTimestamp(
+			RelationalTuple<? extends ITimeInterval> inElem, int attrPos) {
+		Number timeN = (Number) inElem.getAttribute(attrPos);
+		PointInTime time = new PointInTime(timeN);
+		return time;
 	}
 
 }
