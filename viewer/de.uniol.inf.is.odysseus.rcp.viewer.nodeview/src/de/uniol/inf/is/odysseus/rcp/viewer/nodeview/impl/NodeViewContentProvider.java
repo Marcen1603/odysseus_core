@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class NodeViewContentProvider implements ITreeContentProvider {
 	
@@ -35,13 +37,27 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 			IOdysseusNodeView node = (IOdysseusNodeView)parentElement;
 			
 			Collection<Object> children = new ArrayList<Object>();
+			
+			// Add Schemainformation
+			if (node.getModelNode().getContent().getOutputSchema() != null){
+				children.add( node.getModelNode().getContent().getOutputSchema());
+			}
+			// Add Metadatainformation
 			for( String type : node.getModelNode().getProvidedMetadataTypes())
 				children.add(node.getModelNode().getMetadataItem(type));
 
 			return children.toArray();
 		}
-	
 		
+		if (parentElement instanceof SDFAttributeList){
+			SDFAttributeList attributes = (SDFAttributeList) parentElement;
+			Collection<Object> children = new ArrayList<Object>();
+			for (SDFAttribute a: attributes){
+				children.add(a);
+			}
+			return children.toArray();
+		}
+	
 		return null;
 	}
 
