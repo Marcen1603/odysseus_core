@@ -20,7 +20,7 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 	public MetadataUpdatePO(IMetadataUpdater<M, T> mFac) {
 		super();
 		this.metadataFactory = mFac;
-		this.setName(getName()+mFac.getName());
+		this.setName(getName()+" "+mFac.getName());
 	}
 
 	public MetadataUpdatePO(MetadataUpdatePO<M, T> metadataUpdatePO) {
