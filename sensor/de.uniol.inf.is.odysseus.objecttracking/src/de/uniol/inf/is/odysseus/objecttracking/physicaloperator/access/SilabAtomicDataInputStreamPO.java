@@ -61,7 +61,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			String uri = attribute.getDatatype().getURI(false);
 			if (uri.equals("Integer")) {
 				this.dataReader[i++] = new IntegerByteHandler();
-			}/* else if (uri.equals("Long")) {
+			}/* else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
 				this.dataReader[i++] = new LongHandler();
 			}*/
 			// double values and measurement values can
@@ -72,7 +72,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			} else if (uri.equals("String")) {
 				this.dataReader[i++] = new StringByteHandler();
 			} else {
-				throw new RuntimeException("illegal datatype");
+				throw new RuntimeException("illegal datatype "+uri);
 			}
 		}
 	}

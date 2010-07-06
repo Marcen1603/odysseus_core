@@ -63,7 +63,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 			String uri = attribute.getDatatype().getURI(false);
 			if (uri.equals("Integer")) {
 				this.dataReader[i++] = new IntegerHandler();
-			} else if (uri.equals("Long")) {
+			} else if (uri.equals("Long") || uri.endsWith("Timestamp")) {
 				this.dataReader[i++] = new LongHandler();
 			}
 			// double values and measurement values can
@@ -76,7 +76,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 			} else if (uri.equals("Date")) {
 				this.dataReader[i++] = new DateHandler();
 			} else {
-				throw new RuntimeException("illegal datatype");
+				throw new RuntimeException("illegal datatype "+uri);
 			}
 		}
 	}
