@@ -8,5 +8,6 @@ import de.uniol.inf.is.odysseus.base.IClone;
 public interface IMetadataUpdater<M extends IClone, T extends IMetaAttributeContainer<? extends M>> {
 	
 	public void updateMetadata(T inElem);
+	public String getName();
 	
 }

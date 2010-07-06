@@ -2,14 +2,14 @@ package de.uniol.inf.is.odysseus.relational_interval;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
 public class RelationalTimestampAttributeTimeIntervalMFactory
-		implements IMetadataUpdater<ITimeInterval, RelationalTuple<? extends ITimeInterval>> {
+		extends AbstractMetadataUpdater<ITimeInterval, RelationalTuple<? extends ITimeInterval>> {
 
 	private int startAttrPos = -1;
 	private int endAttrPos = -1;

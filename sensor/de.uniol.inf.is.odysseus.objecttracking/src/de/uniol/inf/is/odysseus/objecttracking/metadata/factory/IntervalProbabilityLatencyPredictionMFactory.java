@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata.factory;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.metadata.base.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  *
  */
 @Deprecated
-public class IntervalProbabilityLatencyPredictionMFactory implements IMetadataUpdater<IntervalProbabilityLatencyPrediction, MVRelationalTuple<IntervalProbabilityLatencyPrediction>>{
+public class IntervalProbabilityLatencyPredictionMFactory extends AbstractMetadataUpdater<IntervalProbabilityLatencyPrediction, MVRelationalTuple<IntervalProbabilityLatencyPrediction>>{
 
 	SDFAttributeList schema;
 	
