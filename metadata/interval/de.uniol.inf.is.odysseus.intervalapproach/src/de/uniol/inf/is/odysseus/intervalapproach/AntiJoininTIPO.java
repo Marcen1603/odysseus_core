@@ -3,7 +3,6 @@
 //import java.util.Iterator;
 //import java.util.LinkedList;
 //import java.util.PriorityQueue;
-//import java.util.concurrent.TimeoutException;
 //
 //import de.uniol.inf.is.odysseus.base.PointInTime;
 //import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
@@ -14,15 +13,15 @@
 //import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 //import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 //import de.uniol.inf.is.odysseus.metadata.base.MetadataComparator;
+//import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 //import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
 //import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
-//import de.uniol.inf.is.odysseus.physicaloperator.base.event.POException;
 //
 ///**
 // * @author Jonas Jacobi
 // */
-//public class NonExistenceTIPO<T extends IMetaAttributeContainers<ITimeInterval>> extends
-//		BinaryPlanOperator<T, T> {
+//public class AntiJoinTIPO<T extends IMetaAttributeContainer<? extends ITimeInterval>>
+//		extends AbstractPipe<T, T> {
 //	private static final long DEFAULT_TIMEOUT = -1;
 //
 //	private static final int LEFT = 0;
@@ -42,23 +41,22 @@
 //	private boolean[] done;
 //
 //	@SuppressWarnings("unchecked")
-//	public NonExistenceTIPO(ExistenceAO ao, ISweepArea<T> leftArea,
+//	public AntiJoinTIPO(ExistenceAO ao, ISweepArea<T> leftArea,
 //			ISweepArea<T> rightArea) {
-//		super(ao);
+//		super();
 //		this.sa = (ISweepArea<T>[]) new ISweepArea[] { leftArea, rightArea };
 //		this.returnBuffer = new PriorityQueue<T>(10,
 //				new MetadataComparator<ITimeInterval>());
-//		this.inputChannel = InputPort.LEFT.ordinal();
 //		this.order = Order.LeftRight;
-//		PointInTime startTime = new PointInTime(0, 0);
+//		PointInTime startTime = PointInTime.getZeroTime();
 //		this.highestStart = new PointInTime[] { startTime, startTime };
 //	}
 //
 //	@SuppressWarnings("unchecked")
-//	public NonExistenceTIPO(DifferenceAO ao) {
-//		super(ao);
-//		SweepArea<T> leftSA = new DefaultTISweepArea<T>();
-//		SweepArea<T> rightSA = new DefaultTISweepArea<T>();
+//	public AntiJoinTIPO(DifferenceAO ao) {
+//		super();
+//		ISweepArea<T> leftSA = new DefaultTISweepArea<T>();
+//		ISweepArea<T> rightSA = new DefaultTISweepArea<T>();
 //		IPredicate<? super T> predicate = new AndPredicate<T>(OverlapsPredicate
 //				.getInstance(), EqualsPredicate.getInstance());
 //		leftSA.setQueryPredicate(predicate);
@@ -66,17 +64,9 @@
 //		this.sa = new ISweepArea[] { leftSA, rightSA };
 //		this.returnBuffer = new PriorityQueue<T>(10,
 //				new MetadataComparator<ITimeInterval>());
-//		this.inputChannel = InputPort.LEFT.ordinal();
 //		this.order = Order.LeftRight;
-//		PointInTime startTime = new PointInTime(0, 0);
+//		PointInTime startTime = PointInTime.getZeroTime();
 //		this.highestStart = new PointInTime[] { startTime, startTime };
-//	}
-//
-//	@Override
-//	public synchronized void open(SimplePlanOperator<T, ?> caller) {
-//		super.open(caller);
-//		this.done = new boolean[] { false, false };
-//		this.highestStart = new PointInTime[2];
 //	}
 //
 //	/**
@@ -85,8 +75,7 @@
 //	 */
 //	@SuppressWarnings("unchecked")
 //	@Override
-//	protected T process_next(ReturnStatusStore returnStatus)
-//			throws POException, TimeoutException {
+//	protected void process_next(T Object, int port) {
 //		while (true) {
 //			if (canReturn()) {
 //				returnStatus.status = ReturnStatus.VALUE;
@@ -229,4 +218,18 @@
 //			}
 //		}
 //	}
-//}o
+//
+//	@Override
+//	public AntiJoinTIPO<T> clone() {
+//		return new AntiJoinTIPO<T>(this);
+//	}
+//
+//	@Override
+//	public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
+//		return OutputMode.INPUT;
+//	}
+//
+//	@Override
+//	public void processPunctuation(PointInTime timestamp, int port) {
+//	}
+//}
