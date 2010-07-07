@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
@@ -34,6 +35,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 */
 	private static final long serialVersionUID = -8921538607877809462L;
 	private int[] measurementValuePositions;
+	
 
 	/**
 	 * Erzeugt ein neues Object, anhand der Zeile und des Trennzeichens
@@ -47,7 +49,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 */
 	public MVRelationalTuple(SDFAttributeList schema, String line,
 			char delimiter) {
-		super(schema, line, delimiter);
+//		super(schema, line, delimiter);
 		// if(this.getAttribute(3).equals(19.3906)){
 		// try{
 		// throw new Exception("Doppelt.");
@@ -55,6 +57,8 @@ public class MVRelationalTuple<T extends IProbability> extends
 		// e.printStackTrace();
 		// }
 		// }
+		this.attributes = splittLineToAttributes(line, delimiter, schema);
+		
 		this.findMeasurementValuePositions(schema);
 	}
 
@@ -480,4 +484,71 @@ public class MVRelationalTuple<T extends IProbability> extends
         }
         return compare;
     }
+    
+	/**
+	 * Splittet die Zeile anhand des Trennzeichens in ein Array von Strings mit
+	 * den jeweiligen Attributen auf
+	 * 
+	 * @param line
+	 *            enthaelt die konkatenierten Attribute
+	 * @param delimiter
+	 *            enthaelt das Trennzeichen
+	 * @param noOfAttribs
+	 *            enthaelt die Anzahl der Attribute
+	 * @returns Array mit den Attributen
+	 */
+	protected final static Object[] splittLineToAttributes(final String line,
+			final char delimiter, final SDFAttributeList schema) {
+		String[] attributes = line.split(Pattern.quote(new String(
+				new char[] { delimiter })));
+		// Pattern p = Pattern.compile("(.*)[(" + delimiter + ".*)*");
+		// Matcher m = p.matcher(line);
+		int count = attributes.length;
+		if (count != schema.size()) {
+			throw new IllegalArgumentException(
+					"invalid number of attributes: got " + count + " expected "
+							+ schema.size());
+		}
+		//
+		Object[] tokens = new Object[attributes.length];
+		for (int i = 0; i < attributes.length; ++i) {
+			tokens[i] = convertAttribute(attributes[i], schema.get(i));
+		}
+		return tokens;
+	}
+	
+	private final static Object convertAttribute(String stringValue,
+			SDFAttribute attribute) {
+		if (SDFDatatypes.isString(attribute.getDatatype())) {
+			return stringValue;
+		}
+
+		if (attribute.getDatatype().getURI(false) == "Integer") {
+			return Integer.parseInt(stringValue);
+		}
+		if (attribute.getDatatype().getURI(false) == "Double") {
+			return Double.parseDouble(stringValue);
+		}
+		// TODO richtig machen mit den datentypen
+		if (SDFDatatypes.isNumerical(attribute.getDatatype())) {
+			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
+					.iterator();
+			while (i.hasNext()) {
+				SDFDatatypeConstraint constraint = i.next();
+				if (SDFDatatypeConstraints.isInteger(constraint)) {
+					return Integer.parseInt(stringValue);
+				}
+				if (SDFDatatypeConstraints.isRational(constraint)) {
+					return Double.parseDouble(stringValue);
+				}
+			}
+
+			throw new IllegalArgumentException(
+					"missing datatype constraint for numerical attribute (integer/rational)");
+		}
+
+		throw new IllegalArgumentException("attributes of type "
+				+ attribute.getDatatype() + " can't be used with "
+				+ RelationalTuple.class);
+	}
 }
