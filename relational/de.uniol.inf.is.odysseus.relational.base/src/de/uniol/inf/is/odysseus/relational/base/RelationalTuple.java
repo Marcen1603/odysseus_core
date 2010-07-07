@@ -3,18 +3,11 @@ package de.uniol.inf.is.odysseus.relational.base;
 import java.io.Serializable;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypeConstraints;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
+
 
 /**
  * Klasse repraesentiert ein Tupel im relationalen Modell und dient als
@@ -29,14 +22,6 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	private static final long serialVersionUID = 7119095568322125441L;
 
 	protected Object[] attributes;
-
-//	protected SDFAttributeList schema;
-
-	/**
-	 * @uml.property name="delimiter"
-	 */
-	protected char delimiter = '|';
-
 	protected int memSize = -1;
 
 	// -----------------------------------------------------------------
@@ -57,6 +42,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return (K) this.attributes[pos];
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void addAttributeValue(int pos, Object value){		
 		if(this.attributes[pos] != null && !(this.attributes[pos] instanceof Collection)){
 			throw new RuntimeException("Cannot add value to non collection type");
@@ -115,6 +101,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return restrictCreation(createNew, newAttrs);
 	}
 
+	@SuppressWarnings("unchecked")
 	private RelationalTuple<T> restrictCreation(boolean createNew,
 			Object[] newAttrs) {
 		if(createNew){
@@ -201,7 +188,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		}
 		for (int i = 1; i < this.attributes.length; ++i) {
 			Object curAttribute = this.attributes[i];
-			retBuff.append(delimiter);
+			retBuff.append("|");
 			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
 		}
 		retBuff.append(" | sz="+(memSize==-1?"(-)":memSize));
@@ -223,7 +210,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		if (attObject instanceof Long) return Long.SIZE/8;
 		if (attObject instanceof String) return ((String)attObject).length()*2 // Unicode!
 												+Integer.SIZE/8; // Für die Längeninformation (evtl. anders machen?)
-		if (attObject instanceof RelationalTuple) return ((RelationalTuple)attObject).memSize(true);
+		if (attObject instanceof RelationalTuple<?>) return ((RelationalTuple<?>)attObject).memSize(true);
 		
 		throw new IllegalArgumentException("Illegal Relation Attribute Type "+attObject);		
 		
@@ -237,6 +224,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return size;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private int calcSize(Object attObject){
 		int size = 0;
 		if (attObject instanceof Collection){
@@ -309,38 +297,8 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		this.attributes = new Object[attributeLength];
 		System.arraycopy(copy.attributes, 0, this.attributes, 0,
 				attributeLength);
-//		this.schema = copy.schema;
-		this.delimiter = copy.delimiter;
-		//calcSize();
 	}
 
-	/**
-	 * Erzeugt ein neues Tuple und ueberprueft die uebergebenen Attribute
-	 * mittels des uebergebenen Schemas
-	 * 
-	 * @param schema
-	 *            Schema des neuen Tuples
-	 * @param attributes
-	 *            Attributbelegungen des neuen Tuples
-	 */
-	public RelationalTuple(SDFAttributeList schema, Object... attributes) {
-		if (schema.size() != attributes.length) {
-			throw new IllegalArgumentException("listsize doesn't match schema");
-		}
-
-		for (int i = 0; i < schema.size(); ++i) {
-			if (!checkDataType(attributes[i], schema.get(i))) {
-				throw new IllegalArgumentException("attribute " + i
-						+ " has an invalid type");
-			}
-		}
-
-//		this.schema = schema;
-		this.attributes = Arrays.copyOf(attributes, attributes.length);
-
-//		this.attributes = attributes.clone();
-		//calcSize();
-	}
 	
 
 	/**
@@ -354,44 +312,6 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		//calcSize();
 	}
 
-	private final boolean checkDataType(Object object, SDFAttribute attribute) {
-		if (object instanceof String) {
-			return SDFDatatypes.isString(attribute.getDatatype());
-		}
-
-		// Should not be useful anymore, since datatype Date exists
-		// and other non numerical datatypes may be added in future
-		// development. So it would be better to check every
-		// datatype separately
-//		if (!SDFDatatypes.isNumerical(attribute.getDatatype())) {
-//			return false;
-//		}
-
-		if (object instanceof Integer) {
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
-					.iterator();
-			while (i.hasNext()) {
-				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isInteger(constraint)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		if (object instanceof Double) {
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
-					.iterator();
-			while (i.hasNext()) {
-				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isRational(constraint)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		return false;
-	}
-
 	@Override
 	public final int hashCode() {
 		int ret = 0;
@@ -401,9 +321,6 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return ret;
 	}
 
-//	public SDFAttributeList getSchema() {
-//		return schema;
-//	}
 
 	public Object[] getAttributes() {
 		return attributes;
