@@ -48,76 +48,9 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return t;
 	}
 
-	/**
-	 * Splittet die Zeile anhand des Trennzeichens in ein Array von Strings mit
-	 * den jeweiligen Attributen auf
-	 * 
-	 * @param line
-	 *            enthaelt die konkatenierten Attribute
-	 * @param delimiter
-	 *            enthaelt das Trennzeichen
-	 * @param noOfAttribs
-	 *            enthaelt die Anzahl der Attribute
-	 * @returns Array mit den Attributen
-	 */
-	protected final static Object[] splittLineToAttributes(final String line,
-			final char delimiter, final SDFAttributeList schema) {
-		String[] attributes = line.split(Pattern.quote(new String(
-				new char[] { delimiter })));
-		// Pattern p = Pattern.compile("(.*)[(" + delimiter + ".*)*");
-		// Matcher m = p.matcher(line);
-		int count = attributes.length;
-		if (count != schema.size()) {
-			throw new IllegalArgumentException(
-					"invalid number of attributes: got " + count + " expected "
-							+ schema.size());
-		}
-		//
-		Object[] tokens = new Object[attributes.length];
-		for (int i = 0; i < attributes.length; ++i) {
-			tokens[i] = convertAttribute(attributes[i], schema.get(i));
-		}
-		return tokens;
-	}
-
 	// -----------------------------------------------------------------
 	// Attributzugriffsmethoden
 	// -----------------------------------------------------------------
-
-	private final static Object convertAttribute(String stringValue,
-			SDFAttribute attribute) {
-		if (SDFDatatypes.isString(attribute.getDatatype())) {
-			return stringValue;
-		}
-
-		if (attribute.getDatatype().getURI(false) == "Integer") {
-			return Integer.parseInt(stringValue);
-		}
-		if (attribute.getDatatype().getURI(false) == "Double") {
-			return Double.parseDouble(stringValue);
-		}
-		// TODO richtig machen mit den datentypen
-		if (SDFDatatypes.isNumerical(attribute.getDatatype())) {
-			Iterator<SDFDatatypeConstraint> i = attribute.getDtConstraints()
-					.iterator();
-			while (i.hasNext()) {
-				SDFDatatypeConstraint constraint = i.next();
-				if (SDFDatatypeConstraints.isInteger(constraint)) {
-					return Integer.parseInt(stringValue);
-				}
-				if (SDFDatatypeConstraints.isRational(constraint)) {
-					return Double.parseDouble(stringValue);
-				}
-			}
-
-			throw new IllegalArgumentException(
-					"missing datatype constraint for numerical attribute (integer/rational)");
-		}
-
-		throw new IllegalArgumentException("attributes of type "
-				+ attribute.getDatatype() + " can't be used with "
-				+ RelationalTuple.class);
-	}
 
 	@SuppressWarnings("unchecked")
 	public final <K> K getAttribute(int pos) {
@@ -338,10 +271,10 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 * @param noOfAttribs
 	 *            enthaelt die Anzahl der Attribute (Effizienzgr�nde)
 	 */
-	public RelationalTuple(SDFAttributeList schema, String line, char delimiter) {
-//		this.schema = schema;
-		this.attributes = splittLineToAttributes(line, delimiter, schema);
-	}
+//	public RelationalTuple(SDFAttributeList schema, String line, char delimiter) {
+////		this.schema = schema;
+//		this.attributes = splittLineToAttributes(line, delimiter, schema);
+//	}
 
 	/**
 	 * Erzeugt ein neues leeres Object, zur Erzeugung von Zwischenergebnissen
