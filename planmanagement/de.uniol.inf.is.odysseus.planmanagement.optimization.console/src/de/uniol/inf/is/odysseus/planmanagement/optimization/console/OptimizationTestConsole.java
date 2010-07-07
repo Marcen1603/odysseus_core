@@ -136,13 +136,13 @@ public class OptimizationTestConsole implements
 	
 	private void nmsn0(CommandInterpreter ci) {
 		String[] q = new String[4];
-		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
-		q[1] = "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
-		q[2] = "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
-		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
+		q[0] = "CREATE STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
+		q[1] = "CREATE STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
+		q[2] = "CREATE STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
+		q[3] = "CREATE STREAM nexmark:category2 (id STARTTIMESTAMP, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser);
+				this.executor.addQuery(s, parser(), currentUser, trafoConfigParam);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -151,13 +151,13 @@ public class OptimizationTestConsole implements
 	}
 	private void nmsn1(CommandInterpreter ci) {
 		String[] q = new String[4];
-		q[0] = "CREATE STREAM nexmark:person3 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL 134.106.56.149 : 65440";
-		q[1] = "CREATE STREAM nexmark:bid3 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL 134.106.56.149 : 65442";
-		q[2] = "CREATE STREAM nexmark:auction3 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL 134.106.56.149 : 65441";
+		q[0] = "CREATE STREAM nexmark:person3 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL 134.106.56.149 : 65440";
+		q[1] = "CREATE STREAM nexmark:bid3 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL 134.106.56.149 : 65442";
+		q[2] = "CREATE STREAM nexmark:auction3 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL 134.106.56.149 : 65441";
 		q[3] = "CREATE STREAM nexmark:category3 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL 134.106.56.149 : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser);
+				this.executor.addQuery(s, parser(), currentUser, trafoConfigParam);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -166,13 +166,13 @@ public class OptimizationTestConsole implements
 	}
 	private void nmsn2(CommandInterpreter ci) {
 		String[] q = new String[4];
-		q[0] = "CREATE STREAM nexmark:person4 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL 134.106.56.149 : 65450";
-		q[1] = "CREATE STREAM nexmark:bid4 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL 134.106.56.149 : 65452";
-		q[2] = "CREATE STREAM nexmark:auction4 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL 134.106.56.149 : 65451";
+		q[0] = "CREATE STREAM nexmark:person4 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL 134.106.56.149 : 65450";
+		q[1] = "CREATE STREAM nexmark:bid4 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL 134.106.56.149 : 65452";
+		q[2] = "CREATE STREAM nexmark:auction4 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL 134.106.56.149 : 65451";
 		q[3] = "CREATE STREAM nexmark:category4 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL 134.106.56.149 : 65453";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser);
+				this.executor.addQuery(s, parser(), currentUser, trafoConfigParam);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
