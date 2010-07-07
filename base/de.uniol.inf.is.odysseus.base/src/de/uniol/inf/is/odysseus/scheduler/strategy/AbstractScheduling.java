@@ -127,7 +127,7 @@ public abstract class AbstractScheduling implements IScheduling,
 				}
 				nextSource = nextSource();
 			}
-			System.out.println(slaTestCalculator);
+			//System.out.println(slaTestCalculator);
 			return isDone();
 		}
 	}
