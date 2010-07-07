@@ -6,8 +6,17 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.functions.Elemen
 
 public class Write<R> extends AbstractAggregateFunction<R> {
 	
-	public Write() {
+	private static Write instance;
+
+	private Write() {
 		super("WRITE");
+	}
+	
+	static public Write getInstance(){
+		if (instance == null){
+			instance = new Write();
+		}
+		return instance;
 	}
 
 	@Override

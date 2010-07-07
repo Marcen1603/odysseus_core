@@ -28,17 +28,17 @@ public class RelationalSymbolTableOperationFactory implements
 	private IAggregateFunction createNewFunction(String name) {
 		IAggregateFunction func = null;
 		if ("COUNT".equalsIgnoreCase(name)){
-			func = new RelationalCount();
+			func = RelationalCount.getInstance();
 		}else if ("SUM".equalsIgnoreCase(name)){
-			func = new RelationalAvgSum(0, false);
+			func = RelationalAvgSum.getInstance(0, false);
 		}else if ("AVG".equalsIgnoreCase(name)){
-			func = new RelationalAvgSum(0, true);
+			func = RelationalAvgSum.getInstance(0, true);
 		}else if ("MAX".equalsIgnoreCase(name)){
-			func = new RelationalMinMax(0, true);
+			func = RelationalMinMax.getInstance(0, true);
 		}else if ("MIN".equalsIgnoreCase(name)){
-			func = new RelationalMinMax(0, false);
+			func = RelationalMinMax.getInstance(0, false);
 		}else if ("WRITE".equalsIgnoreCase(name)){
-			func = new Write<RelationalTuple<?>>();
+			func = Write.getInstance();
 		}
 		return func;
 	}

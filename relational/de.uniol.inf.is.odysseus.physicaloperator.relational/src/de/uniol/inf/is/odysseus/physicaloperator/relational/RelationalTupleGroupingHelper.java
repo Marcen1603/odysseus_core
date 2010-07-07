@@ -129,19 +129,19 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 		IEvaluator<RelationalTuple<?>> aggFunc = null;
 		switch (key) {
 		case AVG:
-			aggFunc = new RelationalAvgSum(pos, true);
+			aggFunc = RelationalAvgSum.getInstance(pos, true);
 			break;
 		case COUNT:
-			aggFunc = new RelationalCount();
+			aggFunc = RelationalCount.getInstance();
 			break;
 		case MAX:
-			aggFunc = new RelationalMinMax(pos, true);
+			aggFunc = RelationalMinMax.getInstance(pos, true);
 			break;
 		case MIN:
-			aggFunc = new RelationalMinMax(pos, false);
+			aggFunc = RelationalMinMax.getInstance(pos, false);
 			break;
 		case SUM:
-			aggFunc = new RelationalAvgSum(pos, false);
+			aggFunc = RelationalAvgSum.getInstance(pos, false);
 			break;
 		default:
 			throw new IllegalArgumentException("No such Aggregationfunction");

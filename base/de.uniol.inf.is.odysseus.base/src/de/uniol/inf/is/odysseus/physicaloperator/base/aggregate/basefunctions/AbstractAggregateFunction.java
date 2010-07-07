@@ -13,4 +13,5 @@ abstract public class AbstractAggregateFunction<R> implements IAggregateFunction
 		this.name = name;
 	}
 	
+	
 }

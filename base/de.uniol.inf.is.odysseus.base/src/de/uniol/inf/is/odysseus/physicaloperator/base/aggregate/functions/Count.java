@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions.IP
 
 abstract public class Count<T> extends AbstractAggregateFunction<T> {
 	
-	public Count() {
+	protected Count() {
 		super("COUNT");
 	}
 	
@@ -24,5 +24,7 @@ abstract public class Count<T> extends AbstractAggregateFunction<T> {
 		pa.add();
 		return pa;
 	}
+	
+	
 
 }

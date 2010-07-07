@@ -6,7 +6,7 @@ abstract public class AvgSum<T> extends AbstractAggregateFunction<T>{
 
 	boolean isAvg;
 	
-	public AvgSum(boolean isAvg) {
+	protected AvgSum(boolean isAvg) {
 		super (isAvg?"AVG":"SUM");
 		this.isAvg = isAvg;
 	}
@@ -14,5 +14,6 @@ abstract public class AvgSum<T> extends AbstractAggregateFunction<T>{
 	public boolean isAvg(){
 		return isAvg;
 	}
+		
 	
 }

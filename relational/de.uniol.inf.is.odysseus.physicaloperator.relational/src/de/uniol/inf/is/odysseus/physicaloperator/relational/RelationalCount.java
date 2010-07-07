@@ -7,6 +7,19 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalCount extends Count<RelationalTuple<?>> {
 
+	private static RelationalCount instance;
+
+	private RelationalCount(){
+		super();
+	}
+	
+	public static RelationalCount getInstance(){
+		if (instance == null){
+			instance = new RelationalCount();
+		}
+		return instance;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
