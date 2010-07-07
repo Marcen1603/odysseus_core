@@ -190,19 +190,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 
 		window.setWindowType(windowNode.getType());
-		ASTIdentifier onId = windowNode.getOn();
-		if (onId != null) {
-			AttributeResolver tmpResolver = new AttributeResolver();
-			for (SDFAttribute attribute : inputOp.getOutputSchema()) {
-				tmpResolver.addAttribute((SDFAttribute) attribute);
-			}
-			SDFAttribute onAttribute = tmpResolver.getAttribute(onId.getName());
-			if (onAttribute == null) {
-				throw new RuntimeException("invalid attribute in ON: "
-						+ onId.getName());
-			}
-			window.setWindowOn(onAttribute);
-		}
+		
 		if (!windowNode.isUnbounded()) {
 			window.setWindowSize(windowNode.getSize());
 			Long advance = windowNode.getAdvance();

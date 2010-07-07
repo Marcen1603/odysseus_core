@@ -12,7 +12,7 @@ public class MapAOBuilder extends AbstractOperatorBuilder {
 	private static final String EXPRESSIONS = "EXPRESSIONS";
 
 	private ListParameter<SDFExpression> expressions = new ListParameter<SDFExpression>(
-			EXPRESSIONS, REQUIREMENT.MANDATORY, new SDFExpressionParameter("",
+			EXPRESSIONS, REQUIREMENT.MANDATORY, new SDFExpressionParameter("map expression",
 					REQUIREMENT.MANDATORY));
 
 	public MapAOBuilder() {

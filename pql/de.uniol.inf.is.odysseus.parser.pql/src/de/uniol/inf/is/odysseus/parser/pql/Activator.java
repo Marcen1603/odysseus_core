@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.parser.pql;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
+
 public class Activator implements BundleActivator {
 
 	private static final String ACCESS = "ACCESS";
@@ -13,6 +15,7 @@ public class Activator implements BundleActivator {
 	private static final String UNION = "UNION";
 	private static final String RENAME = "RENAME";
 	private static final String WINDOW = "WINDOW";
+	private static final String PRIORITY = "PRIORITY";
 
 	/*
 	 * (non-Javadoc)
@@ -30,6 +33,8 @@ public class Activator implements BundleActivator {
 		PQLParser.addOperatorBuilder(UNION, new UnionAOBuilder());
 		PQLParser.addOperatorBuilder(RENAME, new RenameAOBuilder());
 		PQLParser.addOperatorBuilder(WINDOW, new WindowAOBuilder());
+		
+		PQLParser.addQueryParameter(new IntegerParameter(PRIORITY, REQUIREMENT.OPTIONAL));
 	}
 
 	/*
@@ -47,6 +52,8 @@ public class Activator implements BundleActivator {
 		PQLParser.removeOperatorBuilder(UNION);
 		PQLParser.removeOperatorBuilder(RENAME);
 		PQLParser.removeOperatorBuilder(WINDOW);
+		
+		PQLParser.removeQueryParameter(PRIORITY);
 	}
 
 }

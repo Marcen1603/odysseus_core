@@ -13,7 +13,7 @@ public class RenameAOBuilder extends AbstractOperatorBuilder {
 
 	private static final String ALIASES = "ALIASES";
 	private ListParameter<String> aliases = new ListParameter<String>(ALIASES,
-			REQUIREMENT.MANDATORY, new DirectParameter<String>("",
+			REQUIREMENT.MANDATORY, new DirectParameter<String>("rename alias",
 					REQUIREMENT.MANDATORY));
 
 	public RenameAOBuilder() {

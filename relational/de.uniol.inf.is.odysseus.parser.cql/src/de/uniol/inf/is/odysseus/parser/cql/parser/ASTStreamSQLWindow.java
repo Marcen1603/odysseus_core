@@ -30,7 +30,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 
 	@Override
 	public ASTPartition getPartition() {
-		return (ASTPartition) jjtGetChild(this.type == Type.ON ? 3 : 2);
+		return (ASTPartition) jjtGetChild(2);
 
 	}
 
@@ -96,18 +96,6 @@ public class ASTStreamSQLWindow extends ASTWindow {
 	}
 
 	@Override
-	public ASTIdentifier getOn() {
-		if (this.type == Type.ON) {
-			if (this.isUnbounded) {
-				return (ASTIdentifier) jjtGetChild(0);
-			} else {
-				return (ASTIdentifier) jjtGetChild(2);
-			}
-		}
-		return null;
-	}
-
-	@Override
 	public long getTimeout() {
 		return this.timeout;
 	}
@@ -123,9 +111,8 @@ public class ASTStreamSQLWindow extends ASTWindow {
 
 	@Override
 	public boolean isPartitioned() {
-		int pos = this.type == Type.ON ? 3 : 2;
-		if (jjtGetNumChildren() > pos) {
-			return jjtGetChild(pos) instanceof ASTPartition;
+		if (jjtGetNumChildren() > 2) {
+			return jjtGetChild(2) instanceof ASTPartition;
 		}
 		return false;
 	}

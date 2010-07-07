@@ -183,7 +183,7 @@ void WindowOp():{}{
 }
 
 void SlidingTimeWindow(): {}{
-	<K_SLDING_TIME_WINDOW>"(" AlgebraOp()"," Number()"," Number() [","Identifier()#TimestampAttribute]")"
+	<K_SLDING_TIME_WINDOW>"(" AlgebraOp()"," Number()"," Number() ")"
 }
 
 void AccessOp(): {}{

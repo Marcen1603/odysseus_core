@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 
 public abstract class ASTWindow extends SimpleNode {
 	public static enum Type {
-		TIME, TUPLE, ON
+		TIME, TUPLE
 	}
 
 	protected Type type;
@@ -78,8 +78,6 @@ public abstract class ASTWindow extends SimpleNode {
 		return 0;
 	}
 	
-	public ASTIdentifier getOn(){return null;};
-
 	public abstract ASTPartition getPartition();
 
 }

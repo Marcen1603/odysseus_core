@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.pql;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	final public ILogicalOperator createOperator(
 			Map<String, Object> parameters, List<ILogicalOperator> inputOps) {
 		initOperatorCreation(parameters, inputOps);
-		initParameters(parameters);
+		PQLParser.initParameters(getParameters(), parameters);
 		return createOperator(inputOps);
 	}
 
@@ -74,23 +75,5 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	protected abstract ILogicalOperator createOperator(
 			List<ILogicalOperator> inputOps);
-
-	private void initParameters(Map<String, Object> parameters) {
-		Set<IParameter<?>> params = getParameters();
-		for (IParameter<?> parameter : params) {
-			String parameterName = parameter.getName();
-			boolean hasParameter = parameters.containsKey(parameterName);
-			if (!hasParameter) {
-				parameter.setNoValueAvailable();
-				if (parameter.isMandatory()) {
-					throw new IllegalArgumentException(
-							"missing mandatory parameter: " + parameterName);
-				}
-			} else {
-				Object value = parameters.get(parameterName);
-				parameter.setValueOf(value);
-			}
-		}
-	}
 
 }

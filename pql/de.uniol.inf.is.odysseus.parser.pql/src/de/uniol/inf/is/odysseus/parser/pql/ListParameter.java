@@ -9,22 +9,30 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 
 	private IParameter<T> singleParameter;
 
-	public ListParameter(String name, REQUIREMENT requirement, IParameter<T> singleParameter) {
+	public ListParameter(String name, REQUIREMENT requirement,
+			IParameter<T> singleParameter) {
 		super(name, requirement);
 		this.singleParameter = singleParameter;
 	}
 
 	@Override
 	public void setValueOf(Object object) {
-		ArrayList<T> list = new ArrayList<T>();
-		for(Object o : (List<?>)object) {
-			singleParameter.setValueOf(o);
-			list.add(singleParameter.getValue());
+		//TODO allgemein input parametertyp ueberpruefen
+		try {
+			ArrayList<T> list = new ArrayList<T>();
+			for (Object o : (List<?>) object) {
+				singleParameter.setValueOf(o);
+				list.add(singleParameter.getValue());
+				setValue(list);
+			}
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("wrong input for parameter "
+					+ getName() + ", List expected, got "
+					+ object.getClass().getSimpleName());
 		}
-		
-		setValue(list);
+
 	}
-	
+
 	@Override
 	public void setAttributeResolver(IAttributeResolver resolver) {
 		super.setAttributeResolver(resolver);

@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTimestampAttribute;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
@@ -168,12 +167,6 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 
 	
 	public Object visit(ASTPredictionDefinition node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	
-	public Object visit(ASTTimestampAttribute node, Object data) {
-		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 

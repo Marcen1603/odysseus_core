@@ -40,9 +40,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
@@ -56,7 +56,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTimestampAttribute;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
@@ -572,27 +571,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		outputSchema.add(attr);
 		
 		projectAO.setOutputSchema(outputSchema);
-		
-		return null;
-	}
-
-	
-	public Object visit(ASTTimestampAttribute node, Object data) {
-
-		IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
-		WindowAO window = (WindowAO)((ArrayList)data).get(1);
-		//ILogicalOperator inputForWindow = window.getInputAO();
-		
-		ASTIdentifier onId = (ASTIdentifier)node.jjtGetChild(0);
-		
-		if (onId != null) {
-			SDFAttribute onAttribute = attrRes.getAttribute(onId.getName());
-			if (onAttribute == null) {
-				throw new RuntimeException("invalid attribute in ON: "
-						+ onId.getName());
-			}
-			window.setWindowOn(onAttribute);
-		}
 		
 		return null;
 	}
