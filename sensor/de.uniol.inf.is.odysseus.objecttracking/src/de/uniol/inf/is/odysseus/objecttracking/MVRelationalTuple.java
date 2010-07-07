@@ -49,6 +49,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 */
 	public MVRelationalTuple(SDFAttributeList schema, String line,
 			char delimiter) {
+		super();
 //		super(schema, line, delimiter);
 		// if(this.getAttribute(3).equals(19.3906)){
 		// try{
@@ -70,7 +71,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 	 *            koennen soll
 	 */
 	public MVRelationalTuple(SDFAttributeList schema) {
-		super(schema);
+		super();
 		this.findMeasurementValuePositions(schema);
 	}
 
