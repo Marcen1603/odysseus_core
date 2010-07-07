@@ -20,30 +20,39 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 	private final Logger logger = LoggerFactory.getLogger(AddQueryCommand.class);
 	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		
-		final String queryToExecute = event.getParameter(IQueryConstants.QUERY_PARAMETER_ID);
-		final String parserToUse = event.getParameter(IQueryConstants.PARSER_PARAMETER_ID);
-		final String parameterTransformationConfigurationName = event.getParameter(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID);
-		try {
-			IAdvancedExecutor executor = Activator.getExecutor();
-			if (executor != null) {
-				// TODO: User einfuegen, der diese Query ausf�hrt
-				User user = new User("TODO.SetUser");
-				ParameterTransformationConfiguration cfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(parameterTransformationConfigurationName);
-				if( cfg == null ) {
-					logger.error("ParameterTransformationConfiguration " + parameterTransformationConfigurationName + " nicht gefunden");
-					return null;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final String queryToExecute = event.getParameter(IQueryConstants.QUERY_PARAMETER_ID);
+				final String parserToUse = event.getParameter(IQueryConstants.PARSER_PARAMETER_ID);
+				final String parameterTransformationConfigurationName = event.getParameter(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID);
+				try {
+					IAdvancedExecutor executor = Activator.getExecutor();
+					if (executor != null) {
+						// TODO: User einfuegen, der diese Query ausf�hrt
+						User user = new User("TODO.SetUser");
+						ParameterTransformationConfiguration cfg = ParameterTransformationConfigurationRegistry.getInstance().getTransformationConfiguration(parameterTransformationConfigurationName);
+						if( cfg == null ) {
+							logger.error("ParameterTransformationConfiguration " + parameterTransformationConfigurationName + " nicht gefunden");
+							return;
+						}
+						executor.addQuery(queryToExecute, parserToUse, user, new ParameterDefaultRoot(new MySink()), cfg);
+						
+					} else {
+						logger.error("Kein ExecutorService gefunden");
+					}
+				} catch (PlanManagementException e ) {
+					logger.error("Konnte Command nicht ausführen: ", e);
 				}
-				executor.addQuery(queryToExecute, parserToUse, user, new ParameterDefaultRoot(new MySink()), cfg);
 				
-			} else {
-				logger.error("Kein ExecutorService gefunden");
 			}
-		} catch (PlanManagementException e ) {
-			logger.error("Konnte Command nicht ausführen: ", e);
-		}
+		});
 
+		t.setDaemon(true);
+		t.start();
+		
 		return null;
 	}
 
