@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AbstractTypeSafeMap;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterInstallMetadataListener;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterQueryOptimizer;
 
 /**

@@ -1,4 +1,6 @@
-package de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter;
+package de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter;
+
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.AbstractOptimizationParameter;
 
 public class ParameterInstallMetadataListener extends
 		AbstractOptimizationParameter {
