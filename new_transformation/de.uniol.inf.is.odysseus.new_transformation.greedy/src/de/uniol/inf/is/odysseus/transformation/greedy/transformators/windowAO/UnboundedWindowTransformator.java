@@ -14,7 +14,7 @@ public class UnboundedWindowTransformator implements IPOTransformator<WindowAO> 
 	@Override
 	public boolean canExecute(WindowAO windowAO, TransformationConfiguration config) {
 		return config.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")
-				&& windowAO.getWindowType() == WindowType.UNBOUNDED && windowAO.getWindowOn() == null;
+				&& windowAO.getWindowType() == WindowType.UNBOUNDED;
 	}
 
 	@Override
