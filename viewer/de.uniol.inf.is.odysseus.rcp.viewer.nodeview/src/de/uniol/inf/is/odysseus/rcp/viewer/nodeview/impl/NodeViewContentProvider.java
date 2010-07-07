@@ -40,6 +40,8 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 			
 			// Add Schemainformation
 			if (node.getModelNode().getContent().getOutputSchema() != null){
+//				for( SDFAttribute attr : node.getModelNode().getContent().getOutputSchema())
+//					children.add(attr);
 				children.add( node.getModelNode().getContent().getOutputSchema());
 			}
 			// Add Metadatainformation
@@ -57,6 +59,10 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 			}
 			return children.toArray();
 		}
+		
+		if( parentElement instanceof SDFAttribute ) {
+			return ((SDFAttribute)parentElement).getSubattributes().toArray();
+		}
 	
 		return null;
 	}
@@ -73,8 +79,7 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 				if( n.getModelNode() == tgt ) return n;
 			}
 		}
-
-		System.out.println("getParent() mit " + element.getClass().getSimpleName() + " fehlgeschlagen");
+		
 		return null;
 	}
 
@@ -83,10 +88,15 @@ public class NodeViewContentProvider implements ITreeContentProvider {
 		if( element instanceof IOdysseusNodeView ) {
 			IOdysseusNodeView node = (IOdysseusNodeView)element;
 			if( node.getModelNode() == null ) return false;
-			return node.getModelNode().getProvidedMetadataTypes().size() > 0;
+			if( node.getModelNode().getContent() == null ) return false;
+			if( node.getModelNode().getProvidedMetadataTypes().size() > 0) return true;
+			if( node.getModelNode().getContent().getOutputSchema() != null ) return true;
 		}
 		if( element instanceof Collection<?>) return true;
 		
+		if( element instanceof SDFAttribute) {
+			return ((SDFAttribute)element).getSubattributeCount() > 0;
+		}
 		return false;
 	}
 
