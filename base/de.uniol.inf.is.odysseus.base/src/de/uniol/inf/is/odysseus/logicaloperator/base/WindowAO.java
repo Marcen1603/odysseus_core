@@ -16,16 +16,6 @@ public class WindowAO extends UnaryLogicalOp {
 
 	private long windowAdvance = -1;
 	
-	private SDFAttribute windowOn;
-
-	public SDFAttribute getWindowOn() {
-		return windowOn;
-	}
-
-	public void setWindowOn(SDFAttribute windowOn) {
-		this.windowOn = windowOn;
-	}
-
 	private List<SDFAttribute> partitionedBy;
 
 	public long getWindowAdvance() {
@@ -64,7 +54,6 @@ public class WindowAO extends UnaryLogicalOp {
 		this.windowSize = windowPO.windowSize;
 		this.windowAdvance = windowPO.windowAdvance;
 		this.partitionedBy = windowPO.partitionedBy;
-		this.windowOn = windowPO.windowOn;
 		this.windowType = windowPO.windowType;
 	}
 
@@ -128,8 +117,6 @@ public class WindowAO extends UnaryLogicalOp {
 				+ ((partitionedBy == null) ? 0 : partitionedBy.hashCode());
 		result = prime * result
 				+ (int) (windowAdvance ^ (windowAdvance >>> 32));
-		result = prime * result
-				+ ((windowOn == null) ? 0 : windowOn.hashCode());
 		result = prime * result + (int) (windowSize ^ (windowSize >>> 32));
 		result = prime * result
 				+ ((windowType == null) ? 0 : windowType.hashCode());
@@ -151,11 +138,6 @@ public class WindowAO extends UnaryLogicalOp {
 		} else if (!partitionedBy.equals(other.partitionedBy))
 			return false;
 		if (windowAdvance != other.windowAdvance)
-			return false;
-		if (windowOn == null) {
-			if (other.windowOn != null)
-				return false;
-		} else if (!windowOn.equals(other.windowOn))
 			return false;
 		if (windowSize != other.windowSize)
 			return false;
