@@ -82,7 +82,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			for (IQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 						parameter);
-				if (parameter.getParameterInstallMetadataListener() == ParameterInstallMetadataListener.TRUE){
+				if (parameter != null && parameter.getParameterInstallMetadataListener() == ParameterInstallMetadataListener.TRUE){
 					updateMetadataListener(editableQuery);
 				}
 			}
