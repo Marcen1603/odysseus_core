@@ -44,4 +44,8 @@ public class OptimizeParameter extends AbstractTypeSafeMap<AbstractOptimizationP
 	public ParameterQueryOptimizer getParameterQueryOptimizer() {
 		return (ParameterQueryOptimizer) this.get(ParameterQueryOptimizer.class);
 	}
+	
+	public ParameterInstallMetadataListener getParameterInstallMetadataListener(){
+		return (ParameterInstallMetadataListener) this.get(ParameterInstallMetadataListener.class);
+	}
 }

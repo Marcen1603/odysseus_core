@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.ParameterInstallMetadataListener;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
@@ -107,7 +108,9 @@ public class StandardOptimizer extends AbstractOptimizer {
 			for (IQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 						parameter);
-				updateMetadataListener(editableQuery);
+				if (parameter.getParameterInstallMetadataListener() == ParameterInstallMetadataListener.TRUE){
+					updateMetadataListener(editableQuery);
+				}
 			}
 
 			List<IQuery> newPlan = sender.getRegisteredQueries();
