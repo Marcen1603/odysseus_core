@@ -1,17 +1,21 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.osgicommands;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
-import de.uniol.inf.is.odysseus.base.usermanagement.User;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
 public class NMQNCommand extends AbstractHandler implements IHandler {
 
@@ -27,19 +31,22 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IAdvancedExecutor executor = Activator.getExecutor();
-		if (executor != null) {
-			for (String q : queries) {
-				try {
-					User user = new User("TODO.SetUser");
-					executor.addQuery(q, "CQL", user, new ParameterDefaultRoot(new MySink()), Activator.getTrafoConfigParam());
-				} catch (PlanManagementException e) {
-					e.printStackTrace();
-				}
+		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		for( String q  : queries ) {
+			try {
+				Map<String,String> map = new HashMap<String, String>();
+				map.put(IQueryConstants.PARSER_PARAMETER_ID, "CQL");
+				map.put(IQueryConstants.QUERY_PARAMETER_ID, q);
+				map.put(IQueryConstants.PARAMETER_TRANSFORMATION_CONFIGURATION_NAME_PARAMETER_ID, "Standard");
+				
+				ICommandService cS = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
+				Command cmd = cS.getCommand(IQueryConstants.ADD_QUERY_COMMAND_ID);
+				ParameterizedCommand parCmd = ParameterizedCommand.generateCommand(cmd, map);
+				handlerService.executeCommand(parCmd, null);
+				
+			} catch( Exception ex ) {
+				logger.error("Cannot execute Command:", ex);
 			}
-		} else {
-			logger.error("Kein ExecutorService gefunden");
-			return null;
 		}
 		return null;
 	}
