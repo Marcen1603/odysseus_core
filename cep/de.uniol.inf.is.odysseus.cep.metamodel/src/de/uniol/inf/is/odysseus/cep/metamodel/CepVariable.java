@@ -277,4 +277,51 @@ public class CepVariable {
 		return (this.stateIdentifier == null || stateIdentifier.equals("")) && (this.index == null || this.index <0) && (this.operation == null);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((attributename == null) ? 0 : attributename.hashCode());
+		result = prime * result + ((index == null) ? 0 : index.hashCode());
+		result = prime * result
+				+ ((operation == null) ? 0 : operation.hashCode());
+		result = prime * result
+				+ ((stateIdentifier == null) ? 0 : stateIdentifier.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CepVariable other = (CepVariable) obj;
+		if (attributename == null) {
+			if (other.attributename != null)
+				return false;
+		} else if (!attributename.equals(other.attributename))
+			return false;
+		if (index == null) {
+			if (other.index != null)
+				return false;
+		} else if (!index.equals(other.index))
+			return false;
+		if (operation == null) {
+			if (other.operation != null)
+				return false;
+		} else if (!operation.equals(other.operation))
+			return false;
+		if (stateIdentifier == null) {
+			if (other.stateIdentifier != null)
+				return false;
+		} else if (!stateIdentifier.equals(other.stateIdentifier))
+			return false;
+		return true;
+	}
+
+	
 }

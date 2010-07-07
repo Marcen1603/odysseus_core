@@ -251,7 +251,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 			for (Transition transition : instance.getCurrentState()
 					.getTransitions()) {
-				logger.debug("Evalating: " + transition + " on event " + event);
+				logger.debug("Evaluating: " + transition + " on event " + event);
 				// Terminate if out of Window
 				if (outofWindow) {
 					break;
@@ -261,11 +261,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				if (transition.getCondition().doEventTypeChecking()
 						&& !transition.getCondition().checkEventTypeWithPort(
 								port)) {
-					// logger.debug(instance + " Wrong Datatype "
-					// + eventReader.get(port).getType()
-					// + " for Transition " + transition.getCondition() +
-					// " "+transition.getCondition().doEventTypeChecking()
-					// + " in state " + instance.getCurrentState());
+					 logger.debug(instance + " Wrong Datatype "
+					 + eventReader.get(port).getType()
+					 + " for Transition " + transition.getCondition() +
+					 " "+transition.getCondition().doEventTypeChecking()
+					 + " in state " + instance.getCurrentState());
 					continue;
 				}
 
@@ -354,17 +354,18 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	private boolean updateVariables(R object, StateMachineInstance<R> instance,
 			Transition transition, int port) {
+		logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
 		for (CepVariable varName : transition.getCondition().getVarNames()) {
 
-			// logger.debug("Setting Value for "+varName);
+			logger.debug("Setting Value for "+varName);
 
 			Object newValue = null;
 			if (varName.isActEventName()) {
 				newValue = this.eventReader.get(port).getValue(
 						varName.getVariableName(), object);
 
-				// logger.debug("Setze " + varName + " auf " + newValue +
-				// " from " + object);
+				 logger.debug("Setze " + varName + " auf " + newValue +
+				 " from " + object);
 
 				if (newValue == null) {
 					return false;

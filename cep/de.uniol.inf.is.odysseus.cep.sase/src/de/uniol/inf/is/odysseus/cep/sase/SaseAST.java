@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-07-06 17:12:52
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-07-07 10:23:03
 
 	package de.uniol.inf.is.odysseus.cep.sase; 
 	import java.util.LinkedList;
@@ -440,23 +440,23 @@ public class SaseAST extends TreeParser {
                      if (source.getId().endsWith("[i]")) {
                        RelationalJEPCondition con = new RelationalJEPCondition("");
                        con.setEventType(source.getType());
-                       con.setEventPort(i);
+                       con.setEventPort(sourceNames.indexOf(source.getType()));
                        source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.consumeNoBufferWrite));
                        con = new RelationalJEPCondition("");
                        con.setEventType(source.getType());
-                       con.setEventPort(i);
+                       con.setEventPort(sourceNames.indexOf(source.getType()));
                        source.addTransition(new Transition(source.getId()+ "_take", source,con, EAction.consumeBufferWrite));
                      } else {
                         RelationalJEPCondition con = new RelationalJEPCondition("");
                         con.setEventType(source.getType());
-                        con.setEventPort(i);
+                        con.setEventPort(sourceNames.indexOf(source.getType()));
                         source.addTransition(new Transition(source.getId()+ "_begin", dest, con,EAction.consumeBufferWrite));
                      }
                      if (i > 0 && i < states.size() - 1) {
                         RelationalJEPCondition con = new RelationalJEPCondition("");
                         // Achtung! Ignore hat keinen Typ!
                         //con.setEventType(source.getType());
-                        // con.con.setEventPort(i);
+                        // con.con.setEventPort(sourceNames.indexOf(source.getType()));
                         // Ignore auf sich selbst!
                         source.addTransition(new Transition(source.getId()+ "_ignore", source, con,EAction.discard));
                         
@@ -1409,7 +1409,7 @@ public class SaseAST extends TreeParser {
 
                     match(input, Token.UP, null); 
                      
-                        PathAttribute p = new PathAttribute(var.getText(),"[i-1]","",
+                        PathAttribute p = new PathAttribute(var.getText(),"[i-1]",member==null?"":""+member,
                             symTableOpFac.getOperation(op.getText()).getName());
                         attribs.add(p);
                        

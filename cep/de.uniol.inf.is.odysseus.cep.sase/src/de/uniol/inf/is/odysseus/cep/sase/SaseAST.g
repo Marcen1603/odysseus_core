@@ -194,23 +194,23 @@ List<State> states = new LinkedList<State>();
          if (source.getId().endsWith("[i]")) {
            RelationalJEPCondition con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
-           con.setEventPort(i);
+           con.setEventPort(sourceNames.indexOf(source.getType()));
            source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.consumeNoBufferWrite));
            con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
-           con.setEventPort(i);
+           con.setEventPort(sourceNames.indexOf(source.getType()));
            source.addTransition(new Transition(source.getId()+ "_take", source,con, EAction.consumeBufferWrite));
          } else {
             RelationalJEPCondition con = new RelationalJEPCondition("");
             con.setEventType(source.getType());
-            con.setEventPort(i);
+            con.setEventPort(sourceNames.indexOf(source.getType()));
             source.addTransition(new Transition(source.getId()+ "_begin", dest, con,EAction.consumeBufferWrite));
          }
          if (i > 0 && i < states.size() - 1) {
             RelationalJEPCondition con = new RelationalJEPCondition("");
             // Achtung! Ignore hat keinen Typ!
             //con.setEventType(source.getType());
-            // con.con.setEventPort(i);
+            // con.con.setEventPort(sourceNames.indexOf(source.getType()));
             // Ignore auf sich selbst!
             source.addTransition(new Transition(source.getId()+ "_ignore", source, con,EAction.discard));
             
@@ -460,7 +460,7 @@ attributeTerm[List<PathAttribute> attribs]
     (member=NAME)?
    )
   { 
-    PathAttribute p = new PathAttribute(var.getText(),"[i-1]","",
+    PathAttribute p = new PathAttribute(var.getText(),"[i-1]",member==null?"":""+member,
         symTableOpFac.getOperation(op.getText()).getName());
     attribs.add(p);
    }
