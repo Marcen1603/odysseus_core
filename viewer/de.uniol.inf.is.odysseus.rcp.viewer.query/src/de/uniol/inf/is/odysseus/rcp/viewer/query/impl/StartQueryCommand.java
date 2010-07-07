@@ -19,42 +19,43 @@ public class StartQueryCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		
-		Thread t = new Thread( new Runnable() {
-			@Override
-			public void run() {
-				final String queryID = event.getParameter(IQueryConstants.QUERY_ID_PARAMETER_ID);
 
-				int qID = -1;
-				try {
-					qID = Integer.valueOf(queryID);
-				} catch( NumberFormatException ex ){}
-				if(qID == -1) {
-					Object obj = Helper.getSelection(event);
-					if( obj instanceof IQuery ) {
-						qID = ((IQuery)obj).getID();
-					} else {
-						logger.error("Cannot find queryID");
-						return;
-					}
-				}
-				
-				try {
-					IAdvancedExecutor executor = Activator.getExecutor();
-					if (executor != null) {
-						executor.startQuery(qID);
-					} else {
-						logger.error("Kein ExecutorService gefunden");
-						// TODO: Nachricht hier anzeigen
-						return;
-					}
-				} catch (PlanManagementException e ) {
-					e.printStackTrace();
-				}
+		final String queryID = event.getParameter(IQueryConstants.QUERY_ID_PARAMETER_ID);
+
+		int qID = -1;
+		try {
+			qID = Integer.valueOf(queryID);
+		} catch (NumberFormatException ex) {
+		}
+		if (qID == -1) {
+			Object obj = Helper.getSelection(event);
+			if (obj instanceof IQuery) {
+				qID = ((IQuery) obj).getID();
+			} else {
+				logger.error("Cannot find queryID");
+				return null;
 			}
-		});
-		
-		t.setDaemon(true);
-		t.start();
+		}
+
+		final IAdvancedExecutor executor = Activator.getExecutor();
+		final int qID2 = qID; // final machen :-)
+		if (executor != null) {
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						executor.startQuery(qID2);
+					} catch (PlanManagementException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			t.setDaemon(true);
+			t.start();
+		} else {
+			logger.error("Kein ExecutorService gefunden");
+			return null;
+		}
 
 		return null;
 	}
