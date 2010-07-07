@@ -60,7 +60,7 @@ public abstract class AbstractScheduling implements IScheduling,
 	 * 
 	 * @param plan
 	 */
-	private SLATestCalculator slaTestCalculator = null;
+//	private SLATestCalculator slaTestCalculator = null;
 	
 	public AbstractScheduling(IPartialPlan plan) {
 		this.plan = plan;
@@ -91,7 +91,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		blocked = false;
 		schedulingPaused = false;
 		// TMP to Test
-		slaTestCalculator = new SLATestCalculator(plan.getIterableSource());
+	//	slaTestCalculator = new SLATestCalculator(plan.getIterableSource());
 	}
 
 	@Override
