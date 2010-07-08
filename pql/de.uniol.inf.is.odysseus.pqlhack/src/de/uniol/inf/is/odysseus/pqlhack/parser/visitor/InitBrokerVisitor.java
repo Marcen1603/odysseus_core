@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
  * This means, the visitor traverses the whole query plan. Each time
  * a new ASTNode is visited the preceding (parent) node is passed.
  * If the next (child) node is a Broker-Node, the broker dictionary
- * get a new mapping from queue in-port to data out-port. The port numbers
+ * gets a new mapping from queue in-port to data out-port. The port numbers
  * are incremented each time a mapping is found. Since the operators
  * are not subscribed to each other by this visitor, the order of subscription
  * in the next visitor must be the same order as the mappings are detected here.
