@@ -25,7 +25,6 @@ public class MessageConsoleAppender extends AppenderSkeleton {
 		name = "MessageConsoleAppender";
 		this.messageConsoleStream = messageConsoleStream;
 		this.layout = new PatternLayout(DEFAULT_CONVERSION_PATTERN);
-		messageConsoleStream.getConsole().setWaterMarks(10000, 100000);
 	}
 
 	public void close() {
