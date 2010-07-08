@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -8,6 +11,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class OrAttributeResolver {
 	
@@ -96,12 +100,101 @@ public class OrAttributeResolver {
 		return -1;
 	}
 	
+//	public static void main(String[] args) {
+//		SDFAttributeList list = new SDFAttributeList("Scan");
+//		SDFAttribute attr1 = new SDFAttribute("list1");
+//		SDFAttribute attr2 = new SDFAttribute("list2");
+//	
+//		SDFAttribute attr11 = new SDFAttribute("attr1");
+//		SDFAttribute attr12 = new SDFAttribute("attr12");
+//		SDFAttribute attr21 = new SDFAttribute("attr21");
+//		
+//		SDFAttribute attr211 = new SDFAttribute("attr211");
+//		SDFAttribute attr2111 = new SDFAttribute("attr2111");
+//		SDFAttribute attr2112 = new SDFAttribute("attr2112");
+//		
+//		list.add(attr1);
+//		list.add(attr2);
+//		attr1.addSubattribute(attr11);
+//		attr1.addSubattribute(attr12);
+//		attr2.addSubattribute(attr21);
+//		
+//		attr21.addSubattribute(attr211);
+//		attr211.addSubattribute(attr2111);
+//		attr211.addSubattribute(attr2112);
+//		
+//		int[] indices = resolveIndices(list, new String[] {"list2", "attr21", "attr211", "attr2112"});
+//		int[] indices2 = resolveIndices(list, "list1");
+//		for(int index : indices) {
+//			System.out.println(index);
+//		}
+//		
+//		System.out.println(indices2[0]);
+//		
+//		MVRelationalTuple<IProbability> root = new MVRelationalTuple<IProbability>(2);
+//		MVRelationalTuple<IProbability>  tuple1 = new MVRelationalTuple<IProbability>(1);
+//		MVRelationalTuple<IProbability>  tuple2 = new MVRelationalTuple<IProbability>(1);
+//		MVRelationalTuple<IProbability>  tuple11 = new MVRelationalTuple<IProbability>(1);
+//		root.setAttribute(0, tuple1);
+//		root.setAttribute(1, tuple2);
+//		tuple1.setAttribute(0, tuple11);
+//		tuple2.setAttribute(0, "tuple2Attribute");
+//		tuple11.setAttribute(0, "tuple11attribute");
+//
+//		System.out.println("===== get tuple test");
+//		
+////		System.out.println(root + ", isTuple: "+ (root instanceof RelationalTuple<?>));
+////		System.out.println(root.getAttribute(0) + ", isTuple: "+ (root.getAttributes()[0] instanceof MVRelationalTuple<?>));
+////		System.out.println(tuple1.getAttribute(0) + ", isTuple: "+ (tuple1.getAttributes()[0] instanceof MVRelationalTuple<?>));
+//		
+////		System.out.println(tuple11.getAttribute(0) + ", isTuple: "+ (tuple11.getAttributes()[0] instanceof RelationalTuple<?>));
+//		
+//		
+//		System.out.println(resolveTuple(root, new int[] {0, 0, 0}));
+//		
+//		
+//	}
+	
+	public static ArrayList<int[]> getPathsOfMeasurements(SDFAttributeList attrList) {
+		ArrayList<int[]> tmp = new ArrayList<int[]>();
+		
+		return getPathsOfMeasurementValue(attrList, null, tmp);
+	}
+	
+	private static ArrayList<int[]> getPathsOfMeasurementValue(SDFAttributeList attrList, int[] preliminaryPath, ArrayList<int[]> tmp) {
+		int[][] result = null;
+		
+		//Erster Durchlauf:
+		if (preliminaryPath == null) {
+			preliminaryPath = new int[0];
+		}
+		
+		int counter = 0;
+		for (SDFAttribute attr : attrList) {
+			int[] singlePath = new int[preliminaryPath.length+1];
+			for (int i=0; i<singlePath.length-1; i++) {
+				singlePath[i] = preliminaryPath[i];	
+			}
+			singlePath[singlePath.length-1] = counter;
+			
+			if (SDFDatatypes.isMeasurementValue(attr.getDatatype())){
+				tmp.add(singlePath);
+			}
+			if (!SDFDatatypes.isMeasurementValue(attr.getDatatype()) && attr.getSubattributes() != null) {
+				tmp = getPathsOfMeasurementValue(attr.getSubattributes(), singlePath, tmp);
+			}
+			counter++;
+		}
+		
+		return tmp;
+	}
+	
 	public static void main(String[] args) {
 		SDFAttributeList list = new SDFAttributeList("Scan");
 		SDFAttribute attr1 = new SDFAttribute("list1");
 		SDFAttribute attr2 = new SDFAttribute("list2");
 	
-		SDFAttribute attr11 = new SDFAttribute("attr1");
+		SDFAttribute attr11 = new SDFAttribute("attr11");
 		SDFAttribute attr12 = new SDFAttribute("attr12");
 		SDFAttribute attr21 = new SDFAttribute("attr21");
 		
@@ -120,40 +213,25 @@ public class OrAttributeResolver {
 		attr211.addSubattribute(attr2111);
 		attr211.addSubattribute(attr2112);
 		
+		attr1.setDatatype(SDFDatatypeFactory.getDatatype(""));
+		attr2.setDatatype(SDFDatatypeFactory.getDatatype(""));
+		attr11.setDatatype(SDFDatatypeFactory.getDatatype(""));
+		attr12.setDatatype(SDFDatatypeFactory.getDatatype(""));
+		attr21.setDatatype(SDFDatatypeFactory.getDatatype(""));
+		attr211.setDatatype(SDFDatatypeFactory.getDatatype(""));
 		
-		
-		int[] indices = resolveIndices(list, new String[] {"list2", "attr21", "attr211", "attr2112"});
-		int[] indices2 = resolveIndices(list, "list1");
-		for(int index : indices) {
-//			System.out.println(index);
-		}
-		
-//		System.out.println(indices2[0]);
-		
-		MVRelationalTuple<IProbability> root = new MVRelationalTuple<IProbability>(2);
-		MVRelationalTuple<IProbability>  tuple1 = new MVRelationalTuple<IProbability>(1);
-		MVRelationalTuple<IProbability>  tuple2 = new MVRelationalTuple<IProbability>(1);
-		MVRelationalTuple<IProbability>  tuple11 = new MVRelationalTuple<IProbability>(1);
-		root.setAttribute(0, tuple1);
-		root.setAttribute(1, tuple2);
-		tuple1.setAttribute(0, tuple11);
-		tuple2.setAttribute(0, "tuple2Attribute");
-		tuple11.setAttribute(0, "tuple11attribute");
+		attr2111.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
+		attr2112.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
 
-//		System.out.println("===== get tuple test");
-		
-//		System.out.println(root + ", isTuple: "+ (root instanceof RelationalTuple<?>));
-//		System.out.println(root.getAttribute(0) + ", isTuple: "+ (root.getAttributes()[0] instanceof MVRelationalTuple<?>));
-//		System.out.println(tuple1.getAttribute(0) + ", isTuple: "+ (tuple1.getAttributes()[0] instanceof MVRelationalTuple<?>));
-		
-//		System.out.println(tuple11.getAttribute(0) + ", isTuple: "+ (tuple11.getAttributes()[0] instanceof RelationalTuple<?>));
-		
-		
-//		System.out.println(resolveTuple(root, new int[] {0, 0, 0}));
-		
-		setAttribute(root, new int[]{0, 0, 0}, "HUHU");
-		
-		System.out.println(tuple11.getAttribute(0));
+		ArrayList<int[]> ausgabe = getPathsOfMeasurements(list);
+
+		for (int i=0;i<ausgabe.size(); i++) {
+			int[] current = ausgabe.get(i);
+			for (int j=0; j<current.length; j++) {
+				System.out.print(current[j]);
+			}
+			System.out.println();
+		}
 	}
 
 }
