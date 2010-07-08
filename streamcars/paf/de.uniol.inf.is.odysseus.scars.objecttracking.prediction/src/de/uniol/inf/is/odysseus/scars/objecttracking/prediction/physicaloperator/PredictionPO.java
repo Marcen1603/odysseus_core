@@ -59,12 +59,13 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	private void predictData() {
 		MVRelationalTuple<?> list = (MVRelationalTuple<?>)OrAttributeResolver.resolveTuple(currentScan, objListPath);
-		for(MVRelationalTuple<M> obj : (MVRelationalTuple<M>[])list.getAttributes()) {
+		for(int index=0; index < list.getAttributeCount(); index++) {
+			MVRelationalTuple<M> obj = list.getAttribute(index);
 			IPredictionFunction<MVRelationalTuple<M>, M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
-			pf.predictAll(getOutputSchema(), obj, currentTime);
+			list.setAttribute(index, pf.predictAll(getOutputSchema(), obj, currentTime));
 		}
 	}
 
