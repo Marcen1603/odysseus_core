@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
+import java.util.ArrayList;
+
 public class Probability implements IProbability{
 
 	private double[][] cov;
+	private ArrayList<int[]> attributePaths;
 	private int[] attrIndices;
 	
 	public Probability(){
@@ -59,5 +62,32 @@ public class Probability implements IProbability{
 	@Override
 	public void setMVAttributeIndices(int[] indices) {
 		this.attrIndices = indices;
+	}
+
+	@Override
+	public ArrayList<int[]> getAttributePaths() {
+		return this.attributePaths;
+	}
+
+	@Override
+	public void setAttributePaths(ArrayList<int[]> paths) {
+		this.attributePaths = paths;
+	}
+	
+	@Override
+	public int getIndexOfKovMatrix(int[] path) {
+		for (int i=0; i<this.attributePaths.size(); i++) {
+			if (isEqual(this.attributePaths.get(i), path))
+				return i;
+		}
+		return -1;
+	}
+	
+	private boolean isEqual(int[] a, int[] b) {
+		for (int i=0; i<a.length; i++) {
+			if (a[i] != b[i])
+				return false;
+		}
+		return true;
 	}
 }

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -213,14 +214,27 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 
 	@Override
 	public int[] getMVAttributeIndices() {
-		// TODO Auto-generated method stub
-		return null;
+		return prob.getMVAttributeIndices();
 	}
 
 	@Override
 	public void setMVAttributeIndices(int[] indices) {
-		// TODO Auto-generated method stub
-		
+		prob.setMVAttributeIndices(indices);
+	}
+
+	@Override
+	public ArrayList<int[]> getAttributePaths() {
+		return prob.getAttributePaths();
+	}
+
+	@Override
+	public int getIndexOfKovMatrix(int[] path) {
+		return prob.getIndexOfKovMatrix(path);
+	}
+
+	@Override
+	public void setAttributePaths(ArrayList<int[]> paths) {
+		prob.setAttributePaths(paths);
 	}
 
 }

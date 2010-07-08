@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 
@@ -55,6 +57,9 @@ public interface IProbability extends IMetaAttribute, IClone{
 	 */
 	public int[] getMVAttributeIndices();
 
+	public ArrayList<int[]> getAttributePaths();
 	
+	public void setAttributePaths(ArrayList<int[]> paths);
 	
+	public int getIndexOfKovMatrix(int[] path);
 }
