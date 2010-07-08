@@ -66,7 +66,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private PointInTime min = null;
 
 	/** Sets debug outputs on or off. */
-	private boolean printDebug = false;
+	private boolean printDebug = true;
 
 	/** Indicates whether the content has changed. */
 	private boolean contentChanged = false;

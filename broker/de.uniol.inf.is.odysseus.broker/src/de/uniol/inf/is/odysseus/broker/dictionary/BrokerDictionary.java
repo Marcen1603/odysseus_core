@@ -240,4 +240,8 @@ public class BrokerDictionary {
 	public BrokerAO getLogicalPlan(String brokername){
 		return this.brokerlist.get(brokername).getLogicalPlan();
 	}
+	
+	public Map<String, BrokerDictionaryEntry> getLogicalPlans(){
+		return this.brokerlist;
+	}
 }

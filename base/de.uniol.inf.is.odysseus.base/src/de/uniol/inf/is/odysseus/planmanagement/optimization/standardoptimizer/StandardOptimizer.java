@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.OptimizeParameter;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterInstallMetadataListener;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
 
@@ -55,6 +54,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public StandardOptimizer() {
 		logger = LoggerFactory.getLogger(StandardOptimizer.class);
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
+//		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategy>();
 		this.pendingRequests = new LinkedList<IQuery>();
 	}
 	
@@ -73,6 +73,31 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public void unbindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
 		this.migrationCostModel = null;
 	}
+	
+//	@Override
+//	public void bindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
+//		logger.debug("Bind planmigration strategy "+planMigrationStrategy);
+//		this.planMigrationStrategies.add(planMigrationStrategy);
+//		super.bindPlanMigrationStrategy(planMigrationStrategy);
+//	}
+	
+//	@Override
+//	public void unbindPlanMigrationStrategy(IPlanMigrationStrategy planMigrationStrategy) {
+//		this.planMigrationStrategies.remove(planMigrationStrategy);
+//		super.unbindPlanMigrationStrategy(planMigrationStrategy);
+//	}
+	
+//	@Override
+//	public void bindBufferPlacementStrategy(
+//			IBufferPlacementStrategy bufferPlacementStrategy) {
+//		super.bindBufferPlacementStrategy(bufferPlacementStrategy);
+//	}
+//	
+//	@Override
+//	public void unbindBufferPlacementStrategy(
+//			IBufferPlacementStrategy bufferPlacementStrategy) {
+//		super.unbindBufferPlacementStrategy(bufferPlacementStrategy);
+//	}
 
 	@Override
 	public IExecutionPlan preQueryAddOptimization(IOptimizable sender,
@@ -82,7 +107,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			for (IQuery editableQuery : queries) {
 				this.queryOptimizer.optimizeQuery(sender, editableQuery,
 						parameter);
-				if (parameter != null && parameter.getParameterInstallMetadataListener() == ParameterInstallMetadataListener.TRUE){
+				if (editableQuery.getBuildParameter().getParameterInstallMetadataListener()){
 					updateMetadataListener(editableQuery);
 				}
 			}

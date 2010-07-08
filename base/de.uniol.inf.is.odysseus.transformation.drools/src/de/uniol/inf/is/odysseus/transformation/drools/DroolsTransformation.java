@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
-import de.uniol.inf.is.odysseus.util.PrintLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 /**
  * @author Jonas Jacobi
@@ -68,6 +68,7 @@ public class DroolsTransformation implements ITransformation {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IPhysicalOperator transform(ILogicalOperator op,
 			TransformationConfiguration config) throws TransformationException {
@@ -87,7 +88,7 @@ public class DroolsTransformation implements ITransformation {
 			
 			// plans can be cyclic graphs now, so use our new
 			// walker
-			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 			new AbstractGraphWalker().prefixWalk(top, pv);
 			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation of: " + pv.getResult());
 			
@@ -124,7 +125,11 @@ public class DroolsTransformation implements ITransformation {
 		if (LoggerHelper.getInstance(LOGGER_NAME).isInfoEnabled()) {
 //			LoggerHelper.getInstance(LOGGER_NAME).debug(
 //					"transformation result: \n" + planToString(physicalPO, ""));
-			LoggerHelper.getInstance(LOGGER_NAME).debug("Physical Plan cannot be printed at the moment, because cyclic queries are allowed now.");
+			AbstractGraphWalker walker = new AbstractGraphWalker();
+			PrintGraphVisitor printGraph = new PrintGraphVisitor();
+			walker.prefixWalkPhysical(physicalPO, printGraph);
+			
+			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation result: \n" + printGraph.getResult());
 		}		
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 		return physicalPO;

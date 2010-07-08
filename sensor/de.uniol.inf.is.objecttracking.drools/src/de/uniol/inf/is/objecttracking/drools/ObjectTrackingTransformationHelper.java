@@ -25,7 +25,7 @@ public class ObjectTrackingTransformationHelper {
 		}
 		
 		if(outputSchema == null){
-			throw new RuntimeException("Not AccessPO child found for MetadataCreationPO : " + mPO);
+			throw new RuntimeException("No AccessPO child found for MetadataCreationPO : " + mPO);
 		}
 		
 		return outputSchema;

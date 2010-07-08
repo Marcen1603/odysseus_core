@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AbstractTypeSafeMap;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterDoRestruct;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterInstallMetadataListener;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.optimizeparameter.parameter.ParameterQueryOptimizer;
 
 /**
@@ -44,9 +43,5 @@ public class OptimizeParameter extends AbstractTypeSafeMap<AbstractOptimizationP
 	 */
 	public ParameterQueryOptimizer getParameterQueryOptimizer() {
 		return (ParameterQueryOptimizer) this.get(ParameterQueryOptimizer.class);
-	}
-	
-	public ParameterInstallMetadataListener getParameterInstallMetadataListener(){
-		return (ParameterInstallMetadataListener) this.get(ParameterInstallMetadataListener.class);
 	}
 }

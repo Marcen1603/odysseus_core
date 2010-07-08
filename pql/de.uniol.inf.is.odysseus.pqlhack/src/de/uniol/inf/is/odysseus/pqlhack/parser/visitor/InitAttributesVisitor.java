@@ -79,8 +79,14 @@ public class InitAttributesVisitor extends DefaultVisitor{
 			((RenameAO)inputOp).setOutputSchema(createAliasSchema(node.getAlias(), access));
 			sourceName = node.getAlias();
 		}
-
-		this.attributeResolver.addSource(sourceName, inputOp);
+		
+		// if there are multiple statements, there can be 
+		// more than one access op with the same name.
+		// In this case only add one of them and ignore the
+		// other ones.
+		if(this.attributeResolver.getSource(sourceName) == null){
+			this.attributeResolver.addSource(sourceName, inputOp);
+		}
 	}
 	
 	@Override

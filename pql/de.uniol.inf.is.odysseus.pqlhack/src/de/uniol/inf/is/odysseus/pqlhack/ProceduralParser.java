@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.base.DataDictionary;
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
+import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionaryEntry;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.transaction.TransactionDetector;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
@@ -109,9 +109,9 @@ public class ProceduralParser implements IQueryParser {
 		}
 
 		// now take all brokers and organize their transactions
-		for(Entry<String, ILogicalOperator> entry: DataDictionary.getInstance().getViews()){
-			if(entry.getValue() instanceof BrokerAO && this.brokerNames.contains(((BrokerAO)entry.getValue()).getIdentifier())){
-				TransactionDetector.organizeTransactions((BrokerAO)entry.getValue());
+		for(Entry<String, BrokerDictionaryEntry> entry: BrokerDictionary.getInstance().getLogicalPlans().entrySet()){
+			if(this.brokerNames.contains(entry.getValue().getBrokerName())){
+				TransactionDetector.organizeTransactions(entry.getValue().getLogicalPlan());
 			}
 		}
 		

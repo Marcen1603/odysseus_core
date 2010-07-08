@@ -1,17 +1,15 @@
 package de.uniol.inf.is.odysseus.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.Pair;
 
-public class PrintLogicalGraphVisitor<T extends ILogicalOperator> implements IGraphNodeVisitor<T,String>{
+public class PrintGraphVisitor<T> implements IGraphNodeVisitor<T,String>{
 
 	private ArrayList<Pair<T,T>> visited;
 	private String graph;
 	
-	public PrintLogicalGraphVisitor(){
+	public PrintGraphVisitor(){
 		this.visited = new ArrayList<Pair<T,T>>();
 		this.graph = "";
 	}

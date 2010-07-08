@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.util.PrintLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 /**
  * Logical plan rewriting service, based on drools. It loads rule files (*.drl)
@@ -79,7 +79,7 @@ public class DroolsRewrite implements IRewrite {
 			
 			// plans can be cyclic graphs now, so use our new
 			// walker
-			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 			new AbstractGraphWalker().prefixWalk(top, pv);
 			logger.debug("pre rewrite: " + pv.getResult());
 								
@@ -100,7 +100,7 @@ public class DroolsRewrite implements IRewrite {
 			
 			// plans can be cyclic graphs now, so use our new
 			// walker
-			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 			new AbstractGraphWalker().prefixWalk(top, pv);
 			logger.debug("pre rewrite: " + pv.getResult());
 
@@ -116,7 +116,7 @@ public class DroolsRewrite implements IRewrite {
 			
 			// plans can be cyclic graphs now, so use our new
 			// walker
-			PrintLogicalGraphVisitor<ILogicalOperator> pv = new PrintLogicalGraphVisitor<ILogicalOperator>();
+			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 			new AbstractGraphWalker().prefixWalk(top, pv);
 			logger.debug("pre rewrite: " + pv.getResult());
 

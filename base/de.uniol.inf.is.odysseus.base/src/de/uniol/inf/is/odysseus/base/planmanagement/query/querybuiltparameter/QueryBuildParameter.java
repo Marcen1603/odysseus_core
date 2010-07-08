@@ -47,6 +47,9 @@ public class QueryBuildParameter extends
 		if (!contains(ParameterPriority.class)) {
 			set(new ParameterPriority(0));
 		}
+		if(!contains(ParameterInstallMetadataListener.class)){
+			set(new ParameterInstallMetadataListener(false));
+		}
 	}
 
 	/**
@@ -103,5 +106,9 @@ public class QueryBuildParameter extends
 	public IBufferPlacementStrategy getBufferPlacementStrategy() {
 		return (IBufferPlacementStrategy) get(
 				ParameterBufferPlacementStrategy.class).getValue();
+	}
+	
+	public boolean getParameterInstallMetadataListener(){
+		return ((ParameterInstallMetadataListener)get(ParameterInstallMetadataListener.class)).getValue();
 	}
 }

@@ -107,7 +107,7 @@ public class SensorObject implements IStreamType{
 		a.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 		schema.add(a);
 		a = new SDFAttribute("interval");
-		a.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
+		a.setDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
 		schema.add(a);
 		a = new SDFAttribute("type");
 		a.setDatatype(SDFDatatypeFactory.getDatatype("String"));
