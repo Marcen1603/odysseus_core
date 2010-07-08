@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public class OrAttributeResolver {
 	
@@ -22,10 +24,10 @@ public class OrAttributeResolver {
 	}
 	
 	private static SDFAttribute resolveAttribute(SDFAttributeList attr, String name) {
-		System.out.println("resolveAttribute: " + attr + ", name: " + name);
+//		System.out.println("resolveAttribute: " + attr + ", name: " + name);
 		for(SDFAttribute a : attr) {
 			if(a.getAttributeName().equals(name)) {
-				System.out.println("return: " + a);
+//				System.out.println("return: " + a);
 				return a;
 			}
 		}
@@ -35,7 +37,7 @@ public class OrAttributeResolver {
 	public static<M extends IMetaAttribute> Object resolveTuple(RelationalTuple<?> root, int[] path) {
 		Object currentTuple = root;
 		for(int index=0; index<path.length; index++) {
-			if(currentTuple instanceof RelationalTuple<?>) {
+			if(currentTuple instanceof RelationalTuple) {
 				currentTuple = ((RelationalTuple<?>) currentTuple).getAttributes()[path[index]];
 			} else {
 				return null;
@@ -48,6 +50,7 @@ public class OrAttributeResolver {
 		for(int index=0; index<attr.getAttributeCount(); index++) {
 			SDFAttribute a = attr.get(index);
 			if(a.getAttributeName().equals(name)) {
+//				SDFAttribute listType = SDFDatatypeFactory.getDatatype("List");
 				return index;
 			}
 		}
@@ -70,6 +73,17 @@ public class OrAttributeResolver {
 		}
 		
 		return currentSchema;
+	}
+	
+	public static void setAttribute(RelationalTuple<?> source, int[] path, Object value) {
+		RelationalTuple<?> current = source;
+		
+		for(int depth=0; depth<path.length-1; depth++) {
+			if(current instanceof RelationalTuple) {
+				current = (RelationalTuple<?>)current.getAttribute(path[depth]);
+			}
+		}
+		current.setAttribute(path[path.length-1], value);
 	}
 	
 	public static int indexOfAttribute(RelationalTuple<?> parent, Object attr) {
@@ -96,6 +110,7 @@ public class OrAttributeResolver {
 		SDFAttribute attr2112 = new SDFAttribute("attr2112");
 		
 		list.add(attr1);
+		
 		list.add(attr2);
 		attr1.addSubattribute(attr11);
 		attr1.addSubattribute(attr12);
@@ -105,13 +120,15 @@ public class OrAttributeResolver {
 		attr211.addSubattribute(attr2111);
 		attr211.addSubattribute(attr2112);
 		
+		
+		
 		int[] indices = resolveIndices(list, new String[] {"list2", "attr21", "attr211", "attr2112"});
 		int[] indices2 = resolveIndices(list, "list1");
 		for(int index : indices) {
-			System.out.println(index);
+//			System.out.println(index);
 		}
 		
-		System.out.println(indices2[0]);
+//		System.out.println(indices2[0]);
 		
 		MVRelationalTuple<IProbability> root = new MVRelationalTuple<IProbability>(2);
 		MVRelationalTuple<IProbability>  tuple1 = new MVRelationalTuple<IProbability>(1);
@@ -123,7 +140,7 @@ public class OrAttributeResolver {
 		tuple2.setAttribute(0, "tuple2Attribute");
 		tuple11.setAttribute(0, "tuple11attribute");
 
-		System.out.println("===== get tuple test");
+//		System.out.println("===== get tuple test");
 		
 //		System.out.println(root + ", isTuple: "+ (root instanceof RelationalTuple<?>));
 //		System.out.println(root.getAttribute(0) + ", isTuple: "+ (root.getAttributes()[0] instanceof MVRelationalTuple<?>));
@@ -132,9 +149,11 @@ public class OrAttributeResolver {
 //		System.out.println(tuple11.getAttribute(0) + ", isTuple: "+ (tuple11.getAttributes()[0] instanceof RelationalTuple<?>));
 		
 		
-		System.out.println(resolveTuple(root, new int[] {0, 0, 0}));
+//		System.out.println(resolveTuple(root, new int[] {0, 0, 0}));
 		
+		setAttribute(root, new int[]{0, 0, 0}, "HUHU");
 		
+		System.out.println(tuple11.getAttribute(0));
 	}
 
 }
