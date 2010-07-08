@@ -48,6 +48,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		//
 		MessageConsole myConsole = new MessageConsole("System.out", null); // declare console
 		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { myConsole });
+		try{
+			myConsole.setWaterMarks(10000, 10001);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		MessageConsoleStream stream = myConsole.newMessageStream();
 		PrintStream myS = new PrintStream(stream);
 		System.setOut(myS); // link standard output stream to the console
