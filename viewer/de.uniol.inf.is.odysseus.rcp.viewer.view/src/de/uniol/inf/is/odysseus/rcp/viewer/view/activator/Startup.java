@@ -1,4 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.view.activator;
+
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
