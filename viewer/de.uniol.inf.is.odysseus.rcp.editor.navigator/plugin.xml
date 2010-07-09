@@ -60,7 +60,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.editor.navigator.DeleteCommand"
                label="Delete"
-               style="push">
+               tooltip="Deletes the selected resources">
          </command>
       </menuContribution>
    </extension>

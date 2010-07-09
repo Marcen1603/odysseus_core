@@ -11,7 +11,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.rcp.editor.navigator.activator.Activator;
-import de.uniol.inf.is.odysseus.rcp.editor.navigator.activator.Startup;
 
 public class NavigatorLabelProvider implements ILabelProvider {
 
@@ -38,12 +37,7 @@ public class NavigatorLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if( element instanceof IProject ) {
-			Image img = Activator.getDefault().getImageRegistry().get("project");
-			if( img == null ) {
-				Startup.loadResources();
-				img = Activator.getDefault().getImageRegistry().get("project");
-			}
-			return img;
+			return Activator.getDefault().getImageRegistry().get("project");
 		}
 		if( element instanceof IFolder ) 
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);

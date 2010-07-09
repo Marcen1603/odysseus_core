@@ -16,7 +16,7 @@ public class Startup implements IStartup {
 		});
 	}
 	
-	public static void loadResources() {
+	private static void loadResources() {
 		Activator.getDefault().getImageRegistry().put("project", getImageDescriptor("Icons/project.gif"));
 		Activator.getDefault().getImageRegistry().put("plan", getImageDescriptor("Icons/plan.png"));
 	}
