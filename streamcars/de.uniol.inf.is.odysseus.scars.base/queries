@@ -1,3 +1,6 @@
+
+*** SENSORENDEFINITIONEN ***
+
 CREATE SENSOR radarSensor (
 	RECORD( scan,
 		ATTRIBUTE(timestamp, LONG)
@@ -41,3 +44,48 @@ CREATE SENSOR radarSensor (
 		)
 	)
 ) FROM CHANNEL 192.168.0.1:5001
+
+*** LOGISCHER PLAN MIT SET-PREDICTION-OR ***
+
+LOGICAL PLAN : 
+PROJECTION(
+	SET-PREDICTION-OR(
+		ACCESS(radarSensor),
+		radarSensor.scan.cars.car.posx := radarSensor.scan.cars.car.posx * t; WHERE radarSensor.scan.cars.car.id > 0;
+	),			
+	radarSensor.scan.cars.car.posx
+);
+	
+*** Zyklische Anfrage ***
+LOGICAL PLAN : 
+PROJECTION(
+	JOIN(
+		SET-PREDICTION(
+			SLIDING-TIME-WINDOW(
+				BROKER(a),
+				15,
+				1,
+				a.timestamp
+			),
+			a.pos := a.pos + a.speed * (-a.timestamp) + a.speed * t; WHERE a.id > 0.0;
+		),
+		SET-PREDICTION(
+			SLIDING-TIME-WINDOW(
+				ACCESS(linearMove AS b),
+				10,
+				1,
+				b.timestamp
+			),
+			b.pos := b.pos + b.speed * (-b.timestamp) + b.speed * t; WHERE b.id > 0.0 ;
+		),
+		a.timestamp < b.timestamp AND (a.pos - b.pos) < 0.1 AND (a.pos - b.pos) > -0.1,
+		0
+	),			
+	a.timestamp a.id a.pos a.speed a.timestamp b.timestamp b.id b.pos b.speed
+);
+
+BROKER(a,
+	RSELECTION(
+		BROKER(a, QUEUE (RPROJECTION(ACCESS(linearMove as c), c.timestamp))), a.timestamp > 20));
+
+BROKER(a, RPROJECTION(ACCESS(linearMove as d), d.timestamp));
