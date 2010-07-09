@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.uniol.inf.is.odysseus.rcp.editor.navigator.view.NavigatorViewPart"
+            id="de.uniol.inf.is.odysseus.rcp.editor.navigator"
+            name="Navigator"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.editor.navigator.activator.Startup">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.navigator.command.RefreshCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.navigator.RefreshCommand"
+            name="Refresh">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.navigator.command.CollapseAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.navigator.CollapseAllCommand"
+            name="Collapse All">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.editor.navigator">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.navigator.RefreshCommand"
+               icon="Icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.navigator.CollapseAllCommand"
+               icon="Icons/collapseall.gif"
+               label="Collapse All"
+               style="push"
+               tooltip="Collapse All">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
