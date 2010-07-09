@@ -58,10 +58,18 @@
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.editor.navigator">
          <command
+               commandId="org.eclipse.ui.newWizard"
+               label="New..."
+               style="push">
+         </command>
+         <command
                commandId="de.uniol.inf.is.odysseus.rcp.editor.navigator.DeleteCommand"
                label="Delete"
                tooltip="Deletes the selected resources">
          </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.editor.navigator.Separator">
+         </separator>
       </menuContribution>
    </extension>
 
