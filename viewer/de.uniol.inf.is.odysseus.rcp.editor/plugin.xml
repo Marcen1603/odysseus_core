@@ -7,6 +7,7 @@
             class="de.uniol.inf.is.odysseus.rcp.editor.editorpart.LogicalPlanEditorPart"
             default="false"
             extensions="pln"
+            icon="icons/plan.png"
             id="de.uniol.inf.is.odysseus.rcp.LogicalPlanEditor"
             name="Logical Plan Editor">
       </editor>

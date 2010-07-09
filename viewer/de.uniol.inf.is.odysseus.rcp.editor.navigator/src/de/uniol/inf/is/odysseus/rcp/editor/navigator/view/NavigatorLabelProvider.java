@@ -47,9 +47,12 @@ public class NavigatorLabelProvider implements ILabelProvider {
 		}
 		if( element instanceof IFolder ) 
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-		else if( element instanceof IFile ) 
+		else if( element instanceof IFile ) {
+			IFile file = (IFile)element;
+			if(file.getName().endsWith(".pln"))
+				return Activator.getDefault().getImageRegistry().get("plan");
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-					
+		}
 		return null;
 	}
 

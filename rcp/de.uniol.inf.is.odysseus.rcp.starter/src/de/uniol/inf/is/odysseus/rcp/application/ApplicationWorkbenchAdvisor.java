@@ -1,16 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.application;
 
-import java.io.PrintStream;
-
-import org.apache.log4j.Logger;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 
 import de.uniol.inf.is.odysseus.rcp.perspective.observer.IObserverPerspectiveConstants;
 
@@ -37,7 +30,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		
 		// Log4j-Ausgaben in Console umleiten
 		// Init der Message Console
-		// Temporär wieder auf die Eclipse Console
+		// Temporï¿½r wieder auf die Eclipse Console
 		
 		//		MessageConsole log4jConsole = new MessageConsole("Log4J", null);
 //		MessageConsoleStream log4jStream = log4jConsole.newMessageStream();

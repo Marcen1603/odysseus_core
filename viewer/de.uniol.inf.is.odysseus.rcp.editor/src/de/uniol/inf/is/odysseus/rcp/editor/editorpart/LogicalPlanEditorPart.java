@@ -42,6 +42,7 @@ public class LogicalPlanEditorPart extends EditorPart implements IEditorPart {
 		setSite(site);
 		setInput(input);
 		setPartName(this.input.getName());
+		
 	}
 
 	@Override
