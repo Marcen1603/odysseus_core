@@ -20,21 +20,21 @@ public class PriorityAOHelper {
 	@SuppressWarnings("unchecked")
 	public synchronized static void searchForJoinsAndPlacePostPriorityAOs(AbstractLogicalOperator current, PriorityAO base) {
 
-		if(current instanceof PriorityAO) {
-			base = (PriorityAO) current;
-		}
-		
-		Iterator<LogicalSubscription> it = current.getSubscriptions().iterator();
-		
-		while(it.hasNext()) {
-			LogicalSubscription sub = it.next();
-			
-			if(sub.getTarget() instanceof JoinAO) {
-				handleJoin((AbstractLogicalOperator) sub.getTarget(), base);
-			} else {
-				searchForJoinsAndPlacePostPriorityAOs((AbstractLogicalOperator)sub.getTarget(), base);
-			}
-		} 
+//		if(current instanceof PriorityAO) {
+//			base = (PriorityAO) current;
+//		}
+//		
+//		Iterator<LogicalSubscription> it = current.getSubscriptions().iterator();
+//		
+//		while(it.hasNext()) {
+//			LogicalSubscription sub = it.next();
+//			
+//			if(sub.getTarget() instanceof JoinAO) {
+//				handleJoin((AbstractLogicalOperator) sub.getTarget(), base);
+//			} else {
+//				searchForJoinsAndPlacePostPriorityAOs((AbstractLogicalOperator)sub.getTarget(), base);
+//			}
+//		} 
 		
 	}
 

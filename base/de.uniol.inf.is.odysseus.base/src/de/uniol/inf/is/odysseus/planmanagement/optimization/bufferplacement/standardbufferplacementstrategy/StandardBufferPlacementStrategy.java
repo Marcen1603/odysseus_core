@@ -26,10 +26,7 @@ public class StandardBufferPlacementStrategy
 	protected boolean bufferNeeded(
 			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
 			ISink<?> childSink) {
-		// add buffer, if we are a binary operator or if the bottom
-		// operator is a binary one
-		return subscriptions.size() > 1
-				|| childSink.getSubscribedToSource().size() > 1;
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")

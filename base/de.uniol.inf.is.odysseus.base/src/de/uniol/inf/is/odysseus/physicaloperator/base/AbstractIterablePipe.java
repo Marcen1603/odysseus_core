@@ -37,7 +37,7 @@ public abstract class AbstractIterablePipe<R, W> extends AbstractPipe<R, W>
 	}
 
 	@Override
-	public synchronized boolean isActive() {
+	public boolean isActive() {
 		int ownerCount = owners.size();
 		int deactivateRequestCount = this.deactivateRequestControls.size();
 

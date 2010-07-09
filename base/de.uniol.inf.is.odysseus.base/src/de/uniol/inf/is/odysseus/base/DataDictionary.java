@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.base;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -118,7 +119,10 @@ public class DataDictionary {
 	}
 	
 	public Set<Entry<String, ILogicalOperator>> getViews() {
-		return viewDefinitions.entrySet();
+		Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String,ILogicalOperator>>();
+		sources.addAll(viewDefinitions.entrySet());
+		sources.addAll(logicalViewDefinitions.entrySet());
+		return sources;
 	}
 	
 	public void clearViews() {

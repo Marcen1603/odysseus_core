@@ -10,6 +10,9 @@ public abstract class AbstractPrioBuffer<T extends IMetaAttributeContainer<? ext
 		extends BufferedPipe<T> implements IPrioBuffer<T> {
 	final protected AtomicInteger prioCount = new AtomicInteger(0);
 
+	public AbstractPrioBuffer() {
+	}
+	
 	public AbstractPrioBuffer(AbstractPrioBuffer<T> abstractBufferedPipe) {
 		super(abstractBufferedPipe);
 		prioCount.set(abstractBufferedPipe.prioCount.get());

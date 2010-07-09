@@ -52,6 +52,8 @@ public class TestproducerPO extends
 				propagateDone();
 			}
 		};
+		t.setPriority(7);
+		t.setDaemon(true);
 		t.start();
 	}
 	

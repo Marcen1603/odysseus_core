@@ -12,7 +12,7 @@ public class ProjectAOBuilder extends AbstractOperatorBuilder {
 
 	private static final String ATTRIBUTES = "ATTRIBUTES";
 	private ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
-			ATTRIBUTES, REQUIREMENT.MANDATORY, new SDFAttributeParameter("project attribute",
+			ATTRIBUTES, REQUIREMENT.MANDATORY, new ResolvedSDFAttributeParameter("project attribute",
 					REQUIREMENT.MANDATORY));
 
 	public ProjectAOBuilder() {

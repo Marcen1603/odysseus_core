@@ -55,7 +55,8 @@ public class BatchProducer extends
 				propagateDone();
 			}
 		};
-		t.setPriority(Thread.MAX_PRIORITY);
+		t.setPriority(Thread.NORM_PRIORITY);
+		t.setDaemon(true);
 		t.start();
 	}
 	

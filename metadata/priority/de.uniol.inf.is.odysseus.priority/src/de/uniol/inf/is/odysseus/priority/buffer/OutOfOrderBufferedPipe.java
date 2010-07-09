@@ -6,19 +6,18 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
 public class OutOfOrderBufferedPipe<T extends IMetaAttributeContainer<? extends IPriority>>
 		extends AbstractPrioBuffer<T> {
 
+	public OutOfOrderBufferedPipe() {
+		super();
+	}
+	
 	public OutOfOrderBufferedPipe(
 			OutOfOrderBufferedPipe<T> outOfOrderBufferedPipe) {
 		super(outOfOrderBufferedPipe);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected synchronized void process_next(T object, int port,
-			boolean isReadOnly) {
+	@Override
+	protected synchronized void process_next(T object, int port) {
 		byte prio = object.getMetadata().getPriority();
-
-		if (isReadOnly) {
-			object = (T) object.clone();
-		}
 
 		if (prio > 0) {
 			synchronized (this.buffer) {

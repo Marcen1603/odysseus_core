@@ -93,7 +93,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	}
 
 	private static final String SCHEDULER = "-scheduler";
-	private static final String SCHEDULING_STRAGEGY = "-scheduling_stragegy";
+	private static final String SCHEDULING_STRATEGY = "-scheduling_strategy";
 	private static final String BUFFER_PLACEMENT = "-buffer_placement";
 	private static final String DATA_TYPE = "-data_type";
 	private static final String METADATA_TYPES = "-metadata_types";
@@ -117,8 +117,8 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			benchmark.setScheduler(scheduler);
 		}
 
-		if (arguments.hasParameter(SCHEDULING_STRAGEGY)) {
-			String schedulingStrategy = arguments.get(SCHEDULING_STRAGEGY);
+		if (arguments.hasParameter(SCHEDULING_STRATEGY)) {
+			String schedulingStrategy = arguments.get(SCHEDULING_STRATEGY);
 			benchmark.setSchedulingStrategy(schedulingStrategy);
 		}
 
@@ -178,7 +178,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			throws ArgsException {
 		arguments.addString(SCHEDULER, REQUIREMENT.OPTIONAL,
 				"<scheduler> - sets the scheduler");
-		arguments.addString(SCHEDULING_STRAGEGY, REQUIREMENT.OPTIONAL,
+		arguments.addString(SCHEDULING_STRATEGY, REQUIREMENT.OPTIONAL,
 				"<scheduling strategy> - sets the scheduling strategy");
 		arguments.addString(BUFFER_PLACEMENT, REQUIREMENT.OPTIONAL,
 				"<buffer strategy> - sets the buffer placement strategy");

@@ -9,25 +9,27 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 /**
- *   
+ * 
  * @author Jonas Jacobi, Marco Grawunder
  * 
  */
-public abstract class AbstractBufferPlacementStrategy implements IBufferPlacementStrategy {
+public abstract class AbstractBufferPlacementStrategy implements
+		IBufferPlacementStrategy {
 
-	Logger logger = LoggerFactory.getLogger(AbstractBufferPlacementStrategy.class);
+	Logger logger = LoggerFactory
+			.getLogger(AbstractBufferPlacementStrategy.class);
 
 	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {
 		if (plan.isSink() && !plan.isSource()) {
-			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan).getSubscribedToSource()) {
+			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
+					.getSubscribedToSource()) {
 				addBuffers(s.getTarget());
 			}
 		}
@@ -37,10 +39,13 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void placeBuffer(IBuffer buffer, ISink<?> sink, PhysicalSubscription<? extends ISource<?>> s) {
-		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+	protected void placeBuffer(IBuffer buffer, ISink<?> sink,
+			PhysicalSubscription<? extends ISource<?>> s) {
+		s.getTarget().unsubscribeSink((ISink) sink, s.getSinkInPort(),
+				s.getSourceOutPort(), s.getSchema());
 		buffer.subscribeSink(sink, s.getSinkInPort(), 0, s.getSchema());
-		s.getTarget().subscribeSink(buffer, 0, s.getSourceOutPort(), s.getSchema());
+		s.getTarget().subscribeSink(buffer, 0, s.getSourceOutPort(),
+				s.getSchema());
 		initBuffer(buffer);
 	}
 
@@ -49,6 +54,9 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 
 	@SuppressWarnings("unchecked")
 	public void addBuffers(ISource<?> myplan) {
+		if (myplan instanceof IBuffer){
+			return;
+		}
 		Stack<ISink<?>> sinks = new Stack<ISink<?>>();
 		if (myplan.isSink()) {
 			sinks.add((ISink<?>) myplan);
@@ -56,13 +64,14 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 
 		while (!sinks.isEmpty()) {
 			ISink<?> sink = sinks.pop();
-			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptionsOriginal = sink.getSubscribedToSource();
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptionsOriginal = sink
+					.getSubscribedToSource();
 			Collection<PhysicalSubscription<? extends ISource<?>>> subscriptions = new ArrayList<PhysicalSubscription<? extends ISource<?>>>();
-			
-			for( PhysicalSubscription<? extends ISource<?>> s : subscriptionsOriginal){
-				subscriptions.add(s);			
+
+			for (PhysicalSubscription<? extends ISource<?>> s : subscriptionsOriginal) {
+				subscriptions.add(s);
 			}
-						
+
 			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
 				if (s.getTarget().isSink()) {
 					if (s.getTarget() instanceof IBuffer) {
@@ -77,17 +86,21 @@ public abstract class AbstractBufferPlacementStrategy implements IBufferPlacemen
 						placeBuffer(buffer, sink, s);
 					}
 				} else {
-					// on bottom sources we don't have any priority information
-					// so we have no need for a special buffer
-					IBuffer buffer = new BufferedPipe();
+					IBuffer<?> buffer = createNewSourceBuffer();
 					placeBuffer(buffer, sink, s);
 				}
 			}
 		}
 	}
 
+	protected IBuffer<?> createNewSourceBuffer() {
+		return createNewBuffer();
+	}
+
 	abstract protected IBuffer<?> createNewBuffer();
 
-	abstract protected boolean bufferNeeded(Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions, ISink<?> childSink);
+	abstract protected boolean bufferNeeded(
+			Collection<? extends PhysicalSubscription<? extends ISource<?>>> subscriptions,
+			ISink<?> childSink);
 
 }

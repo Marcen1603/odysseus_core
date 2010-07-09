@@ -16,7 +16,7 @@ public class WindowAOBuilder extends AbstractOperatorBuilder {
 	IParameter<String> type = new DirectParameter<String>("TYPE",
 			REQUIREMENT.MANDATORY);
 	ListParameter<SDFAttribute> partition = new ListParameter<SDFAttribute>(
-			"PARTITION", REQUIREMENT.OPTIONAL, new SDFAttributeParameter("partition attribute",
+			"PARTITION", REQUIREMENT.OPTIONAL, new ResolvedSDFAttributeParameter("partition attribute",
 					REQUIREMENT.MANDATORY));
 
 	public WindowAOBuilder() {

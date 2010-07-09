@@ -10,7 +10,9 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
+import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class PQLParser implements IQueryParser {
 
@@ -45,7 +47,6 @@ public class PQLParser implements IQueryParser {
 			}
 
 			List<IQuery> queries = PQLParserImpl.query();
-
 			for (IQuery query : queries) {
 				query.setParserId(getLanguage());
 			}

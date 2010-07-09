@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 import de.uniol.inf.is.odysseus.parser.pql.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.pql.DirectParameter;
+import de.uniol.inf.is.odysseus.parser.pql.IntegerParameter;
 import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
 
 /**
@@ -19,7 +20,7 @@ public class BenchmarkBuilder extends AbstractOperatorBuilder {
 	private final DirectParameter<Double> selectivity = new DirectParameter<Double>(
 			SELECTIVITY, REQUIREMENT.MANDATORY);
 
-	private final DirectParameter<Integer> processingTimeInns = new DirectParameter<Integer>(
+	private final IntegerParameter processingTimeInns = new IntegerParameter(
 			PROCESSING_TIME, REQUIREMENT.MANDATORY);
 
 	public BenchmarkBuilder() {

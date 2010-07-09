@@ -44,21 +44,23 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private boolean useLoadShedding;
 	private boolean extendedPostPriorisation = false;
 	private boolean useBenchmarkMemUsage = false;
-	
+
 	private User user = new User("Benchmark");
-	
+
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();
 	private IAdvancedExecutor executor;
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
-	
-	private ITransformationHelper transformHelper;
-	
-	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
 
+	private ITransformationHelper transformHelper;
+
+	@SuppressWarnings("unchecked")
+	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration(
+					new RelationalTransformationHelper(), "relational",
+					ITimeInterval.class));
 
 	public Benchmark() {
 		this.dataType = "relational";
@@ -107,7 +109,6 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return this.buildParameters;
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public IBenchmarkResult runBenchmark() throws BenchmarkException {
@@ -124,18 +125,18 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				this.transformHelper, dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
-		trafoConfig.setOption("useExtendedPostPriorisation", this.extendedPostPriorisation);
-		
+		trafoConfig.setOption("useExtendedPostPriorisation",
+				this.extendedPostPriorisation);
+
 		try {
 			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
-			if(useBenchmarkMemUsage) {
-				this.avgMemListener  = new AvgBenchmarkMemUsageListener();
+			if (useBenchmarkMemUsage) {
+				this.avgMemListener = new AvgBenchmarkMemUsageListener();
 				executor.addPlanExecutionListener(avgMemListener);
 			}
 
 			executor.addErrorEventListener(this);
-			
 
 			ArrayList<AbstractQueryBuildParameter<?>> parameters = new ArrayList<AbstractQueryBuildParameter<?>>();
 			parameters
@@ -143,8 +144,13 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			parameters.add(new ParameterDefaultRoot(latency));
 			parameters.addAll(getBuildParameters());
 			for (Pair<String, String> query : getQueries()) {
-				executor.addQuery(query.getE2(), query.getE1(), user, parameters
-						.toArray(new AbstractQueryBuildParameter<?>[0]));
+				executor
+						.addQuery(
+								query.getE2(),
+								query.getE1(),
+								user,
+								parameters
+										.toArray(new AbstractQueryBuildParameter<?>[0]));
 			}
 			result.setStartTime(System.nanoTime());
 			executor.startExecution();
@@ -238,16 +244,15 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		this.usePunctuations = b;
 	}
 
-
 	@Override
 	public void setBenchmarkMemUsage(boolean b) {
 		this.useBenchmarkMemUsage = b;
-		
+
 	}
 
 	@Override
 	public List<DescriptiveStatistics> getMemUsageJoin() {
-		if(useBenchmarkMemUsage) {
+		if (useBenchmarkMemUsage) {
 			return avgMemListener.getMemUsageJoinStatistics();
 		}
 		return null;
@@ -255,7 +260,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 	@Override
 	public List<DescriptiveStatistics> getMemUsageJoinPunctuations() {
-		if(useBenchmarkMemUsage) {
+		if (useBenchmarkMemUsage) {
 			return avgMemListener.getMemUsageJoinPunctuationStatistics();
 		}
 		return null;
@@ -263,15 +268,15 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 	@Override
 	public List<DescriptiveStatistics> getMemUsagePuffer() {
-		if(useBenchmarkMemUsage) {
+		if (useBenchmarkMemUsage) {
 			return avgMemListener.getMemUsageBufferStatistics();
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void setExtendedPostPriorisation(boolean b) {
-		this.extendedPostPriorisation = b;	
+		this.extendedPostPriorisation = b;
 	}
 
 }

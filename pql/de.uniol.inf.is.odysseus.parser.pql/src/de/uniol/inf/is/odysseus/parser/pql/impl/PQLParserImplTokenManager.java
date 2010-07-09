@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.parser.pql.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 /** Token Manager. */
 @SuppressWarnings("all")

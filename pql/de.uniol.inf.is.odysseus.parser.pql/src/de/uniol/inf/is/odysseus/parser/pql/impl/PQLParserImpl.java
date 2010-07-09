@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.parser.pql.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 @SuppressWarnings("all")
 public class PQLParserImpl implements PQLParserImplConstants {
@@ -88,6 +89,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         break label_1;
       }
     }
+    jj_consume_token(0);
     LinkedList < ILogicalOperator > result = new LinkedList < ILogicalOperator > ();
     Set < ILogicalOperator > roots = new HashSet < ILogicalOperator > ();
     for (ILogicalOperator op : namedOps.values())
@@ -111,11 +113,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       String queryName = opEntry.getKey();
       ILogicalOperator topOperator = opEntry.getValue();
-      IQuery query = new Query();
-      query.setLogicalPlan(topOperator);
-      queries.add(query);
       if (roots.contains(topOperator))
       {
+        IQuery query = new Query();
+        query.setLogicalPlan(topOperator);
+        queries.add(query);
         PQLParser.initQueryParameters(namedOpParameters.get(queryName));
         for (String parameterName : namedOpParameters.get(queryName).keySet())
         {
@@ -194,7 +196,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       {if (true) throw new IllegalArgumentException("multiple definition of '"+ nameStr+ "'");}
     }
-    namedOps.put(nameStr, op);
     namedOpParameters.put(nameStr, parameters);
     if (isView)
     {
@@ -203,8 +204,16 @@ public class PQLParserImpl implements PQLParserImplConstants {
       {
         {if (true) throw new IllegalArgumentException("multiple definition of view '"+ nameStr+ "'");}
       }
+      SDFEntity entity = new SDFEntity(nameStr);
+          entity.setAttributes(op.getOutputSchema());
+          DataDictionary.getInstance().sourceTypeMap.put(nameStr, "RelationalStreaming");
+          DataDictionary.getInstance().entityMap.put(nameStr, entity);
       dd.setView(nameStr, op);
+      //get access operator for view, so other operators don't get subscribed
+      //to top operator of the view
+      op = dd.getView(nameStr);
     }
+    namedOps.put(nameStr, op);
   }
 
   static final public ILogicalOperator operator(Map < String, ILogicalOperator > namedOps) throws ParseException {
@@ -319,22 +328,32 @@ public class PQLParserImpl implements PQLParserImplConstants {
   Object value;
   List < Object > list = new ArrayList < Object > ();
     jj_consume_token(23);
-    label_3:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case IDENTIFIER:
-      case CHAR_LITERAL:
-      case FLOAT:
-      case INTEGER:
-      case 23:
-        ;
-        break;
-      default:
-        jj_la1[8] = jj_gen;
-        break label_3;
-      }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case IDENTIFIER:
+    case CHAR_LITERAL:
+    case FLOAT:
+    case INTEGER:
+    case 23:
       value = parameterValue();
       list.add(value);
+      label_3:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 21:
+          ;
+          break;
+        default:
+          jj_la1[8] = jj_gen;
+          break label_3;
+        }
+        jj_consume_token(21);
+        value = parameterValue();
+        list.add(value);
+      }
+      break;
+    default:
+      jj_la1[9] = jj_gen;
+      ;
     }
     jj_consume_token(24);
     {if (true) return list;}
@@ -355,7 +374,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           ;
           break;
         default:
-          jj_la1[9] = jj_gen;
+          jj_la1[10] = jj_gen;
           break label_4;
         }
         jj_consume_token(21);
@@ -364,7 +383,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       }
       break;
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
       ;
     }
     {if (true) return list;}
@@ -407,13 +426,13 @@ public class PQLParserImpl implements PQLParserImplConstants {
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[11];
+  static final private int[] jj_la1 = new int[12];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x20,0x10000,0xc0000,0x200000,0x10000,0x20,0x200000,0x806120,0x806120,0x200000,0x20,};
+      jj_la1_0 = new int[] {0x20,0x10000,0xc0000,0x200000,0x10000,0x20,0x200000,0x806120,0x200000,0x806120,0x200000,0x20,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[1];
   static private boolean jj_rescan = false;
@@ -437,7 +456,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -452,7 +471,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -470,7 +489,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -481,7 +500,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -498,7 +517,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -508,7 +527,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -625,7 +644,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 12; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

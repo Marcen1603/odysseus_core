@@ -12,6 +12,9 @@ public class PriorityBufferedPipe<T extends IMetaAttributeContainer<? extends IP
 
 	private Comparator<? super T> comparator = new MetadataComparator<IPriority>();
 
+	public PriorityBufferedPipe() {
+	}
+	
 	public PriorityBufferedPipe(PriorityBufferedPipe<T> priorityBufferedPipe) {
 		super(priorityBufferedPipe);
 	}

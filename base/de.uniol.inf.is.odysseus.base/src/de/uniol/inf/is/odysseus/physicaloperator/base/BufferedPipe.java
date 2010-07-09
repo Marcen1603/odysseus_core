@@ -97,7 +97,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 		synchronized (this.buffer) {
 			this.buffer.add(object);
 			this.heartbeat.set(null);
