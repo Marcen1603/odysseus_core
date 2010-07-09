@@ -107,9 +107,11 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 								planChanged = false;
 								break;
 							}
-							if (part.next().schedule(timeSlicePerStrategy)) {
+							IScheduling nextPart = part.next();
+							if (nextPart.schedule(timeSlicePerStrategy)) {
 								// part is done
-								part.remove();
+								parts.remove(nextPart);
+								part = parts.iterator();
 							}
 						}
 					}
