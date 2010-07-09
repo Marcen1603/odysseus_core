@@ -7,14 +7,10 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Act
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.base.usermanagement,
- de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.rcp.viewer.query,
- de.uniol.inf.is.odysseus.transformation.helper.relational,
  org.eclipse.core.commands,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"
