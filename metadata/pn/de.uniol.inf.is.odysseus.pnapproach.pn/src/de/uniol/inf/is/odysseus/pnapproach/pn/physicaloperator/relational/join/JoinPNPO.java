@@ -40,7 +40,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>>
 	protected final PNAwareSweepArea<T>[] preareas;
 	protected final IDataMergeFunction<T> dataMerge;
 	protected final IMetadataMergeFunction<M> metadataMerge;
-	protected PNTransferFunction<T> transferFunction;
+	protected PNTransferFunction<T,T> transferFunction;
 	protected PointInTime[] lastTs;
 	protected boolean[] isDone;
 	protected int lastPort;
@@ -49,7 +49,7 @@ public class JoinPNPO<M extends IPosNeg, T extends IMetaAttributeContainer<M>>
 	@SuppressWarnings("unchecked")
 	public JoinPNPO(IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<M> metadataMerge,
-			PNTransferFunction<T> transferFunction,
+			PNTransferFunction<T,T> transferFunction,
 			DefaultPNSweepArea<T>[] areas, DefaultPNSweepArea<T>[] nareas,
 			int lookahead) {
 		this.dataMerge = dataMerge;

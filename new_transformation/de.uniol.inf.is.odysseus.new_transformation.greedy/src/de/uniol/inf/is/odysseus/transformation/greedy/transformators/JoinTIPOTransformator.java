@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TIMergeFunction;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
@@ -34,7 +34,7 @@ public class JoinTIPOTransformator implements IPOTransformator<JoinAO> {
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred);
 
-		joinPO.setTransferFunction(new TITransferFunction());
+		joinPO.setTransferFunction(new TITransferArea());
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setOutputSchema(joinAO.getOutputSchema());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());

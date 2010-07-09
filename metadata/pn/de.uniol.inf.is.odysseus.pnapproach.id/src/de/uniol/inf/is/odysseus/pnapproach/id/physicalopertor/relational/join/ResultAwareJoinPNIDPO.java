@@ -41,7 +41,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 	protected final PNAwareSweepArea<T>[] preareas;
 	protected final IDataMergeFunction<T> dataMerge;
 	protected final IPNMetadataMergeFunction<M> metadataMerge;
-	protected ResultAwarePNTransferFunction<M, T> transferFunction;
+	protected ResultAwarePNTransferFunction<M, T,T> transferFunction;
 	
 	protected HashMap<List<Long>, HashMap<List<Long>, PointInTime>> results;
 	protected PointInTime[] lastTs;
@@ -54,7 +54,7 @@ public class ResultAwareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttributeCo
 	@SuppressWarnings("unchecked")
 	public ResultAwareJoinPNIDPO(IDataMergeFunction<T> dataMerge,
 			IPNMetadataMergeFunction<M> metadataMerge,
-			ResultAwarePNTransferFunction<M, T> transferFunction, DefaultPNIDSweepArea<T>[] areas,
+			ResultAwarePNTransferFunction<M, T,T> transferFunction, DefaultPNIDSweepArea<T>[] areas,
 			DefaultPNIDSweepArea<T>[] nareas, int lookahead) {
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.priority_interval;
 
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
@@ -9,11 +9,11 @@ import de.uniol.inf.is.odysseus.priority.IPriority;
 /**
  * @author Jonas Jacobi
  */
-public class PriorityTITransferFunction<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
-		extends TITransferFunction<T> {
+public class PriorityTITransferArea<K extends ITimeInterval, R extends IMetaAttributeContainer<K>, W extends IMetaAttributeContainer<K>>
+		extends TITransferArea<R,W> {
 
 	@Override
-	public void newElement(T object, int port) {
+	public void newElement(R object, int port) {
 		//cast is necessary because of a compiler bug, see above
 		if (((IPriority)object.getMetadata()).getPriority() == 0) {
 			super.newElement(object, port);
@@ -21,7 +21,7 @@ public class PriorityTITransferFunction<K extends ITimeInterval, T extends IMeta
 	}
 
 	@Override
-	public void transfer(T object) {
+	public void transfer(W object) {
 		//cast is necessary because of a compiler bug, see above
 		if (((IPriority)object.getMetadata()).getPriority() > 0) {
 			po.transfer(object);

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.operatorview.impl;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWTError;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -28,9 +29,13 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		Activator.getDefault().getImageRegistry().put("operatorIcon", Activator.getImageDescriptor("icons/operatorIcon.png"));
-		Activator.getDefault().getImageRegistry().put("operatorGroupIcon", Activator.getImageDescriptor("icons/operatorGroupIcon.png"));
-	}
+		try{
+			Activator.getDefault().getImageRegistry().put("operatorIcon", Activator.getImageDescriptor("icons/operatorIcon.png"));
+			Activator.getDefault().getImageRegistry().put("operatorGroupIcon", Activator.getImageDescriptor("icons/operatorGroupIcon.png"));
+		}catch(SWTError e){
+			// ignore
+		}
+		}
 
 	/*
 	 * (non-Javadoc)

@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -46,7 +46,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	protected IDataMergeFunction<T> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
-	protected ITransferFunction<T> transferFunction;
+	protected ITransferArea<T,T> transferFunction;
 	protected SDFAttributeList outputSchema;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
@@ -62,7 +62,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	public JoinTIPO(IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
-			ITransferFunction<T> transferFunction, ITemporalSweepArea<T>[] areas) {
+			ITransferArea<T,T> transferFunction, ITemporalSweepArea<T>[] areas) {
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
@@ -131,7 +131,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 	}
 
-	public void setTransferFunction(ITransferFunction<T> transferFunction) {
+	public void setTransferFunction(ITransferArea<T,T> transferFunction) {
 		this.transferFunction = transferFunction;
 		transferFunction.init(this);
 	}
@@ -247,7 +247,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		return areas;
 	}
 
-	public ITransferFunction<T> getTransferFunction() {
+	public ITransferArea<T, T> getTransferFunction() {
 		return transferFunction;
 	}
 

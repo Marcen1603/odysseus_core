@@ -54,7 +54,7 @@ public class StateMachineInstance<R> {
 		this.symTab = new SymbolTable<R>(stateMachine.getSymTabScheme(true));
 		this.startTimestamp = startTimestamp;
 		instance = _instanceCounter++;
-		logger.debug("Created new initial StateMachineInstance "+instance);
+		//logger.debug("Created new initial StateMachineInstance "+instance);
 	}
 
 	public StateMachineInstance(StateMachineInstance<R> stateMachineInstance) {
@@ -64,7 +64,7 @@ public class StateMachineInstance<R> {
 		this.matchingTrace = stateMachineInstance.matchingTrace.clone();
 		this.startTimestamp = stateMachineInstance.startTimestamp;
 		instance = _instanceCounter++;
-		logger.debug("Created new StateMachineInstance "+instance+" from "+stateMachineInstance.instance);
+		//logger.debug("Created new StateMachineInstance "+instance+" from "+stateMachineInstance.instance);
 	}
 
 	/**

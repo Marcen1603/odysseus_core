@@ -6,9 +6,9 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<R, R> {
 
-	protected ITransferFunction<R> transferFunction;
+	protected ITransferArea<R,R> transferFunction;
 	
-	public UnionPO(ITransferFunction<R> transferFunction) {
+	public UnionPO(ITransferArea<R,R> transferFunction) {
 		this.transferFunction = transferFunction;
 		transferFunction.init(this);
 	}

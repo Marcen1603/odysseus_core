@@ -37,25 +37,27 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		
 		// Log4j-Ausgaben in Console umleiten
 		// Init der Message Console
-		MessageConsole log4jConsole = new MessageConsole("Log4J", null);
-		MessageConsoleStream log4jStream = log4jConsole.newMessageStream();
-		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { log4jConsole });
+		// Temporär wieder auf die Eclipse Console
 		
-		Logger logger = Logger.getRootLogger();
-		logger.addAppender(new MessageConsoleAppender(log4jStream));
-		
-		// Quelle: http://jprog.blogspot.com/2005/09/using-eclipse-console-view-in-rcp.html
-		//
-		MessageConsole myConsole = new MessageConsole("System.out", null); // declare console
-		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { myConsole });
-		try{
-			myConsole.setWaterMarks(10000, 10001);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		MessageConsoleStream stream = myConsole.newMessageStream();
-		PrintStream myS = new PrintStream(stream);
-		System.setOut(myS); // link standard output stream to the console
-		System.setErr(myS); // link error output stream to the console	
+		//		MessageConsole log4jConsole = new MessageConsole("Log4J", null);
+//		MessageConsoleStream log4jStream = log4jConsole.newMessageStream();
+//		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { log4jConsole });
+//		
+//		Logger logger = Logger.getRootLogger();
+//		logger.addAppender(new MessageConsoleAppender(log4jStream));
+//		
+//		// Quelle: http://jprog.blogspot.com/2005/09/using-eclipse-console-view-in-rcp.html
+//		//
+//		MessageConsole myConsole = new MessageConsole("System.out", null); // declare console
+//		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { myConsole });
+//		try{
+//			myConsole.setWaterMarks(10000, 10001);
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		MessageConsoleStream stream = myConsole.newMessageStream();
+//		PrintStream myS = new PrintStream(stream);
+//		System.setOut(myS); // link standard output stream to the console
+//		System.setErr(myS); // link error output stream to the console	
 	}
 }

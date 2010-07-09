@@ -5,26 +5,26 @@ import java.util.Iterator;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
 import de.uniol.inf.is.odysseus.pnapproach.id.physicalopertor.relational.join.ResultAwareJoinPNIDPO;
 import de.uniol.inf.is.odysseus.pnapproach.id.sweeparea.ResultAwarePNIDSweepArea;
 
-public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAttributeContainer<M>> implements ITransferFunction<T> {
+public class ResultAwarePNTransferFunction<M extends IPosNeg, R extends IMetaAttributeContainer<M>, W extends IMetaAttributeContainer<M>> implements ITransferArea<R,W> {
 
-	private ResultAwareJoinPNIDPO<M, T> po;
-	private ResultAwarePNIDSweepArea<T> sweepArea;
+	private ResultAwareJoinPNIDPO<M, W> po;
+	private ResultAwarePNIDSweepArea<W> sweepArea;
 	final protected PointInTime[] minTs;
 	private int counter;
 	
 	public ResultAwarePNTransferFunction() {
 		minTs = new PointInTime[2];
-		this.sweepArea = new ResultAwarePNIDSweepArea<T>();
+		this.sweepArea = new ResultAwarePNIDSweepArea<W>();
 		this.counter = 0;
 	}
 	
 	public ResultAwarePNTransferFunction(
-			ResultAwarePNTransferFunction<M, T> resultAwarePNTransferFunction)  {
+			ResultAwarePNTransferFunction<M,R, W> resultAwarePNTransferFunction)  {
 		minTs = new PointInTime[2];
 		minTs[0] = resultAwarePNTransferFunction.minTs[0].clone();
 		minTs[1] = resultAwarePNTransferFunction.minTs[1].clone();
@@ -35,16 +35,16 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setSourcePo(AbstractSource<T> source) {
-		po = (ResultAwareJoinPNIDPO<M,T>) source;
+	public void setSourcePo(AbstractSource<W> source) {
+		po = (ResultAwareJoinPNIDPO<M,W>) source;
 	}
 
-	public void init(AbstractSource<T> po){
+	public void init(AbstractSource<W> po){
 		throw new UnsupportedOperationException("Method not supported for this kind of transfer function.\n" +
 				"Use init(ResultAwareJoinPNIDPO instead.");
 	}
 	
-	public void init(ResultAwareJoinPNIDPO<M, T> po) {
+	public void init(ResultAwareJoinPNIDPO<M, W> po) {
 		this.po = po;
 		this.minTs[0] = PointInTime.getZeroTime();
 		this.minTs[1] = PointInTime.getZeroTime();
@@ -52,14 +52,14 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 	}
 	
 	@Override
-	public void newElement(T object, int port) {
+	public void newElement(R object, int port) {
 		PointInTime minimum;
 		synchronized (minTs) {
 			minTs[port] = object.getMetadata().getTimestamp();
 			minimum = PointInTime.before(minTs[0], minTs[1]) ? minTs[0] : minTs[1];
 		}
 		synchronized (this.sweepArea) {
-			Iterator<T> elements = this.sweepArea.extractElementsBefore(minimum);
+			Iterator<W> elements = this.sweepArea.extractElementsBefore(minimum);
 			while (elements.hasNext()) {
 				po.transfer(elements.next());
 			}
@@ -67,14 +67,14 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 	}
 	
 	@Override
-	public void transfer(T object) {
+	public void transfer(W object) {
 		synchronized (this.sweepArea) {
 			this.counter += this.sweepArea.insertAndRemovedWrongScheduled(object);
 
 		}
 	}
 	
-	public void transferForce(T object){
+	public void transferForce(W object){
 		synchronized(this.sweepArea){
 			this.sweepArea.insert(object);
 		}
@@ -82,7 +82,7 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 	
 	@Override
 	public void done() {
-		for (T element : sweepArea) {
+		for (W element : sweepArea) {
 			po.transfer(element);
 		}
 		sweepArea.clear();
@@ -96,8 +96,8 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 		return sweepArea.size();
 	}
 	
-	public ResultAwarePNTransferFunction<M,T> clone() {
-		return new ResultAwarePNTransferFunction<M,T>(this);
+	public ResultAwarePNTransferFunction<M,R,W> clone() {
+		return new ResultAwarePNTransferFunction<M,R,W>(this);
 	}
 
 	@Override
@@ -106,9 +106,4 @@ public class ResultAwarePNTransferFunction<M extends IPosNeg, T extends IMetaAtt
 		
 	}
 
-	@Override
-	public void setDebug(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
 }

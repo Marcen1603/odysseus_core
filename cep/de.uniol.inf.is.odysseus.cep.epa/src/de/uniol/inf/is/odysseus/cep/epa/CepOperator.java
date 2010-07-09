@@ -1,17 +1,15 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.base.Pair;
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
@@ -27,6 +25,9 @@ import de.uniol.inf.is.odysseus.cep.metamodel.validator.Validator;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IInputStreamSyncArea;
+import de.uniol.inf.is.odysseus.physicaloperator.base.IProcessInternal;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
 
 /**
  * Objekte dieser Klasse stellen die Grundkomponente fuer das Complex Event
@@ -36,8 +37,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
-public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterval>, W>
-		extends AbstractPipe<R, W> {
+public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<?>>
+		extends AbstractPipe<R, W> implements IProcessInternal<R>{
 
 	Logger logger = LoggerFactory.getLogger(CepOperator.class);
 
@@ -52,18 +53,10 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private Map<Integer, IEventReader<R, R>> eventReader = new HashMap<Integer, IEventReader<R, R>>();
 
 	/**
-	 * Input-Puffer zur Sortierung
+	 * Transferfunktion for reading and writing Elements
 	 */
-	private PriorityQueue<Pair<R, Integer>> inputQueue = new PriorityQueue<Pair<R, Integer>>(
-			10, new Comparator<Pair<R, Integer>>() {
-				public int compare(Pair<R, Integer> left, Pair<R, Integer> right) {
-					return left.getE1().getMetadata()
-							.compareTo(right.getE1().getMetadata());
-				};
-			});
-	private Map<Integer, PointInTime> lastTSFromPort = new HashMap<Integer, PointInTime>();
-
-	private boolean allInputsRead = false;
+	protected IInputStreamSyncArea<R> inputStreamSyncArea;
+	protected ITransferArea<R,W> outputTransferFunction;
 
 	/**
 	 * Referenz auf den Verzweigungsspeicher
@@ -107,7 +100,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 */
 	public CepOperator(StateMachine<R> stateMachine,
 			Map<Integer, IEventReader<R, R>> eventReader,
-			IComplexEventFactory<R, W> complexEventFactory, boolean validate)
+			IComplexEventFactory<R, W> complexEventFactory, boolean validate, IInputStreamSyncArea<R> inputStreamSyncArea, ITransferArea<R,W> outputTransferFunction)
 			throws Exception {
 		super();
 		this.stateMachine = stateMachine;
@@ -115,6 +108,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		this.eventReader = eventReader;
 		this.instances = new LinkedList<StateMachineInstance<R>>();
 		this.branchingBuffer = new BranchingBuffer<R>();
+		this.inputStreamSyncArea = inputStreamSyncArea;
+		this.outputTransferFunction = outputTransferFunction;
 		if (validate) {
 			Validator<R> validator = new Validator<R>();
 			ValidationResult result = validator.validate(stateMachine);
@@ -134,53 +129,14 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	private void insertIntoInputBuffer(R event, int port) {
-		// if (logger.isDebugEnabled())
-		// logger.debug("InputBuffer with ("
-		// +eventReader.get(port).getType()+") " + event);
-		synchronized (lastTSFromPort) {
-			PointInTime tsi = event.getMetadata().getStart();
-			lastTSFromPort.put(port, tsi);
-		}
-		synchronized (inputQueue) {
-			inputQueue.add(new Pair<R, Integer>(event, port));
-			if (allInputsRead) {
-				processInternal();
-			} else {
-				// Von jeder Quelle mindestens ein Element (Zeitstempel) gelesen
-				allInputsRead = lastTSFromPort.size() == getInputPortCount();
-				if (allInputsRead) {
-					processInternal();
-				}
-			}
-		}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+		inputStreamSyncArea.init(this);
+		outputTransferFunction.init(this);
 	}
-
-	private void processInternal() {
-		PointInTime minTS = null;
-		synchronized (lastTSFromPort) {
-			Iterator<PointInTime> iter = lastTSFromPort.values().iterator();
-			minTS = iter.next();
-			while (iter.hasNext()) {
-				PointInTime l = iter.next();
-				if (l.before(minTS)) {
-					minTS = l;
-				}
-			}
-		}
-
-		synchronized (inputQueue) {
-			// don't use an iterator, it does NOT guarantee ordered traversal!
-			Pair<R, Integer> e = inputQueue.peek();
-			while (e != null
-					&& e.getE1().getMetadata().getStart().beforeOrEquals(minTS)) {
-				this.inputQueue.poll();
-				process_internal(e.getE1(), e.getE2());
-				e = this.inputQueue.peek();
-			}
-		}
-	}
-
+	
 	/**
 	 * Verarbeitet ein übergebenes Event.
 	 */
@@ -188,17 +144,20 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	protected void process_next(R event, int port) {
 		// if (logger.isDebugEnabled())
 		// logger.debug("read "+ event + " "+port);
-		insertIntoInputBuffer(event, port);
+		//insertIntoInputBuffer(event, port);
+		inputStreamSyncArea.newElement(event, port);
+		outputTransferFunction.newElement(event, port);
 	}
 
-	private void process_internal(R event, int port) {
+	@Override
+	public void process_internal(R event, int port) {
 
-		if (logger.isDebugEnabled())
-			logger.debug("-------------------> NEXT EVENT from "
-					+ eventReader.get(port).getType() + ": " + event + " "
-					+ port);
-		if (logger.isDebugEnabled())
-			logger.debug(this.getStats());
+//		if (logger.isDebugEnabled())
+//			logger.debug("-------------------> NEXT EVENT from "
+//					+ eventReader.get(port).getType() + ": " + event + " "
+//					+ port);
+//		if (logger.isDebugEnabled())
+//			logger.debug(this.getStats());
 
 		// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob mindestens
 		// die Typbedingung erfuellt ist
@@ -231,10 +190,13 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		this.instances.removeAll(outdatedInstances);
 
 		if (complexEvents.size() > 0) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Create Events: " + complexEvents);
+			for  (W e:complexEvents){
+				if (logger.isDebugEnabled()) {
+					logger.debug("Created Event: " + e);
+				}				
+				outputTransferFunction.transfer(e);
 			}
-			this.transfer(complexEvents);
+
 		}
 
 	}
@@ -244,14 +206,14 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
 		for (StateMachineInstance<R> instance : this.instances) {
-			if (logger.isDebugEnabled())
-				logger.debug(instance + " Stats: " + instance.getStats());
+//			if (logger.isDebugEnabled())
+//				logger.debug(instance + " Stats: " + instance.getStats());
 			Stack<Transition> takeTransition = new Stack<Transition>();
 			boolean outofWindow = false;
 
 			for (Transition transition : instance.getCurrentState()
 					.getTransitions()) {
-				logger.debug("Evaluating: " + transition + " on event " + event);
+				//logger.debug("Evaluating: " + transition + " on event " + event);
 				// Terminate if out of Window
 				if (outofWindow) {
 					break;
@@ -261,11 +223,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				if (transition.getCondition().doEventTypeChecking()
 						&& !transition.getCondition().checkEventTypeWithPort(
 								port)) {
-					 logger.debug(instance + " Wrong Datatype "
-					 + eventReader.get(port).getType()
-					 + " for Transition " + transition.getCondition() +
-					 " "+transition.getCondition().doEventTypeChecking()
-					 + " in state " + instance.getCurrentState());
+//					 logger.debug(instance + " Wrong Datatype "
+//					 + eventReader.get(port).getType()
+//					 + " for Transition " + transition.getCondition() +
+//					 " "+transition.getCondition().doEventTypeChecking()
+//					 + " in state " + instance.getCurrentState());
 					continue;
 				}
 
@@ -276,7 +238,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 							eventReader.get(port).getTime(event),
 							stateMachine.getWindowSize())) {
 						outofWindow = true;
-						logger.debug(instance + " Out of Window ...");
+//						logger.debug(instance + " Out of Window ...");
 						continue;
 					}
 				}
@@ -290,9 +252,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					try {
 						if (transition.evaluate()) {
 							takeTransition.push(transition);
-							if (logger.isDebugEnabled())
-								logger.debug(instance + " Transition true: "
-										+ transition.getCondition().getLabel());
+//							if (logger.isDebugEnabled())
+//								logger.debug(instance + " Transition true: "
+//										+ transition.getCondition().getLabel());
 
 						} else {
 							// logger.debug(instance + " Transition false: "
@@ -314,28 +276,28 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				 * Verzweigungsspeicher entfernt werden um Speicherleichen zu
 				 * verhindern.
 				 */
-				if (logger.isDebugEnabled()) {
-					if (outofWindow) {
-						logger.debug("Instance " + instance + " out of window");
-					} else {
-						logger.debug("No available transition. Remove instance "
-								+ instance);
-					}
-				}
+//				if (logger.isDebugEnabled()) {
+//					if (outofWindow) {
+//						logger.debug("Instance " + instance + " out of window");
+//					} else {
+//						logger.debug("No available transition. Remove instance "
+//								+ instance);
+//					}
+//				}
 				outdatedInstances.add(instance);
 				this.branchingBuffer.removeBranch(instance);
 			} else if (takeTransition.size() == 1) {
 				// one next state: Change state, execute action
-				if (logger.isDebugEnabled())
-					logger.debug("One transition found: "
-							+ takeTransition.peek());
+//				if (logger.isDebugEnabled())
+//					logger.debug("One transition found: "
+//							+ takeTransition.peek());
 				this.takeTransition(instance, takeTransition.pop(), event, port);
 			} else if (takeTransition.size() > 1) {
 				// mehr als 1 Folgezustand: nichtdeterministische Verzweigung!
-				if (logger.isDebugEnabled())
-					logger.debug(""
-							+ takeTransition.size()
-							+ "  transitions found (nondeterministic branching).");
+//				if (logger.isDebugEnabled())
+//					logger.debug(""
+//							+ takeTransition.size()
+//							+ "  transitions found (nondeterministic branching).");
 				while (takeTransition.size() > 1) {
 					StateMachineInstance<R> newInstance = instance.clone();
 					this.takeTransition(newInstance, takeTransition.pop(),
@@ -354,18 +316,18 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	private boolean updateVariables(R object, StateMachineInstance<R> instance,
 			Transition transition, int port) {
-		logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
+//		logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
 		for (CepVariable varName : transition.getCondition().getVarNames()) {
 
-			logger.debug("Setting Value for "+varName);
+//			logger.debug("Setting Value for "+varName);
 
 			Object newValue = null;
 			if (varName.isActEventName()) {
 				newValue = this.eventReader.get(port).getValue(
 						varName.getVariableName(), object);
 
-				 logger.debug("Setze " + varName + " auf " + newValue +
-				 " from " + object);
+//				 logger.debug("Setze " + varName + " auf " + newValue +
+//				 " from " + object);
 
 				if (newValue == null) {
 					return false;
@@ -375,9 +337,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			}
 			// Set Value in Expression to evaluate
 			transition.getCondition().setValue(varName, newValue);
-			if (logger.isDebugEnabled()) {
-				logger.debug(varName + " = " + newValue + " from " + object);
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug(varName + " = " + newValue + " from " + object);
+//			}
 		}
 		return true;
 	}
@@ -402,9 +364,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				continue;
 
 			if (instance.getCurrentState().isAccepting()) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Reached final state in " + instance);
-				}
+//				if (logger.isDebugEnabled()) {
+//					logger.debug("Reached final state in " + instance);
+//				}
 				// Werte in den Symboltabellen der JEP-Ausdrücke im
 				// Ausgabeschema setzen:
 				for (IOutputSchemeEntry entry : this.stateMachine
@@ -596,10 +558,10 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 */
 	private void takeTransition(StateMachineInstance<R> instance,
 			Transition transition, R event, int port) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(instance.toString() + " Fire: " + transition.getId()
-					+ " " + "Execute action: " + transition.getAction());
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(instance.toString() + " Fire: " + transition.getId()
+//					+ " " + "Execute action: " + transition.getAction());
+//		}
 
 		// TODO : Reihenfolge getauscht ... siehe unten ...
 		instance.executeAction(transition.getAction(), event,

@@ -8,6 +8,7 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base.access,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.rcp.viewer.query,

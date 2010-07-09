@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.base.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 
 /**
@@ -29,7 +29,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 
 	public LeftJoinTIPO(LeftMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<M> metadataMerge,
-			ITransferFunction<T> transferFunction, JoinTISweepArea<T>[] areas) {
+			ITransferArea<T,T> transferFunction, JoinTISweepArea<T>[] areas) {
 		super(dataMerge, metadataMerge, transferFunction, areas);
 		this.left_t_tilde = new HashMap<T, PointInTime>();
 		this.areas = areas;

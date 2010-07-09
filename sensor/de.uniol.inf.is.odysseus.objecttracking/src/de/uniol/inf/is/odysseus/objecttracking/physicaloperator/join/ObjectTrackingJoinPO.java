@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ITemporalSweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -48,7 +48,7 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 	
 	protected Map<IPredicate, IRangePredicate> rangePredicates;
 
-	protected ITransferFunction<T> transferFunction;
+	protected ITransferArea<T,T> transferFunction;
 	protected IPredicate<? super T> joinPredicate;
 	protected SDFAttributeList leftInputSchema;
 	protected SDFAttributeList rightInputSchema;
@@ -76,7 +76,7 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 			Map<IPredicate, IRangePredicate> rangePredicates,
 			IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
-			ITransferFunction<T> transferFunction,
+			ITransferArea<T,T> transferFunction,
 			ObjectTrackingJoinSweepArea<K, T>[] areas) {
 		this.rangePredicates = rangePredicates;
 		this.dataMerge = dataMerge;
@@ -139,11 +139,11 @@ public class ObjectTrackingJoinPO<K extends ITimeInterval & IProbability & IPred
 		// the remove predicate is set automatically
 	}
 	
-	public ITransferFunction<T> getTransferFunction() {
+	public ITransferArea<T,T> getTransferFunction() {
 		return transferFunction;
 	}
 	
-	public void setTransferFunction(ITransferFunction<T> transferFunc){
+	public void setTransferFunction(ITransferArea<T,T> transferFunc){
 		this.transferFunction = transferFunc;
 	}
 	

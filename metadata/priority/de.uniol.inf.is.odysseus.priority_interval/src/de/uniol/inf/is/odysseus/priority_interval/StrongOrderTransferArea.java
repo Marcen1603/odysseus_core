@@ -6,17 +6,17 @@ import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class StrongOrderTransferFunction<K extends ITimeInterval & IPriority, T extends IMetaAttributeContainer<K>>
-		extends TITransferFunction<T> {
+public class StrongOrderTransferArea<K extends ITimeInterval & IPriority, R extends IMetaAttributeContainer<K>, W extends IMetaAttributeContainer<K>>
+		extends TITransferArea<R,W> {
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void newHeartbeat(PointInTime heartbeat, int port) {
-		ArrayList<T> output = new ArrayList<T>();
+		ArrayList<W> output = new ArrayList<W>();
 		PointInTime minimum = null;
 		synchronized (minTs) {
 			minTs[port] = heartbeat;
@@ -25,16 +25,16 @@ public class StrongOrderTransferFunction<K extends ITimeInterval & IPriority, T 
 			}
 		}
 		if (minimum != null) {
-			synchronized (this.out) {
+			synchronized (this.outputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
-				T elem = this.out.peek();
+				W elem = this.outputQueue.peek();
 				while (elem != null
 						&& elem.getMetadata().getStart()
 								.beforeOrEquals(minimum)) {
-					this.out.poll();
+					this.outputQueue.poll();
 					output.add(elem);
-					elem = this.out.peek();
+					elem = this.outputQueue.peek();
 				}
 
 				Object[] sortedOutput = output.toArray();
@@ -42,8 +42,8 @@ public class StrongOrderTransferFunction<K extends ITimeInterval & IPriority, T 
 
 					@Override
 					public int compare(Object o1, Object o2) {
-						T t1 = (T) o1;
-						T t2 = (T) o2;
+						W t1 = (W) o1;
+						W t2 = (W) o2;
 						byte t1priority = t1.getMetadata().getPriority();
 						byte t2priority = t2.getMetadata().getPriority();
 						if (t1priority > t2priority) {
@@ -58,7 +58,7 @@ public class StrongOrderTransferFunction<K extends ITimeInterval & IPriority, T 
 					}
 				});
 				for (Object element : sortedOutput) {
-					transfer((T) element);
+					transfer((W) element);
 				}
 			}
 		}

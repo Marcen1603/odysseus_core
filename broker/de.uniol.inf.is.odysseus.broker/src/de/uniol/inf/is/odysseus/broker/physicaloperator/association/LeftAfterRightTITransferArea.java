@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
@@ -14,16 +14,16 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
  * 
  * @author Dennis Geesen
  * 
- * @param <T>
+ * @param <W>
  *            the type of the tuple
  */
-public class LeftAfterRightTITransferFunction<T extends IMetaAttributeContainer<? extends ITimeInterval>>
-		extends TITransferFunction<T> {
+public class LeftAfterRightTITransferArea<R extends IMetaAttributeContainer<? extends ITimeInterval>,W extends IMetaAttributeContainer<? extends ITimeInterval>>
+		extends TITransferArea<R,W> {
 
 	/**
 	 * Instantiates a new transfer function.
 	 */
-	public LeftAfterRightTITransferFunction() {
+	public LeftAfterRightTITransferArea() {
 		super();
 	}
 
@@ -35,7 +35,7 @@ public class LeftAfterRightTITransferFunction<T extends IMetaAttributeContainer<
 	 * (de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer, int)
 	 */
 	@Override
-	public void newElement(T object, int port) {
+	public void newElement(R object, int port) {
 		if (port == 0) {
 			PointInTime minimum = null;
 			synchronized (minTs) {
@@ -48,28 +48,28 @@ public class LeftAfterRightTITransferFunction<T extends IMetaAttributeContainer<
 				}
 			}
 			if (minimum != null) {
-				synchronized (super.out) {
+				synchronized (super.outputQueue) {
 					// don't use an iterator, it does NOT guarantee ordered
 					// traversal!
-					T elem = this.out.peek();
+					W elem = this.outputQueue.peek();
 					while (elem != null
 							&& elem.getMetadata().getStart().beforeOrEquals(
 									minimum)) {
-						this.out.poll();
+						this.outputQueue.poll();
 						po.transfer(elem);
-						elem = this.out.peek();
+						elem = this.outputQueue.peek();
 					}
 				}
 			}
 		} else {
-			synchronized (super.out) {
+			synchronized (super.outputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
-				T elem = this.out.peek();
+				W elem = this.outputQueue.peek();
 				while (elem != null) {
-					this.out.poll();
+					this.outputQueue.poll();
 					po.transfer(elem);
-					elem = this.out.peek();
+					elem = this.outputQueue.peek();
 				}
 			}
 		}

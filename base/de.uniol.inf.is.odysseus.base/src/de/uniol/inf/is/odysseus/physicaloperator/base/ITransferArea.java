@@ -9,9 +9,9 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
  * der Elemente vor der Weitergabe in den Ausgabedatenstrom des Operators wiederherstellt.
  * 
  *
- * @param <T> Datentyp der Elemente, die Verarbeitet werden sollen.
+ * @param <R> Datentyp der Elemente, die Verarbeitet werden sollen.
  */
-public interface ITransferFunction<T extends IMetaAttributeContainer<?>> extends IClone {
+public interface ITransferArea<R extends IMetaAttributeContainer<?>, W extends IMetaAttributeContainer<?>> extends IClone {
 	
 	/**
 	 * Anhand eines neuen Elementes, welches typischerweise aktuell aus dem
@@ -21,26 +21,23 @@ public interface ITransferFunction<T extends IMetaAttributeContainer<?>> extends
 	 * @param object Das neue Objekt aus dem Eingabedatenstrom des Operators
 	 * @param port Port, auf dem das neue Objekt im Operator angekommen ist
 	 */
-	public void newElement(T object, int port);
+	public void newElement(R object, int inPort);
 
 	/**
 	 * Fuegt ein neues Element in den Heap ein.
 	 * @param object Objekt, das in den Heap eingefuegt werden soll.
 	 */
-	public void transfer(T object);
+	public void transfer(W object);
 
 	public void done();
 
-	public void init(AbstractSource<T> source);
-	public void setSourcePo(AbstractSource<T> source);
+	public void init(AbstractSource<W> source);
+	public void setSourcePo(AbstractSource<W> source);
 
 	public int size();
 
-	public ITransferFunction<T> clone();
+	public ITransferArea<R,W> clone();
 	
-	public void newHeartbeat(PointInTime heartbeat, int port);
-
-	public void setDebug(boolean b);
-	
+	public void newHeartbeat(PointInTime heartbeat, int inPort);	
 	
 }

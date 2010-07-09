@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.ElementType;
 import de.uniol.inf.is.odysseus.pnapproach.base.metadata.IPosNeg;
@@ -41,7 +41,7 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 	protected final PNAwareSweepArea<T>[] preareas;
 	protected final IDataMergeFunction<T> dataMerge;
 	protected final IPNMetadataMergeFunction<M> metadataMerge;
-	protected ITransferFunction<T> transferFunction;
+	protected ITransferArea<T,T> transferFunction;
 	protected PointInTime[] lastTs;
 	protected boolean[] isDone;
 	protected int lastPort;
@@ -50,7 +50,7 @@ public class ResultUnawareJoinPNIDPO<M extends IPosNeg, T extends IMetaAttribute
 	@SuppressWarnings("unchecked")
 	public ResultUnawareJoinPNIDPO(IDataMergeFunction<T> dataMerge,
 			IPNMetadataMergeFunction<M> metadataMerge,
-			ITransferFunction<T> transferFunction,
+			ITransferArea<T,T> transferFunction,
 			DefaultPNIDSweepArea<T>[] areas,
 			DefaultPNIDSweepArea<T>[] nareas,
 			int lookahead) {

@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.base.IWindow.WindowType;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultHeartbeatGeneration;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferFunction;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BlockingBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -160,7 +160,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				.getMetaTypes()
 				.contains(
 						"de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")) {
-			union = new UnionPO(new TITransferFunction());
+			union = new UnionPO(new TITransferArea());
 		} else {
 			throw new QueryOptimizationException(
 					"Approach for UnionPO not supported.");
