@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
@@ -55,8 +57,8 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	public IntervalProbabilityLatencyPrediction() {
 		this.prob = new Probability();
 		this.latency = new Latency();
-		// TODO prüfen, ob diese eine Klasse ausreicht
-		// wenn man verschiedene Klassen für PredictionFunctions braucht, dann
+		// TODO prï¿½fen, ob diese eine Klasse ausreicht
+		// wenn man verschiedene Klassen fï¿½r PredictionFunctions braucht, dann
 		// muss man irgendwie einen Unterscheidungsmechanismus
 		// einbauen, der entscheidet, wann welches Objekt
 		// erzeugt wird
@@ -217,6 +219,24 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	public void setMVAttributeIndices(int[] indices) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ArrayList<int[]> getAttributePaths() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAttributePaths(ArrayList<int[]> paths) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getIndexOfKovMatrix(int[] path) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
