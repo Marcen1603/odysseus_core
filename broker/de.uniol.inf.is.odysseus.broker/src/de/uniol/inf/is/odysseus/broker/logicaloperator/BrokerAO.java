@@ -76,7 +76,7 @@ public class BrokerAO extends AbstractLogicalOperator{
 		SDFAttributeListExtended aliasSchema = new SDFAttributeListExtended();
 		for(SDFAttribute attribute : outputSchema){
 			SDFAttribute newAttribute = attribute.clone();
-			newAttribute.setSourceName(null);
+			newAttribute.setSourceName(this.identifier);
 			aliasSchema.add(newAttribute);
 		}
 		
