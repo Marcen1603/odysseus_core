@@ -55,13 +55,13 @@ public abstract class AbstractScheduling implements IScheduling,
 	 * event that scheduling is possible again
 	 */
 	boolean blocked = false;
-	
+
 	/**
 	 * 
 	 * @param plan
 	 */
-//	private SLATestCalculator slaTestCalculator = null;
-	
+	// private SLATestCalculator slaTestCalculator = null;
+
 	public AbstractScheduling(IPartialPlan plan) {
 		this.plan = plan;
 		prepareSources();
@@ -91,7 +91,7 @@ public abstract class AbstractScheduling implements IScheduling,
 		blocked = false;
 		schedulingPaused = false;
 		// TMP to Test
-	//	slaTestCalculator = new SLATestCalculator(plan.getIterableSource());
+		// slaTestCalculator = new SLATestCalculator(plan.getIterableSource());
 	}
 
 	@Override
@@ -107,29 +107,26 @@ public abstract class AbstractScheduling implements IScheduling,
 
 		long endTime = System.currentTimeMillis() + maxTime;
 		IIterableSource<?> nextSource = nextSource();
-		synchronized (schedulingEventListener) {
-			while (!this.blocked && !this.schedulingPaused
-					&& nextSource != null
-					&& System.currentTimeMillis() < endTime) {
-				// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" a="
-				// +nextSource.isActive()+" n="+nextSource.hasNext());
-				if (nextSource.isDone()) {
-					sourceDone(nextSource);
-				} else if (nextSource.isBlocked()) {
-					logger.debug(nextSource + " blocked");
-					updateBlocked(plan.getSourceId(nextSource));
-				} else if (nextSource.hasNext() && nextSource.isActive()) {
-					// logger.debug(nextSource + " process");
-					nextSource.transferNext();
-				} else {
-					// logger.debug(nextSource + " nothing to process");
-					updateSchedulable(nextSource);
-				}
-				nextSource = nextSource();
+		while (!this.blocked && !this.schedulingPaused && nextSource != null
+				&& System.currentTimeMillis() < endTime) {
+			// System.out.println("Process ISource "+nextSource+" b="+nextSource.isBlocked()+" a="
+			// +nextSource.isActive()+" n="+nextSource.hasNext());
+			if (nextSource.isDone()) {
+				sourceDone(nextSource);
+			} else if (nextSource.isBlocked()) {
+				logger.debug(nextSource + " blocked");
+				updateBlocked(plan.getSourceId(nextSource));
+			} else if (nextSource.hasNext() && nextSource.isActive()) {
+				// logger.debug(nextSource + " process");
+				nextSource.transferNext();
+			} else {
+				// logger.debug(nextSource + " nothing to process");
+				updateSchedulable(nextSource);
 			}
-			//System.out.println(slaTestCalculator);
-			return isDone();
+			nextSource = nextSource();
 		}
+		// System.out.println(slaTestCalculator);
+		return isDone();
 	}
 
 	private void updateSchedulable(IIterableSource<?> nextSource) {
@@ -138,8 +135,10 @@ public abstract class AbstractScheduling implements IScheduling,
 			if (schedulingPaused == false) {
 				schedulingPaused = true;
 				// logger.debug("Scheduling paused, nothing to schedule");
-				for (ISchedulingEventListener l : schedulingEventListener) {
-					l.nothingToSchedule(this);
+				synchronized (schedulingEventListener) {
+					for (ISchedulingEventListener l : schedulingEventListener) {
+						l.nothingToSchedule(this);
+					}
 				}
 			}
 		}
@@ -150,9 +149,12 @@ public abstract class AbstractScheduling implements IScheduling,
 		if (notBlocked.cardinality() == 0) {
 			if (blocked == false) {
 				blocked = true;
-				logger.debug("Processing blocked because all operators are blocked");
-				for (ISchedulingEventListener l : schedulingEventListener) {
-					l.nothingToSchedule(this);
+				logger
+						.debug("Processing blocked because all operators are blocked");
+				synchronized (schedulingEventListener) {
+					for (ISchedulingEventListener l : schedulingEventListener) {
+						l.nothingToSchedule(this);
+					}
 				}
 			}
 		}
@@ -220,12 +222,12 @@ public abstract class AbstractScheduling implements IScheduling,
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isSchedulingBlocked() {
 		return blocked;
 	}
-	
+
 	@Override
 	public boolean isSchedulingPaused() {
 		return schedulingPaused;
@@ -233,13 +235,13 @@ public abstract class AbstractScheduling implements IScheduling,
 
 }
 
-class SLATestCalculator implements IPOEventListener{
+class SLATestCalculator implements IPOEventListener {
 	final Map<IPhysicalOperator, Long> processPerOperator;
 	long overallCount = 0;
-	
+
 	public SLATestCalculator(List<? extends IPhysicalOperator> toMonitor) {
 		processPerOperator = new HashMap<IPhysicalOperator, Long>();
-		for (IPhysicalOperator p:toMonitor){
+		for (IPhysicalOperator p : toMonitor) {
 			processPerOperator.put(p, 0l);
 			p.subscribe(this, POEventType.ProcessDone);
 		}
@@ -250,17 +252,19 @@ class SLATestCalculator implements IPOEventListener{
 		IPhysicalOperator source = poEvent.getSource();
 		synchronized (processPerOperator) {
 			long c = processPerOperator.get(source);
-			processPerOperator.put(source, c+1);
+			processPerOperator.put(source, c + 1);
 			overallCount++;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer b = new StringBuffer(this.getClass().getSimpleName());
-		b.append("OverallCount "+overallCount+"\n");
-		for (Entry<IPhysicalOperator, Long> p:processPerOperator.entrySet()){
-			b.append("--> "+p.getKey()+" = "+p.getValue()+" "+ (overallCount>0?(p.getValue() / overallCount):0)+"\n");
+		b.append("OverallCount " + overallCount + "\n");
+		for (Entry<IPhysicalOperator, Long> p : processPerOperator.entrySet()) {
+			b.append("--> " + p.getKey() + " = " + p.getValue() + " "
+					+ (overallCount > 0 ? (p.getValue() / overallCount) : 0)
+					+ "\n");
 		}
 		return b.toString();
 	}
