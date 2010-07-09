@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -13,6 +14,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
@@ -21,6 +23,8 @@ import org.eclipse.ui.part.ViewPart;
 public class NavigatorViewPart extends ViewPart {
 
 	private TreeViewer treeViewer;
+	private MenuManager menuManager = new MenuManager();
+	private Menu contextMenu;
 	
 	public NavigatorViewPart() {
 	}
@@ -71,6 +75,13 @@ public class NavigatorViewPart extends ViewPart {
 				}
 			}
 		});
+		
+		// Contextmenu
+		contextMenu = menuManager.createContextMenu(treeViewer.getTree());
+		// Set the MenuManager
+		treeViewer.getTree().setMenu(contextMenu);
+		getSite().registerContextMenu(menuManager, treeViewer);
+
 	}
 
 	@Override

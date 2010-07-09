@@ -28,6 +28,11 @@
             id="de.uniol.inf.is.odysseus.rcp.editor.navigator.CollapseAllCommand"
             name="Collapse All">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.navigator.command.DeleteCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.navigator.DeleteCommand"
+            name="Delete">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -47,6 +52,15 @@
                label="Collapse All"
                style="push"
                tooltip="Collapse All">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.editor.navigator">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.navigator.DeleteCommand"
+               label="Delete"
+               style="push">
          </command>
       </menuContribution>
    </extension>
