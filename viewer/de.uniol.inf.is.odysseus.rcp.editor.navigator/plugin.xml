@@ -72,5 +72,19 @@
          </separator>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="/Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.editor.navigator.wizard.NewLogicalPlanWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspective.queries"
+            hasPages="true"
+            icon="Icons/plan.png"
+            id="de.uniol.inf.is.odysseus.rcp.editor.navigator.NewLogicalPlanWizard"
+            name="New Logical Plan"
+            project="false">
+      </wizard>
+   </extension>
 
 </plugin>
