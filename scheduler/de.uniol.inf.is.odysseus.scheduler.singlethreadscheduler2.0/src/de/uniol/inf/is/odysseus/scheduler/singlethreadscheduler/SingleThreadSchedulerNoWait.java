@@ -72,9 +72,11 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 				while (!isInterrupted()) {
 						Iterator<IScheduling> part = parts.iterator();
 						while (part.hasNext() && !isInterrupted()) {
-							if (part.next().schedule(timeSlicePerStrategy)) {
+							IScheduling nextPart = part.next();
+							if (nextPart.schedule(timeSlicePerStrategy)) {
 								// part is done
-								part.remove();
+								parts.remove(nextPart);
+								part = parts.iterator();
 							}
 						}
 					}
