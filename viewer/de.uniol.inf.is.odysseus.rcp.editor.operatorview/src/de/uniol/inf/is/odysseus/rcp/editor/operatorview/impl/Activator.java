@@ -35,7 +35,8 @@ public class Activator extends AbstractUIPlugin {
 		}catch(SWTError e){
 			// ignore
 		}
-		}
+	}
+
 
 	/*
 	 * (non-Javadoc)

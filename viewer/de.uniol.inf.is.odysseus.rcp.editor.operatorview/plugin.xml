@@ -26,5 +26,11 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.editor.operatorview.impl.Startup">
+      </startup>
+   </extension>
 
 </plugin>
