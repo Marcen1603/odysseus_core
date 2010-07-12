@@ -59,7 +59,7 @@ public class NewLogicalPlanWizard extends Wizard implements INewWizard {
 		Path path = new Path(fileName);
 		IFile newFile = root.getFile(path);
 		try {
-			byte[] bytes = "File contents".getBytes();
+			byte[] bytes = "".getBytes();
 		    InputStream source = new ByteArrayInputStream(bytes);
 			newFile.create(source, IResource.NONE, null);
 		} catch (CoreException e) {
