@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Operator Rewrite
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.operator.rewrite
+Bundle-Version: 1.0.0.0
+Bundle-Vendor: Timo Michelsen
+Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools;bundle-version="1.0.3"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator,
+ de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator,
+ de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata
