@@ -48,12 +48,9 @@ CREATE SENSOR radarSensor (
 *** LOGISCHER PLAN MIT SET-PREDICTION-OR ***
 
 LOGICAL PLAN : 
-PROJECTION(
-	SET-PREDICTION-OR(
-		ACCESS(radarSensor),
-		radarSensor.scan.cars.car.posx := radarSensor.scan.cars.car.posx * t; WHERE radarSensor.scan.cars.car.id > 0;
-	),			
-	radarSensor.scan.cars.car.posx
+SET-PREDICTION-OR(
+	ACCESS(radarSensor),
+	radarSensor.scan.cars.car.posx := radarSensor.scan.cars.car.posx * t; WHERE radarSensor.scan.cars.car.id > 0;
 );
 	
 *** Zyklische Anfrage ***
