@@ -15,10 +15,13 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 	private PredictionFunctionContainer<M> predictionFunctions;
 	private int[] pathToList;
 	
-	public PredictionAssignPO(PredictionAssignAO<M> predictionAO) {
+	public PredictionAssignPO() {
 		super();
-		predictionFunctions = predictionAO.getPredictionFunctions();
-		pathToList = predictionAO.getPathToList();
+	}
+	
+	public void init(int[] pathToList, PredictionFunctionContainer<M> predictionFunctions) {
+		this.pathToList = pathToList;
+		this.predictionFunctions = predictionFunctions;
 	}
 	
 	public PredictionAssignPO(PredictionAssignPO<M> copy) {
