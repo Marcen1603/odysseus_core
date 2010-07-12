@@ -18,8 +18,6 @@ public class AttributeResolver implements IAttributeResolver {
 	private static final long serialVersionUID = -6960117786021105217L;
 
 	private Map<String, ILogicalOperator> sources;
-
-	
 	private Set<SDFAttribute> attributes;
 
 	public AttributeResolver() {
@@ -101,13 +99,25 @@ public class AttributeResolver implements IAttributeResolver {
 		if (source == null) {
 			throw new IllegalArgumentException("no such source: " + sourceName);
 		}
+		
 		for (SDFAttribute attribute : source.getOutputSchema()) {
-			if (attribute.getAttributeName().equals(attributeName)) {
-				return attribute;
-			}
+			SDFAttribute a = findORAttribute(attributeName, attribute);
+			if( a != null ) return a;
+//			if (attribute.getAttributeName().equals(attributeName)) {
+//				return attribute;
+//			}
 		}
 		throw new IllegalArgumentException("no such attribute: " + sourceName
 				+ "." + attributeName);
+	}
+	
+	private SDFAttribute findORAttribute( String attributeName, SDFAttribute attr ) {
+		if(attr.getQualName().equals(attributeName)) return attr;
+		for( SDFAttribute a : attr.getSubattributes() ) {
+			SDFAttribute b = findORAttribute(attributeName, a);
+			if( b != null ) return b;
+		}
+		return null;
 	}
 
 	public SDFAttribute getAggregateAttribute(ASTAggregateExpression expression) {
