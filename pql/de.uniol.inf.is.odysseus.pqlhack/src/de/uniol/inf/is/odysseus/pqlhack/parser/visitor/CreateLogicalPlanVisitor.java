@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOrOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
@@ -62,6 +63,9 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
+import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -456,15 +460,15 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	
 	public Object visit(ASTBasicPredicate node, Object data) {
-		SDFExpression expression;
+		SDFObjectRelationalExpression expression;
 //		try {
-			expression = new SDFExpression("", node.getPredicate(),
+			expression = new SDFObjectRelationalExpression("", node.getPredicate(),
 					(IAttributeResolver) ((ArrayList) data).get(0));
 //		} catch (SDFExpressionParseException e) {
 //			throw new RuntimeException(e);
 //		}
 		
-		((ArrayList)data).add(new RelationalPredicate(expression));
+		((ArrayList)data).add(new ObjectRelationalPredicate(expression));
 		
 		return data;
 	}
@@ -592,8 +596,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			initPredicate(((NotPredicate) predicate).getChild(), left, right);
 			return;
 		}
-		if (predicate instanceof IRelationalPredicate) {
+		if (predicate instanceof RelationalPredicate) {
 			((RelationalPredicate) predicate).init(left, right);
+		}
+		if (predicate instanceof ObjectRelationalPredicate) {
+			((ObjectRelationalPredicate) predicate).init(left, right);
 		}
 		// NOTE: Das ProbabilityPredicate muss nicht mit linkem
 		// und rechtem Schema initialisiert werden.
@@ -868,6 +875,124 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		
 		((ArrayList)data).add(broker);
 		((ArrayList)data).add(new Integer(curOutPort));
+		return data;
+	}
+
+
+	@Override
+	public Object visit(ASTPredictionAssignOrOp node, Object data) {
+		PredictionAssignAO prediction = new PredictionAssignAO();
+		
+		// pass only the attribute resolver to the children
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList)data).get(0));
+		
+		ArrayList returnData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForPrediction = (AbstractLogicalOperator)returnData.get(1);
+		int sourceOutPort = ((Integer)returnData.get(2)).intValue();
+		
+
+		prediction.subscribeToSource(inputForPrediction, 0, sourceOutPort, inputForPrediction.getOutputSchema());
+				
+		for(int i = 1; i<node.jjtGetNumChildren(); i++){
+			
+			// handle the standard prediction definitions
+			if(node.jjtGetChild(i) instanceof ASTPredictionDefinition){
+				ASTPredictionDefinition predDef = (ASTPredictionDefinition)node.jjtGetChild(i);
+				
+				SDFObjectRelationalExpression[] expressions = new SDFObjectRelationalExpression[prediction.getOutputSchema().getAttributeCount()];
+				
+				// aside from the last child, all children
+				// must be ASTPredictionFunctionDefinitions
+				for(int u = 0; u<predDef.jjtGetNumChildren() - 1; u++){
+					ASTPredictionFunctionDefinition predFctDef = 
+						(ASTPredictionFunctionDefinition)predDef.jjtGetChild(u);
+					
+					ASTIdentifier attr = (ASTIdentifier)predFctDef.jjtGetChild(0);
+					ASTExpression predFct = (ASTExpression)predFctDef.jjtGetChild(1);
+					
+					SDFObjectRelationalExpression predFctExpr = null; 
+					try{
+						predFctExpr = new SDFObjectRelationalExpression("", predFct.toString(), (IAttributeResolver)((ArrayList)data).get(0));
+						predFctExpr.initAttributePaths(prediction.getOutputSchema());
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+					
+					// find out to which attribute the expression belongs
+					// if it is for the first attribute add the expression
+					// to expr[0]. If it is for the second attribute add
+					// it to expr[1] and so on.
+					
+					String attrName = attr.getName();
+					
+					IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
+					
+					for(int v = 0; v<prediction.getOutputSchema().getAttributeCount(); v++){
+						if(prediction.getOutputSchema().getAttribute(v).equals(attrRes.getAttribute(attrName))){
+							expressions[v] = predFctExpr;
+						}
+					}
+				}
+				
+				// only the attribute resolver will be passed
+				// to the children
+				newData = new ArrayList();
+				newData.add(((ArrayList)data).get(0));
+				
+				// the last child of a prediction definition will be a predicate
+				IPredicate predicate = (IPredicate)((ArrayList)predDef.jjtGetChild(predDef.jjtGetNumChildren()-1).jjtAccept(this, newData)).get(1);
+				
+				initPredicate(predicate, prediction.getInputSchema(), null);
+				
+				prediction.setPredictionFunction(expressions, predicate);	
+			}
+			
+			// handle the default prediction definition
+			else if(node.jjtGetChild(i) instanceof ASTDefaultPredictionDefinition){
+				ASTDefaultPredictionDefinition predDef = (ASTDefaultPredictionDefinition)node.jjtGetChild(i);
+				
+				SDFObjectRelationalExpression[] expressions = new SDFObjectRelationalExpression[prediction.getOutputSchema().getAttributeCount()];
+				
+				// aside from the last child, all children
+				// must be ASTPredictionFunctionDefinitions
+				for(int u = 0; u<predDef.jjtGetNumChildren() - 1; u++){
+					ASTPredictionFunctionDefinition predFctDef = 
+						(ASTPredictionFunctionDefinition)predDef.jjtGetChild(u);
+					
+					ASTIdentifier attr = (ASTIdentifier)predFctDef.jjtGetChild(0);
+					ASTExpression predFct = (ASTExpression)predFctDef.jjtGetChild(1);
+					
+					SDFObjectRelationalExpression predFctExpr = null; 
+					try{
+						predFctExpr = new SDFObjectRelationalExpression("", predFct.toString(), (IAttributeResolver)((ArrayList)data).get(0));
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+					
+					// find out to which attribute the expression belongs
+					// if it is for the first attribute add the expression
+					// to expr[0]. If it is for the second attribute add
+					// it to expr[1] and so on.
+					
+					String attrName = attr.getName();
+					
+					IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
+					
+					for(int v = 0; v<prediction.getOutputSchema().getAttributeCount(); v++){
+						if(prediction.getOutputSchema().getAttribute(v).equals(attrRes.getAttribute(attrName))){
+							expressions[v] = predFctExpr;
+						}
+					}
+				}
+			}		
+		}
+		
+		// prediction.initListPath(...)
+		
+		((ArrayList)data).add(prediction);
+		((ArrayList)data).add(new Integer(0));
+		
 		return data;
 	}
 

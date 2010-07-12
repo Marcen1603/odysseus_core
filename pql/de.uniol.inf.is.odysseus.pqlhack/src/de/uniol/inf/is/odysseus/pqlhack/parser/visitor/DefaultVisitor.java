@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOrOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
@@ -232,6 +233,12 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTBrokerOp node, Object data) {
+		// TODO Auto-generated method stub
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTPredictionAssignOrOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}

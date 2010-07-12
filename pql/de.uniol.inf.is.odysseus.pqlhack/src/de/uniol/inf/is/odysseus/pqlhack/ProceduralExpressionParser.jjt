@@ -57,6 +57,7 @@ TOKEN : /* Keywords */ {
 |   <K_RELATIONAL_UNNEST: "RUNNEST">
 |	<K_SELECTION: "SELECTION">
 |	<K_SET_PREDICTION: "SET-PREDICTION">
+|   <K_SET_PREDICTION_OR : "SET-PREDICTION-OR" >
 |	<K_SIZE: "SIZE">
 |	<K_SLIDE: "SLIDE">
 |	<K_SLDING_TIME_WINDOW: "SLIDING-TIME-WINDOW">
@@ -114,6 +115,7 @@ void AlgebraOp():{}{
 	AccessOp() |
 	BrokerOp() |
 	PredictionAssignOp() |
+	PredictionAssignOrOp() |
 	TestOp()
 }
 
@@ -196,6 +198,10 @@ void BrokerOp(): {}{
 
 void PredictionAssignOp() : {}{
 	<K_SET_PREDICTION>"(" AlgebraOp() "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
+}
+
+void PredictionAssignOrOp() : {}{
+	<K_SET_PREDICTION_OR>"(" AlgebraOp() "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
 }
 
 void Predicate():{}{

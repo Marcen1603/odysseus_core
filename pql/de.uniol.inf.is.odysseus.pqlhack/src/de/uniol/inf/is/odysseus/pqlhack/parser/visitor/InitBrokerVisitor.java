@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTOrPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOrOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
@@ -67,7 +68,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
  * By this, in visit(ASTBroker node, Object data) we know, whether the broker
  * operator has preceeding operators or not.
  * 
- * @author André Bolles
+ * @author Andrï¿½ Bolles
  *
  */
 public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
@@ -303,6 +304,11 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTPredictionFunctionDefinition node, Object data) {
+		return node.childrenAccept(this, false);
+	}
+
+	@Override
+	public Object visit(ASTPredictionAssignOrOp node, Object data) {
 		return node.childrenAccept(this, false);
 	}
 	
