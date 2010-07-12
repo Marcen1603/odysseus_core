@@ -43,7 +43,7 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		// TODO sehr simple, muss noch darauf geachtet werden das die zeitintervalle bei den zwei eingängen zusammenpassen,
+		// TODO sehr simple, muss noch darauf geachtet werden das die zeitintervalle bei den zwei eingï¿½ngen zusammenpassen,
 		// ist jetzt nicht garantiert (sweaparea? irgendein Buffer?).
 		if(port == 0) {
 			currentTime = (PointInTime)OrAttributeResolver.resolveTuple(object, timeStampPath);
