@@ -4,16 +4,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
-import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
-import org.eclipse.gef.requests.CreateRequest;
 
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 
@@ -25,27 +21,11 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements EditP
 
 	@Override
 	protected IFigure createFigure() {
-		return new Label();
+		return new OperatorFigure();
 	}
 
 	@Override
-	protected void createEditPolicies() {
-		installEditPolicy(EditPolicy.LAYOUT_ROLE, new XYLayoutEditPolicy() {
-
-			@Override
-			protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
-				System.out.println("changeConstraint");
-				return null;
-			}
-
-			@Override
-			protected Command getCreateCommand(CreateRequest request) {
-				System.out.println("createCommand");
-				return null;
-			}
-			
-		});
-		
+	protected void createEditPolicies() {	
 		installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new NonResizableEditPolicy());
 	}
 	
@@ -63,9 +43,9 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements EditP
 
 	@Override
 	protected void refreshVisuals() {
-		Label figure = (Label)getFigure();
+		OperatorFigure figure = (OperatorFigure)getFigure();
 		Operator model = (Operator)getModel();
-		figure.setText(model.getOperatorExtensionDescriptor().getLabel() + "[" + model.getX() + "," + model.getY() + "]");
+		figure.setText(model.getOperatorExtensionDescriptor().getLabel());
 		
 		Rectangle r = new Rectangle(model.getX(), model.getY(), -1, -1);
 		((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure, r);

@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
@@ -32,7 +32,7 @@ public class OperatorPlanEditPart extends AbstractGraphicalEditPart implements E
 	@Override
 	protected IFigure createFigure() {
 		Figure figure = new Figure();
-		figure.setLayoutManager(new XYLayout());
+		figure.setLayoutManager(new FreeformLayout());
 		figure.setOpaque(true);
 		figure.setBackgroundColor(ColorConstants.white);
 		return figure;
