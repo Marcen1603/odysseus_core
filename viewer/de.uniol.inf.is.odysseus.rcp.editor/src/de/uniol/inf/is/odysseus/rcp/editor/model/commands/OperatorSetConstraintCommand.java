@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.editorpart.command;
+package de.uniol.inf.is.odysseus.rcp.editor.model.commands;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.RequestConstants;

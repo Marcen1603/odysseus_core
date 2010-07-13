@@ -18,10 +18,10 @@ import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.requests.CreateRequest;
 
-import de.uniol.inf.is.odysseus.rcp.editor.editorpart.command.CreateOperatorCommand;
-import de.uniol.inf.is.odysseus.rcp.editor.editorpart.command.OperatorSetConstraintCommand;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
+import de.uniol.inf.is.odysseus.rcp.editor.model.commands.OperatorCreateCommand;
+import de.uniol.inf.is.odysseus.rcp.editor.model.commands.OperatorSetConstraintCommand;
 
 public class OperatorPlanEditPart extends AbstractGraphicalEditPart implements EditPart, PropertyChangeListener {
 
@@ -71,7 +71,7 @@ public class OperatorPlanEditPart extends AbstractGraphicalEditPart implements E
 			protected Command getCreateCommand(CreateRequest request) {
 				Object childClass = request.getNewObjectType();
 				if (childClass == Operator.class) {
-					return new CreateOperatorCommand((Operator) request.getNewObject(), (OperatorPlan) getHost().getModel(), (Rectangle) getConstraintFor(request));
+					return new OperatorCreateCommand((Operator) request.getNewObject(), (OperatorPlan) getHost().getModel(), (Rectangle) getConstraintFor(request));
 				}
 				return null;
 			}

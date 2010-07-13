@@ -9,7 +9,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: de.uniol.inf.is.odysseus.rcp.editor
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.rcp.editor.operator,
  org.eclipse.draw2d,

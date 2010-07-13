@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.editorpart;
+package de.uniol.inf.is.odysseus.rcp.editor;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 
+import de.uniol.inf.is.odysseus.rcp.editor.editorpart.MyEditPartFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.operator.IOperatorExtensionDescriptor;
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.operator.IOperatorExtensionDescriptor
 public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable {
 
 	private OperatorPlan plan;
+	private static PaletteRoot paletteModel = null;
 	
 	public LogicalPlanEditorPart() {
 		super();
@@ -106,93 +108,13 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	    GraphicalViewer graphicalViewer = getGraphicalViewer();
 	    graphicalViewer.setContents(plan);
 	    graphicalViewer.addDropTargetListener(createTransferDropTargetListener());
-	    
-//		int operations = DND.DROP_COPY;
-//		Transfer[] transferTypes = new Transfer[]{TextTransfer.getInstance()};
-//		DropTarget target = new DropTarget(getGraphicalViewer().getControl(), operations);
-//		target.setTransfer(transferTypes);
-//		target.addDropListener(new DropTargetListener() {
-//
-//			@Override
-//			public void dragEnter(DropTargetEvent event) {
-//			}
-//
-//			@Override
-//			public void dragLeave(DropTargetEvent event) {
-//			}
-//
-//			@Override
-//			public void dragOperationChanged(DropTargetEvent event) {
-//			}
-//
-//			@Override
-//			public void dragOver(DropTargetEvent event) {
-//				event.detail = DND.DROP_COPY;
-//			}
-//
-//			@Override
-//			public void drop(DropTargetEvent event) {
-//				// IOperatorDescriptor holen
-//				String operatorID = (String)event.data;
-//				IOperatorExtensionDescriptor desc = OperatorExtensionRegistry.getInstance().getExtension(operatorID);
-//				if( desc == null ) {
-//					System.out.println("No IOperatorDescriptionExtension gefunden");
-//					return;
-//				}
-//				
-//				Operator operator = new Operator(desc);
-//				Point p = getGraphicalViewer().getControl().toControl(event.x, event.y);
-//				operator.setX(p.x);
-//				operator.setY(p.y);
-//				plan.addOperator(operator);
-//			}
-//
-//			@Override
-//			public void dropAccept(DropTargetEvent event) {
-//			}
-//			
-//		});	
 	}
-
-//	@Override
-//	public void createPartControl(Composite parent) {
-//		super.createPartControl(parent);
-//		
-//		Composite composite = new Composite(parent, SWT.NONE);
-//		GridLayout gridLayout = new GridLayout();
-//		gridLayout.numColumns = 2;
-//		composite.setLayout(gridLayout);
-//		
-//		FlyoutPaletteComposite flyout = new FlyoutPaletteComposite(composite, SWT.BORDER, getSite().getPage(), 
-//				new PaletteViewerProvider(getEditDomain()), new MyFlyoutPreferences());
-//		flyout.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-//	}
 
 	@Override
 	public void setFocus() {
+		getGraphicalViewer().getControl().setFocus();
 	}
-	
-//	public EditDomain getEditDomain() {
-//		if (editDomain == null) {
-//			editDomain = new DefaultEditDomain(this);
-//		}
-//		return editDomain;
-//	}
-//
-//	public GraphicalViewer getGraphicalViewer() {
-//		if (graphicalViewer == null) {
-//			graphicalViewer = new ScrollingGraphicalViewer();
-//		}
-//		return graphicalViewer;
-//	}
-//
-//	public RootEditPart getRootEditPart() {
-//		if (rootEditPart == null) {
-//			rootEditPart = new ScalableRootEditPart();
-//		}
-//		return rootEditPart;
-//	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -210,12 +132,11 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 		return super.getAdapter(adapter);
 	}
 
-	private static PaletteRoot PALETTE_MODEL = null;
 	@Override
 	protected PaletteRoot getPaletteRoot() {
-		if (PALETTE_MODEL == null)
-			PALETTE_MODEL = PaletteFactory.createPalette();
-		return PALETTE_MODEL;
+		if (paletteModel == null)
+			paletteModel = PaletteFactory.createPalette();
+		return paletteModel;
 	}
 
 }

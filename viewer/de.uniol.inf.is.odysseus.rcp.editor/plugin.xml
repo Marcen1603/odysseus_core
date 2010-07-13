@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.editor.editorpart.LogicalPlanEditorPart"
+            class="de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanEditorPart"
             default="false"
             extensions="pln"
             icon="icons/plan.png"
