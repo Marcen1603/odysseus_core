@@ -12,5 +12,11 @@
             name="Logical Plan Editor">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.editor.activator.Startup">
+      </startup>
+   </extension>
 
 </plugin>
