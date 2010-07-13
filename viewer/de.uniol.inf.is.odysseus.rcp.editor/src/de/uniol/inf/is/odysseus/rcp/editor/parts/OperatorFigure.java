@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.parts;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -23,4 +24,13 @@ public class OperatorFigure extends Figure implements IFigure {
 		layout();
 	}
 
+	public void setHighlighted( boolean h ) {
+		if( h == true ) {
+			label.setBackgroundColor(ColorConstants.black);
+			label.setForegroundColor(ColorConstants.red);
+		} else {
+			label.setBackgroundColor(ColorConstants.red);
+			label.setForegroundColor(ColorConstants.black);
+		}
+	}
 }
