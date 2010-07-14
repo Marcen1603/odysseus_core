@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking;
+package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 public abstract class Connection<L, R, W extends java.lang.Number> implements IConnection<L, R, W> {
 	
