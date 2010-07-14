@@ -1,12 +1,21 @@
 package de.uniol.inf.is.odysseus.filtering;
 
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.scars.objecttracking.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterPO<M extends IProbability> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>  {
+public class FilterPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>  {
 
 	private IGainFunction<M> gainFunction;
 	
@@ -14,10 +23,15 @@ public class FilterPO<M extends IProbability> extends AbstractPipe<MVRelationalT
 	
 	private ICorrectStateEstimateFunction<M> correctStateEstimateFunction;
 	
-	private MVRelationalTuple oldTuple;
+	private MVRelationalTuple<M> oldTuple;
 	
-	private MVRelationalTuple newTuple;
+	private MVRelationalTuple<M> newTuple;
 	
+	private int[] oldObjListPath;
+	private int[] newObjListPath;
+	
+	private SDFAttributeList leftSchema;
+	private SDFAttributeList rightSchema;
 	
 	public FilterPO() {
 	super();	
@@ -48,29 +62,76 @@ public class FilterPO<M extends IProbability> extends AbstractPipe<MVRelationalT
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		// TODO Auto-generated method stub
 	
-	// output modell, etc ??
-	Object matrixes[] = null;
-	Object Gain = null;
+	// list of new objects
+	MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.newObjListPath)).getAttributes();	
+	// list of old objects
+	MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();
+	// list of connections
+	Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
 	
-	// zuerst den gain berechnen 
+	// für Berechnung benötigte Matrixen
+	Object matrixes[] = null;
+	Double[][] Gain = null;
+	// traverse connection list and filter
+	for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
+		
+		MVRelationalTuple<M> oldTuple = connected.getRight();
+		MVRelationalTuple<M> newTuple = connected.getRight();
+		
+		ArrayList<int[]> measurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(this.leftSchema);
+		ArrayList<int[]> measurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(this.rightSchema);
+		
+		// compute gain
+		Gain = gainFunction.computeGain(oldTuple, measurementValuePathsTupleOld, matrixes);
+		
+		// update state covariance
+		//	correctStateCovarianceFunction.computeStateCovariance(oldTuple, measurementValuePathsTupleOld, Gain, matrixes));
+		
+	
+	}
+
+
+	
+/*	// zuerst den gain berechnen 
 	if (port == 0) oldTuple= object;
-	Gain = gainFunction.computeGain(oldTuple, matrixes);
+	
 	
 	// Messwerte
 	if (port == 1) {
 		
 		newTuple = object; 
 		// update Covariance
-		oldTuple = correctStateCovarianceFunction.computeStateCovariance(oldTuple, Gain, matrixes);
+		//oldTuple = correctStateCovarianceFunction.computeStateCovariance(oldTuple, Gain, matrixes);
 		// update State
 		oldTuple = correctStateEstimateFunction.computeStateEstimate(oldTuple,newTuple, Gain, matrixes);
 		
+	*/	
+		
+		
 		// transfer to broker
 		transfer(object);
-	}
+	
 	
 	}
+	
+	
 
+	public void setOldObjListPath(int[] oldObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+	}
+
+	public void setNewObjListPath(int[] newObjListPath) {
+		this.newObjListPath = newObjListPath;
+	}
+
+	public void setLeftSchema(SDFAttributeList leftSchema) {
+		this.leftSchema = leftSchema;
+	}
+
+	public void setRightSchema(SDFAttributeList rightSchema) {
+		this.rightSchema = rightSchema;
+	}
+	
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		// TODO Auto-generated method stub
