@@ -13,8 +13,13 @@ public class CovarianceInitiator extends AbstractMetadataUpdater<ObjectTrackingM
 
 	SDFAttributeList schema;
 	
+	public CovarianceInitiator(SDFAttributeList schema){
+		this.schema = schema;
+	}
+	
 	@Override
 	public void updateMetadata(MVRelationalTuple<ObjectTrackingMetadata> inElem) {
+		inElem.getMetadata().setLatencyStart(System.nanoTime());
 		
 		double[][] cov = null;
 		ArrayList<int[]> paths = getPathsOfMeasurements(this.schema);
