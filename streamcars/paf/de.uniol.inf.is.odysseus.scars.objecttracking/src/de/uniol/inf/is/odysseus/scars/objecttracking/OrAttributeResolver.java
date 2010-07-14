@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.scars.objecttracking;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -95,6 +97,18 @@ public class OrAttributeResolver {
 		return -1;
 	}
 	
+	public static <M extends IProbability> double[] getMeasurementValues(ArrayList<int[]> pathsOfMeasurements, MVRelationalTuple<M> tuple) {
+		ArrayList<Double> tmp = new ArrayList<Double>();
+		for(int[] path : pathsOfMeasurements) {
+			tmp.add((Double) resolveTuple(tuple, path));
+		}
+		double[] retArr = new double[tmp.size()];
+		for(int i = 0; i < tmp.size(); i++) {
+			retArr[i] = tmp.get(i);
+		}
+		return retArr;
+	}
+	
 	public static ArrayList<int[]> getPathsOfMeasurements(SDFAttributeList attrList) {
 		ArrayList<int[]> tmp = new ArrayList<int[]>();
 		
@@ -127,6 +141,7 @@ public class OrAttributeResolver {
 		
 		return tmp;
 	}
+	
 	
 //	public static void main(String[] args) {
 //		SDFAttributeList list = new SDFAttributeList("Scan");
