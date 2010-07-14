@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.assoziation;
 
-import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.OrAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 
 /**
  * This class is used within the association process of the objecttracking architecture
@@ -20,23 +18,19 @@ public class CorrelationMatrixUtils<M extends IProbability> implements ICorrelat
 	/**
 	 * This function generates a correlation matrix of a given scanlist. It is required that a HypothesisGeneration Operator added the connectionlist to the schema before.
 	 */
-	@SuppressWarnings("unchecked")
-	public double[][] encodeMatrix(MVRelationalTuple<M> scan, int[] pathToConList, int[] pathToOldList, int[] pathToNewList, int[] pathToConAttrOld, int[] pathToConAttrNew, int[] pathToConAttrRating, SDFAttributeList schema) {
-		MVRelationalTuple<M>[] objConList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(scan, pathToConList)).getAttributes();
-		MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(scan, pathToNewList)).getAttributes();
-		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(scan, pathToOldList)).getAttributes();
+	public double[][] encodeMatrix(MVRelationalTuple<M>[] newList, MVRelationalTuple<M>[] oldList, Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList) {
 		
 		double[][] correlationMatrix = new double[newList.length][oldList.length];
 		
-		for(MVRelationalTuple<M> connectionEntry : objConList) {
-			Object newRef = OrAttributeResolver.resolveTuple(connectionEntry, pathToConAttrNew);
-			Object oldRef = OrAttributeResolver.resolveTuple(connectionEntry, pathToConAttrOld);
-			Object conRating = OrAttributeResolver.resolveTuple(connectionEntry, pathToConAttrRating);
+		for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> con : objConList) {
+			MVRelationalTuple<M> newRef = con.getLeft();
+			MVRelationalTuple<M> oldRef = con.getRight();
+			Double conRating = con.getRating();
 			
-			int indexOfNewRef = OrAttributeResolver.indexOfAttribute((RelationalTuple<?>) OrAttributeResolver.resolveTuple(scan, pathToNewList), newRef);
-			int indexOfOldRef = OrAttributeResolver.indexOfAttribute((RelationalTuple<?>) OrAttributeResolver.resolveTuple(scan, pathToOldList), oldRef);
+			int indexOfNewRef = this.indexOfTupleInTupleArray(newList, newRef);
+			int indexOfOldRef = this.indexOfTupleInTupleArray(oldList, oldRef);
 			
-			correlationMatrix[indexOfNewRef][indexOfOldRef] = Double.parseDouble(conRating.toString());
+			correlationMatrix[indexOfNewRef][indexOfOldRef] = conRating;
 		}
 		
 		return correlationMatrix;
@@ -45,22 +39,23 @@ public class CorrelationMatrixUtils<M extends IProbability> implements ICorrelat
 	/**
 	 * Returns a MVRelationalTuple with connections for a given correlation matrix.
 	 */
-	@SuppressWarnings("unchecked")
-	public MVRelationalTuple<M>[] decodeMatrix(MVRelationalTuple<M>[] newList, MVRelationalTuple<M>[] oldList, double[][] correlationMatrix, SDFAttributeList connectionSchema, int indexOfConAttrOld, int indexOfConAttrNew, int indexOfConAttrRating) {
-		ArrayList<MVRelationalTuple<M>> updatedConnections = new ArrayList<MVRelationalTuple<M>>();
+	public ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> decodeMatrix(MVRelationalTuple<M>[] newList, MVRelationalTuple<M>[] oldList, double[][] correlationMatrix) {
+		ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> updatedConList = new ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>();
 		for(int i = 0; i < newList.length; i++) {
 			for(int j = 0; j < oldList.length; j++) {
 				if(correlationMatrix[i][j] != 0) {
-					MVRelationalTuple<M> newTuple = new MVRelationalTuple<M>(connectionSchema);
-					newTuple.addAttributeValue(indexOfConAttrNew, newList[i]);
-					newTuple.addAttributeValue(indexOfConAttrOld, newList[j]);
-					newTuple.addAttributeValue(indexOfConAttrRating, correlationMatrix[i][j]);
-					updatedConnections.add(newTuple);
+					updatedConList.add(new Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>(newList[i], oldList[j], correlationMatrix[i][j]));
 				}
 			}
 		}
-		MVRelationalTuple<M>[] updatedConArray = (MVRelationalTuple<M>[]) updatedConnections.toArray();
-		return updatedConArray;
+		return updatedConList;
+	}
+	
+	private int indexOfTupleInTupleArray(MVRelationalTuple<M>[] tupleArray, MVRelationalTuple<M> tuple) {
+		for(int i = 0; i < tupleArray.length; i++) {
+			if(tupleArray[i] == tuple) { return i; }
+		}
+		return -1;
 	}
 
 }

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
 
-import de.uniol.inf.is.odysseus.assoziation.AbstractHypothesisEvaluationFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -18,14 +17,12 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 
 	private static final long serialVersionUID = 1L;
 	
-	private AbstractHypothesisEvaluationFunction<M> hypothesisEvaluationFunction;
 	
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
-	private int[] objConListPath;
-	private int[] conAttrNewPath;
-	private int[] conAttrOldPath;
-	private int[] conAttrRatingPath;
+	
+	private SDFAttributeList leftSchema;
+	private SDFAttributeList rightSchema;
 
 	public HypothesisEvaluationAO() {
 		super();
@@ -35,11 +32,13 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		super(copy);
 	}
 	
+	
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getInputSchema();
 	}
+	
+	
 
 	@Override
 	public AbstractLogicalOperator clone() {
@@ -47,22 +46,22 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		return null;
 	}
 	
-	public AbstractHypothesisEvaluationFunction<M> getHypothesisEvaluationFunction() {
-		return hypothesisEvaluationFunction;
+	public void initSchemata(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+		this.leftSchema = leftSchema;
+		this.rightSchema = rightSchema;
 	}
-
-	public void setHypothesisEvaluationFunction(
-			AbstractHypothesisEvaluationFunction<M> hypothesisEvaluationFunction) {
-		this.hypothesisEvaluationFunction = hypothesisEvaluationFunction;
+	
+	public SDFAttributeList getLeftSchema() {
+		return this.leftSchema;
+	}
+	
+	public SDFAttributeList getRightSchema() {
+		return this.rightSchema;
 	}
 	
 	public void initNeededAttributeIndices(SDFAttributeList input, String[] oldObjListPath, String[] newObjListPath, String[] objConListPath, String[] conAttrNewPath, String[] conAttrOldPath, String[] conAttrRatingPath) {
 		this.initOldObjListPath(input, oldObjListPath);
 		this.initNewObjListPath(input, newObjListPath);
-		this.initObjConListPath(input, objConListPath);
-		this.initConAttrNewPath(input, conAttrNewPath);
-		this.initConAttrOldPath(input, conAttrOldPath);
-		this.initConAttrRatingPath(input, conAttrRatingPath);
 	}
 	
 	public int[] getOldObjListPath() {
@@ -73,21 +72,6 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		return newObjListPath;
 	}
 
-	public int[] getObjConListPath() {
-		return objConListPath;
-	}
-	
-	public int[] getConAttrNewPath() {
-		return conAttrNewPath;
-	}
-	
-	public int[] getConAttrOldPath() {
-		return conAttrOldPath;
-	}
-	
-	public int[] getConAttrRatingPath() {
-		return conAttrRatingPath;
-	}
 	
 	private void initOldObjListPath(SDFAttributeList input, String[] oldObjListPath) {
 		this.oldObjListPath = OrAttributeResolver.resolveIndices(input, oldObjListPath);
@@ -95,21 +79,5 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	
 	private void initNewObjListPath(SDFAttributeList input, String[] newObjListPath) {
 		this.newObjListPath = OrAttributeResolver.resolveIndices(input, newObjListPath);
-	}
-	
-	private void initObjConListPath(SDFAttributeList input, String[] objConListPath) {
-		this.objConListPath = OrAttributeResolver.resolveIndices(input, objConListPath);
-	}
-	
-	private void initConAttrNewPath(SDFAttributeList input, String[] conAttrNewPath) {
-		this.conAttrNewPath = OrAttributeResolver.resolveIndices(input, conAttrNewPath);
-	}
-	
-	private void initConAttrOldPath(SDFAttributeList input, String[] conAttrOldPath) {
-		this.conAttrOldPath = OrAttributeResolver.resolveIndices(input, conAttrOldPath);
-	}
-	
-	private void initConAttrRatingPath(SDFAttributeList input, String[] conAttrRatingPath) {
-		this.conAttrRatingPath = OrAttributeResolver.resolveIndices(input, conAttrRatingPath);
 	}
 }
