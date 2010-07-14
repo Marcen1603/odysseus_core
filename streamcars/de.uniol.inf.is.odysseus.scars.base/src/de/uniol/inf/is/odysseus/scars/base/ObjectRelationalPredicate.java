@@ -3,14 +3,12 @@ package de.uniol.inf.is.odysseus.scars.base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -69,7 +67,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		
-		findAttribute(schema, attr, path);
+		findAttribute(schema, cqlAttr, path);
 
 		int[] p = new int[path.size()];
 		for( int i = 0; i < path.size(); i++ ) 
