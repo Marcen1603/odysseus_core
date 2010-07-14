@@ -7,7 +7,7 @@ public class KalmanCorrectStateEstimate<M extends IProbability> implements ICorr
 
 	@Override
 	public MVRelationalTuple<M> computeStateEstimate(MVRelationalTuple<M> Old,
-			Object Gain, Object[] matrixes) {
+			MVRelationalTuple<M> New, Object Gain, Object[] matrixes) {
 		// TODO Auto-generated method stub
 		return null;
 	}

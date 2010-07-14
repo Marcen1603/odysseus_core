@@ -8,7 +8,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 
 	
+	private IGainFunction<M> gainfunction;
 	
+	private ICorrectStateCovarianceFunction<M> correctStateCovarianceFunction;
+	
+	private ICorrectStateEstimateFunction<M> correctStateEstimate;
 	
 	public FilterAO() {
 	super();
@@ -42,5 +46,48 @@ public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 
 	public boolean equals (Object obj) {
 		return recalcOutputSchemata;}
+
+	/**
+	 * @param gainfunction the gainfunction to set
+	 */
+	public void setGainfunction(IGainFunction<M> gainfunction) {
+		this.gainfunction = gainfunction;
+	}
+
+	/**
+	 * @return the gainfunction
+	 */
+	public IGainFunction<M> getGainfunction() {
+		return gainfunction;
+	}
+
+	/**
+	 * @param correctStateCovarianceFunction the correctStateCovarianceFunction to set
+	 */
+	public void setCorrectStateCovarianceFunction(
+			ICorrectStateCovarianceFunction<M> correctStateCovarianceFunction) {
+		this.correctStateCovarianceFunction = correctStateCovarianceFunction;
+	}
+
+	/**
+	 * @return the correctStateCovarianceFunction
+	 */
+	public ICorrectStateCovarianceFunction<M> getCorrectStateCovarianceFunction() {
+		return correctStateCovarianceFunction;
+	}
+
+	/**
+	 * @param correctStateEstimate the correctStateEstimate to set
+	 */
+	public void setCorrectStateEstimate(ICorrectStateEstimateFunction<M> correctStateEstimate) {
+		this.correctStateEstimate = correctStateEstimate;
+	}
+
+	/**
+	 * @return the correctStateEstimate
+	 */
+	public ICorrectStateEstimateFunction<M> getCorrectStateEstimate() {
+		return correctStateEstimate;
+	}
 
 }

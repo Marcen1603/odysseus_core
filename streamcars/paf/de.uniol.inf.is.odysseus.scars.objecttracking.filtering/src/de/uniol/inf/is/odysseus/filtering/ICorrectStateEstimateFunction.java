@@ -12,5 +12,5 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  */
 public interface ICorrectStateEstimateFunction<M extends IProbability> {
 
-	public MVRelationalTuple<M> computeStateEstimate(MVRelationalTuple<M> Old, Object Gain, Object[] matrixes);
+	public MVRelationalTuple<M> computeStateEstimate(MVRelationalTuple<M> Old, MVRelationalTuple<M> New, Object Gain, Object[] matrixes);
 }
