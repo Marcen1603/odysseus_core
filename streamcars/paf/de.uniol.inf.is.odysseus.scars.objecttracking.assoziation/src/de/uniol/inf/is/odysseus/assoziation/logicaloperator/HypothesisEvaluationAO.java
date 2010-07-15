@@ -50,15 +50,7 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	public HypothesisEvaluationAO<M> clone() {
 		return new HypothesisEvaluationAO<M>(this);
 	}
-	
-	public SDFAttributeList getLeftSchema() {
-		return this.leftSchema;
-	}
-	
-	public SDFAttributeList getRightSchema() {
-		return this.rightSchema;
-	}
-	
+
 	public void initPaths(String oldObjListPath, String newObjListPath) {
 		this.oldObjListPath = oldObjListPath;
 		this.newObjListPath = newObjListPath;
@@ -96,5 +88,13 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	
 	public void setFunctionID(String fuckID) {
 		this.functionID = fuckID;
+	}
+	
+	public SDFAttributeList getLeftSchema() {
+		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
+	}
+	
+	public SDFAttributeList getRightSchema() {
+		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
 	}
 }

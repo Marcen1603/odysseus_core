@@ -26,8 +26,6 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
-	
-	private String ID;
 
 	public HypothesisGenerationAO() {
 		super();
@@ -62,14 +60,6 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	public int[] getOldObjListPath() {
 		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
 		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
-	}
-	
-	public String getID() {
-		return ID;
-	}
-
-	public void setID(String iD) {
-		ID = iD;
 	}
 	
 	public SDFAttributeList getLeftSchema() {
