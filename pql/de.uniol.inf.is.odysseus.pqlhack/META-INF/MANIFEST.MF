@@ -4,7 +4,8 @@ Bundle-Name: de.uniol.inf.is.odysseus.pqlhack
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.pqlhack
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.pqlhack.Activator
-Import-Package: de.uniol.inf.is.odysseus.base,
+Import-Package: de.uniol.inf.is.odysseus.assoziation.logicaloperator,
+ de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.broker.dictionary,
