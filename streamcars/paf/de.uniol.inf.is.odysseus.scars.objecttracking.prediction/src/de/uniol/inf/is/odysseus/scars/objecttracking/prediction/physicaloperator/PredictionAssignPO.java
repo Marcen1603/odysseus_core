@@ -38,10 +38,11 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		
-		MVRelationalTuple<?> listObj = (MVRelationalTuple<?>)OrAttributeResolver.resolveTuple(object, pathToList);
+		Object listObj = object.getORAttribute(pathToList);
+		
 		if(listObj instanceof MVRelationalTuple<?>) {
-			
-			for(Object mvObj : ((MVRelationalTuple<?>) listObj).getAttributes()) {
+			Object[] objList = ((MVRelationalTuple<?>) listObj).getAttributes();
+			for(Object mvObj : objList ) {
 				evaluatePredicateKey((MVRelationalTuple<M>)mvObj);
 			}
 		}
