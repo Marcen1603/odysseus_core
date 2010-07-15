@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
@@ -20,13 +20,14 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	private static final long serialVersionUID = 1L;
 	
 	
-	private int[] oldObjListPath;
-	private int[] newObjListPath;
+	private String oldObjListPath;
+	private String newObjListPath;
 	private HashMap<String, String> algorithmParameter;
+	private HashMap<String, String> measurementPairs;
 	
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
-
+	
 	public HypothesisEvaluationAO() {
 		super();
 	}
@@ -40,19 +41,18 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();
 	}
-	
-	
 
 	@Override
-	public AbstractLogicalOperator clone() {
-		// TODO Auto-generated method stub
-		return null;
+	public HypothesisEvaluationAO<M> clone() {
+		return new HypothesisEvaluationAO<M>(this);
 	}
 	
-	public void initSchemata(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
+	/*
+	private void initSchemata() {
+		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
+		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
 	}
+	*/
 	
 	public SDFAttributeList getLeftSchema() {
 		return this.leftSchema;
@@ -62,17 +62,17 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		return this.rightSchema;
 	}
 	
-	public void initNeededAttributeIndices(SDFAttributeList input, String[] oldObjListPath, String[] newObjListPath, String[] objConListPath, String[] conAttrNewPath, String[] conAttrOldPath, String[] conAttrRatingPath) {
-		this.initOldObjListPath(input, oldObjListPath);
-		this.initNewObjListPath(input, newObjListPath);
+	public void initPaths(String oldObjListPath, String newObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+		this.newObjListPath = newObjListPath;
 	}
 	
 	public int[] getOldObjListPath() {
-		return oldObjListPath;
+		return null;
 	}
 
 	public int[] getNewObjListPath() {
-		return newObjListPath;
+		return null;
 	}
 
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
@@ -83,11 +83,11 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		return this.algorithmParameter;
 	}
 	
-	private void initOldObjListPath(SDFAttributeList input, String[] oldObjListPath) {
-		this.oldObjListPath = OrAttributeResolver.resolveIndices(input, oldObjListPath);
+	public void setMeasurementPairs(HashMap<String, String> newMeasPairs) {
+		this.measurementPairs = newMeasPairs;
 	}
 	
-	private void initNewObjListPath(SDFAttributeList input, String[] newObjListPath) {
-		this.newObjListPath = OrAttributeResolver.resolveIndices(input, newObjListPath);
+	public HashMap<String, String> getMeasurementPairs() {
+		return this.measurementPairs;
 	}
 }
