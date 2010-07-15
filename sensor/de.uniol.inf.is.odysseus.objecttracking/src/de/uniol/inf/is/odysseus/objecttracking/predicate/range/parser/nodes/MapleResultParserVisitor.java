@@ -25,4 +25,4 @@ public interface MapleResultParserVisitor
   public Object visit(ASTString node, Object data);
   public Object visit(ASTIdentifier node, Object data);
 }
-/* JavaCC - OriginalChecksum=30363d4168b6d56d845f7ea60e5c8371 (do not edit this line) */
+/* JavaCC - OriginalChecksum=49ca39aeb4324afcfce42ee4ca2a1d41 (do not edit this line) */

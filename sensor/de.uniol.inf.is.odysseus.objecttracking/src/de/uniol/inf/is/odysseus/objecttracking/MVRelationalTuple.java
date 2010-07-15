@@ -183,6 +183,7 @@ public class MVRelationalTuple<T extends IProbability> extends
 				actualList = ((MVRelationalTuple<?>)actualAttribute).getAttributes();
 			}
 		}
+
 		return actualAttribute;
 	}
 
