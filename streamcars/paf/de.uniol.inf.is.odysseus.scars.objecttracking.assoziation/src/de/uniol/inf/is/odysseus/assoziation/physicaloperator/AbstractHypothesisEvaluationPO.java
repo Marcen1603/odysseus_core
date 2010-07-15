@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.assoziation.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.assoziation.CorrelationMatrixUtils;
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -28,6 +29,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
+	private HashMap<String, String> algorithmParameter;
 	
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
@@ -98,6 +100,10 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public abstract void initAlgorithmParameter();
+	
+	// ----- SETTER AND GETTER -----
 
 	public void setOldObjListPath(int[] oldObjListPath) {
 		this.oldObjListPath = oldObjListPath;
@@ -115,4 +121,28 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 		this.rightSchema = rightSchema;
 	}
 	
+	public int[] getOldObjListPath() {
+		return this.oldObjListPath;
+	}
+
+	public int[] getNewObjListPath() {
+		return this.newObjListPath;
+	}
+
+	public SDFAttributeList getLeftSchema() {
+		return this.leftSchema;
+	}
+
+	public SDFAttributeList getRightSchema() {
+		return this.rightSchema;
+	}
+	
+	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
+		this.algorithmParameter = newAlgoParameter;
+		this.initAlgorithmParameter();
+	}
+	
+	public HashMap<String, String> getAlgorithmParameter() {
+		return this.algorithmParameter;
+	}
 }

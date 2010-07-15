@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
 
+import java.util.HashMap;
+
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -20,6 +22,7 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
+	private HashMap<String, String> algorithmParameter;
 	
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
@@ -72,6 +75,13 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		return newObjListPath;
 	}
 
+	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
+		this.algorithmParameter = newAlgoParameter;
+	}
+	
+	public HashMap<String, String> getAlgorithmParameter() {
+		return this.algorithmParameter;
+	}
 	
 	private void initOldObjListPath(SDFAttributeList input, String[] oldObjListPath) {
 		this.oldObjListPath = OrAttributeResolver.resolveIndices(input, oldObjListPath);
