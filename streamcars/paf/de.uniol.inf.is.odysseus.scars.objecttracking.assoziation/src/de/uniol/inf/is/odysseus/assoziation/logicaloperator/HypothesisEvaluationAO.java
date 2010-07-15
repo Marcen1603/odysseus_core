@@ -30,6 +30,8 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 	
+	private String functionID;
+	
 	public HypothesisEvaluationAO() {
 		super();
 	}
@@ -86,5 +88,13 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	
 	public HashMap<String, String> getMeasurementPairs() {
 		return this.measurementPairs;
+	}
+	
+	public String getFunctionID() {
+		return this.functionID;
+	}
+	
+	public void setFunctionID(String fuckID) {
+		this.functionID = fuckID;
 	}
 }
