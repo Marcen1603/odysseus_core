@@ -320,38 +320,32 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTKeyValuePair node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTAssociationGenOp node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTAssociationEvalOp node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, false);
 	}
 
 	@Override
 	public Object visit(ASTKeyValueList node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, false);
 	}
 	
 }
