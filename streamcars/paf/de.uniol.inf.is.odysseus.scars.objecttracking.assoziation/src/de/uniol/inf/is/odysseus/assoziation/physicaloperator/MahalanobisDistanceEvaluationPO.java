@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
@@ -87,6 +88,20 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IPredictio
 	public void initAlgorithmParameter() {
 		this.threshold = Double.valueOf(this.getAlgorithmParameter().get("treshold"));
 		this.operator = this.getAlgorithmParameter().get("operator");
+	}
+	
+	public double getThreshold() {
+		return threshold;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	@Override
+	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

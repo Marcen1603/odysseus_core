@@ -91,15 +91,11 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 
 	@Override
 	public OutputMode getOutputMode() {
-		// TODO Auto-generated method stub
-		return null;
+		return OutputMode.MODIFIED_INPUT;
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
 	
 	/**
 	 * Inits the algorithm specific parameter. The parameter are stored in the HashMap algorithmParameter.

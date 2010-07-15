@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
 
+import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -20,12 +21,14 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 	private static final long serialVersionUID = 1L;
 	
-	private int[] oldObjListPath;
-	private int[] newObjListPath;
+	private String oldObjListPath;
+	private String newObjListPath;
 		
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 	
+	private String ID;
+
 	public HypothesisGenerationAO() {
 		super();
 	}
@@ -46,39 +49,27 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		return null;
 	}
 	
-	public void initSchemata(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
+	public void initPaths(String oldObjListPath, String newObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+		this.newObjListPath = newObjListPath;
 	}
 	
-	public SDFAttributeList getLeftSchema() {
-		return this.leftSchema;
-	}
-	
-	public SDFAttributeList getRightSchema() {
-		return this.rightSchema;
-	}
-	
-	public void initNeededAttributeIndices(SDFAttributeList input, String[] oldObjListPath, String[] newObjListPath, String[] objConListPath, String[] conAttrNewPath, String[] conAttrOldPath, String[] conAttrRatingPath) {
-		this.initOldObjListPath(input, oldObjListPath);
-		this.initNewObjListPath(input, newObjListPath);
-	}
-	
-	public int[] getOldObjListPath() {
-		return oldObjListPath;
-	}
-
 	public int[] getNewObjListPath() {
-		return newObjListPath;
+		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
+		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
 	}
 
-	
-	private void initOldObjListPath(SDFAttributeList input, String[] oldObjListPath) {
-		this.oldObjListPath = OrAttributeResolver.resolveIndices(input, oldObjListPath);
+	public int[] getOldObjListPath() {
+		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
+		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
 	
-	private void initNewObjListPath(SDFAttributeList input, String[] newObjListPath) {
-		this.newObjListPath = OrAttributeResolver.resolveIndices(input, newObjListPath);
+	public String getID() {
+		return ID;
+	}
+
+	public void setID(String iD) {
+		ID = iD;
 	}
 
 }
