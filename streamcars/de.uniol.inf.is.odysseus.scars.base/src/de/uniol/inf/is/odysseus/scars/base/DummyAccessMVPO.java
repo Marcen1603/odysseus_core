@@ -82,14 +82,14 @@ class DummyJDVEData<M extends IProbability> {
 			return (MVRelationalTuple<M>)res;
 		} else {
 			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(1);
-			tuple.addAttributeValue(0, res);
+			tuple.setAttribute(0, res);
 			return tuple;
 		}
 	}
 	
 	public MVRelationalTuple<M> parseStart(SDFAttribute schema) {
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-		base.addAttributeValue(0, parseNext(schema.getSubattribute(0)));
+		base.setAttribute(0, parseNext(schema.getSubattribute(0)));
 		return base;
 	}
 	
@@ -98,7 +98,7 @@ class DummyJDVEData<M extends IProbability> {
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 		for( int i = 0; i < count; i++ ) {
 			Object obj = parseNext(schema.getSubattribute(i));
-			recordTuple.addAttributeValue(i, obj);
+			recordTuple.setAttribute(i, obj);
 		}
 		return recordTuple;
 	}
@@ -109,7 +109,7 @@ class DummyJDVEData<M extends IProbability> {
 
 		for( int i = 0; i < count; i++ ) {
 			Object obj = parseNext(schema.getSubattribute(0));
-			recordTuple.addAttributeValue(i, obj);
+			recordTuple.setAttribute(i, obj);
 		}
 		return recordTuple;
 	}

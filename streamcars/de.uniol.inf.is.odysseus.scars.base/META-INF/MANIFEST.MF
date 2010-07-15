@@ -14,6 +14,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
+ org.osgi.framework,
  org.slf4j;version="1.5.6"
 Require-Bundle: de.uniol.inf.is.odysseus.base
 Export-Package: de.uniol.inf.is.odysseus.scars.base
