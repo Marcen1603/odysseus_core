@@ -348,19 +348,23 @@ void PredictionFunctionDefinition(): {}{
 	Identifier() ":=" Expression()";"	
 }
 
+void KeyValueList(): {}{
+	( KeyValuePair() ";" )*
+}
+
 void KeyValuePair(): {}{
-	Identifier() ":=" Identifier() ";"
+	Identifier() ":=" Identifier() 
 }
 
 void AssociationGenOp(): {} {
   <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() ")"}
 
 void AssociationEvalOp(): {} {
-  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," ( KeyValuePair() )* "," Identifier() "," Identifier() "," ( KeyValuePair() )* ")" 
+  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier() "," KeyValueList() ")" 
 }
 
 void AssociationSelOp(): {} {
-  < K_ASSOCIATION_SEL > "(" Identifier() "," Identifier() "," Identifier() ")"
+  < K_ASSOCIATION_SEL > "(" Identifier() ")"
 }
 
 void AssociationSrcOp(): {} {

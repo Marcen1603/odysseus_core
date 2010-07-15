@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisEvaluationAO;
+import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
@@ -90,7 +92,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  */
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor{
-
 	
 	public Object visit(SimpleNode node, Object data) {
 		return null;
@@ -1003,18 +1004,43 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return data;
 	}
 
-
+	@Override
+	public Object visit(ASTKeyValueList node, Object data) {
+		return null;
+	}
+	
+	
 	@Override
 	public Object visit(ASTKeyValuePair node, Object data) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public Object visit(ASTAssociationGenOp node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
+		
+		HypothesisGenerationAO gen = new HypothesisGenerationAO();
+		
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtAccept(this, data);
+		int sourceOutPort = ((Integer)childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(0);
+		childOp.subscribeSink(gen, 0, sourceOutPort, childOp.getOutputSchema());
+		
+		childData = (ArrayList<Object>) node.jjtAccept(this, data);
+		sourceOutPort = ((Integer)childData.get(2)).intValue();
+		childOp = (ILogicalOperator) childData.get(0);
+		childOp.subscribeSink(gen, 1, sourceOutPort, childOp.getOutputSchema());
+		
+        ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+
+		
+		// pass only the attribute resolver to the children
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+		newData.add(gen);
+		newData.add(new Integer(0));
+		return newData;
 	}
 
 
@@ -1034,9 +1060,15 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
         eval.setName(identifier.getName());
         
-        identifier = (ASTIdentifier) node.jjtGetChild(1);
-        eval.setName(identifier.getName());
-		
+        HashMap<String, String> params = buildKeyMap((ASTKeyValueList) node.jjtGetChild(2));
+        eval.setAlgorithmParameter(params);
+        
+        identifier = (ASTIdentifier) node.jjtGetChild(3);
+        eval.initPaths(((ASTIdentifier) node.jjtGetChild(4)).getName(), ((ASTIdentifier) node.jjtGetChild(3)).getName());
+                
+        params = buildKeyMap((ASTKeyValueList) node.jjtGetChild(5));
+        eval.setMeasurementPairs(params);
+        
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
 		newData.add(attrRes);
@@ -1058,11 +1090,19 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Object visit(ASTKeyValueList node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	private HashMap<String, String> buildKeyMap(ASTKeyValueList list) {
+        HashMap<String, String> params = new HashMap<String, String>();
+		for (int i = 0; i < list.jjtGetNumChildren(); i++) {
+        	ASTKeyValuePair valuePair = (ASTKeyValuePair) list.jjtGetChild(i);
+        	
+        	String key =  ((ASTIdentifier) valuePair.jjtGetChild(0)).getName();
+        	String value =  ((ASTIdentifier) valuePair.jjtGetChild(1)).getName();
+        	
+			params.put(key, value);
+		}
+		return params;
 	}
+	
 
 }
