@@ -1,5 +1,16 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
+/**
+ * The ConnectionContainer contains an connection list where the rated connections between
+ * objects are stored. It serves as a meta data so that in the objecttracking process
+ * you could access the connections by object.getMetadata().get/setConnectionList().
+ * 
+ * @author Volker Janz
+ *
+ * @param <L> Datatype of the left object
+ * @param <R> Datatype of the right object
+ * @param <W> Datatype of the rating - has to extend java.lang.Number (Double, Integer, ...)
+ */
 public class ConnectionContainer<L, R, W extends java.lang.Number> implements IConnectionContainer<L, R, W> {
 	
 	private ConnectionList<L, R, W> connectionList;
@@ -25,6 +36,10 @@ public class ConnectionContainer<L, R, W extends java.lang.Number> implements IC
 		return new ConnectionContainer<L, R, W>(this.getConnectionList());
 	}
 	
+	/**
+	 * Returns a string with the actual connection list as:
+	 * "[(left:right:rating)][(left:right:rating)][(left:right:rating)]..."
+	 */
 	@Override
 	public String toString(){
 		if(this.connectionList == null || this.connectionList.size() == 0){
