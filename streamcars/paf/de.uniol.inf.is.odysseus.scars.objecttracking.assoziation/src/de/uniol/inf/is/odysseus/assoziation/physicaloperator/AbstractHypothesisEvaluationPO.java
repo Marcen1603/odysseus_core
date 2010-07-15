@@ -101,6 +101,9 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 		return null;
 	}
 	
+	/**
+	 * Inits the algorithm specific parameter. The parameter are stored in the HashMap algorithmParameter.
+	 */
 	public abstract void initAlgorithmParameter();
 	
 	// ----- SETTER AND GETTER -----

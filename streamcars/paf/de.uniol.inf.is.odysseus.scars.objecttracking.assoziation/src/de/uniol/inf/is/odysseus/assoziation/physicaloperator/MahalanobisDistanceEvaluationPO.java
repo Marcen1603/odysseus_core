@@ -83,7 +83,7 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IPredictio
 	public void setOperator(String operator) {
 		this.operator = operator;
 	}
-
+	
 	public void initAlgorithmParameter() {
 		this.threshold = Double.valueOf(this.getAlgorithmParameter().get("treshold"));
 		this.operator = this.getAlgorithmParameter().get("operator");
