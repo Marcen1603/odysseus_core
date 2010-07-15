@@ -28,9 +28,13 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IPredictio
 		
 		double[][] rightCov = tupleOld.getMetadata().getCovariance();
 		RealMatrix rightCovMatrix = new RealMatrixImpl(rightCov);
-		RealMatrix rightCovInvMatrix = rightCovMatrix.inverse();
 		
-		RealMatrix distanceMatrix = leftV.subtract(rightV).transpose().multiply(rightCovInvMatrix).multiply(leftV.subtract(rightV));
+		double[][] leftCov = tupleNew.getMetadata().getCovariance();
+		RealMatrix leftCovMatrix = new RealMatrixImpl(leftCov);
+		
+		RealMatrix covInvMatrix = (rightCovMatrix.add(leftCovMatrix)).inverse();
+		
+		RealMatrix distanceMatrix = leftV.subtract(rightV).transpose().multiply(covInvMatrix).multiply(leftV.subtract(rightV));
 		double distance = distanceMatrix.getEntry(0, 0);
 		
 		if(this.operator.equals("<")){
