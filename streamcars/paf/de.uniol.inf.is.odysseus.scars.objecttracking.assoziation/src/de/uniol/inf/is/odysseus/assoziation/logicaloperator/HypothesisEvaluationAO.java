@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * Logical Operator for the rating of connections within the association process.
  * 
+ * new = left; old = right
+ * 
  * @author Volker Janz
  *
  * @param <M>
@@ -47,13 +49,6 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		return new HypothesisEvaluationAO<M>(this);
 	}
 	
-	/*
-	private void initSchemata() {
-		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
-		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
-	}
-	*/
-	
 	public SDFAttributeList getLeftSchema() {
 		return this.leftSchema;
 	}
@@ -67,12 +62,14 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		this.newObjListPath = newObjListPath;
 	}
 	
-	public int[] getOldObjListPath() {
-		return null;
+	public int[] getNewObjListPath() {
+		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
+		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
 	}
 
-	public int[] getNewObjListPath() {
-		return null;
+	public int[] getOldObjListPath() {
+		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
+		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
 
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
