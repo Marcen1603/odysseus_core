@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class CreateSensorVisitor extends AbstractDefaultVisitor {
 
-	private static final String SEPARATOR = ".";
+	private static final String SEPARATOR = ":";
 	
 	private String name;
 	private String host;
