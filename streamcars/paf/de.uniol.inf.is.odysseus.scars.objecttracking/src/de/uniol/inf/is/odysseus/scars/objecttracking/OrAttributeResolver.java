@@ -24,6 +24,71 @@ public class OrAttributeResolver {
 		return indices;
 	}
 	
+	// TIMO START
+	
+	public static int[] getAttributePath( SDFAttributeList schema, String absoluteAttributeName ) {
+		String sensorName = getSensorName(absoluteAttributeName);
+		String relativeAttributeName = getAttributeName(absoluteAttributeName);
+		String[] paths = getAttributeNamePath(relativeAttributeName);
+		
+		int[] indices = new int[paths.length];
+		SDFAttributeList currentAttributeList = schema;
+		for( int i = 0; i < indices.length; i++ ) {
+			indices[i] = getIndexOf( currentAttributeList, paths[i]);
+			currentAttributeList = currentAttributeList.get(indices[i]).getSubattributes();
+		}
+		
+		return indices;
+	}
+	
+	public static int getIndexOf( SDFAttributeList list, String attributeName ) {
+		for( int i = 0; i < list.getAttributeCount(); i++ ) {
+			if( list.getAttribute(i).getAttributeName().equals(attributeName))
+				return i;
+		}
+		return -1;
+	}
+	
+	public static int[] getAttributePath( SDFAttributeList schema, String sensorName, String relativeAttributeName ) {
+		return getAttributePath(schema, sensorName + "." + relativeAttributeName );
+	}
+	
+	public static String getSensorName( String fullAttributeName ) {
+		String[] name = fullAttributeName.split("\\.");
+		if( name.length == 2 ) {
+			return name[0];
+		} else {
+			// fullAttributeName hatte keinen Sensornamen...
+			return null;
+		}
+	}
+	
+	public static String getAttributeName( String fullAttributeName ) {
+		String[] name = fullAttributeName.split("\\.");
+		if( name.length == 2 ) {
+			return name[1];
+		} else {
+			// fullAttributeName hatte keinen Sensornamen...
+			return name[0];
+		}
+	}
+	
+	// TIMO END
+	
+	public static String[] getAttributeNamePath( String relativeAttributeName ) {
+		String[] parts = relativeAttributeName.split("\\:");
+		String[] result = new String[parts.length];
+		
+		for( int i = 0; i < parts.length; i++ ) {
+			if( i == 0 ) 
+				result[i] = parts[i];
+			else {
+				result[i] = result[i-1] + ":" + parts[i];
+			}
+		}
+		return result;
+	}
+	
 	private static SDFAttribute resolveAttribute(SDFAttributeList attr, String name) {
 //		System.out.println("resolveAttribute: " + attr + ", name: " + name);
 		for(SDFAttribute a : attr) {
