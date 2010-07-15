@@ -31,11 +31,11 @@ public class OrAttributeResolver {
 		String relativeAttributeName = getAttributeName(absoluteAttributeName);
 		String[] paths = getAttributeNamePath(relativeAttributeName);
 		
-		int[] indices = new int[paths.length];
-		SDFAttributeList currentAttributeList = schema;
-		for( int i = 0; i < indices.length; i++ ) {
-			indices[i] = getIndexOf( currentAttributeList, paths[i]);
-			currentAttributeList = currentAttributeList.get(indices[i]).getSubattributes();
+		int[] indices = new int[paths.length-1];
+		SDFAttributeList currentAttributeList = schema.get(0).getSubattributes();
+		for( int i = 1; i < paths.length; i++ ) {
+			indices[i-1] = getIndexOf( currentAttributeList, paths[i]);
+			currentAttributeList = currentAttributeList.get(indices[i-1]).getSubattributes();
 		}
 		
 		return indices;
