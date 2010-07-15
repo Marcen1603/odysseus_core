@@ -65,6 +65,10 @@ TOKEN : /* Keywords */ {
 |	<K_TUMBLING_TIME_WINDOW: "TUMBLING-TIME-WINDOW">
 |	<K_WHERE: "WHERE">
 |   <K_TEST: "TESTOP">
+|   <K_ASSOCIATION_GEN: "ASSOCIATION-GEN">
+|   <K_ASSOCIATION_EVAL: "ASSOCIATION-EVAL">
+|   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
+|   <K_ASSOCIATION_SRC: "ASSOCIATION-SRC">
 }
 
 TOKEN:{
@@ -116,7 +120,11 @@ void AlgebraOp():{}{
 	BrokerOp() |
 	PredictionAssignOp() |
 	PredictionAssignOrOp() |
-	TestOp()
+	TestOp() |
+	AssociationGenOp() |
+	AssociationEvalOp() |
+	AssociationSelOp() |
+	AssociationSrcOp()
 }
 
 void TestOp(): {}{
@@ -338,4 +346,23 @@ void DefaultPredictionDefinition(): {}{
 
 void PredictionFunctionDefinition(): {}{
 	Identifier() ":=" Expression()";"	
+}
+
+void KeyValuePair(): {}{
+	Identifier() ":=" Identifier() ";"
+}
+
+void AssociationGenOp(): {} {
+  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() ")"}
+
+void AssociationEvalOp(): {} {
+  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," ( KeyValuePair() )* "," Identifier() "," Identifier() "," ( KeyValuePair() )* ")" 
+}
+
+void AssociationSelOp(): {} {
+  < K_ASSOCIATION_SEL > "(" Identifier() "," Identifier() "," Identifier() ")"
+}
+
+void AssociationSrcOp(): {} {
+  < K_ASSOCIATION_SRC > "(" Identifier() ")"
 }

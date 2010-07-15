@@ -75,27 +75,35 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_TEST = 36;
   /** RegularExpression Id. */
-  int IDENTIFIER = 37;
+  int K_ASSOCIATION_GEN = 37;
   /** RegularExpression Id. */
-  int LETTER = 38;
+  int K_ASSOCIATION_EVAL = 38;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 39;
+  int K_ASSOCIATION_SEL = 39;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 40;
+  int K_ASSOCIATION_SRC = 40;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 41;
+  int IDENTIFIER = 41;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 42;
+  int LETTER = 42;
   /** RegularExpression Id. */
-  int REGEXP = 43;
+  int SPECIAL_CHARS = 43;
   /** RegularExpression Id. */
-  int FLOAT = 44;
+  int CHAR_LITERAL = 44;
   /** RegularExpression Id. */
-  int INTEGER = 45;
+  int QUOTED_IDENTIFIER = 45;
   /** RegularExpression Id. */
-  int DIGIT = 46;
+  int COMPARE_OPERATOR = 46;
   /** RegularExpression Id. */
-  int IPADDRESS = 47;
+  int REGEXP = 47;
+  /** RegularExpression Id. */
+  int FLOAT = 48;
+  /** RegularExpression Id. */
+  int INTEGER = 49;
+  /** RegularExpression Id. */
+  int DIGIT = 50;
+  /** RegularExpression Id. */
+  int IPADDRESS = 51;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -139,6 +147,10 @@ public interface ProceduralExpressionParserConstants {
     "\"TUMBLING-TIME-WINDOW\"",
     "\"WHERE\"",
     "\"TESTOP\"",
+    "\"ASSOCIATION-GEN\"",
+    "\"ASSOCIATION-EVAL\"",
+    "\"ASSOCIATION-SEL\"",
+    "\"ASSOCIATION-SRC\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

@@ -26,6 +26,10 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolv
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAlgebraOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAndPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationEvalOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationGenOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSelOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
@@ -35,6 +39,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJoinOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTKeyValuePair;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTLogicalPlan;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNotPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNumber;
@@ -994,6 +999,41 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		((ArrayList)data).add(new Integer(0));
 		
 		return data;
+	}
+
+
+	@Override
+	public Object visit(ASTKeyValuePair node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Object visit(ASTAssociationGenOp node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Object visit(ASTAssociationEvalOp node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Object visit(ASTAssociationSelOp node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Object visit(ASTAssociationSrcOp node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

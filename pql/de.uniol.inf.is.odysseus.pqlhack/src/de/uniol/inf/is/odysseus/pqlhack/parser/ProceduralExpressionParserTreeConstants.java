@@ -39,6 +39,11 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTPREDICTIONDEFINITION = 33;
   public int JJTDEFAULTPREDICTIONDEFINITION = 34;
   public int JJTPREDICTIONFUNCTIONDEFINITION = 35;
+  public int JJTKEYVALUEPAIR = 36;
+  public int JJTASSOCIATIONGENOP = 37;
+  public int JJTASSOCIATIONEVALOP = 38;
+  public int JJTASSOCIATIONSELOP = 39;
+  public int JJTASSOCIATIONSRCOP = 40;
 
 
   public String[] jjtNodeName = {
@@ -78,6 +83,11 @@ public interface ProceduralExpressionParserTreeConstants
     "PredictionDefinition",
     "DefaultPredictionDefinition",
     "PredictionFunctionDefinition",
+    "KeyValuePair",
+    "AssociationGenOp",
+    "AssociationEvalOp",
+    "AssociationSelOp",
+    "AssociationSrcOp",
   };
 }
-/* JavaCC - OriginalChecksum=0488a01f48810066ec79574f07818c6e (do not edit this line) */
+/* JavaCC - OriginalChecksum=a20383ec0b6c190527bc610429486c1c (do not edit this line) */
