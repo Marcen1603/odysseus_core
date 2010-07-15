@@ -1795,9 +1795,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
       try {
         jj_consume_token(K_ASSOCIATION_SEL);
         jj_consume_token(54);
-        Identifier();
-        jj_consume_token(56);
-        Identifier();
+        AlgebraOp();
         jj_consume_token(56);
         Identifier();
         jj_consume_token(55);

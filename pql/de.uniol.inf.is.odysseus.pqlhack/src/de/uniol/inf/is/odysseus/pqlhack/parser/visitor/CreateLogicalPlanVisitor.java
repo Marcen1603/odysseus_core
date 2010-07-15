@@ -1033,7 +1033,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		childOp.subscribeSink(gen, 1, sourceOutPort, childOp.getOutputSchema());
 		
         ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
-
+        
 		
 		// pass only the attribute resolver to the children
 		ArrayList newData = new ArrayList();
@@ -1058,7 +1058,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		childOp.subscribeSink(eval, 0, sourceOutPort, childOp.getOutputSchema());
 		
         ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
-        eval.setName(identifier.getName());
+        eval.setFunctionID(identifier.getName());
         
         HashMap<String, String> params = buildKeyMap((ASTKeyValueList) node.jjtGetChild(2));
         eval.setAlgorithmParameter(params);
@@ -1080,7 +1080,9 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		// TODO Auto-generated method stub
+		
+		
+		
 		return null;
 	}
 

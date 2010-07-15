@@ -364,7 +364,7 @@ void AssociationEvalOp(): {} {
 }
 
 void AssociationSelOp(): {} {
-  < K_ASSOCIATION_SEL > "(" Identifier() ")"
+  < K_ASSOCIATION_SEL > "(" AlgebraOp() "," Identifier() ")"
 }
 
 void AssociationSrcOp(): {} {
