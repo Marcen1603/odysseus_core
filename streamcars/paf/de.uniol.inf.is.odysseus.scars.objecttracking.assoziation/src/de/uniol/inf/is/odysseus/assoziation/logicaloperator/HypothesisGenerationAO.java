@@ -71,5 +71,13 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	public void setID(String iD) {
 		ID = iD;
 	}
+	
+	public SDFAttributeList getLeftSchema() {
+		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
+	}
+	
+	public SDFAttributeList getRightSchema() {
+		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
+	}
 
 }
