@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * The Hypothesis Generation has two inputstreams:
@@ -24,9 +23,6 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 	
 	private MVRelationalTuple<M> oldList;
 	private MVRelationalTuple<M> newList;
-	
-	private SDFAttributeList oldSchema;
-	private SDFAttributeList newSchema;
 	
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
@@ -68,14 +64,6 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList newSchema = new SDFAttributeList();
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(this.oldSchema, this.oldObjListPath));
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(this.newSchema, this.newObjListPath));
-		return newSchema;
 	}
 	
 	public int[] getOldObjListPath() {
