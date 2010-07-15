@@ -8,10 +8,12 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 public class KalmanCorrectStateEstimate<M extends IProbability> implements ICorrectStateEstimateFunction<M> {
 
 	@Override
-	public MVRelationalTuple<M> computeStateEstimate(MVRelationalTuple<M> Old,
-			MVRelationalTuple<M> New, Object Gain, Object[] matrixes) {
+	public double[] correctStateEstimate(double[] measurementOld,
+			double[] measurementNew, double[][] gain, Object matrixes) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 }

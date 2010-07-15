@@ -32,6 +32,8 @@ public class FilterPO<M extends IProbability & IPredictionFunctionKey<IPredicate
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 	
+	// output modell?
+	
 	public FilterPO() {
 	super();	
 	}
@@ -70,45 +72,41 @@ public class FilterPO<M extends IProbability & IPredictionFunctionKey<IPredicate
 	
 	// für Berechnung benötigte Matrixen
 	Object matrixes[] = null;
-	Double[][] Gain = null;
+	double[][] gain = null;
 	// traverse connection list and filter
 	for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
 		
 		MVRelationalTuple<M> oldTuple = connected.getRight();
-		MVRelationalTuple<M> newTuple = connected.getRight();
+		MVRelationalTuple<M> newTuple = connected.getLeft();
 		
-		ArrayList<int[]> measurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(this.leftSchema);
-		ArrayList<int[]> measurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(this.rightSchema);
+	//	ArrayList<int[]> measurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(this.leftSchema);
+//		ArrayList<int[]> measurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(this.rightSchema);
 		
+		double[] measurementOld = newTuple.getMeasurementValues();
+		double[] measurementNew = oldTuple.getMeasurementValues();
+		
+		double[][] newCovariance = newTuple.getMetadata().getCovariance();
+		double[][] oldCovariance = oldTuple.getMetadata().getCovariance();
+		
+		double[] correctedMeasurement;
+		double[][] correctedCovariance;
+	
 		// compute gain
-		Gain = gainFunction.computeGain(oldTuple, measurementValuePathsTupleOld, matrixes);
+		gain = gainFunction.computeGain(oldCovariance, newCovariance, matrixes);
 		
 		// update state covariance
-		//	correctStateCovarianceFunction.computeStateCovariance(oldTuple, measurementValuePathsTupleOld, Gain, matrixes));
+		correctedCovariance = correctStateCovarianceFunction.correctStateCovariance(oldCovariance, gain, matrixes);
+		oldTuple.getMetadata().setCovariance(correctedCovariance);
 		
+		// update state estimate
+		correctedMeasurement = correctStateEstimateFunction.correctStateEstimate(measurementOld, measurementNew, gain, matrixes);
+		// oldTuple.
+
 	
 	}
-
-
-	
-/*	// zuerst den gain berechnen 
-	if (port == 0) oldTuple= object;
-	
-	
-	// Messwerte
-	if (port == 1) {
 		
-		newTuple = object; 
-		// update Covariance
-		//oldTuple = correctStateCovarianceFunction.computeStateCovariance(oldTuple, Gain, matrixes);
-		// update State
-		oldTuple = correctStateEstimateFunction.computeStateEstimate(oldTuple,newTuple, Gain, matrixes);
-		
-	*/	
-		
-		
-		// transfer to broker
-		transfer(object);
+	// transfer to broker
+	transfer(object);
 	
 	
 	}

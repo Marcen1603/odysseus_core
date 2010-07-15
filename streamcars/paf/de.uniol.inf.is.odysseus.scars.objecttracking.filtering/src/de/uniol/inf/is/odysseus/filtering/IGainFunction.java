@@ -15,5 +15,5 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  */
 public interface IGainFunction<M extends IProbability> {
 
-	public Double[][] computeGain(MVRelationalTuple<M> Old, ArrayList<int[]> mesurementValuePathsTupleOld, Object[] matrixes);
+	public double[][] computeGain(double[][] covarianceOld, double[][] covarianceNew, Object[] matrixes);
 }

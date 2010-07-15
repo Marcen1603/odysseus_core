@@ -16,12 +16,12 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  */
 public class KalmanGainFunction<M extends IProbability> implements IGainFunction<M> {
 
-
 	@Override
-	public Double[][] computeGain(MVRelationalTuple<M> Old,
-			ArrayList<int[]> mesurementValuePathsTupleOld, Object[] matrixes) {
+	public double[][] computeGain(double[][] oldCovariance, double[][] newCovariance, Object[] matrixes) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }

@@ -9,9 +9,10 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 public class KalmanCorrectStateCovarianceFunction<M extends IProbability> implements ICorrectStateCovarianceFunction<M> {
 
+
 	@Override
-	public MVRelationalTuple<M> computeStateCovariance(MVRelationalTuple<M> Old,
-			ArrayList<int[]> mesurementValuePathsTupleOld, Double[][] Gain, Object[] matrixes) {
+	public double[][] correctStateCovariance(double[][] covarianceOld,
+			double[][] gain, Object[] matrixes) {
 		// TODO Auto-generated method stub
 		return null;
 	}
