@@ -39,10 +39,11 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTPredictionDefinition node, Object data);
   public Object visit(ASTDefaultPredictionDefinition node, Object data);
   public Object visit(ASTPredictionFunctionDefinition node, Object data);
+  public Object visit(ASTKeyValueList node, Object data);
   public Object visit(ASTKeyValuePair node, Object data);
   public Object visit(ASTAssociationGenOp node, Object data);
   public Object visit(ASTAssociationEvalOp node, Object data);
   public Object visit(ASTAssociationSelOp node, Object data);
   public Object visit(ASTAssociationSrcOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=7b7cec3d2647f1f9db8e540ca12d9775 (do not edit this line) */
+/* JavaCC - OriginalChecksum=52183040585a2c18ba7b182f688b9de8 (do not edit this line) */

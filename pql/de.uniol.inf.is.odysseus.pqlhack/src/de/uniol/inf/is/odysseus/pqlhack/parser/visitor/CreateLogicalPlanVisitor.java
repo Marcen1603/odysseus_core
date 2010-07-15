@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisEvaluationAO;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
@@ -39,6 +40,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTJoinOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTKeyValueList;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTKeyValuePair;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTLogicalPlan;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTNotPredicate;
@@ -63,6 +65,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.JJTProceduralExpressionParserState;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -92,7 +95,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 	public Object visit(SimpleNode node, Object data) {
 		return null;
 	}
-
 	
 	public Object visit(ASTLogicalPlan node, Object data) {
 		return node.childrenAccept(this, data);
@@ -1018,8 +1020,29 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTAssociationEvalOp node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		IAttributeResolver attrRes = (IAttributeResolver)((ArrayList)data).get(0);
+		
+		HypothesisEvaluationAO eval = new HypothesisEvaluationAO();
+		// first the output schema is empty, it will be 
+		// filled by the projection attributes
+		
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtAccept(this, data);
+		int sourceOutPort = ((Integer)childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(0);
+		childOp.subscribeSink(eval, 0, sourceOutPort, childOp.getOutputSchema());
+		
+        ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+        eval.setName(identifier.getName());
+        
+        identifier = (ASTIdentifier) node.jjtGetChild(1);
+        eval.setName(identifier.getName());
+		
+		// pass only the attribute resolver to the children
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+		newData.add(eval);
+		newData.add(new Integer(0));
+		return newData;
 	}
 
 
@@ -1032,6 +1055,12 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTKeyValueList node, Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}
