@@ -9,6 +9,16 @@ public class HypothesisSelectionAO<M extends IProbability> extends BinaryLogical
 
 	private static final long serialVersionUID = 1L;
 	
+	private String ID;
+	
+	public String getID() {
+		return ID;
+	}
+
+	public void setID(String iD) {
+		ID = iD;
+	}
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return null;
