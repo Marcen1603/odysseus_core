@@ -1,15 +1,18 @@
-package de.uniol.inf.is.odysseus.objecttracking.metadata.factory;
+
+package de.uniol.inf.is.odysseus.scars.objecttracking;
 
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
+import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
-public class CovarianceInitiator extends AbstractMetadataUpdater<ObjectTrackingMetadata, MVRelationalTuple<ObjectTrackingMetadata>> {
+public class CovarianceInitiator<M extends IProbability> extends AbstractMetadataUpdater<M, MVRelationalTuple<M>> {
 
 	SDFAttributeList schema;
 	
@@ -18,20 +21,25 @@ public class CovarianceInitiator extends AbstractMetadataUpdater<ObjectTrackingM
 	}
 	
 	@Override
-	public void updateMetadata(MVRelationalTuple<ObjectTrackingMetadata> inElem) {
-		inElem.getMetadata().setLatencyStart(System.nanoTime());
+	public void updateMetadata(MVRelationalTuple<M> inElem) {
+		//inElem.getMetadata().setLatencyStart(System.nanoTime());
 		
 		double[][] cov = null;
 		ArrayList<int[]> paths = getPathsOfMeasurements(this.schema);
 		
 		int counter = 0;
 		
-		// For each SDFAttribute in the schema:
-		for(SDFAttribute attr: this.schema){
-			if(SDFDatatypes.isMeasurementValue(attr.getDatatype())){
-				ArrayList covariance = ((SDFAttribute)attr).getCovariance();
+		
+		for (int[] path : paths)
+		{
+			Object resolvedObject = OrAttributeResolver.getSubSchema(this.schema, path);
+			if (resolvedObject instanceof SDFAttribute)
+			{
+				SDFAttribute attribute = (SDFAttribute) resolvedObject;
+				ArrayList<?> covariance = attribute.getCovariance();
 				
-				if(cov == null){
+				if(cov == null)
+				{
 					cov = new double[covariance.size()][covariance.size()];
 				}
 				
@@ -40,6 +48,10 @@ public class CovarianceInitiator extends AbstractMetadataUpdater<ObjectTrackingM
 				}
 				
 				counter++;
+			}
+			else
+			{
+				// not so good..
 			}
 		}
 		
