@@ -1327,7 +1327,7 @@ void AssociationGenOp(): {/*@bgen(jjtree) AssociationGenOp */
 /*@egen*/} {/*@bgen(jjtree) AssociationGenOp */
   try {
 /*@egen*/
-  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() ")"/*@bgen(jjtree)*/
+  <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
