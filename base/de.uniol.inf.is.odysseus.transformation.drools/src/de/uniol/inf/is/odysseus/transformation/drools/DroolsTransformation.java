@@ -113,6 +113,12 @@ public class DroolsTransformation implements ITransformation {
 		IPhysicalOperator physicalPO = null;
 		try {
 			physicalPO = top.getPhysicalInput();
+			
+			// The physical plan can have more than one
+			// root. So find all roots in the physical plan
+			// that have no owner. These roots belong to the
+			// current query.
+			
 		} catch (NoSuchElementException e) {
 			List<ILogicalOperator> errors = new ArrayList<ILogicalOperator>();
 			session.setGlobal("untranslatedOperators", errors);
