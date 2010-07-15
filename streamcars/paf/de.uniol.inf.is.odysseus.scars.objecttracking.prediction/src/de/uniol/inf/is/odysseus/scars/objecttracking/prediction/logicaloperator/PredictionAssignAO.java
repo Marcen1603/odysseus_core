@@ -30,8 +30,8 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 		predictionFunctions = new PredictionFunctionContainer<M>(predictionAO.getPredictionFunctions());
 	}
 	
-	public void initListPath(SDFAttributeList inputSchema, String[] listAttributeNamePath) {
-		pathToList = OrAttributeResolver.resolveIndices(inputSchema, listAttributeNamePath);
+	public void initListPath(SDFAttributeList inputSchema, String absoluteListNamePath) {
+		pathToList = OrAttributeResolver.getAttributePath(inputSchema, absoluteListNamePath);
 	}
 	
 	public int[] getPathToList() {
