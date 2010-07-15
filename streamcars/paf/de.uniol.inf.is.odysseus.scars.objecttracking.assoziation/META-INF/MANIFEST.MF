@@ -19,4 +19,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
 Require-Bundle: Commons.Math;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking
-Export-Package: de.uniol.inf.is.odysseus.assoziation
+Export-Package: de.uniol.inf.is.odysseus.assoziation,
+ de.uniol.inf.is.odysseus.assoziation.logicaloperator,
+ de.uniol.inf.is.odysseus.assoziation.physicaloperator
