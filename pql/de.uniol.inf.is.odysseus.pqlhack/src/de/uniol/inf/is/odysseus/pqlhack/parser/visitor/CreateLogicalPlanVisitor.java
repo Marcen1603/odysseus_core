@@ -901,8 +901,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		
 
 		prediction.subscribeToSource(inputForPrediction, 0, sourceOutPort, inputForPrediction.getOutputSchema());
-				
-		for(int i = 1; i<node.jjtGetNumChildren(); i++){
+		
+		ASTIdentifier listIdentifier = (ASTIdentifier)node.jjtGetChild(1);
+		prediction.initListPath(inputForPrediction.getOutputSchema(), listIdentifier.toString() );
+		
+		for(int i = 2; i<node.jjtGetNumChildren(); i++){
 			
 			// handle the standard prediction definitions
 			if(node.jjtGetChild(i) instanceof ASTPredictionDefinition){
@@ -993,6 +996,9 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 						}
 					}
 				}
+				
+				prediction.setDefaultPredictionFunction(expressions);	
+
 			}		
 		}
 		

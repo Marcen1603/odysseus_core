@@ -209,7 +209,7 @@ void PredictionAssignOp() : {}{
 }
 
 void PredictionAssignOrOp() : {}{
-	<K_SET_PREDICTION_OR>"(" AlgebraOp() "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
+	<K_SET_PREDICTION_OR>"(" AlgebraOp() "," (Identifier()) "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
 }
 
 void Predicate():{}{

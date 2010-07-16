@@ -873,6 +873,8 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         jj_consume_token(54);
         AlgebraOp();
         jj_consume_token(56);
+        Identifier();
+        jj_consume_token(56);
         label_7:
         while (true) {
           PredictionDefinition();

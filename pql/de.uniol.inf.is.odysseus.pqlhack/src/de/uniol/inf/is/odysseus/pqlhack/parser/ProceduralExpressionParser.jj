@@ -694,7 +694,7 @@ void PredictionAssignOrOp() : {/*@bgen(jjtree) PredictionAssignOrOp */
 /*@egen*/}{/*@bgen(jjtree) PredictionAssignOrOp */
         try {
 /*@egen*/
-	<K_SET_PREDICTION_OR>"(" AlgebraOp() "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"/*@bgen(jjtree)*/
+	<K_SET_PREDICTION_OR>"(" AlgebraOp() "," (Identifier()) "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
