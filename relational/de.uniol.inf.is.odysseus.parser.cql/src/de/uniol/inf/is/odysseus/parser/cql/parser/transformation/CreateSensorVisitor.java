@@ -51,7 +51,8 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		source.setPort(port.intValue());
 		source.setHost(host);
 		source.setOutputSchema(ex);
-		DataDictionary.getInstance().setView(name, source);
+		DataDictionary.getInstance().setLogicalView(name, source);
+//		DataDictionary.getInstance().setView(name, source);
 		return null;
 	}
 
