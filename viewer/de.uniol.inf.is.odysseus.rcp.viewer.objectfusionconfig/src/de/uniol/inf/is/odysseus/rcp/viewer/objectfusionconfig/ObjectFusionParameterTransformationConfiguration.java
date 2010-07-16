@@ -16,7 +16,9 @@ public class ObjectFusionParameterTransformationConfiguration implements IParame
 			ITimeInterval.class.getName(),
 			"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
 			"de.uniol.inf.is.odysseus.latency.ILatency",
-			"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability"));
+			"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability", 
+			"de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval",
+			"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime"));
 
 	@Override
 	public ParameterTransformationConfiguration get() {
