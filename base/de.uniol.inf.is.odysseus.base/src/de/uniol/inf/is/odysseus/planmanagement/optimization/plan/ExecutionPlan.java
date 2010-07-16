@@ -128,7 +128,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	public void close() {
 		if (isOpen()) {
 			for (IPartialPlan partialPlan : this.partialPlans) {
-				for (ISink<?> root : partialPlan.getRoots()) {
+				for (IPhysicalOperator root : partialPlan.getRoots()) {
 					root.close();
 				}
 			}

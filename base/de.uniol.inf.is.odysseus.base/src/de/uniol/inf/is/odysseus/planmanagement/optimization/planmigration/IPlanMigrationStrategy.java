@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
@@ -40,7 +42,7 @@ public interface IPlanMigrationStrategy {
 	 * @throws QueryOptimizationException
 	 */
 	public void migrateQuery(IOptimizer sender, IQuery runningQuery, 
-			IPhysicalOperator newPlanRoot) throws QueryOptimizationException;
+			List<IPhysicalOperator> newPlanRoot) throws QueryOptimizationException;
 	
 	public String getName();
 }

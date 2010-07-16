@@ -51,8 +51,10 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener{
 			if(((PlanExecutionEvent) eventArgs).getID().equals(PlanExecutionEvent.EXECUTION_STARTED)) {
 				System.out.println("Plan execution prepared...collecting memory usage data!");
 				for(IPartialPlan each : eventArgs.getSender().getExecutionPlan().getPartialPlans()) {
-					for(ISink<?> op : each.getRoots()) {
-						addMemListeners(op);
+					for(IPhysicalOperator op : each.getRoots()) {
+						if(op.isSink()){
+							addMemListeners((ISink<?>)op);
+						}
 					}
 					for(IIterableSource<?> op : each.getIterableSource()) {
 						addMemListeners(op);

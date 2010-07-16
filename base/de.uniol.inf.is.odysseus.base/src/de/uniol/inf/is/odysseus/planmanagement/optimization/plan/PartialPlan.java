@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -29,7 +30,7 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * Roots which should be scheduled.
 	 */
-	private List<ISink<?>> roots;
+	private List<IPhysicalOperator> roots;
 
 	/**
 	 * Priority with which the objects should be scheduled.
@@ -59,7 +60,7 @@ public class PartialPlan implements IPartialPlan {
 	 *            at runtime
 	 */
 	public PartialPlan(List<IIterableSource<?>> iterableSource,
-			List<ISink<?>> roots, int basePriority) {
+			List<IPhysicalOperator> roots, int basePriority) {
 		this.iterableSource = new ArrayList<IIterableSource<?>>(iterableSource);
 		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
 		for (int i=0;i<iterableSource.size();i++){
@@ -119,7 +120,7 @@ public class PartialPlan implements IPartialPlan {
 	 * ()
 	 */
 	@Override
-	public List<ISink<?>> getRoots() {
+	public List<IPhysicalOperator> getRoots() {
 		return roots;
 	}
 
@@ -164,7 +165,7 @@ public class PartialPlan implements IPartialPlan {
 	public String toString() {
 		String result = "Roots:";
 
-		for (ISink<?> root : this.roots) {
+		for (IPhysicalOperator root : this.roots) {
 			if (result != "") {
 				result += AppEnv.LINE_SEPARATOR;
 			}

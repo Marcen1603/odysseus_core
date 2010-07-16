@@ -17,12 +17,11 @@ import de.uniol.inf.is.odysseus.base.ITransformation;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.TransformationException;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
@@ -68,9 +67,15 @@ public class DroolsTransformation implements ITransformation {
 		}
 	}
 
+	/**
+	 * The plan can have more than one root, so more than
+	 * one root will be returned. However, the physical root
+	 * transformed of the logical operator passed to this methode
+	 * will be first in the list.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public IPhysicalOperator transform(ILogicalOperator op,
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op,
 			TransformationConfiguration config) throws TransformationException {
 		StatefulSession session = rulebase.newStatefulSession();
 		session.insert(config);
@@ -111,6 +116,7 @@ public class DroolsTransformation implements ITransformation {
 			e1.printStackTrace();
 		}
 		IPhysicalOperator physicalPO = null;
+		ArrayList<IPhysicalOperator> queryRoots = null;
 		try {
 			physicalPO = top.getPhysicalInput();
 			
@@ -118,6 +124,17 @@ public class DroolsTransformation implements ITransformation {
 			// root. So find all roots in the physical plan
 			// that have no owner. These roots belong to the
 			// current query.
+			FindQueryRootsVisitor visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
+			AbstractGraphWalker walker = new AbstractGraphWalker();
+			
+			// since we pass physicalPO to the walker, we can
+			// guarantee that the physical po will be the first
+			// operator in the list. The walker will check
+			// each node, whether it is a root or not. This
+			// will be done in order of visiting the nodes.
+			// physicalPO is the first node visited
+			walker.prefixWalkPhysical(physicalPO, visitor);
+			queryRoots = visitor.getResult(); 
 			
 		} catch (NoSuchElementException e) {
 			List<ILogicalOperator> errors = new ArrayList<ILogicalOperator>();
@@ -138,7 +155,10 @@ public class DroolsTransformation implements ITransformation {
 			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation result: \n" + printGraph.getResult());
 		}		
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
-		return physicalPO;
+		
+		
+//		return physicalPO;
+		return queryRoots;
 	}
 
 	

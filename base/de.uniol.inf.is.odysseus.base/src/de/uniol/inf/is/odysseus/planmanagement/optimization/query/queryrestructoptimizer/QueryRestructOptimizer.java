@@ -62,13 +62,13 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		// (Wolf)
 //		if (query.getRoot() == null || restruct == null
 //				|| restruct == ParameterDoRestruct.FALSE) {
-		if (query.getRoot() == null || queryShouldBeRewritten){
+		if (query.getRoots() == null || query.getRoots().isEmpty() || queryShouldBeRewritten){
 		try {
 				// create the physical plan
-				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
+				List<IPhysicalOperator> physicalPlanRoots = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
 						.getTransformationConfiguration());
 
-				postTransformationInit(query, physicalPlan);
+				postTransformationInit(query, physicalPlanRoots);
 			} catch (Throwable e) {
 				throw new QueryOptimizationException(
 						"Exeception while initialize query.", e);
@@ -107,10 +107,10 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 		// (Wolf)
 //		if (query.getRoot() == null || restruct == null
 //				|| restruct == ParameterDoRestruct.FALSE) {
-		if (query.getRoot() == null || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
+		if (query.getRoots() == null || query.getRoots().isEmpty() || (restruct != null && restruct == ParameterDoRestruct.TRUE)){
 		try {
 				// create the physical plan
-				IPhysicalOperator physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
+				List<IPhysicalOperator> physicalPlan = compiler.transform(query.getLogicalPlan(), query.getBuildParameter()
 						.getTransformationConfiguration());
 
 				postTransformationInit(query, physicalPlan);
@@ -122,12 +122,15 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 	}
 	
 	@Override
-	public void postTransformationInit(IQuery query, IPhysicalOperator physicalPlan) 
+	public void postTransformationInit(IQuery query, List<IPhysicalOperator> physicalPlan) 
 			throws QueryOptimizationException, OpenFailedException {
-		addBuffers(query, physicalPlan);
+		
+		for(IPhysicalOperator root: physicalPlan){
+			addBuffers(query, root);
+		}
 		
 		// Initialize the physical plan of the query.
-		query.initializePhysicalPlan(physicalPlan);
+		query.initializePhysicalRoots(physicalPlan);
 	}
 	
 	private void addBuffers(IQuery query, IPhysicalOperator physicalPlan) 
@@ -153,58 +156,61 @@ public class QueryRestructOptimizer implements IQueryOptimizer {
 			OptimizeParameter parameters, Set<String> rulesToUse)
 			throws QueryOptimizationException {
 		
-		ICompiler compiler = sender.getCompiler();
-		if (compiler == null) {
-			throw new QueryOptimizationException("Compiler is not loaded.");
-		}
-
-		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
-		if (restruct == null || restruct != ParameterDoRestruct.TRUE) {
-			// no restruct allowed
-			return new HashMap<IPhysicalOperator, ILogicalOperator>(0);
-		}
-
-		// create working copy of plan
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
-		AbstractGraphWalker walker = new AbstractGraphWalker();
-		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
-		ILogicalOperator logicalPlanCopy = copyVisitor.getResult();
-				
-		// create logical alternatives
-		List<ILogicalOperator> logicalAlternatives = compiler.createAlternativePlans(logicalPlanCopy,
-				rulesToUse);
-
-		try {
-			Map<IPhysicalOperator,ILogicalOperator> alternatives = new HashMap<IPhysicalOperator,ILogicalOperator>();
-			
-			for (ILogicalOperator logicalPlan : logicalAlternatives) {
-				// create alternative physical plans
-				List<IPhysicalOperator> physicalPlans = compiler.transformWithAlternatives(logicalPlan,
-						query.getBuildParameter().getTransformationConfiguration());	
-	
-				for (IPhysicalOperator physicalPlan : physicalPlans) {
-					addBuffers(query, physicalPlan);
-					
-					// put last sink on top
-					IPhysicalOperator oldRoot = query.getRoot();
-					if (oldRoot.isSource()) {
-						throw new QueryOptimizationException(
-								"Migration needs a sink only as operator root.");
-					}
-					IPhysicalOperator newRoot = oldRoot.clone();
-					((ISink)newRoot).subscribeToSource(physicalPlan, 0, 0, physicalPlan.getOutputSchema());
-					physicalPlan = newRoot;
-
-					alternatives.put(physicalPlan, logicalPlan);
-				}
-			}
-			
-			return alternatives;
-
-		} catch (Throwable e) {
-			throw new QueryOptimizationException(
-					"Exeception while initialize query.", e);
-		}
+		throw new RuntimeException("Does not work at the moment. At Marco: Kannst du das bitte so anpassen, " +
+				"dass jetzt berücksichtigt wird, dass bei der Transformation jetzt alle Roots (können jetzt ja" +
+				"auch mehrere sein) eines physischen Anfrageplans zurückgeliefert werden.");
+//		ICompiler compiler = sender.getCompiler();
+//		if (compiler == null) {
+//			throw new QueryOptimizationException("Compiler is not loaded.");
+//		}
+//
+//		ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
+//		if (restruct == null || restruct != ParameterDoRestruct.TRUE) {
+//			// no restruct allowed
+//			return new HashMap<IPhysicalOperator, ILogicalOperator>(0);
+//		}
+//
+//		// create working copy of plan
+//		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
+//		AbstractGraphWalker walker = new AbstractGraphWalker();
+//		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
+//		ILogicalOperator logicalPlanCopy = copyVisitor.getResult();
+//				
+//		// create logical alternatives
+//		List<ILogicalOperator> logicalAlternatives = compiler.createAlternativePlans(logicalPlanCopy,
+//				rulesToUse);
+//
+//		try {
+//			Map<IPhysicalOperator,ILogicalOperator> alternatives = new HashMap<IPhysicalOperator,ILogicalOperator>();
+//			
+//			for (ILogicalOperator logicalPlan : logicalAlternatives) {
+//				// create alternative physical plans
+//				List<IPhysicalOperator> physicalPlans = compiler.transformWithAlternatives(logicalPlan,
+//						query.getBuildParameter().getTransformationConfiguration());	
+//	
+//				for (IPhysicalOperator physicalPlan : physicalPlans) {
+//					addBuffers(query, physicalPlan);
+//					
+//					// put last sink on top
+//					IPhysicalOperator oldRoot = query.getRoot();
+//					if (oldRoot.isSource()) {
+//						throw new QueryOptimizationException(
+//								"Migration needs a sink only as operator root.");
+//					}
+//					IPhysicalOperator newRoot = oldRoot.clone();
+//					((ISink)newRoot).subscribeToSource(physicalPlan, 0, 0, physicalPlan.getOutputSchema());
+//					physicalPlan = newRoot;
+//
+//					alternatives.put(physicalPlan, logicalPlan);
+//				}
+//			}
+//			
+//			return alternatives;
+//
+//		} catch (Throwable e) {
+//			throw new QueryOptimizationException(
+//					"Exeception while initialize query.", e);
+//		}
 	}
 
 }

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.base.planmanagement.query;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IOperatorOwner;
@@ -77,6 +78,10 @@ public interface IQuery extends
 	public ILogicalOperator getLogicalPlan();
 
 	/**
+	 * The method must be called for each of the physical roots of a query.
+	 * Usually there is only one, but sometimes like in object tracking,
+	 * there maybe more than one root in a query.
+	 * 
 	 * Initializes the physical plan of this query. Should be used if a new plan
 	 * is set. This method also opens the physical plan and sets the owner
 	 * relationship between the query and the operators.
@@ -84,12 +89,12 @@ public interface IQuery extends
 	 * The new physical plan is stored as the initial physical plan and is set
 	 * as the current active physical root.
 	 * 
-	 * @param physicalChilds
-	 *            The new physical plan of this Query.
+	 * @param roots
+	 *            The roots of this Query.
 	 * @throws OpenFailedException
 	 *             An {@link Exception} occurs during opening an opertaor.
 	 */
-	public void initializePhysicalPlan(IPhysicalOperator physicalChilds)
+	public void initializePhysicalRoots(List<IPhysicalOperator> roots)
 			throws OpenFailedException;
 
 	/**
@@ -108,7 +113,7 @@ public interface IQuery extends
 	 * @throws OpenFailedException
 	 *             An {@link Exception} occurred during opening an opertaor.
 	 */
-	public IPhysicalOperator setRoot(IPhysicalOperator root)
+	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> root)
 			throws OpenFailedException;
 
 	/**
@@ -116,22 +121,7 @@ public interface IQuery extends
 	 * 
 	 * @return The physical plan of this query.
 	 */
-	public IPhysicalOperator getRoot();
-
-	/**
-	 * Sets the physical children of this query. These children are the physical
-	 * operators which are necessary for the execution of this query. It also
-	 * sets the owner relationship between the query and the operators.
-	 * 
-	 * This method should be only used if special optimizations are processed.
-	 * For initial setting the physical plan use
-	 * {@link #initializePhysicalPlan(IPhysicalOperator)}.
-	 * 
-	 * @param physicalChilds
-	 *            Physical operators which are necessary for the execution of
-	 *            this query.
-	 */
-	public void setPhysicalChilds(ArrayList<IPhysicalOperator> physicalChilds);
+	public List<IPhysicalOperator> getRoots();
 
 	/**
 	 * Returns the direct physical children which are necessary for the

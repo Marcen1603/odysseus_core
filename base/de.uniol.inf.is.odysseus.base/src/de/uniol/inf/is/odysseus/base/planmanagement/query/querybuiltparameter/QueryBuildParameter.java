@@ -4,6 +4,8 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AbstractTypeSafeMap;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.strategies.CloneDefaultRootStrategy;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.strategies.IDefaultRootStrategy;
 
 /**
  * QueryBuildParameter provides a set of {@link AbstractQueryBuildParameter}.
@@ -32,9 +34,20 @@ public class QueryBuildParameter extends
 			set(new ParameterTransformationConfiguration(null));
 		}
 
+		// if no default root is set, 
+		// we need no default root strategy
 		if (!contains(ParameterDefaultRoot.class)) {
 			set(new ParameterDefaultRoot(null));
+			set(new ParameterDefaultRootStrategy(null));
 		}
+		// if there is a default root, but no default root
+		// strategy, we add a clone strategy, that clones
+		// the default root and adds a copy to each root of
+		// the query
+		else if(!contains(ParameterDefaultRootStrategy.class)){
+			set(new ParameterDefaultRootStrategy(new CloneDefaultRootStrategy()));
+		}
+			
 
 		if (!contains(ParameterParserID.class)) {
 			set(new ParameterParserID(""));
@@ -110,5 +123,9 @@ public class QueryBuildParameter extends
 	
 	public boolean getParameterInstallMetadataListener(){
 		return ((ParameterInstallMetadataListener)get(ParameterInstallMetadataListener.class)).getValue();
+	}
+	
+	public IDefaultRootStrategy getDefaultRootStrategy(){
+		return (IDefaultRootStrategy)get(ParameterDefaultRootStrategy.class).getValue();
 	}
 }

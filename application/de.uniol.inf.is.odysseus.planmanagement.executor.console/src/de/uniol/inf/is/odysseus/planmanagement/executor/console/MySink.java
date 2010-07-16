@@ -6,6 +6,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSink;
 
 public class MySink extends AbstractSink<Object> {
 
+	public MySink(){
+	}
+	
+	public MySink(MySink original){
+		super();
+	}
+	
 	@Override
 	protected void process_next(Object object, int port, boolean isReadOnly) {
 		System.out.println("Port:" + port + ", Object:" + object.toString());
@@ -13,7 +20,7 @@ public class MySink extends AbstractSink<Object> {
 
 	@Override
 	public MySink clone()  {
-		throw new RuntimeException("Clone Not implemented yet");
+		return new MySink(this);
 	}
 
 	@Override

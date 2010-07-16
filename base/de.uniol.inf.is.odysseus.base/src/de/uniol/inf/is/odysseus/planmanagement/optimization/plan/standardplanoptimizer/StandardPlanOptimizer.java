@@ -64,14 +64,13 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// check each query
 		for (IQuery query : queries) {
 			// create a physical plan if none is set
-			if (query.getRoot() == null) {
-				IPhysicalOperator physicalPlan = sender.getCompiler()
+			if (query.getRoots() == null || query.getRoots().isEmpty()) {
+				List<IPhysicalOperator> physicalPlan = sender.getCompiler()
 						.transform(
 								query.getLogicalPlan(),
-								query.getBuildParameter()
-										.getTransformationConfiguration());
+								query.getBuildParameter().getTransformationConfiguration());
 
-				query.initializePhysicalPlan(physicalPlan);
+				query.initializePhysicalRoots(physicalPlan);
 			}
 		}
 	}
@@ -109,45 +108,55 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// Each query will be one PartialPlan. Duplicated operators will be
 		// ignored.
 		for (IQuery query : allQueries) {
-			// if the root is not checked
-			if (!roots.contains(query.getRoot())) {
-				// Add root
-				roots.add(query.getRoot());
-
-				// Get all iterable sources in the current physical plan.
-				if (query.getRoot().isSink()) {
-					sourcesTmp = (ArrayList<IIterableSource<?>>) iterableSources((ISink<?>) query
-							.getRoot());
-				} else {
-					sourcesTmp = (ArrayList<IIterableSource<?>>) iterableSources((ISource<?>) query
-							.getRoot());
-				}
-
-				partialPlanSources = new ArrayList<IIterableSource<?>>();
-
-				// store all new iterable sources as global sources and all
-				// pipes as PartialPlan sources.
-				for (IIterableSource<?> iterableSource : sourcesTmp) {
-					// IterableSource is a Pipe
-					if (iterableSource.isSink()
-							&& !partialPlanSources.contains(iterableSource)) {
-						partialPlanSources.add(iterableSource);
-					} else if (!iterableSource.isSink() // IterableSource is a
-														// global Source
-							&& !leafSources.contains(iterableSource)) {
-						leafSources.add(iterableSource);
+			partialPlanSources = new ArrayList<IIterableSource<?>>();
+			for(IPhysicalOperator curRoot : query.getRoots()){
+			
+				// if the root is not checked
+				if (!roots.contains(curRoot)) {
+					// Add root
+					roots.add(curRoot);
+	
+					// Get all iterable sources in the current physical plan.
+					if (curRoot.isSink()) {
+						sourcesTmp = (ArrayList<IIterableSource<?>>) iterableSources((ISink<?>) curRoot);
+					} else {
+						sourcesTmp = (ArrayList<IIterableSource<?>>) iterableSources((ISource<?>) curRoot);
+					}
+	
+//					partialPlanSources = new ArrayList<IIterableSource<?>>();
+	
+					// store all new iterable sources as global sources and all
+					// pipes as PartialPlan sources.
+					for (IIterableSource<?> iterableSource : sourcesTmp) {
+						// IterableSource is a Pipe
+						if (iterableSource.isSink()
+								&& !partialPlanSources.contains(iterableSource)) {
+							partialPlanSources.add(iterableSource);
+						} else if (!iterableSource.isSink() // IterableSource is a
+															// global Source
+								&& !leafSources.contains(iterableSource)) {
+							leafSources.add(iterableSource);
+						}
 					}
 				}
-
-				// create a PartialPlan for this query
-				if (query.getRoot().isSink()
-						&& !partialPlanSources.isEmpty()) {
-					ArrayList<ISink<?>> root = new ArrayList<ISink<?>>();
-					root.add((ISink<?>) query.getRoot());
-					partialPlans.add(new PartialPlan(partialPlanSources, root,
-							query.getPriority()));
-				}
 			}
+			
+			// create a PartialPlan for this query
+			
+			// OLD code
+//			if (query.getRoot().isSink()
+//					&& !partialPlanSources.isEmpty()) {
+//				ArrayList<ISink<?>> root = new ArrayList<ISink<?>>();
+//				root.add((ISink<?>) query.getRoot());
+//				partialPlans.add(new PartialPlan(partialPlanSources, root,
+//						query.getPriority()));
+//			}
+			
+			// NEW code
+			if (!partialPlanSources.isEmpty()) {
+				partialPlans.add(new PartialPlan(partialPlanSources, query.getRoots(), query.getPriority()));
+			}		
+			
 		}
 
 		// Create a new execution plan with the found informations.

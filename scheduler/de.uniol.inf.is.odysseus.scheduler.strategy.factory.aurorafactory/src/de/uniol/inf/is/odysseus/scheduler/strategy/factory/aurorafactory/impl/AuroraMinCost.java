@@ -3,12 +3,13 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 
 public class AuroraMinCost extends AbstractExecListScheduling {
 
@@ -19,8 +20,10 @@ public class AuroraMinCost extends AbstractExecListScheduling {
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(IPartialPlan plan) {
 		List<IIterableSource<?>> execList = new LinkedList<IIterableSource<?>>();
-		for (ISink<?> sink : plan.getRoots()) {
-			postOrderAdd(sink, execList);
+		for (IPhysicalOperator curRoot : plan.getRoots()) {
+			if(curRoot.isSink()){
+				postOrderAdd((ISink<?>)curRoot, execList);
+			}
 		}
 		return execList;
 	}

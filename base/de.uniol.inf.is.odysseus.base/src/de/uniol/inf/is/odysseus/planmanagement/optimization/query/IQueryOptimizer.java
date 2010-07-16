@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,7 +71,7 @@ public interface IQueryOptimizer {
 	 *             An exception during plan initializing.
 	 */
 	public void postTransformationInit(IQuery query,
-			IPhysicalOperator physicalPlan) throws QueryOptimizationException,
+			List<IPhysicalOperator> physicalPlan) throws QueryOptimizationException,
 			OpenFailedException;
 	
 	/**

@@ -163,7 +163,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 	
 	@SuppressWarnings("unchecked")
 	private void updateMetadataListener(IQuery editableQuery) {
-		new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoot(), new InstallMetadataListenerVisitor());
+		// the graph walker walks through the whole plan
+		// so we can start at the first root of the plan
+		// and all roots will be visited.
+		new AbstractGraphWalker().prefixWalkPhysical(editableQuery.getRoots().get(0), new InstallMetadataListenerVisitor());
 	}
 	
 	@Override
@@ -180,6 +183,13 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
+		
+		if(0 == 0){
+			throw new RuntimeException("StandardOptimizer assumes acyclic trees, \n" +
+					"however we can have cyclic graphs. OptimizationTestConsole.e() will not work.\n" +
+					"You can remove this exception, however check that the query only contains a tree");
+		}
+		
 		this.logger.info("Start reoptimize query ID "+query.getID());
 		
 		if (this.getRegisteredPlanMigrationStrategies().isEmpty()) {
@@ -239,7 +249,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
 			for (IPhysicalOperator cPlan : candidates) {
 				for (String strategy : this.getRegisteredPlanMigrationStrategies()) {
-					migrationCandidates.add(new PlanMigration(query.getRoot(), cPlan, getPlanMigrationStrategy(strategy)));
+					migrationCandidates.add(new PlanMigration(query.getRoots().get(0), cPlan, getPlanMigrationStrategy(strategy)));
 				}
 			}
 			// pick near optimal plan with acceptable migration cost
@@ -250,7 +260,9 @@ public class StandardOptimizer extends AbstractOptimizer {
 			
 			// start migration to new plan 
 			this.logger.info("Start migration to new physical plan (query ID "+query.getID()+")");
-			optimalMigration.getStrategy().migrateQuery(this, query, optimalMigration.getNewPlan());
+			ArrayList<IPhysicalOperator> listOfRoots = new ArrayList<IPhysicalOperator>();
+			listOfRoots.add(optimalMigration.getNewPlan());
+			optimalMigration.getStrategy().migrateQuery(this, query, listOfRoots);
 			
 			((IAdvancedExecutor)sender).updateExecutionPlan();
 			

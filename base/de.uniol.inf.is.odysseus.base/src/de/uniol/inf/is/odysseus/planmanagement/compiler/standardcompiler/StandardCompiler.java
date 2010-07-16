@@ -205,7 +205,7 @@ public class StandardCompiler implements ICompiler {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public IPhysicalOperator transform(ILogicalOperator logicalPlan,
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException {
 		// create working copy of plan
@@ -249,15 +249,15 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	@Override
-	public List<IPhysicalOperator> transformWithAlternatives(
+	public List<List<IPhysicalOperator>> transformWithAlternatives(
 			ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException {
 		// TODO mehrere Alternativen muessen generiert werden, z.B. durch
 		// verschiedene Join-Implementationen
-		IPhysicalOperator p = transform(logicalPlan,
+		ArrayList<IPhysicalOperator> p = transform(logicalPlan,
 				transformationConfiguration);
-		List<IPhysicalOperator> list = new ArrayList<IPhysicalOperator>(1);
+		List<List<IPhysicalOperator>> list = new ArrayList<List<IPhysicalOperator>>(1);
 		list.add(p);
 		return list;
 	}

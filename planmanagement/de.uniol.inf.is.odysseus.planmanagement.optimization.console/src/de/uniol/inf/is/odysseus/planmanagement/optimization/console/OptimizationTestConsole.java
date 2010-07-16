@@ -199,7 +199,10 @@ public class OptimizationTestConsole implements
 
 			IPlan plan = (IPlan) this.executor.getSealedPlan();
 			IQuery query = plan.getQuery(queryIds.iterator().next());
-			IPhysicalOperator op = query.getRoot();
+			// @Marco: Ist das richtig. Du hattest vorher nur eine Root.
+			// Jetzt gibt es ja mehrere. Brauchst du weiterhin nur eine
+			// Root.
+			IPhysicalOperator op = query.getRoots().get(0);
 			System.out.println(op.getName());
 
 			this.executor.getOptimizerConfiguration().set(
@@ -467,6 +470,12 @@ public class OptimizationTestConsole implements
 	}
 
 	public List<Measure> e(EvalQuery evalQuery, int seconds) {
+		if(0 == 0){
+			throw new RuntimeException("OptimizationTestConsole assumes acyclic trees, \n" +
+					"however we can have cyclic graphs. OptimizationTestConsole.e() will not work.\n" +
+					"You can remove this exception, however check that the query only contains a tree");
+		}
+		
 		List<Measure> measures = new ArrayList<Measure>(seconds);
 		System.out.println(evalQuery + " " + seconds);
 		String sep = ";";
@@ -544,7 +553,7 @@ public class OptimizationTestConsole implements
 							System.out
 									.println("------------------------------------> Reopt durch, ggf. Senke anpassen");
 							setOptimizationSink((OptimizationTestSink) q
-									.getRoot());
+									.getRoots().get(0));
 						}
 					};
 					new Thread(reopt).start();
@@ -684,8 +693,15 @@ public class OptimizationTestConsole implements
 	private void _helpMakeQueryBad(IQuery query)
 			throws OpenFailedException, NoOptimizerLoadedException,
 			QueryOptimizationException {
+		
+		if(0 == 0){
+			throw new RuntimeException("OptimizationTestConsole assumes acyclic trees, \n" +
+					"however we can have cyclic graphs. OptimizationTestConsole.e() will not work.\n" +
+					"You can remove this exception, however check that the query only contains a tree");
+		}
+		
 		System.out.println("Rebuilding Query to Bad Query");
-		IPhysicalOperator root = query.getRoot();
+		IPhysicalOperator root = query.getRoots().get(0);
 		System.out.println(root.getName());
 		IPhysicalOperator project = ((ISink<?>) root).getSubscribedToSource(0)
 				.getTarget();
@@ -726,7 +742,9 @@ public class OptimizationTestConsole implements
 		newSelect.setOutputSchema(lastJoin.getOutputSchema().clone());
 		PhysicalRestructHelper.appendOperator(newSelect, lastJoin);
 		PhysicalRestructHelper.appendOperator(project, newSelect);
-		query.initializePhysicalPlan(root);
+		ArrayList<IPhysicalOperator> listOfRoots = new ArrayList<IPhysicalOperator>();
+		listOfRoots.add(root);
+		query.initializePhysicalRoots(listOfRoots);
 		this.executor.updateExecutionPlan();
 	}
 

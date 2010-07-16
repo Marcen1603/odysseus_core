@@ -155,8 +155,10 @@ public class Plan implements IPlan {
 		ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 
 		for (IQuery query : getEdittableQueries()) {
-			if (!roots.contains(query.getRoot())) {
-				roots.add(query.getRoot());
+			for(IPhysicalOperator curRoot: query.getRoots()){
+				if (!roots.contains(curRoot)) {
+					roots.add(curRoot);
+				}
 			}
 		}
 

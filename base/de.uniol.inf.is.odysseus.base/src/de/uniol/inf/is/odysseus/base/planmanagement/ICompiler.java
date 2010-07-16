@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.base.planmanagement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -84,7 +85,7 @@ public interface ICompiler extends IInfoProvider {
 	 *             An {@link Exception} which occurs during transformation the
 	 *             query.
 	 */
-	public IPhysicalOperator transform(ILogicalOperator logicalPlan,
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException;
 
@@ -98,11 +99,14 @@ public interface ICompiler extends IInfoProvider {
 	 *            {@link TransformationConfiguration} for the transformation
 	 *            module.
 	 * @return list of physical representations for the logical plan.
+	 * each list element is again a list of physical operators. This is
+	 * because a query can have more than one root. So each query alternative
+	 * is represented by a list of physical operators, the roots of the query.
 	 * @throws TransformationException
 	 *             An {@link Exception} which occurs during transformation the
 	 *             query.
 	 */
-	public List<IPhysicalOperator> transformWithAlternatives(
+	public List<List<IPhysicalOperator>> transformWithAlternatives(
 			ILogicalOperator logicalPlan,
 			TransformationConfiguration transformationConfiguration)
 			throws TransformationException;

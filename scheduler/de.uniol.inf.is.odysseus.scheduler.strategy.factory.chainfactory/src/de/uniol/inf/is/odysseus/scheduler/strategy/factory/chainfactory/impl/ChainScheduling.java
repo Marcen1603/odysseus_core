@@ -10,12 +10,14 @@ import java.util.PriorityQueue;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.base.FESortedPair;
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
 
 public class ChainScheduling extends AbstractExecListScheduling {
 
@@ -30,7 +32,14 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		// Calc for every leaf (!) operator the path to the root (inkl. virtual operators)
 		Map<IIterableSource<?>, List<ISource<?>>> virtualOps = new HashMap<IIterableSource<?>, List<ISource<?>>>();
 		List<List<IIterableSource<?>>> pathes = new ArrayList<List<IIterableSource<?>>>();
-		calcForLeafsPathsToRoots(plan.getRoots(), virtualOps, pathes);
+		
+		List<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
+		for(IPhysicalOperator curRoot : plan.getRoots()){
+			if(curRoot.isSink()){
+				sinkRoots.add((ISink<?>)curRoot);
+			}
+		}
+		calcForLeafsPathsToRoots(sinkRoots, virtualOps, pathes);
 		
 		Map<List<IIterableSource<?>>, OperatorPoint[]> progressCharts = new HashMap<List<IIterableSource<?>>, OperatorPoint[]>();
 

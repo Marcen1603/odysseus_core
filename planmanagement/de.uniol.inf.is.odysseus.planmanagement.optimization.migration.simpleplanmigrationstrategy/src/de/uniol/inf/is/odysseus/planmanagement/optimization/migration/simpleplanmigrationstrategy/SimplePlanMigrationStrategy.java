@@ -67,17 +67,25 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void migrateQuery(IOptimizer sender, IQuery runningQuery,
-			IPhysicalOperator newPlanRoot) throws QueryOptimizationException {
+			List<IPhysicalOperator> newPlanRoots) throws QueryOptimizationException {
+		if(0 == 0){
+			throw new RuntimeException("Planmigration assumes acyclic trees, " +
+					"however we can have cyclic graphs. Migrations will not work.\n" +
+					"You can remove this exception, however check that the query only contains a tree");
+		}
+		
+		// @Marco: Bitte so umbauen, dass beachtet wird,
+		// dass ein Anfrageplan mehrere Roots haben kann.
 		this.logger.debug("Start planmigration.");
 
 		// install both plans for parallel execution
-		IPhysicalOperator oldPlanRoot = runningQuery.getRoot();
+		IPhysicalOperator oldPlanRoot = runningQuery.getRoots().get(0);
 		List<ISource<?>> oldPlanSources = MigrationHelper
 				.getPseudoSources(oldPlanRoot);
 		List<IPhysicalOperator> oldPlanOperatorsBeforeSources = MigrationHelper
 				.getOperatorsBeforeSources(oldPlanRoot, oldPlanSources);
 		List<IPhysicalOperator> newPlanOperatorsBeforeSources = MigrationHelper
-				.getOperatorsBeforeSources(newPlanRoot, oldPlanSources);
+				.getOperatorsBeforeSources(newPlanRoots.get(0), oldPlanSources);
 
 		// get last operators before output sink
 		IPhysicalOperator lastOperatorOldPlan;
@@ -90,11 +98,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					.getSubscribedToSource(0).getTarget();
 		}
 		IPhysicalOperator lastOperatorNewPlan;
-		if (newPlanRoot.isSource()) {
+		if (newPlanRoots.get(0).isSource()) {
 			throw new QueryOptimizationException(
 					"Migration strategy needs a sink only as operator root.");
 		} else {
-			lastOperatorNewPlan = ((ISink<?>) newPlanRoot)
+			lastOperatorNewPlan = ((ISink<?>) newPlanRoots.get(0))
 					.getSubscribedToSource(0).getTarget();
 		}
 
@@ -106,7 +114,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 
 		StrategyContext context = new StrategyContext(sender, runningQuery,
-				newPlanRoot);
+				newPlanRoots.get(0));
 		context.setOldPlanOperatorsBeforeSources(oldPlanOperatorsBeforeSources);
 		context.setLastOperatorNewPlan(lastOperatorNewPlan);
 		context.setLastOperatorOldPlan(lastOperatorOldPlan);
@@ -174,7 +182,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		PhysicalRestructHelper.removeSubscription(oldPlanRoot,
 				lastOperatorOldPlan);
-		PhysicalRestructHelper.replaceChild(newPlanRoot, lastOperatorNewPlan,
+		PhysicalRestructHelper.replaceChild(newPlanRoots.get(0), lastOperatorNewPlan,
 				union);
 		PhysicalRestructHelper.appendOperator(select, lastOperatorNewPlan);
 		PhysicalRestructHelper.appendBinaryOperator(union, lastOperatorOldPlan,
@@ -205,13 +213,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		this.logger.debug("Calling open on new Plan ... done" );
 
 		this.logger.debug("Result:\n"
-				+ AbstractTreeWalker.prefixWalk2(newPlanRoot,
+				+ AbstractTreeWalker.prefixWalk2(newPlanRoots.get(0),
 						new PhysicalPlanToStringVisitor()));
 
 		// execute plans for at least 'w_max' (longest window duration)
 		this.logger.debug("Initializing parallel execution plan.");
 		try {
-			runningQuery.initializePhysicalPlan(newPlanRoot);
+			runningQuery.initializePhysicalRoots(newPlanRoots);
 		} catch (OpenFailedException e) {
 			throw new QueryOptimizationException(
 					"Failed to initialize parallel execution plan.", e);
@@ -234,6 +242,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	void finishedParallelExecution(StrategyContext context) {
+		if(0 == 0){
+			throw new RuntimeException("Planmigration assumes acyclic trees, " +
+					"however we can have cyclic graphs. Migrations will not work.\n" +
+					"You can remove this exception, however check that the query only contains a tree");
+		}
+		
 		if (logger.isDebugEnabled()) {
 			this.logger.debug("ParallelExecutionWaiter terminated.");
 			// activate blocking buffers
@@ -248,7 +262,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// drain all tuples out of plans
 		this.logger.debug("Draining tuples out of plans.");
-		MigrationHelper.drainTuples(context.getRunningQuery().getRoot());
+		MigrationHelper.drainTuples(context.getRunningQuery().getRoots().get(0));
 
 		// remove old plan, keep buffers
 		// top operators
@@ -311,8 +325,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// set and initialize new physical plan
 		// adds query as operator owner, too
 		try {
-			context.getRunningQuery().initializePhysicalPlan(
-					context.getRunningQuery().getRoot());
+			context.getRunningQuery().initializePhysicalRoots(
+					context.getRunningQuery().getRoots());
 		} catch (OpenFailedException e) {
 			this.logger.error("Failed to initialize new execution plan.", e);
 		}
@@ -341,7 +355,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// new plan is ready and running
 		this.logger.debug("Planmigration finished. Result:"
 				+ AbstractTreeWalker.prefixWalk2(context.getRunningQuery()
-						.getRoot(), new PhysicalPlanToStringVisitor()));
+						.getRoots().get(0), new PhysicalPlanToStringVisitor()));
 		context.getOptimizer().handleFinishedMigration(
 				context.getRunningQuery());
 	}

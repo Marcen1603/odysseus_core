@@ -461,7 +461,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 	 * <?>[])
 	 */
 	@Override
-	public int addQuery(IPhysicalOperator physicalPlan, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
+	public int addQuery(List<IPhysicalOperator> physicalPlan, User user, AbstractQueryBuildParameter<?>... parameters) throws PlanManagementException {
 		this.logger.info("Start adding Queries.");
 		try {
 			QueryBuildParameter params = getBuildParameter(parameters);
@@ -551,7 +551,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 			setExecutionPlan(optimizer().preStartOptimization(queryToStart, this.executionPlan));
 			queryToStart.start();
 			if (isRunning()) {
-				queryToStart.getRoot().open();
+				for(IPhysicalOperator curRoot : queryToStart.getRoots()){
+					// this also works for cyclic plans,
+					// since if an operator is already open, the
+					// following sources will not be called any more.
+					curRoot.open();
+				}
 			}
 			this.logger.debug("Query " + queryID + " started.");
 			firePlanModificationEvent(new QueryPlanModificationEvent(this, QueryPlanModificationEvent.QUERY_START, queryToStart));

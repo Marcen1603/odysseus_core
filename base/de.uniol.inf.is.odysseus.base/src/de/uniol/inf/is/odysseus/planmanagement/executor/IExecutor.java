@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -152,7 +153,7 @@ public interface IExecutor extends IOptimizable, IPlanManager, IPlanScheduling,
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public int addQuery(IPhysicalOperator physicalPlan, User user,
+	public int addQuery(List<IPhysicalOperator> physicalPlan, User user,
 			AbstractQueryBuildParameter<?>... parameters)
 			throws PlanManagementException;
 	

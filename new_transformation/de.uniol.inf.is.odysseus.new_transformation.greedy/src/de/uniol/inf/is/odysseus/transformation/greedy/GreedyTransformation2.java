@@ -27,6 +27,9 @@ import de.uniol.inf.is.odysseus.new_transformation.stream_characteristics.Stream
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
+import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 public class GreedyTransformation2 implements ITransformation {
 	private static Logger logger = LoggerFactory.getLogger(GreedyTransformation2.class);
@@ -44,7 +47,7 @@ public class GreedyTransformation2 implements ITransformation {
 	}
 
 	@Override
-	public IPhysicalOperator transform(ILogicalOperator op, TransformationConfiguration config)
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config)
 			throws TransformationException {
 		logger.info("Greedy Transformation Start");
 
@@ -59,12 +62,25 @@ public class GreedyTransformation2 implements ITransformation {
 		transformOperator(op, transformedOperators, config);
 
 		IPhysicalOperator physicalOp = top.getPhysicalInput();
+		
+		// The physical plan can have more than one
+		// root. So find all roots in the physical plan
+		// that have no owner. These roots belong to the
+		// current query.
+		FindQueryRootsVisitor visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
+		AbstractGraphWalker walker = new AbstractGraphWalker();
+		walker.prefixWalkPhysical(physicalOp, visitor);
+		ArrayList<IPhysicalOperator> queryRoots = visitor.getResult(); 
+		
+		
 		if (logger.isInfoEnabled()) {
-			logger.info("transformation result: \n" + planToString(physicalOp, ""));
+			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
+			new AbstractGraphWalker().prefixWalk(top, pv);
+			logger.info("Transformation result: \n" + pv.getResult());
 		}
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 
-		return physicalOp;
+		return queryRoots;
 	}
 
 	/**

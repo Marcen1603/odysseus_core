@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.loadshedding;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.loadshedding.monitoring.AvgInputRate;
 import de.uniol.inf.is.odysseus.loadshedding.strategy.SimpleLoadSheddingStrategy;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -50,13 +51,15 @@ public class LoadManager {
 		
 		AvgInputRate avgInput = new AvgInputRate(this);
 		
-		for(ISink<?> each : plan.getRoots()) {
-			List<ISource<?>> leafs = new ArrayList<ISource<?>>();
-			findLeafs(each, leafs);
-			
-			for(ISource<?> leaf : leafs) {
-				avgInput.addInputStream(leaf);
-				leaf.subscribe(avgInput, POEventType.PushInit);
+		for(IPhysicalOperator each : plan.getRoots()) {
+			if(each.isSink()){
+				List<ISource<?>> leafs = new ArrayList<ISource<?>>();
+				findLeafs((ISink<?>)each, leafs);
+				
+				for(ISource<?> leaf : leafs) {
+					avgInput.addInputStream(leaf);
+					leaf.subscribe(avgInput, POEventType.PushInit);
+				}
 			}
 		}
 		avgInputs.add(avgInput);
@@ -105,7 +108,13 @@ public class LoadManager {
 	
 
 
-	
+	/**
+	 * 
+	 * @param sink
+	 * @param leafs
+	 * @deprecated Will not work with cycles
+	 */
+	@Deprecated
 	private void findLeafs(ISink<?> sink, List<ISource<?>> leafs) {
 		if (sink.getSubscribedToSource() == null
 				|| sink.getSubscribedToSource().size() == 0) {

@@ -652,16 +652,20 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
-					StringBuffer buff = new StringBuffer();
-					if (query.getRoot().isSink()) {
-						support.dumpPlan((ISink) query.getRoot(), depth,
-								buff);
-					} else {
-						support.dumpPlan((ISource) query.getRoot(),
-								depth, buff);
+					for(int i = 0; i<query.getRoots().size(); i++){
+						IPhysicalOperator curRoot = query.getRoots().get(i);
+						StringBuffer buff = new StringBuffer();
+						buff.append("Root No: " + i + "\n");
+						if (curRoot.isSink()) {
+							support.dumpPlan((ISink) curRoot, depth,
+									buff);
+						} else {
+							support.dumpPlan((ISource) curRoot,
+									depth, buff);
+						}
+						ci.println("Physical plan of query: " + qnum);
+						ci.println(buff.toString());
 					}
-					ci.println("Physical plan of query: " + qnum);
-					ci.println(buff.toString());
 				} else {
 					ci.println("Query not found.");
 				}
@@ -683,13 +687,16 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
-					if (query.getRoot().isSink()) {
-						support
-								.printPlanMetadata((ISink) query
-										.getRoot());
-
-					} else {
-						ci.println("Root is no sink.");
+					for(int i = 0; i<query.getRoots().size(); i++){
+						IPhysicalOperator curRoot = query.getRoots().get(i);
+						if (curRoot.isSink()) {
+							System.out.println("Root No: " + i);
+							support
+									.printPlanMetadata((ISink) curRoot);
+	
+						} else {
+							ci.println("Root is no sink.");
+						}
 					}
 				}
 
@@ -1113,7 +1120,7 @@ public class ExecutorConsole implements CommandProvider,
 				
 				// the last plan is the complete plan
 				// so transform this one
-				IPhysicalOperator physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), this.trafoConfigParam.getValue());
+				List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), this.trafoConfigParam.getValue());
 				
 				
 				int queryID = this.executor.addQuery(physPlan, currentUser, this.trafoConfigParam);
