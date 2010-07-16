@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.filtering;
 
+import java.util.HashMap;
+
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
@@ -9,12 +11,11 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
 public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 
+	private IGainFunction gainFunction;
 	
-	private IGainFunction<M> gainfunction;
+	private ICorrectStateEstimateFunction correctStateEstimateFunction;
 	
-	private ICorrectStateCovarianceFunction<M> correctStateCovarianceFunction;
-	
-	private ICorrectStateEstimateFunction<M> correctStateEstimate;
+	private ICorrectStateCovarianceFunction correctStateCovarianceFunction;
 	
 	
 	// path to new and old objects
@@ -61,48 +62,7 @@ public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 
 	
 	
-	/**
-	 * @param gainfunction the gainfunction to set
-	 */
-	public void setGainfunction(IGainFunction<M> gainfunction) {
-		this.gainfunction = gainfunction;
-	}
 
-	/**
-	 * @return the gainfunction
-	 */
-	public IGainFunction<M> getGainfunction() {
-		return gainfunction;
-	}
-
-	/**
-	 * @param correctStateCovarianceFunction the correctStateCovarianceFunction to set
-	 */
-	public void setCorrectStateCovarianceFunction(
-			ICorrectStateCovarianceFunction<M> correctStateCovarianceFunction) {
-		this.correctStateCovarianceFunction = correctStateCovarianceFunction;
-	}
-
-	/**
-	 * @return the correctStateCovarianceFunction
-	 */
-	public ICorrectStateCovarianceFunction<M> getCorrectStateCovarianceFunction() {
-		return correctStateCovarianceFunction;
-	}
-
-	/**
-	 * @param correctStateEstimate the correctStateEstimate to set
-	 */
-	public void setCorrectStateEstimate(ICorrectStateEstimateFunction<M> correctStateEstimate) {
-		this.correctStateEstimate = correctStateEstimate;
-	}
-
-	/**
-	 * @return the correctStateEstimate
-	 */
-	public ICorrectStateEstimateFunction<M> getCorrectStateEstimate() {
-		return correctStateEstimate;
-	}
 
 	public void initPaths(String oldObjListPath, String newObjListPath) {
 		this.oldObjListPath = oldObjListPath;
@@ -119,7 +79,70 @@ public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
 
+	/**
+	 * @param gainfunctionID the gainfunction
+	 *
+	 * */
+	public void setGainfunction(int gainFunctionID, HashMap<String, Object> correctStateEstimateFunctionParameters) {
+		
+		if (gainFunctionID == 1) { 
+		this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction(correctStateEstimateFunctionParameters);
+		
+		}
 	
+	}
+
+	/**
+	 * @return the gainfunction
+	 */
+	public IGainFunction getGainFunction() {
+		return this.gainFunction;
+	}
+
+	
+
+
+	
+	/**
+	 * @param 
+	 */
+	public void setCorrectStateCovarianceFunction(int correctStateCovarianceFunctionID, HashMap<String, Object> correctStateCovarianceFunctionParameters) {
+		
+		if (correctStateCovarianceFunctionID == 1) { 
+		this.correctStateCovarianceFunction = new KalmanCorrectStateCovarianceFunction(correctStateCovarianceFunctionParameters);
+		
+		}
+	
+	}
+
+	/**
+	 * @return the 
+	 */
+	public ICorrectStateCovarianceFunction getCorrectStateCovarianceFunction() {
+		return this.correctStateCovarianceFunction;
+	}
+
+	
+	
+	/**
+	 * @param 
+	 */
+	public void setCorrectStateEstimateFunction(int correctStateEstimateFunctionID, HashMap<String, Object> correctStateEstimateFunctionParameters) {
+		
+		if (correctStateEstimateFunctionID == 1) { 
+		this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction(correctStateEstimateFunctionParameters);
+		
+		}
+	
+	}
+
+	/**
+	 * @return the 
+	 */
+	public ICorrectStateEstimateFunction getCorrectStateEstimateFunction() {
+		return this.correctStateEstimateFunction;
+	}
+
 
 
 

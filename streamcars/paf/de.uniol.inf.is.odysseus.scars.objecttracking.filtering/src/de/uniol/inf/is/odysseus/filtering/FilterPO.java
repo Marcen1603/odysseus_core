@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.filtering;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -16,11 +17,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>>  {
 
-	private IGainFunction<M> gainFunction;
+	private IGainFunction gainFunction;
 	
-	private ICorrectStateCovarianceFunction<M> correctStateCovarianceFunction;
+	private ICorrectStateEstimateFunction correctStateEstimateFunction;
 	
-	private ICorrectStateEstimateFunction<M> correctStateEstimateFunction;
+	private ICorrectStateCovarianceFunction correctStateCovarianceFunction;
 	
 	private MVRelationalTuple<M> oldTuple;
 	
@@ -32,16 +33,15 @@ public class FilterPO<M extends IProbability & IPredictionFunctionKey<IPredicate
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 	
-	// output modell?
-	
+		
 	public FilterPO() {
 	super();	
 	}
 	
 	public FilterPO(FilterAO<M> filterAO) {
-		this.gainFunction = filterAO.getGainfunction();
-		this.correctStateCovarianceFunction = filterAO.getCorrectStateCovarianceFunction();
-		this.correctStateEstimateFunction = filterAO.getCorrectStateEstimate();
+		this.gainFunction=filterAO.getGainFunction();
+		this.correctStateEstimateFunction=filterAO.getCorrectStateEstimateFunction();
+		this.correctStateCovarianceFunction=filterAO.getCorrectStateCovarianceFunction();
 	}
 	public FilterPO(FilterPO<M> copy) {
 	super(copy);
@@ -70,37 +70,47 @@ public class FilterPO<M extends IProbability & IPredictionFunctionKey<IPredicate
 	// list of connections
 	Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
 	
-	// für Berechnung benötigte Matrixen
-	Object matrixes[] = null;
+	
 	double[][] gain = null;
+	
 	// traverse connection list and filter
 	for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
 		
 		MVRelationalTuple<M> oldTuple = connected.getRight();
 		MVRelationalTuple<M> newTuple = connected.getLeft();
 		
-	//	ArrayList<int[]> measurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(this.leftSchema);
-//		ArrayList<int[]> measurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(this.rightSchema);
-		
 		double[] measurementOld = newTuple.getMeasurementValues();
 		double[] measurementNew = oldTuple.getMeasurementValues();
 		
-		double[][] newCovariance = newTuple.getMetadata().getCovariance();
-		double[][] oldCovariance = oldTuple.getMetadata().getCovariance();
+		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
+		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
 		
 		double[] correctedMeasurement;
 		double[][] correctedCovariance;
-	
+		
+		
 		// compute gain
-		gain = gainFunction.computeGain(oldCovariance, newCovariance, matrixes);
+		gainFunction.addParameter("oldCovariance", covarianceOld);
+		gainFunction.addParameter("newCovariance", covarianceNew);
+		
+		gain = gainFunction.computeGain();
 		
 		// update state covariance
-		correctedCovariance = correctStateCovarianceFunction.correctStateCovariance(oldCovariance, gain, matrixes);
+		correctStateCovarianceFunction.addParameter("gain",gain);
+		correctStateCovarianceFunction.addParameter("covarianceOld", covarianceOld);
+		
+		correctedCovariance = correctStateCovarianceFunction.correctStateCovariance();
+		
 		oldTuple.getMetadata().setCovariance(correctedCovariance);
 		
 		// update state estimate
-		correctedMeasurement = correctStateEstimateFunction.correctStateEstimate(measurementOld, measurementNew, gain, matrixes);
-		// oldTuple.
+		correctStateEstimateFunction.addParameter("measurementOld", measurementOld);
+		correctStateEstimateFunction.addParameter("measurementNew", measurementNew);
+		correctStateEstimateFunction.addParameter("gain", gain);
+		
+		
+		correctedMeasurement = correctStateEstimateFunction.correctStateEstimate();
+		
 
 	
 	}

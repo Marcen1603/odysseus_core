@@ -3,10 +3,8 @@
  */
 package de.uniol.inf.is.odysseus.filtering;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
@@ -14,14 +12,57 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  * @author mase
  *
  */
-public class KalmanGainFunction<M extends IProbability> implements IGainFunction<M> {
+public class KalmanGainFunction implements IGainFunction {
 
-	@Override
+/*	@Override
 	public double[][] computeGain(double[][] oldCovariance, double[][] newCovariance, Object[] matrixes) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+*/
+	public int functionID = 1;
+	
+	private  double[][] oldCovariance;
+	
+	double[][] newCovariance;
+	
+	private double[] outputModel;
+	
+	private HashMap<String, Object> parameters;
+	
+	public KalmanGainFunction(HashMap<String, Object> parameters) {
+		this.parameters = parameters;
+		/*this.parameters.put("oldCovariance", oldCovariance);
+		this.parameters.put("newCovariance", newCovariance);
+		this.parameters.put("outputModel", outputModel); */
+	}
+	
+	@Override
+	public double[][] computeGain() {
+		return null;
+	}
 
+	
+	/**
+	 * @param parameters the parameters to set
+	 */
+	public void setParameters(HashMap<String, Object> parameters) {
+		this.parameters = parameters;
+	}
 
+	/**
+	 * @return the parameters
+	 */
+	public HashMap<String, Object> getParameters() {
+		
+		return parameters;
+	} 
+	
+	/**
+	 * @param parameters the parameters to set
+	 */
+	public void addParameter(String key, Object value) {
+		this.parameters.put(key, value);
+	}
 
 }
