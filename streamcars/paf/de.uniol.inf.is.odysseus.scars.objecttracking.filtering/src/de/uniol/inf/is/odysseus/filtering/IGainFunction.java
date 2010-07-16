@@ -33,4 +33,7 @@ public interface IGainFunction {
 	 * @param parameters the parameters to set
 	 */
 	public void addParameter(String key, Object Value);
+
+	public int getFunctionID();
+
 }

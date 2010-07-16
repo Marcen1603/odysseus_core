@@ -7,8 +7,6 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovarianceFunction {
-
-	public int functionID=1;
 	
 	private double[][] covarianceOld;
 	
@@ -18,6 +16,9 @@ public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovari
 	
 	private HashMap<String, Object> parameters;
 	
+	public KalmanCorrectStateCovarianceFunction() {
+		
+	}
 	public KalmanCorrectStateCovarianceFunction(HashMap<String, Object> parameters) {
 		/*this.parameters.put("covarianceOld", covarianceOld );
 		this.parameters.put("gain", gain);
@@ -54,5 +55,14 @@ public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovari
 	public void addParameter(String key, Object value) {
 		this.parameters.put(key, value);
 	}
+
+
+	@Override
+	public int getFunctionID() {
+		
+		return 1;
+	}
+
+
 
 }

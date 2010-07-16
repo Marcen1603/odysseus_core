@@ -31,4 +31,6 @@ public interface ICorrectStateEstimateFunction {
 	 */
 	public void addParameter(String key, Object Value);
 
+	public int getFunctionID();
+
 }

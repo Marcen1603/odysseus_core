@@ -85,6 +85,7 @@ public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 	 * */
 	public void setGainfunction(int gainFunctionID, HashMap<String, Object> correctStateEstimateFunctionParameters) {
 		
+		
 		if (gainFunctionID == 1) { 
 		this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction(correctStateEstimateFunctionParameters);
 		

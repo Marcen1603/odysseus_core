@@ -30,11 +30,15 @@ public class KalmanGainFunction implements IGainFunction {
 	
 	private HashMap<String, Object> parameters;
 	
+	public KalmanGainFunction() {
+		
+	}
 	public KalmanGainFunction(HashMap<String, Object> parameters) {
 		this.parameters = parameters;
 		/*this.parameters.put("oldCovariance", oldCovariance);
 		this.parameters.put("newCovariance", newCovariance);
 		this.parameters.put("outputModel", outputModel); */
+	
 	}
 	
 	@Override
@@ -63,6 +67,12 @@ public class KalmanGainFunction implements IGainFunction {
 	 */
 	public void addParameter(String key, Object value) {
 		this.parameters.put(key, value);
+	}
+
+	@Override
+	public int getFunctionID() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
