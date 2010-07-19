@@ -21,6 +21,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.eclipse.gef.internal.ui.rulers,
  org.eclipse.gef.palette,
  org.eclipse.gef.requests,
+ org.eclipse.gef.ui.actions,
  org.eclipse.gef.ui.palette,
  org.eclipse.gef.ui.parts,
  org.eclipse.ui.part

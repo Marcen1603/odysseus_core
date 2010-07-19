@@ -13,6 +13,7 @@ public class Startup implements IStartup {
 			public void run() {
 				Activator.getDefault().getImageRegistry().put("operatorIcon", Activator.getImageDescriptor("icons/operatorIcon.png"));
 				Activator.getDefault().getImageRegistry().put("operatorGroupIcon", Activator.getImageDescriptor("icons/operatorGroupIcon.png"));
+				Activator.getDefault().getImageRegistry().put("connectionIcon", Activator.getImageDescriptor("icons/connection.gif"));
 			}
 		});
 	}

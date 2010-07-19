@@ -12,10 +12,13 @@ public class OperatorFigure extends Figure implements IFigure {
 	private Label label; 
 	
 	public OperatorFigure() {
-		setLayoutManager(new ToolbarLayout());
+		ToolbarLayout layout = new ToolbarLayout();
+		layout.setMinorAlignment(ToolbarLayout.ALIGN_CENTER);
+		layout.setSpacing(10);
+		setLayoutManager(layout);
 		
 		label = new Label();
-		label.setBorder(new LineBorder());
+		label.setBorder(new LineBorder(2));
 		add(label);
 	}
 	

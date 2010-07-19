@@ -2,12 +2,18 @@ package de.uniol.inf.is.odysseus.rcp.editor;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.draw2d.ConnectionLayer;
+import org.eclipse.draw2d.ManhattanConnectionRouter;
+import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.LayerConstants;
+import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
+import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.requests.CreationFactory;
@@ -17,12 +23,8 @@ import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
@@ -33,7 +35,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 
 	private OperatorPlan plan;
 	private static PaletteRoot paletteModel = null;
-	
+
 	public LogicalPlanEditorPart() {
 		super();
 		setEditDomain(new DefaultEditDomain(this));
@@ -41,7 +43,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		
+
 	}
 
 	@Override
@@ -50,35 +52,26 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	}
 
 	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		
-		setSite(site);
-		setInput(input);
-		setPartName(((FileEditorInput)input).getName());
-		
-		plan = new OperatorPlan();
-	}
-	
-	@Override
-	public boolean isDirty() {
-		return false;
-	}
-
-	@Override
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-	
-	@Override
 	protected void configureGraphicalViewer() {
 		super.configureGraphicalViewer();
-		
+
 		final GraphicalViewer graphicalViewer = getGraphicalViewer();
 		graphicalViewer.setRootEditPart(new ScalableRootEditPart());
 		graphicalViewer.setEditPartFactory(new MyEditPartFactory());
 		graphicalViewer.setKeyHandler(new GraphicalViewerKeyHandler(graphicalViewer));
+
+		RootEditPart root = graphicalViewer.getRootEditPart();
+
+		if (root instanceof LayerManager) {
+			((ConnectionLayer) ((LayerManager) root).getLayer(LayerConstants.CONNECTION_LAYER)).setConnectionRouter(new ManhattanConnectionRouter());
+		}
+
+		createActions();
+		ContextMenuProvider cmProvider = new MyContextMenuProvider(graphicalViewer, getActionRegistry());
+		graphicalViewer.setContextMenu(cmProvider);
+//		getSite().registerContextMenu(cmProvider, graphicalViewer);
 	}
-	
+
 	@Override
 	protected PaletteViewerProvider createPaletteViewerProvider() {
 		return new PaletteViewerProvider(getEditDomain()) {
@@ -88,31 +81,26 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 			}
 		};
 	}
-	
+
 	private TransferDropTargetListener createTransferDropTargetListener() {
 		return new TemplateTransferDropTargetListener(getGraphicalViewer()) {
 			protected CreationFactory getFactory(Object template) {
-				if( template instanceof IOperatorExtensionDescriptor)
-					return new OperatorFactory((IOperatorExtensionDescriptor)template);
-				else 
+				if (template instanceof IOperatorExtensionDescriptor)
+					return new OperatorFactory((IOperatorExtensionDescriptor) template);
+				else
 					return null;
 			}
 		};
 	}
-	
-	@Override
-	protected void initializeGraphicalViewer() {
-		super.initializeGraphicalViewer();	
-		
-		plan = new OperatorPlan();
-	    GraphicalViewer graphicalViewer = getGraphicalViewer();
-	    graphicalViewer.setContents(plan);
-	    graphicalViewer.addDropTargetListener(createTransferDropTargetListener());
-	}
 
 	@Override
-	public void setFocus() {
-		getGraphicalViewer().getControl().setFocus();
+	protected void initializeGraphicalViewer() {
+		super.initializeGraphicalViewer();
+
+		plan = new OperatorPlan();
+		GraphicalViewer graphicalViewer = getGraphicalViewer();
+		graphicalViewer.setContents(plan);
+		graphicalViewer.addDropTargetListener(createTransferDropTargetListener());
 	}
 
 	@SuppressWarnings("rawtypes")
