@@ -76,17 +76,7 @@ public class OrAttributeResolver {
 	// TIMO END
 	
 	public static String[] getAttributeNamePath( String relativeAttributeName ) {
-		String[] parts = relativeAttributeName.split("\\:");
-		String[] result = new String[parts.length];
-		
-		for( int i = 0; i < parts.length; i++ ) {
-			if( i == 0 ) 
-				result[i] = parts[i];
-			else {
-				result[i] = result[i-1] + ":" + parts[i];
-			}
-		}
-		return result;
+		return relativeAttributeName.split("\\:");
 	}
 	
 	private static SDFAttribute resolveAttribute(SDFAttributeList attr, String name) {
