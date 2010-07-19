@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author Jonas Jacobi
@@ -95,27 +96,29 @@ public class AttributeResolver implements IAttributeResolver {
 	}
 
 	private SDFAttribute getAttribute(String sourceName, String attributeName) {
-		ILogicalOperator source= this.sources.get(sourceName);
+		ILogicalOperator source = this.sources.get(sourceName);
 		if (source == null) {
 			throw new IllegalArgumentException("no such source: " + sourceName);
 		}
 		
-		for (SDFAttribute attribute : source.getOutputSchema()) {
-			SDFAttribute a = findORAttribute(attributeName, attribute);
-			if( a != null ) return a;
-//			if (attribute.getAttributeName().equals(attributeName)) {
-//				return attribute;
-//			}
-		}
+		String[] path = attributeName.split("\\:");
+		SDFAttribute attribute = findORAttribute(source.getOutputSchema(), path, 0 );
+		
+		if( attribute != null ) return attribute;
+
 		throw new IllegalArgumentException("no such attribute: " + sourceName
 				+ "." + attributeName);
 	}
 	
-	private SDFAttribute findORAttribute( String attributeName, SDFAttribute attr ) {
-		if(attr.getQualName().equals(attributeName)) return attr;
-		for( SDFAttribute a : attr.getSubattributes() ) {
-			SDFAttribute b = findORAttribute(attributeName, a);
-			if( b != null ) return b;
+	private SDFAttribute findORAttribute( SDFAttributeList list, String[] path, int index ) {
+		String toFind = path[index];
+		for( SDFAttribute attr : list ) {
+			if( attr.getAttributeName().equals(toFind)) {
+				if( index == path.length - 1 ) 
+					return attr;
+				else 
+					return findORAttribute(attr.getSubattributes(), path, index + 1 );
+			}
 		}
 		return null;
 	}
