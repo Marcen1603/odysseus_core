@@ -22,8 +22,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class CreateSensorVisitor extends AbstractDefaultVisitor {
 
-	private static final String SEPARATOR = ":";
-	
 	private String name;
 	private String host;
 	private Long port;
@@ -65,9 +63,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTRecordDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		
-		if( data == null ) data = attrName;
-		else data = data.toString() + SEPARATOR + attrName;
-		SDFAttribute recordAttribute = new SDFAttribute(this.name, data.toString());
+		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName);
 		recordAttribute.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
 		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
 			SDFAttribute attr = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
@@ -86,9 +82,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTListDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		
-		if( data == null ) data = attrName;
-		else data = data.toString() + SEPARATOR + attrName;
-		SDFAttribute attribute = new SDFAttribute(this.name, data.toString());
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
 		attribute.setDatatype(SDFDatatypeFactory.getDatatype("List"));
 		
 		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
@@ -104,9 +98,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
 		
-		if( data == null ) data = attrName;
-		else data = data.toString() + SEPARATOR + attrName;
-		SDFAttribute attribute = new SDFAttribute(this.name, data.toString());
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
 		attribute.setDatatype(astAttrType.getType());
 		attribute.setCovariance(astAttrType.getRow());
 		if (SDFDatatypes.isDate(attribute.getDatatype())) 
