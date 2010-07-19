@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.assoziation.physicaloperator;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.assoziation.CorrelationMatrixUtils;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
@@ -14,16 +16,16 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-	
+
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
-	
+
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
-	
+
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -36,22 +38,61 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();
 		// 1.3 - Get the list of connections between old and new objects as an array of Connection
 		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
-		
+
 		// 2 - Convert the connection list to an matrix of ratings so that even connections which are NOT in the connections list (so they have a rating of 0) can be evaluated
 		CorrelationMatrixUtils<M> corUtils = new CorrelationMatrixUtils<M>();
 		double[][] corMatrix = corUtils.encodeMatrix(newList, oldList, objConList);
-		
+
 		// 3 - Evaluate each connection in the matrix
 		corMatrix = this.singleMatchingEvaluation(corMatrix);
-		
+
 		// 4 - Generate a new connection list out of the matrix. only connections with rating > 0 will be stored so that the connection list is as small as possible
 		ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> newObjConList = corUtils.decodeMatrix(newList, oldList, corMatrix);
-		
+
 		// 5 - Replace the old connection list in the metadata with the new connection list
 		object.getMetadata().setConnectionList(newObjConList);
-		
-		// 6 - ready -> transfer to next operator
-		transfer(object);
+
+		// 6 - ready -> transfer to next operators
+		//     PORTS:	0 -> NEU + NICHT ZUGEORDNET
+		//			    1 -> ZUGEORDNET
+		//			    2 -> ALT + NICHT ZUGEORDNET
+
+		// 6.1 - transfer 1 -> ZUGEORDNET
+		transfer(object, 1);
+
+		// 6.2 - transfer 0 -> NEU + NICHT ZUGEORDNET -> IM FOLGEOPERATOR NUR LISTE MIT NEUEN OBJEKTEN BEACHTEN
+		MVRelationalTuple<M> newWithoutOldList = new MVRelationalTuple<M>(object);
+		MVRelationalTuple<M>[] tmpListNew = this.getNewElementsWithoutOldElements(object.getMetadata().getConnectionList(), newList);
+		OrAttributeResolver.setAttribute(newWithoutOldList, getNewObjListPath(), tmpListNew);
+		transfer(newWithoutOldList, 0);
+
+		// 6.3 - transfer 2 -> ALT + NICHT ZUGEORDNET -> IM FOLGEOPERATOR NUR LISTE MIT ALTEN OBJEKTEN BEACHTEN
+		MVRelationalTuple<M> oldWithoutNewList = new MVRelationalTuple<M>(object);
+		MVRelationalTuple<M>[] tmpListOld = this.getOldElementsWithoutNewElements(object.getMetadata().getConnectionList(), oldList);
+		OrAttributeResolver.setAttribute(oldWithoutNewList, getOldObjListPath(), tmpListOld);
+		transfer(oldWithoutNewList, 2);
+	}
+
+	@SuppressWarnings("unchecked")
+	private MVRelationalTuple<M>[] getNewElementsWithoutOldElements(ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> objConList, MVRelationalTuple<M>[] newList) {
+		ArrayList<MVRelationalTuple<M>> tmp = new ArrayList<MVRelationalTuple<M>>();
+		for(MVRelationalTuple<M> tupleNew : newList) {
+			if (objConList.getRightElementsForLeftElement(tupleNew).isEmpty()) {
+				tmp.add(tupleNew);
+			}
+		}
+		return (MVRelationalTuple<M>[]) tmp.toArray();
+	}
+
+	@SuppressWarnings("unchecked")
+	private MVRelationalTuple<M>[] getOldElementsWithoutNewElements(ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> objConList, MVRelationalTuple<M>[] oldList) {
+		ArrayList<MVRelationalTuple<M>> tmp = new ArrayList<MVRelationalTuple<M>>();
+		for(MVRelationalTuple<M> tupleOld : oldList) {
+			if (objConList.getLeftElementsForRightElement(tupleOld).isEmpty()) {
+				tmp.add(tupleOld);
+			}
+		}
+		return (MVRelationalTuple<M>[]) tmp.toArray();
 	}
 
 	@Override
@@ -64,7 +105,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/**
 	 * Diese Funktion sorgt dafür, dass nur noch eindeutige Zuordnungen vorhanden sind.
 	 */
@@ -74,7 +115,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		if(matchingMatrix.length > 0) {
 			singleMatchingMatrix = new double[matchingMatrix.length][matchingMatrix[0].length];
 		}
-		
+
 		for (int i = 0; i < matchingMatrix.length; i++) {
 			index = getMaxRowIndex(matchingMatrix[i]);
 			if(index != -1) {
@@ -82,7 +123,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 			}
 			index = -1;
 		}
-		
+
 		double maxValue = -1;
 		int maxValueIndex = -1;
 		for (int i = 0; i < singleMatchingMatrix[0].length; i++) {
@@ -93,7 +134,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 					maxValueIndex = j;
 					singleMatchingMatrix[j][i] = 0;
 				} if(maxValue >= singleMatchingMatrix[j][i]) {
-					// Falls der Wert kleiner oder gleich dem vorher errechneten Wert ist wird dieser ignoriert 
+					// Falls der Wert kleiner oder gleich dem vorher errechneten Wert ist wird dieser ignoriert
 					singleMatchingMatrix[j][i] = 0;
 				}
 			}
@@ -103,12 +144,12 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 			maxValue = -1;
 			maxValueIndex = -1;
 		}
-		
+
 		return singleMatchingMatrix;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param row aktuelle Zeiler der Matrix
 	 * @return Index des maximalen Wertes der Zeile
 	 */
@@ -123,7 +164,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		}
 		return index;
 	}
-	
+
 	// ----- SETTER AND GETTER -----
 
 	public void setOldObjListPath(int[] oldObjListPath) {
@@ -141,7 +182,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 	public void setRightSchema(SDFAttributeList rightSchema) {
 		this.rightSchema = rightSchema;
 	}
-	
+
 	public int[] getOldObjListPath() {
 		return this.oldObjListPath;
 	}

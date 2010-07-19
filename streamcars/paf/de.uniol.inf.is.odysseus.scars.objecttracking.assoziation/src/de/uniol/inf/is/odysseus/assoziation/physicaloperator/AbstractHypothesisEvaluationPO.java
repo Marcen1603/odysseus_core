@@ -18,22 +18,22 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Physical Operator for the rating of connections within the association process.
- * 
+ *
  * new = left; old = right
- * 
+ *
  * @author Volker Janz
  *
  * @param <M>
  */
 public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-	
+
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
 	private HashMap<String, String> algorithmParameter;
-	
+
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
-	
+
 	public AbstractHypothesisEvaluationPO() {
 
 	}
@@ -48,35 +48,47 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();
 		// 1.3 - Get the list of connections between old and new objects as an array of Connection
 		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
-		
+
 		// 2 - Convert the connection list to an matrix of ratings so that even connections which are NOT in the connections list (so they have a rating of 0) can be evaluated
 		CorrelationMatrixUtils<M> corUtils = new CorrelationMatrixUtils<M>();
 		double[][] corMatrix = corUtils.encodeMatrix(newList, oldList, objConList);
-		
+
 		// 3 - Evaluate each connection in the matrix
 		corMatrix = this.evaluateAll(corMatrix, newList, oldList);
-		
+
 		// 4 - Generate a new connection list out of the matrix. only connections with rating > 0 will be stored so that the connection list is as small as possible
 		ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> newObjConList = corUtils.decodeMatrix(newList, oldList, corMatrix);
-		
+
 		// 5 - Replace the old connection list in the metadata with the new connection list
 		object.getMetadata().setConnectionList(newObjConList);
-		
+
 		// 6 - ready -> transfer to next operator
 		transfer(object);
 	}
-	
+
 	public abstract double evaluate(MVRelationalTuple<M> tupleNew, MVRelationalTuple<M> tupleOld, ArrayList<int[]> mesurementValuePathsNew, ArrayList<int[]> mesurementValuePathsOld);
 
 	public double[][] evaluateAll(double[][] matrix, MVRelationalTuple<M>[] tupleNew, MVRelationalTuple<M>[] tupleOld) {
 		if(matrix == null || tupleNew == null || tupleOld == null) {
 			throw new NullPointerException("");
-		} 
+		}
+
+		// --- Relative Pfade von einem "Auto" aus zu den Messwerten finden ---
+		int[] pathToFirstCarInNewList = new int[this.getNewObjListPath().length];
+		pathToFirstCarInNewList[this.getNewObjListPath().length-1] = 0;
+
+		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length];
+		pathToFirstCarInOldList[this.getOldObjListPath().length-1] = 0;
+
+		ArrayList<int[]> mesurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.leftSchema, pathToFirstCarInNewList));
+		ArrayList<int[]> mesurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.rightSchema, pathToFirstCarInOldList));
+		// --------------------------------------------------------------------
 
 		for(int i=0; i<matrix[0].length; i++) {
 			for(int j=0; i<matrix.length; j++) {
-				ArrayList<int[]> mesurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(this.leftSchema);
-				ArrayList<int[]> mesurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(this.rightSchema);
+				// --- Auskommentiert da relative Pfade benötigt werden, keine absoluten ---
+				//ArrayList<int[]> mesurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(this.leftSchema);
+				//ArrayList<int[]> mesurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(this.rightSchema);
 				matrix[i][j] = evaluate(tupleNew[i], tupleOld[j], mesurementValuePathsTupleNew, mesurementValuePathsTupleOld);
 			}
 		}
@@ -86,7 +98,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -96,12 +108,12 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 
 	@Override
 	public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
-	
+
 	/**
 	 * Inits the algorithm specific parameter. The parameter are stored in the HashMap algorithmParameter.
 	 */
 	public abstract void initAlgorithmParameter();
-	
+
 	// ----- SETTER AND GETTER -----
 
 	public void setOldObjListPath(int[] oldObjListPath) {
@@ -119,7 +131,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	public void setRightSchema(SDFAttributeList rightSchema) {
 		this.rightSchema = rightSchema;
 	}
-	
+
 	public int[] getOldObjListPath() {
 		return this.oldObjListPath;
 	}
@@ -135,12 +147,12 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	public SDFAttributeList getRightSchema() {
 		return this.rightSchema;
 	}
-	
+
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
 		this.algorithmParameter = newAlgoParameter;
 		this.initAlgorithmParameter();
 	}
-	
+
 	public HashMap<String, String> getAlgorithmParameter() {
 		return this.algorithmParameter;
 	}
