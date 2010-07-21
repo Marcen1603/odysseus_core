@@ -13,15 +13,14 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
 
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
+	//private SDFAttributeList leftSchema;
+	//private SDFAttributeList rightSchema;
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
@@ -175,6 +174,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		this.newObjListPath = newObjListPath;
 	}
 
+	/*
 	public void setLeftSchema(SDFAttributeList leftSchema) {
 		this.leftSchema = leftSchema;
 	}
@@ -182,6 +182,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 	public void setRightSchema(SDFAttributeList rightSchema) {
 		this.rightSchema = rightSchema;
 	}
+	*/
 
 	public int[] getOldObjListPath() {
 		return this.oldObjListPath;
@@ -191,6 +192,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		return this.newObjListPath;
 	}
 
+	/*
 	public SDFAttributeList getLeftSchema() {
 		return this.leftSchema;
 	}
@@ -198,5 +200,6 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 	public SDFAttributeList getRightSchema() {
 		return this.rightSchema;
 	}
+	*/
 
 }
