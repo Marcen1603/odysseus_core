@@ -173,7 +173,6 @@ public class StandardExecutor extends AbstractExecutor implements IAdvancedExecu
 		this.logger.debug("Translate Queries.");
 		// translate query and build logical plans
 		List<IQuery> queries = compiler().translateQuery(queryStr, parserID);
-
 		// create for each logical plan an intern query
 		for (IQuery query : queries) {
 			query.setBuildParameter(parameters);

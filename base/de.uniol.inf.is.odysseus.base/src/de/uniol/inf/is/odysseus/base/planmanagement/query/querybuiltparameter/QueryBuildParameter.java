@@ -4,8 +4,6 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AbstractTypeSafeMap;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.strategies.CloneDefaultRootStrategy;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.strategies.IDefaultRootStrategy;
 
 /**
  * QueryBuildParameter provides a set of {@link AbstractQueryBuildParameter}.
@@ -79,6 +77,14 @@ public class QueryBuildParameter extends
 	 */
 	public IPhysicalOperator getDefaultRoot() {
 		return (IPhysicalOperator) get(ParameterDefaultRoot.class).getValue();
+	}
+	
+	public int getDefaultRootInPort() {
+		ParameterDefaultRoot parameter = get(ParameterDefaultRoot.class);
+		if (parameter == null) {
+			return 0;
+		}
+		return parameter.getPort();
 	}
 
 	/**

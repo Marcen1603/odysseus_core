@@ -1,6 +1,7 @@
-package de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.strategies;
+package de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 
 /**
  * Query parameters can have a default root, that
@@ -28,5 +29,5 @@ public interface IDefaultRootStrategy {
 	 * been cloned, we do not have to set it again. To check this we need the reference
 	 * to the default root (clone or not).
 	 */
-	public IPhysicalOperator subscribeDefaultRootToSource(IPhysicalOperator defaultRoot, IPhysicalOperator source);
+	public IPhysicalOperator subscribeDefaultRootToSource(ISink<?> defaultRoot, IPhysicalOperator source);
 }

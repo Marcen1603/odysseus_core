@@ -10,4 +10,5 @@ public interface IScheduling {
 	boolean isSchedulingBlocked();
 	public void addSchedulingEventListener(ISchedulingEventListener eventListener);
 	public void removeSchedulingEventListener(ISchedulingEventListener eventListener);
+	public boolean isSchedulable();
 }

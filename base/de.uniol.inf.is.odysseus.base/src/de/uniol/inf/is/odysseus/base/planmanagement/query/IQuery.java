@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.base.planmanagement.query;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -132,7 +131,7 @@ public interface IQuery extends
 	 * @return The direct physical children which are necessary for the
 	 *         execution of this query.
 	 */
-	public ArrayList<IPhysicalOperator> getIntialPhysicalPlan();
+	public List<IPhysicalOperator> getIntialPhysicalPlan();
 
 	/**
 	 * Removes the ownership of this query and the registered child operators.

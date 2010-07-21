@@ -27,6 +27,9 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {
+		if (plan instanceof IBuffer) {
+			return;
+		}
 		if (plan.isSink() && !plan.isSource()) {
 			for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) plan)
 					.getSubscribedToSource()) {

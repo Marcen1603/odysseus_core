@@ -147,7 +147,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	final public void done(int port) {
+	final synchronized public void done(int port) {
 		process_done(port);
 		this.allInputsDone = true;
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
@@ -160,7 +160,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	final public boolean isDone() {
+	final synchronized public boolean isDone() {
 		return this.allInputsDone;
 	}
 

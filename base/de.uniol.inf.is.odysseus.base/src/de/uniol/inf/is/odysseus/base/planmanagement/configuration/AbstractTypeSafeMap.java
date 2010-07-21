@@ -51,8 +51,9 @@ public abstract class AbstractTypeSafeMap<T extends IMapValue<?>> implements
 	 *            Type of the searched entry.
 	 * @return Entry for the defined type.
 	 */
-	public T get(Type entryType) {
-		return this.entry.get(entryType);
+	@SuppressWarnings("unchecked")
+	public <S extends T>S get(Class<S> entryType) {
+		return (S) this.entry.get(entryType);
 	}
 
 	/**

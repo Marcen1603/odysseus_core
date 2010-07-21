@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Qu
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
@@ -31,10 +30,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 public class Query implements IQuery {
 
 	protected Logger _logger = null;
-	
-	protected Logger getLogger(){
-		if (_logger == null){
-		_logger = LoggerFactory.getLogger(Query.class);
+
+	protected Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
 		}
 		return _logger;
 	}
@@ -66,9 +65,8 @@ public class Query implements IQuery {
 	private ArrayList<IPhysicalOperator> physicalChilds = new ArrayList<IPhysicalOperator>();
 
 	/**
-	 * Physical root operators of this query. Since
-	 * we do not have trees any more, there can be
-	 * more than one query.
+	 * Physical root operators of this query. Since we do not have trees any
+	 * more, there can be more than one query.
 	 */
 	private List<IPhysicalOperator> roots;
 
@@ -110,7 +108,7 @@ public class Query implements IQuery {
 	public Query() {
 		this("", null, null, null);
 	}
-	
+
 	/**
 	 * Creates a query based on a physical plan and {@link QueryBuildParameter}
 	 * 
@@ -119,7 +117,8 @@ public class Query implements IQuery {
 	 * @param parameters
 	 *            {@link QueryBuildParameter} for creating the query
 	 */
-	public Query(List<IPhysicalOperator> physicalPlan, QueryBuildParameter parameters) {
+	public Query(List<IPhysicalOperator> physicalPlan,
+			QueryBuildParameter parameters) {
 		this("", null, physicalPlan, parameters);
 	}
 
@@ -196,57 +195,6 @@ public class Query implements IQuery {
 		return info;
 	}
 
-	/**
-	 * Get all physical children of a {@link ISource}.
-	 * 
-	 * @param source
-	 *            root of physical plan.
-	 * @return all physical children of source.
-	 */
-	@SuppressWarnings("unchecked")
-	private ArrayList<IPhysicalOperator> getChildren(ISource<?> source) {
-		ArrayList<IPhysicalOperator> ret = new ArrayList<IPhysicalOperator>();
-
-		Stack<ISource<?>> sources = new Stack<ISource<?>>();
-		sources.push(source);
-		while (!sources.isEmpty()) {
-			ISource<?> curSource = sources.pop();
-			if (curSource instanceof ISource<?>) {
-				ret.add(curSource);
-			}
-			if (curSource instanceof IPipe) {
-				IPipe<?, ?> pipe = (IPipe<?, ?>) curSource;
-				for (PhysicalSubscription<? extends ISource<?>> subscription : pipe
-						.getSubscribedToSource()) {
-					if (!ret.contains(subscription.getTarget())) {
-						sources.push(subscription.getTarget());
-					}
-				}
-			}
-		}
-		return ret;
-	}
-
-	/**
-	 * Get all physical children of a {@link ISink}.
-	 * 
-	 * @param sink
-	 *            root of physical plan.
-	 * @return all physical children of source.
-	 */
-	private ArrayList<IPhysicalOperator> getChildren(ISink<?> sink) {
-		if (sink instanceof ISource<?>) {
-			return getChildren((ISource<?>) sink);
-		}
-		Collection<? extends PhysicalSubscription<? extends ISource<?>>> slist = sink
-				.getSubscribedToSource();
-		ArrayList<IPhysicalOperator> ret = new ArrayList<IPhysicalOperator>();
-		for (PhysicalSubscription<? extends ISource<?>> s : slist) {
-			ret.addAll(getChildren(s.getTarget()));
-		}
-		return ret;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -258,15 +206,12 @@ public class Query implements IQuery {
 		this.logicalPlan = logicalPlan;
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#setRoot
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#setRoot
 	 * (de.uniol.inf.is.odysseus.base.IPhysicalOperator)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> roots) {
 		this.roots = roots;
@@ -281,24 +226,29 @@ public class Query implements IQuery {
 
 				ArrayList<IPhysicalOperator> newRoots = new ArrayList<IPhysicalOperator>();
 				// default root must be set for each root now
-				for(IPhysicalOperator oldRoot: this.roots){
-					// register default root TODO hier koennen fehler uebersprungen
+				for (IPhysicalOperator oldRoot : this.roots) {
+					// register default root TODO hier koennen fehler
+					// uebersprungen
 					// werden, wenn
 					// root keine source ist
 					if (defaultRoot != null && defaultRoot.isSink()
 							&& oldRoot.isSource()) {
-						IPhysicalOperator cloned = this.parameters.getDefaultRootStrategy().subscribeDefaultRootToSource(defaultRoot, oldRoot);
-//						((ISink) defaultRoot).subscribeToSource((ISource) oldRoot, 0,
-//								0, oldRoot.getOutputSchema());
-//						this.root = defaultRoot;
-						
+						IPhysicalOperator cloned = this.parameters
+								.getDefaultRootStrategy()
+								.subscribeDefaultRootToSource((ISink<?>) defaultRoot,
+										oldRoot);
+						// ((ISink) defaultRoot).subscribeToSource((ISource)
+						// oldRoot, 0,
+						// 0, oldRoot.getOutputSchema());
+						// this.root = defaultRoot;
+
 						// only add the default root
 						// to the list of new roots, if
 						// it has been cloned. We only
 						// want to have different roots
 						// in the list of roots of this
 						// query.
-						if(!containsReference(newRoots, cloned)){
+						if (!containsReference(newRoots, cloned)) {
 							newRoots.add(cloned);
 						}
 					}
@@ -309,19 +259,18 @@ public class Query implements IQuery {
 
 		return this.roots;
 	}
-	
+
 	/**
-	 * Checks, whether a reference to an object is already contained
-	 * in a list.
+	 * Checks, whether a reference to an object is already contained in a list.
 	 */
-	private boolean containsReference(List<?> listOfObj, Object obj){
-		for(Object o: listOfObj){
-			if(o == obj){
+	private boolean containsReference(List<?> listOfObj, Object obj) {
+		for (Object o : listOfObj) {
+			if (o == obj) {
 				return true;
 			}
 		}
 		return false;
-		
+
 	}
 
 	/*
@@ -348,13 +297,30 @@ public class Query implements IQuery {
 
 		// FIXME: Hier sollte in Zukunft mit Strategien gearbeitet werden
 		// Store each child in a list. And set this Query as owner of each child
-		for(IPhysicalOperator root : roots){
-			if (root.isSink()) {
-				addPhysicalChildren(getChildren((ISink<?>) root));
-			} else {
-				addPhysicalChildren(getChildren((ISource<?>) root));
+		for (IPhysicalOperator root : roots) {
+			addPhysicalChildren(getChildren(root));
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
+		ArrayList<IPhysicalOperator> children = new ArrayList<IPhysicalOperator>();
+		Stack<IPhysicalOperator> operators = new Stack<IPhysicalOperator>();
+		operators.push(root);
+
+		while (!operators.isEmpty()) {
+			IPhysicalOperator curOp = operators.pop();
+			children.add(curOp);
+			if (curOp.isSink()) {
+				Collection<PhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
+						.getSubscribedToSource();
+				for (PhysicalSubscription<ISource<?>> subscription : subsriptions) {
+					operators.push(subscription.getTarget());
+				}
 			}
 		}
+
+		return children;
 	}
 
 	/**
@@ -370,12 +336,11 @@ public class Query implements IQuery {
 	 *            Physical operators which are necessary for the execution of
 	 *            this query.
 	 */
-	private void addPhysicalChildren(
-			ArrayList<IPhysicalOperator> children) {
+	private void addPhysicalChildren(ArrayList<IPhysicalOperator> children) {
 		synchronized (this.physicalChilds) {
 			// Store children, if not already done.
-			for(IPhysicalOperator child: children ){
-				if(!this.physicalChilds.contains(child)){
+			for (IPhysicalOperator child : children) {
+				if (!this.physicalChilds.contains(child)) {
 					this.physicalChilds.add(child);
 					child.addOwner(this);
 				}
@@ -396,11 +361,13 @@ public class Query implements IQuery {
 			getLogger().debug("Remove Ownership for " + physicalOperator);
 			physicalOperator.removeOwner(this);
 			if (!physicalOperator.hasOwner()) {
-				getLogger().debug("No more owners. Closing " + physicalOperator);
+				getLogger()
+						.debug("No more owners. Closing " + physicalOperator);
 				physicalOperator.close();
 				if (physicalOperator.isSink()) {
-					getLogger().debug("Sink unsubscribe from all sources "
-							+ physicalOperator);
+					getLogger().debug(
+							"Sink unsubscribe from all sources "
+									+ physicalOperator);
 					ISink<?> sink = (ISink<?>) physicalOperator;
 					sink.unsubscribeFromAllSources();
 				}
@@ -412,8 +379,7 @@ public class Query implements IQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#start()
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#start()
 	 */
 	@Override
 	public void start() {
@@ -431,8 +397,7 @@ public class Query implements IQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#stop()
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#stop()
 	 */
 	@Override
 	public void stop() {
@@ -560,9 +525,7 @@ public class Query implements IQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#getRoot
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery#getRoot ()
 	 */
 	@Override
 	public List<IPhysicalOperator> getRoots() {

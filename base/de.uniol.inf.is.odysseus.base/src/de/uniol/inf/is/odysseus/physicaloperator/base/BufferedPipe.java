@@ -21,10 +21,10 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
 
-	Logger logger = LoggerFactory.getLogger(BufferedPipe.class);
+	protected Logger logger = LoggerFactory.getLogger(BufferedPipe.class);
 	
 	protected LinkedList<T> buffer = new LinkedList<T>();
-	private Lock transferLock = new ReentrantLock();
+	protected Lock transferLock = new ReentrantLock();
 	protected AtomicReference<PointInTime> heartbeat = new AtomicReference<PointInTime>();
 
 	public BufferedPipe() {

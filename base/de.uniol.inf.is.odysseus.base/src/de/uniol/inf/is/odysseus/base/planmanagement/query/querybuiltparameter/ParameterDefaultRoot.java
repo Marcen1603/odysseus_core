@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 public final class ParameterDefaultRoot extends
 		AbstractQueryBuildParameter<IPhysicalOperator> {
 
+	private int port;
+
 	/**
 	 * Creates a ParameterDefaultRoot.
 	 * 
@@ -20,5 +22,20 @@ public final class ParameterDefaultRoot extends
 	 */
 	public ParameterDefaultRoot(IPhysicalOperator value) {
 		super(value);
+		this.port = 0;
 	}
+
+	public ParameterDefaultRoot(IPhysicalOperator value, int sinkInPort) {
+		super(value);
+		this.port = sinkInPort;
+	}
+	
+	@Override
+	public IPhysicalOperator getValue() {
+		return super.getValue();
+	}
+	
+	public int getPort() {
+		return port;
+	};
 }

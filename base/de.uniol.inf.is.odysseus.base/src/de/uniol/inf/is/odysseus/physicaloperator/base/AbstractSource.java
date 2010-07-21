@@ -128,7 +128,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void transfer(T object, int sourceOutPort) {
 		fire(this.pushInitEvent);
-		process_transfer(object);
+		for (PhysicalSubscription<ISink<? super T>> sink : this.sinkSubscriptions) {
+			if (sink.getSourceOutPort() == sourceOutPort) {
+				sink.getTarget().process(object, sink.getSinkInPort(),
+						isTransferExclusive());
+			}
+		}
 		fire(this.pushDoneEvent);
 	}
 
@@ -294,7 +299,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// TODO: Die Loesung mit der Exception war nicht schoen ...
 			// Jetzt wird es einfach ignoriert
 			// try {
-			if (!this.providesMonitoringData(mItem.getType())){
+			if (!this.providesMonitoringData(mItem.getType())) {
 				this.addMonitoringData(mItem.getType(), mItem);
 			}
 			// } catch (IllegalArgumentException e) {

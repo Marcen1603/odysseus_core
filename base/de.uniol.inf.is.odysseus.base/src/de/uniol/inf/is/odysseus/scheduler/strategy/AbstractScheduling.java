@@ -232,6 +232,11 @@ public abstract class AbstractScheduling implements IScheduling,
 	public boolean isSchedulingPaused() {
 		return schedulingPaused;
 	}
+	
+	@Override
+	public boolean isSchedulable() {
+		return this.schedulable.cardinality() > 0;
+	}
 
 }
 
