@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.base.planmanagement.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -306,16 +308,21 @@ public class Query implements IQuery {
 	private ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
 		ArrayList<IPhysicalOperator> children = new ArrayList<IPhysicalOperator>();
 		Stack<IPhysicalOperator> operators = new Stack<IPhysicalOperator>();
+		Set<IPhysicalOperator> visitedOps = new HashSet<IPhysicalOperator>();
 		operators.push(root);
 
 		while (!operators.isEmpty()) {
 			IPhysicalOperator curOp = operators.pop();
 			children.add(curOp);
+			visitedOps.add(root);
 			if (curOp.isSink()) {
 				Collection<PhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
 						.getSubscribedToSource();
 				for (PhysicalSubscription<ISource<?>> subscription : subsriptions) {
-					operators.push(subscription.getTarget());
+					ISource<?> target = subscription.getTarget();
+					if (!visitedOps.contains(target)) {
+						operators.push(target);
+					}
 				}
 			}
 		}
