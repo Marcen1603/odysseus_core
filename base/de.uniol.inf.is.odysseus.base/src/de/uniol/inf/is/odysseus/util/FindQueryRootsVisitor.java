@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.util;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.base.IPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 /**
  * This visitor finds all roots of a physical plan
@@ -51,7 +51,7 @@ public class FindQueryRootsVisitor<P extends IPhysicalOperator> implements IGrap
 		// operators than it is a root. If this root has no owner,
 		// it belongs to the current query and is not used by other
 		// queries through plan sharing.
-		if((node.isSink() && !node.isSource() || node.isPipe() && ((IPipe)node).getSubscriptions().isEmpty()) &&  !node.hasOwner()){
+		if((node.isSink() && !node.isSource() || (node.isSource() && ((ISource<?>)node).getSubscriptions().isEmpty())) &&  !node.hasOwner()){
 			this.foundRoots.add(node);
 		}
 		
