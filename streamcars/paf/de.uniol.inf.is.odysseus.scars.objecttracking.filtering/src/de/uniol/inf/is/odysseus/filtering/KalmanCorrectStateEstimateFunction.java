@@ -16,11 +16,10 @@ public class KalmanCorrectStateEstimateFunction implements ICorrectStateEstimate
 	
 	public KalmanCorrectStateEstimateFunction() {
 	
-
 	}
+	
 	public KalmanCorrectStateEstimateFunction(HashMap<String, Object> parameters) {
 		this.parameters = parameters;
-
 	}
 
 	@Override
@@ -31,13 +30,12 @@ public class KalmanCorrectStateEstimateFunction implements ICorrectStateEstimate
 
 	@Override
 	public HashMap<String, Object> getParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.parameters;
 	}
 
 	@Override
 	public void setParameters(HashMap<String, Object> parameters) {
-		// TODO Auto-generated method stub
+		this.parameters = parameters;
 	}
 	
 	/**

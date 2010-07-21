@@ -8,17 +8,23 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovarianceFunction {
 	
+	/*
+	 * Wird nicht mehr benötigt, da die Parameter im
+	 * FilterPO gesetzt werden.
+	 * 
 	private double[][] covarianceOld;
 	
 	private double[][] gain;
 	
 	private double[] outputModell;
+	*/
 	
 	private HashMap<String, Object> parameters;
 	
 	public KalmanCorrectStateCovarianceFunction() {
 		
 	}
+	
 	public KalmanCorrectStateCovarianceFunction(HashMap<String, Object> parameters) {
 		/*this.parameters.put("covarianceOld", covarianceOld );
 		this.parameters.put("gain", gain);

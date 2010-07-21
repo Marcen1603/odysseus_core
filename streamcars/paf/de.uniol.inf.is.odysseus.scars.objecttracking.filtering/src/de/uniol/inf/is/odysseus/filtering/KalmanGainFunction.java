@@ -22,11 +22,16 @@ public class KalmanGainFunction implements IGainFunction {
 */
 	public int functionID = 1;
 	
+	/*
+	 * Wird nicht mehr benötigt, da die Parameter im
+	 * FilterPO gesetzt werden.
+	 *
 	private  double[][] oldCovariance;
 	
 	double[][] newCovariance;
 	
 	private double[] outputModel;
+	*/
 	
 	private HashMap<String, Object> parameters;
 	
@@ -58,8 +63,7 @@ public class KalmanGainFunction implements IGainFunction {
 	 * @return the parameters
 	 */
 	public HashMap<String, Object> getParameters() {
-		
-		return parameters;
+		return this.parameters;
 	} 
 	
 	/**
