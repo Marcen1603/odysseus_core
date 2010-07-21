@@ -166,7 +166,7 @@ class JDVEData<M extends IProbability> {
 		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 
 		for( int i = 0; i < count; i++ ) {
-			Object obj = parseNext(schema.getSubattribute(0), bb); // getSubattribute(i), oder? --Sven
+			Object obj = parseNext(schema.getSubattribute(0), bb); 
 			recordTuple.setAttribute(i, obj);
 		}
 		return recordTuple;
