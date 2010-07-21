@@ -31,8 +31,10 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	private int[] newObjListPath;
 	private HashMap<String, String> algorithmParameter;
 
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
+	//private SDFAttributeList leftSchema;
+	//private SDFAttributeList rightSchema;
+
+	private SDFAttributeList schema;
 
 	public AbstractHypothesisEvaluationPO() {
 
@@ -80,8 +82,8 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length];
 		pathToFirstCarInOldList[this.getOldObjListPath().length-1] = 0;
 
-		ArrayList<int[]> mesurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.leftSchema, pathToFirstCarInNewList));
-		ArrayList<int[]> mesurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.rightSchema, pathToFirstCarInOldList));
+		ArrayList<int[]> mesurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.schema, pathToFirstCarInNewList));
+		ArrayList<int[]> mesurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.schema, pathToFirstCarInOldList));
 		// --------------------------------------------------------------------
 
 		for(int i=0; i<matrix[0].length; i++) {
@@ -124,6 +126,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 		this.newObjListPath = newObjListPath;
 	}
 
+	/*
 	public void setLeftSchema(SDFAttributeList leftSchema) {
 		this.leftSchema = leftSchema;
 	}
@@ -131,6 +134,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	public void setRightSchema(SDFAttributeList rightSchema) {
 		this.rightSchema = rightSchema;
 	}
+	*/
 
 	public int[] getOldObjListPath() {
 		return this.oldObjListPath;
@@ -140,6 +144,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 		return this.newObjListPath;
 	}
 
+	/*
 	public SDFAttributeList getLeftSchema() {
 		return this.leftSchema;
 	}
@@ -147,6 +152,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	public SDFAttributeList getRightSchema() {
 		return this.rightSchema;
 	}
+	*/
 
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
 		this.algorithmParameter = newAlgoParameter;
@@ -156,4 +162,13 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 	public HashMap<String, String> getAlgorithmParameter() {
 		return this.algorithmParameter;
 	}
+
+	public SDFAttributeList getSchema() {
+		return schema;
+	}
+
+	public void setSchema(SDFAttributeList schema) {
+		this.schema = schema;
+	}
+
 }

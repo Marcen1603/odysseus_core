@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
@@ -10,9 +9,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * Logical Operator for the rating of connections within the association process.
- * 
+ *
  * new = left; old = right
- * 
+ *
  * @author Volker Janz
  *
  * @param <M>
@@ -20,27 +19,27 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	
-	
+
+
 	private String oldObjListPath;
 	private String newObjListPath;
 	private HashMap<String, String> algorithmParameter;
 	private HashMap<String, String> measurementPairs;
-	
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
-	
+
+	//private SDFAttributeList leftSchema;
+	//private SDFAttributeList rightSchema;
+
 	private String functionID;
-	
+
 	public HypothesisEvaluationAO() {
 		super();
 	}
-	
+
 	public HypothesisEvaluationAO(HypothesisEvaluationAO<M> copy) {
 		super(copy);
 	}
-	
-	
+
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();
@@ -55,46 +54,48 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		this.oldObjListPath = oldObjListPath;
 		this.newObjListPath = newObjListPath;
 	}
-	
+
 	public int[] getNewObjListPath() {
-		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
-		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
+		//this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
+		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.newObjListPath);
 	}
 
 	public int[] getOldObjListPath() {
-		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
-		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
+		//this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
+		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.oldObjListPath);
 	}
 
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
 		this.algorithmParameter = newAlgoParameter;
 	}
-	
+
 	public HashMap<String, String> getAlgorithmParameter() {
 		return this.algorithmParameter;
 	}
-	
+
 	public void setMeasurementPairs(HashMap<String, String> newMeasPairs) {
 		this.measurementPairs = newMeasPairs;
 	}
-	
+
 	public HashMap<String, String> getMeasurementPairs() {
 		return this.measurementPairs;
 	}
-	
+
 	public String getFunctionID() {
 		return this.functionID;
 	}
-	
+
 	public void setFunctionID(String fuckID) {
 		this.functionID = fuckID;
 	}
-	
+
+	/*
 	public SDFAttributeList getLeftSchema() {
 		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
 	}
-	
+
 	public SDFAttributeList getRightSchema() {
 		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
 	}
+	*/
 }
