@@ -76,7 +76,7 @@ class DummyJDVEData<M extends IProbability> {
 	
 	@SuppressWarnings("unchecked")
 	public MVRelationalTuple<M> getScan() {
-		Object res = parseNext(attributeList.get(0));
+		Object res = parseStart(attributeList);
 		
 		if( res instanceof MVRelationalTuple<?>) {
 			return (MVRelationalTuple<M>)res;
@@ -87,9 +87,9 @@ class DummyJDVEData<M extends IProbability> {
 		}
 	}
 	
-	public MVRelationalTuple<M> parseStart(SDFAttribute schema) {
+	public MVRelationalTuple<M> parseStart(SDFAttributeList schema) {
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-		base.setAttribute(0, parseNext(schema.getSubattribute(0)));
+		base.setAttribute(0, parseNext(schema.get(0)));
 		return base;
 	}
 	
