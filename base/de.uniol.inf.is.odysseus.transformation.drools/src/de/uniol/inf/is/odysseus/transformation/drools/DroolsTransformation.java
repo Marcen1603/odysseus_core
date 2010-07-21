@@ -137,6 +137,7 @@ public class DroolsTransformation implements ITransformation {
 			queryRoots = visitor.getResult(); 
 			
 		} catch (NoSuchElementException e) {
+			addLogicalOperatorToSession(session, top, list);
 			List<ILogicalOperator> errors = new ArrayList<ILogicalOperator>();
 			session.setGlobal("untranslatedOperators", errors);
 			session.startProcess("collect_errors");

@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
  */
 public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 		UncaughtExceptionHandler {
-	
+
 	Logger logger = LoggerFactory.getLogger(SingleThreadSchedulerNoWait.class);
 
 	/**
@@ -38,7 +38,8 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 	 *            Factory for creating new scheduling strategies for each
 	 *            partial plan which should be scheduled.
 	 */
-	public SingleThreadSchedulerNoWait(ISchedulingFactory schedulingStrategieFactory) {
+	public SingleThreadSchedulerNoWait(
+			ISchedulingFactory schedulingStrategieFactory) {
 		super(schedulingStrategieFactory);
 	}
 
@@ -56,7 +57,7 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 	 * Thread for execution the global sources.
 	 */
 	private List<SingleSourceExecutor> sourceThreads = new Vector<SingleSourceExecutor>();
-	
+
 	/**
 	 * Thread for execution the registered partial plans. Based on scheduling
 	 * strategies.
@@ -70,16 +71,17 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 		public void run() {
 			try {
 				while (!isInterrupted()) {
-						Iterator<IScheduling> part = parts.iterator();
-						while (part.hasNext() && !isInterrupted()) {
-							IScheduling nextPart = part.next();
-							if (nextPart.schedule(timeSlicePerStrategy)) {
-								// part is done
-								parts.remove(nextPart);
-								part = parts.iterator();
-							}
+					Iterator<IScheduling> part = parts.iterator();
+					while (part.hasNext() && !isInterrupted()) {
+						IScheduling nextPart = part.next();
+						if (nextPart.isSchedulable()
+								&& nextPart.schedule(timeSlicePerStrategy)) {
+							// part is done
+							parts.remove(nextPart);
+							part = parts.iterator();
 						}
 					}
+				}
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
@@ -156,18 +158,18 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 	public void setPartialPlans(List<IPartialPlan> partialPlans) {
 		logger.debug("setPartialPlans");
 		if (partialPlans != null) {
-				logger.debug("setPartialPlans clear");
-				this.parts.clear();
+			logger.debug("setPartialPlans clear");
+			this.parts.clear();
 
-				// Create for each partial plan an own scheduling strategy.
-				// These strategies are used for scheduling partial plans.
-				logger.debug("setPartialPlans create new Parts");
-				for (IPartialPlan partialPlan : partialPlans) {
-					final IScheduling scheduling = schedulingFactory.create(
-							partialPlan, partialPlan.getCurrentPriority());
-					this.parts.add(scheduling);
-				}
-//			}
+			// Create for each partial plan an own scheduling strategy.
+			// These strategies are used for scheduling partial plans.
+			logger.debug("setPartialPlans create new Parts");
+			for (IPartialPlan partialPlan : partialPlans) {
+				final IScheduling scheduling = schedulingFactory.create(
+						partialPlan, partialPlan.getCurrentPriority());
+				this.parts.add(scheduling);
+			}
+			// }
 			// restart ExecutorThread, if terminated before
 			if (isRunning() && !this.parts.isEmpty()
 					&& (execThread == null || !execThread.isAlive())) {
@@ -213,7 +215,6 @@ public class SingleThreadSchedulerNoWait extends AbstractScheduler implements
 
 		}
 	}
-
 
 	/*
 	 * (non-Javadoc)

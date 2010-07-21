@@ -7,24 +7,8 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-priority
--scheduling_strategy &quot;Aurora Min Cost (Iter)&quot;
--buffer_placement &quot;Out Of Order Buffer Placement&quot;
--max_results -1
-
--query_language PQL
--query &quot;source := buffer({type=&apos;Weak Order&apos;}, testproducer({invertedpriorityratio=10, parts=[[50000,3000]]}))
-a = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-b = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-c = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-d = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-e = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-f = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-g = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-h = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-i = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectivity = 1.0}, benchmark({time=5000, selectivity = 1.0}, access({source=&apos;SOURCE&apos;}))))))
-&quot;</programArgs>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m</vmArgs>
+      <programArgs>-console</programArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -38,30 +22,38 @@ i = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectiv
    </launcher>
 
    <vm>
+      <windows>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/OSGi%Minimum-1.2</windows>
    </vm>
 
    <plugins>
       <plugin id="Classloading_Utils"/>
       <plugin id="Commons.Math"/>
       <plugin id="JepModified"/>
-      <plugin id="Jxta_Metering_Plugin"/>
       <plugin id="MatLab"/>
+      <plugin id="com.maplesoft"/>
       <plugin id="com.springsource.org.apache.log4j"/>
       <plugin id="com.springsource.slf4j.api"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
       <plugin id="de.uniol.inf.is.drools.osgi_path_scanner" fragment="true"/>
       <plugin id="de.uniol.inf.is.drools.osgi_rule_agent"/>
+      <plugin id="de.uniol.inf.is.objecttracking.drools" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.args"/>
       <plugin id="de.uniol.inf.is.odysseus.base"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.impl"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.runner"/>
+      <plugin id="de.uniol.inf.is.odysseus.cep"/>
+      <plugin id="de.uniol.inf.is.odysseus.cep.metamodel"/>
+      <plugin id="de.uniol.inf.is.odysseus.cep.metamodel.jep"/>
+      <plugin id="de.uniol.inf.is.odysseus.cep.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.dbIntegration"/>
       <plugin id="de.uniol.inf.is.odysseus.interval_latency"/>
       <plugin id="de.uniol.inf.is.odysseus.interval_latency_priority"/>
       <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
       <plugin id="de.uniol.inf.is.odysseus.latency"/>
       <plugin id="de.uniol.inf.is.odysseus.loadshedding"/>
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.base"/>
+      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.objectrelational"/>
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
@@ -69,7 +61,6 @@ i = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectiv
       <plugin id="de.uniol.inf.is.odysseus.parser.pql.priority"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
-      <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.console"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardexecutioncostmodel"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel"/>
@@ -79,17 +70,21 @@ i = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectiv
       <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.benchmark" fragment="true"/>
+      <plugin id="de.uniol.inf.is.odysseus.rewrite.cep" fragment="true"/>
+      <plugin id="de.uniol.inf.is.odysseus.rewrite.dbIntegration" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.drools"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.priority" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.relational" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.relational_priority" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.benchmark" fragment="true"/>
+      <plugin id="de.uniol.inf.is.odysseus.transformation.cep" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.drools"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.helper.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.interval" fragment="true"/>
@@ -103,11 +98,18 @@ i = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectiv
       <plugin id="javax.transaction" fragment="true"/>
       <plugin id="log4jproperties" fragment="true"/>
       <plugin id="org.apache.cxf"/>
+      <plugin id="org.eclipse.compare.core"/>
+      <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.databinding"/>
+      <plugin id="org.eclipse.core.databinding.observable"/>
+      <plugin id="org.eclipse.core.databinding.property"/>
+      <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.runtime"/>
       <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
+      <plugin id="org.eclipse.core.variables"/>
       <plugin id="org.eclipse.ecf"/>
       <plugin id="org.eclipse.ecf.filetransfer"/>
       <plugin id="org.eclipse.ecf.identity"/>
@@ -117,17 +119,21 @@ i = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectiv
       <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.ds"/>
+      <plugin id="org.eclipse.equinox.p2.console"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.security"/>
       <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
       <plugin id="org.eclipse.equinox.util"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.persistence.jpa.equinox.weaving" fragment="true"/>
-      <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.ui.console"/>
+      <plugin id="org.eclipse.text"/>
       <plugin id="org.hamcrest.core"/>
       <plugin id="org.junit4"/>
       <plugin id="org.mortbay.jetty.server"/>
@@ -153,7 +159,6 @@ i = benchmark({time = 5000, selectivity = 1.0}, benchmark({time = 5000, selectiv
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.parser.cql" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.console" autoStart="true" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.priority" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.priority_interval" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.relational.base" autoStart="false" startLevel="0" />

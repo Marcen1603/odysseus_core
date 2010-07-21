@@ -11,6 +11,7 @@ public abstract class AbstractPrioBuffer<T extends IMetaAttributeContainer<? ext
 	final protected AtomicInteger prioCount = new AtomicInteger(0);
 
 	public AbstractPrioBuffer() {
+		super();
 	}
 	
 	public AbstractPrioBuffer(AbstractPrioBuffer<T> abstractBufferedPipe) {

@@ -12,3 +12,4 @@ Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.scheduler.strategy,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory
 Require-Bundle: de.uniol.inf.is.odysseus.base
+Service-Component: OSGI-INF/simpledynamicpriorityscheduling.xml, OSGI-INF/staticpriorityscheduling.xml

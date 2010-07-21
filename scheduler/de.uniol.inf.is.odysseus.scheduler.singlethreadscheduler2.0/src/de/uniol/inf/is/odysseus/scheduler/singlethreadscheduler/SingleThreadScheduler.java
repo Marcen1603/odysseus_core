@@ -96,7 +96,7 @@ public class SingleThreadScheduler extends AbstractScheduler implements
 						while (part.hasNext() && !terminate && !isInterrupted()) {
 							while (parts.size() == pausedParts.size() && !terminate && !isInterrupted()) {
 								try {
-									pausedParts.wait(100);
+									pausedParts.wait(10);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

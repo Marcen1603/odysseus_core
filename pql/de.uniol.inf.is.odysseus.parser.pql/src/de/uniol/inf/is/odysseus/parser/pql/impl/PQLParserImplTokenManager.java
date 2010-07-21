@@ -73,6 +73,7 @@ static private int jjMoveStringLiteralDfa0_0()
       case 47:
          return jjStopAtPos(0, 12);
       case 58:
+         jjmatchedKind = 25;
          return jjMoveStringLiteralDfa1_0(0x80000L);
       case 61:
          return jjStopAtPos(0, 18);
@@ -302,14 +303,14 @@ static final int[] jjnextStates = {
 public static final String[] jjstrLiteralImages = {
 "", null, null, null, null, null, null, null, null, "\53", "\55", "\52", 
 "\57", null, null, null, "\173", "\175", "\75", "\72\75", "\50", "\54", "\51", 
-"\133", "\135", };
+"\133", "\135", "\72", };
 
 /** Lexer state names. */
 public static final String[] lexStateNames = {
-   "DEFAULT",
+   "DEFAULT", 
 };
 static final long[] jjtoToken = {
-   0x1ff7f21L, 
+   0x3ff7f21L, 
 };
 static final long[] jjtoSkip = {
    0x1eL, 
@@ -402,13 +403,13 @@ public static Token getNextToken()
 
   EOFLoop :
   for (;;)
-  {
-   try
-   {
+  {   
+   try   
+   {     
       curChar = input_stream.BeginToken();
-   }
+   }     
    catch(java.io.IOException e)
-   {
+   {        
       jjmatchedKind = 0;
       matchedToken = jjFillToken();
       return matchedToken;

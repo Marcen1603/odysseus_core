@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.base.FileSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -68,10 +67,12 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 public class ExecutorConsole implements CommandProvider,
-		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
+		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener,
+		ICompilerListener {
 
-	private static Logger logger = LoggerFactory.getLogger(ExecutorConsole.class);
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(ExecutorConsole.class);
+
 	private static final String METHOD = "method";
 
 	private static final String ARGUMENTS = "arguments";
@@ -81,7 +82,7 @@ public class ExecutorConsole implements CommandProvider,
 	private IAdvancedExecutor executor;
 
 	private String parser = null;
-	
+
 	private User currentUser = new User("Console");
 
 	/**
@@ -236,7 +237,9 @@ public class ExecutorConsole implements CommandProvider,
 
 	@SuppressWarnings("unchecked")
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration(new RelationalTransformationHelper(), "relational", ITimeInterval.class));
+			new TransformationConfiguration(
+					new RelationalTransformationHelper(), "relational",
+					ITimeInterval.class));
 
 	private LinkedList<Command> currentCommands;
 
@@ -246,18 +249,20 @@ public class ExecutorConsole implements CommandProvider,
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		logger.debug("executor gebunden");
-		
+
 		this.executor = executor;
 
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
 		this.executor.addCompilerListener(this);
-		
+
 		System.out.println(executor.getCompiler());
-		if (executor.getCompiler() != null){
-			System.out.println("Rewrite Bound : "+executor.getCompiler().isRewriteBound());
-			System.out.println("Transformation Bound :"+executor.getCompiler().isTransformationBound());
+		if (executor.getCompiler() != null) {
+			System.out.println("Rewrite Bound : "
+					+ executor.getCompiler().isRewriteBound());
+			System.out.println("Transformation Bound :"
+					+ executor.getCompiler().isTransformationBound());
 		}
 
 		// Typically no compiler is loaded here, so the following
@@ -495,11 +500,11 @@ public class ExecutorConsole implements CommandProvider,
 		IExecutionPlan plan = this.executor.getExecutionPlan();
 
 		int i = 1;
-//		ci.println("Registered source:");
-//		for (IIterableSource<?> isource : plan.getSources()) {
-//			ci.println(i++ + ": " + isource.toString() + ", Owner:"
-//					+ support.getOwnerIDs(isource.getOwner()));
-//		}
+		// ci.println("Registered source:");
+		// for (IIterableSource<?> isource : plan.getSources()) {
+		// ci.println(i++ + ": " + isource.toString() + ", Owner:"
+		// + support.getOwnerIDs(isource.getOwner()));
+		// }
 
 		ci.println("");
 		i = 1;
@@ -652,16 +657,14 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
-					for(int i = 0; i<query.getRoots().size(); i++){
+					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
 						StringBuffer buff = new StringBuffer();
 						buff.append("Root No: " + i + "\n");
 						if (curRoot.isSink()) {
-							support.dumpPlan((ISink) curRoot, depth,
-									buff);
+							support.dumpPlan((ISink) curRoot, depth, buff);
 						} else {
-							support.dumpPlan((ISource) curRoot,
-									depth, buff);
+							support.dumpPlan((ISource) curRoot, depth, buff);
 						}
 						ci.println("Physical plan of query: " + qnum);
 						ci.println(buff.toString());
@@ -687,13 +690,12 @@ public class ExecutorConsole implements CommandProvider,
 			try {
 				IQuery query = this.executor.getSealedPlan().getQuery(qnum);
 				if (query != null) {
-					for(int i = 0; i<query.getRoots().size(); i++){
+					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
 						if (curRoot.isSink()) {
 							System.out.println("Root No: " + i);
-							support
-									.printPlanMetadata((ISink) curRoot);
-	
+							support.printPlanMetadata((ISink) curRoot);
+
 						} else {
 							ci.println("Root is no sink.");
 						}
@@ -717,17 +719,18 @@ public class ExecutorConsole implements CommandProvider,
 	public void _nexmarkSourcesNIO(CommandInterpreter ci) {
 		addCommand();
 		String[] q = new String[8];
-		q[0] = "CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
-		q[4] = "CREATE STREAM nexmark:person2_v (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FROM (SELECT * FROM nexmark:person2 [UNBOUNDED ON timestamp])";
-		q[1] = "CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
-		q[5] = "CREATE STREAM nexmark:bid2_v (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FROM (SELECT * FROM nexmark:bid2 [UNBOUNDED ON timestamp])";
-		q[2] = "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
-		q[6] = "CREATE STREAM nexmark:auction2_v (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FROM (SELECT * FROM nexmark:auction2 [UNBOUNDED ON timestamp])";
+		q[0] = "CREATE STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
+		q[4] = "CREATE STREAM nexmark:person2_v (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FROM (SELECT * FROM nexmark:person2 [UNBOUNDED])";
+		q[1] = "CREATE STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
+		q[5] = "CREATE STREAM nexmark:bid2_v (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FROM (SELECT * FROM nexmark:bid2 [UNBOUNDED])";
+		q[2] = "CREATE STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
+		q[6] = "CREATE STREAM nexmark:auction2_v (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FROM (SELECT * FROM nexmark:auction2 [UNBOUNDED])";
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		q[7] = "CREATE STREAM nexmark:category2_v (id INTEGER, name STRING, description STRING, parentid INTEGER) FROM (SELECT * FROM nexmark:category2 [UNBOUNDED])";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser, this.trafoConfigParam);
+				this.executor.addQuery(s, parser(), currentUser,
+						this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -746,13 +749,14 @@ public class ExecutorConsole implements CommandProvider,
 	public void _nexmarkSources(CommandInterpreter ci) {
 		addCommand();
 		String[] q = new String[4];
-		q[0] = "CREATE STREAM nexmark:person (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) SOCKET localhost : 65430";
-		q[1] = "CREATE STREAM nexmark:bid (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) SOCKET localhost : 65432";
-		q[2] = "CREATE STREAM nexmark:auction (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) SOCKET localhost : 65431";
+		q[0] = "CREATE STREAM nexmark:person (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) SOCKET localhost : 65430";
+		q[1] = "CREATE STREAM nexmark:bid (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) SOCKET localhost : 65432";
+		q[2] = "CREATE STREAM nexmark:auction (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) SOCKET localhost : 65431";
 		q[3] = "CREATE STREAM nexmark:category (id INTEGER, name STRING, description STRING, parentid INTEGER) SOCKET localhost : 65433";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, parser(), currentUser, this.trafoConfigParam);
+				this.executor.addQuery(s, parser(), currentUser,
+						this.trafoConfigParam);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -810,11 +814,14 @@ public class ExecutorConsole implements CommandProvider,
 	private void addQuery(String q) {
 		try {
 			if (outputputFilename == null || outputputFilename.length() == 0) {
-				this.executor.addQuery(q, parser(), currentUser, new ParameterDefaultRoot(
-						new MySink()), this.trafoConfigParam);
+				this.executor.addQuery(q, parser(), currentUser,
+						new ParameterDefaultRoot(new MySink()),
+						this.trafoConfigParam);
 			} else {
-				this.executor.addQuery(q, parser(), currentUser, new ParameterDefaultRoot(
-						new FileSink(outputputFilename)), this.trafoConfigParam);
+				this.executor.addQuery(q, parser(), currentUser,
+						new ParameterDefaultRoot(
+								new FileSink(outputputFilename)),
+						this.trafoConfigParam);
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -833,10 +840,12 @@ public class ExecutorConsole implements CommandProvider,
 				usePriority = toBoolean(args[0]);
 				TransformationConfiguration trafoConfig;
 				if (usePriority) {
-					trafoConfig = new TransformationConfiguration(new RelationalTransformationHelper(), "relational",
+					trafoConfig = new TransformationConfiguration(
+							new RelationalTransformationHelper(), "relational",
 							ITimeInterval.class, IPriority.class);
 				} else {
-					trafoConfig = new TransformationConfiguration(new RelationalTransformationHelper(), "relational",
+					trafoConfig = new TransformationConfiguration(
+							new RelationalTransformationHelper(), "relational",
 							ITimeInterval.class);
 
 				}
@@ -870,8 +879,7 @@ public class ExecutorConsole implements CommandProvider,
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime");
 				} else {
 					trafoConfig = new TransformationConfiguration(
-							new RelationalTransformationHelper(),
-							"relational",
+							new RelationalTransformationHelper(), "relational",
 							ITimeInterval.class);
 
 				}
@@ -997,21 +1005,21 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	@Help(parameter = "-f <filename> [S|E] [useProp] [-r <true>|<false>] [-m <true>|<false>]", description = "add query declared in <filename> [with console-output-sink] [filepath automatically read from user.files] \n" +
-			"[with restructure or not] [with|without metadata set in physical operators]")
+	@Help(parameter = "-f <filename> [S|E] [useProp] [-r <true>|<false>] [-m <true>|<false>]", description = "add query declared in <filename> [with console-output-sink] [filepath automatically read from user.files] \n"
+			+ "[with restructure or not] [with|without metadata set in physical operators]")
 	public void _addFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
-		
+
 		String filename = null;
-		
-		for(int i = 0; i<args.length; i++){
-			if(args[i].equalsIgnoreCase("useProp")){
+
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equalsIgnoreCase("useProp")) {
 				this.path = System.getProperty("user.files");
 			}
-			
-			else if(args[i].equalsIgnoreCase("-f")){
-				filename = args[i+1];
+
+			else if (args[i].equalsIgnoreCase("-f")) {
+				filename = args[i + 1];
 				i++;
 			}
 		}
@@ -1054,26 +1062,25 @@ public class ExecutorConsole implements CommandProvider,
 		}
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Help(parameter = "<filename> [useProp]", description = "Add query declared in <filename> [filepath automatically read from user.files, otherwise in current directory]")
-	public void _cyclicQueryFromFile(CommandInterpreter ci){
+	public void _cyclicQueryFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
 		addCommand(args);
-		
+
 		String filename = null;
-		
-		for(int i = 0; i<args.length; i++){
-			if(args[i].equalsIgnoreCase("useProp")){
+
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equalsIgnoreCase("useProp")) {
 				this.path = System.getProperty("user.files");
 			}
-			
-			else if(args[i].equalsIgnoreCase("-f")){
-				filename = args[i+1];
+
+			else if (args[i].equalsIgnoreCase("-f")) {
+				filename = args[i + 1];
 				i++;
 			}
 		}
-		
+
 		if (args != null && args.length > 0) {
 			BufferedReader br = null;
 			File file = null;
@@ -1096,17 +1103,15 @@ public class ExecutorConsole implements CommandProvider,
 				ci.printStackTrace(e);
 				return;
 			}
-			
+
 			ICompiler compiler = this.executor.getCompiler();
 			try {
-				List pos = BrokerWrapperPlanFactory.getAllBrokerPOs();
-				
 				List<IQuery> plans = compiler.translateQuery(queries, parser());
-				
+
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 				AbstractGraphWalker walker = new AbstractGraphWalker();
-				for(IQuery plan : plans){
+				for (IQuery plan : plans) {
 					System.out.println("PRINT PARTIAL PLAN: ");
 					walker.prefixWalk(plan.getLogicalPlan(), pv);
 					System.out.println(pv.getResult());
@@ -1114,18 +1119,22 @@ public class ExecutorConsole implements CommandProvider,
 					walker.clearVisited();
 					System.out.println("PRINT END.");
 				}
-				
+
 				// DEBUG:
-				System.out.println("ExecutorConsole: trafoConfigHelper: " + this.trafoConfigParam.getValue().getTransformationHelper());
-				
+				System.out.println("ExecutorConsole: trafoConfigHelper: "
+						+ this.trafoConfigParam.getValue()
+								.getTransformationHelper());
+
 				// the last plan is the complete plan
 				// so transform this one
-				List<IPhysicalOperator> physPlan = compiler.transform(plans.get(plans.size() - 1).getLogicalPlan(), this.trafoConfigParam.getValue());
-				
-				
-				int queryID = this.executor.addQuery(physPlan, currentUser, this.trafoConfigParam);
+				List<IPhysicalOperator> physPlan = compiler.transform(plans
+						.get(plans.size() - 1).getLogicalPlan(),
+						this.trafoConfigParam.getValue());
+
+				int queryID = this.executor.addQuery(physPlan, currentUser,
+						this.trafoConfigParam);
 				this.executor.startQuery(queryID);
-				
+
 			} catch (QueryParseException e1) {
 				e1.printStackTrace();
 			} catch (Exception e1) {
@@ -1145,177 +1154,174 @@ public class ExecutorConsole implements CommandProvider,
 	 */
 	private void delegateAddQueryCmd(String[] args)
 			throws PlanManagementException, Exception {
-		
+
 		boolean eclipseConsole = false;
 		boolean restructureParamSet = false;
 		boolean restructure = false;
 		String query = null;
-		ArrayList<AbstractQueryBuildParameter> params = new ArrayList<AbstractQueryBuildParameter>();
-		
-		for(int i = 0; i<args.length; i++){
-			if(args[i].equalsIgnoreCase("-q")){
-				query = args[i+1];
+		ArrayList<AbstractQueryBuildParameter<?>> params = new ArrayList<AbstractQueryBuildParameter<?>>();
+
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equalsIgnoreCase("-q")) {
+				query = args[i + 1];
 				i++;
-			}
-			else if(args[i].equalsIgnoreCase("E")){
+			} else if (args[i].equalsIgnoreCase("E")) {
 				eclipseConsole = true;
-			}
-			else if(args[i].equalsIgnoreCase("-r")){
+			} else if (args[i].equalsIgnoreCase("-r")) {
 				restructureParamSet = true;
-				restructure = Boolean.getBoolean(args[i+1]);
+				restructure = Boolean.getBoolean(args[i + 1]);
 				i++;
-			}
-			else if(args[i].equalsIgnoreCase("S")){
+			} else if (args[i].equalsIgnoreCase("S")) {
 				params.add(new ParameterDefaultRoot(new MySink()));
-			}
-			else if(args[i].equalsIgnoreCase("-m")){
-				boolean withMeta = Boolean.getBoolean(args[i+1]);
+			} else if (args[i].equalsIgnoreCase("-m")) {
+				boolean withMeta = Boolean.getBoolean(args[i + 1]);
 				i++;
-				if(withMeta){
+				if (withMeta) {
 					params.add(ParameterInstallMetadataListener.TRUE);
-				}else{
+				} else {
 					params.add(ParameterInstallMetadataListener.FALSE);
 				}
 			}
 		}
-		
+
 		params.add(this.trafoConfigParam);
-		
-		AbstractQueryBuildParameter[] paramsArray = new AbstractQueryBuildParameter[params.size()];
-		for(int i = 0; i<params.size(); i++){
+
+		AbstractQueryBuildParameter<?>[] paramsArray = new AbstractQueryBuildParameter[params
+				.size()];
+		for (int i = 0; i < params.size(); i++) {
 			paramsArray[i] = params.get(i);
 		}
-		
-		if(eclipseConsole){
+
+		if (eclipseConsole) {
 			this.addQueryWithEclipseConsoleOutput(query);
 			return;
 		}
-		if(!eclipseConsole && !restructureParamSet){
+		if (!eclipseConsole && !restructureParamSet) {
 			this.executor.addQuery(query, parser(), currentUser, paramsArray);
 			return;
 		}
-		if(!eclipseConsole && restructureParamSet){
-			if(restructure){
-				this.executor.addQuery(query, parser(), currentUser, paramsArray);
+		if (!eclipseConsole && restructureParamSet) {
+			if (restructure) {
+				this.executor.addQuery(query, parser(), currentUser,
+						paramsArray);
 				return;
-			}
-			else{
-				this.executor.addQuery(query, parser(), currentUser, false, null, paramsArray);
+			} else {
+				this.executor.addQuery(query, parser(), currentUser, false,
+						null, paramsArray);
 				return;
 			}
 		}
-		
-//		// a CREATE statement has no arguments
-//		// a QUERY statement does have to have arguments
-//		if (args.length == 1) {
-//			this.executor.addQuery(args[0], parser(), currentUser, this.trafoConfigParam);
-//		}
-//		// a QUERY statement can have arguments
-//		else if (args.length == 2) {
-//			// the second argument can be for sink, so 'S'
-//			// or it can be for doRestruct, so 'true' or 'false'
-//			if (args[1].equalsIgnoreCase("S")) {
-//				this.executor.addQuery(args[0], parser(), currentUser,
-//						new ParameterDefaultRoot(new MySink()),
-//						this.trafoConfigParam);
-//			} else if (args[1].equalsIgnoreCase("E")) {
-//				this.addQueryWithEclipseConsoleOutput(args[0]);
-//			} else if (args[1].equalsIgnoreCase("TRUE")) {
-//				this.executor
-//						.addQuery(args[0], parser(), currentUser, this.trafoConfigParam);
-//			} else if (args[1].equalsIgnoreCase("FALSE")) {
-//				this.executor.addQuery(args[0], parser(), currentUser, false, null,
-//						this.trafoConfigParam);
-//			}
-//		} else if (args.length == 3) {
-//			if (args[1].toUpperCase().equals("S")) {
-//				// the thrid argument is setting the restructuring mode.
-//				if (args[2].equalsIgnoreCase("TRUE")
-//						|| args[2].equalsIgnoreCase("FALSE")) {
-//					this.executor.addQuery(args[0], parser(), currentUser, args[2]
-//							.equalsIgnoreCase("TRUE") ? true : false, null,
-//							new ParameterDefaultRoot(new MySink()),
-//							this.trafoConfigParam);
-//				}
-//				// the third argument are the rule names, restructuring is set
-//				// per default to true
-//				else {
-//					StringTokenizer tokens = new StringTokenizer(args[2], ",",
-//							false);
-//					Set<String> ruleNames = new HashSet<String>();
-//					while (tokens.hasMoreTokens()) {
-//						ruleNames.add(tokens.nextToken());
-//					}
-//
-//					this.executor.addQuery(args[0], parser(), currentUser, true, ruleNames,
-//							new ParameterDefaultRoot(new MySink()),
-//							this.trafoConfigParam);
-//				}
-//			} else {
-//
-//				if (args[1].equalsIgnoreCase("TRUE")
-//						|| args[1].equalsIgnoreCase("FALSE")) {
-//
-//					StringTokenizer tokens = new StringTokenizer(args[2], ",",
-//							false);
-//					Set<String> ruleNames = new HashSet<String>();
-//					while (tokens.hasMoreTokens()) {
-//						ruleNames.add(tokens.nextToken());
-//					}
-//
-//					this.executor.addQuery(args[0], parser(), currentUser, args[2]
-//							.equalsIgnoreCase("TRUE") ? true : false,
-//							ruleNames, this.trafoConfigParam);
-//
-//				} else {
-//					StringTokenizer tokens = new StringTokenizer(args[2], ",",
-//							false);
-//					Set<String> ruleNames = new HashSet<String>();
-//					while (tokens.hasMoreTokens()) {
-//						ruleNames.add(tokens.nextToken());
-//					}
-//
-//					this.executor.addQuery(args[0], parser(), currentUser, true, ruleNames,
-//							this.trafoConfigParam);
-//				}
-//			}
-//		}
-		
-		
-		
+
+		// // a CREATE statement has no arguments
+		// // a QUERY statement does have to have arguments
+		// if (args.length == 1) {
+		// this.executor.addQuery(args[0], parser(), currentUser,
+		// this.trafoConfigParam);
+		// }
+		// // a QUERY statement can have arguments
+		// else if (args.length == 2) {
+		// // the second argument can be for sink, so 'S'
+		// // or it can be for doRestruct, so 'true' or 'false'
+		// if (args[1].equalsIgnoreCase("S")) {
+		// this.executor.addQuery(args[0], parser(), currentUser,
+		// new ParameterDefaultRoot(new MySink()),
+		// this.trafoConfigParam);
+		// } else if (args[1].equalsIgnoreCase("E")) {
+		// this.addQueryWithEclipseConsoleOutput(args[0]);
+		// } else if (args[1].equalsIgnoreCase("TRUE")) {
+		// this.executor
+		// .addQuery(args[0], parser(), currentUser, this.trafoConfigParam);
+		// } else if (args[1].equalsIgnoreCase("FALSE")) {
+		// this.executor.addQuery(args[0], parser(), currentUser, false, null,
+		// this.trafoConfigParam);
+		// }
+		// } else if (args.length == 3) {
+		// if (args[1].toUpperCase().equals("S")) {
+		// // the thrid argument is setting the restructuring mode.
+		// if (args[2].equalsIgnoreCase("TRUE")
+		// || args[2].equalsIgnoreCase("FALSE")) {
+		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
+		// .equalsIgnoreCase("TRUE") ? true : false, null,
+		// new ParameterDefaultRoot(new MySink()),
+		// this.trafoConfigParam);
+		// }
+		// // the third argument are the rule names, restructuring is set
+		// // per default to true
+		// else {
+		// StringTokenizer tokens = new StringTokenizer(args[2], ",",
+		// false);
+		// Set<String> ruleNames = new HashSet<String>();
+		// while (tokens.hasMoreTokens()) {
+		// ruleNames.add(tokens.nextToken());
+		// }
+		//
+		// this.executor.addQuery(args[0], parser(), currentUser, true,
+		// ruleNames,
+		// new ParameterDefaultRoot(new MySink()),
+		// this.trafoConfigParam);
+		// }
+		// } else {
+		//
+		// if (args[1].equalsIgnoreCase("TRUE")
+		// || args[1].equalsIgnoreCase("FALSE")) {
+		//
+		// StringTokenizer tokens = new StringTokenizer(args[2], ",",
+		// false);
+		// Set<String> ruleNames = new HashSet<String>();
+		// while (tokens.hasMoreTokens()) {
+		// ruleNames.add(tokens.nextToken());
+		// }
+		//
+		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
+		// .equalsIgnoreCase("TRUE") ? true : false,
+		// ruleNames, this.trafoConfigParam);
+		//
+		// } else {
+		// StringTokenizer tokens = new StringTokenizer(args[2], ",",
+		// false);
+		// Set<String> ruleNames = new HashSet<String>();
+		// while (tokens.hasMoreTokens()) {
+		// ruleNames.add(tokens.nextToken());
+		// }
+		//
+		// this.executor.addQuery(args[0], parser(), currentUser, true,
+		// ruleNames,
+		// this.trafoConfigParam);
+		// }
+		// }
+		// }
+
 		// the following is not allowed any more
-//		} else if (args.length == 4) {
-//			if (args[1].equalsIgnoreCase("S")) {
-//				// get the rule names
-//				StringTokenizer tokens = new StringTokenizer(args[3], ",",
-//						false);
-//				Set<String> ruleNames = new HashSet<String>();
-//				while (tokens.hasMoreTokens()) {
-//					ruleNames.add(tokens.nextToken());
-//				}
-//
-//				this.executor.addQuery(args[0], parser(), currentUser, args[2]
-//						.equalsIgnoreCase("TRUE") ? true : false, ruleNames,
-//						new ParameterDefaultRoot(new MySink()),
-//						this.trafoConfigParam);
-//			} else {
-//				// get the rule names
-//				StringTokenizer tokens = new StringTokenizer(args[3], ",",
-//						false);
-//				Set<String> ruleNames = new HashSet<String>();
-//				while (tokens.hasMoreTokens()) {
-//					ruleNames.add(tokens.nextToken());
-//				}
-//
-//				this.executor.addQuery(args[0], parser(), currentUser, args[2]
-//						.equalsIgnoreCase("TRUE") ? true : false, ruleNames,
-//						this.trafoConfigParam);
-//			}
-//		}
+		// } else if (args.length == 4) {
+		// if (args[1].equalsIgnoreCase("S")) {
+		// // get the rule names
+		// StringTokenizer tokens = new StringTokenizer(args[3], ",",
+		// false);
+		// Set<String> ruleNames = new HashSet<String>();
+		// while (tokens.hasMoreTokens()) {
+		// ruleNames.add(tokens.nextToken());
+		// }
+		//
+		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
+		// .equalsIgnoreCase("TRUE") ? true : false, ruleNames,
+		// new ParameterDefaultRoot(new MySink()),
+		// this.trafoConfigParam);
+		// } else {
+		// // get the rule names
+		// StringTokenizer tokens = new StringTokenizer(args[3], ",",
+		// false);
+		// Set<String> ruleNames = new HashSet<String>();
+		// while (tokens.hasMoreTokens()) {
+		// ruleNames.add(tokens.nextToken());
+		// }
+		//
+		// this.executor.addQuery(args[0], parser(), currentUser, args[2]
+		// .equalsIgnoreCase("TRUE") ? true : false, ruleNames,
+		// this.trafoConfigParam);
+		// }
+		// }
 
 	}
-	
-	
 
 	@Help(parameter = "<path>", description = "Sets the path from which to read files."
 			+ "E. g. setPath 'C:\\Users\\name\\' and addFromFile 'queries.txt' uses the file C:\\Users\\name\\queries.txt")
@@ -1827,8 +1833,8 @@ public class ExecutorConsole implements CommandProvider,
 			Object ecs = eclipseConsoleSink.newInstance();
 			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
-			this.executor.addQuery(query, parser(), currentUser, new ParameterDefaultRoot(
-					ecSink), this.trafoConfigParam);
+			this.executor.addQuery(query, parser(), currentUser,
+					new ParameterDefaultRoot(ecSink), this.trafoConfigParam);
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");
 		} catch (Exception e) {
@@ -1894,7 +1900,7 @@ public class ExecutorConsole implements CommandProvider,
 
 	@Override
 	public void parserBound(String parserID) {
-		System.out.println("Parser "+parserID+" bound");
+		System.out.println("Parser " + parserID + " bound");
 	}
 
 	@Override

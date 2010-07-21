@@ -211,12 +211,13 @@ class ExecutorThread extends Thread {
 				while (plan != null && !isInterrupted()) {
 					if (plan.schedule(timeSlicePerStrategy)) {
 						// plan is done
-						planScheduling.removeCurrent();
+						planScheduling.removePlan(plan);
 					}
 					plan = planScheduling.nextPlan();
 				}
 			}
 		} catch (Throwable t) {
+			//TODO das is mist so, muss an executor gemeldet werden
 			t.printStackTrace();
 		}
 	}

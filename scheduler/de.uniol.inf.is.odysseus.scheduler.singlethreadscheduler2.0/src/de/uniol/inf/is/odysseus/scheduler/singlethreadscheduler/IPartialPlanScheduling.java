@@ -14,6 +14,7 @@ public interface IPartialPlanScheduling {
 
 	IScheduling nextPlan();
 
-	void removeCurrent();
+	//TODO wieder auf removeCurrent umbauen, atm unpassende bennenung fuer RR
+	void removePlan(IScheduling plan);
 
 }

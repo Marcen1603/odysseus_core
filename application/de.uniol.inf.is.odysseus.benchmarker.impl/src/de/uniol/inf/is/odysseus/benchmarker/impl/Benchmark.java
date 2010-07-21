@@ -120,7 +120,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		BenchmarkSink sink = new BenchmarkSink<ILatency>(result, maxResults);
 		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
 		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
-
+		
+		IntegrationPipe integration = new IntegrationPipe();
+		integration.subscribeSink(latency, 0, 0, latency.getOutputSchema());
+		
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(
 				this.transformHelper, dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
@@ -129,6 +132,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				this.extendedPostPriorisation);
 
 		try {
+			synchronized (this) {
+				wait(1000);	
+			}
+			
 			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
 			if (useBenchmarkMemUsage) {
@@ -141,9 +148,13 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 			ArrayList<AbstractQueryBuildParameter<?>> parameters = new ArrayList<AbstractQueryBuildParameter<?>>();
 			parameters
 					.add(new ParameterTransformationConfiguration(trafoConfig));
-			parameters.add(new ParameterDefaultRoot(latency));
 			parameters.addAll(getBuildParameters());
+			int i = 0;
+			ParameterDefaultRoot defaultRoot = null;
 			for (Pair<String, String> query : getQueries()) {
+				parameters.remove(defaultRoot);
+				defaultRoot = new ParameterDefaultRoot(integration, i);
+				parameters.add(defaultRoot);
 				executor
 						.addQuery(
 								query.getE2(),

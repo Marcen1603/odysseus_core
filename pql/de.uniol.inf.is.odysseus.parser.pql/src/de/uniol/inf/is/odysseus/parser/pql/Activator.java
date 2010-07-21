@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
 
 public class Activator implements BundleActivator {
 
+	private static final String SPLIT = "SPLIT";
 	private static final String ACCESS = "ACCESS";
 	private static final String SELECT = "SELECT";
 	private static final String JOIN = "JOIN";
@@ -33,6 +34,7 @@ public class Activator implements BundleActivator {
 		PQLParser.addOperatorBuilder(UNION, new UnionAOBuilder());
 		PQLParser.addOperatorBuilder(RENAME, new RenameAOBuilder());
 		PQLParser.addOperatorBuilder(WINDOW, new WindowAOBuilder());
+		PQLParser.addOperatorBuilder(SPLIT, new SplitAOBuilder());
 		
 		PQLParser.addQueryParameter(new IntegerParameter(PRIORITY, REQUIREMENT.OPTIONAL));
 	}
@@ -52,6 +54,7 @@ public class Activator implements BundleActivator {
 		PQLParser.removeOperatorBuilder(UNION);
 		PQLParser.removeOperatorBuilder(RENAME);
 		PQLParser.removeOperatorBuilder(WINDOW);
+		PQLParser.removeOperatorBuilder(SPLIT);
 		
 		PQLParser.removeQueryParameter(PRIORITY);
 	}

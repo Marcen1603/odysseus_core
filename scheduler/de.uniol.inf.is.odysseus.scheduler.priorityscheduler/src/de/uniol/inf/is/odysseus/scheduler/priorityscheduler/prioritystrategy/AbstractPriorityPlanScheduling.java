@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy;
 
-import java.util.PriorityQueue;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
@@ -10,22 +11,22 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 public abstract class AbstractPriorityPlanScheduling implements
 		IPartialPlanScheduling, ISchedulingEventListener {
 
-	final private PriorityQueue<IScheduling> queue;
+	final protected ArrayList<IScheduling> queue;
 
 	public AbstractPriorityPlanScheduling(
 			AbstractPriorityPlanScheduling staticPriorityScheduling) {
-		queue = new PriorityQueue<IScheduling>(staticPriorityScheduling.queue);
+		queue = new ArrayList<IScheduling>(staticPriorityScheduling.queue);
 	}
 
 	public AbstractPriorityPlanScheduling() {
-		queue = new PriorityQueue<IScheduling>(10,
-				new CurrentPlanPriorityComperator());
+		queue = new ArrayList<IScheduling>();
 	}
 
 	@Override
 	public void addPlan(IScheduling scheduling) {
 		synchronized (queue) {
 			queue.add(scheduling);
+			Collections.sort(queue, new CurrentPlanPriorityComperator());
 			scheduling.addSchedulingEventListener(this);
 		}
 	}
@@ -41,7 +42,8 @@ public abstract class AbstractPriorityPlanScheduling implements
 	public IScheduling nextPlan() {
 		synchronized (queue) {
 			for (IScheduling plan : queue) {
-				if (!plan.isSchedulingBlocked() && !plan.isSchedulingPaused()) {
+				if (!plan.isSchedulingBlocked() && !plan.isSchedulingPaused()
+						&& plan.isSchedulable()) {
 					updatePriorities(plan);
 					return plan;
 				}
@@ -58,17 +60,17 @@ public abstract class AbstractPriorityPlanScheduling implements
 	}
 
 	@Override
-	public void removeCurrent() {
+	public void removePlan(IScheduling plan) {
 		synchronized (queue) {
-			queue.poll().removeSchedulingEventListener(this);
+			queue.remove(plan);
+			plan.removeSchedulingEventListener(this);
 		}
 	}
 
-	protected void updatePriorityCurrent(int prio) {
+	protected void updatePriorityCurrent(IScheduling current, int prio) {
 		synchronized (queue) {
-			IScheduling s = queue.poll();
-			s.getPlan().setCurrentPriority(prio);
-			queue.add(s);
+			current.getPlan().setCurrentPriority(prio);
+			Collections.sort(queue, new CurrentPlanPriorityComperator());
 		}
 	}
 
@@ -84,6 +86,7 @@ public abstract class AbstractPriorityPlanScheduling implements
 	public void scheddulingPossible(IScheduling sched) {
 		synchronized (queue) {
 			queue.add(sched);
+			Collections.sort(queue, new CurrentPlanPriorityComperator());
 		}
 	}
 

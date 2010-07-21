@@ -14,7 +14,8 @@ import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
-public class RoundRobinPlanScheduling implements IPartialPlanScheduling, ISchedulingEventListener, IClone{
+public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
+		ISchedulingEventListener, IClone {
 
 	Logger logger = LoggerFactory.getLogger(RoundRobinPlanScheduling.class);
 
@@ -26,12 +27,12 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling, ISchedu
 		planList = new ArrayList<IScheduling>();
 		pausedPlans = new HashSet<IScheduling>();
 	}
-	
-	public RoundRobinPlanScheduling(RoundRobinPlanScheduling other){
+
+	public RoundRobinPlanScheduling(RoundRobinPlanScheduling other) {
 		this.planList = new ArrayList(other.planList);
 		this.pausedPlans = new HashSet<IScheduling>(other.pausedPlans);
 	}
-	
+
 	public void addPlan(IScheduling plan) {
 		planList.add(plan);
 		plan.addSchedulingEventListener(this);
@@ -44,7 +45,8 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling, ISchedu
 		planList.clear();
 	}
 
-	public void removeCurrent() {
+	@Override
+	public void removePlan(IScheduling plan) {
 		if (planIterator != null) {
 			planIterator.remove();
 		}
@@ -62,17 +64,21 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling, ISchedu
 			synchronized (pausedPlans) {
 				while (planCount() == pausedPlans.size()) {
 					try {
-						logger.debug(this+" paused");
-						pausedPlans.wait(1000);
+						logger.debug(this + " paused");
+						pausedPlans.wait(10);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			}
-			return planIterator.next();
-		} else {
-			return null;
+			while (planIterator.hasNext()) {
+				IScheduling plan = planIterator.next();
+				if (plan.isSchedulable()) {
+					return plan;
+				}
+			}
 		}
+		return null;
 	}
 
 	@Override
@@ -89,8 +95,8 @@ public class RoundRobinPlanScheduling implements IPartialPlanScheduling, ISchedu
 	}
 
 	@Override
-	public RoundRobinPlanScheduling clone(){
+	public RoundRobinPlanScheduling clone() {
 		return new RoundRobinPlanScheduling(this);
 	}
-	
+
 }
