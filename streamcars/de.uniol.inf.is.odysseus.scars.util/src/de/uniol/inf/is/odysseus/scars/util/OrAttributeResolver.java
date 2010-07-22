@@ -27,7 +27,6 @@ public class OrAttributeResolver {
 	// TIMO START
 	
 	public static int[] getAttributePath( SDFAttributeList schema, String absoluteAttributeName ) {
-		String sensorName = getSensorName(absoluteAttributeName);
 		String relativeAttributeName = getAttributeName(absoluteAttributeName);
 		String[] paths = getAttributeNamePath(relativeAttributeName);
 		
