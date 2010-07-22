@@ -13,6 +13,4 @@ public interface IRating extends IMetaAttribute, IClone {
 
 	public boolean isZero();
 
-	public IRating getRatingObject();
-
 }
