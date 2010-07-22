@@ -12,10 +12,13 @@ public class GainFunctionAO <M extends IProbability> extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private String functionID;
+	
 	// TODO Weitere benötigte Attribute hier einfügen
 	
-	public GainFunctionAO() {
+	public GainFunctionAO(String functionID) {
 		super();
+		this.functionID = functionID;
 	}
 	
 	public GainFunctionAO(GainFunctionAO<M> copy) {
@@ -29,13 +32,8 @@ public class GainFunctionAO <M extends IProbability> extends UnaryLogicalOp {
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		// TODO Falls das Schema nicht verändert wird, kann
-		// hier einfach das InputSchema zurückgegeben werden
-		// (wie in HypothesisEvaluationPO.getOutputSchema())
-		// Falls es verändert wird, 
-		// HypothesisGenerationAO.getOutputSchema() anschauen.
-		return null;
+		return this.getInputSchema();
 	}
 
-	// TODO Weitere benötigte Methoden hier hinzufügen.
+	
 }
