@@ -47,8 +47,8 @@ public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctio
 			double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
 			
 			// compute gain
-			gainFunction.addParameter(HashConstants.GAIN_OLD_COVARIANCE, covarianceOld);
-			gainFunction.addParameter(HashConstants.GAIN_NEW_COVARIANCE, covarianceNew);
+			gainFunction.addParameter(HashConstants.OLD_COVARIANCE, covarianceOld);
+			gainFunction.addParameter(HashConstants.NEW_COVARIANCE, covarianceNew);
 			
 			gain = gainFunction.computeGain();
 			

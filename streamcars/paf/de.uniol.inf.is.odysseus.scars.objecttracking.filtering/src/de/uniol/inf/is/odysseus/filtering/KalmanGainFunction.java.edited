@@ -30,8 +30,13 @@ public class KalmanGainFunction implements IGainFunction {
 	
 	@Override
 	public double[][] computeGain() {
-		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.OLD_COVARIANCE));
-		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.NEW_COVARIANCE));
+<<<<<<< .mine
+		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get("covarianceOld"));
+		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get("covarianceNew"));
+=======
+		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN_OLD_COVARIANCE));
+		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN_NEW_COVARIANCE));
+>>>>>>> .r5771
 		return oldCovariance.add(newCovariance).inverse().multiply(oldCovariance).getData();
 	}
 

@@ -47,8 +47,8 @@ public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & 
 			double[][] gain = oldTuple.getMetadata().getGain();
 			
 			// update state covariance
-			covarianceFunction.addParameter(HashConstants.COVARIANCE_GAIN, gain);
-			covarianceFunction.addParameter(HashConstants.COVARIANCE_OLD_COVARIANCE, covarianceOld);
+			covarianceFunction.addParameter(HashConstants.GAIN, gain);
+			covarianceFunction.addParameter(HashConstants.OLD_COVARIANCE, covarianceOld);
 
 			correctedCovariance = covarianceFunction.correctStateCovariance();
 			

@@ -90,23 +90,23 @@ public class FilterPO<M extends IProbability & IPredictionFunctionKey<IPredicate
 
 
 		// compute gain
-		gainFunction.addParameter("oldCovariance", covarianceOld);
-		gainFunction.addParameter("newCovariance", covarianceNew);
+	//	gainFunction.addParameter("covarianceOld", covarianceOld);
+	//	gainFunction.addParameter("covarianceNew", covarianceNew);
 
 		gain = gainFunction.computeGain();
 
 		// update state covariance
-		correctStateCovarianceFunction.addParameter("gain",gain);
-		correctStateCovarianceFunction.addParameter("covarianceOld", covarianceOld);
+//		correctStateCovarianceFunction.addParameter("gain",gain);
+//		correctStateCovarianceFunction.addParameter("covarianceOld", covarianceOld);
 
 		correctedCovariance = correctStateCovarianceFunction.correctStateCovariance();
 
 		oldTuple.getMetadata().setCovariance(correctedCovariance);
 
 		// update state estimate
-		correctStateEstimateFunction.addParameter("measurementOld", measurementOld);
-		correctStateEstimateFunction.addParameter("measurementNew", measurementNew);
-		correctStateEstimateFunction.addParameter("gain", gain);
+	//	correctStateEstimateFunction.addParameter("measurementOld", measurementOld);
+	//	correctStateEstimateFunction.addParameter("measurementNew", measurementNew);
+	//	correctStateEstimateFunction.addParameter("gain", gain);
 
 
 		correctedMeasurement = correctStateEstimateFunction.correctStateEstimate();

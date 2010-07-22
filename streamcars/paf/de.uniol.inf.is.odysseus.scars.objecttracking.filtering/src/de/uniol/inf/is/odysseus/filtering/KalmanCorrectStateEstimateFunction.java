@@ -25,9 +25,9 @@ public class KalmanCorrectStateEstimateFunction implements ICorrectStateEstimate
 	@Override
 	public double[] correctStateEstimate() {
 		/* Ansatz:
-		RealMatrix measurementOld = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.ESTIMATE_OLD_MEASUREMENT));
-		RealMatrix measurementNew = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.ESTIMATE_NEW_MEASUREMENT));
-		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.ESTIMATE_GAIN));	
+		RealMatrix measurementOld = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.OLD_MEASUREMENT));
+		RealMatrix measurementNew = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.NEW_MEASUREMENT));
+		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN));	
 		return measurementNew.subtract(measurementOld).multiply(gain).add(measurementOld).getData();
 		 */
 		return null;

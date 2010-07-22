@@ -61,18 +61,18 @@ public class CorrectStateEstimateFunctionPO <M extends IGain & IProbability & IP
 			double[][] gain = oldTuple.getMetadata().getGain();
 			
 			// update state estimate
-			estimateFunction.addParameter(HashConstants.ESTIMATE_OLD_MEASUREMENT, measurementOld);
-			estimateFunction.addParameter(HashConstants.ESTIMATE_NEW_MEASUREMENT, measurementNew);
-			estimateFunction.addParameter(HashConstants.ESTIMATE_GAIN, gain);
+			estimateFunction.addParameter(HashConstants.OLD_MEASUREMENT, measurementOld);
+			estimateFunction.addParameter(HashConstants.NEW_MEASUREMENT, measurementNew);
+			estimateFunction.addParameter(HashConstants.GAIN, gain);
 
 
 			correctedMeasurement = estimateFunction.correctStateEstimate();
 			
 			//set corrected measurement
 			// TODO Hier muss der korrigierte Wert gesetzt werden.
-			// Dazu muss eine Liste gelöscht werden und die andere durch die neuen
+			// Dazu muss eine Liste gelï¿½scht werden und die andere durch die neuen
 			// Werte ersetzt werden. Am Besten wird die Liste mit den neuen Werten
-			// gelöscht und in die Liste mit den alten
+			// gelï¿½scht und in die Liste mit den alten
 			// Werten die neuen Werte geschrieben.
 		}
 

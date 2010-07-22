@@ -87,7 +87,7 @@ public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 		
 		
 		if (gainFunctionID == 1) { 
-		this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction(correctStateEstimateFunctionParameters);
+	//	this.gainFunction = new KalmanGainFunction(correctStateEstimateFunctionParameters);
 		
 		}
 	
@@ -110,7 +110,7 @@ public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 	public void setCorrectStateCovarianceFunction(int correctStateCovarianceFunctionID, HashMap<String, Object> correctStateCovarianceFunctionParameters) {
 		
 		if (correctStateCovarianceFunctionID == 1) { 
-		this.correctStateCovarianceFunction = new KalmanCorrectStateCovarianceFunction(correctStateCovarianceFunctionParameters);
+//		this.correctStateCovarianceFunction = new KalmanCorrectStateCovarianceFunction(correctStateCovarianceFunctionParameters);
 		
 		}
 	
@@ -131,7 +131,7 @@ public class FilterAO<M extends IProbability>  extends BinaryLogicalOp{
 	public void setCorrectStateEstimateFunction(int correctStateEstimateFunctionID, HashMap<String, Object> correctStateEstimateFunctionParameters) {
 		
 		if (correctStateEstimateFunctionID == 1) { 
-		this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction(correctStateEstimateFunctionParameters);
+	//	this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction(correctStateEstimateFunctionParameters);
 		
 		}
 	
