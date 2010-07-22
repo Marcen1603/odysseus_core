@@ -20,19 +20,19 @@ public interface IGainFunction {
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void setParameters(HashMap<String, Object> parameters);
+	public void setParameters(HashMap<Integer, Object> parameters);
 
 
 	/**
 	 * @return the parameters
 	 */
-	public HashMap<String, Object> getParameters();
+	public HashMap<Integer, Object> getParameters();
 
 
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void addParameter(String key, Object Value);
+	public void addParameter(Integer key, Object Value);
 
 	public int getFunctionID();
 
