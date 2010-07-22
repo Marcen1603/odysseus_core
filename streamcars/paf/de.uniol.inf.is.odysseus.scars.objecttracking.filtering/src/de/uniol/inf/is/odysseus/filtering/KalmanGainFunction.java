@@ -14,25 +14,8 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  */
 public class KalmanGainFunction implements IGainFunction {
 
-/*	@Override
-	public double[][] computeGain(double[][] oldCovariance, double[][] newCovariance, Object[] matrixes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-*/
 	public int functionID = 1;
-	
-	/*
-	 * Wird nicht mehr benötigt, da die Parameter im
-	 * FilterPO gesetzt werden.
-	 *
-	private  double[][] oldCovariance;
-	
-	double[][] newCovariance;
-	
-	private double[] outputModel;
-	*/
-	
+		
 	private HashMap<String, Object> parameters;
 	
 	public KalmanGainFunction() {
@@ -42,16 +25,16 @@ public class KalmanGainFunction implements IGainFunction {
 		this.parameters = parameters;
 		/*this.parameters.put("oldCovariance", oldCovariance);
 		this.parameters.put("newCovariance", newCovariance);
-		this.parameters.put("outputModel", outputModel); */
-	
+		this.parameters.put("outputModel", outputModel);*/
 	}
 	
 	@Override
 	public double[][] computeGain() {
-		return null;
+		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get("oldCovariance"));
+		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get("newCovariance"));
+		return oldCovariance.add(newCovariance).inverse().multiply(oldCovariance).getData();
 	}
 
-	
 	/**
 	 * @param parameters the parameters to set
 	 */
@@ -75,8 +58,7 @@ public class KalmanGainFunction implements IGainFunction {
 
 	@Override
 	public int getFunctionID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.functionID;
 	}
 
 }
