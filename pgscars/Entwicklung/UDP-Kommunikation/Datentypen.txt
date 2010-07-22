@@ -1,9 +1,0 @@
-Datum         JDVE- bzw. C++-Datentyp  Java-Datentyp
-
-Type          SInt32                   int
-CarTrafficID  SInt32                   int
-LaneID        SInt32                   int
-PositionUTM   Array von Float64        Array von double
-Velocity      Float32                  float
-Length        Float32                  float
-Width         Float32                  float
