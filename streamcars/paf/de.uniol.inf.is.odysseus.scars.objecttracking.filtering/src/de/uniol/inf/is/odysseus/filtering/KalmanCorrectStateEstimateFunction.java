@@ -8,40 +8,45 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 public class KalmanCorrectStateEstimateFunction implements ICorrectStateEstimateFunction {
+		
+	private HashMap<Integer, Object> parameters;
 	
-	// measOld, measNew, Gain, output
-	
-	private HashMap<String, Object> parameters;
-	
-	
-	public KalmanCorrectStateEstimateFunction() {
+		public KalmanCorrectStateEstimateFunction() {
 	
 	}
 	
-	public KalmanCorrectStateEstimateFunction(HashMap<String, Object> parameters) {
+	public KalmanCorrectStateEstimateFunction(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
+		/*this.parameters.put("measurementOld", measurementOld);
+		this.parameters.put("measurementNew", measurementNew);
+		this.parameters.put("gain", gain);*/
 	}
 
 	@Override
 	public double[] correctStateEstimate() {
-		// TODO Auto-generated method stub
+		/* Ansatz:
+		RealMatrix measurementOld = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.ESTIMATE_OLD_MEASUREMENT));
+		RealMatrix measurementNew = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.ESTIMATE_NEW_MEASUREMENT));
+		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.ESTIMATE_GAIN));	
+		return measurementNew.subtract(measurementOld).multiply(gain).add(measurementOld).getData();
+		 */
 		return null;
 	}
 
 	@Override
-	public HashMap<String, Object> getParameters() {
+	public HashMap<Integer, Object> getParameters() {
 		return this.parameters;
 	}
 
 	@Override
-	public void setParameters(HashMap<String, Object> parameters) {
+	public void setParameters(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
 	}
 	
 	/**
 	* @param parameters the parameters to set
 	*/
-	public void addParameter(String key, Object value) {
+	public void addParameter(Integer key, Object value) {
 			this.parameters.put(key, value);
 		}
 
