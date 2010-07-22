@@ -8,9 +8,6 @@ import java.util.HashMap;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-import de.uniol.inf.is.odysseus.filtering.logicaloperator.GainFunctionAO;
-import de.uniol.inf.is.odysseus.filtering.logicaloperator.GainFunctionAO.HashConstants;
-
 /**
  * @author mase
  *
@@ -33,8 +30,8 @@ public class KalmanGainFunction implements IGainFunction {
 	
 	@Override
 	public double[][] computeGain() {
-		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstantsForGain.OLD_COVARIANCE));
-		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstantsForGain.NEW_COVARIANCE));
+		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN_OLD_COVARIANCE));
+		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN_NEW_COVARIANCE));
 		return oldCovariance.add(newCovariance).inverse().multiply(oldCovariance).getData();
 	}
 
