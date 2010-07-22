@@ -45,12 +45,12 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 				case 1: this.newList = object;
 			}
 		} else {
-			this.oldList = null;
-			this.newList = null;
 			Object[] oldNewListArray = new Object[2];
 			oldNewListArray[0] = OrAttributeResolver.resolveTuple(this.oldList, this.oldObjListPath);
 			oldNewListArray[1] = OrAttributeResolver.resolveTuple(this.newList, this.newObjListPath);
 			MVRelationalTuple<M> oldNewList = new MVRelationalTuple<M>(oldNewListArray);
+			this.oldList = null;
+			this.newList = null;
 			transfer(oldNewList);
 		}
 	}
