@@ -1,0 +1,220 @@
+%%Hier wird das Dokument definiert
+
+\documentclass{scrartcl}  %Format und Stil
+
+\usepackage{../style/wrstyle}
+	
+% Einstellungen f\"{u}r die "offizielle" Titelseite
+\title{Projektgruppe StreamCars} % Titel der Dissertation
+\subtitle{wöchentliche Arbeitsberichte}
+\author{Hauke Neemann} % Name des Autors
+\date{\today}
+\surveyor{André Bolles}
+\term{Sommersemester 2010 - Wintersemester 2010/11}
+
+%%Hier wird das Dokument definiert
+\begin{document}
+
+	\maketitle
+	
+	\newpage
+	
+	\tableofcontents
+	
+% ------------------------------ Wochenbericht KW 20 ------------------------------
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item Mittwochs mit Timo getroffen
+			\item Neueste Fortschritte in MSP eingetragen
+			\item Aufgaben auf die Teammitglieder verteilt
+			\item TOP-Listen für Treffen angefertigt
+		\end{compactitem}
+		\item StreamCars
+		\begin{compactitem}
+			\item angefangen UDP-Verbindung von JDVE zu ODYSSEUS zu implementieren
+		\end{compactitem}
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Strukturen der Daten nach dem Verschicken sind nicht so leicht nachzuvollziehen.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item Mittwochs mit Timo getroffen
+			\item Neueste Fortschritte in MSP eingetragen
+			\item Aufgaben auf die Teammitglieder verteilt
+			\item TOP-Listen für Treffen angefertigt
+		\end{compactitem}
+		\item StreamsCars
+		\begin{compactitem}
+			\item mit Sven das neue JDVE zum Laufen bringen.
+			\item die UDP-Verbindung weiter implementieren.
+		\end{compactitem}
+	\end{itemize}
+\end{workToDo}
+
+% ------------------------------ Wochenbericht KW 21 ------------------------------
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item Mittwochs mit Timo getroffen
+			\item Neueste Fortschritte in MSP eingetragen
+			\item Aufgaben auf die Teammitglieder verteilt
+			\item TOP-Listen für Treffen angefertigt
+		\end{compactitem}
+		\item StreamsCars
+		\begin{compactitem}
+			\item versucht mit Sven das neue JDVE zum Laufen zu bringen.
+			\item UDP: 50 Autos übertragen
+		\end{compactitem}
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item das alte JDVE läuft nicht stabil (Dominion\_ED stürzt häufiger ab, bzw. startet nicht richtig)
+		\item das neue JDVE läuft noch gar nicht (Dominion\_ED stürzt häufiger ab, bzw. startet nicht richtig, NextGenViewer startet nicht, etc.)
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item Mittwoch mit Timo treffen
+			\item Aufgabenverteilung und Zeiten planen
+		\end{compactitem}
+		\item UDP-Verbindung
+		\begin{compactitem}
+			\item Dienstag mit Sven treffen um die UDP-Verbindung auszuarbeiten
+		\end{compactitem}
+		\item Seminare
+		\begin{compactitem}
+			\item Seminarvortrag am Freitag in Braunschweig
+		\end{compactitem}
+	\end{itemize}
+\end{workToDo}
+
+% ------------------------------ Wochenbericht KW 22 ------------------------------
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item Mittwochs mit Timo getroffen
+			\item Neueste Fortschritte in MSP eingetragen
+			\item Aufgaben auf die Teammitglieder verteilt
+			\item TOP-Listen für Treffen angefertigt
+		\end{compactitem}
+		\item StreamsCars
+		\begin{compactitem}
+			\item versucht mit Sven das neue JDVE zum Laufen zu bringen. Nach Konsultation von Ulf Noyer das neue JDVE mit Hilfe der alten Version zum Laufen gebracht.
+			\item UDP: die bisherige Testklasse zu einer vernünftigen Hilfsklasse für die Quelle refactort.
+			\item eine eigene Anwendung für JDVE mittels Baal erstellt.
+			\item bei Timo und Thomas in der Findungs-/Diskussionsphase beim Aufstellen der Grammatik für die logischen Operatoren mitgearbeitet
+		\end{compactitem}
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item das alte JDVE läuft nicht stabil (Dominion\_ED stürzt häufiger ab, bzw. startet nicht richtig)
+		\item das neue JDVE lief gar nicht (Dominion\_ED stürzt häufiger ab, bzw. startet nicht richtig, NextGenViewer startet nicht, etc.)
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item Mittwoch mit Timo treffen
+			\item Aufgabenverteilung und Zeiten planen
+		\end{compactitem}
+	\end{itemize}
+\end{workToDo}
+
+% ------------------------------ Wochenbericht KW 23 ------------------------------
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item StreamsCars
+		\begin{compactitem}
+			\item erste Anforderungen gesammelt und strukturiert in die Vorlage von Thomas eingepflegt (Product Backlog)
+			\item in Odysseus, speziell Quellenoperatoren, eingearbeitet (wozu die unterschiedlichen Funktionen da sind und wie man diese implementiert)
+			\item angefangen aus unserer UDP-Verbindung einen Quellenoperator zu implementieren.
+		\end{compactitem}
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Wir haben festgestellt, dass es bereits einen sehr ähnlichen Quellenoperator für atomare Daten gibt. 
+		\item Wir benutzen für den vertikalen Prototypen wahrscheinlich trotzdem weiter unsere Version und später basteln wir das um, so dass der Operator insgesamt generischer wird.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item Mittwoch mit Timo treffen
+			\item Aufgabenverteilung und Zeiten planen
+		\end{compactitem}
+		\item StreamCars
+		\begin{compactitem}
+			\item den Quellenoperator weiterimplementieren, falls notwendig
+			\item auf der JDVE-Seite Ungenauigkeiten für die Messungen einbauen, damit die Prediktion richtig arbeiten kann
+			\item auf der JDVE-Seite eine initiale Fahrerassistenzfunktion einbauen 
+		\end{compactitem}
+	\end{itemize}
+\end{workToDo}
+
+% ------------------------------ Wochenbericht KW 24 ------------------------------
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item mit Timo das Product Backlog ausgearbeitet
+		\end{compactitem}
+		\item StreamsCars
+		\begin{compactitem}
+			\item Probleme mit dem neuen JDVE behoben. Dabei musste der Solution ein UDP-Präprozessor hinzugefügt werden.
+			\item Einen Zeitstempel für die UDP-Übertragung hinzugefügt
+		\end{compactitem}
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item JDVE benötigt verschiedene Präprozessoren (). Das wussten wir bei der Umstellung auf die neue Version nicht (bzw. haben nicht daran gedacht), so dass uns das viel Zeit gekostet hat.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Projektmanagement
+		\begin{compactitem}
+			\item das Release-Backlog ausarbeiten
+			\item Aufgabenverteilung und Zeiten planen
+		\end{compactitem}
+		\item StreamCars
+		\begin{compactitem}
+			\item auf der JDVE-Seite Ungenauigkeiten für die Messungen einbauen, damit die Prediktion richtig arbeiten kann.
+			\item einen Dummy-Operator bauen, damit die Leute auf Odysseusseite testen können ohne JDVE zu benötigen.
+		\end{compactitem}
+	\end{itemize}
+\end{workToDo}
+\end{document}

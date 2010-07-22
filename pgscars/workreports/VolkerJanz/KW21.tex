@@ -1,0 +1,26 @@
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Gating-Algorithmus verstanden.
+		\item In vorhandene ansatzweise Umsetzung der Objektverfolgung in Odysseus eingearbeitet.
+		\item Gating-Algorithmus komplett implementiert (Mahalanobis-Distanz).
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Die vorhandene ansatzweise Umsetzung der Objektverfolung in Odysseus war zunächst unklar.
+		\item Die Trennung von Operator und Algorithmus wurde zunehmend unklarer und sollte definiert werden.
+		\begin{itemize}
+			\item Beispiel Gating: der Algorithmus gibt momentan nur true oder false zurück -> er vergleicht 1 Paar von Objekten und sagt ob diese verknüpft werden oder nicht. Das bedeutet, dass der Operator einen Schleifenaufruf haben muss, der den Algorithmus für jedes Objektpaar aufruft. Diese Anforderung war zunächst unklar -> die Schleife könnte man auch in den Algorithmus versetzen. Wir haben uns zunächst darauf geeinigt das der Operator für den Aufruf für jedes Objektpaar zuständig ist.
+			\end{itemize}
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Assoziations-Algorithmus implementieren: wahrscheinlich Nearest-Neighbor.
+		\item Filter-Algorithmus implementieren (\textit{Anmerkung: es gibt bereits ausgereifte offene libs die den Kalman-Filter implementieren. Wir sollten uns: http://ai.stanford.edu/\~{}paskin/slam/ genauer ansehen})
+		\item J-Unit-Tests für die Algorithmen erstellen.
+	\end{itemize}
+\end{workToDo}

@@ -1,0 +1,13 @@
+- Daten aus DOMINION müssen relativ zum EGO-Fahrzeug übertragen werden.
+- Die Fahrzeugdaten müssen in DOMINION künstlich ungenau gemacht werden.
+- Sollte das EGO Auto auch als Quelle genutzt werden, ist dies eine eigene Quelle auf die per Anfragen zugegriffen werden kann.
+- Fremdfahrzeuge werden durch Datenstrom dargestellt.
+- Es muss möglich sein in Odysseus zu deklarieren, ob die Fahrzeugdaten absolut oder relativ sind. 
+- Gibt es absolute Fahrzeugdaten müssen diese mit Hilfe des EGO Fahrzeugs in relative Daten umgewandelt werden.
+- Alle Daten aus Odysseus müssen nach DOMINION geliefert werden.
+- Die eigentliche Assistenzfunktion wird in DOMINION geregelt.
+- Fahrzeugdaten werden in Objekttupel gespeichert.
+- Dies ist eine Liste mit Fahrzeugen, die mit Metadaten gefüllt ist.
+- Eine Quelle liefert die Fahrzeugdaten.
+- Welche Fahrzeugdaten eine Quelle liefert, muss per "Create Stream..." definiert werden.
+- Welche Fahrzeugdaten benötigt werden, wird durch die verwendeten PAF-Funktionen definiert.

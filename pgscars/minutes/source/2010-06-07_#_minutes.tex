@@ -1,0 +1,99 @@
+\documentclass[pdftex,a4paper]{scrartcl}
+\usepackage{ngerman}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[inner=2cm,outer=2cm,top=2cm,bottom=2cm,includeheadfoot]{geometry}
+\usepackage{rotating}
+\usepackage{paralist}
+\usepackage{url}
+\setlength{\evensidemargin}{\paperwidth}
+\addtolength{\evensidemargin}{-\textwidth}
+\addtolength{\evensidemargin}{-2.0in}
+\addtolength{\evensidemargin}{-\oddsidemargin}
+\setlength{\parindent}{0pt}
+%\renewcommand{\labelenumi}{\alph{enumi})}
+\parskip 12pt
+
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Sitzungsprotokoll}
+%Sitzungsdatum
+\fancyhead[R]{07.06.2010}
+\begin{document}
+
+\renewcommand{\headrulewidth}{0.5pt}
+
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\today}
+\renewcommand{\footrulewidth}{0.5pt}
+
+\begin{center}
+\sc
+%X-te Sitzung
+\LARGE{Protokoll zur 8. Sitzung} \\
+%Sitzungsdatum
+\Large{\textbf{am 07.06.2010}} \\
+%Uhrzeit
+\normalsize{\textbf{um 14:00 - 16:00}}
+\end{center}
+%Moderator bzw Sitzungsleiter
+\begin{large}\textbf{Sitzungsleiter:} Timo Michelsen\\
+%Protokolant
+\textbf{Protokolf"uhrer:} Tobias Krahn\\
+%Wer anwesend ist und wer nicht
+\textbf{Anwesend:} André Bolles, Benjamin Gr\"{u}nebast, Volker Janz,  Tobias Krahn, Timo Michelsen, Sven M\"{u}ller, Daniel Twumasi, Thomas Vogelgesang
+\newline
+
+\end{large}
+\rule{\textwidth}{0.2pt}
+\rm
+
+
+%~~~+++ Tagesordnungsvorstellung +++~~~
+% Hier steht zunächst die vorgeschlagene Tagesordnung für die Sitzung TODO
+\chapter{Tagesordnung}
+ \begin{itemize}
+	\item Briefing
+	\item Organisatorisches
+	\item Weiterarbeit
+ \end{itemize}
+
+%~~~+++ Briefing +++~~~
+% Hier steht ein Briefing, sofern durchgeführt
+\section{Briefing}
+	\begin{itemize}
+		\item Jeder hat kurz seine Ergebnisse zusammengefasst (siehe Wochenberichte).
+		\item Wochenberichte f\"{u}r KW 22 m\"{u}ssen bis morgen (Dienstag, 08.06) im SVN sein, ab n\"{a}chster Woche dann immer p\"{u}nktlich am Montag.
+  	\end{itemize}
+
+\section{Weiterarbeit}
+	\begin{itemize}
+		\item Weiterarbeit in den Kleingruppen.
+	\end{itemize}
+	 
+\section{Sonstiges}
+	\begin{itemize}
+		\item Erinnerung: Mittwoch grillen bei Volker.
+		\item Donnerstag-Treffen findet statt (daf\"{u}r lassen wir zur Klausurenzeit einige Stunden ausfallen)!
+	\end{itemize}
+
+
+%~~~+++ Arbeitsaufträge +++~~~
+\section{Arbeitsaufträge}
+\begin{itemize}
+	\item Weiterarbeit in den Kleingruppen
+\end{itemize}
+
+%~~~+++ Nächste Sitzung +++~~~
+\section{Nächste Sitzung}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline 
+		Datum & Zeit & Ort & Sitzungsleiter & Protokollf"uhrer\\
+		\hline 
+		Montag, 14.06.2010 & 14:00 - 16:00 & OFFIS U61 & Hauke Neemann & Volker Janz\\
+		\hline
+	\end{tabular}
+
+\end{document}

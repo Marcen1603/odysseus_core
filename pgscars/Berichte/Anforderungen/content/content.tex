@@ -1,0 +1,74 @@
+% Namensschema der Labels:
+%
+% Kapitel, Unterkapitel usw.: sec:kapitel:abschnitt:unterabschnitt
+% Bilder: fig:bildname
+% Code-Listings: lst:listingname
+%
+%-------------------------------------------------------------------------------
+%
+% Index-Markierungen mit \index{Indexpunkt ! Unterpunkt} erstellen
+%
+\chapter{Einleitung}\label{sec:einleitung}
+%Einführung und Überblick über die gesamte Anforderungsdefinition
+
+\section{Zielsetzung des Dokuments}\label{sec:einleitung:zielsetzung}
+%Motivation für das Dokument
+%angestrebte Verwendung des Dokuments
+%Bestimmung der Zielgruppe (Welche Leser)?
+
+\section{Vision}\label{sec:einleitung:vision}
+%Die Vision gibt einen kurzen Überblick über das Projekt und die grundlegenden (unumstößlichen) Ziele und Rahmenbedingungen (ca. 1-2 Seiten):
+%Beschreibung der Motivation und Ziele des Projekts
+%Beschreibung der vorgesehenen Anwendungsbereiche
+%Welceh Vorteile versprcht man sich von einem positiven Projektausgang
+
+\section{Definitionen, Akronyme und Abkürzungen}\label{sec:einleitung:definitionen}
+% Hier werden alle Begriffe, Akronyme und Abkürzungen definiert. (Zusätzliche Definitionen im Glossar)
+
+\section{Referenzen}\label{sec:einleitung:refenzen}
+% Hinweis auf alle referenzierten Dokumente. Da wir eine Literaturliste im Anhang haben kann dieser Punkt eventuell wegfallen. Eventuell kann an dieser stelle ein Blick auf verwandte Literatur erfolgen
+Hier ist ein Dummy-Zitat, damit das Makefile durchläuft \cite{dummy}
+
+\section{Überblick}\label{sec:einleitung:ueberblick}
+%Hier wird eine Übersicht über den Inhalt und die Struktur des Dokuments gegeben
+
+%-------------------------------------------------------------------------------
+
+\chapter{Allgemeine Beschreibung}\label{sec:beschreibung}
+% Überblick über das System und seinen Einsatzbereich
+% Beschreibung allgemeiner Systemfaktoren
+
+\section{Produkt-Einbettung}\label{sec:beschreibung:einbettung}
+% Einordnung des Systems in seine Systemumgebung (evtl. Blockdiagramm)
+% Übertragung der Anforderungen des Gesamtsystems auf das Teilsystem
+% Beschreibungder Schnittstellen des Systems
+%	Benutzungsschnittstellen (GUI Design, Funktionstasten, Benutzergruppen)
+%	Hardwareschnittstellen (Hardwarekonfiguration, Speicher, unterstützte Geräte)
+%	Kommunikationsschnittstellen (LAN Protokolle)
+%	Softwareschnittstellen (Komponente, Version, Zweck, Schnittstellenformat)
+
+\section{Produkt-Funktionen}\label{sec:beschreibung:funktionen}
+% Zusammenfassung der Funktionen, die durch das Softwaresystem unterstützt werden soll.
+
+\section{Anforderungen an die Benutzer}\label{sec:beschreibung:benutzer}
+% Beschreibung allgemeiner Anforderungen an die intendierten Anwender (Ausbildung, Erfahrung, technischer Hintergrund)
+% Kann eventuell wegfallen, da wir einen wissenschaftlichen Prototyp entwickeln und kein System für den operativen Einsatz
+
+\section{Annahmen und Abhängigkeiten}\label{sec:beschreibung:abhaengigkeiten}
+% Auflistung von Annahmen über die Systemumgebung, deren Änderung die Systemanforderungen deutlich ändern kann (Betriebssystem, speziell zu entwickelnde Hardware)
+% Wird auf unser Projekt wahrscheinlich nicht zutreffen
+
+\section{Weitere Anforderungen}\label{sec:beschreibung:weitere}
+% Auflistung von Anforderungen, die in einer zukünftigen Version realisert werden sollen
+% Dieser Abschnitt wird für unser Projekt wahrscheinlich nicht erforderlich sein. Evtl. kann man an dieser Stelle einen Ausblick auf mögliche Entwicklungen geben, die über den Umfang der PG hinausgehen
+
+%-------------------------------------------------------------------------------
+
+\chapter{Anforderungen}\label{sec:anforderung} \index{Anforderung}
+% detaillierte Beschreibung aller Anforderungen
+
+\input{content/functional_requirements.tex}
+
+\input{content/nonfunctional_requirements.tex}
+
+\chapter{Zusammenfassung}\label{sec:zusammenfassung}

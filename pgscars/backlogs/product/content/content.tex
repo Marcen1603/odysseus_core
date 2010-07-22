@@ -1,0 +1,156 @@
+% Namensschema der Labels:
+%
+% Kapitel, Unterkapitel usw.: sec:kapitel:abschnitt:unterabschnitt
+% Bilder: fig:bildname
+% Code-Listings: lst:listingname
+%
+%-------------------------------------------------------------------------------
+%
+% Index-Markierungen mit \index{Indexpunkt ! Unterpunkt} erstellen
+%
+\chapter{Anforderungen}\label{sec:anforderung} \index{Anforderung}
+
+\section{JDVE}
+\begin{description}
+	\item[\req{J}] Die vom JDVE bereitgestellten Sensoren liefern Sensorendaten, die als Datengrundlage dienen.
+	\item[\subreq{J}] Es können beliebig viele Sensoren zur Datenerfassung genutzt werden. 
+	\item[\subreq{J}] Das Datenformat der Sensoren muss von ODYSSEUS berücksichtigt werden.
+	\item[\subreq{J}] Es wird ein Radarsensor zur Fahrzeugerfassung genutzt.
+	%\item[\subreq{J}] Jeder Sensor besitzt ein eigenes Format seiner gesendeten Daten, die berï¿½cksichtigt werden muss. % Das ist etwas, was wir beachten müssen, aber doch keine Anforderung. Habs oben woanders drangeschrieben (Sven)
+	%\item[\subreq{J}] Jeder Sensor besitzt eine Fehlerwahrscheinlichkeit (d.h. eine Wahrscheinlichkeit einen ungültigen Wert zu liefern).
+	\item[\subreq{J}] Jeder Sensor besitzt eine Ungenauigkeit bzgl. seiner bereitgestellten Daten (Varianzen).
+        \item[\subsubreq{J}] Falls die gelieferten Daten exakt sind (realitätsgetreue Simulation), muss die Unschärfe künstlich vorgenommen werden. Hierfür sollten normalverteilte Zufallszahlen verwendet werden.
+	\item[\req{J}] Es muss eine Fahrassistenzfunktion auf JDVE-Seite umgesetzt werden.
+	\item[\subreq{J}] Es muss eine FCW (Forward Collision Warning) realisiert werden.
+	\item[\subreq{J}] Das Fahrzeug wird geregelt abgebremst, falls notwendig.
+\end{description}
+
+\resetcount
+\section{Kommunikation zwischen JDVE und Odysseus}
+\begin{description}
+	\item[\req{K}] Alle Daten, die von den Sensoren detektiert werden, müssen an ODYSSEUS verschickt werden.
+	\item[\subreq{K}] Zur Kommunikation wird UDP verwendet.
+	\item[\subreq{K}] JDVE benötigt eine Server-URL von ODYSSEUS.
+	\item[\subreq{K}] JDVE benötigt einen Server-Port von ODYSSEUS.
+	\item[\subreq{K}] Es muss ein Übertragungsformat für die Daten definiert werden.
+	\item[\req{K}] Alle Ergebnisdaten aus ODYSSEUS müssen dem JDVE geliefert werden.
+	\item[\subreq{K}] Zur Übertragung der Daten wird UDP verwendet.
+	\item[\subreq{K}] ODYSSEUS benötigt eine Server-URL von JDVE.
+	\item[\subreq{K}] ODYSSEUS benötigt einen Server-Port von JDVE.
+	\item[\subreq{K}] Es muss ein Übertragungsformat für die Daten definiert werden.
+	\item[\req{K}] Alle Daten sind relativ zum eigenen Fahrzeug.
+\end{description}
+
+\resetcount
+\section{Odysseus}
+\begin{description}
+	\item[\req{O}] Eine Quelle stellt die Verbindung zu JDVE her.
+	\item[\subreq{O}] Jede Quelle stellt in Odysseus einen Sensor dar.
+	\item[\subreq{O}] Die Quelle empfängt alle Daten eines Sensors von JDVE.
+	\item[\subreq{O}] Die Quelle benötigt Server-Port zur Kommunikation.
+	\item[\subreq{O}] Die Quelle kennt das Format der empfangenen Daten.
+	\item[\subreq{O}] Die Quelle wandelt die empfangenen Daten in objektrelationale Tupel um.
+	\item[\subreq{O}] Die Quelle nimmt bei der Umwandlung Rücksicht auf das objektrelationale Schema, welches über Anfragen definiert wurde (\texttt{CREATE STREAM (...)}).
+	\item[\subreq{O}] Die Quelle sendet die Daten weiter durch den physischen Operatorgraphen.
+
+	\item[\req{O}] Jedes Tupel ist objektrelational.
+	\item[\subreq{O}] Jedes Tupel muss zeitlich eingeordnet werden können (über Zeitstempel). Der Zeitstempel ist von den Sensoren gegeben, in unserem Fall von JDVE.
+	\item[\subreq{O}] Das Tupelschema wird dynamisch mittels der Anfragesprache definiert.
+	\item[\subreq{O}] Tupel bestehen aus atomaren Werten und/oder weiteren Tupeln.
+	\item[\subreq{O}] Tupel können Listen sein.
+	\item[\subsubreq{O}] Die Liste kann beliebig viele Elemente enthalten.
+	\item[\subsubreq{O}] Elemente können auch Tupel sein.
+	
+	\item[\req{O}] Der (physische) Operatorgraph muss beliebig erweiterbar sein.
+	\item[\subreq{O}] An jeder Stelle des Objecttrackings können beliebige weitere Operatoren hinzugefügt werden.
+	\item[\subreq{O}] Der Operatorplan ist nicht starr definiert.
+	\item[\req{O}] Es soll ein Unnest-Operator bereitgestellt werden, um Listen von Objekten zu zerlegen und die Objekte als eigenständige Datenstromelemente zu versenden.
+\end{description}
+
+\resetcount
+\section{Umweltmodell}
+\begin{description}
+	\item[\req{A}] Das Umweltmodell muss aktuelle Fahrzeugumgebung darstellen können.
+	\item[\req{A}] Das Umweltmodell darf nicht zu viel Speicher verbrauchen.
+	\item[\req{A}] Das Umweltmodell muss fehlerhafte Messungen in einem Messzyklus behandeln können.
+	\item[\req{A}] Es gibt einfache Sensoren als Quellen (bspw. Regensensor) zur Einspeisung.
+	\item[\req{A}] Es gibt Objektstrackingzyklen zur Einspeisung von Daten.
+	\item[\subreq{A}] Es gibt eine Eingabe pro Sensorzyklus (bspw. Radarsensor).
+	\item[\subreq{A}] Um Zyklen zu erzeugen wird ein Broker verwendet.
+	\item[\subreq{A}] Es gibt genau einen Broker.
+	\item[\subreq{A}] Der Broker speichert alles im Hauptspeicher.
+	\item[\subreq{A}] Der Broker fasst alle Objecttrackingzyklen zusammen.
+	\item[\subreq{A}] Der Broker muss n Objecttracking Eingaben haben können (viele Sensoren).
+	\item[\subreq{A}] Der Broker muss n Objecttracking Ausgaben haben können (viele Sensoren).
+	\item[\subreq{A}] Eine Blockierung muss vermieden werden.
+	\item[\subsubreq{A}] Der Broker braucht Initialwerte.
+	\item[\req{A}] Auf das Umweltmodell müssen Anfragen ausgeführt werden können.
+\end{description}
+
+\resetcount
+\section{Objecttracking}
+\begin{description}
+	% O schon vergeben, alternative Ideen:
+	% T -> Object(T)racking
+	% P -> da es sich hauptsächlich um PAF dreht
+	% V -> Objekt(V)erfolgung
+	\item[\req{T}] Der Prozess der Objektverfolgung wird konzeptuell in die drei Teilschritte Prädiktion, Assoziation und Filterung eingeteilt,
+	\item[\req{T}] Diese Teilschritte werden mittels Operatoren realisiert.
+	\item[\subreq{T}] Definiert werden die Operatoren mittels Grammatiken.
+	% \item[\subreq{T}] Erzeugt werden die Operatoren durch Transformationsregeln.
+	\item[\subreq{T}] Die Umwandlung der logischen Operatoren (AO) in die physischen Operatoren (PO) erfolgt durch die Transformationsregeln.
+	\item[\subreq{T}] Bei der Umwandlung werden die Daten, welche ein logischer Operator enthält, an den jeweiligen physischen Operator weitergegeben.
+	\item[\subreq{T}] Es muss ein Prädiktions-Operator implementiert werden.
+	\item[\subsubreq{T}] Es muss ein Prädiktions-Operator implementiert werden, welcher anhand des Zeitpunktes eines neu eintreffenden Objektes Schätzwerte für mögliche Positionen der im Umweltmodell vorhandenen Objekte liefert.
+	\item[\subsubreq{T}] Es muss mindestens ein Prädiktions-Algorithmus implementiert werden, welcher anhand des Zeitpunktes eines neu eintreffenden Objektes Schätzwerte für mögliche Positionen der im Umweltmodell vorhandenen Objekte berechnet.
+	\item[\subreq{T}] Es muss ein Gating-Operator implementiert werden.
+	\item[\subsubreq{T}] Es muss ein Gating-Operator implementiert werden, welcher eine Verknüpfung möglicher Objektpaare vornimmt.
+	\item[\subsubreq{T}] Es muss mindestens ein Gating-Algorithmus implementiert werden, welche eine vorläufige Verknüpfung möglicher Objektpaare berechnet.
+	\item[\subreq{T}] Es muss ein Assoziations-Operator implementiert werden.
+	\item[\subsubreq{T}] Es muss ein Assoziations-Operator implementiert werden, welcher eine spezielle Selektion auf die Verknüpfungen des Gating-Operators liefert.
+	\item[\subsubreq{T}] Es muss mindestens ein Assoziations-Algorithmus implementiert werden, welcher eine spezielle Selektion auf den Verknüpfungen des Gating-Operators durchführt.
+	\item[\subreq{T}] Es muss ein Filterungs-Operator implementiert werden.
+	\item[\subsubreq{T}] Es muss ein Filterungs-Operator implementiert werden, welcher die möglichst genaue Position eines erkannten Objektes anhand der von der Assoziation verknüpften Objektpaare liefert.
+	\item[\subsubreq{T}] Es muss mindestens ein Filterungs-Algorithmus implementiert werden, welcher die möglichst genaue Position eines erkannten Objektes anhand der von der Assoziation verknüpften Objektpaare liefert.
+	\item[\subreq{T}] Mögliche Algorithmen werden in den logischen Operatoren bereitgestellt.
+	\item[\subreq{T}] Der jeweilige sinnvolle Algorithmus wird zur Laufzeit anhand eines Keys aus den, vom jeweiligen logischen Operator bereitgestellten, möglichen Algorithmen im entsprechenden physischen Operator ausgewählt.
+	\item[\subreq{T}] Objektverknüpfungen müssen als Objektreferenzen realisiert werden.
+	\item[\req{T}] Die Reihenfolge der Objektverfolgung muss eingehalten werden (PAF).
+	\item[\req{T}] Zwischen den PAF-Operatoren sollen andere Operatoren möglich sein (bspw. Selektion).
+	\item[\req{T}] Neue Algorithmen sollen einfach eingebunden werden können.
+	\item[\subreq{T}] Algorithmen werden von Operatoren gekapselt und über spezielle Interfaces implementiert.
+	\item[\subreq{T}] Sofern möglich sollen Operatoren Parametrisierungsmöglichkeiten erhalten (z. B. Treshold).
+	\item[\req{T}] Werden neue Algorithmen eingebunden sollen möglichst keine neuen Operatoren erzeugt werden.
+	\item[\req{T}] Im Datenstrom wird eine Liste von Fahrzeugen versandt.
+	\item[\subreq{T}] Die Fahrzeugliste wird mittels Zeitstempel eindeutig markiert.
+	\item[\subreq{T}] Ein spezielles Metadatum wird benötigt, welches Algorithmenpezifische Informationen sichert, wie z. B. die Kovarianzmatrix.
+	\item[\req{T}] Die Möglichkeit der Sensordatenfusion muss gegeben sein.
+	\item[\req{T}] Kovarianzmatrix muss für jeden Messwert initialisiert werden.
+\end{description}
+
+\resetcount
+\section{Grammatik und Anfragen}
+\begin{description}
+	\item[\req{A}] Anfragepläne müssen durch Anfragesprachen dargestellt werden können.
+	\item[\req{A}] Broker-Operator muss als Quelle angesprochen werden können (für weitere Anfragen).
+	\item[\req{A}] Broker-Operator muss in PQL als Operator zur Verfügung stehen.
+	\item[\req{A}] Prädiktions-Operator muss in PQL als Operator zur Verfügung stehen.
+	\item[\req{A}] Assoziations-Operator muss in PQL als Operator zur Verfügung stehen.
+	\item[\req{A}] Filterung-Operator muss in PQL als Operator zur Verfügung stehen.
+	\item[\req{A}] Quellen, die die Sensorendaten liefern, müssen in PQL ansprechbar sein.
+	\item[\req{A}] Senken müssen in PQL verwendet werden können (insbesondere die UDP-Senke).
+	\item[\req{A}] Dem Broker-Operator müssen in PQL beliebig viele Eingänge übergeben werden können.
+	\item[\req{A}] In CQL müssen neue Sensoren deklariert werden können.
+	\item[\subreq{A}] Der entsprechende CQL-Befehl soll sich in der Syntax am Befehl \texttt{CREATE STREAM} orientieren.
+	\item[\subreq{A}] Beim Deklarieren des Sensors muss das Schema des Sensors definiert werden können.
+	\item[\subsubreq{A}] Das Schema muss dem objektrelationalem Datenmodell entsprechen.
+	\item[\subsubreq{A}] Die objektrelationalen Elemente des Schemas müssen beliebig tief verschachtelt werden können.
+	\item[\subsubreq{A}] Als objektrelationale Elemente des Schemas müssen einzelne Attribute definiert werden können.
+	\item[\subsubreq{A}] Als objektrelationale Elemente des Schemas müssen Listen von (gleichartigen) objektrelationalen Elementen definiert werden können.
+	\item[\subsubreq{A}] Als objektrelationale Elemente des Schemas müssen Records von (unterschiedlichen) objektrelationalen Elementen definiert werden können.
+	\item[\subreq{A}] Für die Definition des Sensors muss dessen URL angegeben werden können.
+	\item[\subreq{A}] Für die Definition des Sensors muss dessen Port angegeben werden können.
+	\item[\req{A}] Initialwerte für KovarianzmatrixM, müssen in Anfrage definiert werden (beziehen sich auf Ungenauigkeiten der einzelnen Sensoren).
+\end{description}
+
+

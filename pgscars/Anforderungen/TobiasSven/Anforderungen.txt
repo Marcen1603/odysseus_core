@@ -1,0 +1,6 @@
+- Alles, was unser Radar detektiert, soll erfasst und an ODYSSEUS per UDP verschickt werden.
+Schnittstelle 1: Fahrzeugerkennungen als Liste oder mit Markierungen zwischendrin
+
+- Die Anforderungen ans JDVE für die Verarbeitung der Daten, die ODYSSEUS per UDP schickt, hängen vom zu verwirklichenden Fahrassistenzsystem ab.
+Mein Vorschlag: Beginnen mit einem FCW (Forward Collision Warning) derart, dass eine Warnung auf dem Bildschirm angezeigt wird bzw. eine Lampe zu leuchten beginnt. Das wäre es dann für den vertikalen Prototypen. Danach Fahrassistenzsystem um Komponente erweitern, die das Fahrzeug geregelt abbremst, falls notwendig. 
+Schnittstelle 2: Fahrzeuge (nur die, die sich auf der Bahn vor uns befinden) + Bewegungsvektoren

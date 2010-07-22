@@ -1,0 +1,13 @@
+Initialisieren neuer Objekte:
+Neue Objekte (Autos) müssen erkannt werden.
+Neu erkannte Objekte (Autos) sollen mit einer Complex Event Processing-Komponente initialisiert werden.
+
+
+???????????
+Verfahren zum Erkennen neuer Objekte: 
+1. Wenn ein Objekt im Sensorzyklus liegt, das keinen Vorgänger hat, Event "Neu" auslösen.
+2. Wenn x Events "Neu" ausgelöst wurden, diese in ein neues Event schreiben, das die Initialisierung eines neu erkannten
+Objekts anstößt.
+???????????
+
+Können wir die CEP-Komponente nutzen, die in Odysseus integriert ist oder müssen wir eine neue schreiben?

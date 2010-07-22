@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="DPUSensors">
+</Property><Property Name="Projektmappendatei" Value="C:\Diss\Studis\BA_Dennis_Wiemann\SVN_neu\trunk\code\DPUSensors\DPUSensors.sln">
+</Property><Property Name="Benutzeroptionendatei" Value="C:\Diss\Studis\BA_Dennis_Wiemann\SVN_neu\trunk\code\DPUSensors\DPUSensors.suo">
+</Property><Property Name="Date" Value="Donnerstag, 6. Mai 2010">
+</Property><Property Name="Time" Value="08:21">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="DPUSensors.sln" Description="Datei wurde erfolgreich als &quot;C:\Diss\Studis\BA_Dennis_Wiemann\SVN_neu\trunk\code\DPUSensors\DPUSensors.sln.old&quot; gesichert">
+</Event><Event ErrorLevel="0" Project="" Source="DPUSensors.suo" Description="Datei wurde erfolgreich als &quot;C:\Diss\Studis\BA_Dennis_Wiemann\SVN_neu\trunk\code\DPUSensors\DPUSensors.suo.old&quot; gesichert">
+</Event><Event ErrorLevel="0" Project="DPUSensors" Source="DPUSensors.vcproj" Description="Die Webbereitstellung auf dem lokalen IIS-Server wird nicht mehr unterstützt. Das Buildtool für die Webbereitstellung wurde aus den Projekteinstellungen entfernt.">
+</Event><Event ErrorLevel="1" Project="DPUSensors" Source="DPUSensors.vcproj" Description="Die Anwendung wurde aktualisiert und enthält nun auch Einstellungen für die Benutzerkontensteuerung (User Account Control, UAC) von Windows Vista. Standardmäßig wird die Anwendung beim Ausführen unter Windows Vista mit aktivierter Benutzerkontensteuerung so markiert, dass sie mit den gleichen Berechtigungen wie der Prozess ausgeführt wird, durch den sie gestartet wurde. Mit der Markierung wird auch das Ausführen der Anwendung mit Virtualisierung deaktiviert. Sie können die Einstellungen der Benutzerkontensteuerung über die Eigenschaftenseiten des Projekts ändern.">
+</Event><Event ErrorLevel="0" Project="DPUSensors" Source="DPUSensors.vcproj" Description="Die Projektdatei wurde erfolgreich als &quot;C:\Diss\Studis\BA_Dennis_Wiemann\SVN_neu\trunk\code\DPUSensors\DPUSensors.vcproj.8.00.old&quot; gesichert.">
+</Event><Event ErrorLevel="0" Project="DPUSensors" Source="DPUSensors.vcproj" Description="Das Projekt wurde erfolgreich aktualisiert.">
+</Event><Event ErrorLevel="3" Project="DPUSensors" Source="DPUSensors.vcproj" Description="Converted">
+</Event><Event ErrorLevel="2" Project="Playground" Source="..\..\..\..\..\Playground\Playground.vcproj" Description="Die Projektdatei &quot;C:\Diss\Studis\Playground\Playground.vcproj&quot; konnte nicht aktualisiert werden. Vergewissern Sie sich, dass die Datei vorhanden und nicht schreibgeschützt ist.">
+</Event><Event ErrorLevel="2" Project="Playground" Source="..\..\..\..\..\Playground\Playground.vcproj" Description="Fehler beim Aktualisieren des Projekts.">
+</Event><Event ErrorLevel="3" Project="Playground" Source="..\..\..\..\..\Playground\Playground.vcproj" Description="Nicht konvertiert">
+</Event><Event ErrorLevel="0" Project="" Source="DPUSensors.sln" Description="Die Projektmappe wurde erfolgreich konvertiert.">
+</Event><Event ErrorLevel="3" Project="" Source="DPUSensors.sln" Description="Converted">
+</Event></UpgradeLog>

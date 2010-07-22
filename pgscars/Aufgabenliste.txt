@@ -1,0 +1,21 @@
+- Objektrelational (Tobias)
+-- Definition
+-- Abgrenzung zu relational
+-- Umsetzung in Odysseus
+- Broker einlesen (Wolf)
+- UDP (Sven, Hauke)
+-- Übertragungsprotokoll für Objektmodell
+-- UDP in c++
+-- UDP in java
+- Objektmodell definieren
+-- was für Informationen von c++ zu java (Benny)
+-- wie in Java aufgebaut (Benny)
+-- Quelle implementieren (UDP Stream zu Objektmodell) (Wolf, Benny)
+-- P (Nico) A (Volker) F (Daniel) Algos
+- wie weit geht Sensordatenfusion in JDVE (join vor Broker?) (Treffen)
+- Logische Operatoren (Thomas, Timo)
+- Grammatik erstellen (Thomas, Timo)
+- physische Operatoren
+- Graphtransformation definieren
+- Anforderungen zusammenfassen (Timo)
+- Geiles Diagramm textuell erfassen ()

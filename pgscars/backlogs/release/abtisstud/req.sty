@@ -1,0 +1,9 @@
+% This is a style file that defines some new commands for counting requirements
+\newcounter{1cnt} 
+\newcounter{2cnt} 
+\newcounter{3cnt} 
+\newcounter{4cnt} 
+\newcommand{\req}[1]{\stepcounter{1cnt}\setcounter{2cnt}{0}\setcounter{3cnt}{0}\setcounter{4cnt}{0}#1-\arabic{1cnt}:}
+\newcommand{\subreq}[1]{\stepcounter{2cnt}\setcounter{3cnt}{0}\setcounter{4cnt}{0}#1-\arabic{1cnt}-\arabic{2cnt}:}
+\newcommand{\subsubreq}[1]{\stepcounter{3cnt}\setcounter{4cnt}{0}#1-\arabic{1cnt}-\arabic{2cnt}-\arabic{3cnt}:}
+\newcommand{\subsubsubreq}[1]{\stepcounter{4cnt}#1-\arabic{1cnt}-\arabic{2cnt}-\arabic{3cnt}-\arabic{4cnt}:}

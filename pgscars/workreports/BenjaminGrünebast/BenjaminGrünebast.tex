@@ -1,0 +1,154 @@
+%%Hier wird das Dokument definiert
+
+\documentclass{scrartcl}  %Format und Stil
+
+\usepackage{../style/wrstyle}
+	
+% Einstellungen f\"{u}r die "offizielle" Titelseite
+\title{Projektgruppe StreamCars} % Titel der Dissertation
+\subtitle{wöchentliche Arbeitsberichte}
+\author{Benjamin Grünebast} % Name des Autors
+\date{\today}
+\surveyor{André Bolles}
+\term{Sommersemester 2010 - Wintersemester 2010/11}
+
+%%Hier wird das Dokument definiert
+\begin{document}
+
+	\maketitle
+	
+	\newpage
+	
+	\tableofcontents
+	
+% Wochenbericht KW 20
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Präsentation für Seminar fertig gemacht.
+		\item Ausarbeitung für Seminar fertig gemacht.
+		\item Einarbeitung in Objektmodell und Operatoren in Odysseus
+		\item Einarbeitung in Odysseus
+			\begin{compactitem}
+				\item Thomas Seminararbeit durchgearbeitet
+				\item Die Odysseus-Klassen \texttt{RealationalTupel} und andere zur Schemadefinition benötigte Klassen "`angeschaut"' (verstanden)
+			\end{compactitem}
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Objektmodell kann nicht einfach definiert werden.
+			\begin{compactitem}
+				\item Es leitet sich aus den PAF-Funktionen und den zu implementierenden AAS ab. 
+				\item Die Modelle werden also durch Input- und Outputschemas der Operatoren definiert.
+				\item Die Schemas werden durch "`Create Stream Attribute..."' erzeugt. 
+			\end{compactitem}
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Im allgemeinen, neue Aufgaben suchen.
+		\item Schemadefinitionen der Daten im Datenfluss bzgl. der einzelnen Operatoren herrausfinden und besprechen
+		\item Erste Quelle in Odysseus erstellen, um UDP-Verbindung und Daten in Odysseus zu testen
+	\end{itemize}
+\end{workToDo}
+
+% Wochenbericht KW 21
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Erster Klassenentwurf für physische Quelle in Odysseus erstellt.
+		\item Plugin-Projekt \texttt{de.uniol.inf.is.odysseus.scars.base} erstellt
+		\item Analogien und Hilfen in dem Odysseus-Projekt \texttt{de.uniol.inf.is.odysseus.objecttracking} gefunden. (Programm Code nachvollzogen)
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Konnten die Quelle leider nicht mit den UDP Daten aus jDVE testen, da Hauke und Sven nicht da waren, und wir das Ding einfach nicht zum laufen bekommen haben, obwohl sie sagten es währe fertig.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item ...
+	\end{itemize}
+\end{workToDo}
+
+\week
+% Wochenbericht KW 22
+\begin{workDone}
+	\begin{itemize}
+		\item Auslesen der richtigen Attribute aus den relationalen Tupeln (Klasse: \texttt{RelationalTuple} und \texttt{MVRelationalTuple}) versucht nachzuvollziehen, um die Daten für die Algorithmen bereitzustellen.
+		\item Freitag: Exkurs Braunschweig DLR
+		\item Mit Volker die Trennung von Odysseus-Operator und Algorithmus diskutiert und analysiert.
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Leider immer noch mangelnde Klarheit über das Auslesen der richtigen Attribute in den Operatoren. Die Klasse \texttt{SDFExpression} beschreibt die Funktion die in PQL angegeben wird und enthält die Namen der benötigten Attribute. Wie kommt sie in den Operator? 
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Bericht zur Initialisierung des Kontextmodellls schreiben.
+	\end{itemize}
+\end{workToDo}
+
+\week
+% Wochenbericht KW 23
+\begin{workDone}
+	\begin{itemize}
+		\item Am Montag mit Volker Umsetzung von Operatoren eingearbeitet.
+		\item Den Bericht für die Initialisierung des Kontextmodells fertig geschrieben.
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Volker war Donnerstag leider krank, daher konnten wir nicht zusammen die Operatoren implementieren.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Operatoren implementieren, jedenfalls einen, damit alle einmal gesehen haben wie das geht.
+	\end{itemize}
+\end{workToDo}
+
+% Wochenbericht KW 23
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Grapfische Zeichnung zur Architektur erstellt, um einen Überblick über die zu erstellenden Operatoren und deren Ein-/Ausgabedaten zu erhalten. (Jetzt aber schon wieder veraltet)
+		\item Wichtige Aspekte bei der Implementierung des Filter-Operators geklärt. (z.B. Prädiktionsfunktionen werden dort für die Matrixberechnungen auch benötigt (mit Daniel))
+		\item Die "`hoffentlich"' letzten Lücken bei der allgemeinen Implementierung von Operatoren für objektrelationale Daten geschlossen. Genauer: wie komme ich an das Tupel herran, das die liste der detektierten Objekte enthält? Lösung: Name der Liste wird und anderer wichtiger Attribute wie der Zeitstempel werden in der Anfragesprache definiert, und dem logischen Operator als Strings übergeben, anschließend erfolgt mit hilfe des entsprechenden Eingabeschemas die Auflösung in indices der entsprechenden Attribute (nun ist jedoch die Auflösung das problem!).
+		\item Speziellen Container-Klasse erstellt, die als Metadatum im Shema die PredictionFunctions enthält (kann vll später für die Filterung mit Hilfmethoden ausgestattet werden, die bei der Matrixberechnung nützlich sind).
+		\item Mit volker und den anderen über die Parametrisierung und aufteilung des assoziations-operators diskutiert. (Volkers Idee: Assoziationsoperator besteht aus einer Reihe von Operatoren oder Funktionen die die Verknüpfungen zwischen neu und alt mithilfe einer Korrelations-matrix bewerten, und am ende der Reihe werden jeweils die besten bewertungen gewählt. Somit, gute Parametrisierung mit Hilfe verschiedener Bewertungs-operatoren (nicht nur gating).
+		\item Interface für die Bewertungsfunktion (als Parameter für die Bewertungsoperatoren) mit den anderen erstellt.
+		\item Meinen Senf zum Product baglock dazugegeben.
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Am Montag und Donnerstag war leider die Lücke für die allgemeine Implementierung von Operatoren für objektrelationale Daten noch nicht geschlossen. 
+		\item die Speziellen Container-Klasse die als Metadatum im Shema die PredictionFunctions enthält muss noch mit den anderen besprochen werden.
+		\item Auflösung des Attributnames, bei einem objektrelationalen Schema. (vll. neuen datentyp: "`or"' oder "`complex"'???) woher weiß ich, wo ich im schema nach dem attributnamen suchen muss? Können wir das festlegen? normalerweise sollte das etwas generischer sein. Und was ist, wenn zwei attribute den gleichen namen haben? (kann warscheinlich nicht passieren) Gesetzt den fall man hat den namen der liste, in der lediglich die messobjekte enthalten sind, kann man dann das schema, welches eigentlich ein baum ist, komplett durchsuchen? Dann reicht nicht einfach nur ein index an welcher stelle das attribute(die liste) steht, sondern es muss ein index pfad angegeben werden. ??? 
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item die Speziellen Container-Klasse die als Metadatum im Shema die PredictionFunctions enthält muss noch mit den anderen besprochen werden.
+		\item die prediction-Op und predicionAssignOp müssen endlich fertig werden, und mit Timo und den anderen zur Erstellung der Grammatik besprochen werden.
+		\item den anderen die neuen erkenntnisse über die implementierung der operatoren (bzgl. der lücken, siehe workDone) erklären, so das alle anfangen können die operatoren zu implementieren.
+	\end{itemize}
+\end{workToDo}
+
+\end{document}

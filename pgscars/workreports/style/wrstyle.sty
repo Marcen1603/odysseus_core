@@ -1,0 +1,176 @@
+% Paket-Deklaration
+\ProvidesPackage{abtisstud/abtisstud}
+
+% Importierte Pakete
+%Hier werden korrekte Trennregeln eingelesen(deutsch).
+\usepackage[ngerman]{babel}	
+%Die Ausgabefonts, die verwendet werden sollen
+\usepackage[T1]{fontenc}
+% Sonderzeichen Textzeichen bspw. \textminus
+\usepackage{textcomp}
+%Sonderzeichen wie ü ä ö und ähnliches werden automatisch von  Latex umgesetzt				
+\usepackage[latin1]{inputenc}					
+%Verbessert die Qualität des PDF-Dokuments
+\usepackage{ae,aecompl}	
+%Paket zum Einbinden von Bildern				
+\usepackage{graphicx}	
+%Paket zum Einbinden von URL`s oder Sprungverweisen im 	Inhaltsverzeichnis(sofern vorhanden)					
+\usepackage{hyperref} 
+% Seitenstil für \pagestyle{scrheadings}, Kopfzeile
+\usepackage{scrpage2}
+% Farben definieren
+\usepackage[pdftex]{color}
+% Farbige Tabellen
+\usepackage{longtable}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{cancel}
+\usepackage{graphicx}
+\usepackage{mathcomp}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\usepackage{ltxtable}
+
+%Seitenstruktur	head=4.0cm, headsep=2.0cm,foot=2.5cm
+\usepackage[paper=a4paper, 
+						left=2.5cm, right=2.5cm,	
+						top=3.0cm, bottom=2.5cm]{geometry}
+
+% Tiefe des Inhaltsverzeichnisses, Numerierung der Abschnitte
+\setcounter{secnumdepth}{0}
+\setcounter{tocdepth}{1}
+
+\renewcommand{\section}{\@startsection%
+   {section}%             name
+   {1}%                   level
+   {0mm}%                 indent
+   {-\baselineskip}%      beforeskip
+   {1.15\baselineskip}%    afterskip
+   {\LARGE\sffamily\bfseries}}%     style
+\renewcommand{\subsection}{\@startsection%
+   {subsection}%          name
+   {2}%                   level
+   {0mm}%                 indent
+   {1.0\baselineskip}%      beforeskip
+   {0.65\baselineskip}%    afterskip
+   {\large\sffamily\bfseries}}%     style
+
+% Oberer Rand und Header, Textstart ab 3.5cm
+\setlength{\voffset}{-1.0in}
+\setlength{\topmargin}{2.3cm}
+\setlength{\headheight}{0.5cm}
+\setlength{\headsep}{0.7cm}
+
+% Rand immer 3.5cm
+\setlength{\hoffset}{-1.0in}
+\setlength{\oddsidemargin}{2.5 cm}
+\setlength{\evensidemargin}{2.5 cm}
+
+% Textfeldgrï¿œï¿œe
+\setlength{\textwidth}{15.5cm}
+\setlength{\textheight}{22.2cm}
+
+% Fuï¿œzeileunterseite 1cm unter Textende
+\setlength{\footskip}{1.0cm}
+
+% Einstellen der Header
+
+% Listen (itemize, enumerate) linksbï¿œndig
+\usepackage[flushright]{paralist}
+\setdefaultleftmargin{0.5cm}{}{}{}{}{}
+
+\usepackage[ngerman]{datenumber}
+\setdatenumber{2010}{5}{17}
+
+\newcounter{weekCt}
+\newcounter{nextWeekCt}
+\setcounter{weekCt}{19}
+\setcounter{nextWeekCt}{20}
+
+\setdatenumber{2010}{5}{17}
+
+\newcommand{\setmydate}[1]{\addtocounter{datenumber}{#1}\setdatebynumber{\arabic{datenumber}}}
+\newcommand{\weekDate}{Vom \datedate \setmydate{6} bis zum \datedate \setmydate{1}.}
+\newcommand{\weekText}{Kalenderwoche \arabic{weekCt}}
+\newcommand{\nextWeekText}{Kalenderwoche \arabic{nextWeekCt}}
+\newcommand{\week}{\stepcounter{weekCt}\stepcounter{nextWeekCt}\newpage\section{\weekText} \weekDate}
+
+
+\newenvironment{workDone}{\subsection{Erledigte Aufgaben}}{}
+\newenvironment{workProblems}{\subsection{Aufgetretenen Probleme}}{}
+\newenvironment{workToDo}{\subsection{Aufgaben für \nextWeekText}}{}
+
+% Seitenstil mit benutzerdefinierter Kopfzeile
+\pagestyle{scrheadings}
+
+	\automark[section]{section}
+
+	\clearscrheadfoot
+	% schirftart ändern											
+	\ihead{Arbeitsbericht \headmark}
+	\ohead{\@author}	
+	% Kopfzeile Schriftart					 
+	\setkomafont{pagehead}{%
+		\small\itshape
+	}	% Kopzeile linie
+	\setheadsepline{.4pt}	
+	\cfoot{\pagemark}
+	
+	
+% Offizielle Titelseite
+\def\surveyor#1{\gdef\@surveyor{#1}}
+\def\subtitle#1{\gdef\@subtitle{#1}}
+\def\term#1{\gdef\@term{#1}}
+
+\renewcommand\maketitle{\begin{titlepage}%
+  \begin{center}%
+  %\includegraphics[width=0.5\textwidth]{abtisstud/unilogo.eps} \\
+  \rotatebox{0}{\includegraphics[width=0.5\textwidth]{../style/unilogo.pdf}} \\
+  \begin{sffamily}
+    Fakultät II -- Informatik, Wirtschafts- und Rechtswissenschaften \\[0.1em]
+    Department für Informatik \\
+  \end{sffamily}
+
+  \vspace*{2cm}
+
+
+  \begin{sffamily}
+    \huge \bfseries \@title
+  \end{sffamily}
+  
+  \textbf{\@term}
+  
+  \vspace*{1.0cm}
+  
+  \Large \textbf{\@subtitle}
+  
+  \vspace*{1.5cm}
+
+  \vspace*{1.5cm}
+
+  vorgelegt von \\[0.75em]
+  \large \textbf{\@author}
+  
+  \vspace*{2cm}
+
+  \normalsize
+
+  Gutachter: \\[0.75em]
+  \begin{bfseries}
+    \@surveyor
+  \end{bfseries}
+  \vspace*{1.2cm}
+
+  \@date
+  \vfill
+  \end{center}
+\end{titlepage}
+}
+
+%Schusterjungen und Hurenkinder vermeiden
+\clubpenalty = 10000
+\widowpenalty = 10000 \displaywidowpenalty = 10000
+
+\setlength{\parindent}{0pt}

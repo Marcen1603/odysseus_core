@@ -1,0 +1,46 @@
+% Namensschema der Labels:
+%
+% Kapitel, Unterkapitel usw.: sec:kapitel:abschnitt:unterabschnitt
+% Bilder: fig:bildname
+% Code-Listings: lst:listingname
+%
+%-------------------------------------------------------------------------------
+%
+% Index-Markierungen mit \index{Indexpunkt ! Unterpunkt} erstellen
+%
+\chapter{Einleitung}\label{sec:einleitung}
+
+\section{Zweck des Systems}\label{sec:einleitung:zweck}
+
+\section{Entwurfsziele}\label{sec:einleitung:entwurfsziel}
+
+\section{Definitionen, Akronyme und Abkürzungen}\label{sec:einleitung:definitionen}
+
+\section{Referenzen}\label{sec:einleitung:referenzen}
+Hier ist ein Dummy-Zitat, damit das Makefile durchläuft \cite{dummy}
+\section{Überblick}\label{sec:einleitung:ueberblick}
+
+%-------------------------------------------------------------------------------
+
+\chapter{Aktuelle Softwarearchitektur}\label{sec:aktuell}
+% In diesem Kapitel wird auf die bereits vorhandenen Systeme eingegangen. Das sind in unserem Fall vor allem Odysseus und JDVE
+
+\section{Odysseus}\label{sec:aktuell:odysseus}
+
+\section{JDVE}\label{sec:aktuell:jdve}
+
+%-------------------------------------------------------------------------------
+
+\chapter{Vorgeschlagene Softwarearchitektur}\label{sec:architektur}
+% Hier wird der eigentliche Entwurf präsentiert
+
+\input{content/design.tex}
+
+%-------------------------------------------------------------------------------
+
+\chapter{Subsystemdienste}\label{sec:subsystemdienste}
+% Hier werden noch einmal alle Subsysteme aufgeführt und deren Funktionalität kurz beschrieben. Wozu man das noch einmal braucht wusste schon im SWP niemand ;)
+
+%-------------------------------------------------------------------------------
+
+\chapter{Zusammenfassung}\label{sec:zusammenfassung}

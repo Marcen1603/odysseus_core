@@ -1,0 +1,24 @@
+ - Hierzu kann, wie es in Odysseus [BGJ+09]
+bspw. der Fall ist, eine Menge von Transformationsregeln definiert werden, die
+prüfen, welche Informationen in einem Datenstrom zur Verfügung stehen, um
+anschließend automatisch mögliche Alternativen für physische Implementierungen
+vorzuschlagen. Bei eindeutiger Auswahl von Algorithmen können diese
+auch automatisch in den auszuführenden Plan übernommen werden.
+
+ - Es muss ein Operator implementiert werden der die Prädiktion, das Gating, die Assoziation und die Filterung beinhaltet (Gruppierung)
+
+ - Die Reihenfolge der Objektverfolgung darf nicht geändert werden
+
+ - Es muss eine Prädiktion implementiert werden
+
+ - Es muss ein Gating (Vorauswahl möglicher Objektpaare) implementiert werden
+
+ - Es muss eine Assoziation implementiert werden
+
+ - Es muss eine Filterung implementiert werden
+
+ - Die ankommenden Relationalen Tupel müssen in objektrelationale Elemente umgewandelt werden (Gating)
+
+ - Es müssen Objektverträglichkeiten der Operatoren untereinander definiert werden
+
+ - Jedes relationale Tupel muss (bspw. durch einen Zeitstempel) identifiziert werden können

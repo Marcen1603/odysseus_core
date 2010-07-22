@@ -1,0 +1,85 @@
+Wolf und Benjamin : Broker / Umweltmodell
+=========================================
+
+Zyklen im Operatorgraph:
+- Operator mit Zyklus benötig Intialwert, da sonst blokiert wird (warten auf einen Eingabestrom)
+- zusätzlicher Operator mit Intialwert, danch einfach eingabe weitergeben -> Broker
+- möglich: Operator mit Zyklus verwirft eingehende Wert -> Broker hat nichts zum weiterleiten -> Blockierung -----> Zusätzliche Quelle als Lieferant
+- es kann n Ein und Augaben geben
+
+Aus DSMS:
+- Die Datenquelle ist aktiv und schickt ihre Daten in einem potenziell unendlichen Datenstrom. Die Daten werden von der aktiven Datenquelle in das System gepusht. Die Verarbeitung des Systems ist damit push-basiert.
+- Die Daten erreichen das System in einer nicht vorhersagbaren Rate und Reihenfolge, die sich während der Laufzeit ändern kann.
+- Auf Grund der potentiell unendlichen Folge ist eine explizite Zwischenspeicherung nicht möglich.
+- Die Ausgabe von Daten ist datengetrieben (data driven) und wird nicht je Anfrage erstellt (demand driven). Dabei werden Anfragen kontinuierlich bei jedem ankommenden Tupel ausgeführt.
+- Es besteht eine zeitliche Ordnung. Diese ist implizit durch die Ankunft im System oder explizit durch die Erstellungszeit in der Datenquelle gegebenen.
+- Der Zugriff ist nur sequentiell möglich. Es besteht also kein wahlfreier Zugriff auf andere Tupel.
+- Ein Tupel wird nur einmal von der Datenquelle übertragen. Tupel müssen explizit gespeichert werden oder sie sind nach dem Zugriff verloren.
+- Bei der Ausführung wird nur der Hauptspeicher und kein Sekundärspeicher verwendet.
+- Anfragen dürfen nicht blockieren, so dass zur Laufzeit kontinuierlich Ergebnisse geliefert werden.
+
+An Broker:
+- Ein Zyklus muss push-basiert und datengetrieben arbeiten, so dass der Broker Tupel reaktiv entgegen nimmt.
+- Der Broker muss resistent gegenüber Reihenfolge der Eingänge und Rate der ankommenden Tupel sein.
+- Die zeitliche Ordnung der Tupel muss gewährleistet werden.
+- Der Zugriff auf Tupel ist nur sequentiell möglich. Bereits betrachtete Tupel sind explizit verloren.
+- Für die Ausführung wird der Hauptspeicher verwendet und es werden keine Tupel gespeichert.
+- Ein Zyklus darf keine Blockierung auslösen.
+
+
+- Umweltmodell muss aktuelle Welt darstellen
+- Berücksichtigung von fehlerhaften Messungen in einem Messzyklus
+- Broker muss n Objekttracking Eingaben und Ausgaben haben können (viele Sensoren) -> Zusammenfassung im Umweltmodell -> Aufsplittung für Augabe muss trotzdem gewährleitet sein
+- Borker muss n Eingaben eines Sensorzyklus kennen oder Vereingung alter und neuer Objekte vor dem Broker -> 1 Eingabe pro Sensorzyklus
+- Broker braucht Intialwerte -> Vermeidung Blockierung
+- Borker speichert alles im Hauptspeicher -> Umweltmodell darf nicht zu viel Speicher verbrauchen
+- Quellen können 1 bis n Sensoren sein?
+- Objekttracking kann aus 1 bis n Sensoren Daten bekommen?
+- Anfragepläne müssen durch ANfragesprache dargestellt werden können (Def. Sensoren)
+
+Fragen:
+- Wie wird Umweltmodell Objektraltional abgebildet?
+- Wie wird das Umweltmodell durch Sprache definiert? Regen, Objekte etc. 
+- Woher weiß ich, wenn ich Anfragen stelle, welche Objekte es im Modell gibt?
+- Wann werden Objekte verworfen im Umweltmodell? Bei jedem Zyklus? Man kann auch alte Objekte über mehere Zyklen behalten auch wenn sie aktuell nicht erfasst wurden (bspw. Fehlmessung)
+- ist Broker das Umweltmodell oder hat der Broker ein Umweltmodel?
+- Behandlung von Geisterobjekten?
+
+
+Sven und Tobias : JDVE
+======================
+- Alles, was unser Radar detektiert, soll erfasst und an ODYSSEUS per UDP verschickt werden.
+Schnittstelle 1: Fahrzeugerkennungen als Liste oder mit Markierungen zwischendrin
+
+- Die Anforderungen ans JDVE für die Verarbeitung der Daten, die ODYSSEUS per UDP schickt, hängen vom zu verwirklichenden Fahrassistenzsystem ab.
+Mein Vorschlag: Beginnen mit einem FCW (Forward Collision Warning) derart, dass eine Warnung auf dem Bildschirm angezeigt wird bzw. eine Lampe zu leuchten beginnt. Das wäre es dann für den vertikalen Prototypen. Danach Fahrassistenzsystem um Komponente erweitern, die das Fahrzeug geregelt abbremst, falls notwendig. 
+Schnittstelle 2: Fahrzeuge (nur die, die sich auf der Bahn vor uns befinden) + Bewegungsvektoren
+
+
+Timo und Thomas : PQL und Grammatik
+===================================
+- Broker-Operator muss als Quelle angesprochen werden können (für weitere Anfragen )
+- Broker-Operator muss in PQL als Operator zur Verfügung stehen
+- Prediction-Operator muss in PQL als Operator zur Verfügung stehen
+- Assoziation-Operator muss in PQL als Operator zur Verfügung stehen
+- Filterung-Operator muss in PQL als Operator zur Verfügung stehen
+- Quellen, die die Sensorendaten liefern, müssen in PQL ansprechbar sein
+- Senken müssen in PQL verwendet werden können (insbesondere die UDP-Senke)
+- Dem Broker-Operator müssen in PQL beliebig viele Eingänge übergeben werden können
+
+Nico und Volker : Objektverfolgung
+==================================
+- Hierzu kann, wie es in Odysseus bspw. der Fall ist, eine Menge von Transformationsregeln definiert werden, die prüfen, welche Informationen in einem Datenstrom zur Verfügung stehen, um anschließend automatisch mögliche Alternativen für physische Implementierungen vorzuschlagen. Bei eindeutiger Auswahl von Algorithmen können diese auch automatisch in den auszuführenden Plan übernommen werden.
+- Es muss ein Operator implementiert werden der die Prädiktion, das Gating, die Assoziation und die Filterung beinhaltet (Gruppierung)
+- Die Reihenfolge der Objektverfolgung darf nicht geändert werden
+- Es muss eine Prädiktion implementiert werden
+- Es muss ein Gating (Vorauswahl möglicher Objektpaare) implementiert werden
+- Es muss eine Assoziation implementiert werden
+- Es muss eine Filterung implementiert werden
+- Die ankommenden Relationalen Tupel müssen in objektrelationale Elemente umgewandelt werden (Gating)
+- Es müssen Objektverträglichkeiten der Operatoren untereinander definiert werden
+- Jedes relationale Tupel muss (bspw. durch einen Zeitstempel) identifiziert werden können
+
+Hauke : CEP (obsolet)
+=====================
+---

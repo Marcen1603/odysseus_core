@@ -1,0 +1,93 @@
+\documentclass[11pt,a4paper]{book} % Basisdokumentenklasse
+\usepackage[ngerman]{babel}        % Deutsche Standardbezeichner und Trennung
+\usepackage[latin1]{inputenc}      % F\"{u}r Umlaute
+\usepackage[T1]{fontenc}           % und {\ss}
+\usepackage{makeidx}               % Indexpaket
+\usepackage{times}                 % Sch\"{o}nere Schriften, Achtung, nicht pslatex verwenden!
+\usepackage{longtable}             % Lange Tabelle f\"{u}r Abk\"{u}rzungsverzeichnis
+\usepackage{graphics}              % EPS-Grafiken einbinden
+\usepackage{hyperref}
+
+\usepackage{fancyvrb}              % Fancy-Verbatin f\"{u}r Programmlistings
+
+
+\usepackage{abtisstud/abtisstud}           % Das Abteilungs-Stylepaket, am Ende einbinden!
+\usepackage{abtisstud/req}	   % Counter for Requirements
+
+
+% Einstellungen f\"{u}r die "offizielle" Titelseite
+\title{Product-Backlog} % Titel der Dissertation
+\author{Benjamin Gr\"{u}nebast\\ Daniel Twumasi\\ Hauke Neemann \\ Nico Klein \\ Sven M\"{u}ller\\ Thomas Vogelgesang\\ Timo Michelsen\\ Tobias Krahn\\ Volker Janz\\ Wolf Bauer} % Name des Autors
+\date{\today}
+\arbeitstyp{Internes Dokument}
+\ersterbetreuer{Dipl.-Inform. Andr\'{e} Bolles}
+\zweiterbetreuer{Prof. Dr. Daniela Nicklas}
+\dritterbetreuer{PD Dr. Frank K\"{o}ster}
+
+
+
+% Index erneuern
+\makeindex
+
+% Das eigentliche Dokument
+\begin{document}
+
+% Anfang des Dokuments
+\maketitle              % Offizielle Titelseite der Uni
+
+\newpage
+\thispagestyle{empty}
+\cleardoublepage
+
+\pagenumbering{Roman}   % R\"{o}mische Seitenzahlen f\"{u}r den Anfang
+
+% Zusammenfassung und Abstract
+%\input{content/abstract.tex}
+
+
+% Inhaltsverzeichnis
+\renewcommand{\contentsname}{Inhalt} % Es soll nicht Inhaltsverzeichnis hei{\ss}en, sondern Inhalt
+\tableofcontents        % Inhaltsverzeichnis einbinden
+\cleardoublepage        % Danach auf ungerader Seite weitermachen
+\pagenumbering{arabic}  % Arabische Seitenzahlen starten neu
+
+
+% Der eigentliche Inhalt, hier k\"{o}nnte man dann auch jedes Kapitel einzeln einf\"{u}gen
+\input{content/content.tex}
+
+
+% Verzeichnisse am Ende, erst das Glossar
+%\addonchapter{Glossar} % Es soll auch Glossar hei{\ss}en
+%\input{content/glossar.tex}
+
+% Dann die Abk\"{u}rzungen
+%\addonchapter{Abk\"{u}rzungen} % Die sollen auch Abk\"{u}rzungen hei{\ss}en
+%\input{content/abkuerzungen.tex}
+
+% Weiter mit Abbildungen
+%\cleardoublepage
+%\phantomsection % generiert Anker f\"{u}r \addcontentsline
+%\addcontentsline{toc}{chapter}{Abbildungen} % Sowohl im Inhaltsverzeichnis als auch als
+%\renewcommand{\listfigurename}{Abbildungen} % \"{U}berschrift als "Abbildungen" ohne -verzeichnis
+%\listoffigures
+
+% Schlie{\ss}lich Literatur
+%\cleardoublepage
+%\phantomsection % generiert Anker f\"{u}r \addcontentsline
+%\addcontentsline{toc}{chapter}{Literatur} % Soll als "Literatur" auftauchen
+%\bibliographystyle{alphadin}                 % Unser Standard-Bibliopgraphiestyle
+%\renewcommand{\bibname}{Literatur}        % Auch als \"{U}berschrift soll "Literatur" erscheinen
+%\bibliography{content/bibliographie}            % Literaturverzeichnis einbinden
+
+% Und ganz am Ende der Index
+%\cleardoublepage
+%\phantomsection % generiert Anker f\"{u}r \addcontentsline
+%\addcontentsline{toc}{chapter}{Index} % Der auch Index hei{\ss}en soll
+%\input{content/index.tex}                     % Index einbinden, vorher aber mit makeindex erzeugen!
+%\printindex{}
+
+% Und schlie{\ss}lich noch die Versicherung f\"{u}r das Pr\"{u}fungsamt, Parameter ist der Ort der Unterschrift
+%\cleardoublepage
+%\versicherung{Oldenburg}
+
+\end{document}

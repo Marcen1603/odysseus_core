@@ -1,0 +1,181 @@
+%%Hier wird das Dokument definiert
+
+\documentclass{scrartcl}  %Format und Stil
+
+\usepackage{../style/wrstyle}
+	
+% Einstellungen f\"{u}r die "offizielle" Titelseite
+\title{Projektgruppe StreamCars} % Titel der Dissertation
+\subtitle{w\"ochentliche Arbeitsberichte}
+\author{Daniel Twumasi} % Name des Autors
+\date{\today}
+\surveyor{Andr\'e Bolles}
+\term{Sommersemester 2010 - Wintersemester 2010/11}
+
+%%Hier wird das Dokument definiert
+\begin{document}
+
+	\maketitle
+	
+	\newpage
+	
+	\tableofcontents
+	
+% Wochenbericht KW 20
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Pras\"entation und Ausarbeitung ausarbeiten.
+		\item In Odysseus einarbeiten.
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Krankgeschrieben von Donnerstag bis Samstag.
+		\item Deshalb keine Einarbeitung.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Einarbeitung in Odysseus.
+		\item Implementierung des Kalmanfilers.
+	\end{itemize}
+\end{workToDo}
+
+% Wochenbericht KW 21
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Zusammenarbeit bei Implementierung des Gating und Assoziationsoperators.
+		
+\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Kalmanfiler aus Zeitgr\"unden noch nicht implementiert.
+\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Einarbeitung in Odysseus.
+		\item Kalmanfilter implementieren und testen
+		\item Vorbereiten und halten der Pr\"asentation in Braunschweig.	
+	\end{itemize}
+\end{workToDo}
+
+% Wochenbericht KW 22
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item M\"ogliche Einteilung des Filterungsprozesses (Filter) in geeignete Teilschritte bzw. Operatoren identifiziert.
+		\item Zusammenarbeit bei Implementierung des Gating und Assoziationsoperators.
+\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Andere Filter wie z.B. Partikelfilter m\"ussen ggf. in andere Teilschritte eingeteilt werden. Daher Einarbeitung in diese Techniken n\"otig.
+		\item Zusammenh\"ange in Odysseus noch nicht durchschaut.
+\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Kalmanfilter implementieren und testen
+		\item Zusammenarbeit bei Implementierung des Gating und Assoziationsoperators.
+	\end{itemize}
+\end{workToDo}
+
+
+% Wochenbericht KW 23
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Einteilung in Teilschritte auf Grundlage des Bayes-Frameworks vorgenommen. \\
+		      Einteilung in Teilschritte Initialisierung und Korrektur
+		\item Beim Gating Operator die Mahalanobis Distanz bzgl. der Kovarianzmatrix verstanden.
+		
+\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Diese Woche nicht gen\"ugend Zeit f\"ur die Implementierung des Filters verwendet. Daher n\"achste Woche mehr Zeit einteilen.
+		\item Zusammenh\"ange in Odysseus noch nicht durchschaut.
+\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Kalmanfilter auf Grundlage des Bayes-Frameworks implementieren und testen
+		\item Zusammenarbeit bei Implementierung des Gating und Assoziationsoperators.
+		\item Product Backlog erweitern
+		\item Dokument zur Initialisierung des Kontextmodells durcharbeiten.
+	\end{itemize}
+\end{workToDo}
+
+
+% Wochenbericht KW 24
+\week
+\begin{workDone}
+	\begin{itemize}
+		\item Product Backlog erweitert
+		\item Dokument zur Initialisierung des Kontextmodells durchgearbeit bzw. besprochen.
+		\item Zusammenarbeit bei Implementierung des Gating und Assoziationsoperators.
+		\item In das Thema Datenfusion eingelesen
+		\item In das Thema Change Point Detection eingelesen
+		
+\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Kalman-Filter noch nicht implementiert.
+		\item Zusammenh\"ange in Odysseus noch nicht durchschaut.
+\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Konzept für Initialisierung (Track Initialisierung) und Korrektur des Kalmanfilters überlegen
+		\item Zusammenarbeit bei Implementierung des Gating und Assoziationsoperators.
+
+	\end{itemize}
+\end{workToDo}
+
+
+% Wochenbericht KW 25
+\week
+\begin{workDone}
+	\begin{itemize}
+	\item Konzept für Gating und Assoziationsoperator besprochen. \\
+	      Ergebnis: Nicht beide Schritte in einen Operator.
+	\item Kalman Filter Gleichungen bzw. Korrektur Schritt besprochen. \\
+	Ergebnis: Prozessmodell für Korrektur Schritt nicht nötig
+	\item Konzept für Speicherung der Distanzen bzw. Assoziationen besprochen. \\
+	Ergebnis: Speicherung der Assoziation als Attribut des jeweiligen Objektes statt als Matrix
+	\item Initialisierung im Filter besprochen. \\
+	Ergebnis: Initialwert evtl mit Messwert gleichsetzen.
+	\item Paper zum Thema Initialisierung gefunden und gelesen.
+		
+\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+	\item 
+\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+	\item
+
+	\end{itemize}
+\end{workToDo}
+\end{document}

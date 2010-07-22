@@ -1,0 +1,28 @@
+\documentclass{article}
+
+\usepackage{ngerman}
+\usepackage[latin1]{inputenc}
+
+\title{Erste Anforderungen bzgl. PQL/Grammatik}
+\author{Thomas Vogelgesang, Timo Michelsen}
+\date{\today}
+
+\begin{document}
+
+	\maketitle
+
+	\begin{itemize}
+		\item PQL-Grammatik anpassen
+		\begin{itemize}
+			\item Broker-Operator muss als Quelle angesprochen werden können (für weitere Anfragen )
+			\item Broker-Operator muss in PQL als Operator zur Verfügung stehen
+			\item Prediction-Operator muss in PQL als Operator zur Verfügung stehen
+			\item Assoziation-Operator muss in PQL als Operator zur Verfügung stehen
+			\item Filterung-Operator muss in PQL als Operator zur Verfügung stehen
+			\item Quellen, die die Sensorendaten liefern, müssen in PQL ansprechbar sein
+			\item Senken müssen in PQL verwendet werden können (insbesondere die UDP-Senke)
+			\item Dem Broker-Operator müssen in PQL beliebig viele Eingänge übergeben werden können
+		\end{itemize}		
+	\end{itemize}
+
+\end{document}

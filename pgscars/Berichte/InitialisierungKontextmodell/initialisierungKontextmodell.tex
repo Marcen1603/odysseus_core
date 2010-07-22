@@ -1,0 +1,93 @@
+\documentclass{article}
+
+\usepackage[ngerman]{babel}        % Deutsche Standardbezeichner und Trennung
+\usepackage[latin1]{inputenc}      % F\"{u}r Umlaute
+\usepackage[T1]{fontenc}           % und {\ss}
+\usepackage{makeidx}               % Indexpaket
+\usepackage{times}                 % Sch\"{o}nere Schriften, Achtung, nicht pslatex verwenden!
+\usepackage{longtable}             % Lange Tabelle f\"{u}r Abk\"{u}rzungsverzeichnis
+\usepackage{graphics}              % EPS-Grafiken einbinden
+\usepackage{hyperref}
+\usepackage[latin1]{inputenc}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{mdwlist}
+
+\usepackage{fancyvrb}              % Fancy-Verbatin f\"{u}r Programmlistings
+
+\title{Initialisierung des Kontextmodells zur Objektverfolgung} % Titel der Dissertation,
+\author{Benjamin Grünebast \\ Nico Klein}
+
+\begin{document}
+\maketitle
+\section{Allgemeine Architektur}
+Die allgemeine Architektur des Datenstroms zur Objektverfolgung bzgl. der PG StreamCars ist in Abbildung \ref{fig:ObjektverfolgungAllgemein} zu sehen.
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.70\textwidth]{images/ObjektverfolgungAllgemein.pdf}
+	\caption{allgemeine Architektur zur Objektverfolgung im Datenstrom}
+	\label{fig:ObjektverfolgungAllgemein}
+\end{figure}
+\begin{description}
+	\item[Quelle:] Die \textit{Quelle} nimmt die aus der Sensorebene generierten Datenobjekte entgegen und stellt den logischen Ausgangspunkt des Datenstroms dar. Die Datenobjekte werden mittels einer UDP-Verbindung an die Quelle übertragen.
+	\item[Projektion:] Der Projektions-Operator projeziert den Zeitpunkt des Eintreffens der aktuellen Messung aus der Quelle und stellt sie der Prädiktion bereit.
+	\item[Prädiktion (P):] Die Prädiktion besitzt zwei Eingänge (einen für den Zeitpunkt des Eintreffens der neuen Messung und einen für die Datenobjekte, welche schon im Umweltmodell gespeichert worden sind). Dort werden die alten Datenobjekte auf die neue Zeit prädiziert um in der Assoziation miteinander verglichen werden zu können.
+	\item[Assoziation (A):] Der Assoziations-Operator beitzt die aus der aktuellen Messung erhaltenen Datenobjekte und die prädizierten Datenobjekte aus dem Umweltmodell. Dort werden die Objekte der aktuellen Messung und der Datenobjekte aus dem Umweltmodell miteinander verbunden, die möglicherweise dasselbe reale Objekt repräsentieren. Die daraus entstandenen Verbindungen werden an die Filterung weiter gereicht.
+	\item[Filterung (F):] Der Filterungs-Operator versucht aus den, vom Assoziations-Operator, verbundenen Objekten der alten und neuen Daten, eine bestmögliche Schätzung des realen Objektes zu erstellen, die dann an den Broker weiter geleitet wird.
+	\item[Broker:] Der Broker sorgt dafür, dass die Daten, welche in das Umweltmodell mit eingehen, an den Prädiktions-Operator weitergeleitet werden.
+\end{description}
+Das hier erläuterte Vorgehen stellt eine grobe Übersicht dar, um die folgende Vorstellung der Initalisierung des Kontextmodells besser nachvollziehen zu können.
+
+\section{Probleme}
+Das grundlegend zu behandelnde Problem ist die Intialisierung des Kontextmodells. Sind am Anfang der Objektverfolgung (z.B. beim Einschalten der Sensoren oder des FAS) noch keine Objekte erkannt worden, so besitzt das Kontextmodell noch keinerlei Datenobjekte, die zur Prädiktion verwendet werden können. Daraus folgt, dass die Datenobjekte der neuen Messung in der Assoziation mit keinen Daten der vorheriegen Messung verknüpft werden können, und somit für die Filterung schlicht keine Daten (Verbindungen zwischen aktuellen und vorheriegen Messungen) vorhanden sind. Dies verhindert, dass Objekte erkannt werden können. Aus diesem Grund muss das Kontextmodell anfänglich initial mit Daten versorgt werden. Diese Befüllung des Umweltmodells mit Initialdaten stellt einen Sonderfall, welcher berücksichtigt werden muss.
+
+Eine Möglichkeit die Daten initial in das Umweltmodell einzupflegen wäre, dass die aus der Quelle gelieferten Daten direkt in den Broker geschrieben werden. Dies ist jedoch nicht sinnvoll, da bei der Verarbeitung von Sensordaten davon ausgegangen werden muss, dass diese ungenau sein oder "`Geisterobjekte"' liefern (Objekte die es in der realen Welt nicht gibt) können. Zudem besteht die Möglichkeit, dass Objekte in einem Sensor-Zyklus nicht erkannt werden können obwohl diese vorhanden sind. In diesem Fall würde nach der Assoziation keine Verknüpfung vorhanden sein, und das entsprechende Objekt würde direkt aus dem Umweltmodell entfernt werden.\\
+
+Aufgaben die das Kontextmodell erfüllen muss:
+\begin{itemize}
+\item Intialisierung des Kontextmodells
+\item Behandlung vorher noch nicht erkannter Objekte (neue Objekte) 
+\item Behandlung von Objekten aus der vorheriegen Messung, die mit keinem Objekt der aktuellen Messung verknüpft werden können (zu entfernende Objekte)
+\end{itemize}
+
+\section{Lösung}
+Bei der Intialisierung sind alle erkannten Objekte neu erkannte Objekte. Des Weiteren sind im Assoziations-Operator alle Objekte (neue Objekte und aus dem Umweltmodell bekannte Objekte) vorhanden (zur Verdeutlichung: In der Filterung lediglich die Objekte die in der neuen und der vorheriegen Messung enthalten sind).
+
+Somit lässt sich in dem Assoziations-Operator leicht feststellen, welche Objekte:
+\begin{itemize}
+\item neue Objekte sind: Objekte die mit keinem vorhandem Objekt verknüpft werden können
+\item zu entfernende Objekte sind: aus dem Umweltmodell bekannte Objekte die mit keinem Objekt der aktuellen Messung verknüpft werden können (nicht mehr erkannte Objekte)
+\item erkannte Objekte sind: Objekte die in der aktuellen Messung und im Umweltmodell vorhanden sind und verknüpft werden
+\end{itemize}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.90\textwidth]{images/loesungAssoziation.pdf}
+	\caption{Assoziations-Operator mit drei Ausgängen}
+	\label{fig:loesungAssoziation}
+\end{figure}
+Ziel ist es, die neu erkannten Objekte dem Kontextmodell nicht direkt hinzuzufügen, um das Auftauchen von Geisterobjekten zu vermeiden und einmalig nicht mehr erkannte Objekte nicht gleich zu entfernen um Sensorfehler in diesem Bereich zu kompensieren. Die neu erkannten Objekte werden nun gesondert behandelt und getrennt vom eigentlichen Kontextmodell verfolgt. Diese werden in einem zweiten Zyklus, der wiederum die bereits bekannten Operatoren zur Objektverfolgung enthält, gesammelt (siehe Abbildung \ref{fig:ArchitekturLoesung}). 
+
+Je nachdem wie häufig diese nun in dem zusätzlichen Zyklus wiedererkannt wurden (z.B. öfter als einmal), werden sie \textit{bewertet}, bevor sie in den Broker weitergeleitet werden. Dieser Bewertungsoperator ist jedoch noch konzeptionell, abstrakt und es ist noch nicht entschieden wie die Bewertung der Daten erfolgen soll.
+
+Anschließend können anhand der Bewertung im Broker gegebenenfalls Datenobjekte gelöscht (durch ein entsprechendes \textit{Predicate}), oder durch einen Selektions-Operator Objekte in den Kreislauf (das Umweltmodell) der primären Objektverfolgung aufgenommen werden.
+
+Auch im primären Zyklus werden die Objekte die zwar in der vorherigen Messung bekannt waren, aber nicht wieder erkannt wurden entsprechend bewertet, und können ggf. gelöscht werden. Durch die Vereinigung der alten, neuen und wiedererkannten Daten, ist nun eine robustere Objektverfolgung möglich, in der Objekte nicht sofort auftauchen oder wieder verschwinden.
+
+Der Vorteil dieser Lösung ist, dass wir die Operatoren für den sekundären Zyklus wiederverwenden können, und eine flexible Entscheidungsgestaltung für das Entfernen und Hinzufügen von Objekten erreichen. 
+
+Bei der Intialisierung muss jedoch noch ein Aspekt beachtet werden. Damit der Kreislauf durch einen der Broker laufen kann, muss dieser trotzdem noch einen "`Startwert"' z.B. eine leere Liste von Datenobjekten enthalten.
+
+
+
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{images/ArchitekturLoesung.pdf}
+	\caption{Konzeptmodell}
+	\label{fig:ArchitekturLoesung}
+\end{figure}
+
+
+\end{document}
+

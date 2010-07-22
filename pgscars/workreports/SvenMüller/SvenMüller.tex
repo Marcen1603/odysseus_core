@@ -1,0 +1,173 @@
+%%Hier wird das Dokument definiert
+
+\documentclass{scrartcl}  %Format und Stil
+
+\usepackage{../style/wrstyle_UTF8}
+	
+% Einstellungen f\"{u}r die "offizielle" Titelseite
+\title{Projektgruppe StreamCars} % Titel der Dissertation
+\subtitle{wöchentliche Arbeitsberichte}
+\author{Sven Müller} % Name des Autors
+\date{\today}
+\surveyor{André Bolles}
+\term{Sommersemester 2010 - Wintersemester 2010/11}
+
+\renewenvironment{workToDo}{\subsection{Bevorstehende Aufgaben}}{}
+
+%%Hier wird das Dokument definiert
+\begin{document}
+
+	\maketitle
+	
+	\newpage
+	
+	\tableofcontents
+	
+% Wochenbericht KW 20
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Seminarausarbeitung überarbeitet und ergänzt.
+		\item Seminarvortrag erstellt.
+		\item Seminar in Oldenburg, Seminarvortrag gehalten.
+		\item Datentransfer C++/JDVE => Java/ODYSSEUS 
+		\begin{compactitem}
+			\item Ein einzelnes Zeichen geschickt und empfangen
+			\item Komplexere Datentypen geschickt und empfangen
+			\item Ganze Autodetektionen geschickt und empfangen
+			\item Ganze Scans geschickt und empfangen
+			\item (jeweils mit Hauke zusammen)
+		\end{compactitem}
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Dominion verschickt nicht nur die Daten selbst, sondern auch einige Füllbytes, von denen wir nicht wussten, wann und wo sie im verschickten Paket vorkommen. War ein wenig Try und Fix...
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Datentransfer C++/JDVE => Java/ODYSSEUS: Das testweise Implementierte schöner implementieren.
+	\end{itemize}
+\end{workToDo}
+
+% Wochenbericht KW 21
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Seminarausarbeitung überarbeitet und ergänzt.
+	\end{itemize}
+\end{workDone}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Datentransfer C++/JDVE => Java/ODYSSEUS: Das testweise Implementierte schöner implementieren.
+	\end{itemize}
+\end{workToDo}
+
+% Wochenbericht KW 22
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Datentransfer C++/JDVE => Java/ODYSSEUS
+		\begin{compactitem}
+			\item auf der JDVE-Seite analysiert, welche Daten wir genau bekommen.
+			\item Java-Klassen von Hauke mit Hauke zusammen getestet.
+			\item Demo für Marco Hannibal vorbereitet (mit Hauke zusammen).
+			\item "`Neues"' JDVE
+			\begin{compactitem}
+				\item mit Ulf Noyer gesprochen, da es nicht richtig funktionierte.
+				\item Fix erstellt, ins SVN gepackt, auf dem Simulationsrechner installiert und entsprechende Mail über die ML gejagt.
+				\item C++-Kram aus "`altem"' JDVE eingepflegt (grob, auf Haukes Laptop, mit Hauke zusammen)
+				\item Angefangen, C++-Kram aus "`altem"' JDVE einzupflegen (so wie man's machen sollte, auf Haukes Laptop, mit Hauke zusammen)
+			\end{compactitem}
+		\end{compactitem}
+		\item Seminar und Exkursion nach Braunschweig zum DLR
+		\item Seminarausarbeitung überarbeitet, ergänzt und abgegeben.
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Das "`neue"' JDVE wollte nicht funktionieren.
+		\item Die mitgelieferten Datenkerne (Ontology.xml) passten nicht zu den Applikationen des JDVE. Das irritierte allerdings nur.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Datentransfer C++/JDVE => Java/ODYSSEUS
+		\begin{compactitem}
+			\item "`Neues"' JDVE
+			\begin{compactitem}
+				\item C++-Kram aus "`altem"' JDVE eingepflegen (so wie man's machen sollte)
+				\item NexGenViewer aus "`altem"' JDVE holen und schauen, ob's klappt (Tipp von Ulf Noyer)
+			\end{compactitem}
+			\item Java-Klassen ins ODYSSEUS-Projekt/-SVN einpflegen
+		\end{compactitem}
+	\end{itemize}
+\end{workToDo}
+
+% Wochenbericht KW 23
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Zweiten Simulationsrechner von Ralf geholt und im U64 aufgestellt.
+		\item Java-Klassen ins ODYSSEUS-Projekt/-SVN eingepflegt (mit Hauke zusammen).
+		\item Wrapper-Klassen im ODYSSEUS-Projekt/-SVN erstellt (mit Hauke zusammen).
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Unerfahrenheit mit ODYSSEUS
+		\item Ein wesentlich generischer Ansatz für die Java-Implementierung wäre anzuraten. Für den vertikalen Prototypen sollte es aber langen.
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Unschärfe in die von JDVE verschickten Daten einbauen
+		\item Schnittstelle für den Weg ODYSSEUS->JDVE konzipieren
+		\item Zweiten Simulationsrechner installieren
+	\end{itemize}
+\end{workToDo}
+
+
+% Wochenbericht KW 24
+\week
+
+\begin{workDone}
+	\begin{itemize}
+		\item Mit Hauke zusammen Code aus "`altem"' JDVE ins "`neue"' portiert
+		\item Für uns wichtige Dateien des JDVE ins SVN gepackt => Arbeit überall an ein und demselben JDVE nun einfacher (kein "`altes"'/"`neues"'/"`altes neues"'/"`neues neues"' JDVE mehr)
+		\item Für Hauke und mich Visual Studio 2005 besorgt
+		\item Das virtuelle Windows auf meinem Notebook für die Arbeit mit dem JDVE gerüstet (vorher habe ich den Simulationsrechner benutzt)
+	\end{itemize}
+\end{workDone}
+
+\begin{workProblems}
+	\begin{itemize}
+		\item Fehlende Rückwärtskompatibilität von Visual-Studio-2008-Projektdateien
+		\item Visual Studio mag es scheinbar nicht, wenn Präprozessordefinitionen in Header-Dateien stehen, sondern möchte sie in den Projektdateien haben
+	\end{itemize}
+\end{workProblems}
+
+\begin{workToDo}
+	\begin{itemize}
+		\item Unschärfe in die von JDVE verschickten Daten einbauen (wollten damit diese KW anfangen, die aufgetretenen Probleme hinderten Hauke und mich Donnerstag jedoch daran)
+		\item Schnittstelle für den Weg ODYSSEUS->JDVE konzipieren
+		\item Zweiten Simulationsrechner installieren
+		\item Zeitstempel als zusätzliches Attribut mitgeschicken (evtl. hat Hauke dies inzwischen erledigt)
+		\item Absolute Koordinaten der Fahrzeuge in relative umwandeln
+		\item Zusätzlichen ODYSSEUS-Operator für Dummydaten erstellen
+	\end{itemize}
+\end{workToDo}
+
+\end{document}

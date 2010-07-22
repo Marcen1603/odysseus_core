@@ -1,0 +1,132 @@
+\documentclass[pdftex,a4paper]{scrartcl}
+\usepackage{ngerman}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[inner=2cm,outer=2cm,top=2cm,bottom=2cm,includeheadfoot]{geometry}
+\usepackage{rotating}
+\usepackage{paralist}
+\usepackage{url}
+\setlength{\evensidemargin}{\paperwidth}
+\addtolength{\evensidemargin}{-\textwidth}
+\addtolength{\evensidemargin}{-2.0in}
+\addtolength{\evensidemargin}{-\oddsidemargin}
+\setlength{\parindent}{0pt}
+%\renewcommand{\labelenumi}{\alph{enumi})}
+\parskip 12pt
+
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Sitzungsprotokoll}
+%Sitzungsdatum
+\fancyhead[R]{29.04.2010}
+\begin{document}
+
+\renewcommand{\headrulewidth}{0.5pt}
+
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\today}
+\renewcommand{\footrulewidth}{0.5pt}
+
+\begin{center}
+\sc
+%X-te Sitzung
+\LARGE{Protokoll zur 3. Sitzung} \\
+%Sitzungsdatum
+\Large{\textbf{am 29.04.2010}} \\
+%Uhrzeit
+\normalsize{\textbf{um 14:15 - 16:00}}
+\end{center}
+%Moderator bzw Sitzungsleiter
+\begin{large}\textbf{Sitzungsleiter:} André Bolles\\
+%Protokolant
+\textbf{Protokolf"uhrer:} Benjamin Grünebast\\
+%Wer anwesend ist und wer nicht
+\textbf{Anwesend:} Wolf Bauer, André Bolles, Benjamin Grünebast, Volker Janz, Nico Klein, Tobias Krahn, Timo Michelsen, Sven Müller, Hauke Neemann, Daniel Twumasi, Thomas Vogelgesang
+\newline
+
+\end{large}
+\rule{\textwidth}{0.2pt}
+\rm
+
+
+%~~~+++ Tagesordnungsvorstellung +++~~~
+% Hier steht zunächst die vorgeschlagene Tagesordnung für die Sitzung
+\chapter{Tagesordnung}
+ \begin{itemize}
+	\item Einführung Trac (Projektverwaltung) von Wolf Bauer
+	\item Vorstellung von Vorgehensmodell(Projektplanung) Scrum von Hauke Neemann
+	\item grundsetzliche Anforderungen an das Projekt von André Boolles
+ \end{itemize}
+
+\section{Einführung Trac von Wolf Bauer}
+	\begin{itemize}
+		\item Trac bietet ein Ticketverwaltungssytem für unsere Aufgabenverteilung. Dabei kann jeder von uns Tickets erstellen, anderen Personen zuweisen, sowie Tickets zur Bearbeitung annehmen.
+		\item Link zum Trac des Odysseus-Projekts: http://isdb1.offis.uni-oldenburg.de:8000/odysseus/
+		\item Logindaten: die gleichen wie Odysseus-SVN-Login
+   \end{itemize}
+   \subsection{Trac Ticketverwaltung}
+   	\begin{itemize}
+			\item Bei der Erstellung neuer Tickets soll in dem Formular als version: odysseus\_osgi verwendet werden.
+			\item die Componenten müssen wir selber ausdenken bzw. aussuchen
+			\item jedem Ticket können Dateien, wie z.B. source-code oder konsolenausgaben hinzugefügt werden
+		\end{itemize}
+		\subsection{Integration in Eclipse - Installation}
+		Folgende Update-Sites in Eclipse hinzufügen (unter: Help->install new Software):
+		\begin{itemize}
+			\item mylyn update seite: http://download.eclipse.org/tools/mylyn/update/e3.4
+			\item mylyn extras seite: http://download.eclipse.org/tools/mylyn/update/extras
+		\end{itemize}
+		Folgende Plugins von diesen Seiten in eclipse installieren:
+				\begin{itemize}
+			\item Mylyn Task List (aktuell Version 3.3.3...)
+			\item Mylyn Connector: Trac (aktuell Version 3.3.3...)
+		\end{itemize}
+		\subsection{Integration in Eclipse - Configuration}
+		In der Perspective "`Planning"' lässt sich neben der "`Task List View"' die View "`Task Repositories View"' öffnen und anzeigen. In der Repositories View können nun neue Repositories hinzugeügt werden, wo als erstes "`Trac"' als "`Repository Type"' ausgewählt werden muss. Anschließend den oben genannten Link unter Server eintragen und die account daten eingeben. Wichtig hier, als erstes müssen die Einstellungen mittels "`validate Settings"' validiert werden. Danach sollte alles funktionieren, mit "`Finish"' beenden.
+		
+		In der "`Task List View"' lassen sich nun neben neuen Tickets auch neue Queries anlegen, mit deren Hilfe nach bestimmten Tickets gesucht werden kann und in der Lista danach gefiltert werden.
+		
+		    
+%~~~+++ Nächster Punkt  +++~~~ 
+\section{Vorgehensmodell der Projektplanung Scrum von Hauke Neemann}
+Als Vorgehensmodell für die Projektplanung soll Scrum genutzt werden. Dieses Modell wurde von Hauke Neemann grob vorgestellt.
+
+\section{Anforderungen von André Bolles}
+André hat die grundlegenden Anforderungen grob aufgezeigt, was das Projekt am ende können muss.
+\begin{itemize}
+	\item Primär: Die Simulationssoftware an Odysseus anbinden
+	\item vom Sensor erkannte Objekte einlesen können
+	\item Die Zugehörigkeit der Objekte zu einem Scanzyklus muss gegeben sein
+	\item nicht jedes Objekt einzelnd im Datenstrom sondern eine Liste mit allen im Zyklus erkannten Objekten auf einmal
+	\item Objektvervolgung (vermutlich aufteilen in drei Datenstrom-Operatoren):
+		\begin{itemize}
+			\item Prädektion: Zeitbezug / wo das Objekt im nächsten Zeitpunkt sein könnte.
+			\item Assoziation: Verknüpfen alter Messungen mit den neuen. Sprich: Welches Objekt der alten Messung ist Objekt der neuen Messung? (hier reicht nearest neighbor algorithm)
+			\item Filterung: Was bzw. Messabweichungen / Wo ist der wirkliche neue Wert des Objektes? (hier reicht einfacher Kalmann-Filter)
+		\end{itemize}
+		\item Der Broker-Operator wird aus der Objektverfolgung mit den richtigen Daten gefüttert, und stellt im gewissen Maße unser Umgebungsmodell dar.
+	\item alles soll auf objekt-relationaler Ebene entwickelt werden, ohne Berücksichtigung auf die Implementierung im richtigem Auto. D.h. auch Performance im Bezug zum richtigem Auto für uns erstmal irrelevant.
+\end{itemize}
+Eine detailiertere Beschreibung der Anforderungen kann in André's Dissertation gefunden werden. 
+
+\section{Sonstiges Wichtiges}
+
+
+%~~~+++ Arbeitsaufträge +++~~~
+\section{Arbeitsaufträge}
+\begin{itemize}
+	\item Odysseus SVN und Trac einrichten, und in Eclipse IDE installieren.
+\end{itemize}
+
+%~~~+++ Nächste Sitzung +++~~~
+\section{Nächste Sitzung}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline 
+		Datum & Zeit & Ort & Sitzungsleiter & Protokollf"uhrer\\
+		\hline 
+		Montag, 03.05.2010 & 14:00 - 16:00 & OFFIS U61 & André Bolles & ??	\\
+		\hline
+	\end{tabular}
+\end{document}
