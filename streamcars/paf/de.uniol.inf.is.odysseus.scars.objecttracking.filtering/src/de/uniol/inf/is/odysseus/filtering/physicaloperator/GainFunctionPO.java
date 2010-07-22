@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.IGainFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
@@ -9,10 +10,13 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private IGainFunction gainFunction;
+
+	private SDFAttributeList schema;
 	
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
@@ -42,8 +46,8 @@ public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPr
 			double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
 			
 			// compute gain
-			gainFunction.addParameter("oldCovariance", covarianceOld);
-			gainFunction.addParameter("newCovariance", covarianceNew);
+			gainFunction.addParameter(HashConstants.GAIN_OLD_COVARIANCE, covarianceOld);
+			gainFunction.addParameter(HashConstants.GAIN_NEW_COVARIANCE, covarianceNew);
 			
 			gain = gainFunction.computeGain();
 			
@@ -68,4 +72,7 @@ public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPr
 		this.gainFunction = gainFunction;
 	}
 
+	public void setSchema(SDFAttributeList schema) {
+		this.schema = schema;
+	}
 }

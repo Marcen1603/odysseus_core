@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.ICorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
@@ -44,7 +45,6 @@ public class CorrectStateEstimateFunctionPO <M extends IProbability & IPredictio
 		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
 
 
-		double[][] gain = null;
 
 		// traverse connection list and filter
 		for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
@@ -57,11 +57,12 @@ public class CorrectStateEstimateFunctionPO <M extends IProbability & IPredictio
 
 			double[] correctedMeasurement;
 
-
+			double[][] gain = oldTuple.getMetadata().getGain();
+			
 			// update state estimate
-			estimateFunction.addParameter("measurementOld", measurementOld);
-			estimateFunction.addParameter("measurementNew", measurementNew);
-			estimateFunction.addParameter("gain", gain);
+			estimateFunction.addParameter(HashConstants.ESTIMATE_OLD_MEASUREMENT, measurementOld);
+			estimateFunction.addParameter(HashConstants.ESTIMATE_NEW_MEASUREMENT, measurementNew);
+			estimateFunction.addParameter(HashConstants.ESTIMATE_GAIN, gain);
 
 
 			correctedMeasurement = estimateFunction.correctStateEstimate();
