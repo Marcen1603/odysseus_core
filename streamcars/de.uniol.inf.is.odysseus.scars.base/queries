@@ -87,3 +87,35 @@ BROKER(a,
 		BROKER(a, QUEUE (RPROJECTION(ACCESS(linearMove as c), c.timestamp))), a.timestamp > 20));
 
 BROKER(a, RPROJECTION(ACCESS(linearMove as d), d.timestamp));
+
+------------------------------------------
+
+CREATE SENSOR sensorA (
+	RECORD( scan,
+		ATTRIBUTE(dummy, LONG)
+	)
+) FROM CHANNEL 127.0.0.1:5001
+
+CREATE SENSOR sensorB (
+	RECORD( scan,
+		ATTRIBUTE(dummy, LONG)
+	)
+) FROM CHANNEL 127.0.0.1:5001
+
+LOGICAL PLAN : 
+ASSOCIATION-GEN (
+	ACCESS (sensorA),
+	ACCESS (sensorB),
+	sensorA.dummy,
+	sensorB.dummy
+)
+
+LOGICAL PLAN : 
+ASSOCIATION-EVAL (
+	ACCESS (sensorA),
+	EVALUATEID,
+	param1 := value1; param2 := value2;,
+	sensorA.dummy,
+	sensorB.dummy,
+	sensorA.dummy := sensorB.dummy; sensorA.car := sensorB.car;
+)
