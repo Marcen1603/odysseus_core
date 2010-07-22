@@ -40,6 +40,10 @@ public class Rating implements IRating {
 		return false;
 	}
 
+	public Rating getRatingObject() {
+		return this;
+	}
+
 	@Override
 	public IRating clone(){
 		return new Rating(0);
