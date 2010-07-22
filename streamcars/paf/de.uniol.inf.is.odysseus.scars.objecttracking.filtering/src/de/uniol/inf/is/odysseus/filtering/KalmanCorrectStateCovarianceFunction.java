@@ -8,49 +8,38 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovarianceFunction {
 	
-	/*
-	 * Wird nicht mehr benötigt, da die Parameter im
-	 * FilterPO gesetzt werden.
-	 * 
-	private double[][] covarianceOld;
-	
-	private double[][] gain;
-	
-	private double[] outputModell;
-	*/
-	
-	private HashMap<String, Object> parameters;
+	private HashMap<Integer, Object> parameters;
 	
 	public KalmanCorrectStateCovarianceFunction() {
 		
 	}
 	
-	public KalmanCorrectStateCovarianceFunction(HashMap<String, Object> parameters) {
+	public KalmanCorrectStateCovarianceFunction(HashMap<Integer, Object> parameters) {
 		/*this.parameters.put("covarianceOld", covarianceOld );
-		this.parameters.put("gain", gain);
-		this.parameters.put("outputModell", outputModell); */
+		this.parameters.put("gain", gain);*/
 		this.parameters=parameters;
 	}
 	
-	
 	@Override
 	public double[][] correctStateCovariance() {
-		// TODO Auto-generated method stub
-		return null;
+		RealMatrix covarianceOld = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.COVARIANCE_OLD_COVARIANCE));
+		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.COVARIANCE_GAIN));
+		RealMatrix identityMatrixOfGain = new RealMatrixImpl(makeIdentityMatrix(gain.getData()));
+		return identityMatrixOfGain.subtract(gain).multiply(covarianceOld).getData();
 	}
 	
 
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void setParameters(HashMap<String, Object> parameters) {
+	public void setParameters(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
 	 * @return the parameters
 	 */
-	public HashMap<String, Object> getParameters() {
+	public HashMap<Integer, Object> getParameters() {
 		
 		return parameters;
 	} 
@@ -58,17 +47,28 @@ public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovari
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void addParameter(String key, Object value) {
+	public void addParameter(Integer key, Object value) {
 		this.parameters.put(key, value);
 	}
 
 
 	@Override
 	public int getFunctionID() {
-		
 		return 1;
 	}
-
-
+	
+	public static double[][] makeIdentityMatrix(double[][] template) {
+		double[][] identityMatrix = new double[template.length][template.length];
+		for (int i = 0; i<template.length; i++) {
+			for (int j = 0; j<template.length; j++) {
+				if (i == j) {
+					identityMatrix[i][j] = 1;
+				} else if (i != j) {
+					identityMatrix[i][j] = 0;
+				}
+			}
+		}
+		return identityMatrix;
+	}
 
 }
