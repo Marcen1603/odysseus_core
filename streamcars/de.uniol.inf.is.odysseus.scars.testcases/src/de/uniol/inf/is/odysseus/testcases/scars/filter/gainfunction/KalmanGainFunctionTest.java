@@ -1,11 +1,12 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.testcases.filter.gainfunction;
+package de.uniol.inf.is.odysseus.testcases.scars.filter.gainfunction;
 
 
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.IGainFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
 
@@ -28,7 +29,7 @@ public class KalmanGainFunctionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-	HashMap<String,Object> parameters = new HashMap<String,Object>();;
+	HashMap<Integer,Object> parameters = new HashMap<Integer,Object>();;
 	
 	
 	
@@ -40,8 +41,8 @@ public class KalmanGainFunctionTest {
 	// the covariance of the new measurement
 	double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 	
-	parameters.put("covarianceOld", covarianceOld);
-	parameters.put("covarianceNew",covarianceNew);
+	parameters.put(HashConstants.OLD_COVARIANCE, covarianceOld);
+	parameters.put(HashConstants.NEW_COVARIANCE,covarianceNew);
 	
 	
 	this.gainfunction = new KalmanGainFunction();

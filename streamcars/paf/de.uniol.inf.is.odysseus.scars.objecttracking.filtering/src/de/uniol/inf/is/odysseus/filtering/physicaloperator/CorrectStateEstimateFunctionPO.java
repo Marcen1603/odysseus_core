@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.ICorrectStateEstimateFunction;
+import de.uniol.inf.is.odysseus.filtering.logicaloperator.CorrectStateEstimateFunctionAO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -22,8 +23,16 @@ public class CorrectStateEstimateFunctionPO <M extends IGain & IProbability & IP
 	private SDFAttributeList schema;
 
 	public CorrectStateEstimateFunctionPO() {
-
+	super();
 	}
+	
+	public CorrectStateEstimateFunctionPO(CorrectStateEstimateFunctionPO copy) {
+		super(copy);
+		}
+	
+	public CorrectStateEstimateFunctionPO(CorrectStateEstimateFunctionAO<IProbability> correctStateEstimateFunctionAO) {
+		this.estimateFunction=correctStateEstimateFunctionAO.getCorrectStateEstimateFunction();
+		}
 	
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {

@@ -2,8 +2,11 @@ package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.filtering.FilterAO;
+import de.uniol.inf.is.odysseus.filtering.FilterPO;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.IGainFunction;
+import de.uniol.inf.is.odysseus.filtering.logicaloperator.GainFunctionAO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -19,6 +22,20 @@ public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctio
 
 	private SDFAttributeList schema;
 	
+	public GainFunctionPO() {
+		super();
+		}
+	
+	public GainFunctionPO(GainFunctionAO gainfunctionAO) {
+		this.gainFunction=gainfunctionAO.getGainFunction();
+		
+	}
+	
+	public GainFunctionPO(GainFunctionPO copy) {
+		super(copy);
+		}
+	
+	
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
 		// TODO Auto-generated method stub
@@ -32,6 +49,7 @@ public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctio
 
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		
 		// list of connections
 		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
 		

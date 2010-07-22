@@ -1,11 +1,12 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.testcases.filter.correctstatecovariancefunction;
+package de.uniol.inf.is.odysseus.testcases.scars.filter.correctstatecovariancefunction;
 
 
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.ICorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
 
@@ -30,7 +31,7 @@ public class KalmanCorrectStateCovarianceFunctionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-	HashMap<String,Object> parameters = new HashMap<String,Object>();;
+	HashMap<Integer,Object> parameters = new HashMap<Integer,Object>();;
 	
 	
 	
@@ -41,8 +42,8 @@ public class KalmanCorrectStateCovarianceFunctionTest {
 	// the gain
 	double[][] gain = { {0.2,0.2}, {0.1,0.4}};
 	
-	parameters.put("covarianceOld", covarianceOld);
-	parameters.put("gain",gain);
+	parameters.put(HashConstants.OLD_COVARIANCE, covarianceOld);
+	parameters.put(HashConstants.GAIN,gain);
 	
 	
 	// create function and set parameters
@@ -54,7 +55,7 @@ public class KalmanCorrectStateCovarianceFunctionTest {
 	}
 	@Test
 	public void test() {
-		double[][] expected = { {9.0,20.0}, {21.5,15.5} };
+		double[][] expected = { {1.0,10.0}, {8.5,4.5} };
 	
 		
 		this.result=this.kalmanCorrectStateCovarianceFunction.correctStateCovariance();

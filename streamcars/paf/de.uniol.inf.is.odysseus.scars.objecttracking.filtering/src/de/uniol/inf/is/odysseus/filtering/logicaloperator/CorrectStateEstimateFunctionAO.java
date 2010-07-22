@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.filtering.logicaloperator;
 
+import de.uniol.inf.is.odysseus.filtering.ICorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -19,6 +20,8 @@ public class CorrectStateEstimateFunctionAO <M extends IProbability> extends Una
 	
 	private String newObjListPath;
 
+	private ICorrectStateEstimateFunction correctStateEstimateFunction;
+	
 	public CorrectStateEstimateFunctionAO(String functionId) {
 		super();
 		this.functionID = functionId;
@@ -35,10 +38,10 @@ public class CorrectStateEstimateFunctionAO <M extends IProbability> extends Una
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		// TODO Falls das Schema nicht verändert wird, kann
-		// hier einfach das InputSchema zurückgegeben werden
+		// TODO Falls das Schema nicht verï¿½ndert wird, kann
+		// hier einfach das InputSchema zurï¿½ckgegeben werden
 		// (wie in HypothesisEvaluationPO.getOutputSchema())
-		// Falls es verändert wird, 
+		// Falls es verï¿½ndert wird, 
 		// HypothesisGenerationAO.getOutputSchema() anschauen.
 		return null;
 	}
@@ -64,5 +67,20 @@ public class CorrectStateEstimateFunctionAO <M extends IProbability> extends Una
 
 	public void setFunctionID(String functionID) {
 		this.functionID = functionID;
+	}
+
+	/**
+	 * @param correctStateEstimateFunction the correctStateEstimateFunction to set
+	 */
+	public void setCorrectStateEstimateFunction(
+			ICorrectStateEstimateFunction correctStateEstimateFunction) {
+		this.correctStateEstimateFunction = correctStateEstimateFunction;
+	}
+
+	/**
+	 * @return the correctStateEstimateFunction
+	 */
+	public ICorrectStateEstimateFunction getCorrectStateEstimateFunction() {
+		return correctStateEstimateFunction;
 	}
 }

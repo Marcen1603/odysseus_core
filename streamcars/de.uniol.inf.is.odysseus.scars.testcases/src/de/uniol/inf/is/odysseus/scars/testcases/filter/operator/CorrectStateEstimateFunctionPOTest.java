@@ -1,0 +1,28 @@
+/**
+ * 
+ */
+package de.uniol.inf.is.odysseus.scars.testcases.filter.operator;
+
+
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ * @author dtwumasi
+ *
+ */
+public class CorrectStateEstimateFunctionPOTest {
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+	}
+	
+	@Test
+	public void test() {
+		
+	}
+}

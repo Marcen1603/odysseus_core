@@ -1,11 +1,12 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.testcases.filter.correctstateestimatefunction;
+package de.uniol.inf.is.odysseus.testcases.scars.filter.correctstateestimatefunction;
 
 
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.ICorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
 
@@ -29,7 +30,7 @@ public class KalmanCorrectStateEstimateFunctionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-	HashMap<String,Object> parameters = new HashMap<String,Object>();;
+	HashMap<Integer,Object> parameters = new HashMap<Integer,Object>();;
 	
 	
 	
@@ -44,8 +45,8 @@ public class KalmanCorrectStateEstimateFunctionTest {
 	// the gain
 	double[][] gain = { {0.2,0.2}, {0.1,0.4}};
 	
-	parameters.put("measurementOld", measurementOld);
-	parameters.put("measurementNew",measurementNew);
+	parameters.put(HashConstants.OLD_MEASUREMENT, measurementOld);
+	parameters.put(HashConstants.NEW_MEASUREMENT,measurementNew);
 	
 	
 	this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction();
