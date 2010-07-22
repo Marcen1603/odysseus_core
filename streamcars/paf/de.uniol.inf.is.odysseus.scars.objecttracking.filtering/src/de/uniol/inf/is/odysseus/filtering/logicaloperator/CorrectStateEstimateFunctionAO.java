@@ -65,6 +65,4 @@ public class CorrectStateEstimateFunctionAO <M extends IProbability> extends Una
 	public void setFunctionID(String functionID) {
 		this.functionID = functionID;
 	}
-	
-	// TODO Weitere benötigte Methoden hier hinzufügen.
 }

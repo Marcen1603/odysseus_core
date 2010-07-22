@@ -36,6 +36,4 @@ public class CorrectStateCovarianceFunctionAO  <M extends IProbability> extends 
 		// HypothesisGenerationAO.getOutputSchema() anschauen.
 		return null;
 	}
-	
-	// TODO Weitere benötigte Methoden hier hinzufügen.
 }

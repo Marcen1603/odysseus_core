@@ -34,9 +34,5 @@ public class GainFunctionAO <M extends IProbability> extends UnaryLogicalOp {
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();
 	}
-
-	public enum HashConstants {
-		OLD_COVARIANCE, NEW_COVARIANCE
-	};
 }
 
