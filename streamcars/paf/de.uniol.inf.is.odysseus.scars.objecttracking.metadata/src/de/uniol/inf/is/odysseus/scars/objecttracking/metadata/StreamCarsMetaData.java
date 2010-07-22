@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 
 /**
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
  * @param <R> Datatype of the right object (ConnectionContainer)
  * @param <W> Datatype of the rating - has to extend java.lang.Number (Double, Integer, ...) (ConnectionContainer)
  */
-public class StreamCarsMetaData<L, R, W extends java.lang.Number> extends Probability implements IConnectionContainer<L, R, W>, IRating, IGain  {
+public class StreamCarsMetaData<L, R, W extends java.lang.Number> extends Probability implements IConnectionContainer<L, R, W>, IRating, IGain, IProbability  {
 
 	/* ############### KONSTRUKTOREN ################ */
 
