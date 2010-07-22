@@ -6,6 +6,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisEvaluationAO;
 import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisSelectionAO;
+import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
@@ -76,6 +77,7 @@ import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -361,6 +363,18 @@ public class CreateLogicalPlanVisitor implements
 			((ArrayList) data)
 					.add(attributeResolver.getSource(((ASTIdentifier) node
 							.jjtGetChild(0)).getName()));
+		}
+		
+		/*
+		 * TODO
+		 * This is a quick hack to make the access-op work for sources parsed by cql (see ticket 181)
+		 * this should be replaced by a better management of sources
+		 */
+		
+		if (((ArrayList)data).get(1) == null) {
+			((ArrayList)data).remove(1);
+			((ArrayList)data).add(DataDictionary.getInstance().getView(((ASTIdentifier) node
+					.jjtGetChild(0)).getName()));
 		}
 
 		((ArrayList) data).add(new Integer(0));
@@ -1113,13 +1127,14 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0)
 				.jjtAccept(this, data);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
-		ILogicalOperator childOp = (ILogicalOperator) childData.get(0);
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		
 		childOp.subscribeSink(gen, 0, sourceOutPort, childOp.getOutputSchema());
 
 		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this,
 				data);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
-		childOp = (ILogicalOperator) childData.get(0);
+		childOp = (ILogicalOperator) childData.get(1);
 		childOp.subscribeSink(gen, 1, sourceOutPort, childOp.getOutputSchema());
 
 		gen.initPaths(((ASTIdentifier) node.jjtGetChild(3)).getName(),
