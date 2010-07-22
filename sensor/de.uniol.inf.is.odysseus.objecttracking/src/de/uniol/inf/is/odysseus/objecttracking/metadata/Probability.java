@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Probability implements IProbability{
 
 	private double[][] cov;
 	private ArrayList<int[]> attributePaths;
 	private int[] attrIndices;
+	private List<String> mvAttributeNames = null;
 	
 	public Probability(){
 		cov = null;
@@ -90,4 +93,19 @@ public class Probability implements IProbability{
 		}
 		return true;
 	}
+
+  @Override
+  public List<String> getMVAttributeNames()
+  {
+    return Collections.unmodifiableList(this.mvAttributeNames);
+  }
+
+  @Override
+  public void setMVAttributeNames(List<String> mvAttributeNames)
+  {
+    // Parameter mvAttributeNames can be modified externally
+    // That's why the list is being copied
+    // The Strings are immutable, so they don't have to be copied
+    this.mvAttributeNames = new ArrayList<String>(mvAttributeNames);
+  }
 }
