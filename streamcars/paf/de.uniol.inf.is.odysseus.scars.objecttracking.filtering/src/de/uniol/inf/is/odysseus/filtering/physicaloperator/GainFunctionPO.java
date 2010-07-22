@@ -10,9 +10,10 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private IGainFunction gainFunction;
 
@@ -52,10 +53,7 @@ public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPr
 			gain = gainFunction.computeGain();
 			
 			//set gain
-			// TODO Hier muss der Gain als Metadatum gesetzt werden.
-			// Dazu anschauen: objecttracking.metadata. Ein Interface
-			// anlegen und dieses implementieren. Dann kann man auf 
-			// object.getMetadata().get/setConnectionList() zugreifen.
+			oldTuple.getMetadata().setGain(gain);
 		}
 			
 		// transfer to broker

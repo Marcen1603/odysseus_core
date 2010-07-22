@@ -4,17 +4,16 @@ import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.ICorrectStateCovarianceFunction;
-import de.uniol.inf.is.odysseus.filtering.ICorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class CorrectStateCovarianceFunctionPO <M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private ICorrectStateCovarianceFunction covarianceFunction;
 	private SDFAttributeList schema;
@@ -52,6 +51,8 @@ public class CorrectStateCovarianceFunctionPO <M extends IProbability & IPredict
 			covarianceFunction.addParameter(HashConstants.COVARIANCE_OLD_COVARIANCE, covarianceOld);
 
 			correctedCovariance = covarianceFunction.correctStateCovariance();
+			
+			oldTuple.getMetadata().setCovariance(correctedCovariance);
 		}
 
 		// transfer to broker

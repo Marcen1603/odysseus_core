@@ -10,10 +10,11 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class CorrectStateEstimateFunctionPO <M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class CorrectStateEstimateFunctionPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private ICorrectStateEstimateFunction estimateFunction;
 	private int[] oldObjListPath;
@@ -68,10 +69,11 @@ public class CorrectStateEstimateFunctionPO <M extends IProbability & IPredictio
 			correctedMeasurement = estimateFunction.correctStateEstimate();
 			
 			//set corrected measurement
-			// TODO Hier muss der korrigierte Wert als Metadatum gesetzt werden.
-			// Dazu anschauen: objecttracking.metadata. Ein Interface
-			// anlegen und dieses implementieren. Dann kann man auf 
-			// object.getMetadata().get/setConnectionList() zugreifen.
+			// TODO Hier muss der korrigierte Wert gesetzt werden.
+			// Dazu muss eine Liste gelöscht werden und die andere durch die neuen
+			// Werte ersetzt werden. Am Besten wird die Liste mit den neuen Werten
+			// gelöscht und in die Liste mit den alten
+			// Werten die neuen Werte geschrieben.
 		}
 
 		// transfer to broker
