@@ -143,7 +143,10 @@ public class LabdataServer {
 					}
 					inner: for (int u = 0; u < schema.size(); u++) {
 						SDFAttribute attr = schema.get(u);
-						if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
+						// hack fix for timestamp @TODO fix it someday.
+						if (attr.getDatatype().getURI(false).endsWith("Timestamp")) {
+							cachedValues[i][u] = Integer.parseInt(line[u]);
+						} else if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
 						} else if (SDFDatatypes.isDouble(attr.getDatatype())) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
