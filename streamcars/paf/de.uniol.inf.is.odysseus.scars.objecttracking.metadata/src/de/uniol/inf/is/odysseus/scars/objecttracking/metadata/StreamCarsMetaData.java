@@ -17,16 +17,16 @@ public class StreamCarsMetaData<L, R, W extends java.lang.Number> extends Probab
 
 	/* ############### KONSTRUKTOREN ################ */
 
-	StreamCarsMetaData() {
+	public StreamCarsMetaData() {
 		this.connectionList = new ConnectionList<L, R, W>();
 		this.rating = 0;
 	}
 
-	StreamCarsMetaData(ConnectionList<L, R, W> inilist) {
+	public StreamCarsMetaData(ConnectionList<L, R, W> inilist) {
 		this.setConnectionList(inilist);
 	}
 
-	StreamCarsMetaData(int init) {
+	public StreamCarsMetaData(int init) {
 		if(init <= 0) {
 			init = 0;
 		}

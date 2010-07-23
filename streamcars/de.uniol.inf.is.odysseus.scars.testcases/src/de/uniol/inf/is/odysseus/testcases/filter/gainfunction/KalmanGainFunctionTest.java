@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.testcases.scars.filter.gainfunction;
+package de.uniol.inf.is.odysseus.testcases.filter.gainfunction;
 
 
 import java.util.HashMap;

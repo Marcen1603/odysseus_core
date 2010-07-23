@@ -22,6 +22,10 @@ public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctio
 
 	private SDFAttributeList schema;
 	
+	// path to new and old objects
+	private int[] oldObjListPath;
+	private int[] newObjListPath;
+	
 	public GainFunctionPO() {
 		super();
 		}
@@ -48,7 +52,7 @@ public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctio
 	}
 
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	public void process_next(MVRelationalTuple<M> object, int port) {
 		
 		// list of connections
 		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
@@ -91,4 +95,22 @@ public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctio
 	public void setSchema(SDFAttributeList schema) {
 		this.schema = schema;
 	}
+
+	/**
+	 * @param oldObjListPath the oldObjListPath to set
+	 */
+	public void setOldObjListPath(int[] oldObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+	}
+
+	/**
+	 * @param newObjListPath the newObjListPath to set
+	 */
+	public void setNewObjListPath(int[] newObjListPath) {
+		this.newObjListPath = newObjListPath;
+	}
+
+
+
+
 }

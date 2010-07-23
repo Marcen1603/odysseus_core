@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.testcases.scars.filter.correctstatecovariancefunction;
+package de.uniol.inf.is.odysseus.testcases.filter.correctstatecovariancefunction;
 
 
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.scars.testcases.filter.operator;
+package de.uniol.inf.is.odysseus.testcases.filter.operator;
 
 
 import org.junit.Before;

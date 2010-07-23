@@ -12,7 +12,8 @@ public class CorrectStateCovarianceFunctionAO  <M extends IProbability> extends 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	// TODO Weitere benötigte Attribute hier einfügen
+	
+	// TODO Weitere benï¿½tigte Attribute hier einfï¿½gen
 	
 	public CorrectStateCovarianceFunctionAO() {
 		super();
@@ -29,10 +30,10 @@ public class CorrectStateCovarianceFunctionAO  <M extends IProbability> extends 
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		// TODO Falls das Schema nicht verändert wird, kann
-		// hier einfach das InputSchema zurückgegeben werden
+		// TODO Falls das Schema nicht verï¿½ndert wird, kann
+		// hier einfach das InputSchema zurï¿½ckgegeben werden
 		// (wie in HypothesisEvaluationPO.getOutputSchema())
-		// Falls es verändert wird, 
+		// Falls es verï¿½ndert wird, 
 		// HypothesisGenerationAO.getOutputSchema() anschauen.
 		return null;
 	}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.scars.testcases.filter.operator;
+package de.uniol.inf.is.odysseus.testcases.filter.operator;
 
 
 import org.junit.Before;
@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @author dtwumasi
  *
  */
-public class GainFunctionAOTest {
+public class CorrectStateEstimateFunctionAOTest {
 
 	/**
 	 * @throws java.lang.Exception
