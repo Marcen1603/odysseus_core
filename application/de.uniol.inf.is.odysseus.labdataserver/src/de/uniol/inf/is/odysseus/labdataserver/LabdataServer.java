@@ -145,7 +145,7 @@ public class LabdataServer {
 						SDFAttribute attr = schema.get(u);
 						// hack fix for timestamp @TODO fix it someday.
 						if (attr.getDatatype().getURI(false).endsWith("Timestamp")) {
-							cachedValues[i][u] = Integer.parseInt(line[u]);
+							cachedValues[i][u] = Long.parseLong(line[u]);
 						} else if (SDFDatatypes.isMeasurementValue(attr.getDatatype())) {
 							cachedValues[i][u] = Double.parseDouble(line[u]);
 						} else if (SDFDatatypes.isDouble(attr.getDatatype())) {
@@ -409,7 +409,10 @@ class CSVHandler extends ClientHandler {
 							break;
 						}
 						SDFAttribute attr = this.schema.get(u);
-						if (SDFDatatypes.isMeasurementValue(attr.getDatatype())
+						// hack fix for timestamp @TODO fix it someday.
+						if (attr.getDatatype().getURI(false).endsWith("Timestamp")) {
+							oStream.writeLong((Long) cachedValues[i][u]);
+						} else if (SDFDatatypes.isMeasurementValue(attr.getDatatype())
 								|| SDFDatatypes.isDouble(attr.getDatatype())) {
 							oStream.writeDouble((Double) cachedValues[i][u]);
 						} else if (SDFDatatypes.isInteger(attr.getDatatype())) {
