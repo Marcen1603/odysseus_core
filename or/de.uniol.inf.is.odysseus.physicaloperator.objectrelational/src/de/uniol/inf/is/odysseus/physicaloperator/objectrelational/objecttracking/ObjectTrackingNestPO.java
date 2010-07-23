@@ -313,6 +313,13 @@ public class ObjectTrackingNestPO
 	    	"ObjectTrackingNestPO done signal: " + 
 	    	System.nanoTime()
 	    );
+		
+		/**
+		 * Evaluates all partials in min-priority order.
+		 */
+		
+		this.allTuplesSent();
+		
 		for(MVRelationalTuple<M> t : this.q) {
 			this.transfer(t);
 			System.out.println(t);
