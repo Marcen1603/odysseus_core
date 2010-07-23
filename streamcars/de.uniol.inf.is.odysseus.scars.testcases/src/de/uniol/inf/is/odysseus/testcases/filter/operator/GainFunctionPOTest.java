@@ -13,16 +13,18 @@ import static org.junit.Assert.*;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
-import de.uniol.inf.is.odysseus.filtering.IGainFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.GainFunctionPO;
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
+
 
 
 /**
@@ -31,7 +33,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
  * @param <M>
  *
  */
-public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MVRelationalTuple<C>,MVRelationalTuple<C>, Double>, M extends IProbability>{
+public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MVRelationalTuple<C>,MVRelationalTuple<C>, Double>, M extends IProbability, G extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> {
 
 	private GainFunctionPO gainfunctionPO;
 	
@@ -49,20 +51,17 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		
 		// attributes for the old object
 		
-		Object[] attributesOld = new Object[2];
-		
-		
 		double speedOld = 0.9;
 		double posOld = 1.7;
 		
-		attributesOld[0] = speedOld;
-		attributesOld[1] = posOld;
+		Object[] attributesOld = {speedOld,posOld};
+		
+		// MVRelationalTuple to hold the data
 		
 		MVRelationalTuple<M> oldTuple = new MVRelationalTuple<M>(attributesOld);
 		
 		// set positions
-		int[] mvPosOld = {0,1};
-		oldTuple.setMeasurementValuePositions(mvPosOld);
+		oldTuple.setMeasurementValuePositions(new int[] {0,1});
 		
 		// covariance
 		double[][] covarianceOld = { {5.0,15.0}, {15.0,10.0} };
@@ -73,19 +72,16 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		
 		// attributes for the new object
 		
-		Object[] attributesNew = new Object[2];
-		
 		double speedNew = 1.0;
 		double posNew = 2.0;
 		
-		attributesNew[0] = speedNew;
-		attributesNew[1] = posNew;
+		Object[] attributesNew = {speedNew,posNew};
 		
+		// MVRelationalTuple to hold the new data
 		MVRelationalTuple<M> newTuple = new MVRelationalTuple<M>(attributesNew);
 		
 		// set positions
-		int[] mvPosNew = {0,1};
-		newTuple.setMeasurementValuePositions(mvPosNew);
+		newTuple.setMeasurementValuePositions(new int[] {0,1});
 		
 		// the covariance of the new measurement
 		double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
@@ -94,11 +90,23 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		
 		oldTuple.setMetadata((M) PNew);
 		
+		// MVRelationalTuples to hold the old Tuples
+		
+		MVRelationalTuple<M> oldList = new MVRelationalTuple<M>(oldTuple);
+		
+		oldList.setMeasurementValuePositions(new int[] {0});
+		
+		MVRelationalTuple<M> newList = new MVRelationalTuple<M>(newTuple);
+		
+		newList.setMeasurementValuePositions(new int[] {0});
+		
 		// the main MVRelationalTuple
 		
-		Object[] measurements = {newTuple,oldTuple};
+		Object[] measurements = {newList,oldList};
 		
 		measurementTuple = new MVRelationalTuple<C>(measurements);
+		
+		measurementTuple.setMeasurementValuePositions(new int[] {0,1});
 		
 		// connections
 		
@@ -108,11 +116,11 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		
 		conList.add(0, con);
 	
-		StreamCarsMetaData<MVRelationalTuple,MVRelationalTuple,Double> streamCars= new StreamCarsMetaData(conList);
+		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> streamCars= new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double>(conList);
 		
 		measurementTuple.setMetadata((C) streamCars);
 	
-		
+		// the gain function
 		
 		HashMap<Integer,Object> parameters = new HashMap<Integer,Object>();;
 		
@@ -124,6 +132,7 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		
 		gainfunction.setParameters(parameters);
 		
+		// create the PO
 		
 		gainfunctionPO = new GainFunctionPO();
 		
