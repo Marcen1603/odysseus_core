@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.filtering;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
@@ -27,16 +25,22 @@ public class KalmanCorrectStateEstimateFunction implements ICorrectStateEstimate
 	public double[] correctStateEstimate() {
 		
 		double result[];
-		// Ansatz:
-		// TODO Muss eine neuere Version des Apache Frameworks verwenden,
 		
-	/*	RealMatrix measurementOld = new RealMatrix((double[]) this.parameters.get(HashConstants.OLD_MEASUREMENT));
+		RealMatrix measurementOld = new RealMatrixImpl((double[]) this.parameters.get(HashConstants.OLD_MEASUREMENT));
 		RealMatrix measurementNew = new RealMatrixImpl((double[]) this.parameters.get(HashConstants.NEW_MEASUREMENT));
 		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN));	
-		RealMatrix resultRM = new RealMatrixImpl(result);
-		return result = measurementOld.add(  gain.multiply  (  measurementNew.subtract(measurementOld)  )  ).getData();
-		*/
-		return null; 
+		
+		RealMatrix temp = new RealMatrixImpl();
+		
+		temp =  measurementNew.subtract(measurementOld);
+		temp =  gain.multiply(temp);
+		temp =  measurementOld.add(temp);
+		
+		result = temp.getColumn(0);
+		
+		return result;
+	
+		
 	}
 
 	@Override

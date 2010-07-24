@@ -22,10 +22,22 @@ public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovari
 	
 	@Override
 	public double[][] correctStateCovariance() {
+		
+		double[][] result;
+		
 		RealMatrix covarianceOld = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.OLD_COVARIANCE));
 		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN));
 		RealMatrix identityMatrixOfGain = new RealMatrixImpl(makeIdentityMatrix(gain.getData()));
-		return identityMatrixOfGain.subtract(gain).multiply(covarianceOld).getData();
+		
+		RealMatrix temp = new RealMatrixImpl();
+		
+		temp = identityMatrixOfGain.subtract(gain);
+		
+		temp = temp.multiply(covarianceOld);
+		
+		result = temp.getData();
+		
+		return result;
 	}
 	
 

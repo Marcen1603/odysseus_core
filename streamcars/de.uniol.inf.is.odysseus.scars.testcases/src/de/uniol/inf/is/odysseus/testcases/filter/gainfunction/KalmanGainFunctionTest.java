@@ -35,11 +35,11 @@ public class KalmanGainFunctionTest {
 	
 	// the covariance of the old measurement
 
-	double[][] covarianceOld = { {5.0,15.0}, {15.0,10.0} };
+	double[][] covarianceOld = { {5.0,50.0}, {50.0,10.0} };
 	
 		
 	// the covariance of the new measurement
-	double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
+	double[][] covarianceNew = { {3.0,21.0}, {21.0,7.0} };
 	
 	parameters.put(HashConstants.OLD_COVARIANCE, covarianceOld);
 	parameters.put(HashConstants.NEW_COVARIANCE,covarianceNew);
@@ -53,7 +53,7 @@ public class KalmanGainFunctionTest {
 	}
 	@Test
 	public void test() {
-		double[][] expected = { {0.3922413793103448,0.09051724137931039}, {0.05172413793103449,0.39655172413793105} };
+		double[][] expected = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688} };
 	
 		
 		this.result=this.gainfunction.computeGain();

@@ -47,7 +47,7 @@ public class KalmanCorrectStateEstimateFunctionTest {
 	
 	parameters.put(HashConstants.OLD_MEASUREMENT, measurementOld);
 	parameters.put(HashConstants.NEW_MEASUREMENT,measurementNew);
-	
+	parameters.put(HashConstants.GAIN,gain);
 	
 	this.correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction();
 	
@@ -57,13 +57,13 @@ public class KalmanCorrectStateEstimateFunctionTest {
 	}
 	@Test
 	public void test() {
-		double[] expected = {1.7,1.82};
+		double[] expected = {0.98,1.83};
 	
 		
 		this.result=this.correctStateEstimateFunction.correctStateEstimate();
 		
-		assertEquals(expected[0], result[0]);
-		assertEquals(expected[1], result[1]);
+		assertEquals(expected[0], result[0],0);
+		assertEquals(expected[1], result[1],0);
 		
 	}
 }

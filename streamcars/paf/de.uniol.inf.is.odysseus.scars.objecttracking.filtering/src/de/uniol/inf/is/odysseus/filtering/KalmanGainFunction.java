@@ -9,7 +9,7 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 /**
- * @author mase
+ * @author dtwumasi
  *
  */
 public class KalmanGainFunction implements IGainFunction {
@@ -30,9 +30,21 @@ public class KalmanGainFunction implements IGainFunction {
 	
 	@Override
 	public double[][] computeGain() {
+		
+		double[][] result;
+		
 		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.OLD_COVARIANCE));
 		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.NEW_COVARIANCE));
-		return oldCovariance.add(newCovariance).inverse().multiply(oldCovariance).getData();
+		
+		RealMatrix temp = new RealMatrixImpl();
+		
+		temp = oldCovariance.add(newCovariance);
+		temp = temp.inverse();
+		temp = oldCovariance.multiply(temp);
+		
+		result = temp.getData();
+		
+		return result;
 	}
 
 	/**

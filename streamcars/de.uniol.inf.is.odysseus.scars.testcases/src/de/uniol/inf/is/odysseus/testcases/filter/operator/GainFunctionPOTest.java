@@ -64,7 +64,7 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		oldTuple.setMeasurementValuePositions(new int[] {0,1});
 		
 		// covariance
-		double[][] covarianceOld = { {5.0,15.0}, {15.0,10.0} };
+		double[][] covarianceOld = { {5.0,50.0}, {50.0,10.0} };
 		
 		Probability POld = new Probability(covarianceOld);
 		
@@ -88,7 +88,7 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		
 		Probability PNew = new Probability(covarianceNew);
 		
-		oldTuple.setMetadata((M) PNew);
+		newTuple.setMetadata((M) PNew);
 		
 		// MVRelationalTuples to hold the old Tuples
 		
@@ -140,7 +140,7 @@ public class GainFunctionPOTest<C extends IProbability & IConnectionContainer<MV
 		
 		int[] oldObjListPath = {0};
 		
-		int[] newObjListPath = {0};
+		int[] newObjListPath = {1};
 			
 		gainfunctionPO.setOldObjListPath(oldObjListPath);
 		

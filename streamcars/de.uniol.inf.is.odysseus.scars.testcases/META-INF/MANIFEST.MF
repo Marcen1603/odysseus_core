@@ -19,4 +19,5 @@ Require-Bundle: org.junit,
  de.uniol.inf.is.odysseus.base;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.objecttracking;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.scars.objecttracking.metadata;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.scars.objecttracking.filtering;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.scars.objecttracking.filtering;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0"

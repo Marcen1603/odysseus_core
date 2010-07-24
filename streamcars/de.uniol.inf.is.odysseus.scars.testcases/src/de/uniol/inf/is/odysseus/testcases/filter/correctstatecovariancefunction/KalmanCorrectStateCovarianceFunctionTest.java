@@ -37,7 +37,7 @@ public class KalmanCorrectStateCovarianceFunctionTest {
 	
 	// the covariance of the old measurement
 
-	double[][] covarianceOld = { {5.0,15.0}, {15.0,10.0} };
+	double[][] covarianceOld = { {5.0,50.0}, {50.0,10.0} };
 	
 	// the gain
 	double[][] gain = { {0.2,0.2}, {0.1,0.4}};
