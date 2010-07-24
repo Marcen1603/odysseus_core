@@ -18,6 +18,9 @@ public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & 
 	private ICorrectStateCovarianceFunction covarianceFunction;
 	private SDFAttributeList schema;
 	
+	private int[] oldObjListPath;
+	private int[] newObjListPath;
+	
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
 		// TODO Auto-generated method stub
@@ -72,4 +75,26 @@ public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & 
 	public void setSchema(SDFAttributeList schema) {
 		this.schema = schema;
 	}
+
+	/**
+	 * @param oldObjListPath the oldObjListPath to set
+	 */
+	public void setOldObjListPath(int[] oldObjListPath) {
+		this.oldObjListPath = oldObjListPath;
+	}
+
+	/**
+	 * @param newObjListPath the newObjListPath to set
+	 */
+	public void setNewObjListPath(int[] newObjListPath) {
+		this.newObjListPath = newObjListPath;
+	}
+
+
+
+	
+	
+
+
+
 }

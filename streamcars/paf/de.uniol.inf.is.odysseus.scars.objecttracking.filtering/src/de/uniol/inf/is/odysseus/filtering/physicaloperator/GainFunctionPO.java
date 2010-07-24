@@ -17,8 +17,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<N>, MVRelationalTuple<N>, Double> , 
-						N extends IProbability>
+public class GainFunctionPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> >
 							extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private IGainFunction gainFunction;
@@ -58,15 +57,15 @@ public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPr
 	public void process_next(MVRelationalTuple<M> object, int port) {
 		
 		// list of connections
-		Connection<MVRelationalTuple<N>, MVRelationalTuple<N>, Double>[] objConList = (Connection<MVRelationalTuple<N>, MVRelationalTuple<N>, Double>[]) object.getMetadata().getConnectionList().toArray();
+		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
 		
 		double[][] gain = null;
 		
 		// traverse connection list and filter
-		for(Connection<MVRelationalTuple<N>, MVRelationalTuple<N>, Double> connected : objConList ) {
+		for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
 			
-			MVRelationalTuple<N> oldTuple = connected.getRight();
-			MVRelationalTuple<N> newTuple = connected.getLeft();
+			MVRelationalTuple<M> oldTuple = connected.getRight();
+			MVRelationalTuple<M> newTuple = connected.getLeft();
 			
 			double[][] covarianceNew = newTuple.getMetadata().getCovariance();
 			double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
@@ -78,7 +77,7 @@ public class GainFunctionPO <M extends IProbability & IPredictionFunctionKey<IPr
 			gain = gainFunction.computeGain();
 			
 			//set gain
-			//connected.setGain(gain);
+			connected.getRight().getMetadata().setGain(gain);
 		}
 			
 		// transfer to broker
