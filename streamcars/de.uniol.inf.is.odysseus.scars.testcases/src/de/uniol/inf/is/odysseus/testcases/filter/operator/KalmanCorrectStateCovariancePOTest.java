@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.CorrectStateCovarianceFunctionPO;
+import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanCorrectStateCovariancePO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
@@ -21,9 +21,9 @@ import de.uniol.inf.is.odysseus.testcases.FilterAOTestData;
  * @author dtwumasi
  *
  */
-public class CorrectStateCovariancePOTest<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
+public class KalmanCorrectStateCovariancePOTest<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
 
-	private CorrectStateCovarianceFunctionPO correctStateCovariancePO;
+	private KalmanCorrectStateCovariancePO correctStateCovariancePO;
 	
 	private MVRelationalTuple<M> measurementTuple;
 		
@@ -41,9 +41,9 @@ public class CorrectStateCovariancePOTest<M extends IGain & IProbability & IConn
 		
 			// create the PO
 			
-			correctStateCovariancePO = new CorrectStateCovarianceFunctionPO();
+			correctStateCovariancePO = new KalmanCorrectStateCovariancePO();
 			
-			correctStateCovariancePO.setCovarianceFunction(correctStateCovarianceFunction);
+			correctStateCovariancePO.setFilterFunction(correctStateCovarianceFunction);
 			
 			int[] oldObjListPath = {0};
 			

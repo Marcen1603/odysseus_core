@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovarianceFunction {
+public class KalmanCorrectStateCovarianceFunction implements IFilterFunction {
 	
 	private HashMap<Integer, Object> parameters;
 	
@@ -21,7 +21,7 @@ public class KalmanCorrectStateCovarianceFunction implements ICorrectStateCovari
 	}
 	
 	@Override
-	public double[][] correctStateCovariance() {
+	public double[][] compute() {
 		
 		double[][] result;
 		

@@ -39,7 +39,7 @@ public class KalmanCorrectStateCovarianceFunctionTest {
 		double[][] expected = { {-6.0,38.0}, {29.5,1} };
 	
 		
-		double[][] result=this.kalmanCorrectStateCovarianceFunction.correctStateCovariance();
+		double[][] result=this.kalmanCorrectStateCovarianceFunction.compute();
 		
 		assertArrayEquals(expected,result);
 		

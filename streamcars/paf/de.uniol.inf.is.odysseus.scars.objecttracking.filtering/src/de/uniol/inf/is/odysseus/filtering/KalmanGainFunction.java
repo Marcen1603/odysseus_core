@@ -12,7 +12,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  * @author dtwumasi
  *
  */
-public class KalmanGainFunction implements IGainFunction {
+public class KalmanGainFunction implements IFilterFunction {
 
 	public int functionID = 1;
 		
@@ -21,15 +21,13 @@ public class KalmanGainFunction implements IGainFunction {
 	public KalmanGainFunction() {
 		
 	}
+	
 	public KalmanGainFunction(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
-		/*this.parameters.put("oldCovariance", oldCovariance);
-		this.parameters.put("newCovariance", newCovariance);
-		this.parameters.put("outputModel", outputModel);*/
 	}
 	
-	@Override
-	public double[][] computeGain() {
+
+	public double[][] compute() {
 		
 		double[][] result;
 		

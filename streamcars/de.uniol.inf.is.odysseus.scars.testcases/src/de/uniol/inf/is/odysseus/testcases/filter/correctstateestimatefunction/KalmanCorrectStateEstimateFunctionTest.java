@@ -36,7 +36,7 @@ public class KalmanCorrectStateEstimateFunctionTest {
 		
 		double[] expected = {0.98,1.83};
 		
-		double[] result=this.correctStateEstimateFunction.correctStateEstimate();
+		double[] result=this.correctStateEstimateFunction.compute();
 		
 		assertEquals(expected[0], result[0],0);
 		assertEquals(expected[1], result[1],0);

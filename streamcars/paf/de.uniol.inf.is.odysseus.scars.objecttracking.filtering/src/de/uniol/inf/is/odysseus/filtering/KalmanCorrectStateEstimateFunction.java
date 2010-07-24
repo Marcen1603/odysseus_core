@@ -6,7 +6,7 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 
-public class KalmanCorrectStateEstimateFunction implements ICorrectStateEstimateFunction {
+public class KalmanCorrectStateEstimateFunction implements IFilterFunction {
 		
 	private HashMap<Integer, Object> parameters;
 	
@@ -22,7 +22,7 @@ public class KalmanCorrectStateEstimateFunction implements ICorrectStateEstimate
 	}
 
 	@Override
-	public double[] correctStateEstimate() {
+	public double[] compute() {
 		
 		double result[];
 		

@@ -22,7 +22,8 @@ import de.uniol.inf.is.odysseus.base.IMetaAttribute;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.GainFunctionPO;
+import de.uniol.inf.is.odysseus.filtering.physicaloperator.AbstractFilterPO;
+import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanGainFunctionPO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -36,9 +37,9 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
  * @param <M>
  *
  */
-public class GainFunctionPOTest<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
+public class KalmanGainFunctionPOTest<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
 
-	private GainFunctionPO gainfunctionPO;
+	private KalmanGainFunctionPO gainfunctionPO;
 	
 
 	
@@ -57,9 +58,9 @@ public class GainFunctionPOTest<M extends IGain & IProbability & IConnectionCont
 	
 		// create the PO
 		
-		gainfunctionPO = new GainFunctionPO();
+		gainfunctionPO = new KalmanGainFunctionPO();
 		
-		gainfunctionPO.setGainFunction(gainfunction);
+		gainfunctionPO.setFilterFunction(gainfunction);
 		
 		int[] oldObjListPath = {0};
 		

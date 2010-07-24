@@ -3,14 +3,14 @@ package de.uniol.inf.is.odysseus.filtering.logicaloperator;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
-import de.uniol.inf.is.odysseus.filtering.IGainFunction;
+import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class GainFunctionAO <M extends IProbability> extends UnaryLogicalOp {
+public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 
 	/**
 	 * 
@@ -19,7 +19,7 @@ public class GainFunctionAO <M extends IProbability> extends UnaryLogicalOp {
 	
 	private String functionID;
 	
-	private IGainFunction gainFunction;
+	private IFilterFunction filterFunction;
 	
 	// path to new and old objects
 	private String oldObjListPath;
@@ -29,35 +29,30 @@ public class GainFunctionAO <M extends IProbability> extends UnaryLogicalOp {
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 	
-	public GainFunctionAO(String functionID) {
+	public FilterAO(String functionID) {
 		super();
 		this.functionID = functionID;
 	}
 	
-	public GainFunctionAO(GainFunctionAO<M> copy) {
+	public FilterAO(FilterAO<M> copy) {
 		super(copy);
 	}
 	
 	
 	/**
-	 * @param gainfunctionID the gainfunction
+	 * @param filterFunctionID the filterfunction
 	 *
 	 * */
-	public void setGainfunction(int gainFunctionID, HashMap<String, Object> correctStateEstimateFunctionParameters) {
-		
-		
-		if (gainFunctionID == 1) { 
-	//	this.gainFunction = new KalmanGainFunction(correctStateEstimateFunctionParameters);
-		
-		}
+	public void setFilterfunction(IFilterFunction filterfunction) {
+		this.filterFunction = filterfunction;
 	
 	}
 
 	/**
-	 * @return the gainfunction
+	 * @return the filterfunction
 	 */
-	public IGainFunction getGainFunction() {
-		return this.gainFunction;
+	public IFilterFunction getFilterFunction() {
+		return this.filterFunction;
 	}
 	
 	public void initPaths(String oldObjListPath, String newObjListPath) {
@@ -75,12 +70,9 @@ public class GainFunctionAO <M extends IProbability> extends UnaryLogicalOp {
 		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
 	
-	
-	
-	
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new GainFunctionAO<M>(this);
+		return new FilterAO<M>(this);
 	}
 
 	@Override

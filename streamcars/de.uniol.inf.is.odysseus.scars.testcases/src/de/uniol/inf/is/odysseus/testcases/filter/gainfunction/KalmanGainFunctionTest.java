@@ -36,7 +36,7 @@ public class KalmanGainFunctionTest {
 		
 		double[][] expected = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688} };
 	
-		double[][] result=this.kalmanGainFunction.computeGain();
+		double[][] result=this.kalmanGainFunction.compute();
 		
 		assertArrayEquals(expected,result);
 	}

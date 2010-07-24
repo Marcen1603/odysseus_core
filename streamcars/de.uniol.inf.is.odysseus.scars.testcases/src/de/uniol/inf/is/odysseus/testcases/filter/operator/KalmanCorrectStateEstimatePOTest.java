@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.CorrectStateEstimateFunctionPO;
+import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanCorrectStateEstimatePO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
@@ -22,10 +22,10 @@ import de.uniol.inf.is.odysseus.testcases.FilterAOTestData;
  * @author dtwumasi
  *
  */
-public class CorrectStateEstimateFunctionPOTest<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
+public class KalmanCorrectStateEstimatePOTest<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
 
 	
-	private CorrectStateEstimateFunctionPO correctStateEstimatePO;
+	private KalmanCorrectStateEstimatePO correctStateEstimatePO;
 	
 	private MVRelationalTuple<M> measurementTuple;
 	
@@ -45,9 +45,9 @@ public class CorrectStateEstimateFunctionPOTest<M extends IGain & IProbability &
 	
 		// create the PO
 		
-		correctStateEstimatePO = new CorrectStateEstimateFunctionPO();
+		correctStateEstimatePO = new KalmanCorrectStateEstimatePO();
 		
-		correctStateEstimatePO.setEstimateFunction(correctStateEstimateFunction);
+		correctStateEstimatePO.setFilterFunction(correctStateEstimateFunction);
 		
 		int[] oldObjListPath = {0};
 		

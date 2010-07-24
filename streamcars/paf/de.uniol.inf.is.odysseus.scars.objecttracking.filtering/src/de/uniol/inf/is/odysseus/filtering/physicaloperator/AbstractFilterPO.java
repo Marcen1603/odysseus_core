@@ -3,7 +3,8 @@ package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
-import de.uniol.inf.is.odysseus.filtering.ICorrectStateCovarianceFunction;
+import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
+import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -13,13 +14,31 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private ICorrectStateCovarianceFunction covarianceFunction;
+public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> >
+							extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+
+	private IFilterFunction filterFunction;
+
 	private SDFAttributeList schema;
 	
+	// path to new and old objects
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
+	
+	public AbstractFilterPO() {
+		super();
+		}
+	
+	public AbstractFilterPO(FilterAO filterFunctionAO) {
+		this.setFilterFunction(filterFunctionAO.getFilterFunction());
+		
+	}
+	
+	public AbstractFilterPO(AbstractFilterPO copy) {
+		super(copy);
+		}
+	
 	
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
@@ -33,31 +52,15 @@ public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & 
 	}
 
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	public void process_next(MVRelationalTuple<M> object, int port) {
+		
 		// list of connections
 		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
-
-
+		
 		// traverse connection list and filter
 		for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
-
-			MVRelationalTuple<M> oldTuple = connected.getRight();
-
-			double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
-
-			double[][] correctedCovariance;
-
-			double[][] gain = oldTuple.getMetadata().getGain();
-			
-			// update state covariance
-			covarianceFunction.addParameter(HashConstants.GAIN, gain);
-			covarianceFunction.addParameter(HashConstants.OLD_COVARIANCE, covarianceOld);
-
-			correctedCovariance = covarianceFunction.correctStateCovariance();
-			
-			oldTuple.getMetadata().setCovariance(correctedCovariance);
+			compute(connected);
 		}
-
 		// transfer to broker
 		transfer(object);
 	}
@@ -68,8 +71,8 @@ public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & 
 		
 	}
 	
-	public void setCovarianceFunction(ICorrectStateCovarianceFunction covarianceFunction) {
-		this.covarianceFunction = covarianceFunction;
+	public void setFilterFunction(IFilterFunction filterFunction) {
+		this.filterFunction = filterFunction;
 	}
 
 	public void setSchema(SDFAttributeList schema) {
@@ -89,12 +92,15 @@ public class CorrectStateCovarianceFunctionPO <M extends IGain & IProbability & 
 	public void setNewObjListPath(int[] newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}
-
-
-
 	
+	public abstract void compute(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected);
+
+	/**
+	 * @return the filterFunction
+	 */
+	public IFilterFunction getFilterFunction() {
+		return filterFunction;
+	}
 	
-
-
 
 }
