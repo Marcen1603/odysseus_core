@@ -7,7 +7,7 @@ package de.uniol.inf.is.odysseus.testcases.filter.operator;
 import org.junit.Before;
 
 /**
- * @author mase
+ * @author dtwumasi
  *
  */
 public class FilterAOTest {

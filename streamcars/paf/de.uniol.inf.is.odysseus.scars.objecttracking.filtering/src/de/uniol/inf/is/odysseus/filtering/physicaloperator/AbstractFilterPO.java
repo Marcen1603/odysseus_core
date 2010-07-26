@@ -54,13 +54,8 @@ public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredic
 	@Override
 	public void process_next(MVRelationalTuple<M> object, int port) {
 		
-		// list of connections
-		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
 		
-		// traverse connection list and filter
-		for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
-			compute(connected);
-		}
+		object = computeAll(object);
 		// transfer to broker
 		transfer(object);
 	}
@@ -93,6 +88,18 @@ public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredic
 		this.newObjListPath = newObjListPath;
 	}
 	
+	
+	/**
+	 * 
+	 * @param object
+	 * @return
+	 */
+	
+	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
+	/**
+	 * 
+	 * @param connected
+	 */
 	public abstract void compute(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected);
 
 	/**

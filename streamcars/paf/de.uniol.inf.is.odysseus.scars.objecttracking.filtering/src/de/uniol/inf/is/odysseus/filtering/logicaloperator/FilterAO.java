@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.filtering.logicaloperator;
 
-import java.util.HashMap;
-
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;

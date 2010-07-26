@@ -3,31 +3,20 @@
  */
 package de.uniol.inf.is.odysseus.testcases.filter.operator;
 
-
-import java.util.HashMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
-import de.uniol.inf.is.odysseus.testcases.FilterFunctionTestData;
 
-import de.uniol.inf.is.odysseus.base.IMetaAttribute;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.AbstractFilterPO;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanGainFunctionPO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
+
 
 
 
@@ -46,6 +35,8 @@ public class KalmanGainFunctionPOTest<M extends IGain & IProbability & IConnecti
 	private MVRelationalTuple<M> measurementTuple;
 	
 	private MVRelationalTuple<M> expectedTuple;
+	
+	private MVRelationalTuple<M> resultTuple;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -69,19 +60,18 @@ public class KalmanGainFunctionPOTest<M extends IGain & IProbability & IConnecti
 		
 		double[][] covarianceNew = { {3.0,21.0}, {21.0,7.0} };
 		
-		this.measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
 		
-		// Expected Data
+		// the expected tuple
 		
-		speedOld = 0.9;
+		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
 		
-		posOld = 1.7;
+		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) expectedTuple.getMetadata().getConnectionList().toArray();
 		
-		speedNew = 1.0;
+		double[][] gainExp = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688 }};
 		
-		posNew = 2.0;
+		objConList[0].getRight().getMetadata().setGain(gainExp);
 		
-		this.expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
 		
 		KalmanGainFunction gainfunction = new KalmanGainFunction();
 		
@@ -105,8 +95,9 @@ public class KalmanGainFunctionPOTest<M extends IGain & IProbability & IConnecti
 	@Test
 	public  void test() {
 	
-	//gainfunctionPO.process_next(measurementTuple, 0);
+	resultTuple = gainfunctionPO.computeAll(measurementTuple);
 	
+	assertEquals(resultTuple, expectedTuple);
 	
 
 	}

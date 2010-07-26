@@ -18,6 +18,21 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
  */
 public class KalmanCorrectStateEstimatePO<M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractFilterPO<M> {
 
+	
+	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+
+		// list of connections
+		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
+		
+		// traverse connection list and filter
+		for(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected : objConList ) {
+			compute(connected);
+		}
+		
+		return object;
+		
+		}
+	
 	public void compute(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected) {
 		
 		
