@@ -21,19 +21,37 @@ public class KalmanCorrectStateCovarianceFunction implements IFilterFunction {
 	}
 	
 	@Override
+	/**
+	 * This method computes the new state covariance
+	 */
 	public double[][] compute() {
 		
 		double[][] result;
 		
 		RealMatrix covarianceOld = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.OLD_COVARIANCE));
+		RealMatrix covarianceNew = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.NEW_COVARIANCE));
 		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN));
 		RealMatrix identityMatrixOfGain = new RealMatrixImpl(makeIdentityMatrix(gain.getData()));
 		
+		// (I-K)Pk(I-K)^t + KRK^t
 		RealMatrix temp = new RealMatrixImpl();
 		
-		temp = identityMatrixOfGain.subtract(gain);
+		// I - K
+		RealMatrix term1 = new RealMatrixImpl();
+		term1 = identityMatrixOfGain.subtract(gain);
 		
-		temp = temp.multiply(covarianceOld);
+		temp = term1.multiply(covarianceOld);
+		
+		temp = temp.multiply(term1.transpose());
+		
+		RealMatrix term2 = new RealMatrixImpl();
+		
+		// KRK^T
+		term2 = gain.multiply(covarianceNew);
+		
+		term2 = term2.multiply(gain.transpose());
+		
+		temp = temp.add(term2);
 		
 		result = temp.getData();
 		

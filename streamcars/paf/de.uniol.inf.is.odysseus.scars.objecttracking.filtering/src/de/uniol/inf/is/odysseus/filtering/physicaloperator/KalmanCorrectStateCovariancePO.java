@@ -23,13 +23,17 @@ public void compute(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Doubl
 		
 		
 		MVRelationalTuple<M> oldTuple = connected.getRight();
+		MVRelationalTuple<M> newTuple = connected.getLeft();
 		
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
+		
+		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
 		
 		double[][] gain = oldTuple.getMetadata().getGain();
 	
 		getFilterFunction().addParameter(HashConstants.GAIN, gain);
 		getFilterFunction().addParameter(HashConstants.OLD_COVARIANCE, covarianceOld);
+		getFilterFunction().addParameter(HashConstants.NEW_COVARIANCE, covarianceNew);
 		
 		double[][] resultCovariance = (double[][]) getFilterFunction().compute();
 	
