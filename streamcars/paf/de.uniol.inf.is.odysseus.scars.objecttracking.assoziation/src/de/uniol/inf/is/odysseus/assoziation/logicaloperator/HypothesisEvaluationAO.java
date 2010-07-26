@@ -26,9 +26,6 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	private HashMap<String, String> algorithmParameter;
 	private HashMap<String, String> measurementPairs;
 
-	//private SDFAttributeList leftSchema;
-	//private SDFAttributeList rightSchema;
-
 	private String functionID;
 
 	public HypothesisEvaluationAO() {
@@ -56,12 +53,10 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	}
 
 	public int[] getNewObjListPath() {
-		//this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
 		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.newObjListPath);
 	}
 
 	public int[] getOldObjListPath() {
-		//this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
 		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.oldObjListPath);
 	}
 
@@ -88,14 +83,4 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	public void setFunctionID(String fuckID) {
 		this.functionID = fuckID;
 	}
-
-	/*
-	public SDFAttributeList getLeftSchema() {
-		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
-	}
-
-	public SDFAttributeList getRightSchema() {
-		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
-	}
-	*/
 }

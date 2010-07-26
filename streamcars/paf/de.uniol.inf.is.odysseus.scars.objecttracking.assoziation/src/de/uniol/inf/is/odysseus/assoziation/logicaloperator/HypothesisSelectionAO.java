@@ -15,9 +15,6 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 	private String oldObjListPath;
 	private String newObjListPath;
 
-	//private SDFAttributeList leftSchema;
-	//private SDFAttributeList rightSchema;
-
 	public String getID() {
 		return ID;
 	}
@@ -43,23 +40,10 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 	}
 
 	public int[] getNewObjListPath() {
-		//this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
 		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.newObjListPath);
 	}
 
 	public int[] getOldObjListPath() {
-		//this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
 		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.oldObjListPath);
 	}
-
-	/*
-	public SDFAttributeList getLeftSchema() {
-		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
-	}
-
-	public SDFAttributeList getRightSchema() {
-		return ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
-	}
-	*/
-
 }
