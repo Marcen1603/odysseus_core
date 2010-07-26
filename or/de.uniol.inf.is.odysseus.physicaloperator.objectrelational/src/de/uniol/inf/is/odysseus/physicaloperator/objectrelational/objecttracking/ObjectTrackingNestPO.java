@@ -169,7 +169,7 @@ public class ObjectTrackingNestPO
 	private void process(
 		MVRelationalTuple<M> incomingTuple,
 		int port
-	) {
+	) {			
 		ObjectTrackingNestTISweepArea<M> sa;
 		PointInTime minStart;
 		PointInTime incomingTupleStart;
@@ -237,7 +237,7 @@ public class ObjectTrackingNestPO
 						
 			if(
 				minStart != null && 
-				minStart == minPartial.getMetadata().getStart()
+				minStart.equals(minPartial.getMetadata().getStart())
 			) {
 				break;
 			}
@@ -288,8 +288,7 @@ public class ObjectTrackingNestPO
 		
 		MVRelationalTuple<M> delivery = this.deliver();
 		if(delivery != null) {
-			this.transfer(delivery);
-			System.out.println(delivery);
+			this.transfer(delivery);		
 		} 
 	}	
 
@@ -321,8 +320,7 @@ public class ObjectTrackingNestPO
 		this.allTuplesSent();
 		
 		for(MVRelationalTuple<M> t : this.q) {
-			this.transfer(t);
-			System.out.println(t);
+			this.transfer(t);			
 		}
 	}
 	
@@ -575,17 +573,15 @@ public class ObjectTrackingNestPO
 	 * uses the partial nest with more tuples as merge base.  
 	 * 
 	 * @param a partial nest
-	 * @param b partial nest
+	 * @param b tuple 
 	 */
 	@SuppressWarnings("unchecked")
 	private ObjectTrackingPartialNest<M> merge
-		(ObjectTrackingPartialNest<M> a, ObjectTrackingPartialNest<M> b) {
+		(ObjectTrackingPartialNest<M> a, MVRelationalTuple<M> b) {
 		
 		ObjectTrackingMetadata<Object> meta = 
 			new ObjectTrackingMetadata<Object>();
 		
-		List<MVRelationalTuple<M>> tuples;
-	
 		TimeInterval ti = TimeInterval.intersection(
 		      a.getMetadata().clone(), 
 		      b.getMetadata().clone()
@@ -593,56 +589,15 @@ public class ObjectTrackingNestPO
 				
 		meta.setStreamTime(ti);
 		
-		tuples = new ArrayList<MVRelationalTuple<M>>();		
+		a.add(b);
+		a.setMetadata((M)meta);
 		
-		/*
-		 * Small optimization; addAll tuples of the bigger partial to 
-		 * the new partial, then check it against the smaller one, 
-		 * if the smaller one got tuples not existent in the bigger 
-		 * one, add it. 
-		 */		
-		
-		boolean exists = false;
-		
-		if(a.getSize() < b.getSize()) {
-			tuples.addAll(b.getNest());	
-			for(MVRelationalTuple<M> t : a.getNest()) {
-				for(MVRelationalTuple<M> t2 : tuples) {
-					if(t.equals(t2)) {
-						exists = true;
-					} 
-				}
-				if(!exists) {
-					tuples.add(t);
-				}
-				exists = false;
-			}
-			
-		} else {
-			exists = false;
-			tuples.addAll(a.getNest());
-			for(MVRelationalTuple<M> t : b.getNest()) {
-				for(MVRelationalTuple<M> t2 : tuples) {
-					if(t.equals(t2)) {
-						exists = true;
-					}
-				}
-				if(!exists) {
-					tuples.add(t);
-				}
-				exists = false;
-			}
-		}			
-		
-		for(MVRelationalTuple<M> t : tuples) {
+		for(MVRelationalTuple<M> t : a.getNest()) {
 			M metaForTuple = t.getMetadata();
 			metaForTuple.setStreamTime(meta.getStreamTime().clone());
 		}
-		
-		ObjectTrackingPartialNest<M> partial;
-		partial = new ObjectTrackingPartialNest<M>(tuples, (M)meta);
-		
-		return partial;
+				
+		return a;
 	}
 	
 	/**
@@ -708,25 +663,16 @@ public class ObjectTrackingNestPO
 	private void update(
 		ObjectTrackingNestTISweepArea<M> sa,
 		MVRelationalTuple<M> incomingTuple
-	) {
-		
-		ITimeInterval incomingPartialTI;
+	) {		
+		ITimeInterval incomingTupleTI;
 		ITimeInterval partialTI;
 		
 		List<ITimeInterval> fillInitialTI;
 
-		PointInTime incomingPartialStart;
-		PointInTime incomingPartialEnd;
+		PointInTime incomingTupleStart;
+		PointInTime incomingTupleEnd;
 		PointInTime partialStart;
 		PointInTime partialEnd;
-		
-		/* 
-		 * Convert the tuple to a partial nest to query it against 
-		 * the other partial nests in the sweep area.
-		 */
-		
-		final ObjectTrackingPartialNest<M> incomingPartial = new 
-			ObjectTrackingPartialNest<M>(incomingTuple);
 		
 		/*
 		 * Get all other partial nests that qualify (overlap in time)
@@ -734,7 +680,7 @@ public class ObjectTrackingNestPO
 		 */
 		
 		Iterator<ObjectTrackingPartialNest<M>> qualifies = 
-			sa.queryOverlaps(incomingPartial.getMetadata());
+			sa.queryOverlaps(incomingTuple.getMetadata());
 		
 		/*
 		 * If no other partial nest qualifies then insert a initial 
@@ -742,13 +688,13 @@ public class ObjectTrackingNestPO
 		 */
 		
 		if(!qualifies.hasNext()) {
-			sa.insert(incomingPartial);
+			sa.insert(new ObjectTrackingPartialNest<M>(incomingTuple));
 		}
 		
 		else { 						
-			incomingPartialTI = incomingPartial.getMetadata();
-			incomingPartialStart = incomingPartialTI.getStart();
-			incomingPartialEnd = incomingPartialTI.getEnd();
+			incomingTupleTI = incomingTuple.getMetadata();
+			incomingTupleStart = incomingTupleTI.getStart();
+			incomingTupleEnd = incomingTupleTI.getEnd();
 			
 			/*
 			 * The initial fillInitialTI time interval covers the 
@@ -760,7 +706,7 @@ public class ObjectTrackingNestPO
 			 */
 						
 			fillInitialTI = new ArrayList<ITimeInterval>();
-			fillInitialTI.add(incomingPartialTI.clone());
+			fillInitialTI.add(incomingTupleTI.clone());
 			
 			while(qualifies.hasNext()) {
 				ObjectTrackingPartialNest<M> partial = qualifies.next();
@@ -779,7 +725,7 @@ public class ObjectTrackingNestPO
 				
 				sa.remove(partial);				
 								
-				if(partialStart.before(incomingPartialStart)) {
+				if(partialStart.before(incomingTupleStart)) {
 					
 					ObjectTrackingPartialNest<M> leftOverlapPartial = 
 						partial.clone();						
@@ -788,7 +734,7 @@ public class ObjectTrackingNestPO
 					
 					TimeInterval ti = new TimeInterval(
 						partialStart.clone(),
-						incomingPartialStart.clone()
+						incomingTupleStart.clone()
 					);
 					
 					meta.setStreamTime(ti);					
@@ -802,7 +748,7 @@ public class ObjectTrackingNestPO
 					
 					sa.insert(leftOverlapPartial);
 				
-					if(incomingPartialEnd.before(partialEnd)) {
+					if(incomingTupleEnd.before(partialEnd)) {
 						
 						/*
 						 * Incoming partial TI is contained in partial TI.
@@ -812,7 +758,7 @@ public class ObjectTrackingNestPO
 						 */
 											
 						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingPartial.clone());
+							this.merge(partial.clone(), incomingTuple);
 						
 						/*
 						 * time interval of partial is reduced to 
@@ -825,7 +771,7 @@ public class ObjectTrackingNestPO
 						meta = rightOverlapPartial.getMetadata();
 						
 						TimeInterval ti2 = new TimeInterval(
-							incomingPartialEnd.clone(),
+							incomingTupleEnd.clone(),
 							partialEnd.clone()
 						);
 						
@@ -853,7 +799,7 @@ public class ObjectTrackingNestPO
 						 */
 					
 						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingPartial.clone());
+							this.merge(partial.clone(), incomingTuple);
 						
 						sa.insert(mergePartial);	
 						this.updateFillInitialTI(fillInitialTI, mergePartial);	
@@ -865,7 +811,7 @@ public class ObjectTrackingNestPO
 					if(partialTI.equals( 
 						TimeInterval.union(
 							partialTI, 
-							incomingPartialTI
+							incomingTupleTI
 						))) {
 												
 						/*
@@ -873,19 +819,19 @@ public class ObjectTrackingNestPO
 						 */			
 						
 						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingPartial.clone());
+							this.merge(partial.clone(), incomingTuple);
 						
 						sa.insert(mergePartial);
 						this.updateFillInitialTI(fillInitialTI, mergePartial);					
 					} else 
-					if(partialTI.getEnd().before(incomingPartialTI.getEnd())) {
+					if(partialTI.getEnd().before(incomingTupleTI.getEnd())) {
 						
 						/*
 						 * Incoming partial TI contains whole partial TI.
 						 */									
 
 						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(incomingPartial.clone(), partial.clone());
+							this.merge(partial.clone(), incomingTuple);
 														
 						sa.insert(mergePartial);							
 						this.updateFillInitialTI(fillInitialTI, mergePartial);
@@ -897,7 +843,7 @@ public class ObjectTrackingNestPO
 						 */
 						
 						ObjectTrackingPartialNest<M> mergePartial = 
-							this.merge(partial.clone(), incomingPartial.clone());				
+							this.merge(partial.clone(), incomingTuple);				
 
 						/*
 						 * Special case if incomingPartialEnd is equal
@@ -905,7 +851,7 @@ public class ObjectTrackingNestPO
 						 * check.
 						 */
 						
-						if(!incomingPartialEnd.equals(partialEnd)) {
+						if(!incomingTupleEnd.equals(partialEnd)) {
 						
 							ObjectTrackingPartialNest<M> overlapPartialRight = 
 								partial.clone();
@@ -913,7 +859,7 @@ public class ObjectTrackingNestPO
 							M meta = overlapPartialRight.getMetadata();
 							
 							TimeInterval ti3 = new TimeInterval(
-								incomingPartialEnd.clone(),
+								incomingTupleEnd.clone(),
 								partialEnd.clone()
 							);
 							
@@ -946,7 +892,7 @@ public class ObjectTrackingNestPO
 			
 			for(ITimeInterval ti : fillInitialTI) {
 				ObjectTrackingPartialNest<M> fillPartial = 
-					incomingPartial.clone();			
+					new ObjectTrackingPartialNest<M>(incomingTuple);			
 				
 				M meta = fillPartial.getMetadata();				
 				meta.setStreamTime(ti.clone());

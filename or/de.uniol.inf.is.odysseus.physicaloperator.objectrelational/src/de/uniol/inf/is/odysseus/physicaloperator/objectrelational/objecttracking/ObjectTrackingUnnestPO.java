@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.objectrelational.base.SetEntry;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class ObjectTrackingUnnestPO
 	<T extends ObjectTrackingMetadata<Object>> extends
-	AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>> {
+	AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
 	/*
 	 * For processing internally, only the super class SDFAttributeList
@@ -102,9 +103,13 @@ public class ObjectTrackingUnnestPO
     
     @SuppressWarnings("unchecked")
 	protected void process_next(
-    	MVRelationalTuple<T> input, 
+    	RelationalTuple<T> inputrel, 
     	int port
     ) {    	    	
+    	
+    	MVRelationalTuple<T> input = new MVRelationalTuple(inputrel.getAttributes());
+ 
+    	
         int index;
         Object[] outputValues;
         MVRelationalTuple<T> outputTuple;        
@@ -148,6 +153,7 @@ public class ObjectTrackingUnnestPO
         
         while(old.hasNext()) {
         	MVRelationalTuple<T> oldTuple = old.next();
+        	old.remove();
         	this.transfer(oldTuple);        	
         }      
     } 
