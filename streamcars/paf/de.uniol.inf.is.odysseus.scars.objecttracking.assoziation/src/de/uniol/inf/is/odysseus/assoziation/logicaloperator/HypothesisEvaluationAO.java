@@ -80,7 +80,7 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		return this.functionID;
 	}
 
-	public void setFunctionID(String fuckID) {
-		this.functionID = fuckID;
+	public void setFunctionID(String funcID) {
+		this.functionID = funcID;
 	}
 }
