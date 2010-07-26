@@ -38,8 +38,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		SDFAttributeList newSchema = new SDFAttributeList();
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(((LogicalSubscription) this.getSubscriptions().toArray()[0]).getSchema(), this.getNewObjListPath()));
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(((LogicalSubscription) this.getSubscriptions().toArray()[1]).getSchema(), this.getOldObjListPath()));
+		newSchema.addAttributes(OrAttributeResolver.getSubSchema(this.getSubscribedToSource(LEFT).getSchema(), this.getNewObjListPath()));
+		newSchema.addAttributes(OrAttributeResolver.getSubSchema(this.getSubscribedToSource(RIGHT).getSchema(), this.getOldObjListPath()));
 		return newSchema;
 	}
 
@@ -55,21 +55,21 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	}
 	
 	public int[] getNewObjListPath() {
-		this.leftSchema = ((LogicalSubscription)this.getSubscriptions().toArray()[0]).getSchema();
+		this.leftSchema = this.getSubscribedToSource(LEFT).getSchema();
 		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
 	}
 
 	public int[] getOldObjListPath() {
-		this.rightSchema = ((LogicalSubscription)this.getSubscriptions().toArray()[1]).getSchema();
+		this.rightSchema = this.getSubscribedToSource(RIGHT).getSchema();
 		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
 	
 	public SDFAttributeList getLeftSchema() {
-		return ((LogicalSubscription) this.getSubscriptions().toArray()[0]).getSchema();
+		return this.getSubscribedToSource(LEFT).getSchema();
 	}
 	
 	public SDFAttributeList getRightSchema() {
-		return ((LogicalSubscription) this.getSubscriptions().toArray()[1]).getSchema();
+		return this.getSubscribedToSource(RIGHT).getSchema();
 	}
 
 }
