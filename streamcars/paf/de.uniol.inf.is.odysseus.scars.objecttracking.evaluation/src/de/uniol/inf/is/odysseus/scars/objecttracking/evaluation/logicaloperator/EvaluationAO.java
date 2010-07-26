@@ -8,10 +8,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 7650711998042333164L;
-	
+
 	private String associationObjListPath;
-	private String filteringObjListPath; 
+	private String filteringObjListPath;
 	private String brokerObjListPath;
+
+	private double threshold;
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
@@ -23,7 +25,7 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public void initPaths(String associationObjListPath, String filteringObjListPaths, String brokerObjListPath) {
 		this.associationObjListPath = associationObjListPath;
 		this.filteringObjListPath = filteringObjListPaths;
@@ -33,13 +35,21 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 	public int[] getAssociationObjListPath() {
 		return OrAttributeResolver.getAttributePath(this.getInputSchema(0), this.associationObjListPath);
 	}
-	
+
 	public int[] getFilteringObjListPath() {
 		return OrAttributeResolver.getAttributePath(this.getInputSchema(1), this.filteringObjListPath);
 	}
-	
+
 	public int[] getBrokerObjListPath() {
 		return OrAttributeResolver.getAttributePath(this.getInputSchema(2), this.brokerObjListPath);
+	}
+
+	public double getThreshold() {
+		return threshold;
+	}
+
+	public void setThreshold(double threshold) {
+		this.threshold = threshold;
 	}
 
 }
