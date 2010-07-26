@@ -1160,7 +1160,7 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0)
 				.jjtAccept(this, data);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
-		ILogicalOperator childOp = (ILogicalOperator) childData.get(0);
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 		childOp
 				.subscribeSink(eval, 0, sourceOutPort, childOp
 						.getOutputSchema());
