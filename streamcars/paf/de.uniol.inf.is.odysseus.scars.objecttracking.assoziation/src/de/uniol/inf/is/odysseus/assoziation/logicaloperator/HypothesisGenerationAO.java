@@ -38,8 +38,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		SDFAttributeList newSchema = new SDFAttributeList();
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema(), this.getNewObjListPath()));
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema(), this.getOldObjListPath()));
+		newSchema.addAttributes(OrAttributeResolver.getSubSchema(((LogicalSubscription) this.getSubscriptions().toArray()[0]).getSchema(), this.getNewObjListPath()));
+		newSchema.addAttributes(OrAttributeResolver.getSubSchema(((LogicalSubscription) this.getSubscriptions().toArray()[1]).getSchema(), this.getOldObjListPath()));
 		return newSchema;
 	}
 
