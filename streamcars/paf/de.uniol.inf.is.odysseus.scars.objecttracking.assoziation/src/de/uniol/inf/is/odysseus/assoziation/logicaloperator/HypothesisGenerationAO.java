@@ -55,12 +55,12 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	}
 	
 	public int[] getNewObjListPath() {
-		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
+		this.leftSchema = ((LogicalSubscription)this.getSubscriptions().toArray()[0]).getSchema();
 		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
 	}
 
 	public int[] getOldObjListPath() {
-		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
+		this.rightSchema = ((LogicalSubscription)this.getSubscriptions().toArray()[1]).getSchema();
 		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
 	
