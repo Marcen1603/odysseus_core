@@ -36,7 +36,7 @@ public class KalmanCorrectStateCovarianceFunctionTest {
 	@Test
 	public void test() {
 
-		double[][] expected = { {-6.0,38.0}, {29.5,1} };
+		double[][] expected = { {-10.320000000000002,26.12}, {26.12,0.48} };
 	
 		
 		double[][] result=this.kalmanCorrectStateCovarianceFunction.compute();

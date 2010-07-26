@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.testcases.FilterAOTestData;
+import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
 
 
 /**
@@ -33,9 +33,9 @@ public class KalmanCorrectStateCovariancePOTest<M extends IGain & IProbability &
 		@Before
 		public void setUp() throws Exception {
 		
-			FilterAOTestData<M> measurement = new FilterAOTestData<M>();
+			FilterPOTestData<M> measurement = new FilterPOTestData<M>();
 			
-			this.measurementTuple = measurement.getTestData();
+			//this.measurementTuple = measurement.getTestData();
 			
 			KalmanCorrectStateCovarianceFunction correctStateCovarianceFunction = new KalmanCorrectStateCovarianceFunction();
 		

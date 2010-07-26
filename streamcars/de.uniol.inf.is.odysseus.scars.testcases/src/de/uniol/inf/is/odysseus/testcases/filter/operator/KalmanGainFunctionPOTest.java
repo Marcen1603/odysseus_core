@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.testcases.FilterAOTestData;
+import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
 import de.uniol.inf.is.odysseus.testcases.FilterFunctionTestData;
 
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
@@ -44,18 +44,47 @@ public class KalmanGainFunctionPOTest<M extends IGain & IProbability & IConnecti
 
 	
 	private MVRelationalTuple<M> measurementTuple;
+	
+	private MVRelationalTuple<M> expectedTuple;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
 	
-		FilterAOTestData<M> measurement = new FilterAOTestData<M>();
+		FilterPOTestData<M> testData = new FilterPOTestData<M>();
 		
-		this.measurementTuple = measurement.getTestData();
+		// Measurement Data
+		
+		double speedOld = 0.9;
+		
+		double posOld = 1.7;
+		
+		double[][] covarianceOld = { {5.0,50.0}, {50.0,10.0} };
+		
+		double speedNew = 1.0;
+		
+		double posNew = 2.0;
+		
+		double[][] covarianceNew = { {3.0,21.0}, {21.0,7.0} };
+		
+		this.measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
+		
+		// Expected Data
+		
+		speedOld = 0.9;
+		
+		posOld = 1.7;
+		
+		speedNew = 1.0;
+		
+		posNew = 2.0;
+		
+		this.expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
 		
 		KalmanGainFunction gainfunction = new KalmanGainFunction();
-	
+		
 		// create the PO
 		
 		gainfunctionPO = new KalmanGainFunctionPO();
@@ -76,7 +105,7 @@ public class KalmanGainFunctionPOTest<M extends IGain & IProbability & IConnecti
 	@Test
 	public  void test() {
 	
-	gainfunctionPO.process_next(measurementTuple, 0);
+	//gainfunctionPO.process_next(measurementTuple, 0);
 	
 	
 

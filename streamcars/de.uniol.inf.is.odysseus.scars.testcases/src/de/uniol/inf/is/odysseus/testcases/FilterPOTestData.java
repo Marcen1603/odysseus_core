@@ -16,23 +16,27 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @author dtwumasi
  *
  */
-public class FilterAOTestData<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
+public class FilterPOTestData<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
 
-	private MVRelationalTuple<M> testTuple;
 	
-	public FilterAOTestData() {
 	
-		this.testTuple = generateTestData();	
+	private MVRelationalTuple<M> expectedTuple;
 	
+	public FilterPOTestData() {
+	
+		
+		//this.expectedTuple=generateExpectedTuple(this.testTuple.clone());
+		//	double speedOld = 0.98;
+		//	double posOld = 1.83;
+		//double[][] covarianceOld = { {-10.320000000000002,26.12}, {26.12,0.48} };
+		// double[][] covarianceOld = { {5.0,50.0}, {50.0,10.0} };
+		//double[][] gain = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688 }};
+		// double speedNew = 1.0;
+	//	double posNew = 2.0;
+	// //	double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 	}
-
-	private MVRelationalTuple<M> generateTestData() {
 		
-		
-		// attributes for the old object
-		
-		double speedOld = 0.9;
-		double posOld = 1.7;
+	public MVRelationalTuple<M> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew ) {
 		
 		Object[] attributesOld = {speedOld,posOld};
 		
@@ -43,19 +47,21 @@ public class FilterAOTestData<M extends IGain & IProbability & IConnectionContai
 		// set positions
 		oldTuple.setMeasurementValuePositions(new int[] {0,1});
 		
+
 		// covariance
-		double[][] covarianceOld = { {5.0,50.0}, {50.0,10.0} };
+		//covarianceOld = { {5.0,50.0}, {50.0,10.0} };
 		
-		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> metaold = new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>();
+		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> metaOld = new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>();
 		
-		metaold.setCovariance(covarianceOld);
+		metaOld.setCovariance(covarianceOld);
 		
-	//	oldTuple.setMetadata(metaold);		
+		
+		//oldTuple.setMetadata(metaold);		
 					
 		// attributes for the new object
 		
-		double speedNew = 1.0;
-		double posNew = 2.0;
+		//double speedNew = 1.0;
+		//double posNew = 2.0;
 		
 		Object[] attributesNew = {speedNew,posNew};
 		
@@ -66,11 +72,11 @@ public class FilterAOTestData<M extends IGain & IProbability & IConnectionContai
 		newTuple.setMeasurementValuePositions(new int[] {0,1});
 		
 		// the covariance of the new measurement
-		double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
+		//double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 		
-		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> metanew = new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double>();
+		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> metaNew = new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double>();
 		
-		metanew.setCovariance(covarianceNew);
+		metaNew.setCovariance(covarianceNew);
 		
 		//newTuple.setMetadata(metanew);
 		
@@ -104,18 +110,10 @@ public class FilterAOTestData<M extends IGain & IProbability & IConnectionContai
 		
 		//measurementTuple.setMetadata((M) streamCars);
 	
+		
+		
 		return measurementTuple;
-		
-		
-		
-		
-	}
 
-	/**
-	 * @return the testData
-	 */
-	public MVRelationalTuple<M> getTestData() {
-		return testTuple;
-	}
+		}
 
 }
