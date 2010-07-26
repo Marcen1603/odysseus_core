@@ -3,82 +3,56 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class LinearPredictionFunction<M extends IProbability> implements IPredictionFunction<M>{
 
-	private SDFExpression[] expressions;
+	private SDFAttributeList scanSchema;
+	private SDFAttributeList timeSchema;
+	
+	private PredictionExpression[] expressions;
 	private double[][] noiseMatrix;
 	
+	
 	@Override
-	public MVRelationalTuple<M> predictData(MVRelationalTuple<M> object, PointInTime currentTime, PointInTime timeToPredict) {
-		if(currentTime.before(timeToPredict)) {
-			throw new IllegalArgumentException("the time to predict from, is newer then the current time");
+	public void init(SDFAttributeList scanSchema, SDFAttributeList timeSchema) {
+		this.scanSchema = scanSchema;
+		this.timeSchema = timeSchema;
+		for(PredictionExpression exp : expressions) {
+			exp.initAttributePaths(scanSchema);
+			exp.initAttributePaths(timeSchema);
 		}
-		
-		if(expressions == null) {
-			return object.clone();
-		}
-		
-		Object[] objAttributes = getAttributesToPredict(object);
-		Object[] predictedAttributes = new Object[objAttributes.length];
-		long deltaTime = currentTime.getMainPoint() - timeToPredict.getMainPoint();
-		
-		for(int attrIndex=0; attrIndex<objAttributes.length; attrIndex++) {
-			
-			if(expressions[attrIndex] != null) {
-				int[] expressionAttrIndices = expressions[attrIndex].getAttributePositions();
-				Object[] expressionVariables = getExpressionVariables(expressionAttrIndices, objAttributes, deltaTime);
-				this.expressions[attrIndex].bindVariables(expressionVariables);
-				predictedAttributes[attrIndex] = expressions[attrIndex].getValue();
-			} else {
-				predictedAttributes[attrIndex] = objAttributes[attrIndex];
-			}
-		}
-		
-		MVRelationalTuple<M> predictedObject = new MVRelationalTuple<M>(object);
-		predictedObject.setAttributes(predictedAttributes);
-		
-		return predictedObject;
-	}
-	
-	private Object[] getAttributesToPredict(MVRelationalTuple<M> object) {
-		Object[] values = new Object[object.getAttributeCount()];
-		for(int i = 0; i<object.getAttributeCount(); i++){
-			values[i] = object.getAttribute(i);
-		}
-		return values;
-	}
-	
-	private Object[] getExpressionVariables(int[] expressionAttrIndices, Object[] attributesToPredict, long deltaTime) {
-		Object[] expressionVariables = new Object[expressionAttrIndices.length];
-		for(int i=0; i<expressionAttrIndices.length; i++) {
-			if(expressionAttrIndices[i] != -1) {
-				expressionVariables[i] = attributesToPredict[expressionAttrIndices[i]];
-			} else {
-				expressionVariables[i] = deltaTime;
-			}
-		}
-		return expressionVariables;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public M predictMetadata(M metadata, PointInTime currentTime, PointInTime timeToPredict) {
-		if(currentTime.before(timeToPredict)) {
-			throw new IllegalArgumentException("the time to predict from, is newer then the current time");
+	public void predictData(MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int currentIndex) {
+		for(int index=0; index<expressions.length; index++) {
+			expressions[index].replaceVaryingAttributeIndex(scanSchema, currentIndex);
+			expressions[index].replaceVaryingAttributeIndex(timeSchema, currentIndex);
+			
+			for(String attrName : expressions[index].getAttributeNames(scanSchema)) {
+				int[] attrPath = expressions[index].getAttributePath(attrName);
+				expressions[index].bindVariable(attrName, resolveValue(attrPath, scanRootTuple));
+			}
+			
+			for(String attrName : expressions[index].getAttributeNames(timeSchema)) {
+				int[] attrPath = expressions[index].getAttributePath(attrName);
+				expressions[index].bindVariable(attrName, resolveValue(attrPath, timeTuple));
+			}
+			expressions[index].evaluate();
+			int[] targetPath = expressions[index].getTargetPath();
+			Object targetValue = expressions[index].getTargetValue();
+			setValue(targetPath, scanRootTuple, targetValue);
 		}
-		if(expressions == null || metadata.getCovariance() == null) {
-			return (M) metadata.clone();
-		}
-		
+	}
+	
+	@Override
+	public void predictMetadata(M metadata, MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int currentIndex) {
+
 		double[][] sigma = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
-		long deltaTime = currentTime.getMainPoint() - timeToPredict.getMainPoint();
-		int[] mvAttrIndices = metadata.getMVAttributeIndices();
-		
 		for(int row=0; row<sigma.length; row++) {
 			for(int col=0; col<sigma[row].length; col++) {
 				sigma[row][col] = metadata.getCovariance()[row][col];
@@ -87,51 +61,66 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 		
 		// H * Sigma...
 		double[][] tmpCov = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
+		for(int row=0; row<sigma.length; row++) {
+			for(int col=0; col<sigma[row].length; col++) {
+				tmpCov[row][col] = sigma[row][col];
+			}
+		}
 		
-		for(int row=0; row<tmpCov.length; row++) {
-			for(int col=0; col<tmpCov[0].length; col++) {
-				
-				if(expressions[mvAttrIndices[row]] != null) {
-					int[] exprAttrIndices = expressions[mvAttrIndices[row]].getAttributePositions();
-					Object[] exprAttrVals = new Object[exprAttrIndices.length];
-					
-					for(int i=0; i<exprAttrIndices.length; i++) {
-						if(exprAttrIndices[i] != -1) {
-							int matrixIndex = convertAttrIndexToMatrixIndex(exprAttrIndices[i], exprAttrIndices);
-							exprAttrVals[i] = sigma[row][matrixIndex];
-						} else {
-							exprAttrVals[i] = deltaTime;
-						}
+		for(int index=0; index<expressions.length; index++) {
+			expressions[index].replaceVaryingAttributeIndex(scanSchema, index);
+			expressions[index].replaceVaryingAttributeIndex(timeSchema, index);
+			int covRow = metadata.getIndexOfKovMatrix(expressions[index].getTargetPath());
+			
+			for(int col=0; col<tmpCov.length; col++) {
+				for(String attrName : expressions[index].getAttributeNames(scanSchema)) {
+					int[] attrPath = expressions[index].getAttributePath(attrName);
+					int covAttrIndex = metadata.getIndexOfKovMatrix(attrPath);
+					if(covAttrIndex != -1) {
+						expressions[index].bindVariable(attrName, sigma[covAttrIndex][col]);
+					} else {
+						// not found in covmatrix so it usually reflects a time value
+						// TODO use paths in tuples (for time etc.)
+						expressions[index].bindVariable(attrName, resolveValue(attrPath, scanRootTuple));
 					}
-					
-					this.expressions[mvAttrIndices[row]].bindVariables(exprAttrVals);
-					tmpCov[row][col] = expressions[mvAttrIndices[row]].getValue();
-				} else {
-					tmpCov[row][col] = sigma[row][col];
 				}
+				for(String attrName : expressions[index].getAttributeNames(timeSchema)) {
+					int[] attrPath = expressions[index].getAttributePath(attrName);
+					expressions[index].bindVariable(attrName, resolveValue(attrPath, timeTuple));
+				}
+				expressions[index].evaluate();
+				tmpCov[covRow][col] = expressions[index].getTargetDoubleValue();
 			}
 		}
 		
 		// ... * H^T
 		double[][] tmpCov2 = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
-		for(int row=0; row<tmpCov.length; row++) {
-			for(int col=0; col<tmpCov[0].length; col++) {
-				
-				if(expressions[mvAttrIndices[col]] != null) {
-					int[] exprAttrIndices = expressions[mvAttrIndices[row]].getAttributePositions();
-					Object[] exprAttrVals = new Object[exprAttrIndices.length];
-					
-					for(int i=0; i<exprAttrIndices.length; i++) {
-						if(exprAttrIndices[i] != -1) {
-							int matrixIndex = convertAttrIndexToMatrixIndex(exprAttrIndices[i], exprAttrIndices);
-							exprAttrVals[i] = sigma[matrixIndex][col];
-						} else {
-							exprAttrVals[i] = deltaTime;
-						}
+		for(int row=0; row<sigma.length; row++) {
+			for(int col=0; col<sigma[row].length; col++) {
+				tmpCov2[row][col] = tmpCov[row][col];
+			}
+		}
+		for(int index=0; index<expressions.length; index++) {
+			int covCol = metadata.getIndexOfKovMatrix(expressions[index].getTargetPath());
+			
+			for(int row=0; row<tmpCov[covCol].length; row++) {
+				for(String attrName : expressions[index].getAttributeNames(scanSchema)) {
+					int[] attrPath = expressions[index].getAttributePath(attrName);
+					int covAttrIndex = metadata.getIndexOfKovMatrix(attrPath);
+					if(covAttrIndex != -1) {
+						expressions[index].bindVariable(attrName, tmpCov[row][covAttrIndex]);
+					} else {
+						// not found in covmatrix so it usually reflects a time value
+						// TODO use paths in tuples (for time etc.)
+						expressions[index].bindVariable(attrName, resolveValue(attrPath, scanRootTuple));
 					}
-					this.expressions[mvAttrIndices[col]].bindVariables(exprAttrVals);
-					tmpCov2[row][col] = this.expressions[mvAttrIndices[col]].getValue();
 				}
+				for(String attrName : expressions[index].getAttributeNames(timeSchema)) {
+					int[] attrPath = expressions[index].getAttributePath(attrName);
+					expressions[index].bindVariable(attrName, resolveValue(attrPath, timeTuple));
+				}
+				expressions[index].evaluate();
+				tmpCov[row][covCol] = expressions[index].getTargetDoubleValue();
 			}
 		}
 		
@@ -141,33 +130,40 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 			RealMatrix q = new RealMatrixImpl(this.noiseMatrix);
 			tmpCov2 = cov.add(q).getData();
 		}
-		
-		M newMetadata = null;
-		newMetadata = (M)metadata.clone();
-		newMetadata.setCovariance(tmpCov2);
-		
-		return newMetadata;
+		metadata.setCovariance(tmpCov2);
 	}
 	
-	private int convertAttrIndexToMatrixIndex(int attrIndex, int[] attributeIndices) {
-		for(int matrixIndex=0; matrixIndex<attributeIndices.length; matrixIndex++) {
-			if(attrIndex == attributeIndices[matrixIndex]) {
-				return matrixIndex;
+	protected Object resolveValue(int[] path, MVRelationalTuple<M> root) {
+		Object currentTuple = root;
+		for(int depth=0; depth<path.length; depth++) {
+			if(currentTuple instanceof MVRelationalTuple<?>) {
+				currentTuple = ((MVRelationalTuple<?>) currentTuple).getAttribute(path[depth]);
 			}
 		}
-		return -1;
+		return currentTuple;
 	}
-
+	
+	protected void setValue(int[] path, MVRelationalTuple<M> root, Object value) {
+		MVRelationalTuple<?> currentTuple = root;
+		for(int depth=0; depth<path.length-1; depth++) {
+			currentTuple = ((MVRelationalTuple<?>) currentTuple).<MVRelationalTuple<?>>getAttribute(path[depth]);
+		}
+		currentTuple.setAttribute(path[path.length-1], value);
+	}
+	
 	@Override
-	public void setExpressions(SDFExpression[] expressions) {
+	public void setExpressions(PredictionExpression[] expressions) {
 		this.expressions = expressions;
 	}
-
+	
 	@Override
 	public void setNoiseMatrix(double[][] noiseMatrix) {
 		this.noiseMatrix = noiseMatrix;
 	}
-	
+
+
+
+
 
 
 }

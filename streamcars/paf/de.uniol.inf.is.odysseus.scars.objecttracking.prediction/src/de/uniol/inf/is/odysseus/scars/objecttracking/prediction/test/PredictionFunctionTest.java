@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction2;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.LinearPredictionFunction2;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.LinearPredictionFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -22,7 +22,7 @@ public class PredictionFunctionTest {
 		MVRelationalTuple<IProbability> scanTuple = createScanTuple(scan);
 		MVRelationalTuple<IProbability> timeTuple = createTimeTuple();
 		
-		IPredictionFunction2<IProbability> pf = new LinearPredictionFunction2<IProbability>();
+		IPredictionFunction<IProbability> pf = new LinearPredictionFunction<IProbability>();
 		PredictionExpression[] e = createExpressions();
 		pf.setExpressions(e);
 		pf.init(scan, time);
