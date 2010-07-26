@@ -1197,7 +1197,7 @@ public class CreateLogicalPlanVisitor implements
 		// subscribe to source
 		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
 		int sourceOutPort = ((Integer) inputOpNode.get(2)).intValue();
-		ILogicalOperator inputOp = (ILogicalOperator) inputOpNode.get(0);
+		ILogicalOperator inputOp = (ILogicalOperator) inputOpNode.get(1);
 		inputOp.subscribeSink(selection, 0, sourceOutPort, inputOp.getOutputSchema());
 		
 		// get name of this op
