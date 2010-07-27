@@ -12,6 +12,8 @@
 
    <windowImages/>
 
+   <splash
+      location="de.uniol.inf.is.odysseus.rcp.starter" />
    <launcher>
       <solaris/>
       <win useIco="false">
