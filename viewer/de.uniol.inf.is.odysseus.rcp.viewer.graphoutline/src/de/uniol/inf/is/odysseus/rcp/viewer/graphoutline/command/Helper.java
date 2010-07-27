@@ -16,7 +16,7 @@ public class Helper {
 	public static TreeViewer getTreeViewer(ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
-		GraphOutlinePart view = (GraphOutlinePart) page.findView(IGraphOutlineConstants.NODEVIEW_ID);
+		GraphOutlinePart view = (GraphOutlinePart) page.findView(IGraphOutlineConstants.GRAPHOUTLINE_ID);
 		return view.getTreeViewer();
 	}
 	

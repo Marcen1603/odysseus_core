@@ -18,7 +18,7 @@ public class ChangeSyncCommand extends AbstractHandler implements IHandler {
 		
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
-		GraphOutlinePart view = (GraphOutlinePart) page.findView(IGraphOutlineConstants.NODEVIEW_ID);
+		GraphOutlinePart view = (GraphOutlinePart) page.findView(IGraphOutlineConstants.GRAPHOUTLINE_ID);
 		if( view != null )
 			view.setSync(!view.getSync());
 		return null;
