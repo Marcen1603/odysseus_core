@@ -14,7 +14,7 @@ public class QueriesPerspective implements IPerspectiveFactory {
 		layout.setEditorAreaVisible(true);
 		layout.setFixed(false);
 
-		layout.addView(IConsoleConstants.ID_CONSOLE_VIEW, IPageLayout.BOTTOM, 1.0f, editorArea);
+		layout.addView(IConsoleConstants.ID_CONSOLE_VIEW, IPageLayout.BOTTOM, 0.70f, editorArea);
 		
 		layout.addPerspectiveShortcut(IQueriesPerspectiveConstants.PERSPECTIVE_ID);
 	}

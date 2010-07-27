@@ -10,8 +10,9 @@
                id="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView"
                minimized="false"
                moveable="true"
-               relationship="stack"
-               relative="org.eclipse.ui.console.ConsoleView"
+               ratio="0.70"
+               relationship="right"
+               relative="org.eclipse.ui.editorss"
                showTitle="true"
                standalone="false"
                visible="true">

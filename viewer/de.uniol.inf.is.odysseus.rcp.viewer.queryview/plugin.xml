@@ -19,7 +19,9 @@
                id="de.uniol.inf.is.odysseus.rcp.viewer.queryview"
                minimized="false"
                moveable="true"
+               ratio="0.7"
                relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
                showTitle="true"
                standalone="false"
                visible="true">
