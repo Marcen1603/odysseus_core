@@ -19,58 +19,51 @@ public class SDFDatatypes extends SDF {
 	public static String Number = baseURI + "Number";
 
 	public static String Intervall = baseURI + "Intervall";
-	
+
 	public static String MeasurementValue = baseURI + "MeasurementValue";
 
 	public static String List = baseURI + "List";
 
 	public static String hasBaseDatatype = baseURI + "hasBaseDatatype";
 
-	public static String hasIntervallStartOpen = baseURI
-			+ "hasIntervallStartOpen";
+	public static String hasIntervallStartOpen = baseURI + "hasIntervallStartOpen";
 
-	public static String hasIntervallStartClose = baseURI
-			+ "hasIntervallStartClose";
+	public static String hasIntervallStartClose = baseURI + "hasIntervallStartClose";
 
 	public static String hasIntervallEndOpen = baseURI + "hasIntervallEndOpen";
 
-	public static String hasIntervallEndClose = baseURI
-			+ "hasIntervallEndClose";
+	public static String hasIntervallEndClose = baseURI + "hasIntervallEndClose";
 
-	public static boolean isNumerical(
-			de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype type) {
-		return type.getURI(false).equals("Long")
-				|| type.getURI(false).equals("Integer")
-				|| type.getURI(false).equals("Double")
-				|| type.getURI(false).equals("MV");
+	public static boolean isNumerical(de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype type) {
+		return type.getURI(false).equals("Long") || type.getURI(false).equals("Integer") || type.getURI(false).equals("Double") || type.getURI(false).equals("MV");
 	}
-	
-	public static boolean isInteger(SDFDatatype type){
+
+	public static boolean isInteger(SDFDatatype type) {
 		return type.getURI(false).equals("Integer");
 	}
-	
-	public static boolean isLong(SDFDatatype type){
+
+	public static boolean isLong(SDFDatatype type) {
 		return type.getURI(false).equals("Long");
 	}
-	
-	public static boolean isDouble(SDFDatatype type){
+
+	public static boolean isDouble(SDFDatatype type) {
 		return type.getURI(false).equals("Double");
 	}
-	
-	public static boolean isMeasurementValue(
-			de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype type) {
+
+	public static boolean isMeasurementValue(de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype type) {
+		String uri = type.getURI(false);
+		if( uri.startsWith("MV")) return true;
 		return type.getURI(false).equals("MV");
 	}
 
-	public static boolean isString(
-			de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype type) {
+	public static boolean isString(de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype type) {
 		return type.getURI(false).equals("String");
 	}
 
-	public static boolean isDate(SDFDatatype type){
+	public static boolean isDate(SDFDatatype type) {
 		return type.getURI(false).equals("Date");
 	}
-	
+
 	protected SDFDatatypes() {
 		super.baseUri = SDFDatatypes.baseURI;
 		super.namespaceName = SDFDatatypes.namespaceName;
