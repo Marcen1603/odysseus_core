@@ -237,16 +237,4 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 		prob.setAttributePaths(paths);
 	}
 
-	@Override
-	public void setMVAttributeNames(List<String> mvAttributeNames) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<String> getMVAttributeNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

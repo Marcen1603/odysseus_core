@@ -240,16 +240,4 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 		return 0;
 	}
 
-	@Override
-	public void setMVAttributeNames(List<String> mvAttributeNames) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<String> getMVAttributeNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

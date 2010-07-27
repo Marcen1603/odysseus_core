@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.IMetaAttribute;
@@ -63,36 +62,4 @@ public interface IProbability extends IMetaAttribute, IClone{
 	public void setAttributePaths(ArrayList<int[]> paths);
 	
 	public int getIndexOfKovMatrix(int[] path);
-	
-	/**
-	 * When using object relational tuples this method is used to set the names
-	 * of the measurement value attributes (for example "a.scan:listobjspeed").
-	 * <p>
-	 * The names should correspond to the paths returned by {@link 
-   * #getAttributePaths()}, so attributeNames.size() should be equal to
-   * {@link #getAttributePaths()}.size().
-   * <p>
-   * Of course, the names should correspond to the attributes of the covariance
-   * matrix returned by {@link #getCovariance()}, too.
-	 * 
-	 * @author Sven
-	 * @param attributeNames
-	 */
-	public void setMVAttributeNames(List<String> mvAttributeNames);
-	
-	/**
-   * When using object relational tuples this method is used to get the names
-   * of the measurement value attributes (for example "a.scan:listobjspeed").
-   * <p>
-   * The names should correspond to the paths returned by {@link 
-   * #getAttributePaths()}, so attributeNames.size() should be equal to
-   * {@link #getAttributePaths()}.size().
-   * <p>
-   * Of course, the names should correspond to the attributes of the covariance
-   * matrix returned by {@link #getCovariance()}, too.
-   * 
-   * @author Sven
-   * @param attributeNames
-   */
-	public List<String> getMVAttributeNames();
 }
