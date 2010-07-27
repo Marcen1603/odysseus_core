@@ -14,6 +14,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -76,14 +78,13 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 
 		queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		queryTextField.setText(lastQuery);
-		queryTextField.addKeyListener(new KeyAdapter() {
+		queryTextField.addModifyListener( new ModifyListener() {
 			@Override
-			public void keyReleased(KeyEvent e) {
+			public void modifyText(ModifyEvent e) {
 				updateOkButtonEnabled();
 			}
-			
 		});
-		
+				
 		if(lastQuery.length()>0)
 			queryTextField.selectAll();
 		historyCombo.addSelectionListener(new SelectionAdapter() {
@@ -272,6 +273,9 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		String result = "";
 		int lastPos = 0;
 		int pos = text.indexOf(ch, 0);
+		if( pos == -1 ) 
+			return text;
+		
 		while( pos >= 0 ) {
 			result = result + text.substring(lastPos, pos);
 			lastPos = pos + 1;
