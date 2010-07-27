@@ -14,12 +14,12 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.INodeViewPart;
+import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.IGraphOutlinePart;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.editor.IGraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 
-public class NodeViewPart extends ViewPart implements INodeViewPart, ISelectionListener {
+public class GraphOutlinePart extends ViewPart implements IGraphOutlinePart, ISelectionListener {
 
 	private TreeViewer treeViewer;
 	private boolean synched = false;
@@ -32,8 +32,8 @@ public class NodeViewPart extends ViewPart implements INodeViewPart, ISelectionL
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FillLayout());
 		treeViewer = new TreeViewer(composite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
-		treeViewer.setContentProvider(new NodeViewContentProvider());
-		treeViewer.setLabelProvider(new NodeViewLabelProvider());
+		treeViewer.setContentProvider(new GraphOutlineContentProvider());
+		treeViewer.setLabelProvider(new GraphOutlineLabelProvider());
 		
 		IEditorPart activeEditor = getSite().getPage().getActiveEditor();
 		if(  activeEditor != null ) {

@@ -8,8 +8,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.INodeViewConstants;
-import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.impl.NodeViewPart;
+import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.IGraphOutlineConstants;
+import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.impl.GraphOutlinePart;
 
 public class ChangeSyncCommand extends AbstractHandler implements IHandler {
 
@@ -18,7 +18,7 @@ public class ChangeSyncCommand extends AbstractHandler implements IHandler {
 		
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
-		NodeViewPart view = (NodeViewPart) page.findView(INodeViewConstants.NODEVIEW_ID);
+		GraphOutlinePart view = (GraphOutlinePart) page.findView(IGraphOutlineConstants.NODEVIEW_ID);
 		if( view != null )
 			view.setSync(!view.getSync());
 		return null;

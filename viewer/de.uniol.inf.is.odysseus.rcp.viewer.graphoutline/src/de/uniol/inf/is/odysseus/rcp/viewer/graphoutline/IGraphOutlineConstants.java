@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.graphoutline;
 
-public interface INodeViewConstants {
+public interface IGraphOutlineConstants {
 	
 	public static final String NODEVIEW_ID = "de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView";
 	public static final String COLLAPSE_ALL_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.viewer.nodeview.CollapseAll";

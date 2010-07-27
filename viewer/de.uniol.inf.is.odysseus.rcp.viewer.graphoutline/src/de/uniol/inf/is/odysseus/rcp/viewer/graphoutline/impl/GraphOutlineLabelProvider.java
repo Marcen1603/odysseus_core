@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.graph.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class NodeViewLabelProvider implements ILabelProvider {
+public class GraphOutlineLabelProvider implements ILabelProvider {
 
 	private final Map<String, Image> images = new HashMap<String, Image>();
 	

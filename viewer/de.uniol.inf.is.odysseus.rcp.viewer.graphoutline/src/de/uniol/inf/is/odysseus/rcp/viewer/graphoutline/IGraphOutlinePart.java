@@ -4,7 +4,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IViewPart;
 
-public interface INodeViewPart extends IViewPart {
+public interface IGraphOutlinePart extends IViewPart {
 
 	public TreeViewer getTreeViewer();
 	public void setSync( boolean sync );

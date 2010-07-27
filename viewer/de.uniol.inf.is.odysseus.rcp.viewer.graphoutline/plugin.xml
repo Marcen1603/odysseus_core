@@ -23,7 +23,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            class="de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.impl.NodeViewPart"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.impl.GraphOutlinePart"
             icon="images/outline_co.gif"
             id="de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView"
             name="Graph Outline"

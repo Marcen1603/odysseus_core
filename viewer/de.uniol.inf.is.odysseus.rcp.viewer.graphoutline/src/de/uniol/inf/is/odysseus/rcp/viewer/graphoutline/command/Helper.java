@@ -8,15 +8,15 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.INodeViewConstants;
-import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.impl.NodeViewPart;
+import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.IGraphOutlineConstants;
+import de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.impl.GraphOutlinePart;
 
 public class Helper {
 
 	public static TreeViewer getTreeViewer(ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();
-		NodeViewPart view = (NodeViewPart) page.findView(INodeViewConstants.NODEVIEW_ID);
+		GraphOutlinePart view = (GraphOutlinePart) page.findView(IGraphOutlineConstants.NODEVIEW_ID);
 		return view.getTreeViewer();
 	}
 	
