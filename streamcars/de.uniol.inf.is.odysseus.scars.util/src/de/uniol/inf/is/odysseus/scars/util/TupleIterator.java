@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * 
@@ -50,11 +51,57 @@ public class TupleIterator {
 	 * Es ist zu beachten, dass Tupel, welche Untertupel besitzen, auch besucht werden, bevor in
 	 * die Kindtupel fortgesetzt wird.
 	 *
-	 * @param tuple Durchzunavigierender Tupel
-	 * @param start Pfad zum Startpunkt innerhalb des Tupels.
+	 * @param tuple Durchzunavigierender Tupel. Darf nicht null sein.
+	 * @param start Pfad zum Startpunkt innerhalb des Tupels. Darf nicht null sein.
 	 */
 	public TupleIterator(MVRelationalTuple<?> tuple, SchemaIndexPath start) {
 		this(tuple, start, Integer.MAX_VALUE);
+	}
+	
+	/**
+	 * Erstellt eine neue TupelIterator-Instanz. Über dem angegebenen Tupel wird iteriert.
+	 * Mittels diesem Konstruktor wird über den VOLLSTÄNDIGEN Tuple iteriert, also von der
+	 * Wurzel an.
+	 * 
+	 * Der Navigator geht beliebig in die Tiefe.
+	 * 
+	 * Es ist zu beachten, dass Tupel, welche Untertupel besitzen, auch besucht werden, bevor in
+	 * die Kindtupel fortgesetzt wird.
+	 *
+	 * @param tuple Durchzunavigierender Tupel. Darf nicht null sein.
+	 * @param completeSchema Komplettes Schema des Tupels. Darf nicht null sein.
+	 */
+	public TupleIterator( MVRelationalTuple<?> tuple, SDFAttributeList completeSchema ) {
+		this(tuple, completeSchema, Integer.MAX_VALUE);
+	}
+	
+	/**
+	 * Erstellt eine neue TupelIterator-Instanz. Über dem angegebenen Tupel wird iteriert.
+	 * Mittels diesem Konstruktor wird über den VOLLSTÄNDIGEN Tuple iteriert, also von der
+	 * Wurzel an.
+	 * 
+	 * Über maxLevels lässt sich die maximale Tiefe bestimmen, wie weit der Iterator
+	 * iterieren soll. Ist maxLevels=0, so wird nicht in die Tiefe gegangen, die Iteration
+	 * ist nach einem next() vorbei. maxLevels=1 bewirkt, dass nur durch die unmittelbaren Untertupel
+	 * navigiert wird.
+	 * 
+	 * Es ist zu beachten, dass Tupel, welche Untertupel besitzen, auch besucht werden, bevor in
+	 * die Kindtupel fortgesetzt wird.
+	 *
+	 * @param tuple Durchzunavigierender Tupel. Darf nicht null sein.
+	 * @param completeSchema Komplettes Schema des Tupels. Darf nicht null sein.
+	 * @param maxLevels Maximale Iterationstiefe. Muss positiv oder null sein.
+	 */	public TupleIterator( MVRelationalTuple<?> tuple, SDFAttributeList completeSchema, int maxLevels ) {
+		this.tuple = tuple;
+		this.maxLevels = maxLevels;
+		
+		SDFAttribute attr = completeSchema.get(0);
+		String name = attr.getAttributeName();
+		
+		SchemaHelper hlp = new SchemaHelper(completeSchema);
+		SchemaIndexPath path = hlp.getSchemaIndexPath(name);
+		
+		reset(path);
 	}
 
 	/**
@@ -72,9 +119,9 @@ public class TupleIterator {
 	 * Es ist zu beachten, dass Tupel, welche Untertupel besitzen, auch besucht werden, bevor in
 	 * die Kindtupel fortgesetzt wird.
 	 * 
-	 * @param tuple Durchzunavigierender Tupel
-	 * @param start Pfad zum Startpunkt innerhalb des Tupels.
-	 * @param maxLevels Maximale Iterationstiefe
+	 * @param tuple Durchzunavigierender Tupel. Darf nicht null sein.
+	 * @param start Pfad zum Startpunkt innerhalb des Tupels. Darf nicht null sein.
+	 * @param maxLevels Maximale Iterationstiefe. Muss positiv oder null sein.
 	 */
 	public TupleIterator(MVRelationalTuple<?> tuple, SchemaIndexPath start, int maxLevels) {
 		this.tuple = tuple;
