@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;

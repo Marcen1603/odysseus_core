@@ -13,6 +13,9 @@ package de.uniol.inf.is.odysseus.broker.exceptions;
  */
 public class CyclicQueryException extends RuntimeException{
 
+	
+	private static final long serialVersionUID = 1L;
+
 	public CyclicQueryException(){
 		super();
 	}
