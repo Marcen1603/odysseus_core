@@ -28,6 +28,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	private IWorkbenchAction exitAction;
 	private IWorkbenchAction preferencesAction;
 	private IWorkbenchAction aboutAction;
+	private IWorkbenchAction resetPerspectiveAction;
+	private IWorkbenchAction closePerspectiveAction;
+	private IWorkbenchAction closeAllPerspectivesAction;
 	private IContributionItem showViewAction;
 	private IContributionItem perspectivesMenuAction;
 
@@ -56,6 +59,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		aboutAction = ActionFactory.ABOUT.create(window);
 		showViewAction = ContributionItemFactory.VIEWS_SHORTLIST.create(window);
 		perspectivesMenuAction = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window);
+		
+		resetPerspectiveAction = ActionFactory.RESET_PERSPECTIVE.create(window);
+		closePerspectiveAction = ActionFactory.CLOSE_PERSPECTIVE.create(window);
+		closeAllPerspectivesAction = ActionFactory.CLOSE_ALL_PERSPECTIVES.create(window);
 	}
 
 	protected void fillMenuBar(IMenuManager menuBar) {
@@ -75,6 +82,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		windowMenu.add(viewsMenu);
 		perspectivesMenu.add(perspectivesMenuAction);
 		windowMenu.add(perspectivesMenu);
+		windowMenu.add(new Separator());
+		windowMenu.add(resetPerspectiveAction);
+		windowMenu.add(closePerspectiveAction);
+		windowMenu.add(closeAllPerspectivesAction);
+		windowMenu.add(new Separator());
 		windowMenu.add(preferencesAction);
 		
 		
