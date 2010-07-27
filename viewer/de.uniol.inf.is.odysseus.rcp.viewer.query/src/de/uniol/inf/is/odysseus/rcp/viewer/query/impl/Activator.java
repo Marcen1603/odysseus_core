@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
+import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryHistory;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -35,6 +36,7 @@ public class Activator extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		QueryHistory.getInstance().save();
 		super.stop(context);
 	}
 
