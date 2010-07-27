@@ -12,7 +12,7 @@ public class MySink extends AbstractSink<Object> {
 
 	@Override
 	public MySink clone()  {
-		throw new RuntimeException("Clone Not implemented yet");
+		return new MySink();
 	}
 
 	@Override
