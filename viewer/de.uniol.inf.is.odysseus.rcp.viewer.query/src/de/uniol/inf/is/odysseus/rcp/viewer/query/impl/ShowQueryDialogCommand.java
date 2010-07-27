@@ -12,6 +12,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -39,12 +41,15 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 	private static String lastTransCfg = "";
 	
 	private static final String EMPTY_HISTORY = "[Nothing]";
+	private static final String NO_PARSER = "No parser available";
+	private static final String NO_EXECUTOR = "No executor available";
 	
 	private Combo historyCombo;
 	private Combo parserCombo;
 	private Combo transCfgCombo;
 	
 	private Button okButton;
+	private Text queryTextField;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -69,8 +74,16 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		gd2.horizontalSpan = 3;
 		historyCombo.setLayoutData(gd2);
 
-		final Text queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		queryTextField = new Text(dialogShell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		queryTextField.setText(lastQuery);
+		queryTextField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateOkButtonEnabled();
+			}
+			
+		});
+		
 		if(lastQuery.length()>0)
 			queryTextField.selectAll();
 		historyCombo.addSelectionListener(new SelectionAdapter() {
@@ -172,6 +185,26 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		
 		return null;
 	}
+	
+	private void updateOkButtonEnabled() {
+		if(parserCombo.getText() == NO_PARSER ) { 
+			okButton.setEnabled(false);
+			return;
+		}
+		
+		if( parserCombo.getText() == NO_EXECUTOR ){
+			okButton.setEnabled(false);
+			return;
+		}
+		
+		if( queryTextField.getText().length() == 0 ) {
+			okButton.setEnabled(false);
+			return;
+		}
+		
+		okButton.setEnabled(true);
+	}
+			
 
 	private void fillTransformCfgCombo() {
 		transCfgCombo.removeAll();
@@ -200,18 +233,17 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 			if(lastFound) 
 				parserCombo.setText(lastParser);
 			else
-				parserCombo.setText(parserCombo.getItem(0));
+				parserCombo.select(0);
 		} catch (PlanManagementException e1) {
-			parserCombo.add("No parser available");
+			parserCombo.add(NO_PARSER);
 			parserCombo.setEnabled(false);
-			okButton.setEnabled(false);
-			parserCombo.setText("No parser available");
+			parserCombo.select(0);
 		} catch (NullPointerException ex ) {
-			parserCombo.add("No executor available");
+			parserCombo.add(NO_EXECUTOR);
 			parserCombo.setEnabled(false);
-			okButton.setEnabled(false);
-			parserCombo.setText("No executor available");
+			parserCombo.select(0);
 		}
+		updateOkButtonEnabled();
 	}
 
 	private void fillHistoryCombo() {
