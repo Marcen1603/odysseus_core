@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nodeview
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.graphoutline;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.activator.Activator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions,
+ de.uniol.inf.is.odysseus.base
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.monitoring,
+ de.uniol.inf.is.odysseus.rcp.viewer.model,
+ de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
+ de.uniol.inf.is.odysseus.rcp.viewer.model.meta,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.editor,
+ de.uniol.inf.is.odysseus.rcp.viewer.view.graph,
+ org.slf4j
+Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.graphoutline
