@@ -78,7 +78,9 @@ import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -139,9 +141,19 @@ public class CreateLogicalPlanVisitor implements
 					.jjtGetChild(i);
 			String attrString = ((ASTIdentifier) attrIdentifier.jjtGetChild(0))
 					.getName();
-			SDFAttribute attr = attrRes.getAttribute(attrString);
 
-			outAttributes.add(attr);
+			try {
+				SDFAttribute attr = attrRes.getAttribute(attrString);
+				outAttributes.add(attr);
+			} catch (AmgigiousAttributeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAttributeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
 		}
 		projection.setOutAttributes(outAttributes);
 
@@ -195,9 +207,16 @@ public class CreateLogicalPlanVisitor implements
 					.jjtGetChild(i);
 			String attrString = ((ASTIdentifier) attrIdentifier.jjtGetChild(0))
 					.getName();
-			SDFAttribute attr = attrRes.getAttribute(attrString);
-
-			outAttributes.add(attr);
+			try {
+				SDFAttribute attr = attrRes.getAttribute(attrString);
+				outAttributes.add(attr);
+			} catch (AmgigiousAttributeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAttributeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		projection.setOutputSchema(outAttributes);
 
@@ -441,9 +460,17 @@ public class CreateLogicalPlanVisitor implements
 
 					for (int v = 0; v < prediction.getOutputSchema()
 							.getAttributeCount(); v++) {
-						if (prediction.getOutputSchema().getAttribute(v)
-								.equals(attrRes.getAttribute(attrName))) {
-							expressions[v] = predFctExpr;
+						try {
+							if (prediction.getOutputSchema().getAttribute(v)
+									.equals(attrRes.getAttribute(attrName))) {
+								expressions[v] = predFctExpr;
+							}
+						} catch (AmgigiousAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 				}
@@ -502,9 +529,17 @@ public class CreateLogicalPlanVisitor implements
 
 					for (int v = 0; v < prediction.getOutputSchema()
 							.getAttributeCount(); v++) {
-						if (prediction.getOutputSchema().getAttribute(v)
-								.equals(attrRes.getAttribute(attrName))) {
-							expressions[v] = predFctExpr;
+						try {
+							if (prediction.getOutputSchema().getAttribute(v)
+									.equals(attrRes.getAttribute(attrName))) {
+								expressions[v] = predFctExpr;
+							}
+						} catch (AmgigiousAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 				}
@@ -625,10 +660,17 @@ public class CreateLogicalPlanVisitor implements
 		ProjectAO projectAO = (ProjectAO) ((ArrayList) data).get(1);
 
 		String attrString = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		SDFAttribute attr = attrRes.getAttribute(attrString);
-
 		SDFAttributeList outputSchema = projectAO.getOutputSchema();
-		outputSchema.add(attr);
+		try {
+			SDFAttribute attr= attrRes.getAttribute(attrString);
+			outputSchema.add(attr);
+		} catch (AmgigiousAttributeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAttributeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		projectAO.setOutputSchema(outputSchema);
 
@@ -865,7 +907,15 @@ public class CreateLogicalPlanVisitor implements
 		nestAttributeIdentifier = (ASTIdentifier) node.jjtGetChild(1);
 
 		nestAttributeName = nestAttributeIdentifier.getName();
-		op.setNestAttribute(attrRes.getAttribute(nestAttributeName));
+		try {
+			op.setNestAttribute(attrRes.getAttribute(nestAttributeName));
+		} catch (AmgigiousAttributeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAttributeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		((ArrayList) data).add(op);
 		((ArrayList) data).add(new Integer(0));
@@ -1019,9 +1069,17 @@ public class CreateLogicalPlanVisitor implements
 
 					for (int v = 0; v < prediction.getOutputSchema()
 							.getAttributeCount(); v++) {
-						if (prediction.getOutputSchema().getAttribute(v)
-								.equals(attrRes.getAttribute(attrName))) {
-							expressions[v] = predFctExpr;
+						try {
+							if (prediction.getOutputSchema().getAttribute(v)
+									.equals(attrRes.getAttribute(attrName))) {
+								expressions[v] = predFctExpr;
+							}
+						} catch (AmgigiousAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 				}
@@ -1081,9 +1139,17 @@ public class CreateLogicalPlanVisitor implements
 
 					for (int v = 0; v < prediction.getOutputSchema()
 							.getAttributeCount(); v++) {
-						if (prediction.getOutputSchema().getAttribute(v)
-								.equals(attrRes.getAttribute(attrName))) {
-							expressions[v] = predFctExpr;
+						try {
+							if (prediction.getOutputSchema().getAttribute(v)
+									.equals(attrRes.getAttribute(attrName))) {
+								expressions[v] = predFctExpr;
+							}
+						} catch (AmgigiousAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchAttributeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 				}
