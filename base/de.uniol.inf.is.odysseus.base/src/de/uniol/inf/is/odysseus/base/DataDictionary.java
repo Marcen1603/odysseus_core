@@ -83,6 +83,10 @@ public class DataDictionary {
 		}
 	}
 	
+	public ILogicalOperator removeView(String name) {
+		return viewDefinitions.remove(name);
+	}
+	
 	public ILogicalOperator getViewForTransformation(String name) {
 		return viewDefinitions.get(name);
 	}
