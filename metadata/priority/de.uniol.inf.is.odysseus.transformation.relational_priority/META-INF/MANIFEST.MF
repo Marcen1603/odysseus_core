@@ -14,5 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.base.access,
  de.uniol.inf.is.odysseus.physicaloperator.base.event,
- de.uniol.inf.is.odysseus.priority_interval,
- de.uniol.inf.is.odysseus.priority_relational
+ de.uniol.inf.is.odysseus.priority_interval
