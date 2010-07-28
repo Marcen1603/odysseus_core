@@ -127,23 +127,21 @@ public class RelationalTupleGroupingHelper<T extends IMetaAttribute> extends
 	private IEvaluator<RelationalTuple<?>> createAggFunction(AggregateFunction key,
 			int pos) {
 		IEvaluator<RelationalTuple<?>> aggFunc = null;
-		switch (key) {
-		case AVG:
-			aggFunc = RelationalAvgSum.getInstance(pos, true);
-			break;
-		case COUNT:
+		if ((key.getName().equalsIgnoreCase("AVG"))
+				|| (key.getName().equalsIgnoreCase("SUM"))) {
+			aggFunc = RelationalAvgSum.getInstance(pos, (key.getName()
+					.equalsIgnoreCase("AVG")) ? true : false);
+		} else if (key.getName().equalsIgnoreCase("COUNT")) {
 			aggFunc = RelationalCount.getInstance();
-			break;
-		case MAX:
-			aggFunc = RelationalMinMax.getInstance(pos, true);
-			break;
-		case MIN:
-			aggFunc = RelationalMinMax.getInstance(pos, false);
-			break;
-		case SUM:
-			aggFunc = RelationalAvgSum.getInstance(pos, false);
-			break;
-		default:
+		} else if ((key.getName().equalsIgnoreCase("MIN"))
+				|| (key.getName().equalsIgnoreCase("MAX"))) {
+			aggFunc = RelationalMinMax.getInstance(pos, (key.getName()
+					.equalsIgnoreCase("MAX")) ? true : false);
+		} else if (key.getName().equalsIgnoreCase("BEAN")) {
+			aggFunc = new AggregationBean(pos, key.getProperty("resource"));
+		} else if (key.getName().equalsIgnoreCase("SCRIPT")) {
+			aggFunc = new AggregationJSR223(pos, key.getProperty("resource"));
+		} else {
 			throw new IllegalArgumentException("No such Aggregationfunction");
 		}
 		return aggFunc;

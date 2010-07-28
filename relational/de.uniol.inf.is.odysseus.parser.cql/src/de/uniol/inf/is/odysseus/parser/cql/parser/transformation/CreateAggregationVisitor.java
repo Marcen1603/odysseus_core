@@ -104,20 +104,18 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		if (attribute == null) {
 			SDFDatatype datatype = this.attributeResolver.getAttribute(
 					attributeName).getDatatype();
-			if (!isNumerical(datatype) && function != AggregateFunction.COUNT) {
+			if (!isNumerical(datatype) && function.getName().equalsIgnoreCase("COUNT")) {
 				throw new IllegalArgumentException("function '"
 						+ function.toString()
 						+ "' can't be used on non scalar types");
 			}
 			attribute = new SDFAttribute(null, funcName);
-			switch (function) {
-			case AVG:
+			if (function.getName().equalsIgnoreCase("AVG")) {
 				attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
-			case COUNT:
+			} else if (function.getName().equalsIgnoreCase("COUNT")) {
 				attribute
 						.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
-				break;
-			default:
+			} else {
 				// datatype equals datatype of input attribute
 				// for other functions
 				attribute.setDatatype(datatype);

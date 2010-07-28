@@ -67,7 +67,7 @@ public class SDFExpression implements Serializable {
 
 	private static final String variableRegexp = "(\\p{Alpha}[\\p{Alnum}\\_:\\.]*)([^\\(\\p{Alnum}_:\\.\"]|$)";
 
-	private static final String aggregateRegexp = "\\b((SUM|COUNT|AVG|MIN|MAX)\\([^\\)]*\\))";
+	private static final String aggregateRegexp = "\\b((SUM|COUNT|AVG|MIN|MAX|BEAN|SCRIPT)\\([^\\)]*\\))";
 
 	private static final Pattern variablePattern = Pattern
 			.compile(variableRegexp);

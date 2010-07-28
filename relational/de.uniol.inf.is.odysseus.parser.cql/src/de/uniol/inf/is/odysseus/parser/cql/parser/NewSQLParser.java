@@ -3169,7 +3169,7 @@ import de.uniol.inf.is.odysseus.base.AggregateFunction;
       }
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-    jjtn000.setFunction(AggregateFunction.valueOf(AggregateFunction.class, t.image.toUpperCase()));
+    jjtn000.setFunction(new AggregateFunction(t.image.toUpperCase()));
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
