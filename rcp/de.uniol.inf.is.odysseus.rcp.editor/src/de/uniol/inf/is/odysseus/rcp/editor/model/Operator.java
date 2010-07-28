@@ -5,8 +5,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.rcp.editor.operator.IOperatorExtensionDescriptor;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 
 public class Operator {
 
@@ -17,17 +16,17 @@ public class Operator {
 	public static final String PROPERTY_CONNECTION_AS_SOURCE_REMOVED = "connection_src_remove";
 	public static final String PROPERTY_CONNECTION_AS_TARGET_REMOVED = "connection_tgt_remove";
 	
-	private ILogicalOperator operator;
-	private IOperatorExtensionDescriptor descriptor;
+	private IOperatorBuilder builder;
+	private String builderName;
 	private int x = 0;
 	private int y = 0;
 	private PropertyChangeSupport listeners;
 	private List<OperatorConnection> connectionsAsSource = new ArrayList<OperatorConnection>();
 	private List<OperatorConnection> connectionsAsTarget = new ArrayList<OperatorConnection>();
 	
-	public Operator( IOperatorExtensionDescriptor desc ) {
-		this.descriptor = desc;
-		this.operator = desc.getExtensionClass().create();
+	public Operator( IOperatorBuilder builder, String builderName ) {
+		this.builder = builder;
+		this.builderName = builderName;
 		listeners = new PropertyChangeSupport(this);
 	}
 	
@@ -39,12 +38,12 @@ public class Operator {
 		listeners.removePropertyChangeListener(listener);
 	}
 	
-	public ILogicalOperator getLogicalOperator() {
-		return operator;
+	public IOperatorBuilder getOperatorBuilder() {
+		return builder;
 	}
 	
-	public IOperatorExtensionDescriptor getOperatorExtensionDescriptor() {
-		return descriptor;
+	public String getOperatorBuilderName() {
+		return builderName;
 	}
 	
 	public void addConnection( OperatorConnection connection ) {

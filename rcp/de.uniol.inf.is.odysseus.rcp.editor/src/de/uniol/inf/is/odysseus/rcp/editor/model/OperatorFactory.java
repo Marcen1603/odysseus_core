@@ -2,19 +2,19 @@ package de.uniol.inf.is.odysseus.rcp.editor.model;
 
 import org.eclipse.gef.requests.CreationFactory;
 
-import de.uniol.inf.is.odysseus.rcp.editor.operator.IOperatorExtensionDescriptor;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 
 public class OperatorFactory implements CreationFactory {
 
-	private IOperatorExtensionDescriptor desc;
+	private final String operatorBuilderName;
 	
-	public OperatorFactory(IOperatorExtensionDescriptor desc) {
-		this.desc = desc;
+	public OperatorFactory(String operatorBuilderName) {
+		this.operatorBuilderName = operatorBuilderName;
 	}
 	
 	@Override
 	public Object getNewObject() {
-		Operator op = new Operator(desc);
+		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName), operatorBuilderName);
 		return op;
 	}
 

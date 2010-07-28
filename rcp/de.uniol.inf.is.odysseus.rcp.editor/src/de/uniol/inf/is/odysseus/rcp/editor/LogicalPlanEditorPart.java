@@ -28,7 +28,6 @@ import org.eclipse.ui.IWorkbenchPage;
 
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
-import de.uniol.inf.is.odysseus.rcp.editor.operator.IOperatorExtensionDescriptor;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
 
 public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable {
@@ -85,8 +84,8 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	private TransferDropTargetListener createTransferDropTargetListener() {
 		return new TemplateTransferDropTargetListener(getGraphicalViewer()) {
 			protected CreationFactory getFactory(Object template) {
-				if (template instanceof IOperatorExtensionDescriptor)
-					return new OperatorFactory((IOperatorExtensionDescriptor) template);
+				if (template instanceof String)
+					return new OperatorFactory((String) template);
 				else
 					return null;
 			}

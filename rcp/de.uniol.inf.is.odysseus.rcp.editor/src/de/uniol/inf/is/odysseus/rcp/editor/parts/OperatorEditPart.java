@@ -105,7 +105,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	protected void refreshVisuals() {
 		OperatorFigure figure = (OperatorFigure) getFigure();
 		Operator model = (Operator) getModel();
-		figure.setText(model.getOperatorExtensionDescriptor().getLabel());
+		figure.setText(model.getOperatorBuilderName());
 
 		Rectangle r = new Rectangle(model.getX(), model.getY(), -1, -1);
 		((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure, r);
