@@ -10,13 +10,13 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.base.IQueryParser;
 import de.uniol.inf.is.odysseus.base.QueryParseException;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 
 public class PQLParser implements IQueryParser {
 
 	private PQLParserImpl parser;
 
-	private static Map<String, IPredicateBuilder> predicateBuilder = new HashMap<String, IPredicateBuilder>();
 	private static Map<String, IParameter<?>> queryParameters = new HashMap<String, IParameter<?>>();
 
 	@Override
@@ -54,32 +54,22 @@ public class PQLParser implements IQueryParser {
 		}
 	}
 
-	public static void addOperatorBuilder(String identifier,
-			IOperatorBuilder builder) {
-		PQLParserImpl.addOperatorBuilder(identifier, builder);
-	}
-
-	public static void removeOperatorBuilder(String identifier) {
-		PQLParserImpl.removeOperatorBuilder(identifier);
-	}
-
-	public static void addPredicateBuilder(String identifier,
-			IPredicateBuilder builder) {
-		if (predicateBuilder.containsKey(identifier)) {
-			throw new IllegalArgumentException(
-					"multiple definitions of predicate builder: " + identifier);
-		}
-
-		predicateBuilder.put(identifier, builder);
-	}
-
-	public static void removePredicateBuilder(String identifier) {
-		predicateBuilder.remove(identifier);
-	}
-
-	public static IPredicateBuilder getPredicateBuilder(String predicateType) {
-		return predicateBuilder.get(predicateType);
-	}
+//	public static void addOperatorBuilder(String identifier,
+//			IOperatorBuilder builder) {
+//		PQLParserImpl.addOperatorBuilder(identifier, builder);
+//	}
+//
+//	public static Set<String> getOperatorBuilderNames() {
+//		return PQLParserImpl.getOperatorBuilderNames();
+//	}
+//	
+//	public static IOperatorBuilder getOperatorBuilder(String name) {
+//		return PQLParserImpl.getOperatorBuilder(name);
+//	}
+//
+//	public static void removeOperatorBuilder(String identifier) {
+//		PQLParserImpl.removeOperatorBuilder(identifier);
+//	}
 
 	public static void addQueryParameter(IParameter<?> parameter) {
 		String parameterName = parameter.getName();
@@ -112,14 +102,14 @@ public class PQLParser implements IQueryParser {
 			String parameterName = parameter.getName();
 			boolean hasParameter = tmpParameters.containsKey(parameterName);
 			if (!hasParameter) {
-				parameter.setNoValueAvailable();
+				parameter.setInputValue(null);
 				if (parameter.isMandatory()) {
 					throw new IllegalArgumentException(
 							"missing mandatory parameter: " + parameterName);
 				}
 			} else {
 				Object value = parameterValues.get(parameterName);
-				parameter.setValueOf(value);
+				parameter.setInputValue(value);
 				tmpParameters.remove(parameterName);
 			}
 		}

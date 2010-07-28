@@ -1,25 +1,21 @@
 package de.uniol.inf.is.odysseus.parser.pql.test;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.parser.pql.IOperatorBuilder;
-import de.uniol.inf.is.odysseus.parser.pql.IParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter;
 
-public class MuhBuilder implements IOperatorBuilder {
+public class MuhBuilder extends AbstractOperatorBuilder {
+
+	public MuhBuilder() {
+		super(0, 5);
+	}
 
 	@Override
-	public ILogicalOperator createOperator(Map<String, Object> parameters,
-			List<ILogicalOperator> inputOps) {
+	protected ILogicalOperator createOperatorInternal() {
 		MuhOperator op = new MuhOperator();
-		int i = 0;
-		for(ILogicalOperator curOp : inputOps) {
-			op.subscribeToSource(curOp, i++,0, new SDFAttributeList());	
-		}
 		return op;
 	}
 
@@ -27,7 +23,10 @@ public class MuhBuilder implements IOperatorBuilder {
 	public Set<IParameter<?>> getParameters() {
 		return Collections.emptySet();
 	}
-	
-	
+
+	@Override
+	protected boolean internalValidation() {
+		return true;
+	}
 
 }

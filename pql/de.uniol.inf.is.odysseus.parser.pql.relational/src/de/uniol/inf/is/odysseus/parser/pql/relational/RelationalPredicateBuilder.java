@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.parser.pql.relational;
 import java.io.StringReader;
 
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.parser.pql.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IPredicateBuilder;
 import de.uniol.inf.is.odysseus.parser.pql.relational.predicateParser.ParseException;
 import de.uniol.inf.is.odysseus.parser.pql.relational.predicateParser.RelationalPredicateParser;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;

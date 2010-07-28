@@ -1,13 +1,11 @@
 package de.uniol.inf.is.odysseus.parser.pql.benchmark;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.impl.TestProducerAO;
-import de.uniol.inf.is.odysseus.parser.pql.AbstractOperatorBuilder;
-import de.uniol.inf.is.odysseus.parser.pql.IntegerParameter;
-import de.uniol.inf.is.odysseus.parser.pql.ListParameter;
-import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ListParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 
 public class TestProducerPOBuilder extends AbstractOperatorBuilder {
 	IntegerParameter invertedPriorityRatio = new IntegerParameter(
@@ -17,13 +15,12 @@ public class TestProducerPOBuilder extends AbstractOperatorBuilder {
 					REQUIREMENT.MANDATORY));
 
 	public TestProducerPOBuilder() {
+		super(0, 0);
 		setParameters(invertedPriorityRatio, parts);
 	}
 
 	@Override
-	protected ILogicalOperator createOperator(List<ILogicalOperator> inputOps) {
-		checkInputSize(inputOps, 0);
-
+	protected ILogicalOperator createOperatorInternal() {
 		TestProducerAO ao = new TestProducerAO();
 		ao.setInvertedPriorityRatio(invertedPriorityRatio.getValue());
 		for (BatchItem batch : parts.getValue()) {
@@ -31,6 +28,11 @@ public class TestProducerPOBuilder extends AbstractOperatorBuilder {
 		}
 
 		return ao;
+	}
+
+	@Override
+	protected boolean internalValidation() {
+		return true;
 	}
 
 }

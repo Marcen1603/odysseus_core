@@ -1,37 +1,39 @@
 package de.uniol.inf.is.odysseus.parser.pql.benchmark;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BatchProducerAO;
-import de.uniol.inf.is.odysseus.parser.pql.AbstractOperatorBuilder;
-import de.uniol.inf.is.odysseus.parser.pql.IntegerParameter;
-import de.uniol.inf.is.odysseus.parser.pql.ListParameter;
-import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ListParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 
 public class BatchProducerBuilder extends AbstractOperatorBuilder {
 
 	IntegerParameter invertedPriorityRatio = new IntegerParameter(
 			"INVERTEDPRIORITYRATIO", REQUIREMENT.MANDATORY);
-	ListParameter<BatchItem> batches = new ListParameter<BatchItem>(
-			"BATCHES", REQUIREMENT.MANDATORY, new BatchParameter("BATCH",
+	ListParameter<BatchItem> batches = new ListParameter<BatchItem>("BATCHES",
+			REQUIREMENT.MANDATORY, new BatchParameter("BATCH",
 					REQUIREMENT.MANDATORY));
 
 	public BatchProducerBuilder() {
+		super(0, 0);
 		setParameters(invertedPriorityRatio, batches);
 	}
 
 	@Override
-	protected ILogicalOperator createOperator(List<ILogicalOperator> inputOps) {
-		checkInputSize(inputOps, 0);
-		
+	protected ILogicalOperator createOperatorInternal() {
 		BatchProducerAO ao = new BatchProducerAO();
 		ao.setInvertedPriorityRatio(invertedPriorityRatio.getValue());
-		for(BatchItem batch : batches.getValue()){
+		for (BatchItem batch : batches.getValue()) {
 			ao.addBatch(batch.size, batch.wait);
 		}
-		
+
 		return ao;
+	}
+
+	@Override
+	protected boolean internalValidation() {
+		return true;
 	}
 
 }

@@ -6,6 +6,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 
 public class PQLParserTest implements BundleActivator {
@@ -19,7 +20,7 @@ public class PQLParserTest implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		try {
-			PQLParser.addOperatorBuilder("muh", new MuhBuilder());
+			OperatorBuilderFactory.putOperatorBuilderType("muh", MuhBuilder.class);
 			String queryString = "a = muh()\nb=muh()\nc=muh(a,b)\n"
 					+ "OUT= muh({ [x=1,[y=2]], z='a>b']}, c)";
 			PQLParser parser = new PQLParser();

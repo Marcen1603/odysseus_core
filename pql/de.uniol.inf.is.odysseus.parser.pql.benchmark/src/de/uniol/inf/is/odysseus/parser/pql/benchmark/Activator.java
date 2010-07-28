@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.parser.pql.benchmark;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 
-public class Activator implements BundleActivator{
-	
+public class Activator implements BundleActivator {
+
 	private static final String BENCHMARK = "Benchmark";
 	private static final String BATCH_PRODUCER = "BatchProducer";
 	private static final String TEST_PRODUCER = "TestProducer";
@@ -14,17 +14,21 @@ public class Activator implements BundleActivator{
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		PQLParser.addOperatorBuilder(BATCH_PRODUCER, new BatchProducerBuilder());
-		PQLParser.addOperatorBuilder(TEST_PRODUCER, new TestProducerPOBuilder());
-		PQLParser.addOperatorBuilder(BENCHMARK, new BenchmarkBuilder());
-		PQLParser.addOperatorBuilder(BUFFER, new BufferAOBuilder());
+		OperatorBuilderFactory.putOperatorBuilderType(BATCH_PRODUCER,
+				BatchProducerBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(TEST_PRODUCER,
+				TestProducerPOBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(BENCHMARK,
+				BenchmarkBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(BUFFER,
+				BufferAOBuilder.class);
 	}
-	
+
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		PQLParser.removeOperatorBuilder(BATCH_PRODUCER);
-		PQLParser.removeOperatorBuilder(BENCHMARK);
-		PQLParser.removeOperatorBuilder(TEST_PRODUCER);
-		PQLParser.removeOperatorBuilder(BUFFER);
+		OperatorBuilderFactory.removeOperatorBuilderType(BATCH_PRODUCER);
+		OperatorBuilderFactory.removeOperatorBuilderType(BENCHMARK);
+		OperatorBuilderFactory.removeOperatorBuilderType(TEST_PRODUCER);
+		OperatorBuilderFactory.removeOperatorBuilderType(BUFFER);
 	}
 }

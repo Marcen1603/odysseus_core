@@ -1,13 +1,12 @@
 package de.uniol.inf.is.odysseus.parser.pql.benchmark;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
-import de.uniol.inf.is.odysseus.parser.pql.AbstractOperatorBuilder;
-import de.uniol.inf.is.odysseus.parser.pql.DirectParameter;
-import de.uniol.inf.is.odysseus.parser.pql.IntegerParameter;
-import de.uniol.inf.is.odysseus.parser.pql.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.DirectParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IParameter.REQUIREMENT;
 
 /**
  * @author Jonas Jacobi
@@ -24,11 +23,12 @@ public class BenchmarkBuilder extends AbstractOperatorBuilder {
 			PROCESSING_TIME, REQUIREMENT.MANDATORY);
 
 	public BenchmarkBuilder() {
+		super(1, 1);
 		setParameters(selectivity, processingTimeInns);
 	}
 
 	@Override
-	protected ILogicalOperator createOperator(List<ILogicalOperator> inputOps) {
+	protected ILogicalOperator createOperatorInternal() {
 		Integer processingTimeInns = this.processingTimeInns.getValue();
 		Double selectivity = this.selectivity.getValue();
 
@@ -36,5 +36,19 @@ public class BenchmarkBuilder extends AbstractOperatorBuilder {
 				selectivity);
 
 		return benchmarkAO;
+	}
+
+	@Override
+	protected boolean internalValidation() {
+		boolean isValid = true;
+		if (selectivity.getValue() < 0) {
+			addError(new IllegalParameterException("selectivity has to be greater than 0"));
+			isValid = false;
+		}
+		if (processingTimeInns.getValue() < 0) {
+			addError(new IllegalParameterException("time has to be greater than 0"));
+			isValid = false;
+		}
+		return isValid;
 	}
 }
