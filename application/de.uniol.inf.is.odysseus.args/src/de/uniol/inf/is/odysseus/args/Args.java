@@ -171,7 +171,7 @@ public class Args {
 		return get(parameterName);
 	}
 
-	public String getBoolean(String parameterName) {
+	public boolean getBoolean(String parameterName) {
 		return get(parameterName);
 	}
 

@@ -16,7 +16,9 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.SameDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.benchmarker.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
@@ -55,12 +57,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
 
 	private ITransformationHelper transformHelper;
-
-	@SuppressWarnings("unchecked")
-	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration(
-					new RelationalTransformationHelper(), "relational",
-					ITimeInterval.class));
+	private boolean noMetadataCreation;
 
 	public Benchmark() {
 		this.dataType = "relational";
@@ -120,22 +117,25 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		BenchmarkSink sink = new BenchmarkSink<ILatency>(result, maxResults);
 		LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
 		latency.subscribeSink(sink, 0, 0, latency.getOutputSchema());
-		
+
 		IntegrationPipe integration = new IntegrationPipe();
 		integration.subscribeSink(latency, 0, 0, latency.getOutputSchema());
-		
+
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(
 				this.transformHelper, dataType, getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
 		trafoConfig.setOption("useExtendedPostPriorisation",
 				this.extendedPostPriorisation);
+		if (noMetadataCreation) {
+			trafoConfig.setOption("NO_METADATA", true);
+		}
 
 		try {
 			synchronized (this) {
-				wait(1000);	
+				wait(1000);
 			}
-			
+
 			executor.setDefaultBufferPlacementStrategy(bufferPlacement);
 			executor.setScheduler(scheduler, schedulingStrategy);
 			if (useBenchmarkMemUsage) {
@@ -155,6 +155,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 				parameters.remove(defaultRoot);
 				defaultRoot = new ParameterDefaultRoot(integration, i);
 				parameters.add(defaultRoot);
+				parameters.add(new ParameterDefaultRootStrategy(
+						new SameDefaultRootStrategy()));
 				executor
 						.addQuery(
 								query.getE2(),
@@ -188,11 +190,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		q[2] = "CREATE STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
-			try {
-				this.executor.addQuery(s, "CQL", user, this.trafoConfigParam);
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
-			}
+			// try {
+			// this.executor.addQuery(s, "CQL", user, this.trafoConfigParam);
+			// } catch (PlanManagementException e) {
+			// e.printStackTrace();
+			// }
 		}
 	}
 
@@ -288,6 +290,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 	@Override
 	public void setExtendedPostPriorisation(boolean b) {
 		this.extendedPostPriorisation = b;
+	}
+
+	@Override
+	public void setNoMetadataCreation(boolean b) {
+		this.noMetadataCreation = b;
 	}
 
 }

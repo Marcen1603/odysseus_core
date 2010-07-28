@@ -107,7 +107,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String OUT = "-out";
 	private static final String WAIT = "-wait";
 	private static final String MEMORY_USAGE = "-memUsage";
-
+	private static final String NO_METADATA = "-no_metadata";
 	// private static Logger logger =
 	// LoggerFactory.getLogger(BenchmarkStarter.class);
 
@@ -146,6 +146,8 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		}
 
 		benchmark.setMetadataTypes(metaTypes);
+		
+		benchmark.setNoMetadataCreation(arguments.getBoolean(NO_METADATA));
 
 		if (arguments.get(PUNCTUATIONS)) {
 			benchmark.setUsePunctuations(true);
@@ -219,6 +221,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 						"<filename> - writes results in file <filename> (default=result.xml)");
 
 		arguments.addInteger(WAIT, REQUIREMENT.OPTIONAL, "<time in ms> - wait for time ms for the benchmarker to become available (default is infinite waiting)");
+		arguments.addBoolean(NO_METADATA, " - don't create MetadataCreationPOs");
 		arguments.parse(args);
 	}
 }

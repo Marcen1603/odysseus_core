@@ -25,4 +25,5 @@ public interface IBenchmark {
 	public List<DescriptiveStatistics> getMemUsagePuffer();
 	public List<DescriptiveStatistics> getMemUsageJoinPunctuations();
 	public void setExtendedPostPriorisation(boolean b);
+	public void setNoMetadataCreation(boolean b);
 }
