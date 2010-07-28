@@ -5,7 +5,8 @@
    <extension
          id="application"
          point="org.eclipse.core.runtime.applications">
-      <application>
+      <application
+            icon="icons/appicon.gif">
          <run
                class="de.uniol.inf.is.odysseus.rcp.application.Application">
          </run>

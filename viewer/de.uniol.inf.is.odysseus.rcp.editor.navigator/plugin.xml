@@ -5,6 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             class="de.uniol.inf.is.odysseus.rcp.editor.navigator.view.NavigatorViewPart"
+            icon="Icons/navigator.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.navigator"
             name="Navigator"
             restorable="true">

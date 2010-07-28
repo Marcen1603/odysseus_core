@@ -47,6 +47,7 @@
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.editor.StreamEditor"
             default="false"
+            icon="Icons/lupe.gif"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.StreamEditor"
             name="Stream Editor">
       </editor>

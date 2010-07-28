@@ -6,6 +6,7 @@
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.view.editor.impl.GraphViewEditor"
             default="false"
+            icon="icons/graph.jpg"
             id="de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor"
             name="Graph Editor">
       </editor>
