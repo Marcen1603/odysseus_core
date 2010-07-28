@@ -32,7 +32,7 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 	}
 
 	@Override
-	final protected void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 		byte prio = object.getMetadata().getPriority();
 
 		if (prio > 0) {
