@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.base;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -10,11 +11,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 /**
  * @author Jonas Jacobi
  */
-public class MapAO extends UnaryLogicalOp {
+public class MapAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<SDFExpression> expressions;
-	private SDFAttributeList outputSchema = null;
+	private SDFAttributeList outputSchema = new SDFAttributeList();
 
 	public MapAO() {
 		super();
@@ -30,11 +31,15 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	private void calcOutputSchema() {
+		outputSchema.clear();
 		if (expressions != null) {
-				this.outputSchema = new SDFAttributeList();
+			SDFAttributeList inputSchema = getInputSchema();
+			if (inputSchema != null) {
 				for (SDFExpression expr : expressions) {
 					SDFAttribute attr = new SDFAttribute(expr.getExpression());
-					//FIXME stimmt natuerlich nicht im allgemeinen, aber atm ist datatype unbekannt
+					// FIXME stimmt natuerlich nicht im allgemeinen, aber atm
+					// ist
+					// datatype unbekannt
 					attr.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
 					outputSchema.add(attr);
 
@@ -47,6 +52,7 @@ public class MapAO extends UnaryLogicalOp {
 					// } else{
 					// outputSchema.add(new SDFAttribute(expr.toString()));
 					// }
+				}
 			}
 		}
 	}
@@ -58,9 +64,30 @@ public class MapAO extends UnaryLogicalOp {
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		if (outputSchema == null)
-			calcOutputSchema();
 		return outputSchema;
+	}
+
+	@Override
+	public void setOutputSchema(SDFAttributeList outputSchema) {
+		this.outputSchema = outputSchema.clone();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp#
+	 * subscribeToSource(de.uniol.inf.is.odysseus.base.ILogicalOperator, int,
+	 * int,
+	 * de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
+	 */
+	@Override
+	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
+			int sourceOutPort, SDFAttributeList inputSchema) {
+		super.subscribeToSource(source, sinkInPort, sourceOutPort, inputSchema);
+		if (outputSchema.size() == 0) {
+			calcOutputSchema();
+		}
 	}
 
 	@Override
