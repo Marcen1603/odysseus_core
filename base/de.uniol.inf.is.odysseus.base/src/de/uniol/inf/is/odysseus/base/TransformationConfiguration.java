@@ -77,6 +77,10 @@ public class TransformationConfiguration {
 		return (T) this.options.get(key);
 	}
 	
+	public boolean hasOption(String key) {
+		return this.options.containsKey(key);
+	}
+	
 	public void removeOption(String key){
 		this.options.remove(key);
 	}
