@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.rcp.editor;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.ConnectionLayer;
-import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditDomain;
@@ -62,7 +62,7 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 		RootEditPart root = graphicalViewer.getRootEditPart();
 
 		if (root instanceof LayerManager) {
-			((ConnectionLayer) ((LayerManager) root).getLayer(LayerConstants.CONNECTION_LAYER)).setConnectionRouter(new ManhattanConnectionRouter());
+			((ConnectionLayer) ((LayerManager) root).getLayer(LayerConstants.CONNECTION_LAYER)).setConnectionRouter(new BendpointConnectionRouter());
 		}
 
 		createActions();
