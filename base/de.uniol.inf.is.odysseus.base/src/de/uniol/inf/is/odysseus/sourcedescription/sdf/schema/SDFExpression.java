@@ -232,40 +232,47 @@ public class SDFExpression implements Serializable {
 				return v;
 			}
 		}
-		SDFAttribute attribute = this.attributeResolver.getAttribute(token);
-		String aliasName = null;
+		try {
+			SDFAttribute attribute = this.attributeResolver.getAttribute(token);
+			String aliasName = null;
 
-		/**
-		 * We have to allow the variable "t" for "time" in expressions, although
-		 * time is not an attribute of a relational schema. This is because,
-		 * prediction function make use of the time attribute.
-		 * 
-		 * So, what we have to do is to check if the token equals "t" if no
-		 * attribute has been found for the token name. TODO an ABo, kann man
-		 * diese spezialbehandlung nicht irgendwie rausziehen?
-		 */
-		if (attribute == null && !token.equals("t")) {
-			System.err.println("no such attribute: " + token);
-			throw new SDFExpressionParseException("No such attribute: " + token);
-		} else if (token.equals("t")) {
-			aliasName = "t";
-			attribute = new SDFAttribute(null, "t");
-		} else {
-			aliasName = attribute.getPointURI();
+			/**
+			 * We have to allow the variable "t" for "time" in expressions,
+			 * although time is not an attribute of a relational schema. This is
+			 * because, prediction function make use of the time attribute.
+			 * 
+			 * So, what we have to do is to check if the token equals "t" if no
+			 * attribute has been found for the token name. TODO an ABo, kann
+			 * man diese spezialbehandlung nicht irgendwie rausziehen?
+			 */
+			if (attribute == null && !token.equals("t")) {
+				System.err.println("no such attribute: " + token);
+				throw new SDFExpressionParseException("No such attribute: "
+						+ token);
+			} else if (token.equals("t")) {
+				aliasName = "t";
+				attribute = new SDFAttribute(null, "t");
+			} else {
+				aliasName = attribute.getPointURI();
+			}
+
+			Variable var = this.variables.get(aliasName);
+			if (var == null) {
+				String varName = "__V" + ++this.varCounter;
+				myParser.addVariable(varName, null);
+				var = myParser.getVar(varName);
+				this.variableArrayList.add(var);
+				this.attributes.add(attribute.clone());
+				this.variables.put(aliasName, var);
+				insertAttributePath(token);
+			}
+			return var;
+		} catch (NoSuchAttributeException e) {
+			e.printStackTrace();
+		} catch (AmgigiousAttributeException e) {
+			e.printStackTrace();
 		}
-
-		Variable var = this.variables.get(aliasName);
-		if (var == null) {
-			String varName = "__V" + ++this.varCounter;
-			myParser.addVariable(varName, null);
-			var = myParser.getVar(varName);
-			this.variableArrayList.add(var);
-			this.attributes.add(attribute.clone());
-			this.variables.put(aliasName, var);
-			insertAttributePath(token);
-		}
-
-		return var;
+		return null;
 	}
 
 	protected void insertAttributePath(String token) {

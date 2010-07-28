@@ -21,15 +21,14 @@ public class DirectAttributeResolver implements IAttributeResolver {
 		this.schema = directAttributeResolver.schema.clone();
 	}
 
-	public SDFAttribute getAttribute(String name) {
+	public SDFAttribute getAttribute(String name) throws AmgigiousAttributeException, NoSuchAttributeException {
 		String[] parts = name.split("\\.", 2);
 		SDFAttribute found = null;
 		for (SDFAttribute attr : schema) {
 			if (parts.length == 1) {
 				if (((SDFAttribute) attr).getAttributeName().equals(name)) {
 					if (found != null) {
-						throw new IllegalArgumentException(
-								"amgigious attribute: " + name);
+						throw new AmgigiousAttributeException(name);
 					}
 					found = attr;
 				}
@@ -40,7 +39,7 @@ public class DirectAttributeResolver implements IAttributeResolver {
 			}
 		}
 		if (found == null) {
-			throw new IllegalArgumentException("no such attribute: " + name);
+			throw new NoSuchAttributeException(name);
 		}
 		return found;
 	}
