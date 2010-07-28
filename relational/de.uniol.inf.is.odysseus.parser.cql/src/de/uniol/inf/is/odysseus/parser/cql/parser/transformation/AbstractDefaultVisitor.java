@@ -95,7 +95,9 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.predicate.SDFCompareOperatorFactory;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFPredicates;
 
 public class AbstractDefaultVisitor implements NewSQLParserVisitor {
@@ -249,10 +251,21 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	protected String getName(ASTAggregateExpression curChild,
 			IAttributeResolver attributeResolver) {
-		return (curChild.jjtGetChild(0)).toString()
-				+ "("
-				+ attributeResolver.getAttribute(curChild.jjtGetChild(1)
-						.toString()) + ")";
+
+		try {
+			return (curChild.jjtGetChild(0)).toString()
+					+ "("
+					+ attributeResolver.getAttribute(curChild.jjtGetChild(1)
+							.toString()) + ")";
+		} catch (AmgigiousAttributeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAttributeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+
 	}
 
 	public Object visit(ASTRenamedExpression node, Object data) {
