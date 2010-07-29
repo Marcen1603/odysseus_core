@@ -1,18 +1,18 @@
 
-package de.uniol.inf.is.odysseus.scars.objecttracking;
+package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
-public class CovarianceInitiatorTest
+public class StreamCarsMetaDataInitializerTest
 {
   public static void main(String[] args)
   {
     TestFactory.create();
     System.out.println(TestFactory.schema);
-    //CovarianceInitiatorTest.tryIterator();
-    CovarianceInitiatorTest.test();
+    //StreamCarsMetaDataInitializerTest.tryIterator();
+    StreamCarsMetaDataInitializerTest.test();
   }
   
   public static void tryIterator()
@@ -43,13 +43,13 @@ public class CovarianceInitiatorTest
   
   public static void test()
   {
-    // create CovarianceInitiator
+    // create StreamCarsMetaDataInitializer
     
     // Notiz: SDFDatatype.isXXX(SDFDatatype) sollte false liefern, falls übergebener
     // SDFDatatype null ist!
-    CovarianceInitiator<IProbability> covInit = new CovarianceInitiator<IProbability>(TestFactory.schema);
+    StreamCarsMetaDataInitializer<IProbability> covInit = new StreamCarsMetaDataInitializer<IProbability>(TestFactory.schema);
     
-    // initialize iprobability metadata of tuples with CovarianceInitiator
+    // initialize iprobability metadata of tuples with StreamCarsMetaDataInitializer
     
     covInit.updateMetadata(TestFactory.tuple);
   }

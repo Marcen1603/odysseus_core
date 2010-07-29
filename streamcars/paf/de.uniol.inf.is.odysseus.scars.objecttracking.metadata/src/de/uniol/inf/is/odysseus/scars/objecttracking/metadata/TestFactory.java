@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking;
+package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
