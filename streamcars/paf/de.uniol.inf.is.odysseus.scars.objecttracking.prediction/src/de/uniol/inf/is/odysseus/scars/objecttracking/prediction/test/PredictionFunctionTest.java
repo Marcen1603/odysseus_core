@@ -46,10 +46,13 @@ public class PredictionFunctionTest {
 		
 		e[0] = new PredictionExpression("a.list:obj:pos:x", "a.list:obj:pos:x * (b.currentTime - a.scanTime)");
 		e[1] = new PredictionExpression("a.list:obj:pos:y", "a.list:obj:pos:y * (b.currentTime - a.scanTime)");
-		e[2] = new PredictionExpression("a.list:obj:pos:x", "a.list:obj:pos:z * (b.currentTime - a.scanTime)");
+		e[2] = new PredictionExpression("a.list:obj:pos:z", "a.list:obj:pos:z * (b.currentTime - a.scanTime)");
 		e[3] = new PredictionExpression("a.list:obj:speed", "a.list:obj:speed * (b.currentTime - a.scanTime)");
 		
-		
+//		e[0] = new PredictionExpression("a.list:obj:pos:x", "a.list:obj:pos:x");
+//		e[1] = new PredictionExpression("a.list:obj:pos:y", "a.list:obj:pos:y");
+//		e[2] = new PredictionExpression("a.list:obj:pos:x", "a.list:obj:pos:z");
+//		e[3] = new PredictionExpression("a.list:obj:speed", "a.list:obj:speed");
 		
 		return e;
 	}

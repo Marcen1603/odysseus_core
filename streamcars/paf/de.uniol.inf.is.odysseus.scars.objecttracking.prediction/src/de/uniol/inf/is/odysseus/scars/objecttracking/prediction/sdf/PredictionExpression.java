@@ -93,6 +93,7 @@ public class PredictionExpression {
 	 * @param variableName
 	 */
 	protected void createVariable(String variableName) {
+		System.out.println("create variable: " + variableName);
 		String[] varSplit = variableName.split("\\.", 2);
 		String source = varSplit[0];
 		List<String> varNames = variables.get(source);
@@ -121,7 +122,10 @@ public class PredictionExpression {
 	public void initAttributePaths(SDFAttributeList schema) {
 		String sourceName = getSourceName(schema);
 		List<String> schemaVariables = variables.get(sourceName);
-
+		if(schemaVariables == null) {
+			//schema not requiered by expression, so simple ignore
+			return;
+		}
 		for(String var : schemaVariables) {
 			variablePaths.put(var, resolveAttributePath(schema, var));
 		}
@@ -186,7 +190,11 @@ public class PredictionExpression {
 	 * @return
 	 */
 	public List<String> getAttributeNames(SDFAttributeList schema) {
-		return variables.get(getSourceName(schema));
+		List<String> attrNames = variables.get(getSourceName(schema));
+		if(attrNames == null) {
+			return new ArrayList<String>();
+		}
+		return attrNames;
 	}
 	
 	/**
@@ -266,7 +274,10 @@ public class PredictionExpression {
 	public void replaceVaryingAttributeIndex(SDFAttributeList schema, int index) {
 		String sourceName = getSourceName(schema);
 		List<String> schemaVarNames = variables.get(sourceName);
-		
+		if(schemaVarNames == null) {
+			//schema not requiered by expression, so simple ignore
+			return;
+		}
 		for(String var : schemaVarNames) {
 			replaceIndex(getAttributePath(var), index);
 		}
