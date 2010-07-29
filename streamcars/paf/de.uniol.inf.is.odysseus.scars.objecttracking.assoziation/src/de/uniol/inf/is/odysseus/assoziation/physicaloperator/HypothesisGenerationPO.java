@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.assoziation.physicaloperator;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -26,18 +28,18 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	private int[] newObjListPath;
 
 	public HypothesisGenerationPO() {
-		
+
 	}
-	
+
 	public HypothesisGenerationPO(HypothesisGenerationPO<M> copy) {
 		super(copy);
-		
+
 		this.oldList = copy.getOldList();
 		this.newList = copy.getNewList();
 		this.oldObjListPath = copy.getOldObjListPath();
 		this.newObjListPath = copy.getNewObjListPath();
 	}
-	
+
 	public MVRelationalTuple<M> getOldList() {
 		return oldList;
 	}
@@ -53,7 +55,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	public void setNewList(MVRelationalTuple<M> newList) {
 		this.newList = newList;
 	}
-	
+
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		// TODO Auto-generated method stub
@@ -68,17 +70,23 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		if(this.oldList == null || this.newList == null) {
 			switch(port) {
+				/*
+				 *  WICHTIG: Im sekundären Zyklus muss das, was aus dem primären Zyklus
+				 *  aus der HypothesisSelection in diesen Operator kommt auf Port 1
+				 *  ankommen!!!!!!!!!
+				 *
+				 */
 				case 0: this.oldList = object;
 				case 1: this.newList = object;
 			}
 		} else {
-			Object[] oldNewListArray = new Object[2];
-			oldNewListArray[0] = OrAttributeResolver.resolveTuple(this.oldList, this.oldObjListPath);
-			oldNewListArray[1] = OrAttributeResolver.resolveTuple(this.newList, this.newObjListPath);
-			MVRelationalTuple<M> oldNewList = new MVRelationalTuple<M>(oldNewListArray);
+			Object[] oldListAttributes = oldList.getAttributes();
+			ArrayList<Object> oldNewListAttributes = new ArrayList<Object>();
+			oldNewListAttributes.add(oldListAttributes);
+			oldNewListAttributes.add(OrAttributeResolver.resolveTuple(this.newList, this.newObjListPath));
 			this.oldList = null;
 			this.newList = null;
-			transfer(oldNewList);
+			transfer(new MVRelationalTuple<M>(oldNewListAttributes.toArray()));
 		}
 	}
 
@@ -107,7 +115,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	public void setNewObjListPath(int[] newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}
-	
+
 	public void testProcessNext(MVRelationalTuple<M> object, int port) {
 		process_next(object, port);
 	}
