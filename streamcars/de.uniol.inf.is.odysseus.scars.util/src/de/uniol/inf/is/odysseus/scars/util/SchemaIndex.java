@@ -25,6 +25,10 @@ public class SchemaIndex {
 		return index;
 	}
 	
+	public boolean isRoot() {
+		return index < 0;
+	}
+	
 	public SDFAttribute getAttribute() {
 		return attribute;
 	}

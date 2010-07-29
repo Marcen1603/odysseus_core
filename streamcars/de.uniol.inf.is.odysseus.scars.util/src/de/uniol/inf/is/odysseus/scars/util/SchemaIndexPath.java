@@ -61,7 +61,13 @@ public class SchemaIndexPath {
 	public TupleIndexPath toTupleIndexPath(MVRelationalTuple<?> tuple) {
 		List<TupleIndex> list = new ArrayList<TupleIndex>();
 		Object parent = tuple;
-		for( int i = 0; i < indices.size(); i++ ) {
+		
+		if( indices.size() == 1 && indices.get(0).isRoot()) {
+			list.add(new TupleIndex(tuple, -1, getAttribute()));
+			return new TupleIndexPath(list, this);
+		}
+		
+		for( int i = 1; i < indices.size(); i++ ) {
 			TupleIndex idx = new TupleIndex( ((MVRelationalTuple<?>)parent), indices.get(i).toInt(), indices.get(i).getAttribute());
 			list.add(idx);
 			

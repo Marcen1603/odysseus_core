@@ -61,16 +61,14 @@ public class Example {
 		schema = new SDFAttributeList( new SDFAttribute[] {base} );
 		
 		// Tupel
-		baseTuple = new MVRelationalTuple<IProbability>(1);
-		MVRelationalTuple<IProbability> tuple = new MVRelationalTuple<IProbability>(5);
-		baseTuple.setAttribute(0, tuple);
+		baseTuple = new MVRelationalTuple<IProbability>(5);
 		
 		MVRelationalTuple<IProbability> tuple_a = new MVRelationalTuple<IProbability>(3);
-		tuple.setAttribute(0, tuple_a);
-		tuple.setAttribute(1, (long)100);
-		tuple.setAttribute(2, (int)20);
-		tuple.setAttribute(3, (long)1345);
-		tuple.setAttribute(4, 123.45);
+		baseTuple.setAttribute(0, tuple_a);
+		baseTuple.setAttribute(1, (long)100);
+		baseTuple.setAttribute(2, (int)20);
+		baseTuple.setAttribute(3, (long)1345);
+		baseTuple.setAttribute(4, 123.45);
 		
 		tuple_a.setAttribute(0, "Hallo");
 		MVRelationalTuple<IProbability> tuple_a_b = new MVRelationalTuple<IProbability>(10); // die Liste

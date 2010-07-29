@@ -57,6 +57,8 @@ public class TupleIndex {
 	 * @return Wert des Tupels.
 	 */
 	public Object getValue() {
+		if( valueIndex == -1  )
+			return parent;
 		return parent.getAttribute(valueIndex);
 	}
 	
