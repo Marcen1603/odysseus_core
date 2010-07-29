@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
- * Initializes tuple (of type {@link MVRelationalTuple}) metadata used by
+ * Initializes tuple (of type {@link MVRelationalTuple}) meta data used by
  * project group StreamCars.
  * <p>
  * See public methods for details.
@@ -28,18 +28,18 @@ public class StreamCarsMetaDataInitializer<M extends IProbability> extends
 {
   // set by constructor/initMetadata
   // used by updateMetadata
-  private double[][] covMatrix = null;
   private SDFAttributeList schema;
+  private double[][] covMatrix = null;
 
   /**
-   * Creates a StreamCarsMetaDataInitializer object and initializes the metadata used by
-   * {@link #updateMetadata(MVRelationalTuple)}.
+   * Creates a StreamCarsMetaDataInitializer object and initializes the meta data used by
+   * {@link #updateMetaData(MVRelationalTuple)}.
    * <p>
-   * NOTE: schema is used by {@link #updateMetadata(MVRelationalTuple)} as root
+   * NOTE: schema is used by {@link #updateMetaData(MVRelationalTuple)} as root
    * to navigate through the tuple given. So it has to represent the schema of
    * the tuples which shall be initialized by this object.
    * <p>
-   * Probability Metadata (type IProbability)
+   * Probability Meta Data (type IProbability)
    * <p>
    * As basis for initializing the schema given is used. It is searched for
    * measurement value attributes by invoking
@@ -47,27 +47,27 @@ public class StreamCarsMetaDataInitializer<M extends IProbability> extends
    * for each attribute or subattribute.
    * <p>
    * Finally, each row of the covariance matrix used by
-   * {@link #updateMetadata(MVRelationalTuple)} is set to the covariance list of
+   * {@link #updateMetaData(MVRelationalTuple)} is set to the covariance list of
    * each measurement value attribute found in the schema respectively (see
    * {@link SDFAttribute#getCovariance()}).
    * 
    * @param schema
-   *          the schema, used to initialize metadata, NOTE: has to be the
+   *          the schema, used to initialize meta data, NOTE: has to be the
    *          schema of the tuples which shall be initialized by this object!
    */
   public StreamCarsMetaDataInitializer(SDFAttributeList schema)
   {
     this.schema = schema;
-    this.initMetadata();
+    this.initMetaData();
   }
 
-  private void initMetadata()
+  private void initMetaData()
   {
-    this.initProbabilityMetadata();
-    // invoke more metadata initializers here
+    this.initProbabilityMetaData();
+    // invoke more StreamCars meta data initializers here
   }
   
-  private void initProbabilityMetadata()
+  private void initProbabilityMetaData()
   {
     // 
     // get measurement attributes of schema given to constructor
@@ -84,6 +84,8 @@ public class StreamCarsMetaDataInitializer<M extends IProbability> extends
       
       // if current attribute is measurement attribute
       SDFDatatype type = attr.getDatatype();
+      // Notiz: SDFDatatype.isXXX(SDFDatatype) sollte false liefern, falls übergebener
+      // SDFDatatype null ist!
       if (type != null && SDFDatatypes.isMeasurementValue(type))
       {
           
@@ -128,32 +130,32 @@ public class StreamCarsMetaDataInitializer<M extends IProbability> extends
   }
 
   /**
-   * Initializes tuple (of type {@link MVRelationalTuple}) metadata used by
+   * Initializes tuple (of type {@link MVRelationalTuple}) meta data used by
    * project group StreamCars.
    * <p>
-   * The metadata used to update tuple is being set by the constructor. See
+   * The meta data used to update tuple is being set by the constructor. See
    * {@link #StreamCarsMetaDataInitializer(SDFAttributeList)} for details.
    * <p>
    * NOTE: It is assumed that the schema used to initialize this object
    * represents the schema of the tuple initialized by this method.
    * 
    * @param tuple
-   *          tuple of which metadata (M) should be initialized, NOTE: has to
+   *          tuple of which meta data (M) should be initialized, NOTE: has to
    *          match schema given to constructor!
    */
   @Override
   public void updateMetadata(MVRelationalTuple<M> tuple)
   {
-    this.initMetadataOfTuple(tuple);
+    this.initMetaDataOfTuple(tuple);
   }
 
-  private void initMetadataOfTuple(MVRelationalTuple<M> tupleGiven)
+  private void initMetaDataOfTuple(MVRelationalTuple<M> tupleGiven)
   {
-    this.initProbabilityMetadataOfTuple(tupleGiven);
+    this.initProbabilityMetaDataOfTuple(tupleGiven);
     // invoke more tuple metadata initializers here
   }
   
-  private void initProbabilityMetadataOfTuple(MVRelationalTuple<M> tupleGiven)
+  private void initProbabilityMetaDataOfTuple(MVRelationalTuple<M> tupleGiven)
   {
     // 
     // set covariance matrix of tuple given
@@ -161,8 +163,8 @@ public class StreamCarsMetaDataInitializer<M extends IProbability> extends
     // element)
     // 
     
-    IProbability iProbabilityMetadata = tupleGiven.getMetadata();
-    iProbabilityMetadata.setCovariance(this.covMatrix);
+    IProbability iProbabilityMetaData = tupleGiven.getMetadata();
+    iProbabilityMetaData.setCovariance(this.covMatrix);
     
     // 
     // set covariance matrix of tuples in tuple given
@@ -182,17 +184,17 @@ public class StreamCarsMetaDataInitializer<M extends IProbability> extends
       {
         MVRelationalTuple<?> tuple = (MVRelationalTuple<?>) tupleObject;
         
-        // then get probability metadata of tuple
+        // then get probability meta data of tuple
         Object metadataObject = tuple.getMetadata();
-        // we know that the tuple cant't contain any metadata but probability
-        // metadata (type IProbability), since it says so in declaration
+        // we know that the tuple cant't contain any meta data but probability
+        // meta data (type IProbability), since it says so in declaration
         // of MVRelationalTuple
-        iProbabilityMetadata = (IProbability) metadataObject;
+        iProbabilityMetaData = (IProbability) metadataObject;
         
         // set covariance matrix to the one set by initMetadataItself
         // a NullPointerException thrown by this line
-        // means that metadata creation failed
-        iProbabilityMetadata.setCovariance(this.covMatrix);
+        // means that meta data creation failed
+        iProbabilityMetaData.setCovariance(this.covMatrix);
       }
       
       // tell iterator to move to next tuple
