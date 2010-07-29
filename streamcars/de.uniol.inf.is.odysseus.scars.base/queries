@@ -127,3 +127,6 @@ ASSOCIATION-SEL (
 	sensorA.dummy,
 	sensorB.dummy
 )
+
+LOGICAL PLAN :
+ASSOCIATION-SRC ( testAssociation, 1 )
