@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class SchemaIterator {
 
@@ -21,6 +22,22 @@ public class SchemaIterator {
 	public SchemaIterator(SchemaIndexPath start, int maxLevels) {
 		this.maxLevels = maxLevels;
 		reset(start);
+	}
+	
+	public SchemaIterator( SDFAttributeList completeSchema ) {
+		this( completeSchema, Integer.MAX_VALUE);
+	}
+	
+	public SchemaIterator( SDFAttributeList completeSchema, int maxLevels ) {
+		this.maxLevels = maxLevels;
+		
+		SDFAttribute attr = completeSchema.get(0);
+		String name = attr.getAttributeName();
+		
+		SchemaHelper hlp = new SchemaHelper(completeSchema);
+		SchemaIndexPath path = hlp.getSchemaIndexPath(name);
+		
+		reset(path);
 	}
 
 	public void reset(SchemaIndexPath start) {
