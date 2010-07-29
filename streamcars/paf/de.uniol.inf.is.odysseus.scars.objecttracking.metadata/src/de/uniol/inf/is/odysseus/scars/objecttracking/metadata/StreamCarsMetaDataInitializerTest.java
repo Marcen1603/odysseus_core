@@ -11,8 +11,8 @@ public class StreamCarsMetaDataInitializerTest
   {
     TestFactory.create();
     System.out.println(TestFactory.schema);
-    //StreamCarsMetaDataInitializerTest.tryIterator();
-    StreamCarsMetaDataInitializerTest.test();
+    StreamCarsMetaDataInitializerTest.tryIterator();
+    //StreamCarsMetaDataInitializerTest.test();
   }
   
   public static void tryIterator()
@@ -45,11 +45,9 @@ public class StreamCarsMetaDataInitializerTest
   {
     // create StreamCarsMetaDataInitializer
     
-    // Notiz: SDFDatatype.isXXX(SDFDatatype) sollte false liefern, falls übergebener
-    // SDFDatatype null ist!
     StreamCarsMetaDataInitializer<IProbability> covInit = new StreamCarsMetaDataInitializer<IProbability>(TestFactory.schema);
     
-    // initialize iprobability metadata of tuples with StreamCarsMetaDataInitializer
+    // initialize probability meta data of tuples with StreamCarsMetaDataInitializer
     
     covInit.updateMetadata(TestFactory.tuple);
   }
