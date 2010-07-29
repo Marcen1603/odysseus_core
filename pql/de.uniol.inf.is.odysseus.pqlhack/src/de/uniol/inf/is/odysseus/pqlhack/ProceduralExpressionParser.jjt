@@ -368,5 +368,5 @@ void AssociationSelOp(): {} {
 }
 
 void AssociationSrcOp(): {} {
-  < K_ASSOCIATION_SRC > "(" Identifier() ")"
+  < K_ASSOCIATION_SRC > "(" Identifier() "," Number() ")"
 }

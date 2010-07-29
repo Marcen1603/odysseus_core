@@ -1416,7 +1416,7 @@ void AssociationSrcOp(): {/*@bgen(jjtree) AssociationSrcOp */
 /*@egen*/} {/*@bgen(jjtree) AssociationSrcOp */
   try {
 /*@egen*/
-  < K_ASSOCIATION_SRC > "(" Identifier() ")"/*@bgen(jjtree)*/
+  < K_ASSOCIATION_SRC > "(" Identifier() "," Number() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

@@ -19,7 +19,9 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.parser.pql.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 

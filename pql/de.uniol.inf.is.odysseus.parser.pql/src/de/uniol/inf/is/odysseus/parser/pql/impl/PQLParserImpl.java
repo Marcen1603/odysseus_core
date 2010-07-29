@@ -14,53 +14,36 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.parser.pql.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 @SuppressWarnings("all")
 public class PQLParserImpl implements PQLParserImplConstants {
-  private static Map < String, IOperatorBuilder > operatorBuilders = new HashMap < String, IOperatorBuilder > ();
-
-  public static void addOperatorBuilder(String identifier, IOperatorBuilder builder)
-  {
-    if (operatorBuilders.containsKey(identifier.toUpperCase()))
-    {
-      throw new IllegalArgumentException("builder for '" + identifier.toUpperCase() + "' already available");
-    }
-    operatorBuilders.put(identifier.toUpperCase(), builder);
-  }
-
-  public static void removeOperatorBuilder(String identifier)
-  {
-    operatorBuilders.remove(identifier.toUpperCase());
-  }
-
   static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)
   {
-    IOperatorBuilder builder = operatorBuilders.get(identifier.toUpperCase());
-    if (builder == null)
-    {
-      throw new IllegalArgumentException("unknown operator type: " + identifier.toUpperCase());
-    }
+    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase());
     List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();
-    for (InputOperatorItem item : inputOps)
-    {
-      inputOperators.add(item.operator);
-    }
-    ILogicalOperator operator = builder.createOperator(parameters, inputOperators);
     for (int i = 0;
     i < inputOps.size();
     ++ i)
     {
-      ILogicalOperator inputOperator = inputOps.get(i).operator;
-      operator.subscribeToSource(inputOperator, i, inputOps.get(i).outputPort, inputOperator.getOutputSchema());
+      builder.setInputOperator(i, inputOps.get(i).operator, inputOps.get(i).outputPort);
     }
+    PQLParser.initParameters(builder.getParameters(), parameters);
+    if (!builder.validate())
+    {
+      throw new ValidationException(builder.getErrors());
+    }
+    ILogicalOperator operator = builder.createOperator();
     return operator;
   }
 
@@ -202,7 +185,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       {if (true) throw new IllegalArgumentException("multiple definition of '"+ nameStr+ "'");}
     }
-
     if (isView)
     {
       nameStr = name.image;
@@ -219,11 +201,12 @@ public class PQLParserImpl implements PQLParserImplConstants {
       //get access operator for view, so other operators don't get subscribed
       //to top operator of the view
       op = dd.getView(nameStr);
-    } else
+    }
+    else
     {
       namedOpParameters.put(nameStr, parameters);
-         namedOps.put(nameStr, op);
-  }
+      namedOps.put(nameStr, op);
+    }
   }
 
   static final public ILogicalOperator operator(Map < String, ILogicalOperator > namedOps) throws ParseException {

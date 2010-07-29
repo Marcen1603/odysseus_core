@@ -1842,6 +1842,8 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         jj_consume_token(K_ASSOCIATION_SRC);
         jj_consume_token(54);
         Identifier();
+        jj_consume_token(56);
+        Number();
         jj_consume_token(55);
       } catch (Throwable jjte000) {
     if (jjtc000) {

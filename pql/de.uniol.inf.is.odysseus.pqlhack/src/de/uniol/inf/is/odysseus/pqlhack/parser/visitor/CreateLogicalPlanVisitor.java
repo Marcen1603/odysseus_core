@@ -1282,13 +1282,14 @@ public class CreateLogicalPlanVisitor implements
 		selection.initPaths(pathOld, pathNew);
 		
 		// saving op for source lookup
-		attrRes.addSource(opName, selection);
+		//attrRes.addSource(opName, selection);
+		DataDictionary.getInstance().setLogicalView(opName, selection);
 
 		// constructing return values
 		newData.add(attrRes);
 		newData.add(selection);
-		newData.add(new Integer(0));// TODO okay? are there different output ports used?
-
+		newData.add(new Integer(0));
+		
 		return newData;
 	}
 
@@ -1300,15 +1301,19 @@ public class CreateLogicalPlanVisitor implements
 		// get name and lookup operator
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
 		String srcName = identifier.getName();
-		ILogicalOperator associationSource = attrRes.getSource(srcName);
+		ILogicalOperator associationSource = DataDictionary.getInstance().getView(srcName);
 		if (associationSource == null) {
 			throw new RuntimeException("The source cannot be found: " + srcName);
 		}
 		
+		// get output-port of selection
+		String number = ((ASTNumber)node.jjtGetChild(1)).getValue();
+		Integer outputPort = new Integer(number);
+		
 		// constructing return values
 		newData.add(attrRes);
 		newData.add(associationSource);
-		newData.add(new Integer(0));
+		newData.add(outputPort);
 
 		return newData;
 	}
