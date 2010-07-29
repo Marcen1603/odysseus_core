@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
 
 
@@ -23,17 +23,17 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  * @param <M>
  *
  */
-public class KalmanCorrectStateEstimatePOTest<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
+public class KalmanCorrectStateEstimatePOTest {
 
 	private KalmanCorrectStateEstimatePO correctStateEstimatePO;
 	
 
 	
-	private MVRelationalTuple<M> measurementTuple;
+	private MVRelationalTuple<StreamCarsMetaData> measurementTuple;
 	
-	private MVRelationalTuple<M> expectedTuple;
+	private MVRelationalTuple<StreamCarsMetaData> expectedTuple;
 	
-	private MVRelationalTuple<M> resultTuple;
+	private MVRelationalTuple<StreamCarsMetaData> resultTuple;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -41,7 +41,7 @@ public class KalmanCorrectStateEstimatePOTest<M extends IGain & IProbability & I
 	@Before
 	public void setUp() throws Exception {
 	
-		FilterPOTestData<M> testData = new FilterPOTestData<M>();
+		FilterPOTestData testData = new FilterPOTestData();
 		
 		// Measurement Data
 		
@@ -67,7 +67,7 @@ public class KalmanCorrectStateEstimatePOTest<M extends IGain & IProbability & I
 		
 		expectedTuple = testData.generateTestTuple(speedOldExp, posOldExp, covarianceOld, speedNew, posNew, covarianceNew);
 		
-		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) expectedTuple.getMetadata().getConnectionList().toArray();
+		Connection[] objConList = (Connection[]) expectedTuple.getMetadata().getConnectionList().toArray();
 		
 		KalmanCorrectStateEstimateFunction estimatefunction = new KalmanCorrectStateEstimateFunction();
 		

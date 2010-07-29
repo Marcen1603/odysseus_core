@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @author dtwumasi
  *
  */
-public class FilterPOTestData<M extends IGain & IProbability & IConnectionContainer<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>> {
+public class FilterPOTestData {
 
 	
 	
-	private MVRelationalTuple<M> expectedTuple;
+	private MVRelationalTuple<StreamCarsMetaData> expectedTuple;
 	
 	public FilterPOTestData() {
 	
@@ -36,13 +36,13 @@ public class FilterPOTestData<M extends IGain & IProbability & IConnectionContai
 	// //	double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 	}
 		
-	public MVRelationalTuple<M> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew ) {
+	public MVRelationalTuple<StreamCarsMetaData> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew ) {
 		
 		Object[] attributesOld = {speedOld,posOld};
 		
 		// MVRelationalTuple to hold the data
 		
-		MVRelationalTuple<M> oldTuple = new MVRelationalTuple<M>(attributesOld);
+		MVRelationalTuple<StreamCarsMetaData> oldTuple = new MVRelationalTuple<StreamCarsMetaData>(attributesOld);
 		
 		// set positions
 		oldTuple.setMeasurementValuePositions(new int[] {0,1});
@@ -51,12 +51,12 @@ public class FilterPOTestData<M extends IGain & IProbability & IConnectionContai
 		// covariance
 		//covarianceOld = { {5.0,50.0}, {50.0,10.0} };
 		
-		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> metaOld = new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>, Double>();
+		StreamCarsMetaData metaOld = new StreamCarsMetaData();
 		
 		metaOld.setCovariance(covarianceOld);
 		
 		
-		//oldTuple.setMetadata(metaold);		
+		//oldTuple.setMetadata(metaOld);		
 					
 		// attributes for the new object
 		
@@ -66,7 +66,7 @@ public class FilterPOTestData<M extends IGain & IProbability & IConnectionContai
 		Object[] attributesNew = {speedNew,posNew};
 		
 		// MVRelationalTuple to hold the new data
-		MVRelationalTuple<M> newTuple = new MVRelationalTuple<M>(attributesNew);
+		MVRelationalTuple<StreamCarsMetaData> newTuple = new MVRelationalTuple<StreamCarsMetaData>(attributesNew);
 		
 		// set positions
 		newTuple.setMeasurementValuePositions(new int[] {0,1});
@@ -74,7 +74,7 @@ public class FilterPOTestData<M extends IGain & IProbability & IConnectionContai
 		// the covariance of the new measurement
 		//double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 		
-		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> metaNew = new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double>();
+		StreamCarsMetaData metaNew = new StreamCarsMetaData();
 		
 		metaNew.setCovariance(covarianceNew);
 		
@@ -82,11 +82,11 @@ public class FilterPOTestData<M extends IGain & IProbability & IConnectionContai
 		
 		// MVRelationalTuples to hold the old Tuples
 		
-		MVRelationalTuple<M> oldList = new MVRelationalTuple<M>(oldTuple);
+		MVRelationalTuple<StreamCarsMetaData> oldList = new MVRelationalTuple<StreamCarsMetaData>(oldTuple);
 		
 		oldList.setMeasurementValuePositions(new int[] {0});
 		
-		MVRelationalTuple<M> newList = new MVRelationalTuple<M>(newTuple);
+		MVRelationalTuple<StreamCarsMetaData> newList = new MVRelationalTuple<StreamCarsMetaData>(newTuple);
 		
 		newList.setMeasurementValuePositions(new int[] {0});
 		
@@ -94,19 +94,19 @@ public class FilterPOTestData<M extends IGain & IProbability & IConnectionContai
 		
 		Object[] measurements = {newList,oldList};
 		
-		MVRelationalTuple<M> measurementTuple = new MVRelationalTuple<M>(measurements);
+		MVRelationalTuple<StreamCarsMetaData> measurementTuple = new MVRelationalTuple<StreamCarsMetaData>(measurements);
 		
 		measurementTuple.setMeasurementValuePositions(new int[] {0,1});
 		
 		// connections
 		
-		ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> conList = new ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>();
+		ConnectionList conList = new ConnectionList();
 		
-		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>  con = new Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> (oldTuple,newTuple,5.0);
+		Connection  con = new Connection (oldTuple,newTuple,5.0);
 		
 		conList.add(0, con);
 	
-		StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double> streamCars= new StreamCarsMetaData<MVRelationalTuple<M>,MVRelationalTuple<M>,Double>(conList);
+		StreamCarsMetaData streamCars= new StreamCarsMetaData(conList);
 		
 		//measurementTuple.setMetadata((M) streamCars);
 	

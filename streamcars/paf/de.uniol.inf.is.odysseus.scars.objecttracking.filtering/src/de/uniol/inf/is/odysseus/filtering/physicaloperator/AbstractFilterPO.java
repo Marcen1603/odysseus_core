@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> >
+public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer >
 							extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private IFilterFunction filterFunction;
@@ -34,10 +34,6 @@ public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredic
 		this.setFilterFunction(filterFunctionAO.getFilterFunction());
 		
 	}
-	
-	public AbstractFilterPO(AbstractFilterPO copy) {
-		super(copy);
-		}
 	
 	
 	@Override
@@ -96,11 +92,12 @@ public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredic
 	 */
 	
 	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
+	
 	/**
 	 * 
 	 * @param connected
 	 */
-	public abstract void compute(Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> connected);
+	public abstract void compute(Connection connected);
 
 	/**
 	 * @return the filterFunction

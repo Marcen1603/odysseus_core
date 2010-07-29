@@ -23,6 +23,9 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	private String oldObjListPath;
 	private String newObjListPath;
 	
+	// path to default tuple
+	private String defaultObjListPath;
+	
 	// schemas
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
@@ -76,6 +79,14 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();
+	}
+
+	public void setDefaultObjListPath(String defaultObjListPath) {
+		this.defaultObjListPath = defaultObjListPath;
+	}
+
+	public String getDefaultObjListPath() {
+		return defaultObjListPath;
 	}
 }
 

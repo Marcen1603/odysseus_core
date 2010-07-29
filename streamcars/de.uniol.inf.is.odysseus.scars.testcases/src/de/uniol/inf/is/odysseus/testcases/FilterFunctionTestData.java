@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.filtering.HashConstants;
  * @author dtwumasi
  *
  */
-public class FilterFunctionTestData {
+public class FilterFunctionTestData<StreamCarsMetaData> {
 	
 	private HashMap<Integer,Object> testData;
 	
