@@ -34,17 +34,30 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 
 	public HypothesisEvaluationAO(HypothesisEvaluationAO<M> copy) {
 		super(copy);
+
+		this.oldObjListPath = copy.getOldObjListPathC();
+		this.newObjListPath = copy.getNewObjListPathC();
+		this.algorithmParameter = copy.getAlgorithmParameter();
+		this.measurementPairs = copy.getMeasurementPairs();
+		this.functionID = copy.getFunctionID();
 	}
 
+	@Override
+	public HypothesisEvaluationAO<M> clone(){
+		return new HypothesisEvaluationAO<M>(this);
+	}
+
+	public String getOldObjListPathC() {
+		return this.oldObjListPath;
+	}
+
+	public String getNewObjListPathC() {
+		return this.newObjListPath;
+	}
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();
-	}
-
-	@Override
-	public HypothesisEvaluationAO<M> clone() {
-		return new HypothesisEvaluationAO<M>(this);
 	}
 
 	public void initPaths(String oldObjListPath, String newObjListPath) {

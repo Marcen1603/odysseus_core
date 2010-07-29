@@ -40,6 +40,15 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IP
 
 	}
 
+	public AbstractHypothesisEvaluationPO(AbstractHypothesisEvaluationPO<M> clone) {
+		super(clone);
+
+		this.oldObjListPath = clone.getOldObjListPath();
+		this.newObjListPath = clone.getNewObjListPath();
+		this.algorithmParameter = clone.getAlgorithmParameter();
+		this.schema = clone.getSchema();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
