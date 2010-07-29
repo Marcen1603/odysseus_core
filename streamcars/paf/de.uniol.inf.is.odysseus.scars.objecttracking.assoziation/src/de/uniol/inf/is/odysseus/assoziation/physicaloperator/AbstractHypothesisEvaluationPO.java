@@ -83,10 +83,16 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 		}
 
 		// --- Relative Pfade von einem "Auto" aus zu den Messwerten finden ---
-		int[] pathToFirstCarInNewList = new int[this.getNewObjListPath().length];
+		int[] pathToFirstCarInNewList = new int[this.getNewObjListPath().length+1];
+		for(int i = 0; i < pathToFirstCarInNewList.length; i++) {
+			pathToFirstCarInNewList[i] = this.getNewObjListPath()[i];
+		}
 		pathToFirstCarInNewList[this.getNewObjListPath().length-1] = 0;
 
 		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length];
+		for(int i = 0; i < pathToFirstCarInOldList.length; i++) {
+			pathToFirstCarInOldList[i] = this.getOldObjListPath()[i];
+		}
 		pathToFirstCarInOldList[this.getOldObjListPath().length-1] = 0;
 
 		ArrayList<int[]> mesurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.schema, pathToFirstCarInNewList));
