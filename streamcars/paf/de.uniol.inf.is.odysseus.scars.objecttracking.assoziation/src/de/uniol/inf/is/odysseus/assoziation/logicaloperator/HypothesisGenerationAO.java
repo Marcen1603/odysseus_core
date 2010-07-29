@@ -48,7 +48,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return null;
+		return new HypothesisGenerationAO<M>(this);
 	}
 
 	public void initPaths(String oldObjListPath, String newObjListPath) {
