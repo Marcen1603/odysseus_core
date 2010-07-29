@@ -7,10 +7,8 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 
 
 
@@ -35,19 +33,19 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  */
 public class PredictionFunctionContainer<M extends IProbability> implements Iterable<IPredicate<MVRelationalTuple<M>>>{
 	
-	private Map<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<MVRelationalTuple<M>, M>> predictionFunctions;
+	private Map<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>> predictionFunctions;
 	private IPredicate<MVRelationalTuple<M>> defaultPredictionFunctionKey;
-	private IPredictionFunction<MVRelationalTuple<M>, M> defaultPredictionFunction;
+	private IPredictionFunction<M> defaultPredictionFunction;
 	
 	
 	public PredictionFunctionContainer() {
-		predictionFunctions = new HashMap<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<MVRelationalTuple<M>, M>>();
+		predictionFunctions = new HashMap<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>>();
 		defaultPredictionFunctionKey = new TruePredicate<MVRelationalTuple<M>>();
 		defaultPredictionFunction = null;
 	}
 	
 	public PredictionFunctionContainer(PredictionFunctionContainer<M> container) {
-		predictionFunctions = new HashMap<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<MVRelationalTuple<M>, M>>(container.getMap());
+		predictionFunctions = new HashMap<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>>(container.getMap());
 		defaultPredictionFunctionKey = container.getDefaultPredictionFunctionKey();
 		defaultPredictionFunction = container.getDefaultPredictionFunction();
 	}
@@ -58,7 +56,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	 * @param key
 	 * @return
 	 */
-	public IPredictionFunction<MVRelationalTuple<M>,M> get(IPredicate<MVRelationalTuple<M>> key) {
+	public IPredictionFunction<M> get(IPredicate<MVRelationalTuple<M>> key) {
 		if(key.equals(defaultPredictionFunctionKey)) {
 			return defaultPredictionFunction;
 		}
@@ -69,22 +67,13 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	 * Sets the default prediction function. Passing in some SDFExpressions which then are used to construct the prediction function.
 	 * @param defaultPredictionFunction
 	 */
-	public void setDefaultPredictionFunction(SDFExpression[] defaultPredictionFunction) {
-		IPredictionFunction<MVRelationalTuple<M>, M> predFct = new LinearProbabilityPredictionFunction<M>();
+	public void setDefaultPredictionFunction(PredictionExpression[] defaultPredictionFunction) {
+		IPredictionFunction<M> predFct = new LinearPredictionFunction<M>();
 		predFct.setExpressions(defaultPredictionFunction);
-		
-		int[][] vars = new int[defaultPredictionFunction.length][];
-		for(int u = 0; u<defaultPredictionFunction.length; u++){
-			SDFExpression expression = defaultPredictionFunction[u];
-			if(expression != null)
-				vars[u] = expression.getAttributePositions();
-		}
-		
-		predFct.setVariables(vars);
 		this.defaultPredictionFunction = predFct;
 	}
 	
-	public IPredictionFunction<MVRelationalTuple<M>,M> getDefaultPredictionFunction() {
+	public IPredictionFunction<M> getDefaultPredictionFunction() {
 		return defaultPredictionFunction;
 	}
 	
@@ -98,7 +87,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	 * Note: the default prediction function and key are treated differently, and are not contained in this map.
 	 * @return 
 	 */
-	public Map<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<MVRelationalTuple<M>, M>> getMap() {
+	public Map<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>> getMap() {
 		return predictionFunctions;
 	}
 	
@@ -108,23 +97,14 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	 * @param expressions
 	 * @param predicate
 	 */
-	public void setPredictionFunction(SDFExpression[] expressions, IPredicate<MVRelationalTuple<M>> predicate) {
+	public void setPredictionFunction(PredictionExpression[] expressions, IPredicate<MVRelationalTuple<M>> predicate) {
 		if (this.predictionFunctions.containsKey(predicate)) {
 			throw new IllegalArgumentException("predictionFunction already exists: " + expressions);
 		}
 		
-		IPredictionFunction<MVRelationalTuple<M>, M> predFct = new LinearProbabilityPredictionFunction<M>();
+		IPredictionFunction<M> predFct = new LinearPredictionFunction<M>();
 		predFct.setExpressions(expressions);
-		
-		int[][] vars = new int[expressions.length][];
-		for(int u = 0; u<expressions.length; u++){
-			SDFExpression expression = expressions[u];
-			if(expression != null)
-				vars[u] = expression.getAttributePositions();
-		}
-		
 		predicate.init();
-		predFct.setVariables(vars);
 		this.predictionFunctions.put(predicate, predFct);
 	}
 	

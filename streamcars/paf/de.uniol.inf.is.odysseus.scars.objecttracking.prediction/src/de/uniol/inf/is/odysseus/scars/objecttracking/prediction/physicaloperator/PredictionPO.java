@@ -3,17 +3,17 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperato
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
 public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private PointInTime currentTime;
+	private MVRelationalTuple<M> currentTime;
 	private MVRelationalTuple<M> currentScan;
 	
 	private int[] timeStampPath;
@@ -46,7 +46,7 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		// TODO sehr simple, muss noch darauf geachtet werden das die zeitintervalle bei den zwei eing�ngen zusammenpassen,
 		// ist jetzt nicht garantiert (sweaparea? irgendein Buffer?).
 		if(port == 0) {
-			currentTime = (PointInTime)OrAttributeResolver.resolveTuple(object, timeStampPath);
+			currentTime = object;
 		} else if(port == 1) {
 			currentScan = object;
 		}
@@ -64,8 +64,8 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		MVRelationalTuple<?> list = (MVRelationalTuple<?>)OrAttributeResolver.resolveTuple(currentScan, objListPath);
 		for(int index=0; index < list.getAttributeCount(); index++) {
 			MVRelationalTuple<M> obj = list.getAttribute(index);
-			IPredictionFunction<MVRelationalTuple<M>, M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
-			list.setAttribute(index, pf.predictAll(getOutputSchema(), obj, currentTime));
+			IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
+			pf.predictData(currentScan, currentTime, index);
 		}
 	}
 
