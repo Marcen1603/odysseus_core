@@ -5,18 +5,16 @@ import java.util.ArrayList;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
-public class MahalanobisDistanceEvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer> extends AbstractHypothesisEvaluationPO<M> {
+public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectionContainer> extends AbstractHypothesisEvaluationPO<M> {
 
-	private double threshold;
-	private String operator;
+	private double threshold = 5;
+	private String operator = "<=";
 
 	public double evaluate(MVRelationalTuple<M> tupleNew, MVRelationalTuple<M> tupleOld, ArrayList<int[]> mesurementValuePathsNew, ArrayList<int[]> mesurementValuePathsOld) {
 		// new = left; old = right
@@ -32,11 +30,15 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IPredictio
 
 		double[][] leftCov = tupleNew.getMetadata().getCovariance();
 		RealMatrix leftCovMatrix = new RealMatrixImpl(leftCov);
-
-		RealMatrix covInvMatrix = (rightCovMatrix.add(leftCovMatrix)).inverse();
+		RealMatrix covInvMatrix = rightCovMatrix.add(leftCovMatrix);
+		try {
+			covInvMatrix = covInvMatrix.inverse();
+		} catch (Exception e) {
+			return 0;
+		}
 
 		RealMatrix distanceMatrix = leftV.subtract(rightV).transpose().multiply(covInvMatrix).multiply(leftV.subtract(rightV));
-		double distance = distanceMatrix.getEntry(0, 0);
+		double distance = Math.abs(distanceMatrix.getEntry(0, 0));
 
 		if(this.operator.equals("<")){
 			if(distance < this.threshold) {
