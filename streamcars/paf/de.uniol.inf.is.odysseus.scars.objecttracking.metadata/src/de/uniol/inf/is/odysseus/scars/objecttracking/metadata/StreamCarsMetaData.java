@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 
@@ -9,68 +11,28 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
  *
  * @author Volker Janz
  *
- * @param <L> Datatype of the left object (ConnectionContainer)
- * @param <R> Datatype of the right object (ConnectionContainer)
- * @param <W> Datatype of the rating - has to extend java.lang.Number (Double, Integer, ...) (ConnectionContainer)
  */
-public class StreamCarsMetaData<L, R, W extends java.lang.Number> extends Probability implements IConnectionContainer<L, R, W>, IRating, IGain, IProbability  {
+public class StreamCarsMetaData implements IConnectionContainer, IGain, IProbability  {
 
 	/* ############### KONSTRUKTOREN ################ */
 
 	public StreamCarsMetaData() {
-		this.connectionList = new ConnectionList<L, R, W>();
-		this.rating = 0;
+		this.connectionList = new ConnectionList();
 	}
 
-	public StreamCarsMetaData(ConnectionList<L, R, W> inilist) {
+	public StreamCarsMetaData(ConnectionList inilist) {
 		this.setConnectionList(inilist);
-	}
-
-	public StreamCarsMetaData(int init) {
-		if(init <= 0) {
-			init = 0;
-		}
-		this.rating = init;
-	}
-
-	/* ############### RATING ################ */
-
-	private int rating;
-
-	public void setRating(int rating) {
-		this.rating = rating;
-	}
-
-	public int getRating() {
-		return this.rating;
-	}
-
-	public void incRating() {
-		this.rating++;
-	}
-
-	public void decRating() {
-		if(this.rating >= 0) {
-			this.rating--;
-		}
-	}
-
-	public boolean isZero() {
-		if(this.rating >= 0) {
-			return true;
-		}
-		return false;
 	}
 
 	/* ############### CONNECTIONCONTAINER ################ */
 
-	private ConnectionList<L, R, W> connectionList;
+	private ConnectionList connectionList;
 
-	public void setConnectionList(ConnectionList<L, R, W> list) {
+	public void setConnectionList(ConnectionList list) {
 		this.connectionList = list;
 	}
 
-	public ConnectionList<L, R, W> getConnectionList() {
+	public ConnectionList getConnectionList() {
 		return this.connectionList;
 	}
 
@@ -85,13 +47,13 @@ public class StreamCarsMetaData<L, R, W extends java.lang.Number> extends Probab
 		}
 
 		String cons = "[";
-		for(Connection<L, R, W> con : this.connectionList) {
+		for(Connection con : this.connectionList) {
 			cons += "(";
 			cons += con.getLeft().toString();
 			cons += ":";
 			cons += con.getRight().toString();
 			cons += ":";
-			cons += con.getRating().toString();
+			cons += String.valueOf(con.getRating());
 			cons += ")";
 		}
 		cons += "]";
@@ -99,13 +61,13 @@ public class StreamCarsMetaData<L, R, W extends java.lang.Number> extends Probab
 		return cons;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public StreamCarsMetaData clone() {
 		return null;
 	}
 
-	/* ############### CONNECTIONCONTAINER ################ */
+	/* ############### GAIN ################ */
+
 	private double[][] gain;
 	@Override
 	public double[][] getGain() {
@@ -115,6 +77,38 @@ public class StreamCarsMetaData<L, R, W extends java.lang.Number> extends Probab
 	@Override
 	public void setGain(double[][] newGain) {
 		this.gain = newGain;
+	}
+
+	/* ############### PROBABILITY ################ */
+
+	Probability probObj = new Probability();
+
+	public void setCovariance(double[][] sigma) {
+		probObj.setCovariance(sigma);
+	}
+
+	public double[][] getCovariance() {
+		return probObj.getCovariance();
+	}
+
+	public void setMVAttributeIndices(int[] indices) {
+		probObj.setMVAttributeIndices(indices);
+	}
+
+	public int[] getMVAttributeIndices() {
+		return probObj.getMVAttributeIndices();
+	}
+
+	public ArrayList<int[]> getAttributePaths() {
+		return probObj.getAttributePaths();
+	}
+
+	public void setAttributePaths(ArrayList<int[]> paths) {
+		probObj.setAttributePaths(paths);
+	}
+
+	public int getIndexOfKovMatrix(int[] path) {
+		return probObj.getIndexOfKovMatrix(path);
 	}
 
 }

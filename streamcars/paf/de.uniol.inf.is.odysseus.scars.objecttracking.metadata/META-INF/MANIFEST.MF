@@ -7,6 +7,9 @@ Bundle-Activator: de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Activat
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.objectrelational.base,
+ de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
+ de.uniol.inf.is.odysseus.relational.base,
  org.osgi.framework;version="1.3.0"
 Export-Package: de.uniol.inf.is.odysseus.scars.objecttracking.metadata

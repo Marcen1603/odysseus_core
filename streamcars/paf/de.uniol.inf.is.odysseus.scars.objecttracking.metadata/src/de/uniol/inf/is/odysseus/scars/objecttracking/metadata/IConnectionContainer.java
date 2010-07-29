@@ -10,13 +10,10 @@ import de.uniol.inf.is.odysseus.base.IMetaAttribute;
  *
  * @author Volker Janz
  *
- * @param <L> Datatype of the left object
- * @param <R> Datatype of the right object
- * @param <W> Datatype of the rating - has to extend java.lang.Number (Double, Integer, ...)
  */
-public interface IConnectionContainer<L, R, W extends java.lang.Number> extends IMetaAttribute, IClone{
+public interface IConnectionContainer extends IMetaAttribute, IClone{
 
-	public void setConnectionList(ConnectionList<L, R, W> list);
-	public ConnectionList<L, R, W> getConnectionList();
+	public void setConnectionList(ConnectionList list);
+	public ConnectionList getConnectionList();
 
 }
