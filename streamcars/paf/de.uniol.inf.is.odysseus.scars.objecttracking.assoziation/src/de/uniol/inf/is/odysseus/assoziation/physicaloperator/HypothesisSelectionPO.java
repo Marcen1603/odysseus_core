@@ -19,8 +19,16 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
 
-	//private SDFAttributeList leftSchema;
-	//private SDFAttributeList rightSchema;
+	public HypothesisSelectionPO() {
+		
+	}
+	
+	public HypothesisSelectionPO(HypothesisSelectionPO<M> copy) {
+		super(copy);
+		
+		this.oldObjListPath = copy.oldObjListPath;
+		this.newObjListPath = copy.newObjListPath;
+	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
@@ -101,7 +109,6 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.assoziation.physicaloperator;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
@@ -19,7 +17,7 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  * @author Volker Janz
  *
  */
-public class HypothesisGenerationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisGenerationPO<M extends IProbability & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private MVRelationalTuple<M> oldList;
 	private MVRelationalTuple<M> newList;
@@ -27,6 +25,35 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
 
+	public HypothesisGenerationPO() {
+		
+	}
+	
+	public HypothesisGenerationPO(HypothesisGenerationPO<M> copy) {
+		super(copy);
+		
+		this.oldList = copy.getOldList();
+		this.newList = copy.getNewList();
+		this.oldObjListPath = copy.getOldObjListPath();
+		this.newObjListPath = copy.getNewObjListPath();
+	}
+	
+	public MVRelationalTuple<M> getOldList() {
+		return oldList;
+	}
+
+	public void setOldList(MVRelationalTuple<M> oldList) {
+		this.oldList = oldList;
+	}
+
+	public MVRelationalTuple<M> getNewList() {
+		return newList;
+	}
+
+	public void setNewList(MVRelationalTuple<M> newList) {
+		this.newList = newList;
+	}
+	
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		// TODO Auto-generated method stub
@@ -62,8 +89,7 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HypothesisGenerationPO<M>(this);
 	}
 
 	public int[] getOldObjListPath() {
@@ -80,6 +106,10 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 
 	public void setNewObjListPath(int[] newObjListPath) {
 		this.newObjListPath = newObjListPath;
+	}
+	
+	public void testProcessNext(MVRelationalTuple<M> object, int port) {
+		process_next(object, port);
 	}
 
 }

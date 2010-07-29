@@ -15,6 +15,18 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 
 	private double threshold;
 
+	public EvaluationAO() {
+		
+	}
+	
+	public EvaluationAO(EvaluationAO<M> copy) {
+		super(copy);
+		this.associationObjListPath = copy.associationObjListPath;
+		this.filteringObjListPath = copy.filteringObjListPath;
+		this.brokerObjListPath = copy.brokerObjListPath;
+		this.threshold = copy.getThreshold();
+	}
+	
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return getInputSchema(2);
@@ -22,8 +34,7 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new EvaluationAO<M>(this);
 	}
 
 	public void initPaths(String associationObjListPath, String filteringObjListPaths, String brokerObjListPath) {

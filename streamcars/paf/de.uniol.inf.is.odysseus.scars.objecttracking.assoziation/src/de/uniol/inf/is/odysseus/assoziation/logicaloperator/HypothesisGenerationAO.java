@@ -32,6 +32,10 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 	public HypothesisGenerationAO(HypothesisGenerationAO<M> copy) {
 		super(copy);
+		this.oldObjListPath = copy.oldObjListPath;
+		this.newObjListPath = copy.newObjListPath;
+		this.leftSchema = copy.getLeftSchema();
+		this.rightSchema = copy.getRightSchema();
 	}
 
 	@Override
@@ -44,7 +48,6 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

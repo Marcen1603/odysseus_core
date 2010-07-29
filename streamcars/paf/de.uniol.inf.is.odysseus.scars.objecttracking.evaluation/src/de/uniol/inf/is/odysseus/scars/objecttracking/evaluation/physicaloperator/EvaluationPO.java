@@ -19,6 +19,17 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	private int[] brokerObjListPath;
 
 	private double threshold;
+	
+	public EvaluationPO() {
+		
+	}
+	
+	public EvaluationPO(EvaluationPO<M> copy) {
+		this.associationObjListPath = copy.getAssociationObjListPath();
+		this.filteringObjListPath = copy.getFilteringObjListPath();
+		this.brokerObjListPath = copy.getBrokerObjListPath();
+		this.threshold = copy.getThreshold();
+	}
 
 	public int[] getAssociationObjListPath() {
 		return associationObjListPath;

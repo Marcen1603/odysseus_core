@@ -14,6 +14,18 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 
 	private String oldObjListPath;
 	private String newObjListPath;
+	
+	public HypothesisSelectionAO() {
+		
+	}
+	
+	public HypothesisSelectionAO(HypothesisSelectionAO<M> copy) {
+		super(copy);
+		
+		this.ID = copy.getID();
+		this.oldObjListPath = copy.oldObjListPath;
+		this.newObjListPath = copy.newObjListPath;
+	}
 
 	public String getID() {
 		return ID;
@@ -30,8 +42,7 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HypothesisSelectionAO<M>(this);
 	}
 
 	public void initPaths(String oldObjListPath, String newObjListPath) {

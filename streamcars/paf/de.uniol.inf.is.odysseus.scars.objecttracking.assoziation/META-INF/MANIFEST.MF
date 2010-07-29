@@ -19,7 +19,8 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.slf4j;version="1.5.6"
 Require-Bundle: Commons.Math;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.base,
- de.uniol.inf.is.odysseus.objecttracking
+ de.uniol.inf.is.odysseus.objecttracking,
+ org.junit
 Export-Package: de.uniol.inf.is.odysseus.assoziation,
  de.uniol.inf.is.odysseus.assoziation.logicaloperator,
  de.uniol.inf.is.odysseus.assoziation.physicaloperator
