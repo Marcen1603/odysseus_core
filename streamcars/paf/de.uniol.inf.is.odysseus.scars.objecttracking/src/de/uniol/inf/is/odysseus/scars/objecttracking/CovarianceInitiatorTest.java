@@ -11,13 +11,13 @@ public class CovarianceInitiatorTest
   {
     TestFactory.create();
     System.out.println(TestFactory.schema);
-    CovarianceInitiatorTest.tryIterator();
-    //CovarianceInitiatorTest.test();
+    //CovarianceInitiatorTest.tryIterator();
+    CovarianceInitiatorTest.test();
   }
   
   public static void tryIterator()
   {
-    TupleIterator iterator = new TupleIterator(TestFactory.tuples, TestFactory.schema);
+    TupleIterator iterator = new TupleIterator(TestFactory.tuple, TestFactory.schema);
     
     while( !iterator.isFinished() ) {
       
@@ -51,6 +51,6 @@ public class CovarianceInitiatorTest
     
     // initialize iprobability metadata of tuples with CovarianceInitiator
     
-    covInit.updateMetadata(TestFactory.tuples);
+    covInit.updateMetadata(TestFactory.tuple);
   }
 }

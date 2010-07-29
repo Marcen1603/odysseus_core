@@ -8,14 +8,16 @@ import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIterator;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
- * Initializes metadata (of type {@link IProbability}) of a tuple (of type
- * {@link MVRelationalTuple}).
+ * Initializes tuple (of type {@link MVRelationalTuple}) metadata used by
+ * project group StreamCars.
  * <p>
  * See public methods for details.
  * 
@@ -25,14 +27,20 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 public class CovarianceInitiator<M extends IProbability> extends
     AbstractMetadataUpdater<M, MVRelationalTuple<M>>
 {
-  // set by constructor/initMetadataItself
+  // set by constructor/initMetadata
   // used by updateMetadata
   private double[][] covMatrix = null;
-  private SDFAttributeList schema = null;
+  private SDFAttributeList schema;
 
   /**
    * Creates a CovarianceInitiator object and initializes the metadata used by
    * {@link #updateMetadata(MVRelationalTuple)}.
+   * <p>
+   * NOTE: schema is used by {@link #updateMetadata(MVRelationalTuple)} as root
+   * to navigate through the tuple given. So it has to represent the schema of
+   * the tuples which shall be initialized by this object.
+   * <p>
+   * Probability Metadata (type IProbability)
    * <p>
    * As basis for initializing the schema given is used. It is searched for
    * measurement value attributes by invoking
@@ -43,10 +51,6 @@ public class CovarianceInitiator<M extends IProbability> extends
    * {@link #updateMetadata(MVRelationalTuple)} is set to the covariance list of
    * each measurement value attribute found in the schema respectively (see
    * {@link SDFAttribute#getCovariance()}).
-   * <p>
-   * NOTE: schema is used by {@link #updateMetadata(MVRelationalTuple)} as root
-   * to navigate through the tuple given. So it has to represent the schema of
-   * the tuples which shall be initialized by this object.
    * 
    * @param schema
    *          the schema, used to initialize metadata, NOTE: has to be the
@@ -55,53 +59,73 @@ public class CovarianceInitiator<M extends IProbability> extends
   public CovarianceInitiator(SDFAttributeList schema)
   {
     this.schema = schema;
-    this.initMetadataItself();
+    this.initMetadata();
   }
 
-  private void initMetadataItself()
+  private void initMetadata()
   {
-    // get measurement value attribute paths of schema given to constructor
-
-    List<int[]> mvAttrPaths = OrAttributeResolver
-        .getPathsOfMeasurements(this.schema);
+    this.initProbabilityMetadata();
+    // invoke more metadata initializers here
+  }
+  
+  private void initProbabilityMetadata()
+  {
+    // get measurement attributes of schema given to constructor
+    
+    // go through all attributes in schema
+    List<SDFAttribute> mAttrs = new ArrayList<SDFAttribute>();
+    SchemaIterator iterator = new SchemaIterator(this.schema);
+    while (!iterator.isFinished())
+    {
+      SDFAttribute attr = iterator.getAttribute();
+      
+      // if current attribute is measurement attribute
+      SDFDatatype type = attr.getDatatype();
+      if (type != null)
+      {
+        if (SDFDatatypes.isMeasurementValue(type))
+        {
+          
+          // save attribute for later use
+          mAttrs.add(attr);
+        }
+      }
+      else
+      {
+        // TODO
+      }
+      
+      // get next attribute in schema
+      iterator.next();
+    }
 
     // initialize covariance matrix:
-    // number of mv attributes * number of mv attributes
+    // number_of_measurement_attributes * number_of_measurement_attributes
 
-    this.covMatrix = new double[mvAttrPaths.size()][mvAttrPaths.size()];
+    this.covMatrix = new double[mAttrs.size()][mAttrs.size()];
 
     // current row of covariance matrix (corresponds to current measurement
     // value attribute)
 
     int row = 0;
 
-    // work through all measurement value paths
+    // work through all measurement attributes saved before
 
-    for (int[] mvAttrPath : mvAttrPaths)
+    for (SDFAttribute mAttr : mAttrs)
     {
-
-      // and get the corresponding measurement value attribute
-
-      Object mvObject = OrAttributeResolver.getSubSchema(this.schema,
-          mvAttrPath);
-      // a ClassCastException being thrown by the following line
-      // means that the object returned by OrAttributeResolver
-      // for a measurement value attribute path returned by
-      // the same class is no schema attribute (type SDFAttribute)
-      SDFAttribute mvAttribute = (SDFAttribute) mvObject;
 
       // get covariance list out of attribute
 
-      ArrayList<?> covariances = mvAttribute.getCovariance();
+      ArrayList<?> covarianceList = mAttr.getCovariance();
 
       // initialize current matrix row with covariance list
 
-      for (int i = 0; i < covariances.size(); ++i)
+      for (int i = 0; i < covarianceList.size(); ++i)
       {
         // a ClassCastException being thrown by the following line
         // means that the covariance list of a measurement value attribute
         // does not entirely contain double objects (type Double)
-        this.covMatrix[row][i] = (Double) covariances.get(i);
+        this.covMatrix[row][i] = (Double) covarianceList.get(i);
       }
 
       // next row
@@ -111,8 +135,8 @@ public class CovarianceInitiator<M extends IProbability> extends
   }
 
   /**
-   * Initializes metadata (of type {@link IProbability}) of a tuple (of type
-   * {@link MVRelationalTuple}).
+   * Initializes tuple (of type {@link MVRelationalTuple}) metadata used by
+   * project group StreamCars.
    * <p>
    * The metadata used to update tuple is being set by the constructor. See
    * {@link #CovarianceInitiator(SDFAttributeList)} for details.
@@ -127,11 +151,29 @@ public class CovarianceInitiator<M extends IProbability> extends
   @Override
   public void updateMetadata(MVRelationalTuple<M> tuple)
   {
-    this.initMetadataOfTuples(tuple);
+    this.initMetadataOfTuple(tuple);
   }
 
-  private void initMetadataOfTuples(MVRelationalTuple<M> tupleGiven)
+  private void initMetadataOfTuple(MVRelationalTuple<M> tupleGiven)
   {
+    this.initProbabilityMetadataOfTuple(tupleGiven);
+    // invoke more tuple metadata initializers here
+  }
+  
+  private void initProbabilityMetadataOfTuple(MVRelationalTuple<M> tupleGiven)
+  {
+    Object rootObject = tupleGiven.getAttribute(0);
+    if (rootObject instanceof MVRelationalTuple<?>)
+    {
+      MVRelationalTuple<?> root = (MVRelationalTuple<?>) rootObject;
+      IProbability prob = ((IProbability) root.getMetadata());
+      prob.setCovariance(this.covMatrix);
+    }
+    else
+    {
+      // TODO
+    }
+    
     // navigate through all tuples in tupleGiven
     // use schema given to constructor as root schema
 
@@ -146,7 +188,7 @@ public class CovarianceInitiator<M extends IProbability> extends
 
       Object tupleObject = iterator.getTupleObject();
       
-      // if it is a tuple
+      // if it is a tuple (could also be a double, int, etc.)
       
       if (tupleObject instanceof MVRelationalTuple<?>)
       {
@@ -161,8 +203,15 @@ public class CovarianceInitiator<M extends IProbability> extends
         IProbability iProbabilityMetadata = (IProbability) metadataObject;
         
         // set covariance matrix to the one set by initMetadataItself
-
-        iProbabilityMetadata.setCovariance(this.covMatrix);
+        
+        if (iProbabilityMetadata != null)
+        {
+          iProbabilityMetadata.setCovariance(this.covMatrix);
+        }
+        else
+        {
+          // TODO
+        }
       }
       
       // tell iterator to move to next tuple
