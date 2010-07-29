@@ -6,12 +6,14 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.util.CovarianceMapper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class LinearPredictionFunction<M extends IProbability> implements IPredictionFunction<M>{
 
 	private SDFAttributeList scanSchema;
 	private SDFAttributeList timeSchema;
+	private CovarianceMapper mapper;
 	
 	private PredictionExpression[] expressions;
 	private double[][] noiseMatrix;
@@ -21,6 +23,7 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	public void init(SDFAttributeList scanSchema, SDFAttributeList timeSchema) {
 		this.scanSchema = scanSchema;
 		this.timeSchema = timeSchema;
+		mapper = new CovarianceMapper(scanSchema);
 		for(PredictionExpression exp : expressions) {
 			exp.initAttributePaths(scanSchema);
 			exp.initAttributePaths(timeSchema);
@@ -52,6 +55,7 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	@Override
 	public void predictMetadata(M metadata, MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int currentIndex) {
 
+		
 		double[][] sigma = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
 		for(int row=0; row<sigma.length; row++) {
 			for(int col=0; col<sigma[row].length; col++) {
@@ -74,16 +78,17 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 			
 			for(int col=0; col<tmpCov.length; col++) {
 				for(String attrName : expressions[index].getAttributeNames(scanSchema)) {
-					int[] attrPath = expressions[index].getAttributePath(attrName);
-					int covAttrIndex = metadata.getIndexOfKovMatrix(attrPath);
+					int covAttrIndex = mapper.getCovarianceIndex(attrName);
 					if(covAttrIndex != -1) {
 						expressions[index].bindVariable(attrName, sigma[covAttrIndex][col]);
 					} else {
 						// not found in covmatrix so it usually reflects a time value
 						// TODO use paths in tuples (for time etc.)
+						int[] attrPath = expressions[index].getAttributePath(attrName);
 						expressions[index].bindVariable(attrName, resolveValue(attrPath, scanRootTuple));
 					}
 				}
+				
 				for(String attrName : expressions[index].getAttributeNames(timeSchema)) {
 					int[] attrPath = expressions[index].getAttributePath(attrName);
 					expressions[index].bindVariable(attrName, resolveValue(attrPath, timeTuple));

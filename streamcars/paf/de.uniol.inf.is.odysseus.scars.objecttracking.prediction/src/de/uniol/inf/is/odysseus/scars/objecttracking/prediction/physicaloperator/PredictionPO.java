@@ -46,9 +46,9 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		// TODO sehr simple, muss noch darauf geachtet werden das die zeitintervalle bei den zwei eing�ngen zusammenpassen,
 		// ist jetzt nicht garantiert (sweaparea? irgendein Buffer?).
 		if(port == 0) {
-			currentTime = object;
+			currentTime = object.clone();
 		} else if(port == 1) {
-			currentScan = object;
+			currentScan = object.clone();
 		}
 		if(currentTime != null && currentScan != null) {
 			predictData();
@@ -66,6 +66,8 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 			MVRelationalTuple<M> obj = list.getAttribute(index);
 			IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
 			pf.predictData(currentScan, currentTime, index);
+			M metadata = obj.getMetadata();
+			pf.predictMetadata(metadata, currentScan, currentTime, index);
 		}
 	}
 
