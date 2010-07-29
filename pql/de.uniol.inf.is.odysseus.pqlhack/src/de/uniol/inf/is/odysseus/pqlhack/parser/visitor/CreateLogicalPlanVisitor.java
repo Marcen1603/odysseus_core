@@ -1312,7 +1312,7 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 		newData.add(associationSource);
 		newData.add(outputPort);
-
+		
 		return newData;
 	}
 
