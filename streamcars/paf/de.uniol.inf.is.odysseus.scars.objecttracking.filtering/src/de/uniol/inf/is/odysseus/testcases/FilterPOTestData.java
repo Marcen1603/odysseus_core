@@ -44,60 +44,37 @@ public class FilterPOTestData {
 		
 		MVRelationalTuple<StreamCarsMetaData> oldTuple = new MVRelationalTuple<StreamCarsMetaData>(attributesOld);
 		
-		// set positions
-		oldTuple.setMeasurementValuePositions(new int[] {0,1});
-		
-
-		// covariance
-		//covarianceOld = { {5.0,50.0}, {50.0,10.0} };
 		
 		StreamCarsMetaData metaOld = new StreamCarsMetaData();
 		
 		metaOld.setCovariance(covarianceOld);
 		
-		
-		//oldTuple.setMetadata(metaOld);		
+		oldTuple.setMetadata(metaOld);		
 					
-		// attributes for the new object
-		
-		//double speedNew = 1.0;
-		//double posNew = 2.0;
-		
 		Object[] attributesNew = {speedNew,posNew};
 		
 		// MVRelationalTuple to hold the new data
 		MVRelationalTuple<StreamCarsMetaData> newTuple = new MVRelationalTuple<StreamCarsMetaData>(attributesNew);
 		
-		// set positions
-		newTuple.setMeasurementValuePositions(new int[] {0,1});
-		
-		// the covariance of the new measurement
-		//double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 		
 		StreamCarsMetaData metaNew = new StreamCarsMetaData();
 		
 		metaNew.setCovariance(covarianceNew);
 		
-		//newTuple.setMetadata(metanew);
+		newTuple.setMetadata(metaNew);
 		
 		// MVRelationalTuples to hold the old Tuples
 		
 		MVRelationalTuple<StreamCarsMetaData> oldList = new MVRelationalTuple<StreamCarsMetaData>(oldTuple);
-		
-		oldList.setMeasurementValuePositions(new int[] {0});
-		
+			
 		MVRelationalTuple<StreamCarsMetaData> newList = new MVRelationalTuple<StreamCarsMetaData>(newTuple);
-		
-		newList.setMeasurementValuePositions(new int[] {0});
 		
 		// the main MVRelationalTuple
 		
 		Object[] measurements = {newList,oldList};
 		
 		MVRelationalTuple<StreamCarsMetaData> measurementTuple = new MVRelationalTuple<StreamCarsMetaData>(measurements);
-		
-		measurementTuple.setMeasurementValuePositions(new int[] {0,1});
-		
+			
 		// connections
 		
 		ConnectionList conList = new ConnectionList();
@@ -108,7 +85,7 @@ public class FilterPOTestData {
 	
 		StreamCarsMetaData streamCars= new StreamCarsMetaData(conList);
 		
-		//measurementTuple.setMetadata((M) streamCars);
+		measurementTuple.setMetadata(streamCars);
 	
 		
 		

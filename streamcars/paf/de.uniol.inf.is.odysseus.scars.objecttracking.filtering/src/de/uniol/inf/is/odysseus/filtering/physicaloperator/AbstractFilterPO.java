@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
@@ -12,16 +14,24 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer >
-							extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public abstract class AbstractFilterPO
+							extends AbstractPipe<MVRelationalTuple<StreamCarsMetaData>, MVRelationalTuple<StreamCarsMetaData>> {
 
 	private IFilterFunction filterFunction;
 
 	private SDFAttributeList schema;
 	
+	/**
+	 * @return the schema
+	 */
+	public SDFAttributeList getSchema() {
+		return schema;
+	}
+
 	// path to new and old objects
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
@@ -37,7 +47,7 @@ public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredic
 	
 	
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVRelationalTuple<StreamCarsMetaData>, MVRelationalTuple<StreamCarsMetaData>> clone() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -48,7 +58,7 @@ public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredic
 	}
 
 	@Override
-	public void process_next(MVRelationalTuple<M> object, int port) {
+	public void process_next(MVRelationalTuple<StreamCarsMetaData> object, int port) {
 		
 		
 		object = computeAll(object);
@@ -84,20 +94,28 @@ public abstract class AbstractFilterPO <M extends IGain & IProbability & IPredic
 		this.newObjListPath = newObjListPath;
 	}
 	
-	
 	/**
-	 * 
-	 * @param object
-	 * @return
+	 * @param oldObjListPath the oldObjListPath to set
 	 */
+	public int[] getOldObjListPath() {
+		return this.oldObjListPath;
+	}
+
+	/**
+	 * @param newObjListPath the newObjListPath to set
+	 */
+	public int[] getNewObjListPath() {
+		return this.newObjListPath;
+	}
 	
-	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
+	
+	public abstract MVRelationalTuple<StreamCarsMetaData> computeAll(MVRelationalTuple<StreamCarsMetaData> object);
 	
 	/**
 	 * 
 	 * @param connected
 	 */
-	public abstract void compute(Connection connected);
+	public abstract void compute(Connection connected, ArrayList<int[]> mesurementValuePathsTupleNew, ArrayList<int[]> mesurementValuePathsTupleOld);
 
 	/**
 	 * @return the filterFunction

@@ -18,7 +18,8 @@ Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
 Require-Bundle: de.uniol.inf.is.odysseus.base,
  Commons.Math;bundle-version="1.0.0",
  com.springsource.slf4j.api;bundle-version="1.5.6",
- de.uniol.inf.is.odysseus.scars.objecttracking
+ de.uniol.inf.is.odysseus.scars.objecttracking,
+ org.junit4;bundle-version="4.5.0"
 Export-Package: de.uniol.inf.is.odysseus.filtering,
  de.uniol.inf.is.odysseus.filtering.logicaloperator,
  de.uniol.inf.is.odysseus.filtering.physicaloperator

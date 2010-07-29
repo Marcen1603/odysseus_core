@@ -3,20 +3,21 @@
  */
 package de.uniol.inf.is.odysseus.testcases.filter.operator;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
 
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanGainFunctionPO;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
 
@@ -67,12 +68,11 @@ public class KalmanGainFunctionPOTest {
 		
 		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
 		
-		Connection[] objConList = (Connection[]) ((IConnectionContainer) expectedTuple.getMetadata()).getConnectionList().toArray();
-		
 		double[][] gainExp = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688 }};
 		
-		((MetaAttributeContainer<StreamCarsMetaData>) objConList[0].getRight()).getMetadata().setGain(gainExp);
+		Connection[] objConList = (Connection[]) expectedTuple.getMetadata().getConnectionList().toArray();
 		
+		((MVRelationalTuple<StreamCarsMetaData>) objConList[0].getRight()).getMetadata().setGain(gainExp);
 		
 		KalmanGainFunction gainfunction = new KalmanGainFunction();
 		
