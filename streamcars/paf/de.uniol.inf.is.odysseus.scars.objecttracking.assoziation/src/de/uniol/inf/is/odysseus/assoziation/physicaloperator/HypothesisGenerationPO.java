@@ -15,22 +15,22 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  * 2 - the new detected objects
  * Both list now have the same timestamp. The Hypothesis Generation Operator initiates the connection list
  * in the metadata and changes the schema so that the next operator gets both lists (new and old) as input.
- * 
+ *
  * @author Volker Janz
  *
  */
-public class HypothesisGenerationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-	
+public class HypothesisGenerationPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+
 	private MVRelationalTuple<M> oldList;
 	private MVRelationalTuple<M> newList;
-	
+
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
-	
+
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public int[] getOldObjListPath() {
 		return this.oldObjListPath;
 	}
@@ -73,7 +73,7 @@ public class HypothesisGenerationPO<M extends IProbability & IPredictionFunction
 	public int[] getNewObjListPath() {
 		return this.newObjListPath;
 	}
-	
+
 	public void setOldObjListPath(int[] oldObjListPath) {
 		this.oldObjListPath = oldObjListPath;
 	}

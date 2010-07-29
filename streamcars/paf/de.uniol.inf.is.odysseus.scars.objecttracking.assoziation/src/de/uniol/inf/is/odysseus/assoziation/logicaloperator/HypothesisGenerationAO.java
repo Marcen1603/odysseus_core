@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
 
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -13,24 +12,24 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 2 - the new detected objects
  * Both list now have the same timestamp. The Hypothesis Generation Operator initiates the connection list
  * in the metadata and changes the schema so that the next operator gets both lists (new and old) as input.
- * 
+ *
  * @author Volker Janz
  *
  */
 public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String oldObjListPath;
 	private String newObjListPath;
-		
+
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 
 	public HypothesisGenerationAO() {
 		super();
 	}
-	
+
 	public HypothesisGenerationAO(HypothesisGenerationAO<M> copy) {
 		super(copy);
 	}
@@ -48,12 +47,12 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public void initPaths(String oldObjListPath, String newObjListPath) {
 		this.oldObjListPath = oldObjListPath;
 		this.newObjListPath = newObjListPath;
 	}
-	
+
 	public int[] getNewObjListPath() {
 		this.leftSchema = this.getSubscribedToSource(LEFT).getSchema();
 		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
@@ -63,11 +62,11 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		this.rightSchema = this.getSubscribedToSource(RIGHT).getSchema();
 		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
-	
+
 	public SDFAttributeList getLeftSchema() {
 		return this.getSubscribedToSource(LEFT).getSchema();
 	}
-	
+
 	public SDFAttributeList getRightSchema() {
 		return this.getSubscribedToSource(RIGHT).getSchema();
 	}

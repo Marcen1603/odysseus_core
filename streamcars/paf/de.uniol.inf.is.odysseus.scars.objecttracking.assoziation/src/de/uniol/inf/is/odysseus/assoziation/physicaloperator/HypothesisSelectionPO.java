@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
-public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
@@ -36,7 +36,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		// 1.2 - Get the list of old objects (which are predicted to the timestamp of the new objects) as an array of MVRelationalTuple
 		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();
 		// 1.3 - Get the list of connections between old and new objects as an array of Connection
-		Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[] objConList = (Connection<MVRelationalTuple<M>, MVRelationalTuple<M>, Double>[]) object.getMetadata().getConnectionList().toArray();
+		Connection[] objConList = (Connection[]) object.getMetadata().getConnectionList().toArray();
 
 		// 2 - Convert the connection list to an matrix of ratings so that even connections which are NOT in the connections list (so they have a rating of 0) can be evaluated
 		CorrelationMatrixUtils<M> corUtils = new CorrelationMatrixUtils<M>();
@@ -46,7 +46,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 		corMatrix = this.singleMatchingEvaluation(corMatrix);
 
 		// 4 - Generate a new connection list out of the matrix. only connections with rating > 0 will be stored so that the connection list is as small as possible
-		ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> newObjConList = corUtils.decodeMatrix(newList, oldList, corMatrix);
+		ConnectionList newObjConList = corUtils.decodeMatrix(newList, oldList, corMatrix);
 
 		// 5 - Replace the old connection list in the metadata with the new connection list
 		object.getMetadata().setConnectionList(newObjConList);
@@ -73,7 +73,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 	}
 
 	@SuppressWarnings("unchecked")
-	private MVRelationalTuple<M>[] getNewElementsWithoutOldElements(ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> objConList, MVRelationalTuple<M>[] newList) {
+	private MVRelationalTuple<M>[] getNewElementsWithoutOldElements(ConnectionList objConList, MVRelationalTuple<M>[] newList) {
 		ArrayList<MVRelationalTuple<M>> tmp = new ArrayList<MVRelationalTuple<M>>();
 		for(MVRelationalTuple<M> tupleNew : newList) {
 			if (objConList.getRightElementsForLeftElement(tupleNew).isEmpty()) {
@@ -84,7 +84,7 @@ public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionK
 	}
 
 	@SuppressWarnings("unchecked")
-	private MVRelationalTuple<M>[] getOldElementsWithoutNewElements(ConnectionList<MVRelationalTuple<M>, MVRelationalTuple<M>, Double> objConList, MVRelationalTuple<M>[] oldList) {
+	private MVRelationalTuple<M>[] getOldElementsWithoutNewElements(ConnectionList objConList, MVRelationalTuple<M>[] oldList) {
 		ArrayList<MVRelationalTuple<M>> tmp = new ArrayList<MVRelationalTuple<M>>();
 		for(MVRelationalTuple<M> tupleOld : oldList) {
 			if (objConList.getLeftElementsForRightElement(tupleOld).isEmpty()) {
