@@ -76,6 +76,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
@@ -1032,8 +1033,9 @@ public class CreateLogicalPlanVisitor implements
 				ASTPredictionDefinition predDef = (ASTPredictionDefinition) node
 						.jjtGetChild(i);
 
-				SDFObjectRelationalExpression[] expressions = new SDFObjectRelationalExpression[prediction
-						.getOutputSchema().getAttributeCount()];
+//				SDFObjectRelationalExpression[] expressions = new SDFObjectRelationalExpression[prediction
+//						.getOutputSchema().getAttributeCount()];
+				PredictionExpression[] expressions = new PredictionExpression[prediction.getOutputSchema().getAttributeCount()]; 
 
 				// aside from the last child, all children
 				// must be ASTPredictionFunctionDefinitions
@@ -1046,13 +1048,10 @@ public class CreateLogicalPlanVisitor implements
 					ASTExpression predFct = (ASTExpression) predFctDef
 							.jjtGetChild(1);
 
-					SDFObjectRelationalExpression predFctExpr = null;
+					PredictionExpression predFctExpr = null;
 					try {
-						predFctExpr = new SDFObjectRelationalExpression("",
-								predFct.toString(),
-								(IAttributeResolver) ((ArrayList) data).get(0));
-						predFctExpr.initAttributePaths(prediction
-								.getOutputSchema());
+						predFctExpr = new PredictionExpression(attr.toString(),predFct.toString());
+						predFctExpr.initAttributePaths(prediction.getOutputSchema());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1104,7 +1103,7 @@ public class CreateLogicalPlanVisitor implements
 				ASTDefaultPredictionDefinition predDef = (ASTDefaultPredictionDefinition) node
 						.jjtGetChild(i);
 
-				SDFObjectRelationalExpression[] expressions = new SDFObjectRelationalExpression[prediction
+				PredictionExpression[] expressions = new PredictionExpression[prediction
 						.getOutputSchema().getAttributeCount()];
 
 				// aside from the last child, all children
@@ -1118,11 +1117,10 @@ public class CreateLogicalPlanVisitor implements
 					ASTExpression predFct = (ASTExpression) predFctDef
 							.jjtGetChild(1);
 
-					SDFObjectRelationalExpression predFctExpr = null;
+					PredictionExpression predFctExpr = null;
 					try {
-						predFctExpr = new SDFObjectRelationalExpression("",
-								predFct.toString(),
-								(IAttributeResolver) ((ArrayList) data).get(0));
+						predFctExpr = new PredictionExpression(attr.toString(),predFct.toString());
+						predFctExpr.initAttributePaths(prediction.getOutputSchema());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
