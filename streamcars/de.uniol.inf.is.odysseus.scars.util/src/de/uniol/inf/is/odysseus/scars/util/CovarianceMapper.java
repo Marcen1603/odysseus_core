@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -9,13 +9,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 public class CovarianceMapper {
 
-	private Map<String, Integer> indices = new HashMap<String, Integer>();
+	private List<String> indices = new ArrayList<String>();
 	
 	public CovarianceMapper( SDFAttributeList schema ) {
-		find(schema, null, 0);
+		find(schema, null);
 	}
 	
-	private void find(SDFAttributeList list, String fullAttributeName, int counter ) {
+	private void find(SDFAttributeList list, String fullAttributeName ) {
 		String lastName = fullAttributeName;
 		for( SDFAttribute attribute : list ) {
 			
@@ -25,9 +25,10 @@ public class CovarianceMapper {
 				lastName = lastName + ":" + attribute.getAttributeName();
 			
 			if( SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
-				indices.put(lastName, counter);
-				counter++;
+				indices.add(lastName);
 			}
+			
+			find(attribute.getSubattributes(), lastName);
 		}
 	}
 	
@@ -36,7 +37,25 @@ public class CovarianceMapper {
 	}
 	
 	public int getCovarianceIndex( String fullAttributeName ) {
-		return indices.get(fullAttributeName);
+		return indices.indexOf(fullAttributeName);
 	}
 	
+	public String getAttributeName( int index ) {
+		return indices.get(index);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("{");
+		for( int i = 0; i < getSize(); i++ ) {
+			sb.append(i).append(" -> ").append(getAttributeName(i));
+			if(i < getSize() - 1)
+				sb.append(", ");
+		}
+		sb.append("}");
+		
+		return sb.toString();
+	}
 }

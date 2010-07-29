@@ -35,8 +35,8 @@ public class TuplePrinter {
 	}
 	
 	public static void printSchema(SDFAttributeList schema, String startAttributeName) {
-		SchemaHelper helper = new SchemaHelper(schema);
-		SchemaIterator iterator = new SchemaIterator(helper.getSchemaIndexPath(startAttributeName));
+//		SchemaHelper helper = new SchemaHelper(schema);
+		SchemaIterator iterator = new SchemaIterator(schema);
 
 		
 		while (!iterator.isFinished()) {
