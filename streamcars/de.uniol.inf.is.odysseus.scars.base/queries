@@ -119,3 +119,11 @@ ASSOCIATION-EVAL (
 	sensorB.dummy,
 	sensorA.dummy := sensorB.dummy; sensorA.car := sensorB.car;
 )
+
+LOGICAL PLAN : 
+ASSOCIATION-SEL (
+	ACCESS (sensorA),
+	testAssociation,
+	sensorA.dummy,
+	sensorB.dummy
+)
