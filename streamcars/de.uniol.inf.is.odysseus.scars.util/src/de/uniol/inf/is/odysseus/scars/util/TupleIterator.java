@@ -60,8 +60,8 @@ public class TupleIterator {
 	
 	/**
 	 * Erstellt eine neue TupelIterator-Instanz. Über dem angegebenen Tupel wird iteriert.
-	 * Mittels diesem Konstruktor wird über den VOLLSTÄNDIGEN Tuple iteriert, also von der
-	 * Wurzel an.
+	 * Mittels diesem Konstruktor wird über den Tuple iteriert, also von der
+	 * Wurzel an. Warnung: Die Wurzel selbst wird NICHT erfasst.
 	 * 
 	 * Der Navigator geht beliebig in die Tiefe.
 	 * 
@@ -77,8 +77,8 @@ public class TupleIterator {
 	
 	/**
 	 * Erstellt eine neue TupelIterator-Instanz. Über dem angegebenen Tupel wird iteriert.
-	 * Mittels diesem Konstruktor wird über den VOLLSTÄNDIGEN Tuple iteriert, also von der
-	 * Wurzel an.
+	 * Mittels diesem Konstruktor wird über den Tupel iteriert, also von der
+	 * Wurzel an. Warnung: Die Wurzel selbst wird NICHT erfasst.
 	 * 
 	 * Über maxLevels lässt sich die maximale Tiefe bestimmen, wie weit der Iterator
 	 * iterieren soll. Ist maxLevels=0, so wird nicht in die Tiefe gegangen, die Iteration
