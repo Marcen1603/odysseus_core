@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Parameter
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.parameters;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.logicaloperator.builder,
+ org.eclipse.swt.widgets

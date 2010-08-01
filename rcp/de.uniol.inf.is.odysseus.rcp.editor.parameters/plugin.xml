@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
+            name="SOURCE">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
+            name="TYPE">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.LongParameterEditor"
+            name="SIZE">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.StringParameterEditor"
+            name="HOST">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.parameters.IntegerParameterEditor"
+            name="PORT">
+      </editor>
+   </extension>
+
+</plugin>
