@@ -11,7 +11,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.nodeview.NodeView">
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.GraphOutline">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.ShowStream"
                label="Show stream as list"
