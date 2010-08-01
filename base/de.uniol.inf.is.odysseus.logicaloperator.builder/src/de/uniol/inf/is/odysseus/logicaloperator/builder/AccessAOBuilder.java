@@ -63,16 +63,18 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		if (DataDictionary.getInstance().containsView(sourceName)) {
 			if (host.hasValue() || type.hasValue() || port.hasValue()
 					|| attributes.hasValue()) {
-				throw new IllegalArgumentException("view " + sourceName
-						+ " already exists");
+				addError(new IllegalArgumentException("view " + sourceName
+						+ " already exists"));
+				return false;
 			}
 		} else {
 			if (!(host.hasValue() && type.hasValue() && port.hasValue() && attributes
 					.hasValue())) {
-				throw new IllegalArgumentException(
+				addError(new IllegalArgumentException(
 						"missing information for the creation of source "
 								+ sourceName
-								+ ". expecting host, port, type and attributes.");
+								+ ". expecting host, port, type and attributes."));
+				return false;
 			}
 		}
 		return true;
