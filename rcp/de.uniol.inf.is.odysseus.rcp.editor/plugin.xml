@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor" name="Parameter Editor" schema="schema/de.uniol.inf.is.odysseus.rcp.editor.ParameterEditor.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -17,6 +18,40 @@
       <startup
             class="de.uniol.inf.is.odysseus.rcp.editor.activator.Startup">
       </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="de.uniol.inf.is.odysseus.rcp.editor.view.ParameterViewPart"
+            id="de.uniol.inf.is.odysseus.rcp.editor.ParameterView"
+            name="Parameters View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.commands.ExecutePlanCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.ExecutePlan"
+            name="Execute Logical Plan">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.editor.toolbar1">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.editor.ExecutePlan"
+                  icon="icons/run.gif"
+                  label="Execute"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
 
 </plugin>

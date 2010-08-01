@@ -49,6 +49,10 @@ public class LogicalPlanEditorPart extends GraphicalEditorWithFlyoutPalette impl
 	public void doSaveAs() {
 
 	}
+	
+	public OperatorPlan getOperatorPlan() {
+		return plan;
+	}
 
 	@Override
 	protected void configureGraphicalViewer() {

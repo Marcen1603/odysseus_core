@@ -27,13 +27,11 @@ public class OperatorFigure extends Figure implements IFigure {
 		layout();
 	}
 
-	public void setHighlighted( boolean h ) {
-		if( h == true ) {
-			label.setBackgroundColor(ColorConstants.black);
-			label.setForegroundColor(ColorConstants.red);
-		} else {
-			label.setBackgroundColor(ColorConstants.red);
-			label.setForegroundColor(ColorConstants.black);
-		}
+	public void markError() {
+		label.setForegroundColor(ColorConstants.red);
+	}
+	
+	public void unmarkError() {
+		label.setForegroundColor(ColorConstants.black);
 	}
 }

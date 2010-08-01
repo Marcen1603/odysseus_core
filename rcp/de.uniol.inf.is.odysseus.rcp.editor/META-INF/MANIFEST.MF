@@ -10,7 +10,13 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.base.usermanagement,
+ de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.logicaloperator.builder,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.transformation.helper.relational,
  org.eclipse.draw2d,
  org.eclipse.draw2d.geometry,
  org.eclipse.gef,
@@ -24,4 +30,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.eclipse.gef.ui.actions,
  org.eclipse.gef.ui.palette,
  org.eclipse.gef.ui.parts,
- org.eclipse.ui.part
+ org.eclipse.ui.part,
+ org.slf4j;version="1.5.6"
+Export-Package: de.uniol.inf.is.odysseus.rcp.editor.parameter
+Service-Component: OSGI-INF/Executor.xml

@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPolicy;
@@ -38,7 +39,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 	protected IFigure createFigure() {
 		return new OperatorFigure();
 	}
-
+	
 	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.COMPONENT_ROLE, new ComponentEditPolicy() {
@@ -52,7 +53,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 				return super.createDeleteCommand(deleteRequest);
 			}
 		});
-		
+			
 		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new GraphicalNodeEditPolicy() {
 
 			protected Command getConnectionCompleteCommand(CreateConnectionRequest request) {
@@ -79,6 +80,7 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		});
 	}
 
+	
 	@Override
 	protected List<?> getModelSourceConnections() {
 		return ((Operator) getModel()).getConnectionsAsSource();
@@ -106,9 +108,26 @@ public class OperatorEditPart extends AbstractGraphicalEditPart implements NodeE
 		OperatorFigure figure = (OperatorFigure) getFigure();
 		Operator model = (Operator) getModel();
 		figure.setText(model.getOperatorBuilderName());
-
+		
+		if( model.getOperatorBuilder().validate() ) {
+			figure.unmarkError();
+			figure.setToolTip( null );
+		} else {
+			figure.markError();
+			figure.setToolTip(new Label(getErrorText(model.getOperatorBuilder().getErrors())));
+		}
+		
 		Rectangle r = new Rectangle(model.getX(), model.getY(), -1, -1);
 		((GraphicalEditPart) getParent()).setLayoutConstraint(this, figure, r);
+	}
+	
+	protected String getErrorText(List<Exception> errors) {
+		StringBuilder sb = new StringBuilder();
+		for( Exception ex : errors) {
+			sb.append(ex.getMessage());
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 
 	@Override
