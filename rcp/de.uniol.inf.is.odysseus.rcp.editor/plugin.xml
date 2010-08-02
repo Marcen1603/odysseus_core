@@ -24,6 +24,7 @@
       <view
             allowMultiple="false"
             class="de.uniol.inf.is.odysseus.rcp.editor.view.ParameterViewPart"
+            icon="icons/prop.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.ParameterView"
             name="Parameters View"
             restorable="true">
