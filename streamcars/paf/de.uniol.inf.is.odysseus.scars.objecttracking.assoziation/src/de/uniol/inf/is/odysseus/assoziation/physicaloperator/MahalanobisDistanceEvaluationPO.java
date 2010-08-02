@@ -102,8 +102,17 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MahalanobisDistanceEvaluationPO<M>(this);
+	}
+
+	public MahalanobisDistanceEvaluationPO() {
+
+	}
+
+	public MahalanobisDistanceEvaluationPO(MahalanobisDistanceEvaluationPO<M> clone) {
+		super(clone);
+		this.threshold = clone.getThreshold();
+		this.operator = clone.getOperator();
 	}
 
 }
