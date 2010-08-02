@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanGainFunctionPO;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
 
@@ -78,8 +79,14 @@ public class KalmanGainFunctionPOTest {
 			objConList[i] = tmpConList.get(i);
 		}
 
-		((MVRelationalTuple<StreamCarsMetaData>) objConList[0].getRight()).getMetadata().setGain(gainExp);
+		//(MVRelationalTuple<StreamCarsMetaData>) objConList[0].getRight();
 
+		MVRelationalTuple<StreamCarsMetaData> test = (MVRelationalTuple<StreamCarsMetaData>) objConList[0].getRight();
+		
+		test.getMetadata().setGain(gainExp);
+		
+		objConList[0].setRight(test);
+		
 		KalmanGainFunction gainfunction = new KalmanGainFunction();
 
 		// create the PO

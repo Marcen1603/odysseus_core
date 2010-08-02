@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
 /**
  * @author dtwumasi
  * @param <T>
- * @param <M>
+ * @param <StreamCarsMetaData>
  *
  */
 public class KalmanCorrectStateEstimatePOTest {

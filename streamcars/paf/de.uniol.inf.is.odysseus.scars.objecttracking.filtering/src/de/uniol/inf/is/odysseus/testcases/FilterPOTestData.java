@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @author dtwumasi
  *
  */
-public class FilterPOTestData {
+public class FilterPOTestData<M extends IProbability & IConnectionContainer> {
 
 	
 	
-	private MVRelationalTuple<StreamCarsMetaData> expectedTuple;
+	private MVRelationalTuple<M> expectedTuple;
 	
 	public FilterPOTestData() {
 	
@@ -36,7 +36,7 @@ public class FilterPOTestData {
 	// //	double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 	}
 		
-	public MVRelationalTuple<StreamCarsMetaData> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew ) {
+	public MVRelationalTuple generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew ) {
 		
 		Object[] attributesOld = {speedOld,posOld};
 		
@@ -65,9 +65,9 @@ public class FilterPOTestData {
 		
 		// MVRelationalTuples to hold the old Tuples
 		
-		MVRelationalTuple<StreamCarsMetaData> oldList = new MVRelationalTuple<StreamCarsMetaData>(oldTuple);
+		MVRelationalTuple<M> oldList = new MVRelationalTuple<M>(oldTuple);
 			
-		MVRelationalTuple<StreamCarsMetaData> newList = new MVRelationalTuple<StreamCarsMetaData>(newTuple);
+		MVRelationalTuple<M> newList = new MVRelationalTuple<M>(newTuple);
 		
 		// the main MVRelationalTuple
 		

@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
 /**
  * @author dtwumasi
- * @param <M>
+ * @param <StreamCarsMetaData>
  *
  */
 public class KalmanGainFunctionPO extends AbstractFilterPO {
@@ -26,8 +26,12 @@ public class KalmanGainFunctionPO extends AbstractFilterPO {
 	
 		
 		// list of connections
-	    Connection[] objConList = (Connection[]) ((IConnectionContainer) object.getMetadata()).getConnectionList().toArray();
-	
+		Connection[] objConList = new Connection[object.getMetadata().getConnectionList().toArray().length];
+		ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
+
+		for(int i = 0; i < objConList.length; i++) {
+			objConList[i] = tmpConList.get(i);
+		}
 	    // traverse connection list and filter
 	    for(Connection connected : objConList ) {
 		compute(connected,null, null );
