@@ -56,7 +56,12 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 		// 1.2 - Get the list of old objects (which are predicted to the timestamp of the new objects) as an array of MVRelationalTuple
 		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();
 		// 1.3 - Get the list of connections between old and new objects as an array of Connection
-		Connection[] objConList = (Connection[]) object.getMetadata().getConnectionList().toArray();
+		Connection[] objConList = new Connection[object.getMetadata().getConnectionList().toArray().length];
+		ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
+
+		for(int i = 0; i < objConList.length; i++) {
+			objConList[i] = tmpConList.get(i);
+		}
 
 		// 2 - Convert the connection list to an matrix of ratings so that even connections which are NOT in the connections list (so they have a rating of 0) can be evaluated
 		CorrelationMatrixUtils<M> corUtils = new CorrelationMatrixUtils<M>();
