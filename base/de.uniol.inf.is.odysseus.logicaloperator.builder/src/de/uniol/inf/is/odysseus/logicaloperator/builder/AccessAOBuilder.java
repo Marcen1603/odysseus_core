@@ -38,6 +38,12 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		if (DataDictionary.getInstance().containsView(sourceName)) {
 			return DataDictionary.getInstance().getView(sourceName);
 		}
+		AccessAO ao = createNewAccessAO(sourceName);
+
+		return ao;
+	}
+
+	private AccessAO createNewAccessAO(String sourceName) {
 		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
 		SDFEntity sdfEntity = new SDFEntity(sourceName);
 		List<SDFAttribute> attributeList = attributes.getValue();
@@ -52,7 +58,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		ao.setHost(host.getValue());
 		ao.setPort(port.getValue());
 		ao.setOutputSchema(schema);
-
 		return ao;
 	}
 

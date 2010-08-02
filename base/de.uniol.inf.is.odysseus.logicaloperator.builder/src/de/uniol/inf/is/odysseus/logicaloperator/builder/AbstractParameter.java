@@ -14,7 +14,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	final private REQUIREMENT requirement;
 	private T value;
 	private IAttributeResolver resolver;
-	protected final List<Exception> errors;
+	private final List<Exception> errors;
 	protected Object inputValue;
 
 	public AbstractParameter(String name, REQUIREMENT requirement) {
@@ -55,7 +55,8 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 				internalAssignment();
 			}
 		} catch (Exception e) {
-			this.errors.add(e);
+			this.errors.add(new IllegalParameterException("illegal value for "
+					+ getName() + ": " + e.getMessage()));
 			return false;
 		}
 		return true;
