@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 
@@ -42,7 +43,8 @@ public class AddQueryCommand extends AbstractHandler implements IHandler {
 					try {
 						executor.addQuery(queryToExecute, parserToUse, user, new ParameterDefaultRoot(new MySink()), cfg);
 					} catch (PlanManagementException e) {
-						logger.error("Konnte Command nicht ausführen: ", e);
+						new ExceptionWindow(e);
+						e.printStackTrace();
 					}
 				}
 

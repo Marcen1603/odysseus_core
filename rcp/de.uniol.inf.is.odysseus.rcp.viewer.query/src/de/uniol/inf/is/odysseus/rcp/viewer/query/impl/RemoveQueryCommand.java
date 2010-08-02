@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
 public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
@@ -44,6 +45,7 @@ public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
 					try {
 						executor.removeQuery(qID2);
 					} catch (PlanManagementException e) {
+						new ExceptionWindow(e);
 						e.printStackTrace();
 					}
 				}

@@ -7,6 +7,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 
 public class StopRouterCommand extends AbstractHandler implements IHandler {
@@ -18,6 +19,7 @@ public class StopRouterCommand extends AbstractHandler implements IHandler {
 				Router.getInstanceWithOutStarting().stopRouting();
 			}
 		} catch (IOException e) {
+			new ExceptionWindow(e);
 			e.printStackTrace();
 		}
 		return null;	

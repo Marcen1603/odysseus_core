@@ -15,6 +15,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
 public class NMQNCommand extends AbstractHandler implements IHandler {
@@ -45,6 +46,7 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 				handlerService.executeCommand(parCmd, null);
 				
 			} catch( Exception ex ) {
+				new ExceptionWindow(ex);
 				logger.error("Cannot execute Command:", ex);
 			}
 		}

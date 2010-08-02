@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorConnection;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 
@@ -46,20 +47,25 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		// Aktiven Editor holen
 		IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		
-		if( editorPart instanceof LogicalPlanEditorPart ) {
-			LogicalPlanEditorPart part = (LogicalPlanEditorPart)editorPart;
-			
-			// Plan validieren
-			if( !validatePlan( part.getOperatorPlan() ) ) {
-				System.out.println("Folgende Fehler sind im OperatorPlan:");
-				for( String txt : errorTexts ) 
-					System.out.println(txt);
+		try {
+			if( editorPart instanceof LogicalPlanEditorPart ) {
+				LogicalPlanEditorPart part = (LogicalPlanEditorPart)editorPart;
 				
-				return null;
+				// Plan validieren
+				if( !validatePlan( part.getOperatorPlan() ) ) {
+					System.out.println("Folgende Fehler sind im OperatorPlan:");
+					for( String txt : errorTexts ) 
+						System.out.println(txt);
+					
+					return null;
+				}
+				// Logischen Plan aufbauen
+				buildLogicalPlan( part.getOperatorPlan() );
+				
 			}
-			// Logischen Plan aufbauen
-			buildLogicalPlan( part.getOperatorPlan() );
-			
+		} catch( Exception ex ) {
+			ex.printStackTrace();
+			new ExceptionWindow(ex);
 		}
 		
 		return null;

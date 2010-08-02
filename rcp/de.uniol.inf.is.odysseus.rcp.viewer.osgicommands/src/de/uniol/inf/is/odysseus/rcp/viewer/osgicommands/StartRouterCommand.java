@@ -8,6 +8,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
 import de.uniol.inf.is.odysseus.physicaloperator.base.access.Router;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 public class StartRouterCommand extends AbstractHandler implements IHandler {
 
@@ -18,6 +19,7 @@ public class StartRouterCommand extends AbstractHandler implements IHandler {
 				Router.getInstanceWithOutStarting().start();
 			}
 		} catch (IOException e) {
+			new ExceptionWindow(e);
 			e.printStackTrace();
 		}
 		return null;
