@@ -16,8 +16,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSweepArea;
  * purge. The elements are always sorted and extract and purge only remove
  * elements, until the remove predicate first returns false. The remove
  * predicate is fixed to the TotallyBeforePredicate
- * 
- * @author Jonas Jacobi
  */
 public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>> {
