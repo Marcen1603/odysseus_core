@@ -20,8 +20,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.priority,
- de.uniol.inf.is.odysseus.priority.buffer,
- de.uniol.inf.is.odysseus.priority.punctuation
+ de.uniol.inf.is.odysseus.priority.buffer
 Bundle-Activator: de.uniol.inf.is.odysseus.priority.Activator
 Service-Component: OSGI-INF/PunctuationBufferPlacement.xml,OSGI-INF/PostPriorisationBufferPlacement.xml,OSGI-INF/PostPriorisationCombinedPlacement.xml, OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/weakorderbufferplacement.xml, OSGI-INF/strongorderbufferplacement.xml
 Require-Bundle: de.uniol.inf.is.odysseus.base;bundle-version="1.0.0"

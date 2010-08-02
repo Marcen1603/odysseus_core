@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.priority;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -9,8 +7,9 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-@SuppressWarnings( { "unchecked", "serial" })
 public class PriorityAO<T> extends UnaryLogicalOp {
+
+	private static final long serialVersionUID = -4615895793429076670L;
 
 	@Override
 	public int hashCode() {
@@ -30,7 +29,7 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PriorityAO other = (PriorityAO) obj;
+		PriorityAO<?> other = (PriorityAO<?>) obj;
 		if (defaultPriority != other.defaultPriority)
 			return false;
 		if (priorities == null) {
@@ -57,7 +56,7 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 		this.defaultPriority = 0;
 	}
 
-	public PriorityAO(PriorityAO priorityAO) {
+	public PriorityAO(PriorityAO<T> priorityAO) {
 		this.priorities = priorityAO.priorities;
 	}
 
@@ -78,8 +77,8 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 	}
 
 	@Override
-	public PriorityAO clone() {
-		return new PriorityAO(this);
+	public PriorityAO<T> clone() {
+		return new PriorityAO<T>(this);
 	}
 
 	private boolean isPunctuationActive = false;
@@ -91,17 +90,7 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 	public boolean isPunctuationActive() {
 		return isPunctuationActive;
 	}
-	
-	public void setCopartners(List<PostPriorisationAO<?>> copartners) {
-		this.copartners = copartners;
-	}
 
-	public List<PostPriorisationAO<?>> getCopartners() {
-		return copartners;
-	}
-
-	private List<PostPriorisationAO<?>> copartners = new ArrayList<PostPriorisationAO<?>>();
-	
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return getInputSchema();

@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.priority;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
@@ -13,20 +11,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 /**
  * @author Jonas Jacobi, Jan Steinke
  */
-public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
+public class PriorityPO<K extends IPriority & ITimeInterval, T extends IMetaAttributeContainer<K>>
 		extends AbstractPipe<T, T> {
 
 	private final Map<Byte, IPredicate<? super T>> priorites;
-
-	protected List<IPostPriorisationPipe<?>> copartners;
-
-	public void setCopartners(List<IPostPriorisationPipe<?>> copartners) {
-		this.copartners = copartners;
-	}
-
-	public List<IPostPriorisationPipe<?>> getCopartners() {
-		return copartners;
-	}
 
 	private final byte defaultPriority;
 
@@ -41,7 +29,6 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 		this.priorites = priorityAO.getPriorities();
 		this.defaultPriority = priorityAO.getDefaultPriority();
 		this.isPunctuationActive = priorityAO.isPunctuationActive();
-		this.copartners = new ArrayList<IPostPriorisationPipe<?>>();
 	}
 
 	@Override
@@ -54,28 +41,33 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 		for (Map.Entry<Byte, IPredicate<? super T>> curPriority : this.priorites
 				.entrySet()) {
 			if (curPriority.getValue().evaluate(next)) {
-				next.getMetadata().setPriority(curPriority.getKey());
-				transfer(next);
-				ITimeInterval time = (ITimeInterval) next.getMetadata();
-				if (curPriority.getKey() != 0 && isPunctuationActive) {
-					sendPunctuation(time.getStart());
-				}
+				Byte priority = curPriority.getKey();
+				next.getMetadata().setPriority(priority);
+				transfer(next, 0);
 
-				if (copartners != null) {
-					for (IPostPriorisationPipe<?> each : copartners) {
-						each.addTimeInterval((IMetaAttributeContainer<?>) next);
-					}
+				if (priority != 0) {
+					processPrioritizedElement(next);
 				}
-
 				return;
 			}
 		}
 		next.getMetadata().setPriority(this.defaultPriority);
+		if (this.defaultPriority != 0) {
+			processPrioritizedElement(next);
+		}
 		transfer(next);
 
 		return;
 	}
-	
+
+	private void processPrioritizedElement(T next) {
+		transfer(next, 1);
+		if (isPunctuationActive) {
+			ITimeInterval time = (ITimeInterval) next.getMetadata();
+			sendPunctuation(time.getStart());
+		}
+	}
+
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		sendPunctuation(timestamp);
@@ -88,11 +80,10 @@ public class PriorityPO<T extends IMetaAttributeContainer<? extends IPriority>>
 	public void setPunctuationActive(boolean isPunctuationActive) {
 		this.isPunctuationActive = isPunctuationActive;
 	}
-	
+
 	@Override
-	public PriorityPO<T> clone()  {
+	public PriorityPO<K, T> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
-
 
 }
