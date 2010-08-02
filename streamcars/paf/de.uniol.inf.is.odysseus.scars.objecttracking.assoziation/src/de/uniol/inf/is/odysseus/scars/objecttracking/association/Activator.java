@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.assoziation;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

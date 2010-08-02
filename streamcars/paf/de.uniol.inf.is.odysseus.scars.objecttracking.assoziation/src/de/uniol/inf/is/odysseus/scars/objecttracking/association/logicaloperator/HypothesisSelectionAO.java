@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;

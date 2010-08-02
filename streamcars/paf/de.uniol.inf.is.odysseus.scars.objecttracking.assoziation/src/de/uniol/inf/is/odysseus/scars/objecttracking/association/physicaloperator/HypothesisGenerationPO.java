@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.assoziation.physicaloperator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
 import java.util.ArrayList;
 

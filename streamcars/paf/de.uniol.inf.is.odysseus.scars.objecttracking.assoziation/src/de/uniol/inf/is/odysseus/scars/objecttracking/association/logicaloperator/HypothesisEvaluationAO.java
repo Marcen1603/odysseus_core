@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.assoziation.logicaloperator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator;
 
 import java.util.HashMap;
 

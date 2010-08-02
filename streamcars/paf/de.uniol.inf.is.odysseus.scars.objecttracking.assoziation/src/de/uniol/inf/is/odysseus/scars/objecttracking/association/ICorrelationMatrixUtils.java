@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.assoziation;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;

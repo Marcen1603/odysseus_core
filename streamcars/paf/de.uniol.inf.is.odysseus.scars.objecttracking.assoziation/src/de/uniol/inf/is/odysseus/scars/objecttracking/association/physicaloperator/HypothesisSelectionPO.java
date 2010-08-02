@@ -1,31 +1,31 @@
-package de.uniol.inf.is.odysseus.assoziation.physicaloperator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.assoziation.CorrelationMatrixUtils;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.CorrelationMatrixUtils;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
-public class HypothesisSelectionPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisSelectionPO<M extends IProbability & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
 
 	public HypothesisSelectionPO() {
-		
+
 	}
-	
+
 	public HypothesisSelectionPO(HypothesisSelectionPO<M> copy) {
 		super(copy);
-		
+
 		this.oldObjListPath = copy.oldObjListPath;
 		this.newObjListPath = copy.newObjListPath;
 	}

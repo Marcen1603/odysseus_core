@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.assoziation.test;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association.test;
 
 import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.assoziation.physicaloperator.HypothesisSelectionPO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.HypothesisSelectionPO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
 public class TestHypothesisSelectionPO extends TestCase{

@@ -1,13 +1,13 @@
-package de.uniol.inf.is.odysseus.assoziation.physicaloperator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.assoziation.CorrelationMatrixUtils;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.CorrelationMatrixUtils;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.assoziation.test;
+package de.uniol.inf.is.odysseus.scars.objecttracking.association.test;
 
 import java.util.ArrayList;
 
@@ -6,8 +6,8 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.assoziation.physicaloperator.MahalanobisDistanceEvaluationPO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator.MahalanobisDistanceEvaluationPO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
 public class TestHypothesisEvaluationPO extends TestCase{

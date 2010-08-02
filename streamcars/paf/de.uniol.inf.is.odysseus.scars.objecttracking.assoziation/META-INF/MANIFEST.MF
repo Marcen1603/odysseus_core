@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Assoziation
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.assoziation
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.association
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.assoziation.Activator
 Bundle-ActivationPolicy: lazy
@@ -23,6 +23,6 @@ Require-Bundle: Commons.Math;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking,
  org.junit
-Export-Package: de.uniol.inf.is.odysseus.assoziation,
- de.uniol.inf.is.odysseus.assoziation.logicaloperator,
- de.uniol.inf.is.odysseus.assoziation.physicaloperator
+Export-Package: de.uniol.inf.is.odysseus.scars.objecttracking.association,
+ de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator,
+ de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator
