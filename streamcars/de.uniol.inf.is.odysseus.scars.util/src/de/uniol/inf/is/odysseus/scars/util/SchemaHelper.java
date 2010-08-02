@@ -28,14 +28,7 @@ public class SchemaHelper {
 		}
 		
 		this.schema = schema;
-		
-		// root
-		SchemaIndex rootIndex = new SchemaIndex(-1, schema.get(0));
-		List<SchemaIndex> list = new ArrayList<SchemaIndex>();
-		list.add(rootIndex);
-		paths.put(schema.get(0).getAttributeName(), new SchemaIndexPath(list, schema.get(0)));
-		
-		calculateAllPaths( schema.get(0).getSubattributes(), new ArrayList<SchemaIndex>(), null);
+		calculateAllPaths( schema, new ArrayList<SchemaIndex>(), null);
 	}
 	
 	public SDFAttributeList getSchema() {

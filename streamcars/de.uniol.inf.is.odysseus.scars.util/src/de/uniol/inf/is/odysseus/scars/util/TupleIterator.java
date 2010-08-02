@@ -133,6 +133,7 @@ public class TupleIterator {
 	private Object get(SchemaIndexPath path) {
 		if (path == null || path.getLength() == 0)
 			return tuple;
+
 		TupleHelper tupleHelper = new TupleHelper(tuple);
 		return tupleHelper.getObject(path);
 	}
@@ -254,7 +255,7 @@ public class TupleIterator {
 	 * @return Tupelpfad des Tupelobjektes
 	 */
 	public SchemaIndexPath getSchemaIndexPath() {
-		return new SchemaIndexPath(schemaIndices.subList(1, schemaIndices.size()), schemaIndices.peek().getAttribute());
+		return new SchemaIndexPath(schemaIndices.subList(0, schemaIndices.size()), schemaIndices.peek().getAttribute());
 	}
 
 	/**
@@ -272,7 +273,7 @@ public class TupleIterator {
 	 * @return Tupelpfad des Tupelobjektes
 	 */
 	public TupleIndexPath getTupleIndexPath() {
-		List<TupleIndex> list = tupleIndices.subList(1, tupleIndices.size());
+		List<TupleIndex> list = tupleIndices.subList(0, tupleIndices.size());
 		return new TupleIndexPath(list, getSchemaIndexPath());
 	}
 

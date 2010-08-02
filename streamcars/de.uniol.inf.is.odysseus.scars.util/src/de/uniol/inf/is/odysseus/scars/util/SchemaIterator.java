@@ -89,11 +89,11 @@ public class SchemaIterator {
 
 	public SchemaIndexPath getSchemaIndexPath() {
 		List<SchemaIndex> list = new ArrayList<SchemaIndex>();
-		for( int i = 1; i < start.getSchemaIndices().size() - 1; i++ ) {
+		for( int i = 0; i < start.getSchemaIndices().size() - 1; i++ ) {
 			list.add(new SchemaIndex(start.getSchemaIndex(i)));
 		}
 		
-		List<SchemaIndex> subList = schemaIndices.subList(1, schemaIndices.size());
+		List<SchemaIndex> subList = schemaIndices.subList(0, schemaIndices.size());
 		for( int i = 0; i < subList.size(); i++ ) {
 			list.add(new SchemaIndex(subList.get(i)));
 		}
