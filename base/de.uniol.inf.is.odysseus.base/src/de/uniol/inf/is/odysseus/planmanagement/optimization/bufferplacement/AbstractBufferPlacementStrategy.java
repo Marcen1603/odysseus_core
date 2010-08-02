@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
+import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 
 /**
@@ -77,7 +78,7 @@ public abstract class AbstractBufferPlacementStrategy implements
 
 			for (PhysicalSubscription<? extends ISource<?>> s : subscriptions) {
 				if (s.getTarget().isSink()) {
-					if (s.getTarget() instanceof IBuffer) {
+					if (s.getTarget() instanceof IBuffer || s.getTarget() instanceof MetadataCreationPO) {
 						// if there are already buffers in the subplan
 						// we don't want to insert additional ones
 						continue;
