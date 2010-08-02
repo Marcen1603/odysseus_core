@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Exception
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.exception
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.exception.activator.Activator
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.rcp.exception
