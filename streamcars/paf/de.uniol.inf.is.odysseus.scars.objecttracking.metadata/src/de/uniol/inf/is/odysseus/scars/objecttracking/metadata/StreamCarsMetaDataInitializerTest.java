@@ -1,7 +1,7 @@
 
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
@@ -9,46 +9,30 @@ public class StreamCarsMetaDataInitializerTest
 {
   public static void main(String[] args)
   {
-    TestFactory.create();
-    System.out.println(TestFactory.schema);
-    StreamCarsMetaDataInitializerTest.tryIterator();
-    //StreamCarsMetaDataInitializerTest.test();
+    StreamCarsMetaDataInitializerTest.doTest();
   }
   
-  public static void tryIterator()
+  private static void doTest()
   {
-    TupleIterator iterator = new TupleIterator(TestFactory.tuple, TestFactory.schema);
+    System.out.println("StreamCarsMetaDataInitializerTest: Testing StreamCarsMetaDataInitializer...");
     
-    while( !iterator.isFinished() ) {
-      
-      // Tabs für Hierarchie
-      for( int i = 0; i < iterator.getLevel(); i++ ) 
-        System.out.print("\t");
-      
-      // Infos ausgeben
-      Object obj = iterator.getTupleObject();
-      if( obj instanceof MVRelationalTuple<?> ) {
-        System.out.print("TUPLE");
-      } else {
-        System.out.print(obj);
-      }
-      System.out.print(" (" + iterator.getAttribute().getAttributeName() + " : " + iterator.getAttribute().getDatatype().getQualName() + ")");
-      System.out.print(iterator.getTupleIndexPath());
-      System.out.print(iterator.getSchemaIndexPath());
-      System.out.println(iterator.getSchemaIndexPath().getFullAttributeName());
-
-      iterator.next();
-    }
-  }
-  
-  public static void test()
-  {
+    TestFactory.create();
+    
     // create StreamCarsMetaDataInitializer
     
+    System.out.print("StreamCarsMetaDataInitializerTest: Create StreamCarsMetaDataInitializer...");
     StreamCarsMetaDataInitializer<IProbability> covInit = new StreamCarsMetaDataInitializer<IProbability>(TestFactory.schema);
+    System.out.println(" done!");
     
     // initialize probability meta data of tuples with StreamCarsMetaDataInitializer
     
+    System.out.print("StreamCarsMetaDataInitializerTest: Initialize probability meta data of tuples with StreamCarsMetaDataInitializer...");
     covInit.updateMetadata(TestFactory.tuple);
+    System.out.println(" done!");
+    
+    System.out.println("Tuples:");
+    TestUtil.printTuple(TestFactory.tuple, TestFactory.schema);
+    
+    System.out.println("StreamCarsMetaDataInitializerTest: Testing done!");
   }
 }

@@ -20,6 +20,8 @@ public class TestFactory
   
   public static void create()
   {
+    System.out.println("TestFactory: Creating...");
+    
     // create covariance matrix
     
     TestFactory.covMatrix = new double[][]
@@ -66,7 +68,7 @@ public class TestFactory
     //     > attr601
     
     // create schema attributes
-    SDFAttribute baseAttr = new SDFAttribute("src0.attr");
+    SDFAttribute baseAttr = new SDFAttribute("src0.baseAttr");
     SDFAttribute attr0 = new SDFAttribute("src0.attr0");
     SDFAttribute attr1 = new SDFAttribute("src0.attr1");
     SDFAttribute attr10 = new SDFAttribute("src0.attr10");
@@ -150,5 +152,7 @@ public class TestFactory
     tuple1.setMetadata(new Probability());
     tuple6.setMetadata(new Probability());
     tuple60.setMetadata(new Probability());
+    
+    System.out.println("TestFactory: Creating done!");
   }
 }
