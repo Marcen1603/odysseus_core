@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisEvaluationAO;
-import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisGenerationAO;
-import de.uniol.inf.is.odysseus.assoziation.logicaloperator.HypothesisSelectionAO;
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.predicate.AndPredicate;
@@ -75,10 +72,12 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisEvaluationAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
@@ -89,11 +88,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 /**
  * This visitor creates the logical plan from a procedural expression.
  * IMPORTANT: 	data[0] contains the attribute resolver
- * 				data[1] contains the child operator 
+ * 				data[1] contains the child operator
  * 				data[2] contains the output port of the child operator to which the parent is connected
- * 
+ *
  * @author Andre Bolles
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public class CreateLogicalPlanVisitor implements
@@ -166,14 +165,14 @@ public class CreateLogicalPlanVisitor implements
 		// SDFAttribute outAttr = projection.getOutputSchema().getAttribute(i);
 		// for(int u = 0; u<projection.getInputSchema().getAttributeCount();
 		// u++){
-		//				
+		//
 		// SDFAttribute inAttr = projection.getInputSchema().getAttribute(u);
 		// if(outAttr.compareTo(inAttr) == 0){
 		// restrictList[i] = u;
 		// }
 		// }
 		// }
-		//		
+		//
 		// projection.setRestrictList(restrictList);
 
 		((ArrayList) data).add(projection);
@@ -229,14 +228,14 @@ public class CreateLogicalPlanVisitor implements
 		// SDFAttribute outAttr = projection.getOutputSchema().getAttribute(i);
 		// for(int u = 0; u<projection.getInputSchema().getAttributeCount();
 		// u++){
-		//				
+		//
 		// SDFAttribute inAttr = projection.getInputSchema().getAttribute(u);
 		// if(outAttr.compareTo(inAttr) == 0){
 		// restrictList[i] = u;
 		// }
 		// }
 		// }
-		//		
+		//
 		// projection.setRestrictList(restrictList);
 
 		((ArrayList) data).add(projection);
@@ -384,13 +383,13 @@ public class CreateLogicalPlanVisitor implements
 					.add(attributeResolver.getSource(((ASTIdentifier) node
 							.jjtGetChild(0)).getName()));
 		}
-		
+
 		/*
 		 * TODO
 		 * This is a quick hack to make the access-op work for sources parsed by cql (see ticket 181)
 		 * this should be replaced by a better management of sources
 		 */
-		
+
 		if (((ArrayList)data).get(1) == null) {
 			((ArrayList)data).remove(1);
 			((ArrayList)data).add(DataDictionary.getInstance().getView(((ASTIdentifier) node
@@ -868,10 +867,10 @@ public class CreateLogicalPlanVisitor implements
 		// Object visitorInstance = visitorClass.newInstance();
 		// Method m = visitorClass.getDeclaredMethod("visit",
 		// ASTRelationalNestOp.class, Object.class);
-		//		
+		//
 		// AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
 		// .invoke(visitorInstance, node, newData);
-		//			
+		//
 		// ((ArrayList)data).add(sourceOp);
 		// ((ArrayList)data).add(new Integer(0));
 		// return data;
@@ -1035,7 +1034,7 @@ public class CreateLogicalPlanVisitor implements
 
 //				SDFObjectRelationalExpression[] expressions = new SDFObjectRelationalExpression[prediction
 //						.getOutputSchema().getAttributeCount()];
-				PredictionExpression[] expressions = new PredictionExpression[prediction.getOutputSchema().getAttributeCount()]; 
+				PredictionExpression[] expressions = new PredictionExpression[prediction.getOutputSchema().getAttributeCount()];
 
 				// aside from the last child, all children
 				// must be ASTPredictionFunctionDefinitions
@@ -1192,7 +1191,7 @@ public class CreateLogicalPlanVisitor implements
 				.jjtAccept(this, data);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-		
+
 		childOp.subscribeSink(gen, 0, sourceOutPort, childOp.getOutputSchema());
 
 		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this,
@@ -1257,28 +1256,28 @@ public class CreateLogicalPlanVisitor implements
 		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data).get(0);
 
 		HypothesisSelectionAO selection = new HypothesisSelectionAO();
-		
+
 		// subscribe to source
 		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
 		int sourceOutPort = ((Integer) inputOpNode.get(2)).intValue();
 		ILogicalOperator inputOp = (ILogicalOperator) inputOpNode.get(1);
 		inputOp.subscribeSink(selection, 0, sourceOutPort, inputOp.getOutputSchema());
-		
+
 		// get name of this op
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		String opName = identifier.getName();
-		
+
 		// get path to car data
 		identifier = (ASTIdentifier) node.jjtGetChild(2);
 		String pathNew = identifier.getName();
-		
+
 		// get path to old card data
 		identifier = (ASTIdentifier) node.jjtGetChild(3);
 		String pathOld = identifier.getName();
-		
+
 		// path initialization
 		selection.initPaths(pathOld, pathNew);
-		
+
 		// saving op for source lookup
 		//attrRes.addSource(opName, selection);
 		DataDictionary.getInstance().setLogicalView(opName, selection);
@@ -1287,7 +1286,7 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 		newData.add(selection);
 		newData.add(new Integer(0));
-		
+
 		return newData;
 	}
 
@@ -1303,16 +1302,16 @@ public class CreateLogicalPlanVisitor implements
 		if (associationSource == null) {
 			throw new RuntimeException("The source cannot be found: " + srcName);
 		}
-		
+
 		// get output-port of selection
 		String number = ((ASTNumber)node.jjtGetChild(1)).getValue();
 		Integer outputPort = new Integer(number);
-		
+
 		// constructing return values
 		newData.add(attrRes);
 		newData.add(associationSource);
 		newData.add(outputPort);
-		
+
 		return newData;
 	}
 

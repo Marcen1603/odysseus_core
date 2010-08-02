@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools;bundle-version="1.0.3"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.assoziation.logicaloperator,
- de.uniol.inf.is.odysseus.assoziation.physicaloperator,
+Import-Package: de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator,
+ de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata
