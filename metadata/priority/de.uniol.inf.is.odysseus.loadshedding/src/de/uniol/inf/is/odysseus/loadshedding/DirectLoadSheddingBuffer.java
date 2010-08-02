@@ -4,10 +4,10 @@ import java.util.Random;
 
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipePostPriorisation;
+import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 
 public class DirectLoadSheddingBuffer<T extends IMetaAttributeContainer<? extends IPriority>>
-extends DirectInterlinkBufferedPipePostPriorisation<T> {
+extends DirectInterlinkBufferedPipe<T> {
 
 	public static final int NO_LOAD_SHEDDING = -1;
 
