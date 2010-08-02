@@ -11,19 +11,22 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
+// creates objects for test purposes
+// author: sven
 public class TestFactory
 {
-  public static SDFAttributeList schema = null;
-  public static MVRelationalTuple<IProbability> tuple = null;
-  public static double[][] covMatrix = null;
+  // test objects, set by create
+  public static SDFAttributeList testSchema = null;
+  public static MVRelationalTuple<IProbability> testTuple = null;
+  public static double[][] testCovMatrix = null;
   
-  public static void create()
+  public static void createTestObjects()
   {
     System.out.println("TestFactory: Creating...");
     
     // create covariance matrix
     
-    TestFactory.covMatrix = new double[][]
+    TestFactory.testCovMatrix = new double[][]
     {
       { 0.1, 0.0 },
       { 0.0, 0.2 }
@@ -32,12 +35,12 @@ public class TestFactory
     // create covariance lists for each measurement attribute
     
     ArrayList<Double> maList0 = new ArrayList<Double>();
-    for (double wert : TestFactory.covMatrix[0])
+    for (double wert : TestFactory.testCovMatrix[0])
     {
       maList0.add(new Double(wert));
     }
     ArrayList<Double> maList1 = new ArrayList<Double>();
-    for (double wert : TestFactory.covMatrix[1])
+    for (double wert : TestFactory.testCovMatrix[1])
     {
       maList1.add(new Double(wert));
     }
@@ -101,8 +104,8 @@ public class TestFactory
     attr600.setCovariance(maList1);
     
     // create schema and add schema attributes
-    TestFactory.schema = new SDFAttributeList();
-    TestFactory.schema.addAttribute(baseAttr);
+    TestFactory.testSchema = new SDFAttributeList();
+    TestFactory.testSchema.addAttribute(baseAttr);
     baseAttr.addSubattribute(attr0);
     baseAttr.addSubattribute(attr1);
     attr1.addSubattribute(attr10);
@@ -142,7 +145,7 @@ public class TestFactory
     baseObjects[0] = tuple;
     MVRelationalTuple<IProbability> baseTuple = new MVRelationalTuple<IProbability>(baseObjects);
     
-    TestFactory.tuple = baseTuple;
+    TestFactory.testTuple = baseTuple;
     
     // create empty probability metadata
     

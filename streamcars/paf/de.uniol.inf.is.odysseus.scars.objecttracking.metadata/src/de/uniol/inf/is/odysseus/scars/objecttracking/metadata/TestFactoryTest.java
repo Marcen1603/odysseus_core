@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-
+// test TestFactory :)
+// author: sven
 public class TestFactoryTest
 {
   public static void main(String[] args)
@@ -13,18 +13,12 @@ public class TestFactoryTest
   {
     System.out.println("TestFactoryTest: Testing TestFactory...");
     
-    TestFactory.create();
-    
-    // @Timo: An dieser Stelle ist ein Double, der Tupeliterator hält es aber für
-    // ein Tupel und versucht es zu "öffnen" > IndexOutOfBoundsException
-    // Einfach mal diese Klasse laufen lassen
-    MVRelationalTuple<?> bla = (MVRelationalTuple<?>) TestFactory.tuple.getAttribute(0);
-    System.out.println(bla.getAttribute(0));
+    TestFactory.createTestObjects();
     
     System.out.println("Schema: ");
-    TestUtil.printSchema(TestFactory.schema);
+    TestUtil.printSchema(TestFactory.testSchema);
     System.out.println("Tuples: ");
-    TestUtil.printTuple(TestFactory.tuple, TestFactory.schema);
+    TestUtil.printTuple(TestFactory.testTuple, TestFactory.testSchema);
     
     System.out.println("TestFactoryTest: Testing TestFactory done!");
   }

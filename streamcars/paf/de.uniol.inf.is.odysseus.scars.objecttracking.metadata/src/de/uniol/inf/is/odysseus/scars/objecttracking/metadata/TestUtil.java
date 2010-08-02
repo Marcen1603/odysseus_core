@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
+import java.util.Arrays;
+
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIterator;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+// some test utils
+// author: sven
 public class TestUtil
 {
   public static void printSchema(SDFAttributeList schema)
@@ -66,9 +70,26 @@ public class TestUtil
       {
         System.out.print("object: " + obj);
       }
-      System.out.println(" (path " + iterator.getTupleIndexPath() + ", covariance matrix " + matrix + ")");
+      System.out.println(" (path " + iterator.getTupleIndexPath() + ", covariance matrix " + TestUtil.matrixToString(matrix) + ")");
 
       iterator.next();
     }
+  }
+  
+  private static String matrixToString(double[][] matrix)
+  {
+	  if (matrix == null)
+	  {
+		  return null;
+	  }
+	  StringBuffer buf = new StringBuffer();
+	  buf.append("[ ");
+	  for (double[] array : matrix)
+	  {
+		  buf.append(Arrays.toString(array));
+		  buf.append(" ");
+	  }
+	  buf.append("]");
+	  return buf.toString();
   }
 }
