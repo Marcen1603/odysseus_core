@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
-import de.uniol.inf.is.odysseus.priority.PostPriorisationAO;
+import de.uniol.inf.is.odysseus.priority.PostPrioritizationAO;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
 
 public class PriorityAOHelper {
@@ -71,15 +71,15 @@ public class PriorityAOHelper {
 		if(isCriticalAO(current) || 
 			current.getSubscribedToSource() == null || 
 				current.getSubscribedToSource().size() == 0) {
-			PostPriorisationAO prioAO = new PostPriorisationAO();
+			PostPrioritizationAO prioAO = new PostPrioritizationAO();
 
 			// Nur die Default-Prioritaet setzen. Den Rest macht dann die jeweilige Strategie
 			prioAO.setDefaultPriority(base.getDefaultPriority());
 			// Operator erst einmal deaktivieren, damit er nicht die normale Berechnung stört
 			prioAO.setActive(false);
-			prioAO.setPredicates(fragments);
+//			prioAO.setPredicates(fragments);
 			insertPostPriorityAO(current, prioAO);
-			base.getCopartners().add(prioAO);
+//			base.getCopartners().add(prioAO);
 
 		} else {
 			Iterator<LogicalSubscription> it = current.getSubscribedToSource().iterator();
@@ -93,7 +93,7 @@ public class PriorityAOHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public synchronized static  void insertPostPriorityAO(AbstractLogicalOperator current, PostPriorisationAO prioAO) {	
+	public synchronized static  void insertPostPriorityAO(AbstractLogicalOperator current, PostPrioritizationAO prioAO) {	
 		Iterator<LogicalSubscription> it = current.getSubscriptions().iterator();
 		
 		while(it.hasNext()) {
