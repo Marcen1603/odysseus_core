@@ -17,7 +17,8 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.apache.commons.math,
  org.junit,
  org.osgi.framework;version="1.3.0",
- org.slf4j;version="1.5.6"
+ org.slf4j;version="1.5.6",
+ weka.core.neighboursearch
 Require-Bundle: Commons.Math;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking,
