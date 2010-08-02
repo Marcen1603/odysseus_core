@@ -14,6 +14,8 @@ public class Activator implements BundleActivator {
 	private static final String UNION = "UNION";
 	private static final String RENAME = "RENAME";
 	private static final String WINDOW = "WINDOW";
+	private static final String DIFFERENCE = "DIFFERENCE";
+	private static final String EXISTENCE = "EXISTENCE";
 
 	/*
 	 * (non-Javadoc)
@@ -32,6 +34,8 @@ public class Activator implements BundleActivator {
 		OperatorBuilderFactory.putOperatorBuilderType(RENAME, RenameAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(WINDOW, WindowAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(SPLIT, SplitAOBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(DIFFERENCE, DifferenceAOBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(EXISTENCE, ExistenceAOBuilder.class);
 	}
 
 	/*
@@ -50,6 +54,8 @@ public class Activator implements BundleActivator {
 		OperatorBuilderFactory.removeOperatorBuilderType(RENAME);
 		OperatorBuilderFactory.removeOperatorBuilderType(WINDOW);
 		OperatorBuilderFactory.removeOperatorBuilderType(SPLIT);
+		OperatorBuilderFactory.removeOperatorBuilderType(DIFFERENCE);
+		OperatorBuilderFactory.removeOperatorBuilderType(EXISTENCE);
 	}
 
 }
