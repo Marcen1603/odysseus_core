@@ -1192,13 +1192,13 @@ public class CreateLogicalPlanVisitor implements
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 
-		childOp.subscribeSink(gen, 0, sourceOutPort, childOp.getOutputSchema());
+		childOp.subscribeToSource(gen, 0, sourceOutPort, childOp.getOutputSchema());
 
 		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this,
 				data);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
-		childOp.subscribeSink(gen, 1, sourceOutPort, childOp.getOutputSchema());
+		childOp.subscribeToSource(gen, 1, sourceOutPort, childOp.getOutputSchema());
 
 		gen.initPaths(((ASTIdentifier) node.jjtGetChild(3)).getName(),
 				((ASTIdentifier) node.jjtGetChild(2)).getName());
@@ -1225,7 +1225,7 @@ public class CreateLogicalPlanVisitor implements
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 		childOp
-				.subscribeSink(eval, 0, sourceOutPort, childOp
+				.subscribeToSource(eval, 0, sourceOutPort, childOp
 						.getOutputSchema());
 
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
@@ -1261,7 +1261,7 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
 		int sourceOutPort = ((Integer) inputOpNode.get(2)).intValue();
 		ILogicalOperator inputOp = (ILogicalOperator) inputOpNode.get(1);
-		inputOp.subscribeSink(selection, 0, sourceOutPort, inputOp.getOutputSchema());
+		inputOp.subscribeToSource(selection, 0, sourceOutPort, inputOp.getOutputSchema());
 
 		// get name of this op
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
