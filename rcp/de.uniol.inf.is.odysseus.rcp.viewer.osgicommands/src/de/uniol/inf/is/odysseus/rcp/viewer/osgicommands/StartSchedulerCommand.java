@@ -8,6 +8,7 @@ import org.eclipse.core.commands.IHandler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 
 public class StartSchedulerCommand extends AbstractHandler implements IHandler {
@@ -18,6 +19,7 @@ public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 		if( executor != null ) {
 			try {
 				executor.startExecution();
+				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler is running");
 			} catch (PlanManagementException e) {
 				new ExceptionWindow(e);
 				e.printStackTrace();
