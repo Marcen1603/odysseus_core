@@ -62,6 +62,18 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.viewer.queryview.toolbar1">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callActiveGraphEditor"
+                  icon="icons/graph.jpg"
+                  label="Current Graph"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
