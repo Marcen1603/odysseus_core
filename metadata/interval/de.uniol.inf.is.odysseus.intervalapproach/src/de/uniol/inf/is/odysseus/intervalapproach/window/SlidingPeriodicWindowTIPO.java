@@ -55,7 +55,6 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 		this.sa = new DefaultTISweepArea<IMetaAttributeContainer<? extends ITimeInterval>>();
 		this.deliveryList = new LinkedList<IMetaAttributeContainer<? extends ITimeInterval>>();
 
-		this.sa.setRemovePredicate(StartsBeforePredicate.getInstance());
 		// the execution mode must be positive negative in every case,
 		// because in this window only the start time stamp of the elements
 		// is important, but in interval based mode, also the end time stamp
