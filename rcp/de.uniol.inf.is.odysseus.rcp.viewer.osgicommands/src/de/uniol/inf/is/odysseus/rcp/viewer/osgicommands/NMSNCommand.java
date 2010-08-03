@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
 public class NMSNCommand extends AbstractHandler implements IHandler {
@@ -25,22 +26,11 @@ public class NMSNCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-//		IAdvancedExecutor exec = Activator.getExecutor();
-//		if( exec != null ) {
-//			for (String s : q) {
-//				try {
-//					// TODO: User einfuegen, der diese Query ausf�hrt
-//					User user = new User("TODO.SetUser");
-//					 
-//					exec.addQuery(s, "CQL", user, Activator.getTrafoConfigParam());
-//				} catch (PlanManagementException e) {
-//					e.printStackTrace();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		return null;
+
+		if( Activator.getExecutor() == null ) {
+			StatusBarManager.getInstance().setMessage("No executor available");
+			return null;
+		}
 		
 		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 		String[] queries = new String[4];

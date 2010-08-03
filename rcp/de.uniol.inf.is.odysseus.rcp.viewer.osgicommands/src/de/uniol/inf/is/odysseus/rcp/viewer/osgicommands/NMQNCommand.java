@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
 public class NMQNCommand extends AbstractHandler implements IHandler {
@@ -33,6 +34,11 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		if( Activator.getExecutor() == null ) {
+			StatusBarManager.getInstance().setMessage("No executor available");
+			return null;
+		}
+		
 		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 		boolean allOK = true;
 		for( String q  : queries ) {

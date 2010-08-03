@@ -25,6 +25,8 @@ public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 				new ExceptionWindow(e);
 				e.printStackTrace();
 			}
+		} else {
+			StatusBarManager.getInstance().setMessage("No executor available");
 		}
 		return null;
 	}
