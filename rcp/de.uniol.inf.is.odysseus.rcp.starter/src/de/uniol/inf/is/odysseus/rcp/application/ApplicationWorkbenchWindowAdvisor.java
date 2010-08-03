@@ -33,7 +33,5 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	public void postWindowOpen() {
 		IStatusLineManager manager = getWindowConfigurer().getActionBarConfigurer().getStatusLineManager();
 		StatusBarManager.getInstance().setStatusLineManager(manager);
-		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
-		StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler stopped");
 	}
 }
