@@ -20,6 +20,7 @@ public class StopSchedulerCommand extends AbstractHandler implements IHandler {
 			try {
 				executor.stopExecution();
 				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler stopped");
+				StatusBarManager.getInstance().setMessage("Scheduler stopped");
 			} catch (PlanManagementException e) {
 				new ExceptionWindow(e);
 				e.printStackTrace();

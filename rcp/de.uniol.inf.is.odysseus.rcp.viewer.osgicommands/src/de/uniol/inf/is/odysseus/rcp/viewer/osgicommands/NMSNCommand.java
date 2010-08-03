@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
 public class NMSNCommand extends AbstractHandler implements IHandler {
@@ -47,6 +48,7 @@ public class NMSNCommand extends AbstractHandler implements IHandler {
 		queries[1] = "CREATE STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442";
 		queries[2] = "CREATE STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
 		queries[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
+		boolean allOK = true;
 		for( String q  : queries ) {
 			try {
 				Map<String,String> map = new HashMap<String, String>();
@@ -62,8 +64,14 @@ public class NMSNCommand extends AbstractHandler implements IHandler {
 			} catch( Exception ex ) {
 				new ExceptionWindow(ex);
 				logger.error("Cannot execute Command:", ex);
+				allOK = false;
 			}
 		}
+		if( allOK ) 
+			StatusBarManager.getInstance().setMessage("Nexmark Sources added successfully");
+		else 
+			StatusBarManager.getInstance().setMessage("Errors during adding nexmark sources");
+
 		return null;
 	}
 

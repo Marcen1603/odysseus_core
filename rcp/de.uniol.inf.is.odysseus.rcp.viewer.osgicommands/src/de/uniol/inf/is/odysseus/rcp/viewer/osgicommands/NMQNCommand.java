@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.IQueryConstants;
 
 public class NMQNCommand extends AbstractHandler implements IHandler {
@@ -33,6 +34,7 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		boolean allOK = true;
 		for( String q  : queries ) {
 			try {
 				Map<String,String> map = new HashMap<String, String>();
@@ -48,8 +50,14 @@ public class NMQNCommand extends AbstractHandler implements IHandler {
 			} catch( Exception ex ) {
 				new ExceptionWindow(ex);
 				logger.error("Cannot execute Command:", ex);
+				allOK = false;
 			}
 		}
+		if( allOK ) 
+			StatusBarManager.getInstance().setMessage("Nexmark Queries added successfully");
+		else
+			StatusBarManager.getInstance().setMessage("Errors during adding nexmark queries");
+
 		return null;
 	}
 

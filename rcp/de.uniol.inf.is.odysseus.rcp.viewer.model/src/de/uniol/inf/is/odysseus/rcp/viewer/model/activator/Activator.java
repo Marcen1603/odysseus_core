@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.Model;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.impl.OdysseusModelProviderMultipleSink;
@@ -64,11 +63,9 @@ public class Activator implements BundleActivator, IPlanModificationListener  {
 
 	public void bindExecutor(IAdvancedExecutor executor) {
 		executor.addPlanModificationListener(this);
-		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "Executor ready");
 	}
 	
 	public void unbindExecutor(IAdvancedExecutor executor) {
 		executor.removePlanModificationListener(this);
-		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
 	}
 }

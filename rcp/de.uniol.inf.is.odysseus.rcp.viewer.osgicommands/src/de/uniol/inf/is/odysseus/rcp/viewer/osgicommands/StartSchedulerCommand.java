@@ -20,6 +20,7 @@ public class StartSchedulerCommand extends AbstractHandler implements IHandler {
 			try {
 				executor.startExecution();
 				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler is running");
+				StatusBarManager.getInstance().setMessage("Scheduler started");
 			} catch (PlanManagementException e) {
 				new ExceptionWindow(e);
 				e.printStackTrace();

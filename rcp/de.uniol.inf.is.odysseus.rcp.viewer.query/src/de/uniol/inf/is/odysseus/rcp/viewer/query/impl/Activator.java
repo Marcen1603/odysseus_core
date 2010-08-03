@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
+import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.ParameterTransformationConfigurationRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.query.QueryHistory;
 
@@ -56,11 +57,13 @@ public class Activator extends Plugin {
 	// Declarative Service
 	public void bindExecutor(IAdvancedExecutor ex) {
 		executor = ex;
+		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "Executor ready");
 	}
 	
 	// Declarative Service
 	public void unbindExecutor(IAdvancedExecutor ex) {
 		executor = null;
+		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
 	}
 
 }
