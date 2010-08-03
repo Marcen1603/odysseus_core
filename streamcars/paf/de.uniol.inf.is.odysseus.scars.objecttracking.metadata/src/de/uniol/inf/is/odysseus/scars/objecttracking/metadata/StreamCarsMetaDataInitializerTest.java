@@ -17,6 +17,8 @@ public class StreamCarsMetaDataInitializerTest
     System.out.println("StreamCarsMetaDataInitializerTest: Testing StreamCarsMetaDataInitializer...");
     
     TestFactory.createTestObjects();
+    System.out.println("Tuples before:");
+    TestUtil.printTuple(TestFactory.testTuple, TestFactory.testSchema);
     
     // create StreamCarsMetaDataInitializer
     
@@ -30,7 +32,7 @@ public class StreamCarsMetaDataInitializerTest
     covInit.updateMetadata(TestFactory.testTuple);
     System.out.println(" done!");
     
-    System.out.println("Tuples:");
+    System.out.println("Tuples afterwards:");
     TestUtil.printTuple(TestFactory.testTuple, TestFactory.testSchema);
     
     System.out.println("StreamCarsMetaDataInitializerTest: Testing done!");
