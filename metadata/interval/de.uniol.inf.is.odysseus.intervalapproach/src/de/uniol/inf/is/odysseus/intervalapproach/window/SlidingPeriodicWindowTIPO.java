@@ -125,12 +125,8 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 			// delta) * delta - winsize + delta
 			long remove_t_start = (this.slideNo * delta) - winSize + delta - 1;
 			PointInTime p_remove = new PointInTime(remove_t_start);
-			TimeInterval remove_val = new TimeInterval(p_remove,
-					new PointInTime(remove_t_start + 1));
-			IMetaAttributeContainer<ITimeInterval> ref_elem = new MetaAttributeContainer<ITimeInterval>(
-					remove_val);
 
-			this.sa.purgeElements(ref_elem, Order.RightLeft);
+			this.sa.purgeElementsBefore(p_remove);
 		}
 
 		this.sa.insert(object);
