@@ -21,7 +21,9 @@ import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.InputOperatorItem;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -41,7 +43,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     PQLParser.initParameters(builder.getParameters(), parameters);
     if (!builder.validate())
     {
-      throw new ValidationException(builder.getErrors());
+      throw new ValidationException(identifier, builder.getErrors());
     }
     ILogicalOperator operator = builder.createOperator();
     return operator;
@@ -637,7 +639,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       for (int i = 0; i < jj_endpos; i++) {
         jj_expentry[i] = jj_lasttokens[i];
       }
-      jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
+      jj_entries_loop: for (java.util.Iterator it = jj_expentries.iterator(); it.hasNext();) {
         int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {
           for (int i = 0; i < jj_expentry.length; i++) {

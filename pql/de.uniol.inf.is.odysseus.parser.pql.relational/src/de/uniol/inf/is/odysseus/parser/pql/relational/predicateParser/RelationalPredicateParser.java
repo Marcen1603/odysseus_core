@@ -162,6 +162,10 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
       jj_consume_token(22);
     {if (true) return "^";}
       break;
+    case 23:
+      jj_consume_token(23);
+    {if (true) return "%";}
+      break;
     default:
       jj_la1[3] = jj_gen;
       jj_consume_token(-1);
@@ -258,14 +262,14 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
       label_1:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 23:
+        case 24:
           ;
           break;
         default:
           jj_la1[7] = jj_gen;
           break label_1;
         }
-        jj_consume_token(23);
+        jj_consume_token(24);
         tmp = Expression();
         result.append(",");
         result.append(tmp);
@@ -295,9 +299,7 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     {
       {if (true) return "==";}
     }
-    if (t.image.equals("<>"
-    )
-    )
+    if (t.image.equals("<>"))
     {
       {if (true) return "!=";}
     }
@@ -356,55 +358,45 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     return false;
   }
 
-  private boolean jj_3R_25() {
-    if (jj_3R_31()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_32()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   private boolean jj_3_4() {
     if (jj_3R_5()) return true;
     if (jj_3R_6()) return true;
     return false;
   }
 
-  private boolean jj_3R_35() {
-    if (jj_3R_5()) return true;
-    return false;
-  }
-
   private boolean jj_3R_7() {
-    if (jj_3R_24()) return true;
+    if (jj_3R_25()) return true;
     if (jj_scan_token(16)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_25()) jj_scanpos = xsp;
+    if (jj_3R_26()) jj_scanpos = xsp;
     if (jj_scan_token(17)) return true;
     return false;
   }
 
-  private boolean jj_3R_34() {
+  private boolean jj_3R_36() {
     if (jj_3R_5()) return true;
-    if (jj_3R_6()) return true;
-    if (jj_3R_31()) return true;
     return false;
   }
 
-  private boolean jj_3R_31() {
+  private boolean jj_3R_35() {
+    if (jj_3R_5()) return true;
+    if (jj_3R_6()) return true;
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_32() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_34()) {
+    if (jj_3R_35()) {
     jj_scanpos = xsp;
-    if (jj_3R_35()) return true;
+    if (jj_3R_36()) return true;
     }
     return false;
   }
 
-  private boolean jj_3R_29() {
+  private boolean jj_3R_30() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(8)) {
@@ -414,10 +406,15 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     return false;
   }
 
-  private boolean jj_3R_33() {
-    if (jj_3R_31()) return true;
-    if (jj_3R_36()) return true;
-    if (jj_3R_31()) return true;
+  private boolean jj_3R_34() {
+    if (jj_3R_32()) return true;
+    if (jj_3R_37()) return true;
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(CHAR_LITERAL)) return true;
     return false;
   }
 
@@ -427,35 +424,30 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     return false;
   }
 
-  private boolean jj_3R_30() {
-    if (jj_scan_token(CHAR_LITERAL)) return true;
+  private boolean jj_3R_28() {
+    if (jj_3R_34()) return true;
     return false;
   }
 
-  private boolean jj_3R_27() {
-    if (jj_3R_33()) return true;
+  private boolean jj_3R_18() {
+    if (jj_3R_25()) return true;
     return false;
   }
 
   private boolean jj_3R_8() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_26()) {
+    if (jj_3R_27()) {
     jj_scanpos = xsp;
-    if (jj_3R_27()) return true;
+    if (jj_3R_28()) return true;
     }
     return false;
   }
 
-  private boolean jj_3R_26() {
+  private boolean jj_3R_27() {
     if (jj_scan_token(16)) return true;
     if (jj_3R_4()) return true;
     if (jj_scan_token(17)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_18() {
-    if (jj_3R_24()) return true;
     return false;
   }
 
@@ -466,18 +458,18 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
 
   private boolean jj_3R_17() {
     if (jj_scan_token(20)) return true;
-    if (jj_3R_24()) return true;
+    if (jj_3R_25()) return true;
     return false;
   }
 
   private boolean jj_3R_16() {
     if (jj_scan_token(16)) return true;
-    if (jj_3R_31()) return true;
+    if (jj_3R_32()) return true;
     if (jj_scan_token(17)) return true;
     return false;
   }
 
-  private boolean jj_3R_28() {
+  private boolean jj_3R_29() {
     if (jj_scan_token(K_NOT)) return true;
     if (jj_3R_4()) return true;
     return false;
@@ -488,25 +480,18 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     return false;
   }
 
-  private boolean jj_3R_36() {
+  private boolean jj_3R_37() {
     if (jj_scan_token(COMPARE_OPERATOR)) return true;
     return false;
   }
 
   private boolean jj_3R_14() {
-    if (jj_3R_30()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_3() {
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(K_AND)) return true;
-    if (jj_3R_4()) return true;
+    if (jj_3R_31()) return true;
     return false;
   }
 
   private boolean jj_3R_13() {
-    if (jj_3R_29()) return true;
+    if (jj_3R_30()) return true;
     return false;
   }
 
@@ -532,8 +517,20 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     return false;
   }
 
-  private boolean jj_3R_24() {
+  private boolean jj_3R_3() {
+    if (jj_3R_8()) return true;
+    if (jj_scan_token(K_AND)) return true;
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25() {
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(23)) return true;
     return false;
   }
 
@@ -564,6 +561,12 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     return false;
   }
 
+  private boolean jj_3R_33() {
+    if (jj_scan_token(24)) return true;
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
   private boolean jj_3R_21() {
     if (jj_scan_token(20)) return true;
     return false;
@@ -574,14 +577,8 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     return false;
   }
 
-  private boolean jj_3R_32() {
-    if (jj_scan_token(23)) return true;
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
   private boolean jj_3R_11() {
-    if (jj_3R_28()) return true;
+    if (jj_3R_29()) return true;
     return false;
   }
 
@@ -592,6 +589,16 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
 
   private boolean jj_3R_20() {
     if (jj_scan_token(19)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26() {
+    if (jj_3R_32()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_33()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -611,7 +618,10 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
     jj_scanpos = xsp;
     if (jj_3R_22()) {
     jj_scanpos = xsp;
-    if (jj_3R_23()) return true;
+    if (jj_3R_23()) {
+    jj_scanpos = xsp;
+    if (jj_3R_24()) return true;
+    }
     }
     }
     }
@@ -641,7 +651,7 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x114b40,0x114b00,0x114b00,0x7c0000,0x4300,0x110800,0x300,0x800000,0x114b00,};
+      jj_la1_0 = new int[] {0x114b40,0x114b00,0x114b00,0xfc0000,0x4300,0x110800,0x300,0x1000000,0x114b00,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[5];
   private boolean jj_rescan = false;
@@ -827,7 +837,7 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[24];
+    boolean[] la1tokens = new boolean[25];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -841,7 +851,7 @@ public class RelationalPredicateParser implements RelationalPredicateParserConst
         }
       }
     }
-    for (int i = 0; i < 24; i++) {
+    for (int i = 0; i < 25; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
