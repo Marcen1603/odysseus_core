@@ -188,45 +188,37 @@ public class QueryViewPart extends ViewPart implements IPlanModificationListener
 		} else if ("QUERY_ADDED".equals(eventArgs.getID())) {
 			addQuery((IQuery) eventArgs.getValue());
 		} else if( "QUERY_STOP".equals(eventArgs.getID())) {
-			tableViewer.refresh((IQuery) eventArgs.getValue());
+//			tableViewer.refresh((IQuery) eventArgs.getValue());
+			refreshTable();
 		} else if( "QUERY_START".equals(eventArgs.getID())) {
-			tableViewer.refresh((IQuery) eventArgs.getValue());
+//			tableViewer.refresh((IQuery) eventArgs.getValue());
+			refreshTable();
 		}
+	}
+	
+	protected void refreshTable() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				tableViewer.refresh();
+			}
+
+		});
 	}
 
 	private void addQueries(Collection<IQuery> qs) {
 		queries.addAll(qs);
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				tableViewer.refresh();
-			}
-
-		});
+		refreshTable();
 	}
 
 	private void removeQuery(IQuery q) {
 		queries.remove(q);
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				tableViewer.refresh();
-			}
-
-		});
+		refreshTable();
 	}
 
 	private void addQuery(IQuery q) {
 		queries.add(q);
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				tableViewer.refresh();
-			}
-
-		});
+		refreshTable();
 	}
 }
