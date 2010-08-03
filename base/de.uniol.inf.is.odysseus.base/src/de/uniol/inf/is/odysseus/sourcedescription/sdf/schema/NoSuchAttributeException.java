@@ -7,7 +7,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class NoSuchAttributeException extends Exception {
+public class NoSuchAttributeException extends RuntimeException {
 
 	/**
 	 * 

@@ -7,7 +7,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class AmgigiousAttributeException extends Exception {
+public class AmgigiousAttributeException extends RuntimeException {
 
 	/**
 	 * 
