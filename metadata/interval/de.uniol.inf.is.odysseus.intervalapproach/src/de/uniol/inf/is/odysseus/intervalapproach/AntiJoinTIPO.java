@@ -31,8 +31,6 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	//
 	private PriorityQueue<T> returnBuffer;
 	//
-	private Order order;
-	//
 	private PointInTime[] highestStart;
 
 	//
@@ -43,7 +41,6 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 		this.sa = (ISweepArea<T>[]) new ISweepArea[] { leftArea, rightArea };
 		this.returnBuffer = new PriorityQueue<T>(10,
 				new MetadataComparator<ITimeInterval>());
-		this.order = Order.LeftRight;
 		PointInTime startTime = PointInTime.getZeroTime();
 		this.highestStart = new PointInTime[] { startTime, startTime };
 	}
@@ -61,7 +58,6 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 		this.sa = new ISweepArea[] { leftSA, rightSA };
 		this.returnBuffer = new PriorityQueue<T>(10,
 				new MetadataComparator<ITimeInterval>());
-		this.order = Order.LeftRight;
 		PointInTime startTime = PointInTime.getZeroTime();
 		this.highestStart = new PointInTime[] { startTime, startTime };
 	}
@@ -70,7 +66,6 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 		this.sa = antiJoinTIPO.sa.clone();// TODO was ist hier gewollt
 		this.returnBuffer = new PriorityQueue<T>(10,
 				new MetadataComparator<ITimeInterval>());
-		this.order = Order.LeftRight;
 		PointInTime startTime = PointInTime.getZeroTime();
 		this.highestStart = new PointInTime[] { startTime, startTime };
 	}
@@ -252,20 +247,20 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	synchronized protected void process_next(T object, int port) {
 		T curInput = object;
 		ITimeInterval curMetadata = curInput.getMetadata();
 		PointInTime curStart = curMetadata.getStart();
 		this.highestStart[port] = curStart;
 
 		if (port == LEFT) {
-			sa[RIGHT].purgeElements(curInput, order);
+			sa[RIGHT].purgeElements(curInput, Order.LeftRight);
 			if (!this.sa[RIGHT].isEmpty()
 					&& (curMetadata.getEnd().before(this.sa[RIGHT].peek()
 							.getMetadata().getStart()))) {
 				this.returnBuffer.add(curInput);
 			} else {
-				Iterator<T> it = sa[RIGHT].query(curInput, order);
+				Iterator<T> it = sa[RIGHT].query(curInput, Order.LeftRight);
 				if (!it.hasNext()) {
 					sa[LEFT].insert(curInput);
 				} else {
@@ -297,13 +292,13 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 		} else {
 			this.sa[RIGHT].insert(curInput);
 			Iterator<T> extractIT = this.sa[LEFT].extractElements(curInput,
-					order);
+					Order.RightLeft);
 			while (extractIT.hasNext()) {
 				this.returnBuffer.add(extractIT.next());
 			}
 
 			LinkedList<T> newElements = new LinkedList<T>();
-			Iterator<T> it = this.sa[LEFT].query(curInput, order);
+			Iterator<T> it = this.sa[LEFT].query(curInput, Order.RightLeft);
 			while (it.hasNext()) {
 				T next = it.next();
 				it.remove();
@@ -326,9 +321,11 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 		}
 		PointInTime minStart = PointInTime.min(this.highestStart[LEFT],
 				this.highestStart[RIGHT]);
-		while (returnBuffer.peek().getMetadata().getStart().afterOrEquals(
+		T tmpElement = returnBuffer.peek();
+		while (tmpElement != null && tmpElement.getMetadata().getStart().beforeOrEquals(
 				minStart)) {
 			transfer(returnBuffer.poll());
+			tmpElement = returnBuffer.peek();
 		}
 	}
 
