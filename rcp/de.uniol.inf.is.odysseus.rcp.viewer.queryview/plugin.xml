@@ -36,7 +36,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.viewer.view.commands.callActiveGraphEditor"
                icon="icons/graph.jpg"
-               label="Actual Graph"
+               label="Current Graph"
                style="push">
          </command>
       </menuContribution>
