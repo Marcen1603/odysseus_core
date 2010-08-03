@@ -20,10 +20,12 @@ public class WindowAOBuilder extends AbstractOperatorBuilder {
 			"PARTITION", REQUIREMENT.OPTIONAL,
 			new ResolvedSDFAttributeParameter("partition attribute",
 					REQUIREMENT.MANDATORY));
+	DirectParameter<Long> slide = new DirectParameter<Long>("SLIDE",
+			REQUIREMENT.OPTIONAL);
 
 	public WindowAOBuilder() {
 		super(1, 1);
-		setParameters(advance, size, type, partition);
+		setParameters(advance, size, type, partition, slide);
 	}
 
 	@Override
@@ -57,6 +59,9 @@ public class WindowAOBuilder extends AbstractOperatorBuilder {
 			windowAO.setWindowSize(windowSize);
 			windowAO.setWindowAdvance(windowAdvance);
 		}
+		if (slide.hasValue()) {
+			windowAO.setWindowSlide(slide.getValue());
+		}
 		windowAO.setWindowType(windowType);
 
 		return windowAO;
@@ -72,8 +77,8 @@ public class WindowAOBuilder extends AbstractOperatorBuilder {
 				return false;
 			}
 		} else {
+			boolean isValid = true;
 			if (windowTypeStr.equals(UNBOUNDED)) {
-				boolean isValid = true;
 				if (size.hasValue()) {
 					isValid = false;
 					addError(new IllegalParameterException(
@@ -89,14 +94,24 @@ public class WindowAOBuilder extends AbstractOperatorBuilder {
 					addError(new IllegalParameterException(
 							"can't use partition in unbounded window"));
 				}
-				return isValid;
+				if (slide.hasValue()) {
+					isValid = false;
+					addError(new IllegalParameterException(
+							"can't use slide in unbounded window"));
+				}
 			} else {
 				if (!windowTypeStr.equals(TUPLE)) {
+					isValid = false;
 					addError(new IllegalParameterException(
 							"invalid window type: " + windowTypeStr));
-					return false;
+				}
+				if (slide.hasValue()) {
+					isValid = false;
+					addError(new IllegalParameterException(
+							"can't use slide in tuple window"));
 				}
 			}
+			return isValid;
 		}
 		return true;
 	}

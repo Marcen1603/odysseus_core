@@ -16,6 +16,7 @@ public class Activator implements BundleActivator {
 	private static final String WINDOW = "WINDOW";
 	private static final String DIFFERENCE = "DIFFERENCE";
 	private static final String EXISTENCE = "EXISTENCE";
+	private static final String AGGREGATION = "AGGREGATION";
 
 	/*
 	 * (non-Javadoc)
@@ -36,6 +37,7 @@ public class Activator implements BundleActivator {
 		OperatorBuilderFactory.putOperatorBuilderType(SPLIT, SplitAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(DIFFERENCE, DifferenceAOBuilder.class);
 		OperatorBuilderFactory.putOperatorBuilderType(EXISTENCE, ExistenceAOBuilder.class);
+		OperatorBuilderFactory.putOperatorBuilderType(AGGREGATION, AggregateAOBuilder.class);
 	}
 
 	/*
@@ -56,6 +58,7 @@ public class Activator implements BundleActivator {
 		OperatorBuilderFactory.removeOperatorBuilderType(SPLIT);
 		OperatorBuilderFactory.removeOperatorBuilderType(DIFFERENCE);
 		OperatorBuilderFactory.removeOperatorBuilderType(EXISTENCE);
+		OperatorBuilderFactory.removeOperatorBuilderType(AGGREGATION);
 	}
 
 }
