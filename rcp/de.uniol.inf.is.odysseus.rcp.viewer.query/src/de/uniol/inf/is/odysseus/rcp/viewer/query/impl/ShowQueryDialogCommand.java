@@ -188,6 +188,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 		fillTransformCfgCombo();
 
 		dialogShell.open();
+		queryTextField.setFocus();
 
 		return null;
 	}
