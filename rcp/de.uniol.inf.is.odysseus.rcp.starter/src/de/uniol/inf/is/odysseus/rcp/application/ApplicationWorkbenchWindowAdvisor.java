@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.application;
 
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+
+import de.uniol.inf.is.odysseus.rcp.statusbar.StatusBarManager;
 
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
@@ -25,5 +28,12 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowProgressIndicator(true);
 		configurer.setShowPerspectiveBar(true);
 	}
-
+	
+	@Override
+	public void postWindowOpen() {
+		IStatusLineManager manager = getWindowConfigurer().getActionBarConfigurer().getStatusLineManager();
+		StatusBarManager.getInstance().setStatusLineManager(manager);
+		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
+		StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, "Scheduler stopped");
+	}
 }
