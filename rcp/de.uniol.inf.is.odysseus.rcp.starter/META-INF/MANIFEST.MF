@@ -12,5 +12,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.rcp.perspective.observer,
+ de.uniol.inf.is.odysseus.rcp.statusbar,
  org.apache.log4j,
  org.apache.log4j.spi
