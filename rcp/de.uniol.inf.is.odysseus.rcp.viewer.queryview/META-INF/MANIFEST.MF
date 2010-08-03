@@ -17,6 +17,7 @@ Import-Package: de.uniol.inf.is.odysseus.base.planmanagement.event,
  de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification,
  de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.rcp.statusbar,
  de.uniol.inf.is.odysseus.rcp.viewer.view,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.queryview

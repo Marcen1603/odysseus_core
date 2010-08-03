@@ -61,6 +61,14 @@
                label="Remove Query"
                style="push">
          </command>
+         <separator
+               name="Separator2">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.viewer.queryview.CopyCommand"
+               label="Copy Querytext"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
@@ -80,6 +88,14 @@
       <startup
             class="de.uniol.inf.is.odysseus.rcp.viewer.queryview.activator.StartUp">
       </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.queryview.commands.CopyCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.queryview.CopyCommand"
+            name="Copy">
+      </command>
    </extension>
 
 </plugin>
