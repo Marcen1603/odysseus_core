@@ -17,6 +17,10 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  */
 public class KalmanCorrectStateCovariancePO  extends AbstractFilterPO {
 	
+	public KalmanCorrectStateCovariancePO() {
+		
+	}
+	
 	@Override
 	public MVRelationalTuple<StreamCarsMetaData> computeAll(MVRelationalTuple<StreamCarsMetaData> object) {
 		

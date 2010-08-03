@@ -21,6 +21,10 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  */
 public class KalmanGainFunctionPO extends AbstractFilterPO {
 
+	public KalmanGainFunctionPO() {
+		
+	}
+	
 	@Override
 	public MVRelationalTuple<StreamCarsMetaData> computeAll(MVRelationalTuple<StreamCarsMetaData> object) {
 	
