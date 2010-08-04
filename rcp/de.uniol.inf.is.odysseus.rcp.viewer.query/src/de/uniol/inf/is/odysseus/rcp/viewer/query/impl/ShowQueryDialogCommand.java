@@ -86,16 +86,6 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 
 		if (lastQuery.length() > 0)
 			queryTextField.selectAll();
-		historyCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Combo combo = (Combo) e.getSource();
-				if (combo.getSelectionIndex() == 0)
-					queryTextField.setText("");
-				else
-					queryTextField.setText(QueryHistory.getInstance().getQuery(combo.getSelectionIndex() - 1));
-			}
-		});
 
 		GridData gd1 = new GridData(GridData.FILL_BOTH);
 		gd1.horizontalSpan = 3;
@@ -125,7 +115,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 
 				try {
-					QueryHistory.getInstance().addQuery(queryTextField.getText());
+					QueryHistory.getInstance().addQuery(parserCombo.getText(), queryTextField.getText());
 
 					Map<String, String> map = new HashMap<String, String>();
 					map.put(IQueryConstants.PARSER_PARAMETER_ID, parserCombo.getText());
@@ -181,6 +171,19 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 				lastQuery = queryTextField.getText();
 			}
 
+		});
+		
+		historyCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Combo combo = (Combo) e.getSource();
+				if (combo.getSelectionIndex() == 0) {
+					queryTextField.setText("");
+				} else {
+					queryTextField.setText(QueryHistory.getInstance().getQuery(combo.getSelectionIndex() - 1));
+					parserCombo.setText(QueryHistory.getInstance().getParser(combo.getSelectionIndex() - 1));
+				}
+			}
 		});
 
 		fillParserCombo();

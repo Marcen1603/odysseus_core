@@ -12,10 +12,35 @@ import org.slf4j.LoggerFactory;
 
 public final class QueryHistory {
 
+	private class QueryHistoryEntry {
+		public String query;
+		public String parser;
+		
+		public QueryHistoryEntry( String query, String parser ) {
+			this.query = query;
+			this.parser = parser;
+		}
+		
+		@Override
+		public String toString() {
+			return "[" + parser + "] " + query;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if( obj == this ) return true;
+			if( !(obj instanceof QueryHistoryEntry)) return false;
+			
+			QueryHistoryEntry entry = (QueryHistoryEntry)obj;
+			return entry.query.equals(query) && entry.parser.equals(parser);
+		}
+		
+	}
 	public static final String HISTORY_FILENAME = ".queryHistory";
 	public static final String SEPARATOR = "###";
+	public static final String PARSER = "[PARSER]";
 
-	private final List<String> queries = new ArrayList<String>();
+	private final List<QueryHistoryEntry> queries = new ArrayList<QueryHistoryEntry>();
 	private final Logger logger = LoggerFactory.getLogger(QueryHistory.class);
 	private static QueryHistory instance = null;
 
@@ -39,11 +64,20 @@ public final class QueryHistory {
 			f = new BufferedReader(new FileReader(HISTORY_FILENAME));
 
 			String actualQuery = null;
+			String usedParser = null;
 			while ((line = f.readLine()) != null) {
 
-				if (line.equals(SEPARATOR)) {
-					addQuery(actualQuery);
+				if( line.startsWith(PARSER)) {
+					usedParser = line.substring(PARSER.length());
+				} else if (line.equals(SEPARATOR)) {
+					
+					//abwärtskompatibel
+					if( usedParser == null ) 
+						usedParser = "CQL";
+					
+					addQuery(usedParser, actualQuery);
 					actualQuery = null;
+					usedParser = null;
 				} else {
 					if (actualQuery == null)
 						actualQuery = line;
@@ -70,7 +104,11 @@ public final class QueryHistory {
 			writer = new FileWriter(HISTORY_FILENAME);
 
 			for (int i = 0; i < queries.size(); i++) {
-				writer.write(queries.get(i));
+				QueryHistoryEntry e = queries.get(i);
+				
+				writer.write(e.query);
+				writer.write("\n");
+				writer.write(PARSER + e.parser);
 				writer.write("\n");
 				writer.write(SEPARATOR);
 				writer.write("\n");
@@ -94,19 +132,25 @@ public final class QueryHistory {
 	}
 
 	public List<String> getQueryHistory() {
-		return Collections.unmodifiableList(queries);
+		return Collections.unmodifiableList(getStringList());
 	}
 	
 	public String getQuery( int index ) {
-		return queries.get(index);
+		return queries.get(index).query;
+	}
+	
+	public String getParser( int index ) {
+		return queries.get(index).parser;
 	}
 
-	public void addQuery(String queryString) {
-		int idx = queries.indexOf(queryString);	
+	public void addQuery(String parser, String queryString) {
+		QueryHistoryEntry e = new QueryHistoryEntry(queryString, parser);
+		
+		int idx = queries.indexOf(e);	
 		if (idx >= 0) 
 			queries.remove(idx);
 		
-		queries.add(0, queryString);
+		queries.add(0, e);
 	}
 
 	public void removeQuery(String queryString) {
@@ -115,5 +159,13 @@ public final class QueryHistory {
 
 	public boolean containsQuery(String queryString) {
 		return queries.contains(queryString);
+	}
+	
+	protected List<String> getStringList() {
+		List<String> str = new ArrayList<String>();
+		for( int i = 0; i < queries.size(); i++ ) {
+			str.add(queries.get(i).toString());
+		}
+		return str;
 	}
 }
