@@ -41,7 +41,6 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
                id="de.uniol.inf.is.odysseus.rcp.editor.toolbar1">
