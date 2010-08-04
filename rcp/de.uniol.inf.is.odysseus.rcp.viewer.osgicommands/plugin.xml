@@ -14,16 +14,6 @@
             name="Stop Scheduler">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartRouterCommand"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartRouter"
-            name="Start Router">
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopRouterCommand"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopRouter"
-            name="Stop Router">
-      </command>
-      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.NMSNCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.NMSN"
             name="NMSN">
