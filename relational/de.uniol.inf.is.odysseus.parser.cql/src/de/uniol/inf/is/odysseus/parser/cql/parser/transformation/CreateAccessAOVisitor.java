@@ -138,11 +138,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private void relationalStreamingSource(ASTSimpleSource node,
 			SDFSource source, String sourceName) {
-		ILogicalOperator access = this.sources.get(source);
-		if (access == null) {
-			access = DataDictionary.getInstance().getView(sourceName);
-			this.sources.put(source, access);
-		}
+		ILogicalOperator access = DataDictionary.getInstance().getView(sourceName);
+		
 
 		ILogicalOperator inputOp = access;
 		if (node.hasAlias()) {
