@@ -36,7 +36,11 @@ tokens{
 	package de.uniol.inf.is.odysseus.cep.sase; 
 }
 
-
+@rulecatch{
+catch(RecognitionException e){
+  throw e;
+}
+}
 start 	: createStmt|
 	  queryStmt;
 

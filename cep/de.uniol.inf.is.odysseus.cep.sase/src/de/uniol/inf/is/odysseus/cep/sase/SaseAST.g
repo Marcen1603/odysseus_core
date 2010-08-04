@@ -12,8 +12,6 @@ options {
 	import java.util.Map;
 	import java.util.HashMap;
 	import java.util.Iterator;
-	import java.util.Set;
-	import java.util.TreeSet;
 	
 	import de.uniol.inf.is.odysseus.base.DataDictionary;
 	import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -135,6 +133,11 @@ options {
 
 }
 
+@rulecatch{
+catch(RecognitionException e){
+  throw e;
+}
+}
 start returns [ILogicalOperator op]
   :
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View

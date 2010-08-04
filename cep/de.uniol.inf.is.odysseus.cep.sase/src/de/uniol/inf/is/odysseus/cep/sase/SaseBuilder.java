@@ -54,7 +54,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		try {
 			lex = new SaseLexer(new ANTLRReaderStream(reader));
 		} catch (IOException e) {
-			throw new QueryParseException(e);
+			throw new RuntimeException(e);
+			//throw new QueryParseException(e);
 		}
 		return processParse(lex);
 	}
@@ -73,8 +74,9 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		try {
 			ret = parser.start();
 		} catch (RecognitionException e) {
-			e.printStackTrace();
-			throw new QueryParseException(e);
+			throw new RuntimeException(e);
+			//			e.printStackTrace();
+//			throw new QueryParseException(e);
 		}
 		CommonTree tree = (CommonTree) ret.getTree();
 		printTree(tree, 2);
@@ -92,7 +94,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			query.setLogicalPlan(ao);
 			retList.add(query);
 		} catch (RecognitionException e) {
-			throw new QueryParseException(e);
+			throw new RuntimeException(e);
+			//throw new QueryParseException(e);
 		}
 		return retList;
 	}
