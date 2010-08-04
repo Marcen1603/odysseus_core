@@ -151,6 +151,7 @@ public final class QueryHistory {
 			queries.remove(idx);
 		
 		queries.add(0, e);
+		save();
 	}
 
 	public void removeQuery(String queryString) {

@@ -115,7 +115,6 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 
 				try {
-					QueryHistory.getInstance().addQuery(parserCombo.getText(), queryTextField.getText());
 
 					Map<String, String> map = new HashMap<String, String>();
 					map.put(IQueryConstants.PARSER_PARAMETER_ID, parserCombo.getText());
@@ -126,6 +125,7 @@ public class ShowQueryDialogCommand extends AbstractHandler implements IHandler 
 					Command cmd = cS.getCommand(IQueryConstants.ADD_QUERY_COMMAND_ID);
 					ParameterizedCommand parCmd = ParameterizedCommand.generateCommand(cmd, map);
 					handlerService.executeCommand(parCmd, null);
+					QueryHistory.getInstance().addQuery(parserCombo.getText(), queryTextField.getText());
 
 				} catch (Exception ex) {
 					ex.printStackTrace();
