@@ -67,11 +67,19 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	}
 
 	public SDFAttributeList getLeftSchema() {
-		return this.getSubscribedToSource(LEFT).getSchema();
+		if(this.getSubscribedToSource(LEFT) != null) {
+			return this.getSubscribedToSource(LEFT).getSchema();
+		}else {
+			return null;
+		}
 	}
 
 	public SDFAttributeList getRightSchema() {
-		return this.getSubscribedToSource(RIGHT).getSchema();
+		if(this.getSubscribedToSource(RIGHT) != null) {
+			return this.getSubscribedToSource(RIGHT).getSchema();
+		}else {
+			return null;
+		}
 	}
 
 }
