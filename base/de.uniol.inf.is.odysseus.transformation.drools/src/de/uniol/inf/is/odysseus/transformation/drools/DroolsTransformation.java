@@ -154,7 +154,6 @@ public class DroolsTransformation implements ITransformation {
 			walker.prefixWalkPhysical(physicalPO, printGraph);
 			
 			LoggerHelper.getInstance(LOGGER_NAME).debug("transformation result: \n" + printGraph.getResult());
-			System.out.println("muh");
 		}		
 		op.unsubscribeSink(top, 0, 0, op.getOutputSchema());
 		
