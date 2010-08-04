@@ -67,7 +67,7 @@ public class StateMachineInstance<R> {
 		this.startTimestamp = stateMachineInstance.startTimestamp;
 		instance = _instanceCounter++;
 		derivedFrom = stateMachineInstance.instance;
-		logger.debug("Created new StateMachineInstance " + toString());
+		// logger.debug("Created new StateMachineInstance " + toString());
 	}
 
 	/**
@@ -122,19 +122,19 @@ public class StateMachineInstance<R> {
 	 */
 	public void takeTransition(Transition transition, R event,
 			IEventReader<R, R> eventReader) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(instance + " Fire: " + transition.getId() + " "
-					+ "Execute action: " + transition.getAction());
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(instance + " Fire: " + transition.getId() + " "
+//					+ "Execute action: " + transition.getAction());
+//		}
 
 		// TODO : Reihenfolge getauscht ... siehe unten ...
 		executeAction(transition.getAction(), event, eventReader);
 
 		setCurrentState(transition.getNextState());
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Updated Instance "+instance);
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("Updated Instance "+instance);
+//		}
 		
 		// if (logger.isDebugEnabled()) {
 		// logger.debug(instance + " --> " + instance.getStats());

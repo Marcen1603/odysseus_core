@@ -12,6 +12,8 @@ options {
 	import java.util.Map;
 	import java.util.HashMap;
 	import java.util.Iterator;
+	import java.util.Set;
+	import java.util.TreeSet;
 	
 	import de.uniol.inf.is.odysseus.base.DataDictionary;
 	import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -195,7 +197,7 @@ List<State> states = new LinkedList<State>();
            RelationalJEPCondition con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
            con.setEventPort(sourceNames.indexOf(source.getType()));
-           // TODO: Ist das mit dem EAction.discard richtig?
+           // TODO: Ist das mit dem EAction.discard immer richtig?
            source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.discard));
            con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
@@ -229,7 +231,9 @@ state[List<State> states, List<String> sourceNames]
   {
 		  if (not != null) throw new RuntimeException("Negative states not supported now!");
 		  String _statename = statename.getText();
-		  sourceNames.add(_statename);
+		  if (!sourceNames.contains(_statename)){
+		    sourceNames.add(_statename);
+		  }
 		  String _attributeName = attrName.getText();
 		//	getLogger().debug("Einfacher Zustand "+_statename+" "+_attributeName);
 			// Anm. _statename darf mehrfach vorkommen  Variablenname nicht
@@ -320,7 +324,7 @@ whereExpression[StateMachine stmachine]
         while (compareIter.hasNext()) {
           CompareExpression ce = compareIter.next();
           //getLogger().debug(ce);
-          System.out.println("Compare Expression "+ce);
+          //System.out.println("Compare Expression "+ce);
           PathAttribute attr = ce.get(s.getId());
           if (attr != null) {
             Transition t = s.getTransition(s.getId() + "_begin");
@@ -334,7 +338,7 @@ whereExpression[StateMachine stmachine]
             // Anpassen der Variablennamen für das Metamodell:
             String fullExpression = tranformAttributesToMetamodell(
                 ce, s);
-            System.out.println("fullExpression "+fullExpression);  
+            //System.out.println("fullExpression "+fullExpression);  
             //String fullExpression = ce.getFullExpression();
             t.appendAND(fullExpression);
             t = s.getTransition(s.getId() + "_ignore");

@@ -195,9 +195,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		}
 		if (complexEvents.size() > 0) {
 			for (W e : complexEvents) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Created Event: " + e);
-				}
+//				if (logger.isDebugEnabled()) {
+//					logger.debug("Created Event: " + e);
+//				}
 				outputTransferFunction.transfer(e);
 			}
 
@@ -349,9 +349,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			LinkedList<StateMachineInstance<R>> outdatedInstances, int port) {
 		LinkedList<W> complexEvents = new LinkedList<W>();
 		for(StateMachineInstance<R> instance:instances){
-			if (logger.isDebugEnabled()) {
-				logger.debug("Testing for final state in " + instance);
-			}		
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Testing for final state in " + instance);
+//			}		
 
 			/*
 			 * Durch das Markieren der veralteten Automateninstanzen und das
