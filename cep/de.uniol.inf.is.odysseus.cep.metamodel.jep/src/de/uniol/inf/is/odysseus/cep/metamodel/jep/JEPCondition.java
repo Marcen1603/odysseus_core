@@ -147,7 +147,7 @@ abstract public class JEPCondition extends AbstractCondition {
 	}
 
 	@Override
-	public void append(String fullExpression) {
+	public void appendAND(String fullExpression) {
 		String curLabel = getLabel();
 		if (curLabel == null || curLabel.length() == 0 || "1".equals(curLabel)) {
 			setLabel(fullExpression);
@@ -156,6 +156,17 @@ abstract public class JEPCondition extends AbstractCondition {
 		}
 	}
 
+	@Override
+	public void appendOR(String fullExpression) {
+		String curLabel = getLabel();
+		if (curLabel == null || curLabel.length() == 0 || "1".equals(curLabel)) {
+			setLabel(fullExpression);
+		} else {
+			setLabel(curLabel + " || " + fullExpression);
+		}
+	}
+
+	
 	@Override
 	public void negate() {
 		if (negate) negate = false; else negate = true;

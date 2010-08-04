@@ -154,8 +154,12 @@ public class Transition {
 		return getCondition().evaluate();
 	}
 
-	public void append(String fullExpression) {
-		getCondition().append(fullExpression);		
+	public void appendAND(String fullExpression) {
+		getCondition().appendAND(fullExpression);		
+	}
+	
+	public void appendOR(String fullExpression){
+		getCondition().appendOR(fullExpression);		
 	}
 	
 	public void negateExpression() {
@@ -168,5 +172,28 @@ public class Transition {
 		return null;
 	}
 
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Transition other = (Transition) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	
 
 }

@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.cep.epa;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ITransferArea;
  * 
  */
 public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<?>>
-		extends AbstractPipe<R, W> implements IProcessInternal<R>{
+		extends AbstractPipe<R, W> implements IProcessInternal<R> {
 
 	Logger logger = LoggerFactory.getLogger(CepOperator.class);
 
@@ -56,12 +56,13 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * Transferfunktion for reading and writing Elements
 	 */
 	protected IInputStreamSyncArea<R> inputStreamSyncArea;
-	protected ITransferArea<R,W> outputTransferFunction;
+	protected ITransferArea<R, W> outputTransferFunction;
 
-	/**
-	 * Referenz auf den Verzweigungsspeicher
-	 */
-	private BranchingBuffer<R> branchingBuffer;
+	// removed for performance improvements
+	// /**
+	// * Referenz auf den Verzweigungsspeicher
+	// */
+	// private BranchingBuffer<R> branchingBuffer;
 	/**
 	 * Liste aller Automaten-Instanzen, die gerade vom EPA verarbeitet werden
 	 */
@@ -100,14 +101,15 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 */
 	public CepOperator(StateMachine<R> stateMachine,
 			Map<Integer, IEventReader<R, R>> eventReader,
-			IComplexEventFactory<R, W> complexEventFactory, boolean validate, IInputStreamSyncArea<R> inputStreamSyncArea, ITransferArea<R,W> outputTransferFunction)
-			throws Exception {
+			IComplexEventFactory<R, W> complexEventFactory, boolean validate,
+			IInputStreamSyncArea<R> inputStreamSyncArea,
+			ITransferArea<R, W> outputTransferFunction) throws Exception {
 		super();
 		this.stateMachine = stateMachine;
 		this.complexEventFactory = complexEventFactory;
 		this.eventReader = eventReader;
 		this.instances = new LinkedList<StateMachineInstance<R>>();
-		this.branchingBuffer = new BranchingBuffer<R>();
+		// this.branchingBuffer = new BranchingBuffer<R>();
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferFunction = outputTransferFunction;
 		if (validate) {
@@ -129,14 +131,13 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		return OutputMode.NEW_ELEMENT;
 	}
 
-
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		inputStreamSyncArea.init(this);
 		outputTransferFunction.init(this);
 	}
-	
+
 	/**
 	 * Verarbeitet ein übergebenes Event.
 	 */
@@ -144,7 +145,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	protected void process_next(R event, int port) {
 		// if (logger.isDebugEnabled())
 		// logger.debug("read "+ event + " "+port);
-		//insertIntoInputBuffer(event, port);
+		// insertIntoInputBuffer(event, port);
 		inputStreamSyncArea.newElement(event, port);
 		outputTransferFunction.newElement(event, port);
 	}
@@ -152,12 +153,12 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	@Override
 	public void process_internal(R event, int port) {
 
-//		if (logger.isDebugEnabled())
-//			logger.debug("-------------------> NEXT EVENT from "
-//					+ eventReader.get(port).getType() + ": " + event + " "
-//					+ port);
-//		if (logger.isDebugEnabled())
-//			logger.debug(this.getStats());
+		if (logger.isDebugEnabled())
+			logger.debug("-------------------> NEXT EVENT from "
+					+ eventReader.get(port).getType() + ": " + event + " "
+					+ port);
+		// if (logger.isDebugEnabled())
+		// logger.debug(this.getStats());
 
 		// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob mindestens
 		// die Typbedingung erfuellt ist
@@ -166,34 +167,37 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				.getTransitions()) {
 
 			// Hinweis: Es gibt keine Ignore Kante an der ersten Transition
-			// deswegen nicht transition.getCondition().doEventTypeChecking() 
+			// deswegen nicht transition.getCondition().doEventTypeChecking()
 			if (transition.getCondition().checkEventTypeWithPort(port)) {
 				createNewInstance = true;
 				break;
 			}
 		}
-		if (createNewInstance) {
-			this.instances.add(new StateMachineInstance<R>(this.stateMachine,
-					getEventReader().get(port).getTime(event)));
+		LinkedList<W> complexEvents = null;
+		synchronized (instances) {
+			if (createNewInstance) {
+				this.instances.add(new StateMachineInstance<R>(
+						this.stateMachine, getEventReader().get(port).getTime(
+								event)));
+			}
+			if (event == null)
+				throw new InvalidEventException(
+						"The event to be processed is null.");
+
+			LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
+			LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
+
+			validateTransitions(event, outdatedInstances, branchedInstances,
+					port);
+			this.instances.addAll(branchedInstances);
+			complexEvents = validateFinalStates(outdatedInstances, port);
+			this.instances.removeAll(outdatedInstances);
 		}
-		if (event == null)
-			throw new InvalidEventException(
-					"The event to be processed is null.");
-
-		LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
-		LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
-
-		validateTransitions(event, outdatedInstances, branchedInstances, port);
-		this.instances.addAll(branchedInstances);
-		LinkedList<W> complexEvents = validateFinalStates(outdatedInstances,
-				port);
-		this.instances.removeAll(outdatedInstances);
-
 		if (complexEvents.size() > 0) {
-			for  (W e:complexEvents){
+			for (W e : complexEvents) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Created Event: " + e);
-				}				
+				}
 				outputTransferFunction.transfer(e);
 			}
 
@@ -206,14 +210,15 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
 		for (StateMachineInstance<R> instance : this.instances) {
-//			if (logger.isDebugEnabled())
-//				logger.debug(instance + " Stats: " + instance.getStats());
-			Stack<Transition> takeTransition = new Stack<Transition>();
+			if (logger.isDebugEnabled())
+				logger.debug("Validating " + instance);
+			List<Transition> transitionsToTake = new ArrayList<Transition>();
 			boolean outofWindow = false;
 
 			for (Transition transition : instance.getCurrentState()
 					.getTransitions()) {
-				//logger.debug("Evaluating: " + transition + " on event " + event);
+				// logger.debug("Evaluating: " + transition + " on event " +
+				// event);
 				// Terminate if out of Window
 				if (outofWindow) {
 					break;
@@ -223,11 +228,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				if (transition.getCondition().doEventTypeChecking()
 						&& !transition.getCondition().checkEventTypeWithPort(
 								port)) {
-//					 logger.debug(instance + " Wrong Datatype "
-//					 + eventReader.get(port).getType()
-//					 + " for Transition " + transition.getCondition() +
-//					 " "+transition.getCondition().doEventTypeChecking()
-//					 + " in state " + instance.getCurrentState());
+					// logger.debug(instance + " Wrong Datatype "
+					// + eventReader.get(port).getType()
+					// + " for Transition " + transition.getCondition() +
+					// " "+transition.getCondition().doEventTypeChecking()
+					// + " in state " + instance.getCurrentState());
 					continue;
 				}
 
@@ -238,96 +243,92 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 							eventReader.get(port).getTime(event),
 							stateMachine.getWindowSize())) {
 						outofWindow = true;
-//						logger.debug(instance + " Out of Window ...");
+						// logger.debug(instance + " Out of Window ...");
 						continue;
 					}
 				}
 				/**
-				 * update variables /* Über Variablen iterieren und neu
-				 * belegen. Achtung! Sobald eine Variabel nicht belegbar ist,
-				 * braucht (darf) die Transition nicht ausgewertet werden (kann
-				 * also nie true sein)
+				 * update variables
 				 */
-				if (updateVariables(event, instance, transition, port)) {
-					try {
-						if (transition.evaluate()) {
-							takeTransition.push(transition);
-//							if (logger.isDebugEnabled())
-//								logger.debug(instance + " Transition true: "
-//										+ transition.getCondition().getLabel());
-
-						} else {
-							// logger.debug(instance + " Transition false: "
-							// + transition.getCondition().getLabel());
-						}
-					} catch (Exception e) {
-						// System.out.println(transition.getCondition().getLabel());
-						e.printStackTrace();
-						throw new ConditionEvaluationException(
-								"Cannot evaluate condition "
-										+ transition.getCondition(), e);
+				try {
+					boolean allVarSet = updateVariables(event, instance,
+							transition, port);
+					// take the transition if all variables are set and the
+					// condition evaluates to true
+					// OR: if not all variables are set (== condition cannot be
+					// evaluated --> false) and
+					// the condition is negated (e.g. in _ignore transitions)
+					if ((!allVarSet && transition.getCondition().isNegate())
+							|| (allVarSet && transition.evaluate())) {
+						transitionsToTake.add(transition);
+						// if (logger.isDebugEnabled())
+						// logger.debug(instance + " Transition true: "
+						// + transition.getCondition().getLabel());
+						//
+						// }
+						// else {
+						// logger.debug(instance + " Transition false: "
+						// + transition.getCondition().getLabel());
 					}
+
+				} catch (Exception e) {
+					// System.out.println(transition.getCondition().getLabel());
+					e.printStackTrace();
+					throw new ConditionEvaluationException(
+							"Cannot evaluate condition "
+									+ transition.getCondition(), e);
 				}
-			}
-			if (takeTransition.isEmpty()) {
-				/*
-				 * Kein Zustandswechsel möglich: Automateninstanz als
-				 * entfernbar makieren. Die Instanz muss auch aus dem
-				 * Verzweigungsspeicher entfernt werden um Speicherleichen zu
-				 * verhindern.
-				 */
-//				if (logger.isDebugEnabled()) {
-//					if (outofWindow) {
-//						logger.debug("Instance " + instance + " out of window");
-//					} else {
-//						logger.debug("No available transition. Remove instance "
-//								+ instance);
-//					}
-//				}
+			} // for (Transition transition...)
+			if (transitionsToTake.isEmpty()) {
+				// if (logger.isDebugEnabled())
+				// logger.debug("No transition on "+ instance);
+
+				// no transition on this instance, mark for removal
 				outdatedInstances.add(instance);
-				this.branchingBuffer.removeBranch(instance);
-			} else if (takeTransition.size() == 1) {
-				// one next state: Change state, execute action
-//				if (logger.isDebugEnabled())
-//					logger.debug("One transition found: "
-//							+ takeTransition.peek());
-				this.takeTransition(instance, takeTransition.pop(), event, port);
-			} else if (takeTransition.size() > 1) {
-				// mehr als 1 Folgezustand: nichtdeterministische Verzweigung!
-//				if (logger.isDebugEnabled())
-//					logger.debug(""
-//							+ takeTransition.size()
-//							+ "  transitions found (nondeterministic branching).");
-				while (takeTransition.size() > 1) {
-					StateMachineInstance<R> newInstance = instance.clone();
-					this.takeTransition(newInstance, takeTransition.pop(),
-							event, port);
-					this.branchingBuffer.addBranch(instance, newInstance);
-					branchedInstances.add(newInstance);
+				// this.branchingBuffer.removeBranch(instance);
+			} else {
+				if (transitionsToTake.size() == 1) {
+					// execute transition
+					instance.takeTransition(transitionsToTake.remove(0), event,
+							eventReader.get(port));
+				} else {
+					// execute possible further transitions on new instances
+					// because it must be cloned from current instance,
+					// make takeTransition on current instance last
+					while(transitionsToTake.size() > 1) {
+						StateMachineInstance<R> newInstance = instance.clone();
+						Transition toTake = transitionsToTake.remove(0);
+						newInstance.takeTransition(toTake, event,
+								eventReader.get(port));
+						// this.branchingBuffer.addBranch(instance,
+						// newInstance);
+						branchedInstances.add(newInstance);
+					}
+					// Now its save to update current Transition
+					instance.takeTransition(transitionsToTake.remove(0), event,
+							eventReader.get(port));
 				}
-				// Warum dahinter? K�nnte das nicht auch als erstes gemacht
-				// werden?
-				// Dann kann man sich den Fall takeTransition.size()==1 sparen
-				// ...
-				this.takeTransition(instance, takeTransition.pop(), event, port);
 			}
 		}
 	}
 
+	// update Variables in transition. If no values is found for at least one
+	// variable return false
+	// if all variables set return true
 	private boolean updateVariables(R object, StateMachineInstance<R> instance,
 			Transition transition, int port) {
-//		logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
+		// logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
 		for (CepVariable varName : transition.getCondition().getVarNames()) {
 
-//			logger.debug("Setting Value for "+varName);
+			// logger.debug("Setting Value for "+varName);
 
 			Object newValue = null;
 			if (varName.isActEventName()) {
 				newValue = this.eventReader.get(port).getValue(
 						varName.getVariableName(), object);
 
-//				 logger.debug("Setze " + varName + " auf " + newValue +
-//				 " from " + object);
+				// logger.debug("Setze " + varName + " auf " + newValue +
+				// " from " + object);
 
 				if (newValue == null) {
 					return false;
@@ -337,9 +338,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			}
 			// Set Value in Expression to evaluate
 			transition.getCondition().setValue(varName, newValue);
-//			if (logger.isDebugEnabled()) {
-//				logger.debug(varName + " = " + newValue + " from " + object);
-//			}
+			// if (logger.isDebugEnabled()) {
+			// logger.debug(varName + " = " + newValue + " from " + object);
+			// }
 		}
 		return true;
 	}
@@ -347,9 +348,10 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private LinkedList<W> validateFinalStates(
 			LinkedList<StateMachineInstance<R>> outdatedInstances, int port) {
 		LinkedList<W> complexEvents = new LinkedList<W>();
-		for (Iterator<StateMachineInstance<R>> i = this.instances.iterator(); i
-				.hasNext();) {
-			StateMachineInstance<R> instance = i.next();
+		for(StateMachineInstance<R> instance:instances){
+			if (logger.isDebugEnabled()) {
+				logger.debug("Testing for final state in " + instance);
+			}		
 
 			/*
 			 * Durch das Markieren der veralteten Automateninstanzen und das
@@ -364,9 +366,9 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				continue;
 
 			if (instance.getCurrentState().isAccepting()) {
-//				if (logger.isDebugEnabled()) {
-//					logger.debug("Reached final state in " + instance);
-//				}
+				if (logger.isDebugEnabled()) {
+					logger.debug("Reached final state in " + instance);
+				}
 				// Werte in den Symboltabellen der JEP-Ausdrücke im
 				// Ausgabeschema setzen:
 				for (IOutputSchemeEntry entry : this.stateMachine
@@ -484,14 +486,14 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		return stateMachine;
 	}
 
-	/**
-	 * Liefert den Verzweigungsspeicher des EPA zurück.
-	 * 
-	 * @return Der aktuelle Verzweigungsspeicher.
-	 */
-	public BranchingBuffer<R> getBranchingBuffer() {
-		return branchingBuffer;
-	}
+	// /**
+	// * Liefert den Verzweigungsspeicher des EPA zurück.
+	// *
+	// * @return Der aktuelle Verzweigungsspeicher.
+	// */
+	// public BranchingBuffer<R> getBranchingBuffer() {
+	// return branchingBuffer;
+	// }
 
 	/**
 	 * Liefert eine Liste, mit allen zur Zeit aktiven Automateninstanzen.
@@ -545,47 +547,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	// }
 
 	/**
-	 * Wechselt den Zustand einer Automateninstanz
-	 * 
-	 * @param instance
-	 *            Automateninstanz, die den Zustand wechseln soll.
-	 * @param transition
-	 *            Die Transition, die genommen werden soll.
-	 * @param event
-	 *            Referenz auf das sich aktuell in der Verarbeitung befindliche
-	 *            Event.
-	 * @param port
-	 */
-	private void takeTransition(StateMachineInstance<R> instance,
-			Transition transition, R event, int port) {
-//		if (logger.isDebugEnabled()) {
-//			logger.debug(instance.toString() + " Fire: " + transition.getId()
-//					+ " " + "Execute action: " + transition.getAction());
-//		}
-
-		// TODO : Reihenfolge getauscht ... siehe unten ...
-		instance.executeAction(transition.getAction(), event,
-				this.eventReader.get(port));
-
-		instance.setCurrentState(transition.getNextState());
-
-		// if (logger.isDebugEnabled()) {
-		// logger.debug(instance + " --> " + instance.getStats());
-		// }
-		/*
-		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
-		 * das Event gespeichert wird. Wird der Zustand zuerst gewechselt, wird
-		 * das Event dem Zielzustand der Transition zugeordnet, ansonsten dem
-		 * Ausgangszustand.
-		 * 
-		 * Die CEP-Komponente erfordert zur Zeit, dass erst der Zustand
-		 * gewechselt wird und anschließend die Aktion ausgeführt wird. Die
-		 * umgekehrte Reihenfolge würde zu Problemen mit der internen
-		 * Namenskonvention für Events führen. --> MG: Ist das so? Warum?
-		 */
-	}
-
-	/**
 	 * Liefert Statistiken zum aktuellen Zustand des EPA.
 	 * 
 	 * @return
@@ -593,8 +554,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	public String getStats() {
 		String str = "";
 		str = str + "#instances:" + this.instances.size() + " ";
-		str = str + "#branch trees:"
-				+ this.branchingBuffer.getBranches().size();
+		// str = str + "#branch trees:"
+		// + this.branchingBuffer.getBranches().size();
 		return str;
 	}
 

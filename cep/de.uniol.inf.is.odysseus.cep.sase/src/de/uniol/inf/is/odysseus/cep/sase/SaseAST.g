@@ -195,7 +195,8 @@ List<State> states = new LinkedList<State>();
            RelationalJEPCondition con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
            con.setEventPort(sourceNames.indexOf(source.getType()));
-           source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.consumeNoBufferWrite));
+           // TODO: Ist das mit dem EAction.discard richtig?
+           source.addTransition(new Transition(source.getId()+ "_proceed", dest, con, EAction.discard));
            con = new RelationalJEPCondition("");
            con.setEventType(source.getType());
            con.setEventPort(sourceNames.indexOf(source.getType()));
@@ -319,12 +320,12 @@ whereExpression[StateMachine stmachine]
         while (compareIter.hasNext()) {
           CompareExpression ce = compareIter.next();
           //getLogger().debug(ce);
+          System.out.println("Compare Expression "+ce);
           PathAttribute attr = ce.get(s.getId());
           if (attr != null) {
             Transition t = s.getTransition(s.getId() + "_begin");
-
             if (t == null && attr.isKleeneAttribute()) {
-              if (attr.getKleenePart().equals("i")) {
+              if (attr.getKleenePart().equals("[i]")) {
                 t = s.getTransition(s.getId() + "_take");
               } else {
                 t = s.getTransition(s.getId() + "_proceed");
@@ -333,24 +334,25 @@ whereExpression[StateMachine stmachine]
             // Anpassen der Variablennamen für das Metamodell:
             String fullExpression = tranformAttributesToMetamodell(
                 ce, s);
+            System.out.println("fullExpression "+fullExpression);  
             //String fullExpression = ce.getFullExpression();
-            t.append(fullExpression);
+            t.appendAND(fullExpression);
             t = s.getTransition(s.getId() + "_ignore");
             if (t != null) {
               switch (stmachine.getEventSelectionStrategy()) {
               case PARTITION_CONTIGUITY:
-                t.append(fullExpression);
+                t.appendAND(fullExpression);
                 // negation later!
                 break;
               case SKIP_TILL_NEXT_MATCH:
-                t.append(fullExpression);
+                t.appendOR(fullExpression);
                 t.getCondition().setEventTypeChecking(false);
                 // negation later!
                 break;
               case STRICT_CONTIGUITY:
-                t.append("false");
+                t.appendAND("false");
                 break;
-              case SKIP_TILL_ANY_MATCH:
+              case SKIP_TILL_ANY_MATCH:                
               default:
                 t.getCondition().setEventTypeChecking(false);
               }

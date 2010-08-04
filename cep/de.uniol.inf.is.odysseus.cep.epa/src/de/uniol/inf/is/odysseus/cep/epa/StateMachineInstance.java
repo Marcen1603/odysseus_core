@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
+import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 
 /**
@@ -25,6 +26,7 @@ public class StateMachineInstance<R> {
 
 	static int _instanceCounter = 0;
 	private int instance = 0;
+	private int derivedFrom = -1;
 
 	/**
 	 * Referenz auf den aktuellen Zustand der Automateninstanz
@@ -54,7 +56,7 @@ public class StateMachineInstance<R> {
 		this.symTab = new SymbolTable<R>(stateMachine.getSymTabScheme(true));
 		this.startTimestamp = startTimestamp;
 		instance = _instanceCounter++;
-		//logger.debug("Created new initial StateMachineInstance "+instance);
+		// logger.debug("Created new initial StateMachineInstance "+instance);
 	}
 
 	public StateMachineInstance(StateMachineInstance<R> stateMachineInstance) {
@@ -64,7 +66,8 @@ public class StateMachineInstance<R> {
 		this.matchingTrace = stateMachineInstance.matchingTrace.clone();
 		this.startTimestamp = stateMachineInstance.startTimestamp;
 		instance = _instanceCounter++;
-		//logger.debug("Created new StateMachineInstance "+instance+" from "+stateMachineInstance.instance);
+		derivedFrom = stateMachineInstance.instance;
+		logger.debug("Created new StateMachineInstance " + toString());
 	}
 
 	/**
@@ -106,6 +109,50 @@ public class StateMachineInstance<R> {
 	}
 
 	/**
+	 * Wechselt den Zustand einer Automateninstanz
+	 * 
+	 * @param instance
+	 *            Automateninstanz, die den Zustand wechseln soll.
+	 * @param transition
+	 *            Die Transition, die genommen werden soll.
+	 * @param event
+	 *            Referenz auf das sich aktuell in der Verarbeitung befindliche
+	 *            Event.
+	 * @param port
+	 */
+	public void takeTransition(Transition transition, R event,
+			IEventReader<R, R> eventReader) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(instance + " Fire: " + transition.getId() + " "
+					+ "Execute action: " + transition.getAction());
+		}
+
+		// TODO : Reihenfolge getauscht ... siehe unten ...
+		executeAction(transition.getAction(), event, eventReader);
+
+		setCurrentState(transition.getNextState());
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Updated Instance "+instance);
+		}
+		
+		// if (logger.isDebugEnabled()) {
+		// logger.debug(instance + " --> " + instance.getStats());
+		// }
+		/*
+		 * Die Reihenfolge der Methodenaufrufe legt fest, in welchem StateBuffer
+		 * das Event gespeichert wird. Wird der Zustand zuerst gewechselt, wird
+		 * das Event dem Zielzustand der Transition zugeordnet, ansonsten dem
+		 * Ausgangszustand.
+		 * 
+		 * Die CEP-Komponente erfordert zur Zeit, dass erst der Zustand
+		 * gewechselt wird und anschließend die Aktion ausgeführt wird. Die
+		 * umgekehrte Reihenfolge würde zu Problemen mit der internen
+		 * Namenskonvention für Events führen. --> MG: Ist das so? Warum?
+		 */
+	}
+
+	/**
 	 * Führt eine Aktion des Automaten aus und aktualisiert die Symboltabelle.
 	 * 
 	 * @param action
@@ -117,35 +164,54 @@ public class StateMachineInstance<R> {
 	 */
 	public void executeAction(EAction action, R event,
 			IEventReader<R, R> eventReader) throws UndefinedActionException {
-		if (action == EAction.consumeBufferWrite
-				|| action == EAction.consumeNoBufferWrite) {
-			if (action == EAction.consumeBufferWrite) {
-//				logger.debug(this+" add Event to matching trace " + event + " "
-//						+ currentState);
-				this.matchingTrace.addEvent(event, this.currentState, this);
-			}
+		if (action == EAction.consumeBufferWrite) {
+			// logger.debug(this+" add Event to matching trace " + event +
+			// " "
+			// + currentState);
+			this.matchingTrace.addEvent(event, this.currentState, this);
 			// Symboltabelle aktualisieren
 			for (CepVariable entry : this.symTab.getKeys()) {
 
-//				logger.debug(this+" Trying to update Symboltable entry " + entry + " with "
-//						+ event + " " + currentState);
+				// logger.debug(this+" Trying to update Symboltable entry "
+				// + entry + " with "
+				// + event + " " + currentState);
 
 				if (entry.getStateIdentifier().equals(
 						this.currentState.getVar())) {
-//					if (logger.isDebugEnabled()){
-//						logger.debug(this+" Update "+entry+" with "+eventReader.getValue(entry.getAttribute(), event));
-//					}
+					// if (logger.isDebugEnabled()){
+					// logger.debug(this+" Update "+entry+" with "+eventReader.getValue(entry.getAttribute(),
+					// event));
+					// }
 					symTab.updateValue(entry,
 							eventReader.getValue(entry.getAttribute(), event));
 				}
 			}
 		} else if (action == EAction.discard) {
 			// in diesem Fall ist nichts zu tun
-//			logger.debug(this+" Discard "+event);
+			// logger.debug(this+" Discard "+event);
 		} else {
 			throw new UndefinedActionException("The action " + action
 					+ " is undefined.");
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return instance;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		StateMachineInstance other = (StateMachineInstance) obj;
+		if (instance != other.instance)
+			return false;
+		return true;
 	}
 
 	/**
@@ -168,8 +234,10 @@ public class StateMachineInstance<R> {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "@" + instance + " ("
-				+ startTimestamp + ") Current State: " + currentState.getId();
+		return getClass().getSimpleName() + "@" + instance
+				+ (derivedFrom >= 0 ? "[" + derivedFrom + "]" : "") + " ("
+				+ startTimestamp + ") Current State: " + currentState.getId()
+				+ " " + symTab.toString();
 	}
 
 }

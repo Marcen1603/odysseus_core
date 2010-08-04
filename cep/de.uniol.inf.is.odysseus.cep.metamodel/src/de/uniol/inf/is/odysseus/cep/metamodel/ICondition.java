@@ -18,7 +18,8 @@ public interface ICondition extends IExpression{
 	public String getLabel();
 	public String toString(String indent);
 	public boolean evaluate();
-	public void append(String fullExpression);
+	public void appendAND(String fullExpression);
+	public void appendOR(String fullExpression);
 	public void negate();
 	public boolean isNegate();
 	/**
