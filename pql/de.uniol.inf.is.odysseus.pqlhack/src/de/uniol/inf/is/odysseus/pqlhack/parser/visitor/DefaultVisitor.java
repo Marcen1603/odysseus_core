@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOrOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
@@ -252,36 +253,42 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 	@Override
 	public Object visit(ASTKeyValuePair node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAssociationGenOp node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAssociationEvalOp node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTKeyValueList node, Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTPredictionOp node, Object data) {
+		// TODO Auto-generated method stub
+		return node.childrenAccept(this, data);
 	}
 }

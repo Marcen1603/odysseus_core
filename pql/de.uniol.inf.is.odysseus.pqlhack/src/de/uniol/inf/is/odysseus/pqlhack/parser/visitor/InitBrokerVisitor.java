@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionAssignOrOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionFunctionDefinition;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTPredictionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionIdentifier;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalJoinOp;
@@ -345,6 +346,11 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTKeyValueList node, Object data) {
+		return node.childrenAccept(this, false);
+	}
+
+	@Override
+	public Object visit(ASTPredictionOp node, Object data) {
 		return node.childrenAccept(this, false);
 	}
 	

@@ -48,6 +48,7 @@ TOKEN : /* Keywords */ {
 |	<K_OR: "OR">
 |	<K_ON: "ON">
 |	<K_PLAN: "PLAN">
+|   <K_PREDICTION: "PREDICTION">
 |	<K_PROJECTION: "PROJECTION">
 |   <K_QUEUE: "QUEUE">
 |   <K_RELATIONAL_PROJECTION: "RPROJECTION">
@@ -120,6 +121,7 @@ void AlgebraOp():{}{
 	BrokerOp() |
 	PredictionAssignOp() |
 	PredictionAssignOrOp() |
+	PredictionOp() |
 	TestOp() |
 	AssociationGenOp() |
 	AssociationEvalOp() |
@@ -211,6 +213,9 @@ void PredictionAssignOp() : {}{
 void PredictionAssignOrOp() : {}{
 	<K_SET_PREDICTION_OR>"(" AlgebraOp() "," (Identifier()) "," (PredictionDefinition())+ [<K_DEFAULT> DefaultPredictionDefinition()] ")"
 }
+
+void PredictionOp() : {}{
+  	< K_PREDICTION >"(" AlgebraOp() "," AlgebraOp() "," (Identifier()) ")"}
 
 void Predicate():{}{
   LOOKAHEAD(OrPredicate())OrPredicate()

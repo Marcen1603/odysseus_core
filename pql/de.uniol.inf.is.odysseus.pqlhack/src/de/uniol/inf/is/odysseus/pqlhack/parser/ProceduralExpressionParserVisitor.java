@@ -22,6 +22,7 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTBrokerOp node, Object data);
   public Object visit(ASTPredictionAssignOp node, Object data);
   public Object visit(ASTPredictionAssignOrOp node, Object data);
+  public Object visit(ASTPredictionOp node, Object data);
   public Object visit(ASTPredicate node, Object data);
   public Object visit(ASTSimplePredicate node, Object data);
   public Object visit(ASTBasicPredicate node, Object data);
@@ -46,4 +47,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTAssociationSelOp node, Object data);
   public Object visit(ASTAssociationSrcOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=52183040585a2c18ba7b182f688b9de8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=db453350117533bb08d41eb5faa53865 (do not edit this line) */

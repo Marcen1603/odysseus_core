@@ -21,30 +21,31 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTBROKEROP = 15;
   public int JJTPREDICTIONASSIGNOP = 16;
   public int JJTPREDICTIONASSIGNOROP = 17;
-  public int JJTPREDICATE = 18;
-  public int JJTSIMPLEPREDICATE = 19;
-  public int JJTBASICPREDICATE = 20;
-  public int JJTORPREDICATE = 21;
-  public int JJTANDPREDICATE = 22;
-  public int JJTNOTPREDICATE = 23;
-  public int JJTEXPRESSION = 24;
-  public int JJTSIMPLETOKEN = 25;
-  public int JJTFUNCTIONEXPRESSION = 26;
-  public int JJTFUNCTIONNAME = 27;
-  public int JJTNUMBER = 28;
-  public int JJTSTRING = 29;
-  public int JJTVOID = 30;
-  public int JJTIDENTIFIER = 31;
-  public int JJTCOMPAREOPERATOR = 32;
-  public int JJTPREDICTIONDEFINITION = 33;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 34;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 35;
-  public int JJTKEYVALUELIST = 36;
-  public int JJTKEYVALUEPAIR = 37;
-  public int JJTASSOCIATIONGENOP = 38;
-  public int JJTASSOCIATIONEVALOP = 39;
-  public int JJTASSOCIATIONSELOP = 40;
-  public int JJTASSOCIATIONSRCOP = 41;
+  public int JJTPREDICTIONOP = 18;
+  public int JJTPREDICATE = 19;
+  public int JJTSIMPLEPREDICATE = 20;
+  public int JJTBASICPREDICATE = 21;
+  public int JJTORPREDICATE = 22;
+  public int JJTANDPREDICATE = 23;
+  public int JJTNOTPREDICATE = 24;
+  public int JJTEXPRESSION = 25;
+  public int JJTSIMPLETOKEN = 26;
+  public int JJTFUNCTIONEXPRESSION = 27;
+  public int JJTFUNCTIONNAME = 28;
+  public int JJTNUMBER = 29;
+  public int JJTSTRING = 30;
+  public int JJTVOID = 31;
+  public int JJTIDENTIFIER = 32;
+  public int JJTCOMPAREOPERATOR = 33;
+  public int JJTPREDICTIONDEFINITION = 34;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 35;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 36;
+  public int JJTKEYVALUELIST = 37;
+  public int JJTKEYVALUEPAIR = 38;
+  public int JJTASSOCIATIONGENOP = 39;
+  public int JJTASSOCIATIONEVALOP = 40;
+  public int JJTASSOCIATIONSELOP = 41;
+  public int JJTASSOCIATIONSRCOP = 42;
 
 
   public String[] jjtNodeName = {
@@ -66,6 +67,7 @@ public interface ProceduralExpressionParserTreeConstants
     "BrokerOp",
     "PredictionAssignOp",
     "PredictionAssignOrOp",
+    "PredictionOp",
     "Predicate",
     "SimplePredicate",
     "BasicPredicate",
@@ -92,4 +94,4 @@ public interface ProceduralExpressionParserTreeConstants
     "AssociationSrcOp",
   };
 }
-/* JavaCC - OriginalChecksum=02d77e3cc8496db9dc646b4337b2e8e6 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f896e42ca013eab375565fc9ca72bcc2 (do not edit this line) */

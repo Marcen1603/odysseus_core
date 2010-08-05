@@ -52,6 +52,7 @@ TOKEN : /* Keywords */ {
 |	<K_OR: "OR">
 |	<K_ON: "ON">
 |	<K_PLAN: "PLAN">
+|   <K_PREDICTION: "PREDICTION">
 |	<K_PROJECTION: "PROJECTION">
 |   <K_QUEUE: "QUEUE">
 |   <K_RELATIONAL_PROJECTION: "RPROJECTION">
@@ -161,6 +162,7 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	BrokerOp() |
 	PredictionAssignOp() |
 	PredictionAssignOrOp() |
+	PredictionOp() |
 	TestOp() |
 	AssociationGenOp() |
 	AssociationEvalOp() |
@@ -716,6 +718,35 @@ void PredictionAssignOrOp() : {/*@bgen(jjtree) PredictionAssignOrOp */
         }
 /*@egen*/
 }
+
+void PredictionOp() : {/*@bgen(jjtree) PredictionOp */
+  ASTPredictionOp jjtn000 = new ASTPredictionOp(JJTPREDICTIONOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) PredictionOp */
+        try {
+/*@egen*/
+  	< K_PREDICTION >"(" AlgebraOp() "," AlgebraOp() "," (Identifier()) ")"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/}
 
 void Predicate():{/*@bgen(jjtree) Predicate */
   ASTPredicate jjtn000 = new ASTPredicate(JJTPREDICATE);

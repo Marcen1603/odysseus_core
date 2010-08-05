@@ -14,13 +14,13 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
       try {
         jj_consume_token(K_LOGICAL);
         jj_consume_token(K_PLAN);
-        jj_consume_token(52);
+        jj_consume_token(53);
         label_1:
         while (true) {
           AlgebraOp();
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 53:
-            jj_consume_token(53);
+          case 54:
+            jj_consume_token(54);
             break;
           default:
             jj_la1[0] = jj_gen;
@@ -30,6 +30,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           case K_ACCESS:
           case K_BROKER:
           case K_JOIN:
+          case K_PREDICTION:
           case K_PROJECTION:
           case K_RELATIONAL_PROJECTION:
           case K_RELATIONAL_SELECTION:
@@ -129,6 +130,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         case K_SET_PREDICTION_OR:
           PredictionAssignOrOp();
           break;
+        case K_PREDICTION:
+          PredictionOp();
+          break;
         case K_TEST:
           TestOp();
           break;
@@ -182,9 +186,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_TEST);
-        jj_consume_token(54);
-        AlgebraOp();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -218,14 +222,14 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_PROJECTION);
-        jj_consume_token(54);
+        jj_consume_token(55);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         label_2:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -257,7 +261,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
                                               }
           }
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -291,14 +295,14 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_RELATIONAL_PROJECTION);
-        jj_consume_token(54);
+        jj_consume_token(55);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         label_3:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -330,7 +334,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
                                                          }
           }
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -367,13 +371,13 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         jjtree.openNodeScope(jjtn000);Token windowSize;
       try {
         jj_consume_token(K_SELECTION);
-        jj_consume_token(54);
+        jj_consume_token(55);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         Predicate();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 56:
-          jj_consume_token(56);
+        case 57:
+          jj_consume_token(57);
           windowSize = jj_consume_token(INTEGER);
                                                                                   jjtn000.setWindowSize(windowSize.image);
           break;
@@ -381,7 +385,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           jj_la1[5] = jj_gen;
           ;
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -415,11 +419,11 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         jjtree.openNodeScope(jjtn000);Token windowSize;
       try {
         jj_consume_token(K_RELATIONAL_SELECTION);
-        jj_consume_token(54);
-        AlgebraOp();
-        jj_consume_token(56);
-        Predicate();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        Predicate();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -453,13 +457,13 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         jjtree.openNodeScope(jjtn000);Token windowSize;
       try {
         jj_consume_token(K_RELATIONAL_JOIN);
-        jj_consume_token(54);
-        AlgebraOp();
-        jj_consume_token(56);
-        AlgebraOp();
-        jj_consume_token(56);
-        Predicate();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        AlgebraOp();
+        jj_consume_token(57);
+        Predicate();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -493,16 +497,16 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_RELATIONAL_NEST);
-        jj_consume_token(54);
+        jj_consume_token(55);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         Identifier();
-        jj_consume_token(56);
+        jj_consume_token(57);
         label_4:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -511,7 +515,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           }
           Identifier();
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -545,11 +549,11 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_RELATIONAL_UNNEST);
-        jj_consume_token(54);
-        AlgebraOp();
-        jj_consume_token(56);
-        Identifier();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -583,15 +587,15 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         jjtree.openNodeScope(jjtn000);Token windowSize;
       try {
         jj_consume_token(K_JOIN);
-        jj_consume_token(54);
+        jj_consume_token(55);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         Predicate();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 56:
-          jj_consume_token(56);
+        case 57:
+          jj_consume_token(57);
           windowSize = jj_consume_token(INTEGER);
                                                                                              jjtn000.setWindowSize(windowSize.image);
           break;
@@ -599,7 +603,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           jj_la1[7] = jj_gen;
           ;
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -666,13 +670,13 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_SLDING_TIME_WINDOW);
-        jj_consume_token(54);
-        AlgebraOp();
-        jj_consume_token(56);
-        Number();
-        jj_consume_token(56);
-        Number();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        Number();
+        jj_consume_token(57);
+        Number();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -706,7 +710,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_ACCESS);
-        jj_consume_token(54);
+        jj_consume_token(55);
         Identifier();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_AS:
@@ -717,7 +721,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           jj_la1[8] = jj_gen;
           ;
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -751,14 +755,14 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_BROKER);
-        jj_consume_token(54);
+        jj_consume_token(55);
         Identifier();
         if (jj_2_1(2)) {
-          jj_consume_token(56);
+          jj_consume_token(57);
           jj_consume_token(K_QUEUE);
-          jj_consume_token(54);
-          AlgebraOp();
           jj_consume_token(55);
+          AlgebraOp();
+          jj_consume_token(56);
                                                                                    jjtn000.setQueue(true);
         } else {
           ;
@@ -766,18 +770,18 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         label_5:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 56:
+          case 57:
             ;
             break;
           default:
             jj_la1[9] = jj_gen;
             break label_5;
           }
-          jj_consume_token(56);
+          jj_consume_token(57);
           AlgebraOp();
                                                                                                                                jjtn000.increaseNoOfChildOps();
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -811,15 +815,15 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_SET_PREDICTION);
-        jj_consume_token(54);
+        jj_consume_token(55);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         label_6:
         while (true) {
           PredictionDefinition();
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -836,7 +840,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           jj_la1[11] = jj_gen;
           ;
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -870,17 +874,17 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_SET_PREDICTION_OR);
-        jj_consume_token(54);
+        jj_consume_token(55);
         AlgebraOp();
-        jj_consume_token(56);
+        jj_consume_token(57);
         Identifier();
-        jj_consume_token(56);
+        jj_consume_token(57);
         label_7:
         while (true) {
           PredictionDefinition();
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -897,7 +901,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           jj_la1[13] = jj_gen;
           ;
         }
-        jj_consume_token(55);
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -922,6 +926,46 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     }
   }
 
+  static final public void PredictionOp() throws ParseException {
+    trace_call("PredictionOp");
+    try {
+                       /*@bgen(jjtree) PredictionOp */
+  ASTPredictionOp jjtn000 = new ASTPredictionOp(JJTPREDICTIONOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        jj_consume_token(K_PREDICTION);
+        jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        AlgebraOp();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(56);
+      } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            {if (true) throw (RuntimeException)jjte000;}
+          }
+          if (jjte000 instanceof ParseException) {
+            {if (true) throw (ParseException)jjte000;}
+          }
+          {if (true) throw (Error)jjte000;}
+      } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+      }
+    } finally {
+      trace_return("PredictionOp");
+    }
+  }
+
   static final public void Predicate() throws ParseException {
     trace_call("Predicate");
     try {
@@ -943,8 +987,8 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           case CHAR_LITERAL:
           case FLOAT:
           case INTEGER:
-          case 54:
-          case 59:
+          case 55:
+          case 60:
             SimplePredicate();
             break;
           default:
@@ -986,9 +1030,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         if (jj_2_4(2147483647)) {
-          jj_consume_token(54);
-          Predicate();
           jj_consume_token(55);
+          Predicate();
+          jj_consume_token(56);
         } else if (jj_2_5(2147483647)) {
           BasicPredicate();
         } else {
@@ -1177,8 +1221,8 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           case CHAR_LITERAL:
           case FLOAT:
           case INTEGER:
-          case 54:
-          case 59:
+          case 55:
+          case 60:
             SimpleToken();
             break;
           default:
@@ -1233,13 +1277,13 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
             FunctionExpression();
           } else {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case 54:
-              jj_consume_token(54);
-              Expression();
+            case 55:
               jj_consume_token(55);
+              Expression();
+              jj_consume_token(56);
               break;
             case IDENTIFIER:
-            case 59:
+            case 60:
               Identifier();
               break;
             default:
@@ -1305,9 +1349,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
       jjtree.closeNodeScope(jjtn001, true);
     }
         }
-        jj_consume_token(54);
-        Expression();
         jj_consume_token(55);
+        Expression();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1406,24 +1450,24 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     trace_call("MathOperator");
     try {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 57:
-        jj_consume_token(57);
-    {if (true) return "*";}
-        break;
       case 58:
         jj_consume_token(58);
-    {if (true) return "+";}
+    {if (true) return "*";}
         break;
       case 59:
         jj_consume_token(59);
-    {if (true) return "-";}
+    {if (true) return "+";}
         break;
       case 60:
         jj_consume_token(60);
-    {if (true) return "/";}
+    {if (true) return "-";}
         break;
       case 61:
         jj_consume_token(61);
+    {if (true) return "/";}
+        break;
+      case 62:
+        jj_consume_token(62);
     {if (true) return "^";}
         break;
       default:
@@ -1447,8 +1491,8 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   Token t;
       try {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 59:
-          sign = jj_consume_token(59);
+        case 60:
+          sign = jj_consume_token(60);
           break;
         default:
           jj_la1[20] = jj_gen;
@@ -1503,7 +1547,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           PredictionFunctionDefinition();
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -1513,7 +1557,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         }
         jj_consume_token(K_WHERE);
         Predicate();
-        jj_consume_token(53);
+        jj_consume_token(54);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1551,7 +1595,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
           PredictionFunctionDefinition();
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -1559,7 +1603,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
             break label_9;
           }
         }
-        jj_consume_token(53);
+        jj_consume_token(54);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1593,9 +1637,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         Identifier();
-        jj_consume_token(62);
+        jj_consume_token(63);
         Expression();
-        jj_consume_token(53);
+        jj_consume_token(54);
       } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1632,7 +1676,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
-          case 59:
+          case 60:
             ;
             break;
           default:
@@ -1640,7 +1684,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
             break label_10;
           }
           KeyValuePair();
-          jj_consume_token(53);
+          jj_consume_token(54);
         }
       } catch (Throwable jjte000) {
           if (jjtc000) {
@@ -1675,7 +1719,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         Identifier();
-        jj_consume_token(62);
+        jj_consume_token(63);
         Identifier();
       } catch (Throwable jjte000) {
           if (jjtc000) {
@@ -1710,15 +1754,15 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_ASSOCIATION_GEN);
-        jj_consume_token(54);
-        AlgebraOp();
-        jj_consume_token(56);
-        AlgebraOp();
-        jj_consume_token(56);
-        Identifier();
-        jj_consume_token(56);
-        Identifier();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        AlgebraOp();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1752,19 +1796,19 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_ASSOCIATION_EVAL);
-        jj_consume_token(54);
-        AlgebraOp();
-        jj_consume_token(56);
-        Identifier();
-        jj_consume_token(56);
-        KeyValueList();
-        jj_consume_token(56);
-        Identifier();
-        jj_consume_token(56);
-        Identifier();
-        jj_consume_token(56);
-        KeyValueList();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(57);
+        KeyValueList();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(57);
+        KeyValueList();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1798,15 +1842,15 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_ASSOCIATION_SEL);
-        jj_consume_token(54);
-        AlgebraOp();
-        jj_consume_token(56);
-        Identifier();
-        jj_consume_token(56);
-        Identifier();
-        jj_consume_token(56);
-        Identifier();
         jj_consume_token(55);
+        AlgebraOp();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(57);
+        Identifier();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1840,11 +1884,11 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   jjtree.openNodeScope(jjtn000);
       try {
         jj_consume_token(K_ASSOCIATION_SRC);
-        jj_consume_token(54);
-        Identifier();
-        jj_consume_token(56);
-        Number();
         jj_consume_token(55);
+        Identifier();
+        jj_consume_token(57);
+        Number();
+        jj_consume_token(56);
       } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1925,9 +1969,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
 
   static private boolean jj_3R_17() {
     if (jj_3R_35()) return true;
-    if (jj_scan_token(54)) return true;
-    if (jj_3R_23()) return true;
     if (jj_scan_token(55)) return true;
+    if (jj_3R_23()) return true;
+    if (jj_scan_token(56)) return true;
     return false;
   }
 
@@ -1937,9 +1981,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   }
 
   static private boolean jj_3R_28() {
-    if (jj_scan_token(54)) return true;
-    if (jj_3R_23()) return true;
     if (jj_scan_token(55)) return true;
+    if (jj_3R_23()) return true;
+    if (jj_scan_token(56)) return true;
     return false;
   }
 
@@ -2016,12 +2060,6 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     return false;
   }
 
-  static private boolean jj_3_1() {
-    if (jj_scan_token(56)) return true;
-    if (jj_scan_token(K_QUEUE)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_12() {
     if (jj_3R_18()) return true;
     if (jj_scan_token(K_AND)) return true;
@@ -2041,6 +2079,12 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
     return false;
   }
 
+  static private boolean jj_3_1() {
+    if (jj_scan_token(57)) return true;
+    if (jj_scan_token(K_QUEUE)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_11() {
     if (jj_3R_18()) return true;
     if (jj_scan_token(K_OR)) return true;
@@ -2049,7 +2093,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   }
 
   static private boolean jj_3_4() {
-    if (jj_scan_token(54)) return true;
+    if (jj_scan_token(55)) return true;
     if (jj_3R_13()) return true;
     return false;
   }
@@ -2062,7 +2106,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   static private boolean jj_3R_35() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(59)) jj_scanpos = xsp;
+    if (jj_scan_token(60)) jj_scanpos = xsp;
     if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
@@ -2088,9 +2132,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   }
 
   static private boolean jj_3R_36() {
-    if (jj_scan_token(54)) return true;
-    if (jj_3R_13()) return true;
     if (jj_scan_token(55)) return true;
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(56)) return true;
     return false;
   }
 
@@ -2100,7 +2144,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   }
 
   static private boolean jj_3R_34() {
-    if (jj_scan_token(61)) return true;
+    if (jj_scan_token(62)) return true;
     return false;
   }
 
@@ -2115,7 +2159,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   }
 
   static private boolean jj_3R_33() {
-    if (jj_scan_token(60)) return true;
+    if (jj_scan_token(61)) return true;
     return false;
   }
 
@@ -2141,12 +2185,12 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   }
 
   static private boolean jj_3R_32() {
-    if (jj_scan_token(59)) return true;
+    if (jj_scan_token(60)) return true;
     return false;
   }
 
   static private boolean jj_3R_31() {
-    if (jj_scan_token(58)) return true;
+    if (jj_scan_token(59)) return true;
     return false;
   }
 
@@ -2170,7 +2214,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   }
 
   static private boolean jj_3R_30() {
-    if (jj_scan_token(57)) return true;
+    if (jj_scan_token(58)) return true;
     return false;
   }
 
@@ -2182,9 +2226,9 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   static private boolean jj_3R_41() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(48)) {
+    if (jj_scan_token(49)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(49)) return true;
+    if (jj_scan_token(50)) return true;
     }
     return false;
   }
@@ -2209,10 +2253,10 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x3fd01220,0x3fd01220,0x0,0x0,0x0,0x0,0x0,0x40,0x0,0x0,0x800,0x0,0x800,0x10000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x0,0x7fb01220,0x7fb01220,0x0,0x0,0x0,0x0,0x0,0x40,0x0,0x0,0x800,0x0,0x800,0x10000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x200000,0x1f1,0x1f1,0x8000200,0x8000200,0x1000000,0x8000200,0x1000000,0x0,0x1000000,0x8000200,0x0,0x8000200,0x0,0x8431200,0x8431200,0x31000,0x8400200,0x30000,0x3e000000,0x8000000,0x8000200,0x8000200,0x8000200,};
+      jj_la1_1 = new int[] {0x400000,0x3e2,0x3e2,0x10000400,0x10000400,0x2000000,0x10000400,0x2000000,0x0,0x2000000,0x10000400,0x0,0x10000400,0x0,0x10862400,0x10862400,0x62000,0x10800400,0x60000,0x7c000000,0x10000000,0x10000400,0x10000400,0x10000400,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[7];
   static private boolean jj_rescan = false;
@@ -2424,7 +2468,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[63];
+    boolean[] la1tokens = new boolean[64];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -2441,7 +2485,7 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         }
       }
     }
-    for (int i = 0; i < 63; i++) {
+    for (int i = 0; i < 64; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
