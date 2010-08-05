@@ -27,6 +27,7 @@ public class PredictionFunctionTest {
 		pf.setExpressions(e);
 		pf.init(scan, time);
 		
+		
 		pf.predictData(scanTuple, timeTuple, 0);
 		IProbability metadata = scanTuple.<MVRelationalTuple<IProbability>>getAttribute(0).<MVRelationalTuple<IProbability>>getAttribute(0).getMetadata();
 		pf.predictMetadata(metadata, scanTuple, timeTuple, 0);

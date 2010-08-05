@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
 public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
+	
 	private MVRelationalTuple<M> currentTime;
 	private MVRelationalTuple<M> currentScan;
 	

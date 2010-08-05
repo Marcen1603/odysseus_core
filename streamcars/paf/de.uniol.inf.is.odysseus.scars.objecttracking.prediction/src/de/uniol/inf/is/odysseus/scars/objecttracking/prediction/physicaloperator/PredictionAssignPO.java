@@ -47,6 +47,7 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 		}
 		transfer(object);
 		return;
+		
 	}
 	
 	private void evaluatePredicateKey(MVRelationalTuple<M> tuple) {
