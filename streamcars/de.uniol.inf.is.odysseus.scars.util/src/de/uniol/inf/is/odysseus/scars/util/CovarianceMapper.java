@@ -17,17 +17,18 @@ public class CovarianceMapper {
 	
 	private void find(SDFAttributeList list, String fullAttributeName ) {
 		String lastName = fullAttributeName;
+
 		for( SDFAttribute attribute : list ) {
 			
 			if( lastName == null ) 
 				lastName = attribute.getSourceName() + "." + attribute.getAttributeName();
 			else
-				lastName = lastName + ":" + attribute.getAttributeName();
+				lastName = fullAttributeName + ":" + attribute.getAttributeName();
 			
 			if( SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
 				indices.add(lastName);
 			}
-			
+			System.out.println(lastName);
 			find(attribute.getSubattributes(), lastName);
 		}
 	}
