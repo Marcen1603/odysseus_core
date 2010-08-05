@@ -1192,13 +1192,13 @@ public class CreateLogicalPlanVisitor implements
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 
-		childOp.subscribeToSource(gen, 0, sourceOutPort, childOp.getOutputSchema());
+		gen.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this,
 				data);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
-		childOp.subscribeToSource(gen, 1, sourceOutPort, childOp.getOutputSchema());
+		gen.subscribeToSource(childOp, 1, sourceOutPort, childOp.getOutputSchema());
 
 		gen.initPaths(((ASTIdentifier) node.jjtGetChild(3)).getName(),
 				((ASTIdentifier) node.jjtGetChild(2)).getName());
