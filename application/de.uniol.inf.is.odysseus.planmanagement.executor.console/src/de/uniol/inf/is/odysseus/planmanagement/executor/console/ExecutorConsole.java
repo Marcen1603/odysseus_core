@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -1683,6 +1683,46 @@ public class ExecutorConsole implements CommandProvider,
 		}
 
 	}
+	
+	
+	/**
+	 * Reads a file from the current working directory and executes each line as if it comes from the console
+	 *
+	 * @param ci the CommandInterpreter of the console
+	 */
+	@Help(parameter = "<filename> ", description = "Reads a file from the current working or absolute directory and executes each line as if it comes from the console.\n" +
+			"\tskips blank and commented (with //) lines.")
+	public void _runfile(CommandInterpreter ci) {
+		StringBuilder sb = new StringBuilder();
+		String arg = ci.nextArgument();
+		while(arg!=null){
+			sb.append(arg+" ");			
+			arg = ci.nextArgument();	
+		}								
+		File file = new File(sb.toString().trim());
+			logger.debug("--- running macro from file: " + file.getAbsolutePath()+ " ---");
+			
+			BufferedReader in;
+			try {
+				in = new BufferedReader(new FileReader(file));
+			
+			String zeile = null;
+			while ((zeile = in.readLine()) != null) {
+				zeile = zeile.trim();
+				if(!zeile.isEmpty() && (!zeile.startsWith("//"))){
+					logger.debug("Running command: " + zeile);
+					ci.execute(zeile);					
+				}
+			}
+			} catch (FileNotFoundException e) {
+				logger.error("File not found ("+file.getAbsolutePath()+")");
+			} catch (IOException e) {
+				logger.error("Error while reading from file");
+			}
+			logger.debug("--- macro from file " + file.getAbsolutePath() + " done ---");
+		
+	}
+	
 
 	@Help(parameter = "<macro name>", description = "begin macro recording")
 	public void _startrecord(CommandInterpreter ci) {
