@@ -32,7 +32,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 			throw new IllegalArgumentException("source is null or empty!");
 		
 		this.sources = source;
-		logger.debug( "StreamManager created" );
+		//logger.debug( "StreamManager created" );
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 				subscribeToSource( s, i++,0 , s.getOutputSchema());
 			}
 			connected = true;
-			logger.debug("Connected");
+			//logger.debug("Connected");
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 				unsubscribeFromSource( s, i++, 0, s.getOutputSchema());
 			}
 			connected = false;
-			logger.debug("Disconnected");
+			//logger.debug("Disconnected");
 		}
 	}
 	
@@ -66,7 +66,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 
 	@Override
 	protected void process_next( In element, int port, boolean isReadOnly ) {
-		logger.debug( "Objekt:" + element.toString() );
+		//logger.debug( "Objekt:" + element.toString() );
 		if( hasExceptions )
 			return;
 		
@@ -81,7 +81,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 			try {
 				notifyListeners( element, port );
 			} catch( Exception ex ) {
-				logger.error( "Bei der Verarbeitung des Datenelements " + element.toString() + " trat eine Exception auf!", ex);
+				//logger.error( "Bei der Verarbeitung des Datenelements " + element.toString() + " trat eine Exception auf!", ex);
 				hasExceptions = true;
 			}
 		}
