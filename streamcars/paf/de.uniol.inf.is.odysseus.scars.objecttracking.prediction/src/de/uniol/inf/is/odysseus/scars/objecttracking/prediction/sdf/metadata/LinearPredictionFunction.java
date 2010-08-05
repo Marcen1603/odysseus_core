@@ -106,17 +106,18 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 			}
 		}
 		for(int index=0; index<expressions.length; index++) {
-			int covCol = metadata.getIndexOfKovMatrix(expressions[index].getTargetPath());
+			int covCol = mapper.getCovarianceIndex(expressions[index].getTargetAttributeName());
 			
 			for(int row=0; row<tmpCov[covCol].length; row++) {
 				for(String attrName : expressions[index].getAttributeNames(scanSchema)) {
-					int[] attrPath = expressions[index].getAttributePath(attrName);
-					int covAttrIndex = metadata.getIndexOfKovMatrix(attrPath);
+					
+					int covAttrIndex = mapper.getCovarianceIndex(attrName);
 					if(covAttrIndex != -1) {
 						expressions[index].bindVariable(attrName, tmpCov[row][covAttrIndex]);
 					} else {
 						// not found in covmatrix so it usually reflects a time value
 						// TODO use paths in tuples (for time etc.)
+						int[] attrPath = expressions[index].getAttributePath(attrName);
 						expressions[index].bindVariable(attrName, resolveValue(attrPath, scanRootTuple));
 					}
 				}
