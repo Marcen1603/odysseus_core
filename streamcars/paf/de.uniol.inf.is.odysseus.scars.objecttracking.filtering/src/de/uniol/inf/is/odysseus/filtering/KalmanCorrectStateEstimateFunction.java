@@ -10,8 +10,16 @@ public class KalmanCorrectStateEstimateFunction implements IFilterFunction {
 		
 	private HashMap<Integer, Object> parameters;
 	
-		public KalmanCorrectStateEstimateFunction() {
+	public KalmanCorrectStateEstimateFunction() {
+		this.parameters = new HashMap<Integer, Object>();
+	}
 	
+	
+	
+	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction copy) {
+
+		copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
+		
 	}
 	
 	public KalmanCorrectStateEstimateFunction(HashMap<Integer, Object> parameters) {

@@ -19,13 +19,18 @@ public class KalmanGainFunction implements IFilterFunction {
 	private HashMap<Integer, Object> parameters;
 	
 	public KalmanGainFunction() {
-		
+	this.parameters = new HashMap<Integer, Object>();
 	}
 	
 	public KalmanGainFunction(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
 	}
 	
+	public KalmanGainFunction(KalmanGainFunction copy) {
+
+	copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
+	
+	}
 
 	public double[][] compute() {
 		

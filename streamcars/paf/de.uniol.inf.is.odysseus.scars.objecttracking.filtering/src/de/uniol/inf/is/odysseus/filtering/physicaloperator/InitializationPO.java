@@ -33,7 +33,7 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 			oldList[i]=measurement;
 		}
 		
-		// this in object reinsetzten
+		// this in object reinsetzen
 		
 		return object;
 		

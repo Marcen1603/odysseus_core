@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 
@@ -19,14 +20,15 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  * @param <StreamCarsMetaData>
  *
  */
-public class KalmanGainFunctionPO extends AbstractFilterPO {
+public class KalmanGainFunctionPO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
 	public KalmanGainFunctionPO() {
 		
 	}
 	
+
 	@Override
-	public MVRelationalTuple<StreamCarsMetaData> computeAll(MVRelationalTuple<StreamCarsMetaData> object) {
+	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 	
 		
 		// list of connections

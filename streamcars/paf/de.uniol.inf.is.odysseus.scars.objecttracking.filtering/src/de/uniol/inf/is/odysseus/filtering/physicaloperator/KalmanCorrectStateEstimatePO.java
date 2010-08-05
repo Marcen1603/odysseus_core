@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
@@ -16,14 +18,20 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  * @author dtwumasi
  *
  */
-public class KalmanCorrectStateEstimatePO extends AbstractFilterPO {
+public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
 	public KalmanCorrectStateEstimatePO() {
 		
 	}
-	
-	public MVRelationalTuple<StreamCarsMetaData> computeAll(MVRelationalTuple<StreamCarsMetaData> object) {
 
+	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+		
+		// 1 - Get the needed data out of the MVRelationalTuple object
+		// 1.1 - Get the list of new objects as an array of MVRelationalTuple
+	//	MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.getNewObjListPath())).getAttributes();
+		// 1.2 - Get the list of old objects (which are predicted to the timestamp of the new objects) as an array of MVRelationalTuple
+	//	MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.getOldObjListPath())).getAttributes();
+		
 		// --- Relative Pfade von einem "Auto" aus zu den Messwerten finden ---
 		int[] pathToFirstCarInNewList = new int[this.getNewObjListPath().length+1];
 		for(int i = 0; i < pathToFirstCarInNewList.length; i++) {
@@ -67,10 +75,10 @@ public class KalmanCorrectStateEstimatePO extends AbstractFilterPO {
 		getFilterFunction().addParameter(HashConstants.OLD_MEASUREMENT, measurementOld);
 		getFilterFunction().addParameter(HashConstants.GAIN, gain);
 	
-		double[][] gainResult = (double[][]) getFilterFunction().compute();
+		double[][] result = (double[][]) getFilterFunction().compute();
 	
 		//set gain
-		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setGain(gainResult);
+		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setGain(result);
 
 	
 }

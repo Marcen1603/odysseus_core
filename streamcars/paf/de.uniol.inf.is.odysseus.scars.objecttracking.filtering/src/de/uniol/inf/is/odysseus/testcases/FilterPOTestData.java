@@ -4,6 +4,8 @@
 package de.uniol.inf.is.odysseus.testcases;
 
 
+import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
@@ -16,11 +18,11 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @author dtwumasi
  *
  */
-public class FilterPOTestData<M extends IProbability & IConnectionContainer> {
+public class FilterPOTestData {
 
 	
 	
-	private MVRelationalTuple<M> expectedTuple;
+	private MVRelationalTuple<StreamCarsMetaData> expectedTuple;
 	
 	public FilterPOTestData() {
 	
@@ -36,7 +38,7 @@ public class FilterPOTestData<M extends IProbability & IConnectionContainer> {
 	// //	double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
 	}
 		
-	public MVRelationalTuple generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew ) {
+	public MVRelationalTuple<StreamCarsMetaData> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew, double[][] gain ) {
 		
 		Object[] attributesOld = {speedOld,posOld};
 		
@@ -49,8 +51,16 @@ public class FilterPOTestData<M extends IProbability & IConnectionContainer> {
 		
 		metaOld.setCovariance(covarianceOld);
 		
-		oldTuple.setMetadata(metaOld);		
-					
+		ArrayList<int[]> pathsOld = new ArrayList<int[]>();
+		
+		pathsOld.add(new int[] {0});
+		pathsOld.add(new int[] {1});
+		
+		metaOld.setAttributePaths(pathsOld);
+		
+		oldTuple.setMetadata(metaOld);
+		
+		
 		Object[] attributesNew = {speedNew,posNew};
 		
 		// MVRelationalTuple to hold the new data
@@ -61,13 +71,22 @@ public class FilterPOTestData<M extends IProbability & IConnectionContainer> {
 		
 		metaNew.setCovariance(covarianceNew);
 		
+		ArrayList<int[]> pathsNew = new ArrayList<int[]>();
+		
+		pathsNew.add(new int[] {0});
+		pathsNew.add(new int[] {1});
+		
+		metaNew.setAttributePaths(pathsNew);
+		
+		if (gain!=null) metaNew.setGain(gain);
+		
 		newTuple.setMetadata(metaNew);
 		
 		// MVRelationalTuples to hold the old Tuples
 		
-		MVRelationalTuple<M> oldList = new MVRelationalTuple<M>(oldTuple);
+		MVRelationalTuple<StreamCarsMetaData> oldList = new MVRelationalTuple<StreamCarsMetaData>(oldTuple);
 			
-		MVRelationalTuple<M> newList = new MVRelationalTuple<M>(newTuple);
+		MVRelationalTuple<StreamCarsMetaData> newList = new MVRelationalTuple<StreamCarsMetaData>(newTuple);
 		
 		// the main MVRelationalTuple
 		
@@ -83,7 +102,15 @@ public class FilterPOTestData<M extends IProbability & IConnectionContainer> {
 		
 		conList.add(0, con);
 	
-		StreamCarsMetaData streamCars= new StreamCarsMetaData(conList);
+		StreamCarsMetaData streamCars= new StreamCarsMetaData();
+		
+		ArrayList<int[]> pathsMeas = new ArrayList<int[]>();
+		
+		pathsMeas.add(new int[] {0});
+		pathsMeas.add(new int[] {1});
+		
+		streamCars.setAttributePaths(pathsMeas);
+		streamCars.setConnectionList(conList);
 		
 		measurementTuple.setMetadata(streamCars);
 	

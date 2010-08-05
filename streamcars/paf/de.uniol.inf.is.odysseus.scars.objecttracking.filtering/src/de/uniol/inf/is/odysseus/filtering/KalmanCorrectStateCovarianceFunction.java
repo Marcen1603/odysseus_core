@@ -11,12 +11,16 @@ public class KalmanCorrectStateCovarianceFunction implements IFilterFunction {
 	private HashMap<Integer, Object> parameters;
 	
 	public KalmanCorrectStateCovarianceFunction() {
+		this.parameters = new HashMap<Integer, Object>();
+	}
+	
+	public KalmanCorrectStateCovarianceFunction(KalmanCorrectStateCovarianceFunction copy) {
+
+		copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
 		
 	}
 	
 	public KalmanCorrectStateCovarianceFunction(HashMap<Integer, Object> parameters) {
-		/*this.parameters.put("covarianceOld", covarianceOld );
-		this.parameters.put("gain", gain);*/
 		this.parameters=parameters;
 	}
 	

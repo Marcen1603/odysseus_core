@@ -18,8 +18,8 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-public abstract class AbstractFilterPO
-							extends AbstractPipe<MVRelationalTuple<StreamCarsMetaData>, MVRelationalTuple<StreamCarsMetaData>> {
+public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer>
+							extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private IFilterFunction filterFunction;
 
@@ -39,15 +39,16 @@ public abstract class AbstractFilterPO
 	public AbstractFilterPO() {
 		super();
 		}
+
 	
-	public AbstractFilterPO(FilterAO filterFunctionAO) {
+	public AbstractFilterPO(FilterAO<M> filterFunctionAO) {
 		this.setFilterFunction(filterFunctionAO.getFilterFunction());
 		
 	}
 	
 	
 	@Override
-	public AbstractPipe<MVRelationalTuple<StreamCarsMetaData>, MVRelationalTuple<StreamCarsMetaData>> clone() {
+	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -57,8 +58,7 @@ public abstract class AbstractFilterPO
 		return OutputMode.INPUT;
 	}
 
-	@Override
-	public void process_next(MVRelationalTuple<StreamCarsMetaData> object, int port) {
+	protected void process_next(MVRelationalTuple<M> object, int port) {
 		
 		
 		object = computeAll(object);
@@ -109,13 +109,14 @@ public abstract class AbstractFilterPO
 	}
 	
 	
-	public abstract MVRelationalTuple<StreamCarsMetaData> computeAll(MVRelationalTuple<StreamCarsMetaData> object);
+	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
 	
 	/**
 	 * 
 	 * @param connected
 	 */
 	public abstract void compute(Connection connected, ArrayList<int[]> mesurementValuePathsTupleNew, ArrayList<int[]> mesurementValuePathsTupleOld);
+
 
 	/**
 	 * @return the filterFunction

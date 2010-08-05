@@ -5,53 +5,49 @@ package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.base.ISubscription;
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * @author dtwumasi
  *
  */
-public class KalmanCorrectStateCovariancePO  extends AbstractFilterPO {
+public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnectionContainer>  extends AbstractFilterPO<M> {
 	
 	public KalmanCorrectStateCovariancePO() {
 		
 	}
 	
-	@Override
-	public MVRelationalTuple<StreamCarsMetaData> computeAll(MVRelationalTuple<StreamCarsMetaData> object) {
+
+	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 		
-		// --- Relative Pfade von einem "Auto" aus zu den Messwerten finden ---
-		int[] pathToFirstCarInNewList = new int[this.getNewObjListPath().length+1];
-		for(int i = 0; i < pathToFirstCarInNewList.length; i++) {
-			pathToFirstCarInNewList[i] = this.getNewObjListPath()[i];
-		}
-		pathToFirstCarInNewList[this.getNewObjListPath().length-1] = 0;
-
-		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length];
-		for(int i = 0; i < pathToFirstCarInOldList.length; i++) {
-			pathToFirstCarInOldList[i] = this.getOldObjListPath()[i];
-		}
-		pathToFirstCarInOldList[this.getOldObjListPath().length-1] = 0;
-
-		ArrayList<int[]> measurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.getSchema(), pathToFirstCarInNewList));
-		ArrayList<int[]> measurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.getSchema(), pathToFirstCarInOldList));
+		
+		
 		// list of connections
-		Connection[] objConList = (Connection[]) object.getMetadata().getConnectionList().toArray();
-		
+		Connection[] objConList = new Connection[object.getMetadata().getConnectionList().toArray().length];
+		ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
+
+		for(int i = 0; i < objConList.length; i++) {
+			objConList[i] = tmpConList.get(i);
+		}
+				
 		// traverse connection list and filter
 		for(Connection connected : objConList ) {
-			compute(connected, measurementValuePathsTupleNew, measurementValuePathsTupleOld);
+			compute(connected, null, null);
 		}
 		
 		return object;
 		
 		}
 	
-	@Override
+	
 	public void compute(Connection connected, ArrayList<int[]> measurementValuePathsTupleNew,
 			ArrayList<int[]> measurementValuePathsTupleOld) {
 		
@@ -76,5 +72,9 @@ public class KalmanCorrectStateCovariancePO  extends AbstractFilterPO {
 		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setCovariance(resultCovariance);
 	
 	 }
+
+
+
+	
 
 }

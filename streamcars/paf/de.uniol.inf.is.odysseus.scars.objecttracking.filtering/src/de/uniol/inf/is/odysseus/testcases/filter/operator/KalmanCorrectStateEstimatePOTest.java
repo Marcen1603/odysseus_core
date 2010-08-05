@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.testcases.filter.operator;
 
+import java.util.ArrayList;
+
+import junit.framework.TestCase;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanCorrectStateEstimatePO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 
@@ -23,9 +26,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @param <StreamCarsMetaData>
  *
  */
-public class KalmanCorrectStateEstimatePOTest {
+public class KalmanCorrectStateEstimatePOTest extends TestCase {
 
-	private KalmanCorrectStateEstimatePO correctStateEstimatePO;
+	private KalmanCorrectStateEstimatePO<StreamCarsMetaData> correctStateEstimatePO;
 	
 
 	
@@ -57,7 +60,7 @@ public class KalmanCorrectStateEstimatePOTest {
 		
 		double[][] covarianceNew = { {3.0,21.0}, {21.0,7.0} };
 		
-		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, null);
 		
 		// the expected tuple
 		
@@ -65,15 +68,20 @@ public class KalmanCorrectStateEstimatePOTest {
 		
 		double posOldExp = 1.83;
 		
-		expectedTuple = testData.generateTestTuple(speedOldExp, posOldExp, covarianceOld, speedNew, posNew, covarianceNew);
+		expectedTuple = testData.generateTestTuple(speedOldExp, posOldExp, covarianceOld, speedNew, posNew, covarianceNew,null);
 		
-		Connection[] objConList = (Connection[]) expectedTuple.getMetadata().getConnectionList().toArray();
+		Connection[] objConList = new Connection[expectedTuple.getMetadata().getConnectionList().toArray().length];
+		ArrayList<Connection> tmpConList = expectedTuple.getMetadata().getConnectionList();
+
+		for(int i = 0; i < objConList.length; i++) {
+			objConList[i] = tmpConList.get(i);
+		}
 		
 		KalmanCorrectStateEstimateFunction estimatefunction = new KalmanCorrectStateEstimateFunction();
 		
 		// create the PO
 		
-		correctStateEstimatePO = new KalmanCorrectStateEstimatePO();
+		correctStateEstimatePO = new KalmanCorrectStateEstimatePO<StreamCarsMetaData>();
 		
 		correctStateEstimatePO.setFilterFunction(estimatefunction);
 		

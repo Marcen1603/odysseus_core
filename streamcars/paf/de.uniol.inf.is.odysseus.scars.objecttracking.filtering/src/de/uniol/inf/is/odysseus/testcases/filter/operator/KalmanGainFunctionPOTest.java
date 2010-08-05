@@ -5,6 +5,8 @@ package de.uniol.inf.is.odysseus.testcases.filter.operator;
 
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -29,9 +31,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @param <M>
  *
  */
-public class KalmanGainFunctionPOTest {
+public class KalmanGainFunctionPOTest extends TestCase {
 
-	private KalmanGainFunctionPO gainfunctionPO;
+	private KalmanGainFunctionPO<StreamCarsMetaData> gainfunctionPO;
 
 
 
@@ -63,11 +65,11 @@ public class KalmanGainFunctionPOTest {
 
 		double[][] covarianceNew = { {3.0,21.0}, {21.0,7.0} };
 
-		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, null);
 
 		// the expected tuple
 
-		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew);
+		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, null);
 
 		double[][] gainExp = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688 }};
 
