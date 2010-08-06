@@ -31,6 +31,11 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements ISt
 	}
 	
 	@Override
+	public Collection<ISource<? extends In>> getSources() {
+		return sources;
+	}
+	
+	@Override
 	public final void connect() {
 		if(sources != null ) {
 			int i = 0;

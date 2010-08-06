@@ -29,6 +29,19 @@
             </iterate>
          </with>
       </definition>
+      <definition
+            id="isIQuery">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -36,9 +49,14 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.command.ShowStreamCommand"
             commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.ShowStream">
          <enabledWhen>
-            <reference
-                  definitionId="isNodeView">
-            </reference>
+            <or>
+               <reference
+                     definitionId="isNodeView">
+               </reference>
+               <reference
+                     definitionId="isIQuery">
+               </reference>
+            </or>
          </enabledWhen>
       </handler>
    </extension>
@@ -57,6 +75,10 @@
       <menuContribution
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.StreamMenuFactory"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.GraphOutline">
+      </menuContribution>
+      <menuContribution
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.StreamMenuFactory"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.queryview">
       </menuContribution>
    </extension>
 

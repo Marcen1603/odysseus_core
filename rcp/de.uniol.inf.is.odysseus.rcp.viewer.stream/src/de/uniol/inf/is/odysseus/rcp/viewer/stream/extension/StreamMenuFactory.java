@@ -30,7 +30,7 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 		
 		for( StreamExtensionDefinition def : definitions ) {
 			CommandContributionItemParameter p = new CommandContributionItemParameter(serviceLocator, "", IStreamConstants.SHOW_STREAM_COMMAND, SWT.PUSH);
-			p.label = "Stream: " + def.getLabel();
+			p.label = def.getLabel();
 			p.parameters = new HashMap<Object, Object>();
 			p.parameters.put(IStreamConstants.STREAM_EDITOR_TYPE_PARAMETER_ID, def.getID());
 			

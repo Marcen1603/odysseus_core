@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -22,7 +23,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class StreamTableEditor implements IStreamEditorType {
 
-	private IStreamEditorInput editorInput;
 	private IEditorPart part;
 	private TableViewer viewer;
 	private SDFAttributeList schema;
@@ -55,8 +55,8 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void init(IEditorPart editorPart, IStreamEditorInput editorInput) {
-		this.editorInput = editorInput;
-		schema = this.editorInput.getNodeModel().getContent().getOutputSchema();
+		ISource<?>[] sources = editorInput.getStreamConnection().getSources().toArray(new ISource<?>[0]);
+		schema = sources[0].getOutputSchema();
 		part = editorPart;
 		
 	}

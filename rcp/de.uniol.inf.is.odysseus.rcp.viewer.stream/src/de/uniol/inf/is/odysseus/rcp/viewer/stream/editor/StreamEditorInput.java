@@ -20,10 +20,14 @@ public class StreamEditorInput implements IStreamEditorInput {
 	private INodeModel<IPhysicalOperator> nodeModel;
 	private IStreamConnection<Object> connection;
 	private IStreamEditorType editorType;
+	private String editorTypeID;
+	private String editorLabel;
 	
-	public StreamEditorInput( INodeModel<IPhysicalOperator> nodeModel, IStreamEditorType type ) {
+	public StreamEditorInput( INodeModel<IPhysicalOperator> nodeModel, IStreamEditorType type, String editorTypeID, String editorLabel ) {
 		this.nodeModel = nodeModel;
 		this.editorType = type;
+		this.editorTypeID = editorTypeID;
+		this.editorLabel = editorLabel;
 		
 		// Datenstromquellen identifizieren
 		final Collection<ISource<?>> sources = new ArrayList<ISource<?>>();
@@ -38,6 +42,10 @@ public class StreamEditorInput implements IStreamEditorInput {
 			throw new IllegalArgumentException("could not identify type of content of node " + nodeModel );
 		
 		connection = new DefaultStreamConnection<Object>(sources);
+	}
+	
+	public String getEditorTypeID() {
+		return editorTypeID;
 	}
 	
 	@Override
@@ -66,7 +74,7 @@ public class StreamEditorInput implements IStreamEditorInput {
 
 	@Override
 	public String getName() {
-		return nodeModel.getName();
+		return nodeModel.getName() + "[" + editorLabel + "]";
 	}
 
 	@Override
@@ -90,7 +98,8 @@ public class StreamEditorInput implements IStreamEditorInput {
 			return true;
 		}
 		if (obj instanceof StreamEditorInput) {
-			return nodeModel.equals(((StreamEditorInput)obj).getNodeModel());
+			StreamEditorInput i = (StreamEditorInput)obj;
+			return nodeModel.equals(i.getNodeModel()) && editorTypeID.equals(((StreamEditorInput) obj).getEditorTypeID());
 		}
 		return false;	
 	}
