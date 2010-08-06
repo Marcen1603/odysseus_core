@@ -30,3 +30,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.transformation.drools,
  org.apache.commons.math.linear
+Export-Package: de.uniol.inf.is.odysseus.objecttracking.drools

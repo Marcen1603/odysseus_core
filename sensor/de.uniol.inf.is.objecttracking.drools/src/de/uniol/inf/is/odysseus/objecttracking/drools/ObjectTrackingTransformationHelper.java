@@ -1,4 +1,4 @@
-package de.uniol.inf.is.objecttracking.drools;
+package de.uniol.inf.is.odysseus.objecttracking.drools;
 
 import java.util.List;
 

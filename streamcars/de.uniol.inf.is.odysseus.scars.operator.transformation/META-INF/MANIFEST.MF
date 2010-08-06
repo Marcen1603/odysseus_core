@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.filtering,
  de.uniol.inf.is.odysseus.filtering.logicaloperator,
  de.uniol.inf.is.odysseus.filtering.physicaloperator,
+ de.uniol.inf.is.odysseus.objecttracking.drools,
  de.uniol.inf.is.odysseus.scars.objecttracking,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator,
