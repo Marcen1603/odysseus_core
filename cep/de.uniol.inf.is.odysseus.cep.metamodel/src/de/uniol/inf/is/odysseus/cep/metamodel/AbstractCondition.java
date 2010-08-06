@@ -16,6 +16,7 @@ abstract public class AbstractCondition implements ICondition {
 	private int eventPort;
 	private boolean eventTypeChecking = true;
 
+	
 	public AbstractCondition() {
 	}
 
@@ -53,16 +54,11 @@ abstract public class AbstractCondition implements ICondition {
 
 	@Override
 	public boolean checkEventType(String eventType) {
-		boolean ret = true;
-		if (doEventTypeChecking()) {
-			if (this.eventType != null) {
-				ret = isNegate() ? !eventType.equals(this.eventType)
-						: eventType.equals(this.eventType);
-			}
-
-			// System.out.println("checkEventType "+eventType+" "+this.eventType+" --> "+ret);
+		if (doEventTypeChecking()){
+			return eventType.equals(this.eventType);
+		}else{
+			return true;
 		}
-		return ret;
 	}
 	
 	@Override
@@ -77,7 +73,11 @@ abstract public class AbstractCondition implements ICondition {
 
 	@Override
 	public boolean checkEventTypeWithPort(int port) {
-		return isNegate() ? port != eventPort : port == eventPort;
+		if (doEventTypeChecking()){
+			return port == eventPort;
+		}else{
+			return true;
+		}
 	}
 
 	@Override

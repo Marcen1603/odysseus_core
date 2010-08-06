@@ -144,17 +144,21 @@ public class Transition {
 
 	public String toString() {
 		String str =   "T: " + this.id;
-		str += ":=(" + ((this.condition!=null && !this.condition.getLabel().equals("1"))?condition.toString():"true")+")";
-		str += this.condition.doEventTypeChecking()?" AND "+(this.condition.isNegate()?"type!=":"type==")+this.condition.getEventType():"";
+		str += ":="+condition;
 		str +=  "-->" + this.nextState.getId();
 		str += " [" + this.action+"]";
 		return str;
 	}
 	
-	public boolean evaluate() {		
-		return getCondition().evaluate();
+	public boolean evaluate(String eventType) {		
+		return getCondition().evaluate(eventType);
 	}
 
+	public boolean evaluate(int eventTypePort) {		
+		return getCondition().evaluate(eventTypePort);
+	}
+
+	
 	public void appendAND(String fullExpression) {
 		getCondition().appendAND(fullExpression);		
 	}

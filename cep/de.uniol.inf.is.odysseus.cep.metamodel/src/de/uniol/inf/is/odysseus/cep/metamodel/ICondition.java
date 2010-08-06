@@ -17,23 +17,13 @@ public interface ICondition extends IExpression{
 	public void setLabel(String label);
 	public String getLabel();
 	public String toString(String indent);
-	public boolean evaluate();
+	public boolean evaluate(String eventType);
+	public boolean evaluate(int eventTypePort);
 	public void appendAND(String fullExpression);
 	public void appendOR(String fullExpression);
 	public void negate();
 	public boolean isNegate();
-	/**
-	 * Check if eventType is applicable for Transition 
-	 * @param type
-	 * @return !isNegate() && eventType == type;
-	 */
-	public boolean checkEventType(String eventType);
-	/**
-	 * Same as checkEventType but using port
-	 * @param port
-	 * @return !isNegate() && eventTypePort == port;
-	 */
-	public boolean checkEventTypeWithPort(int port);
+
 	public boolean doEventTypeChecking();
 	public void setEventTypeChecking(boolean eventTypeChecking);
 	/**
@@ -56,8 +46,10 @@ public interface ICondition extends IExpression{
 	 * @param start
 	 * @param current
 	 * @param windowsize
-	 * @return !isNegate() && start + windowsize < current;
+	 * @return start + windowsize < current;
 	 */
-	public boolean checkTime(long start, long current, long windowsize);	
+	public boolean checkTime(long start, long current, long windowsize);
+	boolean checkEventType(String eventType);
+	boolean checkEventTypeWithPort(int port);	
 
 }

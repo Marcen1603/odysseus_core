@@ -167,9 +167,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			for (Transition transition : this.stateMachine.getInitialState()
 					.getTransitions()) {
 
-				// Hinweis: Es gibt keine Ignore Kante an der ersten Transition
-				// deswegen nicht
-				// transition.getCondition().doEventTypeChecking()
 				if (transition.getCondition().checkEventTypeWithPort(port)) {
 					createNewInstance = true;
 					break;
@@ -225,18 +222,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					break;
 				}
 
-				// First check Type
-				if (transition.getCondition().doEventTypeChecking()
-						&& !transition.getCondition().checkEventTypeWithPort(
-								port)) {
-					// logger.debug(instance + " Wrong Datatype "
-					// + eventReader.get(port).getType()
-					// + " for Transition " + transition.getCondition() +
-					// " "+transition.getCondition().doEventTypeChecking()
-					// + " in state " + instance.getCurrentState());
-					continue;
-				}
-
 				// Check Time
 				if (stateMachine.getWindowSize() > 0) {
 					if (!transition.getCondition().checkTime(
@@ -260,7 +245,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					// evaluated --> false) and
 					// the condition is negated (e.g. in _ignore transitions)
 					if ((!allVarSet && transition.getCondition().isNegate())
-							|| (allVarSet && transition.evaluate())) {
+							|| (allVarSet && transition.evaluate(port))) {
 						transitionsToTake.add(transition);
 						// if (logger.isDebugEnabled())
 						// logger.debug(instance + " Transition true: "

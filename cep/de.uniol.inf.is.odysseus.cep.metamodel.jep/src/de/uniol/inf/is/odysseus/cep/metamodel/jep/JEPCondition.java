@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.cep.metamodel.jep;
 
+import java.awt.Label;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -110,7 +111,19 @@ abstract public class JEPCondition extends AbstractCondition {
 
 
 	@Override
-	public boolean evaluate() {
+	public boolean evaluate(int eventTypePort) {
+		boolean ret = checkEventTypeWithPort(eventTypePort) && evaluate();		
+		return negate? !ret:ret;
+	}
+	
+	@Override
+	public boolean evaluate(String eventType) {
+		boolean ret = checkEventType(eventType) && evaluate();		
+		return negate? !ret:ret;
+	}
+	
+	
+	private boolean evaluate() {
 		/*
 		 * C-Semantik: Alles ungleich 0 oder null ist true! JEP tut komische
 		 * Dinge: - Vergleichsoperatoren liefern Boolean-Objekte und NaN
@@ -170,12 +183,16 @@ abstract public class JEPCondition extends AbstractCondition {
 	@Override
 	public void negate() {
 		if (negate) negate = false; else negate = true;
-		String curLabel = getLabel();
-		setLabel("!(" + curLabel + ")");
 	}
 	
 	@Override
 	public boolean isNegate() {
 		return negate;
+	}
+	
+	@Override
+	public String toString() {
+		String ret = (getLabel().equals("1")?"true":getLabel())+(doEventTypeChecking()?" AND type == "+getEventType():"");
+		return negate? "!("+ret+")":ret;
 	}
 }
