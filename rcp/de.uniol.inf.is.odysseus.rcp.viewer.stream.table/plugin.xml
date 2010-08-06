@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable10Editor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table10"
+            label="Table 10">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable20Editor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table20"
+            label="Table 20">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable50Editor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table50"
+            label="Table 50">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTableInfEditor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.TableInf"
+            label="Table">
+      </editor>
+   </extension>
+
+</plugin>
