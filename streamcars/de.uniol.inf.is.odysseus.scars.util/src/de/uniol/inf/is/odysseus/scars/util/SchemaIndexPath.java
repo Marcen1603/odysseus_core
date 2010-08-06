@@ -75,6 +75,14 @@ public class SchemaIndexPath {
 		return indices.get(index);
 	}
 	
+	public String[] toStringPath() {
+		String[] path = new String[indices.size()];
+		for( int i = 0; i < indices.size(); i++ ) {
+			path[i] = indices.get(i).getAttribute().getAttributeName();
+		}
+		return path;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
