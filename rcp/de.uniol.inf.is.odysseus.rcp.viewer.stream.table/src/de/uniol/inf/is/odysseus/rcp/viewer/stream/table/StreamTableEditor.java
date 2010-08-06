@@ -36,6 +36,11 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
+		if( !(element instanceof RelationalTuple<?>)) {
+			System.out.println("Warning: StreamTable is only for relational tuple!");
+			return;
+		}
+			
 		tuples.add(0, (RelationalTuple<?>)element);
 		if( tuples.size() > maxTuples ) {
 			tuples.remove(tuples.size()-1);
