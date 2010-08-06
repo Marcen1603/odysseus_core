@@ -60,8 +60,9 @@ public class PredictionFunctionTest {
 	
 	private static SDFAttributeList createScanSchema() {
 		SDFAttributeList scan = new SDFAttributeList();
-		
+	
 		SDFAttribute list = new SDFAttribute("a.list");
+		
 		list.setDatatype(SDFDatatypeFactory.getDatatype("List"));
 		
 		SDFAttribute obj = new SDFAttribute("obj");

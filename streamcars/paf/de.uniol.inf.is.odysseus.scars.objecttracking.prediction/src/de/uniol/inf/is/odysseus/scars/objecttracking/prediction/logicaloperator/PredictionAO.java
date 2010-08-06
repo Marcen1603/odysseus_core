@@ -15,7 +15,6 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 	private static final long serialVersionUID = 1L;
 	
 	private PredictionFunctionContainer<M> predictionFunctions;
-	private int[] timeStampPath;
 	private int[] objListPath;
 
 	
@@ -37,17 +36,13 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 	public PredictionFunctionContainer<M> getPredictionFunctions() {
 		return predictionFunctions;
 	}
-	
-	public int[] getTimeStampPath() {
-		return timeStampPath;
-	}
+
 	
 	public int[] getObjListPath() {
 		return objListPath;
 	}
 	
-	public void initNeededAttributeIndices(SDFAttributeList left, SDFAttributeList right, String[] timeStampPath,String[] objListPath) {
-		this.timeStampPath = OrAttributeResolver.resolveIndices(left, timeStampPath);
+	public void initNeededAttributeIndices(SDFAttributeList right,String[] objListPath) {
 		this.objListPath = OrAttributeResolver.resolveIndices(right, objListPath);
 	}
 	

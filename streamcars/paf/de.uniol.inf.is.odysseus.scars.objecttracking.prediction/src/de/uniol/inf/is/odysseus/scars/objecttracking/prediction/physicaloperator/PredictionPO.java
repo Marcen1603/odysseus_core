@@ -17,22 +17,24 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	private MVRelationalTuple<M> currentTime;
 	private MVRelationalTuple<M> currentScan;
 	
-	private int[] timeStampPath;
 	private int[] objListPath;
 
 	private PredictionFunctionContainer<M> predictionFunctions;
 	
-	
-	
-	public PredictionPO(PredictionAO<M> predictionAO) {
-		predictionFunctions = predictionAO.getPredictionFunctions();
-		timeStampPath = predictionAO.getTimeStampPath();
-		objListPath = predictionAO.getObjListPath();
+	public PredictionPO() {
+		
 	}
-
+	
+	public void setPredictionFunctions(PredictionFunctionContainer<M> predictionFunctions) {
+		this.predictionFunctions = predictionFunctions;
+	}
+	
+	public void setObjectListPath(int[] objListPath) {
+		this.objListPath = objListPath;
+	}
+	
 	public PredictionPO(PredictionPO<M> copy) {
 		predictionFunctions = new PredictionFunctionContainer<M>(copy.predictionFunctions);
-		timeStampPath = copy.timeStampPath;
 		objListPath = copy.objListPath;
 	}
 
