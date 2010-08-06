@@ -3,22 +3,15 @@ package de.uniol.inf.is.odysseus.testcases.filter.operator;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanCorrectStateCovariancePO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
-
+import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanCorrectStateCovariancePO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-
+import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
 
 
 /**
@@ -27,7 +20,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @param <StreamCarsMetaData>
  *
  */
-public class KalmanCorrectStateCovariancePOTest extends TestCase {
+public class KalmanCorrectStateCovariancePOTest extends TestCase  {
 
 	private KalmanCorrectStateCovariancePO<StreamCarsMetaData> correctStateCovariancePO;
 	
@@ -101,7 +94,7 @@ public class KalmanCorrectStateCovariancePOTest extends TestCase {
 	}
 	
 	@Test
-	public  void test() {
+	public  void testh() {
 	
 	resultTuple = correctStateCovariancePO.computeAll(measurementTuple);
 	

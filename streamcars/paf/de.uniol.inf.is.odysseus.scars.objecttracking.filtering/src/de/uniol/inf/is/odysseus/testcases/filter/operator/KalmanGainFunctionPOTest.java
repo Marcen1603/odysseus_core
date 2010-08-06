@@ -5,24 +5,18 @@ package de.uniol.inf.is.odysseus.testcases.filter.operator;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
+import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.testcases.FilterPOTestData;
+import junit.framework.TestCase;
 
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanGainFunctionPO;
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 
 
 /**
@@ -31,7 +25,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @param <M>
  *
  */
-public class KalmanGainFunctionPOTest extends TestCase {
+public class KalmanGainFunctionPOTest extends TestCase  {
 
 	private KalmanGainFunctionPO<StreamCarsMetaData> gainfunctionPO;
 

@@ -16,6 +16,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3037302552522493103L;
+
 	private String functionID;
 	
 	private IFilterFunction filterFunction;
