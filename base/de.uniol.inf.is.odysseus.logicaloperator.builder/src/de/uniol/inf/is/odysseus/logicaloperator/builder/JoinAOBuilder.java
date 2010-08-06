@@ -8,7 +8,7 @@ public class JoinAOBuilder extends AbstractOperatorBuilder {
 
 	private static final String PREDICATE = "PREDICATE";
 	private PredicateParameter predicateParameter = new PredicateParameter(
-			PREDICATE, REQUIREMENT.MANDATORY);
+			PREDICATE, REQUIREMENT.OPTIONAL);
 
 	public JoinAOBuilder() {
 		super(2, 2);
@@ -17,7 +17,9 @@ public class JoinAOBuilder extends AbstractOperatorBuilder {
 
 	protected ILogicalOperator createOperatorInternal() {
 		JoinAO joinAO = new JoinAO();
-		joinAO.setPredicate(predicateParameter.getValue());
+		if(predicateParameter.hasValue()){
+			joinAO.setPredicate(predicateParameter.getValue());
+		}
 		return joinAO;
 	}
 
