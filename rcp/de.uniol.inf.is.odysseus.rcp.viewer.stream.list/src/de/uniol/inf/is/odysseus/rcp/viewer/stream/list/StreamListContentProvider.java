@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class StreamTableContentProvider implements IStructuredContentProvider {
+public class StreamListContentProvider implements IStructuredContentProvider {
 
 	private List<String> elements = new LinkedList<String>();
 	

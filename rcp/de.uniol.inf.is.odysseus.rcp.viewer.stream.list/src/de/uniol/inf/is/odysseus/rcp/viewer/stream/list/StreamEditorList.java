@@ -13,8 +13,8 @@ public class StreamEditorList implements IStreamEditorType {
 
 	private TableViewer tableViewer;
 	private IStreamEditorInput input;
-	private StreamTableContentProvider contentProvider = new StreamTableContentProvider();
-	private StreamTableLabelProvider labelProvider = new StreamTableLabelProvider();
+	private StreamListContentProvider contentProvider = new StreamListContentProvider();
+	private StreamListLabelProvider labelProvider = new StreamListLabelProvider();
 
 	@Override
 	public void createPartControl(Composite parent) {

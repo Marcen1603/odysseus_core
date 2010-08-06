@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -25,6 +26,8 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
+		MenuManager manager = new MenuManager("Show Stream");
+		
 		for( StreamExtensionDefinition def : definitions ) {
 			CommandContributionItemParameter p = new CommandContributionItemParameter(serviceLocator, "", IStreamConstants.SHOW_STREAM_COMMAND, SWT.PUSH);
 			p.label = "Stream: " + def.getLabel();
@@ -33,8 +36,10 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 			
 			IContributionItem item = new CommandContributionItem(p);
 			item.setVisible(true);
-			additions.addContributionItem(item, null);
+			manager.add(item);
 		}
+		
+		additions.addContributionItem(manager, null);
 	}
 
 }
