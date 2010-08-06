@@ -52,5 +52,12 @@
             name="Stream Editor">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.extension.StreamMenuFactory"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.GraphOutline">
+      </menuContribution>
+   </extension>
 
 </plugin>

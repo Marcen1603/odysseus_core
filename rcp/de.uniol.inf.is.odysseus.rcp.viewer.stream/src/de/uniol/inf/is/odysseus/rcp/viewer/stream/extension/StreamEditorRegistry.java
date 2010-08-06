@@ -12,7 +12,7 @@ public class StreamEditorRegistry {
 	private static StreamEditorRegistry instance;
 
 	private List<StreamExtensionDefinition> definitions = new ArrayList<StreamExtensionDefinition>();
-	
+
 	private StreamEditorRegistry() {
 		evaluateRegisteredExtensions();
 	}
@@ -22,39 +22,20 @@ public class StreamEditorRegistry {
 			instance = new StreamEditorRegistry();
 		return instance;
 	}
-	
+
 	public List<StreamExtensionDefinition> getStreamExtensionDefinitions() {
 		return definitions;
 	}
 
 	public void evaluateRegisteredExtensions() {
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_ID);
-//		try {
-			for (IConfigurationElement e : config) {
-				
-				StreamExtensionDefinition def = new StreamExtensionDefinition();
-				def.setID(e.getAttribute("id"));
-				def.setConfigElement(e);
-				definitions.add(def);
-				
-//				final Object o = e.createExecutableExtension("class");
-//				if (o instanceof IGreeter) {
-//					ISafeRunnable runnable = new ISafeRunnable() {
-//						@Override
-//						public void handleException(Throwable exception) {
-//							System.out.println("Exception in client");
-//						}
-//
-//						@Override
-//						public void run() throws Exception {
-//							((IGreeter) o).greet();
-//						}
-//					};
-//					SafeRunner.run(runnable);
-//				}
-			}
-//		} catch (CoreException ex) {
-//			System.out.println(ex.getMessage());
-//		}
+		for (IConfigurationElement e : config) {
+
+			StreamExtensionDefinition def = new StreamExtensionDefinition();
+			def.setID(e.getAttribute("id"));
+			def.setLabel(e.getAttribute("label"));
+			def.setConfigElement(e);
+			definitions.add(def);
+		}
 	}
 }

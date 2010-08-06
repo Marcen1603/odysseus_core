@@ -6,6 +6,7 @@ public class StreamExtensionDefinition {
 
 	private String id;
 	private IConfigurationElement configElement;
+	private String label;
 	
 	public StreamExtensionDefinition() {}
 	
@@ -23,6 +24,14 @@ public class StreamExtensionDefinition {
 
 	public void setConfigElement(IConfigurationElement configElement) {
 		this.configElement = configElement;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 	
 	

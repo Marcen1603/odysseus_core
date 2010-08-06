@@ -29,7 +29,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		String editorTypeID = event.getParameter("de.uniol.inf.is.odysseus.rcp.viewer.stream.StreamEditorType");
+		String editorTypeID = event.getParameter(IStreamConstants.STREAM_EDITOR_TYPE_PARAMETER_ID);
 		
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		IWorkbenchPage page = window.getActivePage();

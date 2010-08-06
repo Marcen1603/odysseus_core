@@ -5,23 +5,9 @@
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.list.StreamEditorList"
-            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.List">
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.List"
+            label="List">
       </editor>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.GraphOutline">
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.ShowStream"
-               label="Show stream as list"
-               style="push">
-            <parameter
-                  name="de.uniol.inf.is.odysseus.rcp.viewer.stream.StreamEditorType"
-                  value="de.uniol.inf.is.odysseus.rcp.viewer.stream.List">
-            </parameter>
-         </command>
-      </menuContribution>
    </extension>
 
 </plugin>
