@@ -21,6 +21,7 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	
 	// path to new and old objects
 	private String oldObjListPath;
+
 	private String newObjListPath;
 	
 	// path to default tuple
@@ -37,6 +38,12 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	
 	public FilterAO(FilterAO<M> copy) {
 		super(copy);
+		this.oldObjListPath = new String(copy.getOldObjListPath());
+		this.newObjListPath = new String(copy.getNewObjListPath());
+		this.defaultObjListPath = new String(copy.getDefaultObjListPath());
+		this.leftSchema = new SDFAttributeList(copy.getLeftSchema());
+		this.rightSchema = new SDFAttributeList(copy.getRightSchema());
+		
 	}
 	
 	
@@ -56,17 +63,29 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 		return this.filterFunction;
 	}
 	
-	public void initPaths(String oldObjListPath, String newObjListPath) {
+	
+	public String getOldObjListPath() {
+		return oldObjListPath;
+	}
+
+	public void setOldObjListPath(String oldObjListPath) {
 		this.oldObjListPath = oldObjListPath;
+	}
+	
+	public String getNewObjListPath() {
+		return newObjListPath;
+	}
+
+	public void setNewObjListPath(String newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}
 	
-	public int[] getNewObjListPath() {
+	public int[] getNewObjListPathInt() {
 		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
 		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
 	}
 
-	public int[] getOldObjListPath() {
+	public int[] getOldObjListPathInt() {
 		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
 		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
 	}
@@ -75,7 +94,23 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	public AbstractLogicalOperator clone() {
 		return new FilterAO<M>(this);
 	}
+	
+	public SDFAttributeList getLeftSchema() {
+		return leftSchema;
+	}
 
+	public void setLeftSchema(SDFAttributeList leftSchema) {
+		this.leftSchema = leftSchema;
+	}
+
+	public SDFAttributeList getRightSchema() {
+		return rightSchema;
+	}
+
+	public void setRightSchema(SDFAttributeList rightSchema) {
+		this.rightSchema = rightSchema;
+	}
+	
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();

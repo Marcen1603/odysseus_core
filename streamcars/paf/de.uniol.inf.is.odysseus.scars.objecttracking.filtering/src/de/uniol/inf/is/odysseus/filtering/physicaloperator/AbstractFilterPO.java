@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
-import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -20,26 +19,17 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 
 	private SDFAttributeList schema;
 	
-	/**
-	 * @return the schema
-	 */
-	public SDFAttributeList getSchema() {
-		return schema;
-	}
+	
 
 	// path to new and old objects
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
 	
 	public AbstractFilterPO() {
-		super();
-		}
-
-	
-	public AbstractFilterPO(FilterAO<M> filterFunctionAO) {
-		this.setFilterFunction(filterFunctionAO.getFilterFunction());
 		
 	}
+
+	
 	
 	
 	@Override
@@ -50,7 +40,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 
 	@Override
 	public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 
 	protected void process_next(MVRelationalTuple<M> object, int port) {
@@ -67,8 +57,11 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 		
 	}
 	
-	public void setFilterFunction(IFilterFunction filterFunction) {
-		this.filterFunction = filterFunction;
+	/**
+	 * @return the schema
+	 */
+	public SDFAttributeList getSchema() {
+		return schema;
 	}
 
 	public void setSchema(SDFAttributeList schema) {
@@ -85,6 +78,13 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	/**
 	 * @param newObjListPath the newObjListPath to set
 	 */
+	public int[] getNewObjListPath() {
+		return this.newObjListPath;
+	}
+	
+	/**
+	 * @param newObjListPath the newObjListPath to set
+	 */
 	public void setNewObjListPath(int[] newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}
@@ -96,12 +96,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 		return this.oldObjListPath;
 	}
 
-	/**
-	 * @param newObjListPath the newObjListPath to set
-	 */
-	public int[] getNewObjListPath() {
-		return this.newObjListPath;
-	}
+
 	
 	
 	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
@@ -120,5 +115,8 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 		return filterFunction;
 	}
 	
+	public void setFilterFunction(IFilterFunction filterFunction) {
+		this.filterFunction = filterFunction;
+	}
 
 }

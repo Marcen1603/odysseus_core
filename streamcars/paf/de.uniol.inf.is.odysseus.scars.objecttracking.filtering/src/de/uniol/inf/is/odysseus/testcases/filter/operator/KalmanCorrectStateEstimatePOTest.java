@@ -81,6 +81,8 @@ public class KalmanCorrectStateEstimatePOTest extends TestCase {
 		
 		correctStateEstimatePO.setFilterFunction(estimatefunction);
 		
+		correctStateEstimatePO.setSchema(testData.getSchema());
+		
 		int[] oldObjListPath = {0};
 		
 		int[] newObjListPath = {1};

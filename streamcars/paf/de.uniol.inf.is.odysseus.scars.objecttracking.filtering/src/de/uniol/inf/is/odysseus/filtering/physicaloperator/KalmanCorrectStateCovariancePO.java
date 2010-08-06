@@ -6,6 +6,8 @@ package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
+import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
+import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -19,10 +21,26 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  */
 public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnectionContainer>  extends AbstractFilterPO<M> {
 	
+	
 	public KalmanCorrectStateCovariancePO() {
-		
+	super();
 	}
 	
+	public KalmanCorrectStateCovariancePO(FilterAO<M> filterAO) {
+		this.setFilterFunction(filterAO.getFilterFunction());
+		this.setNewObjListPath(filterAO.getNewObjListPathInt());
+		this.setOldObjListPath(filterAO.getOldObjListPathInt());
+	}
+
+	public KalmanCorrectStateCovariancePO(KalmanCorrectStateCovariancePO<M> copy) {
+		if (copy.getFilterFunction().getFunctionID() == 1) {
+			this.setFilterFunction(new KalmanCorrectStateCovarianceFunction(copy.getFilterFunction().getParameters()));
+		}
+		
+		this.setNewObjListPath(copy.getNewObjListPath().clone());
+		this.setOldObjListPath(copy.getOldObjListPath().clone());
+	
+	}
 
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 		
@@ -70,9 +88,7 @@ public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnection
 		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setCovariance(resultCovariance);
 	
 	 }
-
-
-
 	
+
 
 }

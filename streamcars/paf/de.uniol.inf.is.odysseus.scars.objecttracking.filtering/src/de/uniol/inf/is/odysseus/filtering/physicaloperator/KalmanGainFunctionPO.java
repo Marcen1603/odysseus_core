@@ -6,9 +6,13 @@ package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
+import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
+import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
@@ -22,9 +26,26 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
 public class KalmanGainFunctionPO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
 	public KalmanGainFunctionPO() {
+	super();	
+	}
+	
+	public KalmanGainFunctionPO(FilterAO<M> filterAO) {
+		this.setFilterFunction(filterAO.getFilterFunction());
+		this.setNewObjListPath(filterAO.getNewObjListPathInt());
+		this.setOldObjListPath(filterAO.getOldObjListPathInt());
 		
 	}
 	
+	public KalmanGainFunctionPO(KalmanGainFunctionPO<M> copy) {
+		if (copy.getFilterFunction().getFunctionID() == 1) {
+			this.setFilterFunction(new KalmanGainFunction(copy.getFilterFunction().getParameters()));
+		}
+		
+		this.setNewObjListPath(copy.getNewObjListPath().clone());
+		this.setOldObjListPath(copy.getOldObjListPath().clone());
+		
+	
+	}
 
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
@@ -64,5 +85,12 @@ public class KalmanGainFunctionPO<M extends IProbability & IConnectionContainer>
 			((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setGain(gain);
 	
 		
+	}
+
+
+	
+	@Override
+	public AbstractPipe clone() {
+		return new KalmanGainFunctionPO<M>(this);
 	}
 }

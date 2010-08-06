@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.testcases;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -13,6 +14,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 /**
  * @author dtwumasi
@@ -26,17 +30,8 @@ public class FilterPOTestData {
 	
 	public FilterPOTestData() {
 	
-		
-		//this.expectedTuple=generateExpectedTuple(this.testTuple.clone());
-		//	double speedOld = 0.98;
-		//	double posOld = 1.83;
-		//double[][] covarianceOld = { {-10.320000000000002,26.12}, {26.12,0.48} };
-		// double[][] covarianceOld = { {5.0,50.0}, {50.0,10.0} };
-		//double[][] gain = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688 }};
-		// double speedNew = 1.0;
-	//	double posNew = 2.0;
-	// //	double[][] covarianceNew = { {3.0,21.0}, {21,7.0} };
-	}
+	}	
+	
 		
 	public MVRelationalTuple<StreamCarsMetaData> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew, double[][] gain ) {
 		
@@ -117,7 +112,48 @@ public class FilterPOTestData {
 		
 		
 		return measurementTuple;
-
+		
 		}
+
+	public SDFAttributeList getSchema() {
+		
+			SDFAttributeList scan = new SDFAttributeList();
+		
+			SDFAttribute oldList = new SDFAttribute("old.list");
+			oldList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
+			
+			SDFAttribute newList = new SDFAttribute("new.list");
+			oldList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
+			
+			SDFAttribute newObject = new SDFAttribute("NewObject");
+			newObject.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
+			
+			SDFAttribute oldObject = new SDFAttribute("OldObject");
+			oldObject.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
+			
+			SDFAttribute pos = new SDFAttribute("pos");
+			pos.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
+	
+			
+			SDFAttribute speed = new SDFAttribute("speed");
+			speed.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
+			
+			scan.add(oldList);
+			scan.add(newList);
+			oldList.addSubattribute(newObject);
+			newList.addSubattribute(oldObject);
+			
+			newObject.addSubattribute(pos);
+			oldObject.addSubattribute(speed);
+			
+			oldObject.addSubattribute(pos);
+			newObject.addSubattribute(speed);
+			
+			return scan;
+		}
+		
+		
+		
+	
 
 }
