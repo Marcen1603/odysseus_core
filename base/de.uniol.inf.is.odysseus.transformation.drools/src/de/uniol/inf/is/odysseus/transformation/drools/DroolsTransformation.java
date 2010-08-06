@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.base.TransformationException;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.transformation.drools.debug.DebugEventListener;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
@@ -32,7 +33,10 @@ public class DroolsTransformation implements ITransformation {
 
 	private static final String RULE_PATH = "/resources/transformation/rules";
 	private static final String LOGGER_NAME = "transformation";
+	private static final boolean SHOW_ADDITIONAL_LOGGINGS = false;
+	
 	private RuleBase rulebase;
+
 
 	private static void addLogicalOperatorToSession(StatefulSession session,
 			ILogicalOperator op, List<ILogicalOperator> inserted) {
@@ -73,7 +77,7 @@ public class DroolsTransformation implements ITransformation {
 	 * transformed of the logical operator passed to this methode
 	 * will be first in the list.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op,
 			TransformationConfiguration config) throws TransformationException {
@@ -103,13 +107,12 @@ public class DroolsTransformation implements ITransformation {
 
 		session.insert(this);
 		session.startProcess("flow");
-
-//		 WorkingMemoryConsoleLogger lg = new
-//		 WorkingMemoryConsoleLogger(session);
-//		 lg.clearFilters();
-//		 session.addEventListener( new DebugAgendaEventListener() );
-//		 session.addEventListener( new DebugWorkingMemoryEventListener() );
-		
+		//Debugging stuff		
+		DebugEventListener debugEventListener = new DebugEventListener(LOGGER_NAME, SHOW_ADDITIONAL_LOGGINGS);
+		session.addEventListener(debugEventListener.getAgendaEventListener());
+		session.addEventListener(debugEventListener.getWorkingMemoryEventListener());
+		session.addEventListener(debugEventListener.getRuleFlowEventListener());		
+		 
 		try {
 			session.fireAllRules();
 		} catch (Exception e1) {
@@ -163,14 +166,14 @@ public class DroolsTransformation implements ITransformation {
 	}
 
 	
-	@SuppressWarnings({ "unused", "unchecked" })
+	@SuppressWarnings( "unused")
 	private String planToStringOLD(IPhysicalOperator physicalPO, String indent) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
 		builder.append(physicalPO);
 		builder.append('\n');
 		if (physicalPO.isSink()) {
-			for (PhysicalSubscription sub : ((ISink<?>) physicalPO)
+			for (PhysicalSubscription<?> sub : ((ISink<?>) physicalPO)
 					.getSubscribedToSource()) {
 				builder.append(planToString(
 						(IPhysicalOperator) sub.getTarget(), "  " + indent));
