@@ -58,14 +58,15 @@ public class KalmanGainFunctionPOTest extends TestCase  {
 		double posNew = 2.0;
 
 		double[][] covarianceNew = { {3.0,21.0}, {21.0,7.0} };
-
-		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, null);
+		
+		double[][] gain = { {0.2,0.2}, {0.1,0.4}};
+		
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain);
 
 		// the expected tuple
 
-		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, null);
+		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain);
 
-		double[][] gainExp = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688 }};
 
 
 		Connection[] objConList = new Connection[expectedTuple.getMetadata().getConnectionList().toArray().length];
@@ -79,7 +80,7 @@ public class KalmanGainFunctionPOTest extends TestCase  {
 
 		MVRelationalTuple<StreamCarsMetaData> test = (MVRelationalTuple<StreamCarsMetaData>) objConList[0].getRight();
 		
-		test.getMetadata().setGain(gainExp);
+		test.getMetadata().setGain(gain);
 		
 		objConList[0].setRight(test);
 		

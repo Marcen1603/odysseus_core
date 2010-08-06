@@ -57,7 +57,7 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 		}
 		pathToFirstCarInNewList[this.getNewObjListPath().length-1] = 0;
 
-		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length];
+		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length+1];
 		for(int i = 0; i < pathToFirstCarInOldList.length-1; i++) {
 			pathToFirstCarInOldList[i] = this.getOldObjListPath()[i];
 		}
@@ -99,10 +99,12 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 		getFilterFunction().addParameter(HashConstants.OLD_MEASUREMENT, measurementOld);
 		getFilterFunction().addParameter(HashConstants.GAIN, gain);
 	
-		double[][] result = (double[][]) getFilterFunction().compute();
-	
-		//set gain
-		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setGain(result);
+		double[] result = (double[]) getFilterFunction().compute();
+		
+		// TODO richtig machen
+		for (int i=0; i<= result.length-1; i++) {
+			newTuple.setAttribute(measurementValuePathsTupleNew.get(i)[0], result[i]);
+		}
 
 	}
 

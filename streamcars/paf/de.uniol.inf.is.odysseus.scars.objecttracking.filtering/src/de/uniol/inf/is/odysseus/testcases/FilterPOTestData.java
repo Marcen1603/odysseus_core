@@ -117,7 +117,7 @@ public class FilterPOTestData {
 
 	public SDFAttributeList getSchema() {
 		
-			SDFAttributeList scan = new SDFAttributeList();
+			SDFAttributeList object = new SDFAttributeList();
 		
 			SDFAttribute oldList = new SDFAttribute("old.list");
 			oldList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
@@ -131,25 +131,43 @@ public class FilterPOTestData {
 			SDFAttribute oldObject = new SDFAttribute("OldObject");
 			oldObject.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
 			
-			SDFAttribute pos = new SDFAttribute("pos");
-			pos.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
+			SDFAttribute posOld = new SDFAttribute("posOld");
+			posOld.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
 	
 			
-			SDFAttribute speed = new SDFAttribute("speed");
-			speed.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
+			SDFAttribute speedOld = new SDFAttribute("speedOld");
+			speedOld.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
 			
-			scan.add(oldList);
-			scan.add(newList);
-			oldList.addSubattribute(newObject);
-			newList.addSubattribute(oldObject);
+			SDFAttribute posNew = new SDFAttribute("posNew");
+			posNew.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
+	
 			
-			newObject.addSubattribute(pos);
-			oldObject.addSubattribute(speed);
+			SDFAttribute speedNew = new SDFAttribute("speedNew");
+			speedNew.setDatatype(SDFDatatypeFactory.getDatatype("MV"));
 			
-			oldObject.addSubattribute(pos);
-			newObject.addSubattribute(speed);
 			
-			return scan;
+		
+			
+			newObject.addSubattribute(posNew);
+			newObject.addSubattribute(speedNew);
+			
+			newList.addSubattribute(newObject);
+			
+			object.add(newList);
+			
+			
+			
+			
+			
+			oldObject.addSubattribute(speedOld);
+			oldObject.addSubattribute(posOld);
+			
+			oldList.addSubattribute(oldObject);
+		
+			object.add(oldList);
+			
+			
+			return object;
 		}
 		
 		
