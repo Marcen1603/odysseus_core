@@ -145,6 +145,7 @@ public class Transition {
 	public String toString() {
 		String str =   "T: " + this.id;
 		str += ":=(" + ((this.condition!=null && !this.condition.getLabel().equals("1"))?condition.toString():"true")+")";
+		str += this.condition.doEventTypeChecking()?" AND "+(this.condition.isNegate()?"type!=":"type==")+this.condition.getEventType():"";
 		str +=  "-->" + this.nextState.getId();
 		str += " [" + this.action+"]";
 		return str;

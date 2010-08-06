@@ -214,12 +214,10 @@ List<State> states = new LinkedList<State>();
          }
          if (i > 0 && i < states.size() - 1) {
             RelationalJEPCondition con = new RelationalJEPCondition("");
-            // Achtung! Ignore hat keinen Typ!
-            //con.setEventType(source.getType());
-            // con.con.setEventPort(sourceNames.indexOf(source.getType()));
+            con.setEventType(source.getType());
+            con.setEventPort(sourceNames.indexOf(source.getType()));
             // Ignore auf sich selbst!
             source.addTransition(new Transition(source.getId()+ "_ignore", source, con,EAction.discard));
-            
           }
        }
     } else {
@@ -344,40 +342,59 @@ whereExpression[StateMachine stmachine]
             //System.out.println("fullExpression "+fullExpression);  
             //String fullExpression = ce.getFullExpression();
             t.appendAND(fullExpression);
-            t = s.getTransition(s.getId() + "_ignore");
-            if (t != null) {
-              switch (stmachine.getEventSelectionStrategy()) {
-              case PARTITION_CONTIGUITY:
-                t.appendAND(fullExpression);
-                // negation later!
-                break;
-              case SKIP_TILL_NEXT_MATCH:
-                t.appendOR(fullExpression);
-                t.getCondition().setEventTypeChecking(false);
-                // negation later!
-                break;
-              case STRICT_CONTIGUITY:
-                t.appendAND("false");
-                break;
-              case SKIP_TILL_ANY_MATCH:                
-              default:
-                t.getCondition().setEventTypeChecking(false);
-              }
-            }
+//            t = s.getTransition(s.getId() + "_ignore");
+//            if (t != null) {
+//              switch (stmachine.getEventSelectionStrategy()) {
+//              case PARTITION_CONTIGUITY:
+//                t.appendAND(fullExpression);
+//                // negation later!
+//                break;
+//              case SKIP_TILL_NEXT_MATCH:
+//                t.appendOR(fullExpression);
+//                t.getCondition().setEventTypeChecking(false);
+//                // negation later!
+//                break;
+//              case STRICT_CONTIGUITY:
+//                t.appendAND("false");
+//                break;
+//              case SKIP_TILL_ANY_MATCH:                
+//              default:
+//                t.getCondition().setEventTypeChecking(false);
+//              }
+//            }
             compareIter.remove();
           }
         }
       }
     }
-    // SET NEGATION on whole expression!
-    if (stmachine.getEventSelectionStrategy() == EEventSelectionStrategy.PARTITION_CONTIGUITY
-        || stmachine.getEventSelectionStrategy() == EEventSelectionStrategy.SKIP_TILL_NEXT_MATCH) {
-      List<State> states = stmachine.getStates();
-      for (State s : states) {
-        Transition t = s.getTransition(s.getId() + "_ignore");
-        if (t != null) {
-          t.negateExpression();
-        }
+    
+    List<State> states = stmachine.getStates();
+    for (State s : states) {
+        Transition ignore = s.getTransition(s.getId() + "_ignore");
+        if (ignore != null) {
+          switch (stmachine.getEventSelectionStrategy()){
+            case SKIP_TILL_NEXT_MATCH:
+              ignore.getCondition().setEventTypeChecking(true);
+	            Transition t = s.getTransition(s.getId() + "_take");
+	            if (t == null){
+	              t = s.getTransition(s.getId() + "_begin");
+	            }
+	           ignore.appendAND(t.getCondition().getLabel());
+	           ignore.negateExpression();
+	           break;
+	          case STRICT_CONTIGUITY:
+	              ignore.getCondition().setEventTypeChecking(false);
+                ignore.appendAND("false");
+                break;  
+            case PARTITION_CONTIGUITY:
+                throw new RuntimeException("PARTITION_CONTIGUITY not implemented yet");
+                //break;
+            case SKIP_TILL_ANY_MATCH:      
+              ignore.getCondition().setEventTypeChecking(false);          
+            default:
+              ignore.getCondition().setEventTypeChecking(false);
+	        }
+	    
       }
     }
      

@@ -37,11 +37,12 @@ public interface ICondition extends IExpression{
 	public boolean doEventTypeChecking();
 	public void setEventTypeChecking(boolean eventTypeChecking);
 	/**
-	 * Set Type of Events that can be processed by this Transition (only one possible?)
+	 * Set Type of Events that can be processed by this Transition (only one)
 	 * @param type
 	 * @return
 	 */
 	public void setEventType(String type);
+	public String getEventType();
 	
 	/**
 	 * Set InputPort of Events that can be processed by this Transition 
@@ -57,7 +58,6 @@ public interface ICondition extends IExpression{
 	 * @param windowsize
 	 * @return !isNegate() && start + windowsize < current;
 	 */
-	public boolean checkTime(long start, long current, long windowsize);
-	
+	public boolean checkTime(long start, long current, long windowsize);	
 
 }

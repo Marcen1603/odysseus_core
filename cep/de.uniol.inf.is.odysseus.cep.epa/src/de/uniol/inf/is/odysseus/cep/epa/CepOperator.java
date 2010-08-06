@@ -152,30 +152,32 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	@Override
 	public void process_internal(R event, int port) {
-
-		if (logger.isDebugEnabled())
-			logger.debug("-------------------> NEXT EVENT from "
-					+ eventReader.get(port).getType() + ": " + event + " "
-					+ port);
-		// if (logger.isDebugEnabled())
-		// logger.debug(this.getStats());
-
-		// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob mindestens
-		// die Typbedingung erfuellt ist
-		boolean createNewInstance = false;
-		for (Transition transition : this.stateMachine.getInitialState()
-				.getTransitions()) {
-
-			// Hinweis: Es gibt keine Ignore Kante an der ersten Transition
-			// deswegen nicht transition.getCondition().doEventTypeChecking()
-			if (transition.getCondition().checkEventTypeWithPort(port)) {
-				createNewInstance = true;
-				break;
-			}
-		}
-		LinkedList<W> complexEvents = null;
 		synchronized (instances) {
+			if (logger.isDebugEnabled())
+				logger.debug("-------------------> NEXT EVENT from "
+						+ eventReader.get(port).getType() + ": " + event + " "
+						+ port);
+			// if (logger.isDebugEnabled())
+			// logger.debug(this.getStats());
+
+			// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob
+			// mindestens
+			// die Typbedingung erfuellt ist
+			boolean createNewInstance = false;
+			for (Transition transition : this.stateMachine.getInitialState()
+					.getTransitions()) {
+
+				// Hinweis: Es gibt keine Ignore Kante an der ersten Transition
+				// deswegen nicht
+				// transition.getCondition().doEventTypeChecking()
+				if (transition.getCondition().checkEventTypeWithPort(port)) {
+					createNewInstance = true;
+					break;
+				}
+			}
+			LinkedList<W> complexEvents = null;
 			if (createNewInstance) {
+				logger.debug("Created New Initial Instance");
 				this.instances.add(new StateMachineInstance<R>(
 						this.stateMachine, getEventReader().get(port).getTime(
 								event)));
@@ -186,23 +188,22 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 			LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
 			LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
-
 			validateTransitions(event, outdatedInstances, branchedInstances,
 					port);
 			this.instances.addAll(branchedInstances);
 			complexEvents = validateFinalStates(outdatedInstances, port);
 			this.instances.removeAll(outdatedInstances);
-		}
-		if (complexEvents.size() > 0) {
-			for (W e : complexEvents) {
-//				if (logger.isDebugEnabled()) {
-//					logger.debug("Created Event: " + e);
-//				}
-				outputTransferFunction.transfer(e);
+
+			if (complexEvents.size() > 0) {
+				for (W e : complexEvents) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Created Event: " + e);
+					}
+					outputTransferFunction.transfer(e);
+				}
+
 			}
-
 		}
-
 	}
 
 	private void validateTransitions(R event,
@@ -280,8 +281,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				}
 			} // for (Transition transition...)
 			if (transitionsToTake.isEmpty()) {
-				// if (logger.isDebugEnabled())
-				// logger.debug("No transition on "+ instance);
+				if (logger.isDebugEnabled())
+					logger.debug("No transition on " + instance);
 
 				// no transition on this instance, mark for removal
 				outdatedInstances.add(instance);
@@ -295,7 +296,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					// execute possible further transitions on new instances
 					// because it must be cloned from current instance,
 					// make takeTransition on current instance last
-					while(transitionsToTake.size() > 1) {
+					while (transitionsToTake.size() > 1) {
 						StateMachineInstance<R> newInstance = instance.clone();
 						Transition toTake = transitionsToTake.remove(0);
 						newInstance.takeTransition(toTake, event,
@@ -309,6 +310,12 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 							eventReader.get(port));
 				}
 			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("After Taking Transitions " + instance);
+				for (StateMachineInstance s : branchedInstances) {
+					logger.debug("Branched Instances " + s);
+				}
+			}
 		}
 	}
 
@@ -320,15 +327,15 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		// logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
 		for (CepVariable varName : transition.getCondition().getVarNames()) {
 
-			// logger.debug("Setting Value for "+varName);
+			//logger.debug("Setting Value for "+varName);
 
 			Object newValue = null;
 			if (varName.isActEventName()) {
 				newValue = this.eventReader.get(port).getValue(
 						varName.getVariableName(), object);
 
-				// logger.debug("Setze " + varName + " auf " + newValue +
-				// " from " + object);
+//				 logger.debug("Setze " + varName + " auf " + newValue +
+//				 " from " + object);
 
 				if (newValue == null) {
 					return false;
@@ -348,10 +355,10 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private LinkedList<W> validateFinalStates(
 			LinkedList<StateMachineInstance<R>> outdatedInstances, int port) {
 		LinkedList<W> complexEvents = new LinkedList<W>();
-		for(StateMachineInstance<R> instance:instances){
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("Testing for final state in " + instance);
-//			}		
+		for (StateMachineInstance<R> instance : instances) {
+			// if (logger.isDebugEnabled()) {
+			// logger.debug("Testing for final state in " + instance);
+			// }
 
 			/*
 			 * Durch das Markieren der veralteten Automateninstanzen und das
