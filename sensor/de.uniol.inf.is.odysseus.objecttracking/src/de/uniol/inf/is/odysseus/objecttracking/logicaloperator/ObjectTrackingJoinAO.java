@@ -141,50 +141,58 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			Map<IPredicate, IPredictionFunction> leftFcts = (Map<IPredicate, IPredictionFunction>) leftInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 			Map<IPredicate, IPredictionFunction> rightFcts = (Map<IPredicate, IPredictionFunction>) rightInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 			
-			for(Entry<IPredicate, IPredictionFunction> leftEntry: leftFcts.entrySet()){
-				for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
-					AndPredicate newPredicate;
-					newPredicate = new AndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
-					IPredictionFunction newFunction = new LinearProbabilityPredictionFunction();
-					
-					IPredictionFunction leftFct = leftEntry.getValue();
-					IPredictionFunction rightFct = rightEntry.getValue();
-					
-					SDFExpression[] newExpressions = new SDFExpression[leftFct.getExpressions().length + rightFct.getExpressions().length];
-					for(int i = 0; i<leftFct.getExpressions().length; i++){
-						newExpressions[i] = 
-							leftFct.getExpressions()[i] != null ? 
-									leftFct.getExpressions()[i].clone() : 
-									null;
-					}
-					for(int i = leftFct.getExpressions().length; i<newExpressions.length; i++){
-						newExpressions[i] = 
-							rightFct.getExpressions()[i - leftFct.getExpressions().length] != null ? 
-									rightFct.getExpressions()[i - leftFct.getExpressions().length].clone() : 
-									null;
-					}
-					
-					// now the attribute positions in each expression have to be reinitialized
-					for(int i = 0; i<newExpressions.length; i++){
-						if(newExpressions[i] != null){
-							newExpressions[i].initAttributePositions(outputSchema);
+			// maybe the prediction functions have not been set
+			// this can happen, if we use a schema convert operator
+			// in our query plan, that changes to SDFAttributeListExtended
+			// for compatibility with other operators
+			// FIXME: Neue PredictionFunctions aus scars-Plugin verwenden
+			if(leftFcts != null && rightFcts != null){
+			
+				for(Entry<IPredicate, IPredictionFunction> leftEntry: leftFcts.entrySet()){
+					for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
+						AndPredicate newPredicate;
+						newPredicate = new AndPredicate(leftEntry.getKey().clone(), rightEntry.getKey().clone());
+						IPredictionFunction newFunction = new LinearProbabilityPredictionFunction();
+						
+						IPredictionFunction leftFct = leftEntry.getValue();
+						IPredictionFunction rightFct = rightEntry.getValue();
+						
+						SDFExpression[] newExpressions = new SDFExpression[leftFct.getExpressions().length + rightFct.getExpressions().length];
+						for(int i = 0; i<leftFct.getExpressions().length; i++){
+							newExpressions[i] = 
+								leftFct.getExpressions()[i] != null ? 
+										leftFct.getExpressions()[i].clone() : 
+										null;
 						}
+						for(int i = leftFct.getExpressions().length; i<newExpressions.length; i++){
+							newExpressions[i] = 
+								rightFct.getExpressions()[i - leftFct.getExpressions().length] != null ? 
+										rightFct.getExpressions()[i - leftFct.getExpressions().length].clone() : 
+										null;
+						}
+						
+						// now the attribute positions in each expression have to be reinitialized
+						for(int i = 0; i<newExpressions.length; i++){
+							if(newExpressions[i] != null){
+								newExpressions[i].initAttributePositions(outputSchema);
+							}
+						}
+						newFunction.setExpressions(newExpressions);
+						
+						int[][] vars = new int[newExpressions.length][];
+						for(int u = 0; u<newExpressions.length; u++){
+							SDFExpression expression = newExpressions[u];
+							if(expression != null)
+								vars[u] = expression.getAttributePositions();
+						}
+						newFunction.setVariables(vars);
+						
+						newPredictionFunctions.put(newPredicate, newFunction);
 					}
-					newFunction.setExpressions(newExpressions);
-					
-					int[][] vars = new int[newExpressions.length][];
-					for(int u = 0; u<newExpressions.length; u++){
-						SDFExpression expression = newExpressions[u];
-						if(expression != null)
-							vars[u] = expression.getAttributePositions();
-					}
-					newFunction.setVariables(vars);
-					
-					newPredictionFunctions.put(newPredicate, newFunction);
-				}
-			}			
-			recalcOutputSchemata = false;
-			outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredictionFunctions);
+				}			
+				recalcOutputSchemata = false;
+				outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredictionFunctions);
+			}
 		}
 		return outputSchema;
 		
@@ -209,17 +217,25 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		Map<IPredicate, IPredictionFunction> leftFcts = (Map<IPredicate, IPredictionFunction>) leftInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 		Map<IPredicate, IPredictionFunction> rightFcts = (Map<IPredicate, IPredictionFunction>) rightInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);		
 		
-		this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
-		for(Entry<IPredicate, IPredictionFunction> leftEntry : leftFcts.entrySet()){
-			for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
-				AndPredicate newPredicate = new AndPredicate(leftEntry.getKey(), rightEntry.getKey());
-				
-				IRangePredicate rangePredicate = this.generateRangePredicate(
-						this.getPredicate(),
-						leftEntry.getValue().getExpressions(), 
-						rightEntry.getValue().getExpressions(), 
-						attributeResolver);
-				this.rangePredicates.put(newPredicate, rangePredicate);
+		// maybe the prediction functions have not been set
+		// this can happen, if we use a schema convert operator
+		// in our query plan, that changes to SDFAttributeListExtended
+		// for compatibility with other operators
+		// FIXME: Neue PredictionFunctions aus scars-Plugin verwenden
+		if(leftFcts != null && rightFcts != null){
+		
+			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
+			for(Entry<IPredicate, IPredictionFunction> leftEntry : leftFcts.entrySet()){
+				for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
+					AndPredicate newPredicate = new AndPredicate(leftEntry.getKey(), rightEntry.getKey());
+					
+					IRangePredicate rangePredicate = this.generateRangePredicate(
+							this.getPredicate(),
+							leftEntry.getValue().getExpressions(), 
+							rightEntry.getValue().getExpressions(), 
+							attributeResolver);
+					this.rangePredicates.put(newPredicate, rangePredicate);
+				}
 			}
 		}
 	}

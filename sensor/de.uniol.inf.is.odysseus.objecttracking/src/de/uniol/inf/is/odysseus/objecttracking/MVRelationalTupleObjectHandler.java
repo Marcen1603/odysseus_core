@@ -72,7 +72,12 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 			//logger.debug("create "+byteBuffer);
 			Object[] attributes = new Object[dataHandler.length];
 			for (int i=0;i<dataHandler.length;i++){
-				attributes[i] = dataHandler[i].readData(byteBuffer);
+				try{
+					attributes[i] = dataHandler[i].readData(byteBuffer);
+				}catch(BufferUnderflowException e){
+					System.out.println("BufferUnderflowException at attribute no " + i);
+					e.printStackTrace();
+				}
 			}
 			r = new MVRelationalTuple<M>(attributes);
 			byteBuffer.clear();

@@ -57,55 +57,57 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_RELATIONAL_UNNEST = 27;
   /** RegularExpression Id. */
-  int K_SELECTION = 28;
+  int K_SCHEMA_CONVERT = 28;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 29;
+  int K_SELECTION = 29;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION_OR = 30;
+  int K_SET_PREDICTION = 30;
   /** RegularExpression Id. */
-  int K_SIZE = 31;
+  int K_SET_PREDICTION_OR = 31;
   /** RegularExpression Id. */
-  int K_SLIDE = 32;
+  int K_SIZE = 32;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 33;
+  int K_SLIDE = 33;
   /** RegularExpression Id. */
-  int K_SUM = 34;
+  int K_SLDING_TIME_WINDOW = 34;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 35;
+  int K_SUM = 35;
   /** RegularExpression Id. */
-  int K_WHERE = 36;
+  int K_TUMBLING_TIME_WINDOW = 36;
   /** RegularExpression Id. */
-  int K_TEST = 37;
+  int K_WHERE = 37;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_GEN = 38;
+  int K_TEST = 38;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_EVAL = 39;
+  int K_ASSOCIATION_GEN = 39;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SEL = 40;
+  int K_ASSOCIATION_EVAL = 40;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SRC = 41;
+  int K_ASSOCIATION_SEL = 41;
   /** RegularExpression Id. */
-  int IDENTIFIER = 42;
+  int K_ASSOCIATION_SRC = 42;
   /** RegularExpression Id. */
-  int LETTER = 43;
+  int IDENTIFIER = 43;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 44;
+  int LETTER = 44;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 45;
+  int SPECIAL_CHARS = 45;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 46;
+  int CHAR_LITERAL = 46;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 47;
+  int QUOTED_IDENTIFIER = 47;
   /** RegularExpression Id. */
-  int REGEXP = 48;
+  int COMPARE_OPERATOR = 48;
   /** RegularExpression Id. */
-  int FLOAT = 49;
+  int REGEXP = 49;
   /** RegularExpression Id. */
-  int INTEGER = 50;
+  int FLOAT = 50;
   /** RegularExpression Id. */
-  int DIGIT = 51;
+  int INTEGER = 51;
   /** RegularExpression Id. */
-  int IPADDRESS = 52;
+  int DIGIT = 52;
+  /** RegularExpression Id. */
+  int IPADDRESS = 53;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -140,6 +142,7 @@ public interface ProceduralExpressionParserConstants {
     "\"RJOIN\"",
     "\"RNEST\"",
     "\"RUNNEST\"",
+    "\"SCHEMACONVERT\"",
     "\"SELECTION\"",
     "\"SET-PREDICTION\"",
     "\"SET-PREDICTION-OR\"",

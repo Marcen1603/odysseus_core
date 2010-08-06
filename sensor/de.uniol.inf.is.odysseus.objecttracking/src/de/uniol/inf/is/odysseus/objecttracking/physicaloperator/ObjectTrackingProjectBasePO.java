@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * This is the superclass of the our project PO.
  * TODO: In einer Klasse vereinheitlichen
  * @author Andre Bolles
+ * @deprecated Not used any more
  */
 public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 		AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>> {
@@ -108,7 +109,8 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	 * 
 	 * Example: / 1 0 0 0 \
 	 * 			\ 0 0 1 0 /
-	 * @throws OpenFailedException 
+	 * @throws OpenFailedException
+	 * @deprecated project matrix is calculated from restrict list 
 	 */
 	@Override
 	public void process_open() throws OpenFailedException{

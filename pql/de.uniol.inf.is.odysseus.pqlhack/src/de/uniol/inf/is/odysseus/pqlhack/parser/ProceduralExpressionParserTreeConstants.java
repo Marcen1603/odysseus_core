@@ -15,37 +15,38 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTRELATIONALNESTOP = 9;
   public int JJTRELATIONALUNNESTOP = 10;
   public int JJTJOINOP = 11;
-  public int JJTWINDOWOP = 12;
-  public int JJTSLIDINGTIMEWINDOW = 13;
-  public int JJTACCESSOP = 14;
-  public int JJTBROKEROP = 15;
-  public int JJTPREDICTIONASSIGNOP = 16;
-  public int JJTPREDICTIONASSIGNOROP = 17;
-  public int JJTPREDICTIONOP = 18;
-  public int JJTPREDICATE = 19;
-  public int JJTSIMPLEPREDICATE = 20;
-  public int JJTBASICPREDICATE = 21;
-  public int JJTORPREDICATE = 22;
-  public int JJTANDPREDICATE = 23;
-  public int JJTNOTPREDICATE = 24;
-  public int JJTEXPRESSION = 25;
-  public int JJTSIMPLETOKEN = 26;
-  public int JJTFUNCTIONEXPRESSION = 27;
-  public int JJTFUNCTIONNAME = 28;
-  public int JJTNUMBER = 29;
-  public int JJTSTRING = 30;
-  public int JJTVOID = 31;
-  public int JJTIDENTIFIER = 32;
-  public int JJTCOMPAREOPERATOR = 33;
-  public int JJTPREDICTIONDEFINITION = 34;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 35;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 36;
-  public int JJTKEYVALUELIST = 37;
-  public int JJTKEYVALUEPAIR = 38;
-  public int JJTASSOCIATIONGENOP = 39;
-  public int JJTASSOCIATIONEVALOP = 40;
-  public int JJTASSOCIATIONSELOP = 41;
-  public int JJTASSOCIATIONSRCOP = 42;
+  public int JJTSCHEMACONVERTOP = 12;
+  public int JJTWINDOWOP = 13;
+  public int JJTSLIDINGTIMEWINDOW = 14;
+  public int JJTACCESSOP = 15;
+  public int JJTBROKEROP = 16;
+  public int JJTPREDICTIONASSIGNOP = 17;
+  public int JJTPREDICTIONASSIGNOROP = 18;
+  public int JJTPREDICTIONOP = 19;
+  public int JJTPREDICATE = 20;
+  public int JJTSIMPLEPREDICATE = 21;
+  public int JJTBASICPREDICATE = 22;
+  public int JJTORPREDICATE = 23;
+  public int JJTANDPREDICATE = 24;
+  public int JJTNOTPREDICATE = 25;
+  public int JJTEXPRESSION = 26;
+  public int JJTSIMPLETOKEN = 27;
+  public int JJTFUNCTIONEXPRESSION = 28;
+  public int JJTFUNCTIONNAME = 29;
+  public int JJTNUMBER = 30;
+  public int JJTSTRING = 31;
+  public int JJTVOID = 32;
+  public int JJTIDENTIFIER = 33;
+  public int JJTCOMPAREOPERATOR = 34;
+  public int JJTPREDICTIONDEFINITION = 35;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 36;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 37;
+  public int JJTKEYVALUELIST = 38;
+  public int JJTKEYVALUEPAIR = 39;
+  public int JJTASSOCIATIONGENOP = 40;
+  public int JJTASSOCIATIONEVALOP = 41;
+  public int JJTASSOCIATIONSELOP = 42;
+  public int JJTASSOCIATIONSRCOP = 43;
 
 
   public String[] jjtNodeName = {
@@ -61,6 +62,7 @@ public interface ProceduralExpressionParserTreeConstants
     "RelationalNestOp",
     "RelationalUnnestOp",
     "JoinOp",
+    "SchemaConvertOp",
     "WindowOp",
     "SlidingTimeWindow",
     "AccessOp",
@@ -94,4 +96,4 @@ public interface ProceduralExpressionParserTreeConstants
     "AssociationSrcOp",
   };
 }
-/* JavaCC - OriginalChecksum=f896e42ca013eab375565fc9ca72bcc2 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ff443e3536fc8b1d6188fb41f9c85d15 (do not edit this line) */

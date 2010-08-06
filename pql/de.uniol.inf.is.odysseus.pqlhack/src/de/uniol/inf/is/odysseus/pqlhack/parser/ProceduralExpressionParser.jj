@@ -60,6 +60,7 @@ TOKEN : /* Keywords */ {
 |   <K_RELATIONAL_JOIN: "RJOIN">
 |   <K_RELATIONAL_NEST: "RNEST">
 |   <K_RELATIONAL_UNNEST: "RUNNEST">
+|	<K_SCHEMA_CONVERT: "SCHEMACONVERT">
 |	<K_SELECTION: "SELECTION">
 |	<K_SET_PREDICTION: "SET-PREDICTION">
 |   <K_SET_PREDICTION_OR : "SET-PREDICTION-OR" >
@@ -167,7 +168,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	AssociationGenOp() |
 	AssociationEvalOp() |
 	AssociationSelOp() |
-	AssociationSrcOp()/*@bgen(jjtree)*/
+	AssociationSrcOp() |
+	SchemaConvertOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -516,6 +518,36 @@ void JoinOp(): {/*@bgen(jjtree) JoinOp */
 	// this will be done by the restructuring component
 	// window size is a hack for evaluation of window size
 	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtn000.setWindowSize(windowSize.image);})? ")"/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void SchemaConvertOp(): {/*@bgen(jjtree) SchemaConvertOp */
+  ASTSchemaConvertOp jjtn000 = new ASTSchemaConvertOp(JJTSCHEMACONVERTOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) SchemaConvertOp */
+        try {
+/*@egen*/
+	<K_SCHEMA_CONVERT>"(" AlgebraOp() ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalNestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalUnnestOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSchemaConvertOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
@@ -316,7 +317,7 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTPredictionAssignOrOp node, Object data) {
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, true);
 	}
 
 	@Override
@@ -326,27 +327,33 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 
 	@Override
 	public Object visit(ASTAssociationGenOp node, Object data) {
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, true);
 	}
 
 	@Override
 	public Object visit(ASTAssociationEvalOp node, Object data) {
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, true);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, true);
 	}
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
-		return node.childrenAccept(this, false);
+		return node.childrenAccept(this, true);
 	}
 
 	@Override
 	public Object visit(ASTKeyValueList node, Object data) {
 		return node.childrenAccept(this, false);
+	}
+
+	@Override
+	public Object visit(ASTSchemaConvertOp node, Object data) {
+		// TODO Auto-generated method stub
+		return node.childrenAccept(this, true);
 	}
 
 	@Override

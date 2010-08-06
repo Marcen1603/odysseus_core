@@ -47,6 +47,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	
 	public ObjectTrackingProjectAO(ObjectTrackingProjectAO projectMVAO) {
 		super(projectMVAO);
+		this.outAttributes = projectMVAO.outAttributes;
 	}
 
 	public ObjectTrackingProjectAO() {
@@ -60,7 +61,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 
 	public @Override
 	ProjectAO clone() {
-		return new ProjectAO(this);
+		return new ObjectTrackingProjectAO(this);
 	}
 	
 	/**
@@ -88,13 +89,18 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		
 		Map<IPredicate, IPredictionFunction> predFcts = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 		
+		// maybe the prediction functions have not been set
+		// this can happen, if we use a schema convert operator
+		// in our query plan, that changes to SDFAttributeListExtended
+		// for compatibility with other operators
+		if(predFcts != null){
+			for(Entry<IPredicate, IPredictionFunction> entry : predFcts.entrySet()){
+				IPredictionFunction newPredFct = this.getNewPredictionFunction(inputSchema, outAttributes, entry.getValue().getExpressions());			
+				newPredFcts.put(entry.getKey().clone(), newPredFct);
+			}
 		
-		for(Entry<IPredicate, IPredictionFunction> entry : predFcts.entrySet()){
-			IPredictionFunction newPredFct = this.getNewPredictionFunction(inputSchema, outAttributes, entry.getValue().getExpressions());			
-			newPredFcts.put(entry.getKey().clone(), newPredFct);
+			newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);
 		}
-		
-		newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);
 		
 		return newOutputSchema;
 	}
@@ -188,4 +194,5 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	public RealMatrix determineProjectMatrix(int[] restrictList){
 		return calcProjectMatrix(restrictList, (SDFAttributeListExtended)this.getInputSchema(0));
 	}
+
 }

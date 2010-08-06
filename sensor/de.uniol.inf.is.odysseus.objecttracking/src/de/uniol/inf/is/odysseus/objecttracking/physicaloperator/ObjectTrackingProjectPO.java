@@ -1,10 +1,17 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
+import org.apache.commons.math.linear.RealMatrix;
+
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * This operator works the same way as relationalProjectMVPO. It additionally deletes
@@ -16,11 +23,23 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  * @param <T>
  */
 @SuppressWarnings("unchecked")
-public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey & ILatency> extends ObjectTrackingProjectBasePO<T> {
+public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey & ILatency> extends AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>>{
 
 	private final String LOGGER_NAME = "ObjectTrackingProjectPO";
+	
+	int[] restrictList;
+	RealMatrix projectMatrix;
+	SDFAttributeList inputSchema;
+	SDFAttributeList outputSchema;
+	
+	
 	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao){
-		super(ao);
+		super();
+		this.restrictList = ao.determineRestrictList();
+		this.projectMatrix = ao.determineProjectMatrix(this.restrictList);
+		this.inputSchema = ao.getInputSchema();
+		this.outputSchema = ao.getOutputSchema();
+		
 	}
 	
 //	public ObjectTrackingProjectPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
@@ -28,7 +47,13 @@ public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctio
 //	}
 	
 	public ObjectTrackingProjectPO(ObjectTrackingProjectPO<T> copy) {
-		super(copy);
+		super();
+		int length = copy.restrictList.length;
+		restrictList = new int[length];
+		System.arraycopy(copy.restrictList, 0, restrictList, 0, length);
+		
+		this.projectMatrix = copy.projectMatrix.copy();
+		this.inputSchema = copy.inputSchema.clone();
 	}
 	
 	@Override
@@ -42,7 +67,6 @@ public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctio
 		try {
 			// restrict the original tuple and set the new metadata
 			MVRelationalTuple<T> objectNew = (MVRelationalTuple<T>)object.restrict(this.restrictList, this.projectMatrix, false);
-			objectNew.getMetadata().setLatencyEnd(System.nanoTime());
 			
 			// updating the prediction function
 			// is not necessary, since the
@@ -61,30 +85,40 @@ public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctio
 		}
 	}
 	
-	/**
-	 * This method deletes the prediction function from 
-	 * the metadata, if not all necessary attributes are
-	 * available after projection. Also the schema of
-	 * the prediction function will be updated and only
-	 * expressions affecting any of the output attributes
-	 * will be in the prediction function.
-	 * 
-	 * This cannot be done in advance, since every element
-	 * in a data stream can have a different prediction function.
-	 * 
-	 * TODO: Da die Menge an Prädiktionsfunktionen endlich ist,
-	 * wird man wohl auch das vorher berechnen können und dann
-	 * einfach nur schon aus den bekannten Prädiktionsfunktionen
-	 * auswählen, ob null gesetzt werden muss oder nicht.
-	 * 
-	 * @param mData The prediction function to be updated
-	 * @return the updated prediction function.
-	 * 
-	 * @deprecated We do not have to update the prediction function 
-	 * any more. This is because, no prediction function is contained
-	 * in the tuple. Only the key for the prediction function is contained
-	 * in the tuple. However, this key will not be changed by the project po.
-	 */
+	@Override
+	public OutputMode getOutputMode(){
+		return OutputMode.MODIFIED_INPUT;
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
+	}
+	
+//	/**
+//	 * This method deletes the prediction function from 
+//	 * the metadata, if not all necessary attributes are
+//	 * available after projection. Also the schema of
+//	 * the prediction function will be updated and only
+//	 * expressions affecting any of the output attributes
+//	 * will be in the prediction function.
+//	 * 
+//	 * This cannot be done in advance, since every element
+//	 * in a data stream can have a different prediction function.
+//	 * 
+//	 * TODO: Da die Menge an Prädiktionsfunktionen endlich ist,
+//	 * wird man wohl auch das vorher berechnen können und dann
+//	 * einfach nur schon aus den bekannten Prädiktionsfunktionen
+//	 * auswählen, ob null gesetzt werden muss oder nicht.
+//	 * 
+//	 * @param mData The prediction function to be updated
+//	 * @return the updated prediction function.
+//	 * 
+//	 * @deprecated We do not have to update the prediction function 
+//	 * any more. This is because, no prediction function is contained
+//	 * in the tuple. Only the key for the prediction function is contained
+//	 * in the tuple. However, this key will not be changed by the project po.
+//	 */
 //	@Deprecated
 //	private T updatePrdFct(T mData){
 //		int[][] variables = mData.getVariables();

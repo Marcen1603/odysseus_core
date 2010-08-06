@@ -4,19 +4,20 @@ Bundle-Name: Evaluation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.evaluation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.objecttracking,
- de.uniol.inf.is.odysseus.base
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.metadata.base,
+ de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.scars.objecttracking,
  de.uniol.inf.is.odysseus.scars.objecttracking.metadata,
  de.uniol.inf.is.odysseus.scars.util,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"

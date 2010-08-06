@@ -23,3 +23,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.apache.commons.math.linear,
  org.junit;version="4.5.0",
  org.osgi.framework;version="1.3.0"
+Export-Package: de.uniol.inf.is.odysseus.filtering,
+ de.uniol.inf.is.odysseus.filtering.logicaloperator,
+ de.uniol.inf.is.odysseus.filtering.physicaloperator

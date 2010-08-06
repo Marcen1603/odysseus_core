@@ -56,6 +56,7 @@ TOKEN : /* Keywords */ {
 |   <K_RELATIONAL_JOIN: "RJOIN">
 |   <K_RELATIONAL_NEST: "RNEST">
 |   <K_RELATIONAL_UNNEST: "RUNNEST">
+|	<K_SCHEMA_CONVERT: "SCHEMACONVERT">
 |	<K_SELECTION: "SELECTION">
 |	<K_SET_PREDICTION: "SET-PREDICTION">
 |   <K_SET_PREDICTION_OR : "SET-PREDICTION-OR" >
@@ -126,7 +127,8 @@ void AlgebraOp():{}{
 	AssociationGenOp() |
 	AssociationEvalOp() |
 	AssociationSelOp() |
-	AssociationSrcOp()
+	AssociationSrcOp() |
+	SchemaConvertOp()
 }
 
 void TestOp(): {}{
@@ -187,6 +189,10 @@ void JoinOp(): {
 	// this will be done by the restructuring component
 	// window size is a hack for evaluation of window size
 	<K_JOIN>"(" AlgebraOp() "," AlgebraOp() "," Predicate() ("," windowSize = <INTEGER> {jjtThis.setWindowSize(windowSize.image);})? ")"
+}
+
+void SchemaConvertOp(): {} {
+	<K_SCHEMA_CONVERT>"(" AlgebraOp() ")"
 }
 
 void WindowOp():{}{

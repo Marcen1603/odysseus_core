@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator.objectrelational;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -11,7 +12,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 public class NestAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
-	private SDFAttributeList outputSchema;
+	private SDFAttributeListExtended outputSchema;
+	// passed parameters in a query, so extended list
+	// not necessary
 	private SDFAttributeList nestingAttributes;
 	private SDFAttribute nestAttribute;
 	private String nestAttributeName;
@@ -33,7 +36,7 @@ public class NestAO extends UnaryLogicalOp {
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFAttributeListExtended getOutputSchema() {
 		if(this.outputSchema == null) {
 		    SDFAttributeList inputSchema = this.getInputSchema();
 			this.outputSchema = calcOutputSchema(inputSchema);
@@ -54,12 +57,16 @@ public class NestAO extends UnaryLogicalOp {
 	 * modify input schema, removing attributes to nest, and 
 	 * adding new nesting attribute.
 	 */	
-	private SDFAttributeList calcOutputSchema(SDFAttributeList inputSchema) {
-	    SDFAttributeList outputSchema;
-	    SDFAttributeList groupingAttributes;
+	private SDFAttributeListExtended calcOutputSchema(SDFAttributeList inputSchema) {
+	    // TODO: Falls inputSchema eine Extended ist, dann müssen noch
+		// die Metadaten, also die PredictionFunctions ins Ausgabeschema
+		// übernommen werden.
+		
+		SDFAttributeListExtended outputSchema;
+	    SDFAttributeListExtended groupingAttributes;
 	    SDFAttribute nestAttribute;
 	    
-	    groupingAttributes = new SDFAttributeList();
+	    groupingAttributes = new SDFAttributeListExtended();
 
 	    for(SDFAttribute attribute : inputSchema) {
 	        if(!this.nestingAttributes.contains(attribute)) {
@@ -71,7 +78,7 @@ public class NestAO extends UnaryLogicalOp {
 	    nestAttribute.setDatatype(SDFDatatypeFactory.getDatatype("Set"));
 	    nestAttribute.setSubattributes(this.nestingAttributes);
 	    
-	    outputSchema = new SDFAttributeList();
+	    outputSchema = new SDFAttributeListExtended();
 	   
 	    for(SDFAttribute groupingAttribute : groupingAttributes) {
 	        outputSchema.add(groupingAttribute);

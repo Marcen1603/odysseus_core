@@ -13,7 +13,7 @@ public class Probability implements IProbability{
 	}
 	
 	public Probability(double[][] sigma){
-		if(sigma != null){
+		if(sigma != null && sigma.length > 0){
 			cov = new double[sigma.length][sigma[0].length];
 			for(int i =0; i<sigma.length; i++){
 				for(int u = 0; u<sigma[i].length; u++){

@@ -144,7 +144,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	@Override
 	protected void process_next(T object, int port) {
 
-		if (isDone()) { // TODO bei den sources abmelden ?? MG: Warum??
+		if (isDone()) {
+			// TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
 			// JJ: weil man schon fertig sein
 			// kann, wenn ein strom keine elemente liefert, der

@@ -16,6 +16,7 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTRelationalNestOp node, Object data);
   public Object visit(ASTRelationalUnnestOp node, Object data);
   public Object visit(ASTJoinOp node, Object data);
+  public Object visit(ASTSchemaConvertOp node, Object data);
   public Object visit(ASTWindowOp node, Object data);
   public Object visit(ASTSlidingTimeWindow node, Object data);
   public Object visit(ASTAccessOp node, Object data);
@@ -47,4 +48,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTAssociationSelOp node, Object data);
   public Object visit(ASTAssociationSrcOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=db453350117533bb08d41eb5faa53865 (do not edit this line) */
+/* JavaCC - OriginalChecksum=09f54d9cc0c4f35c217c3949c3b3f9a4 (do not edit this line) */

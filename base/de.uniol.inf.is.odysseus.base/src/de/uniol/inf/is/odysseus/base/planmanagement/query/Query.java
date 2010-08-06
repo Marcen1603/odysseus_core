@@ -314,7 +314,7 @@ public class Query implements IQuery {
 		while (!operators.isEmpty()) {
 			IPhysicalOperator curOp = operators.pop();
 			children.add(curOp);
-			visitedOps.add(root);
+			visitedOps.add(curOp);
 			if (curOp.isSink()) {
 				Collection<PhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
 						.getSubscribedToSource();

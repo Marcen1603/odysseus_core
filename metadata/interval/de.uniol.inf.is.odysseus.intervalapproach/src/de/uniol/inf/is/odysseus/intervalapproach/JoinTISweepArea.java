@@ -33,6 +33,7 @@ public class JoinTISweepArea<T extends IMetaAttributeContainer<? extends ITimeIn
 					if (getQueryPredicate().evaluate(element, next)) {
 						result.add(next);
 					}
+
 				}
 				break;
 			case RightLeft:

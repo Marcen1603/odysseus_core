@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable{
 
 	private static final long serialVersionUID = 4218605858465342011L;
-	private SDFAttributeList outputSchema;
+	protected SDFAttributeList outputSchema;
 	
 	public RenameAO() {
 		super();

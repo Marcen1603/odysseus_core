@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingJoi
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPredictionAssignAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingSelectAO;
+import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.SchemaConvertAO;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AttributeResolver;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAccessOp;
@@ -60,6 +61,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalNestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalProjectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTRelationalUnnestOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSchemaConvertOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSelectionOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
@@ -571,7 +573,7 @@ public class CreateLogicalPlanVisitor implements
 		// }
 
 		((ArrayList) data).add(new ObjectRelationalPredicate(expression));
-
+//		((ArrayList) data).add(new RelationalPredicate(expression));
 		return data;
 	}
 
@@ -1327,6 +1329,27 @@ public class CreateLogicalPlanVisitor implements
 			params.put(key, value);
 		}
 		return params;
+	}
+
+	@Override
+	public Object visit(ASTSchemaConvertOp node, Object data) {
+		ArrayList<Object> newData = new ArrayList<Object>();
+		newData.add(((ArrayList)data).get(0));
+		
+		SchemaConvertAO scOp = new SchemaConvertAO();
+		
+		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData));
+		AbstractLogicalOperator inputForSchemaConvert = (AbstractLogicalOperator) returnData.get(1);
+		
+		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
+		scOp.subscribeToSource(inputForSchemaConvert, 0, sourceOutPort,
+				inputForSchemaConvert.getOutputSchema());
+		
+		((ArrayList) data).add(scOp);
+		((ArrayList) data).add(new Integer(0));
+		
+		return data;
+		
 	}
 
 	@Override

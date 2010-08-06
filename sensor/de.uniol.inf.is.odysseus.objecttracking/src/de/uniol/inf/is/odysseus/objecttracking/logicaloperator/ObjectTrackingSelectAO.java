@@ -138,10 +138,16 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 			
 			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
 			
-			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
-			for(Entry<IPredicate, IPredictionFunction> entry : predictionFunctions.entrySet()){
-				IRangePredicate rangePredicate = this.generateRangePredicate(this.getPredicate(), entry.getValue().getExpressions(), attributeResolver);
-				this.rangePredicates.put(entry.getKey(), rangePredicate);
+			// maybe the prediction functions have not been set
+			// this can happen, if we use a schema convert operator
+			// in our query plan, that changes to SDFAttributeListExtended
+			// for compatibility with other operators
+			if(predictionFunctions != null){
+				this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
+				for(Entry<IPredicate, IPredictionFunction> entry : predictionFunctions.entrySet()){
+					IRangePredicate rangePredicate = this.generateRangePredicate(this.getPredicate(), entry.getValue().getExpressions(), attributeResolver);
+					this.rangePredicates.put(entry.getKey(), rangePredicate);
+				}
 			}
 		}
 	}
