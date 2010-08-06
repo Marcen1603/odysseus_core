@@ -1249,7 +1249,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		AbstractLogicalOperator rightIn = (AbstractLogicalOperator) rightInData.get(1);
 		int rightInSourceOutPort = ((Integer) rightInData.get(2)).intValue();
 		
-		String attributeName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String attributeName = ((ASTIdentifier) node.jjtGetChild(2)).getName();
 		
 		SDFAttributeList schema = leftIn.getOutputSchema();
 		SchemaHelper helper = new SchemaHelper(schema);
