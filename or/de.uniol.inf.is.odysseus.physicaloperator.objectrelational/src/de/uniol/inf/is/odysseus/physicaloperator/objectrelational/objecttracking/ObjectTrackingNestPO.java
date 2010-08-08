@@ -166,7 +166,7 @@ public class ObjectTrackingNestPO
 	/**
 	 * processing
 	 */
-	private void process(
+	private PointInTime process(
 		MVRelationalTuple<M> incomingTuple,
 		int port
 	) {			
@@ -269,7 +269,9 @@ public class ObjectTrackingNestPO
 					g.insert(saOfMin, groupIdOfMin);
 				}				
 			} else break;
-		}		
+		}	
+		
+		return minStart;
 	}
 	
 	/**
@@ -284,12 +286,16 @@ public class ObjectTrackingNestPO
 		MVRelationalTuple<M> incomingTuple, 
 		int port
 	) {		
-		this.process(incomingTuple, port);
+		PointInTime minStart;
+		minStart = this.process(incomingTuple, port);
 		
-		MVRelationalTuple<M> delivery = this.deliver();
-		if(delivery != null) {
-			this.transfer(delivery);		
-		} 
+		Iterator<MVRelationalTuple<M>> it = 
+			this.q.extractElementsBefore(minStart);
+		
+		while(it.hasNext()) {
+			this.transfer(it.next());
+			it.remove();
+		}	
 	}	
 
 	/**
@@ -303,7 +309,7 @@ public class ObjectTrackingNestPO
 		MVRelationalTuple<M> incomingTuple, 
 		int port
 	) {
-			this.process(incomingTuple, port);
+		this.process(incomingTuple, port);
 	}	
 	
 	@Override
@@ -359,7 +365,7 @@ public class ObjectTrackingNestPO
 	}
 
 	/**
-	 * Deliver elements 
+	 * Deliver elements, used for testing proposes.
 	 */
 	public MVRelationalTuple<M> deliver() {
 		return this.q.poll();
@@ -414,13 +420,10 @@ public class ObjectTrackingNestPO
     }
 
     /**
-	 * 
 	 * This method is used initially for determining the group attributes
 	 * position with grouping attribute names as input.
 	 * 
-	 * @TODO optimize reduce to array
 	 * @return array of positions
-	 * 
 	 */
 	private int[] getGroupingAttributesPos() {
 		int positions[];
@@ -444,13 +447,11 @@ public class ObjectTrackingNestPO
 	} 
 	
 	/**
-	 * 
 	 * This method is called initially at constructor call to get an 
 	 * int[] of positions of non-groupingAttributes for restricting 
 	 * every relational tuple to them and convert them into a partial nest.
 	 *  
 	 * @return integer array of positions of non-grouping attribute positions
-	 * 
 	 */
 	private int[] getNonGroupingAttributePos() {
 		
@@ -482,14 +483,12 @@ public class ObjectTrackingNestPO
 	}
 
 	/**
-	 * 
 	 * Storing the values of the groupingAttributes in the 
 	 * MVNestTISweepArea<M> for evaluating (transform to relational 
 	 * tuple output)
 	 * 
 	 * @param tuple
 	 * @return
-	 * 
 	 */
 	private Object[] getGroupingValues(
 		MVRelationalTuple<M> tuple) {
@@ -569,8 +568,7 @@ public class ObjectTrackingNestPO
 
 	/**
 	 * merge partial nests to one partial nest with the 
-	 * time interval equals the intersection of both. A little optimization 
-	 * uses the partial nest with more tuples as merge base.  
+	 * time interval equals the intersection of both. 
 	 * 
 	 * @param a partial nest
 	 * @param b tuple 
@@ -702,7 +700,7 @@ public class ObjectTrackingNestPO
 			 * then time intervals of merged partial nests are subtracted.
 			 * 
 			 * In the end, the fillInitialTI time intervals are used to 
-			 * create initial partial nests of incoming partial nest.
+			 * create initial partial nests of incoming tuple.
 			 */
 						
 			fillInitialTI = new ArrayList<ITimeInterval>();
@@ -751,7 +749,7 @@ public class ObjectTrackingNestPO
 					if(incomingTupleEnd.before(partialEnd)) {
 						
 						/*
-						 * Incoming partial TI is contained in partial TI.
+						 * Incoming tuple TI is contained in partial TI.
 						 *
 						 * Here we need to merge the partial nest with 
 						 * time interval equals intersection
@@ -795,7 +793,7 @@ public class ObjectTrackingNestPO
 					} else {	
 						
 						/*
-						 * Incoming partial TI right overlaps the partial TI.
+						 * Incoming tuple TI right overlaps the partial TI.
 						 */
 					
 						ObjectTrackingPartialNest<M> mergePartial = 
@@ -815,7 +813,7 @@ public class ObjectTrackingNestPO
 						))) {
 												
 						/*
-						 * Incoming partial TI is equal to partial TI.
+						 * Incoming tuple TI is equal to partial TI.
 						 */			
 						
 						ObjectTrackingPartialNest<M> mergePartial = 
@@ -827,7 +825,7 @@ public class ObjectTrackingNestPO
 					if(partialTI.getEnd().before(incomingTupleTI.getEnd())) {
 						
 						/*
-						 * Incoming partial TI contains whole partial TI.
+						 * Incoming tuple TI contains whole partial TI.
 						 */									
 
 						ObjectTrackingPartialNest<M> mergePartial = 
@@ -839,7 +837,7 @@ public class ObjectTrackingNestPO
 					else {
 					
 						/*
-						 * Incoming partial TI left overlaps the partial TI.
+						 * Incoming tuple TI left overlaps the partial TI.
 						 */
 						
 						ObjectTrackingPartialNest<M> mergePartial = 

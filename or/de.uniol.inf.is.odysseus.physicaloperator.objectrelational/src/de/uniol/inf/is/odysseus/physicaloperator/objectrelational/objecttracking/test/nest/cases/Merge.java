@@ -35,14 +35,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * a1	a2	a3	a4
  * 1    	5	6	7	[0,10)
- * 1	    8	9	10	[0,10)
  * 
  * end:
  * if everything works correctly the end partial [5,10) should contain
  * 
  * a1	a2	a3	a4
  * 1    	2	3	4	[5,10)
- * 1    	4	5	6	[5,10)
+ * 1    	5	6	7	[5,10)
  * 1	    5	6	7	[5,10)
  * 
  * @author Jendrik Poloczek
@@ -124,8 +123,7 @@ public class Merge extends TestCase {
 	    }
 	    
 	    String[] inputDataPartialB = new String[] {
-				"1;5;6;7,0;10",
-				"1;8;9;10,0;10",
+				"1;5;6;7,0;10"
 			  };  
 	    
 		inputTuplesPartialB = 
@@ -158,7 +156,7 @@ public class Merge extends TestCase {
 	    }
 	    
 		ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> partialA;
-		ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>> partialB;
+		MVRelationalTuple<ObjectTrackingMetadata<Object>> tupleB;
 
 		ObjectTrackingMetadata<Object> metaPartialA = 
 			new ObjectTrackingMetadata<Object>();
@@ -178,28 +176,25 @@ public class Merge extends TestCase {
 		metaPartialB.setStart(new PointInTime(0));
 		metaPartialB.setEnd(new PointInTime(10));
 		
-		partialB = 
-			new ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>>(
-				inputTuplesPartialB,
-				metaPartialB
-			);
-		
+		tupleB = 
+			inputTuplesPartialB.get(0);
+			
 		this.merge = 
 			ObjectTrackingNestPO.class.getDeclaredMethod(
 				"merge", 
 				ObjectTrackingPartialNest.class,
-				ObjectTrackingPartialNest.class
+				MVRelationalTuple.class
 			);
 		
 		this.merge.setAccessible(true);
 		
 		this.result = 
 			(ObjectTrackingPartialNest<ObjectTrackingMetadata<Object>>) 
-			this.merge.invoke(this.nestPO, partialA, partialB);			   
+			this.merge.invoke(this.nestPO, partialA, tupleB);			   
 	}
 	
 	@Test public void merge() {
-        this.tuples = result.getNest();
+        this.tuples = result.getNest();        
         
         assertEquals(this.result.getSize(), new Integer(3));
         

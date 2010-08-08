@@ -19,7 +19,7 @@ public class NestPOAllTests extends TestSuite {
     	TestSuite suite = new TestSuite("ObjectTracking NestPO tests");
     	
     	suite.addTest(new GroupId());
-    	suite.addTest(new Merge());
+    	//suite.addTest(new Merge());
     	suite.addTest(new UpdateAllTests());
     	suite.addTest(new CreateOutputTuple());
     	suite.addTest(new Nest());
