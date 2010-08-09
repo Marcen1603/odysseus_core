@@ -1,7 +1,12 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.test;
 
+//import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
+//import junit.framework.TestCase;
+//import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -14,8 +19,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 public class PredictionFunctionTest {
-	
+	//@Test
 	public static void main(String[] args) {
+	//public void test() {
 		SDFAttributeList scan = createScanSchema();
 		SDFAttributeList time = createTimeSchema();
 		
@@ -34,6 +40,15 @@ public class PredictionFunctionTest {
 		System.out.println();
 		
 		MVRelationalTuple<IProbability> list = scanTuple.getAttribute(0);
+		//String firstAttribute = list.getAttribute(0).toString();
+		//assertEquals(firstAttribute, "9.0|9.0|0.0 | sz=(-) | META | null|405.0 | sz=(-) | META | [[4.5 4.5 4.5 4.5 ];[4.5 4.5 4.5 4.5 ];[4.5 4.5 4.5 4.5 ];[4.5 4.5 4.5 4.5 ];");
+		//String secondAttribute = list.getAttribute(1).toString();
+		//assertEquals(secondAttribute, "1.0|1.0|0.0 | sz=(-) | META | null|45.0 | sz=(-) | META | [[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];");
+		//String thirdAttribute = list.getAttribute(2).toString();
+		//assertEquals(thirdAttribute, "1.0|1.0|0.0 | sz=(-) | META | null|45.0 | sz=(-) | META | [[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ]");
+		//String fourthAttribute = list.getAttribute(3).toString();
+		//assertEquals(fourthAttribute, "1.0|1.0|0.0 | sz=(-) | META | null|45.0 | sz=(-) | META | [[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];[0.5 0.5 0.5 0.5 ];");
+		
 		for(Object o : list.getAttributes()) {
 			System.out.println(o);
 		}
