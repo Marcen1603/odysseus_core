@@ -38,12 +38,11 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	
 	public FilterAO(FilterAO<M> copy) {
 		super(copy);
-		this.oldObjListPath = new String(copy.getOldObjListPath());
-		this.newObjListPath = new String(copy.getNewObjListPath());
-		this.defaultObjListPath = new String(copy.getDefaultObjListPath());
-		this.leftSchema = new SDFAttributeList(copy.getLeftSchema());
-		this.rightSchema = new SDFAttributeList(copy.getRightSchema());
-		
+		this.oldObjListPath = copy.getOldObjListPath();
+		this.newObjListPath = copy.getNewObjListPath();
+		this.defaultObjListPath = copy.getDefaultObjListPath();
+		this.leftSchema = copy.getLeftSchema().clone();
+		this.rightSchema = copy.getRightSchema().clone();
 	}
 	
 	
