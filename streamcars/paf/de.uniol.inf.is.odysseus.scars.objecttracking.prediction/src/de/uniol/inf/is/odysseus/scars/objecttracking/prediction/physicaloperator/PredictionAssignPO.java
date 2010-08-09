@@ -25,7 +25,8 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 	public PredictionAssignPO(PredictionAssignPO<M> copy) {
 		super(copy);
 		predictionFunctions = new PredictionFunctionContainer<M>(copy.predictionFunctions);
-		pathToList = copy.pathToList;
+		this.pathToList = new int[copy.pathToList.length];
+		System.arraycopy(copy.pathToList, 0, this.pathToList, 0, copy.pathToList.length);
 	}
 	
 	@Override

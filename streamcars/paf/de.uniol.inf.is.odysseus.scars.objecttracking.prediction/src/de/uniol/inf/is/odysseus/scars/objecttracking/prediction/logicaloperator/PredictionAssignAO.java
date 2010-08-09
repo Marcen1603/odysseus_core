@@ -28,7 +28,8 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	public PredictionAssignAO(PredictionAssignAO<M> predictionAO) {
 		super(predictionAO);
 		predictionFunctions = new PredictionFunctionContainer<M>(predictionAO.getPredictionFunctions());
-		pathToList = predictionAO.getPathToList();
+		this.pathToList = new int[predictionAO.pathToList.length];
+		System.arraycopy(predictionAO.pathToList, 0, this.pathToList, 0, predictionAO.pathToList.length);
 	}
 	
 	public void initListPath(SDFAttributeList inputSchema, String absoluteListNamePath) {
