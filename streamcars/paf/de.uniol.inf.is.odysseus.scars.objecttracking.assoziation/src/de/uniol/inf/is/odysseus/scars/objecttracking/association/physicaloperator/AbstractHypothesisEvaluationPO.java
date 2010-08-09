@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -29,32 +30,33 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 	private int[] newObjListPath;
 	private HashMap<String, String> algorithmParameter;
 
-	//private SDFAttributeList leftSchema;
-	//private SDFAttributeList rightSchema;
-
 	private SDFAttributeList schema;
 
 	public AbstractHypothesisEvaluationPO() {
-
+		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	public AbstractHypothesisEvaluationPO(AbstractHypothesisEvaluationPO<M> clone) {
 		super(clone);
 
 		this.oldObjListPath = clone.getOldObjListPath();
 		this.newObjListPath = clone.getNewObjListPath();
-		this.algorithmParameter = clone.getAlgorithmParameter();
+		this.algorithmParameter = (HashMap<String, String>) clone.getAlgorithmParameter().clone();
 		this.schema = clone.getSchema();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
+		// 0 - Instanciate needed helper classes
+		TupleHelper thMainObject = new TupleHelper(object);
+
 		// 1 - Get the needed data out of the MVRelationalTuple object
 		// 1.1 - Get the list of new objects as an array of MVRelationalTuple
-		MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.newObjListPath)).getAttributes();
+		MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>) thMainObject.getObject(newObjListPath, false)).getAttributes();
 		// 1.2 - Get the list of old objects (which are predicted to the timestamp of the new objects) as an array of MVRelationalTuple
-		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.oldObjListPath)).getAttributes();
+		MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>) thMainObject.getObject(oldObjListPath, false)).getAttributes();
 		// 1.3 - Get the list of connections between old and new objects as an array of Connection
 		Connection[] objConList = new Connection[object.getMetadata().getConnectionList().toArray().length];
 		ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
@@ -126,6 +128,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	// Clone methods will be implemented in the concrete EvaluationPO classes
 	@Override
 	public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
 
@@ -144,16 +147,6 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 		this.newObjListPath = newObjListPath;
 	}
 
-	/*
-	public void setLeftSchema(SDFAttributeList leftSchema) {
-		this.leftSchema = leftSchema;
-	}
-
-	public void setRightSchema(SDFAttributeList rightSchema) {
-		this.rightSchema = rightSchema;
-	}
-	*/
-
 	public int[] getOldObjListPath() {
 		return this.oldObjListPath;
 	}
@@ -161,16 +154,6 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 	public int[] getNewObjListPath() {
 		return this.newObjListPath;
 	}
-
-	/*
-	public SDFAttributeList getLeftSchema() {
-		return this.leftSchema;
-	}
-
-	public SDFAttributeList getRightSchema() {
-		return this.rightSchema;
-	}
-	*/
 
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
 		this.algorithmParameter = newAlgoParameter;

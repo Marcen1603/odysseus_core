@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -26,20 +26,26 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	private HashMap<String, String> algorithmParameter;
 	private HashMap<String, String> measurementPairs;
 
+	private SchemaHelper sh;
+
 	private String functionID;
 
 	public HypothesisEvaluationAO() {
 		super();
+
+		this.sh = new SchemaHelper(this.getInputSchema());
 	}
 
+	@SuppressWarnings("unchecked")
 	public HypothesisEvaluationAO(HypothesisEvaluationAO<M> copy) {
 		super(copy);
 
 		this.oldObjListPath = copy.getOldObjListPathC();
 		this.newObjListPath = copy.getNewObjListPathC();
-		this.algorithmParameter = copy.getAlgorithmParameter();
-		this.measurementPairs = copy.getMeasurementPairs();
+		this.algorithmParameter = (HashMap<String, String>) copy.getAlgorithmParameter().clone();
+		this.measurementPairs = (HashMap<String, String>) copy.getMeasurementPairs().clone();
 		this.functionID = copy.getFunctionID();
+		this.sh = new SchemaHelper(copy.getInputSchema());
 	}
 
 	@Override
@@ -66,11 +72,11 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	}
 
 	public int[] getNewObjListPath() {
-		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.newObjListPath);
+		return sh.getSchemaIndexPath(this.newObjListPath).toArray();
 	}
 
 	public int[] getOldObjListPath() {
-		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.oldObjListPath);
+		return sh.getSchemaIndexPath(this.oldObjListPath).toArray();
 	}
 
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
