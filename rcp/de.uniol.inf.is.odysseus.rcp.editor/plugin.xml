@@ -53,5 +53,23 @@
          </toolbar>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.rcp.editor.ParameterView"
+               minimized="false"
+               moveable="true"
+               ratio="0.70f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
