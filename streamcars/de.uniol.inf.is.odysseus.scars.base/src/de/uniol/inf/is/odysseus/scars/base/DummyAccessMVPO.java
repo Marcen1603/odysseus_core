@@ -16,6 +16,8 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 	private DummyJDVEData<M> data;
 	private SDFAttributeList outputSchema;
 	
+	private long lastTime = 0;
+	
 	public DummyAccessMVPO() {
 	}
 	
@@ -58,16 +60,14 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 		/* 
 		 * Hier wird gewartet, damit die Verarbeitung
 		 * der Daten besser nachvollzogen werden kann und
-		 * Odysseus / Eclipse nicht überlastet wird 
+		 * Odysseus / Eclipse nicht ï¿½berlastet wird 
 		 * (siehe auch Ticket 225).
 		 * */
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if( System.currentTimeMillis() - lastTime > 1000 ) {
+			transfer(data.getScan());
+			lastTime = System.currentTimeMillis();
 		}
-		transfer(data.getScan());
+
 	}
 
 	@Override
@@ -88,7 +88,7 @@ class DummyJDVEData<M extends IProbability> {
 	
 	@SuppressWarnings("unchecked")
 	public MVRelationalTuple<M> getScan() {
-		Object res = parseNext(attributeList.get(0));
+		Object res = parseStart(attributeList);
 		
 		if( res instanceof MVRelationalTuple<?>) {
 			return (MVRelationalTuple<M>)res;
@@ -99,11 +99,11 @@ class DummyJDVEData<M extends IProbability> {
 		}
 	}
 	
-//	public MVRelationalTuple<M> parseStart(SDFAttributeList schema) {
-//		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-//		base.setAttribute(0, parseNext(schema.get(0)));
-//		return base;
-//	}
+	public MVRelationalTuple<M> parseStart(SDFAttributeList schema) {
+		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		base.setAttribute(0, parseNext(schema.get(0)));
+		return base;
+	}
 	
 	public MVRelationalTuple<M> parseRecord(SDFAttribute schema) {
 		int count = schema.getSubattributeCount();
