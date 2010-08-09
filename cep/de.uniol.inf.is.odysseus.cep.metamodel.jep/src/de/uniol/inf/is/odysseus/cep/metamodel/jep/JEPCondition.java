@@ -74,7 +74,7 @@ abstract public class JEPCondition extends AbstractCondition {
 		String str = out.replace("$0",CepVariable.getSeperator()+"-1"+CepVariable.getSeperator());
 		str = str.replace("$1", CepVariable.getSeperator());
 		str = str.replace("$2", "[");
-		str.replace("$3", "]");
+		str = str.replace("$3", "]");
 		return new CepVariable(str);
 	}
 
