@@ -42,17 +42,17 @@ abstract public class JEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 	}
 
 	private String transformToJepVar(String in) {
-		String str = in.replace(CepVariable.getSeperator(), "ä");
-		str = str.replace("-", "ß");
-		str = str.replace("[", "ö");
-		return str.replace("]", "ü");
+		String str = in.replace(CepVariable.getSeperator()+"-1"+CepVariable.getSeperator(), "$0");
+		str = str.replace(CepVariable.getSeperator(), "$1");
+		str = str.replace("[", "$2");
+		return str.replace("]", "$3");
 	}
 
 	private CepVariable transformToOutVar(String out) {
-		String str = out.replace("ä", CepVariable.getSeperator());
-		str = str.replace("ß", "-");
-		str = str.replace("ö", "[");
-		str.replace("ü", "]");
+		String str = out.replace("$0",CepVariable.getSeperator()+"-1"+CepVariable.getSeperator());
+		str = str.replace("$1", CepVariable.getSeperator());
+		str = str.replace("$2", "[");
+		str.replace("$3", "]");
 		return new CepVariable(str);
 	}
 	
