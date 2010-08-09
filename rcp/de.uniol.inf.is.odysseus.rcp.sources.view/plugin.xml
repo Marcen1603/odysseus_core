@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="de.uniol.inf.is.odysseus.rcp.sources.view.part.SourcesViewPart"
+            icon="Icons/source.png"
+            id="de.uniol.inf.is.odysseus.rcp.sources.SourcesView"
+            name="Sources"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.sources.view.activator.StartUp">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.sources.view.commands.RefreshCommand"
+            id="de.uniol.inf.is.odysseus.rcp.sources.view.RefreshCommand"
+            name="Refresh">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.sources.view.commands.ExpandAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.sources.view.ExpandAllCommand"
+            name="Expand All">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.sources.view.commands.CollapseAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.sources.view.CollapseAll"
+            name="Collapse All">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.sources.SourcesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.sources.view.RefreshCommand"
+               icon="Icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.sources.view.ExpandAllCommand"
+               icon="Icons/expandall.gif"
+               label="Expand All"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.sources.view.CollapseAll"
+               icon="Icons/collapseall.gif"
+               label="Collapse All"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
