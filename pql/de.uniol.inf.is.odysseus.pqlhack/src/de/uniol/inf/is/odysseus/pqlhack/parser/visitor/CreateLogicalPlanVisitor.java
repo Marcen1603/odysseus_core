@@ -962,28 +962,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 						e.printStackTrace();
 					}
 
-					// find out to which attribute the expression belongs
-					// if it is for the first attribute add the expression
-					// to expr[0]. If it is for the second attribute add
-					// it to expr[1] and so on.
-
-					String attrName = attr.getName();
-
-					IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
-
-					for (int v = 0; v < prediction.getOutputSchema().getAttributeCount(); v++) {
-						try {
-							if (prediction.getOutputSchema().getAttribute(v).equals(attrRes.getAttribute(attrName))) {
-								expressions[v] = predFctExpr;
-							}
-						} catch (AmgigiousAttributeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (NoSuchAttributeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+					expressions[u] = predFctExpr;
 				}
 
 				// only the attribute resolver will be passed
@@ -1021,28 +1000,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 						e.printStackTrace();
 					}
 
-					// find out to which attribute the expression belongs
-					// if it is for the first attribute add the expression
-					// to expr[0]. If it is for the second attribute add
-					// it to expr[1] and so on.
-
-					String attrName = attr.getName();
-
-					IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
-
-					for (int v = 0; v < prediction.getOutputSchema().getAttributeCount(); v++) {
-						try {
-							if (prediction.getOutputSchema().getAttribute(v).equals(attrRes.getAttribute(attrName))) {
-								expressions[v] = predFctExpr;
-							}
-						} catch (AmgigiousAttributeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (NoSuchAttributeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+					expressions[u] = predFctExpr;
 				}
 
 				prediction.setDefaultPredictionFunction(expressions);
@@ -1253,7 +1211,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		
 		String attributeName = ((ASTIdentifier) node.jjtGetChild(2)).getName();
 		
-		SDFAttributeList schema = leftIn.getOutputSchema();
+		SDFAttributeList schema = rightIn.getOutputSchema();
 		SchemaHelper helper = new SchemaHelper(schema);
 		String[] path = helper.getSchemaIndexPath(attributeName).toStringPath();
 		ao.initNeededAttributeIndices(schema, path);
