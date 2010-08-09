@@ -4,6 +4,9 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +61,11 @@ public class StartQueryCommand extends AbstractHandler implements IHandler {
 			t.start();
 		} else {
 			logger.error("Kein ExecutorService gefunden");
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.OK);
+		    box.setMessage("No executor available");
+		    box.setText("Error");
+		    box.open();
+
 			return null;
 		}
 

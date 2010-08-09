@@ -9,6 +9,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -29,6 +31,12 @@ public class NMSNCommand extends AbstractHandler implements IHandler {
 
 		if( Activator.getExecutor() == null ) {
 			StatusBarManager.getInstance().setMessage("No executor available");
+			
+			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.ICON_ERROR | SWT.OK);
+		    box.setMessage("No executor available");
+		    box.setText("Error");
+		    box.open();
+
 			return null;
 		}
 		
