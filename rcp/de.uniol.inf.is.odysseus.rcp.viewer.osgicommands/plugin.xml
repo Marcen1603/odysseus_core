@@ -49,16 +49,6 @@
                   name="Seperator"
                   visible="true">
             </separator>          
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StartRouter"
-                  label="Start Router"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.osgicommands.StopRouter"
-                  label="Stop Router"
-                  style="push">
-            </command>
             <separator
                   name="Seperator"
                   visible="true">
