@@ -45,6 +45,18 @@ CREATE SENSOR radarSensor (
 	)
 ) FROM CHANNEL 192.168.0.1:5001
 
+LOGICAL PLAN : 
+
+PREDICTION( 
+	ACCESS( timer ), 
+	SET-PREDICTION-OR(
+		ACCESS(radarSensor),
+		radarSensor.scan:cars,
+		radarSensor.scan:cars:car:posx := radarSensor.scan:cars:car:posx * ( radarSensor.scan.timestamp - timer.timestamp) ; WHERE radarSensor.scan:cars:car:id > 0;
+	),
+	radarSensor.scan:cars
+)
+
 *** LOGISCHER PLAN MIT SET-PREDICTION-OR ***
 
 LOGICAL PLAN : 
