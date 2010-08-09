@@ -34,6 +34,7 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	}
 	
 	public PredictionPO(PredictionPO<M> copy) {
+		super(copy);
 		predictionFunctions = new PredictionFunctionContainer<M>(copy.predictionFunctions);
 		objListPath = copy.objListPath;
 	}
