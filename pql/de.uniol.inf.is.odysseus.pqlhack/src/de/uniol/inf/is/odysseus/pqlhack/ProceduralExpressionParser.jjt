@@ -71,6 +71,7 @@ TOKEN : /* Keywords */ {
 |   <K_ASSOCIATION_EVAL: "ASSOCIATION-EVAL">
 |   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
 |   <K_ASSOCIATION_SRC: "ASSOCIATION-SRC">
+|   <K_EVALUATE: "EVALUATE">
 }
 
 TOKEN:{
@@ -128,7 +129,8 @@ void AlgebraOp():{}{
 	AssociationEvalOp() |
 	AssociationSelOp() |
 	AssociationSrcOp() |
-	SchemaConvertOp()
+	SchemaConvertOp() |
+	EvaluateOp()
 }
 
 void TestOp(): {}{
@@ -381,3 +383,6 @@ void AssociationSelOp(): {} {
 void AssociationSrcOp(): {} {
   < K_ASSOCIATION_SRC > "(" Identifier() "," Number() ")"
 }
+
+void EvaluateOp(): {} {
+  < K_EVALUATE > "(" AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," Number() ")"}

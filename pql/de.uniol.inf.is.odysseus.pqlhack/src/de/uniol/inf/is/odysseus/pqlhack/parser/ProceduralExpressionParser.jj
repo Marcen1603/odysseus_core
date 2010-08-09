@@ -75,6 +75,7 @@ TOKEN : /* Keywords */ {
 |   <K_ASSOCIATION_EVAL: "ASSOCIATION-EVAL">
 |   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
 |   <K_ASSOCIATION_SRC: "ASSOCIATION-SRC">
+|   <K_EVALUATE: "EVALUATE">
 }
 
 TOKEN:{
@@ -169,7 +170,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	AssociationEvalOp() |
 	AssociationSelOp() |
 	AssociationSrcOp() |
-	SchemaConvertOp()/*@bgen(jjtree)*/
+	SchemaConvertOp() |
+	EvaluateOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1501,3 +1503,32 @@ void AssociationSrcOp(): {/*@bgen(jjtree) AssociationSrcOp */
   }
 /*@egen*/
 }
+
+void EvaluateOp(): {/*@bgen(jjtree) EvaluateOp */
+  ASTEvaluateOp jjtn000 = new ASTEvaluateOp(JJTEVALUATEOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) EvaluateOp */
+  try {
+/*@egen*/
+  < K_EVALUATE > "(" AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," Number() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}

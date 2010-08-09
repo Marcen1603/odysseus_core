@@ -47,6 +47,7 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTASSOCIATIONEVALOP = 41;
   public int JJTASSOCIATIONSELOP = 42;
   public int JJTASSOCIATIONSRCOP = 43;
+  public int JJTEVALUATEOP = 44;
 
 
   public String[] jjtNodeName = {
@@ -94,6 +95,7 @@ public interface ProceduralExpressionParserTreeConstants
     "AssociationEvalOp",
     "AssociationSelOp",
     "AssociationSrcOp",
+    "EvaluateOp",
   };
 }
-/* JavaCC - OriginalChecksum=ff443e3536fc8b1d6188fb41f9c85d15 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ed69ad8a5570007d605fa1ec27af2e07 (do not edit this line) */

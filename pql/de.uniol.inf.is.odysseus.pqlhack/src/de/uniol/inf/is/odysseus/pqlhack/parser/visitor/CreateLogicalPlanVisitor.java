@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
@@ -78,6 +79,7 @@ import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisEvaluationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.EvaluationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
@@ -1266,6 +1268,65 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		((ArrayList) data).add(new Integer(0));
 
 		return data;
+	}
+
+	@Override
+	public Object visit(ASTEvaluateOp node, Object data) {		
+        IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+
+        EvaluationAO evalAO = new EvaluationAO();
+
+        // subscribe bei der Assoziation (HypothesisSelektion)
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
+		int sourceOutPort = ((Integer) childData.get(2)).intValue();
+		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
+		evalAO.subscribeToSource(childOp, 2, sourceOutPort, childOp.getOutputSchema());
+		
+		// Assoziations Objektpfad
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
+		String associationObjListPath = identifier.getName();
+		
+        // subscribe bei der Filterung
+		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this, data);
+		sourceOutPort = ((Integer) childData.get(2)).intValue();
+		childOp = (ILogicalOperator) childData.get(1);
+		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+		
+		// get filteringObjListPaths
+		identifier = (ASTIdentifier) node.jjtGetChild(3);
+		String filteringObjListPaths = identifier.getName();
+		
+        // subscribe bei bei temporären Broker
+		childData = (ArrayList<Object>) node.jjtGetChild(4).jjtAccept(this, data);
+		sourceOutPort = ((Integer) childData.get(2)).intValue();
+		childOp = (ILogicalOperator) childData.get(1);
+		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+		
+		// get brokerObjListPath
+		identifier = (ASTIdentifier) node.jjtGetChild(5);
+		String brokerObjListPath = identifier.getName();
+		
+		// Init AO paths
+		evalAO.initPaths(associationObjListPath, filteringObjListPaths, brokerObjListPath);
+		
+		// get threshold
+		ASTNumber number = (ASTNumber) node.jjtGetChild(6);
+		
+		Double threshold = 0.0;
+		try {
+			threshold = new Double(number.getValue());
+		} catch (Exception e) {
+		}
+
+		// set threshold
+		evalAO.setThreshold(threshold);
+		
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
+		newData.add(evalAO);
+		newData.add(new Integer(0));
+		
+		return newData;
 	}
 
 }
