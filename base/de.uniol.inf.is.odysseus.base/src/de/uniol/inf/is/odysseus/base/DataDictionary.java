@@ -1,11 +1,16 @@
 package de.uniol.inf.is.odysseus.base;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -19,11 +24,12 @@ import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
  */
 public class DataDictionary {
 
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(DataDictionary.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataDictionary.class);
 
 	static private DataDictionary instance = null;
 
+	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
+	
 	private Map<String, ILogicalOperator> viewDefinitions = new HashMap<String, ILogicalOperator>();
 	private Map<String, ILogicalOperator> logicalViewDefinitions = new HashMap<String, ILogicalOperator>();
 
@@ -34,6 +40,38 @@ public class DataDictionary {
 	private DataDictionary() {
 	}
 
+	public void addListener( IDataDictionaryListener listener ) {
+		if( listener == null ) 
+			throw new IllegalArgumentException("listener is null");
+		
+		if( !listeners.contains(listener))
+			listeners.add(listener);
+	}
+	
+	public void removeListener( IDataDictionaryListener listener ) {
+		listeners.remove(listener);
+	}
+	
+	private void fireAddEvent( String name, ILogicalOperator op ) {
+		for( IDataDictionaryListener listener : listeners ) {
+			try {
+				listener.addedViewDefinition(this, name, op);
+			} catch( Exception ex ) {
+				logger.error("Error during executing listener", ex);
+			}
+		}
+	}
+	
+	private void fireRemoveEvent( String name, ILogicalOperator op ) {
+		for( IDataDictionaryListener listener : listeners ) {
+			try {
+				listener.removedViewDefinition(this, name, op);
+			} catch( Exception ex ) {
+				logger.error("Error during executing listener", ex);
+			}
+		}
+	}
+	
 	public synchronized static DataDictionary getInstance() {
 		if (instance == null) {
 //			logger.debug("Create new DataDictionary");
@@ -73,6 +111,7 @@ public class DataDictionary {
 
 	public void setView(String name, ILogicalOperator plan) {
 		viewDefinitions.put(name, plan);
+		fireAddEvent(name, plan);
 	}
 
 	public ILogicalOperator getView(String name) {
@@ -84,7 +123,10 @@ public class DataDictionary {
 	}
 	
 	public ILogicalOperator removeView(String name) {
-		return viewDefinitions.remove(name);
+		ILogicalOperator op = viewDefinitions.remove(name);
+		if( op != null ) 
+			fireRemoveEvent(name, op);
+		return op;
 	}
 	
 	public ILogicalOperator getViewForTransformation(String name) {
@@ -107,6 +149,7 @@ public class DataDictionary {
 	
 	public void setLogicalView(String name, ILogicalOperator topOperator){
 		this.logicalViewDefinitions.put(name, topOperator);
+		fireAddEvent(name, topOperator);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -130,7 +173,12 @@ public class DataDictionary {
 	}
 	
 	public void clearViews() {
+		
+		for( Entry<String, ILogicalOperator> entry : this.viewDefinitions.entrySet() )
+			fireRemoveEvent(entry.getKey(), entry.getValue());
+		
 		this.viewDefinitions.clear();
+		
 	}
 
 	public boolean containsView(String viewName) {
