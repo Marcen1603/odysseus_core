@@ -65,17 +65,15 @@ abstract public class JEPCondition extends AbstractCondition {
 	}
 
 	private String transformToJepVar(String in) {
-		String str = in.replace(CepVariable.getSeperator(), "ä");
-		str = str.replace("-", "ß");
-		str = str.replace("[", "ö");
-		return str.replace("]", "ü");
+		String str = in.replace(CepVariable.getSeperator(), "$1");
+		str = str.replace("[", "$2");
+		return str.replace("]", "$3");
 	}
 
 	private CepVariable transformToOutVar(String out) {
-		String str = out.replace("ä", CepVariable.getSeperator());
-		str = str.replace("ß", "-");
-		str = str.replace("ö", "[");
-		str.replace("ü", "]");
+		String str = out.replace("$1", CepVariable.getSeperator());
+		str = str.replace("$2", "[");
+		str.replace("$3", "]");
 		return new CepVariable(str);
 	}
 
@@ -138,10 +136,10 @@ abstract public class JEPCondition extends AbstractCondition {
 				conditionValue = boolVal.booleanValue() ? 1.0 : 0.0;
 			} else {
 
-				for (CepVariable v : getVarNames()) {
-					getLogger().error("Variable " + v + " "
-							+ expression.getVar(symbolTable.get(v)).getValue());
-				}
+//				for (CepVariable v : getVarNames()) {
+//					getLogger().error("Variable " + v + " "
+//							+ expression.getVar(symbolTable.get(v)).getValue());
+//				}
 				ConditionEvaluationException e = new ConditionEvaluationException();
 				e.fillInStackTrace();
 				throw e;
