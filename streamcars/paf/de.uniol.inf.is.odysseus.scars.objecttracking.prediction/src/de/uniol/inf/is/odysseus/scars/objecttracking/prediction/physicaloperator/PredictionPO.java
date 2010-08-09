@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
@@ -22,7 +21,13 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	private PredictionFunctionContainer<M> predictionFunctions;
 	
 	public PredictionPO() {
-		
+	}
+	
+	public PredictionPO(PredictionPO<M> copy) {
+		super(copy);
+		this.predictionFunctions = new PredictionFunctionContainer<M>(copy.predictionFunctions);
+		objListPath = new int[copy.objListPath.length];
+		System.arraycopy(copy.objListPath, 0, this.objListPath, 0, copy.objListPath.length);
 	}
 	
 	public void setPredictionFunctions(PredictionFunctionContainer<M> predictionFunctions) {
@@ -32,13 +37,6 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	public void setObjectListPath(int[] objListPath) {
 		this.objListPath = objListPath;
 	}
-	
-	public PredictionPO(PredictionPO<M> copy) {
-		super(copy);
-		predictionFunctions = new PredictionFunctionContainer<M>(copy.predictionFunctions);
-		objListPath = copy.objListPath;
-	}
-
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -83,6 +81,4 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	public PredictionPO<M> clone() {
 		return new PredictionPO<M>(this);
 	}
-
-
 }

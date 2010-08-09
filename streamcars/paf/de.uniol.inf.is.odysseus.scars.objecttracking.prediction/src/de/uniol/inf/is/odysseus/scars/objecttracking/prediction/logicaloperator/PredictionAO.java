@@ -26,6 +26,7 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 	public PredictionAO(PredictionAO<M> copy) {
 		super(copy);
 		predictionFunctions = new PredictionFunctionContainer<M>(copy.getPredictionFunctions());
+		System.arraycopy(copy.objListPath, 0, this.objListPath, 0, copy.objListPath.length);
 	}
 	
 
