@@ -27,17 +27,8 @@ public class OrAttributeResolver {
 	// TIMO START
 	
 	public static int[] getAttributePath( SDFAttributeList schema, String absoluteAttributeName ) {
-		String relativeAttributeName = getAttributeName(absoluteAttributeName);
-		String[] paths = getAttributeNamePath(relativeAttributeName);
-		
-		int[] indices = new int[paths.length-1];
-		SDFAttributeList currentAttributeList = schema.get(0).getSubattributes();
-		for( int i = 1; i < paths.length; i++ ) {
-			indices[i-1] = getIndexOf( currentAttributeList, paths[i]);
-			currentAttributeList = currentAttributeList.get(indices[i-1]).getSubattributes();
-		}
-		
-		return indices;
+		SchemaHelper helper = new SchemaHelper(schema);
+		return helper.getSchemaIndexPath(absoluteAttributeName).toArray();
 	}
 	
 	public static int getIndexOf( SDFAttributeList list, String attributeName ) {

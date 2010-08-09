@@ -54,7 +54,6 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	
 	@Override
 	public void predictMetadata(M metadata, MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int currentIndex) {
-		System.out.println("predict Metadata");
 		
 		double[][] sigma = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
 		for(int row=0; row<sigma.length; row++) {

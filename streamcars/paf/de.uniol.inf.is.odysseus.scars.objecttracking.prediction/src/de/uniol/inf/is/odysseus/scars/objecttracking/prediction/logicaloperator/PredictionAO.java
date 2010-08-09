@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -33,6 +34,13 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 
 	public void setPredictionFunctions(PredictionFunctionContainer<M> predictionFunctions) {
 		this.predictionFunctions = predictionFunctions;
+		
+		SDFAttributeList left = getInputSchema(0); // zeit
+		SDFAttributeList right = getInputSchema(1); // tupel
+		
+		for( IPredictionFunction<M> f : this.predictionFunctions.getMap().values() ) {
+			f.init(right, left);
+		}
 	}
 	
 	public PredictionFunctionContainer<M> getPredictionFunctions() {

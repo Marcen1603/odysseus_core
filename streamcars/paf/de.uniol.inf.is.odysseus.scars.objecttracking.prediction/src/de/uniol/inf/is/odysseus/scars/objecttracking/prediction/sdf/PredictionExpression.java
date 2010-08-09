@@ -12,6 +12,8 @@ import org.nfunk.jep.JEP;
 import org.nfunk.jep.Node;
 import org.nfunk.jep.ParseException;
 
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -121,17 +123,24 @@ public class PredictionExpression {
 	 */
 	public void initAttributePaths(SDFAttributeList schema) {
 		String sourceName = getSourceName(schema);
+		SchemaHelper helper = new SchemaHelper(schema);
 		List<String> schemaVariables = variables.get(sourceName);
 		if(schemaVariables == null) {
 			//schema not requiered by expression, so simple ignore
 			return;
 		}
 		for(String var : schemaVariables) {
-			variablePaths.put(var, resolveAttributePath(schema, var));
+			SchemaIndexPath path = helper.getSchemaIndexPath(var);
+			int[] p = path.toArray();
+			replaceWithRelativeIndex(schema, p);
+			variablePaths.put(var, p);
 		}
 		
 		if(sourceName.equals(targetSource)) {
-			targetPath = resolveAttributePath(schema, targetVarName);
+			SchemaIndexPath path = helper.getSchemaIndexPath(targetVarName);
+			int[] p = path.toArray();
+			replaceWithRelativeIndex(schema, p);
+			targetPath = p;
 		}
 	}
 	
@@ -141,26 +150,26 @@ public class PredictionExpression {
 	 * @param attributeName
 	 * @return
 	 */
-	protected int[] resolveAttributePath(SDFAttributeList schema, String attributeName) {
-		String attr = attributeName.split("\\.", 2)[1];
-		String[] attrParts = attr.split("\\:");
-		int[] indices = new int[attrParts.length];
-		SDFAttributeList current = schema;
-		
-		for(int depth=0; depth<attrParts.length; depth++) {
-			for(int index=0; index<current.getAttributeCount(); index++) {
-				SDFAttribute a = current.get(index);
-				if(a.getAttributeName().equals(attrParts[depth])) {
-					indices[depth] = index;
-					current = a.getSubattributes();
-					break;
-				}
-			}
-		}
-		replaceWithRelativeIndex(schema, indices);
-		
-		return indices;
-	}
+//	protected int[] resolveAttributePath(SDFAttributeList schema, String attributeName) {
+//		String attr = attributeName.split("\\.", 2)[1];
+//		String[] attrParts = attr.split("\\:");
+//		int[] indices = new int[attrParts.length];
+//		SDFAttributeList current = schema;
+//		
+//		for(int depth=0; depth<attrParts.length; depth++) {
+//			for(int index=0; index<current.getAttributeCount(); index++) {
+//				SDFAttribute a = current.get(index);
+//				if(a.getAttributeName().equals(attrParts[depth])) {
+//					indices[depth] = index;
+//					current = a.getSubattributes();
+//					break;
+//				}
+//			}
+//		}
+//		replaceWithRelativeIndex(schema, indices);
+//		
+//		return indices;
+//	}
 	
 	/**
 	 * 
@@ -248,10 +257,10 @@ public class PredictionExpression {
 	 * @param value
 	 */
 	public void bindVariable(String attrName, Object value) {
-		int[] path = getAttributePath(attrName);
-		System.out.println("");
-		System.out.print("bind: " + attrName + ", " + value + "Path: ");
-		for(int p : path) { System.out.print(p + " "); }
+//		int[] path = getAttributePath(attrName);
+//		System.out.println("");
+//		System.out.print("bind: " + attrName + ", " + value + "Path: ");
+//		for(int p : path) { System.out.print(p + " "); }
 		expressionParser.addVariable(attrName, value);
 	}
 	
@@ -272,17 +281,27 @@ public class PredictionExpression {
 	 * @param index
 	 */
 	public void replaceVaryingAttributeIndex(SDFAttributeList schema, int index) {
+		
 		String sourceName = getSourceName(schema);
 		List<String> schemaVarNames = variables.get(sourceName);
 		if(schemaVarNames == null) {
 			//schema not requiered by expression, so simple ignore
 			return;
 		}
+		SchemaHelper helper = new SchemaHelper(schema);
 		for(String var : schemaVarNames) {
-			replaceIndex(getAttributePath(var), index);
+			int[] path = helper.getSchemaIndexPath(var).toArray();
+			replaceWithRelativeIndex(schema, path);
+			replaceIndex(path, index);
+			
+			variablePaths.put(var, path);
 		}
 		if(sourceName.equals(targetSource)) {
-			replaceIndex(targetPath, index);
+			int[] path = helper.getSchemaIndexPath(targetVarName).toArray();
+			replaceWithRelativeIndex(schema, path);
+			replaceIndex(path, index);
+			
+			targetPath = path;
 		}
 		
 	}

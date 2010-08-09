@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator;
 
+import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
@@ -42,7 +43,7 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
+
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		// TODO sehr simple, muss noch darauf geachtet werden das die zeitintervalle bei den zwei eing�ngen zusammenpassen,
@@ -55,7 +56,6 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		if(currentTime != null && currentScan != null) {
 			predictData();
 			MVRelationalTuple<M> tmp = currentScan;
-			currentTime = null;
 			currentScan = null;
 			transfer(tmp);
 		}
@@ -67,6 +67,9 @@ public class PredictionPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		for(int index=0; index < list.getAttributeCount(); index++) {
 			MVRelationalTuple<M> obj = list.getAttribute(index);
 			IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
+			if( pf == null ) {
+				System.out.println("Möp");
+			}
 			pf.predictData(currentScan, currentTime, index);
 			M metadata = obj.getMetadata();
 			pf.predictMetadata(metadata, currentScan, currentTime, index);
