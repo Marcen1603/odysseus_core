@@ -100,6 +100,14 @@ public class MVRelationalTuple<T extends IProbability> extends
 					this.measurementValuePositions, 0,
 					copy.measurementValuePositions.length);
 		}
+		
+		// deep copy for objectrelationals (by Timo M.)
+		for( int i = 0; i < getAttributeCount(); i++ ) {
+			Object attribute = getAttribute(i);
+			if( attribute instanceof MVRelationalTuple ) {
+				setAttribute(i, new MVRelationalTuple<T>((MVRelationalTuple<T>)attribute)); // recursive copy
+			}
+		}
 	}
 
 	/**
