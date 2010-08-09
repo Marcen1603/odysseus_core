@@ -90,4 +90,18 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 		return filterFunction;
 	}
 
+	/**
+	 * @param functionID the functionID to set
+	 */
+	public void setFunctionID(String functionID) {
+		this.functionID = functionID;
+	}
+
+	/**
+	 * @return the functionID
+	 */
+	public String getFunctionID() {
+		return functionID;
+	}
+
 }

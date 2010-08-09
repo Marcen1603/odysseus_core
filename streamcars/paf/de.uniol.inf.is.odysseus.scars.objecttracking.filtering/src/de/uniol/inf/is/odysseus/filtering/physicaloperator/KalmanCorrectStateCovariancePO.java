@@ -4,6 +4,7 @@
 package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
@@ -27,18 +28,19 @@ public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnection
 	}
 	
 	public KalmanCorrectStateCovariancePO(FilterAO<M> filterAO) {
+		super();
 		this.setFilterFunction(filterAO.getFilterFunction());
-		this.setNewObjListPath(filterAO.getNewObjListPathInt());
-		this.setOldObjListPath(filterAO.getOldObjListPathInt());
+		this.setParameters(filterAO.getParameters());
 	}
 
 	public KalmanCorrectStateCovariancePO(KalmanCorrectStateCovariancePO<M> copy) {
+		super();
+		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getFilterFunction().getParameters());
 		if (copy.getFilterFunction().getFunctionID() == 1) {
-			this.setFilterFunction(new KalmanCorrectStateCovarianceFunction(copy.getFilterFunction().getParameters()));
+			this.setFilterFunction(new KalmanCorrectStateCovarianceFunction(parametercopy));			
 		}
 		
-		this.setNewObjListPath(copy.getNewObjListPath().clone());
-		this.setOldObjListPath(copy.getOldObjListPath().clone());
+		
 	
 	}
 

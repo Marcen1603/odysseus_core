@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
@@ -24,6 +25,9 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	// path to new and old objects
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
+	
+	// optional parameters for the filter function. Not used right now
+	private HashMap<Integer, Object> parameters;
 	
 	public AbstractFilterPO() {
 		
@@ -117,6 +121,26 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	
 	public void setFilterFunction(IFilterFunction filterFunction) {
 		this.filterFunction = filterFunction;
+	}
+
+
+
+
+	/**
+	 * @param parameters the parameters to set
+	 */
+	public void setParameters(HashMap<Integer, Object> parameters) {
+		this.parameters = parameters;
+	}
+
+
+
+
+	/**
+	 * @return the parameters
+	 */
+	public HashMap<Integer, Object> getParameters() {
+		return parameters;
 	}
 
 }

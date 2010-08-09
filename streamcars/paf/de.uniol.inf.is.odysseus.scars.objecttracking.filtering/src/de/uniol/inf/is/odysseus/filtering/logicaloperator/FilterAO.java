@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.filtering.logicaloperator;
 
+import java.util.HashMap;
+
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
@@ -27,13 +29,16 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	// path to default tuple
 	private String defaultObjListPath;
 	
+	// Optional parameters for the Filter function. Not used right now.
+	private HashMap<Integer, Object> parameters;
+	
 	// schemas
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 	
 	public FilterAO(String functionID) {
 		super();
-		this.functionID = functionID;
+		this.setFunctionID(functionID);
 	}
 	
 	public FilterAO(FilterAO<M> copy) {
@@ -121,6 +126,34 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 
 	public String getDefaultObjListPath() {
 		return defaultObjListPath;
+	}
+
+	/**
+	 * @param functionID the functionID to set
+	 */
+	public void setFunctionID(String functionID) {
+		this.functionID = functionID;
+	}
+
+	/**
+	 * @return the functionID
+	 */
+	public String getFunctionID() {
+		return functionID;
+	}
+
+	/**
+	 * @param parameters the parameters to set
+	 */
+	public void setParameters(HashMap<Integer, Object> parameters) {
+		this.parameters = parameters;
+	}
+
+	/**
+	 * @return the parameters
+	 */
+	public HashMap<Integer, Object> getParameters() {
+		return parameters;
 	}
 }
 

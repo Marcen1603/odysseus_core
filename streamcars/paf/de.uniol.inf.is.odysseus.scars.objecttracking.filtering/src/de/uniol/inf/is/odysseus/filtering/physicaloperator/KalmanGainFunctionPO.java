@@ -4,6 +4,7 @@
 package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
@@ -30,19 +31,19 @@ public class KalmanGainFunctionPO<M extends IProbability & IConnectionContainer>
 	}
 	
 	public KalmanGainFunctionPO(FilterAO<M> filterAO) {
+		super();
 		this.setFilterFunction(filterAO.getFilterFunction());
-		this.setNewObjListPath(filterAO.getNewObjListPathInt());
-		this.setOldObjListPath(filterAO.getOldObjListPathInt());
+		this.setParameters(filterAO.getParameters());
 		
 	}
 	
 	public KalmanGainFunctionPO(KalmanGainFunctionPO<M> copy) {
+		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getFilterFunction().getParameters());
 		if (copy.getFilterFunction().getFunctionID() == 1) {
-			this.setFilterFunction(new KalmanGainFunction(copy.getFilterFunction().getParameters()));
+			this.setFilterFunction(new KalmanGainFunction(parametercopy));
 		}
 		
-		this.setNewObjListPath(copy.getNewObjListPath().clone());
-		this.setOldObjListPath(copy.getOldObjListPath().clone());
+		
 		
 	
 	}

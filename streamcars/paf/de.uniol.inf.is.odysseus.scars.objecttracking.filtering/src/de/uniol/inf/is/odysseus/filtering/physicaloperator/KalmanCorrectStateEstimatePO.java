@@ -4,6 +4,7 @@
 package de.uniol.inf.is.odysseus.filtering.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.filtering.HashConstants;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
@@ -30,11 +31,14 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 		this.setFilterFunction(filterAO.getFilterFunction());
 		this.setNewObjListPath(filterAO.getNewObjListPathInt());
 		this.setOldObjListPath(filterAO.getOldObjListPathInt());
+		this.setParameters(filterAO.getParameters());
 	}
 
 	public KalmanCorrectStateEstimatePO(KalmanCorrectStateEstimatePO<M> copy) {
+		super();
+		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getFilterFunction().getParameters());
 		if (copy.getFilterFunction().getFunctionID() == 1) {
-			this.setFilterFunction(new KalmanCorrectStateEstimateFunction(copy.getFilterFunction().getParameters()));
+			this.setFilterFunction(new KalmanCorrectStateEstimateFunction(parametercopy));
 		}
 		
 		this.setNewObjListPath(copy.getNewObjListPath().clone());
@@ -103,7 +107,7 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 		
 		// TODO richtig machen
 		for (int i=0; i<= result.length-1; i++) {
-			newTuple.setAttribute(measurementValuePathsTupleNew.get(i)[0], result[i]);
+			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[0], result[i]);
 		}
 
 	}
