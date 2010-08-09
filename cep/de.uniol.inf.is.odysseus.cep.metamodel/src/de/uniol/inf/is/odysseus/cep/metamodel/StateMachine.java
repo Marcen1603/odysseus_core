@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -27,6 +29,7 @@ public class StateMachine<E> {
 	 * darf diese Liste nicht leer sein.
 	 */
 	private List<State> states;
+	private Map<String, State> stateMap;
 	/**
 	 * Referenz auf den Startzustand des Automaten. Das referenzierte Objekt
 	 * muss bei der Verarbeitung durch den EPA in states enthalten sein. Darf
@@ -76,6 +79,10 @@ public class StateMachine<E> {
 	 */
 	public StateMachine(List<State> states, String initialStateId, OutputScheme outputScheme, long windowSize) {
 		this.states = states;
+		this.stateMap = new HashMap<String, State>();
+		for (State s:states){
+			stateMap.put(s.getId(), s);
+		}
 		this.initialStateId = initialStateId;
 		this.outputScheme = outputScheme;
 	}
@@ -85,6 +92,7 @@ public class StateMachine<E> {
 	 */
 	public StateMachine() {
 		this.states = new LinkedList<State>();
+		this.stateMap = new HashMap<String, State>();
 		this.outputScheme = new OutputScheme();
 	}
 
@@ -107,6 +115,10 @@ public class StateMachine<E> {
 	 */
 	public void setStates(List<State> states) {
 		this.states = states;
+		this.stateMap = new HashMap<String, State>();
+		for (State s:states){
+			stateMap.put(s.getId(), s);
+		}
 	}
 
 	/**
@@ -119,11 +131,7 @@ public class StateMachine<E> {
 	}
 
 	public State getState(String id) {
-		for (State s : states) {
-			if (s.getId().equals(id))
-				return s;
-		}
-		return null;
+		return stateMap.get(id);
 	}
 	
 

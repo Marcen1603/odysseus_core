@@ -241,7 +241,7 @@ state[List<State> states, List<String> sourceNames]
 			simpleState.add(_statename);
 			if (simpleAttributeState.get(_attributeName) == null){
 				simpleAttributeState.put(_attributeName,_statename);
-				states.add(new State(_attributeName, _attributeName, _statename, false));
+				states.add(new State(_attributeName,_attributeName, _statename, false));
 			}else{
         throw new RuntimeException("Double attribute definition "+_attributeName); 
 			}
@@ -562,8 +562,13 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     SDFAttributeList attrList = new SDFAttributeList();
     for (PathAttribute p : retAttr) {
       String op = p.getAggregation();
-      String a = p.getAttribute();
+      String a = p.getStatename();
       String i = p.getKleenePart();
+      if ("[i]".equals(i)){
+        i = "";
+      }else if ("[i-1]".equals(i)){
+        i = "-1";
+      }
       String path = p.getPath();
       e = new RelationalJEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
           + "." + path));

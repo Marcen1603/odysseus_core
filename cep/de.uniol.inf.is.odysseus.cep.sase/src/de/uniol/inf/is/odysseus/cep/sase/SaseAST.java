@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-08-06 14:03:18
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2010-08-09 15:31:32
 
 	package de.uniol.inf.is.odysseus.cep.sase; 
 	import java.util.LinkedList;
@@ -545,7 +545,7 @@ public class SaseAST extends TreeParser {
                     			simpleState.add(_statename);
                     			if (simpleAttributeState.get(_attributeName) == null){
                     				simpleAttributeState.put(_attributeName,_statename);
-                    				states.add(new State(_attributeName, _attributeName, _statename, false));
+                    				states.add(new State(_attributeName,_attributeName, _statename, false));
                     			}else{
                             throw new RuntimeException("Double attribute definition "+_attributeName); 
                     			}
@@ -1777,8 +1777,13 @@ public class SaseAST extends TreeParser {
                         SDFAttributeList attrList = new SDFAttributeList();
                         for (PathAttribute p : retAttr) {
                           String op = p.getAggregation();
-                          String a = p.getAttribute();
+                          String a = p.getStatename();
                           String i = p.getKleenePart();
+                          if ("[i]".equals(i)){
+                            i = "";
+                          }else if ("[i-1]".equals(i)){
+                            i = "-1";
+                          }
                           String path = p.getPath();
                           e = new RelationalJEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
                               + "." + path));
@@ -1795,7 +1800,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:580:3: 
+                    // C:\\development\\odysseus\\cep\\de.uniol.inf.is.odysseus.cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:585:3: 
                     {
                     }
                     break;

@@ -177,7 +177,7 @@ public class StateMachineInstance<R> {
 				// + event + " " + currentState);
 
 				if (entry.getStateIdentifier().equals(
-						this.currentState.getVar())) {
+						this.currentState.getId())) {
 					// if (logger.isDebugEnabled()){
 					// logger.debug(this+" Update "+entry+" with "+eventReader.getValue(entry.getAttribute(),
 					// event));
