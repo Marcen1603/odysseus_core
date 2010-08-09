@@ -55,6 +55,18 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 	
 	@Override
 	public void transferNext() {
+		/* 
+		 * Hier wird gewartet, damit die Verarbeitung
+		 * der Daten besser nachvollzogen werden kann und
+		 * Odysseus / Eclipse nicht überlastet wird 
+		 * (siehe auch Ticket 225).
+		 * */
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		transfer(data.getScan());
 	}
 
