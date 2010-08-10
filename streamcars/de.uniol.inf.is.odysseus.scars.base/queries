@@ -58,7 +58,8 @@ PREDICTION(
 		radarSensor.scan:cars,
 		radarSensor.scan:cars:car:posx := radarSensor.scan:cars:car:posx * ( radarSensor.scan.timestamp - timer.timestamp) ; WHERE radarSensor.scan:cars:car:id > 0;
 	),
-	radarSensor.scan:cars
+	radarSensor.scan:cars,
+	radarSensor.scan:timestamp
 )
 
 *** LOGISCHER PLAN MIT SET-PREDICTION-OR ***
