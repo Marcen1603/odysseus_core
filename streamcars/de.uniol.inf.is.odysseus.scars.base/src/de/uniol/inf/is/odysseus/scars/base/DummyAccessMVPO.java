@@ -22,6 +22,10 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 	public DummyAccessMVPO() {
 	}
 	
+	public DummyAccessMVPO( DummyAccessMVPO<M> po ) {
+		outputSchema = po.outputSchema.clone();
+	}
+	
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
@@ -53,7 +57,7 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 
 	@Override
 	public AbstractSource<MVRelationalTuple<M>> clone() {
-		return null;
+		return new DummyAccessMVPO<M>( this );
 	}
 	
 	@Override

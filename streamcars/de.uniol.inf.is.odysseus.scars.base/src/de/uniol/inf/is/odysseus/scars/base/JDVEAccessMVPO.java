@@ -29,6 +29,10 @@ public class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAcces
 		this.port = pPort;
 	}
 	
+	public JDVEAccessMVPO( JDVEAccessMVPO<M> po ) {
+		this.port = po.port;
+	}
+	
 	@Override
 	public void setOutputSchema(SDFAttributeList outputSchema) {
 		super.setOutputSchema(outputSchema);
@@ -79,7 +83,7 @@ public class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAcces
 
 	@Override
 	public AbstractSource<MVRelationalTuple<M>> clone() {
-		return null;
+		return new JDVEAccessMVPO<M>(this);
 	}
 	
 	@Override
@@ -132,7 +136,7 @@ class JDVEData<M extends IProbability> {
 	     * die Methoden, die wir zum Auslesen ben�tigen. */
 		ByteBuffer byteBuffer = ByteBuffer.wrap(receiveData);
 		byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		Object res = parseNext(attributeList.get(0), byteBuffer);
+		Object res = parseStart(attributeList, byteBuffer);
 		
 		if( res instanceof MVRelationalTuple<?>) {
 			return (MVRelationalTuple<M>)res;
@@ -143,11 +147,11 @@ class JDVEData<M extends IProbability> {
 		}
 	}
 	
-//	public MVRelationalTuple<M> parseStart(SDFAttributeList schema, ByteBuffer bb) {
-//		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
-//		base.setAttribute(0, parseNext(schema.get(0), bb));
-//		return base;
-//	}
+	public MVRelationalTuple<M> parseStart(SDFAttributeList schema, ByteBuffer bb) {
+		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		base.setAttribute(0, parseNext(schema.get(0), bb));
+		return base;
+	}
 	
 	public MVRelationalTuple<M> parseRecord(SDFAttribute schema, ByteBuffer bb) {
 		int count = schema.getSubattributeCount();
