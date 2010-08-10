@@ -23,6 +23,10 @@ CREATE SENSOR radarSensor (
 	)
 ) FROM CHANNEL 127.0.0.1:5001
 
+CREATE SENSOR timer (
+	ATTRIBUTE(timestamp, LONG)
+) FROM CHANNEL 127.0.0.1:5001
+
 CREATE SENSOR radarSensor (
 	RECORD( scan,
 		ATTRIBUTE(timestamp, LONG)
