@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +26,14 @@ public class TupleIndexPath {
 	TupleIndexPath( List<TupleIndex> indices, SchemaIndexPath schemaIndexPath ) {
 		this.indices = indices;
 		this.schemaIndexPath = schemaIndexPath;
+	}
+	
+	TupleIndexPath( TupleIndexPath other ) {
+		this.indices = new ArrayList<TupleIndex>();
+		for( TupleIndex idx : other.indices ) {
+			indices.add( idx.clone() );
+		}
+		this.schemaIndexPath = other.schemaIndexPath;
 	}
 	
 	/**
@@ -132,5 +141,13 @@ public class TupleIndexPath {
 		TupleIndexPath idx = (TupleIndexPath)obj;
 		
 		return idx.indices.equals(this.indices) && idx.schemaIndexPath.equals(this.schemaIndexPath);
+	}
+	
+	/**
+	 * Liefert eine tiefe Kopie des aktuellen TupleIndexPaths.
+	 * Das referenzierte SchemaIndexPath wird nicht geklont.
+	 */
+	public TupleIndexPath clone() {
+		return new TupleIndexPath( this );
 	}
 }

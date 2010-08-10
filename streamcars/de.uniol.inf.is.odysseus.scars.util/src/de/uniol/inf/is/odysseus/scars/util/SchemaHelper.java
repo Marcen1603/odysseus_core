@@ -39,6 +39,11 @@ public class SchemaHelper {
 		return schema;
 	}
 	
+	SchemaHelper( SchemaHelper other ) {
+		this.schema = other.schema.clone();
+		calculateAllPaths(schema, new ArrayList<SchemaIndex>(), null );
+	}
+	
 	public SchemaIndexPath getSchemaIndexPath( String fullAttributeName ) {
 		if( fullAttributeName.contains(SOURCE_SEPARATOR)) {
 			String[] parts = fullAttributeName.split(SOURCE_SPLIT_REGEX);
@@ -112,6 +117,10 @@ public class SchemaHelper {
 		for( int i = 0; i < base.size(); i++ ) 
 			newList.add( new SchemaIndex(base.get(i)));
 		return newList;
+	}
+	
+	public SchemaHelper clone() {
+		return new SchemaHelper(this);
 	}
 
 }

@@ -48,4 +48,8 @@ public class SchemaIndex {
 		
 		return idx.isList == this.isList && idx.index == this.index && idx.attribute.equals(this.attribute);
 	}
+	
+	public SchemaIndex clone() {
+		return new SchemaIndex(this);
+	}
 }

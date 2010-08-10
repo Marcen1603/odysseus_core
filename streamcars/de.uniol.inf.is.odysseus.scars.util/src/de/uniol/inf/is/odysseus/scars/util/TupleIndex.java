@@ -30,6 +30,12 @@ public class TupleIndex {
 		this.attribute = attribute;
 	}
 	
+	TupleIndex( TupleIndex other ) {
+		this.parent = other.getParent();
+		this.valueIndex = other.valueIndex;
+		this.attribute = other.attribute;
+	}
+	
 	/**
 	 * Liefert den übergeordneten MVRelationalTuple<?>, worin der Indexeintrag
 	 * verweist. Der Index kann über getValueIndex() geliefert werden.
@@ -92,5 +98,13 @@ public class TupleIndex {
 	@Override
 	public String toString() {
 		return String.valueOf(valueIndex);
+	}
+	
+	/**
+	 * Erstellt eine tiefe Kopie des aktuellen TupleIndex. Der entsprechende SDFAttribute
+	 * wird nicht geklont.
+	 */
+	public TupleIndex clone() {
+		return new TupleIndex(this);
 	}
 }

@@ -25,6 +25,15 @@ public class SchemaIndexPath {
 		this.to = attributeTo;
 	}
 	
+	SchemaIndexPath( SchemaIndexPath other ) {
+		this.indices = new ArrayList<SchemaIndex>();
+		for( SchemaIndex idx : other.indices ) {
+			indices.add( idx.clone() );
+		}
+		this.hasListInside = other.hasListInside;
+		this.to = other.to.clone();
+	}
+	
 	public int getLength() {
 		return indices.size();
 	}
@@ -106,5 +115,9 @@ public class SchemaIndexPath {
 		SchemaIndexPath idx = (SchemaIndexPath)obj;
 		
 		return idx.indices.equals(this.indices) && idx.hasListInside == this.hasListInside && idx.to.equals(this.to);
+	}
+	
+	public SchemaIndexPath clone() {
+		return new SchemaIndexPath(this);
 	}
 }
