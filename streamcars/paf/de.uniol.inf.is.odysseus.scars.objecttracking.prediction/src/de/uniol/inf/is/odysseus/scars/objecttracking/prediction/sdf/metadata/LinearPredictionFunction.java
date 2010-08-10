@@ -18,7 +18,6 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	private PredictionExpression[] expressions;
 	private double[][] noiseMatrix;
 	
-	
 	@Override
 	public void init(SDFAttributeList scanSchema, SDFAttributeList timeSchema) {
 		this.scanSchema = scanSchema;

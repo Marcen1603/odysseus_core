@@ -95,7 +95,6 @@ public class PredictionExpression {
 	 * @param variableName
 	 */
 	protected void createVariable(String variableName) {
-		System.out.println("create variable: " + variableName);
 		String[] varSplit = variableName.split("\\.", 2);
 		String source = varSplit[0];
 		List<String> varNames = variables.get(source);

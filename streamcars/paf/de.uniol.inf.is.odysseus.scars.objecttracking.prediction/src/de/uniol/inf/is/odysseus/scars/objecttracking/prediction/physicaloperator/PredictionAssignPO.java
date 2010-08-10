@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	
@@ -37,8 +38,8 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		
-		Object listObj = object.getORAttribute(pathToList);
+		TupleHelper helper = new TupleHelper(object);
+		Object listObj = helper.getObject(pathToList, false);
 		
 		if(listObj instanceof MVRelationalTuple<?>) {
 			Object[] objList = ((MVRelationalTuple<?>) listObj).getAttributes();

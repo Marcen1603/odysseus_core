@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
@@ -52,8 +53,9 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 		return objListPath;
 	}
 	
-	public void initNeededAttributeIndices(SDFAttributeList right,String[] objListPath) {
-		this.objListPath = OrAttributeResolver.resolveIndices(right, objListPath);
+	public void initNeededAttributeIndices(SDFAttributeList right,String objListPathName) {
+		SchemaHelper helper = new SchemaHelper(right);
+		this.objListPath = helper.getSchemaIndexPath(objListPathName).toArray();
 	}
 	
 	@SuppressWarnings("unchecked")

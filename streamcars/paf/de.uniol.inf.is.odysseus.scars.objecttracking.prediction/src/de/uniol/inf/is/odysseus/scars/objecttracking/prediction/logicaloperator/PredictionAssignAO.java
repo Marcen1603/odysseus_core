@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
@@ -33,7 +34,8 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	}
 	
 	public void initListPath(SDFAttributeList inputSchema, String absoluteListNamePath) {
-		pathToList = OrAttributeResolver.getAttributePath(inputSchema, absoluteListNamePath);
+		SchemaHelper helper = new SchemaHelper(inputSchema);
+		pathToList = helper.getSchemaIndexPath(absoluteListNamePath).toArray();
 	}
 	
 	public int[] getPathToList() {
@@ -63,5 +65,4 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 		outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, predictionFunctions);
 		return outputSchema;
 	}
-
 }
