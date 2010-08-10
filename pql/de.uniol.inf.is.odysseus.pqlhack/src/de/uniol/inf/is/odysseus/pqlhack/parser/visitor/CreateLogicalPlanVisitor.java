@@ -1190,11 +1190,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		int rightInSourceOutPort = ((Integer) rightInData.get(2)).intValue();
 		
 		String attributeName = ((ASTIdentifier) node.jjtGetChild(2)).getName();
+		String timeAttributeName = ((ASTIdentifier) node.jjtGetChild(3)).getName();
 		
 		SDFAttributeList schema = rightIn.getOutputSchema();
-		SchemaHelper helper = new SchemaHelper(schema);
-		String[] path = helper.getSchemaIndexPath(attributeName).toStringPath();
-		ao.initNeededAttributeIndices(schema, path);
+		ao.initNeededAttributeIndices(schema, attributeName, timeAttributeName );
 		
 		ao.subscribeToSource(leftIn, 0, leftInSourceOutPort, leftIn.getOutputSchema());
 		ao.subscribeToSource(rightIn, 1, rightInSourceOutPort, rightIn.getOutputSchema());
