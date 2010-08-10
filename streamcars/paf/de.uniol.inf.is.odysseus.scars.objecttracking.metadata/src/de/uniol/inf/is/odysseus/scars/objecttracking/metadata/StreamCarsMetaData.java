@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
-import java.util.ArrayList;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 
 /**
  * Combined metadata which implements each metadata that is used in the
@@ -12,16 +10,20 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
  * @author Volker Janz
  *
  */
-public class StreamCarsMetaData implements IConnectionContainer, IGain, IProbability  {
+public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements 
+	IConnectionContainer, IGain {
 
 	/* ############### KONSTRUKTOREN ################ */
 
 	public StreamCarsMetaData() {
+		super();
 		this.connectionList = new ConnectionList();
 	}
-
-	public StreamCarsMetaData(ConnectionList inilist) {
-		this.setConnectionList(inilist);
+	
+	public StreamCarsMetaData( StreamCarsMetaData<K> data ) {
+		super(data);
+		this.connectionList = data.connectionList;
+		this.gain = data.gain;
 	}
 
 	/* ############### CONNECTIONCONTAINER ################ */
@@ -62,8 +64,8 @@ public class StreamCarsMetaData implements IConnectionContainer, IGain, IProbabi
 	}
 
 	@Override
-	public StreamCarsMetaData clone() {
-		return null;
+	public StreamCarsMetaData<K> clone() {
+		return new StreamCarsMetaData<K>(this);
 	}
 
 	/* ############### GAIN ################ */
@@ -78,37 +80,4 @@ public class StreamCarsMetaData implements IConnectionContainer, IGain, IProbabi
 	public void setGain(double[][] newGain) {
 		this.gain = newGain;
 	}
-
-	/* ############### PROBABILITY ################ */
-
-	Probability probObj = new Probability();
-
-	public void setCovariance(double[][] sigma) {
-		probObj.setCovariance(sigma);
-	}
-
-	public double[][] getCovariance() {
-		return probObj.getCovariance();
-	}
-
-	public void setMVAttributeIndices(int[] indices) {
-		probObj.setMVAttributeIndices(indices);
-	}
-
-	public int[] getMVAttributeIndices() {
-		return probObj.getMVAttributeIndices();
-	}
-
-	public ArrayList<int[]> getAttributePaths() {
-		return probObj.getAttributePaths();
-	}
-
-	public void setAttributePaths(ArrayList<int[]> paths) {
-		probObj.setAttributePaths(paths);
-	}
-
-	public int getIndexOfKovMatrix(int[] path) {
-		return probObj.getIndexOfKovMatrix(path);
-	}
-
 }
