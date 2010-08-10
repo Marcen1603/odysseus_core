@@ -20,6 +20,8 @@ public class SchemaHelper {
 	private SDFAttributeList schema;
 	
 	private Map<String, SchemaIndexPath> paths = new HashMap<String, SchemaIndexPath>();
+	private Map<SDFAttribute, SchemaIndexPath> attributePaths = new HashMap<SDFAttribute, SchemaIndexPath>();
+	
 	private String sourceName = null;
 	private SDFAttribute startTimestampAttribute = null;
 	private SDFAttribute endTimestampAttribute = null;
@@ -46,6 +48,10 @@ public class SchemaHelper {
 		if( p == null ) 
 			throw new IllegalArgumentException("cannot find schemaindexpath for " + fullAttributeName);
 		return paths.get(fullAttributeName);
+	}
+	
+	public SchemaIndexPath getSchemaIndexPath( SDFAttribute attribute ) {
+		return attributePaths.get(attribute);
 	}
 	
 	public SDFAttribute getAttribute( String fullAttributeName ) {
@@ -93,6 +99,7 @@ public class SchemaHelper {
 			
 			actualPath.add( new SchemaIndex(index, attribute));
 			paths.put(fullAttributeName, new SchemaIndexPath(copy(actualPath), attribute));
+			attributePaths.put(attribute, new SchemaIndexPath(copy(actualPath), attribute));
 			
 			calculateAllPaths( attribute.getSubattributes(), actualPath, fullAttributeName);
 			
