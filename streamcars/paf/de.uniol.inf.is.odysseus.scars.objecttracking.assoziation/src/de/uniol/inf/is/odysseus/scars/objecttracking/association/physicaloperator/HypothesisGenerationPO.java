@@ -61,6 +61,9 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 			this.sweepScanned.insert(object);
 		}
 
+		this.sweepPrediction.purgeElements(object, Order.LeftRight);
+		this.sweepScanned.purgeElements(object, Order.LeftRight);
+
 		Iterator<MVRelationalTuple<M>> itPred = sweepPrediction.query(object, Order.LeftRight);
 		Iterator<MVRelationalTuple<M>> itScan = sweepScanned.query(object, Order.LeftRight);
 
