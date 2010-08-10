@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.filtering.logicaloperator;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
-import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -18,8 +17,6 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	private static final long serialVersionUID = 1L;
 	
 	private String functionID;
-	
-	private IFilterFunction filterFunction;
 	
 	// path to new and old objects
 	private String oldObjListPath;
@@ -49,24 +46,7 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 		this.leftSchema = copy.getLeftSchema().clone();
 		this.rightSchema = copy.getRightSchema().clone();
 	}
-	
-	
-	/**
-	 * @param filterFunctionID the filterfunction
-	 *
-	 * */
-	public void setFilterfunction(IFilterFunction filterfunction) {
-		this.filterFunction = filterfunction;
-	
-	}
 
-	/**
-	 * @return the filterfunction
-	 */
-	public IFilterFunction getFilterFunction() {
-		return this.filterFunction;
-	}
-	
 	
 	public String getOldObjListPath() {
 		return oldObjListPath;

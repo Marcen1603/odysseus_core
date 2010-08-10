@@ -29,7 +29,7 @@ public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnection
 	
 	public KalmanCorrectStateCovariancePO(FilterAO<M> filterAO) {
 		super();
-		this.setFilterFunction(filterAO.getFilterFunction());
+		
 		this.setParameters(filterAO.getParameters());
 	}
 

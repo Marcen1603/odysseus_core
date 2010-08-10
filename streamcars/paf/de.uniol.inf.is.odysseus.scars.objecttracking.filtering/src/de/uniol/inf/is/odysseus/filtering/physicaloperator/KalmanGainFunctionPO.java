@@ -32,7 +32,6 @@ public class KalmanGainFunctionPO<M extends IProbability & IConnectionContainer>
 	
 	public KalmanGainFunctionPO(FilterAO<M> filterAO) {
 		super();
-		this.setFilterFunction(filterAO.getFilterFunction());
 		this.setParameters(filterAO.getParameters());
 		
 	}

@@ -28,7 +28,7 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 	}
 
 	public KalmanCorrectStateEstimatePO(FilterAO<M> filterAO) {
-		this.setFilterFunction(filterAO.getFilterFunction());
+	
 		this.setNewObjListPath(filterAO.getNewObjListPathInt());
 		this.setOldObjListPath(filterAO.getOldObjListPathInt());
 		this.setParameters(filterAO.getParameters());
