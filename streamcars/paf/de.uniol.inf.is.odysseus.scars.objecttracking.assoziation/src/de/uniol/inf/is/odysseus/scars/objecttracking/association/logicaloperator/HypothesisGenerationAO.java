@@ -38,12 +38,16 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		this.rightSchema = copy.getRightSchema();
 	}
 
+	// LEFT -> SOURCE (neu erkannte objekte)
+	// RIGHT -> PREDICTION (alte, prädizierte objekte)
+
+	// Schema von PREDICTION wird erweitert um Schema der Liste von SOURCE (analog zur Änderung des Tupels im PO)
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList newSchema = new SDFAttributeList();
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(this.getSubscribedToSource(LEFT).getSchema(), this.getNewObjListPath()));
-		newSchema.addAttributes(OrAttributeResolver.getSubSchema(this.getSubscribedToSource(RIGHT).getSchema(), this.getOldObjListPath()));
-		return newSchema;
+		SDFAttributeList predictionSchema = this.getSubscribedToSource(RIGHT).getSchema();
+		predictionSchema.addAttributes(OrAttributeResolver.getSubSchema(this.getSubscribedToSource(LEFT).getSchema(), this.getNewObjListPath()));
+		return predictionSchema;
 	}
 
 	@Override
