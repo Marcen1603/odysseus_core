@@ -23,6 +23,28 @@ CREATE SENSOR radarSensor (
 	)
 ) FROM CHANNEL 127.0.0.1:5001
 
+CREATE SENSOR radarSensor2 (
+	RECORD( scan,
+		ATTRIBUTE(timestamp, LONG)
+		LIST( cars, 
+			RECORD( car,
+				ATTRIBUTE(type, INTEGER)
+				ATTRIBUTE(id, INTEGER)
+				ATTRIBUTE(laneid, INTEGER)
+				ATTRIBUTE(posx, MV FLOAT 		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posy, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posz, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(roll, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(pitch, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(heading, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(velocity, MV FLOAT	0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(length, FLOAT)
+				ATTRIBUTE(width, FLOAT)
+			)
+		)
+	)
+) FROM CHANNEL 127.0.0.1:5001
+
 CREATE SENSOR timer (
 	ATTRIBUTE(timestamp, STARTTIMESTAMP)
 ) FROM CHANNEL 127.0.0.1:5001
@@ -106,34 +128,35 @@ BROKER(a, RPROJECTION(ACCESS(linearMove as d), d.timestamp));
 
 ------------------------------------------
 
-CREATE SENSOR sensorA (
-	RECORD( scan,
-		ATTRIBUTE(dummy, LONG)
-	)
-) FROM CHANNEL 127.0.0.1:5001
-
-CREATE SENSOR sensorB (
-	RECORD( scan,
-		ATTRIBUTE(dummy, LONG)
-	)
-) FROM CHANNEL 127.0.0.1:5001
-
 LOGICAL PLAN : 
 ASSOCIATION-GEN (
-	ACCESS (sensorA),
-	ACCESS (sensorB),
-	sensorA.dummy,
-	sensorB.dummy
+	ACCESS (radarSensor),
+	ACCESS (radarSensor2),
+	radarSensor.scan:cars,
+	radarSensor2.scan:cars
 )
+
+Info: port 0 ist scannedObjects, port 1 ist predicted
+
+INFO: Die Generation hat als definierte Ausgabe: 
+RECORD( association,
+		ATTRIBUTE(timestamp, LONG)
+		LIST( predictedObjects, 
+			...
+		)
+		LIST( scannedObjects, 
+			...
+		)
+	)
 
 LOGICAL PLAN : 
 ASSOCIATION-EVAL (
 	ACCESS (sensorA),
 	EVALUATEID,
 	param1 := value1; param2 := value2;,
-	sensorA.dummy,
-	sensorB.dummy,
-	sensorA.dummy := sensorB.dummy; sensorA.car := sensorB.car;
+	association:newObjects,
+	association:predictedObjects,
+	association:newObjects.car := association:predictedObjects.car; sensorA.car := sensorB.car;
 )
 
 LOGICAL PLAN : 

@@ -1017,14 +1017,19 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
 		HypothesisGenerationAO gen = new HypothesisGenerationAO();
+		
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
 
-		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-
 		gen.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
+		
+		newData = new ArrayList();
+		newData.add(attrRes);
 
-		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this, data);
+		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
 		gen.subscribeToSource(childOp, 1, sourceOutPort, childOp.getOutputSchema());
@@ -1032,11 +1037,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		gen.initPaths(((ASTIdentifier) node.jjtGetChild(3)).getName(), ((ASTIdentifier) node.jjtGetChild(2)).getName());
 
 		// pass only the attribute resolver to the children
-		ArrayList newData = new ArrayList();
-		newData.add(attrRes);
-		newData.add(gen);
-		newData.add(new Integer(0));
-		return newData;
+		((ArrayList) data).add(gen);
+		((ArrayList) data).add(new Integer(0));
+		
+		return data;
 	}
 
 	@Override
@@ -1046,8 +1050,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		HypothesisEvaluationAO eval = new HypothesisEvaluationAO();
 		// first the output schema is empty, it will be
 		// filled by the projection attributes
+		
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
 
-		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 		childOp.subscribeToSource(eval, 0, sourceOutPort, childOp.getOutputSchema());
@@ -1065,22 +1072,23 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		eval.setMeasurementPairs(params);
 
 		// pass only the attribute resolver to the children
-		ArrayList newData = new ArrayList();
-		newData.add(attrRes);
-		newData.add(eval);
-		newData.add(new Integer(0));
-		return newData;
+		((ArrayList) data).add(eval);
+		((ArrayList) data).add(new Integer(0));
+		
+		return data;
 	}
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		ArrayList<Object> newData = new ArrayList<Object>();
 		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data).get(0);
 
 		HypothesisSelectionAO selection = new HypothesisSelectionAO();
+		
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
 
 		// subscribe to source
-		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
+		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) inputOpNode.get(2)).intValue();
 		ILogicalOperator inputOp = (ILogicalOperator) inputOpNode.get(1);
 		inputOp.subscribeToSource(selection, 0, sourceOutPort, inputOp.getOutputSchema());
@@ -1105,16 +1113,14 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		DataDictionary.getInstance().setLogicalView(opName, selection);
 
 		// constructing return values
-		newData.add(attrRes);
-		newData.add(selection);
-		newData.add(new Integer(0));
-
-		return newData;
+		((ArrayList) data).add(selection);
+		((ArrayList) data).add(new Integer(0));
+		
+		return data;
 	}
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
-		ArrayList<Object> newData = new ArrayList<Object>();
 		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data).get(0);
 
 		// get name and lookup operator
@@ -1130,11 +1136,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		Integer outputPort = new Integer(number);
 
 		// constructing return values
-		newData.add(attrRes);
-		newData.add(associationSource);
-		newData.add(outputPort);
-
-		return newData;
+		((ArrayList) data).add(associationSource);
+		((ArrayList) data).add(new Integer(0));
+		
+		return data;
 	}
 
 	private HashMap<String, String> buildKeyMap(ASTKeyValueList list) {
@@ -1211,9 +1216,12 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
         IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
         EvaluationAO evalAO = new EvaluationAO();
+        
+		ArrayList newData = new ArrayList();
+		newData.add(attrRes);
 
         // subscribe bei der Assoziation (HypothesisSelektion)
-		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, data);
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
 		evalAO.subscribeToSource(childOp, 2, sourceOutPort, childOp.getOutputSchema());
@@ -1222,8 +1230,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		String associationObjListPath = identifier.getName();
 		
+		newData = new ArrayList();
+		newData.add(attrRes);
+		
         // subscribe bei der Filterung
-		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this, data);
+		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
 		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
@@ -1232,8 +1243,11 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		identifier = (ASTIdentifier) node.jjtGetChild(3);
 		String filteringObjListPaths = identifier.getName();
 		
+		newData = new ArrayList();
+		newData.add(attrRes);
+		
         // subscribe bei bei temporären Broker
-		childData = (ArrayList<Object>) node.jjtGetChild(4).jjtAccept(this, data);
+		childData = (ArrayList<Object>) node.jjtGetChild(4).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
 		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
@@ -1257,12 +1271,10 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// set threshold
 		evalAO.setThreshold(threshold);
 		
-		ArrayList newData = new ArrayList();
-		newData.add(attrRes);
-		newData.add(evalAO);
-		newData.add(new Integer(0));
+		((ArrayList) data).add(evalAO);
+		((ArrayList) data).add(new Integer(0));
 		
-		return newData;
+		return data;
 	}
 
 }

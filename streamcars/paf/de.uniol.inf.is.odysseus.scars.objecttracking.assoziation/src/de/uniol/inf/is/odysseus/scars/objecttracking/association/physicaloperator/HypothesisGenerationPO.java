@@ -1,13 +1,12 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
-import java.util.ArrayList;
-
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 /**
  * The Hypothesis Generation has two inputstreams:
@@ -21,45 +20,25 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  */
 public class HypothesisGenerationPO<M extends IProbability & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private MVRelationalTuple<M> oldList;
-	private MVRelationalTuple<M> newList;
+	private MVRelationalTuple<M> predictedObject;
+	private MVRelationalTuple<M> scannedObject;
 
-	private int[] oldObjListPath;
-	private int[] newObjListPath;
+	private String oldObjListPath;
+	private String newObjListPath;
 
 	public HypothesisGenerationPO() {
-
 	}
 
 	public HypothesisGenerationPO(HypothesisGenerationPO<M> copy) {
 		super(copy);
-
-		this.oldList = copy.getOldList();
-		this.newList = copy.getNewList();
+		this.predictedObject = copy.predictedObject;
+		this.scannedObject = copy.scannedObject;
 		this.oldObjListPath = copy.getOldObjListPath();
 		this.newObjListPath = copy.getNewObjListPath();
 	}
 
-	public MVRelationalTuple<M> getOldList() {
-		return oldList;
-	}
-
-	public void setOldList(MVRelationalTuple<M> oldList) {
-		this.oldList = oldList;
-	}
-
-	public MVRelationalTuple<M> getNewList() {
-		return newList;
-	}
-
-	public void setNewList(MVRelationalTuple<M> newList) {
-		this.newList = newList;
-	}
-
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -68,26 +47,43 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 	 */
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
-		if(this.oldList == null || this.newList == null) {
+		if(this.predictedObject == null || this.scannedObject == null) {
 			switch(port) {
 				/*
-				 *  WICHTIG: Im sekundären Zyklus muss das, was aus dem primären Zyklus
+				 *  WICHTIG: Im sekundï¿½ren Zyklus muss das, was aus dem primï¿½ren Zyklus
 				 *  aus der HypothesisSelection in diesen Operator kommt auf Port 1
 				 *  ankommen!!!!!!!!!
 				 *
 				 */
-				case 0: this.oldList = object;
-				case 1: this.newList = object;
+				case 0: this.predictedObject = object;
+				case 1: this.scannedObject = object;
 			}
 		} else {
-			Object[] oldListAttributes = oldList.getAttributes();
-			ArrayList<Object> oldNewListAttributes = new ArrayList<Object>();
-			oldNewListAttributes.add(oldListAttributes);
-			oldNewListAttributes.add(OrAttributeResolver.resolveTuple(this.newList, this.newObjListPath));
-			this.oldList = null;
-			this.newList = null;
-			transfer(new MVRelationalTuple<M>(oldNewListAttributes.toArray()));
+			MVRelationalTuple<M> output = createOutputTuple(this.scannedObject, this.predictedObject);
+			this.predictedObject = null;
+			this.scannedObject = null;
+			transfer(output);
 		}
+	}
+	
+	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {
+		SchemaHelper helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
+		
+		Object[] association = new Object[3];
+		
+		// get timestamp path from scanned data
+		SchemaIndexPath path = helper.getSchemaIndexPath(helper.getStartTimestampAttribute());
+		association[0] = path.toTupleIndexPath(scannedObject).getTupleObject();
+		
+		// get scanned objects
+		path = helper.getSchemaIndexPath(this.newObjListPath);
+		association[1] = path.toTupleIndexPath(scannedObject).getTupleObject();
+		
+		// get predicted objects
+		path = helper.getSchemaIndexPath(this.oldObjListPath);
+		association[2] =  path.toTupleIndexPath(predictedObject).getTupleObject();
+		
+		return new MVRelationalTuple<M>(association);
 	}
 
 	@Override
@@ -100,19 +96,19 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		return new HypothesisGenerationPO<M>(this);
 	}
 
-	public int[] getOldObjListPath() {
+	public String getOldObjListPath() {
 		return this.oldObjListPath;
 	}
 
-	public int[] getNewObjListPath() {
+	public String getNewObjListPath() {
 		return this.newObjListPath;
 	}
 
-	public void setOldObjListPath(int[] oldObjListPath) {
+	public void setOldObjListPath(String oldObjListPath) {
 		this.oldObjListPath = oldObjListPath;
 	}
 
-	public void setNewObjListPath(int[] newObjListPath) {
+	public void setNewObjListPath(String newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}
 
