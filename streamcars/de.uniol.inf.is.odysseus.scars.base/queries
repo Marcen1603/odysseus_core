@@ -3,7 +3,7 @@
 
 CREATE SENSOR radarSensor (
 	RECORD( scan,
-		ATTRIBUTE(timestamp, LONG)
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
 		LIST( cars, 
 			RECORD( car,
 				ATTRIBUTE(type, INTEGER)
@@ -24,12 +24,12 @@ CREATE SENSOR radarSensor (
 ) FROM CHANNEL 127.0.0.1:5001
 
 CREATE SENSOR timer (
-	ATTRIBUTE(timestamp, LONG)
+	ATTRIBUTE(timestamp, STARTTIMESTAMP)
 ) FROM CHANNEL 127.0.0.1:5001
 
 CREATE SENSOR radarSensor (
 	RECORD( scan,
-		ATTRIBUTE(timestamp, LONG)
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
 		LIST( cars, 
 			RECORD( car,
 				ATTRIBUTE(type, INTEGER)
@@ -58,8 +58,7 @@ PREDICTION(
 		radarSensor.scan:cars,
 		radarSensor.scan:cars:car:posx := radarSensor.scan:cars:car:posx * ( radarSensor.scan.timestamp - timer.timestamp) ; WHERE radarSensor.scan:cars:car:id > 0;
 	),
-	radarSensor.scan:cars,
-	radarSensor.scan:timestamp
+	radarSensor.scan:cars
 )
 
 *** LOGISCHER PLAN MIT SET-PREDICTION-OR ***
