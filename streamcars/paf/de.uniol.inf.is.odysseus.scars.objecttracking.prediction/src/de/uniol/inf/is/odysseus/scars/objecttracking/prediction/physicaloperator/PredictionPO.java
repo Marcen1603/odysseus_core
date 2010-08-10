@@ -22,7 +22,6 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 	private MVRelationalTuple<M> currentScan;
 	
 	private int[] objListPath;
-	private int[] timePath;
 	
 	private ISweepArea<MVRelationalTuple<M>> scanBuffer;
 
@@ -36,8 +35,6 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 		this.predictionFunctions = new PredictionFunctionContainer<M>(copy.predictionFunctions);
 		objListPath = new int[copy.objListPath.length];
 		System.arraycopy(copy.objListPath, 0, this.objListPath, 0, copy.objListPath.length);
-		timePath = new int[copy.timePath.length];
-		System.arraycopy(copy.timePath, 0, this.timePath, 0, copy.timePath.length);
 	}
 	
 	public void setPredictionFunctions(PredictionFunctionContainer<M> predictionFunctions) {
@@ -48,10 +45,6 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 		this.objListPath = objListPath;
 	}
 
-	public void setTimePath( int[] timePath ) {
-		this.timePath = timePath;
-	}
-	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;

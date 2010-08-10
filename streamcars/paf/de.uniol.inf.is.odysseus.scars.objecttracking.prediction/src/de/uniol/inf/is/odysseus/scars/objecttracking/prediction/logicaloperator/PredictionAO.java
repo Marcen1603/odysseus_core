@@ -17,8 +17,6 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 	
 	private PredictionFunctionContainer<M> predictionFunctions;
 	private int[] objListPath;
-	private int[] timePath;
-
 	
 	public PredictionAO() {
 		super();
@@ -30,8 +28,6 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 		predictionFunctions = new PredictionFunctionContainer<M>(copy.getPredictionFunctions());
 		this.objListPath = new int[copy.objListPath.length];
 		System.arraycopy(copy.objListPath, 0, this.objListPath, 0, copy.objListPath.length);
-		this.timePath = new int[copy.timePath.length];
-		System.arraycopy(copy.timePath, 0, this.timePath, 0, copy.timePath.length);
 	}
 	
 
@@ -55,14 +51,9 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 		return objListPath;
 	}
 	
-	public int[] getTimePath() {
-		return timePath;
-	}
-	
-	public void initNeededAttributeIndices(SDFAttributeList right,String objListPathName, String timeAttributeName ) {
+	public void initNeededAttributeIndices(SDFAttributeList right,String objListPathName ) {
 		SchemaHelper helper = new SchemaHelper(right);
 		this.objListPath = helper.getSchemaIndexPath(objListPathName).toArray();
-		this.timePath = helper.getSchemaIndexPath(timeAttributeName).toArray();
 	}
 	
 	@SuppressWarnings("unchecked")
