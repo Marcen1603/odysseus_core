@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -23,19 +24,22 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	private String oldObjListPath;
 	private String newObjListPath;
 
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
+	private SchemaHelper leftSh;
+	private SchemaHelper rightSh;
 
 	public HypothesisGenerationAO() {
 		super();
+		leftSh = new SchemaHelper(this.getSubscribedToSource(LEFT).getSchema());
+		rightSh = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema());
 	}
 
 	public HypothesisGenerationAO(HypothesisGenerationAO<M> copy) {
 		super(copy);
 		this.oldObjListPath = copy.oldObjListPath;
 		this.newObjListPath = copy.newObjListPath;
-		this.leftSchema = copy.getLeftSchema();
-		this.rightSchema = copy.getRightSchema();
+		copy.leftSh = new SchemaHelper(this.getSubscribedToSource(LEFT).getSchema());
+		copy.rightSh = new SchemaHelper(this.getSubscribedToSource(RIGHT).getSchema());
+
 	}
 
 	// LEFT -> SOURCE (neu erkannte objekte)
@@ -61,13 +65,11 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	}
 
 	public int[] getNewObjListPath() {
-		this.leftSchema = this.getSubscribedToSource(LEFT).getSchema();
-		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
+		return leftSh.getSchemaIndexPath(newObjListPath).toArray();
 	}
 
 	public int[] getOldObjListPath() {
-		this.rightSchema = this.getSubscribedToSource(RIGHT).getSchema();
-		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
+		return rightSh.getSchemaIndexPath(oldObjListPath).toArray();
 	}
 
 	public SDFAttributeList getLeftSchema() {

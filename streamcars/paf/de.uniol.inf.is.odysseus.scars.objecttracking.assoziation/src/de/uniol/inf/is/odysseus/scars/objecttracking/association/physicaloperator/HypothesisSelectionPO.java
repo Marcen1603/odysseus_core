@@ -184,16 +184,6 @@ public class HypothesisSelectionPO<M extends IProbability & IConnectionContainer
 		this.newObjListPath = newObjListPath;
 	}
 
-	/*
-	public void setLeftSchema(SDFAttributeList leftSchema) {
-		this.leftSchema = leftSchema;
-	}
-
-	public void setRightSchema(SDFAttributeList rightSchema) {
-		this.rightSchema = rightSchema;
-	}
-	*/
-
 	public int[] getOldObjListPath() {
 		return this.oldObjListPath;
 	}
@@ -201,15 +191,5 @@ public class HypothesisSelectionPO<M extends IProbability & IConnectionContainer
 	public int[] getNewObjListPath() {
 		return this.newObjListPath;
 	}
-
-	/*
-	public SDFAttributeList getLeftSchema() {
-		return this.leftSchema;
-	}
-
-	public SDFAttributeList getRightSchema() {
-		return this.rightSchema;
-	}
-	*/
 
 }

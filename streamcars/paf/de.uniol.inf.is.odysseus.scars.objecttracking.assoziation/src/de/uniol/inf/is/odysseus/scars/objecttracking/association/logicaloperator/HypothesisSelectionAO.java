@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperato
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalOp {
@@ -14,17 +14,19 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 
 	private String oldObjListPath;
 	private String newObjListPath;
-	
+
+	private SchemaHelper sh;
+
 	public HypothesisSelectionAO() {
-		
+		sh = new SchemaHelper(this.getInputSchema());
 	}
-	
+
 	public HypothesisSelectionAO(HypothesisSelectionAO<M> copy) {
 		super(copy);
-		
 		this.ID = copy.getID();
 		this.oldObjListPath = copy.oldObjListPath;
 		this.newObjListPath = copy.newObjListPath;
+		sh = new SchemaHelper(this.getInputSchema());
 	}
 
 	public String getID() {
@@ -51,10 +53,10 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 	}
 
 	public int[] getNewObjListPath() {
-		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.newObjListPath);
+		return sh.getSchemaIndexPath(this.newObjListPath).toArray();
 	}
 
 	public int[] getOldObjListPath() {
-		return OrAttributeResolver.getAttributePath(this.getInputSchema(), this.oldObjListPath);
+		return sh.getSchemaIndexPath(this.oldObjListPath).toArray();
 	}
 }
