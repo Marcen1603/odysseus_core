@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.filtering.tests
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: de.uniol.inf.is.odysseus.scars.objecttracking.filtering;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.filtering,
+ junit.framework;version="3.8.2",
+ org.junit;version="4.5.0"
