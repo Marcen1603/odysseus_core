@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration">
+      <transformationConfiguration
+            class="de.uniol.inf.is.odysseus.rcp.scarscfg.ScarsTransformationConfiguration"
+            name="StreamCars">
+      </transformationConfiguration>
+   </extension>
+
+</plugin>
