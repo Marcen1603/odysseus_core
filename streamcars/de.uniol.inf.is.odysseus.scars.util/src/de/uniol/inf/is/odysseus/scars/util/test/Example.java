@@ -31,11 +31,11 @@ public class Example {
 		SDFAttribute a = new SDFAttribute(sourceName, "a");
 		a.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
 		SDFAttribute b = new SDFAttribute(sourceName, "b");
-		b.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		b.setDatatype(SDFDatatypeFactory.getDatatype("StartTimestamp"));
 		SDFAttribute c = new SDFAttribute(sourceName, "c");
 		c.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
 		SDFAttribute d = new SDFAttribute(sourceName, "d");
-		d.setDatatype(SDFDatatypeFactory.getDatatype("Long"));
+		d.setDatatype(SDFDatatypeFactory.getDatatype("EndTimestamp"));
 		SDFAttribute e = new SDFAttribute(sourceName, "e");
 		e.setDatatype(SDFDatatypeFactory.getDatatype("MV Float"));
 		base.addSubattribute(a);

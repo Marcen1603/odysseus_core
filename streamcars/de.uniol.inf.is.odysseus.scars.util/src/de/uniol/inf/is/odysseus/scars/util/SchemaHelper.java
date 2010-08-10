@@ -21,6 +21,8 @@ public class SchemaHelper {
 	
 	private Map<String, SchemaIndexPath> paths = new HashMap<String, SchemaIndexPath>();
 	private String sourceName = null;
+	private SDFAttribute startTimestampAttribute = null;
+	private SDFAttribute endTimestampAttribute = null;
 	
 	public SchemaHelper( SDFAttributeList schema ) {
 		if( schema == null ) {
@@ -63,6 +65,14 @@ public class SchemaHelper {
 		return sourceName;
 	}
 	
+	public SDFAttribute getStartTimestampAttribute() {
+		return startTimestampAttribute;
+	}
+	
+	public SDFAttribute getEndTimestampAttribute() {
+		return endTimestampAttribute;
+	}
+	
 	private void calculateAllPaths(SDFAttributeList list, List<SchemaIndex> actualPath, String actualAttributeName) {
 		for( int index = 0; index < list.getAttributeCount(); index++ ) {
 			SDFAttribute attribute = list.getAttribute(index);
@@ -73,6 +83,13 @@ public class SchemaHelper {
 				fullAttributeName = actualAttributeName + ATTRIBUTE_SEPARATOR + attribute.getAttributeName();
 			else
 				fullAttributeName = attribute.getAttributeName();
+			
+			// timestamp
+			if( attribute.getDatatype().getURIWithoutQualName().equals("StartTimestamp")) {
+				startTimestampAttribute = attribute;
+			} else if( attribute.getDatatype().getURIWithoutQualName().equals("EndTimestamp")) {
+				endTimestampAttribute = attribute;
+			}
 			
 			actualPath.add( new SchemaIndex(index, attribute));
 			paths.put(fullAttributeName, new SchemaIndexPath(copy(actualPath), attribute));

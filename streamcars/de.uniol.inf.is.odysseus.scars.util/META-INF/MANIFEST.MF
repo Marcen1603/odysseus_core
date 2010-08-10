@@ -9,6 +9,7 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary
 Export-Package: de.uniol.inf.is.odysseus.scars.util
