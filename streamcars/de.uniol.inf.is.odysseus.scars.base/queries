@@ -25,7 +25,7 @@ CREATE SENSOR radarSensor (
 
 CREATE SENSOR radarSensor2 (
 	RECORD( scan,
-		ATTRIBUTE(timestamp, LONG)
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
 		LIST( cars, 
 			RECORD( car,
 				ATTRIBUTE(type, INTEGER)

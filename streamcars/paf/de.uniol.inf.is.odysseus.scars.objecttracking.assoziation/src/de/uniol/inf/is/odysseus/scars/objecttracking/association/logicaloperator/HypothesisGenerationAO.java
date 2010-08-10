@@ -24,7 +24,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String ASSOCIATION_RECORD_NAME = "association";
+	private static final String ASSOCIATION_SOURCE_NAME = "association";
+	private static final String ASSOCIATION_RECORD_NAME = "scan";
 	private static final String SCANNED_OBJECTS_NAME = "scannedObjects";
 	private static final String PREDICTED_OBJECTS_NAME = "predictedObjects";
 
@@ -68,7 +69,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends
 		SDFAttribute predictedObjects = helper
 				.getAttribute(this.oldObjListPath).clone();
 		// set new list name
-		scannedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
+		predictedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
 
 		// create new record
 		SDFAttribute association = new SDFAttribute(ASSOCIATION_RECORD_NAME);
@@ -79,11 +80,22 @@ public class HypothesisGenerationAO<M extends IProbability> extends
 		association.addSubattribute(scannedObjects);
 		// add predicted objects to record
 		association.addSubattribute(predictedObjects);
+		
+		// set source name 
+		setSourceName(association, ASSOCIATION_SOURCE_NAME);
 
 		SDFAttributeList newSchema = new SDFAttributeList();
 		newSchema.addAttribute(association);
 
 		return newSchema;
+	}
+	
+	private SDFAttribute setSourceName(SDFAttribute attribute, String sourceName) {
+		attribute.setSourceName(sourceName);
+		for (SDFAttribute attSdfAttribute : attribute.getSubattributes()) {
+			setSourceName(attSdfAttribute, sourceName);
+		}
+		return attribute;
 	}
 
 	@Override

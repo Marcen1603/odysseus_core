@@ -197,6 +197,12 @@ class JDVEData<M extends IProbability> {
 			return bb.getInt();
 //		} else 	if( "Date".equals(schema.getDatatype().getURIWithoutQualName() )) {
 //			throw new RuntimeException("not implememted yet");
+		} else if ("StartTimestamp".equals(schema.getDatatype()
+				.getURIWithoutQualName())) {
+			return bb.getLong();
+		} else if ("EndTimestamp".equals(schema.getDatatype()
+				.getURIWithoutQualName())) {
+			return bb.getLong();
 		} else {
 			throw new RuntimeException("not implememted yet");			
 		}
