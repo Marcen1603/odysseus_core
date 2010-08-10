@@ -87,6 +87,16 @@ public class TupleIndexPath {
 	}
 	
 	/**
+	 * Setzt das Tupelattribut, worauf dieser Pfad zeigt, auf den
+	 * gegebenen Wert. Eine Typ- und Werteprüfung findet nicht statt.
+	 * 
+	 * @param obj Neuer Wert
+	 */
+	public void setTupleObject( Object obj ) {
+		indices.get(indices.size() - 1).setValue(obj);
+	}
+	
+	/**
 	 * Liefert den Pfad als int-Array zurück.
 	 * 
 	 * @return Int-Array
