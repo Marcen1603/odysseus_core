@@ -6,10 +6,13 @@ Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary
 Export-Package: de.uniol.inf.is.odysseus.scars.util
+Require-Bundle: de.uniol.inf.is.odysseus.base
