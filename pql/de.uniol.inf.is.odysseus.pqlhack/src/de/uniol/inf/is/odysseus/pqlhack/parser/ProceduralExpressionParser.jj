@@ -728,7 +728,7 @@ void PredictionOp() : {/*@bgen(jjtree) PredictionOp */
 /*@egen*/}{/*@bgen(jjtree) PredictionOp */
         try {
 /*@egen*/
-  	< K_PREDICTION >"(" AlgebraOp() "," AlgebraOp() "," (Identifier()) "," (Identifier()) ")"/*@bgen(jjtree)*/
+  	< K_PREDICTION >"(" AlgebraOp() "," AlgebraOp() "," (Identifier()) ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

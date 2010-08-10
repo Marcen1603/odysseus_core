@@ -217,7 +217,7 @@ void PredictionAssignOrOp() : {}{
 }
 
 void PredictionOp() : {}{
-  	< K_PREDICTION >"(" AlgebraOp() "," AlgebraOp() "," (Identifier()) "," (Identifier()) ")"}
+  	< K_PREDICTION >"(" AlgebraOp() "," AlgebraOp() "," (Identifier()) ")"}
 
 void Predicate():{}{
   LOOKAHEAD(OrPredicate())OrPredicate()
