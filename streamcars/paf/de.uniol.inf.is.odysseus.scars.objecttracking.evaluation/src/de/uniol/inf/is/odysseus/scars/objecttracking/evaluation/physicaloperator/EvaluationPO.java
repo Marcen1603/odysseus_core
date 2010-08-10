@@ -25,9 +25,9 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	}
 	
 	public EvaluationPO(EvaluationPO<M> copy) {
-		this.associationObjListPath = copy.getAssociationObjListPath();
-		this.filteringObjListPath = copy.getFilteringObjListPath();
-		this.brokerObjListPath = copy.getBrokerObjListPath();
+		this.associationObjListPath = copy.getAssociationObjListPath().clone();
+		this.filteringObjListPath = copy.getFilteringObjListPath().clone();
+		this.brokerObjListPath = copy.getBrokerObjListPath().clone();
 		this.threshold = copy.getThreshold();
 	}
 

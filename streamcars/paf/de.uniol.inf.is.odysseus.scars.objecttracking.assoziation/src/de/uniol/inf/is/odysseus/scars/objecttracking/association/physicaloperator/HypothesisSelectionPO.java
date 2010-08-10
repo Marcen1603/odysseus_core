@@ -24,8 +24,8 @@ public class HypothesisSelectionPO<M extends IProbability & IConnectionContainer
 	public HypothesisSelectionPO(HypothesisSelectionPO<M> copy) {
 		super(copy);
 
-		this.oldObjListPath = copy.oldObjListPath;
-		this.newObjListPath = copy.newObjListPath;
+		this.oldObjListPath = copy.oldObjListPath.clone();
+		this.newObjListPath = copy.newObjListPath.clone();
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class HypothesisSelectionPO<M extends IProbability & IConnectionContainer
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		return null;
+		return new HypothesisSelectionPO<M>(this);
 	}
 
 	/**
