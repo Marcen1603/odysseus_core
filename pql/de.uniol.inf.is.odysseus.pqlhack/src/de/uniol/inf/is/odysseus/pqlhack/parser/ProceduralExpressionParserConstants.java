@@ -77,39 +77,37 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_WHERE = 37;
   /** RegularExpression Id. */
-  int K_TEST = 38;
+  int K_ASSOCIATION_GEN = 38;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_GEN = 39;
+  int K_ASSOCIATION_EVAL = 39;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_EVAL = 40;
+  int K_ASSOCIATION_SEL = 40;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SEL = 41;
+  int K_ASSOCIATION_SRC = 41;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SRC = 42;
+  int K_EVALUATE = 42;
   /** RegularExpression Id. */
-  int K_EVALUATE = 43;
+  int IDENTIFIER = 43;
   /** RegularExpression Id. */
-  int IDENTIFIER = 44;
+  int LETTER = 44;
   /** RegularExpression Id. */
-  int LETTER = 45;
+  int SPECIAL_CHARS = 45;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 46;
+  int CHAR_LITERAL = 46;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 47;
+  int QUOTED_IDENTIFIER = 47;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 48;
+  int COMPARE_OPERATOR = 48;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 49;
+  int REGEXP = 49;
   /** RegularExpression Id. */
-  int REGEXP = 50;
+  int FLOAT = 50;
   /** RegularExpression Id. */
-  int FLOAT = 51;
+  int INTEGER = 51;
   /** RegularExpression Id. */
-  int INTEGER = 52;
+  int DIGIT = 52;
   /** RegularExpression Id. */
-  int DIGIT = 53;
-  /** RegularExpression Id. */
-  int IPADDRESS = 54;
+  int IPADDRESS = 53;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -154,7 +152,6 @@ public interface ProceduralExpressionParserConstants {
     "\"SUM\"",
     "\"TUMBLING-TIME-WINDOW\"",
     "\"WHERE\"",
-    "\"TESTOP\"",
     "\"ASSOCIATION-GEN\"",
     "\"ASSOCIATION-EVAL\"",
     "\"ASSOCIATION-SEL\"",
@@ -174,8 +171,8 @@ public interface ProceduralExpressionParserConstants {
     "\":\"",
     "\";\"",
     "\"(\"",
-    "\")\"",
     "\",\"",
+    "\")\"",
     "\"*\"",
     "\"+\"",
     "\"-\"",

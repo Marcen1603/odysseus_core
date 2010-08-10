@@ -68,7 +68,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
@@ -83,7 +82,6 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
-import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -843,24 +841,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		((ArrayList) data).add(op);
-		((ArrayList) data).add(new Integer(0));
-
-		return data;
-	}
-
-	public Object visit(ASTTestOp node, Object data) {
-		TestAO op = new TestAO();
-
-		ArrayList newData = new ArrayList();
-		newData.add(((ArrayList) data).get(0));
-
-		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
-		AbstractLogicalOperator inputForTest = (AbstractLogicalOperator) returnData.get(1);
-		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
-
-		op.subscribeToSource(inputForTest, 0, sourceOutPort, inputForTest.getOutputSchema());
 
 		((ArrayList) data).add(op);
 		((ArrayList) data).add(new Integer(0));

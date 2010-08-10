@@ -42,7 +42,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
@@ -230,12 +229,6 @@ public class DefaultVisitor implements ProceduralExpressionParserVisitor{
 
 	
 	public Object visit(ASTRelationalUnnestOp node, Object data) {
-		// TODO Auto-generated method stub
-		return node.childrenAccept(this, data);
-	}
-
-	
-	public Object visit(ASTTestOp node, Object data) {
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}

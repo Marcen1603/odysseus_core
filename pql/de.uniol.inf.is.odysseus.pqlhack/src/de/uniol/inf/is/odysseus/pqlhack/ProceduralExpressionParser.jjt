@@ -66,7 +66,6 @@ TOKEN : /* Keywords */ {
 |	<K_SUM: "SUM">
 |	<K_TUMBLING_TIME_WINDOW: "TUMBLING-TIME-WINDOW">
 |	<K_WHERE: "WHERE">
-|   <K_TEST: "TESTOP">
 |   <K_ASSOCIATION_GEN: "ASSOCIATION-GEN">
 |   <K_ASSOCIATION_EVAL: "ASSOCIATION-EVAL">
 |   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
@@ -124,17 +123,12 @@ void AlgebraOp():{}{
 	PredictionAssignOp() |
 	PredictionAssignOrOp() |
 	PredictionOp() |
-	TestOp() |
 	AssociationGenOp() |
 	AssociationEvalOp() |
 	AssociationSelOp() |
 	AssociationSrcOp() |
 	SchemaConvertOp() |
 	EvaluateOp()
-}
-
-void TestOp(): {}{
-    <K_TEST>"(" AlgebraOp() ")"
 }
 
 void ProjectionOp(): {}{
