@@ -20,20 +20,15 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 
 	private static final long serialVersionUID = 1L;
 
-
 	private String oldObjListPath;
 	private String newObjListPath;
 	private HashMap<String, String> algorithmParameter;
 	private HashMap<String, String> measurementPairs;
 
-	private SchemaHelper sh;
-
 	private String functionID;
 
 	public HypothesisEvaluationAO() {
 		super();
-
-		this.sh = new SchemaHelper(this.getInputSchema());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -45,7 +40,6 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		this.algorithmParameter = (HashMap<String, String>) copy.getAlgorithmParameter().clone();
 		this.measurementPairs = (HashMap<String, String>) copy.getMeasurementPairs().clone();
 		this.functionID = copy.getFunctionID();
-		this.sh = new SchemaHelper(copy.getInputSchema());
 	}
 
 	@Override
@@ -72,10 +66,12 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 	}
 
 	public int[] getNewObjListPath() {
+		SchemaHelper sh = new SchemaHelper(this.getInputSchema());
 		return sh.getSchemaIndexPath(this.newObjListPath).toArray();
 	}
 
 	public int[] getOldObjListPath() {
+		SchemaHelper sh = new SchemaHelper(this.getInputSchema());
 		return sh.getSchemaIndexPath(this.oldObjListPath).toArray();
 	}
 

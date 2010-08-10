@@ -15,10 +15,8 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 	private String oldObjListPath;
 	private String newObjListPath;
 
-	private SchemaHelper sh;
-
 	public HypothesisSelectionAO() {
-		sh = new SchemaHelper(this.getInputSchema());
+		super();
 	}
 
 	public HypothesisSelectionAO(HypothesisSelectionAO<M> copy) {
@@ -26,7 +24,6 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 		this.ID = copy.getID();
 		this.oldObjListPath = copy.oldObjListPath;
 		this.newObjListPath = copy.newObjListPath;
-		sh = new SchemaHelper(this.getInputSchema());
 	}
 
 	public String getID() {
@@ -53,10 +50,12 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
 	}
 
 	public int[] getNewObjListPath() {
+		SchemaHelper sh = new SchemaHelper(this.getInputSchema());
 		return sh.getSchemaIndexPath(this.newObjListPath).toArray();
 	}
 
 	public int[] getOldObjListPath() {
+		SchemaHelper sh = new SchemaHelper(this.getInputSchema());
 		return sh.getSchemaIndexPath(this.oldObjListPath).toArray();
 	}
 }
