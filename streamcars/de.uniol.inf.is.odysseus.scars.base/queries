@@ -78,7 +78,7 @@ PREDICTION(
 	SET-PREDICTION-OR(
 		ACCESS(radarSensor),
 		radarSensor.scan:cars,
-		radarSensor.scan:cars:car:posx := radarSensor.scan:cars:car:posx * ( radarSensor.scan.timestamp - timer.timestamp) ; WHERE radarSensor.scan:cars:car:id > 0;
+		radarSensor.scan:cars:car:posx := radarSensor.scan:cars:car:posx * ( radarSensor.scan:timestamp - timer.timestamp) ; WHERE radarSensor.scan:cars:car:id > 0;
 	),
 	radarSensor.scan:cars
 )
