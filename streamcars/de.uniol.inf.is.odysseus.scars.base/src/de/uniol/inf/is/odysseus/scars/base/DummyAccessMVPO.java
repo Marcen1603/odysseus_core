@@ -15,6 +15,7 @@ public class DummyAccessMVPO <M extends IProbability> extends AbstractSensorAcce
 
 	private DummyJDVEData<M> data;
 	private SDFAttributeList outputSchema;
+	protected static int CARCOUNT = 5;
 	
 	private long lastTime = 0;
 	
@@ -116,10 +117,9 @@ class DummyJDVEData<M extends IProbability> {
 	}
 	
 	public MVRelationalTuple<M> parseList(SDFAttribute schema) {
-		int count = 50;
-		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
+		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(DummyAccessMVPO.CARCOUNT);
 
-		for( int i = 0; i < count; i++ ) {
+		for( int i = 0; i < DummyAccessMVPO.CARCOUNT; i++ ) {
 			Object obj = parseNext(schema.getSubattribute(0));
 			recordTuple.setAttribute(i, obj);
 		}
