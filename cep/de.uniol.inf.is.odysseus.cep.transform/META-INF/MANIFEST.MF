@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CEP Transform
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.transform
+Bundle-Version: 1.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.cep.transform.Activator
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.cep,
+ de.uniol.inf.is.odysseus.cep.epa,
+ de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
+ de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational,
+ de.uniol.inf.is.odysseus.cep.epa.eventreading.relational,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.logicaloperator.base,
+ de.uniol.inf.is.odysseus.physicaloperator.base,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.6"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
