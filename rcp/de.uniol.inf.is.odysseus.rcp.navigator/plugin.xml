@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewer
+            viewerId="de.uniol.inf.is.odysseus.rcp.NavigatorView">
+      </viewer>
+      <viewerContentBinding
+            viewerId="de.uniol.inf.is.odysseus.rcp.NavigatorView">
+         <includes>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resourceContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.filters.*">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+      <viewerActionBinding
+            viewerId="de.uniol.inf.is.odysseus.rcp.NavigatorView">
+         <includes>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.*">
+            </actionExtension>
+         </includes>
+      </viewerActionBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="de.uniol.inf.is.odysseus.rcp.navigator.part.CommonNavigatorEx"
+            icon="Icons/navigator.gif"
+            id="de.uniol.inf.is.odysseus.rcp.NavigatorView"
+            name="CNF Navigator"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
+         <view
+               closeable="false"
+               id="de.uniol.inf.is.odysseus.rcp.NavigatorView"
+               minimized="false"
+               moveable="false"
+               ratio="0.30f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
