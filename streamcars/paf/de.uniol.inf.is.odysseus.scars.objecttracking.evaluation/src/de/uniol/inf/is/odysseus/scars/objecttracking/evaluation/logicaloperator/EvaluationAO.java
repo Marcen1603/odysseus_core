@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperator{
@@ -16,9 +15,9 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 	private double threshold;
 
 	public EvaluationAO() {
-		
+
 	}
-	
+
 	public EvaluationAO(EvaluationAO<M> copy) {
 		super(copy);
 		this.associationObjListPath = copy.associationObjListPath;
@@ -26,7 +25,7 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 		this.brokerObjListPath = copy.brokerObjListPath;
 		this.threshold = copy.getThreshold();
 	}
-	
+
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return getInputSchema(2);
@@ -43,24 +42,24 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 		this.brokerObjListPath = brokerObjListPath;
 	}
 
-	public int[] getAssociationObjListPath() {
-		return OrAttributeResolver.getAttributePath(this.getInputSchema(0), this.associationObjListPath);
-	}
-
-	public int[] getFilteringObjListPath() {
-		return OrAttributeResolver.getAttributePath(this.getInputSchema(1), this.filteringObjListPath);
-	}
-
-	public int[] getBrokerObjListPath() {
-		return OrAttributeResolver.getAttributePath(this.getInputSchema(2), this.brokerObjListPath);
-	}
-
 	public double getThreshold() {
 		return threshold;
 	}
 
 	public void setThreshold(double threshold) {
 		this.threshold = threshold;
+	}
+
+	public String getAssociationObjListPath() {
+		return associationObjListPath;
+	}
+
+	public String getFilteringObjListPath() {
+		return filteringObjListPath;
+	}
+
+	public String getBrokerObjListPath() {
+		return brokerObjListPath;
 	}
 
 }
