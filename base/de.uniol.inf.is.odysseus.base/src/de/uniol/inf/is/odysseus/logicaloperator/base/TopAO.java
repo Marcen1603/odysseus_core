@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.logicaloperator.base;
 
+import java.util.Iterator;
+
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.base.Subscription;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -38,7 +42,15 @@ public class TopAO extends UnaryLogicalOp {
 		if (physicalInput != null) {
 			return physicalInput;
 		}
-		return getPhysSubscriptionsTo().iterator().next().getTarget();
+		IPhysicalOperator ret = null;
+		Iterator<Subscription<ISource<?>>> iter = getPhysSubscriptionsTo().iterator();
+		if (iter.hasNext()){
+			Subscription<ISource<?>> s = iter.next();
+			if (s!=null){
+				ret = s.getTarget();
+			}
+		}
+		return ret;
 	}
 	
 	@Override
