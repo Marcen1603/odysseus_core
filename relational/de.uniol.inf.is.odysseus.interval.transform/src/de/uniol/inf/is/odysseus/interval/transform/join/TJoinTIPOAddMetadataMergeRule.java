@@ -32,7 +32,7 @@ public class TJoinTIPOAddMetadataMergeRule extends AbstractTransformationRule<Jo
 
 	@Override
 	public boolean isExecutable(JoinTIPO<?, ?> operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 			if (transformConfig.getMetaTypes().size() > 1) {
 				if (operator.getMetadataMerge() != null) {
 					if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {

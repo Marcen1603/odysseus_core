@@ -31,7 +31,7 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 
 	@Override
 	public boolean isExecutable(TimestampAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())){
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 			if(operator.isAllPhysicalInputSet() && operator.isUsingSystemTime()){
 				return true;
 			}

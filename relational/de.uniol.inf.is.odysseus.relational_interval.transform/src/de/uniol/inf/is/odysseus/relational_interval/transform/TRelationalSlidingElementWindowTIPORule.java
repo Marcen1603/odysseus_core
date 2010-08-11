@@ -33,7 +33,7 @@ public class TRelationalSlidingElementWindowTIPORule extends AbstractTransformat
 
 	@Override
 	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 			if (operator.isAllPhysicalInputSet())
 				if (operator.getWindowType() == WindowType.SLIDING_TUPLE_WINDOW || operator.getWindowType() == WindowType.JUMPING_TUPLE_WINDOW) {
 					if (operator.isPartitioned()) {

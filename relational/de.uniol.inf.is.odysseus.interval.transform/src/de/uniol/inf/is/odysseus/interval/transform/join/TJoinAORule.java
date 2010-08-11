@@ -41,7 +41,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 	@Override
 	public boolean isExecutable(JoinAO operator, TransformationConfiguration transformConfig) {
 		if(operator.isAllPhysicalInputSet()){
-			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())){
+			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 				return true;
 			}
 		}

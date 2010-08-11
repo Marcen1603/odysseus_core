@@ -34,7 +34,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 
 	@Override
 	public boolean isExecutable(UnionAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())){
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 			if(operator.isAllPhysicalInputSet()){
 				return true;
 			}

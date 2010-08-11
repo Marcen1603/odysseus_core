@@ -28,7 +28,7 @@ public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
 
 	@Override
 	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 			if (operator.isAllPhysicalInputSet()) {
 				if (operator.getWindowType() == WindowType.UNBOUNDED) {
 					return true;

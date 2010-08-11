@@ -34,7 +34,7 @@ public class TSlidingTimeWindowTIPORule extends AbstractTransformationRule<Windo
 
 	@Override
 	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 			if (operator.isAllPhysicalInputSet()) {
 				if (operator.getWindowType() == WindowType.SLIDING_TIME_WINDOW) {
 					return true;
