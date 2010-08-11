@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
@@ -31,7 +32,7 @@ public class TSlidingElementWindowTIPORule extends AbstractTransformationRule<Wi
 
 	@Override
 	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
-		if (transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
 			if (operator.isAllPhysicalInputSet()) {
 				if ((operator.getWindowType() == WindowType.SLIDING_TUPLE_WINDOW || operator.getWindowType() == WindowType.JUMPING_TUPLE_WINDOW)) {
 					if (!operator.isPartitioned()) {

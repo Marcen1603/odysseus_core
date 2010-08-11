@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SystemTimeIntervalFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TimestampAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataUpdatePO;
@@ -30,7 +31,7 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 
 	@Override
 	public boolean isExecutable(TimestampAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")){
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())){
 			if(operator.isAllPhysicalInputSet() && operator.isUsingSystemTime()){
 				return true;
 			}

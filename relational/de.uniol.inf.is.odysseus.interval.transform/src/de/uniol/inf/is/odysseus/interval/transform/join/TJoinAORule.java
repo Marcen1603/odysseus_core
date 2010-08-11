@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
@@ -40,7 +41,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 	@Override
 	public boolean isExecutable(JoinAO operator, TransformationConfiguration transformConfig) {
 		if(operator.isAllPhysicalInputSet()){
-			if(transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")){
+			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())){
 				return true;
 			}
 		}

@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AggregateAO;
-import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.base.MetadataRegistry;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -36,7 +36,7 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 
 	@Override
 	public boolean isExecutable(AggregateAO operator, TransformationConfiguration transformConfig) {
-		if (transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}

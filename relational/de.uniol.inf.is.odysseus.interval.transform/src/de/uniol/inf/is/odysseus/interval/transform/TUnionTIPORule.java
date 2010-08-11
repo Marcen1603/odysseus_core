@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnionAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.UnionPO;
@@ -33,7 +34,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 
 	@Override
 	public boolean isExecutable(UnionAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")){
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())){
 			if(operator.isAllPhysicalInputSet()){
 				return true;
 			}

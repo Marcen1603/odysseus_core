@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.interval.transform.join;
 
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.metadata.base.CombinedMergeFunction;
@@ -31,7 +32,7 @@ public class TJoinTIPOAddMetadataMergeRule extends AbstractTransformationRule<Jo
 
 	@Override
 	public boolean isExecutable(JoinTIPO<?, ?> operator, TransformationConfiguration transformConfig) {
-		if (transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
 			if (transformConfig.getMetaTypes().size() > 1) {
 				if (operator.getMetadataMerge() != null) {
 					if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {

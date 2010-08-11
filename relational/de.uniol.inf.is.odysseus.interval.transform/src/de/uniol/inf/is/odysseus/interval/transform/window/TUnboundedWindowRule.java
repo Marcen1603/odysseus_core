@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -27,7 +28,7 @@ public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
 
 	@Override
 	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
-		if (transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")) {
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())) {
 			if (operator.isAllPhysicalInputSet()) {
 				if (operator.getWindowType() == WindowType.UNBOUNDED) {
 					return true;
