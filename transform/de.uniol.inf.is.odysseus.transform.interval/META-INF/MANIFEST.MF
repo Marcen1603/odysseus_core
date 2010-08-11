@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Interval
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.transform.interval
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.interval.transform
 Bundle-Version: 1.0.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.transform.interval.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.interval.transform.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Relational
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.transform.relational
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational.transform
 Bundle-Version: 1.0.0.0
-Bundle-Activator: de.uniol.inf.is.odysseus.transform.relational.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.relational.transform.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
