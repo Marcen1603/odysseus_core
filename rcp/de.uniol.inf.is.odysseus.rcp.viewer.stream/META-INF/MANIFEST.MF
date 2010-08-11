@@ -6,18 +6,17 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.Activator
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.core.expressions
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement.query,
  de.uniol.inf.is.odysseus.physicaloperator.base,
- de.uniol.inf.is.odysseus.rcp.viewer.graphoutline,
  de.uniol.inf.is.odysseus.rcp.viewer.model,
  de.uniol.inf.is.odysseus.rcp.viewer.model.create,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.view.graph,
+ org.eclipse.core.expressions,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.extension
