@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TimestampAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
@@ -33,7 +34,7 @@ public class TApplicationTimestampRule extends AbstractTransformationRule<Timest
 
 	@Override
 	public boolean isExecutable(TimestampAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getMetaTypes().contains("de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval")){
+		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.toString())){
 			if(operator.isAllPhysicalInputSet()){
 				if(!operator.isUsingSystemTime()){
 					return true;
