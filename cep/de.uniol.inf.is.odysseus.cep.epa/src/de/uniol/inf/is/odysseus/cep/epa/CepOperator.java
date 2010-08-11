@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.cep.metamodel.exception.InvalidStateMachineException;
@@ -405,7 +406,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			// String[] split = varName.split(CepVariable.getSeperator());
 			// int index = split[2].isEmpty() ? -1 : Integer.parseInt(split[2]);
 			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(
-					 stateMachine.getState(varName.getStateIdentifier()), varName.getIndex());
+					varName.getStateIdentifier() , varName.getIndex());
 			if (event != null) {
 				IEventReader<R, ?> eventR = this.eventReader.get(port);
 				if (port > 0) {

@@ -73,8 +73,13 @@ public class MatchingTrace<R> {
 		this.lastEvent = matchedevent;
 	}
 	
+
 	public MatchedEvent<R> getEvent(State state, int pos){
-		List<MatchedEvent<R>> l = stateBuffer.get(state.getVar());
+		return getEvent(state.getVar(),pos);
+	}
+
+	public MatchedEvent<R> getEvent(String stateVar, int pos){
+		List<MatchedEvent<R>> l = stateBuffer.get(stateVar);
 		if (l!=null && l.size()>0){
 			if (pos > 0 ){ // && pos < l.size()
 				return l.get(pos);
@@ -83,7 +88,6 @@ public class MatchingTrace<R> {
 			}
 		}
 		return null;
-		
 	}
 	
 	
