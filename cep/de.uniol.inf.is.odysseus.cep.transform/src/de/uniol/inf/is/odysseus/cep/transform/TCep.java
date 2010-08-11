@@ -63,8 +63,7 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "CepAO --> CepOperator (Relational)";
 	}
 
 }
