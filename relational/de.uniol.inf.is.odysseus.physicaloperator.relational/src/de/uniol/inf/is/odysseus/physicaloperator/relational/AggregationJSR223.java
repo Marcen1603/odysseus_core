@@ -35,14 +35,32 @@ public class AggregationJSR223 extends
 	public static final String KEY_META = "meta";
 	public static final String KEY_PARTIAL = "partial";
 
+	/** The script engine */
 	private ScriptEngine engine;
+	/** The compiled script if supported */
 	private CompiledScript script;
+	/** The path to the script file */
 	private String fileName;
-	private int pos;
+	/** Position array to support multiple attributes for aggregation */
+	private int[] positions;
 
+	/**
+	 * 
+	 * @param pos
+	 * @param name
+	 */
 	public AggregationJSR223(int pos, String name) {
+		this(new int[] { pos }, name);
+	}
+
+	/**
+	 * 
+	 * @param pos
+	 * @param name
+	 */
+	public AggregationJSR223(int[] pos, String name) {
 		super(name);
-		this.pos = pos;
+		this.positions = pos;
 		this.fileName = name;
 		String extension = name.substring(name.lastIndexOf(".") + 1);
 		ScriptEngineManager manager = new ScriptEngineManager();
@@ -89,8 +107,9 @@ public class AggregationJSR223 extends
 	@Override
 	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
 		Bindings bindings = this.engine.createBindings();
-		for (int i = 0; i < in.getAttributeCount(); ++i) {
-			bindings.put(KEY_ATTRIBUTE + i, in.getAttribute(i));
+		Object[] attributes = getAttributes(in, this.positions);
+		for (int i = 0; i < attributes.length; ++i) {
+			bindings.put(KEY_ATTRIBUTE + i, attributes[i]);
 		}
 		bindings.put(KEY_META, in.getMetadata());
 		Double partial = new Double(0);
@@ -115,19 +134,25 @@ public class AggregationJSR223 extends
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions
+	 * .IMerger
+	 * #merge(de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions
+	 * .IPartialAggregate, java.lang.Object, boolean)
+	 */
 	@Override
 	public IPartialAggregate<RelationalTuple<?>> merge(
 			IPartialAggregate<RelationalTuple<?>> partial,
 			RelationalTuple<?> in, boolean create) {
 		Bindings bindings = this.engine.createBindings();
-		for (int i = 0; i < in.getAttributeCount(); ++i) {
-			bindings.put(KEY_ATTRIBUTE + i, in.getAttribute(i));
+		Object[] attributes = getAttributes(in, this.positions);
+		for (int i = 0; i < attributes.length; ++i) {
+			bindings.put(KEY_ATTRIBUTE + i, attributes[i]);
 		}
 		bindings.put(KEY_META, in.getMetadata());
-		// TODO What is "create"? And when it is called?
-		// if (create) {
-		// ((PartialAggregateData) partial).setPartial(new Double(0));
-		// }
 		bindings
 				.put(KEY_PARTIAL, ((PartialAggregateData) partial).getPartial());
 
@@ -149,6 +174,15 @@ public class AggregationJSR223 extends
 		return partial;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.physicaloperator.base.aggregate.basefunctions
+	 * .IEvaluator
+	 * #evaluate(de.uniol.inf.is.odysseus.physicaloperator.base.aggregate
+	 * .basefunctions.IPartialAggregate)
+	 */
 	@Override
 	public RelationalTuple<?> evaluate(
 			IPartialAggregate<RelationalTuple<?>> partial) {
@@ -175,16 +209,36 @@ public class AggregationJSR223 extends
 		return result;
 	}
 
-	private class PartialAggregateData implements
-			IPartialAggregate<RelationalTuple<?>> {
-		private Object partial = null;
+	/**
+	 * Return the attributes from the tuple
+	 * 
+	 * @param in
+	 * @param positions
+	 * @return
+	 */
+	private Object[] getAttributes(RelationalTuple<?> in, int[] positions) {
+		Object[] attributes = new Object[positions.length];
+		for (int i = 0; i < positions.length; ++i) {
+			attributes[i] = in.getAttribute(positions[i]);
+		}
+		return attributes;
+	}
 
-		public PartialAggregateData() {
+	/**
+	 * class of the partial object for storing the results of the init and merge
+	 * methods
+	 * 
+	 */
+	public static class PartialAggregateData implements
+			IPartialAggregate<RelationalTuple<?>> {
+		public Object partial = null;
+
+		public PartialAggregateData(PartialAggregateData partialAggregateData) {
+			this.partial = partialAggregateData.getPartial();
 
 		}
 
-		public PartialAggregateData(PartialAggregateData instance) {
-			this.partial = instance.getPartial();
+		public PartialAggregateData() {
 		}
 
 		public Object getPartial() {
@@ -195,9 +249,9 @@ public class AggregationJSR223 extends
 			this.partial = partial;
 		}
 
+		@Override
 		public PartialAggregateData clone() {
 			return new PartialAggregateData(this);
 		}
-
 	}
 }
