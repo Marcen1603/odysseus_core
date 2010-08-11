@@ -30,14 +30,12 @@ public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
 
 	@Override
 	public boolean isExecutable(P2PSourceAO operator, TransformationConfiguration transformConfig) {
-		// TODO Auto-generated method stub
-		return false;
+		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "P2PSourceAO -> P2PInputStreamAccessPO";
 	}
 
 }
