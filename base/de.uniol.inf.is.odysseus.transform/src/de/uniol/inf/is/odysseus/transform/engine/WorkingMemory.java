@@ -95,6 +95,7 @@ public class WorkingMemory {
 							return;
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 						TransformationExecutor.getLogger().error(e.getLocalizedMessage());
 						throw new RuntimeException("Transformation Failed: "+e.getLocalizedMessage(), e);
 					}

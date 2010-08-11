@@ -47,7 +47,13 @@ public class TransformationExecutor implements ITransformation {
 		// start transformation
 		env.processTransformation();
 		logger.trace("Processing rules done.");
+		
 		IPhysicalOperator physicalPO = top.getPhysicalInput();
+		if(physicalPO==null){
+			logger.warn("PhysicalInput of TopAO is null!");
+			logger.warn("Current working memory:");
+			logger.warn(env.getWorkingMemory().getCurrentContent().toString());
+		}
 		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
 		AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 		walker.prefixWalkPhysical(physicalPO, visitor);

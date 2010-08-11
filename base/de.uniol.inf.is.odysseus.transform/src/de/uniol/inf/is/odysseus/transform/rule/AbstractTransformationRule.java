@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.transform.rule;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -23,8 +22,7 @@ public abstract class AbstractTransformationRule<T> implements ITransformRule<T>
 	}
 	
 	protected List<?> getCollection(){
-		List<Object> liste = new ArrayList<Object>();
-		Collections.copy(liste, this.getCurrentWorkingMemory().getCurrentContent());
+		List<Object> liste = new ArrayList<Object>(this.getCurrentWorkingMemory().getCurrentContent());
 		return liste;				
 	}
 	
