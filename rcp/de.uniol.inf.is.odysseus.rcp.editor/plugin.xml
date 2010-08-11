@@ -63,7 +63,7 @@
                minimized="false"
                moveable="true"
                ratio="0.70f"
-               relationship="left"
+               relationship="right"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
                standalone="false"
