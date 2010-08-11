@@ -60,12 +60,5 @@
          </commandParameter>
       </command>
    </extension>
-   <extension
-         point="de.uniol.inf.is.odysseus.rcp.viewer.query.transformationConfiguration">
-      <transformationConfiguration
-            class="de.uniol.inf.is.odysseus.rcp.viewer.query.impl.DefaultParameterTransformationConfiguration"
-            name="Standard">
-      </transformationConfiguration>
-   </extension>
 
 </plugin>

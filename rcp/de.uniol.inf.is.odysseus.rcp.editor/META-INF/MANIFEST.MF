@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.activator.Activator
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.ui.navigator;bundle-version="3.5.0"
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.base,
@@ -18,7 +17,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.planmanagement.executor,
  de.uniol.inf.is.odysseus.planmanagement.executor.exception,
  de.uniol.inf.is.odysseus.rcp.exception,
- de.uniol.inf.is.odysseus.transformation.helper.relational,
  org.eclipse.draw2d,
  org.eclipse.draw2d.geometry,
  org.eclipse.gef,
@@ -26,7 +24,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  org.eclipse.gef.dnd,
  org.eclipse.gef.editparts,
  org.eclipse.gef.editpolicies,
- org.eclipse.gef.internal.ui.rulers,
  org.eclipse.gef.palette,
  org.eclipse.gef.requests,
  org.eclipse.gef.ui.actions,

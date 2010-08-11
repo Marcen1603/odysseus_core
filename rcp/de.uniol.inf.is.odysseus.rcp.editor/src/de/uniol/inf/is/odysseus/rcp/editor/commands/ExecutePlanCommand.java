@@ -13,8 +13,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
-import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.editor.LogicalPlanEditorPart;
@@ -23,18 +22,16 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorConnection;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
-import de.uniol.inf.is.odysseus.transformation.helper.relational.RelationalTransformationHelper;
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {
-
-	@SuppressWarnings("unchecked")
-	private static ParameterTransformationConfiguration trafoConfigParam = 
-		new ParameterTransformationConfiguration(
-				new TransformationConfiguration(
-						new RelationalTransformationHelper(), 
-						"relational", 
-						ITimeInterval.class));
+//
+//	@SuppressWarnings("unchecked")
+//	private static ParameterTransformationConfiguration trafoConfigParam = 
+//		new ParameterTransformationConfiguration(
+//				new TransformationConfiguration(
+//						new RelationalTransformationHelper(), 
+//						"relational", 
+//						ITimeInterval.class));
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -136,7 +133,8 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		} 
 		
 		try {
-			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), new User("TestUser"), trafoConfigParam);
+//			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), new User("TestUser"), trafoConfigParam);
+			Activator.getExecutor().addQuery(logicals.get(logicals.size()-1), new User("TestUser"), (AbstractQueryBuildParameter<?>) null); // TransCfg muss korrigiert werden
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}
