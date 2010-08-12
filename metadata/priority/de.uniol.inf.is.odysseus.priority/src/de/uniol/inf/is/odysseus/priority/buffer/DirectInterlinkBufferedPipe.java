@@ -42,6 +42,7 @@ public class DirectInterlinkBufferedPipe<T extends IMetaAttributeContainer<? ext
 		} else {
 			synchronized (this.buffer) {
 				this.buffer.add(object);
+				this.heartbeat.set(null);
 			}
 		}
 	}

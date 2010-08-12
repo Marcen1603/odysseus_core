@@ -64,7 +64,7 @@ public class PriorityPO<K extends IPriority & ITimeInterval, T extends IMetaAttr
 		transfer(next, 1);
 		if (isPunctuationActive) {
 			ITimeInterval time = (ITimeInterval) next.getMetadata();
-			sendPunctuation(time.getStart());
+			sendPunctuation(time.getStart().clone());
 		}
 	}
 
