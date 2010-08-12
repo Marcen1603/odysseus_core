@@ -13,7 +13,7 @@ public class TAggregateAORule extends AbstractTransformationRule<AggregatePO> {
 	}
 
 	@Override
-	public void transform(AggregatePO aggregatePO, TransformationConfiguration transformConfig) {
+	public void execute(AggregatePO aggregatePO, TransformationConfiguration transformConfig) {
 		aggregatePO.setGroupingHelper(new RelationalTupleGroupingHelper(aggregatePO.getInputSchema(), aggregatePO.getOutputSchema(), aggregatePO.getGroupingAttribute(),
 				aggregatePO.getAggregations()));
 		update(aggregatePO);

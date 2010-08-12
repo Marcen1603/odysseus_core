@@ -18,7 +18,7 @@ public class TApplicationTimestampRule extends AbstractTransformationRule<Timest
 	}
 
 	@Override
-	public void transform(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
+	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
 		int pos = timestampAO.getInputSchema().indexOf(timestampAO.getStartTimestamp());
 		int posEnd = timestampAO.hasEndTimestamp() ? timestampAO.getInputSchema().indexOf(timestampAO.getEndTimestamp()) : -1;
 		RelationalTimestampAttributeTimeIntervalMFactory mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(pos, posEnd); 

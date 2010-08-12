@@ -21,7 +21,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void transform(AccessAO accessAO, TransformationConfiguration transformConfig) {
+	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSource().getURI(false);
 		ISource accessPO = null;
 		try {

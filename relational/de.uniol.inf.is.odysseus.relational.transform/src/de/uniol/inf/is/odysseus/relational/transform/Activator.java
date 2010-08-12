@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
-import de.uniol.inf.is.odysseus.transform.flow.RuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class Activator implements BundleActivator {
 
@@ -20,13 +20,13 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		TransformationInventory.getInstance().addRule(new TAccessAORelationalInputRule(), RuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TAccessAOAtomicDataRule(), RuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TAccessAORelationalByteBufferRule(), RuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TFixedSetAccessAORule(), RuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TAggregateAORule(), RuleFlowGroup.METAOBJECTS);
-		TransformationInventory.getInstance().addRule(new TMapAORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TProjectAORule(), RuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TAccessAORelationalInputRule(), TransformRuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRule(new TAccessAOAtomicDataRule(), TransformRuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRule(new TAccessAORelationalByteBufferRule(), TransformRuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRule(new TFixedSetAccessAORule(), TransformRuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRule(new TAggregateAORule(), TransformRuleFlowGroup.METAOBJECTS);
+		TransformationInventory.getInstance().addRule(new TMapAORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TProjectAORule(), TransformRuleFlowGroup.TRANSFORMATION);
 	}
 
 	/*

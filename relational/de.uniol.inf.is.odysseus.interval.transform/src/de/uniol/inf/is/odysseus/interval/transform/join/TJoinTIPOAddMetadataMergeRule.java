@@ -15,7 +15,7 @@ public class TJoinTIPOAddMetadataMergeRule extends AbstractTransformationRule<Jo
 	}
 
 	@Override
-	public void transform(JoinTIPO<?, ?> joinPO, TransformationConfiguration transformConfig) {
+	public void execute(JoinTIPO<?, ?> joinPO, TransformationConfiguration transformConfig) {
 		((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 		/*
 		 * # no update, because otherwise # other rules may overwrite this rule

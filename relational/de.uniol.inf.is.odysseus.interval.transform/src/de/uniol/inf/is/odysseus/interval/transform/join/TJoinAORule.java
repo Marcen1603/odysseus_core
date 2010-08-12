@@ -22,7 +22,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 	}
 
 	@Override
-	public void transform(JoinAO joinAO, TransformationConfiguration transformConfig) {
+	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) {
 		JoinTIPO joinPO = new JoinTIPO();
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());

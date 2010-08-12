@@ -15,7 +15,7 @@ public class TJoinTIPOSetMetadataMerge extends AbstractTransformationRule<JoinTI
 	}
 
 	@Override
-	public void transform(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
+	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
 		joinPO.setMetadataMerge(TIMergeFunction.getInstance());
 		/*
 		# no update, because otherwise

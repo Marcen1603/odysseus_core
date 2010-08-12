@@ -17,7 +17,7 @@ public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
 	}
 
 	@Override
-	public void transform(WindowAO windowAO, TransformationConfiguration transformConfig) {
+	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowAO.getPhysInputPOs().iterator().next());
 		for (ILogicalOperator o : toUpdate) {
 			update(o);

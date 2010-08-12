@@ -13,7 +13,7 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 	}
 
 	@Override
-	public void transform(JoinTIPO<?,?> joinPO, TransformationConfiguration transformConfig) {
+	public void execute(JoinTIPO<?,?> joinPO, TransformationConfiguration transformConfig) {
 		joinPO.setDataMerge(new RelationalMergeFunction(joinPO.getOutputSchema().size()));
 		update(joinPO);		
 	}

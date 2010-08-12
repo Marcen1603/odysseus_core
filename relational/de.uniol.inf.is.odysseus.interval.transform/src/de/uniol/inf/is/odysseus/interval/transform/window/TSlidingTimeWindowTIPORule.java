@@ -18,7 +18,7 @@ public class TSlidingTimeWindowTIPORule extends AbstractTransformationRule<Windo
 	}
 
 	@Override
-	public void transform(WindowAO windowAO, TransformationConfiguration transformConfig) {
+	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		SlidingTimeWindowTIPO windowPO = new SlidingTimeWindowTIPO(windowAO); 
 		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowPO);

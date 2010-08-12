@@ -18,7 +18,7 @@ public class TRelationalSlidingElementWindowTIPORule extends AbstractTransformat
 	}
 
 	@Override
-	public void transform(WindowAO windowAO, TransformationConfiguration transformConfig) {
+	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		RelationalSlidingElementWindowTIPO windowPO = new RelationalSlidingElementWindowTIPO(windowAO);
 		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowPO);

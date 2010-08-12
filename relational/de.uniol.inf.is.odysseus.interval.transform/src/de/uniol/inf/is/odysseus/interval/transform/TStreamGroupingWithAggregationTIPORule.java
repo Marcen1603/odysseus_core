@@ -18,7 +18,7 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 	}
 
 	@Override
-	public void transform(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
+	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
 		StreamGroupingWithAggregationPO po = new StreamGroupingWithAggregationPO(aggregateAO.getInputSchema(), aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
 		po.setOutputSchema(aggregateAO.getOutputSchema()); // Notwendig??

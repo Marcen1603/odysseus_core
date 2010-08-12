@@ -18,7 +18,7 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 	}
 
 	@Override
-	public void transform(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
+	public void execute(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSource().getURI(false);
 		ISource accessPO = new FixedSetPO(accessAO.getTuples());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());

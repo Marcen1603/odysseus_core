@@ -17,7 +17,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	}
 
 	@Override
-	public void transform(MapAO mapAO, TransformationConfiguration transformConfig) {
+	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) {
 		RelationalMapPO mapPO = new RelationalMapPO(mapAO.getInputSchema(), mapAO.getExpressions().toArray(new SDFExpression[0]));
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(mapAO,mapPO);
 		for (ILogicalOperator o:toUpdate){

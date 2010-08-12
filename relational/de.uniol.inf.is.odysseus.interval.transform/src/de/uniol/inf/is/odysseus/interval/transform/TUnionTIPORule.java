@@ -18,7 +18,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 	}
 
 	@Override
-	public void transform(UnionAO unionAO, TransformationConfiguration transformConfig) {
+	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) {
 		UnionPO unionPO = new UnionPO(new TITransferArea());
 		unionPO.setOutputSchema(unionAO.getOutputSchema());
 		

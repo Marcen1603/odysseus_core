@@ -18,7 +18,7 @@ public class TSlidingPeriodicWindowTIPORule extends AbstractTransformationRule<W
 	}
 
 	@Override
-	public void transform(WindowAO windowAO, TransformationConfiguration transformConfig) {
+	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		SlidingPeriodicWindowTIPO windowPO = new SlidingPeriodicWindowTIPO(windowAO);
 		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowPO);

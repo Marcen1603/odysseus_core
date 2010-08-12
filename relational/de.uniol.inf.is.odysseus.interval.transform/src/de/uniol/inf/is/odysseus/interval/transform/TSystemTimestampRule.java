@@ -18,7 +18,7 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 	}
 
 	@Override
-	public void transform(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
+	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
 		SystemTimeIntervalFactory mUpdater = new SystemTimeIntervalFactory();		
 		MetadataUpdatePO po = new MetadataUpdatePO(mUpdater);
 		po.setOutputSchema(timestampAO.getOutputSchema());

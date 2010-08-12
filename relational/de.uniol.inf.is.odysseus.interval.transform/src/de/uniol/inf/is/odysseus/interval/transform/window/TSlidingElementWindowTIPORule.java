@@ -18,7 +18,7 @@ public class TSlidingElementWindowTIPORule extends AbstractTransformationRule<Wi
 	}
 
 	@Override
-	public void transform(WindowAO windowAO, TransformationConfiguration transformConfig) {
+	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		SlidingElementWindowTIPO windowPO = new SlidingElementWindowTIPO(windowAO);
 		windowPO.setOutputSchema(windowAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, windowPO);

@@ -16,7 +16,7 @@ public class TDifferenceAORule extends AbstractTransformationRule<DifferenceAO> 
 	}
 
 	@Override
-	public void transform(DifferenceAO differenceAO, TransformationConfiguration transformConfig) {
+	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) {
 		AntiJoinTIPO po = new AntiJoinTIPO(differenceAO);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(differenceAO, po);
 		for (ILogicalOperator o:toUpdate){

@@ -15,7 +15,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	}
 
 	@Override
-	public void transform(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
+	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
 		ITemporalSweepArea[] areas = new ITemporalSweepArea[2];
 		areas[0] = new JoinTISweepArea();
 		areas[1] = new JoinTISweepArea();

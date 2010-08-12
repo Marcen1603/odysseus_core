@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.interval.transform.window.TSlidingPeriodicWindow
 import de.uniol.inf.is.odysseus.interval.transform.window.TSlidingTimeWindowTIPORule;
 import de.uniol.inf.is.odysseus.interval.transform.window.TUnboundedWindowRule;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
-import de.uniol.inf.is.odysseus.transform.flow.RuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class Activator implements BundleActivator {
 
@@ -29,21 +29,21 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		TransformationInventory.getInstance().addRule(new TDifferenceAORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TExistenceAORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TJoinAORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TJoinAOSetSARule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TJoinTIPOAddMetadataMergeRule(), RuleFlowGroup.METAOBJECTS);
-		TransformationInventory.getInstance().addRule(new TJoinTIPOSetMetadataMerge(), RuleFlowGroup.METAOBJECTS);
-		TransformationInventory.getInstance().addRule(new TStreamGroupingWithAggregationTIPORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TSystemTimestampRule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TUnionTIPORule(), RuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TDifferenceAORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TExistenceAORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TJoinAORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TJoinAOSetSARule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TJoinTIPOAddMetadataMergeRule(), TransformRuleFlowGroup.METAOBJECTS);
+		TransformationInventory.getInstance().addRule(new TJoinTIPOSetMetadataMerge(), TransformRuleFlowGroup.METAOBJECTS);
+		TransformationInventory.getInstance().addRule(new TStreamGroupingWithAggregationTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TSystemTimestampRule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TUnionTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
 		
-		TransformationInventory.getInstance().addRule(new TSlidingAdvanceTimeWindowTIPORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TSlidingElementWindowTIPORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TSlidingPeriodicWindowTIPORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TSlidingTimeWindowTIPORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TUnboundedWindowRule(), RuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TSlidingAdvanceTimeWindowTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TSlidingElementWindowTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TSlidingPeriodicWindowTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TSlidingTimeWindowTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TUnboundedWindowRule(), TransformRuleFlowGroup.TRANSFORMATION);
 		
 		
 	}

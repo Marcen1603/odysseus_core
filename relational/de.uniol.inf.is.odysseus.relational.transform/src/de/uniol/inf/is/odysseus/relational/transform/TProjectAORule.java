@@ -16,7 +16,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	}
 
 	@Override
-	public void transform(ProjectAO projectAO, TransformationConfiguration transformConfig) {		
+	public void execute(ProjectAO projectAO, TransformationConfiguration transformConfig) {		
 		RelationalProjectPO projectPO = new RelationalProjectPO(projectAO.determineRestrictList());
 		projectPO.setOutputSchema(projectAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(projectAO,projectPO);

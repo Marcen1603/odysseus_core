@@ -19,7 +19,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void transform(AccessAO accessAO, TransformationConfiguration transformConfig) {
+	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSource().getURI(false);
 		ISource accessPO = new AtomicDataInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());

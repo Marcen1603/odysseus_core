@@ -21,7 +21,7 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 	}
 
 	@Override
-	public void transform(ExistenceAO existenceAO, TransformationConfiguration transformConfig) {
+	public void execute(ExistenceAO existenceAO, TransformationConfiguration transformConfig) {
 		ISweepArea leftSA = new DefaultTISweepArea();
 		ISweepArea rightSA = new DefaultTISweepArea();
 		IPredicate predicate = existenceAO.getPredicate();
