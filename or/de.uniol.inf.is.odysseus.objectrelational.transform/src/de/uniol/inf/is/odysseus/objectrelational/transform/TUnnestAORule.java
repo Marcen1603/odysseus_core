@@ -20,7 +20,7 @@ public class TUnnestAORule extends AbstractTransformationRule<ObjectTrackingUnne
 	}
 
 	@Override
-	public void transform(ObjectTrackingUnnestAO unnestAO, TransformationConfiguration transformConfig) {		
+	public void execute(ObjectTrackingUnnestAO unnestAO, TransformationConfiguration transformConfig) {		
 		ObjectTrackingUnnestPO<?> unnestPO = new ObjectTrackingUnnestPO(unnestAO.getInputSchema(),unnestAO.getOutputSchema(),unnestAO.getNestAttribute());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(unnestAO, unnestPO);
 		for (ILogicalOperator o:toUpdate){

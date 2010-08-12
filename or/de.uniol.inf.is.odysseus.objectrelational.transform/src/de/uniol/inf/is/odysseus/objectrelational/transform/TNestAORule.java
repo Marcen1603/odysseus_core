@@ -20,7 +20,7 @@ public class TNestAORule extends AbstractTransformationRule<ObjectTrackingNestAO
 	}
 
 	@Override
-	public void transform(ObjectTrackingNestAO nestAO, TransformationConfiguration transformConfig) {
+	public void execute(ObjectTrackingNestAO nestAO, TransformationConfiguration transformConfig) {
 		ObjectTrackingNestPO<?> nestPO = new ObjectTrackingNestPO(nestAO.getInputSchema(),nestAO.getOutputSchema(),nestAO.getNestAttribute(),nestAO.getGroupingAttributes());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(nestAO, nestPO);
 		for (ILogicalOperator o:toUpdate){
