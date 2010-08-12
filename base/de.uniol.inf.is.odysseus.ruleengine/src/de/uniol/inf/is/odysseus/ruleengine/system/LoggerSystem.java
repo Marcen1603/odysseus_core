@@ -5,7 +5,8 @@ import org.slf4j.LoggerFactory;
 
 public class LoggerSystem {
 	
-	private static Logger logger = LoggerFactory.getLogger("transformation");
+	private static Logger defaultlogger = LoggerFactory.getLogger("ruleengine");
+	private static Accuracy defaultAccuracy = Accuracy.DEBUG;
 	
 	public enum Accuracy{
 		ERROR,
@@ -14,27 +15,49 @@ public class LoggerSystem {
 		DEBUG,		
 		TRACE
 	}
+		
 	
-	public static void printlog(String message){
-		printlog(Accuracy.DEBUG, message);
+	public static void printlog(String name, String message){
+		printlog(message, LoggerFactory.getLogger(name));		
 	}
 	
+	public static void printlog(String name, Accuracy accuracy, String message){
+		printlog(accuracy, message, LoggerFactory.getLogger(name));
+		
+	}
+	
+	//defaults
+	
 	public static void printlog(Accuracy accuracy, String message){
+		printlog(accuracy, message, defaultlogger);
+	}
+	
+	public static void printlog(String message){
+		printlog(message, defaultlogger);
+	}
+	
+	//mappers
+	
+	private static void printlog(String message, Logger thelogger) {		
+		printlog(defaultAccuracy, message, thelogger);
+	}
+
+	private static void printlog(Accuracy accuracy, String message, Logger currentlogger){
 		switch (accuracy) {
 		case TRACE:
-			//logger.trace(message);
-			//break;
+			//currentlogger.trace(message);
+			break;
 		case DEBUG:
-			logger.debug(message);
+			currentlogger.debug(message);
 			break;
 		case INFO:
-			logger.info(message);
+			currentlogger.info(message);
 			break;
 		case WARN:
-			logger.warn(message);
+			currentlogger.warn(message);
 			break;
 		case ERROR:
-			logger.error(message);
+			currentlogger.error(message);
 			break;
 
 		default:

@@ -22,10 +22,8 @@ import de.uniol.inf.is.drools.RuleAgentFactory;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IRewrite;
 import de.uniol.inf.is.odysseus.base.LogicalSubscription;
-import de.uniol.inf.is.odysseus.logicaloperator.base.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.base.TopAO;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 /**
@@ -55,17 +53,16 @@ public class DroolsRewrite implements IRewrite {
 	@SuppressWarnings("unchecked")
 	public ILogicalOperator rewritePlanInternal(ILogicalOperator plan) {
 
-		logger.debug("Current Top subscriptions  "
-				+ plan.getSubscriptions().toString());
+		logger.debug("Current Top subscriptions  " + plan.getSubscriptions().toString());
 
 		logger.debug("RULES: ");
-		for(Package pkg : rulebase.getPackages()){
+		for (Package pkg : rulebase.getPackages()) {
 			logger.debug("PACKAGE: " + pkg.getName());
-			for(Rule r : pkg.getRules()){
-				logger.debug(r.getName()+ " : " + r.getRuleFlowGroup());
+			for (Rule r : pkg.getRules()) {
+				logger.debug(r.getName() + " : " + r.getRuleFlowGroup());
 			}
 		}
-		
+
 		StatefulSession session = rulebase.newStatefulSession();
 		TopAO top = new TopAO();
 		plan.subscribeSink(top, 0, 0, plan.getOutputSchema());
@@ -73,31 +70,32 @@ public class DroolsRewrite implements IRewrite {
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperatorToSession(session, top, list);
 		if (logger.isInfoEnabled()) {
-//			logger.debug("pre rewrite: "
-//					+ AbstractTreeWalker.prefixWalk(top,
-//							new AlgebraPlanToStringVisitor(true)));
-			
+			// logger.debug("pre rewrite: "
+			// + AbstractTreeWalker.prefixWalk(top,
+			// new AlgebraPlanToStringVisitor(true)));
+
 			// plans can be cyclic graphs now, so use our new
 			// walker
 			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 			new AbstractGraphWalker().prefixWalk(top, pv);
 			logger.debug("pre rewrite: " + pv.getResult());
-								
+
 		}
 
-//		WorkingMemoryConsoleLogger lg = new WorkingMemoryConsoleLogger(session);
-//		lg.clearFilters();
-//		session.addEventListener(new DebugAgendaEventListener());
-//		session.addEventListener(new DebugWorkingMemoryEventListener());
+		// WorkingMemoryConsoleLogger lg = new
+		// WorkingMemoryConsoleLogger(session);
+		// lg.clearFilters();
+		// session.addEventListener(new DebugAgendaEventListener());
+		// session.addEventListener(new DebugWorkingMemoryEventListener());
 		session.startProcess("RuleFlow");
 
 		session.fireAllRules();
 		session.dispose();
 		if (logger.isInfoEnabled()) {
-//			logger.debug("post rewrite:"
-//					+ AbstractTreeWalker.prefixWalk(top,
-//							new AlgebraPlanToStringVisitor(true)));
-			
+			// logger.debug("post rewrite:"
+			// + AbstractTreeWalker.prefixWalk(top,
+			// new AlgebraPlanToStringVisitor(true)));
+
 			// plans can be cyclic graphs now, so use our new
 			// walker
 			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
@@ -107,13 +105,12 @@ public class DroolsRewrite implements IRewrite {
 		}
 		LogicalSubscription sub = top.getSubscribedToSource(0);
 		ILogicalOperator ret = sub.getTarget();
-		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub
-				.getSourceOutPort(), sub.getSchema());
+		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 		if (logger.isInfoEnabled()) {
-//			logger.debug("post rewrite:"
-//					+ AbstractTreeWalker.prefixWalk(ret,
-//							new AlgebraPlanToStringVisitor(true)));
-			
+			// logger.debug("post rewrite:"
+			// + AbstractTreeWalker.prefixWalk(ret,
+			// new AlgebraPlanToStringVisitor(true)));
+
 			// plans can be cyclic graphs now, so use our new
 			// walker
 			PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
@@ -125,8 +122,7 @@ public class DroolsRewrite implements IRewrite {
 	}
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan,
-			Set<String> rulesToApply) {
+	public ILogicalOperator rewritePlan(ILogicalOperator plan, Set<String> rulesToApply) {
 		ruleBaseLock.writeLock().lock();
 		try {
 			Package pkg = this.rulebase.getPackage(PACKAGE_NAME);
@@ -154,8 +150,7 @@ public class DroolsRewrite implements IRewrite {
 		return this.ruleNames;
 	}
 
-	private static void addLogicalOperatorToSession(StatefulSession session,
-			ILogicalOperator op, List<ILogicalOperator> inserted) {
+	private static void addLogicalOperatorToSession(StatefulSession session, ILogicalOperator op, List<ILogicalOperator> inserted) {
 		if (op == null) {
 			return;
 		}
@@ -177,8 +172,7 @@ public class DroolsRewrite implements IRewrite {
 	public void activate(ComponentContext context) {
 		try {
 			this.bundleContext = context.getBundleContext();
-			RuleAgent ra = RuleAgentFactory.createRuleAgent(this.bundleContext,
-					RULE_PATH, LOGGER_NAME);
+			RuleAgent ra = RuleAgentFactory.createRuleAgent(this.bundleContext, RULE_PATH, LOGGER_NAME);
 			this.ruleBaseLock.readLock().lock();
 			try {
 				this.rulebase = ra.getRuleBase();

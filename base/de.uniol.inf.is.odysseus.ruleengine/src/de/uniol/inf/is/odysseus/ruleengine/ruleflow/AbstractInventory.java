@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.ruleengine.ruleflow;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 
@@ -16,10 +17,40 @@ public abstract class AbstractInventory implements IRuleFlow{
 	
 	private LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> workFlow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>>();
 	
+	public AbstractInventory() {
+		//intentionally left blank
+	}
 	
+	protected AbstractInventory(AbstractInventory inventory) {
+		this.workFlow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>>(inventory.getCopyOfWorkFlow());	
+	}
+
+	private  LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> getCopyOfWorkFlow(){
+		LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> copyflow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>>();
+		for(Entry<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> entry : this.workFlow.entrySet()){
+			IRuleFlowGroup group = entry.getKey();
+			PriorityQueue<IRule<?,?>> newQueue = new PriorityQueue<IRule<?,?>>();
+			for(IRule<?,?> rule : entry.getValue()){
+				IRule<?, ?> copyrule;
+				try {
+					copyrule = rule.getClass().newInstance();
+				} catch (Exception e) {				
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+				newQueue.add(copyrule);
+			}
+			copyflow.put(group, newQueue);
+			
+		}		
+		return copyflow;
+	}
+
 	public void addRuleFlowGroup(IRuleFlowGroup group) {
 		if (!this.workFlow.containsKey(group)) {
 			workFlow.put(group, new PriorityQueue<IRule<?,?>>());
+		}else{
+			LoggerSystem.printlog(Accuracy.WARN, "RuleGroup already exists!");
 		}
 	}
 
@@ -71,7 +102,5 @@ public abstract class AbstractInventory implements IRuleFlow{
 		};
 
 		return iterator;
-
-	}
-	
+	}	
 }

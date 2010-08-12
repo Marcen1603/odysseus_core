@@ -46,7 +46,8 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 		if(roots.get(0).isSource()){
 			ISource<?> source = (ISource<?>)roots.get(0);
 			List<AccessAO> accessAOs = new ArrayList<AccessAO>();
-			for(Object o: super.getCollection()){
+			List<?> currentWM = super.getCollection();
+			for(Object o: currentWM){
 				if(o instanceof AccessAO){
 					AccessAO other = (AccessAO)o;
 					if(other.getSource().getURI().equals(accessAO.getSource().getURI())){

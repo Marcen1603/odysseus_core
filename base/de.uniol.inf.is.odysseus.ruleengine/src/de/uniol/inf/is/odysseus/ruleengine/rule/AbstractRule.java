@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.ruleengine.rule;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.ruleengine.system.WorkingMemory;
@@ -12,9 +13,23 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 	public AbstractRule() {
 
 	}
+	
+	
 
 	public void setCurrentWorkingMemory(WorkingMemory wm) {
 		this.currentWorkingMemory = wm;
+	}
+	
+	protected <K> List<K> getAllOfSameTyp(K k){
+		List<K> liste = new ArrayList<K>();
+		for (Object object : getCollection()) {
+			if (k.getClass().isInstance(object)) {
+				@SuppressWarnings("unchecked")
+				K o = (K) object;
+				liste.add(o);
+			}
+		}
+		return liste;
 	}
 
 	protected List<?> getCollection() {
@@ -38,6 +53,12 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 	protected void insert(Object operator) {
 		this.getCurrentWorkingMemory().insertObject(operator);
 	}
+	
+	protected void updateAll(Collection<Object> objects){
+		for(Object o : objects){
+			update(o);
+		}
+	}
 
 	@Override
 	public int compareTo(IRule<T, U> o) {
@@ -54,6 +75,6 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
 	@Override
 	public String toString() {
-		return this.getName() + " (" + getClass().getName() + ")";
+		return this.getName() + " (" + getClass().getName() + ") - "+super.hashCode();
 	}
 }
