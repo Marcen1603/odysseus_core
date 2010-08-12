@@ -8,7 +8,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 public class ResolvedSDFAttributeParameter extends
 		AbstractParameter<SDFAttribute> {
 
-	private final Logger logger = LoggerFactory.getLogger(ResolvedSDFAttributeParameter.class);
+	  Logger _logger = null;
+	  Logger getLogger(){
+	    if (_logger == null){
+	      _logger = LoggerFactory.getLogger(ResolvedSDFAttributeParameter.class);
+	    }
+	    return _logger;
+	  }
 	
 	public ResolvedSDFAttributeParameter(String name, REQUIREMENT requirement) {
 		super(name, requirement);
@@ -25,7 +31,7 @@ public class ResolvedSDFAttributeParameter extends
 			
 			setValue(attribute);
 		} catch( Exception ex ) {
-			logger.error("cannot assign attribute value", ex);
+			this.getLogger().error("cannot assign attribute value", ex);
 		}
 	}
 

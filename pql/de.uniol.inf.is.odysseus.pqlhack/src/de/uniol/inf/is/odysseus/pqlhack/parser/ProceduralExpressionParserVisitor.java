@@ -6,6 +6,8 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(SimpleNode node, Object data);
   public Object visit(ASTLogicalPlan node, Object data);
   public Object visit(ASTAlgebraOp node, Object data);
+  public Object visit(ASTTestOp node, Object data);
+  public Object visit(ASTBenchmarkOp node, Object data);
   public Object visit(ASTProjectionOp node, Object data);
   public Object visit(ASTProjectionIdentifier node, Object data);
   public Object visit(ASTRelationalProjectionOp node, Object data);
@@ -48,4 +50,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTAssociationSrcOp node, Object data);
   public Object visit(ASTEvaluateOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=8e8342dd63e98b4ec25f09627b7c372f (do not edit this line) */
+/* JavaCC - OriginalChecksum=9c374d1e03bf5cef93c97941e8ee3c38 (do not edit this line) */

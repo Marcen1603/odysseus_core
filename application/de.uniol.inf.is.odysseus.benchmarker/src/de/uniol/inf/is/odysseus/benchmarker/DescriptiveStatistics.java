@@ -137,4 +137,15 @@ public class DescriptiveStatistics {
 			return this.values[pos];
 		}
 	}
+	
+	public String toString(){
+		String str = "";
+		str += "Min: " + this.getMin() + "\n";
+		str += "Max: " + this.getMax() + "\n";
+		str += "Mean: " + this.getMean() + "\n";
+		str += "Value count: " + this.getN() + "\n";
+		str += "Standard deviation: " + this.getStandardDeviation() + "\n";
+		str += "Variance: " + this.getVariance() + "\n";
+		return str;
+	}
 }

@@ -9,10 +9,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 
 /**
@@ -20,7 +24,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
  */
 public class WrapperPlanFactory {
 	
-	//private static final Logger logger = LoggerFactory.getLogger( WrapperPlanFactory.class );
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(WrapperPlanFactory.class);
+		}
+		return _logger;
+	}
 	
 	private static Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
 

@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -46,7 +46,11 @@ import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.Pa
 import de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.base.usermanagement.User;
 import de.uniol.inf.is.odysseus.base.wrapper.WrapperPlanFactory;
+import de.uniol.inf.is.odysseus.benchmarker.IBenchmarkResult;
+import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkSink;
+import de.uniol.inf.is.odysseus.benchmarker.impl.LatencyBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
+import de.uniol.inf.is.odysseus.latency.ILatency;
 import de.uniol.inf.is.odysseus.physicaloperator.base.FileSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -107,6 +111,8 @@ public class ExecutorConsole implements CommandProvider,
 	private String currentMacro = null;
 
 	private ReoptimizeTimer reoptimizeTimer = null;
+	
+	private BenchmarkSink benchmarkSink = null;
 
 	private static class DelegateCommandInterpreter implements
 			CommandInterpreter {
@@ -914,6 +920,22 @@ public class ExecutorConsole implements CommandProvider,
 		ci.println("Broker configuration is "
 				+ (useBrokerConfig ? "activated" : "deactivated"));
 	}
+	
+	public void _waitForBenchmarkResult(CommandInterpreter ci){
+		try {
+			if(this.benchmarkSink != null){
+				IBenchmarkResult result = this.benchmarkSink.waitForResult();
+				System.out.println(result.toString());
+			}
+			else{
+				System.out.println("No benchmark sink used in query!");
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	private boolean toBoolean(String string) {
 		if (string.equalsIgnoreCase("true")) {
@@ -1173,6 +1195,10 @@ public class ExecutorConsole implements CommandProvider,
 				i++;
 			} else if (args[i].equalsIgnoreCase("S")) {
 				params.add(new ParameterDefaultRoot(new MySink()));
+			} else if (args[i].equalsIgnoreCase("B")) {
+				IBenchmarkResult<ILatency> benchRes = new LatencyBenchmarkResultFactory().createBenchmarkResult();
+				this.benchmarkSink = new BenchmarkSink(benchRes, -1);
+				params.add(new ParameterDefaultRoot(this.benchmarkSink));
 			} else if (args[i].equalsIgnoreCase("-m")) {
 				boolean withMeta = Boolean.getBoolean(args[i + 1]);
 				i++;

@@ -41,6 +41,7 @@ TOKEN : /* Keywords */ {
 |	<K_AS: "AS">
 |	<K_AND: "AND">
 |	<K_AVG: "AVG">
+|   <K_BENCHMARK: "BENCHMARK">
 |   <K_BROKER: "BROKER">
 |	<K_COUNT: "COUNT">
 |	<K_DEFAULT: "DEFAULT">
@@ -70,6 +71,7 @@ TOKEN : /* Keywords */ {
 |	<K_SUM: "SUM">
 |	<K_TUMBLING_TIME_WINDOW: "TUMBLING-TIME-WINDOW">
 |	<K_WHERE: "WHERE">
+|   <K_TEST: "TESTOP">
 |   <K_ASSOCIATION_GEN: "ASSOCIATION-GEN">
 |   <K_ASSOCIATION_EVAL: "ASSOCIATION-EVAL">
 |   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
@@ -164,12 +166,74 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	PredictionAssignOp() |
 	PredictionAssignOrOp() |
 	PredictionOp() |
+	TestOp() |
 	AssociationGenOp() |
 	AssociationEvalOp() |
 	AssociationSelOp() |
 	AssociationSrcOp() |
+	EvaluateOp() |
 	SchemaConvertOp() |
-	EvaluateOp()/*@bgen(jjtree)*/
+	BenchmarkOp()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void TestOp(): {/*@bgen(jjtree) TestOp */
+  ASTTestOp jjtn000 = new ASTTestOp(JJTTESTOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) TestOp */
+    try {
+/*@egen*/
+    <K_TEST>"(" AlgebraOp() "," Identifier() ")"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void BenchmarkOp() : {/*@bgen(jjtree) BenchmarkOp */
+  ASTBenchmarkOp jjtn000 = new ASTBenchmarkOp(JJTBENCHMARKOP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) BenchmarkOp */
+        try {
+/*@egen*/
+	<K_BENCHMARK>"(" AlgebraOp() "," Number() "," Number() ")"/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

@@ -6,11 +6,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IClone;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 
 public class CombinedMergeFunction<T extends IClone> implements
 		IMetadataMergeFunction<T> {
 
-	Logger logger = LoggerFactory.getLogger(CombinedMergeFunction.class);
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
+	
 	private ArrayList<IInlineMetadataMergeFunction<? super T>> mergeFunctions = new ArrayList<IInlineMetadataMergeFunction<? super T>>();
 
 	public CombinedMergeFunction() {
@@ -42,7 +51,7 @@ public class CombinedMergeFunction<T extends IClone> implements
 			}
 			return mergedData;
 		} catch (Exception e) {
-			logger.error("could not merge metadata", e);
+			getLogger().error("could not merge metadata", e);
 			throw new RuntimeException(e);
 		}
 	}

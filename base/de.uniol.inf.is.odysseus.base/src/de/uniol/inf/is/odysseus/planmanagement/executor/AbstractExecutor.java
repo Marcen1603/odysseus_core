@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListe
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.base.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQueryReoptimizeListener;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
@@ -48,10 +49,14 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		ISettingChangeListener, 
 		IQueryReoptimizeListener, IPlanReoptimizeListener {
 
-	/**
-	 * Logger zum Ausgeben von Systemmeldungen
-	 */
-	private Logger logger;
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
 
 	/**
 	 * Alle in Odysseus gespeicherten Anfragen
@@ -133,19 +138,19 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		if (newExecutionPlan != null && !newExecutionPlan.equals(this.executionPlan)) {
 			try {
 				executionPlanLock.lock();
-				this.logger.info("Set execution plan.");
+				getLogger().info("Set execution plan.");
 				// Init current execution plan with newExecutionPlan
 				this.executionPlan.initWith(newExecutionPlan);
 				if (isRunning()) {
-					this.logger.info("Set execution plan. Open");
+					getLogger().info("Set execution plan. Open");
 					this.executionPlan.open();
 				}
-				this.logger.info("Set execution plan. Refresh Scheduling");
+				getLogger().info("Set execution plan. Refresh Scheduling");
 				schedulerManager().refreshScheduling(this);
-				this.logger.info("New execution plan set.");
+				getLogger().info("New execution plan set.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				this.logger.error("Error while setting new execution plan. "
+				getLogger().error("Error while setting new execution plan. "
 						+ e.getMessage());
 				fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
 						"Error while setting new execution plan. "
@@ -160,12 +165,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * Standard-Construktor. Initialisiert die Ausführungsumgebung.
 	 */
 	public AbstractExecutor() {
-		this.logger = LoggerFactory.getLogger(AbstractExecutor.class);
-		this.logger.trace("Create Executor.");
+		getLogger().trace("Create Executor.");
 		try {
 			initialize();
 		} catch (ExecutorInitializeException e) {
-			this.logger.error("Error activate executor. Error: "
+			getLogger().error("Error activate executor. Error: "
 					+ e.getMessage());
 		}
 	}
@@ -353,7 +357,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	@Override
 	public void initialize() throws ExecutorInitializeException {
-		this.logger.debug("Start initializing Executor.");
+		getLogger().debug("Start initializing Executor.");
 
 		initializeIntern(configuration);
 
@@ -369,7 +373,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 		this.configuration.addValueChangeListener(this);
 
-		this.logger.debug("Stop initializing Executor.");
+		getLogger().debug("Stop initializing Executor.");
 	}
 
 	/* (non-Javadoc)
@@ -386,11 +390,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	@Override
 	public void startExecution() throws SchedulerException {
 		if (isRunning()) {
-			this.logger.debug("Scheduler already running.");
+			getLogger().debug("Scheduler already running.");
 			return;
 		}
 
-		this.logger.info("Start Scheduler.");
+		getLogger().info("Start Scheduler.");
 		try {
 			this.executionPlan.open();
 			
@@ -401,7 +405,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
-		this.logger.info("Scheduler started.");
+		getLogger().info("Scheduler started.");
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEvent.EXECUTION_STARTED));
@@ -413,17 +417,17 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	@Override
 	public void stopExecution() throws SchedulerException {
 		if (!isRunning()) {
-			this.logger.debug("Scheduler not running.");
+			getLogger().debug("Scheduler not running.");
 			return;
 		}
-		this.logger.info("Stop Scheduler.");
+		getLogger().info("Stop Scheduler.");
 		try {
 			schedulerManager().stopScheduling();
 			this.executionPlan.close();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
-		this.logger.info("Scheduler stopped.");
+		getLogger().info("Scheduler stopped.");
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEvent.EXECUTION_STOPPED));
@@ -457,7 +461,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		try {
 			return compiler();
 		} catch (Exception e) {
-			this.logger.error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		return null;
 	}

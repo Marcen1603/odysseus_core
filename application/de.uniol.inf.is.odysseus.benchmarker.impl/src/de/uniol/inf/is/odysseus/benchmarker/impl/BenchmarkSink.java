@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 /**
  * @author Jonas Jacobi
  */
-class BenchmarkSink<M extends ILatency> extends
+public class BenchmarkSink<M extends ILatency> extends
 		AbstractSink<RelationalTuple<M>> {
 
 	private Lock lock = new ReentrantLock();
@@ -30,6 +30,14 @@ class BenchmarkSink<M extends ILatency> extends
 	public BenchmarkSink(IBenchmarkResult<M> result, long resultsToRead) {
 		this.result = result;
 		this.resultsToRead = resultsToRead;
+	}
+	
+	public BenchmarkSink(BenchmarkSink<M> old){
+		this.lock = old.lock;
+		this.resultQueue = old.resultQueue;
+		this.result = old.result;
+		this.resultsToRead = old.resultsToRead;
+		this.counter = old.counter;
 	}
 
 	@Override
@@ -81,7 +89,7 @@ class BenchmarkSink<M extends ILatency> extends
 	
 	@Override
 	public BenchmarkSink<M> clone()  {
-		throw new RuntimeException("Clone Not implemented yet");
+		return new BenchmarkSink<M>(this);
 	}
 
 	@Override

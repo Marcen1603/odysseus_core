@@ -7,12 +7,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 
 public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements
 		IRouterReceiver {
 	
-	Logger logger = LoggerFactory.getLogger(ByteBufferReceiverPO.class);
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
 
 	private IObjectHandler<W> handler;
 	private int size = -1;

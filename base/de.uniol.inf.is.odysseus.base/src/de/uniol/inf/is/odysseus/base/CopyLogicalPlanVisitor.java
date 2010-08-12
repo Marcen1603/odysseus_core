@@ -7,6 +7,7 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.util.INodeVisitor;
 
 /**
@@ -22,7 +23,15 @@ import de.uniol.inf.is.odysseus.util.INodeVisitor;
 public class CopyLogicalPlanVisitor	implements
 		INodeVisitor<ISubscriber<ILogicalOperator, LogicalSubscription>, ILogicalOperator> {
 
-	private Logger logger;
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(CopyLogicalPlanVisitor.class);
+		}
+		return _logger;
+	}
+	
 	private ILogicalOperator root;
 	private Stack<ILogicalOperator> last;
 	private Stack<ILogicalOperator> lastOld;
@@ -30,7 +39,6 @@ public class CopyLogicalPlanVisitor	implements
 	private Map<ILogicalOperator, ILogicalOperator> replaced = new HashMap<ILogicalOperator, ILogicalOperator>();
 
 	public CopyLogicalPlanVisitor() {
-		this.logger = LoggerFactory.getLogger(CopyLogicalPlanVisitor.class);
 		this.root = null;
 		this.last = new Stack<ILogicalOperator>();
 		this.lastOld = new Stack<ILogicalOperator>();
@@ -57,7 +65,7 @@ public class CopyLogicalPlanVisitor	implements
 				break;
 			}
 		}
-		this.logger.debug("subscribe " + sink.getName() + " to "
+		getLogger().debug("subscribe " + sink.getName() + " to "
 				+ source.getName());
 		source.subscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(),
 				sub.getSchema());
@@ -75,7 +83,7 @@ public class CopyLogicalPlanVisitor	implements
 	@Override
 	public void nodeAction(ISubscriber<ILogicalOperator, LogicalSubscription> node) {
 		ILogicalOperator op = (ILogicalOperator) node;
-		this.logger.debug("copy " + op.getName());
+		getLogger().debug("copy " + op.getName());
 		ILogicalOperator op2 = null;
 			op2 = op.clone();
 			op2.clearPhysicalSubscriptions();

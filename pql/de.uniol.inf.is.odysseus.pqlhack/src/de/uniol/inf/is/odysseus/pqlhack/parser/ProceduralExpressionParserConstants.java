@@ -19,95 +19,99 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_AVG = 8;
   /** RegularExpression Id. */
-  int K_BROKER = 9;
+  int K_BENCHMARK = 9;
   /** RegularExpression Id. */
-  int K_COUNT = 10;
+  int K_BROKER = 10;
   /** RegularExpression Id. */
-  int K_DEFAULT = 11;
+  int K_COUNT = 11;
   /** RegularExpression Id. */
-  int K_JOIN = 12;
+  int K_DEFAULT = 12;
   /** RegularExpression Id. */
-  int K_LOGICAL = 13;
+  int K_JOIN = 13;
   /** RegularExpression Id. */
-  int K_MAX = 14;
+  int K_LOGICAL = 14;
   /** RegularExpression Id. */
-  int K_MIN = 15;
+  int K_MAX = 15;
   /** RegularExpression Id. */
-  int K_NOT = 16;
+  int K_MIN = 16;
   /** RegularExpression Id. */
-  int K_OR = 17;
+  int K_NOT = 17;
   /** RegularExpression Id. */
-  int K_ON = 18;
+  int K_OR = 18;
   /** RegularExpression Id. */
-  int K_PLAN = 19;
+  int K_ON = 19;
   /** RegularExpression Id. */
-  int K_PREDICTION = 20;
+  int K_PLAN = 20;
   /** RegularExpression Id. */
-  int K_PROJECTION = 21;
+  int K_PREDICTION = 21;
   /** RegularExpression Id. */
-  int K_QUEUE = 22;
+  int K_PROJECTION = 22;
   /** RegularExpression Id. */
-  int K_RELATIONAL_PROJECTION = 23;
+  int K_QUEUE = 23;
   /** RegularExpression Id. */
-  int K_RELATIONAL_SELECTION = 24;
+  int K_RELATIONAL_PROJECTION = 24;
   /** RegularExpression Id. */
-  int K_RELATIONAL_JOIN = 25;
+  int K_RELATIONAL_SELECTION = 25;
   /** RegularExpression Id. */
-  int K_RELATIONAL_NEST = 26;
+  int K_RELATIONAL_JOIN = 26;
   /** RegularExpression Id. */
-  int K_RELATIONAL_UNNEST = 27;
+  int K_RELATIONAL_NEST = 27;
   /** RegularExpression Id. */
-  int K_SCHEMA_CONVERT = 28;
+  int K_RELATIONAL_UNNEST = 28;
   /** RegularExpression Id. */
-  int K_SELECTION = 29;
+  int K_SCHEMA_CONVERT = 29;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 30;
+  int K_SELECTION = 30;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION_OR = 31;
+  int K_SET_PREDICTION = 31;
   /** RegularExpression Id. */
-  int K_SIZE = 32;
+  int K_SET_PREDICTION_OR = 32;
   /** RegularExpression Id. */
-  int K_SLIDE = 33;
+  int K_SIZE = 33;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 34;
+  int K_SLIDE = 34;
   /** RegularExpression Id. */
-  int K_SUM = 35;
+  int K_SLDING_TIME_WINDOW = 35;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 36;
+  int K_SUM = 36;
   /** RegularExpression Id. */
-  int K_WHERE = 37;
+  int K_TUMBLING_TIME_WINDOW = 37;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_GEN = 38;
+  int K_WHERE = 38;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_EVAL = 39;
+  int K_TEST = 39;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SEL = 40;
+  int K_ASSOCIATION_GEN = 40;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SRC = 41;
+  int K_ASSOCIATION_EVAL = 41;
   /** RegularExpression Id. */
-  int K_EVALUATE = 42;
+  int K_ASSOCIATION_SEL = 42;
   /** RegularExpression Id. */
-  int IDENTIFIER = 43;
+  int K_ASSOCIATION_SRC = 43;
   /** RegularExpression Id. */
-  int LETTER = 44;
+  int K_EVALUATE = 44;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 45;
+  int IDENTIFIER = 45;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 46;
+  int LETTER = 46;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 47;
+  int SPECIAL_CHARS = 47;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 48;
+  int CHAR_LITERAL = 48;
   /** RegularExpression Id. */
-  int REGEXP = 49;
+  int QUOTED_IDENTIFIER = 49;
   /** RegularExpression Id. */
-  int FLOAT = 50;
+  int COMPARE_OPERATOR = 50;
   /** RegularExpression Id. */
-  int INTEGER = 51;
+  int REGEXP = 51;
   /** RegularExpression Id. */
-  int DIGIT = 52;
+  int FLOAT = 52;
   /** RegularExpression Id. */
-  int IPADDRESS = 53;
+  int INTEGER = 53;
+  /** RegularExpression Id. */
+  int DIGIT = 54;
+  /** RegularExpression Id. */
+  int IPADDRESS = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -123,6 +127,7 @@ public interface ProceduralExpressionParserConstants {
     "\"AS\"",
     "\"AND\"",
     "\"AVG\"",
+    "\"BENCHMARK\"",
     "\"BROKER\"",
     "\"COUNT\"",
     "\"DEFAULT\"",
@@ -152,6 +157,7 @@ public interface ProceduralExpressionParserConstants {
     "\"SUM\"",
     "\"TUMBLING-TIME-WINDOW\"",
     "\"WHERE\"",
+    "\"TESTOP\"",
     "\"ASSOCIATION-GEN\"",
     "\"ASSOCIATION-EVAL\"",
     "\"ASSOCIATION-SEL\"",

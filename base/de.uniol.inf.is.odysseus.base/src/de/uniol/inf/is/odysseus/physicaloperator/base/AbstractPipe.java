@@ -50,9 +50,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
 	};
 
-	// private static final Logger logger = LoggerFactory
-	// .getLogger(AbstractPipe.class);
-
 	abstract protected void process_next(R object, int port);
 
 	// private boolean[] inputExclusive;

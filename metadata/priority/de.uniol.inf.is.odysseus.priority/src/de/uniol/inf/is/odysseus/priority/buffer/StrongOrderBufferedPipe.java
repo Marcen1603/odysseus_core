@@ -66,7 +66,7 @@ public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends
 	@Override
 	public boolean hasNext() {
 		if (!isOpen()) {
-			logger.error("hasNext call on not opened buffer!");
+			getLogger().error("hasNext call on not opened buffer!");
 			return false;
 		}
 

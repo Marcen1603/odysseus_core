@@ -37,12 +37,12 @@ CREATE STREAM linearMove(
 ) SOCKET MV localhost : 55570
 
 CREATE STREAM hypothesis(
-	timestamp INTEGER,
+	timestamp STARTTIMESTAMP,
 	cycle INTEGER
 ) SOCKET MV localhost : 55571
 
 CREATE STREAM pointStream(
-	timestamp INTEGER,
+	timestamp STARTTIMESTAMP,
 	cycle INTEGER,
 	x INTEGER,
 	oldX INTEGER,
@@ -64,10 +64,10 @@ CREATE STREAM test:labdataMV (
 	timestamp LONG,
 	epoch INTEGER,
 	moteid INTEGER,
-	temperature MV 0.5 0.2 0.0 0.0,
-	humidity MV 0.2 2.0 0.0 0.0,
-	light MV 0.0 0.0 20.0 0.0,
-	voltage MV 0.0 0.0 0.0 0.4
+	temperature MV FLOAT 0.5 0.2 0.0 0.0,
+	humidity MV FLOAT 0.2 2.0 0.0 0.0,
+	light MV FLOAT 0.0 0.0 20.0 0.0,
+	voltage MV FLOAT 0.0 0.0 0.0 0.4
 ) SOCKET MV localhost : 55560
 
 
@@ -75,10 +75,10 @@ CREATE STREAM fas:viewCar(
 	timestamp LONG,
 	runtime LONG,
 	gps_time DATE HH:mm:ss.SS,
-	gps_velocity MV 1.5 1.0 1.0 0.0,
-	engine_rpm MV 1.0 20.0 1.0 0.0,
-	speed MV 1.0 1.0 1.5 0.0,
-	brake_pressure MV 0.0 0.0 0.0 0.2
+	gps_velocity MV FLOAT 1.5 1.0 1.0 0.0,
+	engine_rpm MV FLOAT 1.0 20.0 1.0 0.0,
+	speed MV FLOAT 1.0 1.0 1.5 0.0,
+	brake_pressure MV FLOAT 0.0 0.0 0.0 0.2
 ) SOCKET MV localhost : 55561
 
 CREATE STREAM viewCar:brakesCorr(
@@ -86,8 +86,8 @@ CREATE STREAM viewCar:brakesCorr(
 	gps_time DATE HH:mm:ss.SS,
 	speed DOUBLE,
 	pressure DOUBLE,
-	accel MV 0.125 0.295,
-	avgPressure MV 0.295 0.7
+	accel MV FLOAT 0.125 0.295,
+	avgPressure MV FLOAT 0.295 0.7
 ) SOCKET MV localhost : 55562
 
 CREATE STREAM viewCar:brakesUnCorr(
@@ -95,8 +95,8 @@ CREATE STREAM viewCar:brakesUnCorr(
 	gps_time DATE HH:mm:ss.SS,
 	speed DOUBLE,
 	pressure DOUBLE,
-	accel MV 0.125 0.0,
-	avgPressure MV 0.0 0.7
+	accel MV FLOAT 0.125 0.0,
+	avgPressure MV FLOAT 0.0 0.7
 ) SOCKET MV localhost : 55563
 
 CREATE STREAM nexmark:person (

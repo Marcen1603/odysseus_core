@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.IClone;
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 
 /**
@@ -21,7 +22,14 @@ import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
 public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		implements IBuffer<T> {
 
-	protected Logger logger = LoggerFactory.getLogger(BufferedPipe.class);
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
 	
 	protected LinkedList<T> buffer = new LinkedList<T>();
 	protected Lock transferLock = new ReentrantLock();
@@ -52,7 +60,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	@Override
 	public boolean hasNext() {
 		if (!isOpen()){
-			logger.error("hasNext call on not opened buffer!");
+			getLogger().error("hasNext call on not opened buffer!");
 			return false;
 		}
 			

@@ -12,6 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -24,8 +25,15 @@ import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
  */
 public class DataDictionary {
 
-	private static final Logger logger = LoggerFactory.getLogger(DataDictionary.class);
+	protected static Logger _logger = null;
 
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
+	
 	static private DataDictionary instance = null;
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
@@ -57,7 +65,7 @@ public class DataDictionary {
 			try {
 				listener.addedViewDefinition(this, name, op);
 			} catch( Exception ex ) {
-				logger.error("Error during executing listener", ex);
+				getLogger().error("Error during executing listener", ex);
 			}
 		}
 	}
@@ -67,7 +75,7 @@ public class DataDictionary {
 			try {
 				listener.removedViewDefinition(this, name, op);
 			} catch( Exception ex ) {
-				logger.error("Error during executing listener", ex);
+				getLogger().error("Error during executing listener", ex);
 			}
 		}
 	}

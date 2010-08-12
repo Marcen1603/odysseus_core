@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -23,8 +24,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
 public abstract class AbstractBufferPlacementStrategy implements
 		IBufferPlacementStrategy {
 
-	Logger logger = LoggerFactory
-			.getLogger(AbstractBufferPlacementStrategy.class);
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(AbstractBufferPlacementStrategy.class);
+		}
+		return _logger;
+	}
 
 	@SuppressWarnings("unchecked")
 	public void addBuffers(IPhysicalOperator plan) {

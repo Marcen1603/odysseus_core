@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.base.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -36,10 +37,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimize
  */
 public abstract class AbstractOptimizer implements IOptimizer {
 
-	/**
-	 * Logger for detailed informations.
-	 */
-	protected Logger logger = LoggerFactory.getLogger(AbstractOptimizer.class);
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(AbstractOptimizer.class);
+		}
+		return _logger;
+	}
 
 	/**
 	 * Map of registered buffer placement strategies.
@@ -75,7 +80,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	public void activate() {
 		// load logger
-		this.logger.trace("Create Executor.");
+		getLogger().trace("Create Executor.");
 	}
 
 	/**
@@ -86,7 +91,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public void bindBufferPlacementStrategy(
 			IBufferPlacementStrategy bufferPlacementStrategy) {
 		String bpN = bufferPlacementStrategy.getName();
-		logger.debug("bindBufferPlacementStrategy "+bpN);
+		getLogger().debug("bindBufferPlacementStrategy "+bpN);
 		synchronized (this.bufferPlacementStrategies) {
 			this.bufferPlacementStrategies.put(bpN, bufferPlacementStrategy);
 		}
@@ -152,7 +157,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	public void bindPlanMigrationStrategy(
 			IPlanMigrationStrategy planMigrationStrategy) {
-		logger.debug("Bind planmigration strategy "+planMigrationStrategy.getName());
+		getLogger().debug("Bind planmigration strategy "+planMigrationStrategy.getName());
 		this.planMigrationStrategies.put(planMigrationStrategy.getName(), planMigrationStrategy);
 	}
 

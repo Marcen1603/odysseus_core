@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.physicaloperator.base.BufferedPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
@@ -20,7 +21,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.Abst
 public class StandardBufferPlacementStrategy 
 	   extends	AbstractBufferPlacementStrategy {
  
-	Logger logger = LoggerFactory.getLogger(StandardBufferPlacementStrategy.class);;
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
 	
 	@Override
 	protected boolean bufferNeeded(

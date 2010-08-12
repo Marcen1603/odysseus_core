@@ -5,6 +5,7 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
@@ -25,10 +26,16 @@ public class CopyPhysicalPlanVisitor implements
 	private boolean errorsOccured;
 	private IPhysicalOperator root;
 
-	private Logger logger;
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(Query.class);
+		}
+		return _logger;
+	}
 
 	public CopyPhysicalPlanVisitor() {
-		this.logger = LoggerFactory.getLogger(CopyPhysicalPlanVisitor.class);
 		this.last = new Stack<IPhysicalOperator>();
 		this.lastOld = new Stack<IPhysicalOperator>();
 		this.errorsOccured = false;
@@ -52,7 +59,7 @@ public class CopyPhysicalPlanVisitor implements
 				break;
 			}
 		}
-		this.logger.debug("subscribe " + sink.getName() + " to "
+		getLogger().debug("subscribe " + sink.getName() + " to "
 				+ source.getName());
 		source.subscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(),
 				sub.getSchema());
@@ -69,7 +76,7 @@ public class CopyPhysicalPlanVisitor implements
 
 	@Override
 	public void nodeAction(IPhysicalOperator op) {
-		this.logger.debug("copy " + op.getName());
+		getLogger().debug("copy " + op.getName());
 		this.last.push(op.clone());
 		if (this.root == null) {
 			this.root = this.last.peek();

@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.base.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
+import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
@@ -34,6 +35,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationGenOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSelOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
@@ -68,6 +70,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
@@ -82,6 +85,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
+import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
@@ -848,6 +852,24 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		return data;
 	}
 
+	public Object visit(ASTTestOp node, Object data) {
+		TestAO op = new TestAO(node.getName());
+
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForTest = (AbstractLogicalOperator) returnData.get(1);
+		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
+
+		op.subscribeToSource(inputForTest, 0, sourceOutPort, inputForTest.getOutputSchema());
+
+		((ArrayList) data).add(op);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
+
 	@Override
 	public Object visit(ASTBrokerOp node, Object data) {
 		// We cannot use the same code as for ASTAccessOp, since
@@ -1208,6 +1230,32 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		((ArrayList) data).add(ao);
 		((ArrayList) data).add(new Integer(0));
 
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTBenchmarkOp node, Object data) {
+		
+		// first child is preceeding operator
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+		ArrayList inData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForBench = (AbstractLogicalOperator) inData.get(1);
+		int inputSourceOutPort = ((Integer) inData.get(2)).intValue();
+		
+		// second child is selectivity
+		double selectivity = Double.parseDouble(((ASTNumber)node.jjtGetChild(1)).getValue());
+		
+		//third child is duration
+		int duration = Integer.parseInt(((ASTNumber)node.jjtGetChild(2)).getValue());
+		
+		BenchmarkAO bench = new BenchmarkAO(duration, selectivity);
+		
+		bench.subscribeToSource(inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
+		
+		((ArrayList) data).add(bench);
+		((ArrayList) data).add(new Integer(0));
+		
 		return data;
 	}
 

@@ -5,53 +5,57 @@ public interface ProceduralExpressionParserTreeConstants
 {
   public int JJTLOGICALPLAN = 0;
   public int JJTALGEBRAOP = 1;
-  public int JJTPROJECTIONOP = 2;
-  public int JJTPROJECTIONIDENTIFIER = 3;
-  public int JJTRELATIONALPROJECTIONOP = 4;
-  public int JJTSELECTIONOP = 5;
-  public int JJTRELATIONALSELECTIONOP = 6;
-  public int JJTRELATIONALJOINOP = 7;
-  public int JJTRELATIONALNESTOP = 8;
-  public int JJTRELATIONALUNNESTOP = 9;
-  public int JJTJOINOP = 10;
-  public int JJTSCHEMACONVERTOP = 11;
-  public int JJTWINDOWOP = 12;
-  public int JJTSLIDINGTIMEWINDOW = 13;
-  public int JJTACCESSOP = 14;
-  public int JJTBROKEROP = 15;
-  public int JJTPREDICTIONASSIGNOP = 16;
-  public int JJTPREDICTIONASSIGNOROP = 17;
-  public int JJTPREDICTIONOP = 18;
-  public int JJTPREDICATE = 19;
-  public int JJTSIMPLEPREDICATE = 20;
-  public int JJTBASICPREDICATE = 21;
-  public int JJTORPREDICATE = 22;
-  public int JJTANDPREDICATE = 23;
-  public int JJTNOTPREDICATE = 24;
-  public int JJTEXPRESSION = 25;
-  public int JJTSIMPLETOKEN = 26;
-  public int JJTFUNCTIONEXPRESSION = 27;
-  public int JJTFUNCTIONNAME = 28;
-  public int JJTNUMBER = 29;
-  public int JJTSTRING = 30;
-  public int JJTVOID = 31;
-  public int JJTIDENTIFIER = 32;
-  public int JJTCOMPAREOPERATOR = 33;
-  public int JJTPREDICTIONDEFINITION = 34;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 35;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 36;
-  public int JJTKEYVALUELIST = 37;
-  public int JJTKEYVALUEPAIR = 38;
-  public int JJTASSOCIATIONGENOP = 39;
-  public int JJTASSOCIATIONEVALOP = 40;
-  public int JJTASSOCIATIONSELOP = 41;
-  public int JJTASSOCIATIONSRCOP = 42;
-  public int JJTEVALUATEOP = 43;
+  public int JJTTESTOP = 2;
+  public int JJTBENCHMARKOP = 3;
+  public int JJTPROJECTIONOP = 4;
+  public int JJTPROJECTIONIDENTIFIER = 5;
+  public int JJTRELATIONALPROJECTIONOP = 6;
+  public int JJTSELECTIONOP = 7;
+  public int JJTRELATIONALSELECTIONOP = 8;
+  public int JJTRELATIONALJOINOP = 9;
+  public int JJTRELATIONALNESTOP = 10;
+  public int JJTRELATIONALUNNESTOP = 11;
+  public int JJTJOINOP = 12;
+  public int JJTSCHEMACONVERTOP = 13;
+  public int JJTWINDOWOP = 14;
+  public int JJTSLIDINGTIMEWINDOW = 15;
+  public int JJTACCESSOP = 16;
+  public int JJTBROKEROP = 17;
+  public int JJTPREDICTIONASSIGNOP = 18;
+  public int JJTPREDICTIONASSIGNOROP = 19;
+  public int JJTPREDICTIONOP = 20;
+  public int JJTPREDICATE = 21;
+  public int JJTSIMPLEPREDICATE = 22;
+  public int JJTBASICPREDICATE = 23;
+  public int JJTORPREDICATE = 24;
+  public int JJTANDPREDICATE = 25;
+  public int JJTNOTPREDICATE = 26;
+  public int JJTEXPRESSION = 27;
+  public int JJTSIMPLETOKEN = 28;
+  public int JJTFUNCTIONEXPRESSION = 29;
+  public int JJTFUNCTIONNAME = 30;
+  public int JJTNUMBER = 31;
+  public int JJTSTRING = 32;
+  public int JJTVOID = 33;
+  public int JJTIDENTIFIER = 34;
+  public int JJTCOMPAREOPERATOR = 35;
+  public int JJTPREDICTIONDEFINITION = 36;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 37;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 38;
+  public int JJTKEYVALUELIST = 39;
+  public int JJTKEYVALUEPAIR = 40;
+  public int JJTASSOCIATIONGENOP = 41;
+  public int JJTASSOCIATIONEVALOP = 42;
+  public int JJTASSOCIATIONSELOP = 43;
+  public int JJTASSOCIATIONSRCOP = 44;
+  public int JJTEVALUATEOP = 45;
 
 
   public String[] jjtNodeName = {
     "LogicalPlan",
     "AlgebraOp",
+    "TestOp",
+    "BenchmarkOp",
     "ProjectionOp",
     "ProjectionIdentifier",
     "RelationalProjectionOp",
@@ -96,4 +100,4 @@ public interface ProceduralExpressionParserTreeConstants
     "EvaluateOp",
   };
 }
-/* JavaCC - OriginalChecksum=2beb6794804af5d5312df6a9b78b22ca (do not edit this line) */
+/* JavaCC - OriginalChecksum=d73d12638dbe7f328bff1e2c211b1c6b (do not edit this line) */

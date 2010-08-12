@@ -31,9 +31,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.PhysicalSubscription;
  */
 public class Query implements IQuery {
 
-	protected Logger _logger = null;
+	protected static Logger _logger = null;
 
-	protected Logger getLogger() {
+	protected static Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(Query.class);
 		}

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IAdvancedExecutor;
@@ -41,7 +42,14 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
  */
 public class StandardOptimizer extends AbstractOptimizer {
 	
-	Logger logger = null;
+	protected static Logger _logger = null;
+
+	protected static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(StandardOptimizer.class);
+		}
+		return _logger;
+	}
 	
 	private IPlanExecutionCostModel executionCostModel;
 	private IPlanMigrationCostModel migrationCostModel;
@@ -52,7 +60,6 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public static final long MONITORING_PERIOD = 30000;
 	
 	public StandardOptimizer() {
-		logger = LoggerFactory.getLogger(StandardOptimizer.class);
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
 //		this.planMigrationStrategies = new ArrayList<IPlanMigrationStrategy>();
 		this.pendingRequests = new LinkedList<IQuery>();
@@ -190,10 +197,10 @@ public class StandardOptimizer extends AbstractOptimizer {
 					"You can remove this exception, however check that the query only contains a tree");
 		}
 		
-		this.logger.info("Start reoptimize query ID "+query.getID());
+		getLogger().info("Start reoptimize query ID "+query.getID());
 		
 		if (this.getRegisteredPlanMigrationStrategies().isEmpty()) {
-			this.logger.warn("No plan migration strategies available. Aborting.");
+			getLogger().warn("No plan migration strategies available. Aborting.");
 			return executionPlan;
 		}
 		
@@ -220,7 +227,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		
 		// optimization lock on query
 		if (this.optimizationContext.containsKey(query.getID())) {
-			this.logger.warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
+			getLogger().warn("Aborted reoptimization. Query with ID "+query.getID()+" is currently getting optimized.");
 			return executionPlan;
 		} else if (this.optimizationContext.size() >= this.configuration.getSettingMaxConcurrentOptimizations().getValue()) {
 			queueRequest(query, "There are currently "+this.optimizationContext.size()+" optimizations running.");
@@ -231,7 +238,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		
 		try {
 			// build alternative physical plans
-			this.logger.debug("Building alternative plans.");
+			getLogger().debug("Building alternative plans.");
 			Map<IPhysicalOperator,ILogicalOperator> alternatives = this.queryOptimizer.createAlternativePlans(
 					sender, query, 
 					new OptimizeParameter(ParameterDoRestruct.TRUE), null);
@@ -240,7 +247,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			List<IPhysicalOperator> candidates = this.executionCostModel.getCostCalculator().pickBest(
 					alternatives.keySet(), this.configuration.getSettingComparePlanCandidates().getValue());
 			if (candidates.isEmpty()) {
-				this.logger.info("No alternative plans for query ID "+query.getID());
+				getLogger().info("No alternative plans for query ID "+query.getID());
 				this.optimizationContext.remove(query.getID());
 				return executionPlan;
 			}
@@ -259,7 +266,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			context.setSender(sender);
 			
 			// start migration to new plan 
-			this.logger.info("Start migration to new physical plan (query ID "+query.getID()+")");
+			getLogger().info("Start migration to new physical plan (query ID "+query.getID()+")");
 			ArrayList<IPhysicalOperator> listOfRoots = new ArrayList<IPhysicalOperator>();
 			listOfRoots.add(optimalMigration.getNewPlan());
 			optimalMigration.getStrategy().migrateQuery(this, query, listOfRoots);
@@ -267,11 +274,11 @@ public class StandardOptimizer extends AbstractOptimizer {
 			((IAdvancedExecutor)sender).updateExecutionPlan();
 			
 			// wait for migration end callback
-			this.logger.info("Plan migration running (query ID "+query.getID()+")");
+			getLogger().info("Plan migration running (query ID "+query.getID()+")");
 			
 		} catch (Exception e) {
 			//this.optimizationContext.remove(query.getID());
-			this.logger.warn("Reoptimization failed. (query ID "+query.getID()+")",e);
+			getLogger().warn("Reoptimization failed. (query ID "+query.getID()+")",e);
 		}
 		
 		return executionPlan;
@@ -293,7 +300,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 			// remove lock and context
 			this.optimizationContext.remove(query.getID());
-			this.logger.info("Finished plan migration (query ID "
+			getLogger().info("Finished plan migration (query ID "
 					+ query.getID() + ")");
 			
 			// handle pending requests
@@ -301,13 +308,13 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 		} catch (Exception e) {
 			// this.optimizationContext.remove(sender.getID());
-			this.logger.warn("Reoptimization failed. (query ID "
+			getLogger().warn("Reoptimization failed. (query ID "
 					+ query.getID() + ")", e);
 		}
 	}
 	
 	private void queueRequest(IQuery query, String reason) {
-		this.logger.warn("Reoptimization request queued. "+reason);
+		getLogger().warn("Reoptimization request queued. "+reason);
 		if (!this.pendingRequests.contains(query)) {
 			this.pendingRequests.offer(query);
 		}
