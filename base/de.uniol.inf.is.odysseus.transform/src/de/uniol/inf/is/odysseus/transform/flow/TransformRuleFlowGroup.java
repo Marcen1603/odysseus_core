@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.transform.flow;
 
-public enum RuleFlowGroup {
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+
+public enum TransformRuleFlowGroup implements IRuleFlowGroup{
 	INIT,
 	ACCESS,
 	CREATE_METADATA,

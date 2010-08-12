@@ -35,7 +35,7 @@ public class TransformationExecutor implements ITransformation {
 		logger.debug("Starting transformation of "+op+"...");
 		
 		// creating a new transformation environment
-		TransformationEnvironment env = new TransformationEnvironment(config);
+		TransformationEnvironment env = new TransformationEnvironment(config, TransformationInventory.getInstance());
 
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		ArrayList<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
@@ -45,7 +45,7 @@ public class TransformationExecutor implements ITransformation {
 		addLogicalOperator(top, list, env);
 		logger.trace("Processing rules...");
 		// start transformation
-		env.processTransformation();
+		env.processEnvironment();
 		logger.trace("Processing rules done.");
 		
 		IPhysicalOperator physicalPO = top.getPhysicalInput();

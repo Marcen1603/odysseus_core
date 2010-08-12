@@ -24,7 +24,7 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public void transform(AccessAO accessAO, TransformationConfiguration transformConfig) {
+	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		System.out.println("Transform view: " + accessAO);
 		String sourceName = accessAO.getSource().getURI(false);
 		//ILogicalOperator cPlan = AbstractTreeWalker.prefixWalk($view, new CopyLogicalPlanVisitor());

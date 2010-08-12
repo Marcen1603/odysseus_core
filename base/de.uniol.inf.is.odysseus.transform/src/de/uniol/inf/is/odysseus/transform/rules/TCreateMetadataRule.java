@@ -23,7 +23,7 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void transform(ISource source, TransformationConfiguration transformConfig) {
+	public void execute(ISource source, TransformationConfiguration transformConfig) {
 		Class type = MetadataRegistry.getMetadataType(transformConfig.getMetaTypes());
 		MetadataCreationPO po = null;
 		for(PhysicalSubscription<ISink> sub : (Collection<PhysicalSubscription<ISink>>)source.getSubscriptions()){

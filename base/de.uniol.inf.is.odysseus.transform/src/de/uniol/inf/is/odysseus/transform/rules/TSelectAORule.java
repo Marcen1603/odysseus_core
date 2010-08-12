@@ -16,7 +16,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	}
 
 	@Override
-	public void transform(SelectAO selectAO, TransformationConfiguration transformConfig) {		
+	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {		
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
 		selectPO.setOutputSchema(selectAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(selectAO, selectPO);

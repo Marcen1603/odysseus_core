@@ -16,7 +16,7 @@ public class TSplitAORule extends AbstractTransformationRule<SplitAO> {
 	}
 
 	@Override
-	public void transform(SplitAO splitAO, TransformationConfiguration transformConfig) {
+	public void execute(SplitAO splitAO, TransformationConfiguration transformConfig) {
 		SplitPO splitPO = new SplitPO(splitAO.getPredicates());
 		splitPO.setOutputSchema(splitAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(splitAO, splitPO);

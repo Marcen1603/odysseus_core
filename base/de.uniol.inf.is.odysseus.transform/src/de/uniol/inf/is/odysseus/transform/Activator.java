@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
-import de.uniol.inf.is.odysseus.transform.flow.RuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rules.TAccessAOExistsRule;
 import de.uniol.inf.is.odysseus.transform.rules.TCreateMetadataRule;
 import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
@@ -28,20 +28,20 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		
 		// init rule flow (order is important)
-		TransformationInventory.getInstance().addRuleFlowGroup(RuleFlowGroup.INIT);
-		TransformationInventory.getInstance().addRuleFlowGroup(RuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRuleFlowGroup(RuleFlowGroup.CREATE_METADATA);
-		TransformationInventory.getInstance().addRuleFlowGroup(RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRuleFlowGroup(RuleFlowGroup.METAOBJECTS);
-		TransformationInventory.getInstance().addRuleFlowGroup(RuleFlowGroup.CLEANUP);	
+		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.INIT);
+		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.CREATE_METADATA);
+		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.METAOBJECTS);
+		TransformationInventory.getInstance().addRuleFlowGroup(TransformRuleFlowGroup.CLEANUP);	
 		
 		//loading default rules		
-		TransformationInventory.getInstance().addRule(new TAccessAOExistsRule(), RuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TCreateMetadataRule(), RuleFlowGroup.CREATE_METADATA);
-		TransformationInventory.getInstance().addRule(new TDeleteRenameAORule(), RuleFlowGroup.INIT);
-		TransformationInventory.getInstance().addRule(new TSelectAORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TSplitAORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TTransformViewRule(), RuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRule(new TAccessAOExistsRule(), TransformRuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRule(new TCreateMetadataRule(), TransformRuleFlowGroup.CREATE_METADATA);
+		TransformationInventory.getInstance().addRule(new TDeleteRenameAORule(), TransformRuleFlowGroup.INIT);
+		TransformationInventory.getInstance().addRule(new TSelectAORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TSplitAORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TTransformViewRule(), TransformRuleFlowGroup.ACCESS);
 		
 		
 	}
