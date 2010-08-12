@@ -183,6 +183,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createNexmarkSources() {
 		String[] q = new String[4];
 		q[0] = "CREATE STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440";
@@ -190,11 +191,15 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 		q[2] = "CREATE STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441";
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
-			// try {
-			// this.executor.addQuery(s, "CQL", user, this.trafoConfigParam);
-			// } catch (PlanManagementException e) {
-			// e.printStackTrace();
-			// }
+			try {
+				this.executor.addQuery(s, "CQL", user,
+						new ParameterTransformationConfiguration(
+								new TransformationConfiguration(
+										new RelationalTransformationHelper(),
+										"relational", ITimeInterval.class)));
+			} catch (PlanManagementException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -263,28 +268,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark {
 
 	}
 
-	@Override
-	public List<DescriptiveStatistics> getMemUsageJoin() {
-		if (useBenchmarkMemUsage) {
-			return avgMemListener.getMemUsageJoinStatistics();
-		}
-		return null;
-	}
-
-	@Override
-	public List<DescriptiveStatistics> getMemUsageJoinPunctuations() {
-		if (useBenchmarkMemUsage) {
-			return avgMemListener.getMemUsageJoinPunctuationStatistics();
-		}
-		return null;
-	}
-
-	@Override
-	public List<DescriptiveStatistics> getMemUsagePuffer() {
-		if (useBenchmarkMemUsage) {
-			return avgMemListener.getMemUsageBufferStatistics();
-		}
-		return null;
+	public DescriptiveStatistics getMemUsageStatistics() {
+		return this.avgMemListener.getMemUsageStatistics();
 	}
 
 	@Override

@@ -7,7 +7,6 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -query_language PQL -query &quot;source:=testproducer({invertedpriorityratio=2, parts=[[1000,1000]]}) a=benchmark({time = 5000, selectivity = 1.0}, access({source=&apos;source&apos;})) b=benchmark({time = 5000, selectivity = 1.0}, access({source=&apos;source&apos;}))&quot; -priority -buffer_placement &quot;No Buffers&quot;</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.6 -Xms40m -Xmx512m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
@@ -66,7 +65,7 @@
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel"/>
       <plugin id="de.uniol.inf.is.odysseus.priority"/>
       <plugin id="de.uniol.inf.is.odysseus.priority_interval"/>
-      <plugin id="de.uniol.inf.is.odysseus.priority_relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.priority_relational" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.benchmark" fragment="true"/>
@@ -79,7 +78,7 @@
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>

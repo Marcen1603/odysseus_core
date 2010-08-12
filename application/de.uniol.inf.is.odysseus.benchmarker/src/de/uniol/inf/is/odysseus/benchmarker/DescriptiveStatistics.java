@@ -138,6 +138,20 @@ public class DescriptiveStatistics {
 		}
 	}
 	
+	public void mergeValues(DescriptiveStatistics otherStats) {
+		if (isEvaluated|| otherStats.isEvaluated) {
+			throw new RuntimeException(
+					"can't add any more values after first read");
+		}
+		
+		long[] tmp = values;
+		values = new long[count + otherStats.count];
+		System.arraycopy(tmp, 0, values, 0, count);
+		System.arraycopy(otherStats.values, 0, values, 0, otherStats.count);
+		this.count += otherStats.count;
+		this.sum += otherStats.sum;
+	}
+	
 	public String toString(){
 		String str = "";
 		str += "Min: " + this.getMin() + "\n";

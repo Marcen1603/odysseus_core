@@ -23,6 +23,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 	private static final String DEFAULT_OUT_FILE = "result.xml";
 	private static final int DEFAULT_WAIT = 0;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -30,16 +31,19 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	 * IApplicationContext)
 	 */
 	public Object start(IApplicationContext context) throws Exception {
-		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		String[] args = (String[]) context.getArguments().get(
+				IApplicationContext.APPLICATION_ARGS);
 		Args arguments = new Args();
-		BundleContext ctx = Activator.getDefault().getBundle().getBundleContext();
+		BundleContext ctx = Activator.getDefault().getBundle()
+				.getBundleContext();
 		try {
 			initArgs(arguments, args);
 
 			ServiceTracker t = new ServiceTracker(ctx, IBenchmark.class
 					.getName(), null);
 			t.open();
-			int wait = arguments.hasParameter(WAIT) ? arguments.getInteger(WAIT) : DEFAULT_WAIT;
+			int wait = arguments.hasParameter(WAIT) ? arguments
+					.getInteger(WAIT) : DEFAULT_WAIT;
 			IBenchmark benchmark = (IBenchmark) t.waitForService(wait);
 			if (benchmark == null) {
 				throw new Exception("cannot find benchmark service");
@@ -49,27 +53,19 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 			IBenchmarkResult<?> result = benchmark.runBenchmark();
 			String filename = DEFAULT_OUT_FILE;
-			if (arguments.hasParameter(OUT)){
+			if (arguments.hasParameter(OUT)) {
 				filename = arguments.get(OUT);
 			}
-			
+
 			Serializer serializer = new Persister();
 			serializer.write(result, new File(filename));
-			
-			if(arguments.get(MEMORY_USAGE)) {
-				for(int i=0; i < benchmark.getMemUsageJoin().size();i++) {
-					String memFile = filename.replaceAll(".xml", i + "JOIN.xml" );
-					serializer.write(benchmark.getMemUsageJoin().get(i), new File(memFile));
-				}
-				for(int i=0; i < benchmark.getMemUsageJoinPunctuations().size();i++) {
-					String memFile = filename.replaceAll(".xml", i + "JOIN2.xml" );
-					serializer.write(benchmark.getMemUsageJoinPunctuations().get(i), new File(memFile));
-				}
-				/*	for(int i=0; i < benchmark.getMemUsagePuffer().size();i++) {
-					serializer.write(benchmark.getMemUsagePuffer().get(i), new File(i + "BUFFER" + filename));
-				}*/
-			}			
-			
+
+			if (arguments.get(MEMORY_USAGE)) {
+				String memFile = filename.replaceAll(".xml", "_memory.xml");
+				serializer.write(benchmark.getMemUsageStatistics(), new File(
+						memFile));
+			}
+
 		} catch (ArgsException e) {
 			e.printStackTrace();
 			System.out.println("usage:\n");
@@ -78,7 +74,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		} catch (Throwable t) {
 			t.printStackTrace();
 			return -1;
-		} 
+		}
 
 		return IApplication.EXIT_OK;
 	}
@@ -108,6 +104,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	private static final String WAIT = "-wait";
 	private static final String MEMORY_USAGE = "-memUsage";
 	private static final String NO_METADATA = "-no_metadata";
+
 	// private static Logger logger =
 	// LoggerFactory.getLogger(BenchmarkStarter.class);
 
@@ -146,14 +143,14 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		}
 
 		benchmark.setMetadataTypes(metaTypes);
-		
+
 		benchmark.setNoMetadataCreation(arguments.getBoolean(NO_METADATA));
 
 		if (arguments.get(PUNCTUATIONS)) {
 			benchmark.setUsePunctuations(true);
 		}
-		
-		if(arguments.get(EXTENDED_POSTPRIORISATION)) {
+
+		if (arguments.get(EXTENDED_POSTPRIORISATION)) {
 			benchmark.setExtendedPostPriorisation(true);
 		}
 
@@ -165,8 +162,8 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			Long maxResults = arguments.getLong(MAX_RESULTS);
 			benchmark.setMaxResults(maxResults);
 		}
-		
-		if(arguments.get(MEMORY_USAGE)) {
+
+		if (arguments.get(MEMORY_USAGE)) {
 			benchmark.setBenchmarkMemUsage(true);
 		}
 
@@ -210,18 +207,24 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 		arguments
 				.addBoolean(LOAD_SHEDDING, " - enables usage of load shedding");
-		
-		arguments
-		.addBoolean(EXTENDED_POSTPRIORISATION, " - enables extended post priorisation");		
-		
-		arguments.addBoolean(MEMORY_USAGE, " - activates the listener to benchmark memory usage");		
+
+		arguments.addBoolean(EXTENDED_POSTPRIORISATION,
+				" - enables extended post priorisation");
+
+		arguments.addBoolean(MEMORY_USAGE,
+				" - activates the listener to benchmark memory usage");
 
 		arguments
 				.addString(OUT, REQUIREMENT.OPTIONAL,
 						"<filename> - writes results in file <filename> (default=result.xml)");
 
-		arguments.addInteger(WAIT, REQUIREMENT.OPTIONAL, "<time in ms> - wait for time ms for the benchmarker to become available (default is infinite waiting)");
-		arguments.addBoolean(NO_METADATA, " - don't create MetadataCreationPOs");
+		arguments
+				.addInteger(
+						WAIT,
+						REQUIREMENT.OPTIONAL,
+						"<time in ms> - wait for time ms for the benchmarker to become available (default is infinite waiting)");
+		arguments
+				.addBoolean(NO_METADATA, " - don't create MetadataCreationPOs");
 		arguments.parse(args);
 	}
 }

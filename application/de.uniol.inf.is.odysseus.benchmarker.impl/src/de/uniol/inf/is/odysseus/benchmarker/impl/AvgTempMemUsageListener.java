@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
+import de.uniol.inf.is.odysseus.base.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.benchmarker.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.PunctuationStorage;
 import de.uniol.inf.is.odysseus.physicaloperator.base.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
+import de.uniol.inf.is.odysseus.physicaloperator.base.event.POEvent;
 
 /**
  * Collects memory usage for a given operator using SweepAreas.
@@ -16,16 +16,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.event.IPOEventListener;
  */
 public class AvgTempMemUsageListener implements IPOEventListener {
 
-	private Object value;
-	
 	private DescriptiveStatistics stats = new DescriptiveStatistics();
 
 	public DescriptiveStatistics getStats() {
 		return stats;
-	}
-
-	public AvgTempMemUsageListener(Object op) {
-		this.value = op;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -33,24 +27,20 @@ public class AvgTempMemUsageListener implements IPOEventListener {
 	public synchronized void poEventOccured(POEvent poEvent) {
 		long tmp = 0;
 
-		if (value instanceof JoinTIPO) {
-			final ISweepArea[] areas = ((JoinTIPO) value).getAreas();
+		IPhysicalOperator sourceOp = poEvent.getSource();
+		if (sourceOp instanceof JoinTIPO) {
+			final ISweepArea[] areas = ((JoinTIPO) sourceOp).getAreas();
 
 			for (ISweepArea each : areas) {
 				tmp += each.size();
 			}
-		} else if (value instanceof IBuffer) {
-			tmp = ((IBuffer) value).size();
-		} else if (value instanceof PunctuationStorage) {
-			PunctuationStorage punc = (PunctuationStorage) value;
-			tmp = punc.size();
+		} else if (sourceOp instanceof IBuffer) {
+			tmp = ((IBuffer) sourceOp).size();
 		}
 		try {
 			stats.addValue(tmp);
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 	}
-
-
 
 }
