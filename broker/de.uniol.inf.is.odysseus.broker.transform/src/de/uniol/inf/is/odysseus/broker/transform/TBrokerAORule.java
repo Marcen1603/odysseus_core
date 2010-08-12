@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerAORule extends AbstractTransformationRule<BrokerAO> {
@@ -17,8 +19,8 @@ public class TBrokerAORule extends AbstractTransformationRule<BrokerAO> {
 	}
 
 	@Override
-	public void transform(BrokerAO brokerAO, TransformationConfiguration trafo) {
-		getLogger().debug("CREATE Broker: " + brokerAO.getIdentifier()); 
+	public void execute(BrokerAO brokerAO, TransformationConfiguration trafo) {
+		LoggerSystem.printlog(Accuracy.DEBUG, "CREATE Broker: " + brokerAO.getIdentifier()); 
 		BrokerPO brokerPO = new BrokerPO(brokerAO.getIdentifier());
 		brokerPO.setOutputSchema(brokerAO.getOutputSchema());
 		brokerPO.setQueueSchema(brokerAO.getQueueSchema());
@@ -29,7 +31,7 @@ public class TBrokerAORule extends AbstractTransformationRule<BrokerAO> {
 		}		
 		retract(brokerAO);
 		insert(brokerPO);
-		getLogger().debug("CREATE Broker end.");
+		LoggerSystem.printlog(Accuracy.DEBUG, "CREATE Broker end.");
 		
 	}
 

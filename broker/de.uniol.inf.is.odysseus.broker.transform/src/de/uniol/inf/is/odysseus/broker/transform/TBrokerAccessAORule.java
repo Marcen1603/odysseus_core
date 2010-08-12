@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleObjectHandler;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
@@ -21,8 +23,8 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public void transform(AccessAO accessAO, TransformationConfiguration trafo) {
-		getLogger().debug("Using Broker Access Operator");
+	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
+		LoggerSystem.printlog(Accuracy.DEBUG,"Using Broker Access Operator");
 		String accessPOName = accessAO.getSource().getURI(false);
 		ISource<?> accessPO = null;
 

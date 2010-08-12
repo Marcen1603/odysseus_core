@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerJoinTIPORule extends AbstractTransformationRule<JoinAO> {
@@ -23,8 +25,8 @@ public class TBrokerJoinTIPORule extends AbstractTransformationRule<JoinAO> {
 	}
 
 	@Override
-	public void transform(JoinAO joinAO, TransformationConfiguration trafo) {
-		getLogger().debug("Using Broker Transfer Function");
+	public void execute(JoinAO joinAO, TransformationConfiguration trafo) {
+		LoggerSystem.printlog(Accuracy.DEBUG, "Using Broker Transfer Function");
 		JoinTIPO joinPO = new BrokerJoinTIPO();
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());

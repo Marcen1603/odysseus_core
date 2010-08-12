@@ -18,7 +18,7 @@ public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
 	}
 
 	@Override
-	public void transform(P2PSourceAO p2pSourceAO, TransformationConfiguration transformConfig) {
+	public void execute(P2PSourceAO p2pSourceAO, TransformationConfiguration transformConfig) {
 		P2PInputStreamAccessPO<?,?> p2pAccessPO = new P2PInputStreamAccessPO(new IdentityTransformation(), p2pSourceAO.getAdv(), PeerGroupTool.getPeerGroup());
 		p2pAccessPO.setOutputSchema(p2pSourceAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(p2pSourceAO, p2pAccessPO);

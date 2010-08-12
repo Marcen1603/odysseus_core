@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.base.ILogicalOperator;
 import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasurePO;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TMetricAORule extends AbstractTransformationRule<MetricMeasureAO> {
@@ -16,8 +18,8 @@ public class TMetricAORule extends AbstractTransformationRule<MetricMeasureAO> {
 	}
 
 	@Override
-	public void transform(MetricMeasureAO metricMeasureAO, TransformationConfiguration transformConfig) {
-		getLogger().debug("Transform MetricMeasureAO"); 
+	public void execute(MetricMeasureAO metricMeasureAO, TransformationConfiguration transformConfig) {
+		LoggerSystem.printlog(Accuracy.DEBUG, "Transform MetricMeasureAO"); 
 		MetricMeasurePO<?> metricMeasurePO = new MetricMeasurePO(metricMeasureAO.getOnAttribute());
 		metricMeasurePO.setOutputSchema(metricMeasureAO.getOutputSchema());						
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(metricMeasureAO,metricMeasurePO);							

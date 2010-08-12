@@ -4,6 +4,8 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
 import de.uniol.inf.is.odysseus.broker.transaction.TransactionDetector;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerCycleDetectionRule extends AbstractTransformationRule<BrokerPO<?>> {
@@ -14,10 +16,10 @@ public class TBrokerCycleDetectionRule extends AbstractTransformationRule<Broker
 	}
 
 	@Override
-	public void transform(BrokerPO<?> operator, TransformationConfiguration transformConfig) {		
-		getLogger().debug("Searching for cycles and reorganize broker transactions..."); 
+	public void execute(BrokerPO<?> operator, TransformationConfiguration transformConfig) {		
+		LoggerSystem.printlog(Accuracy.DEBUG, "Searching for cycles and reorganize broker transactions..."); 
 		TransactionDetector.reorganizeTransactions(BrokerWrapperPlanFactory.getAllBrokerPOs());		
-		getLogger().debug("Searching done"); 
+		LoggerSystem.printlog(Accuracy.DEBUG, "Searching done"); 
 		retract(operator);
 	}
 

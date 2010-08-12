@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
-import de.uniol.inf.is.odysseus.transform.flow.RuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class Activator implements BundleActivator {
 
@@ -20,12 +20,12 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		TransformationInventory.getInstance().addRule(new TBrokerAccessAORule(), RuleFlowGroup.ACCESS);
-		TransformationInventory.getInstance().addRule(new TBrokerAOExistsRule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TBrokerAORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TBrokerCycleDetectionRule(), RuleFlowGroup.CLEANUP);
-		TransformationInventory.getInstance().addRule(new TBrokerJoinTIPORule(), RuleFlowGroup.TRANSFORMATION);
-		TransformationInventory.getInstance().addRule(new TMetricAORule(), RuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TBrokerAccessAORule(), TransformRuleFlowGroup.ACCESS);
+		TransformationInventory.getInstance().addRule(new TBrokerAOExistsRule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TBrokerAORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TBrokerCycleDetectionRule(), TransformRuleFlowGroup.CLEANUP);
+		TransformationInventory.getInstance().addRule(new TBrokerJoinTIPORule(), TransformRuleFlowGroup.TRANSFORMATION);
+		TransformationInventory.getInstance().addRule(new TMetricAORule(), TransformRuleFlowGroup.TRANSFORMATION);
 	}
 
 	/*

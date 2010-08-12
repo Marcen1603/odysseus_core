@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.base.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerPO;
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerWrapperPlanFactory;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
+import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TBrokerAOExistsRule extends AbstractTransformationRule<BrokerAO> {
@@ -17,16 +19,16 @@ public class TBrokerAOExistsRule extends AbstractTransformationRule<BrokerAO> {
 	}
 
 	@Override
-	public void transform(BrokerAO brokerAO, TransformationConfiguration trafo) {
-		getLogger().debug("Reuse Broker: " + brokerAO);
-		getLogger().debug("Using existing BrokerPO");  		
+	public void execute(BrokerAO brokerAO, TransformationConfiguration trafo) {
+		LoggerSystem.printlog(Accuracy.DEBUG, "Reuse Broker: " + brokerAO);
+		LoggerSystem.printlog(Accuracy.DEBUG, "Using existing BrokerPO");  		
 		BrokerPO<?> brokerPO = BrokerWrapperPlanFactory.getPlan(brokerAO.getIdentifier());				
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(brokerAO,brokerPO);										
 		for (ILogicalOperator o:toUpdate){
-			getLogger().debug("Insert: "+o);		
+			LoggerSystem.printlog(Accuracy.DEBUG, "Insert: "+o);		
 			update(o);
 		}			
-		getLogger().debug("Retracting BrokerAO: "+brokerAO);		 
+		LoggerSystem.printlog(Accuracy.DEBUG, "Retracting BrokerAO: "+brokerAO);		 
 		retract(brokerAO);	
 		insert(brokerPO);
 		
