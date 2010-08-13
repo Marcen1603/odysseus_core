@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.LockSupport;
 
 import com.Ostermiller.util.CSVParser;
 
@@ -100,6 +101,8 @@ public class LabdataServer {
 		String streamName = cfg.getProperty("streamName", "test:labdata");
 		
 		String stream_definition_file = "labdata_cfg/" + cfg.getProperty("streamDefinitons");
+		
+		int elementsPerSecond = Integer.parseInt(cfg.getProperty("frequency")); 
 		
 		URL stream_definition_URL = Activator.getContext().getBundle().getEntry(stream_definition_file);
 		InputStream input = stream_definition_URL.openStream();
@@ -188,7 +191,7 @@ public class LabdataServer {
 						cachedValues, accelerationFactor);
 			} else if (useCSV) {
 				handler = new CSVHandler(s, iStream, limit, inputFile,
-						cachedValues, schema, accelerationFactor, delim);
+						cachedValues, schema, elementsPerSecond, delim);
 			} else {
 				handler = new TupleHandler(s, iStream, limit, inputFile,
 						cachedValues, accelerationFactor);
@@ -371,13 +374,17 @@ class RawHandler extends ClientHandler {
 class CSVHandler extends ClientHandler {
 	private SDFAttributeList schema;
 	char csvDelim;
+	int elementsPerSecond;
+	int periodLength;
 
 	public CSVHandler(Socket s, ObjectInputStream stream, Integer limit,
 			String inputFile, Object[][] cachedValues, SDFAttributeList schema,
-			Integer accelerationFactor, char delim) {
-		super(s, stream, limit, inputFile, cachedValues, accelerationFactor);
+			Integer elementsPerSecond, char delim) {
+		super(s, stream, limit, inputFile, cachedValues, elementsPerSecond);
 		this.schema = schema;
 		this.csvDelim = delim;
+		this.periodLength = 1000000000/elementsPerSecond; // in nanoseconds
+		System.out.println("Sending all " + this.periodLength + "ms.");
 	}
 
 	@Override
@@ -401,13 +408,15 @@ class CSVHandler extends ClientHandler {
 
 			while ((limit < 1 || i < limit) && !stop) {
 				if (limit > 0) {
+					
 					for (int u = 0; u < cachedValues[i].length; u++) {
 						// if the following condition is true,
 						// limit is higher than data is available.
 						if(cachedValues[i] == null || cachedValues[i][u] == null){
 							stop = true;
 							break;
-						}
+						}	
+						
 						SDFAttribute attr = this.schema.get(u);
 						// hack fix for timestamp @TODO fix it someday.
 						if (attr.getDatatype().getURI(false).endsWith("Timestamp")) {
@@ -480,6 +489,9 @@ class CSVHandler extends ClientHandler {
 					}
 				}
 				i++;
+				// wait for the next element for 1/frequency milliseconds
+//				Thread.sleep(this.periodLength);
+				LockSupport.parkNanos(this.periodLength);
 			}
 			long endDuration = System.nanoTime();
 			System.out.println(" |->Done" + " i = " + i);

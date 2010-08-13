@@ -51,6 +51,8 @@ import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkSink;
 import de.uniol.inf.is.odysseus.benchmarker.impl.LatencyBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.latency.ILatency;
+import de.uniol.inf.is.odysseus.latency.LatencyCalculationPipe;
+import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.base.FileSink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.base.ISource;
@@ -925,7 +927,7 @@ public class ExecutorConsole implements CommandProvider,
 		try {
 			if(this.benchmarkSink != null){
 				IBenchmarkResult result = this.benchmarkSink.waitForResult();
-				System.out.println(result.toString());
+				System.out.println(result.getStatistics().toString());
 			}
 			else{
 				System.out.println("No benchmark sink used in query!");
@@ -1198,7 +1200,9 @@ public class ExecutorConsole implements CommandProvider,
 			} else if (args[i].equalsIgnoreCase("B")) {
 				IBenchmarkResult<ILatency> benchRes = new LatencyBenchmarkResultFactory().createBenchmarkResult();
 				this.benchmarkSink = new BenchmarkSink(benchRes, -1);
-				params.add(new ParameterDefaultRoot(this.benchmarkSink));
+				LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
+				latency.subscribeSink(this.benchmarkSink, 0, 0, latency.getOutputSchema());
+				params.add(new ParameterDefaultRoot(latency));
 			} else if (args[i].equalsIgnoreCase("-m")) {
 				boolean withMeta = Boolean.getBoolean(args[i + 1]);
 				i++;
@@ -1651,14 +1655,16 @@ public class ExecutorConsole implements CommandProvider,
 				while (tokens.hasMoreTokens()) {
 					String token = tokens.nextToken();
 					// this is for complex tokens that are in ' '
-					if (token.equals("'")) {
+					if (token.startsWith("'") || token.startsWith("\"")) {
+						String start = token.substring(0, 1);
 						boolean isEnd = false;
-						String complexArgument = "";
+						String complexArgument = token.substring(1);
 						while (!isEnd) {
 							String innerToken = tokens.nextToken();
-							if (!innerToken.equals("'")) {
+							if (!innerToken.endsWith(start)) {
 								complexArgument += innerToken;
 							} else {
+								complexArgument += innerToken.substring(0, innerToken.length() - 1);
 								isEnd = true;
 							}
 						}

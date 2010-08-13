@@ -100,6 +100,7 @@ public class DescriptiveStatistics {
 
 		this.percentileMap = new TreeMap<Integer, Double>();
 		addPersistablePercentiles(5, 10, 25, 50, 75, 90, 95);
+		
 	}
 
 	private void addPersistablePercentiles(int... percentiles) {
@@ -153,6 +154,7 @@ public class DescriptiveStatistics {
 	}
 	
 	public String toString(){
+		this.prepareStats();
 		String str = "";
 		str += "Min: " + this.getMin() + "\n";
 		str += "Max: " + this.getMax() + "\n";
@@ -160,6 +162,8 @@ public class DescriptiveStatistics {
 		str += "Value count: " + this.getN() + "\n";
 		str += "Standard deviation: " + this.getStandardDeviation() + "\n";
 		str += "Variance: " + this.getVariance() + "\n";
+		str += "95 percentile: " + this.getPercentile(95) + "\n";
+		str += "50 percentile: " + this.getPercentile(50);
 		return str;
 	}
 }
