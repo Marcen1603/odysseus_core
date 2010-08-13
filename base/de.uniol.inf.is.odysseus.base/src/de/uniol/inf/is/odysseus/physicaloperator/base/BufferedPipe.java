@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.base.OpenFailedException;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.monitoring.StaticValueMonitoringData;
+import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 /**
  * @author Jonas Jacobi
@@ -104,9 +105,15 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		return OutputMode.INPUT;
 	}
 
+	int i = 0;
+	
 	@Override
 	protected void process_next(T object, int port) {
 		synchronized (this.buffer) {
+			i++;
+			if(i % 20 == 0){
+				LoggerHelper.getInstance(this.getName()).debug("Buffer size: " + this.size());
+			}
 			this.buffer.add(object);
 			this.heartbeat.set(null);
 		}

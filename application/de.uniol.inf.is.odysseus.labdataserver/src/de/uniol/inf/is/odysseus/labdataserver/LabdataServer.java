@@ -384,7 +384,7 @@ class CSVHandler extends ClientHandler {
 		this.schema = schema;
 		this.csvDelim = delim;
 		this.periodLength = 1000000000/elementsPerSecond; // in nanoseconds
-		System.out.println("Sending all " + this.periodLength + "ms.");
+		System.out.println("Sending all " + this.periodLength + "ns.");
 	}
 
 	@Override
@@ -406,7 +406,9 @@ class CSVHandler extends ClientHandler {
 			long startDuration = System.nanoTime();
 			boolean stop = false;
 
+			long lastTime = System.nanoTime();
 			while ((limit < 1 || i < limit) && !stop) {
+				long start = System.nanoTime();
 				if (limit > 0) {
 					
 					for (int u = 0; u < cachedValues[i].length; u++) {
@@ -489,9 +491,17 @@ class CSVHandler extends ClientHandler {
 					}
 				}
 				i++;
-				// wait for the next element for 1/frequency milliseconds
-//				Thread.sleep(this.periodLength);
-				LockSupport.parkNanos(this.periodLength);
+				// wait for the next element for this.periodLength nanoseconds
+				long expectedTime = lastTime + this.periodLength;
+				
+				while (expectedTime > System.nanoTime()) {
+					;
+				}
+				long end = System.nanoTime();
+				if((end - start) < periodLength){
+					System.out.println("duration too small: " + (end - start));
+				}
+				lastTime = expectedTime;
 			}
 			long endDuration = System.nanoTime();
 			System.out.println(" |->Done" + " i = " + i);

@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
+import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBufferOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
@@ -86,7 +88,6 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.operator.test.ao.TestAO;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
@@ -1320,6 +1321,30 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		evalAO.setThreshold(threshold);
 		
 		((ArrayList) data).add(evalAO);
+		((ArrayList) data).add(new Integer(0));
+		
+		return data;
+	}
+
+	@Override
+	public Object visit(ASTBufferOp node, Object data) {
+		// first child is preceeding operator
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+		
+		ArrayList inData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForBuffer = (AbstractLogicalOperator) inData.get(1);
+		int inputSourceOutPort = ((Integer) inData.get(2)).intValue();
+		
+		// second child is selectivity
+		String type = ((ASTIdentifier)node.jjtGetChild(1)).getName();
+		
+		BufferAO buffer = new BufferAO();
+		buffer.setType(type);
+		
+		buffer.subscribeToSource(inputForBuffer, 0, inputSourceOutPort, inputForBuffer.getOutputSchema());
+		
+		((ArrayList) data).add(buffer);
 		((ArrayList) data).add(new Integer(0));
 		
 		return data;

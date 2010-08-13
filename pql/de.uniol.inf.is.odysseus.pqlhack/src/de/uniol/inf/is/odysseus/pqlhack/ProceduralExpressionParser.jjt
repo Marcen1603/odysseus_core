@@ -39,6 +39,7 @@ TOKEN : /* Keywords */ {
 |	<K_AVG: "AVG">
 |   <K_BENCHMARK: "BENCHMARK">
 |   <K_BROKER: "BROKER">
+|	<K_BUFFER: "BUFFER">
 |	<K_COUNT: "COUNT">
 |	<K_DEFAULT: "DEFAULT">
 |	<K_JOIN: "JOIN">
@@ -132,7 +133,8 @@ void AlgebraOp():{}{
 	AssociationSrcOp() |
 	EvaluateOp() |
 	SchemaConvertOp() |
-	BenchmarkOp()
+	BenchmarkOp() |
+	BufferOp()
 }
 
 void TestOp(): {}{
@@ -141,6 +143,10 @@ void TestOp(): {}{
 
 void BenchmarkOp() : {}{
 	<K_BENCHMARK>"(" AlgebraOp() "," Number() "," Number() ")"
+}
+
+void BufferOp(): {}{
+	<K_BUFFER>"(" AlgebraOp() "," Identifier() ")"
 }
 
 void ProjectionOp(): {}{

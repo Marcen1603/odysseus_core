@@ -23,95 +23,97 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_BROKER = 10;
   /** RegularExpression Id. */
-  int K_COUNT = 11;
+  int K_BUFFER = 11;
   /** RegularExpression Id. */
-  int K_DEFAULT = 12;
+  int K_COUNT = 12;
   /** RegularExpression Id. */
-  int K_JOIN = 13;
+  int K_DEFAULT = 13;
   /** RegularExpression Id. */
-  int K_LOGICAL = 14;
+  int K_JOIN = 14;
   /** RegularExpression Id. */
-  int K_MAX = 15;
+  int K_LOGICAL = 15;
   /** RegularExpression Id. */
-  int K_MIN = 16;
+  int K_MAX = 16;
   /** RegularExpression Id. */
-  int K_NOT = 17;
+  int K_MIN = 17;
   /** RegularExpression Id. */
-  int K_OR = 18;
+  int K_NOT = 18;
   /** RegularExpression Id. */
-  int K_ON = 19;
+  int K_OR = 19;
   /** RegularExpression Id. */
-  int K_PLAN = 20;
+  int K_ON = 20;
   /** RegularExpression Id. */
-  int K_PREDICTION = 21;
+  int K_PLAN = 21;
   /** RegularExpression Id. */
-  int K_PROJECTION = 22;
+  int K_PREDICTION = 22;
   /** RegularExpression Id. */
-  int K_QUEUE = 23;
+  int K_PROJECTION = 23;
   /** RegularExpression Id. */
-  int K_RELATIONAL_PROJECTION = 24;
+  int K_QUEUE = 24;
   /** RegularExpression Id. */
-  int K_RELATIONAL_SELECTION = 25;
+  int K_RELATIONAL_PROJECTION = 25;
   /** RegularExpression Id. */
-  int K_RELATIONAL_JOIN = 26;
+  int K_RELATIONAL_SELECTION = 26;
   /** RegularExpression Id. */
-  int K_RELATIONAL_NEST = 27;
+  int K_RELATIONAL_JOIN = 27;
   /** RegularExpression Id. */
-  int K_RELATIONAL_UNNEST = 28;
+  int K_RELATIONAL_NEST = 28;
   /** RegularExpression Id. */
-  int K_SCHEMA_CONVERT = 29;
+  int K_RELATIONAL_UNNEST = 29;
   /** RegularExpression Id. */
-  int K_SELECTION = 30;
+  int K_SCHEMA_CONVERT = 30;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 31;
+  int K_SELECTION = 31;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION_OR = 32;
+  int K_SET_PREDICTION = 32;
   /** RegularExpression Id. */
-  int K_SIZE = 33;
+  int K_SET_PREDICTION_OR = 33;
   /** RegularExpression Id. */
-  int K_SLIDE = 34;
+  int K_SIZE = 34;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 35;
+  int K_SLIDE = 35;
   /** RegularExpression Id. */
-  int K_SUM = 36;
+  int K_SLDING_TIME_WINDOW = 36;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 37;
+  int K_SUM = 37;
   /** RegularExpression Id. */
-  int K_WHERE = 38;
+  int K_TUMBLING_TIME_WINDOW = 38;
   /** RegularExpression Id. */
-  int K_TEST = 39;
+  int K_WHERE = 39;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_GEN = 40;
+  int K_TEST = 40;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_EVAL = 41;
+  int K_ASSOCIATION_GEN = 41;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SEL = 42;
+  int K_ASSOCIATION_EVAL = 42;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SRC = 43;
+  int K_ASSOCIATION_SEL = 43;
   /** RegularExpression Id. */
-  int K_EVALUATE = 44;
+  int K_ASSOCIATION_SRC = 44;
   /** RegularExpression Id. */
-  int IDENTIFIER = 45;
+  int K_EVALUATE = 45;
   /** RegularExpression Id. */
-  int LETTER = 46;
+  int IDENTIFIER = 46;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 47;
+  int LETTER = 47;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 48;
+  int SPECIAL_CHARS = 48;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 49;
+  int CHAR_LITERAL = 49;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 50;
+  int QUOTED_IDENTIFIER = 50;
   /** RegularExpression Id. */
-  int REGEXP = 51;
+  int COMPARE_OPERATOR = 51;
   /** RegularExpression Id. */
-  int FLOAT = 52;
+  int REGEXP = 52;
   /** RegularExpression Id. */
-  int INTEGER = 53;
+  int FLOAT = 53;
   /** RegularExpression Id. */
-  int DIGIT = 54;
+  int INTEGER = 54;
   /** RegularExpression Id. */
-  int IPADDRESS = 55;
+  int DIGIT = 55;
+  /** RegularExpression Id. */
+  int IPADDRESS = 56;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -129,6 +131,7 @@ public interface ProceduralExpressionParserConstants {
     "\"AVG\"",
     "\"BENCHMARK\"",
     "\"BROKER\"",
+    "\"BUFFER\"",
     "\"COUNT\"",
     "\"DEFAULT\"",
     "\"JOIN\"",

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Probability
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.transformation.probability
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.11"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.broker.physicaloperator,
+ de.uniol.inf.is.odysseus.objecttracking,
+ de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.merge
