@@ -11,8 +11,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class DummyAccessMVPO<M extends IProbability> extends
-		AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
+public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
 	private DummyJDVEData<M> data;
 	private SDFAttributeList outputSchema;
@@ -120,8 +119,7 @@ class DummyJDVEData<M extends IProbability> {
 	}
 
 	public MVRelationalTuple<M> parseList(SDFAttribute schema) {
-		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(
-				DummyAccessMVPO.CARCOUNT);
+		MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(DummyAccessMVPO.CARCOUNT);
 
 		for (int i = 0; i < DummyAccessMVPO.CARCOUNT; i++) {
 			Object obj = parseNext(schema.getSubattribute(0));
@@ -133,11 +131,9 @@ class DummyJDVEData<M extends IProbability> {
 	public Object parseAttribute(SDFAttribute schema) {
 		if ("Integer".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return rdm.nextInt(100);
-		} else if ("Double"
-				.equals(schema.getDatatype().getURIWithoutQualName())) {
+		} else if ("Double".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return rdm.nextDouble();
-		} else if ("String"
-				.equals(schema.getDatatype().getURIWithoutQualName())) {
+		} else if ("String".equals(schema.getDatatype().getURIWithoutQualName())) {
 			throw new RuntimeException("not implememted yet");
 		} else if ("Long".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return (long) rdm.nextInt(100);
@@ -145,21 +141,16 @@ class DummyJDVEData<M extends IProbability> {
 			return rdm.nextFloat();
 		} else if ("MV".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return rdm.nextDouble();
-		} else if ("MV Float".equals(schema.getDatatype()
-				.getURIWithoutQualName())) {
+		} else if ("MV Float".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return rdm.nextFloat();
-		} else if ("MV Long".equals(schema.getDatatype()
-				.getURIWithoutQualName())) {
+		} else if ("MV Long".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return (long) rdm.nextInt(100);
-		} else if ("MV Integer".equals(schema.getDatatype()
-				.getURIWithoutQualName())) {
+		} else if ("MV Integer".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return rdm.nextInt(100);
-		} else if ("StartTimestamp".equals(schema.getDatatype()
-				.getURIWithoutQualName())) {
-			return (long) rdm.nextInt(100);
-		} else if ("EndTimestamp".equals(schema.getDatatype()
-				.getURIWithoutQualName())) {
-			return (long) rdm.nextInt(100);
+		} else if ("StartTimestamp".equals(schema.getDatatype().getURIWithoutQualName())) {
+			return System.currentTimeMillis();
+		} else if ("EndTimestamp".equals(schema.getDatatype().getURIWithoutQualName())) {
+			return System.currentTimeMillis() + 1000; // eine Sekunde abstand
 		} else {
 			throw new RuntimeException("not implememted yet");
 		}
