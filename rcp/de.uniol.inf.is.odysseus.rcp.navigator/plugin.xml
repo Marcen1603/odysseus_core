@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewer
+            popupMenuId="de.uniol.inf.is.odysseus.rcp.NavigatorView.popup"
             viewerId="de.uniol.inf.is.odysseus.rcp.NavigatorView">
       </viewer>
       <viewerContentBinding
@@ -30,6 +31,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.navigator.part.CommonNavigatorEx"
             icon="Icons/navigator.gif"
             id="de.uniol.inf.is.odysseus.rcp.NavigatorView"

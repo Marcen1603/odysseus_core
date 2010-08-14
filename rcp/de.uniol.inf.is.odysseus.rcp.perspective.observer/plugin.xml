@@ -9,5 +9,12 @@
             name="Observer">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="Odysseus"
+            name="Odysseus">
+      </category>
+   </extension>
 
 </plugin>

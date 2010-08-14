@@ -23,6 +23,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.viewer.graphoutline.impl.GraphOutlinePart"
             icon="images/outline_co.gif"
             id="de.uniol.inf.is.odysseus.rcp.viewer.GraphOutline"

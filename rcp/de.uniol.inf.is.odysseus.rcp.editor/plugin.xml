@@ -23,6 +23,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.editor.view.ParameterViewPart"
             icon="icons/prop.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.ParameterView"

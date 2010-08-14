@@ -9,5 +9,19 @@
             name="Queries">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="Odysseus"
+            name="Odysseus">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="Odysseus"
+            name="Odysseus">
+      </category>
+   </extension>
 
 </plugin>

@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.sources.view.part.SourcesViewPart"
             icon="Icons/source.png"
             id="de.uniol.inf.is.odysseus.rcp.sources.SourcesView"
