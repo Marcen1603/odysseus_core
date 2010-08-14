@@ -24,63 +24,105 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	// them
 	// in the fill methods. This ensures that the actions aren't recreated
 	// when fillActionBars is called with FILL_PROXY.
-	private IWorkbenchAction newAction;
+	private IContributionItem newShortlistAction;
 	private IWorkbenchAction exitAction;
 	private IWorkbenchAction preferencesAction;
 	private IWorkbenchAction aboutAction;
 	private IWorkbenchAction resetPerspectiveAction;
 	private IWorkbenchAction closePerspectiveAction;
 	private IWorkbenchAction closeAllPerspectivesAction;
-	private IContributionItem showViewAction;
-	private IContributionItem perspectivesMenuAction;
+	private IContributionItem viewsShortlistAction;
+	private IContributionItem perspectivesShortlistAction;
+	
+	private IWorkbenchAction undo;
+	private IWorkbenchAction redo;
+	private IWorkbenchAction cut;
+	private IWorkbenchAction copy;
+	private IWorkbenchAction paste;
+	private IWorkbenchAction delete;
+	private IWorkbenchAction selectAll;
+	private IWorkbenchAction find;
+
 
 	public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
 		super(configurer);
 	}
 
 	protected void makeActions(final IWorkbenchWindow window) {
-		// Creates the actions and registers them.
-		// Registering is needed to ensure that key bindings work.
-		// The corresponding commands keybindings are defined in the plugin.xml
-		// file.
-		// Registering also provides automatic disposal of the actions when
-		// the window is closed.
-
-		newAction = ActionFactory.NEW.create(window);
-		newAction.setText("New...");
-		register(newAction);
+		newShortlistAction = ContributionItemFactory.NEW_WIZARD_SHORTLIST.create(window);
 		
 		exitAction = ActionFactory.QUIT.create(window);
 		register(exitAction);
+		
+		
+		undo = ActionFactory.UNDO.create(window);
+		register(undo);
+		redo = ActionFactory.REDO.create(window);
+		register(redo);
+		cut = ActionFactory.CUT.create(window);
+		register(cut);
+		copy = ActionFactory.COPY.create(window);
+		register(copy);
+		paste = ActionFactory.PASTE.create(window);
+		register(paste);
+		delete = ActionFactory.DELETE.create(window);
+		register(delete);
+		selectAll = ActionFactory.SELECT_ALL.create(window);
+		register(selectAll);
+		find = ActionFactory.FIND.create(window);
+		register(find);
 		
 		preferencesAction = ActionFactory.PREFERENCES.create(window);
 		register(preferencesAction);
 		
 		aboutAction = ActionFactory.ABOUT.create(window);
-		showViewAction = ContributionItemFactory.VIEWS_SHORTLIST.create(window);
-		perspectivesMenuAction = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window);
+		register(aboutAction);
+		viewsShortlistAction = ContributionItemFactory.VIEWS_SHORTLIST.create(window);
+		perspectivesShortlistAction = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window);
 		
 		resetPerspectiveAction = ActionFactory.RESET_PERSPECTIVE.create(window);
+		register(resetPerspectiveAction);
 		closePerspectiveAction = ActionFactory.CLOSE_PERSPECTIVE.create(window);
+		register(closePerspectiveAction);
 		closeAllPerspectivesAction = ActionFactory.CLOSE_ALL_PERSPECTIVES.create(window);
+		register(closeAllPerspectivesAction);
 	}
 
 	protected void fillMenuBar(IMenuManager menuBar) {
 		MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
+		MenuManager newMenu = new MenuManager("New", ActionFactory.NEW.getId());
+		MenuManager editMenu = new MenuManager("&Edit", IWorkbenchActionConstants.M_EDIT);
 		MenuManager windowMenu = new MenuManager("&Window", IWorkbenchActionConstants.M_WINDOW);
 		MenuManager perspectivesMenu = new MenuManager("Open Perspective", "perspectives");
 		MenuManager viewsMenu = new MenuManager("Show View", "views");
 		MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
 		menuBar.add(fileMenu);
+		menuBar.add(editMenu);
 		menuBar.add(windowMenu);
 		menuBar.add(helpMenu);
 		
-		fileMenu.add(newAction);
+		fileMenu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
+		fileMenu.add(newMenu);
+		newMenu.add(new Separator(ActionFactory.NEW.getId()));
+		newMenu.add(newShortlistAction);
+		newMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		fileMenu.add(exitAction);
 		
-		viewsMenu.add(showViewAction);
+		editMenu.add(undo);
+		editMenu.add(redo);
+		editMenu.add(new Separator());
+		editMenu.add(cut);
+		editMenu.add(copy);
+		editMenu.add(paste);
+		editMenu.add(new Separator());
+		editMenu.add(delete);
+		editMenu.add(selectAll);
+		editMenu.add(new Separator());
+		editMenu.add(find);
+		
+		viewsMenu.add(viewsShortlistAction);
 		windowMenu.add(viewsMenu);
-		perspectivesMenu.add(perspectivesMenuAction);
+		perspectivesMenu.add(perspectivesShortlistAction);
 		windowMenu.add(perspectivesMenu);
 		windowMenu.add(new Separator());
 		windowMenu.add(resetPerspectiveAction);
