@@ -15,7 +15,7 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 	private double threshold;
 
 	public EvaluationAO() {
-
+		super();
 	}
 
 	public EvaluationAO(EvaluationAO<M> copy) {
