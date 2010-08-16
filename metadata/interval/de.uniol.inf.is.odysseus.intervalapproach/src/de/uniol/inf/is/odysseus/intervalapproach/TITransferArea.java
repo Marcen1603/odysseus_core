@@ -87,6 +87,7 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 		}
 		if (minimum != null) {
 			synchronized (this.outputQueue) {
+				boolean wasElementSent = false;
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
 				W elem = this.outputQueue.peek();
@@ -94,9 +95,12 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 						&& elem.getMetadata().getStart()
 								.beforeOrEquals(minimum)) {
 					this.outputQueue.poll();
-
+					wasElementSent = true;
 					po.transfer(elem);
 					elem = this.outputQueue.peek();
+				}
+				if (wasElementSent) {
+					po.sendPunctuation(minimum);
 				}
 			}
 		}

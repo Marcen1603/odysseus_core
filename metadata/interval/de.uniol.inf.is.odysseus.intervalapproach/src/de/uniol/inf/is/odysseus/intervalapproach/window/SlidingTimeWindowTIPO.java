@@ -29,4 +29,9 @@ public class SlidingTimeWindowTIPO<T extends IMetaAttributeContainer<ITimeInterv
 	public SlidingTimeWindowTIPO<T> clone() {
 		return new SlidingTimeWindowTIPO<T>(this);
 	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
+	}
 }

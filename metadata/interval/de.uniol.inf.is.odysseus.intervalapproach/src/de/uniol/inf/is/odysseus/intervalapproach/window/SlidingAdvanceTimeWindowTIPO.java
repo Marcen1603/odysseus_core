@@ -32,5 +32,10 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IMetaAttributeContainer<? e
 	public SlidingAdvanceTimeWindowTIPO<T> clone() {
 		return new SlidingAdvanceTimeWindowTIPO<T>(this);
 	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
+	}
 
 }
