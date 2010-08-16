@@ -40,6 +40,8 @@ public class PredictionFunctionTest {
 		System.out.println();
 		
 		MVRelationalTuple<IProbability> list = scanTuple.getAttribute(0);
+		double[] measurements = list.getMeasurementValues();
+		double one = measurements[0];
 		//String firstAttribute = list.getAttribute(0).toString();
 		//assertEquals(firstAttribute, "9.0|9.0|0.0 | sz=(-) | META | null|405.0 | sz=(-) | META | [[4.5 4.5 4.5 4.5 ];[4.5 4.5 4.5 4.5 ];[4.5 4.5 4.5 4.5 ];[4.5 4.5 4.5 4.5 ];");
 		//String secondAttribute = list.getAttribute(1).toString();
