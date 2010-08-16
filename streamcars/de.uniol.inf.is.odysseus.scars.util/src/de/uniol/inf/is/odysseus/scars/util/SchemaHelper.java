@@ -21,6 +21,7 @@ public class SchemaHelper {
 	
 	private Map<String, SchemaIndexPath> paths = new HashMap<String, SchemaIndexPath>();
 	private Map<SDFAttribute, SchemaIndexPath> attributePaths = new HashMap<SDFAttribute, SchemaIndexPath>();
+	private Map<SDFAttribute, String> names = new HashMap<SDFAttribute, String>();
 	
 	private String sourceName = null;
 	private SDFAttribute startTimestampAttribute = null;
@@ -72,6 +73,10 @@ public class SchemaHelper {
 		return Collections.unmodifiableCollection(paths.values());
 	}
 	
+	public String getFullAttributeName(SDFAttribute attr) {
+		return names.get(attr);
+	}
+	
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -105,6 +110,7 @@ public class SchemaHelper {
 			actualPath.add( new SchemaIndex(index, attribute));
 			paths.put(fullAttributeName, new SchemaIndexPath(copy(actualPath), attribute));
 			attributePaths.put(attribute, new SchemaIndexPath(copy(actualPath), attribute));
+			names.put(attribute, fullAttributeName);
 			
 			calculateAllPaths( attribute.getSubattributes(), actualPath, fullAttributeName);
 			
