@@ -1201,7 +1201,7 @@ public class CreateLogicalPlanVisitor implements
 				.jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-		childOp.subscribeToSource(eval, 0, sourceOutPort,
+		eval.subscribeToSource(childOp, 0, sourceOutPort,
 				childOp.getOutputSchema());
 
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
