@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
@@ -381,5 +382,13 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
 		// TODO Auto-generated method stub
 		return node.childrenAccept(this, true);
 	}
+
+  @Override
+  public Object visit(ASTFilterOp node, Object data)
+  {
+    // filter op is a production rule in the grammar which can
+    // have AlgebraOp() as a child. so data:=true
+    return node.childrenAccept(this, true);
+  }
 	
 }

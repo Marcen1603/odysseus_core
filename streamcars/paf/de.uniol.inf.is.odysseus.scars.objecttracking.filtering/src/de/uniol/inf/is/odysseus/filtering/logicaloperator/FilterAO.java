@@ -30,10 +30,10 @@ public class FilterAO <M extends IProbability> extends UnaryLogicalOp {
 	private SDFAttributeList leftSchema;
 	private SDFAttributeList rightSchema;
 	
-	public FilterAO(String functionID) {
-		super();
-		this.setFunctionID(functionID);
-	}
+	public FilterAO()
+	{
+    super();
+  }
 	
 	public FilterAO(FilterAO<M> copy) {
 		super(copy);
