@@ -350,6 +350,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		// }
 	}
+	
+	@Override
+	public void sendPunctuation(PointInTime punctuation, int outPort){
+		for(PhysicalSubscription<? extends ISink<?>> sub: this.sinkSubscriptions){
+			if(sub.getSourceOutPort() == outPort){
+				sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
+			}
+		}
+	}
 
 	@Override
 	public String getName() {

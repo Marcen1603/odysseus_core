@@ -52,6 +52,8 @@ public interface ISource<T> extends IPhysicalOperator, ISubscribable<ISink<? sup
 
 	public void sendPunctuation(PointInTime punctuation);
 	
+	public void sendPunctuation(PointInTime punctuation, int outPort);
+	
 	/**
 	 * Removes several subscriptions in remove list to this source and
 	 * subscribes a sink in one 'atomic' step, so that no transfer() can be

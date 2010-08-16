@@ -116,9 +116,17 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		}
 	}
 
+
+	long start = -1;
+	long end = -1;
+	long duration = 0;
+	int elemCount = 0;
 	@Override
 	public synchronized boolean hasNext() {
-
+		
+		if(this.start == -1){
+			this.start = System.nanoTime();
+		}
 		if (p2p) {
 			if (!connectToPipe) {
 				return false;
@@ -153,6 +161,11 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		} catch (EOFException e) {
 			// System.out.println("READER DONE.");
 			this.isDone = true;
+			this.end = System.nanoTime();
+			long duration = (end - start);
+			long elems = (long)this.elemCount * 1000L * 1000L * 1000L;
+			System.out.println("elements/sec: " + ((double)(elems)/ (double)(duration)));
+			
 			propagateDone();
 			return false;
 		} catch (IOException e) {
@@ -162,6 +175,8 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		}
 
 		this.buffer = new MVRelationalTuple<M>(this.attributeData);
+		this.elemCount++;
+		
 		return true;
 		// this.buffer = new MVRelationalTuple<M>(this.outputSchema,
 		// this.attributeData);
