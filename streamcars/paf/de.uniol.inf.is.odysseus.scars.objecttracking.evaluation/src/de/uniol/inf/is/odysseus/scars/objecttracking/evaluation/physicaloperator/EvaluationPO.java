@@ -25,6 +25,18 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 	private PointInTimeSweepArea<M> sweepAssociation;
 	private PointInTimeSweepArea<M> sweepFiltering;
 	private PointInTimeSweepArea<M> sweepBroker;
+	
+	private long associationTime = -1;
+	private long filteringTime = -1;
+	private long brokerTime = -1;
+	
+	private boolean boolAsso = false;
+	private boolean boolFilter = false;
+	private boolean boolBroker = false;
+	
+	private boolean boolAssoEmpty = false;
+	private boolean boolFilterEmpty = false;
+	private boolean boolBrokerEmpty = false;
 
 	private double threshold;
 
@@ -48,8 +60,13 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO Auto-generated method stub
-
+		if(port == 0) {
+			this.associationTime = timestamp.getMainPoint();
+		} else if (port == 1) {
+			this.filteringTime = timestamp.getMainPoint();
+		} else if (port == 2) {
+			this.brokerTime = timestamp.getMainPoint();
+		}
 	}
 
 	/*
@@ -86,21 +103,55 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		Iterator<MVRelationalTuple<M>> itAssociation = sweepAssociation.query(object, Order.LeftRight);
 		Iterator<MVRelationalTuple<M>> itFiltering = sweepFiltering.query(object, Order.LeftRight);
 		Iterator<MVRelationalTuple<M>> itBroker = sweepBroker.query(object, Order.LeftRight);
+		
+		if(!itAssociation.hasNext()) {
+			if(associationTime != -1) {
+				boolAssoEmpty = true;
+			}
+		} else {
+			boolAsso = true;
+		}
+		
+		if(!itFiltering.hasNext()) {
+			if(filteringTime != -1) {
+				boolFilterEmpty = true;
+			}
+		} else {
+			boolFilter = true;
+		}
+		
+		if(!itBroker.hasNext()) {
+			if(brokerTime != -1) {
+				boolBrokerEmpty = true;
+			}
+		} else {
+			boolBroker = true;
+		}
 
 		// Check if there is a complete input -> one list from every port (so that it can be evaluated)
-		if(itAssociation.hasNext() && itFiltering.hasNext() && itBroker.hasNext()) {
-			// Get the three lists
-			MVRelationalTuple<M> associationMainObject = itAssociation.next();
-			MVRelationalTuple<M> filteringMainObject = itFiltering.next();
-			MVRelationalTuple<M> brokerMainObject = itBroker.next();
-
-			MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput.getSchemaIndexPath(this.associationObjListPath).toTupleIndexPath(associationMainObject).getTupleObject();
-			MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>) shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
-			MVRelationalTuple<M> brokerListObject = (MVRelationalTuple<M>) shSecondBrokerInput.getSchemaIndexPath(this.brokerObjListPath).toTupleIndexPath(brokerMainObject).getTupleObject();
-
-			MVRelationalTuple<M>[] associationObjList = (MVRelationalTuple<M>[]) associationListObject.getAttributes();
-			MVRelationalTuple<M>[] filteringObjList = (MVRelationalTuple<M>[]) filteringListObject.getAttributes();
-			MVRelationalTuple<M>[] brokerObjList = (MVRelationalTuple<M>[]) brokerListObject.getAttributes();
+		if((boolAsso || boolAssoEmpty)&&(boolFilter || boolFilterEmpty)&&(boolBroker || boolBrokerEmpty)) {
+			
+			MVRelationalTuple<M>[] associationObjList = null;
+			MVRelationalTuple<M>[] filteringObjList = null;
+			MVRelationalTuple<M>[] brokerObjList = null;
+			
+			if(boolAsso) {
+				MVRelationalTuple<M> associationMainObject = itAssociation.next();
+				MVRelationalTuple<M> associationListObject = (MVRelationalTuple<M>) shAssociationInput.getSchemaIndexPath(this.associationObjListPath).toTupleIndexPath(associationMainObject).getTupleObject();
+				associationObjList = (MVRelationalTuple<M>[]) associationListObject.getAttributes();
+			}
+			
+			if(boolFilter) {
+				MVRelationalTuple<M> filteringMainObject = itFiltering.next();
+				MVRelationalTuple<M> filteringListObject = (MVRelationalTuple<M>) shFilteringInput.getSchemaIndexPath(this.filteringObjListPath).toTupleIndexPath(filteringMainObject).getTupleObject();
+				filteringObjList = (MVRelationalTuple<M>[]) filteringListObject.getAttributes();
+			}
+			
+			if(boolBroker) {
+				MVRelationalTuple<M> brokerMainObject = itBroker.next();
+				MVRelationalTuple<M> brokerListObject = (MVRelationalTuple<M>) shSecondBrokerInput.getSchemaIndexPath(this.brokerObjListPath).toTupleIndexPath(brokerMainObject).getTupleObject();
+				brokerObjList = (MVRelationalTuple<M>[]) brokerListObject.getAttributes();
+			}
 
 			// Do the evaluation
 			double val = 0;
@@ -150,6 +201,15 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 
 			// Transfer the generated tuple
 			transfer(new MVRelationalTuple<M>(combinedListFather));
+			boolAsso = false;
+			boolAssoEmpty = false;
+			boolFilter = false;
+			boolFilterEmpty = false;
+			boolBroker = false;
+			boolBrokerEmpty = false;
+			associationTime = -1;
+			filteringTime = -1;
+			brokerTime = -1;
 		}
 	}
 

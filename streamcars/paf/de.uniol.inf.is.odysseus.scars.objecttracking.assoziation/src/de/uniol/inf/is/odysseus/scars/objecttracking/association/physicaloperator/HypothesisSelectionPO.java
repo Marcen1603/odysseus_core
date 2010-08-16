@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperat
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
-public class HypothesisSelectionPO<M extends IProbability & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private int[] oldObjListPath;
 	private int[] newObjListPath;
@@ -80,7 +81,11 @@ public class HypothesisSelectionPO<M extends IProbability & IConnectionContainer
 		MVRelationalTuple<M> oldWithoutNewList = new MVRelationalTuple<M>(object);
 		MVRelationalTuple<M>[] tmpListOld = this.getOldElementsWithoutNewElements(object.getMetadata().getConnectionList(), oldList);
 		OrAttributeResolver.setAttribute(oldWithoutNewList, getOldObjListPath(), tmpListOld);
-		transfer(oldWithoutNewList, 2);
+		if(tmpListOld.length > 0) {
+			transfer(oldWithoutNewList, 2);
+		} else {
+			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
