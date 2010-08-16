@@ -67,6 +67,7 @@ public class EvaluationPO<M extends IProbability & IPredictionFunctionKey<IPredi
 		} else if (port == 2) {
 			this.brokerTime = timestamp.getMainPoint();
 		}
+		this.sendPunctuation(timestamp);
 	}
 
 	/*

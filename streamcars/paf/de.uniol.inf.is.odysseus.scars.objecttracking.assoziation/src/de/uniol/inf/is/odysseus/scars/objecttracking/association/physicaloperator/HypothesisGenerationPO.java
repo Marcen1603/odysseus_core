@@ -47,6 +47,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
+		this.sendPunctuation(timestamp);
 	}
 
 	/**
