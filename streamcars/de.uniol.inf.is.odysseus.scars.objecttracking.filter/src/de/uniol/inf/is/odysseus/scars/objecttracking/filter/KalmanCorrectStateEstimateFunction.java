@@ -58,9 +58,9 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 		result = temp.getData();
 		
 		// TODO richtig machen
-	/*	for (int i=0; i<= connected.; i++) {
-			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[0], result);
-		}*/
+		for (int y=0; y<= result.length; y++) {
+			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[y], result[i]);
+		}
 		
 	
 		

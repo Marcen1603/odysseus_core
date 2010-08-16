@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.CreateMetaDataPO;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterPOTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 
@@ -45,7 +45,7 @@ public class KalmanGainFunctionTest extends TestCase  {
 	@Before
 	public void setUp() throws Exception {
 
-		FilterPOTestData testData = new FilterPOTestData();
+		FilterFunctionTestData testData = new FilterFunctionTestData();
 
 		// Measurement Data
 

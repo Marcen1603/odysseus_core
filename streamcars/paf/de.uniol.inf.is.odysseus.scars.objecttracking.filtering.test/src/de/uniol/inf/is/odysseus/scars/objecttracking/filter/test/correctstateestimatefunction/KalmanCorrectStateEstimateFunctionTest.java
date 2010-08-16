@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.filtering.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterPOTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
@@ -40,7 +41,7 @@ public class KalmanCorrectStateEstimateFunctionTest extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 	
-		FilterPOTestData testData = new FilterPOTestData();
+		FilterFunctionTestData testData = new FilterFunctionTestData();
 		
 		// Measurement Data
 		
