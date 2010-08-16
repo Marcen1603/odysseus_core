@@ -194,8 +194,8 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			// equal this minimum
 			if (min != null && nextTs.getPointInTime().beforeOrEquals(min)) {
 				// add the next timestamp transaction to the destinations
-				TransactionTS tts = timestampList.poll();
-				int nextPort = tts.getOutgoingPort();
+				timestampList.poll();
+				int nextPort = nextTs.getOutgoingPort();
 				PhysicalSubscription<ISink<? super T>> nextSub = getSinkSubscriptionForPort(nextPort);
 				if (nextSub != null) {
 					destinations.add(nextSub);						
@@ -224,7 +224,20 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 				}
 			}
 		}
+		// If the sweep area is empty, then a punctuation must be send.
+		// I think, this.min should be the punctuation of choice.
+		// The punctuation must be send to all following operators, I think.
 
+		else{
+			if(this.min != null){
+				this.sendPunctuation(new PointInTime(this.min));
+			}
+			
+			// if min is null, you cannot send a punctuation, because
+			// you don't know anything about the time progress
+			// To ensure, that you can send a punctuation, all preceeding
+			// operators have to send a punctuation.
+		}
 		
 
 	}
