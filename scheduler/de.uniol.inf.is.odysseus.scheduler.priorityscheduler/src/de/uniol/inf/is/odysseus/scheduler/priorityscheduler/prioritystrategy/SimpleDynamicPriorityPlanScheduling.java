@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy;
 
 import java.util.Collections;
 
+import de.uniol.inf.is.odysseus.physicaloperator.base.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
@@ -44,15 +45,28 @@ public class SimpleDynamicPriorityPlanScheduling extends
 	@Override
 	protected void updatePriorityCurrent(IScheduling current, int prio) {
 		synchronized (queue) {
-			current.getPlan().setCurrentPriority(prio);
-			// TODO binary search sinnvoll, aber findet das element nicht ...
+			IPartialPlan curPlan = current.getPlan();
+			int currentPriority = curPlan.getCurrentPriority();
+			curPlan.setCurrentPriority(prio);
 			int pos = queue.indexOf(current);
 			int nextPos = pos;
-			while (++nextPos < queue.size()) {
-				if (queue.get(nextPos).getPlan().getCurrentPriority() > prio) {
-					Collections.swap(queue, pos++, nextPos);
-				} else {
-					break;
+			if (prio < currentPriority) {
+				// TODO binary search sinnvoll, aber findet das element nicht
+				// ...
+				while (++nextPos < queue.size()) {
+					if (queue.get(nextPos).getPlan().getCurrentPriority() > prio) {
+						Collections.swap(queue, pos++, nextPos);
+					} else {
+						break;
+					}
+				}
+			} else {
+				while (--nextPos >= 0) {
+					if (queue.get(nextPos).getPlan().getCurrentPriority() < prio) {
+						Collections.swap(queue, pos--, nextPos);
+					} else {
+						break;
+					}
 				}
 			}
 		}
