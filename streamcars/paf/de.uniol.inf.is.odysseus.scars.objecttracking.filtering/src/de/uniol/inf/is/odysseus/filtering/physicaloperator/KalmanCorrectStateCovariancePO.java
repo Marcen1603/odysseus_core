@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
@@ -91,6 +92,10 @@ public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnection
 	
 	 }
 	
+	@Override
+	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+		return new KalmanCorrectStateCovariancePO<M>(this);
+	}
 
 
 }

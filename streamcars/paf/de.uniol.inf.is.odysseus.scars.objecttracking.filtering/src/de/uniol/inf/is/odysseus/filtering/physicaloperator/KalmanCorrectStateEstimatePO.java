@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 	
 	public KalmanCorrectStateEstimatePO() {
-	super();	
+		super();	
 	}
 
 	public KalmanCorrectStateEstimatePO(FilterAO<M> filterAO) {
@@ -85,7 +86,7 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 		
 		return object;
 		
-		}
+	}
 	
 	public void compute(Connection connected, ArrayList<int[]> measurementValuePathsTupleNew, ArrayList<int[]> measurementValuePathsTupleOld  ) {
 		
@@ -109,11 +110,10 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 		for (int i=0; i<= result.length-1; i++) {
 			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[0], result[i]);
 		}
-
 	}
-
-
-
-
+	@Override
+	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+		return new KalmanCorrectStateEstimatePO<M>(this);
+	}
 
 }

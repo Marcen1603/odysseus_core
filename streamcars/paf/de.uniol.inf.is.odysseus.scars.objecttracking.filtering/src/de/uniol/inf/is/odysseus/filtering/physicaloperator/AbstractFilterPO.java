@@ -33,14 +33,9 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 		
 	}
 
-	
-	
-	
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
+
 
 	@Override
 	public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
