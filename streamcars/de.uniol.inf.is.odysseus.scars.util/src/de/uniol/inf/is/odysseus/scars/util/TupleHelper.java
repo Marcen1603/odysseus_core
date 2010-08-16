@@ -39,4 +39,6 @@ public class TupleHelper {
 	public MVRelationalTuple<?> getTuple() {
 		return tuple;
 	}
+	
+	
 }
