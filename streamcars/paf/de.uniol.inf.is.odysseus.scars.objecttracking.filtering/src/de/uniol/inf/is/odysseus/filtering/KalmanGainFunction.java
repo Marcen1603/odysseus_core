@@ -3,41 +3,50 @@
  */
 package de.uniol.inf.is.odysseus.filtering;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
+import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+
 /**
  * @author dtwumasi
  *
  */
-public class KalmanGainFunction implements IFilterFunction {
+public class KalmanGainFunction extends AbstractMetaDataCreationFunction {
 
-	public int functionID = 1;
-		
-	private HashMap<Integer, Object> parameters;
-	
 	public KalmanGainFunction() {
-	this.parameters = new HashMap<Integer, Object>();
+		super();
 	}
-	
-	public KalmanGainFunction(HashMap<Integer, Object> parameters) {
-		this.parameters = parameters;
-	}
-	
-	public KalmanGainFunction(KalmanGainFunction copy) {
-
-	copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
-	
-	}
-
-	public double[][] compute() {
 		
-		double[][] result;
+		public KalmanGainFunction(KalmanGainFunction copy) {
+
+			copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
+			
+		}
 		
-		RealMatrix oldCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.OLD_COVARIANCE));
-		RealMatrix newCovariance = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.NEW_COVARIANCE));
+		public KalmanGainFunction(HashMap<Integer, Object> parameters) {
+			this.setParameters(parameters);
+		}
+		
+
+	public void compute(Connection connected) {
+		
+		double gain[][];
+		
+		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
+		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+	
+		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
+		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
+				
+		RealMatrix oldCovariance = new RealMatrixImpl(covarianceOld);
+		RealMatrix newCovariance = new RealMatrixImpl(covarianceNew);
 		
 		RealMatrix temp = new RealMatrixImpl();
 		
@@ -45,35 +54,23 @@ public class KalmanGainFunction implements IFilterFunction {
 		temp = temp.inverse();
 		temp = oldCovariance.multiply(temp);
 		
-		result = temp.getData();
+		gain = temp.getData();
 		
-		return result;
-	}
-
-	/**
-	 * @param parameters the parameters to set
-	 */
-	public void setParameters(HashMap<Integer, Object> parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * @return the parameters
-	 */
-	public HashMap<Integer, Object> getParameters() {
-		return this.parameters;
-	} 
+		//set gain
+		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setGain(gain);
 	
-	/**
-	 * @param parameters the parameters to set
-	 */
-	public void addParameter(Integer key, Object value) {
-		this.parameters.put(key, value);
+		
+		
+		
+		
 	}
+
+
 
 	@Override
-	public int getFunctionID() {
-		return this.functionID;
+	public AbstractMetaDataCreationFunction clone() {
+		
+		return new KalmanGainFunction(this);
 	}
 
 }

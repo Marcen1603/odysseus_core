@@ -1,77 +1,77 @@
 package de.uniol.inf.is.odysseus.filtering;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
-public class KalmanCorrectStateEstimateFunction implements IFilterFunction {
+
+public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFunction {
 		
-	private HashMap<Integer, Object> parameters;
-	
+
+		
 	public KalmanCorrectStateEstimateFunction() {
-		this.parameters = new HashMap<Integer, Object>();
+		
 	}
-	
-	
-	
+		
 	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction copy) {
-
+		
 		copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
-		
+			
 	}
-	
+		
 	public KalmanCorrectStateEstimateFunction(HashMap<Integer, Object> parameters) {
-		this.parameters = parameters;
-		/*this.parameters.put("measurementOld", measurementOld);
-		this.parameters.put("measurementNew", measurementNew);
-		this.parameters.put("gain", gain);*/
+			
+		this.setParameters(parameters);
 	}
-
+		
 	@Override
-	public double[] compute() {
+	public void compute(Connection connected, ArrayList<int[]> measurementValuePathsTupleNew, ArrayList<int[]> measurementValuePathsTupleOld, int i) {
 		
-		double result[];
+		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
+		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+	
+		double[] measurementOld = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleOld, oldTuple);
 		
-		RealMatrix measurementOld = new RealMatrixImpl((double[]) this.parameters.get(HashConstants.OLD_MEASUREMENT));
-		RealMatrix measurementNew = new RealMatrixImpl((double[]) this.parameters.get(HashConstants.NEW_MEASUREMENT));
-		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN));	
+		double[] measurementNew = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleNew, newTuple);
+		
+		double[][] gain = oldTuple.getMetadata().getGain();
+		
+		double[][] result;
+		
+		RealMatrix measurementOldMatrix = new RealMatrixImpl(measurementOld);
+		RealMatrix measurementNewMatrix = new RealMatrixImpl(measurementNew);
+		RealMatrix gainMatrix = new RealMatrixImpl(gain);	
 		
 		RealMatrix temp = new RealMatrixImpl();
 		
-		temp =  measurementNew.subtract(measurementOld);
-		temp =  gain.multiply(temp);
-		temp =  measurementOld.add(temp);
+		temp =  measurementNewMatrix.subtract(measurementOldMatrix);
+		temp =  gainMatrix.multiply(temp);
+		temp =  measurementOldMatrix.add(temp);
 		
-		result = temp.getColumn(0);
+		result = temp.getData();
 		
-		return result;
+		// TODO richtig machen
+	/*	for (int i=0; i<= connected.; i++) {
+			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[0], result);
+		}*/
+		
 	
 		
 	}
 
 	@Override
-	public HashMap<Integer, Object> getParameters() {
-		return this.parameters;
+	public AbstractDataUpdateFunction clone() {
+		
+		return new KalmanCorrectStateEstimateFunction(this);
 	}
 
-	@Override
-	public void setParameters(HashMap<Integer, Object> parameters) {
-		this.parameters = parameters;
-	}
-	
-	/**
-	* @param parameters the parameters to set
-	*/
-	public void addParameter(Integer key, Object value) {
-			this.parameters.put(key, value);
-		}
 
-	@Override
-	public int getFunctionID() {
-		// TODO Auto-generated method stub
-		return 1;
-	}
 	
 }

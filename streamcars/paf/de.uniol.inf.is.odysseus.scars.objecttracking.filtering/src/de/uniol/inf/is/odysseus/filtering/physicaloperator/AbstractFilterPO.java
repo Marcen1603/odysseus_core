@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.base.PointInTime;
-import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -16,7 +15,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer>
 							extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-	private IFilterFunction filterFunction;
+
 
 	private SDFAttributeList schema;
 	
@@ -95,31 +94,12 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 		return this.oldObjListPath;
 	}
 
-
-	
 	
 	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
-	
-	/**
-	 * 
-	 * @param connected
-	 */
-	public abstract void compute(Connection connected, ArrayList<int[]> mesurementValuePathsTupleNew, ArrayList<int[]> mesurementValuePathsTupleOld);
-
-
-	/**
-	 * @return the filterFunction
-	 */
-	public IFilterFunction getFilterFunction() {
-		return filterFunction;
-	}
-	
-	public void setFilterFunction(IFilterFunction filterFunction) {
-		this.filterFunction = filterFunction;
-	}
-
-
-
+		
+		
+		
+		
 
 	/**
 	 * @param parameters the parameters to set

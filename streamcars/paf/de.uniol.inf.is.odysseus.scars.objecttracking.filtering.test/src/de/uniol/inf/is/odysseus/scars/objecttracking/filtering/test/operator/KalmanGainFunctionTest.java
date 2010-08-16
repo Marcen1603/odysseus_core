@@ -10,11 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 import junit.framework.TestCase;
 
+import de.uniol.inf.is.odysseus.filtering.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanGainFunction;
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanGainFunctionPO;
+import de.uniol.inf.is.odysseus.filtering.physicaloperator.CreateMetaDataPO;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data.FilterPOTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 
@@ -25,9 +26,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
  * @param <M>
  *
  */
-public class KalmanGainFunctionPOTest extends TestCase  {
+public class KalmanGainFunctionTest extends TestCase  {
 
-	private KalmanGainFunctionPO<StreamCarsMetaData> gainfunctionPO;
+	private AbstractMetaDataCreationFunction gainfunction;
 
 
 
@@ -44,7 +45,7 @@ public class KalmanGainFunctionPOTest extends TestCase  {
 	@Before
 	public void setUp() throws Exception {
 
-		FilterPOTestData testData = new FilterPOTestData();
+		FilterFunctionTestData testData = new FilterFunctionTestData();
 
 		// Measurement Data
 
@@ -84,31 +85,34 @@ public class KalmanGainFunctionPOTest extends TestCase  {
 		
 		objConList[0].setRight(test);
 		
-		KalmanGainFunction gainfunction = new KalmanGainFunction();
+		gainfunction = new KalmanGainFunction();
 
-		// create the PO
 
-		gainfunctionPO = new KalmanGainFunctionPO<StreamCarsMetaData>();
-
-		gainfunctionPO.setFilterFunction(gainfunction);
-
-		int[] oldObjListPath = {0};
+		/*int[] oldObjListPath = {0};
 
 		int[] newObjListPath = {1};
 
 		gainfunctionPO.setOldObjListPath(oldObjListPath);
 
-		gainfunctionPO.setNewObjListPath(newObjListPath);
+		gainfunctionPO.setNewObjListPath(newObjListPath); */
 
-
+		
+		
 	}
 
 	@Test
 	public  void test() {
-
-	resultTuple = gainfunctionPO.computeAll(measurementTuple);
-
-	assertEquals(expectedTuple,resultTuple);
+		
+	Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
+	
+	ArrayList<int[]> attributePathsOld = measurementTuple.getMetadata().getAttributePaths();
+	
+	
+	ArrayList<int[]> attributePathsNew = measurementTuple.getMetadata().getAttributePaths();
+	
+	gainfunction.compute(connected);
+	
+	assertEquals(expectedTuple,measurementTuple);
 
 
 	}

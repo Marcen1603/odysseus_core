@@ -1,17 +1,23 @@
 package de.uniol.inf.is.odysseus.filtering;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-public class KalmanCorrectStateCovarianceFunction implements IFilterFunction {
+import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+
+public class KalmanCorrectStateCovarianceFunction extends AbstractMetaDataUpdateFunction {
 	
-	private HashMap<Integer, Object> parameters;
+	
 	
 	public KalmanCorrectStateCovarianceFunction() {
-		this.parameters = new HashMap<Integer, Object>();
+	super();
 	}
 	
 	public KalmanCorrectStateCovarianceFunction(KalmanCorrectStateCovarianceFunction copy) {
@@ -21,75 +27,61 @@ public class KalmanCorrectStateCovarianceFunction implements IFilterFunction {
 	}
 	
 	public KalmanCorrectStateCovarianceFunction(HashMap<Integer, Object> parameters) {
-		this.parameters=parameters;
+		this.setParameters(parameters);
 	}
 	
 	@Override
 	/**
 	 * This method computes the new state covariance
 	 */
-	public double[][] compute() {
+	public void compute(Connection connected) {
+		
+	
+			
+		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
+		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+			
+		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
+			
+		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
+			
+		double[][] gain = oldTuple.getMetadata().getGain();		
 		
 		double[][] result;
 		
-		RealMatrix covarianceOld = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.OLD_COVARIANCE));
-		RealMatrix covarianceNew = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.NEW_COVARIANCE));
-		RealMatrix gain = new RealMatrixImpl((double[][]) this.parameters.get(HashConstants.GAIN));
-		RealMatrix identityMatrixOfGain = new RealMatrixImpl(makeIdentityMatrix(gain.getData()));
+		RealMatrix covarianceOldMatrix = new RealMatrixImpl(covarianceOld);
+		RealMatrix covarianceNewMatrix = new RealMatrixImpl(covarianceNew);
+		RealMatrix gainMatrix = new RealMatrixImpl(gain);
+		RealMatrix identityMatrixOfGain = new RealMatrixImpl(makeIdentityMatrix(gainMatrix.getData()));
 		
 		// (I-K)Pk(I-K)^t + KRK^t
 		RealMatrix temp = new RealMatrixImpl();
 		
 		// I - K
 		RealMatrix term1 = new RealMatrixImpl();
-		term1 = identityMatrixOfGain.subtract(gain);
+		term1 = identityMatrixOfGain.subtract(gainMatrix);
 		
-		temp = term1.multiply(covarianceOld);
+		temp = term1.multiply(covarianceOldMatrix);
 		
 		temp = temp.multiply(term1.transpose());
 		
 		RealMatrix term2 = new RealMatrixImpl();
 		
 		// KRK^T
-		term2 = gain.multiply(covarianceNew);
+		term2 = gainMatrix.multiply(covarianceNewMatrix);
 		
-		term2 = term2.multiply(gain.transpose());
+		term2 = term2.multiply(gainMatrix.transpose());
 		
 		temp = temp.add(term2);
 		
 		result = temp.getData();
 		
-		return result;
+		//set new state covariance
+		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setCovariance(result);
 	}
 	
 
-	/**
-	 * @param parameters the parameters to set
-	 */
-	public void setParameters(HashMap<Integer, Object> parameters) {
-		this.parameters = parameters;
-	}
 
-	/**
-	 * @return the parameters
-	 */
-	public HashMap<Integer, Object> getParameters() {
-		
-		return parameters;
-	} 
-	
-	/**
-	 * @param parameters the parameters to set
-	 */
-	public void addParameter(Integer key, Object value) {
-		this.parameters.put(key, value);
-	}
-
-
-	@Override
-	public int getFunctionID() {
-		return 1;
-	}
 	
 	public static double[][] makeIdentityMatrix(double[][] template) {
 		double[][] identityMatrix = new double[template.length][template.length];
@@ -103,6 +95,12 @@ public class KalmanCorrectStateCovarianceFunction implements IFilterFunction {
 			}
 		}
 		return identityMatrix;
+	}
+
+	@Override
+	public AbstractMetaDataUpdateFunction clone() {
+		
+		return new KalmanCorrectStateCovarianceFunction(this);
 	}
 
 }

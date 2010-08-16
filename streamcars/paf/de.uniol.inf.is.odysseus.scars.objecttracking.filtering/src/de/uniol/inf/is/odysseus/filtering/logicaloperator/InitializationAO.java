@@ -3,7 +3,8 @@
  */
 package de.uniol.inf.is.odysseus.filtering.logicaloperator;
 
-import de.uniol.inf.is.odysseus.filtering.IFilterFunction;
+
+import de.uniol.inf.is.odysseus.filtering.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -23,7 +24,7 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 
 	private String functionID;
 	
-	private IFilterFunction filterFunction;
+	private AbstractMetaDataUpdateFunction filterFunction;
 	
 	// path to new  objects
 	private String newObjListPath;
@@ -82,13 +83,6 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 		return newObjListPath;
 	}
 
-	public void setFilterFunction(IFilterFunction filterFunction) {
-		this.filterFunction = filterFunction;
-	}
-
-	public IFilterFunction getFilterFunction() {
-		return filterFunction;
-	}
 
 	/**
 	 * @param functionID the functionID to set

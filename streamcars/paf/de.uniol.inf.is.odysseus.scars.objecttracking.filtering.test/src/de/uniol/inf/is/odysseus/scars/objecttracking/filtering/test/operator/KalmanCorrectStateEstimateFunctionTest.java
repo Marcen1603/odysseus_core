@@ -1,14 +1,18 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.operator;
 
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.KalmanCorrectStateEstimatePO;
+import java.util.ArrayList;
+
+import de.uniol.inf.is.odysseus.filtering.physicaloperator.UpdateDataPO;
 import org.junit.Before;
 import org.junit.Test;
 import junit.framework.TestCase;
 
+import de.uniol.inf.is.odysseus.filtering.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data.FilterPOTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data.FilterFunctionTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
 
@@ -18,9 +22,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @param <StreamCarsMetaData>
  *
  */
-public class KalmanCorrectStateEstimatePOTest extends TestCase {
+public class KalmanCorrectStateEstimateFunctionTest extends TestCase {
 
-	private KalmanCorrectStateEstimatePO<StreamCarsMetaData> correctStateEstimatePO;
+	private AbstractDataUpdateFunction correctStateEstimateFunction;
 	
 
 	
@@ -36,7 +40,7 @@ public class KalmanCorrectStateEstimatePOTest extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 	
-		FilterPOTestData testData = new FilterPOTestData();
+		FilterFunctionTestData testData = new FilterFunctionTestData();
 		
 		// Measurement Data
 		
@@ -68,16 +72,17 @@ public class KalmanCorrectStateEstimatePOTest extends TestCase {
 		
 		expectedTuple = testData.generateTestTuple(speedOldExp, posOldExp, covarianceOld, speedNew, posNew, covarianceNew,gain);
 		
-
-		KalmanCorrectStateEstimateFunction estimatefunction = new KalmanCorrectStateEstimateFunction();
+		correctStateEstimateFunction = new KalmanCorrectStateEstimateFunction();
+		
+		//KalmanCorrectStateEstimateFunction estimatefunction = new KalmanCorrectStateEstimateFunction();
 		
 		// create the PO
 		
-		correctStateEstimatePO = new KalmanCorrectStateEstimatePO<StreamCarsMetaData>();
+	/*	correctStateEstimatePO = new UpdateDataPO<StreamCarsMetaData>();
 		
-		correctStateEstimatePO.setFilterFunction(estimatefunction);
+		correctStateEstimatePO.setDataUpdateFunction(estimatefunction);
 		
-		correctStateEstimatePO.setSchema(testData.getSchema());
+		correctStateEstimatePO.setSchema(testData.getSchema()); 
 		
 		int[] oldObjListPath = {1};
 		
@@ -85,7 +90,7 @@ public class KalmanCorrectStateEstimatePOTest extends TestCase {
 			
 		correctStateEstimatePO.setOldObjListPath(oldObjListPath);
 		
-		correctStateEstimatePO.setNewObjListPath(newObjListPath);
+		correctStateEstimatePO.setNewObjListPath(newObjListPath); */
 	
 	
 	}
@@ -93,9 +98,16 @@ public class KalmanCorrectStateEstimatePOTest extends TestCase {
 	@Test
 	public  void test() {
 	
-	resultTuple = correctStateEstimatePO.computeAll(measurementTuple);
+		
+		Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
+		
+		ArrayList<int[]> attributePathsOld = measurementTuple.getMetadata().getAttributePaths();
+		
+		ArrayList<int[]> attributePathsNew = measurementTuple.getMetadata().getAttributePaths();
+		int i=0;
+		correctStateEstimateFunction.compute(connected, attributePathsNew, attributePathsOld,i);
 	
-	assertEquals(expectedTuple,resultTuple);
+		assertEquals(expectedTuple,measurementTuple);
 	
 
 	}
