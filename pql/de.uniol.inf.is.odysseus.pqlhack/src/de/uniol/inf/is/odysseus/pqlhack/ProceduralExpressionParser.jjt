@@ -385,7 +385,7 @@ void AssociationGenOp(): {} {
   <K_ASSOCIATION_GEN> "(" AlgebraOp() "," AlgebraOp() "," Identifier() "," Identifier() ")"}
 
 void AssociationEvalOp(): {} {
-  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier() "," KeyValueList() ")" 
+  <K_ASSOCIATION_EVAL> "(" AlgebraOp() "," Identifier() "," KeyValueList() "," Identifier() "," Identifier() ( "," KeyValueList() )? ")" 
 }
 
 void AssociationSelOp(): {} {
