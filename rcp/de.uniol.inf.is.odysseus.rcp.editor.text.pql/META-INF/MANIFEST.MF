@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pql
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.text.pql;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.text.pql.Activator
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.logicaloperator.builder,
+ de.uniol.inf.is.odysseus.parser.pql,
+ de.uniol.inf.is.odysseus.rcp.editor.text,
+ org.osgi.framework;version="1.3.0"
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor.text
