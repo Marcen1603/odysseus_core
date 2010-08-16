@@ -39,7 +39,7 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 	@Override
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		TupleHelper helper = new TupleHelper(object);
-		Object listObj = helper.getObject(pathToList, false);
+		Object listObj = helper.getObject(pathToList);
 		
 		if(listObj instanceof MVRelationalTuple<?>) {
 			Object[] objList = ((MVRelationalTuple<?>) listObj).getAttributes();

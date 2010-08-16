@@ -84,7 +84,7 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 //	@SuppressWarnings("unchecked")
 	private void predictData() {
 		TupleHelper helper = new TupleHelper(currentScanTuple);
-		MVRelationalTuple<?> list = (MVRelationalTuple<?>)helper.getObject(objListPath, false);
+		MVRelationalTuple<?> list = (MVRelationalTuple<?>)helper.getObject(objListPath);
 		for(int index=0; index < list.getAttributeCount(); index++) {
 			MVRelationalTuple<M> obj = list.getAttribute(index);
 			IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
