@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CQL Keywords
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.editor.text.cql;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor.text
+Import-Package: de.uniol.inf.is.odysseus.parser.cql
