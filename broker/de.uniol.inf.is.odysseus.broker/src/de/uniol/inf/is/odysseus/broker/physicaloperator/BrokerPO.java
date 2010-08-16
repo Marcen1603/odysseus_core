@@ -464,6 +464,16 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	public void processPunctuation(PointInTime timestamp, int port) {
 		printDebug("Process punctuation: "+timestamp+" on port "+port);
 		setMinTS(port, timestamp);
+		PointInTime min = this.getMinimum();
+		
+		// if the sweepArea is empty, no data can be sent
+		// in this case, send a punctuation, if possible
+		// Maybe, this won't work. Perhaps, at arrival of
+		// a punctuation, it should be checked, whether
+		// sending data is possible or not.
+		if(min != null && this.sweepArea.isEmpty()){
+			this.sendPunctuation(min);
+		}
 	}
 
 	/**
