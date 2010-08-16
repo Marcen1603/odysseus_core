@@ -74,6 +74,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTSlidingTimeWindow;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTString;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTTestOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTWindowOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.Node;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor;
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -1303,10 +1304,13 @@ public class CreateLogicalPlanVisitor implements
 
 				String key = ((ASTIdentifier) valuePair.jjtGetChild(0))
 						.getName();
-				String value = ((ASTIdentifier) valuePair.jjtGetChild(1))
-						.getName();
-
-				params.put(key, value);
+				
+				Node valueNode = valuePair.jjtGetChild(1); 
+				if(valueNode instanceof ASTIdentifier) {
+					params.put(key, ((ASTIdentifier)valueNode).getName());
+				} else {
+					params.put(key, (((ASTNumber)valueNode).getValue()));
+				}
 			}
 		}
 		return params;

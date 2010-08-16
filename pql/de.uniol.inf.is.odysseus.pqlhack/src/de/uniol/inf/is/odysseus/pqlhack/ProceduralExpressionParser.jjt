@@ -378,7 +378,7 @@ void KeyValueList(): {}{
 }
 
 void KeyValuePair(): {}{
-	Identifier() ":=" Identifier() 
+	Identifier() ":=" ( Identifier() | Number() )
 }
 
 void AssociationGenOp(): {} {
