@@ -1,16 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.Keyword" name="Query Editor Keywords " schema="schema/de.uniol.inf.is.odysseus.rcp.editor.Keyword.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.editor.text.SimpleEditor"
-            default="false"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.editor.SimpleEditor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            default="true"
             extensions="qry"
             icon="Icons/text.gif"
             id="de.uniol.inf.is.odysseus.rcp.editor.QueryTextEditor"
             name="Query Text Editor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.NavigatorView.popup?after=group.build">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
+               label="Run Query"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
+            name="Run Query">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="isQryFile">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.commands.RunQueryCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery">
+         <activeWhen>
+            <reference
+                  definitionId="isQryFile">
+            </reference>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.wizard.NewQueryTextWizard"
+            hasPages="true"
+            icon="Icons/text.gif"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.NewWizard"
+            name="Query Text"
+            project="false">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.perspective.queries">
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.editor.text.NewWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
    </extension>
 
 </plugin>

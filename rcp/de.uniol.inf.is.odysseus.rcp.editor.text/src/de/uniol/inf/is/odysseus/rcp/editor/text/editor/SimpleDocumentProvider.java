@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.text;
+package de.uniol.inf.is.odysseus.rcp.editor.text.editor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,38 +15,15 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.operation.IRunnableContext;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 public class SimpleDocumentProvider extends AbstractDocumentProvider {
-
-	private String parserID = "";
-	private String transCfg = "";
-	
-	
-	public String getParserID() {
-		return parserID;
-	}
-
-	public void setParserID(String parserID) {
-		this.parserID = parserID;
-	}
-
-	public String getTransCfg() {
-		return transCfg;
-	}
-
-	public void setTransCfg(String transCfg) {
-		this.transCfg = transCfg;
-	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
@@ -104,10 +81,6 @@ public class SimpleDocumentProvider extends AbstractDocumentProvider {
 	private void setDocumentContent(IDocument document, Reader reader) throws IOException {
 		BufferedReader in= new BufferedReader(reader);
 		try {
-			
-			parserID = in.readLine();
-			transCfg = in.readLine();
-			
 			StringBuffer buffer= new StringBuffer(512);
 			char[] readBuffer= new char[512];
 			int n= in.read(readBuffer);
@@ -130,6 +103,7 @@ public class SimpleDocumentProvider extends AbstractDocumentProvider {
 	 */
 	protected void setupDocument(IDocument document) {
 	}
+	
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createAnnotationModel(java.lang.Object)
@@ -179,10 +153,6 @@ public class SimpleDocumentProvider extends AbstractDocumentProvider {
 	private void writeDocumentContent(IDocument document, Writer writer, IProgressMonitor monitor) throws IOException {
 		Writer out= new BufferedWriter(writer);
 		try {
-			out.write(parserID);
-			out.write("\n");
-			out.write(transCfg);
-			out.write("\n");
 			out.write(document.get());
 		} finally {
 			out.close();
