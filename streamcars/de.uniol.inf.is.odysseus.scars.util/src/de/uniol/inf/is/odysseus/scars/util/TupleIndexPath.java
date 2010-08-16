@@ -28,6 +28,7 @@ public class TupleIndexPath {
 		this.schemaIndexPath = schemaIndexPath;
 	}
 	
+	// Interner Konstruktor
 	TupleIndexPath( TupleIndexPath other ) {
 		this.indices = new ArrayList<TupleIndex>();
 		for( TupleIndex idx : other.indices ) {
