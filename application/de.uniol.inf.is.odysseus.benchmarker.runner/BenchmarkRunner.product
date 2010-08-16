@@ -13,6 +13,7 @@
 
    <windowImages/>
 
+
    <launcher name="benchmark">
       <solaris/>
       <win useIco="false">
@@ -26,33 +27,23 @@
 
    <plugins>
       <plugin id="Classloading_Utils"/>
-      <plugin id="Commons.Math"/>
       <plugin id="JepModified"/>
-      <plugin id="MatLab"/>
-      <plugin id="com.maplesoft"/>
       <plugin id="com.springsource.org.apache.log4j"/>
       <plugin id="com.springsource.slf4j.api"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
       <plugin id="de.uniol.inf.is.drools.osgi_path_scanner" fragment="true"/>
       <plugin id="de.uniol.inf.is.drools.osgi_rule_agent"/>
-      <plugin id="de.uniol.inf.is.objecttracking.drools" fragment="true"/>
+      <plugin id="de.uniol.inf.is.logicaloperator.builder"/>
       <plugin id="de.uniol.inf.is.odysseus.args"/>
       <plugin id="de.uniol.inf.is.odysseus.base"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.impl"/>
       <plugin id="de.uniol.inf.is.odysseus.benchmarker.runner"/>
-      <plugin id="de.uniol.inf.is.odysseus.cep"/>
-      <plugin id="de.uniol.inf.is.odysseus.cep.metamodel"/>
-      <plugin id="de.uniol.inf.is.odysseus.cep.metamodel.jep"/>
-      <plugin id="de.uniol.inf.is.odysseus.cep.relational"/>
-      <plugin id="de.uniol.inf.is.odysseus.dbIntegration"/>
       <plugin id="de.uniol.inf.is.odysseus.interval_latency"/>
       <plugin id="de.uniol.inf.is.odysseus.interval_latency_priority"/>
       <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
       <plugin id="de.uniol.inf.is.odysseus.latency"/>
-      <plugin id="de.uniol.inf.is.odysseus.loadshedding"/>
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.base"/>
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.objectrelational"/>
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
@@ -65,12 +56,9 @@
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.standardplanmigrationcostmodel"/>
       <plugin id="de.uniol.inf.is.odysseus.priority"/>
       <plugin id="de.uniol.inf.is.odysseus.priority_interval"/>
-      <plugin id="de.uniol.inf.is.odysseus.priority_relational" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.benchmark" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.cep" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite.dbIntegration" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.drools"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.priority" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.rewrite.relational" fragment="true"/>
@@ -78,12 +66,9 @@
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurora_priority" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
-      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.benchmark" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.transformation.cep" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.drools"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.helper.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.interval" fragment="true"/>
@@ -93,8 +78,6 @@
       <plugin id="de.uniol.inf.is.odysseus.transformation.relational_interval" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.transformation.relational_priority" fragment="true"/>
       <plugin id="de.uniol.org.drools"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="javax.transaction" fragment="true"/>
       <plugin id="log4jproperties" fragment="true"/>
       <plugin id="org.apache.cxf"/>
       <plugin id="org.eclipse.compare.core"/>
@@ -135,8 +118,6 @@
       <plugin id="org.eclipse.text"/>
       <plugin id="org.hamcrest.core"/>
       <plugin id="org.junit4"/>
-      <plugin id="org.mortbay.jetty.server"/>
-      <plugin id="org.mortbay.jetty.util"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="org.simpleframework.xml"/>
@@ -153,7 +134,6 @@
       <plugin id="de.uniol.inf.is.odysseus.interval_latency_priority" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.intervalapproach" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.latency" autoStart="false" startLevel="0" />
-      <plugin id="de.uniol.inf.is.odysseus.loadshedding" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.base" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational" autoStart="false" startLevel="0" />
       <plugin id="de.uniol.inf.is.odysseus.parser.cql" autoStart="true" startLevel="0" />
