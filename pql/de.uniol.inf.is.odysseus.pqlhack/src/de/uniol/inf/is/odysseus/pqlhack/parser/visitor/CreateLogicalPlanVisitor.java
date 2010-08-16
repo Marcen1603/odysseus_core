@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.pqlhack.parser.visitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.base.DataDictionary;
 import de.uniol.inf.is.odysseus.base.ILogicalOperator;
@@ -13,6 +14,7 @@ import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
+import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
@@ -43,6 +45,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
@@ -1501,6 +1504,106 @@ public class CreateLogicalPlanVisitor implements
 		((ArrayList) data).add(new Integer(0));
 		
 		return data;
-	}
+  }
 
+  
+  @Override
+  public Object visit(ASTFilterOp node, Object data)
+  {
+    // 
+    // preparation
+    // 
+    
+    // set filter output port
+    final int OUTPUT_PORT = 0;
+    
+    // set convention constants
+    final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
+    final int DATA_LIST_INDEX_OF_OPERATOR = 1;
+    final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
+    
+    // set grammar specific constants
+    final int CHILD_INDEX_OF_ASSOCIATION_SELECTION_AO = 0;
+    final int CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST = 1;
+    final int CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST = 2;
+    final int CHILD_INDEX_OF_FUNCTION_ID = 3;
+    
+    // cast filter data
+    // filter data should be a List<Object> implementation (this is a convention)
+    List<Object> dataList = null;
+    if (!(data instanceof List<?>))
+    {
+      throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
+    }
+    try
+    {
+      dataList = (List<Object>) data;
+    }
+    catch(ClassCastException e)
+    {
+      throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
+    }
+    
+    // get attribute resolver out of data list
+    Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
+    
+    // 
+    // pass on visitor to nodes if necessary
+    //
+    
+    // pass on to association selection ao node (node 0)
+    List<Object> node0DataList = new ArrayList<Object>();
+    node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
+    node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_ASSOCIATION_SELECTION_AO).jjtAccept(
+        this, node0DataList));
+    
+    //
+    // get input data out of child nodes and their output data
+    // 
+    
+    // get association selection operator and its source output port
+    // out of child node 0's returned data list
+    AbstractLogicalOperator associationSelectionAO = (AbstractLogicalOperator) node0DataList
+    .get(DATA_LIST_INDEX_OF_OPERATOR);
+    final int ASSOCIATION_SELECTION_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
+    
+    // get path to new car list out of child 1 (its name)
+    String pathToNewCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST)).getName();
+    
+    // get path to new car list out of child 2 (its name)
+    String pathToOldCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST)).getName();
+    
+    // get path to new car list out of child 3 (its name)
+    String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
+    
+    // 
+    // create Filter AO
+    // and initialize it
+    // 
+    
+    FilterAO filterAO = new FilterAO();
+    
+    filterAO.subscribeToSource(associationSelectionAO, OUTPUT_PORT, ASSOCIATION_SELECTION_OUT_PORT,
+        associationSelectionAO.getOutputSchema());
+    
+    // set path to new car list
+    filterAO.setNewObjListPath(pathToNewCarList);
+    
+    // set path to old car list
+    filterAO.setOldObjListPath(pathToOldCarList);
+    
+    // set function id
+    filterAO.setFunctionID(functionID);
+    
+    // 
+    // return data according to convention
+    // 
+    
+    dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
+    dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
+    
+    return dataList;
+  }
+
+  
 }

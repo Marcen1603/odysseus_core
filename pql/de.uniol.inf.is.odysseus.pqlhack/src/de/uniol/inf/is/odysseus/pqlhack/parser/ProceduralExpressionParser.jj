@@ -78,6 +78,7 @@ TOKEN : /* Keywords */ {
 |   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
 |   <K_ASSOCIATION_SRC: "ASSOCIATION-SRC">
 |   <K_EVALUATE: "EVALUATE">
+|   <K_FILTER: "FILTER">
 }
 
 TOKEN:{
@@ -175,7 +176,8 @@ void AlgebraOp():{/*@bgen(jjtree) AlgebraOp */
 	EvaluateOp() |
 	SchemaConvertOp() |
 	BenchmarkOp() |
-	BufferOp()/*@bgen(jjtree)*/
+	BufferOp() |
+	FilterOp()/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1596,3 +1598,34 @@ void EvaluateOp(): {/*@bgen(jjtree) EvaluateOp */
     }
   }
 /*@egen*/}
+
+void FilterOp(): {/*@bgen(jjtree) FilterOp */
+  ASTFilterOp jjtn000 = new ASTFilterOp(JJTFILTEROP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) FilterOp */
+  try {
+/*@egen*/
+  < K_FILTER > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
