@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
-//import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
@@ -1510,7 +1510,7 @@ public class CreateLogicalPlanVisitor implements
   @Override
   public Object visit(ASTFilterOp node, Object data)
   {
-/*    // 
+   // 
     // preparation
     // 
     
@@ -1602,9 +1602,9 @@ public class CreateLogicalPlanVisitor implements
     dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
     dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
     
-    return dataList;*/
+    return dataList;
     
-    return null;
+  
   }
 
   
