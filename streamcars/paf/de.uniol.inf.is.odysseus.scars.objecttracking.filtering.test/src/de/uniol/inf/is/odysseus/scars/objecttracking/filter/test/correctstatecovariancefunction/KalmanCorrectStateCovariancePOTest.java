@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.operator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.correctstatecovariancefunction;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ import org.junit.Test;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
 import de.uniol.inf.is.odysseus.filtering.physicaloperator.UpdateMetaDataPO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data.FilterFunctionTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterPOTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
@@ -38,7 +38,7 @@ public class KalmanCorrectStateCovariancePOTest extends TestCase  {
 	@Before
 	public void setUp() throws Exception {
 	
-		FilterFunctionTestData testData = new FilterFunctionTestData();
+		FilterPOTestData testData = new FilterPOTestData();
 		
 		// Measurement Data
 		

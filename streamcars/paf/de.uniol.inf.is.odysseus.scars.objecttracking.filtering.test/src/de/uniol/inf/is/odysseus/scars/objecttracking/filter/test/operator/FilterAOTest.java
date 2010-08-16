@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.operator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.operator;
 
 
 import org.junit.Before;
@@ -10,7 +10,7 @@ import org.junit.Before;
  * @author dtwumasi
  *
  */
-public class AbstractFilterPOTest {
+public class FilterAOTest {
 
 	/**
 	 * @throws java.lang.Exception

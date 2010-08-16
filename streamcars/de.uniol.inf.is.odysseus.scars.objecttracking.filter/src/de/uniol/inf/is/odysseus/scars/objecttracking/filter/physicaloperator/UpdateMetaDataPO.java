@@ -37,8 +37,8 @@ public class UpdateMetaDataPO<M extends IProbability & IConnectionContainer>  ex
 
 	public UpdateMetaDataPO(UpdateMetaDataPO<M> copy) {
 		super();
-		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getUpdateMetaDataFunction().getParameters());
-		this.setUpdateMetaDataFunction(new KalmanCorrectStateCovarianceFunction(parametercopy));			
+		this.setUpdateMetaDataFunction(copy.getUpdateMetaDataFunction().clone());
+		
 		}
 		
 	
@@ -71,7 +71,7 @@ public class UpdateMetaDataPO<M extends IProbability & IConnectionContainer>  ex
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		return new UpdateMetaDataPO(this);
+		return new UpdateMetaDataPO<M>(this);
 	}
 	}
 

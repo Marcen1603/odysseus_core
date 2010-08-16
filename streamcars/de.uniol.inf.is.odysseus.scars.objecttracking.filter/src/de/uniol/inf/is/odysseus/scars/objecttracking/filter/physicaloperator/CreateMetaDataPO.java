@@ -36,8 +36,7 @@ public class CreateMetaDataPO<M extends IProbability & IConnectionContainer> ext
 	
 	public CreateMetaDataPO(CreateMetaDataPO<M> copy) {
 		
-		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getMetaDataCreationFunction().getParameters());
-		this.setMetaDataCreationFunction(new KalmanGainFunction(parametercopy));
+		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 		
 	}
 

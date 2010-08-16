@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data;
+package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data;
 
 import java.util.HashMap;
 
@@ -11,11 +11,11 @@ import de.uniol.inf.is.odysseus.filtering.HashConstants;
  * @author dtwumasi
  *
  */
-public class FilterFunctionTestData2 {
+public class FilterFunctionTestData {
 	
 	private HashMap<Integer,Object> testData;
 	
-	public FilterFunctionTestData2() {
+	public FilterFunctionTestData() {
 		this.testData = generateTestData();
 	}
 	

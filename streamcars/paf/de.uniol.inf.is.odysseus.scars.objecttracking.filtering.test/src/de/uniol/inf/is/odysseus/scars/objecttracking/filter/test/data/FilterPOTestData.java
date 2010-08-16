@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data;
+package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data;
 
 
 import java.util.ArrayList;
@@ -18,10 +18,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
  * @author dtwumasi
  *
  */
-public class FilterFunctionTestData {
+public class FilterPOTestData {
 
 	
-	public FilterFunctionTestData() {
+	public FilterPOTestData() {
 	
 	}	
 	

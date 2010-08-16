@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
@@ -33,10 +34,7 @@ public class UpdateDataPO<M extends IProbability & IConnectionContainer> extends
 
 	public UpdateDataPO(UpdateDataPO<M> copy) {
 		super();
-		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getDataUpdateFunction().getParameters());
-		//this.(new KalmanCorrectStateEstimateFunction(parametercopy));
-		
-		
+		this.dataUpdateFunction=copy.getDataUpdateFunction().clone();
 		this.setNewObjListPath(copy.getNewObjListPath().clone());
 		this.setOldObjListPath(copy.getOldObjListPath().clone());
 	

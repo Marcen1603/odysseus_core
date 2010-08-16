@@ -1,11 +1,11 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.correctstatecovariancefunction;
+package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.correctstatecovariancefunction;
 
 
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data.FilterFunctionTestData2;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class KalmanCorrectStateCovarianceFunctionTest {
 	@Before
 	public void setUp() throws Exception {
 	
-	FilterFunctionTestData2 testdata = new FilterFunctionTestData2();
+	FilterFunctionTestData testdata = new FilterFunctionTestData();
 
 	this.kalmanCorrectStateCovarianceFunction = new KalmanCorrectStateCovarianceFunction(testdata.getTestData());
 	

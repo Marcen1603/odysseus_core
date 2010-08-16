@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.operator;
+package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.correctstateestimatefunction;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.filtering.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filtering.test.data.FilterFunctionTestData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterPOTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
@@ -40,7 +40,7 @@ public class KalmanCorrectStateEstimateFunctionTest extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 	
-		FilterFunctionTestData testData = new FilterFunctionTestData();
+		FilterPOTestData testData = new FilterPOTestData();
 		
 		// Measurement Data
 		
