@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.filtering.HashConstants;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.HashConstants;
 
 /**
  * @author dtwumasi

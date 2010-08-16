@@ -6,9 +6,9 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateCovarianceFunction;
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.UpdateMetaDataPO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateCovarianceFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.UpdateMetaDataPO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;

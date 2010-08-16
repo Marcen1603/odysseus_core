@@ -2,15 +2,16 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.correctstatees
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.filtering.physicaloperator.UpdateDataPO;
+
 import org.junit.Before;
 import org.junit.Test;
 import junit.framework.TestCase;
 
-import de.uniol.inf.is.odysseus.filtering.AbstractDataUpdateFunction;
-import de.uniol.inf.is.odysseus.filtering.KalmanCorrectStateEstimateFunction;
+
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterPOTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
