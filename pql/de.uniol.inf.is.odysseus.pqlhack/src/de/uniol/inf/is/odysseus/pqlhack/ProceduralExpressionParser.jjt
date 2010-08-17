@@ -40,6 +40,8 @@ TOKEN : /* Keywords */ {
 |   <K_BENCHMARK: "BENCHMARK">
 |   <K_BROKER: "BROKER">
 |	<K_BUFFER: "BUFFER">
+|	<K_EXIST: "EXIST">
+|	<K_NOT_EXIST : "NOT_EXIST">
 |	<K_COUNT: "COUNT">
 |	<K_DEFAULT: "DEFAULT">
 |	<K_JOIN: "JOIN">
@@ -136,11 +138,18 @@ void AlgebraOp():{}{
 	SchemaConvertOp() |
 	BenchmarkOp() |
 	BufferOp() |
+	ExistOp() |
 	FilterOp()
 }
 
 void TestOp(): {}{
     <K_TEST>"(" AlgebraOp() "," Identifier() ")"
+}
+
+void ExistOp() : {} {
+
+	(<K_EXIST> {jjtThis.setType("exist");} | <K_NOT_EXIST> {jjtThis.setType("not exist");})
+			"(" AlgebraOp() "," AlgebraOp() "," Predicate() ")"
 }
 
 void BenchmarkOp() : {}{

@@ -35,11 +35,11 @@ public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnection
 	}
 
 	public KalmanCorrectStateCovariancePO(KalmanCorrectStateCovariancePO<M> copy) {
-		super();
-		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getFilterFunction().getParameters());
-		if (copy.getFilterFunction().getFunctionID() == 1) {
-			this.setFilterFunction(new KalmanCorrectStateCovarianceFunction(parametercopy));			
-		}
+//		super();
+//		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getFilterFunction().getParameters());
+//		if (copy.getFilterFunction().getFunctionID() == 1) {
+//			this.setFilterFunction(new KalmanCorrectStateCovarianceFunction(parametercopy));			
+//		}
 		
 		
 	
@@ -72,23 +72,23 @@ public class KalmanCorrectStateCovariancePO<M extends IProbability & IConnection
 		
 		
 		
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
-		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
-		
-		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
-		
-		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
-		
-		double[][] gain = oldTuple.getMetadata().getGain();
-	
-		getFilterFunction().addParameter(HashConstants.GAIN, gain);
-		getFilterFunction().addParameter(HashConstants.OLD_COVARIANCE, covarianceOld);
-		getFilterFunction().addParameter(HashConstants.NEW_COVARIANCE, covarianceNew);
-		
-		double[][] resultCovariance = (double[][]) getFilterFunction().compute();
-	
-		//set new state covariance
-		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setCovariance(resultCovariance);
+//		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
+//		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+//		
+//		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
+//		
+//		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
+//		
+//		double[][] gain = oldTuple.getMetadata().getGain();
+//	
+//		getFilterFunction().addParameter(HashConstants.GAIN, gain);
+//		getFilterFunction().addParameter(HashConstants.OLD_COVARIANCE, covarianceOld);
+//		getFilterFunction().addParameter(HashConstants.NEW_COVARIANCE, covarianceNew);
+//		
+//		double[][] resultCovariance = (double[][]) getFilterFunction().compute();
+//	
+//		//set new state covariance
+//		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setCovariance(resultCovariance);
 	
 	 }
 	

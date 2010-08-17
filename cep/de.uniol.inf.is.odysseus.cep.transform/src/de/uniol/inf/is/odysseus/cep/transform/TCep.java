@@ -24,7 +24,7 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 	}
 
 	@Override
-	public void transform(CepAO cepAO,
+	public void execute(CepAO cepAO,
 			TransformationConfiguration transformConfig) {
 		Map<Integer, RelationalReader> rMap = new HashMap<Integer, RelationalReader>();
 		for (LogicalSubscription s : cepAO.getSubscribedToSource()) {

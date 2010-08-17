@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.pqlhack;
 
 import org.osgi.framework.BundleActivator;
-
 import org.osgi.framework.BundleContext;
+
+
+
 
 public class Activator implements BundleActivator {
 

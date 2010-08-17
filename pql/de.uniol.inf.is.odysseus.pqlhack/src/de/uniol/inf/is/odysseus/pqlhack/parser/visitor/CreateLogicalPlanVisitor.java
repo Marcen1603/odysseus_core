@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterAO;
+import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBufferOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
@@ -1505,6 +1506,12 @@ public class CreateLogicalPlanVisitor implements
 		
 		return data;
   }
+
+	@Override
+	public Object visit(ASTExistOp node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
   
   @Override

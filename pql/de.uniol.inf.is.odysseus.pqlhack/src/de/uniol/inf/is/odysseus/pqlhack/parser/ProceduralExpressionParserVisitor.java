@@ -7,6 +7,7 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTLogicalPlan node, Object data);
   public Object visit(ASTAlgebraOp node, Object data);
   public Object visit(ASTTestOp node, Object data);
+  public Object visit(ASTExistOp node, Object data);
   public Object visit(ASTBenchmarkOp node, Object data);
   public Object visit(ASTBufferOp node, Object data);
   public Object visit(ASTProjectionOp node, Object data);
@@ -52,4 +53,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTEvaluateOp node, Object data);
   public Object visit(ASTFilterOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=554b8087534f595ec76732292b5481f2 (do not edit this line) */
+/* JavaCC - OriginalChecksum=b0f2c6eb157bd9a1ebb5d6848b9147ee (do not edit this line) */

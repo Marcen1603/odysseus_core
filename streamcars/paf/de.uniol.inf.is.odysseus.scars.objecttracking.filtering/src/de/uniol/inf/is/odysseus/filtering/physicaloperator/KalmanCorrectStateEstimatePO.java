@@ -36,14 +36,14 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 	}
 
 	public KalmanCorrectStateEstimatePO(KalmanCorrectStateEstimatePO<M> copy) {
-		super();
-		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getFilterFunction().getParameters());
-		if (copy.getFilterFunction().getFunctionID() == 1) {
-			this.setFilterFunction(new KalmanCorrectStateEstimateFunction(parametercopy));
-		}
-		
-		this.setNewObjListPath(copy.getNewObjListPath().clone());
-		this.setOldObjListPath(copy.getOldObjListPath().clone());
+//		super();
+//		HashMap<Integer,Object> parametercopy = new HashMap<Integer,Object>(copy.getFilterFunction().getParameters());
+//		if (copy.getFilterFunction().getFunctionID() == 1) {
+//			this.setFilterFunction(new KalmanCorrectStateEstimateFunction(parametercopy));
+//		}
+//		
+//		this.setNewObjListPath(copy.getNewObjListPath().clone());
+//		this.setOldObjListPath(copy.getOldObjListPath().clone());
 	
 	}
 	
@@ -90,26 +90,26 @@ public class KalmanCorrectStateEstimatePO<M extends IProbability & IConnectionCo
 	
 	public void compute(Connection connected, ArrayList<int[]> measurementValuePathsTupleNew, ArrayList<int[]> measurementValuePathsTupleOld  ) {
 		
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
-		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
-	
-		double[] measurementOld = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleOld, oldTuple);
-		
-		double[] measurementNew = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleNew, newTuple);
-		
-	
-		double[][] gain = oldTuple.getMetadata().getGain();
-		
-		getFilterFunction().addParameter(HashConstants.NEW_MEASUREMENT, measurementNew);
-		getFilterFunction().addParameter(HashConstants.OLD_MEASUREMENT, measurementOld);
-		getFilterFunction().addParameter(HashConstants.GAIN, gain);
-	
-		double[] result = (double[]) getFilterFunction().compute();
-		
-		// TODO richtig machen
-		for (int i=0; i<= result.length-1; i++) {
-			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[0], result[i]);
-		}
+//		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
+//		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+//	
+//		double[] measurementOld = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleOld, oldTuple);
+//		
+//		double[] measurementNew = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleNew, newTuple);
+//		
+//	
+//		double[][] gain = oldTuple.getMetadata().getGain();
+//		
+//		getFilterFunction().addParameter(HashConstants.NEW_MEASUREMENT, measurementNew);
+//		getFilterFunction().addParameter(HashConstants.OLD_MEASUREMENT, measurementOld);
+//		getFilterFunction().addParameter(HashConstants.GAIN, gain);
+//	
+//		double[] result = (double[]) getFilterFunction().compute();
+//		
+//		// TODO richtig machen
+//		for (int i=0; i<= result.length-1; i++) {
+//			oldTuple.setAttribute(measurementValuePathsTupleOld.get(i)[0], result[i]);
+//		}
 	}
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
