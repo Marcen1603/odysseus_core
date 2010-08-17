@@ -20,17 +20,17 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @param <StreamCarsMetaData>
  *
  */
-public class KalmanCorrectStateCovarianceFunctionTest extends TestCase  {
+public class KalmanCorrectStateCovarianceFunctionTest<K> extends TestCase  {
 
-	private FilterCovarianceUpdatePO<StreamCarsMetaData> correctStateCovariancePO;
+	//private FilterCovarianceUpdatePO<StreamCarsMetaData<K>> correctStateCovariancePO;
 	
-
+	private KalmanCorrectStateCovarianceFunction covarianceFunction;
 	
-	private MVRelationalTuple<StreamCarsMetaData> measurementTuple;
+	private MVRelationalTuple<StreamCarsMetaData<K>> measurementTuple;
 	
-	private MVRelationalTuple<StreamCarsMetaData> expectedTuple;
+	private MVRelationalTuple<StreamCarsMetaData<K>> expectedTuple;
 	
-	private MVRelationalTuple<StreamCarsMetaData> resultTuple;
+	private MVRelationalTuple<StreamCarsMetaData<K>> resultTuple;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -38,7 +38,7 @@ public class KalmanCorrectStateCovarianceFunctionTest extends TestCase  {
 	@Before
 	public void setUp() throws Exception {
 	
-		FilterFunctionTestData testData = new FilterFunctionTestData();
+		FilterFunctionTestData<K> testData = new FilterFunctionTestData<K>();
 		
 		// Measurement Data
 		
@@ -57,7 +57,7 @@ public class KalmanCorrectStateCovarianceFunctionTest extends TestCase  {
 		double[][] gain = { {0.7064220183486238,-0.009174311926605505}, {-0.02854230377166156,0.7074413863404688} };
 			
 		
-		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain);
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,1);
 		
 		
 		// the expected tuple
@@ -65,19 +65,12 @@ public class KalmanCorrectStateCovarianceFunctionTest extends TestCase  {
 		double[][] covarianceOldExp = { {-10.320000000000002,26.12}, {26.12,0.48} };
 		
 		
-		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOldExp, speedNew, posNew, covarianceNew, gain);
+		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOldExp, speedNew, posNew, covarianceNew, gain,1);
 		
-		Connection[] objConList = new Connection[expectedTuple.getMetadata().getConnectionList().toArray().length];
-		ArrayList<Connection> tmpConList = expectedTuple.getMetadata().getConnectionList();
-
-		for(int i = 0; i < objConList.length; i++) {
-			objConList[i] = tmpConList.get(i);
-		}
-		
-		KalmanCorrectStateCovarianceFunction covariancefunction = new KalmanCorrectStateCovarianceFunction();
+		covarianceFunction = new KalmanCorrectStateCovarianceFunction<K>();
 		
 		// create the PO
-		
+		/*
 		correctStateCovariancePO = new FilterCovarianceUpdatePO<StreamCarsMetaData>();
 		
 		correctStateCovariancePO.setUpdateMetaDataFunction(covariancefunction);
@@ -89,16 +82,18 @@ public class KalmanCorrectStateCovarianceFunctionTest extends TestCase  {
 		correctStateCovariancePO.setOldObjListPath(oldObjListPath);
 		
 		correctStateCovariancePO.setNewObjListPath(newObjListPath);
-	
+	*/
 	
 	}
 	
 	@Test
 	public  void testh() {
 	
-	resultTuple = correctStateCovariancePO.computeAll(measurementTuple);
+	Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 	
-	assertEquals(expectedTuple,resultTuple);
+	covarianceFunction.compute(connected);
+	
+	assertEquals(expectedTuple,measurementTuple);
 	
 
 	}

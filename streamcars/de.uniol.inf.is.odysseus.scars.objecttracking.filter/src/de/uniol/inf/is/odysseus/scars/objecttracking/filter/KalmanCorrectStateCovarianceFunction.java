@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 
-public class KalmanCorrectStateCovarianceFunction extends AbstractMetaDataUpdateFunction {
+public class KalmanCorrectStateCovarianceFunction<K> extends AbstractMetaDataUpdateFunction {
 	
 	
 	
@@ -20,7 +20,7 @@ public class KalmanCorrectStateCovarianceFunction extends AbstractMetaDataUpdate
 	super();
 	}
 	
-	public KalmanCorrectStateCovarianceFunction(KalmanCorrectStateCovarianceFunction copy) {
+	public KalmanCorrectStateCovarianceFunction(KalmanCorrectStateCovarianceFunction<K> copy) {
 
 		copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
 		
@@ -38,8 +38,8 @@ public class KalmanCorrectStateCovarianceFunction extends AbstractMetaDataUpdate
 		
 	
 			
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
-		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+		MVRelationalTuple<StreamCarsMetaData<K>> oldTuple = (MVRelationalTuple<StreamCarsMetaData<K>>) connected.getRight();
+		MVRelationalTuple<StreamCarsMetaData<K>> newTuple = (MVRelationalTuple<StreamCarsMetaData<K>>) connected.getLeft();
 			
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
 			
@@ -77,7 +77,7 @@ public class KalmanCorrectStateCovarianceFunction extends AbstractMetaDataUpdate
 		result = temp.getData();
 		
 		//set new state covariance
-		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setCovariance(result);
+		((MetaAttributeContainer<StreamCarsMetaData<K>>) connected.getRight()).getMetadata().setCovariance(result);
 	}
 	
 
@@ -100,7 +100,7 @@ public class KalmanCorrectStateCovarianceFunction extends AbstractMetaDataUpdate
 	@Override
 	public AbstractMetaDataUpdateFunction clone() {
 		
-		return new KalmanCorrectStateCovarianceFunction(this);
+		return new KalmanCorrectStateCovarianceFunction<K>(this);
 	}
 
 }

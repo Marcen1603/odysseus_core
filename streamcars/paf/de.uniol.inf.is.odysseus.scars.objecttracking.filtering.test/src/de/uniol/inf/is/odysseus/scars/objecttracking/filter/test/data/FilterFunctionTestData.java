@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
@@ -16,98 +17,106 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
 
 /**
  * @author dtwumasi
+ * @param <K>
  *
  */
-public class FilterFunctionTestData {
+public class FilterFunctionTestData<K> {
 
 	
 	public FilterFunctionTestData() {
 	
 	}	
 	
+	public MVRelationalTuple<StreamCarsMetaData<K>> generateDataTuple(double speed, double pos, double[][] covariance, double[][] gain) {
 		
-	public MVRelationalTuple<StreamCarsMetaData> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew, double[][] gain ) {
-		
-		Object[] attributesOld = {speedOld,posOld};
+		Object[] attributes = {speed,pos};
 		
 		// MVRelationalTuple to hold the data
 		
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = new MVRelationalTuple<StreamCarsMetaData>(attributesOld);
+		MVRelationalTuple<StreamCarsMetaData<K>> Tuple = new MVRelationalTuple<StreamCarsMetaData<K>>(attributes);
 		
 		
-		StreamCarsMetaData metaOld = new StreamCarsMetaData();
+		StreamCarsMetaData<K> meta = new StreamCarsMetaData<K>();
 		
-		metaOld.setCovariance(covarianceOld);
+		meta.setCovariance(covariance);
 		
-		ArrayList<int[]> pathsOld = new ArrayList<int[]>();
+		ArrayList<int[]> paths = new ArrayList<int[]>();
 		
-		pathsOld.add(new int[] {0});
-		pathsOld.add(new int[] {1});
+		paths.add(new int[] {0});
+		paths.add(new int[] {1});
 		
-		metaOld.setAttributePaths(pathsOld);
+		meta.setAttributePaths(paths);
 		
-		if (gain!=null) metaOld.setGain(gain);
+		if (gain!=null) meta.setGain(gain);
 		
-		oldTuple.setMetadata(metaOld);
+		Tuple.setMetadata(meta);
+		
+		return Tuple;
+	}
+	
+	public MVRelationalTuple<StreamCarsMetaData<K>> generateListTuple(Object[] list) {
+		
+		MVRelationalTuple<StreamCarsMetaData<K>> tupleList = new MVRelationalTuple<StreamCarsMetaData<K>>(list);
+		
+		return tupleList;
+		
+	}
+	
+	public MVRelationalTuple<StreamCarsMetaData<K>> generateTestTuple(double speedOld, double posOld, double[][] covarianceOld, double speedNew, double posNew, double[][] covarianceNew, double[][] gain, int number ) {
 		
 		
+		Object [] oldAttributeList = new Object[number];
 		
-		// MVRelationalTuple to hold the new data
+		Object [] newAttributeList = new Object[number];
 		
-		Object[] attributesNew = {speedNew,posNew};
+		for (int i=0; i<=number-1; i++ ) {
+			// MVRelationalTuple to hold the old data
+			MVRelationalTuple<StreamCarsMetaData<K>> oldTuple = generateDataTuple(speedOld, posOld, covarianceOld, gain);
 		
-		MVRelationalTuple<StreamCarsMetaData> newTuple = new MVRelationalTuple<StreamCarsMetaData>(attributesNew);
+			oldAttributeList[i] = oldTuple;
 		
-		StreamCarsMetaData metaNew = new StreamCarsMetaData();
+			// MVRelationalTuple to hold the new data
+			MVRelationalTuple<StreamCarsMetaData<K>> newTuple = generateDataTuple(speedNew, posNew, covarianceNew, null);
 		
-		metaNew.setCovariance(covarianceNew);
+			newAttributeList[i] = newTuple;
 		
-		ArrayList<int[]> pathsNew = new ArrayList<int[]>();
+		}
 		
-		pathsNew.add(new int[] {0});
-		pathsNew.add(new int[] {1});
 		
-		metaNew.setAttributePaths(pathsNew);
+		MVRelationalTuple<StreamCarsMetaData<K>> oldList = generateListTuple(oldAttributeList);
 		
-		newTuple.setMetadata(metaNew);
-		
-		// MVRelationalTuples to hold the Tuples
-		
-		MVRelationalTuple<StreamCarsMetaData> oldList = new MVRelationalTuple<StreamCarsMetaData>(1);
-		oldList.setAttribute(0, oldTuple);
-		
-		MVRelationalTuple<StreamCarsMetaData> newList = new MVRelationalTuple<StreamCarsMetaData>(1);
-		newList.setAttribute(0, newTuple);
-
+		MVRelationalTuple<StreamCarsMetaData<K>> newList = generateListTuple(newAttributeList);
 		
 		// the main MVRelationalTuple
 		
 		Object[] measurements = {newList,oldList};
 		
-		MVRelationalTuple<StreamCarsMetaData> measurementTuple = new MVRelationalTuple<StreamCarsMetaData>(measurements);
+		MVRelationalTuple<StreamCarsMetaData<K>> measurementTuple = new MVRelationalTuple<StreamCarsMetaData<K>>(measurements);
 			
-		// connections
+		StreamCarsMetaData<K> streamCars= new StreamCarsMetaData<K>();
+		
+		// connections and path
 		
 		ConnectionList conList = new ConnectionList();
 		
-		Connection  con = new Connection (newTuple,oldTuple,5.0);
-		
-		conList.add(0, con);
-	
-		StreamCarsMetaData streamCars= new StreamCarsMetaData();
-		
 		ArrayList<int[]> pathsMeas = new ArrayList<int[]>();
 		
-		pathsMeas.add(new int[] {0});
-		pathsMeas.add(new int[] {1});
+		for (int i=0; i<=number-1; i++) {
+		
+			Connection  con = new Connection (newList.getAttribute(i),oldList.getAttribute(i),5.0);
+		
+			conList.add(i, con);
+			
+			pathsMeas.add(new int[] {i});
+		}
+		
+		streamCars.setConnectionList(conList);
 		
 		streamCars.setAttributePaths(pathsMeas);
-		streamCars.setConnectionList(conList);
+	
 		
 		measurementTuple.setMetadata(streamCars);
 	
-		
-		
 		return measurementTuple;
 		
 		}

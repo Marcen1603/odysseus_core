@@ -26,26 +26,25 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
  * @param <M>
  *
  */
-public class KalmanGainFunctionTest extends TestCase  {
+public class KalmanGainFunctionTest<K> extends TestCase  {
 
 	private AbstractMetaDataCreationFunction gainfunction;
 
 
 
-	private MVRelationalTuple<StreamCarsMetaData> measurementTuple;
+	private MVRelationalTuple<StreamCarsMetaData<K>> measurementTuple;
 
-	private MVRelationalTuple<StreamCarsMetaData> expectedTuple;
+	private MVRelationalTuple<StreamCarsMetaData<K>> expectedTuple;
 
-	private MVRelationalTuple<StreamCarsMetaData> resultTuple;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@SuppressWarnings("unchecked")
+
 	@Before
 	public void setUp() throws Exception {
 
-		FilterFunctionTestData testData = new FilterFunctionTestData();
+		FilterFunctionTestData<K> testData = new FilterFunctionTestData<K>();
 
 		// Measurement Data
 
@@ -63,11 +62,11 @@ public class KalmanGainFunctionTest extends TestCase  {
 		
 		double[][] gain = { {0.2,0.2}, {0.1,0.4}};
 		
-		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain);
+		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,1);
 
 		// the expected tuple
 
-		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain);
+		expectedTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,1);
 
 
 
@@ -79,36 +78,21 @@ public class KalmanGainFunctionTest extends TestCase  {
 		}
 
 
-		MVRelationalTuple<StreamCarsMetaData> test = (MVRelationalTuple<StreamCarsMetaData>) objConList[0].getRight();
+	/*	MVRelationalTuple<StreamCarsMetaData<K>> test = (MVRelationalTuple<StreamCarsMetaData<K>>) objConList[0].getRight();
 		
 		test.getMetadata().setGain(gain);
 		
 		objConList[0].setRight(test);
+	*/	
 		
-		gainfunction = new KalmanGainFunction();
+		gainfunction = new KalmanGainFunction(); 
 
-
-		/*int[] oldObjListPath = {0};
-
-		int[] newObjListPath = {1};
-
-		gainfunctionPO.setOldObjListPath(oldObjListPath);
-
-		gainfunctionPO.setNewObjListPath(newObjListPath); */
-
-		
-		
 	}
 
 	@Test
 	public  void test() {
 		
 	Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
-	
-	ArrayList<int[]> attributePathsOld = measurementTuple.getMetadata().getAttributePaths();
-	
-	
-	ArrayList<int[]> attributePathsNew = measurementTuple.getMetadata().getAttributePaths();
 	
 	gainfunction.compute(connected);
 	
