@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  * @author Hauke
  * @author Sven
  */
-public class StreamCarsMetaDataInitializer<M extends IProbability> extends
+public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer> extends
     AbstractMetadataUpdater<M, MVRelationalTuple<M>>
 {
   // set by constructor/initMetadata
@@ -152,9 +152,14 @@ public class StreamCarsMetaDataInitializer<M extends IProbability> extends
   private void initMetaDataOfTuple(MVRelationalTuple<M> tupleGiven)
   {
     this.initProbabilityMetaDataOfTuple(tupleGiven);
+    this.initAssoziationMetaData(tupleGiven);
     // invoke more tuple metadata initializers here
   }
   
+  private void initAssoziationMetaData(MVRelationalTuple<M> tupleGiven) {
+    tupleGiven.getMetadata().setConnectionList(new ConnectionList());
+  }
+
   private void initProbabilityMetaDataOfTuple(MVRelationalTuple<M> tupleGiven)
   {
     // 

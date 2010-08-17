@@ -91,7 +91,11 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		path = helper.getSchemaIndexPath(this.oldObjListPath);
 		association[2] =  path.toTupleIndexPath(predictedObject).getTupleObject();
 
-		return new MVRelationalTuple<M>(association);
+		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		base.setMetadata(scannedObject.getMetadata());
+		base.setAttribute(0, new MVRelationalTuple<M>(association));
+		
+		return base;
 	}
 
 	@Override

@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -65,14 +64,12 @@ public class HypothesisEvaluationAO<M extends IProbability> extends UnaryLogical
 		this.newObjListPath = newObjListPath;
 	}
 
-	public int[] getNewObjListPath() {
-		SchemaHelper sh = new SchemaHelper(this.getInputSchema());
-		return sh.getSchemaIndexPath(this.newObjListPath).toArray();
+	public String getNewObjListPath() {
+		return this.newObjListPath;
 	}
 
-	public int[] getOldObjListPath() {
-		SchemaHelper sh = new SchemaHelper(this.getInputSchema());
-		return sh.getSchemaIndexPath(this.oldObjListPath).toArray();
+	public String getOldObjListPath() {
+		return this.oldObjListPath;
 	}
 
 	public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {

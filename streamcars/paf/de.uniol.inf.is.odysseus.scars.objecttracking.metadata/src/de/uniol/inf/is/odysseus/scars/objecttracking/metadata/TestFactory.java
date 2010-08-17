@@ -17,7 +17,7 @@ public class TestFactory
 {
   // test objects, set by create
   public static SDFAttributeList testSchema = null;
-  public static MVRelationalTuple<IProbability> testTuple = null;
+  public static MVRelationalTuple<StreamCarsMetaData<Object>> testTuple = null;
   public static double[][] testCovMatrix = null;
   
   public static void createTestObjects()
@@ -143,13 +143,13 @@ public class TestFactory
     
     Object[] baseObjects = new Object[1];
     baseObjects[0] = tuple;
-    MVRelationalTuple<IProbability> baseTuple = new MVRelationalTuple<IProbability>(baseObjects);
+    MVRelationalTuple<StreamCarsMetaData<Object>> baseTuple = new MVRelationalTuple<StreamCarsMetaData<Object>>(baseObjects);
     
     TestFactory.testTuple = baseTuple;
     
     // create empty probability metadata
     
-    baseTuple.setMetadata(new Probability());
+    baseTuple.setMetadata(new StreamCarsMetaData<Object>());
     tuple.setMetadata(new Probability());
     tuple1.setMetadata(new Probability());
     tuple6.setMetadata(new Probability());

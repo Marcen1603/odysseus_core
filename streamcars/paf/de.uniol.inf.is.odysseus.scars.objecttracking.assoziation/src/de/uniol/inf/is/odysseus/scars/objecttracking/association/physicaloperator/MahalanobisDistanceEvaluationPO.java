@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator;
 
-import java.util.ArrayList;
-
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
@@ -9,27 +7,25 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
 public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectionContainer> extends AbstractHypothesisEvaluationPO<M> {
 
+	private static final String THRESHOLD_ID = "threshold";
+	private static final String OPERATOR_ID = "operator";
+	
 	private double threshold = 5;
 	private String operator = "<=";
 
-	public double evaluate(MVRelationalTuple<M> tupleNew, MVRelationalTuple<M> tupleOld, ArrayList<int[]> mesurementValuePathsNew, ArrayList<int[]> mesurementValuePathsOld) {
+
+	public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues, double[][] predictedObjCovariance, double[] prdictedObjMesurementValues) {
 		// new = left; old = right
 
-		double[] leftMVVector = OrAttributeResolver.getMeasurementValues(mesurementValuePathsNew, tupleNew);
-		RealMatrix leftV = new RealMatrixImpl(leftMVVector);
-
-		double[] rightMVVector = OrAttributeResolver.getMeasurementValues(mesurementValuePathsOld, tupleOld);
-		RealMatrix rightV = new RealMatrixImpl(rightMVVector);
-
-		double[][] rightCov = tupleOld.getMetadata().getCovariance();
-		RealMatrix rightCovMatrix = new RealMatrixImpl(rightCov);
-
-		double[][] leftCov = tupleNew.getMetadata().getCovariance();
-		RealMatrix leftCovMatrix = new RealMatrixImpl(leftCov);
+		RealMatrix leftV = new RealMatrixImpl(scannedObjMesurementValues);
+		RealMatrix rightV = new RealMatrixImpl(prdictedObjMesurementValues);
+		
+		RealMatrix rightCovMatrix = new RealMatrixImpl(scannedObjCovariance);
+		RealMatrix leftCovMatrix = new RealMatrixImpl(predictedObjCovariance);
+		
 		RealMatrix covInvMatrix = rightCovMatrix.add(leftCovMatrix);
 		try {
 			covInvMatrix = covInvMatrix.inverse();
@@ -88,8 +84,12 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
 	}
 
 	public void initAlgorithmParameter() {
-		this.threshold = Double.valueOf(this.getAlgorithmParameter().get("treshold"));
-		this.operator = this.getAlgorithmParameter().get("operator");
+		if(this.getAlgorithmParameter().containsKey(THRESHOLD_ID)) {
+			this.threshold = Double.valueOf(this.getAlgorithmParameter().get(THRESHOLD_ID));
+		}
+		if(this.getAlgorithmParameter().containsKey(OPERATOR_ID)) {
+			this.operator = this.getAlgorithmParameter().get(OPERATOR_ID);
+		}
 	}
 
 	public double getThreshold() {

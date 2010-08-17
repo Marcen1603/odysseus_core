@@ -23,7 +23,7 @@ public class StreamCarsMetaDataInitializerTest
     // create StreamCarsMetaDataInitializer
     
     System.out.print("StreamCarsMetaDataInitializerTest: Create StreamCarsMetaDataInitializer...");
-    StreamCarsMetaDataInitializer<IProbability> covInit = new StreamCarsMetaDataInitializer<IProbability>(TestFactory.testSchema);
+    StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>> covInit = new StreamCarsMetaDataInitializer<StreamCarsMetaData<Object>>(TestFactory.testSchema);
     System.out.println(" done!");
     
     // initialize probability meta data of tuples with StreamCarsMetaDataInitializer

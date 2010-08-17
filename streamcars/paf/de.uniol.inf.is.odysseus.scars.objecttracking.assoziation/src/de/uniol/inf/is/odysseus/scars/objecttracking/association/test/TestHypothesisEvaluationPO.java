@@ -16,13 +16,13 @@ public class TestHypothesisEvaluationPO extends TestCase{
 	public void testPO() {
 		MVRelationalTuple<StreamCarsMetaData> tupleNew = createObjectTuple();
 		MVRelationalTuple<StreamCarsMetaData> tupleOld = createObjectTuple1();
-		ArrayList<int[]> paths = new ArrayList<int[]>();
-		paths.add(new int[] {0, 0});
-		paths.add(new int[] {0, 1});
-		paths.add(new int[] {0, 2});
-		paths.add(new int[] {1});
+		double[] paths = new double[4];
+		paths[0] = 0;
+		paths[1] = 1;
+		paths[2] = 2;
+		paths[3] = 1;
 		MahalanobisDistanceEvaluationPO<StreamCarsMetaData> po = new MahalanobisDistanceEvaluationPO<StreamCarsMetaData>();
-		assertEquals(0d, po.evaluate(tupleNew, tupleOld, paths, paths));
+		assertEquals(0d, po.evaluate(tupleNew.getMetadata().getCovariance(), paths, tupleOld.getMetadata().getCovariance(), paths));
 	}
 	
 	private MVRelationalTuple<StreamCarsMetaData> createObjectTuple() {
