@@ -1,113 +1,89 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer> extends
+    AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
-public abstract class AbstractFilterPO<M extends IProbability & IConnectionContainer>
-							extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+  protected boolean havingData = false;
 
+  // path to new and old objects
+  private String oldObjListPath;
+  private String newObjListPath;
 
+  // optional parameters for the filter function. Not used right now
+  private HashMap<Integer, Object> parameters;
 
-	private SDFAttributeList schema;
-	
-	protected boolean havingData=false;
+  public AbstractFilterPO() {
 
-	// path to new and old objects
-	private String oldObjListPath;
-	private String newObjListPath;
-	
-	// optional parameters for the filter function. Not used right now
-	private HashMap<Integer, Object> parameters;
-	
-	public AbstractFilterPO() {
-		
-	}
+  }
 
-	@Override
-	public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
+  @Override
+  public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
 
+  @Override
+  public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
+    return OutputMode.MODIFIED_INPUT;
+  }
 
-	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
+  protected void process_next(MVRelationalTuple<M> object, int port) {
+    havingData = true;
+    object = computeAll(object);
+    // transfer to broker
+    transfer(object);
+  }
 
-	protected void process_next(MVRelationalTuple<M> object, int port) {
-		
-		havingData=true;
-		object = computeAll(object);
-		// transfer to broker
-		transfer(object);
-	}
+  /**
+   * @param oldObjListPath
+   *          the oldObjListPath to set
+   */
+  public void setOldObjListPath(String oldObjListPath) {
+    this.oldObjListPath = oldObjListPath;
+  }
 
+  /**
+   * @param newObjListPath
+   *          the newObjListPath to set
+   */
+  public String getNewObjListPath() {
+    return this.newObjListPath;
+  }
 
-	
-	/**
-	 * @return the schema
-	 */
-	public SDFAttributeList getSchema() {
-		return schema;
-	}
+  /**
+   * @param newObjListPath
+   *          the newObjListPath to set
+   */
+  public void setNewObjListPath(String newObjListPath) {
+    this.newObjListPath = newObjListPath;
+  }
 
-	public void setSchema(SDFAttributeList schema) {
-		this.schema = schema;
-	}
+  /**
+   * @param oldObjListPath
+   *          the oldObjListPath to set
+   */
+  public String getOldObjListPath() {
+    return this.oldObjListPath;
+  }
 
-	/**
-	 * @param oldObjListPath the oldObjListPath to set
-	 */
-	public void setOldObjListPath(String oldObjListPath) {
-		this.oldObjListPath = oldObjListPath;
-	}
+  public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
 
-	/**
-	 * @param newObjListPath the newObjListPath to set
-	 */
-	public String getNewObjListPath() {
-		return this.newObjListPath;
-	}
-	
-	/**
-	 * @param newObjListPath the newObjListPath to set
-	 */
-	public void setNewObjListPath(String newObjListPath) {
-		this.newObjListPath = newObjListPath;
-	}
-	
-	/**
-	 * @param oldObjListPath the oldObjListPath to set
-	 */
-	public String getOldObjListPath() {
-		return this.oldObjListPath;
-	}
+  /**
+   * @param parameters
+   *          the parameters to set
+   */
+  public void setParameters(HashMap<Integer, Object> parameters) {
+    this.parameters = parameters;
+  }
 
-	
-	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
-		
-		
-		
-		
-
-	/**
-	 * @param parameters the parameters to set
-	 */
-	public void setParameters(HashMap<Integer, Object> parameters) {
-		this.parameters = parameters;
-	}
-	
-	/**
-	 * @return the parameters
-	 */
-	public HashMap<Integer, Object> getParameters() {
-		return parameters;
-	}
+  /**
+   * @return the parameters
+   */
+  public HashMap<Integer, Object> getParameters() {
+    return parameters;
+  }
 }

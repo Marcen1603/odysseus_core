@@ -11,41 +11,28 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
-
-
 /**
  * @author dtwumasi
- *
+ * 
  */
 public class InitializationPO<M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer> {
-	
-	
-	
-	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object, int[] newObjListPath, MVRelationalTuple<M> initial ) {
-		
-		MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, newObjListPath)).getAttributes();
-		
-		MVRelationalTuple<M>[] oldList = newList.clone();
-		
-		// traverse connection list and filter
-		int i=0;
-		for(MVRelationalTuple<M> measurement : newList ) {
-			oldList[i]=measurement;
-		}
-		
-		// this in object reinsetzen
-		
-		return object;
-		
-		}
 
+  public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object, int[] newObjListPath, MVRelationalTuple<M> initial) {
 
+    MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>) OrAttributeResolver.resolveTuple(
+        object, newObjListPath)).getAttributes();
 
+    MVRelationalTuple<M>[] oldList = newList.clone();
 
+    // traverse connection list and filter
+    int i = 0;
+    for (MVRelationalTuple<M> measurement : newList) {
+      oldList[i] = measurement;
+    }
 
-	
+    // this in object reinsetzen
 
-	
+    return object;
+
+  }
 }
-
-
