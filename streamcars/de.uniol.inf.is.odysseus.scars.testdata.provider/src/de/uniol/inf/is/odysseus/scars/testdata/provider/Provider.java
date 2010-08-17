@@ -46,12 +46,20 @@ public class Provider implements IProvider {
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-
+		if (this.numOfCars <= 0) {
+			this.numOfCars = 5;
+		}
 	}
 
 	@Override
 	public MVRelationalTuple<?> nextTuple() {
+		/**
+		 * TODO
+		 * Berechnung des neuen zustands
+		 * Prüfen ob auto in sichtbereich
+		 *   - wenn nicht entfernen
+		 *   - neues auto mit neuer id hinzufügen
+		 */
 		Long tsValue = new Long(0);//TODO set correct value
 		
 		MVRelationalTuple<?> root = createTuple(1);
