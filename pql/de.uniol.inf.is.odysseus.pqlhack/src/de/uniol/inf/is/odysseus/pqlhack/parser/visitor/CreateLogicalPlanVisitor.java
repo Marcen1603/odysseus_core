@@ -53,7 +53,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterGainOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFunctionName;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTIdentifier;
