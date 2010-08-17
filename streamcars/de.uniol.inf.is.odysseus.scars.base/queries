@@ -154,9 +154,9 @@ ASSOCIATION-EVAL (
 	ACCESS (sensorA),
 	EVALUATEID,
 	param1 := value1; param2 := value2;,
-	association:newObjects,
-	association:predictedObjects,
-	association:newObjects.car := association:predictedObjects.car; sensorA.car := sensorB.car;
+	association.scan:newObjects,
+	association.scan:predictedObjects,
+	association.scan:newObjects.car := association.scan:predictedObjects.car;
 )
 
 LOGICAL PLAN : 
@@ -169,3 +169,11 @@ ASSOCIATION-SEL (
 
 LOGICAL PLAN :
 ASSOCIATION-SRC ( testAssociation, 1 )
+
+LOGICAL PLAN :
+FILTER(
+	<ASSOCIATION-EVAL>,
+	association.scan:newObjects,
+	association.scan:predictedObjects,
+	KALMAN
+)

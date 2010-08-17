@@ -59,12 +59,12 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     this.schemaHelper = new SchemaHelper(getOutputSchema());
 
     this.scannedObjectListPath = this.schemaHelper.getSchemaIndexPath(this.newObjListPath);
-    this.scannedObjPath = this.schemaHelper.getSchemaIndexPath(this.scannedObjectListPath.getAttribute()
-        .getSubattribute(0));
+    this.scannedObjPath = this.schemaHelper.getSchemaIndexPath(this.newObjListPath + SchemaHelper.ATTRIBUTE_SEPARATOR
+        + this.scannedObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
 
     this.predictedObjectListPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath);
-    this.predictedObjPath = this.schemaHelper.getSchemaIndexPath(this.predictedObjectListPath.getAttribute()
-        .getSubattribute(0));
+    this.predictedObjPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath + SchemaHelper.ATTRIBUTE_SEPARATOR
+        + this.predictedObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
   }
 
   @SuppressWarnings("unchecked")
@@ -119,8 +119,8 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     return objects;
   }
 
-  public double[][] evaluateAll(MVRelationalTuple<M> baseObject, double[][] matrix, ArrayList<MVRelationalTuple<M>> scannedObjects,
-      ArrayList<MVRelationalTuple<M>> predictedObjects) {
+  public double[][] evaluateAll(MVRelationalTuple<M> baseObject, double[][] matrix,
+      ArrayList<MVRelationalTuple<M>> scannedObjects, ArrayList<MVRelationalTuple<M>> predictedObjects) {
     if (matrix == null || scannedObjects == null || predictedObjects == null) {
       throw new NullPointerException("");
     }
