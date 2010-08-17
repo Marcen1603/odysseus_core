@@ -122,6 +122,15 @@
          <keyword
                name="EVALUATE">
          </keyword>
+         <keyword
+               name="FILTER-COVARIANCE">
+         </keyword>
+         <keyword
+               name="FILTER-ESTIMATE">
+         </keyword>
+         <keyword
+               name="FILTER-GAIN">
+         </keyword>
       </group>
       <group
             colorB="255"
