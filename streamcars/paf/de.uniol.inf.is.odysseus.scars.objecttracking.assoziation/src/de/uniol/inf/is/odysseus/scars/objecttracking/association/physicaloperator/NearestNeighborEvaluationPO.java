@@ -14,67 +14,69 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 
 public class NearestNeighborEvaluationPO<M extends IProbability & IConnectionContainer> extends
     AbstractHypothesisEvaluationPO<M> {
+  
+  private static final String DISTANCE_ID = "distanceFunction";
 
-	  private DistanceFunction df;
+  // Available Functions: ChebyshevDistance, EuclideanDistance,
+  // ManhattanDistance, MinkowskiDistance
+  private static final String CHEBYSHEV = "CHEBYSHEV";
+  private static final String EUCLIDEAN = "EUCLIDEAN";
+  private static final String MANHATTEN = "MANHATTEN";
+  private static final String MINKOWSKI = "MINKOWSKI";
 
-	  private static final String DISTANCE_ID = "distanceFunction";
+  private DistanceFunction df;
 
-	  // Available Functions: ChebyshevDistance, EuclideanDistance, ManhattanDistance, MinkowskiDistance
-	  private static final String CHEBYSHEV = "CHEBYSHEV";
-	  private static final String EUCLIDEAN = "EUCLIDEAN";
-	  private static final String MANHATTEN = "MANHATTEN";
-	  private static final String MINKOWSKI = "MINKOWSKI";
+  public NearestNeighborEvaluationPO() {
+  }
 
-	  public void initAlgorithmParameter() {
-			if (this.getAlgorithmParameter().containsKey(DISTANCE_ID)) {
-				String algoName = this.getAlgorithmParameter().get(DISTANCE_ID);
-				if (algoName.equals(CHEBYSHEV)) {
-					this.df = new ChebyshevDistance();
-				} else if (algoName.equals(EUCLIDEAN)) {
-					this.df = new EuclideanDistance();
-				} else if (algoName.equals(MANHATTEN)) {
-					this.df = new ManhattanDistance();
-				} else if (algoName.equals(MINKOWSKI)) {
-					this.df = new MinkowskiDistance();
-				} else {
-					this.df = new EuclideanDistance();
-					System.out.println("### NearestNeighborEvaluationPO: ### No valid distanceFunction ### Default function was selected (EuclideanDistance) ##");
-				}
-			}
-	  }
+  public NearestNeighborEvaluationPO(NearestNeighborEvaluationPO<M> clone) {
+    super(clone);
+    this.df = clone.df;
+  }
 
-	  @Override
-	  public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		  return new NearestNeighborEvaluationPO<M>(this);
-	  }
+  public void initAlgorithmParameter() {
+    if (this.getAlgorithmParameter().containsKey(DISTANCE_ID)) {
+      String algoName = this.getAlgorithmParameter().get(DISTANCE_ID);
+      if (algoName.equals(CHEBYSHEV)) {
+        this.df = new ChebyshevDistance();
+      } else if (algoName.equals(EUCLIDEAN)) {
+        this.df = new EuclideanDistance();
+      } else if (algoName.equals(MANHATTEN)) {
+        this.df = new ManhattanDistance();
+      } else if (algoName.equals(MINKOWSKI)) {
+        this.df = new MinkowskiDistance();
+      } else {
+        this.df = new EuclideanDistance();
+        System.out
+            .println("### NearestNeighborEvaluationPO: ### No valid distanceFunction ### Default function was selected (EuclideanDistance) ##");
+      }
+    }
+  }
 
-	  public NearestNeighborEvaluationPO() {
+  @Override
+  public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
+      double[][] predictedObjCovariance, double[] predictedObjMesurementValues) {
 
-	  }
+    // Create instances
+    Instance scannedObjInstance = new DenseInstance(scannedObjMesurementValues.length);
+    Instance predictedObjInstance = new DenseInstance(predictedObjMesurementValues.length);
 
-	  public NearestNeighborEvaluationPO(NearestNeighborEvaluationPO<M> clone) {
-		  super(clone);
-		  this.df = clone.df;
-	  }
+    // Set values
+    for (int i = 0; i < scannedObjMesurementValues.length; i++) {
+      scannedObjInstance.setValue(i, scannedObjMesurementValues[i]);
+    }
+    for (int i = 0; i < predictedObjMesurementValues.length; i++) {
+      predictedObjInstance.setValue(i, predictedObjMesurementValues[i]);
+    }
 
-	  @Override
-	  public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
-	      double[][] predictedObjCovariance, double[] predictedObjMesurementValues) {
+    // Return Distance
+    // Available Functions: ChebyshevDistance, EuclideanDistance,
+    // ManhattanDistance, MinkowskiDistance, NormalizableDistance
+    return this.df.distance(scannedObjInstance, predictedObjInstance);
+  }
 
-		  // Create instances
-		  Instance scannedObjInstance = new DenseInstance(scannedObjMesurementValues.length);
-		  Instance predictedObjInstance = new DenseInstance(predictedObjMesurementValues.length);
-
-		  // Set values
-		  for(int i = 0; i < scannedObjMesurementValues.length; i++) {
-			  scannedObjInstance.setValue(i, scannedObjMesurementValues[i]);
-		  }
-		  for(int i = 0; i < predictedObjMesurementValues.length; i++) {
-			  predictedObjInstance.setValue(i, predictedObjMesurementValues[i]);
-		  }
-
-		  // Return Distance
-		  // Available Functions: ChebyshevDistance, EuclideanDistance, ManhattanDistance, MinkowskiDistance, NormalizableDistance
-		  return this.df.distance(scannedObjInstance, predictedObjInstance);
-	  }
+  @Override
+  public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+    return new NearestNeighborEvaluationPO<M>(this);
+  }
 }

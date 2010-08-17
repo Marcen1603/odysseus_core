@@ -34,9 +34,9 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
   private String newObjListPath;
   private HashMap<String, String> algorithmParameter;
   private HashMap<String, String> measurementPairs;
+  private SchemaHelper schemaHelper;
   private SchemaIndexPath predictedObjectListPath;
   private SchemaIndexPath scannedObjectListPath;
-  private SchemaHelper schemaHelper;
   private SchemaIndexPath scannedObjPath;
   private SchemaIndexPath predictedObjPath;
 
@@ -52,6 +52,97 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     this.newObjListPath = clone.getNewObjListPath();
     this.algorithmParameter = (HashMap<String, String>) clone.getAlgorithmParameter().clone();
   }
+
+  public void setOldObjListPath(String oldObjListPath) {
+    this.oldObjListPath = oldObjListPath;
+  }
+
+  public void setNewObjListPath(String newObjListPath) {
+    this.newObjListPath = newObjListPath;
+  }
+
+  public String getOldObjListPath() {
+    return this.oldObjListPath;
+  }
+
+  public String getNewObjListPath() {
+    return this.newObjListPath;
+  }
+
+  public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
+    this.algorithmParameter = newAlgoParameter;
+    this.initAlgorithmParameter();
+  }
+
+  public HashMap<String, String> getAlgorithmParameter() {
+    return this.algorithmParameter;
+  }
+
+  public void setMeasurementPairs(HashMap<String, String> measurementPairs) {
+    this.measurementPairs = measurementPairs;
+  }
+
+  public HashMap<String, String> getMeasurementPairs() {
+    return measurementPairs;
+  }
+  
+  @SuppressWarnings("unchecked")
+  private ArrayList<MVRelationalTuple<M>> getObjectList(MVRelationalTuple<M> mvRelationalTuple) {
+    ArrayList<MVRelationalTuple<M>> objects = new ArrayList<MVRelationalTuple<M>>();
+    for (Object attribute : mvRelationalTuple.getAttributes()) {
+      if (attribute instanceof MVRelationalTuple<?>) {
+        objects.add((MVRelationalTuple<M>) attribute);
+      }
+    }
+    return objects;
+  }
+
+  private double[][] evaluateAll(MVRelationalTuple<M> baseObject, double[][] matrix,
+      ArrayList<MVRelationalTuple<M>> scannedObjects, ArrayList<MVRelationalTuple<M>> predictedObjects) {
+    if (matrix == null || scannedObjects == null || predictedObjects == null) {
+      throw new NullPointerException("");
+    }
+
+    for (int i = 0; i < scannedObjects.size(); i++) {
+      for (int j = 0; j < predictedObjects.size(); j++) {
+        MVRelationalTuple<M> scannedObject = scannedObjects.get(i);
+        MVRelationalTuple<M> predictedObject = predictedObjects.get(j);
+
+        matrix[i][j] = evaluate(scannedObject.getMetadata().getCovariance(),
+            getMeasurementValues(baseObject, this.scannedObjPath), predictedObject.getMetadata().getCovariance(),
+            getMeasurementValues(baseObject, this.predictedObjPath));
+      }
+    }
+    return matrix;
+  }
+
+  private double[] getMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path) {
+    ArrayList<Double> values = new ArrayList<Double>();
+    TupleIterator iterator = new TupleIterator(tuple, path);
+    while (!iterator.isFinished()) {
+      if (SDFDatatypes.isMeasurementValue(iterator.getAttribute().getDatatype())) {
+        values.add(new Double(iterator.getTupleObject().toString()));
+      }
+
+      iterator.next();
+    }
+
+    double[] result = new double[values.size()];
+    for (int i = 0; i < values.size(); i++) {
+      result[i] = values.get(i);
+    }
+
+    return result;
+  }
+  
+  /**
+   * Inits the algorithm specific parameter. The parameter are stored in the
+   * HashMap algorithmParameter.
+   */
+  public abstract void initAlgorithmParameter();
+  
+  public abstract double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
+      double[][] predictedObjCovariance, double[] predictedObjMesurementValues);
 
   @Override
   protected void process_open() throws OpenFailedException {
@@ -108,109 +199,13 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     transfer(object);
   }
 
-  @SuppressWarnings("unchecked")
-  private ArrayList<MVRelationalTuple<M>> getObjectList(MVRelationalTuple<M> mvRelationalTuple) {
-    ArrayList<MVRelationalTuple<M>> objects = new ArrayList<MVRelationalTuple<M>>();
-    for (Object attribute : mvRelationalTuple.getAttributes()) {
-      if (attribute instanceof MVRelationalTuple<?>) {
-        objects.add((MVRelationalTuple<M>) attribute);
-      }
-    }
-    return objects;
-  }
-
-  public double[][] evaluateAll(MVRelationalTuple<M> baseObject, double[][] matrix,
-      ArrayList<MVRelationalTuple<M>> scannedObjects, ArrayList<MVRelationalTuple<M>> predictedObjects) {
-    if (matrix == null || scannedObjects == null || predictedObjects == null) {
-      throw new NullPointerException("");
-    }
-
-    for (int i = 0; i < matrix[0].length; i++) {
-      for (int j = 0; j < matrix.length; j++) {
-        MVRelationalTuple<M> scannedObject = scannedObjects.get(i);
-        MVRelationalTuple<M> predictedObject = predictedObjects.get(j);
-
-        matrix[i][j] = evaluate(scannedObject.getMetadata().getCovariance(),
-            getMeasurementValues(baseObject, this.scannedObjPath), predictedObject.getMetadata().getCovariance(),
-            getMeasurementValues(baseObject, this.predictedObjPath));
-      }
-    }
-    return matrix;
-  }
-
-  private double[] getMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path) {
-    ArrayList<Double> values = new ArrayList<Double>();
-    TupleIterator iterator = new TupleIterator(tuple, path);
-    while (!iterator.isFinished()) {
-      if (SDFDatatypes.isMeasurementValue(iterator.getAttribute().getDatatype())) {
-        values.add(new Double(iterator.getTupleObject().toString()));
-      }
-
-      iterator.next();
-    }
-
-    double[] result = new double[values.size()];
-    for (int i = 0; i < values.size(); i++) {
-      result[i] = values.get(i);
-    }
-
-    return result;
-  }
-
   @Override
   public void processPunctuation(PointInTime timestamp, int port) {
+		this.sendPunctuation(timestamp);
   }
 
   @Override
   public OutputMode getOutputMode() {
     return OutputMode.MODIFIED_INPUT;
-  }
-
-  // Clone methods will be implemented in the concrete EvaluationPO classes
-  @Override
-  public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
-
-  /**
-   * Inits the algorithm specific parameter. The parameter are stored in the
-   * HashMap algorithmParameter.
-   */
-  public abstract void initAlgorithmParameter();
-
-  public abstract double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
-      double[][] predictedObjCovariance, double[] predictedObjMesurementValues);
-
-  // ----- SETTER AND GETTER -----
-
-  public void setOldObjListPath(String oldObjListPath) {
-    this.oldObjListPath = oldObjListPath;
-  }
-
-  public void setNewObjListPath(String newObjListPath) {
-    this.newObjListPath = newObjListPath;
-  }
-
-  public String getOldObjListPath() {
-    return this.oldObjListPath;
-  }
-
-  public String getNewObjListPath() {
-    return this.newObjListPath;
-  }
-
-  public void setAlgorithmParameter(HashMap<String, String> newAlgoParameter) {
-    this.algorithmParameter = newAlgoParameter;
-    this.initAlgorithmParameter();
-  }
-
-  public HashMap<String, String> getAlgorithmParameter() {
-    return this.algorithmParameter;
-  }
-
-  public void setMeasurementPairs(HashMap<String, String> measurementPairs) {
-    this.measurementPairs = measurementPairs;
-  }
-
-  public HashMap<String, String> getMeasurementPairs() {
-    return measurementPairs;
   }
 }

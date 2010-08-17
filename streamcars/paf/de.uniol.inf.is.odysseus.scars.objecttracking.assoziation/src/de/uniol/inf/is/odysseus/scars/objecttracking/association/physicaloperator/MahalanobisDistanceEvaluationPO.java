@@ -21,12 +21,20 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
   private static final String EQUAL = "EQUAL";
 
   private double threshold = 5;
-  private String operator = "<=";
+  private String operator = LESS_EQUAL;
+
+  public MahalanobisDistanceEvaluationPO() {
+  }
+
+  public MahalanobisDistanceEvaluationPO(MahalanobisDistanceEvaluationPO<M> clone) {
+    super(clone);
+    this.threshold = clone.threshold;
+    this.operator = clone.operator;
+  }
 
   public double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
       double[][] predictedObjCovariance, double[] prdictedObjMesurementValues) {
-    // new = left; old = right
-
+    
     RealMatrix leftV = new RealMatrixImpl(scannedObjMesurementValues);
     RealMatrix rightV = new RealMatrixImpl(prdictedObjMesurementValues);
 
@@ -40,12 +48,10 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
       return 0;
     }
 
-    RealMatrix distanceMatrix = leftV.subtract(rightV).transpose().multiply(covInvMatrix)
-        .multiply(leftV.subtract(rightV));
+    RealMatrix distanceMatrix = leftV.subtract(rightV).transpose().multiply(covInvMatrix).multiply(
+        leftV.subtract(rightV));
     double distance = Math.abs(distanceMatrix.getEntry(0, 0));
-    
-    
-    
+
     System.out.println("Eval: scanned MV  = " + leftV.toString());
     System.out.println("Eval: predicted MV  = " + rightV.toString());
     System.out.println("Eval: distance  = " + distance);
@@ -84,14 +90,6 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
     return -1;
   }
 
-  public void setThreshold(double threshold) {
-    this.threshold = threshold;
-  }
-
-  public void setOperator(String operator) {
-    this.operator = operator;
-  }
-
   public void initAlgorithmParameter() {
     if (this.getAlgorithmParameter().containsKey(THRESHOLD_ID)) {
       this.threshold = Double.valueOf(this.getAlgorithmParameter().get(THRESHOLD_ID));
@@ -101,27 +99,8 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
     }
   }
 
-  public double getThreshold() {
-    return threshold;
-  }
-
-  public String getOperator() {
-    return operator;
-  }
-
   @Override
   public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
     return new MahalanobisDistanceEvaluationPO<M>(this);
   }
-
-  public MahalanobisDistanceEvaluationPO() {
-
-  }
-
-  public MahalanobisDistanceEvaluationPO(MahalanobisDistanceEvaluationPO<M> clone) {
-    super(clone);
-    this.threshold = clone.getThreshold();
-    this.operator = clone.getOperator();
-  }
-
 }
