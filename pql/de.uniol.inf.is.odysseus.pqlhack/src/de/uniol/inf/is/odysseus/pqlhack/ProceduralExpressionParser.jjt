@@ -76,7 +76,9 @@ TOKEN : /* Keywords */ {
 |   <K_ASSOCIATION_SEL: "ASSOCIATION-SEL">
 |   <K_ASSOCIATION_SRC: "ASSOCIATION-SRC">
 |   <K_EVALUATE: "EVALUATE">
-|   <K_FILTER: "FILTER">
+|   <K_FILTER_GAIN: "FILTER-GAIN">
+|   <K_FILTER_ESTIMATE: "FILTER-ESTIMATE">
+|   <K_FILTER_COVARIANCE: "FILTER-COVARIANCE">
 }
 
 TOKEN:{
@@ -139,7 +141,9 @@ void AlgebraOp():{}{
 	BenchmarkOp() |
 	BufferOp() |
 	ExistOp() |
-	FilterOp()
+	FilterGainOp() |
+	FilterEstimateOp() |
+	FilterCovarianceOp()
 }
 
 void TestOp(): {}{
@@ -410,7 +414,17 @@ void AssociationSrcOp(): {} {
 void EvaluateOp(): {} {
   < K_EVALUATE > "(" AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," AlgebraOp() "," Identifier() "," Number() ")"}
 
-void FilterOp(): {}
+void FilterGainOp(): {}
 {
-  < K_FILTER > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"
+  < K_FILTER_GAIN > "(" AlgebraOp() "," Identifier() ")"
+}
+
+void FilterEstimateOp(): {}
+{
+  < K_FILTER_ESTIMATE > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"
+}
+
+void FilterCovarianceOp(): {}
+{
+  < K_FILTER_COVARIANCE > "(" AlgebraOp() "," Identifier() ")"
 }
