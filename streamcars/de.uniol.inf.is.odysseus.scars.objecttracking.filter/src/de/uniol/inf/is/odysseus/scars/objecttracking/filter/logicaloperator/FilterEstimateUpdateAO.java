@@ -37,7 +37,7 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 		super(copy);
 		this.oldObjListPath = copy.getOldObjListPath();
 		this.newObjListPath = copy.getNewObjListPath();
-	
+		this.setFunctionID(new String(copy.getFunctionID()));
 	}
 
 	

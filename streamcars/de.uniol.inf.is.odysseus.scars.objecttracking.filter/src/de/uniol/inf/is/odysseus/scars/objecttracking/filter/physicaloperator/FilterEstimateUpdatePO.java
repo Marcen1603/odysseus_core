@@ -28,8 +28,8 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
   public FilterEstimateUpdatePO(FilterEstimateUpdatePO<M> copy) {
     super();
     this.dataUpdateFunction = copy.getDataUpdateFunction().clone();
-    this.setNewObjListPath(copy.getNewObjListPath());
-    this.setOldObjListPath(copy.getOldObjListPath());
+    this.setNewObjListPath(new String(copy.getNewObjListPath()));
+    this.setOldObjListPath(new String(copy.getOldObjListPath()));
 
   }
 

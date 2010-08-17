@@ -30,6 +30,7 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	
 	public FilterGainAO(FilterGainAO<M> copy) {
 		super(copy);
+		this.setFunctionID(new String(copy.getFunctionID()));
 	}
 
 

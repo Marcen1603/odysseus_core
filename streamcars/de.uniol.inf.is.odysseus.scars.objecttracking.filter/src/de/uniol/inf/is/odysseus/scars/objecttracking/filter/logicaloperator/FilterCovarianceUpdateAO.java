@@ -32,7 +32,7 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 	
 	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {
 		super(copy);
-		
+		this.setFunctionID(new String(copy.getFunctionID()));
 	}
 
 	@Override
