@@ -97,29 +97,33 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_EVALUATE = 47;
   /** RegularExpression Id. */
-  int K_FILTER = 48;
+  int K_FILTER_GAIN = 48;
   /** RegularExpression Id. */
-  int IDENTIFIER = 49;
+  int K_FILTER_ESTIMATE = 49;
   /** RegularExpression Id. */
-  int LETTER = 50;
+  int K_FILTER_COVARIANCE = 50;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 51;
+  int IDENTIFIER = 51;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 52;
+  int LETTER = 52;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 53;
+  int SPECIAL_CHARS = 53;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 54;
+  int CHAR_LITERAL = 54;
   /** RegularExpression Id. */
-  int REGEXP = 55;
+  int QUOTED_IDENTIFIER = 55;
   /** RegularExpression Id. */
-  int FLOAT = 56;
+  int COMPARE_OPERATOR = 56;
   /** RegularExpression Id. */
-  int INTEGER = 57;
+  int REGEXP = 57;
   /** RegularExpression Id. */
-  int DIGIT = 58;
+  int FLOAT = 58;
   /** RegularExpression Id. */
-  int IPADDRESS = 59;
+  int INTEGER = 59;
+  /** RegularExpression Id. */
+  int DIGIT = 60;
+  /** RegularExpression Id. */
+  int IPADDRESS = 61;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -174,7 +178,9 @@ public interface ProceduralExpressionParserConstants {
     "\"ASSOCIATION-SEL\"",
     "\"ASSOCIATION-SRC\"",
     "\"EVALUATE\"",
-    "\"FILTER\"",
+    "\"FILTER-GAIN\"",
+    "\"FILTER-ESTIMATE\"",
+    "\"FILTER-COVARIANCE\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

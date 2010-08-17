@@ -51,7 +51,9 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTASSOCIATIONSELOP = 45;
   public int JJTASSOCIATIONSRCOP = 46;
   public int JJTEVALUATEOP = 47;
-  public int JJTFILTEROP = 48;
+  public int JJTFILTERGAINOP = 48;
+  public int JJTFILTERESTIMATEOP = 49;
+  public int JJTFILTERCOVARIANCEOP = 50;
 
 
   public String[] jjtNodeName = {
@@ -103,7 +105,9 @@ public interface ProceduralExpressionParserTreeConstants
     "AssociationSelOp",
     "AssociationSrcOp",
     "EvaluateOp",
-    "FilterOp",
+    "FilterGainOp",
+    "FilterEstimateOp",
+    "FilterCovarianceOp",
   };
 }
-/* JavaCC - OriginalChecksum=c177b0535608cfd181963a6e19530f60 (do not edit this line) */
+/* JavaCC - OriginalChecksum=74f521142c72ba3f450c26931724a1ca (do not edit this line) */
