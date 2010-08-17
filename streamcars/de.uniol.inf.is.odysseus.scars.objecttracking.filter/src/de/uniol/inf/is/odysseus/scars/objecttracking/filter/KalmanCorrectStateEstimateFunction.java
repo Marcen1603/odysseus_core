@@ -6,7 +6,6 @@ import java.util.HashMap;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
@@ -23,7 +22,7 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 		
 	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction copy) {
 		
-		copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
+		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 			
 	}
 		

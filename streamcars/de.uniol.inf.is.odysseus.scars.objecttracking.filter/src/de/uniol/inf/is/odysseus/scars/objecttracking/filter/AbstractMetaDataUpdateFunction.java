@@ -4,7 +4,6 @@
  */
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
@@ -24,7 +23,7 @@ public abstract class AbstractMetaDataUpdateFunction {
 	}
 	
 	public AbstractMetaDataUpdateFunction(AbstractMetaDataUpdateFunction copy ) {
-		this.setParameters(parameters);
+		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 	}
 	
 	public abstract AbstractMetaDataUpdateFunction clone();

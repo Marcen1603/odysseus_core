@@ -2,11 +2,9 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator;
 
 import java.util.HashMap;
 
-import de.uniol.inf.is.odysseus.base.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogicalOp {
@@ -35,9 +33,10 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 	
 	public FilterEstimateUpdateAO(FilterEstimateUpdateAO<M> copy) {
 		super(copy);
-		this.oldObjListPath = copy.getOldObjListPath();
-		this.newObjListPath = copy.getNewObjListPath();
+		this.setOldObjListPath(new String(copy.getOldObjListPath()));
+		this.setNewObjListPath(new String(copy.getNewObjListPath()));
 		this.setFunctionID(new String(copy.getFunctionID()));
+		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 	}
 
 	

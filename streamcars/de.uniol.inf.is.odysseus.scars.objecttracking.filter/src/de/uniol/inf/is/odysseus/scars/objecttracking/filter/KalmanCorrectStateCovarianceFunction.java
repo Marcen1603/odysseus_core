@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter;
 
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.math.linear.RealMatrix;
@@ -22,7 +20,7 @@ public class KalmanCorrectStateCovarianceFunction<K> extends AbstractMetaDataUpd
 	
 	public KalmanCorrectStateCovarianceFunction(KalmanCorrectStateCovarianceFunction<K> copy) {
 
-		copy.setParameters(new HashMap<Integer, Object>(this.getParameters()));	
+		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 		
 	}
 	
