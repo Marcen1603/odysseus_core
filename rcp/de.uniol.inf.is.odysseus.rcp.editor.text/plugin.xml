@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.Keyword" name="Query Editor Keywords " schema="schema/de.uniol.inf.is.odysseus.rcp.editor.Keyword.exsd"/>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword" name="PreParserKeyword" schema="schema/de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -82,6 +83,21 @@
                id="de.uniol.inf.is.odysseus.rcp.editor.text.NewWizard">
          </newWizardShortcut>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.editor.PreParserKeyword">
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.ParserPreParserKeyword"
+            name="PARSER">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.TransCfgPreParserKeyword"
+            name="TRANSCFG">
+      </PreParserKeyword>
+      <PreParserKeyword
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.parser.keyword.QueryPreParserKeyword"
+            name="QUERY">
+      </PreParserKeyword>
    </extension>
 
 </plugin>

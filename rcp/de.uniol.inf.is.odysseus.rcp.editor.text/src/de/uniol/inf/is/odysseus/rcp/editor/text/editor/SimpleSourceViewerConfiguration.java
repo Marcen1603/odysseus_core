@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
+import de.uniol.inf.is.odysseus.rcp.editor.text.parser.PreParserKeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.parser.QueryTextParser;
 
 public class SimpleSourceViewerConfiguration extends SourceViewerConfiguration {
@@ -70,7 +71,7 @@ public class SimpleSourceViewerConfiguration extends SourceViewerConfiguration {
 		
 		ArrayList<IRule> rules = new ArrayList<IRule>();
 		WordRule wr = new WordRule( getWordDetector(), Token.UNDEFINED, false );
-		for( String key : QueryTextParser.KEYS) {
+		for( String key : PreParserKeywordRegistry.getInstance().getKeywordNames()) {
 			wr.addWord(QueryTextParser.PARAMETER_KEY + key, parameter);
 		}
 		wr.addWord("#DEFINE", parameter);

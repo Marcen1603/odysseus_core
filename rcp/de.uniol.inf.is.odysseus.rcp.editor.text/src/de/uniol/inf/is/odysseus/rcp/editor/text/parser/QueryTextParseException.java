@@ -6,10 +6,18 @@ public class QueryTextParseException extends Exception {
 	private static final String exceptionMessage = "Error during processing query-file";
 	
 	public QueryTextParseException() {
-		super(exceptionMessage);
+		this(exceptionMessage);
 	}
 	
 	public QueryTextParseException( String msg ) {
-		super(exceptionMessage + ": " + msg);
+		super(msg);
+	}
+	
+	public QueryTextParseException( String msg, Throwable ex ) {
+		super(msg, ex);
+	}
+	
+	public QueryTextParseException( Throwable ex) {
+		this(exceptionMessage, ex);
 	}
 }

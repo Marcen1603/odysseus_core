@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.rcp.exception,
+Import-Package: de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.viewer.query,
  org.eclipse.core.resources,
  org.eclipse.jface.text,
@@ -21,3 +22,4 @@ Import-Package: de.uniol.inf.is.odysseus.rcp.exception,
  org.eclipse.ui.part,
  org.eclipse.ui.texteditor
 Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text
+Service-Component: OSGI-INF/Executor.xml
