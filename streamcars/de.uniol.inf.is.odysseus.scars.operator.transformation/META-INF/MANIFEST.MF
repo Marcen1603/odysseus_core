@@ -6,15 +6,14 @@ Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.10"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.filtering,
- de.uniol.inf.is.odysseus.filtering.logicaloperator,
- de.uniol.inf.is.odysseus.filtering.physicaloperator,
- de.uniol.inf.is.odysseus.objecttracking.drools,
+Import-Package: de.uniol.inf.is.odysseus.objecttracking.drools,
  de.uniol.inf.is.odysseus.scars.objecttracking,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.association.physicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.physicaloperator,
+ de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator,
+ de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.metadata,
  de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.prediction.physicaloperator,
