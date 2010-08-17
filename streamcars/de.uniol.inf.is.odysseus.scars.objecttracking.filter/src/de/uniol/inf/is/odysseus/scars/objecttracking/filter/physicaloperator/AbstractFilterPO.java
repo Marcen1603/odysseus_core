@@ -117,5 +117,6 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	public HashMap<Integer, Object> getParameters() {
 		return parameters;
 	}
-
+	
+	
 }

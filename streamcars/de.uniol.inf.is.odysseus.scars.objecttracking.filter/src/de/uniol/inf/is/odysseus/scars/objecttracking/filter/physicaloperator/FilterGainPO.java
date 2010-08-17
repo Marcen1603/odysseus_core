@@ -25,16 +25,16 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  * @param <StreamCarsMetaData>
  *
  */
-public class CreateMetaDataPO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
+public class FilterGainPO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
 	private AbstractMetaDataCreationFunction metaDataCreationFunction;
 	
-	public CreateMetaDataPO() {
+	public FilterGainPO() {
 	super();	
 	}
 	
 	
-	public CreateMetaDataPO(CreateMetaDataPO<M> copy) {
+	public FilterGainPO(FilterGainPO<M> copy) {
 		
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 		
@@ -72,7 +72,7 @@ public class CreateMetaDataPO<M extends IProbability & IConnectionContainer> ext
 	
 	@Override
 	public AbstractPipe clone() {
-		return new CreateMetaDataPO<M>(this);
+		return new FilterGainPO<M>(this);
 	}
 
 	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {

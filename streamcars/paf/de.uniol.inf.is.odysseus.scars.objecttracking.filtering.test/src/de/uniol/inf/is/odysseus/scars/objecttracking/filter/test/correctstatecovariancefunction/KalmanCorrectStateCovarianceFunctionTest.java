@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateCovarianceFunction;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.UpdateMetaDataPO;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.FilterCovarianceUpdatePO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
  */
 public class KalmanCorrectStateCovarianceFunctionTest extends TestCase  {
 
-	private UpdateMetaDataPO<StreamCarsMetaData> correctStateCovariancePO;
+	private FilterCovarianceUpdatePO<StreamCarsMetaData> correctStateCovariancePO;
 	
 
 	
@@ -78,7 +78,7 @@ public class KalmanCorrectStateCovarianceFunctionTest extends TestCase  {
 		
 		// create the PO
 		
-		correctStateCovariancePO = new UpdateMetaDataPO<StreamCarsMetaData>();
+		correctStateCovariancePO = new FilterCovarianceUpdatePO<StreamCarsMetaData>();
 		
 		correctStateCovariancePO.setUpdateMetaDataFunction(covariancefunction);
 		

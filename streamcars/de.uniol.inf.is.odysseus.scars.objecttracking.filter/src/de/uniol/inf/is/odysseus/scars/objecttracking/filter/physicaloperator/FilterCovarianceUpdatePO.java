@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
  * @author dtwumasi
  *
  */
-public class UpdateMetaDataPO<M extends IProbability & IConnectionContainer>  extends AbstractFilterPO<M> {
+public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContainer>  extends AbstractFilterPO<M> {
 	
 	private AbstractMetaDataUpdateFunction updateMetaDataFunction;
 	
@@ -29,13 +29,13 @@ public class UpdateMetaDataPO<M extends IProbability & IConnectionContainer>  ex
 		this.updateMetaDataFunction = updateMetaDataFunction;
 	}
 
-	public UpdateMetaDataPO() {
+	public FilterCovarianceUpdatePO() {
 	super();
 	}
 	
 
 
-	public UpdateMetaDataPO(UpdateMetaDataPO<M> copy) {
+	public FilterCovarianceUpdatePO(FilterCovarianceUpdatePO<M> copy) {
 		super();
 		this.setUpdateMetaDataFunction(copy.getUpdateMetaDataFunction().clone());
 		
@@ -71,7 +71,7 @@ public class UpdateMetaDataPO<M extends IProbability & IConnectionContainer>  ex
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-		return new UpdateMetaDataPO<M>(this);
+		return new FilterCovarianceUpdatePO<M>(this);
 	}
 	}
 

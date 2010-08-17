@@ -7,6 +7,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 
 /**
@@ -62,5 +63,7 @@ public abstract class AbstractDataUpdateFunction {
 	}
 
 	
+	
+	  
 
 }

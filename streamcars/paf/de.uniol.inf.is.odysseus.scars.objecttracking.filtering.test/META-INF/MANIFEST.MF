@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.scars.objecttracking.filter;bundle-version="1.0.0.qualifier"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.scars.objecttracking.filter,
+ de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator,
  de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator,
  junit.framework;version="3.8.2",
  org.junit;version="4.5.0"

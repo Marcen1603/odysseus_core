@@ -10,8 +10,10 @@ import junit.framework.TestCase;
 
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEstimateFunction;
+
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterPOTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;

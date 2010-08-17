@@ -22,17 +22,17 @@ import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
  * @author dtwumasi
  *
  */
-public class UpdateDataPO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
+public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 	
 	private AbstractDataUpdateFunction dataUpdateFunction;
 	
-	public UpdateDataPO() {
+	public FilterEstimateUpdatePO() {
 	super();	
 	}
 
 
 
-	public UpdateDataPO(UpdateDataPO<M> copy) {
+	public FilterEstimateUpdatePO(FilterEstimateUpdatePO<M> copy) {
 		super();
 		this.dataUpdateFunction=copy.getDataUpdateFunction().clone();
 		this.setNewObjListPath(copy.getNewObjListPath().clone());
@@ -98,7 +98,7 @@ public class UpdateDataPO<M extends IProbability & IConnectionContainer> extends
 
 	@Override
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
-	return new UpdateDataPO<M>(this);	
+	return new FilterEstimateUpdatePO<M>(this);	
 	}
 
 
