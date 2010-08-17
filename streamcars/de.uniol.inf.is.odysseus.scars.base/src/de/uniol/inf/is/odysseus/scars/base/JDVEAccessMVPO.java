@@ -11,6 +11,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.IllegalBlockingModeException;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
@@ -93,8 +94,10 @@ public class JDVEAccessMVPO <M extends IProbability> extends AbstractSensorAcces
 
 	@Override
 	public void transferNext() {
-		if( buffer != null )
+		if( buffer != null ) {
 			transfer(buffer);
+			sendPunctuation(new PointInTime(data.getLastTimestamp()));
+		}
 		buffer = null;
 	}
 }
@@ -107,12 +110,17 @@ class JDVEData<M extends IProbability> {
 	private int port = -1;
 	private DatagramSocket clientSocket;
 	private SDFAttributeList attributeList;
+	private long lastTimestamp;
 
 	public JDVEData(int pPort, SDFAttributeList list) throws SocketException {
 		this.port = pPort;
 		this.clientSocket = new DatagramSocket(this.port);
 		this.clientSocket.setSoTimeout(TIMEOUT);
 		this.attributeList = list;
+	}
+	
+	public long getLastTimestamp() {
+		return lastTimestamp;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -199,7 +207,8 @@ class JDVEData<M extends IProbability> {
 //			throw new RuntimeException("not implememted yet");
 		} else if ("StartTimestamp".equals(schema.getDatatype()
 				.getURIWithoutQualName())) {
-			return bb.getLong();
+			lastTimestamp = bb.getLong();
+			return lastTimestamp;
 		} else if ("EndTimestamp".equals(schema.getDatatype()
 				.getURIWithoutQualName())) {
 			return bb.getLong();

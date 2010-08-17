@@ -4,6 +4,7 @@ import java.net.SocketException;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.base.OpenFailedException;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
@@ -68,6 +69,7 @@ public class DummyAccessMVPO<M extends IProbability> extends AbstractSensorAcces
 		 */
 		if (System.currentTimeMillis() - lastTime > 1000) {
 			transfer(data.getScan());
+			sendPunctuation(new PointInTime(data.getLastTimestamp()));
 			lastTime = System.currentTimeMillis();
 		}
 
@@ -84,9 +86,14 @@ class DummyJDVEData<M extends IProbability> {
 
 	private static Random rdm = new Random();
 	private SDFAttributeList attributeList;
+	private long lastTimestamp = 0;
 
 	public DummyJDVEData(SDFAttributeList list) throws SocketException {
 		this.attributeList = list;
+	}
+	
+	public long getLastTimestamp() {
+		return lastTimestamp;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -148,7 +155,8 @@ class DummyJDVEData<M extends IProbability> {
 		} else if ("MV Integer".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return rdm.nextInt(100);
 		} else if ("StartTimestamp".equals(schema.getDatatype().getURIWithoutQualName())) {
-			return System.currentTimeMillis();
+			lastTimestamp = System.currentTimeMillis();
+			return lastTimestamp;
 		} else if ("EndTimestamp".equals(schema.getDatatype().getURIWithoutQualName())) {
 			return System.currentTimeMillis() + 1000; // eine Sekunde abstand
 		} else {
