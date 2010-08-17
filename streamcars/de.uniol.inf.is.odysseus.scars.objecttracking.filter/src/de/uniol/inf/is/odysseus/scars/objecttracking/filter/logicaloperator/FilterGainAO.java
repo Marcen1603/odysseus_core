@@ -23,10 +23,6 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
 	
-	// schemas
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
-	
 	public FilterGainAO()
 	{
     super();
@@ -34,8 +30,6 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	
 	public FilterGainAO(FilterGainAO<M> copy) {
 		super(copy);
-		this.leftSchema = copy.getLeftSchema().clone();
-		this.rightSchema = copy.getRightSchema().clone();
 	}
 
 
@@ -44,21 +38,6 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 		return new FilterGainAO<M>(this);
 	}
 	
-	public SDFAttributeList getLeftSchema() {
-		return leftSchema;
-	}
-
-	public void setLeftSchema(SDFAttributeList leftSchema) {
-		this.leftSchema = leftSchema;
-	}
-
-	public SDFAttributeList getRightSchema() {
-		return rightSchema;
-	}
-
-	public void setRightSchema(SDFAttributeList rightSchema) {
-		this.rightSchema = rightSchema;
-	}
 	
 	@Override
 	public SDFAttributeList getOutputSchema() {

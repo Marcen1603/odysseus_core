@@ -27,11 +27,7 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 	
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
-	
-	// schemas
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
-	
+
 	public FilterEstimateUpdateAO()
 	{
     super();
@@ -41,8 +37,7 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 		super(copy);
 		this.oldObjListPath = copy.getOldObjListPath();
 		this.newObjListPath = copy.getNewObjListPath();
-		this.leftSchema = copy.getLeftSchema().clone();
-		this.rightSchema = copy.getRightSchema().clone();
+	
 	}
 
 	
@@ -62,35 +57,11 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 		this.newObjListPath = newObjListPath;
 	}
 	
-	public int[] getNewObjListPathInt() {
-		this.leftSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[0].getSchema();
-		return OrAttributeResolver.getAttributePath(leftSchema, this.newObjListPath);
-	}
-
-	public int[] getOldObjListPathInt() {
-		this.rightSchema = ((LogicalSubscription[]) this.getSubscriptions().toArray())[1].getSchema();
-		return OrAttributeResolver.getAttributePath(rightSchema, this.oldObjListPath);
-	}
+	
 	
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new FilterEstimateUpdateAO<M>(this);
-	}
-	
-	public SDFAttributeList getLeftSchema() {
-		return leftSchema;
-	}
-
-	public void setLeftSchema(SDFAttributeList leftSchema) {
-		this.leftSchema = leftSchema;
-	}
-
-	public SDFAttributeList getRightSchema() {
-		return rightSchema;
-	}
-
-	public void setRightSchema(SDFAttributeList rightSchema) {
-		this.rightSchema = rightSchema;
 	}
 	
 	@Override

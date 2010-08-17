@@ -23,9 +23,7 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
 	
-	// schemas
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
+	
 	
 	public FilterCovarianceUpdateAO()
 	{
@@ -34,8 +32,7 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 	
 	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {
 		super(copy);
-		this.leftSchema = copy.getLeftSchema().clone();
-		this.rightSchema = copy.getRightSchema().clone();
+		
 	}
 
 	@Override
@@ -43,21 +40,7 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 		return new FilterCovarianceUpdateAO<M>(this);
 	}
 	
-	public SDFAttributeList getLeftSchema() {
-		return leftSchema;
-	}
-
-	public void setLeftSchema(SDFAttributeList leftSchema) {
-		this.leftSchema = leftSchema;
-	}
-
-	public SDFAttributeList getRightSchema() {
-		return rightSchema;
-	}
-
-	public void setRightSchema(SDFAttributeList rightSchema) {
-		this.rightSchema = rightSchema;
-	}
+	
 	
 	@Override
 	public SDFAttributeList getOutputSchema() {
