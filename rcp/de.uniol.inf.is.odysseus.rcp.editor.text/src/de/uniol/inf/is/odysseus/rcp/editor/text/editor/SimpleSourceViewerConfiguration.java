@@ -70,15 +70,19 @@ public class SimpleSourceViewerConfiguration extends SourceViewerConfiguration {
 		IToken def = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
 		
 		ArrayList<IRule> rules = new ArrayList<IRule>();
+		
+		// PreParserKeywords
 		WordRule wr = new WordRule( getWordDetector(), Token.UNDEFINED, false );
 		for( String key : PreParserKeywordRegistry.getInstance().getKeywordNames()) {
 			wr.addWord(QueryTextParser.PARAMETER_KEY + key, parameter);
 		}
 		wr.addWord("#DEFINE", parameter);
 		rules.add(wr);
-		
+			
+		// Replacements
 		rules.add( new SingleLineRule(QueryTextParser.REPLACEMENT_START_KEY, QueryTextParser.REPLACEMENT_END_KEY, replacement));
 		
+		// Extensions
 		WordRule r = new WordRule(getWordDetector(), def, false);
 		for( String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
 			
@@ -94,8 +98,12 @@ public class SimpleSourceViewerConfiguration extends SourceViewerConfiguration {
 		}
 		rules.add(r);
 
+		// Kommentare
 		rules.add(new SingleLineRule( QueryTextParser.SINGLE_LINE_COMMENT_KEY, "\n", comment, '\\', true));
+		
+		// Whitespace
 		rules.add(new WhitespaceRule(getWhitespaceDetector()));
+		
 		return rules.toArray(new IRule[rules.size()]);
 	}
 

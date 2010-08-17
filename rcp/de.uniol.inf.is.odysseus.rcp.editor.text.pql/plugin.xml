@@ -13,15 +13,6 @@
                name="de.uniol.inf.is.odysseus.rcp.editor.text.pql.keyword110">
          </keyword>
       </group>
-      <group
-            colorB="255"
-            colorG="0"
-            colorR="255"
-            name="PQLName">
-         <keyword
-               name="PQL">
-         </keyword>
-      </group>
    </extension>
 
 </plugin>

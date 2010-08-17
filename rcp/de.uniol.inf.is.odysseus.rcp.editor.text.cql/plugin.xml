@@ -291,15 +291,6 @@
                name="LIST">
          </keyword>
       </group>
-      <group
-            colorB="255"
-            colorG="0"
-            colorR="255"
-            name="CQLName">
-         <keyword
-               name="CQL">
-         </keyword>
-      </group>
    </extension>
 
 </plugin>

@@ -132,15 +132,6 @@
                name="FILTER-GAIN">
          </keyword>
       </group>
-      <group
-            colorB="255"
-            colorG="0"
-            colorR="255"
-            name="PQLHackName">
-         <keyword
-               name="PQLHack">
-         </keyword>
-      </group>
    </extension>
 
 </plugin>
