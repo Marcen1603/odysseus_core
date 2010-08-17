@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -68,8 +69,6 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
 		
 	}
 
-
-	
 	@Override
 	public AbstractPipe clone() {
 		return new FilterGainPO<M>(this);
@@ -82,4 +81,11 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
 	public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
 		return metaDataCreationFunction;
 	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+	this.sendPunctuation(timestamp);
+	}
+
+
 }

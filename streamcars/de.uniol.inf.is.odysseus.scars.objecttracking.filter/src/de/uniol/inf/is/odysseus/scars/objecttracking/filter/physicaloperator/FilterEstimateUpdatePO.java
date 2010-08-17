@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -101,7 +102,10 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 	return new FilterEstimateUpdatePO<M>(this);	
 	}
 
-
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+	this.sendPunctuation(timestamp);
+	}
 
 
 

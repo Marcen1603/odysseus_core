@@ -19,7 +19,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 
 	private SDFAttributeList schema;
 	
-	
+	protected boolean havingData=false;
 
 	// path to new and old objects
 	private int[] oldObjListPath;
@@ -43,17 +43,13 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 
 	protected void process_next(MVRelationalTuple<M> object, int port) {
 		
-		
+		havingData=true;
 		object = computeAll(object);
 		// transfer to broker
 		transfer(object);
 	}
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO Auto-generated method stub
-		
-	}
+
 	
 	/**
 	 * @return the schema
@@ -109,7 +105,7 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	}
 
 
-
+	
 
 	/**
 	 * @return the parameters
@@ -118,5 +114,8 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 		return parameters;
 	}
 	
+	 
+	
+	  
 	
 }

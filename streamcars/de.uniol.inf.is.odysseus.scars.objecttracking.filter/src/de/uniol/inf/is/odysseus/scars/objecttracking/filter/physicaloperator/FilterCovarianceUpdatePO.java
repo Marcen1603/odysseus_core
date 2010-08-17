@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateCovarianceFunction;
+import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -73,8 +74,16 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
 	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
 		return new FilterCovarianceUpdatePO<M>(this);
 	}
+	
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+	if (!havingData) {
+		this.sendPunctuation(timestamp);
+		havingData=false;
+	}
+	
 	}
 
 
-
-
+}
