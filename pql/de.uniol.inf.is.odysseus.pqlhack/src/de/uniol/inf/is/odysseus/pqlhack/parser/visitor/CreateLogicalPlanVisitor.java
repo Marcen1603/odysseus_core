@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.filtering.logicaloperator.FilterAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
@@ -1509,8 +1510,53 @@ public class CreateLogicalPlanVisitor implements
 
 	@Override
 	public Object visit(ASTExistOp node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		// first child is preceeding operator
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+		
+		ExistenceAO exist = new ExistenceAO();
+		
+		if(node.getType().equals("exist")){
+			exist.setType(ExistenceAO.Type.EXISTS);
+		}
+		else if(node.getType().equals("not exist")){
+			exist.setType(ExistenceAO.Type.NOT_EXISTS);
+		}
+		else{
+			throw new RuntimeException("ExistenceAO-Type '" + node.getType() + "' is invalid.");
+		}
+		
+		// get left and right input operators
+		// the right input is only for checking
+		// the left input contains the data
+		// that is passed by this operator
+		ArrayList inputData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator leftInput = (AbstractLogicalOperator)inputData.get(1);
+		int leftSourceOutPort = ((Integer) inputData.get(2)).intValue();
+		
+		newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+
+		inputData = (ArrayList)node.jjtGetChild(1).jjtAccept(this, newData);
+		AbstractLogicalOperator rightInput = (AbstractLogicalOperator)inputData.get(1);
+		int rightSourceOutPort = ((Integer)inputData.get(2)).intValue();
+		
+		exist.subscribeToSource(leftInput, 0, leftSourceOutPort, leftInput.getOutputSchema());
+		exist.subscribeToSource(rightInput, 1, rightSourceOutPort, rightInput.getOutputSchema());
+		
+		// get the predicate
+		newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+		
+		inputData = (ArrayList)node.jjtGetChild(2).jjtAccept(this, newData);
+		IPredicate predicate = (IPredicate)inputData.get(1);
+		
+		exist.setPredicate(predicate);
+		
+		((ArrayList)data).add(exist);
+		((ArrayList)data).add(new Integer(0));
+		
+		return data;
 	}
 
   
