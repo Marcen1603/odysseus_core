@@ -1,3 +1,16 @@
+CREATE STREAM ego(
+	lane INTEGER,
+	timestamp STARTTIMESTAMP,
+	x INTEGER
+) SOCKET MV localhost : 44472
+
+CREATE STREAM radar(
+	lane INTEGER,
+	timestamp STARTTIMESTAMP,
+	x INTEGER
+) SOCKET MV localhost : 44473
+
+
 CREATE STREAM CarLocStream (
 	m_iType INTEGER,   -- Type:
 				   --	. 0: position report

@@ -1556,6 +1556,8 @@ public class CreateLogicalPlanVisitor implements
 		inputData = (ArrayList)node.jjtGetChild(2).jjtAccept(this, newData);
 		IPredicate predicate = (IPredicate)inputData.get(1);
 		
+		initPredicate(predicate, exist.getInputSchema(0), exist.getInputSchema(1));
+		
 		exist.setPredicate(predicate);
 		
 		((ArrayList)data).add(exist);

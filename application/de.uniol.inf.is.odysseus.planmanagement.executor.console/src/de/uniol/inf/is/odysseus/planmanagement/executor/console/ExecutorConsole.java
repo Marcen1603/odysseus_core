@@ -884,7 +884,9 @@ public class ExecutorConsole implements CommandProvider,
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
 							"de.uniol.inf.is.odysseus.latency.ILatency",
 							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability",
-							"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime");
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime",
+							"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer", // ok
+							"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain");
 				} else {
 					trafoConfig = new TransformationConfiguration(
 							new RelationalTransformationHelper(), "relational",
