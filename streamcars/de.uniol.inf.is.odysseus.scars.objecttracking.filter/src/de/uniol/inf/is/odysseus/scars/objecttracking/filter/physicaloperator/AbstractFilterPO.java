@@ -22,8 +22,8 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	protected boolean havingData=false;
 
 	// path to new and old objects
-	private int[] oldObjListPath;
-	private int[] newObjListPath;
+	private String oldObjListPath;
+	private String newObjListPath;
 	
 	// optional parameters for the filter function. Not used right now
 	private HashMap<Integer, Object> parameters;
@@ -65,28 +65,28 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	/**
 	 * @param oldObjListPath the oldObjListPath to set
 	 */
-	public void setOldObjListPath(int[] oldObjListPath) {
+	public void setOldObjListPath(String oldObjListPath) {
 		this.oldObjListPath = oldObjListPath;
 	}
 
 	/**
 	 * @param newObjListPath the newObjListPath to set
 	 */
-	public int[] getNewObjListPath() {
+	public String getNewObjListPath() {
 		return this.newObjListPath;
 	}
 	
 	/**
 	 * @param newObjListPath the newObjListPath to set
 	 */
-	public void setNewObjListPath(int[] newObjListPath) {
+	public void setNewObjListPath(String newObjListPath) {
 		this.newObjListPath = newObjListPath;
 	}
 	
 	/**
 	 * @param oldObjListPath the oldObjListPath to set
 	 */
-	public int[] getOldObjListPath() {
+	public String getOldObjListPath() {
 		return this.oldObjListPath;
 	}
 
@@ -103,19 +103,11 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
 	public void setParameters(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
 	}
-
-
 	
-
 	/**
 	 * @return the parameters
 	 */
 	public HashMap<Integer, Object> getParameters() {
 		return parameters;
 	}
-	
-	 
-	
-	  
-	
 }

@@ -36,8 +36,8 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 	public FilterEstimateUpdatePO(FilterEstimateUpdatePO<M> copy) {
 		super();
 		this.dataUpdateFunction=copy.getDataUpdateFunction().clone();
-		this.setNewObjListPath(copy.getNewObjListPath().clone());
-		this.setOldObjListPath(copy.getOldObjListPath().clone());
+		this.setNewObjListPath(copy.getNewObjListPath());
+		this.setOldObjListPath(copy.getOldObjListPath());
 	
 	}
 	
@@ -48,22 +48,23 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 	//	MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.getNewObjListPath())).getAttributes();
 		// 1.2 - Get the list of old objects (which are predicted to the timestamp of the new objects) as an array of MVRelationalTuple
 	//	MVRelationalTuple<M>[] oldList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>)OrAttributeResolver.resolveTuple(object, this.getOldObjListPath())).getAttributes();
-		
+	  		
 		// --- Relative Pfade von einem "Auto" aus zu den Messwerten finden ---
-		int[] pathToFirstCarInNewList = new int[this.getNewObjListPath().length+1];
-		for(int i = 0; i < pathToFirstCarInNewList.length-1; i++) {
-			pathToFirstCarInNewList[i] = this.getNewObjListPath()[i];
-		}
-		pathToFirstCarInNewList[this.getNewObjListPath().length-1] = 0;
+	  
+//		int[] pathToFirstCarInNewList = new int[this.getNewObjListPath().length+1];
+//		for(int i = 0; i < pathToFirstCarInNewList.length-1; i++) {
+//			pathToFirstCarInNewList[i] = this.getNewObjListPath()[i];
+//		}
+//		pathToFirstCarInNewList[this.getNewObjListPath().length-1] = 0;
+//
+//		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length+1];
+//		for(int i = 0; i < pathToFirstCarInOldList.length-1; i++) {
+//			pathToFirstCarInOldList[i] = this.getOldObjListPath()[i];
+//		}
+//		pathToFirstCarInOldList[this.getOldObjListPath().length-1] = 0;
 
-		int[] pathToFirstCarInOldList = new int[this.getOldObjListPath().length+1];
-		for(int i = 0; i < pathToFirstCarInOldList.length-1; i++) {
-			pathToFirstCarInOldList[i] = this.getOldObjListPath()[i];
-		}
-		pathToFirstCarInOldList[this.getOldObjListPath().length-1] = 0;
-
-		ArrayList<int[]> measurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.getSchema(), pathToFirstCarInNewList));
-		ArrayList<int[]> measurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.getSchema(), pathToFirstCarInOldList));
+//		ArrayList<int[]> measurementValuePathsTupleNew = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.getSchema(), pathToFirstCarInNewList));
+//		ArrayList<int[]> measurementValuePathsTupleOld = OrAttributeResolver.getPathsOfMeasurements(OrAttributeResolver.getSubSchema(this.getSchema(), pathToFirstCarInOldList));
 		
 		// list of connections
 		Connection[] objConList = new Connection[object.getMetadata().getConnectionList().toArray().length];
@@ -76,7 +77,7 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 		// traverse connection list and filter
 		int i=0;
 		for(Connection connected : objConList ) {
-			compute(connected, measurementValuePathsTupleNew, measurementValuePathsTupleOld,i);
+//			compute(connected, measurementValuePathsTupleNew, measurementValuePathsTupleOld,i);
 			i++;
 		}
 		
