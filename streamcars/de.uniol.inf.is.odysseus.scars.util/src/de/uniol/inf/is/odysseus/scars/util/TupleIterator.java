@@ -99,7 +99,7 @@ public class TupleIterator {
 	 * @param completeSchema
 	 *            Komplettes Schema des Tupels. Darf nicht null sein.
 	 * @param maxLevels
-	 *            Maximale Iterationstiefe. Muss positiv oder null sein.
+	 *            Maximale Iterationstiefe. Muss positiv oder 0 sein.
 	 */
 	public TupleIterator(MVRelationalTuple<?> tuple, SDFAttributeList completeSchema, int maxLevels) {
 		this.tuple = tuple;
@@ -112,6 +112,55 @@ public class TupleIterator {
 		SchemaIndexPath path = hlp.getSchemaIndexPath(name);
 
 		reset(path);
+	}
+	
+	/**
+	 * Erstellt eine neue TupelIterator-Instanz. Über dem angegebenen Tupel wird
+	 * iteriert. Mittels diesem Konstruktor wird über den Tuple iteriert, also
+	 * von der Wurzel an. Warnung: Die Wurzel selbst wird NICHT erfasst.
+	 * 
+	 * Der Navigator geht beliebig in die Tiefe.
+	 * 
+	 * Es ist zu beachten, dass Tupel, welche Untertupel besitzen, auch besucht
+	 * werden, bevor in die Kindtupel fortgesetzt wird.
+	 * 
+	 * @param tuple
+	 *            Durchzunavigierender Tupel. Darf nicht null sein.
+	 * @param completeSchema
+	 *            Komplettes Schema des Tupels. Darf nicht null sein.
+	 */
+	public TupleIterator(MVRelationalTuple<?> tuple, TupleIndexPath start) {
+		this( tuple,start, Integer.MAX_VALUE);
+	}
+	
+	/**
+	 * Erstellt eine neue TupelIterator-Instanz. Über dem angegebenen Tupel wird
+	 * iteriert. Über einen TupleIndexPath lässt sich der Knoten im Tupelbaum
+	 * angeben, wo die Iteration beginnt. Beginnt dieser inmitten des Baums, so
+	 * werden die Elternknoten nicht iteriert. Damit ist es möglich, nur durch
+	 * Teilbäume zu iterieren. Ein Pfad lässt sich mittels der Klasse
+	 * SchemaHelper erstellen.
+	 * 
+	 * Über maxLevels lässt sich die maximale Tiefe bestimmen, wie weit der
+	 * Iterator iterieren soll. Ist maxLevels=0, so wird nicht in die Tiefe
+	 * gegangen, die Iteration ist nach einem next() vorbei. maxLevels=1
+	 * bewirkt, dass nur durch die unmittelbaren Untertupel navigiert wird.
+	 * 
+	 * Es ist zu beachten, dass Tupel, welche Untertupel besitzen, auch besucht
+	 * werden, bevor in die Kindtupel fortgesetzt wird.
+	 * 
+	 * @param tuple
+	 *            Durchzunavigierender Tupel. Darf nicht null sein.
+	 * @param start
+	 *            Pfad zum Startpunkt innerhalb des Tupels. Darf nicht null
+	 *            sein.
+	 * @param maxLevels
+	 *            Maximale Iterationstiefe. Muss positiv oder 0 sein.
+	 */
+	public TupleIterator(MVRelationalTuple<?> tuple, TupleIndexPath start, int maxLevels ) {
+		this.tuple = tuple;
+		this.maxLevels = maxLevels;
+		reset(start);
 	}
 
 	/**
@@ -136,7 +185,7 @@ public class TupleIterator {
 	 *            Pfad zum Startpunkt innerhalb des Tupels. Darf nicht null
 	 *            sein.
 	 * @param maxLevels
-	 *            Maximale Iterationstiefe. Muss positiv oder null sein.
+	 *            Maximale Iterationstiefe. Muss positiv oder 0 sein.
 	 */
 	public TupleIterator(MVRelationalTuple<?> tuple, SchemaIndexPath start, int maxLevels) {
 		this.tuple = tuple;
@@ -152,12 +201,49 @@ public class TupleIterator {
 		TupleHelper tupleHelper = new TupleHelper(tuple);
 		return tupleHelper.getObject(path);
 	}
-
+	
 	/**
 	 * Setzt die Iteration auf einen neuen Punkt innerhalb des Tupels zurück.
 	 * 
 	 * @param start
 	 *            Pfad zum Startpunkt innerhalb des Tupels.
+	 */
+	public void reset( TupleIndexPath tupleStart ) {
+		
+		SchemaIndexPath start = tupleStart.toSchemaIndexPath();
+		
+		pointer.clear();
+		schemaIndices.clear();
+		insideList.clear();
+		tupleIndices.clear();
+
+		if (start != null) {
+			IteratorEntry e = new IteratorEntry(tupleStart.getTupleObject());
+			e.index = tupleStart.getIndices().get(tupleStart.getLength() - 1).toInt();
+			
+			pointer.push(new IteratorEntry(get(start)));
+
+			for (int i = 0; i < start.getSchemaIndices().size(); i++) {
+				schemaIndices.push(start.getSchemaIndex(i));
+
+				tupleIndices.push( tupleStart.getIndices().get(i));
+
+				if (insideList.isEmpty())
+					insideList.push(start.getSchemaIndex(0).isList());
+				else
+					insideList.push(start.getSchemaIndex(i).isList() | insideList.peek());
+			}
+
+		} else {
+			throw new IllegalArgumentException("start is null");
+		}
+	}
+
+	/**
+	 * Setzt die Iteration auf einen neuen Punkt innerhalb des Tupels zurück.
+	 * 
+	 * @param start
+	 *            Pfad zum Startpunkt innerhalb des Schemas.
 	 */
 	public void reset(SchemaIndexPath start) {
 		pointer.clear();
@@ -165,25 +251,21 @@ public class TupleIterator {
 		insideList.clear();
 		tupleIndices.clear();
 
+		Object parent = null;
 		if (start != null) {
 			pointer.push(new IteratorEntry(get(start)));
 
 			for (int i = 0; i < start.getSchemaIndices().size(); i++) {
 				schemaIndices.push(start.getSchemaIndex(i));
 
-				Object parent = null;
-				if (pointer.size() > 1)
-					parent = pointer.get(pointer.size() - 2).obj;
-				else
+				if( parent == null ) { 
+					tupleIndices.push( new TupleIndex(tuple, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
 					parent = tuple;
-
-				if (parent instanceof MVRelationalTuple) {
-					tupleIndices.push(new TupleIndex((MVRelationalTuple<?>) parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
 				} else {
-					// something wrong
-					throw new RuntimeException("Programming error");
+					tupleIndices.push( new TupleIndex((MVRelationalTuple<?>)parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
+					parent = ((MVRelationalTuple<?>)parent).getAttribute(schemaIndices.peek().toInt());
 				}
-
+				
 				if (insideList.isEmpty())
 					insideList.push(start.getSchemaIndex(0).isList());
 				else

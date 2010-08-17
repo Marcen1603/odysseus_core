@@ -11,7 +11,24 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class SchemaHelper {
-
+	
+	private class SDFAttributeEntry {
+		
+		public SDFAttribute attribute;
+		
+		public SDFAttributeEntry( SDFAttribute attr ) {
+			attribute = attr;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if( !(obj instanceof SDFAttributeEntry ) ) return false;
+			if( obj == this ) return true;
+			SDFAttributeEntry e = (SDFAttributeEntry)obj;
+			return attribute == e.attribute;
+		}
+	}
+	
 	public static final String SOURCE_SEPARATOR = ".";
 	public static final String ATTRIBUTE_SEPARATOR = ":";
 
@@ -20,8 +37,8 @@ public class SchemaHelper {
 	private SDFAttributeList schema;
 	
 	private Map<String, SchemaIndexPath> paths = new HashMap<String, SchemaIndexPath>();
-	private Map<SDFAttribute, SchemaIndexPath> attributePaths = new HashMap<SDFAttribute, SchemaIndexPath>();
-	private Map<SDFAttribute, String> names = new HashMap<SDFAttribute, String>();
+	private Map<SDFAttributeEntry, SchemaIndexPath> attributePaths = new HashMap<SDFAttributeEntry, SchemaIndexPath>();
+	private Map<SDFAttributeEntry, String> names = new HashMap<SDFAttributeEntry, String>();
 	
 	private String sourceName = null;
 	private SDFAttribute startTimestampAttribute = null;
@@ -57,7 +74,7 @@ public class SchemaHelper {
 	}
 	
 	public SchemaIndexPath getSchemaIndexPath( SDFAttribute attribute ) {
-		return attributePaths.get(attribute);
+		return attributePaths.get(new SDFAttributeEntry(attribute));
 	}
 	
 	public SDFAttribute getAttribute( String fullAttributeName ) {
@@ -74,7 +91,7 @@ public class SchemaHelper {
 	}
 	
 	public String getFullAttributeName(SDFAttribute attr) {
-		return names.get(attr);
+		return names.get(new SDFAttributeEntry(attr));
 	}
 	
 	public String getSourceName() {
@@ -109,8 +126,8 @@ public class SchemaHelper {
 			
 			actualPath.add( new SchemaIndex(index, attribute));
 			paths.put(fullAttributeName, new SchemaIndexPath(copy(actualPath), attribute));
-			attributePaths.put(attribute, new SchemaIndexPath(copy(actualPath), attribute));
-			names.put(attribute, fullAttributeName);
+			attributePaths.put(new SDFAttributeEntry(attribute), new SchemaIndexPath(copy(actualPath), attribute));
+			names.put(new SDFAttributeEntry(attribute), fullAttributeName);
 			
 			calculateAllPaths( attribute.getSubattributes(), actualPath, fullAttributeName);
 			
