@@ -1,9 +1,7 @@
-package de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;
+package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Comparator;
 
-import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
 
 /**
@@ -14,7 +12,7 @@ import de.uniol.inf.is.odysseus.metadata.base.IMetaAttributeContainer;
  *
  * @param <T> the generic type
  */
-public class TimeIntervalComparator<T extends IMetaAttributeContainer<ITimeInterval>> implements Comparator<T> {
+public class TimeIntervalComparator<T extends IMetaAttributeContainer<? extends ITimeInterval>> implements Comparator<T> {
 
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)

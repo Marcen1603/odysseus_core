@@ -79,7 +79,16 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		for( int i = 0; i < list.size(); i++ ) {
 			path.add(i);
 			SDFAttribute a = list.get(i);
-			if( a.getAttributeName().equals(attr.getAttributeName())) {
+//			if(a.getAttributeName().equals(attr.getAttributeName())) {
+			// BUGFIX Sourcename must also be compared. Otherwise
+			// something like this will not work
+			// a.lane = b.lane
+			// If I understand it correctly, in an OR-Schema
+			// all subattributes also have as source name the
+			// name of the stream.
+			// FIXME: However, in this case the following will not work
+			// a.pers1.height = a.pers2.height
+			if(a.equalsCQL(attr)){
 				return true;
 			}
 			
