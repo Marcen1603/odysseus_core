@@ -176,7 +176,7 @@ public class StandardCompiler implements ICompiler {
 	public List<IQuery> translateQuery(String query,
 			String parserID) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
-			return (ArrayList<IQuery>) this.parserList.get(parserID)
+			return (List<IQuery>) this.parserList.get(parserID)
 					.parse(query);
 		}
 

@@ -46,8 +46,8 @@ import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
  * 
  */
 public abstract class AbstractExecutor implements IExecutor, IScheduleable,
-		ISettingChangeListener, 
-		IQueryReoptimizeListener, IPlanReoptimizeListener {
+		ISettingChangeListener, IQueryReoptimizeListener,
+		IPlanReoptimizeListener {
 
 	protected static Logger _logger = null;
 
@@ -105,22 +105,22 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
-	
+
 	/**
-	 * Compiler Listener 
+	 * Compiler Listener
 	 */
 	private List<ICompilerListener> compilerListener = new CopyOnWriteArrayList<ICompilerListener>();
-	
+
 	/**
 	 * Lock for synchronizing execution plan changes.
 	 */
 	protected ReentrantLock executionPlanLock = new ReentrantLock();
-	
+
 	/**
 	 * The default System Monitor.
 	 */
 	protected ISystemMonitor defaultSystemMonitor = null;
-	
+
 	/**
 	 * System Monitor Komponente
 	 */
@@ -135,7 +135,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
 
-		if (newExecutionPlan != null && !newExecutionPlan.equals(this.executionPlan)) {
+		if (newExecutionPlan != null
+				&& !newExecutionPlan.equals(this.executionPlan)) {
 			try {
 				executionPlanLock.lock();
 				getLogger().info("Set execution plan.");
@@ -150,12 +151,13 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				getLogger().info("New execution plan set.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				getLogger().error("Error while setting new execution plan. "
-						+ e.getMessage());
+				getLogger().error(
+						"Error while setting new execution plan. "
+								+ e.getMessage());
 				fireErrorEvent(new ErrorEvent(this, ErrorEvent.ERROR,
 						"Error while setting new execution plan. "
 								+ e.getMessage()));
-			}finally{
+			} finally {
 				executionPlanLock.unlock();
 			}
 		}
@@ -169,8 +171,8 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		try {
 			initialize();
 		} catch (ExecutorInitializeException e) {
-			getLogger().error("Error activate executor. Error: "
-					+ e.getMessage());
+			getLogger().error(
+					"Error activate executor. Error: " + e.getMessage());
 		}
 	}
 
@@ -258,7 +260,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	public void bindCompiler(ICompiler compiler) {
 		this.compiler = compiler;
-		for (ICompilerListener l: compilerListener){
+		for (ICompilerListener l : compilerListener) {
 			compiler.addCompilerListener(l);
 		}
 	}
@@ -270,7 +272,7 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 *            zu entfernende Anfragebearbeitungs-Komponente
 	 */
 	public void unbindCompiler(ICompiler compiler) {
-		for (ICompilerListener l:compilerListener){
+		for (ICompilerListener l : compilerListener) {
 			compiler.removeCompilerListener(l);
 		}
 		if (this.compiler == compiler) {
@@ -344,16 +346,23 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	protected abstract void initializeIntern(
 			ExecutionConfiguration configuration);
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#getConfiguration()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#getConfiguration
+	 * ()
 	 */
 	@Override
 	public ExecutionConfiguration getConfiguration() {
 		return configuration;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#initialize()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#initialize()
 	 */
 	@Override
 	public void initialize() throws ExecutorInitializeException {
@@ -376,16 +385,23 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		getLogger().debug("Stop initializing Executor.");
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable#getSchedulerManager()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable#
+	 * getSchedulerManager()
 	 */
 	@Override
 	public ISchedulerManager getSchedulerManager() {
 		return this.schedulerManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#startExecution()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#
+	 * startExecution()
 	 */
 	@Override
 	public void startExecution() throws SchedulerException {
@@ -395,12 +411,15 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 
 		getLogger().info("Start Scheduler.");
+		getLogger().debug(
+				"#PartialPlans: " + this.executionPlan.getPartialPlans().size()
+						+ " #Roots: " + this.executionPlan.getRoots().size());
 		try {
 			this.executionPlan.open();
-			
+
 			firePlanExecutionEvent(new PlanExecutionEvent(this,
-					PlanExecutionEvent.EXECUTION_PREPARED));			
-			
+					PlanExecutionEvent.EXECUTION_PREPARED));
+
 			schedulerManager().startScheduling();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
@@ -411,8 +430,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				PlanExecutionEvent.EXECUTION_STARTED));
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#stopExecution()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#
+	 * stopExecution()
 	 */
 	@Override
 	public void stopExecution() throws SchedulerException {
@@ -433,8 +455,12 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				PlanExecutionEvent.EXECUTION_STOPPED));
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#isRunning()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#isRunning
+	 * ()
 	 */
 	@Override
 	public boolean isRunning() throws SchedulerException {
@@ -445,16 +471,23 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#getExecutionPlan()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#
+	 * getExecutionPlan()
 	 */
 	@Override
 	public IExecutionPlan getExecutionPlan() {
 		return this.executionPlan;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable#getCompiler()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable
+	 * #getCompiler()
 	 */
 	@Override
 	public ICompiler getCompiler() {
@@ -466,8 +499,14 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler#addPlanModificationListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.
+	 * planmodification
+	 * .IPlanModificationHandler#addPlanModificationListener(de.uniol
+	 * .inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.
+	 * IPlanModificationListener)
 	 */
 	@Override
 	public void addPlanModificationListener(IPlanModificationListener listener) {
@@ -478,8 +517,15 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler#removePlanModificationListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.
+	 * planmodification
+	 * .IPlanModificationHandler#removePlanModificationListener(de
+	 * .uniol.inf.is.odysseus
+	 * .planmanagement.executor.eventhandling.planmodification
+	 * .IPlanModificationListener)
 	 */
 	@Override
 	public void removePlanModificationListener(
@@ -489,8 +535,14 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionHandler#addPlanExecutionListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution
+	 * .IPlanExecutionHandler#addPlanExecutionListener(de.uniol.inf.is.odysseus.
+	 * planmanagement
+	 * .executor.eventhandling.planexecution.IPlanExecutionListener)
 	 */
 	@Override
 	public void addPlanExecutionListener(IPlanExecutionListener listener) {
@@ -501,8 +553,16 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionHandler#removePlanExecutionListener(de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution
+	 * .
+	 * IPlanExecutionHandler#removePlanExecutionListener(de.uniol.inf.is.odysseus
+	 * .
+	 * planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener
+	 * )
 	 */
 	@Override
 	public void removePlanExecutionListener(IPlanExecutionListener listener) {
@@ -511,16 +571,23 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#getSealedPlan()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#getSealedPlan
+	 * ()
 	 */
 	@Override
 	public IPlan getSealedPlan() throws PlanManagementException {
 		return this.plan;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#getSupportedQueryParser()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
+	 * getSupportedQueryParser()
 	 */
 	@Override
 	public Set<String> getSupportedQueryParser()
@@ -529,8 +596,14 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		return c.getSupportedQueryParser();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler#addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * #
+	 * addErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.
+	 * error.IErrorEventListener)
 	 */
 	@Override
 	public void addErrorEventListener(IErrorEventListener errorEventListener) {
@@ -541,8 +614,14 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler#removeErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventHandler
+	 * #
+	 * removeErrorEventListener(de.uniol.inf.is.odysseus.base.planmanagement.event
+	 * .error.IErrorEventListener)
 	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
@@ -551,8 +630,13 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener#sendErrorEvent(de.uniol.inf.is.odysseus.base.planmanagement.event.error.ErrorEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.base.planmanagement.event.error.IErrorEventListener
+	 * #sendErrorEvent(de.uniol.inf.is.odysseus.base.planmanagement.event.error.
+	 * ErrorEvent)
 	 */
 	@Override
 	public synchronized void sendErrorEvent(ErrorEvent eventArgs) {
@@ -560,27 +644,30 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				"Executor exception (with inner error). "
 						+ eventArgs.getMessage()));
 	}
-	
-	public void bindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
+
+	public void bindSystemMonitorFactory(
+			ISystemMonitorFactory systemMonitorFactory) {
 		this.systemMonitorFactory = systemMonitorFactory;
 		// initialize default system monitor
-		this.defaultSystemMonitor = this.systemMonitorFactory.newSystemMonitor();
+		this.defaultSystemMonitor = this.systemMonitorFactory
+				.newSystemMonitor();
 		this.defaultSystemMonitor.initialize(30000L);
 	}
-	
-	public void unbindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
+
+	public void unbindSystemMonitorFactory(
+			ISystemMonitorFactory systemMonitorFactory) {
 		this.systemMonitorFactory = null;
 		if (this.defaultSystemMonitor != null) {
 			this.defaultSystemMonitor.stop();
 			this.defaultSystemMonitor = null;
 		}
 	}
-	
+
 	@Override
 	public void addCompilerListener(ICompilerListener compilerListener) {
 		this.compilerListener.add(compilerListener);
 		// if Compiler already bound
-		if (compiler != null){
+		if (compiler != null) {
 			compiler.addCompilerListener(compilerListener);
 		} // else will be done if compiler is bound
 	}
