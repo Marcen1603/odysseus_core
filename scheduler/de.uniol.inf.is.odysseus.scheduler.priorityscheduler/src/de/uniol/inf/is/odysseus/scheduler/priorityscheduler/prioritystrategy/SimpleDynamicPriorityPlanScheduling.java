@@ -63,6 +63,7 @@ public class SimpleDynamicPriorityPlanScheduling extends
 			} else {
 				while (--nextPos >= 0) {
 					if (queue.get(nextPos).getPlan().getCurrentPriority() < prio) {
+						System.out.println("SSSSSSSSSSWWWWWWWWWAPPPPPP BACK");
 						Collections.swap(queue, pos--, nextPos);
 					} else {
 						break;
