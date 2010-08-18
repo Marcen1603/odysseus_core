@@ -255,7 +255,7 @@ public class Query implements IQuery {
 						}
 					}
 				}
-				this.roots = newRoots;
+//				this.roots = newRoots;
 			}
 		}
 
