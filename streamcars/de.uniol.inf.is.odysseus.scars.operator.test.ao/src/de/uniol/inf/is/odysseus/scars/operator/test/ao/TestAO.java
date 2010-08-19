@@ -10,8 +10,6 @@ public class TestAO extends UnaryLogicalOp{
 
 	public TestAO(String name) {
 		this.setName(name);
-		String s = this.getName();
-		int i =0;
 	}
 	
 	public TestAO( TestAO copy ) {
