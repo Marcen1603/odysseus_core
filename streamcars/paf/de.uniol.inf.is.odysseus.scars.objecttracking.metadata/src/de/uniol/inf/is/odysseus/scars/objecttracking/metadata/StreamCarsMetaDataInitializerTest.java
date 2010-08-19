@@ -1,7 +1,6 @@
 
 package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 // test StreamCarsMetaDataInitializer
 // author: sven

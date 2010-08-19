@@ -12,37 +12,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class SchemaHelper {
 	
-	private class SDFAttributeEntry {
-		
-		public SDFAttribute attribute;
-		
-		public SDFAttributeEntry( SDFAttribute attr ) {
-			attribute = attr;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if( !(obj instanceof SDFAttributeEntry ) ) return false;
-			if( obj == this ) return true;
-			SDFAttributeEntry e = (SDFAttributeEntry)obj;
-			return attribute == e.attribute;
-		}
-	}
-	
 	public static final String SOURCE_SEPARATOR = ".";
 	public static final String ATTRIBUTE_SEPARATOR = ":";
 
-	private static final String SOURCE_SPLIT_REGEX = "\\" + SOURCE_SEPARATOR;
+//	private static final String SOURCE_SPLIT_REGEX = "\\" + SOURCE_SEPARATOR;
 	
 	private SDFAttributeList schema;
 	
 	private Map<String, SchemaIndexPath> paths = new HashMap<String, SchemaIndexPath>();
-	private Map<SDFAttributeEntry, SchemaIndexPath> attributePaths = new HashMap<SDFAttributeEntry, SchemaIndexPath>();
-	private Map<SDFAttributeEntry, String> names = new HashMap<SDFAttributeEntry, String>();
 	
 	private String sourceName = null;
-	private SDFAttribute startTimestampAttribute = null;
-	private SDFAttribute endTimestampAttribute = null;
+	private String startTimestampAttribute = null;
+	private String endTimestampAttribute = null;
 	
 	public SchemaHelper( SDFAttributeList schema ) {
 		if( schema == null ) {
@@ -63,23 +44,28 @@ public class SchemaHelper {
 	}
 	
 	public SchemaIndexPath getSchemaIndexPath( String fullAttributeName ) {
+		// Quellennamen angegegeben?
+		String toFind = "";
+		
 		if( fullAttributeName.contains(SOURCE_SEPARATOR)) {
-			String[] parts = fullAttributeName.split(SOURCE_SPLIT_REGEX);
-			return paths.get(parts[1]);
+			toFind = fullAttributeName;
+//			String[] parts = fullAttributeName.split(SOURCE_SPLIT_REGEX);
+//			if( !parts[0].equals(sourceName) ) // andere Quelle
+//				throw new IllegalArgumentException("sourceName " + parts[0] + " is not euqal to sourcename" + sourceName + " specified in schema");
+//			toFind = parts[1];
+		} else {
+			toFind = sourceName + SOURCE_SEPARATOR + fullAttributeName;
 		}
-		SchemaIndexPath p = paths.get(fullAttributeName);
-		if( p == null ) 
-			throw new IllegalArgumentException("cannot find schemaindexpath for " + fullAttributeName);
-		return paths.get(fullAttributeName);
-	}
-	
-	public SchemaIndexPath getSchemaIndexPath( SDFAttribute attribute ) {
-		return attributePaths.get(new SDFAttributeEntry(attribute));
+		SchemaIndexPath p = paths.get(toFind);
+		if( p != null ) 
+			return p;
+		
+		throw new IllegalArgumentException("cannot find schemaindexpath for " + toFind);
 	}
 	
 	public SDFAttribute getAttribute( String fullAttributeName ) {
 		SchemaIndexPath p = getSchemaIndexPath(fullAttributeName);
-		return p != null ? p.getAttribute() : null;
+		return p.getAttribute();
 	}
 	
 	public Collection<String> getAttributeNames() {
@@ -90,19 +76,15 @@ public class SchemaHelper {
 		return Collections.unmodifiableCollection(paths.values());
 	}
 	
-	public String getFullAttributeName(SDFAttribute attr) {
-		return names.get(new SDFAttributeEntry(attr));
-	}
-	
 	public String getSourceName() {
 		return sourceName;
 	}
 	
-	public SDFAttribute getStartTimestampAttribute() {
-		return startTimestampAttribute;
+	public String getStartTimestampFullAttributeName() {
+		return sourceName+ SOURCE_SEPARATOR+ startTimestampAttribute;
 	}
 	
-	public SDFAttribute getEndTimestampAttribute() {
+	public String getEndTimestampFullAttributeName() {
 		return endTimestampAttribute;
 	}
 	
@@ -115,19 +97,17 @@ public class SchemaHelper {
 			if( actualAttributeName != null ) 
 				fullAttributeName = actualAttributeName + ATTRIBUTE_SEPARATOR + attribute.getAttributeName();
 			else
-				fullAttributeName = attribute.getAttributeName();
+				fullAttributeName = attribute.getSourceName() + SOURCE_SEPARATOR + attribute.getAttributeName();
 			
 			// timestamp
 			if( attribute.getDatatype().getURIWithoutQualName().equals("StartTimestamp")) {
-				startTimestampAttribute = attribute;
+				startTimestampAttribute = fullAttributeName;
 			} else if( attribute.getDatatype().getURIWithoutQualName().equals("EndTimestamp")) {
-				endTimestampAttribute = attribute;
+				endTimestampAttribute = fullAttributeName;
 			}
 			
 			actualPath.add( new SchemaIndex(index, attribute));
 			paths.put(fullAttributeName, new SchemaIndexPath(copy(actualPath), attribute));
-			attributePaths.put(new SDFAttributeEntry(attribute), new SchemaIndexPath(copy(actualPath), attribute));
-			names.put(new SDFAttributeEntry(attribute), fullAttributeName);
 			
 			calculateAllPaths( attribute.getSubattributes(), actualPath, fullAttributeName);
 			

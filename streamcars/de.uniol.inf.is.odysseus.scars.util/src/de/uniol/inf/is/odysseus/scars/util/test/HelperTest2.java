@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -19,19 +20,13 @@ public class HelperTest2 {
 		SchemaHelper helper = new SchemaHelper(schema);
 		SchemaIndexPath start = helper.getSchemaIndexPath("base:a:b");
 		
-		TupleIterator iterator1 = new TupleIterator(tuple, start, 0);
-		while( !iterator1.isFinished() ) {
+		for( TupleInfo info : new TupleIterator(tuple, start, 0) ) {
 			
-			TupleIndexPath tuplePath = iterator1.getTupleIndexPath();
-			
+			TupleIndexPath tuplePath = info.tupleIndexPath;
 			// In der Liste iterieren
-			TupleIterator iterator2 = new TupleIterator(tuple, tuplePath);
-			while( !iterator2.isFinished() ) {
-				System.out.println(iterator2.getTupleObject());
-				iterator2.next();
+			for( TupleInfo info2 : tuplePath ) {
+				System.out.println(info2.tupleObject);
 			}
-			
-			iterator1.next();
 		}
 		
 	}

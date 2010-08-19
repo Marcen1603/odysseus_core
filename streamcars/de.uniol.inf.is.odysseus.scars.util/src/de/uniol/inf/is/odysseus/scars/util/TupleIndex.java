@@ -7,11 +7,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
  * Repräsentiert einen Indexeintrag in einem Tupelpfad. Der Indexeintrag
  * speichert den MVRelationalTuple<?>, worin sich der Indexeintrag
  * verweist. Über getParent() lässt sich dieser abrufen.
- * 
+ * <p>
  * Der dem Indexeintrag zugewiesene Wert kann abgerufen und gesetzt werden. Die Klasse
  * kann von Clients nicht instanziiert werden. Sie wird innerhalb der 
  * TupleIndexPath-Klasse verwendet.
- * 
+ * <p>
  * Von dieser Klasse sollte nicht abgeleitet werden.
  * 
  * @author Timo Michelsen
@@ -22,18 +22,21 @@ public class TupleIndex {
 	private MVRelationalTuple<?> parent;
 	private int valueIndex;
 	private SDFAttribute attribute;
+	private Object value;
 	
 	// Interner Konstruktor
 	TupleIndex( MVRelationalTuple<?> parent, int valueIndex, SDFAttribute attribute ) {
 		this.parent = parent;
 		this.valueIndex = valueIndex;
 		this.attribute = attribute;
+		this.value = this.parent.getAttribute(this.valueIndex);
 	}
 	
 	TupleIndex( TupleIndex other ) {
 		this.parent = other.getParent();
 		this.valueIndex = other.valueIndex;
 		this.attribute = other.attribute;
+		this.value = other.value;
 	}
 	
 	/**
@@ -63,7 +66,7 @@ public class TupleIndex {
 	 * @return Wert des Tupels.
 	 */
 	public Object getValue() {
-		return parent.getAttribute(valueIndex);
+		return value;
 	}
 	
 	/**

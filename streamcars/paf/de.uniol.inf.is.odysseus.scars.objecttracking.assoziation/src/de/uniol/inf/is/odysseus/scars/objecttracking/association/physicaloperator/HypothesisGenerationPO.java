@@ -80,7 +80,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		Object[] association = new Object[3];
 
 		// get timestamp path from scanned data
-		SchemaIndexPath path = helper.getSchemaIndexPath(helper.getStartTimestampAttribute());
+		SchemaIndexPath path = helper.getSchemaIndexPath(helper.getStartTimestampFullAttributeName());
 		association[0] = path.toTupleIndexPath(scannedObject).getTupleObject();
 
 		// get scanned objects

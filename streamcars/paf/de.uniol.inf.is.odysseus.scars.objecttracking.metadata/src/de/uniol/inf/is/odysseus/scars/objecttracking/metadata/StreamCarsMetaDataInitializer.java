@@ -7,7 +7,9 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.metadata.base.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.util.SchemaInfo;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIterator;
+import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -75,12 +77,10 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
     
     // go through all attributes in schema
     List<SDFAttribute> mAttrs = new ArrayList<SDFAttribute>();
-    SchemaIterator iterator = new SchemaIterator(this.schema);
-    while (!iterator.isFinished())
-    {
-      
+    for( SchemaInfo info : new SchemaIterator(this.schema) ) {
+    	     
       // get next schema attribute from iterator
-      SDFAttribute attr = iterator.getAttribute();
+      SDFAttribute attr = info.attribute;
       
       // if current attribute is measurement attribute
       SDFDatatype type = attr.getDatatype();
@@ -92,9 +92,6 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
         // save attribute for later use
         mAttrs.add(attr);
       }
-      
-      // tell iterator to move to next attribute in schema
-      iterator.next();
     }
     
     // 
@@ -177,12 +174,10 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
     
     // navigate through all tuples in tuple given
     // use schema given to constructor as root schema
-    TupleIterator iterator = new TupleIterator(tupleGiven, this.schema);
-    while (!iterator.isFinished())
-    {
-      
+    for( TupleInfo info : new TupleIterator(tupleGiven, this.schema) ) {
+    	     
       // get next tuple object from iterator
-      Object tupleObject = iterator.getTupleObject();
+      Object tupleObject = info.tupleObject;
       
       // if it is a tuple (could also be a double, int, etc.)
       if (tupleObject instanceof MVRelationalTuple<?>)
@@ -201,9 +196,6 @@ public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionC
         // means that meta data creation failed
         iProbabilityMetaData.setCovariance(this.covMatrix);
       }
-      
-      // tell iterator to move to next tuple
-      iterator.next();
     }
   }
 }

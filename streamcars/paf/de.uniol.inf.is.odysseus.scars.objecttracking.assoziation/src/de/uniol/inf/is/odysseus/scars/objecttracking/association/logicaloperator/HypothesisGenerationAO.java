@@ -58,7 +58,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     scannedObjects.setAttributeName(SCANNED_OBJECTS_NAME);
 
     // get timestamp from scanned data
-    SDFAttribute timestamp = helper.getStartTimestampAttribute();
+    String timeStampName = helper.getStartTimestampFullAttributeName();
+    SDFAttribute timestamp = helper.getAttribute(timeStampName);
 
     // copy scanned Objects
     helper = new SchemaHelper(((SDFAttributeListExtended) this.getSubscribedToSource(RIGHT).getSchema().clone()));

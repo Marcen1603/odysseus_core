@@ -9,7 +9,7 @@ public class HelperTest {
 		Example ex = new Example();
 		
 		// Alles ausgeben
-		TuplePrinter.printSchema(ex.getSchema(), "base");
+		TuplePrinter.printSchema(ex.getSchema());
 		System.out.println();
 		TuplePrinter.printTuple(ex.getTuple(), ex.getSchema(), "base");
 	}

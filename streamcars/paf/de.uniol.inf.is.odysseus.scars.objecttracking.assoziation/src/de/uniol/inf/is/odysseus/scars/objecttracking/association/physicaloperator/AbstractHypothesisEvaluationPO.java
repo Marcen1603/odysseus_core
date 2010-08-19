@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
@@ -118,13 +119,10 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 
   private double[] getMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path) {
     ArrayList<Double> values = new ArrayList<Double>();
-    TupleIterator iterator = new TupleIterator(tuple, path);
-    while (!iterator.isFinished()) {
-      if (SDFDatatypes.isMeasurementValue(iterator.getAttribute().getDatatype())) {
-        values.add(new Double(iterator.getTupleObject().toString()));
+    for( TupleInfo info :  new TupleIterator(tuple, path) ) {
+      if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
+        values.add(new Double(info.tupleObject.toString()));
       }
-
-      iterator.next();
     }
 
     double[] result = new double[values.size()];

@@ -59,9 +59,9 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 		SDFAttributeList sourceTimeSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema();
 		SDFAttributeList scanSchema = this.getSubscribedToSource(1).getTarget().getOutputSchema();
 		SchemaHelper helper1 = new SchemaHelper(sourceTimeSchema);
-		currentTimeSchemaPath = helper1.getSchemaIndexPath(helper1.getStartTimestampAttribute());
+		currentTimeSchemaPath = helper1.getSchemaIndexPath(helper1.getStartTimestampFullAttributeName());
 		SchemaHelper helper2 = new SchemaHelper(scanSchema);
-		currentScanTimeSchemaPath = helper2.getSchemaIndexPath(helper2.getStartTimestampAttribute());
+		currentScanTimeSchemaPath = helper2.getSchemaIndexPath(helper2.getStartTimestampFullAttributeName());
 	}
 	
 	@Override
