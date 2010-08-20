@@ -13,5 +13,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/AuroraMinCostIterFactory.xml, OSGI-INF/AuroraMinLatencyIterFactory.xml
