@@ -4,7 +4,6 @@ Bundle-Name: Provider
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.provider
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.provider.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection,
  de.uniol.inf.is.odysseus.p2p.peer,
