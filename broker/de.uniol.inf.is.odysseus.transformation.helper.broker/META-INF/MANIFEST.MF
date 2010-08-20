@@ -12,5 +12,4 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.osgi.framework;version="1.3.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.transformation.helper.broker
