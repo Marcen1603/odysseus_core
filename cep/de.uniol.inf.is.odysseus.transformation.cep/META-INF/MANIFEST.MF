@@ -5,7 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.cep
 Bundle-Version: 1.0.3
 Bundle-Vendor: University of Oldenburg
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
