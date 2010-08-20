@@ -7,7 +7,6 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.perspective.queries.impl.Activato
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp.perspective.queries
 Import-Package: org.eclipse.ui.console
