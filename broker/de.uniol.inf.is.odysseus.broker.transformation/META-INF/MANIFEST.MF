@@ -4,7 +4,6 @@ Bundle-Name: Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker.transformation
 Bundle-Version: 1.0.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.8"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.broker.dictionary,
  de.uniol.inf.is.odysseus.broker.logicaloperator,
  de.uniol.inf.is.odysseus.broker.metric,
