@@ -4,7 +4,6 @@ Bundle-Name: Priority Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.priority;singleton:=true
 Bundle-Version: 1.0.3
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.intervalapproach,
