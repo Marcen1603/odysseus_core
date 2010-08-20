@@ -4,7 +4,6 @@ Bundle-Name: Relational Priority Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.relational_priority;singleton:=true
 Bundle-Version: 1.0.1
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
