@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.drools
 Bundle-Version: 1.0.12
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.drools,
  de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement,
