@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Priorityscheduler
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.priorityscheduler
 Bundle-Version: 1.0.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.physicaloperator.base,
  de.uniol.inf.is.odysseus.planmanagement.optimization.plan,
  de.uniol.inf.is.odysseus.scheduler,
