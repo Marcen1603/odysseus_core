@@ -4,7 +4,6 @@ Bundle-Name: PQL Relational
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.pql.relational
 Bundle-Version: 1.0.0
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.logicaloperator.builder,
  de.uniol.inf.is.odysseus.parser.pql,
