@@ -5,7 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.operator.access.transformati
 Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.10"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access,
