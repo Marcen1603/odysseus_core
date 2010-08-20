@@ -5,7 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.new_transformation.costmodel.mocku
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.new_transformation.costmodel.mockup.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.new_transformation.costmodel.base,
  de.uniol.inf.is.odysseus.new_transformation.stream_characteristics,
