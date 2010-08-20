@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Base2
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.base
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.metadata.base,
