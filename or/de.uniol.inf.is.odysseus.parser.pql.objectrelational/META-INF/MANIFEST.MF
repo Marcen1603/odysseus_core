@@ -5,6 +5,5 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.pql.objectrelational
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.objectrelational.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.parser.pql.objectrelational
