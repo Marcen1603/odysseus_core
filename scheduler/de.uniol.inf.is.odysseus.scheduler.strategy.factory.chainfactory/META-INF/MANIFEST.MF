@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Chainfactory
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.monitoring,
  de.uniol.inf.is.odysseus.monitoring.physicaloperator,
