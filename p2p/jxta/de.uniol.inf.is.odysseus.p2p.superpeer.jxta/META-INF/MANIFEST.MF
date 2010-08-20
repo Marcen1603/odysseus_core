@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Jxta Super-Peer
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.superpeer.jxta
 Bundle-Version: 1.0.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.p2p.jxta.advertisements,
  de.uniol.inf.is.odysseus.p2p.jxta.utils,
  de.uniol.inf.is.odysseus.p2p.peer,
