@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.benchmarker.runner.Activator
 Require-Bundle: org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.args,
  de.uniol.inf.is.odysseus.benchmarker,
  org.simpleframework.xml,
