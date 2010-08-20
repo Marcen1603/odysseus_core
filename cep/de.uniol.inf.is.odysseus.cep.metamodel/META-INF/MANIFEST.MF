@@ -4,7 +4,6 @@ Bundle-Name: Metamodel
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.metamodel
 Bundle-Version: 1.0.0
 Bundle-Vendor: University of Oldenburg
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.cep,
  de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.cep.metamodel.exception,
