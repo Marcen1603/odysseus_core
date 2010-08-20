@@ -4,7 +4,6 @@ Bundle-Name: Relational Interval Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.relational_interval;singleton:=true
 Bundle-Version: 1.0.7
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.base.wrapper,
