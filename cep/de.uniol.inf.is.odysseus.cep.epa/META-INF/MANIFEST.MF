@@ -12,7 +12,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.metadata.base,
  de.uniol.inf.is.odysseus.physicaloperator.base,
  org.slf4j;version="1.5.6"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
  de.uniol.inf.is.odysseus.cep.epa.eventreading,
