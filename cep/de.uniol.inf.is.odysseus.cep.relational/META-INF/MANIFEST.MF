@@ -4,7 +4,6 @@ Bundle-Name: Relational
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.relational
 Bundle-Version: 1.0.0
 Bundle-Vendor: University of Oldenburg
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,
