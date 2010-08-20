@@ -38,7 +38,6 @@ Import-Package: de.uniol.inf.is.odysseus.base,
  net.jxta.util,
  net.jxta.util.documentSerializable,
  org.osgi.framework;version="1.3.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.p2p.thinpeer,
  de.uniol.inf.is.odysseus.p2p.thinpeer.gui,
  de.uniol.inf.is.odysseus.p2p.thinpeer.handler,
