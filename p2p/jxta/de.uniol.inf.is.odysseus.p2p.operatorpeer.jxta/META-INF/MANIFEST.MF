@@ -4,7 +4,6 @@ Bundle-Name: Jxta
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta
 Bundle-Version: 1.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.p2p.operatorpeer;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.base.usermanagement,
