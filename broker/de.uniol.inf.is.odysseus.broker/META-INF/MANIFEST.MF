@@ -4,7 +4,6 @@ Bundle-Name: Broker
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.broker
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.broker.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.predicate,
  de.uniol.inf.is.odysseus.broker.logicaloperator,
