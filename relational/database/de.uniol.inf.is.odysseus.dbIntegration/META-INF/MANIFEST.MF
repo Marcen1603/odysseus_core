@@ -23,7 +23,6 @@ Export-Package:
  de.uniol.inf.is.odysseus.dbIntegration.model,
  de.uniol.inf.is.odysseus.dbIntegration.operators,
  de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/connection-component.xml, OSGI-INF/console-component.xml
 Bundle-ClassPath: mysql-connector-java-5.1.10-bin.jar,
  .
