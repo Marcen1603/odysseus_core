@@ -4,7 +4,6 @@ Bundle-Name: Open
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.open
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.open.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.base.planmanagement.query,
