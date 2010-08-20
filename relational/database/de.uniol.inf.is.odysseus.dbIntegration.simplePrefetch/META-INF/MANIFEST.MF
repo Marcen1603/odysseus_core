@@ -4,7 +4,6 @@ Bundle-Name: SimplePrefetch
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.dbIntegration.simplePrefetch
 Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.dbIntegration.exceptions,
  de.uniol.inf.is.odysseus.dbIntegration.model,
  de.uniol.inf.is.odysseus.dbIntegration.serviceInterfaces,
