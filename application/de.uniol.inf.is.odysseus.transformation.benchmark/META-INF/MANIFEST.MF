@@ -4,7 +4,6 @@ Bundle-Name: Benchmark
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.transformation.benchmark
 Bundle-Version: 1.0.3
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.benchmarker.impl,
  de.uniol.inf.is.odysseus.interval_latency_priority,
  de.uniol.inf.is.odysseus.priority,
