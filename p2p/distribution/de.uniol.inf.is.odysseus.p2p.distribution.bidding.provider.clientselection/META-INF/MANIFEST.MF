@@ -4,7 +4,6 @@ Bundle-Name: Clientselection
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.clientselection
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.clientselection.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection,
  de.uniol.inf.is.odysseus.p2p.gui,
  de.uniol.inf.is.odysseus.p2p.jxta,
