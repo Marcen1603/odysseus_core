@@ -5,7 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta
 Bundle-Version: 1.0.0
 Bundle-ActivationPolicy: lazy
 Fragment-Host: de.uniol.inf.is.odysseus.p2p.administrationpeer;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
