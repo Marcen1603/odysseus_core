@@ -4,6 +4,5 @@ Bundle-Name: Implemented Actuators
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.actuator.impl
 Bundle-Version: 1.0.1
 Fragment-Host: de.uniol.inf.is.odysseus.action.services;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.action.actuator.impl
 Import-Package: de.uniol.inf.is.odysseus.action.demoapp
