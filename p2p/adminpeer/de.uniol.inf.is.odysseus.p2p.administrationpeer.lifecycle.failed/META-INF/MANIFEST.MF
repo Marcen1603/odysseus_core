@@ -4,7 +4,6 @@ Bundle-Name: Failed
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.failed
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.failed.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.p2p.peer,
  de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
  de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
