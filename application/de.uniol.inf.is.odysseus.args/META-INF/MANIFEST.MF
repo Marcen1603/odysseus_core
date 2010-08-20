@@ -5,5 +5,3 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.args
 Bundle-Version: 1.0.0
 Export-Package: de.uniol.inf.is.odysseus.args,
  de.uniol.inf.is.odysseus.args.marshaller
-Bundle-RequiredExecutionEnvironment: 
- JavaSE-1.6
