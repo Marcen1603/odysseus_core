@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CEP Sase
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.sase
 Bundle-Version: 1.0.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: antlr-runtime-3.2.jar,
  .
 Import-Package: de.uniol.inf.is.odysseus.base,
