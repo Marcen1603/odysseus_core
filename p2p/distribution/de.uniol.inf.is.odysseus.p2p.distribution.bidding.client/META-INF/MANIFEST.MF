@@ -4,7 +4,6 @@ Bundle-Name: Client
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.client
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.base.predicate,
