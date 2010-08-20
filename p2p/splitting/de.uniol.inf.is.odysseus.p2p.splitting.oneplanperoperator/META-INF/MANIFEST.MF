@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Oneplanperoperator
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator
 Bundle-Version: 1.0.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.p2p,
