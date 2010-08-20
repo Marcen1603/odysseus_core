@@ -4,7 +4,6 @@ Bundle-Name: Bidding Provider
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider
 Bundle-Version: 1.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.bidding.provider.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.logicaloperator.base,
  de.uniol.inf.is.odysseus.p2p,
