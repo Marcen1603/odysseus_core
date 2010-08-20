@@ -4,7 +4,6 @@ Bundle-Name: Transformation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.objecttracking.broker.transformation
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.10"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.base.wrapper,
  de.uniol.inf.is.odysseus.broker.physicaloperator,
