@@ -4,7 +4,6 @@ Bundle-Name: DbIntegration
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rewrite.dbIntegration
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.rewrite.drools
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.dbIntegration.control,
  de.uniol.inf.is.odysseus.dbIntegration.model,
  de.uniol.inf.is.odysseus.dbIntegration.operators
