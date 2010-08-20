@@ -4,7 +4,6 @@ Bundle-Name: de.uniol.inf.is.odysseus.objecttracking.parser
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.objecttracking.parser
 Bundle-Version: 1.0.0
 Fragment-Host: de.uniol.inf.is.odysseus.parser.cql;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.logicaloperator,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
