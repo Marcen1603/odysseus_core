@@ -1,12 +1,17 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.model.CalculationModelFactory;
 import de.uniol.inf.is.odysseus.scars.testdata.provider.model.CarModel;
+import de.uniol.inf.is.odysseus.scars.testdata.provider.model.ICalculationModel;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeFactory;
@@ -21,11 +26,18 @@ public class Provider implements IProvider {
 	 * zeitlicher abstand zwischen den einzelnen scans in ms
 	 */
 	private int delay;
-	
+	private long currentTimeStamp;
+
+	/**
+	 * Liefert eine eindeutige id f체r das auto und stellt gleichzeitig sicher,
+	 * dass ein Auto mit der id x nicht sofort in den Sichtbereich zur체ckkehrt,
+	 * wenn es ihn gerade erst an anderer Stelle verlassen hat
+	 */
+	private Queue<Integer> idQueue;
+
 	private ArrayList<CarModel> state;
 
 	public Provider() {
-
 	}
 
 	public int getNumOfCars() {
@@ -49,89 +61,170 @@ public class Provider implements IProvider {
 		if (this.numOfCars <= 0) {
 			this.numOfCars = 5;
 		}
+		this.state = new ArrayList<CarModel>();
+		this.idQueue = new LinkedList<Integer>();
+		for (int i = 0; i < numOfCars * 2; i++) {
+			idQueue.offer(i);
+		}
 	}
 
 	@Override
 	public MVRelationalTuple<?> nextTuple() {
 		/**
 		 * TODO
-		 * Berechnung des neuen zustands
-		 * Pr웖en ob auto in sichtbereich
-		 *   - wenn nicht entfernen
-		 *   - neues auto mit neuer id hinzuf웗en
+		 * Kollisionserkennung?
 		 */
-		Long tsValue = new Long(0);//TODO set correct value
-		
+		this.currentTimeStamp += this.delay;
+
+		// neuen zustand berechnen
+		for (CarModel cm : this.state) {
+			cm.getCalcModel().calculateAll();
+		}
+
+		//Pr체fen ob Auto im Sichtbereich
+		Iterator<CarModel> iterator = this.state.iterator();
+		while (iterator.hasNext()) {
+			CarModel cm = iterator.next();
+			if (!this.isVisible(cm)) {
+				iterator.remove();
+			}
+		}
+
+		// ggf. mit neuen Autos auff체llen
+		if (this.state.size() < this.numOfCars) {
+			if (this.freeEntranceSlot()) {
+				ICalculationModel calcModel = CalculationModelFactory.getInstance().getCalculationModel(
+						CalculationModelFactory.OVERTAKE_CALCULATION_MODEL);
+				calcModel.init(new Float(3));
+				calcModel.setDelay(this.delay);
+				Integer id = idQueue.poll();
+				CarModel cm = new CarModel(id, calcModel);
+				this.state.add(cm);
+			}
+		}
+
 		MVRelationalTuple<?> root = createTuple(1);
-		
+
 		MVRelationalTuple<?> scan = createTuple(2);
 		root.setAttribute(0, scan);
-		
+
 		MVRelationalTuple<?> timestamp = createTuple(1);
-		timestamp.setAttribute(0, tsValue);
-		
+		timestamp.setAttribute(0, this.currentTimeStamp);
+
 		MVRelationalTuple<?> cars = createTuple(this.numOfCars);
 		for (int i = 0; i < this.state.size(); i++) {
 			CarModel cm = this.state.get(i);
-			
+
 			MVRelationalTuple<?> type = createTuple(1);
 			type.setAttribute(0, cm.getType());
-			
+
 			MVRelationalTuple<?> id = createTuple(1);
 			id.setAttribute(0, cm.getId());
-			
+
 			MVRelationalTuple<?> laneid = createTuple(1);
 			laneid.setAttribute(0, cm.getLaneid());
-			
+
 			MVRelationalTuple<?> posx = createTuple(1);
 			posx.setAttribute(0, cm.getPosx());
-			
+
 			MVRelationalTuple<?> posy = createTuple(1);
 			posy.setAttribute(0, cm.getPosy());
-			
+
 			MVRelationalTuple<?> posz = createTuple(1);
 			posz.setAttribute(0, cm.getPosz());
-			
+
 			MVRelationalTuple<?> roll = createTuple(1);
 			roll.setAttribute(0, cm.getRoll());
-			
+
 			MVRelationalTuple<?> pitch = createTuple(1);
 			pitch.setAttribute(0, cm.getPitch());
-			
+
 			MVRelationalTuple<?> heading = createTuple(1);
 			heading.setAttribute(0, cm.getHeading());
-			
+
 			MVRelationalTuple<?> velocity = createTuple(1);
 			velocity.setAttribute(0, cm.getVelocity());
-			
+
 			MVRelationalTuple<?> length = createTuple(1);
 			length.setAttribute(0, cm.getLength());
-			
+
 			MVRelationalTuple<?> width = createTuple(1);
 			width.setAttribute(0, cm.getWidth());
-			
+
 			MVRelationalTuple<?> car = createTuple(12);
 			car.setAttribute(0, type);
-			car.setAttribute(0, id);
-			car.setAttribute(0, laneid);
-			car.setAttribute(0, posx);
-			car.setAttribute(0, posy);
-			car.setAttribute(0, posz);
-			car.setAttribute(0, roll);
-			car.setAttribute(0, pitch);
-			car.setAttribute(0, heading);
-			car.setAttribute(0, velocity);
-			car.setAttribute(0, length);
-			car.setAttribute(0, width);
-			
+			car.setAttribute(1, id);
+			car.setAttribute(2, laneid);
+			car.setAttribute(3, posx);
+			car.setAttribute(4, posy);
+			car.setAttribute(5, posz);
+			car.setAttribute(6, roll);
+			car.setAttribute(7, pitch);
+			car.setAttribute(8, heading);
+			car.setAttribute(9, velocity);
+			car.setAttribute(10, length);
+			car.setAttribute(11, width);
+
 			cars.setAttribute(i, car);
 		}
 		
+		scan.addAttributeValue(0, timestamp);
+		scan.addAttributeValue(1, cars);
+		
+		//this.printCarModels();
+
 		return root;
 	}
-	
-	private MVRelationalTuple<? extends IProbability> createTuple(int attributeCount) {
-		MVRelationalTuple<StreamCarsMetaData<Object>> tuple = new MVRelationalTuple<StreamCarsMetaData<Object>>(attributeCount);
+
+	private void printCarModels() {
+		if (this.currentTimeStamp % 1000 == 0) {
+			System.out.println();
+			for (int i = 0; i < 80; i++)
+				System.out.print("*");
+			System.out.println();
+			System.out.println("Timestamp: " + this.currentTimeStamp);
+			for (CarModel cm : this.state) {
+				System.out.println(cm);
+			}
+		}
+	}
+
+	/**
+	 * Pr체ft, ob genug Platz f체r ein weiteres Auto ist
+	 * @return
+	 */
+	private boolean freeEntranceSlot() {
+		for (CarModel cm : this.state) {
+			if (cm.getPosx() < 20) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Diese Methode 체berpr체ft, ob ein Objekt noch innerhalb des sichtbaren
+	 * Bereiches ist
+	 * 
+	 * Momentan wird nur die Entfernung zum eigenen Auto 체berpr체ft. Verdeckungen
+	 * durch andere Autos werden nicht ber체cksichtigt
+	 * 
+	 * @param cm
+	 *            das zu 체berpr체fende CarModel
+	 * @return true wenn das auto sichtbar ist, ansonsten false
+	 */
+	private boolean isVisible(CarModel cm) {
+		if (cm.getPosx() > 150 || cm.getPosx() < 0 || cm.getPosy() < -100
+				|| cm.getPosy() > 100) {
+			return false;
+		}
+		return true;
+	}
+
+	private MVRelationalTuple<? extends IProbability> createTuple(
+			int attributeCount) {
+		MVRelationalTuple<StreamCarsMetaData<Object>> tuple = new MVRelationalTuple<StreamCarsMetaData<Object>>(
+				attributeCount);
 		return tuple;
 	}
 
@@ -201,7 +294,7 @@ public class Provider implements IProvider {
 
 		SDFAttributeListExtended schema = new SDFAttributeListExtended();
 		schema.add(scan);
-
+		
 		return schema;
 	}
 

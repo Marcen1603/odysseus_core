@@ -9,4 +9,5 @@ public interface IProvider {
 	public Object nextTuple();
 	
 	public SDFAttributeList getSchema(String sourceName);
+	
 }

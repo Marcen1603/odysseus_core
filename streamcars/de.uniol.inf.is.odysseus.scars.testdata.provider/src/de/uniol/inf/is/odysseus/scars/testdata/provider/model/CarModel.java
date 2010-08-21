@@ -1,129 +1,201 @@
 package de.uniol.inf.is.odysseus.scars.testdata.provider.model;
 
+
 public class CarModel {
 
-	private Integer type;//Fahrzeugtyp: immer Wert 4
-	private Integer id;// alles > 0 
-	private Integer laneid; //fahrspur: maximal 6
-	private Float posx; // relative koordinaten (in meter?)
-	private Float posy;
-	private Float posz;
-	private Float roll;// kann immer 0 sein
-	private Float pitch;// kann immer 0 sein
-	private Float heading;// kann immer 0 sein
-	private Float velocity;// absolute geschwindigkeit in ?? 
-	private Float length; //lŠnge des autos in m
-	private Float width; //lŠnge des autos in m
-	
-	private ICalculationModel calcModel;
+	private int type;// Fahrzeugtyp: immer Wert 4
+	private int id;// alles > 0
+	private int laneid; // fahrspur: maximal 6
+	private float posx; // relative koordinaten (in meter?)
+	private float posy;
+	private float posz;
+	private float roll;// kann immer 0 sein
+	private float pitch;// kann immer 0 sein
+	private float heading;// kann immer 0 sein
+	private float velocity;// absolute geschwindigkeit in ??
+	private float length; // lï¿½nge des autos in m
+	private float width; // lï¿½nge des autos in m
 
+	private ICalculationModel calcModel;
+	
 	public CarModel(int id, ICalculationModel calcModel) {
 		this.type = 4;
 		this.id = id;
-		this.laneid = 0;
 		this.roll = 0.0f;
 		this.pitch = 0.0f;
 		this.heading = 0.0f;
 		this.length = 4.2f;
 		this.width = 1.95f;
-		
+
 		this.calcModel = calcModel;
+		this.calcModel.setModel(this);
+		this.laneid = this.calcModel.initLaneid();
+		this.posx = this.calcModel.initPosx();
+		this.posy = this.calcModel.initPosy();
+		this.posz = this.calcModel.initPosz();
+		this.velocity = this.calcModel.initVelocity();
+	}
+	
+	public CarModel(CarModel clone) {
+		this.heading = clone.heading;
+		this.id = clone.id;
+		this.laneid = clone.laneid;
+		this.length = clone.length;
+		this.pitch = clone.pitch;
+		this.posx = clone.posx;
+		this.posy = clone.posy;
+		this.posz = clone.posz;
+		this.roll = clone.roll;
+		this.type = clone.type;
+		this.velocity = clone.velocity;
+		this.width = clone.width;
 	}
 
-	public Integer getType() {
+	public int getType() {
 		return type;
 	}
 
-	public void setType(Integer type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public Integer getLaneid() {
+	public int getLaneid() {
 		return laneid;
 	}
 
-	public void setLaneid(Integer laneid) {
+	public void setLaneid(int laneid) {
 		this.laneid = laneid;
 	}
 
-	public Float getPosx() {
+	public float getPosx() {
 		return posx;
 	}
 
-	public void setPosx(Float posx) {
+	public void setPosx(float posx) {
 		this.posx = posx;
 	}
 
-	public Float getPosy() {
+	public float getPosy() {
 		return posy;
 	}
 
-	public void setPosy(Float posy) {
+	public void setPosy(float posy) {
 		this.posy = posy;
 	}
 
-	public Float getPosz() {
+	public float getPosz() {
 		return posz;
 	}
 
-	public void setPosz(Float posz) {
+	public void setPosz(float posz) {
 		this.posz = posz;
 	}
 
-	public Float getRoll() {
+	public float getRoll() {
 		return roll;
 	}
 
-	public void setRoll(Float roll) {
+	public void setRoll(float roll) {
 		this.roll = roll;
 	}
 
-	public Float getPitch() {
+	public float getPitch() {
 		return pitch;
 	}
 
-	public void setPitch(Float pitch) {
+	public void setPitch(float pitch) {
 		this.pitch = pitch;
 	}
 
-	public Float getHeading() {
+	public float getHeading() {
 		return heading;
 	}
 
-	public void setHeading(Float heading) {
+	public void setHeading(float heading) {
 		this.heading = heading;
 	}
 
-	public Float getVelocity() {
+	public float getVelocity() {
 		return velocity;
 	}
 
-	public void setVelocity(Float velocity) {
+	public void setVelocity(float velocity) {
 		this.velocity = velocity;
 	}
 
-	public Float getLength() {
+	public float getLength() {
 		return length;
 	}
 
-	public void setLength(Float length) {
+	public void setLength(float length) {
 		this.length = length;
 	}
 
-	public Float getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
-	public void setWidth(Float width) {
+	public void setWidth(float width) {
 		this.width = width;
 	}
+
+	public ICalculationModel getCalcModel() {
+		return calcModel;
+	}
+
+	public void setCalcModel(ICalculationModel calcModel) {
+		this.calcModel = calcModel;
+	}
+	
+	/**
+	 * setzt die Werte eines Autos auf die Werte eines anderen Autos
+	 */
+	public void setValues(CarModel other) {
+		this.setType(other.getType());
+		this.setId(other.getId());
+		this.setLaneid(other.getLaneid());
+		this.setPosx(other.getPosx());
+		this.setPosy(other.getPosy());
+		this.setPosz(other.getPosz());
+		this.setRoll(other.getRoll());
+		this.setPitch(other.getPitch());
+		this.setHeading(other.getHeading());
+		this.setVelocity(other.getVelocity());
+		this.setWidth(other.getWidth());
+		this.setLength(other.getLength());
+	}
+	
+	public String toString() {
+		String str = "Car\n";
+		str += "  type:     " + this.type +"\n";
+		str += "  id:       " + this.id +"\n";
+		str += "  laneid:   " + this.laneid +"\n";
+		str += "  x:        " + this.posx +"\n";
+		str += "  y:        " + this.posy +"\n";
+		str += "  z:        " + this.posz +"\n";
+		str += "  roll:     " + this.roll +"\n";
+		str += "  pitch:    " + this.pitch +"\n";
+		str += "  heading:  " + this.heading +"\n";
+		str += "  velocity: " + this.velocity +"\n";
+		str += "  length:   " + this.length +"\n";
+		str += "  width:    " + this.width +"\n";
+		
+		return str;
+	}
+
+	@Override
+	protected Object clone() {
+		return new CarModel(this);
+	}
+	
+	
 
 }
