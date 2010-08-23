@@ -18,13 +18,6 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
 
   private AbstractMetaDataUpdateFunction updateMetaDataFunction;
 
-  public AbstractMetaDataUpdateFunction getUpdateMetaDataFunction() {
-    return updateMetaDataFunction;
-  }
-
-  public void setUpdateMetaDataFunction(AbstractMetaDataUpdateFunction updateMetaDataFunction) {
-    this.updateMetaDataFunction = updateMetaDataFunction;
-  }
 
   public FilterCovarianceUpdatePO() {
     super();
@@ -33,14 +26,13 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   public FilterCovarianceUpdatePO(FilterCovarianceUpdatePO<M> copy) {
     super();
     this.setUpdateMetaDataFunction(copy.getUpdateMetaDataFunction().clone());
-
   }
 
   public void compute(Connection connected) {
     updateMetaDataFunction.compute(connected);
-
   }
 
+  
   @Override
   public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
@@ -58,7 +50,6 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
     }
 
     return object;
-
   }
 
   @Override
@@ -72,6 +63,16 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
       this.sendPunctuation(timestamp);
       havingData = false;
     }
+  }
+  
+  
+  // Getter & Setter
 
+  public AbstractMetaDataUpdateFunction getUpdateMetaDataFunction() {
+    return updateMetaDataFunction;
+  }
+
+  public void setUpdateMetaDataFunction(AbstractMetaDataUpdateFunction updateMetaDataFunction) {
+    this.updateMetaDataFunction = updateMetaDataFunction;
   }
 }

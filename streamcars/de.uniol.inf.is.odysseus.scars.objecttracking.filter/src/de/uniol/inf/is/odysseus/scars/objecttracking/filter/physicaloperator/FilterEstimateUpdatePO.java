@@ -30,7 +30,6 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
     this.dataUpdateFunction = copy.getDataUpdateFunction().clone();
     this.setNewObjListPath(new String(copy.getNewObjListPath()));
     this.setOldObjListPath(new String(copy.getOldObjListPath()));
-
   }
 
   public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
@@ -86,23 +85,14 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
     }
 
     return object;
-
   }
-
+  
   public void compute(Connection connected, ArrayList<int[]> measurementValuePathsTupleNew,
       ArrayList<int[]> measurementValuePathsTupleOld, int i) {
     this.dataUpdateFunction.compute(connected, measurementValuePathsTupleNew, measurementValuePathsTupleOld, i);
-
   }
-
-  public void setDataUpdateFunction(AbstractDataUpdateFunction dataUpdateFunction) {
-    this.dataUpdateFunction = dataUpdateFunction;
-  }
-
-  public AbstractDataUpdateFunction getDataUpdateFunction() {
-    return dataUpdateFunction;
-  }
-
+  
+  
   @Override
   public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
     return new FilterEstimateUpdatePO<M>(this);
@@ -111,5 +101,16 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
   @Override
   public void processPunctuation(PointInTime timestamp, int port) {
     this.sendPunctuation(timestamp);
+  }
+
+  
+  // Getter & Setter
+  
+  public AbstractDataUpdateFunction getDataUpdateFunction() {
+    return dataUpdateFunction;
+  }
+  
+  public void setDataUpdateFunction(AbstractDataUpdateFunction dataUpdateFunction) {
+    this.dataUpdateFunction = dataUpdateFunction;
   }
 }

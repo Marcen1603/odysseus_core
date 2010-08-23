@@ -22,15 +22,20 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
 
   private AbstractMetaDataCreationFunction metaDataCreationFunction;
 
+  
   public FilterGainPO() {
     super();
   }
 
   public FilterGainPO(FilterGainPO<M> copy) {
     this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
-
+  }
+  
+  public void compute(Connection connected) {
+    metaDataCreationFunction.compute(connected);
   }
 
+  
   @Override
   public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
@@ -47,13 +52,6 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
     }
 
     return object;
-
-  }
-
-  public void compute(Connection connected) {
-
-    metaDataCreationFunction.compute(connected);
-
   }
 
   @Override
@@ -61,17 +59,19 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
     return new FilterGainPO<M>(this);
   }
 
-  public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {
-    this.metaDataCreationFunction = metaDataCreationFunction;
-  }
-
-  public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
-    return metaDataCreationFunction;
-  }
-
   @Override
   public void processPunctuation(PointInTime timestamp, int port) {
     this.sendPunctuation(timestamp);
   }
 
+  
+  // Getter & Setter
+  
+  public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
+    return metaDataCreationFunction;
+  }
+  
+  public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {
+    this.metaDataCreationFunction = metaDataCreationFunction;
+  }
 }

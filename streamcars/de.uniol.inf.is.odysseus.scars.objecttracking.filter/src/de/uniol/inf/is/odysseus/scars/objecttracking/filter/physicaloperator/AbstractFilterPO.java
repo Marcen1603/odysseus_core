@@ -20,9 +20,19 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
   private HashMap<Integer, Object> parameters;
 
   public AbstractFilterPO() {
-
+	  
   }
-
+  
+  protected void process_next(MVRelationalTuple<M> object, int port) {
+    havingData = true;
+    object = computeAll(object);
+    // transfer to broker
+    transfer(object);
+  }
+  
+  public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
+  
+  
   @Override
   public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
 
@@ -31,59 +41,30 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
     return OutputMode.MODIFIED_INPUT;
   }
 
-  protected void process_next(MVRelationalTuple<M> object, int port) {
-    havingData = true;
-    object = computeAll(object);
-    // transfer to broker
-    transfer(object);
-  }
+  
+  // Getter & Setter
 
-  /**
-   * @param oldObjListPath
-   *          the oldObjListPath to set
-   */
+  public String getOldObjListPath() {
+    return this.oldObjListPath;
+  }
+  
   public void setOldObjListPath(String oldObjListPath) {
     this.oldObjListPath = oldObjListPath;
   }
 
-  /**
-   * @param newObjListPath
-   *          the newObjListPath to set
-   */
   public String getNewObjListPath() {
     return this.newObjListPath;
   }
 
-  /**
-   * @param newObjListPath
-   *          the newObjListPath to set
-   */
   public void setNewObjListPath(String newObjListPath) {
     this.newObjListPath = newObjListPath;
   }
-
-  /**
-   * @param oldObjListPath
-   *          the oldObjListPath to set
-   */
-  public String getOldObjListPath() {
-    return this.oldObjListPath;
+  
+  public HashMap<Integer, Object> getParameters() {
+	return parameters;
   }
 
-  public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
-
-  /**
-   * @param parameters
-   *          the parameters to set
-   */
   public void setParameters(HashMap<Integer, Object> parameters) {
     this.parameters = parameters;
-  }
-
-  /**
-   * @return the parameters
-   */
-  public HashMap<Integer, Object> getParameters() {
-    return parameters;
   }
 }
