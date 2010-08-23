@@ -4,10 +4,13 @@
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator;
 
 
+import java.util.HashMap;
+
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
@@ -23,31 +26,31 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 3037302552522493103L;
 
+	private HashMap<Integer, Object> parameters;
+	
 	private String functionID;
 	
-	private AbstractMetaDataUpdateFunction filterFunction;
+	private AbstractDataUpdateFunction dataUpdateFunction;
 	
 	// path to new  objects
 	private String newObjListPath;
 	
-	// schemas
-	private SDFAttributeList leftSchema;
-
-	
 	
 	/**
-	 * @param po
+	 * @param AO
 	 */
 	public InitializationAO(InitializationAO<M> copy) {
 		super(copy);
-		// TODO Auto-generated constructor stub
+		this.setNewObjListPath(new String(copy.getNewObjListPath()));
+		this.setFunctionID(new String(copy.getFunctionID()));
+		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 	}
 
 	/**
 	 * 
 	 */
 	public InitializationAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	/* (non-Javadoc)
@@ -55,8 +58,7 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	 */
 	@Override
 	public AbstractLogicalOperator clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new InitializationAO<M>(this);
 	}
 
 	/* (non-Javadoc)
@@ -64,17 +66,8 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	 */
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setLeftSchema(SDFAttributeList leftSchema) {
-		this.leftSchema = leftSchema;
-	}
-
-	public SDFAttributeList getLeftSchema() {
-		return leftSchema;
-	}
+		return this.getOutputSchema();
+		}
 
 	public void setNewObjListPath(String newObjListPath) {
 		this.newObjListPath = newObjListPath;
@@ -97,6 +90,22 @@ public class InitializationAO<M extends IProbability> extends UnaryLogicalOp {
 	 */
 	public String getFunctionID() {
 		return functionID;
+	}
+
+	public void setDataUpdateFunction(AbstractDataUpdateFunction dataUpdateFunction) {
+		this.dataUpdateFunction = dataUpdateFunction;
+	}
+
+	public AbstractDataUpdateFunction getDataUpdateFunction() {
+		return dataUpdateFunction;
+	}
+
+	public void setParameters(HashMap<Integer, Object> parameters) {
+		this.parameters = parameters;
+	}
+
+	public HashMap<Integer, Object> getParameters() {
+		return parameters;
 	}
 
 }

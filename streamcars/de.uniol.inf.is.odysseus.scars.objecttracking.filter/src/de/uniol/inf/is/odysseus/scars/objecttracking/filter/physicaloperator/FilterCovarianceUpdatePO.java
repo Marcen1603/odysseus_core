@@ -24,7 +24,7 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   }
 
   public FilterCovarianceUpdatePO(FilterCovarianceUpdatePO<M> copy) {
-    super();
+    super(copy);
     this.setUpdateMetaDataFunction(copy.getUpdateMetaDataFunction().clone());
   }
 

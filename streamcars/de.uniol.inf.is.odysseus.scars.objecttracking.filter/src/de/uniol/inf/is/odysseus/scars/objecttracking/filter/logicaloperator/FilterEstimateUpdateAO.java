@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogicalOp {
@@ -19,6 +20,8 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
 
+	private AbstractDataUpdateFunction  dataUpdateFunction;
+	
 	
 	public FilterEstimateUpdateAO()
 	{
@@ -31,6 +34,7 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 		this.setNewObjListPath(new String(copy.getNewObjListPath()));
 		this.setFunctionID(new String(copy.getFunctionID()));
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setDataUpdateFunction(copy.getDataUpdateFunction().clone());
 	}
 
 	
@@ -77,6 +81,14 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 
 	public void setParameters(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
+	}
+
+	public void setDataUpdateFunction(AbstractDataUpdateFunction dataUpdateFunction) {
+		this.dataUpdateFunction = dataUpdateFunction;
+	}
+
+	public AbstractDataUpdateFunction getDataUpdateFunction() {
+		return dataUpdateFunction;
 	}
 }
 

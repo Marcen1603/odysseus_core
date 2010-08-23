@@ -20,7 +20,15 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
   private HashMap<Integer, Object> parameters;
 
   public AbstractFilterPO() {
-	  
+	 super(); 
+  }
+  
+  public AbstractFilterPO(AbstractFilterPO<M> copy) {
+	  super(copy);
+	  this.setNewObjListPath(new String(copy.getNewObjListPath()));
+	  this.setOldObjListPath(new String(copy.getOldObjListPath()));
+	  this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+	  this.havingData= copy.havingData;
   }
   
   protected void process_next(MVRelationalTuple<M> object, int port) {

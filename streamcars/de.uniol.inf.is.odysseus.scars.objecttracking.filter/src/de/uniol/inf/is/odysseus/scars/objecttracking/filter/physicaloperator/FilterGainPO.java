@@ -28,7 +28,8 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
   }
 
   public FilterGainPO(FilterGainPO<M> copy) {
-    this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
+    super(copy);
+	this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
   }
   
   public void compute(Connection connected) {

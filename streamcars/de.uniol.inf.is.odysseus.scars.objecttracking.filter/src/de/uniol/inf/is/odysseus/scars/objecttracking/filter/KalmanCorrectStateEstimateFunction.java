@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData
 import de.uniol.inf.is.odysseus.scars.util.OrAttributeResolver;
 
 
-public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFunction {
+public class KalmanCorrectStateEstimateFunction<K> extends AbstractDataUpdateFunction {
 		
 
 		
@@ -20,8 +20,8 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 		
 	}
 		
-	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction copy) {
-		
+	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction<K> copy) {
+		super(copy);
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 			
 	}
@@ -34,8 +34,8 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 	@Override
 	public void compute(Connection connected, ArrayList<int[]> measurementValuePathsTupleNew, ArrayList<int[]> measurementValuePathsTupleOld, int i) {
 		
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
-		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+		MVRelationalTuple<StreamCarsMetaData<K>> oldTuple = (MVRelationalTuple<StreamCarsMetaData<K>>) connected.getRight();
+		MVRelationalTuple<StreamCarsMetaData<K>> newTuple = (MVRelationalTuple<StreamCarsMetaData<K>>) connected.getLeft();
 	
 		double[] measurementOld = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleOld, oldTuple);
 		
@@ -69,7 +69,7 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 	@Override
 	public AbstractDataUpdateFunction clone() {
 		
-		return new KalmanCorrectStateEstimateFunction(this);
+		return new KalmanCorrectStateEstimateFunction<K>(this);
 	}
 
 	

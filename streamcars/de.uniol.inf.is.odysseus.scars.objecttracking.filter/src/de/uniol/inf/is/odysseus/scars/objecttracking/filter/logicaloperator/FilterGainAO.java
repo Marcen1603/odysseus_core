@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
@@ -15,6 +16,7 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
 	
+	private AbstractMetaDataCreationFunction metaDataCreationFunction;
 	
 	public FilterGainAO()
 	{
@@ -25,6 +27,7 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 		super(copy);
 		this.setFunctionID(new String(copy.getFunctionID()));
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 	}
 
 
@@ -55,6 +58,14 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 
 	public void setParameters(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
+	}
+
+	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {
+		this.metaDataCreationFunction = metaDataCreationFunction;
+	}
+
+	public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
+		return metaDataCreationFunction;
 	}
 }
 
