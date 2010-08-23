@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scars.util.test;
 
-import de.uniol.inf.is.odysseus.scars.util.TuplePrinter;
+import de.uniol.inf.is.odysseus.scars.util.UtilPrinter;
 
 public class HelperTest {
 
@@ -9,8 +9,8 @@ public class HelperTest {
 		Example ex = new Example();
 		
 		// Alles ausgeben
-		TuplePrinter.printSchema(ex.getSchema());
+		UtilPrinter.printSchema(ex.getSchema());
 		System.out.println();
-		TuplePrinter.printTuple(ex.getTuple(), ex.getSchema(), "base");
+		UtilPrinter.printTuple(ex.getTuple(), ex.getSchema(), "base");
 	}
 }

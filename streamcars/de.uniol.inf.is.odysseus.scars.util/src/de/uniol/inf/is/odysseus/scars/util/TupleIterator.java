@@ -224,7 +224,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 
 	// private Methode: set den Iterator zur Wiederverwendung zurück
 	private void reset(TupleIndexPath tupleStart) {
-		this.tupleStart = tupleStart;
+		this.tupleStart = tupleStart.clone();
 		this.schemaStart = null;
 
 		SchemaIndexPath start = tupleStart.toSchemaIndexPath();
@@ -236,7 +236,8 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 
 		if (start != null) {
 			IteratorEntry e = new IteratorEntry(tupleStart.getTupleObject());
-			e.index = tupleStart.getTupleIndices().get(tupleStart.getLength() - 1).toInt();
+//			e.index = tupleStart.getTupleIndices().get(tupleStart.getLength() - 1).toInt();
+			e.index = 0;
 
 			this.pointer.push(e);
 
@@ -259,7 +260,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	// private Methode: set den Iterator zur Wiederverwendung zurück
 	private void reset(SchemaIndexPath start) {
 		this.tupleStart = null;
-		this.schemaStart = start;
+		this.schemaStart = start.clone();
 
 		pointer.clear();
 		schemaIndices.clear();
@@ -285,10 +286,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 					insideList.push(start.getSchemaIndex(i).isList() | insideList.peek());
 			}
 
-		} else {
-			throw new IllegalArgumentException("start is null");
 		}
-
 	}
 
 	@Override

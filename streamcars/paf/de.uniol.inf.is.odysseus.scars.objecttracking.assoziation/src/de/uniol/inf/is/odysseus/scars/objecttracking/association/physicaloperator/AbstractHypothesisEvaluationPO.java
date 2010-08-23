@@ -14,8 +14,10 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.scars.util.UtilPrinter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
@@ -38,8 +40,6 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
   private SchemaHelper schemaHelper;
   private SchemaIndexPath predictedObjectListPath;
   private SchemaIndexPath scannedObjectListPath;
-  private SchemaIndexPath scannedObjPath;
-  private SchemaIndexPath predictedObjPath;
 
   public AbstractHypothesisEvaluationPO() {
     super();
@@ -86,7 +86,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
   public HashMap<String, String> getMeasurementPairs() {
     return measurementPairs;
   }
-  
+
   @SuppressWarnings("unchecked")
   private ArrayList<MVRelationalTuple<M>> getObjectList(MVRelationalTuple<M> mvRelationalTuple) {
     ArrayList<MVRelationalTuple<M>> objects = new ArrayList<MVRelationalTuple<M>>();
@@ -98,30 +98,25 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     return objects;
   }
 
-  private double[][] evaluateAll(MVRelationalTuple<M> baseObject, double[][] matrix,
-      ArrayList<MVRelationalTuple<M>> scannedObjects, ArrayList<MVRelationalTuple<M>> predictedObjects) {
-    if (matrix == null || scannedObjects == null || predictedObjects == null) {
-      throw new NullPointerException("");
-    }
-
-    for (int i = 0; i < scannedObjects.size(); i++) {
-      for (int j = 0; j < predictedObjects.size(); j++) {
-        MVRelationalTuple<M> scannedObject = scannedObjects.get(i);
-        MVRelationalTuple<M> predictedObject = predictedObjects.get(j);
-
-        matrix[i][j] = evaluate(scannedObject.getMetadata().getCovariance(),
-            getMeasurementValues(baseObject, this.scannedObjPath), predictedObject.getMetadata().getCovariance(),
-            getMeasurementValues(baseObject, this.predictedObjPath));
+  private int countChildTuple(MVRelationalTuple<M> mvRelationalTuple) {
+    int result = 0;
+    for (Object attribute : mvRelationalTuple.getAttributes()) {
+      if (attribute instanceof MVRelationalTuple<?>) {
+        result++;
       }
     }
-    return matrix;
+    return result;
   }
 
-  private double[] getMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path) {
+  private double[] getMeasurementValues(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath) {
     ArrayList<Double> values = new ArrayList<Double>();
-    for( TupleInfo info :  new TupleIterator(tuple, path) ) {
+
+    for (TupleInfo info : new TupleIterator(tuple, tupleIndexPath)) {
       if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
+        System.out.println("MV: " + info.attribute.toString() + " - " + info.tupleObject.toString());
         values.add(new Double(info.tupleObject.toString()));
+      } else {
+        System.out.println(info.attribute.toString() + " - " + info.tupleObject.toString());
       }
     }
 
@@ -132,13 +127,13 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 
     return result;
   }
-  
+
   /**
    * Inits the algorithm specific parameter. The parameter are stored in the
    * HashMap algorithmParameter.
    */
   public abstract void initAlgorithmParameter();
-  
+
   public abstract double evaluate(double[][] scannedObjCovariance, double[] scannedObjMesurementValues,
       double[][] predictedObjCovariance, double[] predictedObjMesurementValues);
 
@@ -148,50 +143,84 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
     this.schemaHelper = new SchemaHelper(getOutputSchema());
 
     this.scannedObjectListPath = this.schemaHelper.getSchemaIndexPath(this.newObjListPath);
-    this.scannedObjPath = this.schemaHelper.getSchemaIndexPath(this.newObjListPath + SchemaHelper.ATTRIBUTE_SEPARATOR
-        + this.scannedObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
-
     this.predictedObjectListPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath);
-    this.predictedObjPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath + SchemaHelper.ATTRIBUTE_SEPARATOR
-        + this.predictedObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
   }
 
   @SuppressWarnings("unchecked")
   @Override
   protected void process_next(MVRelationalTuple<M> object, int port) {
-    // 1 - Get the needed data out of the MVRelationalTuple object
-    // 1.1 - Get the list of new objects as an array of MVRelationalTuple
-    ArrayList<MVRelationalTuple<M>> newList = getObjectList((MVRelationalTuple<M>) this.scannedObjectListPath
-        .toTupleIndexPath(object).getTupleObject());
 
-    // 1.2 - Get the list of old objects (which are predicted to the
-    // timestamp of the new objects) as an array of MVRelationalTuple
-    ArrayList<MVRelationalTuple<M>> oldList = getObjectList((MVRelationalTuple<M>) this.predictedObjectListPath
-        .toTupleIndexPath(object).getTupleObject());
+    TupleIndexPath scannedTupleIndexPath = this.scannedObjectListPath.toTupleIndexPath(object);
+    TupleIndexPath predictedTupleIndexPath = this.predictedObjectListPath.toTupleIndexPath(object);
 
-    // 1.3 - Get the list of connections between old and new objects as an
-    // array of Connection
-    Connection[] objConList = object.getMetadata().getConnectionList().toArray(new Connection[0]);
+    double[][] corMatrix = new double[countChildTuple((MVRelationalTuple<M>) scannedTupleIndexPath.getTupleObject())][countChildTuple((MVRelationalTuple<M>) predictedTupleIndexPath
+        .getTupleObject())];
 
-    // 2 - Convert the connection list to an matrix of ratings so that even
-    // connections which are NOT in the connections list (so they have a
-    // rating of 0) can be evaluated
-    CorrelationMatrixUtils<M> corUtils = new CorrelationMatrixUtils<M>();
-    double[][] corMatrix = corUtils.encodeMatrix(newList.toArray(new MVRelationalTuple[0]),
-        oldList.toArray(new MVRelationalTuple[0]), objConList);
+    int i = 0;
+    int j = 0;
+    for (TupleInfo scannedTupleInfo : scannedTupleIndexPath) {
+      MVRelationalTuple<M> scannedObject = (MVRelationalTuple<M>) scannedTupleInfo.tupleObject;
 
-    // 3 - Evaluate each connection in the matrix
-    corMatrix = this.evaluateAll(object, corMatrix, newList, oldList);
+      System.out.println("###################################################");
+      System.out.println(i + ": " + scannedTupleInfo.tupleIndexPath);
+      System.out.println(scannedObject.toString());
+      UtilPrinter.printInfo(getMeasurementValues(object, scannedTupleInfo.tupleIndexPath));
 
-    // 4 - Generate a new connection list out of the matrix. only
-    // connections with rating > 0 will be stored so that the connection
-    // list is as small as possible
-    ConnectionList newObjConList = corUtils.decodeMatrix(newList.toArray(new MVRelationalTuple[0]),
-        oldList.toArray(new MVRelationalTuple[0]), corMatrix);
+      for (TupleInfo predictedTupleInfo : predictedTupleIndexPath) {
+        MVRelationalTuple<M> predictedObject = (MVRelationalTuple<M>) predictedTupleInfo.tupleObject;
 
-    // 5 - Replace the old connection list in the metadata with the new
-    // connection list
-    object.getMetadata().setConnectionList(newObjConList);
+        System.out.println("----------------------------------------------------");
+
+        System.out.println(j + ": " + predictedTupleInfo.tupleIndexPath);
+        System.out.println(predictedObject.toString());
+        UtilPrinter.printInfo(getMeasurementValues(object, predictedTupleInfo.tupleIndexPath));
+
+        corMatrix[i][j++] = evaluate(scannedObject.getMetadata().getCovariance(),
+            getMeasurementValues(object, scannedTupleInfo.tupleIndexPath), predictedObject.getMetadata()
+                .getCovariance(), getMeasurementValues(object, predictedTupleInfo.tupleIndexPath));
+      }
+      j = 0;
+      i++;
+    }
+
+    // // 1 - Get the needed data out of the MVRelationalTuple object
+    // // 1.1 - Get the list of new objects as an array of MVRelationalTuple
+    // ArrayList<MVRelationalTuple<M>> newList =
+    // getObjectList((MVRelationalTuple<M>) scannedTupleIndexPath
+    // .getTupleObject());
+    //
+    // // 1.2 - Get the list of old objects (which are predicted to the
+    // // timestamp of the new objects) as an array of MVRelationalTuple
+    // ArrayList<MVRelationalTuple<M>> oldList =
+    // getObjectList((MVRelationalTuple<M>) predictedTupleIndexPath
+    // .getTupleObject());
+    //
+    // // 1.3 - Get the list of connections between old and new objects as an
+    // // array of Connection
+    // Connection[] objConList =
+    // object.getMetadata().getConnectionList().toArray(new Connection[0]);
+    //
+    // // 2 - Convert the connection list to an matrix of ratings so that even
+    // // connections which are NOT in the connections list (so they have a
+    // // rating of 0) can be evaluated
+    // CorrelationMatrixUtils<M> corUtils = new CorrelationMatrixUtils<M>();
+    // corMatrix = corUtils.encodeMatrix(newList.toArray(new
+    // MVRelationalTuple[0]),
+    // oldList.toArray(new MVRelationalTuple[0]), objConList);
+    //
+    // // 3 - Evaluate each connection in the matrix
+    // //corMatrix = this.evaluateAll(object, corMatrix, newList, oldList);
+    //
+    // // 4 - Generate a new connection list out of the matrix. only
+    // // connections with rating > 0 will be stored so that the connection
+    // // list is as small as possible
+    // ConnectionList newObjConList = corUtils.decodeMatrix(newList.toArray(new
+    // MVRelationalTuple[0]),
+    // oldList.toArray(new MVRelationalTuple[0]), corMatrix);
+    //
+    // // 5 - Replace the old connection list in the metadata with the new
+    // // connection list
+    // object.getMetadata().setConnectionList(newObjConList);
 
     // 6 - ready -> transfer to next operator
     transfer(object);
@@ -199,7 +228,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
 
   @Override
   public void processPunctuation(PointInTime timestamp, int port) {
-		this.sendPunctuation(timestamp);
+    this.sendPunctuation(timestamp);
   }
 
   @Override
