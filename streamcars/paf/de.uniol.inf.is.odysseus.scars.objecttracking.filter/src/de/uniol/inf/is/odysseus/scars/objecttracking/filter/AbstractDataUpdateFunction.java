@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
@@ -44,7 +45,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(Connection connected, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath);
+	public abstract void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath);
 
 	public double[] getMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path) {
 		    ArrayList<Double> values = new ArrayList<Double>();

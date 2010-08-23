@@ -8,10 +8,12 @@ import java.util.HashMap;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
-import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 /**
  * @author dtwumasi
@@ -33,12 +35,13 @@ public class KalmanGainFunction extends AbstractMetaDataCreationFunction {
 		this.setParameters(parameters);
 	}
 
-	public void compute(Connection connected) {
+	public void compute(Connection connected, MVRelationalTuple<StreamCarsMetaData> tuple, SchemaIndexPath pathToOldList, SchemaIndexPath pathToNewList) {
 
 		double gain[][];
 
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getRight();
-		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>) connected.getLeft();
+		TupleHelper tHelper = new TupleHelper(tuple);
+		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>)tHelper.getObject(connected.getRightPath());
+		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>)tHelper.getObject(connected.getLeftPath());
 
 		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
@@ -55,7 +58,7 @@ public class KalmanGainFunction extends AbstractMetaDataCreationFunction {
 		gain = temp.getData();
 
 		// set gain
-		((MetaAttributeContainer<StreamCarsMetaData>) connected.getRight()).getMetadata().setGain(gain);
+		oldTuple.getMetadata().setGain(gain);
 
 	}
 
@@ -64,5 +67,4 @@ public class KalmanGainFunction extends AbstractMetaDataCreationFunction {
 
 		return new KalmanGainFunction(this);
 	}
-
 }

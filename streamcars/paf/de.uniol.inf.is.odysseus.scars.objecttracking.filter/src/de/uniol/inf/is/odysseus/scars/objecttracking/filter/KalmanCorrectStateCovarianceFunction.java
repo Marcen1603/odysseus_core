@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.metadata.base.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 public class KalmanCorrectStateCovarianceFunction<K> extends AbstractMetaDataUpdateFunction {
 	
@@ -32,12 +34,14 @@ public class KalmanCorrectStateCovarianceFunction<K> extends AbstractMetaDataUpd
 	/**
 	 * This method computes the new state covariance
 	 */
-	public void compute(Connection connected) {
+	public void compute(Connection connected, MVRelationalTuple<StreamCarsMetaData> tuple, SchemaIndexPath pathToOldList, SchemaIndexPath pathToNewList) {
 		
 	
-			
-		MVRelationalTuple<StreamCarsMetaData<K>> oldTuple = (MVRelationalTuple<StreamCarsMetaData<K>>) connected.getRight();
-		MVRelationalTuple<StreamCarsMetaData<K>> newTuple = (MVRelationalTuple<StreamCarsMetaData<K>>) connected.getLeft();
+		int[] oldTuplePath = connected.getRightPath();
+		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>)TupleIndexPath.fromIntArray(oldTuplePath, tuple, pathToOldList).getTupleObject();
+		
+		int[] newTuplePath = connected.getRightPath();
+		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>)TupleIndexPath.fromIntArray(newTuplePath, tuple, pathToNewList).getTupleObject();
 			
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
 			
@@ -75,7 +79,7 @@ public class KalmanCorrectStateCovarianceFunction<K> extends AbstractMetaDataUpd
 		result = temp.getData();
 		
 		//set new state covariance
-		((MetaAttributeContainer<StreamCarsMetaData<K>>) connected.getRight()).getMetadata().setCovariance(result);
+		oldTuple.getMetadata().setCovariance(result);
 	}
 	
 

@@ -9,11 +9,11 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
  */
 public interface IConnection {
 
-	public Object getLeft();
-	public Object getRight();
+	public int[] getLeftPath();
+	public int[] getRightPath();
 
-	public void setLeft(Object newleft);
-	public void setRight(Object newright);
+	public void setLeftPath(int[] newleft);
+	public void setRightPath(int[] newright);
 
 	public double getRating();
 	public void setRating(double newrating);

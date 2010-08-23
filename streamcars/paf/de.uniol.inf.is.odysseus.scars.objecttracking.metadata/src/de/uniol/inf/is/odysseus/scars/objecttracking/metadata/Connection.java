@@ -9,36 +9,38 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
  */
 public class Connection implements IConnection {
 
-	private Object left;
-	private Object right;
+	private int[] leftPath;
+	private int[] rightPath;
 	private double rating;
 
-	public Connection(Object left, Object right, double rating) {
-		this.left = left;
-		this.right = right;
+	public Connection(int[] leftPath, int[] rightPath, double rating) {
+		this.leftPath = leftPath;
+		this.rightPath = rightPath;
 		this.rating = rating;
 	}
 
 	public Connection(Connection copy) {
-		this.left = copy.getLeft();
-		this.right = copy.getRight();
-		this.rating = copy.getRating();
+		this.leftPath = new int[copy.getLeftPath().length];
+		this.rightPath = new int[copy.getRightPath().length];
+		                         
+		System.arraycopy(copy.getLeftPath(), 0, this.leftPath, 0, copy.getLeftPath().length);
+		System.arraycopy(copy.getRightPath(), 0, this.rightPath, 0, copy.getRightPath().length);
 	}
 
-	public Object getLeft() {
-		return this.left;
+	public int[] getLeftPath() {
+		return this.leftPath;
 	}
 
-	public Object getRight() {
-		return this.right;
+	public int[] getRightPath() {
+		return this.rightPath;
 	}
 
-	public void setLeft(Object newleft) {
-		this.left = newleft;
+	public void setLeftPath(int[] newleft) {
+		this.leftPath = newleft;
 	}
 
-	public void setRight(Object newright) {
-		this.right = newright;
+	public void setRightPath(int[] newright) {
+		this.rightPath = newright;
 	}
 
 	public double getRating() {

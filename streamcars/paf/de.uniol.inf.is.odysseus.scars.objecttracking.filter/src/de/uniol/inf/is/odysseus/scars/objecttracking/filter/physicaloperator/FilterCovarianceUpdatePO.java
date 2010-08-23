@@ -9,6 +9,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 /**
  * @author dtwumasi
@@ -17,6 +20,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
   private AbstractMetaDataUpdateFunction updateMetaDataFunction;
+  private SchemaHelper helper;
 
 
   public FilterCovarianceUpdatePO() {
@@ -28,8 +32,8 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
     this.setUpdateMetaDataFunction(copy.getUpdateMetaDataFunction().clone());
   }
 
-  public void compute(Connection connected) {
-    updateMetaDataFunction.compute(connected);
+	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldPath, SchemaIndexPath newPath) {
+    updateMetaDataFunction.compute(connected, (MVRelationalTuple<StreamCarsMetaData>)tuple, oldPath, newPath);
   }
 
   
@@ -37,16 +41,18 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
     // list of connections
-    Connection[] objConList = new Connection[object.getMetadata().getConnectionList().toArray().length];
     ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
 
-    for (int i = 0; i < objConList.length; i++) {
-      objConList[i] = tmpConList.get(i);
-    }
+    if( helper == null ) 
+		helper = new SchemaHelper(getOutputSchema());
+	
+	// traverse connection list and filter
+	SchemaIndexPath oldPath = helper.getSchemaIndexPath(getOldObjListPath());
+	SchemaIndexPath newPath = helper.getSchemaIndexPath(getNewObjListPath());		
 
     // traverse connection list and filter
-    for (Connection connected : objConList) {
-      compute(connected);
+    for (Connection connected : tmpConList) {
+		compute(connected, object, oldPath, newPath);
     }
 
     return object;

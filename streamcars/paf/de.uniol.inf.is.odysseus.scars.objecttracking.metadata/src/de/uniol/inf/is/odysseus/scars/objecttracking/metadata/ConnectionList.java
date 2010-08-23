@@ -22,8 +22,8 @@ public class ConnectionList extends ArrayList<Connection> {
 	public ArrayList<Object> getRightElementsForLeftElement(Object leftelement) {
 		ArrayList<Object> tmplist = new ArrayList<Object>();
 		for(int i = 0; i < this.size(); i++) {
-			if(leftelement == this.get(i).getLeft()) {
-				tmplist.add(this.get(i).getRight());
+			if(leftelement == this.get(i).getLeftPath()) {
+				tmplist.add(this.get(i).getRightPath());
 			}
 		}
 		return tmplist;
@@ -38,8 +38,8 @@ public class ConnectionList extends ArrayList<Connection> {
 	public ArrayList<Object> getLeftElementsForRightElement(Object rightelement) {
 		ArrayList<Object> tmplist = new ArrayList<Object>();
 		for(int i = 0; i < this.size(); i++) {
-			if(rightelement == this.get(i).getRight()) {
-				tmplist.add(this.get(i).getLeft());
+			if(rightelement == this.get(i).getRightPath()) {
+				tmplist.add(this.get(i).getLeftPath());
 			}
 		}
 		return tmplist;

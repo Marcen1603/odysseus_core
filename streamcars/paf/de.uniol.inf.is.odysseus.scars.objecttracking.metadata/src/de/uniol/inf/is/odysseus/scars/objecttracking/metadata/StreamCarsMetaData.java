@@ -23,7 +23,7 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 	public StreamCarsMetaData( StreamCarsMetaData<K> data ) {
 		super(data);
 		this.connectionList = data.connectionList;
-		this.gain = data.gain;
+		this.gain = copyArray(data.gain);
 	}
 
 	/* ############### CONNECTIONCONTAINER ################ */
@@ -51,9 +51,9 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 		String cons = "[";
 		for(Connection con : this.connectionList) {
 			cons += "(";
-			cons += con.getLeft().toString();
+			cons += con.getLeftPath().toString();
 			cons += ":";
-			cons += con.getRight().toString();
+			cons += con.getRightPath().toString();
 			cons += ":";
 			cons += String.valueOf(con.getRating());
 			cons += ")";
@@ -74,6 +74,22 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 	@Override
 	public double[][] getGain() {
 		return this.gain;
+	}
+	
+	private double[][] copyArray( double[][] toCopy ) {
+		if( toCopy == null ) return null;
+		
+		double[][] copy = new double[toCopy.length][];
+		for( int i = 0; i < toCopy.length; i++ ) {
+			copy[i] = new double[toCopy[i].length];
+			
+			for( int j = 0; j < toCopy[i].length; j++ ) {
+				copy[i][j] = toCopy[i][j];
+			}
+			
+		}
+		
+		return copy;
 	}
 
 	@Override

@@ -146,7 +146,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
                 .getCovariance(), getMeasurementValues(object, predictedTupleInfo.tupleIndexPath));
         
         if(value != 0) {
-          newObjConList.add(new Connection(scannedObject, predictedObject, value));
+          newObjConList.add(new Connection(scannedTupleInfo.tupleIndexPath.toArray(), predictedTupleInfo.tupleIndexPath.toArray(), value));
         }
       }
     }

@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
@@ -65,14 +66,14 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 
     // traverse connection list and filter
     for (Connection connected : objConList) {
-       compute(connected, newObjPath, oldObjPath);
+       compute(connected, (MVRelationalTuple<StreamCarsMetaData>)object, newObjPath, oldObjPath);
     }
 
     return object;
   }
   
-  public void compute(Connection connected, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
-    this.dataUpdateFunction.compute(connected, newObjPath, oldObjPath);
+  public void compute(Connection connected, MVRelationalTuple<StreamCarsMetaData> tuple, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
+    this.dataUpdateFunction.compute(connected, tuple, newObjPath, oldObjPath);
   }
   
   

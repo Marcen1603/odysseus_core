@@ -13,6 +13,8 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private String functionID;
+	private String newListName;
+	private String oldListName;
 	
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
@@ -34,6 +36,8 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 		this.setFunctionID(new String(copy.getFunctionID()));
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
+		setNewListName(copy.getNewListName());
+		setOldListName(copy.getOldListName());
 	}
 
 
@@ -72,5 +76,22 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
 		return metaDataCreationFunction;
 	}
+
+	public String getNewListName() {
+		return newListName;
+	}
+
+	public void setNewListName(String newListName) {
+		this.newListName = newListName;
+	}
+
+	public String getOldListName() {
+		return oldListName;
+	}
+
+	public void setOldListName(String oldListName) {
+		this.oldListName = oldListName;
+	}
+	
 }
 

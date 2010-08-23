@@ -3,8 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 
-import java.util.ArrayList;
-
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -12,6 +10,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 /**
  * @author dtwumasi
@@ -20,59 +21,55 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
  */
 public class FilterGainPO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
-  private AbstractMetaDataCreationFunction metaDataCreationFunction;
+	private AbstractMetaDataCreationFunction metaDataCreationFunction;
+	private SchemaHelper helper;
+	
+	public FilterGainPO() {
+		super();
+	}
 
-  
-  public FilterGainPO() {
-    super();
-  }
+	public FilterGainPO(FilterGainPO<M> copy) {
+		super(copy);
+		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
+	}
 
-  public FilterGainPO(FilterGainPO<M> copy) {
-    super(copy);
-	this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
-  }
-  
-  public void compute(Connection connected) {
-    metaDataCreationFunction.compute(connected);
-  }
+	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldPath, SchemaIndexPath newPath) {
+		metaDataCreationFunction.compute(connected, (MVRelationalTuple<StreamCarsMetaData>)tuple, oldPath, newPath);
+	}
 
-  
-  @Override
-  public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+	@Override
+	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
 
-    // list of connections
-    Connection[] objConList = new Connection[object.getMetadata().getConnectionList().toArray().length];
-    ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
+		if( helper == null ) 
+			helper = new SchemaHelper(getOutputSchema());
+		
+		// traverse connection list and filter
+		SchemaIndexPath oldPath = helper.getSchemaIndexPath(getOldObjListPath());
+		SchemaIndexPath newPath = helper.getSchemaIndexPath(getNewObjListPath());		
+		for (Connection connected : object.getMetadata().getConnectionList()) {
+			compute(connected, object, oldPath, newPath);
+		}
 
-    for (int i = 0; i < objConList.length; i++) {
-      objConList[i] = tmpConList.get(i);
-    }
-    // traverse connection list and filter
-    for (Connection connected : objConList) {
-      compute(connected);
-    }
+		return object;
+	}
 
-    return object;
-  }
+	@Override
+	public AbstractPipe clone() {
+		return new FilterGainPO<M>(this);
+	}
 
-  @Override
-  public AbstractPipe clone() {
-    return new FilterGainPO<M>(this);
-  }
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		this.sendPunctuation(timestamp);
+	}
 
-  @Override
-  public void processPunctuation(PointInTime timestamp, int port) {
-    this.sendPunctuation(timestamp);
-  }
+	// Getter & Setter
 
-  
-  // Getter & Setter
-  
-  public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
-    return metaDataCreationFunction;
-  }
-  
-  public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {
-    this.metaDataCreationFunction = metaDataCreationFunction;
-  }
+	public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
+		return metaDataCreationFunction;
+	}
+
+	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {
+		this.metaDataCreationFunction = metaDataCreationFunction;
+	}
 }
