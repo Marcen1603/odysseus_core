@@ -124,12 +124,13 @@ public class FilterFunctionTestData<K> {
 	public SDFAttributeList getSchema() {
 		
 			SDFAttributeList object = new SDFAttributeList();
-		
+			object.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
+			
 			SDFAttribute oldList = new SDFAttribute("old.list");
 			oldList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
 			
 			SDFAttribute newList = new SDFAttribute("new.list");
-			oldList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
+			newList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
 			
 			SDFAttribute newObject = new SDFAttribute("NewObject");
 			newObject.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
@@ -160,10 +161,6 @@ public class FilterFunctionTestData<K> {
 			newList.addSubattribute(newObject);
 			
 			object.add(newList);
-			
-			
-			
-			
 			
 			oldObject.addSubattribute(speedOld);
 			oldObject.addSubattribute(posOld);

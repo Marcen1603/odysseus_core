@@ -17,6 +17,9 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEs
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.test.data.FilterFunctionTestData;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
 /**
@@ -29,13 +32,23 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 
 	private AbstractDataUpdateFunction correctStateEstimateFunction;
 	
-
-	
 	private MVRelationalTuple<StreamCarsMetaData<K>> measurementTuple;
 	
 	private MVRelationalTuple<StreamCarsMetaData<K>> expectedTuple;
 	
 	private MVRelationalTuple<StreamCarsMetaData<K>> resultTuple;
+	
+	private SDFAttributeList outputSchema;
+	
+	private SchemaHelper schemaHelper;
+	private SchemaIndexPath oldObjectListPath;
+	private SchemaIndexPath newObjectListPath;
+	private SchemaIndexPath newObjPath;
+	private SchemaIndexPath oldObjPath;
+	
+	private String oldObjListPath;
+	
+	private String newObjListPath;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -61,6 +74,19 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 		
 		double[][] gain = { {0.2,0.2}, {0.1,0.4}};
 		
+		this.outputSchema = testData.getSchema();
+		
+		this.schemaHelper = new SchemaHelper(this.outputSchema);
+		
+		
+	    this.newObjectListPath = this.schemaHelper.getSchemaIndexPath(this.newObjListPath);
+	    this.newObjPath = this.schemaHelper.getSchemaIndexPath(this.newObjListPath + SchemaHelper.ATTRIBUTE_SEPARATOR
+	        + this.newObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
+
+	    this.oldObjectListPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath);
+	    this.oldObjPath = this.schemaHelper.getSchemaIndexPath(this.oldObjListPath + SchemaHelper.ATTRIBUTE_SEPARATOR
+	        + this.oldObjectListPath.getAttribute().getSubattribute(0).getAttributeName());
+	  
 		
 		
 		measurementTuple = testData.generateTestTuple(speedOld, posOld, covarianceOld, speedNew, posNew, covarianceNew, gain,1);
@@ -88,13 +114,7 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 		
 		Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 		
-		ArrayList<int[]> attributePathsOld = measurementTuple.getMetadata().getAttributePaths();
-		
-		ArrayList<int[]> attributePathsNew = measurementTuple.getMetadata().getAttributePaths();
-		
-		int i=0;
-		
-		//correctStateEstimateFunction.compute(connected, attributePathsNew, attributePathsOld,i);
+		correctStateEstimateFunction.compute(connected, newObjPath, oldObjPath);
 	
 		assertEquals(expectedTuple,measurementTuple);
 	
