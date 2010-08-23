@@ -62,13 +62,14 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 		    return result;
 		  }
 	
-	public void setMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path, double[] measurements) {
-		for (int i=0; i<=measurements.length-1; i++) {
-			 for( TupleInfo info :  new TupleIterator(tuple, path) ) {
-				 if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
-				      //  values.add(new Double(info.tupleObject.toString()));
-				      }
+	public void setMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path, double[] result) {
+		int i=0;
+		for( TupleInfo info :  new TupleIterator(tuple, path) ) {
+			 if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
+			   info.tupleIndexPath.getLastTupleIndex().setValue(result[i]);
+			   i+=1;
 			 }
+	
 		}
 		
 	}
@@ -83,6 +84,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	    }
 	    return objects;
 	  }
+	
 	/**
 	 * @param parameters the parameters needed for computation
 	 */
