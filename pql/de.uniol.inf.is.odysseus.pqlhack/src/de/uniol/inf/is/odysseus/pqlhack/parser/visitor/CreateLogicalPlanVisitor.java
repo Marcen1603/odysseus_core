@@ -1477,9 +1477,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
 		
-		String pathToOldList = ((ASTIdentifier) node.jjtGetChild(2)).getName();
-		String pathToNewList = ((ASTIdentifier) node.jjtGetChild(3)).getName();
-		
 		//
 		// create Filter AO
 		// and initialize it
@@ -1490,8 +1487,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT, embeddedAO.getOutputSchema());
 		// set function id
 		filterAO.setFunctionID(functionID);
-		filterAO.setNewListName(pathToNewList);
-		filterAO.setOldListName(pathToOldList);
 
 		//
 		// return data according to convention

@@ -1707,7 +1707,7 @@ void FilterGainOp(): {/*@bgen(jjtree) FilterGainOp */
 {/*@bgen(jjtree) FilterGainOp */
   try {
 /*@egen*/
-  < K_FILTER_GAIN > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"/*@bgen(jjtree)*/
+  < K_FILTER_GAIN > "(" AlgebraOp() "," Identifier() ")"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
