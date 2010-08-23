@@ -38,10 +38,7 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 	@Override
 	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath) {
 		
-		int[] oldTuplePath = connected.getRightPath();
-		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)TupleIndexPath.fromIntArray(oldTuplePath, tuple, oldObjPath).getTupleObject();
-		
-		int[] newTuplePath = connected.getRightPath();
+		int[] newTuplePath = connected.getLeftPath();
 		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)TupleIndexPath.fromIntArray(newTuplePath, tuple, newObjPath).getTupleObject();
 		
 		double[] measurementOld = getMeasurementValues(tuple, oldObjPath) ;
@@ -64,7 +61,7 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		result = temp.getColumn(0);
 		
 		
-		setMeasurementValues(oldTuple, oldObjPath, result);
+		setMeasurementValues(tuple, oldObjPath, result);
 		
 		// TODO richtig machen
 		/*for (int y=0; y<= result.length; y++) {
