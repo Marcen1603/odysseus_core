@@ -389,12 +389,14 @@ public class PredictionExpression {
 		time.add(currentTime);
 		
 		
-		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * b.currentTime";
+		String expression = "a.list:obj:pos:x + a.list:obj:pos:y + a.list:obj:pos:z * 10";
 		PredictionExpression p = new PredictionExpression("a.list:obj:pos:y", expression);
 		p.initAttributePaths(scan);
 		p.initAttributePaths(time);
+		System.out.println("TEST: BEFORE INDEX REPLACE:");
 		System.out.println(p);
 		p.replaceVaryingAttributeIndex(scan, 2);
+		System.out.println("TEST: AFTER INDEX REPLACE:");
 		System.out.println(p);
 		
 		p.bindVariable("a.list:obj:pos:x", 10);
@@ -403,6 +405,7 @@ public class PredictionExpression {
 		p.bindVariable("b.currentTime", 3);
 		
 		p.evaluate();
+		System.out.println("TEST: AFTER PREDICTION:");
 		System.out.println(p.getTargetValue());
 		System.out.println(p);
 	}
