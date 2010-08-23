@@ -44,6 +44,7 @@ TOKEN : /* Keywords */ {
 |	<K_NOT_EXIST : "NOT_EXIST">
 |	<K_COUNT: "COUNT">
 |	<K_DEFAULT: "DEFAULT">
+|	<K_IN: "IN">
 |	<K_JOIN: "JOIN">
 |	<K_LOGICAL: "LOGICAL">
 |	<K_MAX: "MAX">
@@ -257,6 +258,7 @@ void Predicate():{}{
   | LOOKAHEAD(AndPredicate())AndPredicate()
   | NotPredicate()
   | SimplePredicate()
+  | ExistPredicate()
 }
 void SimplePredicate():{}{
   LOOKAHEAD("("Predicate())"("Predicate()")"
@@ -279,6 +281,13 @@ void NotPredicate():{}{
   <K_NOT>Predicate()
 }
 
+void ExistPredicate():{}{
+	<K_EXIST> ExistVariablesDeclaration() ("," ExistVariablesDeclaration()) ";" Predicate()
+}
+
+void ExistVariablesDeclaration():{}{
+	Identifier() ("," Identifier())* <K_IN> Identifier()
+}
 void Expression():{
   String tOp;
 }

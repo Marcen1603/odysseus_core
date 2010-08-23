@@ -5,9 +5,9 @@ CREATE STREAM ego(
 ) SOCKET MV localhost : 44472
 
 CREATE STREAM radar(
-	lane INTEGER,
-	timestamp STARTTIMESTAMP,
-	x INTEGER
+	rlane INTEGER,
+	rtimestamp STARTTIMESTAMP,
+	rx INTEGER
 ) SOCKET MV localhost : 44473
 
 

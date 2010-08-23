@@ -141,7 +141,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				}
 				hasStartTimestamp = true;
 			}
-			if (attr.getDatatype().equals("StartEndstamp")) {
+			if (attr.getDatatype().equals("EndTimestamp")) {
 				if (hasEndTimestamp) {
 					throw new RuntimeException("multiple definitions of EndTimestamp attribute not allowed");
 				}

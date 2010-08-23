@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistVariablesDeclaration;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
@@ -415,5 +417,15 @@ public class InitBrokerVisitor implements ProceduralExpressionParserVisitor{
     // have AlgebraOp() as a child. so data:=true
     return node.childrenAccept(this, true);
   }
+
+	@Override
+	public Object visit(ASTExistPredicate node, Object data) {
+		return node.childrenAccept(this, true);
+	}
 	
+	@Override
+	public Object visit(ASTExistVariablesDeclaration node, Object data) {
+		return node.childrenAccept(this, true);
+		
+	}
 }

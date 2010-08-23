@@ -406,12 +406,8 @@ class CSVHandler extends ClientHandler {
 			long startDuration = System.nanoTime();
 			boolean stop = false;
 			
-			int[] tooFastIndex = new int[10000];
-			long[] durations = new long[10000];
-			
 			long lastTime = System.nanoTime();
 			while ((limit < 1 || i < limit) && !stop) {
-				long start = System.nanoTime();
 				if (limit > 0) {
 					
 					for (int u = 0; u < cachedValues[i].length; u++) {
@@ -499,21 +495,10 @@ class CSVHandler extends ClientHandler {
 				i++;
 				// wait for the next element for this.periodLength nanoseconds
 				long expectedTime = lastTime + this.periodLength;
-				boolean tooFast = true;
 				while (expectedTime > System.nanoTime()) {
-					tooFast = false;
 				}
-				if(tooFast){
-					tooFastIndex[i-1] = i-1;
-				}
-				lastTime = expectedTime;
-				long end = System.nanoTime();
-				durations[i-1] = (end - start);
 			}
 			long endDuration = System.nanoTime();
-			for(int v = 0; v<tooFastIndex.length; v++){
-				System.out.println("Too fast: " + tooFastIndex[v] + " Duration: " + durations[v]);
-			}
 			System.out.println(" |->Done" + " i = " + i);
 			System.out.println("Duration: " + (endDuration - startDuration));
 		} catch (EOFException e) {

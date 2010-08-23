@@ -27,6 +27,10 @@ public class SDFObjectRelationalExpression extends SDFExpression {
 		this.attributePaths.add(token.split("\\."));
 	}
 	
+	/**
+	 * 
+	 * @deprecated Wird nirgends verwendet
+	 */
 	public void initAttributePaths( SDFAttributeList schema ) {
 		this.attributeIntPaths = new int[this.attributePaths.size()][];
 		
@@ -40,6 +44,9 @@ public class SDFObjectRelationalExpression extends SDFExpression {
 		}
 	}
 
+	/**
+	 * @deprecated Wird nur in Methoden verwendet, die nirgends verwendet werden
+	 */
 	private void findNext(SDFAttributeList list, String[] path, int index, int[] indices) {
 		String attrToFind = path[index];
 		for( int i = 0; i < list.getAttributeCount(); i++ ) {
@@ -51,17 +58,27 @@ public class SDFObjectRelationalExpression extends SDFExpression {
 			}
 		}
 	}
-		
+	
+	/**
+	 * 
+	 * @deprecated Wird nirgends verwendet
+	 */
 	public int[][] getAttributePaths() {
 		return this.attributeIntPaths;
 	}
 	
+	/**
+	 * @deprecated Wird nirgends verwendet
+	 */
 	public void initTarget( String targetAttributeName, SDFAttributeList schema ) {
 		String[] parts = targetAttributeName.split("\\.");
 		targetPath = new int[parts.length];
 		findNext( schema, parts, 0, targetPath);
 	}
 	
+	/**
+	 * @deprecated Wird nirgends verwendet
+	 */
 	public int[] getTargetPath() {
 		return targetPath;
 	}
