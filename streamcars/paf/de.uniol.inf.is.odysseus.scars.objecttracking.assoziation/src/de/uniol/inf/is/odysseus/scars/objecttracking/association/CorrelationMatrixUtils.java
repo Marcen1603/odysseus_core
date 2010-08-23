@@ -58,5 +58,4 @@ public class CorrelationMatrixUtils<M extends IProbability> implements ICorrelat
 		}
 		return -1;
 	}
-
 }

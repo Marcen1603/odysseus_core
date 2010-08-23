@@ -52,10 +52,6 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
         leftV.subtract(rightV));
     double distance = Math.abs(distanceMatrix.getEntry(0, 0));
 
-    System.out.println("Eval: scanned MV  = " + leftV.toString());
-    System.out.println("Eval: predicted MV  = " + rightV.toString());
-    System.out.println("Eval: distance  = " + distance);
-
     if (this.operator.toUpperCase().equals(LESS)) {
       if (distance < this.threshold) {
         return 100;

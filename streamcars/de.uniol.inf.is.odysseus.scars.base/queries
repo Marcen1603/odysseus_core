@@ -162,9 +162,9 @@ ASSOCIATION-EVAL (
 LOGICAL PLAN : 
 ASSOCIATION-SEL (
 	ACCESS (sensorA),
-	testAssociation,
-	sensorA.dummy,
-	sensorB.dummy
+	associationSelection,
+	association.scan:newObjects,
+	association.scan:predictedObjects
 )
 
 LOGICAL PLAN :
