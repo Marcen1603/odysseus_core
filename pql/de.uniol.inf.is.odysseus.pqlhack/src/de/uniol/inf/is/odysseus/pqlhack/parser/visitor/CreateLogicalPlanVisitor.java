@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
@@ -46,8 +45,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistPredicate;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistVariablesDeclaration;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
@@ -88,7 +85,6 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ProceduralExpressionParserVisitor
 import de.uniol.inf.is.odysseus.pqlhack.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalExistsPredicate;
 import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisEvaluationAO;
@@ -1834,64 +1830,5 @@ public class CreateLogicalPlanVisitor implements
     
     return dataList;
   }
-
-  	/**
-  	 * Example: Exist a, b IN source.attr : a.lane = b.lane
-  	 */
-	@Override
-	public Object visit(ASTExistPredicate node, Object data) {
-		ArrayList newData = new ArrayList();
-		newData.add(((ArrayList)data).get(0));
-
-		ObjectRelationalExistsPredicate ePred = null;
-		HashMap<String, String> variableAttributeMappings = new HashMap<String, String>();
-		IPredicate predicate = null;
-		
-		for(int i = 0; i<node.jjtGetNumChildren(); i++){
-			// first there are some children for variable declarations
-			if(node.jjtGetChild(i) instanceof ASTExistVariablesDeclaration){
-				ArrayList<String> variablesData = (ArrayList<String>)node.jjtGetChild(i).jjtAccept(this, newData);
-				// the first elements are the variables, the last is the attribute to
-				// which the variables relate, see example above: source.attr
-				
-				// first get the attribute. We need to know which subattributes
-				// are in this attribute.
-				String attributeName = variablesData.get(variablesData.size());
-				
-				AttributeResolver attrRes = (AttributeResolver)((ArrayList)data).get(0);
-				SDFAttribute attribute = attrRes.getAttribute(attributeName);
-				SDFAttributeList subAttributes = attribute.getSubattributes();
-				
-				for(int u = 0; u<variablesData.size()-1; u++){
-					String variable = variablesData.get(u);
-					// create a new AccessAO with the variable name as source
-					// and the subattributes as schema
-					RenameAO source = new RenameAO();
-					source.setOutputSchema(subAttributes);			
-					attrRes.addSource(variable, source);
-					
-					variableAttributeMappings.put(variable, attributeName);
-				}
-			}
-			// then there is predicate, that uses these variables
-			else if(node.jjtGetChild(i) instanceof ASTPredicate){
-				predicate = (IPredicate)((ArrayList)node.jjtGetChild(i).jjtAccept(this, newData)).get(1);
-			}
-			
-		}
-		
-		ePred = new ObjectRelationalExistsPredicate(predicate);
-		ePred.setVariableAttributeMappings(variableAttributeMappings);
-		
-		((ArrayList)data).add(ePred);
-		return data;
-	}
-	
-	@Override
-	public Object visit(ASTExistVariablesDeclaration node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
   
 }
