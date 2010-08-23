@@ -108,16 +108,16 @@
                name="WHERE">
          </keyword>
          <keyword
-               name="ASSOZIATION-GEN">
+               name="ASSOCIATION-GEN">
          </keyword>
          <keyword
-               name="ASSOZIATION-EVAL">
+               name="ASSOCIATION-EVAL">
          </keyword>
          <keyword
                name="ASSOCIATION-SEL">
          </keyword>
          <keyword
-               name="ASSOZIATION-SRC">
+               name="ASSOCIATION-SRC">
          </keyword>
          <keyword
                name="EVALUATE">
