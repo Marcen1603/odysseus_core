@@ -60,11 +60,14 @@ public class PredictionAssignPO<M extends IProbability & IPredictionFunctionKey<
 			}
 		}
 		tuple.getMetadata().setPredictionFunctionKey(predictionFunctions.getDefaultPredictionFunctionKey());
+		System.err.println("No Predicate can be assigned and evaluated to the current tuple (DEFAULT_PREDICTION_FUNCTION)");
 		return;
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) { }
+	public void processPunctuation(PointInTime timestamp, int port) {
+		this.sendPunctuation(timestamp);
+	}
 	
 	@Override
 	public PredictionAssignPO<M> clone() {

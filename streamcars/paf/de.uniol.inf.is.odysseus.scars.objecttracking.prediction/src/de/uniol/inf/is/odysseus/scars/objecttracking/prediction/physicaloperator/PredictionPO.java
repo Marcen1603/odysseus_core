@@ -88,9 +88,14 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 		for(int index=0; index < list.getAttributeCount(); index++) {
 			MVRelationalTuple<M> obj = list.getAttribute(index);
 			IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
-			pf.predictData(currentScanTuple, currentTimeTuple, index);
-			M metadata = obj.getMetadata();
-			pf.predictMetadata(metadata, currentScanTuple, currentTimeTuple, index);
+			if(pf != null) {
+				pf.predictData(currentScanTuple, currentTimeTuple, index);
+				M metadata = obj.getMetadata();
+				pf.predictMetadata(metadata, currentScanTuple, currentTimeTuple, index);
+			} else {
+				System.err.println("No PredictionFunction assigned (NO DEFAULT PREDICTION_FUNCTION)");
+			}
+			
 		}
 		TupleIndexPath scanTimeTPath = currentTimeSchemaPath.toTupleIndexPath(currentTimeTuple);
 		Long currentTimeValue = (Long)scanTimeTPath.getTupleObject();
@@ -102,6 +107,7 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IPredictionFu
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
+		this.sendPunctuation(timestamp);
 	}
 	
 	@Override
