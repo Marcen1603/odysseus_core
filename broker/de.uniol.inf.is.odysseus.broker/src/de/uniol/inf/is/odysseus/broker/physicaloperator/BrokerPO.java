@@ -143,11 +143,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		WriteTransaction type = BrokerDictionary.getInstance().getWriteTypeForPort(this.identifier, port);
 		// setting the minimum time for the current port
 		this.setMinTS(port, object.getMetadata().getStart());
-		// determin the minimum of all writing streams
-		this.min = getMinimum();
-		// printDebug("Minimun time is " + this.min);
-		printDebug("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
-		printDebug("Minimum is: " + this.min);
+		
 		// if this is a timestamp tuple (from a queue stream)...
 		if (type == WriteTransaction.Timestamp) {
 			// ... save the request as an TransactionTS in the timestamp list
@@ -159,6 +155,18 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			// each incoming object will be put into the waiting buffer
 			waitingBuffer.add(object);
 		}
+		
+		generateOutput();
+
+	}
+	
+	private void generateOutput(){
+		// determin the minimum of all writing streams
+		this.min = getMinimum();
+		// printDebug("Minimun time is " + this.min);
+//		printDebug("Process from " + port + " " + type + ": " + object.toString() + "  (" + this + ")");
+		printDebug("Minimum is: " + this.min);
+		
 		contentChanged = false;
 		// if the broker is not in waiting mode...		
 		// ... and there is a valid minimum (each writing transaction has at
@@ -238,7 +246,6 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 			// To ensure, that you can send a punctuation, all preceeding
 			// operators have to send a punctuation.
 		}
-		
 
 	}
 
@@ -464,16 +471,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	public void processPunctuation(PointInTime timestamp, int port) {
 		printDebug("Process punctuation: "+timestamp+" on port "+port);
 		setMinTS(port, timestamp);
-		PointInTime min = this.getMinimum();
-		
-		// if the sweepArea is empty, no data can be sent
-		// in this case, send a punctuation, if possible
-		// Maybe, this won't work. Perhaps, at arrival of
-		// a punctuation, it should be checked, whether
-		// sending data is possible or not.
-		if(min != null && this.sweepArea.isEmpty()){
-			this.sendPunctuation(min);
-		}
+		generateOutput();
 	}
 
 	/**
