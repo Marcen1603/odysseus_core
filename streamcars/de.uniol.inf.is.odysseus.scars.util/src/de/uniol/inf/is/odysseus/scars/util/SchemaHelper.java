@@ -81,7 +81,7 @@ public class SchemaHelper {
 	}
 	
 	public String getStartTimestampFullAttributeName() {
-		return sourceName+ SOURCE_SEPARATOR+ startTimestampAttribute;
+	   return startTimestampAttribute;
 	}
 	
 	public String getEndTimestampFullAttributeName() {

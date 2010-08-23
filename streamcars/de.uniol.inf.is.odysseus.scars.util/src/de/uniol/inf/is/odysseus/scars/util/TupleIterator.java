@@ -238,7 +238,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 			IteratorEntry e = new IteratorEntry(tupleStart.getTupleObject());
 			e.index = tupleStart.getTupleIndices().get(tupleStart.getLength() - 1).toInt();
 
-			pointer.push(new IteratorEntry(get(start)));
+			this.pointer.push(e);
 
 			for (int i = 0; i < start.getSchemaIndices().size(); i++) {
 				schemaIndices.push(start.getSchemaIndex(i));

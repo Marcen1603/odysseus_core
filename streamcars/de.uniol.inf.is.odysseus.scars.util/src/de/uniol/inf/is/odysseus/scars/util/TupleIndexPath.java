@@ -265,7 +265,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 		info.isInList = schemaIndexPath.hasList();
 		info.level = schemaIndexPath.getLength();
 		info.schemaIndexPath = schemaIndexPath;
-		info.tupleIndexPath = this;
+	    info.tupleIndexPath = this.clone();
 		info.tupleObject = getTupleObject();
 		info.isTuple = (info.tupleObject != null ? (info.tupleObject instanceof MVRelationalTuple) : false);
 		nextStep();
