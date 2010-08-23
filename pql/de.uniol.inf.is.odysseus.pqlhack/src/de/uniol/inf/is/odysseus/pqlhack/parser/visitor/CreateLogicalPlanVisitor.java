@@ -45,6 +45,8 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistPredicate;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistVariablesDeclaration;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
@@ -115,8 +117,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  * 
  */
 @SuppressWarnings("unchecked")
-public class CreateLogicalPlanVisitor implements
-		ProceduralExpressionParserVisitor {
+public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisitor {
 
 	public Object visit(SimpleNode node, Object data) {
 		return null;
@@ -131,8 +132,7 @@ public class CreateLogicalPlanVisitor implements
 	}
 
 	public Object visit(ASTProjectionOp node, Object data) {
-		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data)
-				.get(0);
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
 		ObjectTrackingProjectAO projection = new ObjectTrackingProjectAO();
 		// first the output schema is empty, it will be
@@ -144,23 +144,18 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 
 		// the first child is the input operator
-		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData));
+		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData));
 
-		AbstractLogicalOperator inputForProjection = (AbstractLogicalOperator) returnData
-				.get(1);
+		AbstractLogicalOperator inputForProjection = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
 
-		projection.subscribeToSource(inputForProjection, 0, sourceOutPort,
-				inputForProjection.getOutputSchema());
+		projection.subscribeToSource(inputForProjection, 0, sourceOutPort, inputForProjection.getOutputSchema());
 
 		// the further children are the identifiers
 		SDFAttributeListExtended outAttributes = new SDFAttributeListExtended();
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
-			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier) node
-					.jjtGetChild(i);
-			String attrString = ((ASTIdentifier) attrIdentifier.jjtGetChild(0))
-					.getName();
+			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier) node.jjtGetChild(i);
+			String attrString = ((ASTIdentifier) attrIdentifier.jjtGetChild(0)).getName();
 
 			try {
 				SDFAttribute attr = attrRes.getAttribute(attrString);
@@ -201,8 +196,7 @@ public class CreateLogicalPlanVisitor implements
 	}
 
 	public Object visit(ASTRelationalProjectionOp node, Object data) {
-		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data)
-				.get(0);
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
 		ProjectAO projection = new ProjectAO();
 
@@ -211,21 +205,16 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 
 		// the first child is the input operator
-		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData));
-		AbstractLogicalOperator inputForProjection = (AbstractLogicalOperator) returnData
-				.get(1);
+		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData));
+		AbstractLogicalOperator inputForProjection = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
-		projection.subscribeToSource(inputForProjection, 0, sourceOutPort,
-				inputForProjection.getOutputSchema());
+		projection.subscribeToSource(inputForProjection, 0, sourceOutPort, inputForProjection.getOutputSchema());
 
 		// the further children are the identifiers
 		SDFAttributeList outAttributes = new SDFAttributeList();
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
-			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier) node
-					.jjtGetChild(i);
-			String attrString = ((ASTIdentifier) attrIdentifier.jjtGetChild(0))
-					.getName();
+			ASTProjectionIdentifier attrIdentifier = (ASTProjectionIdentifier) node.jjtGetChild(i);
+			String attrString = ((ASTIdentifier) attrIdentifier.jjtGetChild(0)).getName();
 			try {
 				SDFAttribute attr = attrRes.getAttribute(attrString);
 				outAttributes.add(attr);
@@ -272,20 +261,16 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(((ArrayList) data).get(0));
 
 		// the first child is the input operator
-		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData));
-		AbstractLogicalOperator inputForSelection = (AbstractLogicalOperator) returnData
-				.get(1);
+		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData));
+		AbstractLogicalOperator inputForSelection = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
-		selection.subscribeToSource(inputForSelection, 0, sourceOutPort,
-				inputForSelection.getOutputSchema());
+		selection.subscribeToSource(inputForSelection, 0, sourceOutPort, inputForSelection.getOutputSchema());
 
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
 		// the second child is a predicate
-		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(1)
-				.jjtAccept(this, newData)).get(1);
+		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 		initPredicate(predicate, selection.getInputSchema(), null);
 
 		selection.setPredicate(predicate);
@@ -312,31 +297,24 @@ public class CreateLogicalPlanVisitor implements
 		// in both following lines the index 1 in the get method
 		// can be used, since in both lines the collection
 		// only contains the attribute resolver
-		ArrayList leftInData = (ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator leftIn = (AbstractLogicalOperator) leftInData
-				.get(1);
+		ArrayList leftInData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator leftIn = (AbstractLogicalOperator) leftInData.get(1);
 		int leftInSourceOutPort = ((Integer) leftInData.get(2)).intValue();
 
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		ArrayList rightInData = (ArrayList) node.jjtGetChild(1).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator rightIn = (AbstractLogicalOperator) rightInData
-				.get(1);
+		ArrayList rightInData = (ArrayList) node.jjtGetChild(1).jjtAccept(this, newData);
+		AbstractLogicalOperator rightIn = (AbstractLogicalOperator) rightInData.get(1);
 		int rightInSourceOutPort = ((Integer) rightInData.get(2)).intValue();
 
-		join.subscribeToSource(leftIn, 0, leftInSourceOutPort,
-				leftIn.getOutputSchema());
-		join.subscribeToSource(rightIn, 1, rightInSourceOutPort,
-				rightIn.getOutputSchema());
+		join.subscribeToSource(leftIn, 0, leftInSourceOutPort, leftIn.getOutputSchema());
+		join.subscribeToSource(rightIn, 1, rightInSourceOutPort, rightIn.getOutputSchema());
 
 		// setting the predicate and initializing the operator
 		newData.clear();
 		newData.add(((ArrayList) data).get(0));
-		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(2)
-				.jjtAccept(this, newData)).get(1);
+		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(2).jjtAccept(this, newData)).get(1);
 		initPredicate(predicate, join.getInputSchema(0), join.getInputSchema(1));
 
 		join.setPredicate(predicate);
@@ -362,14 +340,11 @@ public class CreateLogicalPlanVisitor implements
 		// the input must be set first, since the output schema
 		// of the window's input is used for determining an
 		// ON attribute
-		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator inputForWindow = (AbstractLogicalOperator) returnData
-				.get(1);
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForWindow = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
 
-		win.subscribeToSource(inputForWindow, 0, sourceOutPort,
-				inputForWindow.getOutputSchema());
+		win.subscribeToSource(inputForWindow, 0, sourceOutPort, inputForWindow.getOutputSchema());
 
 		win.setWindowSize(((ASTNumber) node.jjtGetChild(1)).getValue());
 		win.setWindowAdvance(((ASTNumber) node.jjtGetChild(2)).getValue());
@@ -391,16 +366,12 @@ public class CreateLogicalPlanVisitor implements
 	}
 
 	public Object visit(ASTAccessOp node, Object data) {
-		AttributeResolver attributeResolver = (AttributeResolver) ((ArrayList) data)
-				.get(0);
+		AttributeResolver attributeResolver = (AttributeResolver) ((ArrayList) data).get(0);
 
 		if (node.hasAlias()) {
-			((ArrayList) data)
-					.add(attributeResolver.getSource(node.getAlias()));
+			((ArrayList) data).add(attributeResolver.getSource(node.getAlias()));
 		} else {
-			((ArrayList) data)
-					.add(attributeResolver.getSource(((ASTIdentifier) node
-							.jjtGetChild(0)).getName()));
+			((ArrayList) data).add(attributeResolver.getSource(((ASTIdentifier) node.jjtGetChild(0)).getName()));
 		}
 
 		/*
@@ -411,8 +382,7 @@ public class CreateLogicalPlanVisitor implements
 
 		if (((ArrayList) data).get(1) == null) {
 			((ArrayList) data).remove(1);
-			((ArrayList) data).add(DataDictionary.getInstance().getView(
-					((ASTIdentifier) node.jjtGetChild(0)).getName()));
+			((ArrayList) data).add(DataDictionary.getInstance().getView(((ASTIdentifier) node.jjtGetChild(0)).getName()));
 		}
 
 		((ArrayList) data).add(new Integer(0));
@@ -427,42 +397,32 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator inputForPrediction = (AbstractLogicalOperator) returnData
-				.get(1);
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForPrediction = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
 
-		prediction.subscribeToSource(inputForPrediction, 0, sourceOutPort,
-				inputForPrediction.getOutputSchema());
+		prediction.subscribeToSource(inputForPrediction, 0, sourceOutPort, inputForPrediction.getOutputSchema());
 
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 
 			// handle the standard prediction definitions
 			if (node.jjtGetChild(i) instanceof ASTPredictionDefinition) {
-				ASTPredictionDefinition predDef = (ASTPredictionDefinition) node
-						.jjtGetChild(i);
+				ASTPredictionDefinition predDef = (ASTPredictionDefinition) node.jjtGetChild(i);
 
-				SDFExpression[] expressions = new SDFExpression[prediction
-						.getOutputSchema().getAttributeCount()];
+				SDFExpression[] expressions = new SDFExpression[prediction.getOutputSchema().getAttributeCount()];
 
 				// aside from the last child, all children
 				// must be ASTPredictionFunctionDefinitions
 				for (int u = 0; u < predDef.jjtGetNumChildren() - 1; u++) {
-					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef
-							.jjtGetChild(u);
+					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef.jjtGetChild(u);
 
-					ASTIdentifier attr = (ASTIdentifier) predFctDef
-							.jjtGetChild(0);
-					ASTExpression predFct = (ASTExpression) predFctDef
-							.jjtGetChild(1);
+					ASTIdentifier attr = (ASTIdentifier) predFctDef.jjtGetChild(0);
+					ASTExpression predFct = (ASTExpression) predFctDef.jjtGetChild(1);
 
 					SDFExpression predFctExpr = null;
 					try {
-						predFctExpr = new SDFExpression("", predFct.toString(),
-								(IAttributeResolver) ((ArrayList) data).get(0));
-						predFctExpr.initAttributePositions(prediction
-								.getOutputSchema());
+						predFctExpr = new SDFExpression("", predFct.toString(), (IAttributeResolver) ((ArrayList) data).get(0));
+						predFctExpr.initAttributePositions(prediction.getOutputSchema());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -474,14 +434,11 @@ public class CreateLogicalPlanVisitor implements
 
 					String attrName = attr.getName();
 
-					IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data)
-							.get(0);
+					IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
-					for (int v = 0; v < prediction.getOutputSchema()
-							.getAttributeCount(); v++) {
+					for (int v = 0; v < prediction.getOutputSchema().getAttributeCount(); v++) {
 						try {
-							if (prediction.getOutputSchema().getAttribute(v)
-									.equals(attrRes.getAttribute(attrName))) {
+							if (prediction.getOutputSchema().getAttribute(v).equals(attrRes.getAttribute(attrName))) {
 								expressions[v] = predFctExpr;
 							}
 						} catch (AmgigiousAttributeException e) {
@@ -500,9 +457,7 @@ public class CreateLogicalPlanVisitor implements
 				newData.add(((ArrayList) data).get(0));
 
 				// the last child of a prediction definition will be a predicate
-				IPredicate predicate = (IPredicate) ((ArrayList) predDef
-						.jjtGetChild(predDef.jjtGetNumChildren() - 1)
-						.jjtAccept(this, newData)).get(1);
+				IPredicate predicate = (IPredicate) ((ArrayList) predDef.jjtGetChild(predDef.jjtGetNumChildren() - 1).jjtAccept(this, newData)).get(1);
 
 				initPredicate(predicate, prediction.getInputSchema(), null);
 
@@ -511,27 +466,21 @@ public class CreateLogicalPlanVisitor implements
 
 			// handle the default prediction definition
 			else if (node.jjtGetChild(i) instanceof ASTDefaultPredictionDefinition) {
-				ASTDefaultPredictionDefinition predDef = (ASTDefaultPredictionDefinition) node
-						.jjtGetChild(i);
+				ASTDefaultPredictionDefinition predDef = (ASTDefaultPredictionDefinition) node.jjtGetChild(i);
 
-				SDFExpression[] expressions = new SDFExpression[prediction
-						.getOutputSchema().getAttributeCount()];
+				SDFExpression[] expressions = new SDFExpression[prediction.getOutputSchema().getAttributeCount()];
 
 				// aside from the last child, all children
 				// must be ASTPredictionFunctionDefinitions
 				for (int u = 0; u < predDef.jjtGetNumChildren() - 1; u++) {
-					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef
-							.jjtGetChild(u);
+					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef.jjtGetChild(u);
 
-					ASTIdentifier attr = (ASTIdentifier) predFctDef
-							.jjtGetChild(0);
-					ASTExpression predFct = (ASTExpression) predFctDef
-							.jjtGetChild(1);
+					ASTIdentifier attr = (ASTIdentifier) predFctDef.jjtGetChild(0);
+					ASTExpression predFct = (ASTExpression) predFctDef.jjtGetChild(1);
 
 					SDFExpression predFctExpr = null;
 					try {
-						predFctExpr = new SDFExpression("", predFct.toString(),
-								(IAttributeResolver) ((ArrayList) data).get(0));
+						predFctExpr = new SDFExpression("", predFct.toString(), (IAttributeResolver) ((ArrayList) data).get(0));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -543,14 +492,11 @@ public class CreateLogicalPlanVisitor implements
 
 					String attrName = attr.getName();
 
-					IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data)
-							.get(0);
+					IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
-					for (int v = 0; v < prediction.getOutputSchema()
-							.getAttributeCount(); v++) {
+					for (int v = 0; v < prediction.getOutputSchema().getAttributeCount(); v++) {
 						try {
-							if (prediction.getOutputSchema().getAttribute(v)
-									.equals(attrRes.getAttribute(attrName))) {
+							if (prediction.getOutputSchema().getAttribute(v).equals(attrRes.getAttribute(attrName))) {
 								expressions[v] = predFctExpr;
 							}
 						} catch (AmgigiousAttributeException e) {
@@ -582,8 +528,7 @@ public class CreateLogicalPlanVisitor implements
 	public Object visit(ASTBasicPredicate node, Object data) {
 		SDFObjectRelationalExpression expression;
 		// try {
-		expression = new SDFObjectRelationalExpression("", node.getPredicate(),
-				(IAttributeResolver) ((ArrayList) data).get(0));
+		expression = new SDFObjectRelationalExpression("", node.getPredicate(), (IAttributeResolver) ((ArrayList) data).get(0));
 		// } catch (SDFExpressionParseException e) {
 		// throw new RuntimeException(e);
 		// }
@@ -598,18 +543,15 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
-				.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
 
 		// pass only the attribute resolver to the children
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
-				.jjtGetChild(1).jjtAccept(this, newData)).get(1);
+		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data)
-				.add(new AndPredicate<RelationalTuple<?>>(left, right));
+		((ArrayList) data).add(new AndPredicate<RelationalTuple<?>>(left, right));
 		return data;
 	}
 
@@ -618,18 +560,15 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
-				.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
 
 		// pass only the attribute resolver to the children
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node
-				.jjtGetChild(1).jjtAccept(this, newData)).get(1);
+		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) ((ArrayList) node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 
-		((ArrayList) data)
-				.add(new OrPredicate<RelationalTuple<?>>(left, right));
+		((ArrayList) data).add(new OrPredicate<RelationalTuple<?>>(left, right));
 		return data;
 	}
 
@@ -638,8 +577,7 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		IPredicate<RelationalTuple<?>> predicate = (IPredicate<RelationalTuple<?>>) ((ArrayList) node
-				.jjtGetChild(0).jjtAccept(this, newData)).get(1);
+		IPredicate<RelationalTuple<?>> predicate = (IPredicate<RelationalTuple<?>>) ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
 
 		((ArrayList) data).add(new NotPredicate<RelationalTuple<?>>(predicate));
 		return data;
@@ -674,8 +612,7 @@ public class CreateLogicalPlanVisitor implements
 	}
 
 	public Object visit(ASTProjectionIdentifier node, Object data) {
-		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data)
-				.get(0);
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 		ProjectAO projectAO = (ProjectAO) ((ArrayList) data).get(1);
 
 		String attrString = ((ASTIdentifier) node.jjtGetChild(0)).getName();
@@ -700,8 +637,7 @@ public class CreateLogicalPlanVisitor implements
 		return null;
 	}
 
-	public static void initPredicate(IPredicate predicate,
-			SDFAttributeList left, SDFAttributeList right) {
+	public static void initPredicate(IPredicate predicate, SDFAttributeList left, SDFAttributeList right) {
 		if (predicate instanceof ComplexPredicate) {
 			ComplexPredicate compPred = (ComplexPredicate) predicate;
 			initPredicate(compPred.getLeft(), left, right);
@@ -742,20 +678,16 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(((ArrayList) data).get(0));
 
 		// the first child is the input operator
-		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator inputForSelection = (AbstractLogicalOperator) returnData
-				.get(1);
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForSelection = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
-		selection.subscribeToSource(inputForSelection, 0, sourceOutPort,
-				inputForSelection.getOutputSchema());
+		selection.subscribeToSource(inputForSelection, 0, sourceOutPort, inputForSelection.getOutputSchema());
 
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
 		// the second child is a predicate
-		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(1)
-				.jjtAccept(this, newData)).get(1);
+		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(1).jjtAccept(this, newData)).get(1);
 		initPredicate(predicate, selection.getInputSchema(), null);
 
 		selection.setPredicate(predicate);
@@ -776,30 +708,23 @@ public class CreateLogicalPlanVisitor implements
 		// in both following lines the index 1 in the get method
 		// can be used, since in both lines the collection
 		// only contains the attribute resolver
-		ArrayList leftReturnData = (ArrayList) node.jjtGetChild(0).jjtAccept(
-				this, newData);
-		AbstractLogicalOperator leftIn = (AbstractLogicalOperator) leftReturnData
-				.get(1);
+		ArrayList leftReturnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator leftIn = (AbstractLogicalOperator) leftReturnData.get(1);
 		int leftSourceOutPort = ((Integer) leftReturnData.get(2)).intValue();
 
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
-		ArrayList rightReturnData = (ArrayList) node.jjtGetChild(1).jjtAccept(
-				this, newData);
-		AbstractLogicalOperator rightIn = (AbstractLogicalOperator) rightReturnData
-				.get(1);
+		ArrayList rightReturnData = (ArrayList) node.jjtGetChild(1).jjtAccept(this, newData);
+		AbstractLogicalOperator rightIn = (AbstractLogicalOperator) rightReturnData.get(1);
 		int rightSourceOutPort = ((Integer) rightReturnData.get(2)).intValue();
 
-		join.subscribeToSource(leftIn, 0, leftSourceOutPort,
-				leftIn.getOutputSchema());
-		join.subscribeToSource(rightIn, 1, rightSourceOutPort,
-				rightIn.getOutputSchema());
+		join.subscribeToSource(leftIn, 0, leftSourceOutPort, leftIn.getOutputSchema());
+		join.subscribeToSource(rightIn, 1, rightSourceOutPort, rightIn.getOutputSchema());
 
 		// setting the predicate and initializing the operator
 		newData.clear();
 		newData.add(((ArrayList) data).get(0));
-		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(2)
-				.jjtAccept(this, newData)).get(1);
+		IPredicate predicate = (IPredicate) ((ArrayList) node.jjtGetChild(2).jjtAccept(this, newData)).get(1);
 		initPredicate(predicate, join.getInputSchema(0), join.getInputSchema(1));
 
 		join.setPredicate(predicate);
@@ -847,8 +772,7 @@ public class CreateLogicalPlanVisitor implements
 
 		newData.add(attrRes);
 
-		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData);
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
 		input = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
 
@@ -918,8 +842,7 @@ public class CreateLogicalPlanVisitor implements
 
 		newData.add(attrRes);
 
-		input = (AbstractLogicalOperator) ((ArrayList) node.jjtGetChild(0)
-				.jjtAccept(this, newData)).get(1);
+		input = (AbstractLogicalOperator) ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData)).get(1);
 
 		op.subscribeTo(input, input.getOutputSchema());
 
@@ -964,8 +887,7 @@ public class CreateLogicalPlanVisitor implements
 	public Object visit(ASTBrokerOp node, Object data) {
 		// We cannot use the same code as for ASTAccessOp, since
 		// the broker also can but not has to have input operators.
-		AttributeResolver attributeResolver = (AttributeResolver) ((ArrayList) data)
-				.get(0);
+		AttributeResolver attributeResolver = (AttributeResolver) ((ArrayList) data).get(0);
 
 		ArrayList newData = new ArrayList();
 		newData.add(attributeResolver);
@@ -979,24 +901,17 @@ public class CreateLogicalPlanVisitor implements
 		// would not match
 		ArrayList returnData = null;
 		if (node.hasQueue()) {
-			returnData = (ArrayList) node.jjtGetChild(1).jjtAccept(this,
-					newData);
+			returnData = (ArrayList) node.jjtGetChild(1).jjtAccept(this, newData);
 			ILogicalOperator inputQueue = (ILogicalOperator) returnData.get(1);
 			int sourceOutPort = ((Integer) returnData.get(2)).intValue();
 
-			if (!broker.getQueueSchema().compatibleTo(
-					inputQueue.getOutputSchema())) {
-				throw new RuntimeException(
-						"Schema mismatch! \nBrokerQueueSchema: "
-								+ broker.getQueueSchema().toString()
-								+ "\nInputQueueSchema: "
-								+ inputQueue.getOutputSchema());
+			if (!broker.getQueueSchema().compatibleTo(inputQueue.getOutputSchema())) {
+				throw new RuntimeException("Schema mismatch! \nBrokerQueueSchema: " + broker.getQueueSchema().toString() + "\nInputQueueSchema: " + inputQueue.getOutputSchema());
 			}
 
 			int curInPort = broker.getSubscribedToSource().size();
 
-			broker.subscribeToSource(inputQueue, curInPort, sourceOutPort,
-					inputQueue.getOutputSchema());
+			broker.subscribeToSource(inputQueue, curInPort, sourceOutPort, inputQueue.getOutputSchema());
 		}
 
 		// get the input ops of the broker
@@ -1005,14 +920,12 @@ public class CreateLogicalPlanVisitor implements
 		// the first child is the identifier
 		int start = node.hasQueue() ? 2 : 1;
 		for (int i = start; i < node.jjtGetNumChildren(); i++) {
-			returnData = (ArrayList) node.jjtGetChild(i).jjtAccept(this,
-					newData);
+			returnData = (ArrayList) node.jjtGetChild(i).jjtAccept(this, newData);
 			ILogicalOperator inputOp = (ILogicalOperator) returnData.get(1);
 			int sourceOutPort = ((Integer) returnData.get(2)).intValue();
 
 			int curInPort = broker.getSubscribedToSource().size();
-			broker.subscribeToSource(inputOp, curInPort, sourceOutPort,
-					inputOp.getOutputSchema());
+			broker.subscribeToSource(inputOp, curInPort, sourceOutPort, inputOp.getOutputSchema());
 		}
 
 		((ArrayList) data).add(broker);
@@ -1028,49 +941,38 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator inputForPrediction = (AbstractLogicalOperator) returnData
-				.get(1);
+		ArrayList returnData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForPrediction = (AbstractLogicalOperator) returnData.get(1);
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
 
-		prediction.subscribeToSource(inputForPrediction, 0, sourceOutPort,
-				inputForPrediction.getOutputSchema());
+		prediction.subscribeToSource(inputForPrediction, 0, sourceOutPort, inputForPrediction.getOutputSchema());
 
 		ASTIdentifier listIdentifier = (ASTIdentifier) node.jjtGetChild(1);
-		prediction.initListPath(inputForPrediction.getOutputSchema(),
-				listIdentifier.toString());
+		prediction.initListPath(inputForPrediction.getOutputSchema(), listIdentifier.toString());
 
 		for (int i = 2; i < node.jjtGetNumChildren(); i++) {
 
 			// handle the standard prediction definitions
 			if (node.jjtGetChild(i) instanceof ASTPredictionDefinition) {
-				ASTPredictionDefinition predDef = (ASTPredictionDefinition) node
-						.jjtGetChild(i);
+				ASTPredictionDefinition predDef = (ASTPredictionDefinition) node.jjtGetChild(i);
 
 				// SDFObjectRelationalExpression[] expressions = new
 				// SDFObjectRelationalExpression[prediction
 				// .getOutputSchema().getAttributeCount()];
-				PredictionExpression[] expressions = new PredictionExpression[prediction
-						.getOutputSchema().getAttributeCount()];
+				PredictionExpression[] expressions = new PredictionExpression[prediction.getOutputSchema().getAttributeCount()];
 
 				// aside from the last child, all children
 				// must be ASTPredictionFunctionDefinitions
 				for (int u = 0; u < predDef.jjtGetNumChildren() - 1; u++) {
-					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef
-							.jjtGetChild(u);
+					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef.jjtGetChild(u);
 
-					ASTIdentifier attr = (ASTIdentifier) predFctDef
-							.jjtGetChild(0);
-					ASTExpression predFct = (ASTExpression) predFctDef
-							.jjtGetChild(1);
+					ASTIdentifier attr = (ASTIdentifier) predFctDef.jjtGetChild(0);
+					ASTExpression predFct = (ASTExpression) predFctDef.jjtGetChild(1);
 
 					PredictionExpression predFctExpr = null;
 					try {
-						predFctExpr = new PredictionExpression(attr.toString(),
-								predFct.toString());
-						predFctExpr.initAttributePaths(prediction
-								.getOutputSchema());
+						predFctExpr = new PredictionExpression(attr.toString(), predFct.toString());
+						predFctExpr.initAttributePaths(prediction.getOutputSchema());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1084,9 +986,7 @@ public class CreateLogicalPlanVisitor implements
 				newData.add(((ArrayList) data).get(0));
 
 				// the last child of a prediction definition will be a predicate
-				IPredicate predicate = (IPredicate) ((ArrayList) predDef
-						.jjtGetChild(predDef.jjtGetNumChildren() - 1)
-						.jjtAccept(this, newData)).get(1);
+				IPredicate predicate = (IPredicate) ((ArrayList) predDef.jjtGetChild(predDef.jjtGetNumChildren() - 1).jjtAccept(this, newData)).get(1);
 
 				initPredicate(predicate, prediction.getInputSchema(), null);
 
@@ -1095,29 +995,22 @@ public class CreateLogicalPlanVisitor implements
 
 			// handle the default prediction definition
 			else if (node.jjtGetChild(i) instanceof ASTDefaultPredictionDefinition) {
-				ASTDefaultPredictionDefinition predDef = (ASTDefaultPredictionDefinition) node
-						.jjtGetChild(i);
+				ASTDefaultPredictionDefinition predDef = (ASTDefaultPredictionDefinition) node.jjtGetChild(i);
 
-				PredictionExpression[] expressions = new PredictionExpression[prediction
-						.getOutputSchema().getAttributeCount()];
+				PredictionExpression[] expressions = new PredictionExpression[prediction.getOutputSchema().getAttributeCount()];
 
 				// aside from the last child, all children
 				// must be ASTPredictionFunctionDefinitions
 				for (int u = 0; u < predDef.jjtGetNumChildren(); u++) {
-					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef
-							.jjtGetChild(u);
+					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef.jjtGetChild(u);
 
-					ASTIdentifier attr = (ASTIdentifier) predFctDef
-							.jjtGetChild(0);
-					ASTExpression predFct = (ASTExpression) predFctDef
-							.jjtGetChild(1);
+					ASTIdentifier attr = (ASTIdentifier) predFctDef.jjtGetChild(0);
+					ASTExpression predFct = (ASTExpression) predFctDef.jjtGetChild(1);
 
 					PredictionExpression predFctExpr = null;
 					try {
-						predFctExpr = new PredictionExpression(attr.toString(),
-								predFct.toString());
-						predFctExpr.initAttributePaths(prediction
-								.getOutputSchema());
+						predFctExpr = new PredictionExpression(attr.toString(), predFct.toString());
+						predFctExpr.initAttributePaths(prediction.getOutputSchema());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1156,33 +1049,27 @@ public class CreateLogicalPlanVisitor implements
 
 	@Override
 	public Object visit(ASTAssociationGenOp node, Object data) {
-		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data)
-				.get(0);
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
 		HypothesisGenerationAO gen = new HypothesisGenerationAO();
 
 		ArrayList newData = new ArrayList();
 		newData.add(attrRes);
 
-		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0)
-				.jjtAccept(this, newData);
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-		gen.subscribeToSource(childOp, 0, sourceOutPort,
-				childOp.getOutputSchema());
+		gen.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		newData = new ArrayList();
 		newData.add(attrRes);
 
-		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this,
-				newData);
+		childData = (ArrayList<Object>) node.jjtGetChild(1).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
-		gen.subscribeToSource(childOp, 1, sourceOutPort,
-				childOp.getOutputSchema());
+		gen.subscribeToSource(childOp, 1, sourceOutPort, childOp.getOutputSchema());
 
-		gen.initPaths(((ASTIdentifier) node.jjtGetChild(3)).getName(),
-				((ASTIdentifier) node.jjtGetChild(2)).getName());
+		gen.initPaths(((ASTIdentifier) node.jjtGetChild(3)).getName(), ((ASTIdentifier) node.jjtGetChild(2)).getName());
 
 		// pass only the attribute resolver to the children
 		((ArrayList) data).add(gen);
@@ -1193,8 +1080,7 @@ public class CreateLogicalPlanVisitor implements
 
 	@Override
 	public Object visit(ASTAssociationEvalOp node, Object data) {
-		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data)
-				.get(0);
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
 		HypothesisEvaluationAO eval = new HypothesisEvaluationAO();
 		// first the output schema is empty, it will be
@@ -1203,25 +1089,21 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList newData = new ArrayList();
 		newData.add(attrRes);
 
-		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0)
-				.jjtAccept(this, newData);
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-		eval.subscribeToSource(childOp, 0, sourceOutPort,
-				childOp.getOutputSchema());
+		eval.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
 		eval.setFunctionID(identifier.getName());
 
-		HashMap<String, String> params = buildKeyMap((ASTKeyValueList) node
-				.jjtGetChild(2));
+		HashMap<String, String> params = buildKeyMap((ASTKeyValueList) node.jjtGetChild(2));
 		eval.setAlgorithmParameter(params);
 
 		identifier = (ASTIdentifier) node.jjtGetChild(3);
-		eval.initPaths(((ASTIdentifier) node.jjtGetChild(4)).getName(),
-				((ASTIdentifier) node.jjtGetChild(3)).getName());
+		eval.initPaths(((ASTIdentifier) node.jjtGetChild(4)).getName(), ((ASTIdentifier) node.jjtGetChild(3)).getName());
 
-		if(node.jjtGetNumChildren() == 6) {
+		if (node.jjtGetNumChildren() == 6) {
 			params = buildKeyMap((ASTKeyValueList) node.jjtGetChild(5));
 			eval.setMeasurementPairs(params);
 		} else {
@@ -1237,8 +1119,7 @@ public class CreateLogicalPlanVisitor implements
 
 	@Override
 	public Object visit(ASTAssociationSelOp node, Object data) {
-		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data)
-				.get(0);
+		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data).get(0);
 
 		HypothesisSelectionAO selection = new HypothesisSelectionAO();
 
@@ -1246,12 +1127,10 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 
 		// subscribe to source
-		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0)
-				.jjtAccept(this, newData);
+		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) inputOpNode.get(2)).intValue();
 		ILogicalOperator inputOp = (ILogicalOperator) inputOpNode.get(1);
-		inputOp.subscribeToSource(selection, 0, sourceOutPort,
-				inputOp.getOutputSchema());
+		inputOp.subscribeToSource(selection, 0, sourceOutPort, inputOp.getOutputSchema());
 
 		// get name of this op
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
@@ -1266,8 +1145,9 @@ public class CreateLogicalPlanVisitor implements
 		String pathOld = identifier.getName();
 
 		// path initialization
-		selection.initPaths(pathOld, pathNew);
-
+		selection.setNewObjListPath(pathNew);
+		selection.setOldObjListPath(pathOld);
+		
 		// saving op for source lookup
 		// attrRes.addSource(opName, selection);
 		DataDictionary.getInstance().setLogicalView(opName, selection);
@@ -1281,14 +1161,12 @@ public class CreateLogicalPlanVisitor implements
 
 	@Override
 	public Object visit(ASTAssociationSrcOp node, Object data) {
-		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data)
-				.get(0);
+		AttributeResolver attrRes = (AttributeResolver) ((ArrayList) data).get(0);
 
 		// get name and lookup operator
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
 		String srcName = identifier.getName();
-		ILogicalOperator associationSource = DataDictionary.getInstance()
-				.getView(srcName);
+		ILogicalOperator associationSource = DataDictionary.getInstance().getView(srcName);
 		if (associationSource == null) {
 			throw new RuntimeException("The source cannot be found: " + srcName);
 		}
@@ -1308,17 +1186,15 @@ public class CreateLogicalPlanVisitor implements
 		HashMap<String, String> params = new HashMap<String, String>();
 		if (list != null) {
 			for (int i = 0; i < list.jjtGetNumChildren(); i++) {
-				ASTKeyValuePair valuePair = (ASTKeyValuePair) list
-						.jjtGetChild(i);
+				ASTKeyValuePair valuePair = (ASTKeyValuePair) list.jjtGetChild(i);
 
-				String key = ((ASTIdentifier) valuePair.jjtGetChild(0))
-						.getName();
-				
-				Node valueNode = valuePair.jjtGetChild(1); 
-				if(valueNode instanceof ASTIdentifier) {
-					params.put(key, ((ASTIdentifier)valueNode).getName());
+				String key = ((ASTIdentifier) valuePair.jjtGetChild(0)).getName();
+
+				Node valueNode = valuePair.jjtGetChild(1);
+				if (valueNode instanceof ASTIdentifier) {
+					params.put(key, ((ASTIdentifier) valueNode).getName());
 				} else {
-					params.put(key, (((ASTNumber)valueNode).getValue()));
+					params.put(key, (((ASTNumber) valueNode).getValue()));
 				}
 			}
 		}
@@ -1332,14 +1208,11 @@ public class CreateLogicalPlanVisitor implements
 
 		SchemaConvertAO scOp = new SchemaConvertAO();
 
-		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData));
-		AbstractLogicalOperator inputForSchemaConvert = (AbstractLogicalOperator) returnData
-				.get(1);
+		ArrayList returnData = ((ArrayList) node.jjtGetChild(0).jjtAccept(this, newData));
+		AbstractLogicalOperator inputForSchemaConvert = (AbstractLogicalOperator) returnData.get(1);
 
 		int sourceOutPort = ((Integer) returnData.get(2)).intValue();
-		scOp.subscribeToSource(inputForSchemaConvert, 0, sourceOutPort,
-				inputForSchemaConvert.getOutputSchema());
+		scOp.subscribeToSource(inputForSchemaConvert, 0, sourceOutPort, inputForSchemaConvert.getOutputSchema());
 
 		((ArrayList) data).add(scOp);
 		((ArrayList) data).add(new Integer(0));
@@ -1355,19 +1228,15 @@ public class CreateLogicalPlanVisitor implements
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		ArrayList leftInData = (ArrayList) node.jjtGetChild(0).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator leftIn = (AbstractLogicalOperator) leftInData
-				.get(1);
+		ArrayList leftInData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator leftIn = (AbstractLogicalOperator) leftInData.get(1);
 		int leftInSourceOutPort = ((Integer) leftInData.get(2)).intValue();
 
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		ArrayList rightInData = (ArrayList) node.jjtGetChild(1).jjtAccept(this,
-				newData);
-		AbstractLogicalOperator rightIn = (AbstractLogicalOperator) rightInData
-				.get(1);
+		ArrayList rightInData = (ArrayList) node.jjtGetChild(1).jjtAccept(this, newData);
+		AbstractLogicalOperator rightIn = (AbstractLogicalOperator) rightInData.get(1);
 		int rightInSourceOutPort = ((Integer) rightInData.get(2)).intValue();
 
 		String attributeName = ((ASTIdentifier) node.jjtGetChild(2)).getName();
@@ -1375,10 +1244,8 @@ public class CreateLogicalPlanVisitor implements
 		SDFAttributeList schema = rightIn.getOutputSchema();
 		ao.initNeededAttributeIndices(schema, attributeName);
 
-		ao.subscribeToSource(leftIn, 0, leftInSourceOutPort,
-				leftIn.getOutputSchema());
-		ao.subscribeToSource(rightIn, 1, rightInSourceOutPort,
-				rightIn.getOutputSchema());
+		ao.subscribeToSource(leftIn, 0, leftInSourceOutPort, leftIn.getOutputSchema());
+		ao.subscribeToSource(rightIn, 1, rightInSourceOutPort, rightIn.getOutputSchema());
 
 		newData.clear();
 		newData.add(((ArrayList) data).get(0));
@@ -1391,33 +1258,33 @@ public class CreateLogicalPlanVisitor implements
 
 	@Override
 	public Object visit(ASTBenchmarkOp node, Object data) {
-		
+
 		// first child is preceeding operator
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 		ArrayList inData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
 		AbstractLogicalOperator inputForBench = (AbstractLogicalOperator) inData.get(1);
 		int inputSourceOutPort = ((Integer) inData.get(2)).intValue();
-		
+
 		// second child is selectivity
-		double selectivity = Double.parseDouble(((ASTNumber)node.jjtGetChild(1)).getValue());
-		
-		//third child is duration
-		int duration = Integer.parseInt(((ASTNumber)node.jjtGetChild(2)).getValue());
-		
+		double selectivity = Double.parseDouble(((ASTNumber) node.jjtGetChild(1)).getValue());
+
+		// third child is duration
+		int duration = Integer.parseInt(((ASTNumber) node.jjtGetChild(2)).getValue());
+
 		BenchmarkAO bench = new BenchmarkAO(duration, selectivity);
-		
+
 		bench.subscribeToSource(inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
-		
+
 		((ArrayList) data).add(bench);
 		((ArrayList) data).add(new Integer(0));
-		
+
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTEvaluateOp node, Object data) {		
-        IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
+	public Object visit(ASTEvaluateOp node, Object data) {
+		IAttributeResolver attrRes = (IAttributeResolver) ((ArrayList) data).get(0);
 
 		EvaluationAO evalAO = new EvaluationAO();
 
@@ -1425,12 +1292,10 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 
 		// subscribe bei der Assoziation (HypothesisSelektion)
-		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0)
-				.jjtAccept(this, newData);
+		ArrayList<Object> childData = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) childData.get(2)).intValue();
 		ILogicalOperator childOp = (ILogicalOperator) childData.get(1);
-		evalAO.subscribeToSource(childOp, 2, sourceOutPort,
-				childOp.getOutputSchema());
+		evalAO.subscribeToSource(childOp, 2, sourceOutPort, childOp.getOutputSchema());
 
 		// Assoziations Objektpfad
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
@@ -1440,12 +1305,10 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 
 		// subscribe bei der Filterung
-		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this,
-				newData);
+		childData = (ArrayList<Object>) node.jjtGetChild(2).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
-		evalAO.subscribeToSource(childOp, 0, sourceOutPort,
-				childOp.getOutputSchema());
+		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		// get filteringObjListPaths
 		identifier = (ASTIdentifier) node.jjtGetChild(3);
@@ -1455,20 +1318,17 @@ public class CreateLogicalPlanVisitor implements
 		newData.add(attrRes);
 
 		// subscribe bei bei temporären Broker
-		childData = (ArrayList<Object>) node.jjtGetChild(4).jjtAccept(this,
-				newData);
+		childData = (ArrayList<Object>) node.jjtGetChild(4).jjtAccept(this, newData);
 		sourceOutPort = ((Integer) childData.get(2)).intValue();
 		childOp = (ILogicalOperator) childData.get(1);
-		evalAO.subscribeToSource(childOp, 0, sourceOutPort,
-				childOp.getOutputSchema());
+		evalAO.subscribeToSource(childOp, 0, sourceOutPort, childOp.getOutputSchema());
 
 		// get brokerObjListPath
 		identifier = (ASTIdentifier) node.jjtGetChild(5);
 		String brokerObjListPath = identifier.getName();
 
 		// Init AO paths
-		evalAO.initPaths(associationObjListPath, filteringObjListPaths,
-				brokerObjListPath);
+		evalAO.initPaths(associationObjListPath, filteringObjListPaths, brokerObjListPath);
 
 		// get threshold
 		ASTNumber number = (ASTNumber) node.jjtGetChild(6);
@@ -1493,342 +1353,334 @@ public class CreateLogicalPlanVisitor implements
 		// first child is preceeding operator
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
-		
+
 		ArrayList inData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
 		AbstractLogicalOperator inputForBuffer = (AbstractLogicalOperator) inData.get(1);
 		int inputSourceOutPort = ((Integer) inData.get(2)).intValue();
-		
+
 		// second child is selectivity
-		String type = ((ASTIdentifier)node.jjtGetChild(1)).getName();
-		
+		String type = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+
 		BufferAO buffer = new BufferAO();
 		buffer.setType(type);
-		
+
 		buffer.subscribeToSource(inputForBuffer, 0, inputSourceOutPort, inputForBuffer.getOutputSchema());
-		
+
 		((ArrayList) data).add(buffer);
 		((ArrayList) data).add(new Integer(0));
-		
+
 		return data;
-  }
+	}
 
 	@Override
 	public Object visit(ASTExistOp node, Object data) {
 		// first child is preceeding operator
 		ArrayList newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
-		
+
 		ExistenceAO exist = new ExistenceAO();
-		
-		if(node.getType().equals("exist")){
+
+		if (node.getType().equals("exist")) {
 			exist.setType(ExistenceAO.Type.EXISTS);
-		}
-		else if(node.getType().equals("not exist")){
+		} else if (node.getType().equals("not exist")) {
 			exist.setType(ExistenceAO.Type.NOT_EXISTS);
-		}
-		else{
+		} else {
 			throw new RuntimeException("ExistenceAO-Type '" + node.getType() + "' is invalid.");
 		}
-		
+
 		// get left and right input operators
 		// the right input is only for checking
 		// the left input contains the data
 		// that is passed by this operator
-		ArrayList inputData = (ArrayList)node.jjtGetChild(0).jjtAccept(this, newData);
-		AbstractLogicalOperator leftInput = (AbstractLogicalOperator)inputData.get(1);
+		ArrayList inputData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator leftInput = (AbstractLogicalOperator) inputData.get(1);
 		int leftSourceOutPort = ((Integer) inputData.get(2)).intValue();
-		
+
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
 
-		inputData = (ArrayList)node.jjtGetChild(1).jjtAccept(this, newData);
-		AbstractLogicalOperator rightInput = (AbstractLogicalOperator)inputData.get(1);
-		int rightSourceOutPort = ((Integer)inputData.get(2)).intValue();
-		
+		inputData = (ArrayList) node.jjtGetChild(1).jjtAccept(this, newData);
+		AbstractLogicalOperator rightInput = (AbstractLogicalOperator) inputData.get(1);
+		int rightSourceOutPort = ((Integer) inputData.get(2)).intValue();
+
 		exist.subscribeToSource(leftInput, 0, leftSourceOutPort, leftInput.getOutputSchema());
 		exist.subscribeToSource(rightInput, 1, rightSourceOutPort, rightInput.getOutputSchema());
-		
+
 		// get the predicate
 		newData = new ArrayList();
 		newData.add(((ArrayList) data).get(0));
-		
-		inputData = (ArrayList)node.jjtGetChild(2).jjtAccept(this, newData);
-		IPredicate predicate = (IPredicate)inputData.get(1);
-		
+
+		inputData = (ArrayList) node.jjtGetChild(2).jjtAccept(this, newData);
+		IPredicate predicate = (IPredicate) inputData.get(1);
+
 		initPredicate(predicate, exist.getInputSchema(0), exist.getInputSchema(1));
-		
+
 		exist.setPredicate(predicate);
-		
-		((ArrayList)data).add(exist);
-		((ArrayList)data).add(new Integer(0));
-		
+
+		((ArrayList) data).add(exist);
+		((ArrayList) data).add(new Integer(0));
+
 		return data;
 	}
 
-  @Override
-  public Object visit(ASTFilterGainOp node, Object data)
-  {
-    // 
-    // preparation
-    // 
-    
-    // set output port
-    final int OUTPUT_PORT = 0;
-    
-    // set convention constants
-    final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
-    final int DATA_LIST_INDEX_OF_OPERATOR = 1;
-    final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
-    
-    // set grammar specific constants
-    final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
-    final int CHILD_INDEX_OF_FUNCTION_ID = 1;
-    
-    // cast filter data
-    // filter data should be a List<Object> implementation (this is a convention)
-    List<Object> dataList = null;
-    if (!(data instanceof List<?>))
-    {
-      throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
-    }
-    try
-    {
-      dataList = (List<Object>) data;
-    }
-    catch(ClassCastException e)
-    {
-      throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
-    }
-    
-    // get attribute resolver out of data list
-    Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
-    
-    // 
-    // pass on visitor to nodes if necessary
-    //
-    
-    // pass on to embedded ao (node 0)
-    List<Object> node0DataList = new ArrayList<Object>();
-    node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
-    node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(
-        this, node0DataList));
-    
-    //
-    // get input data out of child nodes and their output data
-    // 
-    
-    // get embedded operator and its source output port
-    // out of child node 0's returned data list
-    AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList
-    .get(DATA_LIST_INDEX_OF_OPERATOR);
-    final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
-    
-    // get path to new car list out of child 3 (its name)
-    String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
-    
-    // 
-    // create Filter AO
-    // and initialize it
-    // 
-    
-    FilterGainAO filterAO = new FilterGainAO();
-    
-    filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT,
-        embeddedAO.getOutputSchema());
-    
-    // set function id
-    filterAO.setFunctionID(functionID);
-    
-    // 
-    // return data according to convention
-    // 
-    
-    dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
-    dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
-    
-    return dataList;
-  }
+	@Override
+	public Object visit(ASTFilterGainOp node, Object data) {
+		//
+		// preparation
+		//
 
-  @Override
-  public Object visit(ASTFilterEstimateOp node, Object data)
-  {
-    // 
-    // preparation
-    // 
-    
-    // set output port
-    final int OUTPUT_PORT = 0;
-    
-    // set convention constants
-    final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
-    final int DATA_LIST_INDEX_OF_OPERATOR = 1;
-    final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
-    
-    // set grammar specific constants
-    final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
-    final int CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST = 1;
-    final int CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST = 2;
-    final int CHILD_INDEX_OF_FUNCTION_ID = 3;
-    
-    // cast filter data
-    // filter data should be a List<Object> implementation (this is a convention)
-    List<Object> dataList = null;
-    if (!(data instanceof List<?>))
-    {
-      throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
-    }
-    try
-    {
-      dataList = (List<Object>) data;
-    }
-    catch(ClassCastException e)
-    {
-      throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
-    }
-    
-    // get attribute resolver out of data list
-    Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
-    
-    // 
-    // pass on visitor to nodes if necessary
-    //
-    
-    // pass on to embedded ao (node 0)
-    List<Object> node0DataList = new ArrayList<Object>();
-    node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
-    node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(
-        this, node0DataList));
-    
-    //
-    // get input data out of child nodes and their output data
-    // 
-    
-    // get embedded operator and its source output port
-    // out of child node 0's returned data list
-    AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList
-    .get(DATA_LIST_INDEX_OF_OPERATOR);
-    final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
-    
-    // get path to new car list out of child 1 (its name)
-    String pathToNewCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST)).getName();
-    
-    // get path to new car list out of child 2 (its name)
-    String pathToOldCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST)).getName();
-    
-    // get path to new car list out of child 3 (its name)
-    String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
-    
-    // 
-    // create Filter AO
-    // and initialize it
-    // 
-    
-    FilterEstimateUpdateAO filterAO = new FilterEstimateUpdateAO();
-    
-    filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT,
-        embeddedAO.getOutputSchema());
-    
-    // set path to new car list
-    filterAO.setNewObjListPath(pathToNewCarList);
-    
-    // set path to old car list
-    filterAO.setOldObjListPath(pathToOldCarList);
-    
-    // set function id
-    filterAO.setFunctionID(functionID);
-    
-    // 
-    // return data according to convention
-    // 
-    
-    dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
-    dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
-    
-    return dataList;
-  }
+		// set output port
+		final int OUTPUT_PORT = 0;
 
-  @Override
-  public Object visit(ASTFilterCovarianceOp node, Object data)
-  {
-    // 
-    // preparation
-    // 
-    
-    // set output port
-    final int OUTPUT_PORT = 0;
-    
-    // set convention constants
-    final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
-    final int DATA_LIST_INDEX_OF_OPERATOR = 1;
-    final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
-    
-    // set grammar specific constants
-    final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
-    final int CHILD_INDEX_OF_FUNCTION_ID = 1;
-    
-    // cast filter data
-    // filter data should be a List<Object> implementation (this is a convention)
-    List<Object> dataList = null;
-    if (!(data instanceof List<?>))
-    {
-      throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
-    }
-    try
-    {
-      dataList = (List<Object>) data;
-    }
-    catch(ClassCastException e)
-    {
-      throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
-    }
-    
-    // get attribute resolver out of data list
-    Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
-    
-    // 
-    // pass on visitor to nodes if necessary
-    //
-    
-    // pass on to embedded ao (node 0)
-    List<Object> node0DataList = new ArrayList<Object>();
-    node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
-    node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(
-        this, node0DataList));
-    
-    //
-    // get input data out of child nodes and their output data
-    // 
-    
-    // get embedded operator and its source output port
-    // out of child node 0's returned data list
-    AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList
-    .get(DATA_LIST_INDEX_OF_OPERATOR);
-    final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
-    
-    // get path to new car list out of child 3 (its name)
-    String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
-    
-    // 
-    // create Filter AO
-    // and initialize it
-    // 
-    
-    FilterCovarianceUpdateAO filterAO = new FilterCovarianceUpdateAO();
-    
-    filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT,
-        embeddedAO.getOutputSchema());
-    
-    // set function id
-    filterAO.setFunctionID(functionID);
-    
-    // 
-    // return data according to convention
-    // 
-    
-    dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
-    dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
-    
-    return dataList;
-  }
-  
+		// set convention constants
+		final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
+		final int DATA_LIST_INDEX_OF_OPERATOR = 1;
+		final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
+
+		// set grammar specific constants
+		final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
+		final int CHILD_INDEX_OF_FUNCTION_ID = 1;
+
+		// cast filter data
+		// filter data should be a List<Object> implementation (this is a
+		// convention)
+		List<Object> dataList = null;
+		if (!(data instanceof List<?>)) {
+			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
+		}
+		try {
+			dataList = (List<Object>) data;
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
+		}
+
+		// get attribute resolver out of data list
+		Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
+
+		//
+		// pass on visitor to nodes if necessary
+		//
+
+		// pass on to embedded ao (node 0)
+		List<Object> node0DataList = new ArrayList<Object>();
+		node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
+		node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(this, node0DataList));
+
+		//
+		// get input data out of child nodes and their output data
+		//
+
+		// get embedded operator and its source output port
+		// out of child node 0's returned data list
+		AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR);
+		final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
+
+		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
+		
+		String pathToOldList = ((ASTIdentifier) node.jjtGetChild(2)).getName();
+		String pathToNewList = ((ASTIdentifier) node.jjtGetChild(3)).getName();
+		
+		//
+		// create Filter AO
+		// and initialize it
+		//
+
+		FilterGainAO filterAO = new FilterGainAO();
+
+		filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT, embeddedAO.getOutputSchema());
+		// set function id
+		filterAO.setFunctionID(functionID);
+		filterAO.setNewListName(pathToNewList);
+		filterAO.setOldListName(pathToOldList);
+
+		//
+		// return data according to convention
+		//
+
+		dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
+		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
+
+		return dataList;
+	}
+
+	@Override
+	public Object visit(ASTFilterEstimateOp node, Object data) {
+		//
+		// preparation
+		//
+
+		// set output port
+		final int OUTPUT_PORT = 0;
+
+		// set convention constants
+		final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
+		final int DATA_LIST_INDEX_OF_OPERATOR = 1;
+		final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
+
+		// set grammar specific constants
+		final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
+		final int CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST = 1;
+		final int CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST = 2;
+		final int CHILD_INDEX_OF_FUNCTION_ID = 3;
+
+		// cast filter data
+		// filter data should be a List<Object> implementation (this is a
+		// convention)
+		List<Object> dataList = null;
+		if (!(data instanceof List<?>)) {
+			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
+		}
+		try {
+			dataList = (List<Object>) data;
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
+		}
+
+		// get attribute resolver out of data list
+		Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
+
+		//
+		// pass on visitor to nodes if necessary
+		//
+
+		// pass on to embedded ao (node 0)
+		List<Object> node0DataList = new ArrayList<Object>();
+		node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
+		node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(this, node0DataList));
+
+		//
+		// get input data out of child nodes and their output data
+		//
+
+		// get embedded operator and its source output port
+		// out of child node 0's returned data list
+		AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR);
+		final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
+
+		// get path to new car list out of child 1 (its name)
+		String pathToNewCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_NEW_CAR_LIST)).getName();
+
+		// get path to new car list out of child 2 (its name)
+		String pathToOldCarList = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_PATH_TO_OLD_CAR_LIST)).getName();
+
+		// get path to new car list out of child 3 (its name)
+		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
+
+		//
+		// create Filter AO
+		// and initialize it
+		//
+
+		FilterEstimateUpdateAO filterAO = new FilterEstimateUpdateAO();
+
+		filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT, embeddedAO.getOutputSchema());
+
+		// set path to new car list
+		filterAO.setNewObjListPath(pathToNewCarList);
+
+		// set path to old car list
+		filterAO.setOldObjListPath(pathToOldCarList);
+
+		// set function id
+		filterAO.setFunctionID(functionID);
+
+		//
+		// return data according to convention
+		//
+
+		dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
+		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
+
+		return dataList;
+	}
+
+	@Override
+	public Object visit(ASTFilterCovarianceOp node, Object data) {
+		//
+		// preparation
+		//
+
+		// set output port
+		final int OUTPUT_PORT = 0;
+
+		// set convention constants
+		final int DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER = 0;
+		final int DATA_LIST_INDEX_OF_OPERATOR = 1;
+		final int DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT = 2;
+
+		// set grammar specific constants
+		final int CHILD_INDEX_OF_EMBEDDED_OPERATOR = 0;
+		final int CHILD_INDEX_OF_FUNCTION_ID = 1;
+
+		// cast filter data
+		// filter data should be a List<Object> implementation (this is a
+		// convention)
+		List<Object> dataList = null;
+		if (!(data instanceof List<?>)) {
+			throw new IllegalArgumentException("visitor data must be a java.util.List implementation!");
+		}
+		try {
+			dataList = (List<Object>) data;
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("visitor data must be a java.util.List<Object> implementation!", e);
+		}
+
+		// get attribute resolver out of data list
+		Object attributeResolver = dataList.get(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER);
+
+		//
+		// pass on visitor to nodes if necessary
+		//
+
+		// pass on to embedded ao (node 0)
+		List<Object> node0DataList = new ArrayList<Object>();
+		node0DataList.add(DATA_LIST_INDEX_OF_ATTRIBUTE_RESOLVER, attributeResolver);
+		node0DataList = ((List<Object>) node.jjtGetChild(CHILD_INDEX_OF_EMBEDDED_OPERATOR).jjtAccept(this, node0DataList));
+
+		//
+		// get input data out of child nodes and their output data
+		//
+
+		// get embedded operator and its source output port
+		// out of child node 0's returned data list
+		AbstractLogicalOperator embeddedAO = (AbstractLogicalOperator) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR);
+		final int EMBEDDED_OPERATOR_OUT_PORT = ((Integer) node0DataList.get(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT)).intValue();
+
+		// get path to new car list out of child 3 (its name)
+		String functionID = ((ASTIdentifier) node.jjtGetChild(CHILD_INDEX_OF_FUNCTION_ID)).getName();
+
+		//
+		// create Filter AO
+		// and initialize it
+		//
+
+		FilterCovarianceUpdateAO filterAO = new FilterCovarianceUpdateAO();
+
+		filterAO.subscribeToSource(embeddedAO, OUTPUT_PORT, EMBEDDED_OPERATOR_OUT_PORT, embeddedAO.getOutputSchema());
+
+		// set function id
+		filterAO.setFunctionID(functionID);
+
+		//
+		// return data according to convention
+		//
+
+		dataList.add(DATA_LIST_INDEX_OF_OPERATOR, filterAO);
+		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
+
+		return dataList;
+	}
+
+	@Override
+	public Object visit(ASTExistPredicate node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTExistVariablesDeclaration node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

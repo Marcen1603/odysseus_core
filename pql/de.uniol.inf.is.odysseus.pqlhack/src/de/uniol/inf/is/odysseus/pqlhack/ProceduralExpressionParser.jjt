@@ -425,7 +425,7 @@ void EvaluateOp(): {} {
 
 void FilterGainOp(): {}
 {
-  < K_FILTER_GAIN > "(" AlgebraOp() "," Identifier() ")"
+  < K_FILTER_GAIN > "(" AlgebraOp() "," Identifier() "," Identifier() "," Identifier() ")"
 }
 
 void FilterEstimateOp(): {}

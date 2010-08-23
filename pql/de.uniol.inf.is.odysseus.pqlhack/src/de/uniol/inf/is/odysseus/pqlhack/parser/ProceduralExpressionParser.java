@@ -2285,6 +2285,10 @@ public class ProceduralExpressionParser/*@bgen(jjtree)*/implements ProceduralExp
         AlgebraOp();
         jj_consume_token(66);
         Identifier();
+        jj_consume_token(66);
+        Identifier();
+        jj_consume_token(66);
+        Identifier();
         jj_consume_token(67);
       } catch (Throwable jjte000) {
     if (jjtc000) {
