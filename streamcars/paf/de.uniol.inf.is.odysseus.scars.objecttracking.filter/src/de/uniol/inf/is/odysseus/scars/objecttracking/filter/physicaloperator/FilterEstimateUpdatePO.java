@@ -71,10 +71,6 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
     return object;
   }
   
- 
-  
- 
-  
   public void compute(Connection connected, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
     this.dataUpdateFunction.compute(connected, newObjPath, oldObjPath);
   }

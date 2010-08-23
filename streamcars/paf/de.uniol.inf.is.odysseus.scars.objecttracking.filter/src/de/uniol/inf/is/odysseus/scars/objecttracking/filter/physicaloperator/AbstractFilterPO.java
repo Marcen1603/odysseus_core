@@ -48,7 +48,6 @@ public abstract class AbstractFilterPO<M extends IProbability & IConnectionConta
   public de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode getOutputMode() {
     return OutputMode.MODIFIED_INPUT;
   }
-
   
   // Getter & Setter
 

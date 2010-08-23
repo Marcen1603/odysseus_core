@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanGainFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
@@ -21,6 +22,11 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	public FilterGainAO()
 	{
 		super();
+		
+		// Standardwerte (Timo M)
+		parameters = new HashMap<Integer, Object>();
+		metaDataCreationFunction = new KalmanGainFunction();
+		functionID = "KALMAN";
 	}
 	
 	public FilterGainAO(FilterGainAO<M> copy) {
@@ -40,7 +46,6 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	public SDFAttributeList getOutputSchema() {
 		return this.getInputSchema();
 	}
-
 
 	// Getter & Setter
 	
