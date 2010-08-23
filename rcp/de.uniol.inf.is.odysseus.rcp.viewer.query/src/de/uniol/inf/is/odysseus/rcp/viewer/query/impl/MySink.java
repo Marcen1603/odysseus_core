@@ -17,7 +17,7 @@ public class MySink extends AbstractSink<Object> {
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		System.out.println("Port:" + port + ", PUNCTUATION: " + timestamp);
+//		System.out.println("Port:" + port + ", PUNCTUATION: " + timestamp);
 	}
 
 	
