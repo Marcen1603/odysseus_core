@@ -18,15 +18,15 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 
 	private static final long serialVersionUID = 1222104352250883947L;
 
-	private SDFExpression expression;
+	protected SDFExpression expression;
 
 	// stores which attributes are needed at which position for
 	// variable bindings
-	private int[][] attributePaths;
+	protected int[][] attributePaths;
 
 	// fromRightChannel[i] stores if the getAttribute(attributePositions[i])
 	// should be called on the left or on the right input tuple
-	private boolean[] fromRightChannel;
+	protected boolean[] fromRightChannel;
 
 	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
@@ -44,7 +44,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 		for (SDFAttribute curAttribute : neededAttributes) {
 
 			int[] pos = indexOf(leftSchema, curAttribute);
-			if (pos == null) {
+			if (pos == null || pos.length == 0) {
 				if (rightSchema == null){
 					throw new IllegalArgumentException("Attribute "+curAttribute+" not in "+leftSchema+" and rightSchema is null!");
 				}
@@ -77,27 +77,27 @@ public class ObjectRelationalPredicate extends AbstractPredicate<MVRelationalTup
 	
 	private boolean findAttribute( SDFAttributeList list, SDFAttribute attr, ArrayList<Integer> path ) {
 		for( int i = 0; i < list.size(); i++ ) {
-			path.add(i);
 			SDFAttribute a = list.get(i);
-//			if(a.getAttributeName().equals(attr.getAttributeName())) {
-			// BUGFIX Sourcename must also be compared. Otherwise
-			// something like this will not work
-			// a.lane = b.lane
-			// If I understand it correctly, in an OR-Schema
-			// all subattributes also have as source name the
-			// name of the stream.
-			// FIXME: However, in this case the following will not work
-			// a.pers1.height = a.pers2.height
-			if(a.equalsCQL(attr)){
+			path.add(i);
+			if(a.getSourceName().equals(attr.getSourceName()) && a.getAttributeName().equals(attr.getAttributeName())) {
 				return true;
 			}
-			
-			boolean found = findAttribute(a.getSubattributes(), attr, path);
-			if( found == true ) 
-				return true;
-			else {
-				path.remove((Integer)i);
+			else{
+				boolean found = findAttribute(a.getSubattributes(), attr, path);
+				if(!found){
+					path.remove((Integer)i);
+				}
 			}
+			// FIXME: Diese Methode muss rekursiv funktionieren.
+			// Dazu ist jedoch die Kenntnis der OR-Umsetzung der PG
+			// notwendig.
+//			boolean found = findAttribute(a.getSubattributes(), attr, path);
+//			if( found == true ) 
+//				return true;
+//			else {
+//				path.remove((Integer)i);
+//			}
+
 		}
 		return false;
 	}
