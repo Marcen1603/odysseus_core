@@ -6,6 +6,7 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogicalOp {
@@ -15,7 +16,8 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 	
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
-		
+	
+	private AbstractMetaDataUpdateFunction metaDataUpdateFunction;
 	
 	public FilterCovarianceUpdateAO()
 	{
@@ -26,6 +28,8 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 		super(copy);
 		this.setFunctionID(new String(copy.getFunctionID()));
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
+		this.setMetaDataUpdateFunction(copy.getMetaDataUpdateFunction().clone());
+		
 	}
 
 	
@@ -56,6 +60,14 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 	
 	public void setParameters(HashMap<Integer, Object> parameters) {
 		this.parameters = parameters;
+	}
+
+	public void setMetaDataUpdateFunction(AbstractMetaDataUpdateFunction metaDataUpdateFunction) {
+		this.metaDataUpdateFunction = metaDataUpdateFunction;
+	}
+
+	public AbstractMetaDataUpdateFunction getMetaDataUpdateFunction() {
+		return metaDataUpdateFunction;
 	}
 }
 
