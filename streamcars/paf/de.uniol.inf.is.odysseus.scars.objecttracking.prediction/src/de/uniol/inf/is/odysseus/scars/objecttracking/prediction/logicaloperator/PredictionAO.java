@@ -40,6 +40,7 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 		for( IPredictionFunction<M> f : this.predictionFunctions.getMap().values() ) {
 			f.init(right, left);
 		}
+		predictionFunctions.getDefaultPredictionFunction().init(right, left);
 	}
 	
 	public PredictionFunctionContainer<M> getPredictionFunctions() {

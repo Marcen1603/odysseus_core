@@ -41,6 +41,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	public PredictionFunctionContainer() {
 		predictionFunctions = new HashMap<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>>();
 		defaultPredictionFunctionKey = new TruePredicate<MVRelationalTuple<M>>();
+		defaultPredictionFunctionKey.init();
 		defaultPredictionFunction = null;
 	}
 	
