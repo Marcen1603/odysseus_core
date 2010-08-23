@@ -76,7 +76,8 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 
 	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {
 		SchemaHelper helper = new SchemaHelper(getSubscribedToSource(0).getSchema());
-
+		SchemaHelper helper2 = new SchemaHelper(getSubscribedToSource(1).getSchema());
+		
 		Object[] association = new Object[3];
 
 		// get timestamp path from scanned data
@@ -88,7 +89,7 @@ public class HypothesisGenerationPO<M extends IProbability & IConnectionContaine
 		association[1] = path.toTupleIndexPath(scannedObject).getTupleObject();
 
 		// get predicted objects
-		path = helper.getSchemaIndexPath(this.oldObjListPath);
+		path = helper2.getSchemaIndexPath(this.oldObjListPath);
 		association[2] =  path.toTupleIndexPath(predictedObject).getTupleObject();
 
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
