@@ -35,8 +35,10 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
-
-   /* MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>) OrAttributeResolver.resolveTuple(
+	
+	
+	
+    MVRelationalTuple<M>[] newList = (MVRelationalTuple<M>[]) ((MVRelationalTuple<M>) OrAttributeResolver.resolveTuple(
         object, this.getNewObjListPath())).getAttributes(); 
 
     MVRelationalTuple<M>[] oldList = newList.clone();
