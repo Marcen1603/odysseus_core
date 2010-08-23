@@ -32,28 +32,30 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTORPREDICATE = 26;
   public int JJTANDPREDICATE = 27;
   public int JJTNOTPREDICATE = 28;
-  public int JJTEXPRESSION = 29;
-  public int JJTSIMPLETOKEN = 30;
-  public int JJTFUNCTIONEXPRESSION = 31;
-  public int JJTFUNCTIONNAME = 32;
-  public int JJTNUMBER = 33;
-  public int JJTSTRING = 34;
-  public int JJTVOID = 35;
-  public int JJTIDENTIFIER = 36;
-  public int JJTCOMPAREOPERATOR = 37;
-  public int JJTPREDICTIONDEFINITION = 38;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 39;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 40;
-  public int JJTKEYVALUELIST = 41;
-  public int JJTKEYVALUEPAIR = 42;
-  public int JJTASSOCIATIONGENOP = 43;
-  public int JJTASSOCIATIONEVALOP = 44;
-  public int JJTASSOCIATIONSELOP = 45;
-  public int JJTASSOCIATIONSRCOP = 46;
-  public int JJTEVALUATEOP = 47;
-  public int JJTFILTERGAINOP = 48;
-  public int JJTFILTERESTIMATEOP = 49;
-  public int JJTFILTERCOVARIANCEOP = 50;
+  public int JJTEXISTPREDICATE = 29;
+  public int JJTEXISTVARIABLESDECLARATION = 30;
+  public int JJTEXPRESSION = 31;
+  public int JJTSIMPLETOKEN = 32;
+  public int JJTFUNCTIONEXPRESSION = 33;
+  public int JJTFUNCTIONNAME = 34;
+  public int JJTNUMBER = 35;
+  public int JJTSTRING = 36;
+  public int JJTVOID = 37;
+  public int JJTIDENTIFIER = 38;
+  public int JJTCOMPAREOPERATOR = 39;
+  public int JJTPREDICTIONDEFINITION = 40;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 41;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 42;
+  public int JJTKEYVALUELIST = 43;
+  public int JJTKEYVALUEPAIR = 44;
+  public int JJTASSOCIATIONGENOP = 45;
+  public int JJTASSOCIATIONEVALOP = 46;
+  public int JJTASSOCIATIONSELOP = 47;
+  public int JJTASSOCIATIONSRCOP = 48;
+  public int JJTEVALUATEOP = 49;
+  public int JJTFILTERGAINOP = 50;
+  public int JJTFILTERESTIMATEOP = 51;
+  public int JJTFILTERCOVARIANCEOP = 52;
 
 
   public String[] jjtNodeName = {
@@ -86,6 +88,8 @@ public interface ProceduralExpressionParserTreeConstants
     "OrPredicate",
     "AndPredicate",
     "NotPredicate",
+    "ExistPredicate",
+    "ExistVariablesDeclaration",
     "Expression",
     "SimpleToken",
     "FunctionExpression",
@@ -110,4 +114,4 @@ public interface ProceduralExpressionParserTreeConstants
     "FilterCovarianceOp",
   };
 }
-/* JavaCC - OriginalChecksum=74f521142c72ba3f450c26931724a1ca (do not edit this line) */
+/* JavaCC - OriginalChecksum=f53462ee69e1839285e0fb3deb04e893 (do not edit this line) */

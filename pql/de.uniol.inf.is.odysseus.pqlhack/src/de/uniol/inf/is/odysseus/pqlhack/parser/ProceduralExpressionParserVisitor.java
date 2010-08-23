@@ -33,6 +33,8 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTOrPredicate node, Object data);
   public Object visit(ASTAndPredicate node, Object data);
   public Object visit(ASTNotPredicate node, Object data);
+  public Object visit(ASTExistPredicate node, Object data);
+  public Object visit(ASTExistVariablesDeclaration node, Object data);
   public Object visit(ASTExpression node, Object data);
   public Object visit(ASTSimpleToken node, Object data);
   public Object visit(ASTFunctionExpression node, Object data);
@@ -55,4 +57,4 @@ public interface ProceduralExpressionParserVisitor
   public Object visit(ASTFilterEstimateOp node, Object data);
   public Object visit(ASTFilterCovarianceOp node, Object data);
 }
-/* JavaCC - OriginalChecksum=e78ad8abd35dfbe8dcc2d6e3f6158d06 (do not edit this line) */
+/* JavaCC - OriginalChecksum=59078af504583640203f25f91cda5bee (do not edit this line) */

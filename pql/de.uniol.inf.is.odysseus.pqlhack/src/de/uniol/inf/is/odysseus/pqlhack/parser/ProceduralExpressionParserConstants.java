@@ -33,97 +33,99 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_DEFAULT = 15;
   /** RegularExpression Id. */
-  int K_JOIN = 16;
+  int K_IN = 16;
   /** RegularExpression Id. */
-  int K_LOGICAL = 17;
+  int K_JOIN = 17;
   /** RegularExpression Id. */
-  int K_MAX = 18;
+  int K_LOGICAL = 18;
   /** RegularExpression Id. */
-  int K_MIN = 19;
+  int K_MAX = 19;
   /** RegularExpression Id. */
-  int K_NOT = 20;
+  int K_MIN = 20;
   /** RegularExpression Id. */
-  int K_OR = 21;
+  int K_NOT = 21;
   /** RegularExpression Id. */
-  int K_ON = 22;
+  int K_OR = 22;
   /** RegularExpression Id. */
-  int K_PLAN = 23;
+  int K_ON = 23;
   /** RegularExpression Id. */
-  int K_PREDICTION = 24;
+  int K_PLAN = 24;
   /** RegularExpression Id. */
-  int K_PROJECTION = 25;
+  int K_PREDICTION = 25;
   /** RegularExpression Id. */
-  int K_QUEUE = 26;
+  int K_PROJECTION = 26;
   /** RegularExpression Id. */
-  int K_RELATIONAL_PROJECTION = 27;
+  int K_QUEUE = 27;
   /** RegularExpression Id. */
-  int K_RELATIONAL_SELECTION = 28;
+  int K_RELATIONAL_PROJECTION = 28;
   /** RegularExpression Id. */
-  int K_RELATIONAL_JOIN = 29;
+  int K_RELATIONAL_SELECTION = 29;
   /** RegularExpression Id. */
-  int K_RELATIONAL_NEST = 30;
+  int K_RELATIONAL_JOIN = 30;
   /** RegularExpression Id. */
-  int K_RELATIONAL_UNNEST = 31;
+  int K_RELATIONAL_NEST = 31;
   /** RegularExpression Id. */
-  int K_SCHEMA_CONVERT = 32;
+  int K_RELATIONAL_UNNEST = 32;
   /** RegularExpression Id. */
-  int K_SELECTION = 33;
+  int K_SCHEMA_CONVERT = 33;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 34;
+  int K_SELECTION = 34;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION_OR = 35;
+  int K_SET_PREDICTION = 35;
   /** RegularExpression Id. */
-  int K_SIZE = 36;
+  int K_SET_PREDICTION_OR = 36;
   /** RegularExpression Id. */
-  int K_SLIDE = 37;
+  int K_SIZE = 37;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 38;
+  int K_SLIDE = 38;
   /** RegularExpression Id. */
-  int K_SUM = 39;
+  int K_SLDING_TIME_WINDOW = 39;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 40;
+  int K_SUM = 40;
   /** RegularExpression Id. */
-  int K_WHERE = 41;
+  int K_TUMBLING_TIME_WINDOW = 41;
   /** RegularExpression Id. */
-  int K_TEST = 42;
+  int K_WHERE = 42;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_GEN = 43;
+  int K_TEST = 43;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_EVAL = 44;
+  int K_ASSOCIATION_GEN = 44;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SEL = 45;
+  int K_ASSOCIATION_EVAL = 45;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SRC = 46;
+  int K_ASSOCIATION_SEL = 46;
   /** RegularExpression Id. */
-  int K_EVALUATE = 47;
+  int K_ASSOCIATION_SRC = 47;
   /** RegularExpression Id. */
-  int K_FILTER_GAIN = 48;
+  int K_EVALUATE = 48;
   /** RegularExpression Id. */
-  int K_FILTER_ESTIMATE = 49;
+  int K_FILTER_GAIN = 49;
   /** RegularExpression Id. */
-  int K_FILTER_COVARIANCE = 50;
+  int K_FILTER_ESTIMATE = 50;
   /** RegularExpression Id. */
-  int IDENTIFIER = 51;
+  int K_FILTER_COVARIANCE = 51;
   /** RegularExpression Id. */
-  int LETTER = 52;
+  int IDENTIFIER = 52;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 53;
+  int LETTER = 53;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 54;
+  int SPECIAL_CHARS = 54;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 55;
+  int CHAR_LITERAL = 55;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 56;
+  int QUOTED_IDENTIFIER = 56;
   /** RegularExpression Id. */
-  int REGEXP = 57;
+  int COMPARE_OPERATOR = 57;
   /** RegularExpression Id. */
-  int FLOAT = 58;
+  int REGEXP = 58;
   /** RegularExpression Id. */
-  int INTEGER = 59;
+  int FLOAT = 59;
   /** RegularExpression Id. */
-  int DIGIT = 60;
+  int INTEGER = 60;
   /** RegularExpression Id. */
-  int IPADDRESS = 61;
+  int DIGIT = 61;
+  /** RegularExpression Id. */
+  int IPADDRESS = 62;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -146,6 +148,7 @@ public interface ProceduralExpressionParserConstants {
     "\"NOT_EXIST\"",
     "\"COUNT\"",
     "\"DEFAULT\"",
+    "\"IN\"",
     "\"JOIN\"",
     "\"LOGICAL\"",
     "\"MAX\"",

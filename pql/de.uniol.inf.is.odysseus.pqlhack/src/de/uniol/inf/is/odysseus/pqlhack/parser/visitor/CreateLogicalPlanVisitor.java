@@ -1103,7 +1103,7 @@ public class CreateLogicalPlanVisitor implements
 
 				// aside from the last child, all children
 				// must be ASTPredictionFunctionDefinitions
-				for (int u = 0; u < predDef.jjtGetNumChildren() - 1; u++) {
+				for (int u = 0; u < predDef.jjtGetNumChildren(); u++) {
 					ASTPredictionFunctionDefinition predFctDef = (ASTPredictionFunctionDefinition) predDef
 							.jjtGetChild(u);
 
