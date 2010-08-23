@@ -6,9 +6,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogicalOp {
+public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContainer> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private String functionID;
@@ -20,7 +21,7 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
 
-	private AbstractDataUpdateFunction  dataUpdateFunction;
+	private AbstractDataUpdateFunction<M>  dataUpdateFunction;
 	
 	
 	public FilterEstimateUpdateAO()
@@ -83,11 +84,11 @@ public class FilterEstimateUpdateAO <M extends IProbability> extends UnaryLogica
 		this.parameters = parameters;
 	}
 
-	public void setDataUpdateFunction(AbstractDataUpdateFunction dataUpdateFunction) {
+	public void setDataUpdateFunction(AbstractDataUpdateFunction<M> dataUpdateFunction) {
 		this.dataUpdateFunction = dataUpdateFunction;
 	}
 
-	public AbstractDataUpdateFunction getDataUpdateFunction() {
+	public AbstractDataUpdateFunction<M> getDataUpdateFunction() {
 		return dataUpdateFunction;
 	}
 }

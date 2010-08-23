@@ -7,9 +7,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanGainFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
+public class FilterGainAO <M extends IProbability & IGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private String functionID;
@@ -19,7 +20,7 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
 	
-	private AbstractMetaDataCreationFunction metaDataCreationFunction;
+	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
 	
 	public FilterGainAO()
 	{
@@ -27,7 +28,7 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 		
 		// Standardwerte (Timo M)
 		parameters = new HashMap<Integer, Object>();
-		metaDataCreationFunction = new KalmanGainFunction();
+		metaDataCreationFunction = new KalmanGainFunction<M>();
 		functionID = "KALMAN";
 	}
 	
@@ -69,11 +70,11 @@ public class FilterGainAO <M extends IProbability> extends UnaryLogicalOp {
 		this.parameters = parameters;
 	}
 
-	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {
+	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction<M> metaDataCreationFunction) {
 		this.metaDataCreationFunction = metaDataCreationFunction;
 	}
 
-	public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
+	public AbstractMetaDataCreationFunction<M> getMetaDataCreationFunction() {
 		return metaDataCreationFunction;
 	}
 

@@ -6,13 +6,15 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 
-public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFunction<StreamCarsMetaData> {
+public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnectionContainer & IGain> extends AbstractDataUpdateFunction<M> {
 		
 
 		
@@ -20,7 +22,7 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 		
 	}
 		
-	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction copy) {
+	public KalmanCorrectStateEstimateFunction(KalmanCorrectStateEstimateFunction<M> copy) {
 		super(copy);
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 			
@@ -32,21 +34,17 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 	}
 
 		
+	@SuppressWarnings("unchecked")
 	@Override
-	public void compute(Connection connected, MVRelationalTuple<StreamCarsMetaData> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath) {
+	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath) {
 		
 		int[] oldTuplePath = connected.getRightPath();
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>)TupleIndexPath.fromIntArray(oldTuplePath, tuple, oldObjPath).getTupleObject();
+		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)TupleIndexPath.fromIntArray(oldTuplePath, tuple, oldObjPath).getTupleObject();
 		
 		int[] newTuplePath = connected.getRightPath();
-		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>)TupleIndexPath.fromIntArray(newTuplePath, tuple, newObjPath).getTupleObject();
-		
-		//double[] measurementOld = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleOld, oldTuple);
+		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)TupleIndexPath.fromIntArray(newTuplePath, tuple, newObjPath).getTupleObject();
 		
 		double[] measurementOld = getMeasurementValues(oldTuple, oldObjPath) ;
-		
-		//double[] measurementNew = OrAttributeResolver.getMeasurementValues(measurementValuePathsTupleNew, newTuple);
-		
 		double[] measurementNew = getMeasurementValues(newTuple, newObjPath) ;
 		
 		double[][] gain = oldTuple.getMetadata().getGain();
@@ -78,7 +76,7 @@ public class KalmanCorrectStateEstimateFunction extends AbstractDataUpdateFuncti
 	}
 
 	@Override
-	public AbstractDataUpdateFunction clone() {
-		return new KalmanCorrectStateEstimateFunction(this);
+	public AbstractDataUpdateFunction<M> clone() {
+		return new KalmanCorrectStateEstimateFunction<M>(this);
 	}
 }

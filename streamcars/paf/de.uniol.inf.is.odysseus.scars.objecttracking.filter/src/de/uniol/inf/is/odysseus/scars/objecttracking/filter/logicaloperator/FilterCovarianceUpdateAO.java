@@ -17,7 +17,7 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 	// Optional parameters for the Filter function. Not used right now.
 	private HashMap<Integer, Object> parameters;
 	
-	private AbstractMetaDataUpdateFunction metaDataUpdateFunction;
+	private AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction;
 	
 	public FilterCovarianceUpdateAO()
 	{
@@ -62,11 +62,11 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 		this.parameters = parameters;
 	}
 
-	public void setMetaDataUpdateFunction(AbstractMetaDataUpdateFunction metaDataUpdateFunction) {
+	public void setMetaDataUpdateFunction(AbstractMetaDataUpdateFunction<M> metaDataUpdateFunction) {
 		this.metaDataUpdateFunction = metaDataUpdateFunction;
 	}
 
-	public AbstractMetaDataUpdateFunction getMetaDataUpdateFunction() {
+	public AbstractMetaDataUpdateFunction<M> getMetaDataUpdateFunction() {
 		return metaDataUpdateFunction;
 	}
 }

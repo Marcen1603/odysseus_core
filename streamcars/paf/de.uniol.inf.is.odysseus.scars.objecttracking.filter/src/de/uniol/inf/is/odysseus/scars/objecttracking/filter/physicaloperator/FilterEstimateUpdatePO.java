@@ -13,12 +13,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * @author dtwumasi
@@ -26,7 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  */
 public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
-  private AbstractDataUpdateFunction dataUpdateFunction;
+  private AbstractDataUpdateFunction<M> dataUpdateFunction;
 
   private SchemaHelper schemaHelper;
   private SchemaIndexPath oldObjectListPath;
@@ -66,13 +62,13 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 
     // traverse connection list and filter
     for (Connection connected : objConList) {
-       compute(connected, (MVRelationalTuple<StreamCarsMetaData>)object, newObjPath, oldObjPath);
+       compute(connected, (MVRelationalTuple<M>)object, newObjPath, oldObjPath);
     }
 
     return object;
   }
   
-  public void compute(Connection connected, MVRelationalTuple<StreamCarsMetaData> tuple, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
+  public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
     this.dataUpdateFunction.compute(connected, tuple, newObjPath, oldObjPath);
   }
   
@@ -90,11 +86,11 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
   
   // Getter & Setter
   
-  public AbstractDataUpdateFunction getDataUpdateFunction() {
+  public AbstractDataUpdateFunction<M> getDataUpdateFunction() {
     return dataUpdateFunction;
   }
   
-  public void setDataUpdateFunction(AbstractDataUpdateFunction dataUpdateFunction) {
+  public void setDataUpdateFunction(AbstractDataUpdateFunction<M> dataUpdateFunction) {
     this.dataUpdateFunction = dataUpdateFunction;
   }
 }

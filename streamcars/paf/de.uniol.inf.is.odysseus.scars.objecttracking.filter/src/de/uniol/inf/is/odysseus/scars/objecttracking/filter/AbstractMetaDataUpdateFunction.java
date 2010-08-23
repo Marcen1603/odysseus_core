@@ -7,15 +7,15 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 /**
  * @author dtwumasi
  *
  */
-public abstract class AbstractMetaDataUpdateFunction {
+public abstract class AbstractMetaDataUpdateFunction<M extends IProbability> {
 	
 	public AbstractMetaDataUpdateFunction() {
 		
@@ -25,11 +25,11 @@ public abstract class AbstractMetaDataUpdateFunction {
 		this.setParameters(parameters);
 	}
 	
-	public AbstractMetaDataUpdateFunction(AbstractMetaDataUpdateFunction copy ) {
+	public AbstractMetaDataUpdateFunction(AbstractMetaDataUpdateFunction<M> copy ) {
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 	}
 	
-	public abstract AbstractMetaDataUpdateFunction clone();
+	public abstract AbstractMetaDataUpdateFunction<M> clone();
 		
 	
 	private HashMap<Integer, Object> parameters;
@@ -39,7 +39,7 @@ public abstract class AbstractMetaDataUpdateFunction {
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(Connection connected, MVRelationalTuple<StreamCarsMetaData> tuple, SchemaIndexPath pathToOldList, SchemaIndexPath pathToNewList);
+	public abstract void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath pathToOldList, SchemaIndexPath pathToNewList);
 
 	/**
 	 * @param parameters the parameters needed for computation

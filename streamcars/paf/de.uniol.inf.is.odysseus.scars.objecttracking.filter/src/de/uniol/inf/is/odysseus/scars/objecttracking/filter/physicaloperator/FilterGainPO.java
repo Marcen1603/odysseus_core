@@ -6,22 +6,20 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataCreationFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 /**
  * @author dtwumasi
  * @param <StreamCarsMetaData>
  * 
  */
-public class FilterGainPO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
+public class FilterGainPO<M extends IProbability & IConnectionContainer & IGain> extends AbstractFilterPO<M> {
 
-	private AbstractMetaDataCreationFunction metaDataCreationFunction;
+	private AbstractMetaDataCreationFunction<M> metaDataCreationFunction;
 	private SchemaHelper helper;
 	
 	public FilterGainPO() {
@@ -33,8 +31,8 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
 		this.setMetaDataCreationFunction(copy.getMetaDataCreationFunction().clone());
 	}
 
-	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldPath, SchemaIndexPath newPath) {
-		metaDataCreationFunction.compute(connected, (MVRelationalTuple<StreamCarsMetaData>)tuple, oldPath, newPath);
+	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
+		metaDataCreationFunction.compute(connected, (MVRelationalTuple<M>)tuple);
 	}
 
 	@Override
@@ -44,17 +42,15 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
 			helper = new SchemaHelper(getOutputSchema());
 		
 		// traverse connection list and filter
-		SchemaIndexPath oldPath = helper.getSchemaIndexPath(getOldObjListPath());
-		SchemaIndexPath newPath = helper.getSchemaIndexPath(getNewObjListPath());		
 		for (Connection connected : object.getMetadata().getConnectionList()) {
-			compute(connected, object, oldPath, newPath);
+			compute(connected, object);
 		}
 
 		return object;
 	}
 
 	@Override
-	public AbstractPipe clone() {
+	public FilterGainPO<M> clone() {
 		return new FilterGainPO<M>(this);
 	}
 
@@ -63,13 +59,11 @@ public class FilterGainPO<M extends IProbability & IConnectionContainer> extends
 		this.sendPunctuation(timestamp);
 	}
 
-	// Getter & Setter
-
-	public AbstractMetaDataCreationFunction getMetaDataCreationFunction() {
+	public AbstractMetaDataCreationFunction<M> getMetaDataCreationFunction() {
 		return metaDataCreationFunction;
 	}
 
-	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction metaDataCreationFunction) {
+	public void setMetaDataCreationFunction(AbstractMetaDataCreationFunction<M> metaDataCreationFunction) {
 		this.metaDataCreationFunction = metaDataCreationFunction;
 	}
 }

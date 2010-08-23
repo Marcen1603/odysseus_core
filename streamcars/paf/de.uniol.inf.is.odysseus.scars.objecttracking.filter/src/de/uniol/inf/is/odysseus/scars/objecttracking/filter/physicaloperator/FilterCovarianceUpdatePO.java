@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
@@ -19,7 +18,7 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
  */
 public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
-  private AbstractMetaDataUpdateFunction updateMetaDataFunction;
+  private AbstractMetaDataUpdateFunction<M> updateMetaDataFunction;
   private SchemaHelper helper;
 
 
@@ -33,7 +32,7 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   }
 
 	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldPath, SchemaIndexPath newPath) {
-    updateMetaDataFunction.compute(connected, (MVRelationalTuple<StreamCarsMetaData>)tuple, oldPath, newPath);
+    updateMetaDataFunction.compute(connected, (MVRelationalTuple<M>)tuple, oldPath, newPath);
   }
 
   
@@ -74,11 +73,11 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
   
   // Getter & Setter
 
-  public AbstractMetaDataUpdateFunction getUpdateMetaDataFunction() {
+  public AbstractMetaDataUpdateFunction<M> getUpdateMetaDataFunction() {
     return updateMetaDataFunction;
   }
 
-  public void setUpdateMetaDataFunction(AbstractMetaDataUpdateFunction updateMetaDataFunction) {
+  public void setUpdateMetaDataFunction(AbstractMetaDataUpdateFunction<M> updateMetaDataFunction) {
     this.updateMetaDataFunction = updateMetaDataFunction;
   }
 }

@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
@@ -31,11 +30,11 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 		this.setParameters(parameters);
 	}
 	
-	public AbstractDataUpdateFunction(AbstractDataUpdateFunction copy ) {
+	public AbstractDataUpdateFunction(AbstractDataUpdateFunction<M> copy ) {
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));	
 	}
 	
-	public abstract AbstractDataUpdateFunction clone();
+	public abstract AbstractDataUpdateFunction<M> clone();
 		
 	
 	private HashMap<Integer, Object> parameters;

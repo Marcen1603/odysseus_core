@@ -9,23 +9,22 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.StreamCarsMetaData;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
 
 /**
  * @author dtwumasi
  * 
  */
-public class KalmanGainFunction extends AbstractMetaDataCreationFunction {
+public class KalmanGainFunction<M extends IProbability & IGain > extends AbstractMetaDataCreationFunction<M> {
 
 	public KalmanGainFunction() {
 		super();
 	}
 
-	public KalmanGainFunction(KalmanGainFunction copy) {
+	public KalmanGainFunction(KalmanGainFunction<M> copy) {
 
 		this.setParameters(new HashMap<Integer, Object>(copy.getParameters()));
 
@@ -35,13 +34,12 @@ public class KalmanGainFunction extends AbstractMetaDataCreationFunction {
 		this.setParameters(parameters);
 	}
 
-	public void compute(Connection connected, MVRelationalTuple<StreamCarsMetaData> tuple, SchemaIndexPath pathToOldList, SchemaIndexPath pathToNewList) {
-
-		double gain[][];
+	@SuppressWarnings("unchecked")
+	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
 
 		TupleHelper tHelper = new TupleHelper(tuple);
-		MVRelationalTuple<StreamCarsMetaData> oldTuple = (MVRelationalTuple<StreamCarsMetaData>)tHelper.getObject(connected.getRightPath());
-		MVRelationalTuple<StreamCarsMetaData> newTuple = (MVRelationalTuple<StreamCarsMetaData>)tHelper.getObject(connected.getLeftPath());
+		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getRightPath());
+		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getLeftPath());
 
 		double[][] covarianceNew = newTuple.getMetadata().getCovariance();
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
@@ -55,16 +53,13 @@ public class KalmanGainFunction extends AbstractMetaDataCreationFunction {
 		temp = temp.inverse();
 		temp = oldCovariance.multiply(temp);
 
-		gain = temp.getData();
-
 		// set gain
-		oldTuple.getMetadata().setGain(gain);
+		oldTuple.getMetadata().setGain(temp.getData());
 
 	}
 
 	@Override
-	public AbstractMetaDataCreationFunction clone() {
-
-		return new KalmanGainFunction(this);
+	public KalmanGainFunction<M> clone() {
+		return new KalmanGainFunction<M>(this);
 	}
 }
