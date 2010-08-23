@@ -44,10 +44,10 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		int[] newTuplePath = connected.getRightPath();
 		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)TupleIndexPath.fromIntArray(newTuplePath, tuple, newObjPath).getTupleObject();
 		
-		double[] measurementOld = getMeasurementValues(oldTuple, oldObjPath) ;
-		double[] measurementNew = getMeasurementValues(newTuple, newObjPath) ;
+		double[] measurementOld = getMeasurementValues(tuple, oldObjPath) ;
+		double[] measurementNew = getMeasurementValues(tuple, newObjPath) ;
 		
-		double[][] gain = oldTuple.getMetadata().getGain();
+		double[][] gain = newTuple.getMetadata().getGain();
 		
 		double[] result;
 		

@@ -6,10 +6,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContainer> extends UnaryLogicalOp {
+public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContainer & IGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private String functionID;
@@ -27,6 +29,9 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 	public FilterEstimateUpdateAO()
 	{
 		super();
+		functionID = "KALMAN";
+		parameters = new HashMap<Integer, Object>();
+		dataUpdateFunction = new KalmanCorrectStateEstimateFunction<M>();
 	}
 	
 	public FilterEstimateUpdateAO(FilterEstimateUpdateAO<M> copy) {

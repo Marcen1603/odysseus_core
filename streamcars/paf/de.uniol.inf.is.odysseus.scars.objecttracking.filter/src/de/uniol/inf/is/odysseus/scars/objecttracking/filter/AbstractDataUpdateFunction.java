@@ -22,8 +22,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
  */
 public abstract class AbstractDataUpdateFunction<M extends IProbability & IConnectionContainer> {
 	
+	private HashMap<Integer, Object> parameters;
+	
 	public AbstractDataUpdateFunction() {
-		
+		parameters = new HashMap<Integer, Object>();
 	}
 	
 	public AbstractDataUpdateFunction(HashMap<Integer,Object> parameters ) {
@@ -36,8 +38,6 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	
 	public abstract AbstractDataUpdateFunction<M> clone();
 		
-	
-	private HashMap<Integer, Object> parameters;
 	
 	/**
 	 * this method executes the function
