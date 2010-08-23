@@ -44,7 +44,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath);
+	public abstract void compute(Connection connected, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath);
 
 	public double[] getMeasurementValues(MVRelationalTuple<M> tuple, SchemaIndexPath path) {
 		    ArrayList<Double> values = new ArrayList<Double>();

@@ -46,9 +46,11 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 	private SchemaIndexPath newObjPath;
 	private SchemaIndexPath oldObjPath;
 	
-	private String oldObjListPath;
+	private String newObjListPath ="0";
 	
-	private String newObjListPath;
+	private String oldObjListPath = "1";
+	
+	
 	
 	/**
 	 * @throws java.lang.Exception
