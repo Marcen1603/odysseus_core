@@ -4,3 +4,9 @@ Bundle-Name: Test
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.objecttracking.filter.test
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.scars.objecttracking.filter;bundle-version="1.0.0"
+Import-Package: de.uniol.inf.is.odysseus.base,
+ de.uniol.inf.is.odysseus.scars.objecttracking.filter,
+ de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator,
+ de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator,
+ junit.framework,
+ org.junit;version="4.5.0"
