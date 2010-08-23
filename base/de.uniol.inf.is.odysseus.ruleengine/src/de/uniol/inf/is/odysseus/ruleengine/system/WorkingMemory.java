@@ -57,13 +57,20 @@ public class WorkingMemory {
 
 	public void process() {
 		LoggerSystem.printlog(Accuracy.TRACE, "Rule engine started and now looking for matches...");
-		Iterator<IRuleFlowGroup> iterator = this.env.getRuleFlow().iterator();
-		while (iterator.hasNext()) {
-			IRuleFlowGroup group = iterator.next();
+		for(IRuleFlowGroup group : this.env.getRuleFlow()){
 			LoggerSystem.printlog(Accuracy.TRACE, "Running group: " + group + "...");
 			runGroup(group);
 			LoggerSystem.printlog(Accuracy.TRACE, "Group finished: " + group);
 		}
+		
+		
+//		Iterator<IRuleFlowGroup> iterator = this.env.getRuleFlow().iterator();
+//		while (iterator.hasNext()) {
+//			IRuleFlowGroup group = iterator.next();
+//			LoggerSystem.printlog(Accuracy.TRACE, "Running group: " + group + "...");
+//			runGroup(group);
+//			LoggerSystem.printlog(Accuracy.TRACE, "Group finished: " + group);
+//		}
 	}
 
 	private void runGroup(IRuleFlowGroup group) {

@@ -18,9 +18,8 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
-		System.out.println("Transform AccessAO: " + accessAO);
-		String sourceName = accessAO.getSource().getURI(false);
-		ISource accessPO = WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI());
+		System.out.println("Transform AccessAO: " + accessAO);	
+		ISource<?> accessPO = WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI());
 		System.out.println("Transform to existing AccessPO: trafo = " + trafo);
 		System.out.println("Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO,accessPO);

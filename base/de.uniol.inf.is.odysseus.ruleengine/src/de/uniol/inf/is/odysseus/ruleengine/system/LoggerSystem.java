@@ -45,7 +45,7 @@ public class LoggerSystem {
 	private static void printlog(Accuracy accuracy, String message, Logger currentlogger){
 		switch (accuracy) {
 		case TRACE:
-			//currentlogger.trace(message);
+			currentlogger.trace(message);
 			break;
 		case DEBUG:
 			currentlogger.debug(message);

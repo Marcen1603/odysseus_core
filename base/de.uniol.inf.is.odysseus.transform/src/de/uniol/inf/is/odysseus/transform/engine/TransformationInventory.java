@@ -1,11 +1,6 @@
 package de.uniol.inf.is.odysseus.transform.engine;
 
-import java.util.LinkedHashMap;
-import java.util.PriorityQueue;
-
-import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.AbstractInventory;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 /**
  * Handles the global state: current loaded rules and current workflow

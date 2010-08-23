@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.ruleengine.ruleflow;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -11,56 +12,60 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 
+public abstract class AbstractInventory implements IRuleFlow {
 
+	private LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>();
+	private LinkedList<IRuleFlowGroup> workFlow = new LinkedList<IRuleFlowGroup>();
 
-public abstract class AbstractInventory implements IRuleFlow{
-	
-	private LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> workFlow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>>();
-	
 	public AbstractInventory() {
-		//intentionally left blank
-	}
-	
-	protected AbstractInventory(AbstractInventory inventory) {
-		this.workFlow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>>(inventory.getCopyOfWorkFlow());	
+		// intentionally left blank
 	}
 
-	private  LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> getCopyOfWorkFlow(){
-		LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> copyflow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?,?>>>();
-		for(Entry<IRuleFlowGroup, PriorityQueue<IRule<?,?>>> entry : this.workFlow.entrySet()){
+	protected AbstractInventory(AbstractInventory inventory) {
+		this.ruleBase = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>(inventory.getCopyOfRuleBase());
+		this.workFlow = new LinkedList<IRuleFlowGroup>(inventory.getCopyOfWorkFlow());
+	}
+
+	private LinkedList<IRuleFlowGroup> getCopyOfWorkFlow() {
+		return this.workFlow;
+	}
+
+	private LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> getCopyOfRuleBase() {
+		LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> copyflow = new LinkedHashMap<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>>();
+		for (Entry<IRuleFlowGroup, PriorityQueue<IRule<?, ?>>> entry : this.ruleBase.entrySet()) {
 			IRuleFlowGroup group = entry.getKey();
-			PriorityQueue<IRule<?,?>> newQueue = new PriorityQueue<IRule<?,?>>();
-			for(IRule<?,?> rule : entry.getValue()){
+			PriorityQueue<IRule<?, ?>> newQueue = new PriorityQueue<IRule<?, ?>>();
+			for (IRule<?, ?> rule : entry.getValue()) {
 				IRule<?, ?> copyrule;
 				try {
 					copyrule = rule.getClass().newInstance();
-				} catch (Exception e) {				
+				} catch (Exception e) {
 					e.printStackTrace();
 					throw new RuntimeException(e);
 				}
 				newQueue.add(copyrule);
 			}
 			copyflow.put(group, newQueue);
-			
-		}		
+
+		}
 		return copyflow;
 	}
 
-	public void addRuleFlowGroup(IRuleFlowGroup group) {
-		if (!this.workFlow.containsKey(group)) {
-			workFlow.put(group, new PriorityQueue<IRule<?,?>>());
-		}else{
-			LoggerSystem.printlog(Accuracy.WARN, "RuleGroup already exists!");
+	public void addRuleFlowGroup(IRuleFlowGroup group) {		
+		if (!this.ruleBase.containsKey(group)) {
+			this.ruleBase.put(group, new PriorityQueue<IRule<?, ?>>());
 		}
+		workFlow.add(group);
+		LoggerSystem.printlog("Group added to workflow: " + group+ ". New workflow is: "+workFlow.toString());
 	}
 
-	public void addRule(IRule<?,?> rule, IRuleFlowGroup group) {
-		if (this.workFlow.containsKey(group)) {
-			if (this.workFlow.get(group).contains(rule)) {
+	public void addRule(IRule<?, ?> rule, IRuleFlowGroup group) {
+		if (this.ruleBase.containsKey(group)) {
+			if (this.ruleBase.get(group).contains(rule)) {
 				LoggerSystem.printlog(Accuracy.WARN, "Rule \"" + rule + "\" already exists in inventory!");
 			}
-			LoggerSystem.printlog(Accuracy.DEBUG,"Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
-			this.workFlow.get(group).offer(rule);
+			LoggerSystem.printlog(Accuracy.DEBUG, "Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
+			this.ruleBase.get(group).offer(rule);
 		} else {
 			throw new RuntimeException("Group " + group + " for rule " + rule + " doesn't exist");
 		}
@@ -68,17 +73,17 @@ public abstract class AbstractInventory implements IRuleFlow{
 
 	@Override
 	public Iterator<IRuleFlowGroup> iterator() {
-		return workFlow.keySet().iterator();
+		return workFlow.iterator();
 	}
 
-	public Iterator<IRule<?,?>> iteratorRules(IRuleFlowGroup group) {
+	public Iterator<IRule<?, ?>> iteratorRules(IRuleFlowGroup group) {
 		// A PriorityQueue does not guaranty a particular order for the iterator
 		// (like workFlow.get(group).iterator())!!
 		// thus, here comes a order-safe version...
-		PriorityQueue<IRule<?,?>> rules = this.workFlow.get(group);
-		final IRule<?,?>[] ruleArray = rules.toArray(new IRule<?,?>[0]);
+		PriorityQueue<IRule<?, ?>> rules = this.ruleBase.get(group);
+		final IRule<?, ?>[] ruleArray = rules.toArray(new IRule<?, ?>[0]);
 		Arrays.sort(ruleArray);
-		Iterator<IRule<?,?>> iterator = new Iterator<IRule<?,?>>() {
+		Iterator<IRule<?, ?>> iterator = new Iterator<IRule<?, ?>>() {
 			int position = 0;
 
 			@Override
@@ -87,7 +92,7 @@ public abstract class AbstractInventory implements IRuleFlow{
 			}
 
 			@Override
-			public IRule<?,?> next() {
+			public IRule<?, ?> next() {
 				if (hasNext()) {
 					return ruleArray[position++];
 				} else {
@@ -102,5 +107,5 @@ public abstract class AbstractInventory implements IRuleFlow{
 		};
 
 		return iterator;
-	}	
+	}
 }
