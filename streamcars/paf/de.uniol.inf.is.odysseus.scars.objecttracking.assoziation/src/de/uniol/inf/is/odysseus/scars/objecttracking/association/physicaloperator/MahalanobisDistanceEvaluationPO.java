@@ -54,31 +54,31 @@ public class MahalanobisDistanceEvaluationPO<M extends IProbability & IConnectio
 
     if (this.operator.toUpperCase().equals(LESS)) {
       if (distance < this.threshold) {
-        return 100;
+        return distance;
       } else {
         return 0;
       }
     } else if (this.operator.toUpperCase().equals(LESS_EQUAL)) {
       if (distance <= this.threshold) {
-        return 100;
+        return distance;
       } else {
         return 0;
       }
     } else if (this.operator.toUpperCase().equals(EQUAL)) {
       if (distance == this.threshold) {
-        return 100;
+        return distance;
       } else {
         return 0;
       }
     } else if (this.operator.toUpperCase().equals(GREATER_EQUAL)) {
       if (distance >= this.threshold) {
-        return 100;
+        return distance;
       } else {
         return 0;
       }
     } else if (this.operator.toUpperCase().equals(GREATER)) {
       if (distance > this.threshold) {
-        return 100;
+        return distance;
       } else {
         return 0;
       }
