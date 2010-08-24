@@ -44,23 +44,38 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 	 */
 	@Override
 	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("StreamCarsMetaData{");
 		if(this.connectionList == null || this.connectionList.size() == 0){
-			return "no connections";
+			sb.append("no connections");
+		} else {
+			sb.append("connections[");
+			for(Connection con : this.connectionList) {
+				sb.append("(");
+				sb.append(String.valueOf(con.getRating()));
+				sb.append(": ");
+				sb.append(arrayToString(con.getLeftPath()));
+				sb.append("-->");
+				sb.append(arrayToString(con.getRightPath()));
+			}
+			sb.append("]");
 		}
 
-		String cons = "[";
-		for(Connection con : this.connectionList) {
-			cons += "(";
-			cons += con.getLeftPath().toString();
-			cons += ":";
-			cons += con.getRightPath().toString();
-			cons += ":";
-			cons += String.valueOf(con.getRating());
-			cons += ")";
+		sb.append("}");
+		return sb.toString();
+	}
+	
+	private static String arrayToString( int[] array ) {
+		if( array == null ) return "null";
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for( int i = 0; i < array.length; i++ ) { 
+			sb.append(i);
+			if( i != array.length - 1 ) 
+				sb.append(",");
 		}
-		cons += "]";
-
-		return cons;
+		sb.append("}");
+		return sb.toString();
 	}
 
 	@Override
