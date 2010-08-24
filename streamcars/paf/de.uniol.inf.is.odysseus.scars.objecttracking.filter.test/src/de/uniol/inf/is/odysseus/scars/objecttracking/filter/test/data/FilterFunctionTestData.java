@@ -103,7 +103,7 @@ public class FilterFunctionTestData<K> {
 		
 		for (int i=0; i<=number-1; i++) {
 		
-			Connection  con = new Connection (newList.getAttribute(i),oldList.getAttribute(i),5.0);
+			Connection  con = new Connection (new int[] {0,i}, new int[] {1,i},5.0);
 		
 			conList.add(i, con);
 			
@@ -123,14 +123,16 @@ public class FilterFunctionTestData<K> {
 
 	public SDFAttributeList getSchema() {
 		
-			SDFAttributeList object = new SDFAttributeList();
+			SDFAttributeList object = new SDFAttributeList("scan");
 			object.setDatatype(SDFDatatypeFactory.getDatatype("Record"));
 			
-			SDFAttribute oldList = new SDFAttribute("old.list");
+			SDFAttribute oldList = new SDFAttribute("oldlist");
 			oldList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
+			oldList.setSourceName("scan");
 			
-			SDFAttribute newList = new SDFAttribute("new.list");
+			SDFAttribute newList = new SDFAttribute("newlist");
 			newList.setDatatype(SDFDatatypeFactory.getDatatype("List"));
+			newList.setSourceName("scan");
 			
 			SDFAttribute newObject = new SDFAttribute("NewObject");
 			newObject.setDatatype(SDFDatatypeFactory.getDatatype("Record"));

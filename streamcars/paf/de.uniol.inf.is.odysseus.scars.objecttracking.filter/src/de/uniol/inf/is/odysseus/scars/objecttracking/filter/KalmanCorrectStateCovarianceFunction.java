@@ -8,10 +8,11 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
-public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IGain> extends AbstractMetaDataUpdateFunction<K> {
+public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IConnectionContainer & IGain> extends AbstractMetaDataUpdateFunction<K> {
 	
 	
 	

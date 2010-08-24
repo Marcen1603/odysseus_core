@@ -36,11 +36,11 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 		
 	@SuppressWarnings("unchecked")
 	@Override
-	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath) {
+	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
 		
 		TupleHelper tHelper = new TupleHelper(tuple);
 		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getRightPath());
-//		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getLeftPath());
+		//MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getLeftPath());
 		
 		double[] measurementOld = getMeasurementValues(tuple, oldObjPath) ;
 		double[] measurementNew = getMeasurementValues(tuple, newObjPath) ;

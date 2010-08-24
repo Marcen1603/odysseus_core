@@ -66,7 +66,7 @@ public abstract class AbstractDataUpdateFunction<M extends IProbability & IConne
 		int i=0;
 		for( TupleInfo info :  new TupleIterator(tuple, path) ) {
 			 if (SDFDatatypes.isMeasurementValue(info.attribute.getDatatype())) {
-			   info.tupleIndexPath.getLastTupleIndex().setValue(result[i]);
+			   info.tupleIndexPath.setTupleObject(result[i]);
 			   i+=1;
 			 }
 	

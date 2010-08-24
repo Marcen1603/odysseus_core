@@ -46,9 +46,9 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 	private SchemaIndexPath newObjPath;
 	private SchemaIndexPath oldObjPath;
 	
-	private String newObjListPath ="0";
+	private String newObjListPath ="scan.newlist";
 	
-	private String oldObjListPath = "1";
+	private String oldObjListPath = "scan.oldlist";
 	
 	
 	
@@ -116,7 +116,7 @@ public class KalmanCorrectStateEstimateFunctionTest<K> extends TestCase {
 		
 		Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 		
-		correctStateEstimateFunction.compute(connected, newObjPath, oldObjPath);
+		correctStateEstimateFunction.compute(connected, measurementTuple, newObjPath, oldObjPath);
 	
 		assertEquals(expectedTuple,measurementTuple);
 	

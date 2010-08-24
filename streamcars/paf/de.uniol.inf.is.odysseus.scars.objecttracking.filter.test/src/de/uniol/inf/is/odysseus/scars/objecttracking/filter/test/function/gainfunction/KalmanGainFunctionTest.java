@@ -94,7 +94,7 @@ public class KalmanGainFunctionTest<K> extends TestCase  {
 		
 	Connection connected = measurementTuple.getMetadata().getConnectionList().get(0);
 	
-	gainfunction.compute(connected);
+	gainfunction.compute(connected,measurementTuple);
 	
 	assertEquals(expectedTuple,measurementTuple);
 
