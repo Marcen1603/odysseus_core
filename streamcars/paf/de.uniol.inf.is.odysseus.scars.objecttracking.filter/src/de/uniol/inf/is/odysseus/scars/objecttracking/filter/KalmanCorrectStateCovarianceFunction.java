@@ -9,8 +9,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IGain> extends AbstractMetaDataUpdateFunction<K> {
 	
@@ -35,14 +34,12 @@ public class KalmanCorrectStateCovarianceFunction<K extends IProbability & IGain
 	/**
 	 * This method computes the new state covariance
 	 */
-	public void compute(Connection connected, MVRelationalTuple<K> tuple, SchemaIndexPath pathToOldList, SchemaIndexPath pathToNewList) {
+	public void compute(Connection connected, MVRelationalTuple<K> tuple) {
 		
 	
-		int[] oldTuplePath = connected.getRightPath();
-		MVRelationalTuple<K> oldTuple = (MVRelationalTuple<K>)TupleIndexPath.fromIntArray(oldTuplePath, tuple, pathToOldList).getTupleObject();
-		
-		int[] newTuplePath = connected.getRightPath();
-		MVRelationalTuple<K> newTuple = (MVRelationalTuple<K>)TupleIndexPath.fromIntArray(newTuplePath, tuple, pathToNewList).getTupleObject();
+		TupleHelper tHelper = new TupleHelper(tuple);
+		MVRelationalTuple<K> oldTuple = (MVRelationalTuple<K>)tHelper.getObject(connected.getRightPath());
+		MVRelationalTuple<K> newTuple = (MVRelationalTuple<K>)tHelper.getObject(connected.getLeftPath());
 			
 		double[][] covarianceOld = oldTuple.getMetadata().getCovariance();
 			

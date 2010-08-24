@@ -9,8 +9,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 /**
  * @author dtwumasi
@@ -19,8 +17,6 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContainer> extends AbstractFilterPO<M> {
 
   private AbstractMetaDataUpdateFunction<M> updateMetaDataFunction;
-  private SchemaHelper helper;
-
 
   public FilterCovarianceUpdatePO() {
     super();
@@ -31,8 +27,8 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
     this.setUpdateMetaDataFunction(copy.getUpdateMetaDataFunction().clone());
   }
 
-	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldPath, SchemaIndexPath newPath) {
-    updateMetaDataFunction.compute(connected, (MVRelationalTuple<M>)tuple, oldPath, newPath);
+	public void compute(Connection connected, MVRelationalTuple<M> tuple) {
+    updateMetaDataFunction.compute(connected, (MVRelationalTuple<M>)tuple);
   }
 
   
@@ -42,16 +38,9 @@ public class FilterCovarianceUpdatePO<M extends IProbability & IConnectionContai
     // list of connections
     ArrayList<Connection> tmpConList = object.getMetadata().getConnectionList();
 
-    if( helper == null ) 
-		helper = new SchemaHelper(getOutputSchema());
-	
-	// traverse connection list and filter
-	SchemaIndexPath oldPath = helper.getSchemaIndexPath(getOldObjListPath());
-	SchemaIndexPath newPath = helper.getSchemaIndexPath(getNewObjListPath());		
-
     // traverse connection list and filter
     for (Connection connected : tmpConList) {
-		compute(connected, object, oldPath, newPath);
+		compute(connected, object);
     }
 
     return object;

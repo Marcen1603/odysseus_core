@@ -9,7 +9,6 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 
 /**
  * @author dtwumasi
@@ -18,7 +17,7 @@ import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 public abstract class AbstractMetaDataUpdateFunction<M extends IProbability> {
 	
 	public AbstractMetaDataUpdateFunction() {
-		
+		parameters = new HashMap<Integer, Object>();
 	}
 	
 	public AbstractMetaDataUpdateFunction(HashMap<Integer,Object> parameters ) {
@@ -39,7 +38,7 @@ public abstract class AbstractMetaDataUpdateFunction<M extends IProbability> {
 	 * 
 	 * @return Object the result of the computation
 	 */
-	public abstract void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath pathToOldList, SchemaIndexPath pathToNewList);
+	public abstract void compute(Connection connected, MVRelationalTuple<M> tuple);
 
 	/**
 	 * @param parameters the parameters needed for computation

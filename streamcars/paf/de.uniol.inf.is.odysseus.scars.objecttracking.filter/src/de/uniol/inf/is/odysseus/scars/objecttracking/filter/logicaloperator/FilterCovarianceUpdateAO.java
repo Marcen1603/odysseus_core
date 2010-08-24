@@ -7,9 +7,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractMetaDataUpdateFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateCovarianceFunction;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogicalOp {
+public class FilterCovarianceUpdateAO <M extends IProbability & IGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	private String functionID;
@@ -22,6 +24,8 @@ public class FilterCovarianceUpdateAO <M extends IProbability> extends UnaryLogi
 	public FilterCovarianceUpdateAO()
 	{
 		super();
+		parameters = new HashMap<Integer, Object>();
+		metaDataUpdateFunction = new KalmanCorrectStateCovarianceFunction<M>();
 	}
 	
 	public FilterCovarianceUpdateAO(FilterCovarianceUpdateAO<M> copy) {

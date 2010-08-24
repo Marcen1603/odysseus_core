@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.scars.util.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 
 public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnectionContainer & IGain> extends AbstractDataUpdateFunction<M> {
@@ -38,13 +38,14 @@ public class KalmanCorrectStateEstimateFunction<M extends IProbability & IConnec
 	@Override
 	public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath oldObjPath, SchemaIndexPath newObjPath) {
 		
-		int[] newTuplePath = connected.getLeftPath();
-		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)TupleIndexPath.fromIntArray(newTuplePath, tuple, newObjPath).getTupleObject();
+		TupleHelper tHelper = new TupleHelper(tuple);
+		MVRelationalTuple<M> oldTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getRightPath());
+//		MVRelationalTuple<M> newTuple = (MVRelationalTuple<M>)tHelper.getObject(connected.getLeftPath());
 		
 		double[] measurementOld = getMeasurementValues(tuple, oldObjPath) ;
 		double[] measurementNew = getMeasurementValues(tuple, newObjPath) ;
 		
-		double[][] gain = newTuple.getMetadata().getGain();
+		double[][] gain = oldTuple.getMetadata().getGain();
 		
 		double[] result;
 		
