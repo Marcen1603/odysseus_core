@@ -7,3 +7,4 @@ Bundle-Vendor: Timo Michelsen
 Fragment-Host: de.uniol.inf.is.odysseus.transformation.drools;bundle-version="1.0.9"
 Import-Package: de.uniol.inf.is.odysseus.scars.operator.test.ao,
  de.uniol.inf.is.odysseus.scars.operator.test.po
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

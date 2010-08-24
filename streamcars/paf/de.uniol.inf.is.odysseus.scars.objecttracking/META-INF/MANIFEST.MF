@@ -17,3 +17,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.base,
  de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.scars.util;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
