@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 
 /**
  * @author dtwumasi
@@ -64,6 +65,9 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
     for (Connection connected : objConList) {
        compute(connected, (MVRelationalTuple<M>)object, newObjPath, oldObjPath);
     }
+    
+   newObjectListPath.toTupleIndexPath(object).setTupleObject(null);
+   
 
     return object;
   }
