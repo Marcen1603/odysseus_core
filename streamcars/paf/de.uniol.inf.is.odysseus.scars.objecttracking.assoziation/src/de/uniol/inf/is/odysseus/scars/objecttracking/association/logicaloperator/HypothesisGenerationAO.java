@@ -80,7 +80,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
     // set source name
     setSourceName(association, ASSOCIATION_SOURCE_NAME);
 
-    SDFAttributeList newSchema = new SDFAttributeList();
+    // TODO: die metadaten aus dem inputschema mitnehmen
+    SDFAttributeListExtended newSchema = new SDFAttributeListExtended();
     newSchema.addAttribute(association);
 
     return newSchema;
