@@ -67,8 +67,8 @@ CREATE SENSOR brokerSensor ( // wird durch Broker ersetzt
 #QUERY
 LOGICAL PLAN : 
 
-FILTER-COVARIANCE(
-	FILTER-ESTIMATE(
+FILTER-ESTIMATE(
+	FILTER-COVARIANCE(
 		FILTER-GAIN(
 			ASSOCIATION-EVAL(
 				ASSOCIATION-GEN(
@@ -94,9 +94,9 @@ FILTER-COVARIANCE(
 			),
 		 	${filterAlgo}
 		),
-		association.scan:scannedObjects,
-		association.scan:predictedObjects,
 		${filterAlgo}
 	),
+	association.scan:scannedObjects,
+	association.scan:predictedObjects,
 	${filterAlgo}
 )
