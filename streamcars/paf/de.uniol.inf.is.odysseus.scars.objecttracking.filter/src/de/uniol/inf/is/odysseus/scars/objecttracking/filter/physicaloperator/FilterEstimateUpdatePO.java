@@ -16,7 +16,11 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.scars.util.TupleInfo;
+import de.uniol.inf.is.odysseus.scars.util.TupleIterator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.vocabulary.SDFDatatypes;
 
 /**
  * @author dtwumasi
@@ -31,6 +35,8 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
   private SchemaIndexPath newObjectListPath;
   private SchemaIndexPath newObjPath;
   private SchemaIndexPath oldObjPath;
+  private TupleHelper tupleHelper;
+  SDFAttributeList inputSchema;
   
   public FilterEstimateUpdatePO() {
     super();
@@ -44,8 +50,9 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
 
   @Override
   protected void process_open() throws OpenFailedException {
-    super.process_open();
-    SDFAttributeList inputSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema(); 
+    
+	 super.process_open();
+    inputSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema(); 
     this.schemaHelper = new SchemaHelper(inputSchema);
 
     this.newObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath());
@@ -67,11 +74,28 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
     for (Connection connected : objConList) {
        compute(connected, (MVRelationalTuple<M>)object, newObjPath, oldObjPath);
     }
-    
+   
+   MVRelationalTuple<M> newList = (MVRelationalTuple<M>) newObjectListPath.toTupleIndexPath(object).getTupleObject(); 
+   
+   String timeStampName = schemaHelper.getStartTimestampFullAttributeName();
+   SDFAttribute timestamp = schemaHelper.getAttribute(timeStampName);
+   
+   MVRelationalTuple<M> newObject = new MVRelationalTuple<M>(1);
+   
+   MVRelationalTuple <M> scan = new MVRelationalTuple<M>(2);
+   
+   scan.setAttribute(0, newList);
+   scan.setAttribute(1, timestamp);
+   
+   newObject.setAttribute(0, newObject);
+
+   tupleHelper = new TupleHelper(object);
+   
+
    newObjectListPath.toTupleIndexPath(object).setTupleObject(null);
    
 
-    return object;
+    return newObject;
   }
   
   public void compute(Connection connected, MVRelationalTuple<M> tuple, SchemaIndexPath newObjPath, SchemaIndexPath oldObjPath) {
