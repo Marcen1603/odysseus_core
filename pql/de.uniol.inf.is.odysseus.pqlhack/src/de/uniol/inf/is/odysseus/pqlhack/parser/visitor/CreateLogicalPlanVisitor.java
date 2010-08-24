@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ExistenceAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.ProjectAO;
+import de.uniol.inf.is.odysseus.logicaloperator.base.RenameAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.WindowType;
@@ -1130,7 +1131,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		ArrayList<Object> inputOpNode = (ArrayList<Object>) node.jjtGetChild(0).jjtAccept(this, newData);
 		int sourceOutPort = ((Integer) inputOpNode.get(2)).intValue();
 		ILogicalOperator inputOp = (ILogicalOperator) inputOpNode.get(1);
-		inputOp.subscribeToSource(selection, 0, sourceOutPort, inputOp.getOutputSchema());
+		selection.subscribeToSource(inputOp, 0, sourceOutPort, inputOp.getOutputSchema());
 
 		// get name of this op
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(1);
@@ -1145,6 +1146,7 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		String pathOld = identifier.getName();
 
 		// path initialization
+		selection.setID(opName);
 		selection.setNewObjListPath(pathNew);
 		selection.setOldObjListPath(pathOld);
 		
@@ -1166,17 +1168,21 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// get name and lookup operator
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
 		String srcName = identifier.getName();
-		ILogicalOperator associationSource = DataDictionary.getInstance().getView(srcName);
+		HypothesisSelectionAO associationSource = (HypothesisSelectionAO) DataDictionary.getInstance().getView(srcName);
 		if (associationSource == null) {
 			throw new RuntimeException("The source cannot be found: " + srcName);
 		}
+		
 
 		// get output-port of selection
 		String number = ((ASTNumber) node.jjtGetChild(1)).getValue();
 		Integer outputPort = new Integer(number);
-
+				RenameAO renameAO = new RenameAO();
+		renameAO.setOutputSchema(associationSource.getOutputSchema());
+        renameAO.subscribeToSource(associationSource, 0, outputPort, associationSource.getOutputSchema());
+           
 		// constructing return values
-		((ArrayList) data).add(associationSource);
+		((ArrayList) data).add(renameAO);
 		((ArrayList) data).add(new Integer(0));
 
 		return data;
