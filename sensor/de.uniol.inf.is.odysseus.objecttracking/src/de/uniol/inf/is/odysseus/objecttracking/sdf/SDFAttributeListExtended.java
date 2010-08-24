@@ -36,13 +36,31 @@ public class SDFAttributeListExtended extends SDFAttributeList {
 	 * @param attributes1 The old schema that is to be copied
 	 */
 	public SDFAttributeListExtended(SDFAttributeListExtended attributes1) {
-		super(attributes1);
+		super(attributes1.getURI());
+		this.setDatatype(attributes1.getDatatype());
+		this.setUnit(attributes1.getUnit());
+		// deep copy for SDFAttributes and the subattributes 
+		for(int i=0; i<attributes1.getAttributeCount(); i++) {
+			this.add(copyDeep(attributes1.get(i)));
+		}
+		// copy of schmea metadaten
 		if(attributes1.metadata != null){
 			this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
 			for(Entry<SDFAttributeListMetadataTypes, Object> entry : attributes1.metadata.entrySet()){
 				this.metadata.put(entry.getKey(), entry.getValue());
 			}
 		}
+	}
+	
+	private SDFAttribute copyDeep(SDFAttribute attribute) {
+		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName());
+		copy.setDatatype(attribute.getDatatype());
+		copy.setCovariance(attribute.getCovariance());
+		copy.setUnit(attribute.getUnit());
+		for(int i=0; i<attribute.getAmountOfSubattributes(); i++) {
+			copy.addSubattribute(copyDeep(attribute.getSubattribute(i)));
+		}
+		return copy;
 	}
 
 	public SDFAttributeListExtended(SDFAttribute[] attributes1) {
