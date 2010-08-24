@@ -28,7 +28,6 @@ public class CovarianceMapper {
 			if( SDFDatatypes.isMeasurementValue(attribute.getDatatype())) {
 				indices.add(lastName);
 			}
-			System.out.println(lastName);
 			find(attribute.getSubattributes(), lastName);
 		}
 	}
