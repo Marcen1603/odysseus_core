@@ -142,13 +142,18 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 	}
 
 
-	private List<Object> getDifferenceSet(TupleIndexPath baseObjects,
-			List<?> matchedObjects) {
+	private List<Object> getDifferenceSet(MVRelationalTuple<M> mainTuple, TupleIndexPath baseObjects,
+			ConnectionList matchedObjects) {
+		List<Object> tupleList = new ArrayList<Object>();
+		TupleHelper tupleHelper = new TupleHelper(mainTuple);
+		for (int[] obj : matchedObjects.getAllElements()) {
+			tupleList.add(tupleHelper.getObject(obj));
+		}
 		List<Object> result = new ArrayList<Object>();
 
-		for (TupleInfo scannedTupleInfo : baseObjects) {
-			if (!matchedObjects.contains(scannedTupleInfo.tupleObject)) {
-				result.add(scannedTupleInfo.tupleObject);
+		for (TupleInfo tupleInfo : baseObjects) {
+			if (!tupleList.contains(tupleInfo.tupleObject)) {
+				result.add(tupleInfo.tupleObject);
 			}
 		}
 
@@ -186,9 +191,10 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 				.getMetadata().getConnectionList());
 		object.getMetadata().setConnectionList(matchedObjects);
 		transfer(object, 1);
+		System.out.println("Port 1: " + object);
 
 		// PORT: 0, get new not matching objects
-		List<Object> scannedNotMatchedObjects = getDifferenceSet(
+		List<Object> scannedNotMatchedObjects = getDifferenceSet(object,
 				this.scannedObjectListPath.toTupleIndexPath(object),
 				matchedObjects);
 		MVRelationalTuple<M> scannedNotMatchedTuple = new MVRelationalTuple<M>(
@@ -197,9 +203,10 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 				.toTupleIndexPath(scannedNotMatchedTuple);
 		scannedObjectList.setTupleObject(scannedNotMatchedObjects);
 		transfer(scannedNotMatchedTuple, 0);
+		System.out.println("Port 0: " + object);
 
 		// PORT: 2, get predicted not matching objects
-		List<Object> predictedNotMatchedObjects = getDifferenceSet(
+		List<Object> predictedNotMatchedObjects = getDifferenceSet(object,
 				this.predictedObjectListPath.toTupleIndexPath(object),
 				matchedObjects);
 		if (predictedNotMatchedObjects.size() > 0) {
@@ -209,6 +216,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 					.toTupleIndexPath(predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedNotMatchedObjects);
 			transfer(predictedNotMatchedTuple, 2);
+			System.out.println("Port 2: " + object);
 		} else {
 			this.sendPunctuation(new PointInTime(object.getMetadata()
 					.getStart()), 2);
