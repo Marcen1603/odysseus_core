@@ -90,6 +90,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.ObjectRelationalPredicate;
 import de.uniol.inf.is.odysseus.scars.base.SDFObjectRelationalExpression;
+import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.AssociationDictionary;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisEvaluationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
@@ -1151,9 +1152,8 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		selection.setOldObjListPath(pathOld);
 		
 		// saving op for source lookup
-		// attrRes.addSource(opName, selection);
-		DataDictionary.getInstance().setLogicalView(opName, selection);
-
+		AssociationDictionary.getInstance().addSource(opName, selection);
+		
 		// constructing return values
 		((ArrayList) data).add(selection);
 		((ArrayList) data).add(new Integer(0));
@@ -1168,13 +1168,12 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		// get name and lookup operator
 		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
 		String srcName = identifier.getName();
-		HypothesisSelectionAO associationSource = (HypothesisSelectionAO) DataDictionary.getInstance().getView(srcName);
+		HypothesisSelectionAO associationSource =  AssociationDictionary.getInstance().getSource(srcName);
 		if (associationSource == null) {
 			throw new RuntimeException("The source cannot be found: " + srcName);
 		}
 		
-
-		// get output-port of selection
+        // get output-port of selection
 		String number = ((ASTNumber) node.jjtGetChild(1)).getValue();
 		Integer outputPort = new Integer(number);
 				RenameAO renameAO = new RenameAO();
