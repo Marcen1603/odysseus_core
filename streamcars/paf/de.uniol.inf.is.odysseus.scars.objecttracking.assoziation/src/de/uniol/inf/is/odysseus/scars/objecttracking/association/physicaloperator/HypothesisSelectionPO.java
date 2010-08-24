@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionComparator;
+import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
@@ -75,13 +75,13 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			ConnectionList connectionList) {
 
 		TupleHelper tupleHelper = new TupleHelper(mainTuple);
-		Map<MVRelationalTuple<M>, List<ConnectionComparator>> connections = new HashMap<MVRelationalTuple<M>, List<ConnectionComparator>>();
+		Map<MVRelationalTuple<M>, List<Connection>> connections = new HashMap<MVRelationalTuple<M>, List<Connection>>();
 
-		for (ConnectionComparator connection : connectionList) {
+		for (Connection connection : connectionList) {
 			@SuppressWarnings("unchecked")
 			MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) tupleHelper
 					.getObject(connection.getLeftPath());
-			List<ConnectionComparator> tuples = new ArrayList<ConnectionComparator>();
+			List<Connection> tuples = new ArrayList<Connection>();
 			if (!connections.containsKey(tuple)) {
 				tuples.add(connection);
 				connections.put(tuple, tuples);
@@ -94,12 +94,12 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 	}
 
 	private ConnectionList getSingleMatchingList(
-			Map<MVRelationalTuple<M>, List<ConnectionComparator>> connections, MVRelationalTuple<M> mainTuple) {
-		Map<MVRelationalTuple<M>, ConnectionComparator> singleMatchingTuples = new HashMap<MVRelationalTuple<M>, ConnectionComparator>();
+			Map<MVRelationalTuple<M>, List<Connection>> connections, MVRelationalTuple<M> mainTuple) {
+		Map<MVRelationalTuple<M>, Connection> singleMatchingTuples = new HashMap<MVRelationalTuple<M>, Connection>();
 		
 		for (MVRelationalTuple<M> matchingTuple : connections.keySet()) {
-			ConnectionComparator connection = null;
-			for (ConnectionComparator connectionComparator : connections
+			Connection connection = null;
+			for (Connection connectionComparator : connections
 					.get(matchingTuple)) {
 				if (connection == null) {
 					connection = connectionComparator;

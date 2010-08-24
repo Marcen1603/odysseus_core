@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.Connection;
-import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionComparator;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
@@ -147,7 +146,7 @@ public abstract class AbstractHypothesisEvaluationPO<M extends IProbability & IC
                 .getCovariance(), getMeasurementValues(object, predictedTupleInfo.tupleIndexPath));
         
         if(value > 0) {
-          newObjConList.add(new ConnectionComparator(scannedTupleInfo.tupleIndexPath.toArray(), predictedTupleInfo.tupleIndexPath.toArray(), value));
+          newObjConList.add(new Connection(scannedTupleInfo.tupleIndexPath.toArray(), predictedTupleInfo.tupleIndexPath.toArray(), value));
         }
       }
     }
