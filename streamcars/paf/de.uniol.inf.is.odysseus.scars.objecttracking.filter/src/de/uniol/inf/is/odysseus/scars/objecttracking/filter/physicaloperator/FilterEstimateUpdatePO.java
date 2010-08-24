@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContain
 import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
 import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * @author dtwumasi
@@ -44,7 +45,8 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
   @Override
   protected void process_open() throws OpenFailedException {
     super.process_open();
-    this.schemaHelper = new SchemaHelper(getOutputSchema());
+    SDFAttributeList inputSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema(); 
+    this.schemaHelper = new SchemaHelper(inputSchema);
 
     this.newObjectListPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath());
     this.newObjPath = this.schemaHelper.getSchemaIndexPath(this.getNewObjListPath() + SchemaHelper.ATTRIBUTE_SEPARATOR
