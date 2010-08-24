@@ -5,10 +5,14 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.base.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.AbstractDataUpdateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.KalmanCorrectStateEstimateFunction;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContainer & IGain> extends UnaryLogicalOp {
@@ -49,10 +53,18 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		return new FilterEstimateUpdateAO<M>(this);
 	}
 	
-	@Override
-	public SDFAttributeList getOutputSchema() {
-		return this.getInputSchema();
-	}
+	  @Override
+	  public SDFAttributeList getOutputSchema() {
+		  SchemaHelper helper = new SchemaHelper(this.getInputSchema().clone());
+		  SDFAttributeListExtended newSchema = new SDFAttributeListExtended((SDFAttributeListExtended)this.getInputSchema());
+		  helper = new SchemaHelper(newSchema);
+		  SchemaIndexPath path = helper.getSchemaIndexPath(oldObjListPath);
+		  SDFAttribute oldListAttr = helper.getAttribute(oldObjListPath);
+		  SDFAttribute oldListAttrParent = path.getSchemaIndex(path.getLength()-2).getAttribute();
+		  oldListAttrParent.removeSubattribute(oldListAttr);
+		  
+		  return newSchema;
+	  }
 	
 	
 	// Getter & Setter
