@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.base.ISubscription;
 import de.uniol.inf.is.odysseus.base.PointInTime;
 import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe;
@@ -12,6 +13,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.base.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.scars.objecttracking.filter.physicaloperator.AbstractFilterPO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain;
+import de.uniol.inf.is.odysseus.scars.util.SchemaHelper;
+import de.uniol.inf.is.odysseus.scars.util.SchemaIndexPath;
+import de.uniol.inf.is.odysseus.scars.util.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -19,6 +23,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  */
 public class InitializationPO<M extends IGain & IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer> extends AbstractFilterPO<M> {
+
+	private SchemaHelper schemaHelper;
+	private SchemaIndexPath newObjectListPath;
+	private SchemaIndexPath newObjPath;
 
 	
 	public InitializationPO() {
@@ -32,6 +40,11 @@ public class InitializationPO<M extends IGain & IProbability & IPredictionFuncti
 	
 	@Override
 	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+	
+	TupleHelper tHelper = new TupleHelper(object);
+	
+	MVRelationalTuple<M> newList = (MVRelationalTuple<M>) tHelper.getObject(newObjectListPath);
+	
 	
 	
 	
