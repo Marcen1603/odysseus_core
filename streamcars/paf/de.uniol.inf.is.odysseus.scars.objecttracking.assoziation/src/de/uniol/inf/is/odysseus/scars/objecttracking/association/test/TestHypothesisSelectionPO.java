@@ -11,7 +11,7 @@ public class TestHypothesisSelectionPO extends TestCase{
 
 	@Test
 	public void testPO() {
-		HypothesisSelectionPO<StreamCarsMetaData> po = new HypothesisSelectionPO<StreamCarsMetaData>();
+		HypothesisSelectionPO<StreamCarsMetaData<Object>> po = new HypothesisSelectionPO<StreamCarsMetaData<Object>>();
 
 		double[][] evalMatrix = new double[3][3];
 		evalMatrix[0][0] = 0;

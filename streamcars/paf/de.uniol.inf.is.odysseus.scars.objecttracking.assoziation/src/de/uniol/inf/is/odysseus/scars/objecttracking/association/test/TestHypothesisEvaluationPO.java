@@ -14,21 +14,21 @@ public class TestHypothesisEvaluationPO extends TestCase{
 
 	@Test
 	public void testPO() {
-		MVRelationalTuple<StreamCarsMetaData> tupleNew = createObjectTuple();
-		MVRelationalTuple<StreamCarsMetaData> tupleOld = createObjectTuple1();
+		MVRelationalTuple<StreamCarsMetaData<Object>> tupleNew = createObjectTuple();
+		MVRelationalTuple<StreamCarsMetaData<Object>> tupleOld = createObjectTuple1();
 		double[] paths = new double[4];
 		paths[0] = 0;
 		paths[1] = 1;
 		paths[2] = 2;
 		paths[3] = 1;
-		MahalanobisDistanceEvaluationPO<StreamCarsMetaData> po = new MahalanobisDistanceEvaluationPO<StreamCarsMetaData>();
+		MahalanobisDistanceEvaluationPO<StreamCarsMetaData<Object>> po = new MahalanobisDistanceEvaluationPO<StreamCarsMetaData<Object>>();
 		assertEquals(0d, po.evaluate(tupleNew.getMetadata().getCovariance(), paths, tupleOld.getMetadata().getCovariance(), paths));
 	}
 	
-	private MVRelationalTuple<StreamCarsMetaData> createObjectTuple() {
-		MVRelationalTuple<StreamCarsMetaData> obj = new MVRelationalTuple<StreamCarsMetaData>(2);
+	private MVRelationalTuple<StreamCarsMetaData<Object>> createObjectTuple() {
+		MVRelationalTuple<StreamCarsMetaData<Object>> obj = new MVRelationalTuple<StreamCarsMetaData<Object>>(2);
 		
-		MVRelationalTuple<StreamCarsMetaData> pos = new MVRelationalTuple<StreamCarsMetaData>(3);
+		MVRelationalTuple<StreamCarsMetaData<Object>> pos = new MVRelationalTuple<StreamCarsMetaData<Object>>(3);
 		pos.setAttribute(0, 111.0);
 		pos.setAttribute(1, 111.0);
 		pos.setAttribute(2, 111.0);
@@ -64,18 +64,18 @@ public class TestHypothesisEvaluationPO extends TestCase{
 		paths.add(new int[] {0, 2});
 		paths.add(new int[] {1});
 		
-		StreamCarsMetaData p = new StreamCarsMetaData();
+		StreamCarsMetaData<Object> p = new StreamCarsMetaData<Object>();
 		p.setCovariance(cov);
 		p.setAttributePaths(paths);
-		obj.setMetadata((StreamCarsMetaData) p);
+		obj.setMetadata((StreamCarsMetaData<Object>) p);
 		
 		return obj;
 	}
 	
-	private MVRelationalTuple<StreamCarsMetaData> createObjectTuple1() {
-		MVRelationalTuple<StreamCarsMetaData> obj = new MVRelationalTuple<StreamCarsMetaData>(2);
+	private MVRelationalTuple<StreamCarsMetaData<Object>> createObjectTuple1() {
+		MVRelationalTuple<StreamCarsMetaData<Object>> obj = new MVRelationalTuple<StreamCarsMetaData<Object>>(2);
 		
-		MVRelationalTuple<StreamCarsMetaData> pos = new MVRelationalTuple<StreamCarsMetaData>(3);
+		MVRelationalTuple<StreamCarsMetaData<Object>> pos = new MVRelationalTuple<StreamCarsMetaData<Object>>(3);
 		pos.setAttribute(0, 1.0);
 		pos.setAttribute(1, 0.5);
 		pos.setAttribute(2, 0.0);
@@ -111,10 +111,10 @@ public class TestHypothesisEvaluationPO extends TestCase{
 		paths.add(new int[] {0, 2});
 		paths.add(new int[] {1});
 		
-		StreamCarsMetaData p = new StreamCarsMetaData();
+		StreamCarsMetaData<Object> p = new StreamCarsMetaData<Object>();
 		p.setCovariance(cov);
 		p.setAttributePaths(paths);
-		obj.setMetadata((StreamCarsMetaData) p);
+		obj.setMetadata((StreamCarsMetaData<Object>) p);
 		
 		return obj;
 	}
