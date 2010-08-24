@@ -7,7 +7,7 @@ package de.uniol.inf.is.odysseus.scars.objecttracking.metadata;
  * @author Volker Janz
  *
  */
-public class Connection implements IConnection {
+public abstract class Connection implements IConnection {
 
 	private int[] leftPath;
 	private int[] rightPath;

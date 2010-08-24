@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @author Volker Janz
  *
  */
-public class ConnectionList extends ArrayList<Connection> {
+public class ConnectionList extends ArrayList<ConnectionComparator> {
 
 	private static final long serialVersionUID = 1L;
 

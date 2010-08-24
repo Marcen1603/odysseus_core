@@ -26,7 +26,7 @@ public class TestHypothesisSelectionPO extends TestCase{
 		evalMatrix[2][1] = 70;
 		evalMatrix[2][2] = 70;
 
-		evalMatrix = po.singleMatchingEvaluation(evalMatrix);
+//		evalMatrix = po.singleMatchingEvaluation(evalMatrix);
 
 		double[][] resMatrix = new double[3][3];
 		resMatrix[0][0] = 0;
