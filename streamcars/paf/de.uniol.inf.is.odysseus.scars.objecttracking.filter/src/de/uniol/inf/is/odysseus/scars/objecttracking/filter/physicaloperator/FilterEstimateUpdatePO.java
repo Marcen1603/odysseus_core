@@ -79,13 +79,14 @@ public class FilterEstimateUpdatePO<M extends IProbability & IConnectionContaine
    
    String timeStampName = schemaHelper.getStartTimestampFullAttributeName();
    SDFAttribute timestamp = schemaHelper.getAttribute(timeStampName);
-   
+   //schemaHelper.getSchemaIndexPath(timeStampName).toTupleIndexPath(object).getTupleObject();
    MVRelationalTuple<M> newObject = new MVRelationalTuple<M>(1);
    
    MVRelationalTuple <M> scan = new MVRelationalTuple<M>(2);
    
-   scan.setAttribute(0, oldList);
-   scan.setAttribute(1, timestamp);
+   scan.setAttribute(0, timestamp);
+   scan.setAttribute(1, oldList);
+
    
    newObject.setAttribute(0, scan);
 

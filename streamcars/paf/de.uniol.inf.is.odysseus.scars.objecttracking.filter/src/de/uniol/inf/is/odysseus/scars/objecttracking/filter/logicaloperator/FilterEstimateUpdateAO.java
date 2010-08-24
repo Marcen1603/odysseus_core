@@ -58,8 +58,8 @@ public class FilterEstimateUpdateAO <M extends IProbability & IConnectionContain
 		  SchemaHelper helper = new SchemaHelper(this.getInputSchema().clone());
 		  SDFAttributeListExtended newSchema = new SDFAttributeListExtended((SDFAttributeListExtended)this.getInputSchema());
 		  helper = new SchemaHelper(newSchema);
-		  SchemaIndexPath path = helper.getSchemaIndexPath(oldObjListPath);
-		  SDFAttribute oldListAttr = helper.getAttribute(oldObjListPath);
+		  SchemaIndexPath path = helper.getSchemaIndexPath(newObjListPath);
+		  SDFAttribute oldListAttr = helper.getAttribute(newObjListPath);
 		  SDFAttribute oldListAttrParent = path.getSchemaIndex(path.getLength()-2).getAttribute();
 		  oldListAttrParent.removeSubattribute(oldListAttr);
 		  
