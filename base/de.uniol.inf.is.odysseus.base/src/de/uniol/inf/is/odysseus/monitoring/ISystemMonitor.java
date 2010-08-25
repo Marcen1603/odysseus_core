@@ -12,6 +12,8 @@ public interface ISystemMonitor {
 	public void stop();
 	public double getAverageCPULoad();
 	public double getHeapMemoryUsage();
+	public double getAverageMemoryUsage();
+	public double getMaxMemoryUsage();
 	public void addListener(ISystemMonitorListener listener);
 	public void removeListener(ISystemMonitorListener listener);
 }

@@ -21,111 +21,113 @@ public interface ProceduralExpressionParserConstants {
   /** RegularExpression Id. */
   int K_BENCHMARK = 9;
   /** RegularExpression Id. */
-  int K_BROKER = 10;
+  int K_BENCHMARK_EXT = 10;
   /** RegularExpression Id. */
-  int K_BUFFER = 11;
+  int K_BROKER = 11;
   /** RegularExpression Id. */
-  int K_EXIST = 12;
+  int K_BUFFER = 12;
   /** RegularExpression Id. */
-  int K_NOT_EXIST = 13;
+  int K_EXIST = 13;
   /** RegularExpression Id. */
-  int K_COUNT = 14;
+  int K_NOT_EXIST = 14;
   /** RegularExpression Id. */
-  int K_DEFAULT = 15;
+  int K_COUNT = 15;
   /** RegularExpression Id. */
-  int K_IN = 16;
+  int K_DEFAULT = 16;
   /** RegularExpression Id. */
-  int K_JOIN = 17;
+  int K_IN = 17;
   /** RegularExpression Id. */
-  int K_LOGICAL = 18;
+  int K_JOIN = 18;
   /** RegularExpression Id. */
-  int K_MAX = 19;
+  int K_LOGICAL = 19;
   /** RegularExpression Id. */
-  int K_MIN = 20;
+  int K_MAX = 20;
   /** RegularExpression Id. */
-  int K_NOT = 21;
+  int K_MIN = 21;
   /** RegularExpression Id. */
-  int K_OR = 22;
+  int K_NOT = 22;
   /** RegularExpression Id. */
-  int K_ON = 23;
+  int K_OR = 23;
   /** RegularExpression Id. */
-  int K_PLAN = 24;
+  int K_ON = 24;
   /** RegularExpression Id. */
-  int K_PREDICTION = 25;
+  int K_PLAN = 25;
   /** RegularExpression Id. */
-  int K_PROJECTION = 26;
+  int K_PREDICTION = 26;
   /** RegularExpression Id. */
-  int K_QUEUE = 27;
+  int K_PROJECTION = 27;
   /** RegularExpression Id. */
-  int K_RELATIONAL_PROJECTION = 28;
+  int K_QUEUE = 28;
   /** RegularExpression Id. */
-  int K_RELATIONAL_SELECTION = 29;
+  int K_RELATIONAL_PROJECTION = 29;
   /** RegularExpression Id. */
-  int K_RELATIONAL_JOIN = 30;
+  int K_RELATIONAL_SELECTION = 30;
   /** RegularExpression Id. */
-  int K_RELATIONAL_NEST = 31;
+  int K_RELATIONAL_JOIN = 31;
   /** RegularExpression Id. */
-  int K_RELATIONAL_UNNEST = 32;
+  int K_RELATIONAL_NEST = 32;
   /** RegularExpression Id. */
-  int K_SCHEMA_CONVERT = 33;
+  int K_RELATIONAL_UNNEST = 33;
   /** RegularExpression Id. */
-  int K_SELECTION = 34;
+  int K_SCHEMA_CONVERT = 34;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION = 35;
+  int K_SELECTION = 35;
   /** RegularExpression Id. */
-  int K_SET_PREDICTION_OR = 36;
+  int K_SET_PREDICTION = 36;
   /** RegularExpression Id. */
-  int K_SIZE = 37;
+  int K_SET_PREDICTION_OR = 37;
   /** RegularExpression Id. */
-  int K_SLIDE = 38;
+  int K_SIZE = 38;
   /** RegularExpression Id. */
-  int K_SLDING_TIME_WINDOW = 39;
+  int K_SLIDE = 39;
   /** RegularExpression Id. */
-  int K_SUM = 40;
+  int K_SLDING_TIME_WINDOW = 40;
   /** RegularExpression Id. */
-  int K_TUMBLING_TIME_WINDOW = 41;
+  int K_SUM = 41;
   /** RegularExpression Id. */
-  int K_WHERE = 42;
+  int K_TUMBLING_TIME_WINDOW = 42;
   /** RegularExpression Id. */
-  int K_TEST = 43;
+  int K_WHERE = 43;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_GEN = 44;
+  int K_TEST = 44;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_EVAL = 45;
+  int K_ASSOCIATION_GEN = 45;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SEL = 46;
+  int K_ASSOCIATION_EVAL = 46;
   /** RegularExpression Id. */
-  int K_ASSOCIATION_SRC = 47;
+  int K_ASSOCIATION_SEL = 47;
   /** RegularExpression Id. */
-  int K_EVALUATE = 48;
+  int K_ASSOCIATION_SRC = 48;
   /** RegularExpression Id. */
-  int K_FILTER_GAIN = 49;
+  int K_EVALUATE = 49;
   /** RegularExpression Id. */
-  int K_FILTER_ESTIMATE = 50;
+  int K_FILTER_GAIN = 50;
   /** RegularExpression Id. */
-  int K_FILTER_COVARIANCE = 51;
+  int K_FILTER_ESTIMATE = 51;
   /** RegularExpression Id. */
-  int IDENTIFIER = 52;
+  int K_FILTER_COVARIANCE = 52;
   /** RegularExpression Id. */
-  int LETTER = 53;
+  int IDENTIFIER = 53;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 54;
+  int LETTER = 54;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 55;
+  int SPECIAL_CHARS = 55;
   /** RegularExpression Id. */
-  int QUOTED_IDENTIFIER = 56;
+  int CHAR_LITERAL = 56;
   /** RegularExpression Id. */
-  int COMPARE_OPERATOR = 57;
+  int QUOTED_IDENTIFIER = 57;
   /** RegularExpression Id. */
-  int REGEXP = 58;
+  int COMPARE_OPERATOR = 58;
   /** RegularExpression Id. */
-  int FLOAT = 59;
+  int REGEXP = 59;
   /** RegularExpression Id. */
-  int INTEGER = 60;
+  int FLOAT = 60;
   /** RegularExpression Id. */
-  int DIGIT = 61;
+  int INTEGER = 61;
   /** RegularExpression Id. */
-  int IPADDRESS = 62;
+  int DIGIT = 62;
+  /** RegularExpression Id. */
+  int IPADDRESS = 63;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -142,6 +144,7 @@ public interface ProceduralExpressionParserConstants {
     "\"AND\"",
     "\"AVG\"",
     "\"BENCHMARK\"",
+    "\"BENCHMARK-EXT\"",
     "\"BROKER\"",
     "\"BUFFER\"",
     "\"EXIST\"",

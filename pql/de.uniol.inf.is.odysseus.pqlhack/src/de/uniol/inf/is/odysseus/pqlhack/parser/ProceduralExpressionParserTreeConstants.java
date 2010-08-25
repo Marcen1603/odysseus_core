@@ -8,54 +8,53 @@ public interface ProceduralExpressionParserTreeConstants
   public int JJTTESTOP = 2;
   public int JJTEXISTOP = 3;
   public int JJTBENCHMARKOP = 4;
-  public int JJTBUFFEROP = 5;
-  public int JJTPROJECTIONOP = 6;
-  public int JJTPROJECTIONIDENTIFIER = 7;
-  public int JJTRELATIONALPROJECTIONOP = 8;
-  public int JJTSELECTIONOP = 9;
-  public int JJTRELATIONALSELECTIONOP = 10;
-  public int JJTRELATIONALJOINOP = 11;
-  public int JJTRELATIONALNESTOP = 12;
-  public int JJTRELATIONALUNNESTOP = 13;
-  public int JJTJOINOP = 14;
-  public int JJTSCHEMACONVERTOP = 15;
-  public int JJTWINDOWOP = 16;
-  public int JJTSLIDINGTIMEWINDOW = 17;
-  public int JJTACCESSOP = 18;
-  public int JJTBROKEROP = 19;
-  public int JJTPREDICTIONASSIGNOP = 20;
-  public int JJTPREDICTIONASSIGNOROP = 21;
-  public int JJTPREDICTIONOP = 22;
-  public int JJTPREDICATE = 23;
-  public int JJTSIMPLEPREDICATE = 24;
-  public int JJTBASICPREDICATE = 25;
-  public int JJTORPREDICATE = 26;
-  public int JJTANDPREDICATE = 27;
-  public int JJTNOTPREDICATE = 28;
-  public int JJTEXISTPREDICATE = 29;
-  public int JJTEXISTVARIABLESDECLARATION = 30;
-  public int JJTEXPRESSION = 31;
-  public int JJTSIMPLETOKEN = 32;
-  public int JJTFUNCTIONEXPRESSION = 33;
-  public int JJTFUNCTIONNAME = 34;
-  public int JJTNUMBER = 35;
-  public int JJTSTRING = 36;
-  public int JJTVOID = 37;
-  public int JJTIDENTIFIER = 38;
-  public int JJTCOMPAREOPERATOR = 39;
-  public int JJTPREDICTIONDEFINITION = 40;
-  public int JJTDEFAULTPREDICTIONDEFINITION = 41;
-  public int JJTPREDICTIONFUNCTIONDEFINITION = 42;
-  public int JJTKEYVALUELIST = 43;
-  public int JJTKEYVALUEPAIR = 44;
-  public int JJTASSOCIATIONGENOP = 45;
-  public int JJTASSOCIATIONEVALOP = 46;
-  public int JJTASSOCIATIONSELOP = 47;
-  public int JJTASSOCIATIONSRCOP = 48;
-  public int JJTEVALUATEOP = 49;
-  public int JJTFILTERGAINOP = 50;
-  public int JJTFILTERESTIMATEOP = 51;
-  public int JJTFILTERCOVARIANCEOP = 52;
+  public int JJTBENCHMARKOPEXT = 5;
+  public int JJTBUFFEROP = 6;
+  public int JJTPROJECTIONOP = 7;
+  public int JJTPROJECTIONIDENTIFIER = 8;
+  public int JJTRELATIONALPROJECTIONOP = 9;
+  public int JJTSELECTIONOP = 10;
+  public int JJTRELATIONALSELECTIONOP = 11;
+  public int JJTRELATIONALJOINOP = 12;
+  public int JJTRELATIONALNESTOP = 13;
+  public int JJTRELATIONALUNNESTOP = 14;
+  public int JJTJOINOP = 15;
+  public int JJTSCHEMACONVERTOP = 16;
+  public int JJTWINDOWOP = 17;
+  public int JJTSLIDINGTIMEWINDOW = 18;
+  public int JJTACCESSOP = 19;
+  public int JJTBROKEROP = 20;
+  public int JJTPREDICTIONASSIGNOP = 21;
+  public int JJTPREDICTIONASSIGNOROP = 22;
+  public int JJTPREDICTIONOP = 23;
+  public int JJTPREDICATE = 24;
+  public int JJTSIMPLEPREDICATE = 25;
+  public int JJTBASICPREDICATE = 26;
+  public int JJTORPREDICATE = 27;
+  public int JJTANDPREDICATE = 28;
+  public int JJTNOTPREDICATE = 29;
+  public int JJTEXPRESSION = 30;
+  public int JJTSIMPLETOKEN = 31;
+  public int JJTFUNCTIONEXPRESSION = 32;
+  public int JJTFUNCTIONNAME = 33;
+  public int JJTNUMBER = 34;
+  public int JJTSTRING = 35;
+  public int JJTVOID = 36;
+  public int JJTIDENTIFIER = 37;
+  public int JJTCOMPAREOPERATOR = 38;
+  public int JJTPREDICTIONDEFINITION = 39;
+  public int JJTDEFAULTPREDICTIONDEFINITION = 40;
+  public int JJTPREDICTIONFUNCTIONDEFINITION = 41;
+  public int JJTKEYVALUELIST = 42;
+  public int JJTKEYVALUEPAIR = 43;
+  public int JJTASSOCIATIONGENOP = 44;
+  public int JJTASSOCIATIONEVALOP = 45;
+  public int JJTASSOCIATIONSELOP = 46;
+  public int JJTASSOCIATIONSRCOP = 47;
+  public int JJTEVALUATEOP = 48;
+  public int JJTFILTERGAINOP = 49;
+  public int JJTFILTERESTIMATEOP = 50;
+  public int JJTFILTERCOVARIANCEOP = 51;
 
 
   public String[] jjtNodeName = {
@@ -64,6 +63,7 @@ public interface ProceduralExpressionParserTreeConstants
     "TestOp",
     "ExistOp",
     "BenchmarkOp",
+    "BenchmarkOpExt",
     "BufferOp",
     "ProjectionOp",
     "ProjectionIdentifier",
@@ -88,8 +88,6 @@ public interface ProceduralExpressionParserTreeConstants
     "OrPredicate",
     "AndPredicate",
     "NotPredicate",
-    "ExistPredicate",
-    "ExistVariablesDeclaration",
     "Expression",
     "SimpleToken",
     "FunctionExpression",
@@ -114,4 +112,4 @@ public interface ProceduralExpressionParserTreeConstants
     "FilterCovarianceOp",
   };
 }
-/* JavaCC - OriginalChecksum=f53462ee69e1839285e0fb3deb04e893 (do not edit this line) */
+/* JavaCC - OriginalChecksum=342189c365ddde0aa6ad41cf6439dc67 (do not edit this line) */

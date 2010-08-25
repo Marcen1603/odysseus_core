@@ -29,6 +29,10 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	private Thread loadUpdaterThread;
 	private List<ISystemMonitorListener> listeners;
 	
+	private double avgMem;
+	private double maxMem;
+	private long periodCounter;
+	
 	private class LoadRunnable implements Runnable {
 		private boolean run = true;
 		public void stop() {
@@ -61,6 +65,7 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	
 	public StandardSystemMonitor() {
 		this.listeners = Collections.synchronizedList(new ArrayList<ISystemMonitorListener>());
+		this.periodCounter = 1;
 	}
 	
 	public void initialize() {
@@ -109,11 +114,18 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	}
 	
 	private void update() {
+		this.periodCounter++;
 		long sum = getLoadForLastPeriod();
 		this.avgLoad = (double)sum * 100.0 / (double)this.maxLoad;
 		for (ISystemMonitorListener listener:this.listeners) {
 			listener.updateOccured();
 		}
+		
+		long mem = this.getMemForLastPeriod();
+		if(mem > this.maxMem){
+			this.maxMem = mem;
+		}
+		this.avgMem = ((avgMem * (this.periodCounter - 1)) + mem) / this.periodCounter;
 	}
 	
 	private long getLoadForLastPeriod() {
@@ -144,6 +156,20 @@ public class StandardSystemMonitor implements ISystemMonitor {
 	public double getHeapMemoryUsage() {
 		MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 		return (double)usage.getUsed() * 100.0 / (double)usage.getMax();
+	}
+	
+	public double getAverageMemoryUsage(){
+		return this.avgMem;
+	}
+	
+	public double getMaxMemoryUsage(){
+		return this.maxMem;
+	}
+	
+	public long getMemForLastPeriod(){
+		MemoryUsage heapMem = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+		MemoryUsage nonHeapMem = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
+		return heapMem.getUsed() + nonHeapMem.getUsed();
 	}
 	
 	public void addListener(ISystemMonitorListener listener) {

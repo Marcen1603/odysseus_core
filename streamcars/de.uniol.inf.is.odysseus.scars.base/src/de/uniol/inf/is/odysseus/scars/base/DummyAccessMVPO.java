@@ -158,7 +158,7 @@ class DummyJDVEData<M extends IProbability> {
 			lastTimestamp = System.currentTimeMillis();
 			return lastTimestamp;
 		} else if ("EndTimestamp".equals(schema.getDatatype().getURIWithoutQualName())) {
-			return System.currentTimeMillis() + 1000; // eine Sekunde abstand
+			return lastTimestamp + 1000; // eine Sekunde abstand
 		} else {
 			throw new RuntimeException("not implememted yet");
 		}

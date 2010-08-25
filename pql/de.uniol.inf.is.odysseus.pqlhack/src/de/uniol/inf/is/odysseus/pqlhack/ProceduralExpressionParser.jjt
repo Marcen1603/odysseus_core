@@ -38,6 +38,7 @@ TOKEN : /* Keywords */ {
 |	<K_AND: "AND">
 |	<K_AVG: "AVG">
 |   <K_BENCHMARK: "BENCHMARK">
+|	<K_BENCHMARK_EXT: "BENCHMARK-EXT">
 |   <K_BROKER: "BROKER">
 |	<K_BUFFER: "BUFFER">
 |	<K_EXIST: "EXIST">
@@ -140,6 +141,7 @@ void AlgebraOp():{}{
 	EvaluateOp() |
 	SchemaConvertOp() |
 	BenchmarkOp() |
+	BenchmarkOpExt()|
 	BufferOp() |
 	ExistOp() |
 	FilterGainOp() |
@@ -159,6 +161,10 @@ void ExistOp() : {} {
 
 void BenchmarkOp() : {}{
 	<K_BENCHMARK>"(" AlgebraOp() "," Number() "," Number() ")"
+}
+
+void BenchmarkOpExt() : {}{
+	<K_BENCHMARK_EXT>"(" AlgebraOp() "," Number() "," Number() ")"
 }
 
 void BufferOp(): {}{
@@ -258,7 +264,6 @@ void Predicate():{}{
   | LOOKAHEAD(AndPredicate())AndPredicate()
   | NotPredicate()
   | SimplePredicate()
-  | ExistPredicate()
 }
 void SimplePredicate():{}{
   LOOKAHEAD("("Predicate())"("Predicate()")"
@@ -281,13 +286,6 @@ void NotPredicate():{}{
   <K_NOT>Predicate()
 }
 
-void ExistPredicate():{}{
-	<K_EXIST> ExistVariablesDeclaration() ("," ExistVariablesDeclaration()) ";" Predicate()
-}
-
-void ExistVariablesDeclaration():{}{
-	Identifier() ("," Identifier())* <K_IN> Identifier()
-}
 void Expression():{
   String tOp;
 }

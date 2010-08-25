@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.base.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.base.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAO;
+import de.uniol.inf.is.odysseus.benchmarker.impl.BenchmarkAOExt;
 import de.uniol.inf.is.odysseus.benchmarker.impl.BufferAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.logicaloperator.base.AbstractLogicalOperator;
@@ -40,14 +41,13 @@ import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSelOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTAssociationSrcOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBasicPredicate;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOp;
+import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBenchmarkOpExt;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBrokerOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTBufferOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTCompareOperator;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTDefaultPredictionDefinition;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTEvaluateOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistOp;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistPredicate;
-import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExistVariablesDeclaration;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterCovarianceOp;
 import de.uniol.inf.is.odysseus.pqlhack.parser.ASTFilterEstimateOp;
@@ -95,9 +95,6 @@ import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisGenerationAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.association.logicaloperator.HypothesisSelectionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.evaluation.logicaloperator.EvaluationAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterCovarianceUpdateAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterEstimateUpdateAO;
-import de.uniol.inf.is.odysseus.scars.objecttracking.filter.logicaloperator.FilterGainAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.logicaloperator.PredictionAssignAO;
 import de.uniol.inf.is.odysseus.scars.objecttracking.prediction.sdf.PredictionExpression;
@@ -1286,6 +1283,31 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 
 		return data;
 	}
+	
+	@Override
+	public Object visit(ASTBenchmarkOpExt node, Object data) {
+		// first child is preceeding operator
+		ArrayList newData = new ArrayList();
+		newData.add(((ArrayList) data).get(0));
+		ArrayList inData = (ArrayList) node.jjtGetChild(0).jjtAccept(this, newData);
+		AbstractLogicalOperator inputForBench = (AbstractLogicalOperator) inData.get(1);
+		int inputSourceOutPort = ((Integer) inData.get(2)).intValue();
+
+		// second child is selectivity
+		double selectivity = Double.parseDouble(((ASTNumber) node.jjtGetChild(1)).getValue());
+
+		// third child is duration
+		int duration = Integer.parseInt(((ASTNumber) node.jjtGetChild(2)).getValue());
+
+		BenchmarkAOExt bench = new BenchmarkAOExt(duration, selectivity);
+
+		bench.subscribeToSource(inputForBench, 0, inputSourceOutPort, inputForBench.getOutputSchema());
+
+		((ArrayList) data).add(bench);
+		((ArrayList) data).add(new Integer(0));
+
+		return data;
+	}
 
 	@Override
 	public Object visit(ASTEvaluateOp node, Object data) {
@@ -1669,18 +1691,6 @@ public class CreateLogicalPlanVisitor implements ProceduralExpressionParserVisit
 		dataList.add(DATA_LIST_INDEX_OF_OPERATOR_OUTPUT_PORT, OUTPUT_PORT);
 
 		return dataList;
-	}
-
-	@Override
-	public Object visit(ASTExistPredicate node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTExistVariablesDeclaration node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

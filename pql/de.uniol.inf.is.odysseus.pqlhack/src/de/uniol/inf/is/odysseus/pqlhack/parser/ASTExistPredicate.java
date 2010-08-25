@@ -18,4 +18,4 @@ class ASTExistPredicate extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=fbe4cbdf96373950554c81f888c03a3a (do not edit this line) */
+/* JavaCC - OriginalChecksum=0a6f54c1c63df480188bc09c1fa76fd5 (do not edit this line) */
