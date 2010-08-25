@@ -69,7 +69,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 
 	@Override
 	public void newElement(T object, int inPort) {
-		getLogger().debug("New Element "+object+" "+inPort);
+	//	getLogger().debug("New Element "+object+" "+inPort);
 		inputQueue.add(new Pair<T, Integer>(object, inPort));
 		newHeartbeat(object.getMetadata().getStart(), inPort);
 	}
@@ -93,11 +93,12 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 
 	@Override
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
+		if (po == null) return;
 		PointInTime minimum = null;
 		synchronized (minTs) {
 			minTs[inPort] = heartbeat;
 			minimum = getMinTs();
-			getLogger().debug("Current minimum "+minimum);
+		//	getLogger().debug("Current minimum "+minimum);
 		}
 		if (minimum != null) {
 			synchronized (this.inputQueue) {
@@ -110,7 +111,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 					this.inputQueue.poll();
 
 					po.process_internal(elem.getE1(), elem.getE2());
-					getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
+				//	getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
 					elem = this.inputQueue.peek();
 				}
 			}
